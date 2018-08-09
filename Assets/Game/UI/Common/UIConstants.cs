@@ -296,10 +296,35 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		}
 	}
 
+	private static UISafeArea m_safeArea = null;
 	public static UISafeArea safeArea {
 		get {
 			// Select target safe area based on special device
-			return instance.m_safeAreas[(int)specialDevice];
+			//return instance.m_safeAreas[(int)specialDevice];
+
+			if(m_safeArea == null) {
+				// Unity's safe area is in Screen pixels
+				// Normalize and multiply by our Canvases reference resolution (hardcoded)
+				Rect systemSafeArea = Screen.safeArea;
+				ControlPanel.Log("SYSTEM SAFE AREA: " + systemSafeArea.ToString());
+
+				Rect normalizedSafeArea = new Rect(
+					systemSafeArea.x / Screen.width,
+					systemSafeArea.y / Screen.height,
+					systemSafeArea.width / Screen.width,
+					systemSafeArea.height / Screen.height
+				);
+				ControlPanel.Log("NORMALIZED SAFE AREA: " + systemSafeArea.ToString());
+
+				m_safeArea = new UISafeArea(
+					normalizedSafeArea.yMin * 1536f,
+					normalizedSafeArea.xMin * 2048f,
+					normalizedSafeArea.xMax * 2048f,
+					normalizedSafeArea.yMax * 1536f
+				);
+				ControlPanel.Log("SAFE AREA: " + systemSafeArea.ToString());
+			}
+			return m_safeArea;
 		}
 	}
 	#endregion
