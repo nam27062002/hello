@@ -235,7 +235,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
@@ -289,7 +289,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
 			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
@@ -655,7 +655,7 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 
-	private void OnMissionZone(bool toggle, ZoneTrigger zone, bool _fistTime){
+	private void OnMissionZone(bool toggle, ZoneTrigger zone){
 		if ( toggle ){
 			if ( m_onlyFirstTime )
 			{
