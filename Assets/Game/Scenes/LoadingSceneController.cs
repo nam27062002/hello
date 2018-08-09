@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -149,6 +150,72 @@ public class LoadingSceneController : SceneController {
     }
 
     GDPRListener m_gdprListener = new GDPRListener();
+
+    Dictionary<string, int> m_ageRestrictions = new Dictionary<string, int>()
+    {
+          {"US", 13},
+          {"AT", 16},
+          {"BE", 16},
+          {"BG", 16},
+          {"HR", 16},
+          {"CY", 16},
+          {"CZ", 16},
+          {"DK", 16},
+          {"EE", 16},
+          {"FI", 16},
+          {"FR", 16},
+          {"DE", 16},
+          {"GR", 16},
+          {"HU", 16},
+          {"IE", 16},
+          {"IT", 16},
+          {"LV", 16},
+          {"LT", 16},
+          {"LU", 16},
+          {"MT", 16},
+          {"NL", 16},
+          {"PL", 16},
+          {"PT", 16},
+          {"RO", 16},
+          {"SK", 16},
+          {"SI", 16},
+          {"ES", 16},
+          {"SE", 16},
+          {"GB", 16}
+    };
+
+    Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
+    {
+        {"AT", true},
+        {"BE", true},
+        {"BG", true},
+        {"HR", true},
+        {"CY", true},
+        {"CZ", true},
+        {"DK", true},
+        {"EE", true},
+        {"FI", true},
+        {"FR", true},
+        {"DE", true},
+        {"GR", true},
+        {"HU", true},
+        {"IE", true},
+        {"IT", true},
+        {"LV", true},
+        {"LT", true},
+        {"LU", true},
+        {"MT", true},
+        {"NL", true},
+        {"PL", true},
+        {"PT", true},
+        {"RO", true},
+        {"SK", true},
+        {"SI", true},
+        {"ES", true},
+        {"SE", true},
+        {"GB", true}
+    };
+    
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -389,18 +456,29 @@ public class LoadingSceneController : SceneController {
                 if (m_gdprListener.m_infoRecievedFromServer)
                 {
                     string country = m_gdprListener.m_userCountry;
-                        // Recieved values are not good
-                    if ( !GDPRListener.IsValidCountry(country) )
+                    // Recieved values are not good
+                    if ( !GDPRListener.IsValidCountry(country))
                     {
-                        // country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
-                            // Cached Values are not good
-                        // if ( !GDPRListener.IsValidCountry(country) ) 
+
+                        string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
+                        int localeAge = -1;
+                        bool localeRequiresConsent = false;
+                        if (m_ageRestrictions.ContainsKey(localeCountryCode))
                         {
-                            // We set the most restrictive path
-                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
-                        }    
+                            localeAge = m_ageRestrictions[localeCountryCode];
+                        }
+                        if (m_requiresConsent.ContainsKey(localeCountryCode))
+                        {
+                            localeRequiresConsent = m_requiresConsent[localeCountryCode];
+                        }
+                        Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeAge + " Consent: " + localeRequiresConsent +" </color>");
+                        GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeAge, localeRequiresConsent, false);
                     }
-                    Debug.Log("<color=BLUE>"+country+"</color>");
+                    else
+                    {
+                        Debug.Log("<color=YELLOW>"+country+"</color>");
+                    }
+                    
                     SetState( State.WAITING_TERMS );
                 }
             }break;
