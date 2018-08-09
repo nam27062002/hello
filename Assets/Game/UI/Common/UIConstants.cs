@@ -302,7 +302,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			// Select target safe area based on special device
 			//return instance.m_safeAreas[(int)specialDevice];
 
-			if(m_safeArea == null) {
+			if(m_safeArea == null || true) {
 				// Unity's safe area is in Screen pixels
 				// Normalize and multiply by our Canvases reference resolution (hardcoded)
 				//Rect systemSafeArea = Screen.safeArea;
