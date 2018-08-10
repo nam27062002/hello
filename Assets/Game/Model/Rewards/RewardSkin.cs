@@ -71,5 +71,24 @@ namespace Metagame {
 			// Immediately equip it!
 			UsersManager.currentUser.EquipDisguise(m_def.GetAsString("dragonSku"), m_sku, true);
 		}
+
+		/// <summary>
+		/// Obtain the generic TID to describe this reward type.
+		/// </summary>
+		/// <returns>TID describing this reward type.</returns>
+		/// <param name="_plural">Singular or plural TID?</param>
+		public override string GetTID(bool _plural) {
+			// Use definition to find a better tid
+			string tid = "TID_DISGUISE";
+			if(m_def != null) {
+				tid = m_def.GetAsString("tidName");
+			}
+
+			// Add plural suffix if needed (only when skin name is not known)
+			else if(_plural) {
+				tid += "_PLURAL";
+			}
+			return tid;
+		}
 	}
 }

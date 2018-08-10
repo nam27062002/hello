@@ -126,9 +126,18 @@ namespace Metagame {
 		public static Reward CreateFromData(Data _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {			
 			switch(_data.typeCode) {
 				// Currency rewards: pretty straight forward
-				case RewardSoftCurrency.TYPE_CODE:	  return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
-				case RewardHardCurrency.TYPE_CODE:	  return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
-				case RewardGoldenFragments.TYPE_CODE: return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
+				case RewardSoftCurrency.TYPE_CODE: {
+					return CreateTypeSoftCurrency(_data.amount, _economyGroup, _source);
+				}
+
+				case RewardHardCurrency.TYPE_CODE:
+				case "hc": {    // [AOC] Just in case
+					return CreateTypeHardCurrency(_data.amount, _economyGroup, _source);
+				}
+					
+				case RewardGoldenFragments.TYPE_CODE: {
+					return CreateTypeGoldenFragments((int)_data.amount, Rarity.COMMON, _economyGroup, _source);
+				}	
 
 				// Egg reward: if amount is > 1, create a multi reward instead
 				case RewardEgg.TYPE_CODE: {
@@ -156,7 +165,7 @@ namespace Metagame {
 
                 case RewardMultiEgg.TYPE_CODE: {
                     return CreateTypeMultiEgg(_data.amount, _data.sku, _source);
-                } break;
+                }
             }
 			return null;
 		}
@@ -267,6 +276,13 @@ namespace Metagame {
 		/// Do the actual collection based on reward type.
 		/// </summary>
 		protected abstract void DoCollect();
+
+		/// <summary>
+		/// Obtain the generic TID to describe this reward type.
+		/// </summary>
+		/// <returns>TID describing this reward type.</returns>
+		/// <param name="_plural">Singular or plural TID?</param>
+		public abstract string GetTID(bool _plural);
 
 		/// <summary>
 		/// Checks whether this reward needs to be replaced and creates a replacement

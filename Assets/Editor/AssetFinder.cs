@@ -426,6 +426,41 @@ public class AssetFinder : EditorWindow {
 	}
 
 
+    [MenuItem("Hungry Dragon/Marketing/Remove Texture Size Limit")]
+    public static void RemoveTextureSizeLimit()
+    {
+         Debug.Log("Obtaining texture list");
+
+        Texture2D[] textureList;
+        FindAssetInContent<Texture2D>(Directory.GetCurrentDirectory() + "\\Assets", out textureList);
+
+        float c = 0;
+
+        Debug.Log("Remove Texture Size Limit :");
+        foreach (Texture2D texture in textureList)
+        {
+            string path = AssetDatabase.GetAssetPath(texture);
+            TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+                       
+            if (EditorUtility.DisplayCancelableProgressBar( "Reimporting texture", path, c / (float)textureList.Length))
+            {
+                EditorUtility.ClearProgressBar();
+                break;
+            }
+            if (textureImporter != null && textureImporter.mipmapEnabled)
+            {
+                textureImporter.maxTextureSize = 8192;
+                AssetDatabase.ImportAsset(path);
+                Debug.Log(">>> " + path);
+                c++;                   
+
+            }
+        }
+
+        EditorUtility.ClearProgressBar();
+        Debug.Log("list length: " + textureList.Length + " textures:" + c);
+    }
+
 
     //------------------------------------------------------------------//
     // METHODS															//

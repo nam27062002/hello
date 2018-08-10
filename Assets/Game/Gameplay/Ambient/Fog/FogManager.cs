@@ -167,7 +167,7 @@ public class FogManager : MonoBehaviour
 
 	void OnDestroy()
 	{
-		if (Application.isPlaying) {
+		if (Application.isPlaying && ApplicationManager.IsAlive) {
 			InstanceManager.fogManager = null;
 
 			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);

@@ -245,9 +245,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
     private bool m_spinning = true;
-    private bool m_animSpin = false;
     private bool m_rotateOnIdle = false;
 
+    private bool m_waterMovement = false;
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -1728,54 +1728,62 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
     public void StartWaterMovement( Collider _other )
 	{
-		// m_waterMovementModifier = 0;
-		m_waterDeepLimit = false;
-
-		bool createsSplash = false;
-		// Trigger particles
-		if ( m_particleController != null )
-			createsSplash = m_particleController.OnEnterWater( _other );
-
-		// Trigger animation
-		m_animationEventController.OnInsideWater(createsSplash);
-
-		if ( m_state != State.Latching )
-		{
-			if ( m_impulse.y < 0 )
-			{
-				m_impulse = m_impulse * 2.0f;
-			}
-
-			// Change state
-			ChangeState(State.InsideWater);
-		}
-
-		// Notify game
-		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
+        if (!m_waterMovement)
+        {
+            m_waterMovement = true;
+            
+    		m_waterDeepLimit = false;
+    
+    		bool createsSplash = false;
+    		// Trigger particles
+    		if ( m_particleController != null )
+    			createsSplash = m_particleController.OnEnterWater( _other );
+    
+    		// Trigger animation
+    		m_animationEventController.OnInsideWater(createsSplash);
+    
+    		if ( m_state != State.Latching )
+    		{
+    			if ( m_impulse.y < 0 )
+    			{
+    				m_impulse = m_impulse * 2.0f;
+    			}
+    
+    			// Change state
+    			ChangeState(State.InsideWater);
+    		}
+    
+    		// Notify game
+    		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
+        }
 	}
 
 	public void EndWaterMovement( Collider _other )
 	{
-		if (m_animator )
-			m_animator.SetBool(GameConstants.Animator.BOOST, false);
-
-
-		bool createsSplash = false;
-		// Trigger particles
-		if (m_particleController != null)
-			createsSplash = m_particleController.OnExitWater( _other );
-
-		// Trigger animation
-		m_animationEventController.OnExitWater(createsSplash);
-
-		if ( m_state != State.Latching )
-		{
-			// Wait a second
-			ChangeState( State.ExitingWater );
-		}
-
-		// Notify game
-		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
+        if (m_waterMovement)
+        {
+            m_waterMovement = false;
+            
+    		if (m_animator )
+    			m_animator.SetBool(GameConstants.Animator.BOOST, false);
+    
+    		bool createsSplash = false;
+    		// Trigger particles
+    		if (m_particleController != null)
+    			createsSplash = m_particleController.OnExitWater( _other );
+    
+    		// Trigger animation
+    		m_animationEventController.OnExitWater(createsSplash);
+    
+    		if ( m_state != State.Latching )
+    		{
+    			// Wait a second
+    			ChangeState( State.ExitingWater );
+    		}
+    
+    		// Notify game
+    		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
+        }
 	}
 
 	public void StartSpaceMovement()
@@ -2027,7 +2035,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		{
 			m_insideWater = false;
 			// Disable Bubbles
-			if (IsAliveState() )
+			if (IsAliveState())
 			{
 				EndWaterMovement( _other );
 				m_previousState = State.Idle;

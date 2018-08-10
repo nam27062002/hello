@@ -10,7 +10,11 @@ public abstract class AdProvider
         None,
         V4VC,
         Interstitial
-    }   
+    }
+
+    public delegate void VoidDelegate();
+    public VoidDelegate onVideoAdOpen;
+    public VoidDelegate onVideoAdClosed;
 
     public delegate void OnPlayVideoCallback(bool giveReward, int duration, string msg);        
 
@@ -139,6 +143,11 @@ public abstract class AdProvider
     private bool IsProcessingAnAd()
     {
         return m_ad.Type != AdType.None;        
+    }
+    
+    public AdType GetAdType()
+    {
+        return m_ad.Type;
     }
 
     public void OnAdPlayed(Ad ad, bool videoPlayed, string msg=null)

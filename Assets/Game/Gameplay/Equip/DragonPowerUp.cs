@@ -434,6 +434,7 @@ public class DragonPowerUp : MonoBehaviour {
 			// Health
 			case "food_increase":
 			case "hp_increase":
+			case "combined":
 			{
 				return UIConstants.PET_CATEGORY_HEALTH;
 			} break;
@@ -488,6 +489,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "bomb":
 			case "stun":
 			case "findBonus":
+			case "tranformGold":
+			case "shoot_horns":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;

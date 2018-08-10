@@ -55,13 +55,14 @@ public class MathUtils {
 	/// <param name="_value">Base value.</param>
 	/// <param name="_factor">Multiple of this.</param>
 	public static float Snap(float _value, float _factor) {
-		if(_factor == 0f) return _value;
+        if(Math.Abs(_factor) < Mathf.Epsilon) return _value;
 		return Mathf.Round(_value/_factor) * _factor;
 	}
 
 	public static long Snap(long _value, long _factor) {
-		if(_factor == 0) return _value;
-		return (_value/_factor) * _factor;
+        if (_factor == 0) return _value;
+        float ret = Snap((float)_value, (float)_factor);
+        return (long)ret;
 	}
 
 	/// <summary>

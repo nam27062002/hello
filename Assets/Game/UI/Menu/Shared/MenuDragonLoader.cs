@@ -156,7 +156,13 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Initialize loaded dragon (unless using MANUAL mode)
-		if(m_mode != Mode.MANUAL) RefreshDragon();
+        if (m_mode != Mode.MANUAL) {         
+            RefreshDragon();
+        } else {
+            if (m_dragonInstance != null) {
+                m_dragonInstance.SetAnim(m_anim);
+            }
+        }
 	}
 
 

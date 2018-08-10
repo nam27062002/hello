@@ -47,6 +47,8 @@ public class EditorCameraSnapshot : MonoBehaviour {
 
 
     public bool m_Video = false;
+    public bool m_CaptureOnStart = false;
+    public int m_systemFrameRate = 30;
 
     private float m_maximumDeltaTimeBackUp;
 
@@ -137,6 +139,11 @@ public class EditorCameraSnapshot : MonoBehaviour {
         m_screenShotcount = checkScreenshotCount(m_screenshotPath);
 
         m_maximumDeltaTimeBackUp = Time.maximumDeltaTime;
+
+        m_doSnapshot = m_CaptureOnStart;
+
+        Application.targetFrameRate = m_systemFrameRate;
+        Time.captureFramerate = m_systemFrameRate;
     }
 
     private int checkScreenshotCount(string path)

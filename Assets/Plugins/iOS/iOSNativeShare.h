@@ -1,4 +1,25 @@
-﻿#import "UnityAppController.h"
+#import "UnityAppController.h"
+
+// https://stackoverflow.com/questions/13551042/different-data-for-sharing-providers-in-uiactivityviewcontroller
+// 
+@interface MyActivityItemProvider : UIActivityItemProvider
+@end
+
+@implementation MyActivityItemProvider
+
+- (id)item
+{
+    // Return nil, if you don't want this provider to apply
+    // to a particular activity type (say, if you provide
+    // print data as a separate item for UIActivityViewController).
+    if ([self.activityType isEqualToString:UIActivityTypePostToFacebook])
+        return nil;
+    
+    return self.placeholderItem;
+}
+
+@end
+
 
 @interface iOSNativeShare : UIViewController
 {

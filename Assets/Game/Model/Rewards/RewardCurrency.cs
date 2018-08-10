@@ -50,6 +50,14 @@ namespace Metagame {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.SOFT;
 		}
+
+		public override string GetTID(bool _plural) {
+			string tid = "TID_SC_NAME";
+			if(_plural) {
+				tid += "_PLURAL";
+			}
+			return tid;
+		}
 	}
 
 	/// <summary>
@@ -61,6 +69,14 @@ namespace Metagame {
 		public RewardHardCurrency(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.HARD;
+		}
+
+		public override string GetTID(bool _plural) {
+			string tid = "TID_PC_NAME";
+			if(_plural) {
+				tid += "_PLURAL";
+			}
+			return tid;
 		}
 	}
 
@@ -82,6 +98,10 @@ namespace Metagame {
 				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG, EconomyGroup.ToString());
 				UsersManager.currentUser.PushReward(reward);
 			}
+		}
+
+		public override string GetTID(bool _plural) {
+			return "TID_GOLDEN_FRAGMENTS_NAME";	// No singular version :/
 		}
 	}
 }

@@ -145,8 +145,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
                         // Start real money transaction flow
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
 						m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
-						RenderQueueSetter.Apply(m_loadingPopupController.transform, RenderQueueSetter.DEFAULT_UI_QUEUE + 1500);		// [AOC] In this particular case we want the loading popup to show on top of everything (specially meant for the offers popup with eggs, pets and sking VFX)
-                        GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
+						GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
                         {
                             m_checkConnectionError = connectionError;
                     #if UNITY_EDITOR
@@ -158,7 +157,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			} break;
 		}
 	}
-
+    
 	/// <summary>
 	/// 
 	/// </summary>
@@ -169,9 +168,18 @@ public abstract class IPopupShopPill : MonoBehaviour {
 				GameStoreManager.SharedInstance.Buy(GetIAPSku());
 			} else {
 				OnPurchaseError.Invoke(this);
-				UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-			}
-		} else {
+
+#if UNITY_ANDROID
+                string msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));
+                UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
+                // Longer time is given to this feedback because the text is long
+                feedbackText.duration = 4f;
+#else
+                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
+#endif
+
+            }
+        } else {
 			OnPurchaseError.Invoke(this);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
