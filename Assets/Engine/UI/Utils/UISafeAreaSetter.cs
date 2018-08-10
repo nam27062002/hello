@@ -41,9 +41,6 @@ public class UISafeAreaSetter : MonoBehaviour {
 	// Exposed
 	[SerializeField] private Mode m_adjustMode = Mode.POSITION;
 	[SerializeField] private UISafeArea m_scale = new UISafeArea(1f, 1f, 1f, 1f);
-
-	[Separator("Safe Area Overrides")]
-	[SerializeField] private OverrideData[] m_customSafeAreas = new OverrideData[0];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -82,22 +79,12 @@ public class UISafeAreaSetter : MonoBehaviour {
 		// Get safe area
 		UISafeArea safeArea = UIConstants.safeArea;
 
-		// Override?
-		for(int i = 0; i < m_customSafeAreas.Length; ++i) {
-			// Matching device?
-			if(m_customSafeAreas[i].device == UIConstants.specialDevice) {
-				// Yes! Override safe area
-				safeArea = m_customSafeAreas[i].safeArea;
-				break;
-			}
-		}
-
 		// Apply scale
 		UISafeArea scaledSafeArea = new UISafeArea(
-			safeArea.bottom * m_scale.bottom,
 			safeArea.left * m_scale.left,
+			safeArea.top * m_scale.top,
 			safeArea.right * m_scale.right,
-			safeArea.top * m_scale.top
+			safeArea.bottom * m_scale.bottom
 		);
 
 		// Apply based on mode

@@ -251,6 +251,24 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	// -------------------------------------------------------------------------
 	// Other constants
 	#region OtherConstants
+	[SerializeField] private Vector2 m_canvasReferenceResolution = new Vector2(2048f, 1536f);
+	public static Vector2 CANVAS_REFERENCE_RESOLUTION {
+		get { return instance.m_canvasReferenceResolution; }
+	}
+
+	public static Vector2 CANVAS_SIZE {
+		get {
+			return new Vector2(
+				CANVAS_REFERENCE_RESOLUTION.y * ASPECT_RATIO,
+				CANVAS_REFERENCE_RESOLUTION.y
+			);
+		}
+	}
+
+	public static float ASPECT_RATIO {
+		get { return (float)Screen.width / (float)Screen.height; }
+	}
+
 	[SerializeField] private float m_mapMarkersDepth = -50f;
 	public static float MAP_MARKERS_DEPTH {
 		get { return instance.m_mapMarkersDepth; }
@@ -262,56 +280,23 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 
 	[SerializeField] private UISafeArea[] m_safeAreas = new UISafeArea[0];
-	private bool m_specialDeviceInitialized = false;
-	private SpecialDevice m_specialDevice = SpecialDevice.NONE;
-	public static SpecialDevice specialDevice {
-		get {
-			// Has the special device been initialized?
-			if(!instance.m_specialDeviceInitialized) {
-				// No! Do it now
-				// Override if debugging
-				if(DebugSettings.simulatedSpecialDevice != SpecialDevice.NONE) {
-					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
-				}
-
-				// Is it an iPhone X?
-				#if UNITY_IOS
-				else if(UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX) {
-					instance.m_specialDevice = SpecialDevice.IPHONE_X;
-				}
-				#elif UNITY_ANDROID
-                else
-                {
-                    float ar = (float)Screen.width / (float)Screen.height;
-                    if (ar > MIN_ASPECT_RATIO_TO_SUPPORT_ROUND_CORNERS)
-                    {
-                        instance.m_specialDevice = SpecialDevice.ANDROID_MAX_ASPECT_RATIO;
-                    }
-                }
-                #endif
-                // Mark as initialized!
-                instance.m_specialDeviceInitialized = true;
-			}
-			return instance.m_specialDevice;
-		}
-	}
 
 	private static UISafeArea m_safeArea = null;
 	public static UISafeArea safeArea {
 		get {
-			// Select target safe area based on special device
-			//return instance.m_safeAreas[(int)specialDevice];
-
+			// If not yet initialized, do it now
 			if(m_safeArea == null) {
 				// Unity's safe area is in Screen pixels
 				// Normalize and multiply by our Canvases reference resolution (hardcoded)
-				#if UNITY_EDITOR
-				Rect systemSafeArea = new Rect(132f, 63f, 2172f, 1062f);	// iPhoneX
-				#else
+			#if UNITY_EDITOR
+				// Use DebugSettings to simulate different safe areas
+				Rect systemSafeArea = DebugSettings.debugSafeArea;
+			#else
 				Rect systemSafeArea = Screen.safeArea;
-				#endif
+			#endif
 				ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
 
+				// Normalize with screen size
 				Rect normalizedSafeArea = new Rect(
 					systemSafeArea.x / Screen.width,
 					systemSafeArea.y / Screen.height,
@@ -320,15 +305,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 				);
 				ControlPanel.Log(Colors.orange.Tag("NORMALIZED SAFE AREA: " + normalizedSafeArea.ToString()));
 
-				float ar = Screen.width / Screen.height;
-				float canvasH = 1536f;
-				float canvasW = canvasH * ar;
-				ControlPanel.Log(Colors.orange.Tag("ar: " + ar + " | canvas: " + canvasW + ", " + canvasH));
+				// Scale back to our canvases reference resolution
+				// Keep Aspect Ratio!
+				Vector2 canvasSize = CANVAS_SIZE;
+				ControlPanel.Log(Colors.orange.Tag("ar: " + ASPECT_RATIO + " | canvas: " + canvasSize.x + ", " + canvasSize.y));
 				m_safeArea = new UISafeArea(
-					normalizedSafeArea.yMin * canvasH,
-					normalizedSafeArea.xMin * canvasW,
-					(1f - normalizedSafeArea.xMax) * canvasW,
-					(1f - normalizedSafeArea.yMax) * canvasH
+					normalizedSafeArea.xMin * canvasSize.x,
+					(1f - normalizedSafeArea.yMax) * canvasSize.y,
+					(1f - normalizedSafeArea.xMax) * canvasSize.x,
+					normalizedSafeArea.yMin * canvasSize.y
 				);
 				ControlPanel.Log(Colors.orange.Tag("SAFE AREA: " + m_safeArea.ToString()));
 			}
@@ -352,9 +337,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	private void OnEnable() {
 		// Reset some runtime vars to their initial value
 		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
-		// Special device
-		m_specialDevice = SpecialDevice.NONE;
-		m_specialDeviceInitialized = false;
+		m_safeArea = null;
 	}
 
 	/// <summary>
