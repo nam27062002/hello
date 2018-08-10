@@ -74,7 +74,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
         Social_Refresh();
         Resync_Refresh();
         Cloud_Refresh();
-		GameCenter_Refresh();
     }
 
     private bool IsLoadingPopupOpen { get; set; }
@@ -100,7 +99,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
 	[SerializeField] private GameObject m_gameCenterGroup = null;
 
 	private PopupController m_loadingPopupController = null;
-	private PopupController m_confirmPopup = null;
 
 	private void GameCenter_Init() {
 		// Disable google play group if not available
@@ -115,10 +113,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		m_googlePlayGroup.SetActive(false);
 		m_gameCenterGroup.SetActive(false);
 		#endif
-	}
-
-	private void GameCenter_Refresh() {
-
 	}
 
 	private void GameCenter_Destroy() {
@@ -143,12 +137,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
 			m_googlePlayLoginButton.SetActive(true);
 			m_googlePlayLogoutButton.SetActive(false);
 			m_googlePlayAchievementsButton.interactable = false;
-		}
-		#elif UNITY_IOS
-		if ( m_confirmPopup != null )
-		{
-			m_confirmPopup.Close( true );
-			OnGameCenterButton();
 		}
 		#endif
 
@@ -235,32 +223,6 @@ public class PopupSettingsSaveTab : MonoBehaviour
 				}, 0.15f
 			);
 		}
-	}
-
-	public void OnGameCenterButton() {
-		// Apple does NOT login the user, we need to check it.
-		if (!GameCenterManager.SharedInstance.CheckIfAuthenticated ())
-		{
-			IPopupMessage.Config config = IPopupMessage.GetConfig();
-			config.TitleTid = "TID_GAMECENTER_CONNECTION_TITLE";
-			config.ShowTitle = true;
-			config.MessageTid = "TID_GAMECENTER_CONNECTION_BODY";
-			// This popup ignores back button and stays open so the user makes a decision
-			config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformConfirm;
-			config.ConfirmButtonTid = "TID_GEN_OK";
-			config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
-			config.IsButtonCloseVisible = false;
-			m_confirmPopup = PopupManager.PopupMessage_Open(config);
-			m_confirmPopup.OnClosePreAnimation.AddListener( OnPopupDismissed );
-		}
-		else
-		{
-			GameCenterManager.SharedInstance.LaunchGameCenterApp ();
-		}
-	}
-
-	void OnPopupDismissed(){
-		m_confirmPopup = null;
 	}
 	#endregion
 
@@ -504,7 +466,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private Image m_userAvatarImage;
 
     [SerializeField]
-    private TextMeshProUGUI m_userNameText;
+	private Text m_userNameText;
     
     [SerializeField]
     private Localizer m_userNotLoggedInMessageText;

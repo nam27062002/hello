@@ -13,9 +13,11 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 	
 	public override string GetCountryCode()
 	{
-		if (Application.platform == RuntimePlatform.IPhonePlayer )
-			return IOsGetCountryCode();
-		return "US";
+        string ret = "US";
+		if (Application.platform == RuntimePlatform.IPhonePlayer ){
+			ret = IOsGetCountryCode();
+        }
+		return ret;
 	}
 	
 	[DllImport("__Internal")]
@@ -165,5 +167,20 @@ public class PlatformUtilsIOSImpl : PlatformUtils
 		}
 		return Input.touchPressureSupported;
 	}
+
+
+    [DllImport("__Internal")] private static extern bool IOsApplicationExists(string appID);
+    public override bool ApplicationExists(string applicationURI) 
+    { 
+        if (string.IsNullOrEmpty(applicationURI))
+        {
+            Debug.LogError("AppName is null or empty!");
+            return false;
+        }
+        if ( Application.platform == RuntimePlatform.IPhonePlayer )
+            return IOsApplicationExists(applicationURI);
+        return false;
+    }
+
 }
 #endif

@@ -241,33 +241,41 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-		// Change game mode
-		SceneController.s_mode = SceneController.Mode.TOURNAMENT;
-		HDLiveEventsManager.instance.SwitchToTournament();
+        if (SceneController.s_playMenuButtonLock == false) {
+            SceneController.s_playMenuButtonLock = true;
 
-		// Send Tracking event
-		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+            // Change game mode
+            SceneController.s_mode = SceneController.Mode.TOURNAMENT;
+            HDLiveEventsManager.instance.SwitchToTournament();
 
-		// Go to tournament info screen
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+            // Send Tracking event
+            HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+
+            // Go to tournament info screen
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+        }
 	}
 
 	/// <summary>
 	/// Collect Rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-		// Prevent spamming
-		if(m_waitingRewardsData) return;
+        if (SceneController.s_playMenuButtonLock == false) {
+            SceneController.s_playMenuButtonLock = true;
 
-		// Request rewards data and wait for it to be loaded
-		m_tournamentManager.RequestRewards();
+            // Prevent spamming
+            if (m_waitingRewardsData) return;
 
-		// Show busy screen
-		BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
-		BusyScreen.Show(this);
+            // Request rewards data and wait for it to be loaded
+            m_tournamentManager.RequestRewards();
 
-		// Toggle flag
-		m_waitingRewardsData = true;
+            // Show busy screen
+            BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+            BusyScreen.Show(this);
+
+            // Toggle flag
+            m_waitingRewardsData = true;
+        }
 	}
 
 	/// <summary>

@@ -550,13 +550,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   OnClosePreAnimation:
     m_PersistentCalls:
       m_Calls:
@@ -582,13 +582,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   OnClosePostAnimation:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114003328154157686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -707,9 +707,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_titleField:
-    element: {fileID: 0}
+    element: {fileID: 114244961116345248}
   m_messageField:
-    element: {fileID: 0}
+    element: {fileID: 114272165337915564}
   m_textFields: []
   m_imageField:
     element: {fileID: 114555445506607142}
@@ -1361,6 +1361,7 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!114 &114574141887801210
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1577,8 +1578,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114834273466815798
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1876,7 +1877,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1762, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224011752929821782
@@ -1954,7 +1955,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000076294, y: 7}
+  m_AnchoredPosition: {x: -0.000091552734, y: 7}
   m_SizeDelta: {x: 0, y: 37}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224404743969866412
@@ -2129,7 +2130,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4.9, y: 3.5}
+  m_AnchoredPosition: {x: -4.899994, y: 3.5}
   m_SizeDelta: {x: -7.2, y: -3.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224525603755978660
@@ -2147,7 +2148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 4.735, y: -9.1}
+  m_AnchoredPosition: {x: 4.7349854, y: -9.100006}
   m_SizeDelta: {x: 17.406, y: 23}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224550734080492944
@@ -2165,7 +2166,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -11.200012, y: -0.0078004226}
+  m_AnchoredPosition: {x: -11.200012, y: -0.0078125}
   m_SizeDelta: {x: 25, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224647643821260364
@@ -2237,7 +2238,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 8, y: -4.11}
+  m_AnchoredPosition: {x: 8, y: -4.1099854}
   m_SizeDelta: {x: 24, y: -7}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224805626703615188
@@ -2259,7 +2260,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4.9, y: 3.5}
+  m_AnchoredPosition: {x: -4.899994, y: 3.5}
   m_SizeDelta: {x: -7.2, y: -3.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224819426994164396
@@ -2314,7 +2315,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 12.670013, y: -0.0078004226}
+  m_AnchoredPosition: {x: 12.670013, y: -0.0078125}
   m_SizeDelta: {x: 30, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224930198772929924

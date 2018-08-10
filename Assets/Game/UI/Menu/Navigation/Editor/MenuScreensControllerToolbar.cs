@@ -188,6 +188,8 @@ public class MenuScreensControllerToolbar {
 			// Background - using last known total rect
 			s_lastTotalRect.width += 2 * MARGIN;
 			s_lastTotalRect.height += 2 * MARGIN;
+			s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, ELEMENT_SIZE.x);	// Minimum size!
+			s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, ELEMENT_SIZE.y);	// Minimum size!
 			EditorGUI.DrawRect(s_lastTotalRect, BACKGROUND_COLOR);
 
 			// In this particular case it's easier to just go with old school GUI calls

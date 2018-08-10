@@ -180,14 +180,19 @@ public class PersistenceCloudDriver
 
     private bool Syncer_NeedsToShowCloudOverridenPopup { get; set; }
 
+    private float Syncer_Timer { get; set; }
+
 	private void Syncer_Reset()
 	{
+        Syncer_Comparator.Reset();
+
 		Syncer_Step = ESyncSetp.None;
 		Syncer_IsAppInit = false;
 		Syncer_IsSilent = false;
 		Syncer_OnSyncDone = null;
 		Syncer_LogInSocialResult = SocialPlatformManager.ELoginResult.Error;
         Syncer_NeedsToShowCloudOverridenPopup = false;
+        Syncer_Timer = 0f;
     }
 
 	public void Sync(bool isSilent, bool isAppInit, Action<PersistenceStates.ESyncResult, PersistenceStates.ESyncResultDetail> onDone)
@@ -255,30 +260,34 @@ public class PersistenceCloudDriver
 
 	private void Syncer_LogInSocial()
 	{
-		Action<SocialPlatformManager.ELoginResult, string> onDone = delegate(SocialPlatformManager.ELoginResult result, string persistenceMerge)
-		{
-			Syncer_LogInSocialResult = result;
-			switch (Syncer_LogInSocialResult)
-			{
-				case SocialPlatformManager.ELoginResult.Error:
-					Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
-					break;
+        Syncer_Timer = FeatureSettingsManager.instance.SocialPlatformLoginTimeout;
+        Syncer_ExtendedLogInSocial(Syncer_OnLogInSocialDone);
+	}
 
-				case SocialPlatformManager.ELoginResult.Ok:
-					Syncer_Step = ESyncSetp.GettingPersistence;
-					break;
+    private void Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult result, string persistenceMerge)
+    {
+        if (mSyncerStep == ESyncSetp.LoggingInSocial)
+        {
+            Syncer_LogInSocialResult = result;
+            switch (Syncer_LogInSocialResult)
+            {
+                case SocialPlatformManager.ELoginResult.Error:
+                    Syncer_PerformDone(PersistenceStates.ESyncResult.ErrorLogging, PersistenceStates.ESyncResultDetail.NoLogInSocial);
+                    break;
 
-				case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
+                case SocialPlatformManager.ELoginResult.Ok:
+                    Syncer_Step = ESyncSetp.GettingPersistence;
+                    break;
+
+                case SocialPlatformManager.ELoginResult.MergeLocalOrOnlineAccount:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithProgress:
                 case SocialPlatformManager.ELoginResult.MergeDifferentAccountWithoutProgress:
-                    Data.LoadFromString(persistenceMerge);                    
+                    Data.LoadFromString(persistenceMerge);
                     Syncer_Step = ESyncSetp.Syncing;
-					break;
-			}
-		};
-
-		Syncer_ExtendedLogInSocial(onDone);
-	}
+                    break;
+            }
+        }        
+    }
 
 	private void Syncer_GetPersistence()	
 	{
@@ -871,7 +880,19 @@ public class PersistenceCloudDriver
 	#endregion
 
 	public void Update()
-	{        
+	{     
+        switch (mSyncerStep)
+        {
+            case ESyncSetp.LoggingInSocial:
+                // Checks for timeout after calling the social network so we don't depend on the social network, in particular this approach lets us address HDK-1574
+                Syncer_Timer -= Math.Min(UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
+                if (Syncer_Timer <= 0f)
+                {
+                    Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
+                }
+                break;
+        }   
+
 		// Upload local to cloud
 		if (Upload_IsAllowed && Upload_IsEnabled && !Upload_IsRunning && LocalDriver.UpdatesAheadOfCloud > 0)
 		{

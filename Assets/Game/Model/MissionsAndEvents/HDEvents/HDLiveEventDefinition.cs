@@ -47,6 +47,8 @@ public class HDLiveEventDefinition {
 	public DateTime m_startTimestamp = new DateTime();
 	public DateTime m_endTimestamp = new DateTime();
 
+	public bool m_refund;
+
 	public TimeSpan timeToEnd {
 		get { return m_endTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }
 	}
@@ -211,6 +213,9 @@ public class HDLiveEventDefinition {
 		Clean();
 
 		m_initialized = true;
+
+		// has this event bee cancelled?
+		m_refund = _data["refund"].AsBool;
 
 		if ( _data.ContainsKey("code") )
 		{

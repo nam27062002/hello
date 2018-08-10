@@ -33,7 +33,8 @@ public class HDLiveEventData {
 		NOT_JOINED,
 		JOINED,
 		REWARD_AVAILABLE,
-		FINALIZED
+		FINALIZED,
+		REFUND
 	};
 	public State m_state = State.NONE;
 
@@ -95,33 +96,37 @@ public class HDLiveEventData {
 	{
 		if ( m_eventId > 0 && definition.m_eventId == m_eventId)
 		{
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			if ( serverTime < m_definition.m_startTimestamp )
-			{
-				m_state = State.TEASING;
-			}
-			else if ( m_state < State.REWARD_AVAILABLE )
-			{
-				if ( serverTime > m_definition.m_endTimestamp )
+			if (m_definition.m_refund) {
+				m_state = State.REFUND;
+			} else {
+				DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+				if ( serverTime < m_definition.m_startTimestamp )
 				{
-					// if I was playing this event I need to check the reward, otherwise I can finalize it direclty
-					if ( m_state == State.JOINED )	
+					m_state = State.TEASING;
+				}
+				else if ( m_state < State.REWARD_AVAILABLE )
+				{
+					if ( serverTime > m_definition.m_endTimestamp )
 					{
-						m_state = State.REWARD_AVAILABLE;
+						// if I was playing this event I need to check the reward, otherwise I can finalize it direclty
+						if ( m_state == State.JOINED )	
+						{
+							m_state = State.REWARD_AVAILABLE;
+						}
+						else
+						{
+							m_state = State.FINALIZED;
+						}
 					}
-					else
+					else if ( m_state == State.TEASING )
 					{
-						m_state = State.FINALIZED;
+						m_state = State.NOT_JOINED;
 					}
 				}
-				else if ( m_state == State.TEASING )
+				else if ( m_state == State.NONE )
 				{
 					m_state = State.NOT_JOINED;
 				}
-			}
-			else if ( m_state == State.NONE )
-			{
-				m_state = State.NOT_JOINED;
 			}
 		}
 	}
@@ -199,8 +204,11 @@ public class HDLiveEventData {
 				{
 					m_state = State.FINALIZED;
 				}break;
-
-
+				case "5":
+				case "pending_refund":
+				{
+					m_state = State.REFUND;
+				}break;
 			}
 		}
 

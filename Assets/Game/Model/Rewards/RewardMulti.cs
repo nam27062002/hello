@@ -114,6 +114,16 @@ namespace Metagame {
 			}
 		}
 
+		/// <summary>
+		/// Obtain the generic TID to describe this reward type.
+		/// </summary>
+		/// <returns>TID describing this reward type.</returns>
+		/// <param name="_plural">Singular or plural TID?</param>
+		public override string GetTID(bool _plural) {
+			// Shouldn't be used with Multi rewards
+			return "TID_GEN_REWARD";
+		}
+
 		//------------------------------------------------------------------------//
 		// CALLBACKS															  //
 		//------------------------------------------------------------------------//

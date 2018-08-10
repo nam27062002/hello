@@ -64,6 +64,7 @@ public class HDTrackingManager
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
+		REWARD_PREREG,					// Reward given from pre-registration
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
@@ -118,12 +119,36 @@ public class HDTrackingManager
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
     
+    public HDTrackingManager()
+    {
+        SaveOfflineUnsentEventsEnabled = true;
+    }
+
     public virtual void GoToGame() {}
     public virtual void GoToMenu() {}
 
     public virtual void Update()
     {        
     }
+
+    public bool SaveOfflineUnsentEventsEnabled;
+
+    private float SaveOfflineUnsentEventLastTimestamp;
+
+    public void SaveOfflineUnsentEvents()
+    {
+        if (SaveOfflineUnsentEventsEnabled)
+        {
+            float now = Time.realtimeSinceStartup;
+            if (now - SaveOfflineUnsentEventLastTimestamp >= FeatureSettingsManager.instance.TrackingStoreUnsentMinTime)
+            {
+                SaveOfflineUnsentEventLastTimestamp = now;
+                SaveOfflineUnsentEventsExtended();
+            }
+        }
+    }
+
+    protected virtual void SaveOfflineUnsentEventsExtended() {}
 
 #region notify    
     /// <summary>

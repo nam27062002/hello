@@ -19,7 +19,7 @@ MonoBehaviour:
   m_kLocalisedAppNamesIOS: []
   m_strBuildFilename: 
   m_strPVPProtoFile: 
-  m_iBuildEnvironmentSelected: 3
+  m_iBuildEnvironmentSelected: 2
   m_iSocialPlatformSelected: 1
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
@@ -52,11 +52,11 @@ MonoBehaviour:
   - 4246043480
   - 4246043480
   m_strWeiboRedirectURL:
-  - 10.44.4.131/dragon/api/weibo/callback
-  - http://bcn-int-dragon01:8080/dragon/api/weibo/callback
-  - http://bcn-dev-dragon01:8080/dragon/api/weibo/callback
-  - http://dragon-qc.ubi.com/dragon/api/weibo/callback
-  - http://dragon-stage.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
+  - http://dragon.ubi.com/dragon/api/weibo/callback
   - http://dragon.ubi.com/dragon/api/weibo/callback
   m_strGameCenterAppGoogle:
   - 
@@ -93,22 +93,33 @@ MonoBehaviour:
   - 
   - 
   - 
-  m_strVersionIOS: 1.10
-  m_strVersionIOSCode: 183
-  m_strVersionAndroidGplay: 1.10
-  m_strVersionAndroidGplayCode: 183
-  m_strVersionAndroidAmazon: 1.10
-  m_strVersionAndroidAmazonCode: 183
+  m_strVersionIOS: 1.12
+  m_strVersionIOSCode: 197
+  m_strVersionAndroidGplay: 1.12
+  m_strVersionAndroidGplayCode: 197
+  m_strVersionAndroidAmazon: 1.12
+  m_strVersionAndroidAmazonCode: 197
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 0
   m_biOSPushNotifications: 1
   m_kiOSBundleLocalizations:
   - en
+  - de
+  - fr
+  - it
+  - es
+  - pt
+  - ru
+  - zh_CN
+  - zh_TW
+  - ja
+  - ko
+  - tr
   m_kiOSPrivacySettings:
   - NSAppleMusicUsageDescription/Used to listen to music while playing
   - NSBluetoothPeripheralUsageDescription/
   - NSCalendarsUsageDescription/Some ad content may create a calendar event.
-  - NSCameraUsageDescription/
+  - NSCameraUsageDescription/Needed for ARKit
   - NSContactsUsageDescription/
   - NSHealthShareUsageDescription/
   - NSHealthUpdateUsageDescription/
@@ -127,12 +138,12 @@ MonoBehaviour:
   - NSFaceIDUsageDescription/
   - NSPhotoLibraryAddUsageDescription/Used to take pictures of your dragons!
   m_iAndroidMarketSelected: 0
-  m_iAndroidMinSDKVersion: 1
+  m_iAndroidMinSDKVersion: 3
   m_iAndroidTargetSDKVersion: 11
   m_bAndroidDebuggable: 1
   m_bAndroidTVSupported: 0
   m_iAndroidOrientationSelected: 2
-  m_bAndroidSkipUnityPermissions: 1
+  m_bAndroidSkipUnityPermissions: 0
   m_kAndroidNormalPermissions:
   - android.permission.WAKE_LOCK
   - android.permission.INTERNET
