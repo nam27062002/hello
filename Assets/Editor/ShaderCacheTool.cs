@@ -36,6 +36,8 @@ public class ShaderCacheTool : EditorWindow {
     private static string shaderCacheSource = "shader_cache_source.txt";
     private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
+    private static Dictionary<string, string[]> m_shaderValidKeywords = new Dictionary<string, string[]>();
+
     private static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
     {
         if (level >= keywords.Count) return false;
@@ -187,11 +189,98 @@ public class ShaderCacheTool : EditorWindow {
     }
 
 
+    private static string[] getShaderValidKeywords(Shader shader)
+    {
+        string[] validKeywords = null;
+        if (!m_shaderValidKeywords.ContainsKey(shader.name))
+        {
+            string shaderPath = AssetDatabase.GetAssetPath(shader);
+            Debug.Log("Shader path: " + shaderPath);
+
+            string[] shlines = File.ReadAllLines(shaderPath);
+            List<string> vkeywords = new List<string>();
+
+            foreach (string line in shlines)
+            {
+                int off = 0;
+                int pos = line.IndexOf("shader_feature");
+                if (pos == -1)
+                {
+                    pos = line.IndexOf("multi_compile");
+                    if (pos != -1)
+                    {
+                        off = 13;
+                    }
+                }
+                else
+                {
+                    off = 14;
+                }
+
+                if (pos >= 0)
+                {
+                    string kwpack = line.Substring(pos + off);
+                    string[] kwl = kwpack.Split(' ');
+
+                    for (int c = 0; c < kwl.Length; c++)
+                    {
+                        if (kwl[c].Length > 0 && kwl[c][0] != '_')
+                        {
+                            vkeywords.Add(kwl[c]);
+                        }
+                    }
+                }
+            }
+
+            validKeywords = vkeywords.ToArray();
+
+            string ds = "";
+            foreach(string vk in validKeywords)
+            {
+                ds += vk + " ";
+            }
+
+
+            Debug.Log("Valid keywords: " + ds);
+
+            m_shaderValidKeywords[shader.name] = validKeywords;
+
+        }
+        else
+        {
+            validKeywords = m_shaderValidKeywords[shader.name];
+        }
+        return validKeywords;
+    }
+
+    private static string[] stripMaterialKeywords(Material mat)
+    {
+        Shader shader = mat.shader;
+
+        List<string> strippedKeywords = new List<string>();
+
+        List<string> validKeywords = new List<string>(getShaderValidKeywords(mat.shader));
+
+        foreach (string kw in mat.shaderKeywords)
+        {
+            if (validKeywords.Contains(kw))
+            {
+                strippedKeywords.Add(kw);
+            }
+            else
+            {
+                Debug.Log("Stripped keyword: " + kw);
+            }
+        }
+        return strippedKeywords.ToArray();
+    }
+
     [MenuItem("Tools/Create shader caches from materials")]
     static void CreateShaderCachesFromMaterials()
     {
         Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+        m_shaderValidKeywords.Clear();
 
         loadShaderCacheExcludeList();
 
@@ -219,6 +308,9 @@ public class ShaderCacheTool : EditorWindow {
                     Debug.Log(lightMode + " is not a valid light mode.");
                     continue;
                 }
+
+                string[] validKeywords = getShaderValidKeywords(m.shader);
+
 
                 keywords.Clear();
                 keywords.AddRange(m.shaderKeywords);
