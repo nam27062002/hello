@@ -14,9 +14,9 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 		Pass
 		{
-			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" "LightMode" = "ForwardBase" }
 			Cull Back
 			ZWrite on
 
