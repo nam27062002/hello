@@ -247,6 +247,7 @@ public class LoadingSceneController : SceneController {
         CREATING_SINGLETONS,
         WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
+        SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
@@ -414,6 +415,11 @@ public class LoadingSceneController : SceneController {
     /// </summary>
     void Update() {       
 
+        if (m_state != State.SHOWING_COUNTRY_BLACKLISTED_POPUP &&
+            CacheServerManager.SharedInstance.IsCountryBlacklisted()) {
+            SetState(State.SHOWING_COUNTRY_BLACKLISTED_POPUP);
+        } 
+
     	switch( m_state )
     	{
     		case State.NONE:
@@ -510,6 +516,9 @@ public class LoadingSceneController : SceneController {
                 }
             }
             break;
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {}
+            break;
             default:
     		{
 				// Update load progress
@@ -566,7 +575,11 @@ public class LoadingSceneController : SceneController {
 
 		// Actions to perform when entering a specific state
         switch (state)
-        {            
+        {           
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {
+                PopupManager.OpenPopupInstant(PopupCountryBlacklisted.PATH);
+            }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
