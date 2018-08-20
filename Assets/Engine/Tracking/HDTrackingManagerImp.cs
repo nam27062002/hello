@@ -28,6 +28,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         public HDTrackingEvent(string _name) {
             name = _name;
+            data = new Dictionary<string, object>();
         }
     }
     private Queue<HDTrackingEvent> m_eventQueue = new Queue<HDTrackingEvent>();
@@ -421,7 +422,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 #if UNITY_EDITOR
             if (Time.realtimeSinceStartup > 5f)
 #else
-            if (UbiservicesManager.SharedInstance.IsSessionCreated() != null)
+            if (UbiservicesManager.SharedInstance.IsSessionCreated())
 #endif
             {
                 State = EState.SessionStarted;
