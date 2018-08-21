@@ -38,8 +38,7 @@ namespace AI {
 			PetPointingCollectibleTargetData m_data;
 			float m_speed;
 
-			GameObject m_visualCue;
-
+            UIGameEntitySpawn m_visualCue;
 
 			public override StateComponentData CreateData() {
 				return new PetPointingCollectibleTargetData();
@@ -66,8 +65,7 @@ namespace AI {
 				m_lettersManager = FindObjectOfType<HungryLettersManager>();
 
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
-
-				m_visualCue = m_pilot.FindObjectRecursive("visualCue");
+                m_visualCue = m_pilot.GetComponent<UIGameEntitySpawn>();
 
 			}
 
@@ -83,9 +81,9 @@ namespace AI {
 				m_pilot.SetMoveSpeed(m_speed);
 
 				// Show some placeholder visual clue
-				if (m_visualCue)
+				if (m_visualCue != null && m_visualCue.instance != null)
 				{
-					m_visualCue.SetActive(true);
+					m_visualCue.instance.SetActive(true);
 				}
 
 			}
@@ -136,9 +134,9 @@ namespace AI {
 
 			protected override void OnExit(State _newState){
 				// Hide placeholder visual
-				if (m_visualCue)
+				if (m_visualCue && m_visualCue.instance )
 				{
-					m_visualCue.SetActive(false);
+                    m_visualCue.instance.SetActive(false);
 				}
 			}
 		}
