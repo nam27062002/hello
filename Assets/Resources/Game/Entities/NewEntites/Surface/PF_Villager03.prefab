@@ -372,6 +372,7 @@ MonoBehaviour:
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4000014019788774}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114000011423335904
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -400,6 +401,7 @@ MonoBehaviour:
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 4000014019788774}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114000011942830554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -476,6 +478,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -518,6 +521,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -556,6 +560,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_villager_dead
   m_firePoints: []
   m_burnParticle:
@@ -596,6 +601,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1.6, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -635,6 +641,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -662,6 +669,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 1.5
     max: 1.5
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1.5,"isWallWalking":false,"timeToIdle":{"min":15,"max":20},"timeToChangeDirection":{"min":5,"max":10},"dataType":"AI.Behaviour.GroundWanderData","editorFolded":false},{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":10,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":true,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":true,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false},{"dataType":"AI.Behaviour.OnActionPointData","editorFolded":false},{"speed":1.5,"dataType":"AI.Behaviour.HomeSenseDragonData","editorFolded":false},{"speed":10,"dataType":"AI.Behaviour.HomeData","editorFolded":false}]'
   m_databaseKey: PF_Villager03
 --- !u!114 &114000013571211304

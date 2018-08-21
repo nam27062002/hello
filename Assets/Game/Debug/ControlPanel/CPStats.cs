@@ -28,8 +28,11 @@ public class CPStats : MonoBehaviour {
     public TextMeshProUGUI m_FpsLabel;
 	public TextMeshProUGUI m_ScreenSize;
 	public TextMeshProUGUI m_LevelName;
+    public TextMeshProUGUI m_freeMemory;
+    public TextMeshProUGUI m_maxMemory;
+    public TextMeshProUGUI m_totalMemory;
 
-	ControlPanel m_ControlPanel;
+    ControlPanel m_ControlPanel;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -50,7 +53,12 @@ public class CPStats : MonoBehaviour {
 
         m_FpsLabel.text = "FPS: ";
 		m_LevelName.text = "Scene Name: "+ SceneManager.GetActiveScene().name;
-		m_ControlPanel = GetComponentInParent<ControlPanel>();
+
+        m_freeMemory.text = "Heap memory: " + SystemInfo.heapMemorySize;
+        m_maxMemory.text = "Total memory: " + SystemInfo.deviceMemorySize;
+        m_totalMemory.text = "Available memory: " + SystemInfo.availableMemorySize;
+
+        m_ControlPanel = GetComponentInParent<ControlPanel>();
 
         DeviceToken = null;
     }    
@@ -95,5 +103,27 @@ public class CPStats : MonoBehaviour {
             NotificationsManager.SharedInstance.SendGCMRegistryID();
         }*/
     }
+
+    public void Unity_RegisterNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound, true);
+#endif
+    }
+
+    public void Unity_ClearRemoteNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.ClearRemoteNotifications();
+#endif    
+    }
+    
+    public void Unity_UnregisterRemoteNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.UnregisterForRemoteNotifications();
+#endif    
+    }
+    
     #endregion
 }

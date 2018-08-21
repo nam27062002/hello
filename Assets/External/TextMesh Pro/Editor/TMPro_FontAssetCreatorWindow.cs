@@ -136,6 +136,7 @@ namespace TMPro.EditorUtilities
             // Initialize & Get shader property IDs.
             ShaderUtilities.GetShaderPropertyIDs();
 
+/*
             // Locate the plugin files & move them to root of project if that hasn't already been done.
 #if !UNITY_5
             // Find to location of the TextMesh Pro Asset Folder (as users may have moved it)
@@ -161,7 +162,7 @@ namespace TMPro.EditorUtilities
                     FileUtil.ReplaceFile(tmproAssetFolderPath + "/Plugins/vcomp120.dll", projectPath + "/vcomp120.dll");
             }
 #endif
-
+*/
             // Add Event Listener related to Distance Field Atlas Creation.
             TMPro_EventManager.COMPUTE_DT_EVENT.Add(ON_COMPUTE_DT_EVENT);
 

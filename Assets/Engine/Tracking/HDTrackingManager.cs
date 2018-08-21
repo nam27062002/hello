@@ -53,22 +53,29 @@ public class HDTrackingManager
 		SHOP_PC_PACK,
 		SHOP_COINS_PACK,
 		SHOP_OFFER_PACK,
+        SHOP_PROMOTED_IAP,
 		SHOP_KEYS_PACK,
         NOT_ENOUGH_RESOURCES,
         INCENTIVISE_SOCIAL_LOGIN,       // Used when the user logs in social platform
         CHEAT,                          // Use this if the currency comes from a cheat so it won't be tracked
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
+		REWARD_LIVE_EVENT,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
+		REWARD_PREREG,					// Reward given from pre-registration
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
 		GLOBAL_EVENT_KEYS_RESET,		// At the end of the event keys are reset back to 0
 		GLOBAL_EVENT_REFUND,            // Used when adding a score to the global event is not possible and the HC spent to duplicate the score needs to be refunded
 		GLOBAL_EVENT_BONUS,				// Spend a key to duplicate score registered to a global event at the end of the run
-        CUSTOMER_SUPPORT                // Reward received via customer support tool
+
+		TOURNAMENT_ENTRY,			    // Tournament Support
+
+        CUSTOMER_SUPPORT,               // Reward received via customer support tool
+        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
     };
 
 	public enum EFunnels
@@ -112,12 +119,36 @@ public class HDTrackingManager
     // Tracking related data stored in persistence.
     public TrackingPersistenceSystem TrackingPersistenceSystem { get; set; }
     
+    public HDTrackingManager()
+    {
+        SaveOfflineUnsentEventsEnabled = true;
+    }
+
     public virtual void GoToGame() {}
     public virtual void GoToMenu() {}
 
     public virtual void Update()
     {        
     }
+
+    public bool SaveOfflineUnsentEventsEnabled;
+
+    private float SaveOfflineUnsentEventLastTimestamp;
+
+    public void SaveOfflineUnsentEvents()
+    {
+        if (SaveOfflineUnsentEventsEnabled)
+        {
+            float now = Time.realtimeSinceStartup;
+            if (now - SaveOfflineUnsentEventLastTimestamp >= FeatureSettingsManager.instance.TrackingStoreUnsentMinTime)
+            {
+                SaveOfflineUnsentEventLastTimestamp = now;
+                SaveOfflineUnsentEventsExtended();
+            }
+        }
+    }
+
+    protected virtual void SaveOfflineUnsentEventsExtended() {}
 
 #region notify    
     /// <summary>
@@ -139,6 +170,9 @@ public class HDTrackingManager
     /// Called when the application is resumed
     /// </summary>
     public virtual void Notify_ApplicationResumed() {}
+
+
+    public virtual void Notify_MarketingID() {}
 
     /// <summary>
     /// Called when the user starts a round.
@@ -280,6 +314,22 @@ public class HDTrackingManager
     public virtual void Notify_SocialAuthentication() {}
 
     /// <summary>
+    /// Notifies the consent popup display.
+    /// </summary>
+    public virtual void Notify_ConsentPopupDisplay(bool _sourceSettings) { }
+
+    /// <summary>
+    /// Notifies the consent popup accept.
+    /// </summary>
+    /// <param name="_age">Age.</param>
+    /// <param name="_enableAnalytics">If set to <c>true</c> enable analytics.</param>
+    /// <param name="_enableMarketing">If set to <c>true</c> enable marketing.</param>
+    /// <param name="_modVersion">Mod version.</param>
+    /// <param name="_duration">Duration.</param>
+    public virtual void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {}
+
+
+    /// <summary>
     /// The user has closed the legal popup.
     /// </summary>
     public virtual void Notify_LegalPopupClosed(int duration, bool hasBeenAccepted) {}
@@ -394,6 +444,27 @@ public class HDTrackingManager
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
     public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+
+    public virtual void Notify_EggOpened() {}
+
+    /// <summary>
+    /// Called when the user clicks on tournament button on main screen
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// </summary>
+    public virtual void Notify_TournamentClickOnMainScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clicks on next button on tournament description screen
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    public virtual void Notify_TournamentClickOnNextOnDetailsScreen(string tournamentSku) {}
+
+    /// <summary>
+    /// Called when the user clickes on enter tournament button
+    /// </summary>
+    /// <param name="tournamentSku">Sku of the currently available tournament</param>
+    /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
+    public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
     #endregion
 
     #region log

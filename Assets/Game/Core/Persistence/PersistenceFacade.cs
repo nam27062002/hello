@@ -46,9 +46,7 @@ public class PersistenceFacade
 		GameServerManager.SharedInstance.Configure();
 
         // Tries to log in as soon as possible so the chances to have online stuff such as customizer (which may contain offers) ready when main menu is loaded are higher
-        GameServerManager.SharedInstance.Auth(null);
-
-        SocialPlatformManager.SharedInstance.Init();
+        GameServerManager.SharedInstance.Auth(null);        
 	}
 
 	public void Destroy()
@@ -284,6 +282,12 @@ public class PersistenceFacade
         if (Config.LocalDriver.IsLoadedInGame)
         {
             Config.LocalDriver.Save(null);
+
+            if (FeatureSettingsManager.instance.IsTrackingStoreUnsentOnSaveGameEnabled)
+            {
+                // Makes sure tracking events won't get lost if playing offline 
+                HDTrackingManager.Instance.SaveOfflineUnsentEvents();
+            }
         }
 	}
 	#endregion

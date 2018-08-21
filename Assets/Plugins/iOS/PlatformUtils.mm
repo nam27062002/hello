@@ -176,6 +176,19 @@ extern "C"
         }
         return stringCopy( ret.c_str() );
     }
+    
+    BOOL IOsApplicationExists(const char* appID)
+    {
+        BOOL exists = NO;
+        NSString* str = [NSString stringWithUTF8String:appID];
+        NSURL* url = [NSURL URLWithString:str];
+        
+        NSLog(@"_DLApplicationExists %@ %@", str, url);
+        
+        exists = [[UIApplication sharedApplication] canOpenURL: url];
+        
+        return exists;
+    }
 }
 
 

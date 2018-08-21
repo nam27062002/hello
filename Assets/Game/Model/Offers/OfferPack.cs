@@ -125,6 +125,8 @@ public class OfferPack {
 	private int m_gamesPlayed = 0;
 	private PayerType m_payerType = PayerType.ANYONE;
 	private float m_minSpent = 0f;
+	private int m_minNumberOfPurchases = 0;
+	private long m_secondsSinceLastPurchase = 0;
 
 	private string[] m_dragonUnlocked = new string[0];
 	private string[] m_dragonOwned = new string[0];
@@ -287,6 +289,8 @@ public class OfferPack {
 		m_gamesPlayed = 0;
 		m_payerType = PayerType.ANYONE;
 		m_minSpent = 0f;
+		m_minNumberOfPurchases = 0;
+		m_secondsSinceLastPurchase = 0;
 
 		m_dragonUnlocked = new string[0];
 		m_dragonOwned = new string[0];
@@ -377,7 +381,9 @@ public class OfferPack {
 			case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
 		}
-		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent);
+		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100;	// Content in USD, we work in cents of USD
+		m_minNumberOfPurchases = _def.GetAsInt("minNumberOfPurchases", m_minNumberOfPurchases);
+		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;		// Content in minutes, we work in seconds
 
 		m_dragonUnlocked = ParseArray(_def.GetAsString("dragonUnlocked"));
 		m_dragonOwned = ParseArray(_def.GetAsString("dragonOwned"));
@@ -442,6 +448,8 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "gamesPlayed", m_gamesPlayed.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "payerType", "");
 		SetValueIfMissing(ref _def, "minSpent", m_minSpent.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "minNumberOfPurchases", m_minNumberOfPurchases.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "minutesSinceLastPurchase", (m_secondsSinceLastPurchase / 60L).ToString(CultureInfo.InvariantCulture));
 
 		SetValueIfMissing(ref _def, "dragonUnlocked", string.Join(";", m_dragonUnlocked));
 		SetValueIfMissing(ref _def, "dragonOwned", string.Join(";", m_dragonOwned));
@@ -488,6 +496,7 @@ public class OfferPack {
 	private bool CheckActivation() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 
 		// Start date
 		if(GameServerManager.SharedInstance.GetEstimatedServerTime() < m_startDate) return false;
@@ -498,13 +507,19 @@ public class OfferPack {
 		if(profile.eggsCollected < m_openedEggs) return false;
 
 		// Payer profile
-		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 		switch(m_payerType) {
 			case PayerType.PAYER: {
 				if(totalPurchases == 0) return false;
 			} break;
 		}
-		//if(m_minSpent > TODO!!) return false;	// [AOC] TODO!! We don't store total spent in the client. Will be segmented via CRM.
+
+		// Min spent
+		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
+		if(m_minSpent > totalSpent) return false;
+
+		// Min number of purchases
+		if(m_minNumberOfPurchases > totalPurchases) return false;
 
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
@@ -622,6 +637,17 @@ public class OfferPack {
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
 
+		// Time since last purchase
+		if(m_secondsSinceLastPurchase > 0) {	// Nothing to check if default
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			if(trackingPersistence == null) return false;
+			if(trackingPersistence.TotalPurchases > 0) {	// Ignore if player hasn't yet purchased
+				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
+				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
+				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
+			}
+		}
+
 		// All checks passed!
 		return true;
 	}
@@ -691,34 +717,34 @@ public class OfferPack {
 	/// <summary>
 	/// Check whether the featured popup should be displayed or not, and do it.
 	/// </summary>
-	/// <returns><c>true</c> if all conditions to display the popup are met and the popup will be opened, <c>false</c> otherwise.</returns>
+	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
-	public bool ShowPopupIfPossible(WhereToShow _areaToCheck) {
+	public PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
 		// Just in case
-		if(m_def == null) return false;
+		if(m_def == null) return null;
 
 		// Not if not featured
-		if(!m_featured) return false;
+		if(!m_featured) return null;
 
 		// Only active offers!
-		if(!isActive) return false;
+		if(!isActive) return null;
 
 		// Check max views
-		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return false;
+		if(m_maxViews > 0 && m_viewsCount >= m_maxViews) return null;
 
 		// Check area
 		if(m_whereToShow == WhereToShow.DRAGON_SELECTION) {
 			// Special case for dragon selection screen: count both initial time and after run
-			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return false;
+			if(_areaToCheck != WhereToShow.DRAGON_SELECTION && _areaToCheck != WhereToShow.DRAGON_SELECTION_AFTER_RUN) return null;
 		} else {
 			// Standard case: just make sure we're in the right place
-			if(_areaToCheck != m_whereToShow) return false;
+			if(_areaToCheck != m_whereToShow) return null;
 		}
 
 		// Check frequency
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		TimeSpan timeSinceLastView = serverTime - m_lastViewTimestamp;
-		if(timeSinceLastView.TotalMinutes < m_frequency) return false;
+		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
 		// All checks passed!
 		// Show popup
@@ -732,7 +758,7 @@ public class OfferPack {
 		// Update control vars and return
 		m_viewsCount++;
 		m_lastViewTimestamp = serverTime;
-		return true;
+		return popup;
 	}
 
 	/// <summary>

@@ -75,7 +75,9 @@ public class HUDMessage : MonoBehaviour {
 		DAMAGE_RECEIVED,
 		MISSION_ZONE,
 		BREAK_OBJECT_WITH_FIRE,
-		BOOST_SPACE
+		BOOST_SPACE,
+		TIMES_UP,
+		TARGET_REACHED
 	}
 
 	// How to react with consecutive triggers
@@ -197,6 +199,12 @@ public class HUDMessage : MonoBehaviour {
 		m_hasEverPerformedAction = false;
 	}
 
+	private void Start()
+	{
+		  // Deactivate all childs
+        SetOthersVisible( false );
+	}
+
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
@@ -229,6 +237,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 
 		}
 
@@ -236,6 +246,18 @@ public class HUDMessage : MonoBehaviour {
 			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
+    
+    public void SetOthersVisible( bool _visible)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(_visible);
+        }
+        TextMeshProUGUI text = GetComponent<TextMeshProUGUI>();
+        if (text != null)
+            text.enabled = _visible;
+    }
+    
 
 	/// <summary>
 	/// Component disabled.
@@ -269,6 +291,8 @@ public class HUDMessage : MonoBehaviour {
 			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
 			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 		}
 
 		switch(m_hideMode) {
@@ -375,7 +399,10 @@ public class HUDMessage : MonoBehaviour {
 			if(!m_messageSystem.RequestShow(this)) return false;
 		}
 
-		// All checks passed! Show the message
+        // Activate
+        SetOthersVisible(true);
+        
+        // All checks passed! Show the message
 		// Update internal state
 		m_visible = true;
 
@@ -392,10 +419,20 @@ public class HUDMessage : MonoBehaviour {
 		return true;
 	}
 
+    public void OnHideMessage()
+    {
+        if (m_hideMode == HideMode.ANIMATION)
+        {
+            Hide(true);
+        }
+        // Deactivate all
+        SetOthersVisible(false);
+    }
+
 	/// <summary>
 	/// Trigger the "out" animation.
 	/// </summary>
-	virtual public void Hide() {
+	virtual public void Hide( bool _outDone = false ) {
 		// Skip if already inactive
 		if(!m_visible) return;
 
@@ -404,7 +441,8 @@ public class HUDMessage : MonoBehaviour {
 		m_hideTimer = 0f;
 
 		// Trigger anim
-		m_anim.SetTrigger( GameConstants.Animator.OUT );
+        if ( !_outDone )
+		    m_anim.SetTrigger( GameConstants.Animator.OUT );
 
 		// Notify
 		OnHide.Invoke(this);
@@ -416,6 +454,8 @@ public class HUDMessage : MonoBehaviour {
 				m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
 			} break;
 		}
+
+        
 	}
 
 	/// <summary>
@@ -551,6 +591,26 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 	private void OnBoostSky() {
+		Show();
+	}
+
+	private void ShowCallback()
+	{
+		Show();
+	}
+
+	private void ShowObjCompleted()
+	{
+		Transform tr = transform.Find("Icon");
+		if ( tr != null )
+		{
+			Image goalIcon = tr.GetComponent<Image>();
+			if ( goalIcon != null )
+			{
+				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+			}
+		}
 		Show();
 	}
 

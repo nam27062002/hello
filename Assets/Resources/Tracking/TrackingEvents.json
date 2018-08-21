@@ -156,7 +156,10 @@
 				{"boostTime": {"Status": "OK"}},
 				{"mapUsedNB": {"Status": "OK"}},
 				{"isHacker": {"Status": "OK"}},
-				{"hungryLettersNb": {"Status": "OK"}}				
+				{"hungryLettersNb": {"Status": "OK"}},
+				{"totalEggBought": {"Status": "OK"}},
+				{"totalEggFound": {"Status": "OK"}},
+				{"totalEggOpened": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -270,21 +273,8 @@
                 "etl"
             ]
         },
-		"custom.game.legalpopup": {
+		    "game.start": {
             "Parameters": [
-                {"nbViews": {"Status": "OK"}},
-                {"legalPopupType": {"Status": "OK"}},
-				{"duration": {"Status": "OK"}},
-				{"accepted": {"Status": "OK"}}
-            ],
-            "APIs": [
-                "dna",
-                "etl"
-            ]
-        },
-        "game.start": {
-            "Parameters": [
-                {"acq_marketing_id": {"Status": "OK"}},
                 {"hardware": {"Status": "OK"}},
                 {"installDate": {"Status": "OK"}},
                 {"osVersion": {"Status": "OK"}},
@@ -301,7 +291,8 @@
 				{"userTimezone": {"Status": "OK"}},
 				{"storeInstalled": {"Status": "OK"}},
 				{"isHacker": {"Status": "OK"}},
-				{"deviceProfile": {"Status": "OK"}}
+				{"deviceProfile": {"Status": "OK"}},
+				{"initialQuality": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -321,7 +312,12 @@
 		"custom.player.pet" : {
 			"Parameters": [
 				{"petName": {"Status": "OK"}},
-				{"sourceOfPet": {"Status": "OK"}}
+				{"sourceOfPet": {"Status": "OK"}},
+				{"rarity": {"Status": "OK"}},
+				{"category": {"Status": "OK"}},				
+				{"totalEggBought": {"Status": "OK"}},
+				{"totalEggFound": {"Status": "OK"}},
+				{"totalEggOpened": {"Status": "OK"}}
 			],
 			"APIs": [
 				"dna",
@@ -478,6 +474,49 @@
                 "etl"
             ]
         },
+      "custom.game.tournament": {
+        "Parameters": [
+          { "stepName": { "Status": "OK" } },
+          { "paid": { "Status": "OK" } },
+          { "currency": { "Status": "OK" } },
+          { "tournamentSku": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.game.consentpopup": {
+        "Parameters": [
+          { "age": { "Status": "OK" } },
+          { "analytics_optin": { "Status": "OK" } },
+          { "duration": { "Status": "OK" } },
+          { "marketing_optin": { "Status": "OK" } },
+          { "popup_modular_version": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.game.consentpopup_display":  {
+        "Parameters": [
+          {"source": {"Status": "OK"}}
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+      "custom.player.info": {
+        "Parameters": [
+          { "acq_marketing_id": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -788,7 +827,7 @@
         "totalPurchases": {
             "Type": "INT:4",
             "Values": []
-        },
+        },		
 		"triggered": {
             "Type": "BOOL",
             "Values": []
@@ -1156,6 +1195,54 @@
 		"specialOfferAction": {
             "Type": "STRING:15",
             "Values": []
-        }
+        },
+		"totalEggBought": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"totalEggFound": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"totalEggOpened": {
+            "Type": "INT:4",
+            "Values": []
+        },
+		"rarity": {
+           "Type": "STRING:15",
+            "Values": []
+        },
+		"category": {
+            "Type": "STRING:30",
+            "Values": []
+        },
+		"tournamentSku": {
+            "Type": "STRING:30",
+            "Values": []
+        },
+		"paid": {
+            "Type": "BOOL",
+            "Values": []
+        },
+      "age": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "analytics_optin": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "marketing_optin": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "popup_modular_version": {
+        "Type": "STRING:5",
+        "Values": []
+      },
+      "source": {
+        "Type": "STRING:5",
+        "Values": []
+      }
     }
 }

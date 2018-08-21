@@ -80,6 +80,7 @@ public class MissionPill : MonoBehaviour {
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
 			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 		}
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 	}
 
 	/// <summary>
@@ -93,6 +94,7 @@ public class MissionPill : MonoBehaviour {
 			if (FeatureSettingsManager.IsControlPanelEnabled) {
 				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 			}
+			Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		}
 	}
 
@@ -309,9 +311,12 @@ public class MissionPill : MonoBehaviour {
 	/// Refresh the timers part of the cooldown. Optimized to be called every frame.
 	/// </summary>
 	private void RefreshCooldownTimers() {
-		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
-		// Cooldown remaining time
-		if(m_cooldownText != null) m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+        // Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
+        // Cooldown remaining time
+        if (m_cooldownText != null) {
+            double seconds = m_mission.cooldownRemaining.TotalSeconds;
+            m_cooldownText.text = TimeUtils.FormatTime(seconds, (seconds < 60f)? TimeUtils.EFormat.ABBREVIATIONS : TimeUtils.EFormat.DIGITS, 3);
+        }
 
 		// Cooldown bar
 		if(m_cooldownBar != null) m_cooldownBar.normalizedValue = m_mission.cooldownProgress;
@@ -544,6 +549,10 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnLanguageChanged() {
 		// Just update all the info
+		Refresh();
+	}
+
+	private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
 		Refresh();
 	}
 

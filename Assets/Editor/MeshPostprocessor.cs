@@ -15,5 +15,7 @@ public class MeshPostprocessor : AssetPostprocessor {
 
 		importer.animationCompression = ModelImporterAnimationCompression.Optimal;
 		importer.importMaterials = false;
+        importer.isReadable = false;    // Disble Read/Write to avoid multiple instances on memory
+
     }
 }

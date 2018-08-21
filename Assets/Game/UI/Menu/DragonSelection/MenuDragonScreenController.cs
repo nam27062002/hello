@@ -35,6 +35,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	[SerializeField] private float m_unlockAnimFinalPauseDuration = 1f;
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
+    [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
 
 	private bool m_isAnimating = false;
 	private bool isAnimating {
@@ -51,19 +52,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		
-	}
 
 	void Start(){
-		if (GlobalEventManager.user != null && GlobalEventManager.Connected() ){
-			if (GlobalEventManager.currentEvent == null && GlobalEventManager.user.globalEvents.Count <= 0){
-				// ask for live events again
-				GlobalEventManager.TMP_RequestCustomizer();
-			}
+		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		{
+			HDLiveEventsManager.instance.RequestMyEvents();
 		}
 	}
 
@@ -74,8 +67,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         m_showPendingTransactions = false;
 
         // Subscribe to external events.
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);        
 
         // Check whether we need to move to another screen
         // Check order is relevant!
@@ -86,22 +78,22 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-
+		/*
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
 		{
-			// Check global events rewards
-			GlobalEvent ge = GlobalEventManager.currentEvent;
-			if (ge != null) {
-				ge.UpdateState();
-				if (ge.isRewardAvailable) {
+			// Check quest rewards
+			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			if (quest.EventExists())
+			{
+				quest.UpdateStateFromTimers();
+				if ( quest.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE )	
+				{
 					m_goToScreen = MenuScreen.EVENT_REWARD;
 					return;
 				}
 			}
 		}
-
-        // Lowest priority: show pending transactions. They're showing here because we know that the currencies are visible for the user on this screen
-        m_showPendingTransactions = TransactionManager.instance.Flow_NeedsToShowPendingTransactions();        
+		*/        
     }
 
 	/// <summary>
@@ -109,8 +101,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
-        Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnded);        
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);    
     }
 
 	/// <summary>
@@ -329,6 +320,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
 
+                for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                    m_toHideOnTeaseAnim[i].ForceHide(true, false);
+                }
+
 				// Do not desactivate to allow async loading
 				slot.animator.ForceHide(false, false);
 
@@ -362,6 +357,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+                    for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                        m_toHideOnTeaseAnim[i].ForceShow(true);
+                    }
+
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
@@ -391,7 +390,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
 				}
-
+                for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                    m_toHideOnTeaseAnim[i].ForceHide(true, false);
+                }
 				if (!dragonData.isTeased) {
 					// Do not desactivate to allow async loading
 					slot.animator.ForceHide(false, false);
@@ -432,6 +433,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
+                    for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+                        m_toHideOnTeaseAnim[i].ForceShow(true);
+                    }
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
 				}
@@ -521,20 +525,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
 		}
-	}
-
-    /// <summary>
-	/// The current menu screen has changed (animation ends now).
-	/// </summary>
-	/// <param name="_from">Source screen.</param>
-	/// <param name="_to">Target screen.</param>
-    private void OnTransitionEnded(MenuScreen _from, MenuScreen _to) {
-        if (_to == MenuScreen.DRAGON_SELECTION && m_showPendingTransactions)
-        {
-            m_showPendingTransactions = false;
-            TransactionManager.instance.Flow_PerformPendingTransactions(InstanceManager.menuSceneController.GetUICanvasGO());
-        }        
-    }
+	}    
 
     /// <summary>
     /// Play button has been pressed.
@@ -543,12 +534,18 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Select target screen
 		MenuScreen nextScreen = MenuScreen.MISSIONS;
 
-		// If there is an active global event, go to the events screen
+		// If there is an active quest, go to the quest screen
 		// Do it as well if the event is pending reward collection
-		if(GlobalEventManager.currentEvent != null
-			&& (GlobalEventManager.currentEvent.isTeasing || GlobalEventManager.currentEvent.isActive || GlobalEventManager.currentEvent.isRewardAvailable)
-			&& UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
-			nextScreen = MenuScreen.GLOBAL_EVENTS;
+		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
+		{
+			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			if ( quest.EventExists() )	
+			{
+				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
+				{
+					nextScreen = MenuScreen.GLOBAL_EVENTS;	
+				}
+			}
 		}
 
 		// Go to target screen

@@ -43,6 +43,8 @@ public class GoalsScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
+	HDQuestManager m_quest;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -50,6 +52,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		m_quest = HDLiveEventsManager.instance.m_quest;
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
@@ -67,7 +70,7 @@ public class GoalsScreenController : MonoBehaviour {
 		}
 
 		// Global Events
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN) {
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
 			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
 	}
@@ -104,11 +107,12 @@ public class GoalsScreenController : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh visible event button based on event state
-		GlobalEvent evt = GlobalEventManager.currentEvent;
-		bool eventAvailable = evt != null && evt.isActive;
+		// GlobalEvent evt = GlobalEventManager.currentEvent;
+		// bool eventAvailable = evt != null && evt.isActive;
+		bool eventAvailable = m_quest.EventExists() && m_quest.IsRunning();
 
 		// Consider tutorial as well!
-		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN;
+		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
 
 		// Apply
 		m_eventActiveGroup.SetActive(eventAvailable);
@@ -122,6 +126,9 @@ public class GoalsScreenController : MonoBehaviour {
 
 		// Event Timer - only if active
 		if(m_eventActiveGroup.activeSelf) {
+
+			HDLiveEventData evt = m_quest.data;
+
 			// Timer text
 			double remainingSeconds = System.Math.Max(0, evt.remainingTime.TotalSeconds);	// Never go negative!
 			m_eventCountdownText.text = TimeUtils.FormatTime(
@@ -131,12 +138,13 @@ public class GoalsScreenController : MonoBehaviour {
 			);
 
 			// Timer bar
-			TimeSpan totalSpan = evt.endTimestamp - evt.startTimestamp;
+			TimeSpan totalSpan = evt.definition.m_endTimestamp - evt.definition.m_startTimestamp;
 			m_eventCountdownSlider.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
 
 			// If time has finished, request new data
 			if(remainingSeconds <= 0) {
-				GlobalEventManager.RequestCurrentEventState();
+				// GlobalEventManager.RequestCurrentEventState();
+				m_quest.UpdateStateFromTimers();
 			}
 		}
 	}
@@ -190,7 +198,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnGlobalEventsButton() {
 		// Check tutorial!
-		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		int remainingRuns = GameSettings.ENABLE_QUESTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
 		if(remainingRuns > 0) {
 			// Show error message
 			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
@@ -210,7 +218,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// </summary>
 	public void OnChestsButton() {
 		// Check tutorial!
-		int remainingRuns = GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
+		int remainingRuns = GameSettings.ENABLE_QUESTS_AT_RUN - UsersManager.currentUser.gamesPlayed;
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) {
 			// Show error message
 			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";

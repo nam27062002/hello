@@ -1,22 +1,102 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
-
 public class Transaction
-{        
-    private const string KEY_SC = "sc";
-    private const string KEY_HC = "hc";
+{
+    private const string KEY_ID = "order_id";
+    private const string KEY_SOURCE = "source";
+    private const string KEY_ITEMS = "items";
+
+    private const string SOURCE_SHOP = "shop";
+    private const string SOURCE_CUSTOMER_SUPPORT = "crm";
+
+    private static HDTrackingManager.EEconomyGroup GetEconomyGroupFromSource(string source)
+    {
+        HDTrackingManager.EEconomyGroup returnValue = HDTrackingManager.EEconomyGroup.UNKNOWN;
+        switch (source)
+        {
+            case SOURCE_SHOP:
+                returnValue = HDTrackingManager.EEconomyGroup.SHOP_PURCHASE_RESUMED;
+                break;
+
+            case SOURCE_CUSTOMER_SUPPORT:
+                returnValue = HDTrackingManager.EEconomyGroup.CUSTOMER_SUPPORT;
+                break;
+        }
+
+        return returnValue;
+    }
+
+    public const string KEY_SC = "sc";
+    public const string KEY_HC = "hc";
+    public const string KEY_GF = "gf";
+
+    private const string KEY_ITEM_SKU = "sku";
+    private const string KEY_ITEM_TYPE = "type";
+    private const string KEY_ITEM_AMOUNT = "amount";
 
     /// <summary>
     /// Array containing the keys used by server to identify every currency type.
     /// </summary>
-    private static List<string> KEYS = new List<string>
+    private static List<string> KEYS_CURRENCIES = new List<string>
     {
         "none",
         KEY_SC,
-        KEY_HC
+        KEY_HC,
+        KEY_GF
     };
 
-    private static int KEYS_COUNT = KEYS.Count;
+    private static int KEYS_CURRENCIES_COUNT = KEYS_CURRENCIES.Count;
+
+    private static UserProfile.Currency GetCurrencyFromKey(string key)
+    {
+        UserProfile.Currency returnValue = UserProfile.Currency.NONE;
+        switch (key)
+        {
+            case KEY_SC:
+                returnValue = UserProfile.Currency.SOFT;
+                break;
+
+            case KEY_HC:
+                returnValue = UserProfile.Currency.HARD;
+                break;
+
+            case KEY_GF:
+                returnValue = UserProfile.Currency.GOLDEN_FRAGMENTS;
+                break;
+        }
+
+        return returnValue;
+    }
+
+    private static string GetKeyFromCurrency(UserProfile.Currency currency)
+    {
+        string returnValue = null;
+        for (int i = 0; i < KEYS_CURRENCIES_COUNT && returnValue == null; i++)
+        {
+            if (GetCurrencyFromKey(KEYS_CURRENCIES[i]) == currency)
+            {
+                returnValue = KEYS_CURRENCIES[i];
+            }
+        }
+
+        return returnValue;
+    }
+
+    private Dictionary<UserProfile.Currency, Metagame.Reward> m_rewardCurrencies;    
+
+    internal class ItemData
+    {
+        internal Metagame.Reward.Data data { get; set; }
+        internal Metagame.Reward reward { get; set; }
+
+        internal ItemData(Metagame.Reward.Data data, Metagame.Reward reward)
+        {
+            this.data = data;
+            this.reward = reward;
+        }
+    };
+
+    private List<ItemData> m_rewardItems;
 
     /// <summary>
     /// Id given by server to this transaction.
@@ -32,27 +112,36 @@ public class Transaction
 
     private bool m_hasBeenPerformed;
 
-    /// <summary>
-    /// List of involving resource transactions that compose this transaction. Each simple transaction has 
-    /// </summary>
-    private List<TransactionResource> m_transactionResources;    
-    
-    private string GetId()
+    public enum EPerformType
+    {
+        // The transaction is performed directly so the user gets the resources immediately
+        Direct,
+
+        // The transaction is added to the user's profile as a reward so the user will receive it when the reward flow is triggered, typically when entering in dragon selection screen
+        AddToUserProfile
+    };
+
+    public Transaction()
+    {
+        Reset();
+    }
+
+    public string GetId()
     {
         return m_id;
     }
 
-    private void SetId(string value)
+    public void SetId(string value)
     {
         m_id = value;
     }
 
-    private string GetSource()
+    public string GetSource()
     {
         return m_source;
     }
 
-    private void SetSource(string value)
+    public void SetSource(string value)
     {
         m_source = value;
     }
@@ -77,52 +166,23 @@ public class Transaction
         m_hasBeenPerformed = value;
     }
 
-    private UserProfile.Currency GetCurrencyFromKey(string key)
-    {
-        UserProfile.Currency returnValue = UserProfile.Currency.NONE;
-        switch (key)
-        {
-            case KEY_SC:
-                returnValue = UserProfile.Currency.SOFT;
-                break;
-
-            case KEY_HC:
-                returnValue = UserProfile.Currency.HARD;
-                break;
-        }
-
-        return returnValue;
-    }
-
-    private string GetKeyFromCurrency(UserProfile.Currency currency)
-    {
-        string returnValue = null;
-        for (int i = 0; i < KEYS_COUNT && returnValue == null; i++)
-        {
-            if (GetCurrencyFromKey(KEYS[i]) == currency)
-            {
-                returnValue = KEYS[i];
-            }
-        }
-
-        return returnValue;        
-    }
-
     private void Reset()
-    {                
+    {
         SetId(null);
         SetSource(null);
         SetIsValid(false);
         SetHasBeenPerformed(false);
 
-        if (m_transactionResources != null)
+        if (m_rewardCurrencies != null)
         {
-            m_transactionResources.Clear();
-        }
-    }
+            m_rewardCurrencies.Clear();
+        }        
 
-    private const string KEY_ID = "order_id";
-    private const string KEY_SOURCE = "source";
+        if (m_rewardItems != null)
+        {
+            m_rewardItems.Clear();
+        }
+    }    
 
     /// <summary>
     /// Sets up the transaction out of a <c>JSONNode</c>
@@ -131,7 +191,7 @@ public class Transaction
     /// <returns>Whether or not the transaction can be performed</returns>
     public bool FromJSON(JSONNode json)
     {
-        // Example { "id":"1", "source":"crm", "hc":"1" "sc":"100"}
+        // Example { "orderId":"1", "source":"crm", "hc":"1" "sc":"100", "items":[{"sku":"egg_event", "type":"egg", "amount":"1"}]}
         Reset();
 
         if (json != null)
@@ -140,13 +200,19 @@ public class Transaction
             SetSource(json[KEY_SOURCE]);
 
             // Resources
+            long amount;
             string key;
-            UserProfile.Currency currency;
-            TransactionResource transactionResource;
+            UserProfile.Currency currency;            
+            Metagame.Reward currentReward;
+            Metagame.Reward rewardToAdd;
             bool isValid = true;
-            for (int i = 0; i < KEYS_COUNT; i++)
+
+            //
+            // Currencies
+            //
+            for (int i = 0; i < KEYS_CURRENCIES_COUNT && isValid; i++)
             {
-                key = KEYS[i];
+                key = KEYS_CURRENCIES[i];
                 if (json.ContainsKey(key))
                 {
                     currency = GetCurrencyFromKey(key);
@@ -157,17 +223,70 @@ public class Transaction
                     }
                     else
                     {
-                        transactionResource = GetTransactionResource(currency, json[key].AsInt);
-                        AddTransactionResource(transactionResource);
-                    }                    
+                        amount = json[key].AsInt;
+
+                        // Checks if there's already an object of this currency type
+                        currentReward = GetRewardCurrency(currency);
+                        if (currentReward != null)
+                        {
+                            amount += currentReward.amount;
+                        }
+
+                        rewardToAdd = CreateRewardCurrency(currency, amount);
+
+                        if (rewardToAdd == null)
+                        {
+                            if (FeatureSettingsManager.IsDebugEnabled)
+                            {
+                                TransactionManager.LogWarning("No support to translate currency type " + currency + " into Metaga.Reward");
+                            }
+                        }
+                        else
+                        {
+                            AddRewardCurrency(currency, rewardToAdd);
+                        }                                                
+                    }
                 }
             }
 
-            SetIsValid(isValid);                          
+            // 
+            // Items
+            //
+            if (json.ContainsKey(KEY_ITEMS))
+            {
+                JSONNode items = json[KEY_ITEMS];
+                if (items != null)
+                {
+                    // Process every transaction
+                    JSONArray itemsArray = items.AsArray;
+                    if (itemsArray != null)
+                    {
+                        int count = itemsArray.Count;
+                        JSONNode itemNode;                        
+                        for (int i = 0; i < count; i++)
+                        {
+                            itemNode = itemsArray[i];
+
+                            amount = itemNode[KEY_ITEM_AMOUNT].AsInt;
+                            if (amount > 0)
+                            {   
+								// An issue was reported (HDK-2164) caused by using multiegg reward implementation. We're fixing that issue, in the meantime we just avoid using it by
+								// creating as many eggs as needed
+								for(int j = 0; j < amount; j++) 
+								{
+									AddRewardItemData(CreateRewardItemData(itemNode[KEY_ITEM_SKU], itemNode[KEY_ITEM_TYPE], 1));
+								}
+                            }
+                        }
+                    }
+                }
+            }
+
+            SetIsValid(isValid);
         }
 
         return CanPerform();
-    }    
+    }   
 
     public JSONNode ToJSON()
     {
@@ -178,28 +297,49 @@ public class Transaction
         value = GetSource();
         returnValue[KEY_SOURCE] = (value == null) ? "" : value;
 
-        if (m_transactionResources != null)
+        //
+        // Currencies
+        //
+        if (m_rewardCurrencies != null)
         {
             string key;
-            int count = m_transactionResources.Count;
-            UserProfile.Currency currency;
-            for (int i = 0; i < count; i++)
+            foreach (KeyValuePair<UserProfile.Currency, Metagame.Reward> entry in m_rewardCurrencies)
             {
-                currency = m_transactionResources[i].GetCurrency();
-                key = GetKeyFromCurrency(currency);
-                if (string.IsNullOrEmpty(key))
+                if (entry.Value != null)
                 {
-                    if (FeatureSettingsManager.IsDebugEnabled)
+                    key = GetKeyFromCurrency(entry.Key);
+                    returnValue[key] = entry.Value.amount.ToString();
+                }
+            }           
+        }
+
+        //
+        // Items
+        //
+        if (m_rewardItems != null)
+        {
+            int count = m_rewardItems.Count;
+            if (count > 0)
+            {
+                // Dragons
+                JSONArray items = new JSONArray();
+                JSONNode itemNode;
+                for (int i = 0; i < count; i++)
+                {
+                    if (m_rewardItems[i] != null)
                     {
-                        TransactionManager.LogWarning("Not supported currency: " + currency);
+                        itemNode = new JSONClass();
+                        itemNode[KEY_ITEM_SKU] = m_rewardItems[i].data.sku;
+                        itemNode[KEY_ITEM_TYPE] = m_rewardItems[i].data.typeCode;
+                        itemNode[KEY_ITEM_AMOUNT] = m_rewardItems[i].data.amount.ToString();
+
+                        items.Add(itemNode);
                     }
                 }
-                else
-                {
-                    returnValue[key] = m_transactionResources[i].GetAmount().ToString();
-                }
+
+                returnValue.Add(KEY_ITEMS, items);
             }
-        }        
+        }
 
         return returnValue;
     }
@@ -207,31 +347,28 @@ public class Transaction
     public bool CanPerform()
     {
         // The transaction has to be valid and not performed yet
-        bool returnValue = IsValid() && !HasBeenPerformed();        
-        if (returnValue && m_transactionResources != null)
-        {
-            int count = m_transactionResources.Count;
-            for (int i = 0; i < count && returnValue; i++)
-            {
-                returnValue = m_transactionResources[i].CanPerform();
-            }
-        }
-
+        bool returnValue = IsValid() && !HasBeenPerformed();       
         return returnValue;
     }
 
-    public bool Perform()
-    {
+    public bool Perform(EPerformType performType)
+    {		
         bool canPerform = CanPerform();
+
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("Trying to perform transaction " + ToJSON().ToString() + " canPerform = " + canPerform);
+
         if (canPerform)
         {
-            if (m_transactionResources != null)
+            switch (performType)
             {
-                int count = m_transactionResources.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    m_transactionResources[i].Perform();
-                }
+                case EPerformType.Direct:
+                    PerformDirect();
+                    break;
+
+                case EPerformType.AddToUserProfile:
+                    AddToUserProfile();
+                    break;
             }
 
             SetHasBeenPerformed(true);
@@ -242,70 +379,148 @@ public class Transaction
         }
 
         return canPerform;
-    }    
-
-    private TransactionResource GetTransactionResource(UserProfile.Currency currency, int amount)
-    {
-        TransactionResource returnValue = new TransactionResource();
-        returnValue.Setup(currency, amount);
-
-        return returnValue;
     }
 
-    private void AddTransactionResource(TransactionResource value)
+    private void PerformDirect()
     {
-        if (m_transactionResources == null)
-        {
-            m_transactionResources = new List<TransactionResource>();
+        //
+        // Currencies
+        //
+        if (m_rewardCurrencies != null)
+        {            
+            foreach (KeyValuePair<UserProfile.Currency, Metagame.Reward> entry in m_rewardCurrencies)
+            {
+                if (entry.Value != null)
+                {
+                    entry.Value.Collect();
+                }
+            }
         }
 
-        m_transactionResources.Add(value);
-    }
-
-    public int GetResourceTypesAmount()
-    {
-        return (m_transactionResources == null) ? 0 : m_transactionResources.Count;        
-    }  
-
-    public int GetCurrencyAmount(UserProfile.Currency currency)
-    {
-        int returnValue = 0;
-
-        if (m_transactionResources != null)
+        //
+        // Items
+        //
+        if (m_rewardItems != null)
         {
-            int count = m_transactionResources.Count;
+            int count = m_rewardItems.Count;
             for (int i = 0; i < count; i++)
             {
-                if (m_transactionResources[i].GetCurrency() == currency)
+                if (m_rewardItems[i] != null && m_rewardItems[i].reward != null)
                 {
-                    returnValue += m_transactionResources[i].GetAmount();
+                    m_rewardItems[i].reward.Collect();
                 }
             }
         }
-
-        return returnValue;
     }
 
-    public override bool Equals(object obj)
+    private void AddToUserProfile()
     {
-        bool returnValue = false;
-        Transaction item = obj as Transaction;
-        if (item != null)
+        //
+        // Currencies
+        //
+        UserProfile user = UsersManager.currentUser;
+        if (m_rewardCurrencies != null)
         {
-            returnValue = item.GetId() == GetId() && item.GetSource() == GetSource() && item.GetResourceTypesAmount() == GetResourceTypesAmount();
-
-            // Checks the currencies
-            if (returnValue)
+            foreach (KeyValuePair<UserProfile.Currency, Metagame.Reward> entry in m_rewardCurrencies)
             {
-                int count = GetResourceTypesAmount();
-                for (int i = 0; i < count && returnValue; i++)
+                if (entry.Value != null)
                 {
-                    returnValue = (m_transactionResources[i].Equals(item.m_transactionResources[i]));
+                    user.PushReward(entry.Value);
                 }
             }
         }
 
+        //
+        // Items
+        //
+        if (m_rewardItems != null)
+        {
+            int count = m_rewardItems.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (m_rewardItems[i] != null && m_rewardItems[i].reward != null)
+                {
+                    user.PushReward(m_rewardItems[i].reward);
+                }
+            }
+        }
+
+        // Save current profile state in case the open egg flow is interrupted
+        PersistenceFacade.instance.Save_Request(true);
+    }
+
+    private Metagame.Reward CreateRewardCurrency(UserProfile.Currency currency, long amount)    
+    {
+        Metagame.Reward returnValue = null;
+
+        string source = GetSource();
+        HDTrackingManager.EEconomyGroup economyGroup = GetEconomyGroupFromSource(source);
+        switch (currency)
+        {
+            case UserProfile.Currency.SOFT:
+                returnValue = Metagame.Reward.CreateTypeSoftCurrency(amount, economyGroup, source);
+                break;
+
+            case UserProfile.Currency.HARD:
+                returnValue = Metagame.Reward.CreateTypeHardCurrency(amount, economyGroup, source);
+                break;
+
+            case UserProfile.Currency.GOLDEN_FRAGMENTS:
+                // Rarity is unknown at this place so we just use COMMON. It's not important because it's used only for visuals. We can't use UNKNOWN because the visuals crash with that rarity
+                returnValue = Metagame.Reward.CreateTypeGoldenFragments((int)amount, Metagame.Reward.Rarity.COMMON, economyGroup, source);
+                break;
+        }       
+
         return returnValue;
+    }    
+
+    private void AddRewardCurrency(UserProfile.Currency currency, Metagame.Reward reward)
+    {
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("Add Currency " + currency.ToString());
+		
+        if (m_rewardCurrencies == null)
+        {
+            m_rewardCurrencies = new Dictionary<UserProfile.Currency, Metagame.Reward>();
+        }
+
+        if (m_rewardCurrencies.ContainsKey(currency))
+        {
+            m_rewardCurrencies[currency] = reward;
+        }
+        else
+        {
+            m_rewardCurrencies.Add(currency, reward);
+        }
+    }
+
+    private Metagame.Reward GetRewardCurrency(UserProfile.Currency currency)
+    {
+        return (m_rewardCurrencies != null && m_rewardCurrencies.ContainsKey(currency)) ? m_rewardCurrencies[currency] : null;        
+    }
+
+    private ItemData CreateRewardItemData(string sku, string type, long amount)
+    {
+		if(FeatureSettingsManager.IsDebugEnabled)
+			TransactionManager.Log("CreateRewardItemData sku = " + sku + " type = " + type + " amount = " + amount);
+		
+        string source = GetSource();        
+        Metagame.Reward.Data data = new Metagame.Reward.Data();
+        data.sku = sku;
+        data.typeCode = type;
+        data.amount = amount;
+        Metagame.Reward reward = Metagame.Reward.CreateFromData(data, GetEconomyGroupFromSource(source), source);
+
+        return new ItemData(data, reward);
+    }
+
+    private void AddRewardItemData(ItemData itemData)
+    {        
+        if (m_rewardItems == null)
+        {
+            m_rewardItems = new List<ItemData>();
+        }
+
+        m_rewardItems.Add(itemData);        
     }
 }
- 

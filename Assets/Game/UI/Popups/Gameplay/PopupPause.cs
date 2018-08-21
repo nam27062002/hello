@@ -137,7 +137,7 @@ public class PopupPause : PopupPauseBase {
 
 		// Open the dragon info popup and initialize it with the current dragon's data
 		PopupDragonInfo popup = PopupManager.OpenPopupInstant(PopupDragonInfo.PATH).GetComponent<PopupDragonInfo>();
-		popup.Init(DragonManager.currentDragon);
+		popup.Init(InstanceManager.player.data);
 	}
 
 	/// <summary>
@@ -148,7 +148,7 @@ public class PopupPause : PopupPauseBase {
 		base.OnOpenPreAnimation();
 
 		// Hide the mission tab during FTUX
-		if(UsersManager.currentUser.gamesPlayed	< GameSettings.ENABLE_MISSIONS_AT_RUN && SceneManager.GetActiveScene().name != "SC_Popups") {
+		if((UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN || SceneController.s_mode == SceneController.Mode.TOURNAMENT) && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
 			if(tabs != null) {
 				// Set options tab as initial screen

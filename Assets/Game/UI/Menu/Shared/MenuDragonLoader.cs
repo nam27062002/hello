@@ -156,7 +156,13 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Initialize loaded dragon (unless using MANUAL mode)
-		if(m_mode != Mode.MANUAL) RefreshDragon();
+        if (m_mode != Mode.MANUAL) {         
+            RefreshDragon();
+        } else {
+            if (m_dragonInstance != null) {
+                m_dragonInstance.SetAnim(m_anim);
+            }
+        }
 	}
 
 
@@ -328,7 +334,15 @@ public class MenuDragonLoader : MonoBehaviour {
 	/// <summary>
 	/// Reload dragon preview based on mode.
 	/// </summary>
-	public void RefreshDragon() {
+	public void RefreshDragon(bool _force = false) {
+		// Force?
+		string currentDragonSku = m_dragonSku;
+		string currentDisguiseSku = m_disguiseSku;
+		if(_force) {
+			m_dragonSku = "";
+			m_disguiseSku = "";
+		}
+
 		// Load different dragons based on mode
 		// If the game is not running, we don't have any data on current dragon/skin,
 		// so load a placeholder one manually instead
@@ -350,7 +364,7 @@ public class MenuDragonLoader : MonoBehaviour {
 			} break;
 
 			case Mode.MANUAL: {
-				LoadDragon(m_dragonSku, m_disguiseSku);
+				LoadDragon(currentDragonSku, currentDisguiseSku);
 			} break;
 		}
 	}

@@ -1,4 +1,4 @@
-﻿/*
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +14,7 @@ public static class SystemInfo {
         operatingSystem = UnityEngine.SystemInfo.operatingSystem;
         deviceModel = UnityEngine.SystemInfo.deviceModel;
         deviceUniqueIdentifier = UnityEngine.SystemInfo.deviceUniqueIdentifier;
-        systemMemorySize = UnityEngine.SystemInfo.systemMemorySize;
+        heapMemorySize = deviceMemorySize = availableMemorySize = systemMemorySize = UnityEngine.SystemInfo.systemMemorySize;
         graphicsMemorySize = UnityEngine.SystemInfo.graphicsMemorySize;
         processorFrequency = UnityEngine.SystemInfo.processorFrequency;
         processorCount = UnityEngine.SystemInfo.processorCount;
@@ -27,17 +27,18 @@ public static class SystemInfo {
         processorType = UnityEngine.SystemInfo.processorType;
         deviceName = UnityEngine.SystemInfo.deviceName;
         supportsImageEffects = UnityEngine.SystemInfo.supportsImageEffects;
+#if UNITY_ANDROID// && !UNITY_EDITOR
 
-#if UNITY_ANDROID
-        AndroidJavaClass jv = new AndroidJavaClass("android.app.ActivityManager.MemoryInfo");
-        if (jv != null)
+
+        heapMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxHeapMemory() / (1024L * 1024L));
+        deviceMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetMaxDeviceMemory() / (1024L * 1024L));
+        if (deviceMemorySize > systemMemorySize)
         {
-            systemMemorySize = jv.GetStatic<int>("totalMem");
+            systemMemorySize = deviceMemorySize;
         }
-        else
-        {
-            Debug.Log("Unable to open: android.app.ActivityManager.MemoryInfo");
-        }
+        availableMemorySize = (int)(FGOL.Plugins.Native.NativeBinding.Instance.GetAvailableDeviceMemory() / (1024L * 1024L));
+
+
 
 #endif
     }
@@ -66,6 +67,24 @@ public static class SystemInfo {
         get;
         private set;
     }
+    static public int heapMemorySize
+    {
+        get;
+        private set;
+    }
+
+    static public int deviceMemorySize
+    {
+        get;
+        private set;
+    }
+
+    static public int availableMemorySize
+    {
+        get;
+        private set;
+    }
+
 
     static public int graphicsMemorySize
     {
@@ -139,5 +158,3 @@ public static class SystemInfo {
         private set;
     }
 }
-
-*/

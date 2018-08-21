@@ -12,16 +12,19 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 {
 	private string AndroidGetCountryCode()
 	{
-		string result = "US";
-		try{
-			AndroidJavaClass locale = new AndroidJavaClass("com.flurry.android.FlurryAgent");
-			AndroidJavaObject localeObject =  locale.CallStatic<AndroidJavaObject>("getDefault");
-			result = localeObject.Call<string>("getCountry");
-		} catch(Exception e) {
-			Debug.LogError(e.Message);
-		}
+		string result = "";
+        try
+        {
+            AndroidJavaClass localeClass = new AndroidJavaClass("java.util.Locale");
+            AndroidJavaObject locale = localeClass.CallStatic<AndroidJavaObject>("getDefault");
+            result = locale.Call<string>("getCountry");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("AndroidGetCountryCode LOCALE:" + e.Message);
+        }
 		Debug.Log("AndroidGetCountryCode () returned : " + result);
-		return result != null? result: "US";
+		return result != null? result: "";
 	}
 
 	public override string GetCountryCode()
@@ -134,11 +137,11 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 #endif
 	}
 	
-	private static int GetSDKLevel()
+	public static int GetSDKLevel()
 	{
 		int _sdkLevel = 18;
 #if (UNITY_ANDROID && !UNITY_EDITOR) || SKIP_DEFINES
-		IntPtr _class = AndroidJNI.FindClass("android.os.Build$VERSION");
+		IntPtr _class = AndroidJNI.FindClass("android/os/Build$VERSION");
 		IntPtr _fieldId = AndroidJNI.GetStaticFieldID( _class, "SDK_INT", "I");
 		_sdkLevel = AndroidJNI.GetStaticIntField( _class, _fieldId);
 #endif
@@ -182,5 +185,32 @@ public class PlatformUtilsAndroidImpl: PlatformUtils
 		return 0;
 	}
 
+
+    override public bool ApplicationExists(String applicationURI)
+    {
+        bool ret = false;
+#if !UNITY_EDITOR || SKIP_DEFINES
+        try
+        {
+            AndroidJavaObject currentActivity = GetCurrentActivity();
+            AndroidJavaObject packageManager = currentActivity.Call<AndroidJavaObject>("getPackageManager");
+            try
+            {
+                object[] args = new object[] { applicationURI, 1 };
+                AndroidJavaObject packageInfo = packageManager.Call<AndroidJavaObject>("getPackageInfo", args);
+                ret = true;
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Exception getPackageInfo: " + e.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Exception ApplicationExists: " + e.Message);
+        }
+#endif
+        return ret;
+    }
 }
 #endif

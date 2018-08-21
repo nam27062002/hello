@@ -96,7 +96,10 @@ public class ProbabilitySet {
 			}
 			return m_randomState; 
 		}
-		set { m_randomState = value; }
+		set { 
+			m_randomState = value; 
+			m_randomStateInitialized = true;
+		}
 	}
 	private bool m_randomStateInitialized = false;
 

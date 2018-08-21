@@ -83,7 +83,7 @@ public class Entity : IEntity {
 	//-----------------------------------------------
 	// Power up static values
 	//-----------------------------------------------
-
+	private static bool sm_goldenModifier = false;
 	private static float m_powerUpSCMultiplier = 0;	// Soft currency power up multiplier
 	private static float m_powerUpScoreMultiplier = 0;	// Score power up multiplier
 	private static float m_powerUpXpMultiplier = 0;	// XP power up multiplier
@@ -115,7 +115,7 @@ public class Entity : IEntity {
 		// m_reward.score = m_def.GetAsInt("rewardScore");
 		// m_reward.coins = m_def.GetAsInt("rewardCoins");
 		// m_reward.xp = m_def.GetAsFloat("rewardXp");
-		ApplyPowerUpMultipliers();
+
 		m_reward.pc = m_def.GetAsInt("rewardPC");
 		m_reward.health = m_def.GetAsFloat("rewardHealth");
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
@@ -127,6 +127,9 @@ public class Entity : IEntity {
 
 		// Simple data
 		m_goldenChance = m_def.GetAsFloat("goldenChance");
+		if (sm_goldenModifier && m_goldenChance > 0)
+			m_goldenChance = 1f;
+
 		m_pcChance = m_def.GetAsFloat("pcChance");
 
 		m_isBurnable = m_def.GetAsBool("isBurnable");
@@ -148,6 +151,8 @@ public class Entity : IEntity {
 
 		// Feedback data
 		m_feedbackData.InitFromDef(m_def);
+
+		ApplyPowerUpMultipliers();
 	}
 
 	override public void Spawn(ISpawner _spawner) {        
@@ -365,26 +370,16 @@ public class Entity : IEntity {
 		m_reward.score += Mathf.FloorToInt((m_reward.score * m_powerUpScoreMultiplier) / 100.0f);
 
 		m_reward.coins = m_def.GetAsInt("rewardCoins");
-		m_reward.coins += Mathf.FloorToInt((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
+		m_reward.coins += ((m_reward.coins * m_powerUpSCMultiplier) / 100.0f);
 
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
 	}
 
 
-	public static void ResetSCMuliplier()
-	{
-		m_powerUpSCMultiplier = 0;
-	}
-
 	public static void AddSCMultiplier( float value )
 	{
 		m_powerUpSCMultiplier += value;
-	}
-
-	public static void ResetScoreMultiplier()
-	{
-		m_powerUpScoreMultiplier = 0;
 	}
 
 	public static void AddScoreMultiplier( float value )
@@ -392,13 +387,12 @@ public class Entity : IEntity {
 		m_powerUpScoreMultiplier += value;
 	}
 
-	public static void ResetXpMultiplier()
-	{
-		m_powerUpXpMultiplier = 0;
-	}
-
 	public static void AddXpMultiplier( float value )
 	{
 		m_powerUpXpMultiplier += value;
+	}
+
+	public static void SetGoldenModifier(bool _value) {
+		sm_goldenModifier = _value;
 	}
 }
