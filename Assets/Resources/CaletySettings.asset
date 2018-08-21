@@ -15,11 +15,27 @@ MonoBehaviour:
     m_kGameShadersInfo: []
     m_kGlobalShaderVariants: []
   m_kAPKCRCFiles: []
-  m_kLocalisedAppNamesAndroid: []
-  m_kLocalisedAppNamesIOS: []
+  m_kLocalisedAppNamesAndroid:
+  - m_strLanguageCode: ja
+    m_strAppNameiOS: 
+    m_strAppNameAndroid: "\u30CF\u30F3\u30B0\u30EA\u30FC\u30C9\u30E9\u30B4\u30F3"
+    m_strAppShortName: 
+  - m_strLanguageCode: zh-rCN
+    m_strAppNameiOS: 
+    m_strAppNameAndroid: "\u9965\u997F\u9F99"
+    m_strAppShortName: 
+  m_kLocalisedAppNamesIOS:
+  - m_strLanguageCode: ja
+    m_strAppNameiOS: "\u30CF\u30F3\u30B0\u30EA\u30FC\u30C9\u30E9\u30B4\u30F3"
+    m_strAppNameAndroid: 
+    m_strAppShortName: "\u30CF\u30F3\u30B0\u30EA\u30FC\u30C9\u30E9\u30B4\u30F3"
+  - m_strLanguageCode: zh-Hans
+    m_strAppNameiOS: "\u9965\u997F\u9F99"
+    m_strAppNameAndroid: 
+    m_strAppShortName: "\u9965\u997F\u9F99"
   m_strBuildFilename: 
   m_strPVPProtoFile: 
-  m_iBuildEnvironmentSelected: 3
+  m_iBuildEnvironmentSelected: 5
   m_iSocialPlatformSelected: 1
   m_strBundleDEV: com.ubisoft.hungrydragon.dev
   m_strBundleSTAGEPROD: com.ubisoft.hungrydragon
@@ -94,11 +110,11 @@ MonoBehaviour:
   - 
   - 
   m_strVersionIOS: 1.11
-  m_strVersionIOSCode: 195
+  m_strVersionIOSCode: 200
   m_strVersionAndroidGplay: 1.11
-  m_strVersionAndroidGplayCode: 195
+  m_strVersionAndroidGplayCode: 200
   m_strVersionAndroidAmazon: 1.11
-  m_strVersionAndroidAmazonCode: 195
+  m_strVersionAndroidAmazonCode: 200
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 0
   m_biOSPushNotifications: 1
@@ -138,12 +154,12 @@ MonoBehaviour:
   - NSFaceIDUsageDescription/
   - NSPhotoLibraryAddUsageDescription/Used to take pictures of your dragons!
   m_iAndroidMarketSelected: 0
-  m_iAndroidMinSDKVersion: 3
+  m_iAndroidMinSDKVersion: 1
   m_iAndroidTargetSDKVersion: 11
   m_bAndroidDebuggable: 1
   m_bAndroidTVSupported: 0
   m_iAndroidOrientationSelected: 2
-  m_bAndroidSkipUnityPermissions: 0
+  m_bAndroidSkipUnityPermissions: 1
   m_kAndroidNormalPermissions:
   - android.permission.WAKE_LOCK
   - android.permission.INTERNET
