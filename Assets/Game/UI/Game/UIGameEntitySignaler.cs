@@ -8,6 +8,7 @@ public class UIGameEntitySignaler : MonoBehaviour {
     Camera m_gameCamera;
     Camera m_uiCamera;
     public Transform m_signalPivot;
+    public Transform m_steadyPivot;
 
     private void Start()
     {
@@ -28,7 +29,7 @@ public class UIGameEntitySignaler : MonoBehaviour {
            // check is inside the camrea
             if ( posScreen.x >= 0 && posScreen.x <= 1 && posScreen.y >= 0 && posScreen.y <= 1)
             {
-                m_signalPivot.rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                m_signalPivot.rotation = Quaternion.Lerp( m_signalPivot.rotation, Quaternion.AngleAxis(0, Vector3.forward), Time.deltaTime * 2);
             }
             else
             {
@@ -42,10 +43,12 @@ public class UIGameEntitySignaler : MonoBehaviour {
                 float angle = Mathf.Rad2Deg * rads;
                 angle -= 90;
                 // Apply rotation
-                m_signalPivot.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                // m_signalPivot.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                m_signalPivot.rotation = Quaternion.Lerp( m_signalPivot.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * 2);
                 posScreen = clampedPosition;
             }
-            transform.position = m_uiCamera.ViewportToWorldPoint(posScreen); 
+            transform.position = m_uiCamera.ViewportToWorldPoint(posScreen);
+            m_steadyPivot.rotation = Quaternion.identity;
         }
 	}
 }

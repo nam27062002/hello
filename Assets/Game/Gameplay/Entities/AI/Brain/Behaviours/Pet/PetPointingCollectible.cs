@@ -50,6 +50,7 @@ namespace AI {
 
 
 			protected override void OnInitialise() {
+                base.OnInitialise();
 				m_data = m_pilot.GetComponentData<PetPointingCollectibleTargetData>();
 
 				m_player = InstanceManager.player;
@@ -70,6 +71,7 @@ namespace AI {
 			}
 
 			protected override void OnEnter(State oldState, object[] param){
+                base.OnEnter( oldState, param );
 				m_pointToObject = param[0] as GameObject;
 				m_pointToTransform = m_pointToObject.transform;
 
@@ -84,12 +86,16 @@ namespace AI {
 				if (m_visualCue != null && m_visualCue.instance != null)
 				{
 					m_visualCue.instance.SetActive(true);
+                    // Setup visual
+                    Transform tr = m_visualCue.instance.transform.FindTransformRecursive(GetSignalId());
+                    if (tr != null)
+                        tr.gameObject.SetActive( true );
 				}
 
 			}
 
 			override protected void OnUpdate(){
-
+                base.OnUpdate();
 				// TODO Improve this to use events
 				if ( egg )
 				{
@@ -133,12 +139,34 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState){
-				// Hide placeholder visual
+                // Hide placeholder visual
+                base.OnExit(_newState);
 				if (m_visualCue && m_visualCue.instance )
 				{
                     m_visualCue.instance.SetActive(false);
+                    Transform tr = m_visualCue.instance.transform.FindTransformRecursive(GetSignalId());
+                    if (tr != null)
+                        tr.gameObject.SetActive( false );
 				}
 			}
+            
+            private string GetSignalId()
+            {
+                string ret = "";
+                if ( egg )
+                {
+                    ret = "egg";
+                }
+                else if ( chest )
+                {
+                    ret = "treasure";
+                }
+                else if ( letter )
+                {
+                    ret = "letter_" + HungryLettersManager.ToChar( letter.letter );
+                }
+                return ret;
+            }
 		}
 	}
 }
