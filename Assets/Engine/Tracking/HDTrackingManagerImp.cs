@@ -423,6 +423,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             if (Time.realtimeSinceStartup > 5f)
 #else
             if (UbiservicesManager.SharedInstance.IsSessionCreated())
+            //if (UbiservicesManager.SharedInstance.GetUbiServicesFacade() != null)
 #endif
             {
                 State = EState.SessionStarted;
@@ -1146,6 +1147,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             string profileName = "not available";
 #endif
             Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
+            Track_AddParamTrackingID(e);
 
             Track_SendEvent(e);
         }
@@ -1932,6 +1934,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SUBVERSION = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB = "superFireRushNb";
     private const string TRACK_PARAM_TIME_PLAYED = "timePlayed";
+    private const string TRACK_PARAM_TRACKING_ID = "trackingID";
     private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR = "topContributor";
     private const string TRACK_PARAM_TOTAL_EGG_BOUGHT_HC = "totalEggBought";
     private const string TRACK_PARAM_TOTAL_EGG_FOUND = "totalEggFound";
@@ -2186,6 +2189,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             value = localZone.StandardName;
 
         Track_AddParamString(_e, TRACK_PARAM_USER_TIMEZONE, value);
+    }
+
+    private void Track_AddParamTrackingID(HDTrackingEvent _e) {
+        Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID); 
     }
     #endregion
 
