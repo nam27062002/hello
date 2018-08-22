@@ -1,6 +1,6 @@
 // DragonPlayer.cs
 // Hungry Dragon
-// 
+//
 // Created by Marc Saña Forrellach on 05/08/2015.
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
@@ -28,7 +28,7 @@ public class DragonPlayer : MonoBehaviour {
 		AD,
 		PAYING,
 		FREE_REVIVE_PET,
-		UNKNOWN	
+		UNKNOWN
 	};
 
 
@@ -49,7 +49,7 @@ public class DragonPlayer : MonoBehaviour {
 	[Header("Life & energy")]
 	private float m_health;
 	public float health { get { return m_health; } }
-	
+
 	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
@@ -212,7 +212,7 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
 			{
-				m_data = DragonManager.GetDragonData(m_sku);	
+				m_data = DragonManager.GetDragonData(m_sku);
 			}
 			else
 			{
@@ -278,6 +278,8 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
@@ -293,12 +295,13 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 	}
 
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
-	private void OnEnable() 
+	private void OnEnable()
 	{
 		// Make sure the dragon has the scale according to its level
 		gameObject.transform.localScale = Vector3.one * m_defaultSize;
@@ -343,8 +346,8 @@ public class DragonPlayer : MonoBehaviour {
 			m_alcohol -= Time.deltaTime * m_alcoholDrain;
 			if ( m_alcohol < 0 )
 				m_alcohol = 0;
-					
-			if ( drunk != IsDrunk() ) 
+
+			if ( drunk != IsDrunk() )
 			{
 				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
 			}
@@ -436,7 +439,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!
-		if(m_health <= 0f) 
+		if(m_health <= 0f)
 		{
 			m_dragonMotion.Die();
 
@@ -487,7 +490,7 @@ public class DragonPlayer : MonoBehaviour {
 		{
 			bool drunk = IsDrunk();
 			m_alcohol += _offset;
-			if ( drunk != IsDrunk() ) 
+			if ( drunk != IsDrunk() )
 			{
 				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
 			}
@@ -500,34 +503,58 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Determines whether any type of fury is on.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
+	public bool IsFuryOn()
+	{
+		return m_breathBehaviour.IsFuryOn();
+	}
+
+	/// <summary>
 	/// Determines whether this instance is fury on.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is fury on; otherwise, <c>false</c>.</returns>
-	public bool IsFuryOn() {
-		
+	public bool IsStandardFuryOn() {
+
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Standard;
 	}
-
-
-	public void OnLeavingArea(float estimatedLeavingTime){
-		m_dragonEatBehaviour.PauseEating();
-	}
-
-	public void OnEnteringArea(){
-		if ( !m_breathBehaviour.IsFuryOn() ){
-			m_dragonEatBehaviour.ResumeEating();	
-		}
-	}
-
 
 	/// <summary>
 	/// Determines whether this instance is super fury on.
 	/// </summary>
 	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
 	public bool IsMegaFuryOn() {
-		
+
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
 	}
+
+	public void OnLeavingArea(float estimatedLeavingTime){
+		PauseEating();
+	}
+
+	public void OnEnteringArea(){
+		TryResumeEating();
+	}
+
+	protected bool CanIResumeEating()
+	{
+		bool ret = true;
+		if ( m_breathBehaviour.IsFuryOn() || BeingLatchedOn() || !m_dragonMotion.CanIResumeEating())
+			ret = false;
+		return ret;
+	}
+
+
+	private void OnEntityDestroyed(Transform _entity, Reward _reward) {
+		if (_reward.health >= 0) {
+			AddLife(_reward.health, DamageType.NONE, _entity);
+		}
+		AddEnergy(_reward.energy);
+		m_breathBehaviour.AddFury(_reward.fury);
+	}
+
+
 
 	/// <summary>
 	/// Compute the health modifier to be applied based on current health percentage.
@@ -595,7 +622,7 @@ public class DragonPlayer : MonoBehaviour {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
 
-		if(spawnPointObj != null) 
+		if(spawnPointObj != null)
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
 			m_dragonMotion.StartIntroMovement(introPos);
@@ -612,7 +639,7 @@ public class DragonPlayer : MonoBehaviour {
 	public bool IsAlive() {
 		return health > 0;
 	}
-	
+
 	/// <summary>
 	/// Whether the dragon can take damage or not.
 	/// </summary>
@@ -629,7 +656,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_changingArea ) return true;
 
 		if ( m_superSizeInvulnerable ) return true;
-		
+
 		// All checks passed, we're not invulnerable
 		return false;
 	}
@@ -657,20 +684,18 @@ public class DragonPlayer : MonoBehaviour {
 
 	void OnPrewardmFuryRush(DragonBreathBehaviour.Type type, float duration)
 	{
-		m_dragonEatBehaviour.PauseEating();
+		PauseEating();
 	}
 
 	void OnFuryToggled( bool toogle, DragonBreathBehaviour.Type type)
 	{
 		if (toogle)
 		{
-			m_dragonEatBehaviour.PauseEating();
+			PauseEating();
 		}
 		else
 		{
-			if (!BeingLatchedOn())
-				m_dragonEatBehaviour.ResumeEating();
-			
+			TryResumeEating();
 		}
 	}
 
@@ -699,7 +724,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	public bool HasShield( DamageType _type )
 	{
-		if ( m_shield.ContainsKey( _type ) )	
+		if ( m_shield.ContainsKey( _type ) )
 		{
 			return m_shield[_type] > 0;
 		}
@@ -708,7 +733,7 @@ public class DragonPlayer : MonoBehaviour {
 
 	public bool HasShieldActive( DamageType _type )
 	{
-		if ( m_shieldTimers.ContainsKey( _type ) )	
+		if ( m_shieldTimers.ContainsKey( _type ) )
 		{
 			return Time.time <= m_shieldTimers[_type] + m_shieldsDuration;
 		}
@@ -721,7 +746,7 @@ public class DragonPlayer : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the 
+	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the
 	/// tier on the dragon breaking things we have this function to ask on the proper places
 	/// </summary>
 	/// <returns>The tier when breaking.</returns>
@@ -794,7 +819,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 1 )
 		{
 			m_dragonMotion.StartLatchedOnMovement();
-			m_dragonEatBehaviour.PauseEating();
+			PauseEating();
 		}
 	}
 
@@ -804,8 +829,7 @@ public class DragonPlayer : MonoBehaviour {
 		if ( m_numLatching == 0)
 		{
 			m_dragonMotion.EndLatchedOnMovement();
-			if ( !m_breathBehaviour.IsFuryOn() )
-				m_dragonEatBehaviour.ResumeEating();
+			TryResumeEating();
 		}
 	}
 
@@ -833,4 +857,25 @@ public class DragonPlayer : MonoBehaviour {
 		m_defaultSize = size;
 		gameObject.transform.localScale = Vector3.one * m_defaultSize;
 	}
+	public void PauseEating()
+	{
+		m_dragonEatBehaviour.PauseEating();
+	}
+
+	public void TryResumeEating()
+	{
+		if (CanIResumeEating())
+			m_dragonEatBehaviour.ResumeEating();
+	}
+
+	public bool IsBreakingMovement()
+	{
+		bool ret = false;
+		if ( m_dragonBoostBehaviour.IsBoostActive() || m_dragonMotion.IsBreakingMovement() )
+		{
+			ret = true;
+		}
+		return ret;
+	}
+
 }

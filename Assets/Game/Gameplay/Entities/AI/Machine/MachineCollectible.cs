@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace AI {
-	public class MachineCollectible : MonoBehaviour, IMachine, ISpawnable {		
+	public class MachineCollectible : MonoBehaviour, IMachine, ISpawnable {
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
 		private CollectibleViewControl m_viewControl = null;
@@ -44,11 +44,12 @@ namespace AI {
 
 		protected virtual void OnTriggerEnter(Collider _other) {
 			if (_other.CompareTag("Player")) {
-				if (!m_isCollected) {	
-					Reward reward = m_entity.GetOnKillReward(true);
+				if (!m_isCollected) {
+					Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 
 					// Initialize some death info
 					m_entity.onDieStatus.source = IEntity.Type.PLAYER;
+					m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 					// Dispatch global event
 					Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
@@ -109,6 +110,7 @@ namespace AI {
 		public void CustomFixedUpdate(){}
 
 		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
+		public bool Smash(IEntity.Type _source) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		public void SetVelocity(Vector3 _v) {}

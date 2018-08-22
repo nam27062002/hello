@@ -290,10 +290,6 @@ public class DragonBreathBehaviour : MonoBehaviour {
 						}
 						break;
 					}
-					
-					// With fury on boost is infinite
-					m_dragon.AddEnergy(m_dragon.energyMax);
-
 
 					if (m_currentRemainingFuryDuration <= 0)
 					{
@@ -358,6 +354,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	{
 		RecalculateSize();
 		m_type = _type;
+
 		ChangeState(State.BREATHING);
 	}
 	virtual protected void Breath() 
@@ -499,7 +496,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
     		}break;
 			case State.PREWARM_BREATH:
     		{
-	    	}break;
+	  	  	}break;
 			case State.BREATHING:
     		{
 				switch (m_type) {
@@ -548,6 +545,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
     		}break;
 			case State.PREWARM_BREATH:
     		{
+				// With fury on boost is infinite
+				m_dragon.AddEnergy(m_dragon.energyMax);
+
 				m_prewarmFuryTimer = m_prewarmDuration;
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
@@ -583,6 +583,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				}
 
 				RewardManager.currentFireRushMultiplier = m_fireRushMultiplier;
+
+				// With fury on boost is infinite
+				m_dragon.AddEnergy(m_dragon.energyMax);
 
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;

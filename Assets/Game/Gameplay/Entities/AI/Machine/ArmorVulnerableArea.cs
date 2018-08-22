@@ -29,9 +29,9 @@ public class ArmorVulnerableArea : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _other) {
 		if (_other.CompareTag("Player") && m_timer <= 0f) {
-			DragonBoostBehaviour boost = InstanceManager.player.dragonBoostBehaviour;
+			DragonPlayer player = InstanceManager.player;
 
-			bool isHitValid = m_machine.ReduceDurability(boost.IsBoostActive(), IEntity.Type.PLAYER);
+			bool isHitValid = m_machine.ReduceDurability(player.IsBreakingMovement(), IEntity.Type.PLAYER);
 
 			if (isHitValid)	{
 				m_hitParticle.Spawn(transform.position + m_hitParticle.offset);

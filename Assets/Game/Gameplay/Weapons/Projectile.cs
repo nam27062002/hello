@@ -423,6 +423,20 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_poolHandler.ReturnInstance(gameObject);
 	}
 
+	public void OnDestoyed(){
+		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+		if (m_entity != null) {
+			if (EntityManager.instance != null)	{
+				EntityManager.instance.UnregisterEntity(m_entity);
+			}
+		}
+
+		m_state = State.Idle;
+		gameObject.SetActive(false);
+		m_poolHandler.ReturnInstance(gameObject);
+	}
+
 	public void Explode(bool _triggeredByPlayer) {
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
             DealExplosiveDamage(_triggeredByPlayer);

@@ -186,7 +186,10 @@ namespace AI {
 		}
 
 		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
-			
+			return false;
+		}
+
+		public bool Smash( IEntity.Type _source ){
 			return false;
 		}
 

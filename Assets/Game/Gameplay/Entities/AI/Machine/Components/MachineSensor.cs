@@ -105,7 +105,7 @@ namespace AI {
 				if (sense) {
 					float fireRadius = 0f;
 					if (m_senseFire) {
-						if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
+						if (InstanceManager.player.IsFuryOn() ) {
 							fireRadius = InstanceManager.player.breathBehaviour.actualLength;
 						}
 					}
@@ -187,7 +187,7 @@ namespace AI {
 			float fireRadius = 0f;
 			if (Application.isPlaying) {
 				if (m_senseFire && InstanceManager.player != null) {					
-					if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
+					if (InstanceManager.player.IsFuryOn()) {
 						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
 					}
 				}
