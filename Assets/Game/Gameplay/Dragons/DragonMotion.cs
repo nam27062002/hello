@@ -82,7 +82,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	FlyLoopBehaviour		m_flyLoopBehaviour;
 	protected DragonPlayer			m_dragon;
 	// DragonHealthBehaviour	m_health;
-	DragonControlPlayer			m_controls;
+	protected DragonControlPlayer m_controls;
 	public DragonControlPlayer control
 	{
 		get{ return m_controls; }
