@@ -19,11 +19,12 @@ public class ProjectileMotion : MonoBehaviour {
 	Vector3 m_forceVector;
 	Vector3 m_position;
 	Vector3 m_target;
+	public Vector3 target{
+		get{ return m_target; }
+		set{ m_target = value; }
+	}
 	Vector3 m_startPosition;
 
-	// Use this for initialization
-	void Start() {
-	}
 	
 	// Update is called once per frame
 	void Update () 
@@ -65,6 +66,21 @@ public class ProjectileMotion : MonoBehaviour {
 					IProjectile pb = GetComponent<IProjectile>();
 					if (pb != null)
 						pb.Explode(false);
+				}
+			}break;
+			case Type.Missile:
+			{
+				m_duration -= Time.deltaTime;
+				if ( m_duration <= 0 )
+				{
+					IProjectile pb = GetComponent<IProjectile>();
+					if (pb != null)
+						pb.Explode(false);
+				}
+				else
+				{
+					m_direction = Vector3.Lerp(m_direction, (m_target - m_position).normalized, Time.deltaTime * 2);
+					m_position += m_direction * m_arrowSpeed * Time.deltaTime;
 				}
 			}break;
 		}
@@ -126,6 +142,14 @@ public class ProjectileMotion : MonoBehaviour {
 				if ( m_duration <= 0 )
 					m_duration = 0.1f;
 				m_arrowMaxDuration = m_duration;
+			}break;
+			case Type.Missile:
+			{
+				m_position = transform.position;
+				m_startPosition = m_position;
+				m_target = _target;
+				m_direction = transform.forward;
+				m_duration = m_arrowMaxDuration;
 			}break;
 		}
 	}
