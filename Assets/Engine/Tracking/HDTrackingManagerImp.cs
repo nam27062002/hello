@@ -4,7 +4,7 @@
 
 #if UNITY_EDITOR
 //Comment to allow event debugging in windows. WARNING! this code doesn't work in Mac
-#define EDITOR_MODE
+//#define EDITOR_MODE
 #endif
 
 using UnityEngine;
@@ -66,16 +66,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Init() {
-        base.Init();
-        State = EState.WaitingForSessionStart;
-        IsStartSessionNotified = false;
-        AreSDKsInitialised = false;
-
-        if (TrackingPersistenceSystem == null) {
-            TrackingPersistenceSystem = new TrackingPersistenceSystem();
-        } else {
-            TrackingPersistenceSystem.Reset();
-        }
+        base.Init();        
 
         Reset();
 
@@ -86,6 +77,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     private void Reset() {
+        State = EState.WaitingForSessionStart;
+        IsStartSessionNotified = false;
+        AreSDKsInitialised = false;
+
+        if (TrackingPersistenceSystem == null)
+        {
+            TrackingPersistenceSystem = new TrackingPersistenceSystem();
+        }
+        else
+        {
+            TrackingPersistenceSystem.Reset();
+        }
+
         Performance_Reset();
         Session_Reset();
         m_loadFunnelCalety.Reset();
@@ -94,6 +98,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Destroy() {
+        FlushEventQueue();
+
         base.Destroy();
         Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
@@ -158,6 +164,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     protected override void SaveOfflineUnsentEventsExtended() {
         if (IsSaveOfflineUnsentEventsAllowed) {
+            // We need to send all events enqueued so they can be either sent or stored if they couldn't be sent
+            FlushEventQueue();
             DNAManager.SharedInstance.SaveOfflineUnsentEvents();
         }
     }
@@ -431,9 +439,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             break;
 
             case EState.SessionStarted:
-            while(m_eventQueue.Count > 0) {
-                Track_SendEvent(m_eventQueue.Dequeue());
-            }
+            FlushEventQueue();
             break;
         }
 
@@ -452,6 +458,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Performance_Tracker();
         }
 
+    }
+
+    private void FlushEventQueue() {
+        while (m_eventQueue.Count > 0) {
+            Track_SendEvent(m_eventQueue.Dequeue());
+        }
     }
 
     #region notify   
@@ -514,6 +526,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Notify_SessionEnd(ESeassionEndReason.app_closed);
         Track_EtlEndEvent();
 
+        // We need to make sure all events enqueued are sent to Calety TrackingManager in order to give them a chance to either be sent or stored if they couldn't be sent
+        FlushEventQueue();
+
         // Last chance to cache pending events to be sent are stored
         // Not lazy approach is used to guarantee events are stored
         DNAManager.SharedInstance.SaveOfflineUnsentEvents(false);
@@ -535,6 +550,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             Track_EtlEndEvent();
         }
+
+        // We need to make sure all events enqueued are sent to Calety TrackingManager in order to give them a chance to be sent before the game is sent to background, just in case the user doesn't resume it
+        FlushEventQueue();
     }
 
     public override void Notify_ApplicationResumed() {
