@@ -30,6 +30,28 @@ public class HDTrackingManagerImp : HDTrackingManager {
             name = _name;
             data = new Dictionary<string, object>();
         }
+
+        /// <summary>
+        /// Method to do some stuff when we're sure the event has been sent
+        /// </summary>
+        public void OnSent() {
+            switch (name) {
+                case TRACK_EVENT_CUSTOM_PLAYER_INFO:
+                    // We need to store the latest marketing id notified in prefs so we can realise it has changed in order to notify that change
+                    string marketingId = null;
+                    string key = TRACK_PARAM_ACQ_MARKETING_ID;
+                    if (data != null && data.ContainsKey(key))
+                    {
+                        marketingId = data[key] as string;
+                    }
+
+                    if (marketingId != null)
+                    {
+                        PersistencePrefs.SetLatestMarketingIdNotified(marketingId);
+                    }
+                    break;
+            }
+        }
     }
     private Queue<HDTrackingEvent> m_eventQueue = new Queue<HDTrackingEvent>();
     //------------------------------------------------------------------------//
@@ -272,9 +294,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (Session_IsFirstTime) {
             Track_StartPlayingMode(EPlayingMode.TUTORIAL);
-        }
-
-        Notify_MarketingID();
+        }        
 
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);
@@ -461,8 +481,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     private void FlushEventQueue() {
-        while (m_eventQueue.Count > 0) {
-            Track_SendEvent(m_eventQueue.Dequeue());
+        // Makes sure that events can be sent (game.start events has already been sent and Ubiservices session has been created)     
+        if (Session_GameStartSent && State == EState.SessionStarted) {
+            HDTrackingEvent e;
+            while (m_eventQueue.Count > 0) {
+                e = m_eventQueue.Dequeue();
+                e.OnSent();
+                Track_SendEvent(e);
+            }
         }
     }
 
@@ -597,9 +623,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Session_PlayTime = 0f;
     }
 
-    public override void Notify_MarketingID() {
-        if (Session_IsFirstTime)
-            Track_MarketingID();
+    private const string MARKETING_ID_NOT_AVAILABLE = "NotAvailable";
+
+    public override void Notify_MarketingID(bool forced) {
+        string marketingId = GameSessionManager.SharedInstance.GetDeviceMarketingID();
+
+        if (!forced) {                        
+            string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
+
+            // If no markegint Id has been notified yet or
+            // latest marketing id is MARKETING_ID_NOT_AVAILABLE and marketing id is available            
+            forced = string.IsNullOrEmpty(latestIdNotified) ||
+                     latestIdNotified == MARKETING_ID_NOT_AVAILABLE && !string.IsNullOrEmpty(marketingId);                    
+        }
+
+        if (forced) {
+            if (string.IsNullOrEmpty(marketingId)) {
+                marketingId = MARKETING_ID_NOT_AVAILABLE;
+            }
+
+            Track_MarketingID(marketingId);
+        }
     }
 
     /// <summary>
@@ -1140,42 +1184,43 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private void Track_GameStart() {
         HDTrackingEvent e = new HDTrackingEvent("game.start");
+        
+        Track_AddParamSubVersion(e);
+        Track_AddParamProviderAuth(e);
+        Track_AddParamPlayerID(e);
+        Track_AddParamServerAccID(e);
+        // "" is sent because Calety doesn't support this yet
+        Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
+        Track_AddParamLanguage(e);
+        Track_AddParamUserTimezone(e);
+        Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
 
-        if (e != null) {
-            Track_AddParamSubVersion(e);
-            Track_AddParamProviderAuth(e);
-            Track_AddParamPlayerID(e);
-            Track_AddParamServerAccID(e);
-            // "" is sent because Calety doesn't support this yet
-            Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
-            Track_AddParamLanguage(e);
-            Track_AddParamUserTimezone(e);
-            Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
-
-            Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
-            Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
+        Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+        Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
 #if UNITY_ANDROID
 
-            float rating = FeatureSettingsManager.instance.Device_CalculateRating();
-            int systemMemorySize = FeatureSettingsManager.instance.Device_GetSystemMemorySize();
-            int gfxMemorySize = FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
-            string profileName = FeatureSettingsManager.deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
+        float rating = FeatureSettingsManager.instance.Device_CalculateRating();
+        int systemMemorySize = FeatureSettingsManager.instance.Device_GetSystemMemorySize();
+        int gfxMemorySize = FeatureSettingsManager.instance.Device_GetGraphicsMemorySize();
+        string profileName = FeatureSettingsManager.deviceQualityManager.Profiles_RatingToProfileName(rating, systemMemorySize, gfxMemorySize);
 #else
-            string profileName = "not available";
+        string profileName = "not available";
 #endif
-            Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
-            Track_AddParamTrackingID(e);
+        Track_AddParamString(e, TRACK_PARAM_INITIALQUALITY, profileName);
+        Track_AddParamTrackingID(e);
 
-            Track_SendEvent(e);
-        }
+        Track_SendEvent(e);
+
+        Session_GameStartSent = true;        
     }
 
-    private void Track_MarketingID() {
+    private void Track_MarketingID(string marketingId) {
         if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Track_MarketingID");
+            Log("Track_MarketingID id = " + marketingId);
         }
-        HDTrackingEvent e = new HDTrackingEvent("custom.player.info");
+        HDTrackingEvent e = new HDTrackingEvent(TRACK_EVENT_CUSTOM_PLAYER_INFO);
+        Track_AddParamString(e, TRACK_PARAM_ACQ_MARKETING_ID, marketingId);
         m_eventQueue.Enqueue(e);
     }
 
@@ -1828,12 +1873,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     // -------------------------------------------------------------
+    // Events
+    // -------------------------------------------------------------
+    private const string TRACK_EVENT_CUSTOM_PLAYER_INFO = "custom.player.info";
+
+    // -------------------------------------------------------------
     // Params
     // -------------------------------------------------------------    
 
     // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING = "abtesting";
     private const string TRACK_PARAM_ACCEPTED = "accepted";
+    private const string TRACK_PARAM_ACQ_MARKETING_ID = "acq_marketing_id";
     private const string TRACK_PARAM_ACTION = "action";			// "automatic", "info_button" or "settings"
     private const string TRACK_PARAM_AD_IS_AVAILABLE = "adIsAvailable";
     private const string TRACK_PARAM_AD_REVIVE = "adRevive";
@@ -2287,6 +2338,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private bool mSession_IsNotifyOnPauseEnabled;
 
+    private bool Session_GameStartSent { get; set; }
+
     /// <summary>
     /// Whether or not the session is allowed to notify on pause/resume. This is used to avoid session paused/resumed events when the user
     /// goes to background because an ad or a purchase is being performed since those actions are considered part of the game
@@ -2312,6 +2365,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private bool Session_IsARoundRunning { get; set; }
 
     private void Session_Reset() {
+        Session_GameStartSent = false;
         Session_IsPayingSession = false;
         Session_IsAdSession = false;
         Session_PlayTime = 0f;

@@ -709,9 +709,15 @@ public class LoadingSceneController : SceneController {
         }
     }
 
+    /// <summary>
+    /// Callback called when the terms flow related stuff is done, either because terms flow didn't need to be triggered or because the user has just followed all the terms flow
+    /// </summary>
     private void OnTermsDone()
     {
         m_waitingTermsDone = true;
+
+        // We need to notify marketing id. According to design this event has to be sent once the terms flow is done. It has to be sent only if there's new information
+        HDTrackingManager.Instance.Notify_MarketingID(false);
     }
         
     private void StartLoadFlow()

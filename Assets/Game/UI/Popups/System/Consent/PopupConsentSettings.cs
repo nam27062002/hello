@@ -120,6 +120,9 @@ public class PopupConsentSettings : IPopupConsentGDPR {
         int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
         HDTrackingManager.Instance.Notify_ConsentPopupAccept(GDPRManager.SharedInstance.GetCachedUserAge(), trackingConsented, adsConsented, "1_1_1", duration);
 
+        // According to design marketing id has to be sent after the user closes this popup
+        HDTrackingManager.Instance.Notify_MarketingID(true);
+
 		// Close the popup
 		GetComponent<PopupController>().Close(true);
 	}

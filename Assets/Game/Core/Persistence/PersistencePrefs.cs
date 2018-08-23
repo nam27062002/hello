@@ -36,6 +36,9 @@ public class PersistencePrefs
     // User's language set in server
     private static string KEY_SERVER_LANGUAGE = "serverLanguage";
 
+    // Latest marketing id notified
+    private static string KEY_LATEST_MARKETING_ID_NOTIFIED = "latestMarketingIdNotified";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
@@ -47,7 +50,8 @@ public class PersistencePrefs
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
         KEY_USER_PROFILE_NAME,
-        KEY_SERVER_LANGUAGE
+        KEY_SERVER_LANGUAGE,
+        KEY_LATEST_MARKETING_ID_NOTIFIED
     };        
 
     public static bool IsDirty = false;
@@ -131,6 +135,16 @@ public class PersistencePrefs
     public static void SetServerLanguage(string value)
     {
         SetString(KEY_SERVER_LANGUAGE, value);
+    }
+
+    public static string GetLatestMarketingIdNotified()
+    {
+        return PlayerPrefs.GetString(KEY_LATEST_MARKETING_ID_NOTIFIED, null);
+    }
+
+    public static void SetLatestMarketingIdNotified(string value)
+    {
+        SetString(KEY_LATEST_MARKETING_ID_NOTIFIED, value);
     }
 
     #region social
