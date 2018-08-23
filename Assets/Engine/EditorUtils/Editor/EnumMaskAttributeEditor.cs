@@ -54,7 +54,7 @@ public class EnumMaskAttributeEditor : ExtendedPropertyDrawer {
 			_label.text += " (Flags)";
 			m_pos.height = EditorGUI.GetPropertyHeight(_property);	// Default height for an enum field
 			object valueObj = Enum.ToObject(m_objectType, _property.intValue);
-			Enum newValue = EditorGUI.EnumMaskField(m_pos, _label, valueObj as Enum);
+            Enum newValue = EditorGUI.EnumFlagsField(m_pos, _label, valueObj as Enum);
 			if(GUI.changed) {
 				_property.intValue = newValue.GetHashCode();
 			}

@@ -12,7 +12,7 @@ namespace AI {
 		public class AttackMelee : Attack {
 		
 			private IMeleeWeapon m_meleeWeapon;
-			private Entity m_entity;
+			private IEntity m_entity;
 
 
 			public override StateComponentData CreateData() {
@@ -25,7 +25,7 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<AttackMeleeData>();
-				m_entity = m_pilot.GetComponent<Entity>(); 
+                m_entity = m_pilot.GetComponent<IEntity>(); 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
 
 				m_meleeWeapon.enabled = false;

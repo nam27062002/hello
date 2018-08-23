@@ -5,14 +5,14 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	[SerializeField] private float m_timeBetweenHits = 0.5f;
 	[SerializeField] protected DamageType m_damageType = DamageType.NORMAL;
 
-	protected Transform m_transform;
+    protected Transform m_transform;
 	private Collider[] m_weapon;
 
 	protected float m_damage;
 	public float damage { set { m_damage = value; } }
 
-	protected Entity m_entity;
-	public Entity entity { set { m_entity = value; } }
+    protected IEntity m_entity;
+    public IEntity entity { set { m_entity = value; } }
 
 	private float m_timer;
 	private float m_timerPosition;
@@ -55,7 +55,7 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter(Collider _other) {
+    protected virtual void OnTriggerEnter(Collider _other) {
 		if (m_timer <= 0f && _other.CompareTag("Player")) {
 			OnDealDamage();
 			m_timer = m_timeBetweenHits;
