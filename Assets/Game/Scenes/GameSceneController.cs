@@ -143,46 +143,64 @@ public class GameSceneController : GameSceneControllerBase {
     TrackerBoostTime m_boostTimeTracker;
     TrackerMapUsage m_mapUsageTracker;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    override protected void Awake()
+    {
+        // Call parent
+        base.Awake();
 
-		m_boostTimeTracker = new TrackerBoostTime();
-		m_mapUsageTracker = new TrackerMapUsage();
+        m_boostTimeTracker = new TrackerBoostTime();
+        m_mapUsageTracker = new TrackerMapUsage();
 
-		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-		// Make sure loading screen is visible
-		LoadingScreen.Toggle(true, false);
+        // Make sure loading screen is visible
+        LoadingScreen.Toggle(true, false);
 
-		// Check whether the tutorial popup must be displayed
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
-			|| DebugSettings.isPlayTest) {
-			// Tracking
-			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
-			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+        // Check whether the tutorial popup must be displayed
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
+            || DebugSettings.isPlayTest)
+        {
+            // Tracking
+            string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
+            HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 
-			// Open popup
-			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);			
-		}
+            // Open popup
+            PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
+        }
 
-		// Load the dragon
-		if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
-		{
-			string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
-			DragonManager.LoadDragon(dragon);
-		}
-		else
-		{
-			DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
-		}
+        // Load the dragon
 
+        // TO REMOVE!!!!
+        if ( FeatureSettingsManager.IsDebugEnabled && Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        {
+            // Hola soy special SPECIAAAAAAL
+            string dragon = Prefs.GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
+            DragonTier dragonTier = ( DragonTier )Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_TIER, 0);
+            int powerLevel = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL, 0);
+            DragonManager.LoadSpecialDragon(dragon, dragonTier, powerLevel);
+            
+        }
+        else
+        {
+            if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+            {
+                string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+                DragonManager.LoadDragon(dragon);
+            }
+            else
+            {
+                DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+            }
+
+        }
+        
+		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;

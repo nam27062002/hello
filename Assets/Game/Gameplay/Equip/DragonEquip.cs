@@ -250,11 +250,14 @@ public class DragonEquip : MonoBehaviour {
 			}
 		}
 		string skin = def.Get("skin");
-		if ( m_menuMode ){
-			SetSkin( skin );
-		}else{
-			SetSkin( skin + "_ingame" );
-		}
+        if ( !string.IsNullOrEmpty( skin ) )
+        {
+    		if ( m_menuMode ){
+    			SetSkin( skin );
+    		}else{
+    			SetSkin( skin + "_ingame" );
+    		}
+        }
 
 
 		RemoveAccessories();

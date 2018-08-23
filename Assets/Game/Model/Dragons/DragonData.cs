@@ -117,6 +117,8 @@ public class DragonData : IUISelectorItem {
 	// Debug
 	private float m_scaleOffset = 0f;
 
+    public int m_powerLevel = 0;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -164,6 +166,12 @@ public class DragonData : IUISelectorItem {
 		// Other values
 		m_scaleOffset = 0;
 	}
+    
+    public void SetTier( DragonTier _tier )
+    {
+        m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS,  TierToSku( _tier ) );
+        m_tier = (DragonTier)m_tierDef.GetAsInt("order");
+    }
 
 	public bool CanBeSelected() {
 		return GetLockState() > LockState.HIDDEN;

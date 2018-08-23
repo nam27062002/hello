@@ -156,7 +156,7 @@ public class ContentManager
         });
 
         // Dragons
-        kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[] { "Rules/dragonDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[] { "Rules/dragonDefinitions", "Rules/specialDragonDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[] { "Rules/dragonTierDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_PROGRESSION, new string[] { "Rules/dragonProgressionDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, new string[] { "Rules/dragonHealthModifiersDefinitions" });
@@ -190,7 +190,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
 
         // Disguises
-        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions"});
 
         kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[] { "Rules/holdPreyTierSettingsDefinitions" });
 

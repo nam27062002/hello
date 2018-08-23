@@ -74,6 +74,13 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	public const string SHOW_HIDDEN_PETS						= "SHOW_HIDDEN_PETS";
 
+
+        // Special Dragon Cheats
+    public const string USE_SPECIAL_DRAGON                      = "USE_SPECIAL_DRAGON";
+    public const string SPECIAL_DRAGON_SKU                      = "SPECIAL_DRAGON_SKU";
+    public const string SPECIAL_DRAGON_TIER                     = "SPECIAL_DRAGON_TIER";
+    public const string SPECIAL_DRAGON_POWER_LEVEL              = "SPECIAL_DRAGON_POWER_LEVEL";
+    
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//

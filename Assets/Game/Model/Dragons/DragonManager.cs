@@ -233,6 +233,35 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		playerObj.name = GameSettings.playerName;
 			
 	}
+    
+    public static void LoadSpecialDragon( string _sku, DragonTier _tier, int powerLevel)
+    {
+        // Destroy any previously created player
+        GameObject playerObj = GameObject.Find(GameSettings.playerName);
+        if(playerObj != null) {
+            DestroyImmediate(playerObj);
+            playerObj = null;
+        }
+
+        // Get the data for the new dragon
+        DragonData data = DragonManager.GetDragonData(_sku);
+        data.SetTier( _tier );
+        data.m_powerLevel = powerLevel;
+        Range xpRange = data.progression.xpRange;
+        float xpSetup = xpRange.Lerp( (float)_tier/ (float)DragonTier.TIER_4);
+        data.progression.SetXp_DEBUG(xpSetup);
+        
+        Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
+
+        // Load the prefab for the dragon with the given ID
+        GameObject prefabObj = Resources.Load<GameObject>(DragonData.GAME_PREFAB_PATH + data.def.GetAsString("gamePrefab"));
+
+        Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
+
+        // Create a new instance - will automatically be added to the InstanceManager.player property
+        playerObj = Instantiate<GameObject>(prefabObj);
+        playerObj.name = GameSettings.playerName;
+    }
 
 	public static void SetupUser( UserProfile user)
 	{
