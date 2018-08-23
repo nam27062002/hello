@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
@@ -25,7 +26,8 @@ public class UISafeAreaSetter : MonoBehaviour {
 	public enum Mode {
 		SIZE_DECREASE,
 		POSITION,
-		SIZE_INCREASE
+		SIZE_INCREASE,
+		LAYOUT_PADDING
 	}
 
 	[Serializable]
@@ -157,6 +159,22 @@ public class UISafeAreaSetter : MonoBehaviour {
 
 					// Apply!
 					rt.anchoredPosition = newAnchoredPos;
+				} break;
+
+				case Mode.LAYOUT_PADDING: {
+					// Requires a layout
+					HorizontalOrVerticalLayoutGroup layout = GetComponent<HorizontalOrVerticalLayoutGroup>();
+					if(layout == null) break;
+
+					// Adjust padding
+					RectOffset newPadding = layout.padding;
+					newPadding.left += (int)scaledSafeArea.left;
+					newPadding.bottom += (int)scaledSafeArea.bottom;
+					newPadding.right += (int)scaledSafeArea.right;
+					newPadding.top += (int)scaledSafeArea.top;
+
+					// Apply new padding
+					layout.padding = newPadding;
 				} break;
 			}
 		}
