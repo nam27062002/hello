@@ -256,11 +256,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         //-------------------------------
         // Start Tracking manager
-        // Sends the start session event
-        Track_StartSessionEvent();
+        // Sends the start session event        
         Track_GameStart();
         //-------------------------------
 
+		Track_StartSessionEvent();
         Track_MobileStartEvent();
 
         HDTrackingEvent e = new HDTrackingEvent("custom.session.started");
@@ -1214,7 +1214,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         HDTrackingEvent e = new HDTrackingEvent("custom.etl.session.start");        
-        Track_SendEvent(e);
+        //Track_SendEvent(e);
+		m_eventQueue.Enqueue(e);
     }
 
     private void Track_EtlEndEvent() {
