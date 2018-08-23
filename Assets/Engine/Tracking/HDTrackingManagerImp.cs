@@ -421,7 +421,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             case EState.WaitingForSessionStart:
             if (TrackingPersistenceSystem != null && IsStartSessionNotified) {
                 // We need to start session here in Update() so GameCenterManager has time to get the acq_marketing_id, otherwise
-                // that field will be empty in "game.start" event
+                // that field will be empty in "custom.player.info" event
                 StartSession();
             }
             break;
