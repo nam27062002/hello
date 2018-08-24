@@ -39,6 +39,9 @@ public class PersistencePrefs
     // Latest marketing id notified
     private static string KEY_LATEST_MARKETING_ID_NOTIFIED = "latestMarketingIdNotified";
 
+    // Marketing id. It's stored in prefs when it's retrieved successfully since it may take time to get it from device
+    private static string KEY_MARKETING_ID = "marketingId";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
@@ -51,7 +54,8 @@ public class PersistencePrefs
         KEY_SAVEPATHS_LATEST_INDEX,
         KEY_USER_PROFILE_NAME,
         KEY_SERVER_LANGUAGE,
-        KEY_LATEST_MARKETING_ID_NOTIFIED
+        KEY_LATEST_MARKETING_ID_NOTIFIED,
+        KEY_MARKETING_ID
     };        
 
     public static bool IsDirty = false;
@@ -146,6 +150,17 @@ public class PersistencePrefs
     {
         SetString(KEY_LATEST_MARKETING_ID_NOTIFIED, value);
     }
+
+    public static string GetMarketingId()
+    {
+        return PlayerPrefs.GetString(KEY_MARKETING_ID, null);
+    }
+
+    public static void SetMarketingId(string value)
+    {
+        SetString(KEY_MARKETING_ID, value);
+    }
+
 
     #region social
     public static string Social_PlatformKey

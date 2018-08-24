@@ -717,7 +717,7 @@ public class LoadingSceneController : SceneController {
         m_waitingTermsDone = true;
 
         // We need to notify marketing id. According to design this event has to be sent once the terms flow is done. It has to be sent only if there's new information
-        HDTrackingManager.Instance.Notify_MarketingID(false);
+        HDTrackingManager.Instance.Notify_MarketingID(HDTrackingManager.EMarketingIdFrom.FirstLoading);
     }
         
     private void StartLoadFlow()

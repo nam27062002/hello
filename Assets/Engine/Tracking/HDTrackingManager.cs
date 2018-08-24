@@ -172,11 +172,17 @@ public class HDTrackingManager
     public virtual void Notify_ApplicationResumed() {}
 
 
+    public enum EMarketingIdFrom
+    {
+        FirstLoading,
+        Settings
+    };
+
     /// <summary>
     /// Notifies marketing id.
     /// </summary>
-    /// <param name="forced">When <c>true</c> the event is sent. Wehn <c>false</c> the event is sent only if there's new information to notify.</param>
-    public virtual void Notify_MarketingID(bool forced) {}
+    /// <param name="from">Where this method is called from</param>
+    public virtual void Notify_MarketingID(EMarketingIdFrom from) {}
 
     /// <summary>
     /// Called when the user starts a round.

@@ -623,25 +623,34 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Session_PlayTime = 0f;
     }
 
-    private const string MARKETING_ID_NOT_AVAILABLE = "NotAvailable";
+    private const string MARKETING_ID_NOT_AVAILABLE = "NotAvailable";    
 
-    public override void Notify_MarketingID(bool forced) {
-        string marketingId = GameSessionManager.SharedInstance.GetDeviceMarketingID();
-
-        if (!forced) {                        
-            string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
-
-            // If no markegint Id has been notified yet or
-            // latest marketing id is MARKETING_ID_NOT_AVAILABLE and marketing id is available            
-            forced = string.IsNullOrEmpty(latestIdNotified) ||
-                     latestIdNotified == MARKETING_ID_NOT_AVAILABLE && !string.IsNullOrEmpty(marketingId);                    
-        }
-
-        if (forced) {
+    public override void Notify_MarketingID(EMarketingIdFrom from) {
+        // Gets marketing id. It tries to get it from prefs first because it's immediate. If it's empty then it tries to get it from the device
+        string marketingId = PersistencePrefs.GetMarketingId();
+        if (string.IsNullOrEmpty(marketingId)) {
+            marketingId = GameSessionManager.SharedInstance.GetDeviceMarketingID();
+            
             if (string.IsNullOrEmpty(marketingId)) {
                 marketingId = MARKETING_ID_NOT_AVAILABLE;
+            } else {
+                // Marketing id is stored in prefs once retrieved successfully from device in order to be able to use it immediately next time it's required 
+                // since retrieving it from device may take a while
+                PersistencePrefs.SetMarketingId(marketingId);
             }
+        }
 
+        // Marketing id has to be notified always when the user changes the consent terms
+        bool needsToNotify = from == EMarketingIdFrom.Settings;
+
+        // From first loading marketing id has to be notified only when no marketing id has been notified yet or when a valid marketing id is retrieved
+        if (from == EMarketingIdFrom.FirstLoading) {                        
+            string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();            
+            needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
+                     (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);                    
+        }
+
+        if (needsToNotify) {            
             Track_MarketingID(marketingId);
         }
     }
