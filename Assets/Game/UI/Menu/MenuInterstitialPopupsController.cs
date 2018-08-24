@@ -319,6 +319,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Checks whether the Pre-Registration Rewards popup must be displayed or not and does it.
 	/// </summary>
 	private void CheckPreRegRewards() {
+		// [AOC] As of version 1.12 (1st update post-WWL), don't give the pre-reg rewards anymore
+		return;
+
 		// Ignore if it has already been triggered
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
 

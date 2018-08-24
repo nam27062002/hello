@@ -214,8 +214,8 @@ GameObject:
   m_Component:
   - component: {fileID: 224487363926857516}
   - component: {fileID: 114567902720356070}
-  - component: {fileID: 114186151790043890}
   - component: {fileID: 114921741335778522}
+  - component: {fileID: 114653013266080554}
   m_Layer: 5
   m_Name: PF_QuestActivePanel
   m_TagString: Untagged
@@ -4307,6 +4307,7 @@ MonoBehaviour:
   m_icon: {fileID: 114310497948924206}
   m_rewardText: {fileID: 114189018707704862}
   m_showNameForEggsAndPets: 1
+  m_showNameForCurrencies: 0
   m_nameContainer: {fileID: 0}
   m_powerIcon: {fileID: 0}
   m_targetText: {fileID: 114992902777047254}
@@ -4980,24 +4981,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114186151790043890
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1082736125270786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_adjustMode: 2
-  m_scale:
-    bottom: 1
-    left: 0
-    right: 0
-    top: 1
-  m_customSafeAreas: []
 --- !u!114 &114187515593535942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6372,6 +6355,7 @@ MonoBehaviour:
   m_icon: {fileID: 114402242619600254}
   m_rewardText: {fileID: 114616824083782722}
   m_showNameForEggsAndPets: 1
+  m_showNameForCurrencies: 0
   m_nameContainer: {fileID: 0}
   m_powerIcon: {fileID: 0}
   m_targetText: {fileID: 114765865771015104}
@@ -6518,6 +6502,7 @@ MonoBehaviour:
   m_icon: {fileID: 114610955591327502}
   m_rewardText: {fileID: 114885415088858050}
   m_showNameForEggsAndPets: 1
+  m_showNameForCurrencies: 0
   m_nameContainer: {fileID: 0}
   m_powerIcon: {fileID: 0}
   m_targetText: {fileID: 114157904013955576}
@@ -8729,6 +8714,30 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114653013266080554
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1082736125270786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_adjustMode: 1
+  m_scale:
+    bottom: 1
+    left: 1
+    right: 1
+    top: 1
+  m_actions:
+  - mode: 2
+    scale:
+      bottom: 1
+      left: 0
+      right: 0
+      top: 1
 --- !u!114 &114659465388780206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8743,6 +8752,7 @@ MonoBehaviour:
   m_icon: {fileID: 114992568445050262}
   m_rewardText: {fileID: 114973067606649272}
   m_showNameForEggsAndPets: 1
+  m_showNameForCurrencies: 0
   m_nameContainer: {fileID: 0}
   m_powerIcon: {fileID: 0}
   m_targetText: {fileID: 114501054003856434}
@@ -18205,7 +18215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0.0078430185, y: -260}
+  m_AnchoredPosition: {x: 0.007843018, y: -260}
   m_SizeDelta: {x: 900, y: 140}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224063435163276376
@@ -19274,7 +19284,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 10, y: -108.8}
+  m_AnchoredPosition: {x: 10, y: -108.79999}
   m_SizeDelta: {x: 0, y: 250}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224479288445231078
@@ -19368,7 +19378,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 15.000004}
+  m_AnchoredPosition: {x: 0, y: 15}
   m_SizeDelta: {x: -100, y: -30.000015}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224500915353743608
@@ -19560,7 +19570,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 0, y: 100}
+  m_SizeDelta: {x: 637.64, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224554268477985206
 RectTransform:
@@ -20369,7 +20379,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 17.999992}
+  m_AnchoredPosition: {x: 0, y: 18}
   m_SizeDelta: {x: 0, y: -36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224834221136510384
@@ -20632,7 +20642,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 69.99999, y: -70}
+  m_AnchoredPosition: {x: 70, y: -70}
   m_SizeDelta: {x: 99.999985, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224942852162461550

@@ -148,7 +148,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	// Server debugging tools
 	// Only in editor!
-	[Separator("Server debugging tools")]
+	[Separator("Server Debug Tools")]
 	[SerializeField] private bool m_useDebugServer = false;
 	public static bool useDebugServer {
 		get { return instance.m_useDebugServer; }
@@ -162,18 +162,18 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	}
 
 	// UI settings
-	[HideEnumValues(false, true)]
-	[SerializeField] private UIConstants.SpecialDevice m_simulatedSpecialDevice = UIConstants.SpecialDevice.NONE;
-	public static UIConstants.SpecialDevice simulatedSpecialDevice {
-		get { 
-			// Only in editor
-			#if UNITY_EDITOR
-			return instance.m_simulatedSpecialDevice; 
-			#else
-			return UIConstants.SpecialDevice.NONE;
-			#endif
+	[Separator("UI Debug Tools")]
+	[Comment("- iPhone X: 132, 63, 2172, 1062")]
+	[SerializeField] private bool m_useDebugSafeArea = false;
+	[SerializeField] private Rect m_debugSafeArea = new Rect();
+	public static Rect debugSafeArea {
+		get {
+			if(instance.m_useDebugSafeArea) {
+				return instance.m_debugSafeArea;
+			} else {
+				return new Rect(0f, 0f, Screen.width, Screen.height);
+			}
 		}
-		set { instance.m_simulatedSpecialDevice = value; }
 	}
 
     //------------------------------------------------------------------//
