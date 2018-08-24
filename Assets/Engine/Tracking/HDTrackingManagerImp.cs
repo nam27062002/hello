@@ -1173,6 +1173,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {
         Track_TournamentStep(tournamentSku, "Enter", Track_UserCurrencyToString(currency));
     }
+
+    public override void Notify_RateThisApp(ERateThisAppResult result, int dragonProgression) {
+        Track_RateThisAppShown(result, dragonProgression);
+    }
     #endregion
 
     #region track	
@@ -1881,6 +1885,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_RateThisAppShown(ERateThisAppResult result, int dragonProgression) {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_RateThisAppShown result = " + result + " dragonProgression = " + dragonProgression);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.ratethisapp");
+        {            
+            Track_AddParamString(e, TRACK_PARAM_RATE_RESULT, result.ToString());
+            e.data.Add(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -1993,6 +2009,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RADIUS = "radius";
     private const string TRACK_PARAM_RANK = "rank";
     private const string TRACK_PARAM_RARITY = "rarity";
+    private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";

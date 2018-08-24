@@ -518,6 +518,16 @@
           "etl"
         ]
       },
+	  "custom.game.ratethisapp": {
+        "Parameters": [
+          { "rateResult": { "Status": "OK" } },
+		  { "dragonProgression": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1244,9 +1254,13 @@
       "source": {
         "Type": "STRING:5",
         "Values": []
-      },
-      "trackingID": {
+      },      
+	  "trackingID": {
         "Type": "STRING:80",
+        "Values": []
+      },
+	  "rateResult": {
+        "Type": "STRING:5",
         "Values": []
       }
     }
