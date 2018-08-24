@@ -92,6 +92,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Reset();
 
+		// We need to track all events that have to be sent right after the session is created. We need to do it here in order to make sure they will be tracked at the very beginning
+		// The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
+		// events may be reported before the persistence is loaded
+		Track_StartSessionEvent();
+		Track_MobileStartEvent();
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.session.started");
+		{
+			string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+			Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+		}
+		m_eventQueue.Enqueue(e);
+
+
         Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
@@ -281,16 +295,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
         // Sends the start session event        
         Track_GameStart();
         //-------------------------------
-
-		Track_StartSessionEvent();
-        Track_MobileStartEvent();
-
-        HDTrackingEvent e = new HDTrackingEvent("custom.session.started");
-        {
-            string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
-            Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
-        }
-        m_eventQueue.Enqueue(e);
 
         if (Session_IsFirstTime) {
             Track_StartPlayingMode(EPlayingMode.TUTORIAL);

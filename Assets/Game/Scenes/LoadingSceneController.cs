@@ -567,6 +567,13 @@ public class LoadingSceneController : SceneController {
 				// Initialize fonts before showing any other popup
 				// Do it here because we need the Android permissions to be given and the rules to be loaded
 				FontManager.instance.Init();
+
+				// This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
+				// The stuff that this manager handles has to be done only once, regardless the game reboots
+				FeatureSettingsManager.CreateInstance(false);                
+
+				// Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
+				HDTrackingManager.Instance.Init();                
 			} break;
 		}
 
@@ -627,18 +634,14 @@ public class LoadingSceneController : SceneController {
                 ApplicationManager.CreateInstance();
 
                 AntiCheatsManager.CreateInstance();
-
-                // The stuff that this manager handles has to be done only once, regardless the game reboots
-                FeatureSettingsManager.CreateInstance(false);
-
+				                
                 if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
                 {
                     // Initialize local mini-tracking session!
                     // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
                     MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
                 }
-
-                HDTrackingManager.Instance.Init();
+					                
                 HDCustomizerManager.instance.Initialise();
 
                 UsersManager.CreateInstance();
