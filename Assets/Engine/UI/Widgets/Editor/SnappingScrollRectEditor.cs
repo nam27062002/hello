@@ -36,6 +36,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 	private SerializedProperty m_snapAnimDurationProp;
 	private SerializedProperty m_snapAfterDraggingProp;
 	private SerializedProperty m_snapEaseProp;
+	private SerializedProperty m_autoInitialSelectionProp;
 	private SerializedProperty m_selectedPointProp;
 	private SerializedProperty m_onSelectionChangedProp;
 
@@ -54,6 +55,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 		m_snapAnimDurationProp = serializedObject.FindProperty("m_snapAnimDuration");
 		m_snapAfterDraggingProp = serializedObject.FindProperty("m_snapAfterDragging");
 		m_snapEaseProp = serializedObject.FindProperty("m_snapEase");
+		m_autoInitialSelectionProp = serializedObject.FindProperty("m_autoInitialSelection");
 		m_selectedPointProp = serializedObject.FindProperty("m_selectedPoint");
 		m_onSelectionChangedProp = serializedObject.FindProperty("m_onSelectionChanged");
 	}
@@ -82,6 +84,7 @@ public class SnappingScrollRectEditor : ScrollRectEditor {
 		EditorGUILayout.PropertyField(m_snapAnimDurationProp);
 		EditorGUILayout.PropertyField(m_snapAfterDraggingProp);
 		EditorGUILayout.PropertyField(m_snapEaseProp);
+		EditorGUILayout.PropertyField(m_autoInitialSelectionProp);
 
 		// Update view whenever the selected point changes
 		bool selectionChanged = EditorGUILayout.PropertyField(m_selectedPointProp);

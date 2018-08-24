@@ -900,12 +900,11 @@ public class UserProfile : UserPersistenceSystem
 			m_petCollection.Load(_data["pets"]);
 		}
 
-		// Missions
+        // Missions
+        // Clean missions
+        m_userMissions.ClearAllMissions();
 		if(_data.ContainsKey("missions")) {
 			m_userMissions.Load(_data["missions"]);
-		} else {
-			// Clean missions
-			m_userMissions.ClearAllMissions();
 		}
 
 		m_achievements.Initialize();

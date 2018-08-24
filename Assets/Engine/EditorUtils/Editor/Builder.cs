@@ -519,13 +519,95 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		// Save Data ?
 	}
 
-    [PostProcessBuild(1080)]
+    [PostProcessBuild(1090)]
     public static void OnPostProcessBuild(BuildTarget target, string path)
     {
-		if (target == BuildTarget.Android)
+        if ( target == BuildTarget.iOS )
+        {   
+            // Load Info.plist
+            string file = System.IO.Path.Combine(path, "Info.plist");
+            if (!File.Exists(file))
+            {
+                return;
+            }
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.Load(file);
+            XmlNode dict = xmlDocument.SelectSingleNode("plist/dict");
+
+            if (dict != null)
+            {
+                // Add hungrydragon to CFBundleURLTypes/CFBundleURLSchemes so other applications can ask if we are installed
+                CaletyPostprocessor.PListItem urlTypes = CaletyPostprocessor.GetPlistItem( dict, "CFBundleURLTypes");
+                XmlElement urlTypesArray = null;
+                if (urlTypes != null)
+                {
+                    urlTypesArray = (XmlElement)urlTypes.itemValueNode;
+                }
+                else
+                {
+                    urlTypesArray = xmlDocument.CreateElement("array");
+                    dict.AppendChild(urlTypesArray);
+                }
+
+                    // dict
+                XmlElement keyURLTypeDict = xmlDocument.CreateElement("dict");
+
+                    // Add key to dict
+                XmlElement keyURLSchemes = xmlDocument.CreateElement("key");
+                keyURLSchemes.InnerText = "CFBundleURLSchemes";
+                keyURLTypeDict.AppendChild(keyURLSchemes);
+
+
+                    // Array inside dict
+                XmlElement keyURLSchemesArray = xmlDocument.CreateElement("array");
+                        // Add hungry dragon to array
+                XmlElement keyURLScheme = xmlDocument.CreateElement("string");
+                keyURLScheme.InnerText = "hungrydragon";
+                keyURLSchemesArray.AppendChild(keyURLScheme);
+                    
+                    // Add array after the key on dict
+                keyURLTypeDict.AppendChild(keyURLSchemesArray);
+                urlTypesArray.AppendChild(keyURLTypeDict);
+
+
+                // Add hungrysharkevolution and hungrysharkworld to LSApplicationQueriesSchemes so we can ask for them
+                CaletyPostprocessor.PListItem applicationQueriesSchemes = CaletyPostprocessor.GetPlistItem(dict, "LSApplicationQueriesSchemes");
+                XmlElement applicationQueriesSchemesArray = null;
+                if (applicationQueriesSchemes != null)
+                {
+                    applicationQueriesSchemesArray = (XmlElement)applicationQueriesSchemes.itemValueNode;
+                }
+                else
+                {
+                    applicationQueriesSchemesArray = xmlDocument.CreateElement("array");
+                    dict.AppendChild(applicationQueriesSchemesArray);
+                }
+
+                if(applicationQueriesSchemesArray != null)
+                {
+                    XmlElement hungrysharkevolution = xmlDocument.CreateElement("string");
+                    hungrysharkevolution.InnerText = "hungrysharkevolution";
+                    applicationQueriesSchemesArray.AppendChild(hungrysharkevolution);
+
+                    XmlElement hungrysharkworld = xmlDocument.CreateElement("string");
+                    hungrysharkworld.InnerText = "hungrysharkworld";
+                    applicationQueriesSchemesArray.AppendChild(hungrysharkworld);
+                }
+
+
+            }
+
+            // Save file
+            xmlDocument.Save(file);
+            // Remove extra gargabe added by the XmlDocument save
+            CaletyPostprocessor.UpdateStringInFile(file, "dtd\"[]>", "dtd\">");
+
+        }
+        else if  (target == BuildTarget.Android)
 		{
 			//GenerateAdaptiveAPK (path);
 		}
+
     }
 
     /*[MenuItem("Hungry Dragon/Build/Generate Adaptive APK")]

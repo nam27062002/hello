@@ -63,13 +63,21 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// </summary>
 	/// <param name="_t">New parent!</param>
 	public virtual void SetParentAndFit(RectTransform _t) {
-		this.transform.SetParent(_t, false);
+		// Delay by one frame to make sure rect transforms are properly initialized
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			this.transform.SetParent(_t, false);
 
-		float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);		// Prevent division by 0
-		float sy = _t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon);	// Prevent division by 0
-		float scale = (sx < sy)? sx : sy;
-	
-		rectTransform.localScale = new Vector3(scale, scale, scale);
+			float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);      // Prevent division by 0
+			float sy = _t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon);    // Prevent division by 0
+			float scale = (sx < sy) ? sx : sy;
+			rectTransform.localScale = new Vector3(scale, scale, scale);
+
+			// Scale particles as well
+			ParticleScaler scaler = this.GetComponentInChildren<ParticleScaler>();
+			if(scaler != null) {
+				scaler.DoScale();
+			}
+		}, 1);
 	}
 
 	//------------------------------------------------------------------------//

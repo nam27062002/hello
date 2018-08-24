@@ -155,6 +155,12 @@ public class GameServerManagerCalety : GameServerManager {
             GameServerManager.SharedInstance.OnLogOut();
         }
 
+        public override void onCountryBlacklisted() {
+            CacheServerManager.SharedInstance.SetCountryBlacklisted(true);
+            GameServerManager.SharedInstance.OnLogOut();
+        }
+
+
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
 			Debug.TaggedLog(tag, "onUserBlackListed");
@@ -541,6 +547,17 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.PendingTransactions_Confirm, parameters, callback);
     }
 
+    public override void SetLanguage(string serverCode, ServerCallback onDone)
+    {
+        JSONNode json = new JSONClass();
+        json["language"] = serverCode;
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+
+        Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);        
+    }
+
     override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
 	}
@@ -706,6 +723,7 @@ public class GameServerManagerCalety : GameServerManager {
         TrackLoading,
         PendingTransactions_Get,
         PendingTransactions_Confirm,
+        Language_Set,
 
         GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
@@ -1152,6 +1170,17 @@ public class GameServerManagerCalety : GameServerManager {
                     // progress                 
                 }
                 break;
+                case ECommand.Language_Set: {
+                    JSONClass data = null;
+                    string paramsAsString = parameters["body"];
+                    if (!string.IsNullOrEmpty(paramsAsString))
+                    {
+                        data = JSON.Parse(paramsAsString) as JSONClass;
+                    }
+                   
+                    Command_SendCommandAsGameAction(COMMAND_LANGUAGE_SET, data, false);
+                }
+                break;
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
@@ -1551,6 +1580,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
+    private const string COMMAND_LANGUAGE_SET = "language";
 
     /// <summary>
     /// Initialize Calety's NetworkManager.
@@ -1576,7 +1606,8 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);                
+        nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_LANGUAGE_SET, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
         nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);

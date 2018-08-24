@@ -1,6 +1,6 @@
 // MenuInterstitialPopupsController.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 22/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -31,6 +31,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private float m_waitTimeOut;
 
 	private PopupController m_currentPopup = null;
+	private bool m_checkingConnection = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -42,6 +43,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		m_checkingConnection = false;
 	}
 
 	/// <summary>
@@ -55,7 +57,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 	private void Update() {
 		if (m_waitForCustomPopup) {
-			if (!m_popupDisplayed) {				
+			if (!m_popupDisplayed) {
 				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
@@ -81,9 +83,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(m_popupDisplayed) return;
 
 		// Is the last accepted version the same as the current one?
-		if(PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION) {
+		if(PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION) {
 			Debug.Log("<color=RED>LEGAL</color>");
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupTermsAndConditions.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupConsentLoading.PATH);
 			m_popupDisplayed = true;
 		}
 	}
@@ -98,13 +100,56 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				m_waitTimeOut = 5f;
 				BusyScreen.Show(this, false);
 
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(LocalizationManager.SharedInstance.Culture.TwoLetterISOLanguageName);
+				string langServerCode = "en";
+				DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, LocalizationManager.SharedInstance.GetCurrentLanguageSKU());
+				if(langDef != null) {
+					langServerCode = langDef.GetAsString("serverCode", langServerCode);
+				}
+				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}
 			}
 		}
 	}
+
+    private void CheckShark()
+    {
+		// Don't show if a more important popup has already been displayed in this menu loop
+		if(m_popupDisplayed) return;
+
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN) return;
+
+		string sharkPetSku = PopupSharkPetReward.PET_SKU;
+        if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
+        {
+            // Check if hungry shark is installed
+            if (IsHungrySharkGameInstalled())
+            {
+                // Unlock pet
+                UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
+
+                // Show popup
+				PopupController popup = PopupManager.OpenPopupInstant(PopupSharkPetReward.PATH);
+                m_popupDisplayed = true;
+            }
+        }
+    }
+
+    private bool IsHungrySharkGameInstalled()
+    {
+        bool ret = false;
+#if UNITY_EDITOR
+		ret = true;
+#elif UNITY_ANDROID
+        ret = PlatformUtils.Instance.ApplicationExists("com.fgol.HungrySharkEvolution");
+#elif UNITY_IOS
+		ret = PlatformUtils.Instance.ApplicationExists("hungrysharkevolution://");
+#endif
+        return ret;
+    }
+
 
 	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
@@ -119,6 +164,39 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		BusyScreen.Hide(this, true);
 	}
+
+    /// <summary>
+    /// Checks the interstitial ads.
+    /// </summary>
+    private void CheckInterstitialAds()
+    {
+        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() )
+        {
+            if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
+            {
+                // Lets be loading friendly
+                StartCoroutine( LaunchInterstitial() );
+            }
+            else
+            {
+                GameAds.instance.ReduceRunsToInterstitial();
+            }
+        }
+    }
+
+    IEnumerator LaunchInterstitial()
+    {
+        yield return new WaitForSeconds(0.25f);
+        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
+    }
+
+    private void InterstitialCallback( bool rewardGiven )
+    {
+        if ( rewardGiven )
+        {
+            GameAds.instance.ResetRunsToInterstitial();
+        }
+    }
 
 	/// <summary>
 	/// Checks whether the Rating popup must be opened or not and does it.
@@ -159,6 +237,46 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			}
 		}
 	}
+	private void CheckSilentNotification() {
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed)
+			return;
+
+		if(PlayerPrefs.GetInt(HDNotificationsManager.SILENT_FLAG) == 1 && !m_checkingConnection) 
+		{
+			if(Application.internetReachability == NetworkReachability.NotReachable) {
+				ShowGoOnlinePopup();
+				PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
+			} else {
+				m_checkingConnection = true;
+				GameServerManager.SharedInstance.CheckConnection( ConnectionCallback );
+			}
+		}
+	}
+
+	private void ConnectionCallback( FGOL.Server.Error _error) {
+		if(_error != null) {
+			// if there was a connection error show popup
+			ShowGoOnlinePopup();			
+		}
+		PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
+		m_checkingConnection = false;
+	}
+
+	private void ShowGoOnlinePopup() {
+		IPopupMessage.Config config = IPopupMessage.GetConfig();
+		config.TextType = IPopupMessage.Config.ETextType.DEFAULT;
+		config.TitleTid = "TID_GO_ONLINE_FOR_TOURNAMENTS_TITLE";
+		config.ShowTitle = true;
+		config.MessageTid = "TID_GO_ONLINE_FOR_TOURNAMENTS_BODY";
+		config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.Close;
+		config.ConfirmButtonTid = "TID_GEN_OK";
+		config.OnConfirm = null;
+		config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+		config.IsButtonCloseVisible = true;
+
+		PopupManager.PopupMessage_Open(config);		
+	}
 
 	/// <summary>
 	/// Checks whether the Survey popup must be opened or not and does it.
@@ -192,10 +310,28 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     private void CheckPromotedIAPs() {
         if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
-            PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+			m_currentPopup = PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
             m_popupDisplayed = true;
         }
     }
+
+	/// <summary>
+	/// Checks whether the Pre-Registration Rewards popup must be displayed or not and does it.
+	/// </summary>
+	private void CheckPreRegRewards() {
+		// [AOC] As of version 1.12 (1st update post-WWL), don't give the pre-reg rewards anymore
+		return;
+
+		// Ignore if it has already been triggered
+		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
+
+		// Minimum amount of runs must be completed
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
+
+		// Just launch the popup
+		m_currentPopup = PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
+		m_popupDisplayed = true;
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -211,33 +347,34 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
-
-				// 1. Terms and Conditions
 				//CheckTermsAndConditions();
-
 				CheckCustomizerPopup();
 			} break;
 
 		case MenuScreen.DRAGON_SELECTION: {
+				// Coming from any screen (high priority)
+				CheckPreRegRewards();
+				CheckShark();
+
+				// Coming from specific screens
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-						// 1. Rating
+            			CheckInterstitialAds();
 						CheckRating();
-
-						// 2. Survey
 						CheckSurvey();
-
-						// 3. Featured Offer
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
 					} break;
 
 					// Coming from PLAY screen
 					case MenuScreen.PLAY: {
-						// 1. Featured Offer
+						CheckSilentNotification();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
 					} break;
 				}
+
+				// Coming from any screen (low priority)
+				// Nothing for now
 			} break;
 		}
 	}

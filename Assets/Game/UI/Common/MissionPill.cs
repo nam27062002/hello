@@ -311,9 +311,12 @@ public class MissionPill : MonoBehaviour {
 	/// Refresh the timers part of the cooldown. Optimized to be called every frame.
 	/// </summary>
 	private void RefreshCooldownTimers() {
-		// Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
-		// Cooldown remaining time
-		if(m_cooldownText != null) m_cooldownText.text = TimeUtils.FormatTime(m_mission.cooldownRemaining.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
+        // Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
+        // Cooldown remaining time
+        if (m_cooldownText != null) {
+            double seconds = m_mission.cooldownRemaining.TotalSeconds;
+            m_cooldownText.text = TimeUtils.FormatTime(seconds, (seconds < 60f)? TimeUtils.EFormat.ABBREVIATIONS : TimeUtils.EFormat.DIGITS, 3);
+        }
 
 		// Cooldown bar
 		if(m_cooldownBar != null) m_cooldownBar.normalizedValue = m_mission.cooldownProgress;

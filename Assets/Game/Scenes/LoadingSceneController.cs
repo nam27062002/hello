@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -150,6 +151,72 @@ public class LoadingSceneController : SceneController {
 
     GDPRListener m_gdprListener = new GDPRListener();
 
+    Dictionary<string, int> m_ageRestrictions = new Dictionary<string, int>()
+    {
+          {"US", 13},
+          {"AT", 16},
+          {"BE", 16},
+          {"BG", 16},
+          {"HR", 16},
+          {"CY", 16},
+          {"CZ", 16},
+          {"DK", 16},
+          {"EE", 16},
+          {"FI", 16},
+          {"FR", 16},
+          {"DE", 16},
+          {"GR", 16},
+          {"HU", 16},
+          {"IE", 16},
+          {"IT", 16},
+          {"LV", 16},
+          {"LT", 16},
+          {"LU", 16},
+          {"MT", 16},
+          {"NL", 16},
+          {"PL", 16},
+          {"PT", 16},
+          {"RO", 16},
+          {"SK", 16},
+          {"SI", 16},
+          {"ES", 16},
+          {"SE", 16},
+          {"GB", 16}
+    };
+
+    Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
+    {
+        {"AT", true},
+        {"BE", true},
+        {"BG", true},
+        {"HR", true},
+        {"CY", true},
+        {"CZ", true},
+        {"DK", true},
+        {"EE", true},
+        {"FI", true},
+        {"FR", true},
+        {"DE", true},
+        {"GR", true},
+        {"HU", true},
+        {"IE", true},
+        {"IT", true},
+        {"LV", true},
+        {"LT", true},
+        {"LU", true},
+        {"MT", true},
+        {"NL", true},
+        {"PL", true},
+        {"PT", true},
+        {"RO", true},
+        {"SK", true},
+        {"SI", true},
+        {"ES", true},
+        {"SE", true},
+        {"GB", true}
+    };
+    
+
     //------------------------------------------------------------------//
     // MEMBERS															//
     //------------------------------------------------------------------//
@@ -180,6 +247,7 @@ public class LoadingSceneController : SceneController {
         CREATING_SINGLETONS,
         WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
+        SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
@@ -213,7 +281,6 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
-		FontManager.instance.Init();
     }    
 
 	/// <summary>
@@ -325,6 +392,16 @@ public class LoadingSceneController : SceneController {
 			// No language was defined, load default system language
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
+
+        // If language sku not found or not enabled in current platform, use english instead
+        DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, strLanguageSku);
+        if(langDef == null
+        || (Application.platform == RuntimePlatform.Android && !langDef.GetAsBool("android"))
+        || (Application.platform == RuntimePlatform.IPhonePlayer && !langDef.GetAsBool("iOS"))) {
+            strLanguageSku = "lang_english";
+        }
+
+        // Initialize localization manager
 		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
@@ -337,6 +414,11 @@ public class LoadingSceneController : SceneController {
     /// Called every frame.
     /// </summary>
     void Update() {       
+
+        if (m_state != State.SHOWING_COUNTRY_BLACKLISTED_POPUP &&
+            CacheServerManager.SharedInstance.IsCountryBlacklisted()) {
+            SetState(State.SHOWING_COUNTRY_BLACKLISTED_POPUP);
+        } 
 
     	switch( m_state )
     	{
@@ -380,18 +462,29 @@ public class LoadingSceneController : SceneController {
                 if (m_gdprListener.m_infoRecievedFromServer)
                 {
                     string country = m_gdprListener.m_userCountry;
-                        // Recieved values are not good
-                    if ( !GDPRListener.IsValidCountry(country) )
+                    // Recieved values are not good
+                    if ( !GDPRListener.IsValidCountry(country))
                     {
-                        // country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
-                            // Cached Values are not good
-                        // if ( !GDPRListener.IsValidCountry(country) ) 
+
+                        string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
+                        int localeAge = -1;
+                        bool localeRequiresConsent = false;
+                        if (m_ageRestrictions.ContainsKey(localeCountryCode))
                         {
-                            // We set the most restrictive path
-                            GDPRManager.SharedInstance.SetDataFromLocal("Unknown", 13, false);
-                        }    
+                            localeAge = m_ageRestrictions[localeCountryCode];
+                        }
+                        if (m_requiresConsent.ContainsKey(localeCountryCode))
+                        {
+                            localeRequiresConsent = m_requiresConsent[localeCountryCode];
+                        }
+                        Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeAge + " Consent: " + localeRequiresConsent +" </color>");
+                        GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeAge, localeRequiresConsent, false);
                     }
-                    Debug.Log("<color=BLUE>"+country+"</color>");
+                    else
+                    {
+                        Debug.Log("<color=YELLOW>"+country+"</color>");
+                    }
+                    
                     SetState( State.WAITING_TERMS );
                 }
             }break;
@@ -422,6 +515,9 @@ public class LoadingSceneController : SceneController {
                     SetState(State.WAITING_SAVE_FACADE);
                 }
             }
+            break;
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {}
             break;
             default:
     		{
@@ -465,10 +561,25 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
+		// Actions to perform when leaving a specific state
+		switch(m_state) {
+			case State.LOADING_RULES: {
+				// Initialize fonts before showing any other popup
+				// Do it here because we need the Android permissions to be given and the rules to be loaded
+				FontManager.instance.Init();
+			} break;
+		}
+
+		// Switch state
         m_state = state;
 
+		// Actions to perform when entering a specific state
         switch (state)
-        {            
+        {           
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {
+                PopupManager.OpenPopupInstant(PopupCountryBlacklisted.PATH);
+            }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
@@ -481,17 +592,27 @@ public class LoadingSceneController : SceneController {
                 }break;
             case State.WAITING_TERMS:
             {
-				if (PlayerPrefs.GetInt(PopupTermsAndConditions.VERSION_PREFS_KEY) != PopupTermsAndConditions.LEGAL_VERSION 
-					|| GDPRManager.SharedInstance.IsAgePopupNeededToBeShown() 
-					|| GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown() 
-                    )
+				bool termsNeeded = PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION;
+				bool ageNeeded = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();
+				bool consentNeeded = GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown();
+				if(termsNeeded || ageNeeded || consentNeeded)
                 {
-                    Debug.Log("<color=RED>LEGAL</color>");
-					PopupController popupController = PopupManager.LoadPopup(PopupTermsAndConditions.PATH);
-					popupController.GetComponent<PopupTermsAndConditions>().Init(PopupTermsAndConditions.Mode.LOADING_FUNNEL);
-                    popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					// Different popup depending on requirement
+					string popupPath = string.Empty;
+					if(ageNeeded || consentNeeded) {
+						Debug.Log("<color=RED>LEGAL COPPA / GDPR</color>");
+						popupPath = PopupConsentLoadingCoppaGdpr.PATH_COPPA_GDPR;
+					} else {
+						Debug.Log("<color=RED>LEGAL ROTW</color>");
+						popupPath = PopupConsentLoading.PATH;
+					}
+
+					// Open popup
+					PopupController popupController = PopupManager.LoadPopup(popupPath);
+					popupController.GetComponent<PopupConsentLoading>().Init();
+					popupController.OnClosePostAnimation.AddListener(OnTermsDone);
 					popupController.Open();
-                    HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
+					HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
                 }
                 else
                 {

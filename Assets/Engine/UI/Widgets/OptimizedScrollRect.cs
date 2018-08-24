@@ -428,7 +428,7 @@ public class OptimizedScrollRect<T, D> : ScrollRect where T : ScrollRectItem<D> 
 
 	public void AnimateVisiblePills() {
 		int i = m_firstVisibleItemIndex;
-		while (m_slotsOfPills[i] != null) {
+		while (m_slotsOfPills[i] != null && i >= 0 && i < m_slotsOfPills.Count) {
 			m_slotsOfPills[i].Animate(i - m_firstVisibleItemIndex);
 			i++;
 		}

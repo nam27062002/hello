@@ -17,10 +17,12 @@
         eggsCollected = 0;
         timePlayed = 0;
         iapPurchaseMade = false;
+
+        UserProfile.Reset();
     }
 
     public override void Load()
-    {        
+    {
         if (UserProfile == null)
         {
             UserProfile = new UserProfile();
@@ -29,10 +31,10 @@
         UserProfile.Load();
 
         dragonsOwned = UserProfile.GetNumOwnedDragons();
-        eggsCollected = UserProfile.eggsCollected;                
+        eggsCollected = UserProfile.eggsCollected;
 
         timePlayed = UserProfile.timePlayed;
-        iapPurchaseMade = UserProfile.iapPurchaseMade;                        
+        iapPurchaseMade = UserProfile.iapPurchaseMade;
     }
 
     public override void Save()

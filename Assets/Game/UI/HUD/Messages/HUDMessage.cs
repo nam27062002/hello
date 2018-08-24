@@ -199,6 +199,12 @@ public class HUDMessage : MonoBehaviour {
 		m_hasEverPerformedAction = false;
 	}
 
+	private void Start()
+	{
+		  // Deactivate all childs
+        SetOthersVisible( false );
+	}
+
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
@@ -240,6 +246,18 @@ public class HUDMessage : MonoBehaviour {
 			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
+    
+    public void SetOthersVisible( bool _visible)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(_visible);
+        }
+        TextMeshProUGUI text = GetComponent<TextMeshProUGUI>();
+        if (text != null)
+            text.enabled = _visible;
+    }
+    
 
 	/// <summary>
 	/// Component disabled.
@@ -381,7 +399,10 @@ public class HUDMessage : MonoBehaviour {
 			if(!m_messageSystem.RequestShow(this)) return false;
 		}
 
-		// All checks passed! Show the message
+        // Activate
+        SetOthersVisible(true);
+        
+        // All checks passed! Show the message
 		// Update internal state
 		m_visible = true;
 
@@ -398,10 +419,20 @@ public class HUDMessage : MonoBehaviour {
 		return true;
 	}
 
+    public void OnHideMessage()
+    {
+        if (m_hideMode == HideMode.ANIMATION)
+        {
+            Hide(true);
+        }
+        // Deactivate all
+        SetOthersVisible(false);
+    }
+
 	/// <summary>
 	/// Trigger the "out" animation.
 	/// </summary>
-	virtual public void Hide() {
+	virtual public void Hide( bool _outDone = false ) {
 		// Skip if already inactive
 		if(!m_visible) return;
 
@@ -410,7 +441,8 @@ public class HUDMessage : MonoBehaviour {
 		m_hideTimer = 0f;
 
 		// Trigger anim
-		m_anim.SetTrigger( GameConstants.Animator.OUT );
+        if ( !_outDone )
+		    m_anim.SetTrigger( GameConstants.Animator.OUT );
 
 		// Notify
 		OnHide.Invoke(this);
@@ -422,6 +454,8 @@ public class HUDMessage : MonoBehaviour {
 				m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
 			} break;
 		}
+
+        
 	}
 
 	/// <summary>
