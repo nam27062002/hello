@@ -1143,7 +1143,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_Crash(bool isFatal, string errorType, string errorMessage) {
-        Track_Crash(isFatal, errorType, errorMessage);
+        // Marked as deprecated for now
+        //Track_Crash(isFatal, errorType, errorMessage);
     }
 
     public override void Notify_OfferShown(bool onDemand, string itemID) {
