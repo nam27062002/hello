@@ -10,7 +10,7 @@ public class SeasonalSpawner : Spawner
 		public string m_season;
 
 		[EntitySeasonalPrefabListAttribute]
-		public string m_spawner;
+		public string[] m_spawners;
 	}
 
 	public List<SeasonalConfig> m_spawnConfigs = new List<SeasonalConfig>();
@@ -21,7 +21,12 @@ public class SeasonalSpawner : Spawner
 		for( int i = 0; i<m_spawnConfigs.Count; ++i ){
 			if ( m_spawnConfigs[i].m_season.Equals( SeasonManager.activeSeason ) )
 			{
-				m_entityPrefabList[0].name = m_spawnConfigs[i].m_spawner;
+                int count = m_spawnConfigs[i].m_spawners.Length;
+                m_entityPrefabList.Resize(count);
+
+                for (int j = 0; j < count; ++j) {
+                    m_entityPrefabList[j].name = m_spawnConfigs[i].m_spawners[j];
+                }
 				season = true;
 			}
 		}
