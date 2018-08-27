@@ -8,7 +8,7 @@ public class PetProjectile : Projectile {
     [SerializeField] private LayerMask m_groundMask = 0;
 
 
-    protected override void OnTriggerEnter(Collider _other) {
+    public override void OnTriggerEnter(Collider _other) {
         if (m_state == State.Shot) {
             if (m_machine == null || !m_machine.IsDying()) {
                 m_hitCollider = _other;

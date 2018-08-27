@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour, IProjectile {
+public class Projectile : TriggerCallbackReceiver, IProjectile {
 
 	private enum MotionType {
 		Linear = 0,
@@ -49,11 +48,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
-	[SerializeField] private ParticleData m_onAttachParticle;
-	[SerializeField] private ParticleData m_onChargeParticle;
-	[SerializeField] private ParticleData m_onHitParticle;
-	[SerializeField] private ParticleData m_onEatParticle;
-	[SerializeField] private ParticleData m_onBurnParticle;
+	[SerializeField] private ParticleData m_onAttachParticle = null;
+    [SerializeField] private ParticleData m_onChargeParticle = null;
+    [SerializeField] private ParticleData m_onHitParticle = null;
+    [SerializeField] private ParticleData m_onEatParticle = null;
+    [SerializeField] private ParticleData m_onBurnParticle = null;
 	[SerializeField] private bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
@@ -124,11 +123,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_onHitParticle.CreatePool();
 		}
 
+        m_onEatParticle.CreatePool();
+        m_onBurnParticle.CreatePool();
 		m_onChargeParticle.CreatePool();
 		m_onAttachParticle.CreatePool();
-		m_onEatParticle.CreatePool();
-		m_onBurnParticle.CreatePool();
-
+		
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
@@ -381,7 +380,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 
-	protected virtual void OnTriggerEnter(Collider _other) {
+	public override void OnTriggerEnter(Collider _other) {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				m_hitCollider = _other;
@@ -395,6 +394,9 @@ public class Projectile : MonoBehaviour, IProjectile {
 			//Debug.Log(name + " >> " + _other.name);
 		}
 	}
+
+    public override void OnTriggerStay(Collider _other) { }
+    public override void OnTriggerExit(Collider _other) { }
 
 	public void OnEaten() {		
 		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);

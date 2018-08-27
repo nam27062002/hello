@@ -54,7 +54,7 @@ namespace AI {
 
 				m_transitionParam = new object[1];
 
-				m_collidersMask = 1<<LayerMask.NameToLayer("Ground") | 1<<LayerMask.NameToLayer("Obstacle");
+                m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PlayerOnlyCollisions");
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				base.OnInitialise();
