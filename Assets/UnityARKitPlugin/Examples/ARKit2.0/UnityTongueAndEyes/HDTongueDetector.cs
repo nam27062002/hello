@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class HDTongueDetector : MonoBehaviour 
 {
 	public FireBreathDynamic fireRushPrefab;
+	public float m_effectScale = 1.0f;
 	bool shapeEnabled = false;
 	bool fireEnabled = false;
 	Dictionary<string, float> currentBlendShapes;
@@ -36,6 +37,7 @@ public class HDTongueDetector : MonoBehaviour
 		if (enableTongue != fireEnabled) {
 			fireEnabled = enableTongue;
 			fireRushPrefab.EnableFlame (fireEnabled);
+			fireRushPrefab.setEffectScale (m_effectScale, m_effectScale);
 		}
 	}
 
