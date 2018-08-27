@@ -8,7 +8,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         Flying      = (1 << 2),
         Ghost       = (1 << 3),
         Goblin      = (1 << 4),
-        Humanoid    = (1 << 5),
+        Human       = (1 << 5),
         Machine     = (1 << 6),
         Witch       = (1 << 7)
     }
