@@ -40,6 +40,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	protected override void Awake() {
 		base.Awake();
 
+		if(!Application.isPlaying) return;
+
 		m_currentFilter = ALL_FILTERS;
 		m_activeFilters = new Dictionary<string, bool>();
 		m_filterData = new Dictionary<string, List<ScrollRectItemData<PetPillData>>>();
@@ -61,6 +63,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	protected override void OnDestroy() {
 		base.OnDestroy();
 
+		if(!Application.isPlaying) return;
+
 		// Ignore buttons state changes
 		for(int i = 0; i < m_filterButtons.Length; i++) {
 			m_filterButtons[i].OnFilterToggled.RemoveListener(OnFilterButtonToggled);
@@ -72,6 +76,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+		if(!Application.isPlaying) return;
+
 		// If dirty, apply filters
 		if (m_dirty) {
 			ApplyFilters();
@@ -85,6 +91,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	public void Setup(DragonData _dragon) {
+		if(!Application.isPlaying) return;
+
 		foreach(List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {
 			items.Clear();
 		}
@@ -119,6 +127,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 
 
 	public void FocusOn(string _sku, bool _unlock) {
+		if(!Application.isPlaying) return;
+
 		List<ScrollRectItemData<PetPillData>> items = m_filterData[m_currentFilter];
 		for (int i = 0; i < items.Count; ++i) {
 			if (items[i].data.def.sku == _sku) {
@@ -132,6 +142,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	}
 
 	private void SortDefinitions() {
+		if(!Application.isPlaying) return;
+
 		Dictionary<string, int> filterOrder = new Dictionary<string, int>();
 		for(int i = 0; i < m_filterButtons.Length; i++) {
 			filterOrder[m_filterButtons[i].filterName] = i;
@@ -243,6 +255,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	}
 
 	private void ResetFilters() {
+		if(!Application.isPlaying) return;
+
 		for (int i = 0; i < m_filterButtons.Length; ++i) {			
 			m_activeFilters[m_filterButtons[i].filterName] = true;
 		}
@@ -251,6 +265,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	}
 
 	private void ApplyFilters() {
+		if(!Application.isPlaying) return;
+
 		m_ignoreToggleEvents = true;	// Skip events
 		for (int i = 0; i < m_filterButtons.Length; ++i) {
 			PetFilterButton filter = m_filterButtons[i];
@@ -264,6 +280,8 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 
 
 	private void UpdateScrollItems() {
+		if(!Application.isPlaying) return;
+
 		Setup(m_pillPrefabs, m_filterData[m_currentFilter]);
 		if (string.IsNullOrEmpty(m_unlockingPet)) {			
 			AnimateVisiblePills();

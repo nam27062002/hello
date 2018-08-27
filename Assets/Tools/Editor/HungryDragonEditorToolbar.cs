@@ -222,6 +222,33 @@ public class HungryDragonEditorToolbar : EditorWindow {
 				}
 			}
 
+			// iPhone X Overlay
+			if(GUILayout.Button(new GUIContent("X", "iPhone X Overlay"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				// Aux vars
+				string fileName = "PF_iPhoneXOverlay";
+				string path = "Assets/Tools/UITools/iPhoneXOverlay/Prefabs/" + fileName + ".prefab";
+
+				// Is prefab already instantiated?
+				GameObject inst = GameObject.Find(fileName);
+				if(inst != null) {
+					// Delete existing instance
+					if(Application.isPlaying) {
+						GameObject.Destroy(inst);
+					} else {
+						GameObject.DestroyImmediate(inst);
+					}
+				} else {
+					// Load prefab and create an instance
+					GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+					if(prefab != null) {
+						inst = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+						inst.name = fileName;
+					} else {
+						Debug.LogError(Color.red.Tag("Couldn't load prefab " + path));
+					}
+				}
+			}
+
 			// Multipurpose button
 			if(GUILayout.Button(new GUIContent("MR", "Find missing and/or null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				FindMissingReferencesTool.FindMissingReferences(false/*, 
