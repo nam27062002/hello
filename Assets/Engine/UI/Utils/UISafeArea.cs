@@ -14,6 +14,7 @@ using UnityEngine;
 //----------------------------------------------------------------------------//
 /// <summary>
 /// Utility class to define a safe area.
+/// Safe area is defined in Canvas reference resolution.
 /// </summary>
 [System.Serializable]
 public class UISafeArea {
@@ -42,18 +43,22 @@ public class UISafeArea {
 	/// <summary>
 	/// Parametrized constructor
 	/// </summary>
-	/// <param name="_bottom">Bottom margin.</param>
 	/// <param name="_left">Left margin.</param>
-	/// <param name="_right">Right margin.</param>
 	/// <param name="_top">Top margin.</param>
-	public UISafeArea(float _bottom, float _left, float _right, float _top) {
-		this.bottom = _bottom;
+	/// <param name="_right">Right margin.</param>
+	/// <param name="_bottom">Bottom margin.</param>
+	public UISafeArea(float _left, float _top, float _right, float _bottom) {
 		this.left = _left;
-		this.right = _right;
 		this.top = _top;
+		this.right = _right;
+		this.bottom = _bottom;
 	}
 
+	/// <summary>
+	/// Get a string representation of this safe area.
+	/// </summary>
+	/// <returns>A <see cref="T:System.String"/> that represents this <see cref="T:UISafeArea"/>.</returns>
 	public string ToString() {
-		return bottom + ", " + left + ", " + right + ", " + top;
+		return left + ", " + top + ", " + right + ", " + bottom;
 	}
 }
