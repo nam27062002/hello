@@ -18,6 +18,11 @@ ModelImporter:
     100024: Dragon_R_Eye
     100026: Dragon_R_Up_EyeLead
     100028: Dragon_R_Up_EyeLead 1
+    100030: Dragon_ctrlsss
+    100032: Dragon_L_Down_EyeLead
+    100034: Dragon_L_Pupil
+    100036: Dragon_L_Up_EyeLead
+    100038: Dragon_R_Pupil
     400000: //RootNode
     400002: Dragon_Head
     400004: Dragon_Head_Ctrl
@@ -33,7 +38,12 @@ ModelImporter:
     400024: Dragon_R_Eye
     400026: Dragon_R_Up_EyeLead
     400028: Dragon_R_Up_EyeLead 1
-    7400000: Take 001
+    400030: Dragon_ctrlsss
+    400032: Dragon_L_Down_EyeLead
+    400034: Dragon_L_Pupil
+    400036: Dragon_L_Up_EyeLead
+    400038: Dragon_R_Pupil
+    7400000: Blink
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -61,7 +71,61 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Blink
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 9
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Dragon_Hip
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_L_Down_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_L_Pupil
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_L_Up_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Down_EyeLead
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Pupil
+        weight: 1
+      - path: Dragon_Hip/Dragon_ctrlsss/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Up_EyeLead
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
