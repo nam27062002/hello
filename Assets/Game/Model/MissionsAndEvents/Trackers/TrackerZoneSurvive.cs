@@ -33,7 +33,7 @@ public class TrackerZoneSurvive : TrackerBaseTime {
 		// Subscribe to external events
 		m_targetSkus = _targetSkus;
 
-		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnZone);
+		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
 	}
 
 	/// <summary>
@@ -52,7 +52,7 @@ public class TrackerZoneSurvive : TrackerBaseTime {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnZone);
+		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnZone);
 
 		// Call parent
 		base.Clear();
@@ -74,13 +74,15 @@ public class TrackerZoneSurvive : TrackerBaseTime {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	private void OnZone(bool toggle, ZoneTrigger zone, bool _firstTime){
+	private void OnZone(bool toggle, ZoneTrigger zone){
 		if (toggle) {
-			if (m_targetSkus.Contains(zone.m_zoneId))
-				m_updateTime = true;
+			if (m_targetSkus.Contains(zone.m_zoneId)){
+                m_updateTime = true;
+            }
 		} else {
-			if (m_targetSkus.Contains(zone.m_zoneId))
+			if (m_targetSkus.Contains(zone.m_zoneId)){
 				m_updateTime = false;
+            }
 		}
 	}
 }
