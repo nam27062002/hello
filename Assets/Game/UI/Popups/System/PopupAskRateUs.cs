@@ -17,7 +17,7 @@ public class PopupAskRateUs : MonoBehaviour {
 		DeviceUtilsManager.SharedInstance.OpenMarketForRating();
 #endif
 
-        Track_Result(HDTrackingManager.ERateThisAppResult.Yes);
+        Track_Result(HDTrackingManager.ERateThisAppResult.Yes);        
 
         // Set to never ask again
         Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
@@ -57,14 +57,7 @@ public class PopupAskRateUs : MonoBehaviour {
 	}
 
     private void Track_Result(HDTrackingManager.ERateThisAppResult result)
-    {
-        int dragonProgression = 0;
-        DragonData dragonData = DragonManager.currentDragon;
-        if (dragonData != null)
-        {
-            dragonProgression = UsersManager.currentUser.GetDragonProgress(dragonData);             
-        }        
-
-        HDTrackingManager.Instance.Notify_RateThisApp(result, dragonProgression);
+    {     
+        HDTrackingManager.Instance.Notify_RateThisApp(result);
     }
 }

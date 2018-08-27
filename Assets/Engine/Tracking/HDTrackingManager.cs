@@ -483,7 +483,7 @@ public class HDTrackingManager
         Later
     };
 
-    public virtual void Notify_RateThisApp(ERateThisAppResult result, int dragonProgression) {}
+    public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
     #endregion
 
     #region log

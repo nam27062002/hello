@@ -1183,7 +1183,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_TournamentStep(tournamentSku, "Enter", Track_UserCurrencyToString(currency));
     }
 
-    public override void Notify_RateThisApp(ERateThisAppResult result, int dragonProgression) {
+    public override void Notify_RateThisApp(ERateThisAppResult result) {
+        int dragonProgression = 0;
+        DragonData dragonData = DragonManager.currentDragon;
+        if (dragonData != null)
+        {
+            dragonProgression = UsersManager.currentUser.GetDragonProgress(dragonData);
+        }
+
         Track_RateThisAppShown(result, dragonProgression);
     }
     #endregion
