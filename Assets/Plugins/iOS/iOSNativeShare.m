@@ -70,6 +70,7 @@ void ShowAlertMessage (NSString *title, NSString *message){
 	
 	if(mText != NULL && mText.length > 0){
         MyActivityItemProvider *activityItem = [[MyActivityItemProvider alloc] initWithPlaceholderItem:mText];
+        activityItem.hasImage = mfilePath != NULL && mfilePath.length > 0;
         [items addObject:activityItem];
 		// [items addObject:mText];
 	}
