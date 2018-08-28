@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: goblin_box_01_M
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: DARKEN EMISSIVE_NONE FOG OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
+  m_ShaderKeywords: DARKEN EMISSIVE_BLINK FOG OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
     _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
@@ -69,7 +69,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive: 0
+    - Emissive: 1
+    - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 0
@@ -82,7 +83,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 0
-    - _EmissivePower: 0
+    - _EmissivePower: 0.5
+    - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
     - _EnableCutoff: 0
@@ -91,8 +93,11 @@ Material:
     - _EnableFog: 1
     - _EnableLightmapContrast: 0
     - _EnableNormalMap: 0
+    - _EnableNormalwAsSpecular: 0
     - _EnableOpaqueAlpha: 1
     - _EnableSpecular: 1
+    - _EnableTint: 0
+    - _EnableWaveEmission: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -107,11 +112,15 @@ Material:
     - _ReflectionAmount: 0.111
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPower: 20
+    - _SpecularPower: 3.94
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaveEmission: 0.1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecularDir: {r: 0.047210075, g: 0.22930615, b: -0.97220874, a: 0}
+    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Panning: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecularDir: {r: -0.16977356, g: 0.2546603, b: -0.95201105, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

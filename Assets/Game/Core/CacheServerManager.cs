@@ -36,7 +36,8 @@ public class CacheServerManager {
     {
 		SetUsingVersion(version);
 		LoadObsoleteVersion();
-		ClearOldVersions();
+        ClearOldVersions();
+        LoadCountryBlacklisted();
     }
 
     public void SetUsingVersion( string version)
@@ -224,9 +225,32 @@ public class CacheServerManager {
 		return CacheServerManager.IsVersionOlderOrEqual( appVersion, m_obsoleteVersion );
 	}
 
-	#region saving_and_loading
+    #region country_blacklisted
+    private const string COUNTRY_BLACKLISTED_KEY = "country_blacklisted";
+    private bool m_isCountryBlaclisted = false;
 
-	string GetFilePath( string key, bool versioned )
+    public void LoadCountryBlacklisted() {
+        m_isCountryBlaclisted = false;
+     /*   if (HasKey(COUNTRY_BLACKLISTED_KEY)) {
+            string str = GetVariable(COUNTRY_BLACKLISTED_KEY);
+            m_isCountryBlaclisted = bool.Parse(str);
+        }*/
+    }
+
+    public void SetCountryBlacklisted(bool _value) {
+        m_isCountryBlaclisted = _value;
+    //   SetVariable(COUNTRY_BLACKLISTED_KEY, _value.ToString());
+    }
+
+    public bool IsCountryBlacklisted() {
+        return m_isCountryBlaclisted;
+    }
+    #endregion
+
+
+    #region saving_and_loading
+
+    string GetFilePath( string key, bool versioned )
 	{
 		string path = "";
 		if ( versioned )

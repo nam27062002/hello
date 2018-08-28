@@ -70,14 +70,16 @@ public class PopupController : MonoBehaviour {
 	/// Destructor
 	/// </summary>
 	protected virtual void OnDestroy() {
-		// Dispatch message - it could be problematic using "this" at this point
-		Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_DESTROYED, this);
+        if (ApplicationManager.IsAlive) {
+            // Dispatch message - it could be problematic using "this" at this point
+            Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_DESTROYED, this);
 
-		// Clear all events
-		OnOpenPreAnimation.RemoveAllListeners();
-		OnOpenPostAnimation.RemoveAllListeners();
-		OnClosePreAnimation.RemoveAllListeners();
-		OnClosePostAnimation.RemoveAllListeners();
+            // Clear all events
+            OnOpenPreAnimation.RemoveAllListeners();
+            OnOpenPostAnimation.RemoveAllListeners();
+            OnClosePreAnimation.RemoveAllListeners();
+            OnClosePostAnimation.RemoveAllListeners();
+        }
 	}
 
 	//------------------------------------------------------------------//

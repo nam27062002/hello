@@ -122,6 +122,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 
 	// Particle Pools
 	private PoolHandler m_pool = null;
+	public PoolHandler pool { get { return m_pool; }}
 	private List<Tween> m_activeTweens = new List<Tween>();
 	private bool m_activeTweensLock = false;
 

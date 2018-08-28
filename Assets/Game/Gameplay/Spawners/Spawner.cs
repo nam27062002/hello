@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using AI;
 
 public class Spawner : AbstractSpawner {
@@ -60,12 +61,27 @@ public class Spawner : AbstractSpawner {
 		ReRoll
 	}
 
+
+	//-----------------------------------------------
+	// Class members and methods
+	//-----------------------------------------------
+	private static Dictionary<string, float> sm_overrideSpawnFrequency = new Dictionary<string, float>(); // entities that must be spawned more often
+	public static void AddSpawnFrequency(string _prefabName, float _percentage) {
+		sm_overrideSpawnFrequency[_prefabName] = _percentage;
+	}
+
+	public static void RemoveSpawnFrequency(string _prefabName) {
+		sm_overrideSpawnFrequency.Remove(_prefabName);
+	}
+
+
 	//-----------------------------------------------
 	// Properties
 	//-----------------------------------------------
 	[Separator("Entity")]	
 	[CommentAttribute("The entities will spawn on the coordinates of the Spawner, and will move inside the defined area. The spawner can create instances of multiple prefabs, spawning mixed groups (mix entities = true) or random groups each spawn (mix entities = false).")]
 	[SerializeField] private bool m_mixEntities = false;
+	[SerializeField] private bool m_forceHeterogeneityMix = false;
 	[SerializeField] public EntityPrefab[] m_entityPrefabList = new EntityPrefab[1];
 
 	[SerializeField] public RangeInt 	m_quantity = new RangeInt(1, 1);
@@ -117,6 +133,7 @@ public class Spawner : AbstractSpawner {
 
 	private PoolHandler[] m_poolHandlers;
 	private int[] m_poolHandlerIndex;
+	private bool[] m_hasbeenSpawned;
 
 	private string[] m_entitySku;
 	private EntityGoldMode[] m_entityGoldMode;
@@ -168,10 +185,13 @@ public class Spawner : AbstractSpawner {
 		}
 	}
 
-	protected override void OnStart() {
+	protected override void OnStart() {		
 		bool enabledByEvents = true;
+
 		if (m_eventOnly) {
-			enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
+			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
+				// Maybe only check if joined?
+			enabledByEvents = HDLiveEventsManager.instance.m_quest.IsRunning() && HDLiveEventsManager.instance.m_quest.m_isActive;
 		}
 
 		if (enabledByEvents) {
@@ -200,10 +220,16 @@ public class Spawner : AbstractSpawner {
 					m_entitySku = new string[GetMaxEntities()];
 					m_entityGoldMode = new EntityGoldMode[GetMaxEntities()];
 					m_poolHandlerIndex = new int[GetMaxEntities()];
+
 					for (int i = 0; i < m_entitySku.Length; i++) {
 						m_entitySku[i] = "";
 						m_entityGoldMode[i] = EntityGoldMode.ReRoll;
 						m_poolHandlerIndex[i] = 0;
+					}
+
+					m_hasbeenSpawned = new bool[m_entityPrefabList.Length];
+					for (int i = 0; i < m_hasbeenSpawned.Length; i++) {
+						m_hasbeenSpawned[i] = false;
 					}
 
 					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
@@ -219,6 +245,7 @@ public class Spawner : AbstractSpawner {
 					}                			
 
 					// adjust probabilities
+					// and check if this spawner has an invasion enabled
 					float probFactor = 0;
 					for (int i = 0; i < m_entityPrefabList.Length; i++) {
 						probFactor += m_entityPrefabList[i].chance;
@@ -248,6 +275,37 @@ public class Spawner : AbstractSpawner {
 						if (m_scale.max > 1.05f) m_scale.max = 1.05f;
 						if (m_scale.max < 0.95f) m_scale.max = 0.95f;
 
+						bool hasOverrideSpawnFreq = false;
+						float spawnFreqPercentage = 0f;
+
+						Dictionary<string, float>.Enumerator it = sm_overrideSpawnFrequency.GetEnumerator();
+						while (it.MoveNext() && !hasOverrideSpawnFreq) {
+							for (int i = 0; i < m_entityPrefabList.Length; i++) {
+								if (m_entityPrefabList[i].name.Contains(it.Current.Key)) {
+									hasOverrideSpawnFreq = true;
+									spawnFreqPercentage = it.Current.Value;
+									break;
+								}
+							}
+						}
+
+						if (hasOverrideSpawnFreq) {
+							m_spawnTime.min += m_spawnTime.min * spawnFreqPercentage / 100f;
+							m_spawnTime.max += m_spawnTime.max * spawnFreqPercentage / 100f;
+
+							for (int i = 0; i < m_activationTriggers.Length; ++i) {
+								m_activationTriggers[i].value += m_activationTriggers[i].value * spawnFreqPercentage / 100f;
+							}
+
+							for (int i = 0; i < m_activationKillTriggers.Length; ++i) {
+								float value = m_activationKillTriggers[i].value;
+								value += value * spawnFreqPercentage / 100f;
+								if (value < 1) {
+									value = 1;
+								}
+								m_activationKillTriggers[i].value = value;
+							}
+						}
 
 						RegisterInSpawnerManager();
 						SpawnerAreaManager.instance.Register(this);
@@ -357,7 +415,11 @@ public class Spawner : AbstractSpawner {
 
 	protected override string GetPrefabNameToSpawn(uint index) {
 		if (m_mixEntities) {
-			m_prefabIndex = GetPrefabIndex();
+			if (m_forceHeterogeneityMix) {
+				m_prefabIndex = GetPrefabIndexHeterogeneity();
+			} else {
+				m_prefabIndex = GetPrefabIndex();
+			}
 		}
 
 		m_poolHandlerIndex[index] = m_prefabIndex;
@@ -370,7 +432,7 @@ public class Spawner : AbstractSpawner {
 		float rand = Random.Range(0f, 100f);
 		float prob = 0;
 
-		for (i = 0; i < m_entityPrefabList.Length - 1; i++) {
+		for (i = 0; i < m_entityPrefabList.Length - 1; ++i) {
 			prob += m_entityPrefabList[i].chance;
 
 			if (rand <= prob) {
@@ -379,6 +441,31 @@ public class Spawner : AbstractSpawner {
 		}
 
 		return i;
+	}
+
+	private int GetPrefabIndexHeterogeneity() {
+		int fallback = -1;
+		float rand = Random.Range(0f, 100f);
+		float prob = 0;
+
+		for (int i = 0; i < m_entityPrefabList.Length; ++i) {
+			prob += m_entityPrefabList[i].chance;
+
+			if (!m_hasbeenSpawned[i]) {
+				fallback = i;
+				if (rand <= prob) {					
+					m_hasbeenSpawned[i] = true;
+					return i;
+				}
+			}
+		}
+
+		if (fallback < 0) {
+			return GetPrefabIndex();
+		} else {
+			m_hasbeenSpawned[fallback] = true;
+			return fallback;
+		}
 	}
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
@@ -392,7 +479,7 @@ public class Spawner : AbstractSpawner {
 		spawning.transform.localScale = Vector3.one * m_scale.GetRandom();
 	}
 
-	public virtual void ForceGolden( IEntity entity ){
+	public override void ForceGolden( IEntity entity ){
 		base.ForceGolden( entity );
 		int l = m_entities.Length;
 		for (int i = 0; i < l; ++i) {
@@ -436,7 +523,7 @@ public class Spawner : AbstractSpawner {
 			}
 
 			// Reroll the Golden chance
-			for (int i = 0; i < m_entityGoldMode.Length; ++i) {
+			for (int i = 0; i < GetMaxEntities(); ++i) {				
 				m_entityGoldMode[i] = EntityGoldMode.ReRoll;
 			}
 
@@ -449,6 +536,10 @@ public class Spawner : AbstractSpawner {
 			}
 		} else {
 			ResetSpawnTimer(); // instant respawn, because player didn't kill all the entities
+		}
+
+		for (int i = 0; i < m_hasbeenSpawned.Length; i++) {
+			m_hasbeenSpawned[i] = false;
 		}
 
 		if (m_readyToBeDisabled) {
@@ -604,17 +695,30 @@ public class Spawner : AbstractSpawner {
 		Gizmos.color = Colors.fuchsia;
 
 		if (m_homePosMethod == SpawnPointSeparation.Sphere) {
+			float angleOffset = (m_homePosLineRotation * Mathf.PI) / 180f;
 			float distance = m_homePosDistance.distance;
 
 			Gizmos.DrawWireSphere(transform.position, distance * 0.5f);
 			Gizmos.DrawWireSphere(transform.position, distance);
 
-			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.625f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.75f);
-			Gizmos.DrawWireSphere(transform.position, distance * 0.875f);
-		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
-			Quaternion rot = Quaternion.AngleAxis(m_homePosLineRotation, Vector3.forward);
+			Gizmos.color = Colors.WithAlpha(Colors.slateBlue, 0.85f);
+			for (int i = 0; i < m_quantity.max; ++i) {
+				float angle = angleOffset + (i * (2f * Mathf.PI) / m_quantity.max);
+				float d = distance * (0.5f + (0.25f * (i % 2)));
+
+				Vector3 vs = transform.position;
+				vs.x += d * Mathf.Cos(angle);
+				vs.y += d * Mathf.Sin(angle);
+
+				Vector3 ve = transform.position;
+				ve.x += distance * Mathf.Cos(angle);
+				ve.y += distance * Mathf.Sin(angle);
+
+				Gizmos.DrawLine(vs, ve);
+				Gizmos.DrawWireSphere(vs + (ve - vs) * 0.5f, 0.125f);
+			}
+		} else if (m_homePosMethod == SpawnPointSeparation.Line) {		
+			Quaternion rot = Quaternion.AngleAxis(m_homePosLineRotation, Vector3.forward);	
 			Vector3 start = rot * (Vector3.right * m_homePosDistance.min);
 			Vector3 end = rot * (Vector3.right * m_homePosDistance.max);
 
@@ -633,7 +737,7 @@ public class Spawner : AbstractSpawner {
 			Vector3 start_l2 = GameConstants.Vector3.zero;
 			Vector3 end_l2 = GameConstants.Vector3.zero;
 
-			Gizmos.color = Colors.WithAlpha(Colors.fuchsia, 0.5f);
+			Gizmos.color = Colors.WithAlpha(Colors.slateBlue, 0.85f);
 			for (int i = 0; i < m_quantity.max; ++i) {
 				start_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * i + rndArea) + Vector3.up * 0.125f) + transform.position;
 				end_l1 = rot * (Vector3.right * (m_homePosDistance.min + offset * (i + 1) - rndArea) + Vector3.up * 0.125f) + transform.position;
@@ -655,11 +759,12 @@ public class Spawner : AbstractSpawner {
 		float distance = m_homePosDistance.distance;
 
 		if (m_homePosMethod == SpawnPointSeparation.Sphere) {
-			float dAngle = (2f * Mathf.PI) / EntitiesToSpawn;
+			float angleOffset = (m_homePosLineRotation * Mathf.PI) / 180f;
+			float angle = angleOffset + (_index * (2f * Mathf.PI) / m_quantity.max);
 			float randomDistance = Random.Range(distance * (0.5f + (0.25f * (_index % 2))), distance);
 
-			v.x = randomDistance * 0.5f * Mathf.Cos(dAngle * _index);
-			v.y = randomDistance * 0.5f * Mathf.Sin(dAngle * _index);
+			v.x = randomDistance * Mathf.Cos(angle);
+			v.y = randomDistance * Mathf.Sin(angle);
 		} else if (m_homePosMethod == SpawnPointSeparation.Line) {
 			float offset = distance / EntitiesToSpawn;
 

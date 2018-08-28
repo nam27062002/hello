@@ -131,15 +131,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1936677295318468}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 387.64047, y: -78.978, z: 0.011}
+  m_LocalRotation: {x: -0, y: 0.74639416, z: -0, w: 0.66550416}
+  m_LocalPosition: {x: 479.72348, y: -72.41009, z: 0.011}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4162778207430378}
   - {fileID: 4323204027554342}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 96.55801, z: 0}
 --- !u!4 &4162778207430378
 Transform:
   m_ObjectHideFlags: 1
@@ -148,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 1231937224778454}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0.939, z: -0.132}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4470878974235010}
   m_Father: {fileID: 4142369587710010}
@@ -335,6 +335,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.2
+    orientate: 0
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
@@ -373,6 +374,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_burpSound: 
   m_canEatEntities: 0
   m_eaterTier: 0
@@ -402,7 +404,7 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":5,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"seconds":10,"dataType":"AI.Behaviour.TimerAData","editorFolded":false}]'
-  m_databaseKey: PF_Crocodile
+  m_databaseKey: PF_Crocodile (1)
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
   m_avoidCollisions: 1
@@ -484,6 +486,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -526,6 +529,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -564,6 +568,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_crocodile_dead
   m_firePoints: []
   m_burnParticle:
@@ -604,6 +609,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -643,6 +649,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: hd_crocodile_attack
@@ -687,11 +694,12 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 13e1354425eff404fb39fb22530dba15, type: 2}
+  - {fileID: 2100000, guid: adf367076c0373540b525d169cf5deca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -702,6 +710,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

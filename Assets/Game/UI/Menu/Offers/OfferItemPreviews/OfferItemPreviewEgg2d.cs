@@ -40,7 +40,7 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 		Debug.Assert(m_item.type == Metagame.RewardEgg.TYPE_CODE, "ITEM OF THE WRONG TYPE!", this);
 
 		// Initialize image with the target egg icon
-		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.def.GetAsString("itemSku"));
+		m_def = DefinitionsManager.SharedInstance.GetDefinition(m_item.sku);
 		if(m_def == null) {
 			m_image.sprite = null;
 		} else {
@@ -48,6 +48,10 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 		}
 	}
 
+	/// <summary>
+	/// Gets the description of this item, already localized and formatted.
+	/// </summary>
+	/// <returns>The localized description.</returns>
 	public override string GetLocalizedDescription() {
 		if(m_def != null) {
 			// Singular or plural?
@@ -60,5 +64,23 @@ public class OfferItemPreviewEgg2d : IOfferItemPreview {
 			);
 		}
 		return LocalizationManager.SharedInstance.Localize("TID_EGG_PLURAL");	// (shouldn't happen) use generic
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	override public void OnInfoButton() {
+		// Intiialize info popup
+		PopupController popup = PopupManager.LoadPopup(PopupInfoEggDropChance.PATH);
+		popup.GetComponent<PopupInfoEggDropChance>().Init(m_item.sku);
+
+		// Move it forward in Z so it doesn't conflict with our 3d preview!
+		popup.transform.SetLocalPosZ(-2500f);
+
+		// Oopen it!
+		popup.Open();
 	}
 }

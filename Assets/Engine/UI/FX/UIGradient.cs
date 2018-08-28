@@ -1,4 +1,4 @@
-﻿// UIGradient.cs
+// UIGradient.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 22/01/2016.
@@ -23,33 +23,15 @@ public class UIGradient : BaseMeshEffect {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	public enum Direction {
-		HORIZONTAL,
-		VERTICAL,
-		DIAGONAL_1,		// Top-left to bottom-right
-		DIAGONAL_2		// Bottom-left to top-right
-	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Color m_color1 = Colors.white;
-	public Color color1 {
-		get { return m_color1; }
-		set { m_color1 = value; }
-	}
-
-	[SerializeField] private Color m_color2 = Colors.red;
-	public Color color2 {
-		get { return m_color2; }
-		set { m_color2 = value; }
-	}
-
-	[SerializeField] private Direction m_direction = Direction.VERTICAL;
-	public Direction direction {
-		get { return m_direction; }
-		set { m_direction = value; }
+	[SerializeField] private Gradient4 m_gradient = new Gradient4(Color.red, Color.red, Color.white, Color.white);
+	public Gradient4 gradient {
+		get { return m_gradient; }
+		set { m_gradient = value; }
 	}
 
 	// Internal
@@ -95,43 +77,19 @@ public class UIGradient : BaseMeshEffect {
 				limits.yMax = Mathf.Max(limits.yMax, m_vertexList[i].position.y);
 		}
 
-		Color sourceColor;
-		Color finalColor;
-		float delta = 0f;
-		for(int i = 0; i < m_vertexList.Count; i++) {
+		// Compute delta each vertex and use it to figure out its final color
+		Vector2 delta = GameConstants.Vector2.zero;
+		for(int i = 0; i < m_vertexList.Count; ++i) {
 			// Create a duplicate of the vertex
 			UIVertex v = m_vertexList[i];	// Since it's a struct, it will create a copy
 
-			// Compute delta of this vertex considering target direction
-			switch(m_direction) {
-				case Direction.HORIZONTAL: {
-					delta = Mathf.InverseLerp(limits.xMin, limits.xMax, v.position.x);
-				} break;
+			// Compute delta of this vertex relative to min/max coords
+			delta.x = Mathf.InverseLerp(limits.xMin, limits.xMax, v.position.x);
+			delta.y = Mathf.InverseLerp(limits.yMin, limits.yMax, v.position.y);
 
-				case Direction.VERTICAL: {
-					// Invert delta since it makes more sense for color 1 to be on top (delta 1)
-					delta = 1f - Mathf.InverseLerp(limits.yMin, limits.yMax, v.position.y);
-				} break;
-
-				case Direction.DIAGONAL_1: {
-					// Average between the vertical and the horizontal deltas
-					delta = (Mathf.InverseLerp(limits.yMin, limits.yMax, v.position.y) + Mathf.InverseLerp(limits.xMin, limits.xMax, v.position.x));
-					delta /= 2f;
-				} break;
-
-				case Direction.DIAGONAL_2: {
-					// Same as diagonal 1 but inverting the Y delta
-					delta = (1f - Mathf.InverseLerp(limits.yMin, limits.yMax, v.position.y) + Mathf.InverseLerp(limits.xMin, limits.xMax, v.position.x));
-					delta /= 2f;
-				} break;
-			}
-
-			// Compute colors for this vertex
-			sourceColor = v.color.ToColor();
-			finalColor = Color.Lerp(m_color1, m_color2, delta);
-			finalColor *= sourceColor;
-			v.color = finalColor.ToColor32();
-
+			// Compute final color for this vertex
+			// Combine it with original color
+			v.color = (v.color.ToColor() * m_gradient.Evaluate(delta)).ToColor32();
 			m_newVertexList.Add(v);
 		}
 

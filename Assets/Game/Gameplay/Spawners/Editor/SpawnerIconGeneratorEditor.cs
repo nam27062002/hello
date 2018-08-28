@@ -209,9 +209,11 @@ public class SpawnerIconGeneratorEditor : Editor {
 			// Save to file (replace any existing)
 			// [AOC] We must save it to a file in order to persist between sessions, otherwise the icon will be reseted once the scene is closed
 			byte[] bytes = tex.EncodeToPNG();
-			string iconFilePath = Application.dataPath + "/Gizmos/" + _name;
+			//string iconFilePath = Application.dataPath + "/Gizmos/" + _name;
+			string iconFilePath = Path.Combine(Application.dataPath, "Gizmos");
+			iconFilePath = Path.Combine(iconFilePath, _name);
 			Directory.CreateDirectory( Path.GetDirectoryName(iconFilePath) );
-			System.IO.File.WriteAllBytes(iconFilePath, bytes);
+			File.WriteAllBytes(iconFilePath, bytes);
 
 			// Import newly created png to assets database (so we have a GUID and all)
 			iconFilePath = iconFilePath.Replace(Application.dataPath, "Assets");

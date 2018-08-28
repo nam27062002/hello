@@ -37,8 +37,15 @@ public class ResultsSceneEggSlot : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// If the egg view hasn't been loaded, do it now!
+		if(m_eggLoader.eggView == null) {
+			m_eggLoader.Reload();
+		}
+
 		// We want to show all the FX in the results screen :)
-		m_eggLoader.eggView.forceIdleFX = true;
+		if(m_eggLoader.eggView != null) {
+			m_eggLoader.eggView.forceIdleFX = true;
+		}
 	}
 
 	//------------------------------------------------------------------------//

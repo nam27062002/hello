@@ -96,7 +96,10 @@ public class ProbabilitySet {
 			}
 			return m_randomState; 
 		}
-		set { m_randomState = value; }
+		set { 
+			m_randomState = value; 
+			m_randomStateInitialized = true;
+		}
 	}
 	private bool m_randomStateInitialized = false;
 
@@ -218,6 +221,16 @@ public class ProbabilitySet {
 
 		// Return requested value
 		return m_elements[_elementIdx].probability;
+	}
+
+	public float GetProbability(string _sku) {
+		for (int i = 0; i < numElements; ++i) {
+			if (m_elements[i].label.Equals(_sku)) {
+				return m_elements[i].probability;
+			}
+		}
+
+		return -1;
 	}
 
 	/// <summary>

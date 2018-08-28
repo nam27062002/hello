@@ -51,6 +51,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	private static float sm_killStreakPercentage = 0f;
+	public static void AddKillStreakPercentage(float _value) {
+		sm_killStreakPercentage += _value;
+	}
+
+	private static float sm_durationPercentage = 0f;
+	public static void AddDurationPercentage(float _value) {
+		sm_durationPercentage += _value;
+	}
+
 	// Score multiplier
 	[SerializeField] private ScoreMultiplier[] m_scoreMultipliers;
 	private int m_scoreMultiplierStreak = 0;	// Amount of consecutive eaten/burnt/destroyed entities without taking damage
@@ -66,6 +76,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	}
 
 	[SerializeField] private ObscuredLong m_coins = 0;
+	private ObscuredFloat m_coinsPrecision = 0f;
 	public static long coins {
 		get { return instance.m_coins; }
 	}
@@ -106,8 +117,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			// Skip last multiplier!
 			if(instance.m_currentScoreMultiplierIndex < instance.m_scoreMultipliers.Length - 1) {
 				return Mathf.InverseLerp(
-					(float)currentScoreMultiplierData.requiredKillStreak, 
-					(float)instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex + 1].requiredKillStreak, 
+					(float)CalculateKillStreak(currentScoreMultiplierData.requiredKillStreak),
+					(float)CalculateKillStreak(instance.m_scoreMultipliers[instance.m_currentScoreMultiplierIndex + 1].requiredKillStreak),
 					(float)instance.m_scoreMultiplierStreak);
 			}
 			return 0f;
@@ -242,6 +253,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         get { return instance.m_furySuperfireRushAmount; }
     }
 
+    private bool m_switchingArea = false;
+
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
 
@@ -274,6 +287,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         // Required for tracking purposes
         Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
         Messenger.AddListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        
+        Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+        Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
     }
 
 	/// <summary>
@@ -295,14 +311,19 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         // Required for tracking purposes
         Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
         Messenger.RemoveListener<bool>(MessengerEvents.INTOSPACE_TOGGLED, OnIntospaceToggled);
+        
+        Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
+        Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
     }
 
 	/// <summary>
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
+        
+    
 		// Update score multiplier (won't be called if we're in the first multiplier)
-		if(m_scoreMultiplierTimer > 0) {
+		if(m_scoreMultiplierTimer > 0 && !m_switchingArea) {
 			// Update timer
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
@@ -349,8 +370,6 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			// Store new multiplier
 			m_scoreMultipliers[i] = newMult;
 		}
-
-
 	}
 
 	//------------------------------------------------------------------//
@@ -363,6 +382,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		// Score
 		instance.m_score = 0;
 		instance.m_coins = 0;
+		instance.m_coinsPrecision = 0;
 		instance.m_pc = 0;
 		instance.m_xp = 0;
 
@@ -409,6 +429,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         instance.m_enterSpaceAmount = 0;
         instance.m_furyFireRushAmount = 0;
         instance.m_furySuperfireRushAmount = 0;
+        instance.m_switchingArea = false;
     }
 
 	/// <summary>
@@ -418,7 +439,18 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static void ApplyEndOfGameRewards() {
 		// Coins, PC and XP are applied in real time during gameplay
 		// Apply the rest of rewards
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+
+		// Survival bonus
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode != SceneController.Mode.TOURNAMENT) {
+			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		}
+	}
+
+	private static int CalculateKillStreak(int _killStreak) {		
+		float ks = (float)_killStreak;
+		ks += ks * sm_killStreakPercentage / 100f;
+		return Mathf.CeilToInt(ks);
 	}
 
 	//------------------------------------------------------------------//
@@ -439,6 +471,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	/// <param name="_reward">The rewards to be applied.</param>
 	/// <param name="_entity">The entity that has triggered the reward. Can be null.</param>
+	float bonusCoins = 0f;
 	private void ApplyReward(Reward _reward, Transform _entity) {
 		// Score
 		// Apply multiplier
@@ -446,17 +479,29 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		instance.m_score += _reward.score;
 
 		// Coins
-		instance.m_coins += _reward.coins;
-		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)_reward.coins, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
+		long deltaCoins = instance.m_coins;
+
+		instance.m_coinsPrecision += _reward.coins;
+		instance.m_coins = (long)instance.m_coinsPrecision;
+
+		deltaCoins = instance.m_coins - deltaCoins;
+
+		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)deltaCoins, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
 		// PC
 		instance.m_pc += _reward.pc;
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
-		instance.m_xp += _reward.xp;
-
+        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT )
+        {
+	        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+			instance.m_xp += _reward.xp;
+		}
+		else
+		{
+			_reward.xp = 0;
+		}
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
@@ -501,10 +546,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		
 		// Reset timer
 		m_scoreMultiplierTimer = currentScoreMultiplierData.duration;
-		
+		m_scoreMultiplierTimer += m_scoreMultiplierTimer * sm_durationPercentage / 100f;
+
 		// Check if we've reached next threshold
 		if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 
-		&& m_scoreMultiplierStreak >= m_scoreMultipliers[m_currentScoreMultiplierIndex + 1].requiredKillStreak) {
+		&& m_scoreMultiplierStreak >= CalculateKillStreak(m_scoreMultipliers[m_currentScoreMultiplierIndex + 1].requiredKillStreak)) {
 			// Yes!! Change current multiplier
 			SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
 		}
@@ -517,6 +563,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// Checks the survival bonus.
 	/// </summary>
 	private void CheckSurvivalBonus() {
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return;
+
 		// Show feedback to the user every minute
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
 		if(elapsedMinutes > m_lastAwardedSurvivalBonusMinute) {
@@ -556,6 +605,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
+		// [AOC] No survival bonus in tournament mode!
+		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return 0;
+
 		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();
 		int elapsedMinutes = (int)Math.Floor(elapsedTime / 60);
@@ -731,4 +783,19 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
             m_enterSpaceAmount++;
         }
     }    
+    
+    private void OnEnteringArea()
+    {
+        m_switchingArea = false;
+    }
+    
+    private void OnLeavingArea(float t)
+    {
+        m_switchingArea = true;
+    }
+
+    public static int GetReviveCost()
+    {
+    	return freeReviveCount + paidReviveCount + 1;
+    }
 }

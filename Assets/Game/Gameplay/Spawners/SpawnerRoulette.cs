@@ -160,8 +160,12 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 			} else if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 				bool isInsideActivationArea = m_camera.IsInsideActivationMinArea(area.bounds);
 				if (isInsideActivationArea) {
-					m_state = State.Respawning;
-					return true;
+					if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
+						Spawn();
+						m_respawnTime = m_gameSceneController.elapsedSeconds + m_rouletteChangeTime;
+						m_state = State.Respawning;
+						return true;
+					}
 				}
 			}
 		}
@@ -170,10 +174,9 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	}
 
 	public bool Respawn() {
-		m_state = State.Respawning;
-
 		if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 			Spawn();
+			m_respawnTime = m_gameSceneController.elapsedSeconds + m_rouletteChangeTime;
 		}
 
 		// it'll be spawning wagons every few seconds.
@@ -252,18 +255,21 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 		}
 
 		if (_killedByPlayer) {
+			m_state = State.Idle;
 			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
 		} else {
-			m_respawnTime = m_gameSceneController.elapsedSeconds + m_rouletteChangeTime;
+			m_respawnTime = m_gameSceneController.elapsedSeconds;
 		}
 	}
 
 	public void ForceRemoveEntities() {
-		if (m_currentEntity != null) {
-			RemoveEntity(m_currentEntity.gameObject, false);
+		if (m_state != State.Idle) {
+			if (m_currentEntity != null) {
+				RemoveEntity(m_currentEntity.gameObject, false);
+			}
+			m_respawnTime = m_gameSceneController.elapsedSeconds;
+			m_state = State.Idle;
 		}
-		m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
-		m_state = State.Idle;
 	}
 
 	public void ForceReset() {

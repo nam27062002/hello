@@ -249,45 +249,59 @@ public class RewardSceneController : MonoBehaviour {
 	public void OpenReward() {
 		// Get most recent reward in the stack
 		// Don't pop immediately, the Reward.Collect() will do it
-		m_currentReward = UsersManager.currentUser.rewardStack.Peek();
+		if ( UsersManager.currentUser.rewardStack.Count > 0 )
+		{
+			m_currentReward = UsersManager.currentUser.rewardStack.Peek();
 
-		// Hide UI reward elements
-		m_rewardInfoUI.SetRewardType(string.Empty);
+			// Hide UI reward elements
+			m_rewardInfoUI.SetRewardType(string.Empty);
 
-		// Launch the animation based on reward type
-		// Egg
-		if(m_currentReward is Metagame.RewardEgg) {
-			OpenEggReward(m_currentReward as Metagame.RewardEgg);
+			// Launch the animation based on reward type
+			// Egg
+			if(m_currentReward is Metagame.RewardEgg) {
+				OpenEggReward(m_currentReward as Metagame.RewardEgg);
+			}
+
+			// Pet
+			else if(m_currentReward is Metagame.RewardPet) {
+				m_currentReward.Collect();
+				OpenPetReward(m_currentReward as Metagame.RewardPet);
+			}
+
+			// Skin
+			else if(m_currentReward is Metagame.RewardSkin) {
+				// TODO!!
+				m_currentReward.Collect();
+				OpenSkinReward(m_currentReward as Metagame.RewardSkin);
+			}
+
+			// Multi
+			else if(m_currentReward is Metagame.RewardMulti) {
+				m_currentReward.Collect();	// This will push all sub-rewards to the stack
+				OpenReward();	// Call ourselves to open the newly pushed rewards
+				return;	// Don't do anything else
+			}
+
+			// Currency
+			else {
+				m_currentReward.Collect();
+				OpenCurrencyReward(m_currentReward as Metagame.RewardCurrency);
+			}
+
+			// Notify listeners
+			OnAnimStarted.Invoke();
+		}
+		else
+		{
+			// NO REWARD. This shouldnt happen. But just in case
+			// Notify listeners
+			OnAnimStarted.Invoke();
+
+			Sequence seq = DOTween.Sequence();
+			seq.AppendInterval(0.1f);
+			seq.OnComplete(OnAnimationFinish);
 		}
 
-		// Pet
-		else if(m_currentReward is Metagame.RewardPet) {
-			m_currentReward.Collect();
-			OpenPetReward(m_currentReward as Metagame.RewardPet);
-		}
-
-		// Skin
-		else if(m_currentReward is Metagame.RewardSkin) {
-			// TODO!!
-			m_currentReward.Collect();
-			OpenSkinReward(m_currentReward as Metagame.RewardSkin);
-		}
-
-		// Multi
-		else if(m_currentReward is Metagame.RewardMulti) {
-			m_currentReward.Collect();	// This will push all sub-rewards to the stack
-			OpenReward();	// Call ourselves to open the newly pushed rewards
-			return;	// Don't do anything else
-		}
-
-		// Currency
-		else {
-			m_currentReward.Collect();
-			OpenCurrencyReward(m_currentReward as Metagame.RewardCurrency);
-		}
-
-		// Notify listeners
-		OnAnimStarted.Invoke();
 	}
 
 	//------------------------------------------------------------------------//
@@ -536,13 +550,6 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Launch intro as soon as possible (wait for the camera to stop moving)
 		m_eggView.gameObject.SetActive(false);
-
-		// Attach tap FX to the egg's view (but don't activate it just yet)
-		ParticleSystem tapFX = m_rarityFXSetup[(int)_eggReward.rarity].tapFX;
-		if(tapFX != null) {
-			tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
-			tapFX.gameObject.SetActive(false);
-		}
 	}
 
 	/// <summary>
@@ -675,11 +682,7 @@ public class RewardSceneController : MonoBehaviour {
 	/// <param name="_tapCount">Tap count.</param>
 	private void OnEggTap(EggView _egg, int _tapCount) {
 		// Show the right particle effect based on rarity!
-		if(_tapCount == 1 && _egg == m_eggView) {
-			// Activate tap FX, both static and dynamic
-			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
-			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
-
+		if(_tapCount == 1 && _egg == m_eggView) {			
 			// Hide UI
 			m_rewardInfoUI.SetRewardType(string.Empty);
 
@@ -697,7 +700,16 @@ public class RewardSceneController : MonoBehaviour {
 		if(eggData == null) return;
 
 		// If it matches our curent egg, launch its animation!
-		if(_egg == eggData) {
+		if(_egg == eggData) {			
+			// Activate tap FX, both static and dynamic
+			ParticleSystem tapFX = m_rarityFXSetup[(int)m_currentReward.rarity].tapFX;
+			if(tapFX != null) {
+				tapFX.transform.SetParentAndReset(m_eggView.anchorFX);
+			}
+
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFX);
+			TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].tapFXStatic);
+
 			// Launch animation!
 			// Delay to sync with the egg anim
 			UbiBCN.CoroutineManager.DelayedCall(LaunchEggExplosionAnim, UIConstants.openEggExplosionDuration, false);

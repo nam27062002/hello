@@ -31,9 +31,9 @@ public abstract class TrackingObjectiveBase {
 	public TrackerBase tracker { get { return m_tracker; }}
 
 	// Use float to have more precision while tracking (i.e. time)
-	[SerializeField] protected float m_targetValue = 0f;
-	public float targetValue { get { return m_targetValue; }}
-	public float currentValue { 
+	[SerializeField] protected long m_targetValue = 0;
+	public long targetValue { get { return m_targetValue; }}
+	public long currentValue { 
 		get { return m_tracker.currentValue; }
 		set { m_tracker.currentValue = value; }
 	}
@@ -44,7 +44,7 @@ public abstract class TrackingObjectiveBase {
 	}
 
 	public float progress { 
-		get { return m_targetValue > 0f ? m_tracker.currentValue/targetValue : 1f; }	// Protect for infinite values!
+		get { return m_targetValue > 0f ? (float)((double)m_tracker.currentValue/(double)targetValue) : 1f; }	// Protect for infinite values!
 	}
 
 	// State
@@ -81,7 +81,7 @@ public abstract class TrackingObjectiveBase {
 	/// <param name="_typeDef">Definition of hte objective type.</param>
 	/// <param name="_tidDesc">TID corresponding to the objective's description. Typically contains at least one replacement %U0 for the amount and optional extra replacements for the objectives (i.e. "Eat %U0 %U1", "Swim %U0 meters").</param>
 	/// <param name="_tidTarget">Optional TID for the objective's target (i.e. "Birds").</param>
-	protected virtual void Init(TrackerBase _tracker, float _targetValue, DefinitionNode _typeDef, string _tidDesc, string _tidTarget = "") {
+	public virtual void Init(TrackerBase _tracker, long _targetValue, DefinitionNode _typeDef, string _tidDesc, string _tidTarget = "") {
 		// Check some required parameters
 		Debug.Assert(_tracker != null, "Invalid Tracker!");
 
@@ -149,6 +149,15 @@ public abstract class TrackingObjectiveBase {
 	/// <returns>The target value properly formatted.</returns>
 	public virtual string GetTargetValueFormatted() {
 		return m_tracker.FormatValue(targetValue);
+	}
+
+	/// <summary>
+	/// Gets the progress string, custom formatted based on objective type.
+	/// </summary>
+	/// <returns>The progress string properly formatted.</returns>
+	/// <param name="_showTarget">Show target value? (i.e. "25/40"). Some types might override this setting if not appliable.</param>
+	public virtual string GetProgressString(bool _showTarget = true) {
+		return m_tracker.GetProgressString(m_tracker.currentValue, targetValue, _showTarget);
 	}
 
 	//------------------------------------------------------------------//

@@ -61,7 +61,9 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	void OnDestroy() {
-		FirePropagationManager.UnregisterBurningNode(this);
+		if (ApplicationManager.IsAlive) {
+			FirePropagationManager.UnregisterBurningNode (this);
+		}
 	}
 
 	public void Init(InflammableDecoration _parent, Decoration _decoration, ParticleData _burnParticle, ParticleData _feedbackParticle, bool _feedbackParticleMatchDirection, float _hitRadius) {		
@@ -96,7 +98,11 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 		m_timer = 0f;
 	}
 
-	public void Disable() { Extinguish(); }
+	public void Disable() { 
+		StopFireEffect();
+		FirePropagationManager.UnregisterBurningNode(this);
+		m_state = m_nextState = State.Extinguished; 
+	}
 
 	public bool IsSpreadingFire() 	{ return m_state == State.Spreading;  		}
 	public bool IsBurning() 		{ return m_state == State.Burning; 	  		}

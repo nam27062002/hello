@@ -74,7 +74,10 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_SHALL_NOT_PASS,
 		DAMAGE_RECEIVED,
 		MISSION_ZONE,
-		BREAK_OBJECT_WITH_FIRE
+		BREAK_OBJECT_WITH_FIRE,
+		BOOST_SPACE,
+		TIMES_UP,
+		TARGET_REACHED
 	}
 
 	// How to react with consecutive triggers
@@ -112,6 +115,9 @@ public class HUDMessage : MonoBehaviour {
 	[Comment("How the hide animation is triggered:\n- TIMER: After a defined amount of seconds\n- ANIMATION: Animation driven, once the idle animation has finished\n- MANUAL: Manually via the Hide() method\nA manual trigger will override this property in any case.")]
 	[SerializeField] private HideMode m_hideMode = HideMode.TIMER;
 	[SerializeField] private float m_idleDuration = 1f;	// Only applies for TIMER hide mode
+
+	[SerializeField] private bool m_onlyFirstTime = false;	// Check if only one time!
+	private bool m_firstTime = true;
 
 	// Custom exposed setup for specific types - editor will decide when to show them
 	[Separator]
@@ -193,6 +199,12 @@ public class HUDMessage : MonoBehaviour {
 		m_hasEverPerformedAction = false;
 	}
 
+	private void Start()
+	{
+		  // Deactivate all childs
+        SetOthersVisible( false );
+	}
+
 	/// <summary>
 	/// Component enabled.
 	/// </summary>
@@ -222,8 +234,11 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.AddListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
+			case Type.BOOST_SPACE:			Messenger.AddListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.AddListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.AddListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 
 		}
 
@@ -231,6 +246,18 @@ public class HUDMessage : MonoBehaviour {
 			case HideMode.TIMER:			Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
+    
+    public void SetOthersVisible( bool _visible)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(_visible);
+        }
+        TextMeshProUGUI text = GetComponent<TextMeshProUGUI>();
+        if (text != null)
+            text.enabled = _visible;
+    }
+    
 
 	/// <summary>
 	/// Component disabled.
@@ -261,8 +288,11 @@ public class HUDMessage : MonoBehaviour {
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
-			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
+			case Type.MISSION_ZONE: 		Messenger.RemoveListener<bool, ZoneTrigger, bool>(MessengerEvents.MISSION_ZONE, OnMissionZone);break;
 			case Type.BREAK_OBJECT_WITH_FIRE: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_WITH_FIRE, OnBreakObjectWithFire);	break;
+			case Type.BOOST_SPACE:			Messenger.RemoveListener(MessengerEvents.BOOST_SPACE, OnBoostSky); break;
+			case Type.TIMES_UP:				Messenger.RemoveListener(MessengerEvents.TIMES_UP, ShowCallback); break;
+			case Type.TARGET_REACHED:		Messenger.RemoveListener(MessengerEvents.TARGET_REACHED, ShowObjCompleted); break;
 		}
 
 		switch(m_hideMode) {
@@ -369,7 +399,10 @@ public class HUDMessage : MonoBehaviour {
 			if(!m_messageSystem.RequestShow(this)) return false;
 		}
 
-		// All checks passed! Show the message
+        // Activate
+        SetOthersVisible(true);
+        
+        // All checks passed! Show the message
 		// Update internal state
 		m_visible = true;
 
@@ -386,10 +419,20 @@ public class HUDMessage : MonoBehaviour {
 		return true;
 	}
 
+    public void OnHideMessage()
+    {
+        if (m_hideMode == HideMode.ANIMATION)
+        {
+            Hide(true);
+        }
+        // Deactivate all
+        SetOthersVisible(false);
+    }
+
 	/// <summary>
 	/// Trigger the "out" animation.
 	/// </summary>
-	virtual public void Hide() {
+	virtual public void Hide( bool _outDone = false ) {
 		// Skip if already inactive
 		if(!m_visible) return;
 
@@ -398,7 +441,8 @@ public class HUDMessage : MonoBehaviour {
 		m_hideTimer = 0f;
 
 		// Trigger anim
-		m_anim.SetTrigger( GameConstants.Animator.OUT );
+        if ( !_outDone )
+		    m_anim.SetTrigger( GameConstants.Animator.OUT );
 
 		// Notify
 		OnHide.Invoke(this);
@@ -410,6 +454,8 @@ public class HUDMessage : MonoBehaviour {
 				m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
 			} break;
 		}
+
+        
 	}
 
 	/// <summary>
@@ -544,6 +590,30 @@ public class HUDMessage : MonoBehaviour {
 		m_boostingTimer = m_currentBoostSetup.requiredBoostDuration;
 	}
 
+	private void OnBoostSky() {
+		Show();
+	}
+
+	private void ShowCallback()
+	{
+		Show();
+	}
+
+	private void ShowObjCompleted()
+	{
+		Transform tr = transform.Find("Icon");
+		if ( tr != null )
+		{
+			Image goalIcon = tr.GetComponent<Image>();
+			if ( goalIcon != null )
+			{
+				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+			}
+		}
+		Show();
+	}
+
 	/// <summary>
 	/// Fire rush has been toggled.
 	/// </summary>
@@ -584,13 +654,32 @@ public class HUDMessage : MonoBehaviour {
 	}
 
 
-	private void OnMissionZone(bool toggle, ZoneTrigger zone){
+	private void OnMissionZone(bool toggle, ZoneTrigger zone, bool _fistTime){
 		if ( toggle ){
-			// Get text to show
-			TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-	        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
-	        text.text = localized;
-	        Show();
+			if ( m_onlyFirstTime )
+			{
+				if ( _fistTime )
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+					string localizedZone = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+					string localized = LocalizationManager.SharedInstance.Localize("TID_LEVEL_AREA_WELCOME", localizedZone);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			else
+			{
+				if(!_fistTime)
+				{
+					// Get text to show
+					TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+			        string localized = LocalizationManager.SharedInstance.Localize(zone.m_zoneTid);
+			        text.text = localized;
+			        Show();		
+				}
+			}
+			m_firstTime = false;
 		}
 	}
 

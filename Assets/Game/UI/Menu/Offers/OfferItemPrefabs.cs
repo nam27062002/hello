@@ -46,6 +46,8 @@ public class OfferColorGradient {
 	public float discountThreshold = 50f;
 	public Gradient4 titleGradient = new Gradient4();
 	public Gradient4 discountGradient = new Gradient4();
+	public Gradient4 pillFrameGradient = new Gradient4();
+	public Gradient4 pillBackgroundGradient = new Gradient4();
 }
 
 /// <summary>
@@ -60,7 +62,9 @@ public class OfferItemPrefabs : SingletonScriptableObject<OfferItemPrefabs> {
 
 	public enum PrefabType {
 		PREVIEW_2D,
-		PREVIEW_3D
+		PREVIEW_3D,
+
+		COUNT
 	}
 
 	//------------------------------------------------------------------------//

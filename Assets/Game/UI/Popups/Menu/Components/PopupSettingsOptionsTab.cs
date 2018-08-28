@@ -13,13 +13,16 @@ using DG.Tweening;
 /// <summary>
 /// This class is responsible for handling the options tab in the settings popup.
 /// </summary>
-public class PopupSettingsOptionsTab : MonoBehaviour
-{
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES												  //
-    //------------------------------------------------------------------------//
-    // Exposed
-    [SerializeField] private GameObject m_languagePillPrefab = null;
+public class PopupSettingsOptionsTab : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	private const string LANGUAGE_PILL_PATH = "UI/Metagame/Settings/PF_LanguagesFlagPill";
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
@@ -27,24 +30,24 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI m_graphicsQualityCurrentValueText = null;
 	[SerializeField] private GameObject[] m_graphicsQualitySeparators = new GameObject[4];
 	[Space]
-	[SerializeField]
-	private Slider m_notificationsSlider;
+	[SerializeField] private GameObject m_bloodToggle;
+	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
 
-    // Internal
+	// Internal
 	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
 
-	private bool m_dirty = false;
+	private bool m_languageInitialized = false;
 
 	private int m_graphicsMaxLevel = 4;
 	private int m_initialGraphicsQualityLevel = -1;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS														  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialization.
-    /// </summary>
-    public void Awake() {
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	public void Awake() {
 		// Clear all content of the scroll list (used to do the layout)
 		m_languageScrollList.content.DestroyAllChildren(false);
 
@@ -60,47 +63,61 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 
 		// Sort definitions by "order" field, create a pill for each language and init with selected language
 		DefinitionsManager.SharedInstance.SortByProperty(ref languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
+		GameObject prefab = Resources.Load<GameObject>(LANGUAGE_PILL_PATH);
 		for(int i = 0; i < languageDefs.Count; i++) {
 			// Create and initialize pill
-			GameObject pillObj = GameObject.Instantiate<GameObject>(m_languagePillPrefab, m_languageScrollList.content.transform, false);
+			GameObject pillObj = GameObject.Instantiate<GameObject>(prefab, m_languageScrollList.content.transform, false);
 			PopupSettingsLanguagePill pill = pillObj.GetComponent<PopupSettingsLanguagePill>();
 			pill.InitFromDef(languageDefs[i]);
 			m_pills.Add(pill);
 		}
+		prefab = null;
 
-		if (m_pills.Count == 1) {
+		if(m_pills.Count == 1) {
 			m_languageScrollList.enabled = false;
 		}
 
-		// Notification slider
-		m_notificationsSlider.normalizedValue = HDNotificationsManager.instance.GetNotificationsEnabled() ? 1 : 0;
+		m_languageInitialized = false;
 
-		m_dirty = true;
-    }
+		// Toggle some components on/off if Age Restriction is enabled
+		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
+		if(m_bloodToggle != null) {
+			m_bloodToggle.SetActive(!ageRestriction);
+		}
 
-    void OnDestroy(){
-		
+		if(m_gameCenterForChildrenGroup != null) {
+#if UNITY_IOS
+			m_gameCenterForChildrenGroup.SetActive(ageRestriction);
+#else
+			m_gameCenterForChildrenGroup.SetActive(false);
+#endif
+		}
     }
 
 	void Update() {
-		if (m_dirty) {
+		if (!m_languageInitialized) {
 			// Focus curent language
-			SelectCurrentLanguage(false);
-			m_dirty = false;
+			m_languageInitialized = true;
+
+			// Delay a frame to give time for everything to get initialized
+			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+				SelectCurrentLanguage();
+				m_languageScrollList.onSelectionChanged.AddListener(OnLanguageSelectionChanged);
+			}, 1);
 		}
 	}
 
 	/// <summary>
 	/// Focus the currently selected language.
 	/// </summary>
-	private void SelectCurrentLanguage(bool _animate) {
+	private void SelectCurrentLanguage() {
 		// Scroll to initial language pill
 		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
 		for(int i = 0; i < m_pills.Count; i++) {
 			// Is it the selected one?
 			if(m_pills[i].def.sku == currentLangSku) {
 				// Yes! Snap to it and break the loop
-				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), _animate);
+				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), false);
 				break;
 			}
 		}
@@ -122,7 +139,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	/// A new pill has been selected on the snapping scroll list.
 	/// </summary>
 	/// <param name="_selectedPoint">Selected point.</param>
-	public void OnSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
+	public void OnLanguageSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
 		if(_selectedPoint == null) return;
 
 		// Find selected language
@@ -232,20 +249,10 @@ public class PopupSettingsOptionsTab : MonoBehaviour
 	}
 
 	public void OnShow(){
-		m_dirty = true;
+		m_languageInitialized = false;
 	}
 
-	public void OnNotificationsSettingChanged(){
-		int v = Mathf.RoundToInt( m_notificationsSlider.normalizedValue);        
-		HDNotificationsManager.instance.SetNotificationsEnabled(v > 0);        
-	}
-
-	public void Notifications_OnToggle() {
-		if(m_notificationsSlider.value > 0) {
-			m_notificationsSlider.value = 0;
-		} else {
-			m_notificationsSlider.value = 1;
-		}
-		OnNotificationsSettingChanged();
+	public void OnHide() {
+		m_languageScrollList.onSelectionChanged.RemoveListener(OnLanguageSelectionChanged);
 	}
 }

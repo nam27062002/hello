@@ -85,6 +85,8 @@ public class FogManager : MonoBehaviour
 	// Runtime variables
 	List<FogAttributes> m_generatedAttributes = new List<FogAttributes>();
 	List<FogArea> m_activeFogAreaList = new List<FogArea>();
+		// While in fire Fogs
+	List<FogArea> m_activeFireFogAreaList = new List<FogArea>();
 
 	float m_start;
 	float m_end;
@@ -165,7 +167,7 @@ public class FogManager : MonoBehaviour
 
 	void OnDestroy()
 	{
-		if (Application.isPlaying) {
+		if (Application.isPlaying && ApplicationManager.IsAlive) {
 			InstanceManager.fogManager = null;
 
 			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
@@ -228,25 +230,29 @@ public class FogManager : MonoBehaviour
 			if (m_forcedAttributes == null)
 			{
 				float transitionDuration = 0;
-				if ( m_activeFogAreaList.Count > 0)
+				if ( m_usingFire && m_activeFireFogAreaList.Count > 0 )
+				{
+					FogArea selectedFogArea = m_activeFireFogAreaList.Last<FogArea>();
+					m_selectedAttributes = selectedFogArea.m_attributes;
+					if ( m_wasUsingFire )
+					{
+						transitionDuration = selectedFogArea.m_enterTransitionDuration;	
+					}else{
+						transitionDuration = 0.1f;
+					}
+					m_wasUsingFire = true;
+					m_lastSelectedArea = selectedFogArea;
+				}
+				else if ( m_activeFogAreaList.Count > 0)
 				{
 					FogArea selectedFogArea = m_activeFogAreaList.Last<FogArea>();
-					if (m_usingFire && selectedFogArea.m_fireFog)
-					{
-						m_selectedAttributes = selectedFogArea.m_fireAttributes;
+					if ( m_wasUsingFire ){
 						transitionDuration = 0.1f;
-						m_wasUsingFire = true;
+					}else{
+						transitionDuration = selectedFogArea.m_enterTransitionDuration;	
 					}
-					else
-					{
-						if ( m_wasUsingFire ){
-							transitionDuration = 0.1f;
-						}else{
-							transitionDuration = selectedFogArea.m_enterTransitionDuration;	
-						}
-						m_selectedAttributes = selectedFogArea.m_attributes;
-						m_wasUsingFire = false;
-					}
+					m_selectedAttributes = selectedFogArea.m_attributes;
+					m_wasUsingFire = false;
 					m_lastSelectedArea = selectedFogArea;
 				}
 				else
@@ -414,9 +420,14 @@ public class FogManager : MonoBehaviour
 	public void ActivateArea( FogArea _area )
 	{
 		CheckTextureAvailability( _area.m_attributes );
-		if ( _area.m_fireFog )
-			CheckTextureAvailability( _area.m_fireAttributes );	
-		m_activeFogAreaList.Add( _area );
+		if ( _area.m_isFireFog )
+		{
+			m_activeFireFogAreaList.Add( _area );
+		}
+		else
+		{
+			m_activeFogAreaList.Add( _area );
+		}
 	}
 
 	public void CheckTextureAvailability( FogManager.FogAttributes _attributes, bool forceNew = false)
@@ -485,7 +496,14 @@ public class FogManager : MonoBehaviour
 
 	public void DeactivateArea( FogArea _area )
 	{
-		m_activeFogAreaList.Remove( _area );
+		if ( _area.m_isFireFog )
+		{
+			m_activeFireFogAreaList.Remove( _area );
+		}
+		else
+		{
+			m_activeFogAreaList.Remove( _area );	
+		}
 	}
 
 

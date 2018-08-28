@@ -61,13 +61,8 @@ public class DragonControlPlayer : MonoBehaviour {
 			joystickControls = gameInputObj.GetComponent<JoystickControls>();
 		}
 
-		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {
-			// Search path
-			// m_followingSpline = ;
-			GameObject go = GameObject.Find("TestPath");
-			if(go != null) {
-				m_followingSpline = go.GetComponent<Assets.Code.Game.Spline.BezierSpline>();
-			}
+		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {           
+            m_followingSpline = GameObjectExt.FindComponent<Assets.Code.Game.Spline.BezierSpline>(true, "TestPath");            	
 		}
 		m_useTiltControl = GameSettings.Get(GameSettings.TILT_CONTROL_ENABLED);
 		SetupInputs();
@@ -108,7 +103,7 @@ public class DragonControlPlayer : MonoBehaviour {
 		action = false;
 
 		// [AOC] Nothing to do if paused
-		if(InstanceManager.gameSceneControllerBase.paused) return;
+		// if(InstanceManager.gameSceneControllerBase.paused) return;
 
 		if(!m_useTiltControl) {
 			if(touchControls != null) {
@@ -146,6 +141,8 @@ public class DragonControlPlayer : MonoBehaviour {
 	public void GetImpulse(float desiredVelocity, ref Vector3 impulse) {
 
 		impulse = Vector3.zero;
+
+		if (!enabled) return;
 
 		// if app mode is test -> input something else?
 		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST && m_followingSpline != null) {
@@ -215,8 +212,8 @@ public class DragonControlPlayer : MonoBehaviour {
 	void OnDisable() {
 		if(touchControls != null) {
 			touchControls.SetTouchObjRendering(false);
+			touchControls.SetTouch2ObjRendering(false, false);
 			touchControls.enabled = false;
-		
 		}
 
 		if(tiltControls != null)

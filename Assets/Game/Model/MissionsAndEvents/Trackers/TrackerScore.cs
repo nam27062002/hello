@@ -55,9 +55,9 @@ public class TrackerScore : TrackerBase {
 	/// </summary>
 	/// <returns>The rounded value.</returns>
 	/// <param name="_targetValue">The original value to be rounded.</param>
-	override public float RoundTargetValue(float _targetValue) {
+	override public long RoundTargetValue(long _targetValue) {
 		// Round to multiples of 1000
-		_targetValue = MathUtils.Snap(_targetValue, 1000f);
+		_targetValue = MathUtils.Snap(_targetValue, 1000);
 		return base.RoundTargetValue(_targetValue);	// Apply default filter
 	}
 

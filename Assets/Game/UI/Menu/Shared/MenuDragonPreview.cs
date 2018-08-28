@@ -28,6 +28,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		RESULTS_IN,
 		POSE_FLY,
 		FLY,
+        RESULTS_LOOP,
 
 		COUNT
 	};
@@ -37,7 +38,8 @@ public class MenuDragonPreview : MonoBehaviour {
 		"unlocked",
 		"results_in",
 		"pose_fly",
-		"fly"
+		"fly",
+        "results_loop"
 	};
 
 
@@ -69,6 +71,7 @@ public class MenuDragonPreview : MonoBehaviour {
 		public AltAnimSpecialAction m_special;
 		public float m_timeToNext;
 		public bool m_isPreferedAnimation;	// Animation Used when we touch the dragon on dragon selection
+		public int m_animationLevel;
 	}
 	public List<AltAnimConfig> m_altAnimConfigs = new List<AltAnimConfig>();
 	private int m_currentAnimIndex = -1;
@@ -106,6 +109,8 @@ public class MenuDragonPreview : MonoBehaviour {
 	private bool m_allowAltAnimations = true;
 	public bool allowAltAnimations{ get{ return m_allowAltAnimations; }set{ m_allowAltAnimations = value; } }
 
+	private int m_altAnimationsMaxLevel = 10;
+	public int altAnimationsMaxLevel{ get{ return m_altAnimationsMaxLevel; }set{ m_altAnimationsMaxLevel = value; } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -242,16 +247,19 @@ public class MenuDragonPreview : MonoBehaviour {
 						for( int i = 0; i<m_count && m_currentAnimIndex < 0; ++i )
 						{
 							AltAnimConfig item = m_altAnimConfigs[i];
-							item.m_timeToNext -= Time.deltaTime;	
-							m_altAnimConfigs[i] = item;
-							if (item.m_timeToNext <= 0) 
+							if ( item.m_animationLevel <= m_altAnimationsMaxLevel )
 							{
-								// Set alternative animation
-								m_lastAltAnim = m_currentAnimIndex = i;
-								m_animator.SetInteger(GameConstants.Animator.ALT_ANIMATION, m_currentAnimIndex);
-								// 
-								if ( item.m_special != AltAnimSpecialAction.NONE )
-									StartSpecialEvent( item.m_special );
+								item.m_timeToNext -= Time.deltaTime;	
+								m_altAnimConfigs[i] = item;
+								if (item.m_timeToNext <= 0) 
+								{
+									// Set alternative animation
+									m_lastAltAnim = m_currentAnimIndex = i;
+									m_animator.SetInteger(GameConstants.Animator.ALT_ANIMATION, m_currentAnimIndex);
+									// 
+									if ( item.m_special != AltAnimSpecialAction.NONE )
+										StartSpecialEvent( item.m_special );
+								}
 							}
 						}
 					}
@@ -310,7 +318,7 @@ public class MenuDragonPreview : MonoBehaviour {
 
 	public void StartBlood()
 	{
-		bool useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        bool useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if ( useBlood )
 			m_bloodParticle.Play();
 	}

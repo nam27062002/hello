@@ -47,6 +47,11 @@ public class Mission {
 		COUNT
 	}
 
+	private static float sm_powerUpSCMultiplier = 0; // Soft currency modifier multiplier
+	public static void AddSCMultiplier(float value) {
+		sm_powerUpSCMultiplier += value;
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -99,7 +104,7 @@ public class Mission {
 	/// <param name="_missionDef">Mission definition.</param>
 	/// <param name="_targetValue">Target value.</param>
 	/// <param name="_singleRun">Is it a single run mission?</param>
-	public void InitWithParams(DefinitionNode _missionDef, DefinitionNode _typeDef, float _targetValue, bool _singleRun) {
+	public void InitWithParams(DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun) {
 		// Store definitions
 		m_def = _missionDef;
 		m_typeDef = _typeDef;
@@ -232,7 +237,11 @@ public class Mission {
 		// Scale the reward based on max owned dragon
 		DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
 		float rewardScaleFactor = rewardScaleFactorDef != null ? rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier") : 1f;
-		return (int)(MissionManager.maxRewardPerDifficulty[(int)difficulty] * rewardScaleFactor);
+
+		int coins = (int)(MissionManager.maxRewardPerDifficulty[(int)difficulty] * rewardScaleFactor);
+		coins += Mathf.FloorToInt((coins * sm_powerUpSCMultiplier) / 100.0f);
+
+		return coins;
 	}
 
 	/// <summary>
@@ -297,7 +306,7 @@ public class Mission {
 		InitWithParams(
 			missionDef,
 			DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
-			_data["targetValue"].AsFloat, 
+			_data["targetValue"].AsLong, 
 			_data["singleRun"].AsBool
 		);
 
@@ -309,7 +318,7 @@ public class Mission {
 
 		// Restore objective
 		if(m_objective != null) {
-			m_objective.tracker.SetValue(_data["currentValue"].AsFloat, false);
+			m_objective.tracker.InitValue(_data["currentValue"].AsLong);
 			m_objective.enabled = (m_state == State.ACTIVE);
 		}
 

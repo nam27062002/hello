@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using TMPro;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,7 +19,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of a global event reward.
 /// </summary>
-public class GlobalEventsRewardInfo : MonoBehaviour {
+public class GlobalEventsRewardInfo : MetagameRewardView {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,72 +27,20 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed references
-	[SerializeField] private Image m_icon = null;
-	[SerializeField] private TextMeshProUGUI m_rewardText = null;
-	[SerializeField] private TextMeshProUGUI m_targetText = null;
 	[Space]
-	[SerializeField] private bool m_showNameForEggsAndPets = true;	// [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
-	[SerializeField] private GameObject m_nameContainer = null;
-
-	// Convenience properties
-	public RectTransform rectTransform {
-		get { return this.transform as RectTransform; }
-	}
+	[SerializeField] private TextMeshProUGUI m_targetText = null;
+	[SerializeField] protected Image m_tick = null;
 
 	// Internal
-	private GlobalEvent.RewardSlot m_rewardSlot = null;
-	public GlobalEvent.RewardSlot rewardSlot {
-		get { return m_rewardSlot; }
+	private HDLiveEventDefinition.HDLiveEventReward m_questReward = null;
+	public HDLiveEventDefinition.HDLiveEventReward questReward {
+		get { return m_questReward; }
 		set { InitFromReward(value); }
 	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -99,82 +48,57 @@ public class GlobalEventsRewardInfo : MonoBehaviour {
 	/// <summary>
 	/// Refresh the widget with the data of a specific reward.
 	/// </summary>
-	public void InitFromReward(GlobalEvent.RewardSlot _rewardSlot) {
+	public void InitFromReward(HDLiveEventDefinition.HDLiveEventReward _questReward) {
 		// Store new reward
-		m_rewardSlot = _rewardSlot;
+		m_questReward = _questReward;
 
-		// If given reward is null, disable game object and don't do anything else
-		if(m_rewardSlot == null) {
-			this.gameObject.SetActive(false);
-			return;
+		// If given reward is null, disable game object
+		this.gameObject.SetActive(m_questReward != null);
+
+		// Parent will do the rest
+		if(m_questReward != null) {
+			base.InitFromReward(m_questReward.reward);
 		}
+	}
 
-		// Activate game object
-		this.gameObject.SetActive(true);
-
-
-		// Set reward icon and text
-		// Based on type
-		string rewardText = string.Empty;
-		Sprite iconSprite = null;
-		Metagame.Reward reward = _rewardSlot.reward;
-		if (reward is Metagame.RewardPet) {
-			// Get the pet preview
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
-			if(petDef != null) {
-				iconSprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
-				rewardText = petDef.GetLocalized("tidName");
-			} else {
-				// (shouldn't happen)
-				iconSprite = null;
-				rewardText = LocalizationManager.SharedInstance.Localize("TID_PET");
-			}
-
-			// [AOC] Don't show name for some specific cases
-			if(!m_showNameForEggsAndPets) rewardText = string.Empty;
-		} else if (reward is Metagame.RewardEgg) {
-			// Get the egg definition
-			DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, reward.sku);
-			if(eggDef != null) {
-				iconSprite = Resources.Load<Sprite>(UIConstants.EGG_ICONS_PATH + eggDef.Get("icon"));
-				rewardText = eggDef.GetLocalized("tidName");
-			} else {
-				// (shouldn't happen) Use generic
-				iconSprite = null;
-				rewardText = LocalizationManager.SharedInstance.Localize("TID_EGG");
-			}
-
-			// [AOC] Don't show name for some specific cases
-			if(!m_showNameForEggsAndPets) rewardText = string.Empty;
-		} else if (reward is Metagame.RewardCurrency) {
-			// Get the icon linked to this currency
-			iconSprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(reward.currency));
-			rewardText = StringUtils.FormatNumber(reward.amount, 0);
-		} else {
-			iconSprite = null;
-			rewardText = "Unknown reward type";
-		}
-
-		// Apply
-		if(m_icon != null) m_icon.sprite = iconSprite;
-		if(m_rewardText != null) m_rewardText.text = rewardText;
-		if(m_nameContainer) m_nameContainer.SetActive(!string.IsNullOrEmpty(rewardText));	// If empty, hide the whole object
+	/// <summary>
+	/// Refresh the visuals using current data.
+	/// </summary>
+	override public void Refresh() {
+		if(m_questReward == null) return;
+		if(m_reward == null) return;
 
 		// Set target text
 		if(m_targetText != null) {
 			// Abbreviated for big amounts
-			m_targetText.text = StringUtils.FormatBigNumber(m_rewardSlot.targetAmount);
+			m_targetText.text = StringUtils.FormatBigNumber(m_questReward.target);
+		}
+
+		// Parent will do the rest
+		base.Refresh();
+	}
+
+	public void ShowAchieved(bool _achieved, bool _animate)
+	{
+		if(m_tick == null) return;
+
+		bool wasAchieved = m_tick.gameObject.activeSelf;
+		m_tick.gameObject.SetActive( _achieved );
+
+		// Animate? Only when going from not visible to visible
+		if(_animate) {
+			if(!wasAchieved && _achieved) {
+				m_tick.transform.DOKill();
+				m_tick.transform.DOScale(15f, 1f).From().SetEase(Ease.InExpo);
+				m_tick.DOFade(0f, 1f).From().SetEase(Ease.InExpo);
+
+				AudioController.Play("hd_pet_add", 1f, 0.25f);	// Delay to sync with anim
+			}
 		}
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Localization language has changed, refresh texts.
-	/// </summary>
-	private void OnLanguageChanged() {
-		// Reapply current reward
-		InitFromReward(m_rewardSlot);
-	}
+
 }

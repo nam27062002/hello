@@ -8,11 +8,11 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_balrog_1_wings
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL SPECULAR
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: 2920
   stringTagMap:
     QUEUE: AlphaTest
     RenderType: TransparentCutout
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: db0969da5c2da0640a64aa410543d3d8, type: 3}
+        m_Texture: {fileID: 2800000, guid: 26f28ad165a71c44f94c801fcd065700, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 6ec66d9f68253564393eaf762163f7fd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0793065832eddc147a09a4543559c874, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 74d1d996811b44f4b9a1afd64e275e0e, type: 3}
+        m_Texture: {fileID: 2800000, guid: e6838fc56afe16845a7509a9548c946c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -83,12 +83,14 @@ Material:
     - _EnableCutoff: 1
     - _EnableDoublesided: 1
     - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 0
     - _FireAmount: 0
+    - _FireSpeed: 1
     - _Fresnel: 4.05
     - _Glossiness: 0.5
     - _InnerLightAdd: 10
@@ -109,7 +111,7 @@ Material:
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
-    - _ColorAdd: {r: 0.22139922, g: 0.4373017, b: 0.8602941, a: 1}
+    - _ColorAdd: {r: 0, g: 0, b: 0, a: 1}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
@@ -118,4 +120,4 @@ Material:
     - _NoiseColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0.82, g: -0.055, b: 2.63, a: 0.45}
-    - _Tint: {r: 0.74264705, g: 0.89350915, b: 1, a: 1}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}

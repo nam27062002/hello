@@ -133,7 +133,7 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
-	override protected string GetIAPSku() {
+	override public string GetIAPSku() {
 		// Only for REAL money packs
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 

@@ -77,10 +77,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 
 		// If a new dragon was unlocked, tell the menu to show the dragon unlocked screen first!
 		if(m_dragonUnlocked) {
-			GameVars.unlockedDragonSku = m_dragonData.def.sku;
-			// Notify Dragon Unlocked?
-
-			HDTrackingManager.Instance.Notify_DragonUnlocked( m_dragonData.def.sku, m_dragonData.GetOrder() );
+			GameVars.unlockedDragonSku = m_dragonData.def.sku;						
 		}
 	}
 

@@ -21,6 +21,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float REFRESH_FREQUENCY = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -37,7 +38,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	// Internal
-	private List<OfferPack> m_allOffers = new List<OfferPack>();
+    private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();
+    private List<OfferPack> m_allOffers = new List<OfferPack>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -53,12 +55,22 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.AddListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
+		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
+	}
+
+	/// <summary>
+	/// First update loop.
+	/// </summary>
+	private void Start() {
+		// Update the offers periodically
+		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	override protected void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
@@ -66,6 +78,11 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
+		Messenger.RemoveListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
+		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
+
+		// Parent
+		base.OnDestroy();
 	}
 
 	/// <summary>
@@ -79,100 +96,107 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Aux vars
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
-		// Clear current offers cache
-		instance.m_allOffers.Clear();
+        // Clear current offers cache
+        instance.m_allOffers.Clear();
+		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
 		instance.m_featuredOffer = null;
 
-		// Create data for each known offer pack definition
+		// Get all known offer packs
+		// Sort offers by their "order" field, so if two mutually exclusive offers (same uniqueId)
+		// are triggered at the same time, we can control which one shows
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
-		for(int i = 0; i < offerDefs.Count; ++i) {
-			// Skip if offer is not enabled
-			if(!offerDefs[i].GetAsBool("enabled", false)) continue;
+		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
+		// Create data for each known offer pack definition
+		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create new pack
 			OfferPack newPack = new OfferPack();
 			newPack.InitFromDefinition(offerDefs[i]);
 
-			// [AOC] Small optimization: remove featured offers that end in the past
-			if(newPack.featured && newPack.endDate < serverTime) {
-				continue;
-			}
+            // Store new pack
+            instance.m_allOffers.Add(newPack);
 
-			// Store new pack
-			instance.m_allOffers.Add(newPack);
+            // Skip if offer is not enabled
+            if (offerDefs[i].GetAsBool("enabled", false))
+			    instance.m_allEnabledOffers.Add(newPack);
 		}
 
-		// Sort the offers list using custom criteria
-		instance.m_allOffers.Sort(OfferPackComparer);
-
 		// Refresh active and featured offers
-		instance.Refresh();
+		instance.Refresh(true);
 
 		// Notiy game
 		Messenger.Broadcast(MessengerEvents.OFFERS_RELOADED);
 	}
 
 	//------------------------------------------------------------------------//
-	// PUBLIC METHODS														  //
+	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Will refresh the list of offers to be displayed as well as the featured offer.
 	/// </summary>
-	public void Refresh() {
-		// Iterate all offers checking which ones can be displayed
-		// Offers are already sorted
-		m_activeOffers.Clear();
-		m_featuredOffer = null;
-		for(int i = 0; i < m_allOffers.Count; ++i) {
-			// Must this offer be displayed?
-			if(m_allOffers[i].CanBeDisplayed()) {
-				// Yes! Store it as active
-				m_activeOffers.Add(m_allOffers[i]);
+	/// <param name="_forceActiveRefresh">Force a refresh of the active offers list.</param>
+	private void Refresh(bool _forceActiveRefresh) {
+		// Aux vars
+		bool dirty = false;
+		List<OfferPack> toRemove = new List<OfferPack>();
 
-				// Is this offer featured?
-				if(m_featuredOffer == null && m_allOffers[i].featured) {
-					m_featuredOffer = m_allOffers[i];
+		// Iterate all offer packs looking for state changes
+		for(int i = 0; i < m_allEnabledOffers.Count; ++i) {
+			// Has offer changed state?
+			if(m_allEnabledOffers[i].UpdateState() || _forceActiveRefresh) {
+				// Yes!
+				dirty = true;
+
+				// Which state? Refresh lists
+				switch(m_allEnabledOffers[i].state) {
+					case OfferPack.State.ACTIVE: {
+						m_activeOffers.Add(m_allEnabledOffers[i]);
+					} break;
+
+					case OfferPack.State.EXPIRED: {
+						toRemove.Add(m_allEnabledOffers[i]);
+						m_activeOffers.Remove(m_allEnabledOffers[i]);
+					} break;
+
+					case OfferPack.State.PENDING_ACTIVATION: {
+						m_activeOffers.Remove(m_allEnabledOffers[i]);
+					} break;
+				}
+
+				// Update persistence with this pack's new state
+				// [AOC] Packs Save() is smart, only stores packs when required
+				UsersManager.currentUser.SaveOfferPack(m_allEnabledOffers[i]);
+			}
+		}
+
+		// Remove expired offers (they won't be active anymore, no need to update them)
+		for(int i = 0; i < toRemove.Count; ++i) {
+			m_allEnabledOffers.Remove(toRemove[i]);
+		}
+
+		// Has any offer changed its state?
+		if(dirty) {
+			// Re-sort active offers
+			m_activeOffers.Sort(OfferPackComparer);
+
+			// New featured offer?
+			m_featuredOffer = null;
+			for(int i = 0; i < m_activeOffers.Count; ++i) {
+				if(m_activeOffers[i].featured) {
+					m_featuredOffer = m_activeOffers[i];
+					break;
 				}
 			}
-		}
 
-		// Notify game
-		Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED);
+			// Save persistence
+			PersistenceFacade.instance.Save_Request();
+
+			// Notify game
+			Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED);
+		}
 	}
 
-	/// <summary>
-	/// Refreshes the featured offer:
-	/// If a featured offer exists, check its expiring time and look for a new one if it has ended.
-	/// If a featured offer doesn't exist, look for a new one.
-	/// </summary>
-	/// <returns>The new featured offer, if any (or the current one if it haasn't changed).</returns>
-	public OfferPack RefreshFeaturedOffer() {
-		// Aux vars
-		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-
-		// If a fetured offer exists, check its expiration date
-		if(m_featuredOffer != null) {
-			// Has it expired?
-			if(serverTime > m_featuredOffer.endDate) {
-				// Offer has expired, remove it from active offers and clear reference
-				m_activeOffers.Remove(m_featuredOffer);
-				m_featuredOffer = null;
-			}
-		}
-
-		// If no featured offer, look for a new one
-		if(m_featuredOffer == null) {
-			// Actually refresh all active offers
-			Refresh();
-		}
-
-		return m_featuredOffer;
-	}
-
-	//------------------------------------------------------------------------//
-	// INTERNAL METHODS														  //
-	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Function used to sort offer packs.
 	/// </summary>
@@ -188,7 +212,20 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		}
 
 		// Sort by order afterwards
-		return _p1.order.CompareTo(_p2.order);
+		int order = _p1.order.CompareTo(_p2.order);
+		if(order != 0) return order;
+
+		// Then by discount
+		int discount = _p1.def.GetAsFloat("discount").CompareTo(_p2.def.GetAsFloat("discount"));
+		if(discount != 0) return -discount;	// Reverse: item with greater discount goes first!
+
+		// Remaining time goes next
+		int remainingTime = _p1.remainingTime.CompareTo(_p2.remainingTime);
+		if(remainingTime != 0) return remainingTime;
+
+		// Finally by reference price
+		int price = _p1.def.GetAsFloat("refPrice").CompareTo(_p2.def.GetAsFloat("refPrice"));
+		return -price;	// Reverse: item with greater price goes first! (usually a better pack)
 	}
 
 	//------------------------------------------------------------------------//
@@ -213,25 +250,44 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			defaultPack.ValidateDefinition(offerDefs[i]);
 		}
-
-
-		// Offer items
-		// Create a dummy item with default values and use it to validate the definitions
-		OfferPackItem defaultItem = new OfferPackItem();
-		List<DefinitionNode> itemDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_ITEMS);
-		for(int i = 0; i < itemDefs.Count; ++i) {
-			defaultItem.ValidateDefinition(itemDefs[i]);
-		}
 	}
+
+    /// <summary>
+    /// Get a offer pack defined in the definitions. It may not be enabled.
+    /// </summary>
+    /// <returns>The offer pack.</returns>
+    /// <param name="_iapSku">Offer iap sku.</param>
+    public static OfferPack GetOfferPack(string _iapSku) {
+        int count = m_instance.m_allOffers.Count;
+        for (int i = 0; i < count; i++) {
+            OfferPack offerPack = m_instance.m_allOffers[i];
+            if (offerPack.def.Get("iapSku") == _iapSku) {
+                return offerPack;
+            }
+        }
+        return null;
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Called periodically - to avoid doing stuff every frame.
+	/// </summary>
+	private void PeriodicRefresh() {
+		// Update offers
+		Refresh(false);
+	}
+
+	/// <summary>
 	/// Something generic has changed in the game that requires the offers segmentation
 	/// to be checked.
 	/// Different overloads to support different event parameters, but we don't actually care about them.
 	/// </summary>
+	private void OnGameStateChanged() {
+		// [AOC] New implementation: Don't instantly refresh, periodic update will already do it.
+		//Refresh();
+	}
 	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
 		OnGameStateChanged(); 
 	}
@@ -244,7 +300,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void OnGameStateChanged4(Egg _p1) { 
 		OnGameStateChanged(); 
 	}
-	private void OnGameStateChanged() {
-		Refresh();
+	private void OnGameStateChanged5(OfferPack _p1) { 
+		OnGameStateChanged(); 
+	}
+	private void OnGameStateChanged6(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
+		OnGameStateChanged();
 	}
 }

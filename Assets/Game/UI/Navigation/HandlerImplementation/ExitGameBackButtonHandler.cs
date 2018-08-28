@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(NavigationScreen))]
+
 public class ExitGameBackButtonHandler : BackButtonHandler {
 	
 	//------------------------------------------------------------------------//

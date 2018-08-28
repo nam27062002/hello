@@ -35,7 +35,6 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string SHOW_SPEED						        = "SHOW_SPEED";
 	public const string SHOW_ALL_COLLECTIBLES					= "SHOW_ALL_COLLECTIBLES";
 
-	public const string NEW_CAMERA_SYSTEM		 		        = "NEW_CAMERA_SYSTEM";  
 	public const string VERTICAL_ORIENTATION		 		    = "VERTICAL_ORIENTATION";
 	public const string SIMULATED_SPECIAL_DEVICE				= "SIMULATED_SPECIAL_DEVICE";
 

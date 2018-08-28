@@ -60,6 +60,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(OPAQUEFRESNEL)] _EnableOpaqueFresnel("Enable opaque fresnel", Float) = 0
 		[Toggle(OPAQUESPECULAR)] _EnableOpaqueSpecular("Enable opaque specular", Float) = 0
 		[Toggle(BLENDFRESNEL)] _EnableBlendFresnel("Enable blend fresnel", Float) = 0.0
+		[Toggle(VERTEXOFFSET)] _EnableVertexOffset("Enable vertex offset", Float) = 0.0
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire)] FXLayer("Additional FX layer", Float) = 0
@@ -82,7 +83,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 				ZFail keep
 			}
 
-			Cull[_Cull]
+			Cull [_Cull]
 			Blend[_SrcBlend][_DstBlend]
 			ZWrite[_ZWrite]
 			ztest less
@@ -102,6 +103,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ OPAQUEFRESNEL
 			#pragma shader_feature  __ BLENDFRESNEL
 			#pragma shader_feature  __ OPAQUESPECULAR
+			#pragma shader_feature	__ VERTEXOFFSET
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
 			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
@@ -112,16 +114,16 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 //			#define FRESNEL
 
-			#if LOW_DETAIL_ON
+			#ifdef LOW_DETAIL_ON
 			#undef NORMALMAP
 			#undef SPECULAR
 			#endif
 
-			#if MEDIUM_DETAIL_ON
+			#ifdef MEDIUM_DETAIL_ON
 			#undef SPECULAR
 			#endif
 
-			#if HI_DETAIL_ON
+			#ifdef HI_DETAIL_ON
 			#endif
 
 			#include "dragon.cginc"

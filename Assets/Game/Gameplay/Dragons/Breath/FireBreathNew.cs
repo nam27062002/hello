@@ -110,7 +110,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
     override public bool IsInsideArea(Vector2 _point) { 
 	
-		if (m_isFuryOn) {
+		if (IsFuryOn()) {
 			if (m_bounds2D.Contains(_point)) {
 				return MathUtils.TestArcVsPoint( m_mouthTransform.position, m_arcAngle, m_actualLength, m_direction, _point);
 			}
@@ -121,7 +121,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	override public bool Overlaps(CircleAreaBounds _circle)
 	{
-		if (m_isFuryOn) 
+		if (IsFuryOn()) 
 		{
 			Vector3 center = _circle.center;
 			center.z = 0;
@@ -262,7 +262,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		if (m_isFuryOn) {
+		if (IsFuryOn()) {
 			Gizmos.color = Color.magenta;
 
 			// Arc Drawing
@@ -303,7 +303,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private void ShowWaterMode()
 	{
-		if ( m_isFuryOn )
+		if ( IsFuryOn() )
 		{
 			// Change to water modes
 			switch( m_type )
@@ -333,7 +333,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private void ShowNormalMode()
 	{
-		if ( m_isFuryOn )
+		if ( IsFuryOn() )
 		{
 			switch( m_type )
 			{

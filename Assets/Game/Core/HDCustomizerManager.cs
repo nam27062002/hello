@@ -32,7 +32,12 @@ public class HDCustomizerManager
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
-                Log("Files changed: " + kChangedContentFiles.ToString());
+				string msg = "Files changed: ";
+				for(int i = 0; i < kChangedContentFiles.Count; ++i) {
+					if(i > 0) msg += ", ";
+					msg += kChangedContentFiles[i];
+				}
+				Log(msg);
             }
 
             HDCustomizerManager.instance.NotifyFilesChanged(kChangedContentFiles);
@@ -43,7 +48,10 @@ public class HDCustomizerManager
 #if APPLY_ON_DEMAND
         public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
 #else
-        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig) { }
+        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig)
+		{
+			HDCustomizerManager.instance.NotifyPopupIsPrepared(kPopupConfig);
+		}
 #endif
 
         public override void onCustomizationFinished()
@@ -77,6 +85,8 @@ public class HDCustomizerManager
         }
     }
 
+    private const bool DEBUG_ENABLED = false;
+
     private static HDCustomizerManager sm_instance;
 
     public static HDCustomizerManager instance
@@ -95,8 +105,8 @@ public class HDCustomizerManager
 
             return sm_instance;
         }
-    }    
-
+    }
+    
     private enum EState
     {
         None, 
@@ -117,6 +127,13 @@ public class HDCustomizerManager
     /// List containing the files to revert because they were changed by previous customizers that don't have to be applied anymore, typically because those customizers have expired
     /// </summary>
     private List<string> m_filesToRevert;
+
+
+	/// <summary>
+	/// At this point we only support one popup. This will have a reference after the callback from CustomizerMAnager is received.
+	/// </summary>
+	private CustomizerManager.CustomiserPopupConfig m_lastPreparedPopupConfig;
+
 
     /// <summary>
     /// Time in seconds left to make customizer expire
@@ -259,6 +276,11 @@ public class HDCustomizerManager
 
     private void RequestCustomizer()
     {        
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Requesting customizer...", true);
+        }
+
         SetState(EState.WaitingForResponse);        
         CustomizerManager.SharedInstance.GetCustomizationsFromServer();
     }
@@ -295,6 +317,15 @@ public class HDCustomizerManager
     }
 
     /// <summary>
+    /// Returns whether or not the customizer has been received
+    /// </summary>
+    /// <returns></returns>
+    public bool IsReady()
+    {
+        return m_state == EState.Done;
+    }
+
+    /// <summary>
     /// Applies changes to rules if current customizer requires so
     /// </summary>
     /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
@@ -302,7 +333,7 @@ public class HDCustomizerManager
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges());
+            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges(), false);
         }
 
         bool returnValue = false;
@@ -354,7 +385,7 @@ public class HDCustomizerManager
     /// </summary>
     /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
     public bool Apply()
-    {
+    {        
 #if APPLY_ON_DEMAND
         return InternalApply();
 #else
@@ -369,9 +400,49 @@ public class HDCustomizerManager
             SetNeedsToNotifyRulesChanged(false);
         }
 
+        if (FeatureSettingsManager.IsDebugEnabled && returnValue)
+        {
+            Log("Applying changes...", true);
+        }
+
         return returnValue;
 #endif
     }
+
+	public bool IsCustomiserPopupAvailable()
+	{
+		if (m_state == EState.Done)
+		{
+			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+		}
+
+		return false;
+	}
+
+	public CustomizerManager.CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
+    {
+        CustomizerManager.CustomiserPopupConfig returnValue = null;
+
+        // Makes sure that there's a customizer and that is has already been applied
+        if (m_state == EState.Done)
+        {
+			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
+        }
+
+        return returnValue;
+    }
+
+	public CustomizerManager.CustomiserPopupConfig GetLastPreparedPopupConfig()
+	{		
+		CustomizerManager.CustomiserPopupConfig config = m_lastPreparedPopupConfig;
+		m_lastPreparedPopupConfig = null;
+		return config;
+	}
+
+	private void NotifyPopupIsPrepared(CustomizerManager.CustomiserPopupConfig _config) 
+	{
+		m_lastPreparedPopupConfig = _config;
+	}
 
     private void NotifyFilesChanged(List<string> files)
     {
@@ -416,6 +487,19 @@ public class HDCustomizerManager
     private void NotifyCustomizationFinished()
     {        
         SetState(EState.Done);
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            bool needsToApply = m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
+            if (needsToApply)
+            {
+                Log("Customizer WITH changes received. These changes are PENDING to be applied", true);
+            }
+            else
+            {
+                Log("Customizer WITH NO changes received", true);
+            }
+        }
     }
 
     public void NotifyServerDown()
@@ -496,7 +580,7 @@ public class HDCustomizerManager
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup);
+            Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup, false);
         }
 
         switch (m_state)
@@ -574,31 +658,20 @@ public class HDCustomizerManager
         }
     }
 
-#region log
-    private const bool DEBUG_ENABLED = false;
-    private const string LOG_CHANNEL = "[HDCustomizerManager] ";
-    public static void Log(string msg)
+#region log    
+    public static void Log(string msg, bool logToCPConsole=false)
     {
-        msg = LOG_CHANNEL + msg;
-
-        if (DEBUG_ENABLED)
-        {
-            msg = "<color=yellow>" + msg + "</color>";
-        }
-
-        Debug.Log(msg);
+        ControlPanel.Log(msg, ControlPanel.ELogChannel.Customizer, logToCPConsole);
     }
 
     public static void LogWarning(string msg)
     {
-        msg = LOG_CHANNEL + msg;
-        Debug.LogWarning(msg);
+        ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Customizer);
     }
 
     public static void LogError(string msg)
     {
-        msg = LOG_CHANNEL + msg;
-        Debug.LogError(msg);
+        ControlPanel.LogError(msg, ControlPanel.ELogChannel.Customizer);
     }
 #endregion
 }

@@ -437,10 +437,10 @@ MonoBehaviour:
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PF_feathers_3D_noblood
-    path: 
+    name: PS_Blood_Explosion
+    path: Blood
     changeStartColor: 1
-    startColor: {r: 0.2205882, g: 0.18318217, b: 0.184, a: 1}
+    startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
@@ -512,7 +512,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-  m_onEatenAudio: 
+  m_onEatenAudio: hd_scarab_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
@@ -597,7 +597,7 @@ MonoBehaviour:
   m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
-  m_idleAudio: 
+  m_idleAudio: hd_scarab_idle
   m_skins: []
 --- !u!135 &135997305440061154
 SphereCollider:

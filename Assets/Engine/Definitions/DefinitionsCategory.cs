@@ -32,6 +32,9 @@ public class DefinitionsCategory
 	public const string PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1 = "PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1";
 	public const string PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2 = "PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2";
 	public const string PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3 = "PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3";
+	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA1 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA1";
+	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA2 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA2";
+	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA3 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA3";
 	public const string SEASONS = "SEASONS";
 
 	// Progression
@@ -67,8 +70,13 @@ public class DefinitionsCategory
 	public const string GOLDEN_EGGS = "GOLDEN_EGGS";
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
+	public const string PREREG_REWARDS = "PREREG_REWARDS";
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
+    public const string INTERSTITIALS_PROFILES = "INTERSTITIALS_PROFILES";
+    public const string INTERSTITIALS_SETUP = "INTERSTITIALS_SETUP";
+	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
+	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";
@@ -91,7 +99,6 @@ public class DefinitionsCategory
 	// Economy
 	public const string SHOP_PACKS = "SHOP_PACKS";
 	public const string OFFER_PACKS = "OFFER_PACKS";
-	public const string OFFER_ITEMS = "OFFER_ITEMS";
 	public const string CURRENCY_TIERS = "CURRENCY_TIERS";
 };
     

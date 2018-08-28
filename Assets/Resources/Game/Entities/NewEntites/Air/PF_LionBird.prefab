@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 11497242}
   - component: {fileID: 54000013900218966}
   - component: {fileID: 136617037725372644}
+  - component: {fileID: 135090624159108870}
   m_Layer: 16
   m_Name: PF_LionBird
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 117248}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.9375322, y: 1.8134196, z: 0}
+  m_LocalPosition: {x: -843.4659, y: -111.01663, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4354625165897010}
@@ -86,7 +87,7 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":5,"type":0,"delay":1.5,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
-  m_databaseKey: PF_LionBird
+  m_databaseKey: PF_LionBird (1)
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
@@ -103,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_isPlaceHolder: 1
+  m_isPlaceHolder: 0
   m_walkSpeed: 10
   m_runSpeed: 15
   m_minPlaybakSpeed: 1
@@ -154,6 +155,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -196,6 +198,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -234,6 +237,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_lionbird_dead
   m_firePoints: []
   m_burnParticle:
@@ -274,6 +278,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -313,6 +318,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: hd_lionbird_attack
@@ -488,7 +494,7 @@ MonoBehaviour:
     m_ashExceptions: []
   m_onSpawnSound: 
   m_airMotion:
-    m_mass: 240
+    m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 15
     m_dragonStyleRotation: 0
@@ -553,6 +559,19 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
+--- !u!135 &135090624159108870
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117248}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136617037725372644
 CapsuleCollider:
   m_ObjectHideFlags: 1

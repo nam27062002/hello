@@ -256,6 +256,12 @@ public class UserProfile : UserPersistenceSystem
 		set { m_goldenEggsCollected = value; }
 	}
 
+	private int m_openEggTriesWithoutRares;
+	public int openEggTriesWithoutRares {
+		get { return m_openEggTriesWithoutRares; }
+		set { m_openEggTriesWithoutRares = value; }
+	}
+
     // Chests
     private Chest[] m_dailyChests;
 	public Chest[] dailyChests {
@@ -316,11 +322,16 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+	// Offer Packs
+	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+
+	//--------------------------------------------------------------------------
+
     public enum ESocialState
     {
         NeverLoggedIn,
         LoggedIn,
-        LoggedInAndInventivised
+        LoggedInAndIncentivised
     };
 
 
@@ -425,8 +436,11 @@ public class UserProfile : UserPersistenceSystem
         // Disguises
         m_wardrobe = new Wardrobe();
         m_petCollection = new PetCollection();
+
+		// Missions and achievements
+		if(m_userMissions != null) m_userMissions.ClearAllMissions();
         m_userMissions = new UserMissions();
-        m_achievements = new AchievementsTracker();        
+        m_achievements = new AchievementsTracker();
 
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
@@ -434,6 +448,7 @@ public class UserProfile : UserPersistenceSystem
         m_incubationEndTimestamp = DateTime.MinValue;
         eggsCollected = 0;
         m_goldenEggsCollected = 0;
+		m_openEggTriesWithoutRares = 0;
 
         m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];   // Should always have the same length
         m_dailyChestsResetTimestamp = DateTime.MinValue;
@@ -447,7 +462,9 @@ public class UserProfile : UserPersistenceSystem
         
         m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
     
-        m_rewards = new Stack<Metagame.Reward>();                            
+        m_rewards = new Stack<Metagame.Reward>();
+
+		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -458,6 +475,12 @@ public class UserProfile : UserPersistenceSystem
         {
             m_achievements.Dispose();
             m_achievements = null;
+        }
+
+        if ( m_userMissions != null )
+        {
+        	m_userMissions.ClearAllMissions();
+        	m_userMissions = null;
         }
     }
 
@@ -626,6 +649,7 @@ public class UserProfile : UserPersistenceSystem
 		switch(_sku) {
 			case "sc": return Currency.SOFT;
 			case "hc": return Currency.HARD;
+			case "pc": return Currency.HARD;
 			case "goldenFragments": return Currency.GOLDEN_FRAGMENTS;
 			case "keys": return Currency.KEYS;
 			case "money": return Currency.REAL;
@@ -876,12 +900,11 @@ public class UserProfile : UserPersistenceSystem
 			m_petCollection.Load(_data["pets"]);
 		}
 
-		// Missions
+        // Missions
+        // Clean missions
+        m_userMissions.ClearAllMissions();
 		if(_data.ContainsKey("missions")) {
 			m_userMissions.Load(_data["missions"]);
-		} else {
-			// Clean missions
-			m_userMissions.ClearAllMissions();
 		}
 
 		m_achievements.Initialize();
@@ -982,6 +1005,17 @@ public class UserProfile : UserPersistenceSystem
 				m_rewards.Push(r);
 			}
 		}
+
+		// Offer Packs
+		key = "offerPacks";
+		m_offerPacksPersistenceData.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json object into the dictionary
+			JSONClass offersJson = _data[key] as JSONClass;
+			foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
+				m_offerPacksPersistenceData.Add(kvp.Key, kvp.Value as JSONClass);
+			}
+		}
 	}
 
 	/// <summary>
@@ -1034,6 +1068,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Golden egg
 		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
+
+		// Dynamic Probability data
+		m_openEggTriesWithoutRares = _data["openEggTriesWithoutRares"].AsInt;
     }
 
 	/// <summary>
@@ -1151,6 +1188,13 @@ public class UserProfile : UserPersistenceSystem
 		}
 		data.Add("rewards", rewardsData);
 
+		// Offer packs
+		JSONClass offersData = new SimpleJSON.JSONClass();
+		foreach(KeyValuePair<string, JSONClass> kvp in m_offerPacksPersistenceData) {
+			offersData.Add(kvp.Key, kvp.Value);
+		}
+		data.Add("offerPacks", offersData);
+
 		// Return it
 		return data;
 	}
@@ -1192,6 +1236,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Golden eggs
 		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+		// Dynamic Probability data
+		data.Add("openEggTriesWithoutRares", m_openEggTriesWithoutRares.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
         return data;
 	}
@@ -1549,6 +1596,7 @@ public class UserProfile : UserPersistenceSystem
 	public void PushReward(Metagame.Reward _reward) {
 		rewardStack.Push(_reward);
 		Debug.Log("<color=green>PUSH! " + _reward.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_PUSHED, _reward);
 	}
 
 	/// <summary>
@@ -1558,7 +1606,56 @@ public class UserProfile : UserPersistenceSystem
 	public Metagame.Reward PopReward() {
 		Metagame.Reward r = rewardStack.Pop();
 		Debug.Log("<color=red>POP " + r.GetType().Name + "</color>");
+		Messenger.Broadcast<Metagame.Reward>(MessengerEvents.PROFILE_REWARD_POPPED, r);
 		return r;
+	}
+
+	//------------------------------------------------------------------------//
+	// OFFERS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Register an offer pack for persistence save.
+	/// </summary>
+	/// <param name="_offerPack">Pack to be saved.</param>
+	public void SaveOfferPack(OfferPack _pack) {
+		// Don't do it if pack shouldn't be saved
+		if(_pack == null || !_pack.ShouldBePersisted()) return;
+
+		// Save persistence data with unique ID for that pack
+		m_offerPacksPersistenceData[_pack.uniqueId] = _pack.Save();
+	}
+
+	/// <summary>
+	/// Load persistence data corresponding to a specific pack into it, if there is any.
+	/// </summary>
+	public void LoadOfferPack(OfferPack _pack) {
+		// Parameter check
+		if(_pack == null) return;
+
+		// Do we have persistence data for this pack?
+		JSONClass packData = null;
+		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
+			// Yes!
+			// Multiple packs may have the same unique ID, with the intention to make 
+			// them mutually exclusive. In order to know which pack with that ID is actually triggered,
+			// check the sku of the pack as well.
+			// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+			if(packData.ContainsKey("sku") && packData["sku"] == _pack.def.sku) {
+				// Match! Load it into the pack
+				_pack.Load(packData);
+			} else {
+				// Sku doesn't match! Immediately mark pack as expired
+				// (Since it means there is or has been another pack with the same uniqueID which was triggered first)
+				_pack.ForceExpiration();
+			}
+		}
+	}
+
+	/// <summary>
+	/// Cleanup persistence packs that shouldn't be persisted anymore.
+	/// </summary>
+	public void PurgeOfferPacksPersistence() {
+		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
 	}
 }
 

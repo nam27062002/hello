@@ -162,19 +162,27 @@ public class GameSceneController : GameSceneControllerBase {
 		LoadingScreen.Toggle(true, false);
 
 		// Check whether the tutorial popup must be displayed
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.CONTROLS_POPUP)
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
 			|| DebugSettings.isPlayTest) {
 			// Tracking
 			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
 			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 
 			// Open popup
-			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.CONTROLS_POPUP);
+			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);			
 		}
 
 		// Load the dragon
-		DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+		{
+			string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+			DragonManager.LoadDragon(dragon);
+		}
+		else
+		{
+			DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+		}
+
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
@@ -264,7 +272,8 @@ public class GameSceneController : GameSceneControllerBase {
 				
 			case EStates.RUNNING: {
 				// Update running time
-				m_elapsedSeconds += Time.deltaTime;
+				if (!m_freezeElapsedSeconds && !m_switchingArea)
+					m_elapsedSeconds += Time.deltaTime;
 
 				// Dynamic loading
 				if ( m_switchingArea )
@@ -292,6 +301,8 @@ public class GameSceneController : GameSceneControllerBase {
                                                                   
                                 m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
 
+								PoolManager.PreBuild();
+								ParticleManager.PreBuild();
 								ParticleManager.Rebuild();
 
 								if ( m_switchingAreaTasks != null )
@@ -405,6 +416,8 @@ public class GameSceneController : GameSceneControllerBase {
 	public void StartGame() {
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+        GameAds.instance.IncreaseRunsWithoutAds();
 
         Track_RoundStart();
 
@@ -592,7 +605,8 @@ public class GameSceneController : GameSceneControllerBase {
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 				
 				m_levelLoadingTasks = LevelManager.LoadLevel();
-				
+
+				PoolManager.PreBuild();
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
@@ -705,7 +719,7 @@ public class GameSceneController : GameSceneControllerBase {
 		yield return null;
 		InstanceManager.fogManager.firstTime = true;
 		// Hide loading screen
-		LoadingScreen.Toggle(false);
+		LoadingScreen.Toggle(false, false);	// [AOC] Occasionally the screen is not disabled after the fade out animation, locking the rest of the UI interaction. Remove fade animation until a fix is found.
 	}
 
 	private void OnScenesUnloaded()
@@ -805,8 +819,8 @@ public class GameSceneController : GameSceneControllerBase {
             }
         }
 
-		m_boostTimeTracker.SetValue(0, false);
-		m_mapUsageTracker.SetValue(0, false);
+		m_boostTimeTracker.InitValue(0);
+		m_mapUsageTracker.InitValue(0);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
 

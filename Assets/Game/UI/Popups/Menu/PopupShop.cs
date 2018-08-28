@@ -55,11 +55,21 @@ public class PopupShop : MonoBehaviour {
 	[SerializeField] private float[] m_pillRotationSequence = new float[0];
 	[SerializeField] private GameObject m_tabButtonsContainer = null;
 
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_offersCount;
+
+
 	// Other setup parameters
 	private bool m_closeAfterPurchase = false;
 	public bool closeAfterPurchase {
 		get { return m_closeAfterPurchase; }
 		set { m_closeAfterPurchase = value; }
+	}
+
+	private Tabs m_initialTab = Tabs.COUNT;
+	public Tabs initialTab {
+		get { return m_initialTab; }
+		set { m_initialTab = value; }
 	}
 
 	// Data
@@ -128,15 +138,23 @@ public class PopupShop : MonoBehaviour {
 		 || _mode == Mode.OFFERS_FIRST
 		);
 
-		// Select initial tab and scroll list
+		// Select initial tab
 		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
 		switch(_mode) {
+			case Mode.DEFAULT: {
+				// Is initial tab overriden?
+				if(m_initialTab != Tabs.COUNT) {
+					initialTab = (int)m_initialTab;
+				} else {
+					initialTab = (int)Tabs.PC;	// Default behaviour
+				}
+			} break;
+
 			case Mode.SC_ONLY: {
 				initialTab = (int)Tabs.SC; 
 			} break;
 
-			case Mode.PC_ONLY: 
-			case Mode.DEFAULT: {
+			case Mode.PC_ONLY: {
 				initialTab = (int)Tabs.PC;
 			} break;
 
@@ -146,6 +164,7 @@ public class PopupShop : MonoBehaviour {
 		}
 
 		// Go to initial tab
+		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);	// [AOC] The shop popup is keep cached, so if the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
 		m_tabs.GoToScreen(initialTab);
 	}
 
@@ -169,6 +188,8 @@ public class PopupShop : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		HDTrackingManager.Instance.Notify_StoreVisited();
+
+		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
 
         // Reset packs purchased list
         m_packsPurchased.Clear();

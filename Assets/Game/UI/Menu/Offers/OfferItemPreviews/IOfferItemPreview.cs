@@ -26,6 +26,12 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Settings
+	[SerializeField] private bool m_showInfoButton = false;
+	public bool showInfoButton {
+		get { return m_showInfoButton; }
+	}
+
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }
@@ -56,12 +62,32 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
 	/// <param name="_t">New parent!</param>
-	public virtual void SetParentAndFit(Transform _t) {
-		this.transform.SetParent(_t, false);
-		rectTransform.anchorMin = GameConstants.Vector2.zero;
-		rectTransform.anchorMax = GameConstants.Vector2.one;
-		rectTransform.offsetMin = GameConstants.Vector2.zero;
-		rectTransform.offsetMax = GameConstants.Vector2.zero;
+	public virtual void SetParentAndFit(RectTransform _t) {
+		// Delay by one frame to make sure rect transforms are properly initialized
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			this.transform.SetParent(_t, false);
+
+			float sx = _t.rect.width / Mathf.Max(rectTransform.rect.width, float.Epsilon);      // Prevent division by 0
+			float sy = _t.rect.height / Mathf.Max(rectTransform.rect.height, float.Epsilon);    // Prevent division by 0
+			float scale = (sx < sy) ? sx : sy;
+			rectTransform.localScale = new Vector3(scale, scale, scale);
+
+			// Scale particles as well
+			ParticleScaler scaler = this.GetComponentInChildren<ParticleScaler>();
+			if(scaler != null) {
+				scaler.DoScale();
+			}
+		}, 1);
+	}
+
+	//------------------------------------------------------------------------//
+	// OVERRIDE CANDIDATE METHODS											  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	public virtual void OnInfoButton() {
+		// Nothing to do by default
 	}
 
 	//------------------------------------------------------------------------//

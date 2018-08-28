@@ -89,6 +89,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	// Internal
 	private Coroutine m_coroutine;
 	private bool m_animatorCheckOverride = false;
+	private bool m_firstEnablePassed = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -108,22 +109,21 @@ public class MenuShowConditionally : MonoBehaviour {
 		// The animator must ask for permission before showing itself!
 		m_targetAnimator.OnShowCheck.AddListener(OnAnimatorCheck);
 
-		m_coroutine = null;
-	}
-
-	/// <summary>
-	/// First update.
-	/// </summary>
-	private void Start() {
-		// Apply for the first time with current values and without animation
+		// Start hidden (the Start call will properly initialize it based on current values)
+		// Force a hide and then apply for the first time with current values and without animation
+		Apply(false, false, false);
 		Apply(targetDragonSku, currentMenuScreen, false, false);
+
+		m_coroutine = null;
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		Apply(targetDragonSku, currentMenuScreen, true, false);
+		// Don't animate the first time the object is enabled
+		Apply(targetDragonSku, currentMenuScreen, m_firstEnablePassed, false);
+		m_firstEnablePassed = true;
 	}
 
 	/// <summary>
@@ -169,6 +169,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Skip if dragon check disabled
 		if(!m_checkSelectedDragon) return true;
 
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("Checking dragon: " + _dragonSku));
+
 		// Check whether the object should be visible or not
 		bool show = false;
 		DragonData dragon = DragonManager.GetDragonData(_dragonSku);
@@ -207,6 +210,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	public bool CheckScreen(MenuScreen _screen) {
 		// Skip if screen check disabled
 		if(!m_checkScreens) return true;
+		
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("Checking screen: " + _screen));
 
 		// Is screen in the list?
 		bool isScreenOnTheList = m_targetScreens.IndexOf(_screen) >= 0;
@@ -219,7 +225,7 @@ public class MenuShowConditionally : MonoBehaviour {
 			} break;
 
 			case ScreenVisibilityMode.HIDE_ON_TARGET_SCREENS: {
-				show = !isScreenOnTheList;
+				show = !isScreenOnTheList && _screen != MenuScreen.NONE;	// Never show at "NONE" screen! Resolves issue HDK-1251
 			} break;
 		}
 
@@ -236,6 +242,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_useAnims">Whether to animate or not.</param>
 	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
 	private void Apply(bool _show, bool _useAnims, bool _resetAnim) {
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("APPLY: " + _show + ", " + _useAnims + ", " + _resetAnim));
+
 		// Let animator do its magic
 		// If forcing animation and going from visible to visible, hide before showing again
 		if(_resetAnim 
@@ -243,6 +252,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& m_targetAnimator.visible 
 		&& isActiveAndEnabled 
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
+			// Debug
+			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
 			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
@@ -257,6 +269,12 @@ public class MenuShowConditionally : MonoBehaviour {
 			if(m_coroutine != null) {
 				StopCoroutine(m_coroutine);
 				m_coroutine = null;
+			}
+			// Debug
+			if(_show) {
+				ShowHideAnimator.DebugLog(this, Colors.green.Tag("FORCE_SHOW"));
+			} else {
+				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
 			}
 			m_animatorCheckOverride = true;
 			m_targetAnimator.ForceSet(_show, _useAnims);
@@ -344,6 +362,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
 		// Delay
 		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
+
+		// Debug
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("DELAYED APPLY: " + _toShow + ", " + _useAnims + "\nenabled? " + this.enabled));
 
 		// Do it! (If still enabled!)
 		if(this.enabled) {

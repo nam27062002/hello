@@ -324,9 +324,8 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 		// Clean up font name
 		_fontAssetName = GetNonEditorName(_fontAssetName);
 
-		// Is this font asset compatible with current font?
+		// Is target font asset compatible with the current font group?
 		if(currentFontGroup != null) {
-			// Is target font asset compatible with the current font?
 			bool isCompatible = false;
 			for(int i = 0; i < currentFontGroup.fontAssets.Length; ++i) {
 				if(currentFontGroup.fontAssets[i] == _fontAssetName) {
@@ -335,10 +334,10 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 				}
 			}
 
-			// Font asset not compatible with current font
-			if(!isCompatible && currentFontGroup.fontAssets.Length > 0) {
-				// Use default font asset for current font
-				_fontAssetName = currentFontGroup.fontAssets[0];
+			// Font asset not compatible with current font group
+			if(!isCompatible) {
+				// Use default font asset for current font group
+				_fontAssetName = currentFontGroup.defaultFont;
 			}
 		}
 

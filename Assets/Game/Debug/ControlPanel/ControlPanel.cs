@@ -56,7 +56,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
     private bool m_isStatsEnabled;
     public bool IsStatsEnabled {
         get {
-			return m_isStatsEnabled && InstanceManager.menuSceneController == null;	// [AOC] Disable stats at the menu (so annoying for developing UI!)
+			return m_isStatsEnabled;
         }
 
         set {
@@ -202,6 +202,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 				PlayerPrefs.SetInt(LAST_TAB_IDX_PREF_KEY, _newTabIdx);
 			}
 		);
+
+		// Setup console channels
+		Log_InitChannels();
 
         m_activateTimer = 0;
 		CheckCanvasActivation();
@@ -372,4 +375,152 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Toggle();
 		Toggle();
 	}
+
+    #region log    
+    public enum ELogChannel
+    {        
+        General,
+        Customizer,
+        GameCenter,
+		ResultsScreen,
+		LiveEvents,
+        Store
+    };
+    
+    private static Dictionary<ELogChannel, string> sm_logChannelColors;
+    private static Dictionary<ELogChannel, string> sm_logChannelPrefix;
+
+	private static void Log_InitChannels() {
+		Log_SetupChannel(ELogChannel.General, "", Color.white);
+		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
+		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
+		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
+        Log_SetupChannel(ELogChannel.Store, "Store", Colors.coral);
+    }
+
+    private static string Log_GetChannelColor(ELogChannel channel)
+    {
+        string returnValue = null;
+        if (sm_logChannelColors != null && sm_logChannelColors.ContainsKey(channel))
+        {
+            returnValue = sm_logChannelColors[channel];            
+        }
+
+        return returnValue;
+    }
+
+    private static string Log_GetChannelPrefix(ELogChannel channel)
+    {
+        if (sm_logChannelPrefix == null)
+        {
+            sm_logChannelPrefix = new Dictionary<ELogChannel, string>();
+        }
+
+        if (!sm_logChannelPrefix.ContainsKey(channel))
+        {
+            sm_logChannelPrefix[channel] = "[" + channel.ToString() + "] ";
+        }
+
+        return sm_logChannelPrefix[channel];
+    }
+
+	public static void Log_SetupChannel(ELogChannel channel, string _prefix, Color color) {
+		// Prefix
+		if(sm_logChannelPrefix == null) {
+			sm_logChannelPrefix = new Dictionary<ELogChannel, string>();
+		}
+		
+		if(!string.IsNullOrEmpty(_prefix)) {
+			_prefix = "[" + _prefix + "] ";
+		}
+		sm_logChannelPrefix[channel] = _prefix;
+
+		// Color
+        if(sm_logChannelColors == null) {
+            sm_logChannelColors = new Dictionary<ELogChannel, string>();
+        }
+		
+		if(color == Color.white) {
+			sm_logChannelColors[channel] = null;	// Use default color instead of white
+		} else {
+			sm_logChannelColors[channel] = Colors.ToHexString(color, "#", false);
+		}
+    }
+
+    public static string COLOR_ERROR = Colors.ToHexString(Color.red, "#", false);
+    public static string COLOR_WARNING = Colors.ToHexString(Color.yellow, "#", false);
+
+    public static void LogError(string text, ELogChannel channel=ELogChannel.General)
+    {
+        LogToCPConsole(text, channel, COLOR_ERROR);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            text = Log_GetChannelPrefix(channel) + text;
+            Debug.LogError(text);
+        }
+    }
+
+    public static void LogWarning(string text, ELogChannel channel = ELogChannel.General)
+    {
+        LogToCPConsole(text, channel, COLOR_WARNING);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            text = Log_GetChannelPrefix(channel) + text;
+            Debug.LogWarning(text);
+        }
+    }
+
+    public static void Log(string text, ELogChannel channel=ELogChannel.General, bool logToCPConsole=true, bool logToUnityConsole=true) {        
+        if (logToCPConsole) {
+            LogToCPConsole(text, channel);
+        }
+
+        if (logToUnityConsole) {
+            LogToUnityConsole(text, channel);
+        }
+    }   
+
+    private static void LogToCPConsole(string text, ELogChannel channel = ELogChannel.General, string color=null) {
+        // It's logged to control panel console
+        if (FeatureSettingsManager.IsControlPanelEnabled) {
+            if (color == null)
+            {
+                color = Log_GetChannelColor(channel);
+            }
+
+            text = Log_GetChannelPrefix(channel) + text;
+            CPConsoleTab.Log(text, color);
+        }
+    }
+
+    private static void LogToUnityConsole(string text, ELogChannel channel=ELogChannel.General)
+    {
+        // It's logged to Unity console too
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            text = Log_GetChannelPrefix(channel) + text;
+
+#if UNITY_EDITOR
+            string color = Log_GetChannelColor(channel);
+            if (!string.IsNullOrEmpty(color))
+            {   
+				// [AOC] Unfortunately, color is not properly displayed in the Unity Console if the text has more than one line break
+				//		 Workaround it by just coloring the first line
+
+				// Insert opening tag
+				text = text.Insert(0, "<color=" + color + ">");
+
+				// Insert closing tag right before the first line break, or at the end if no line breaks are found
+				int idx = text.IndexOf('\n');
+				if(idx > 0) {
+					text = text.Insert(idx, "</color>");
+				} else {
+					text = text + "</color>";
+				}
+            }            
+#endif
+
+            Debug.Log(text);
+        }
+    }
+    #endregion
 }

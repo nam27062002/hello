@@ -12,7 +12,7 @@ Material:
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2010
+  m_CustomRenderQueue: 2900
   stringTagMap:
     QUEUE: Geometry
     RenderType: Opaque
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 164ef0b567cc15343b2ffd9158b58e40, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9b5582b2fc1927d4eb2009d04360c235, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -82,13 +82,15 @@ Material:
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 0
     - _FireAmount: 0
-    - _Fresnel: 10
+    - _FireSpeed: 1
+    - _Fresnel: 6.99
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
@@ -99,7 +101,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
-    - _SpecExponent: 6.68
+    - _SpecExponent: 8.48
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -111,8 +113,8 @@ Material:
     - _ColorMultiply: {r: 0.9632353, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0.28676468, g: 0.28676468, b: 0.28676468, a: 1}
+    - _FresnelColor: {r: 0.7058823, g: 0.6643598, b: 0.70301867, a: 1}
     - _InnerLightColor: {r: 0.27850497, g: 0.39705884, b: 0.26275954, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.67, a: 0.45}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.41911763, g: 0.17565958, b: 0.37210497, a: 0}
+    - _SecondLightDir: {r: -0.30355707, g: 0.6266985, b: -0.7177062, a: 0}
+    - _Tint: {r: 0.8088235, g: 0.8088235, b: 0.8088235, a: 1}

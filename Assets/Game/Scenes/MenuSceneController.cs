@@ -90,6 +90,9 @@ public class MenuSceneController : SceneController {
 		}
 	}
 
+	// Internal
+	private bool m_wereStatsEnabled = true;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -118,6 +121,10 @@ public class MenuSceneController : SceneController {
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
+
+		// [AOC] Disable Stats on the Control Panel at the menu (so annoying for developing UI!)
+		m_wereStatsEnabled = ControlPanel.instance.IsStatsEnabled;
+		ControlPanel.instance.IsStatsEnabled = false;
     }
 
 	protected IEnumerator Start()
@@ -138,7 +145,11 @@ public class MenuSceneController : SceneController {
 		// StartCoroutine(petsScreen.InstantiatePillsAsync());
 
 		// Request latest global event data
-		GlobalEventManager.RequestCurrentEventData();
+		// GlobalEventManager.RequestCurrentEventData();
+		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		{
+			HDLiveEventsManager.instance.RequestMyEvents();
+		}
 
 		// wait one tick
 		yield return null;
@@ -156,10 +167,16 @@ public class MenuSceneController : SceneController {
 	}    
 
 	protected override void OnDestroy() {
-		Application.lowMemory -= OnLowMemory;
-		base.OnDestroy();
-        if (FeatureSettingsManager.IsDebugEnabled)
-            Debug_OnDestroy();
+        if (ApplicationManager.IsAlive) {
+            // Restore stats on the control panel
+            if (ControlPanel.instance != null)
+                ControlPanel.instance.IsStatsEnabled = m_wereStatsEnabled;
+
+            Application.lowMemory -= OnLowMemory;
+            base.OnDestroy();
+            if (FeatureSettingsManager.IsDebugEnabled)
+                Debug_OnDestroy();
+        }
     }
 	
 	/// <summary>

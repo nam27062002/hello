@@ -40,8 +40,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public Mode appMode
     {
     	get{ return m_appMode; }
-    }
-
+    }    
 
     /// <summary>
 	/// Initialization. This method will be called only once regardless the amount of times the user is led to the Loading scene.
@@ -69,15 +68,17 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);        
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
 
-		Device_Init();
+        Device_Init();
 
         GameCenter_Init();
 
         // [DGR] GAME_VALIDATOR: Not supported yet
         // GameValidator gv = new GameValidator();
         //gv.StartBuildValidation();        
+        ExceptionManager.SharedInstance.AddCrashDelegate(new HDExceptionListener());
     }
 
     protected void Start()
@@ -94,8 +95,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 		}
 
         // Subscribe to external events
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+            Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        }
+
+		CancelLocalNotifications();
 
         StartCoroutine(Device_Update());
     }
@@ -116,11 +122,23 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     protected override void OnDestroy()
     {
-        base.OnDestroy();        
+        base.OnDestroy();
+
+        Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
+        Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
+        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
+            Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+        }
 
         m_isAlive = false;
 
         GameServerManager.SharedInstance.Destroy();
+        HDCustomizerManager.instance.Destroy();
     }
 
     protected override void OnApplicationQuit()
@@ -129,7 +147,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         // Tracking session has to be finished when the application is closed
         HDTrackingManager.Instance.Notify_ApplicationEnd();
-
+        
         //PersistenceManager.Save();
 
         PersistenceFacade.instance.Destroy();
@@ -141,8 +159,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This needs to be called once all stuff is done, otherwise this singleton will be marked as destroyed and some other stuff won't
         // be able to access it
         base.OnApplicationQuit();
-    }
-
+    }    
 
     private void Reset()
     {
@@ -151,6 +168,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Game_IsInGame = false;
         Game_IsPaused = false;
         Debug_IsPaused = false;
+        Language_Reset();
     }
 
     public bool NeedsToRestartFlow { get; set; }    
@@ -263,7 +281,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // ---------------------------
             // Test persistence save
             //Debug_TestPersistenceSave();
-            // ---------------------------            
+            // ---------------------------        
+
+            // ---------------------------
+            // Test social platform with/without age protection
+            //Debug_TestSocialPlatformToggleAgeProtection();
+            // ---------------------------        
+
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
@@ -272,14 +296,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         }
 #endif
 
+        Language_Update();
+
         PersistenceFacade.instance.Update();
         HDTrackingManager.Instance.Update();
-
-        HDCustomizerManager.instance.Update();
-
-        #if UNITY_EDITOR
-        GameServerManager.SharedInstance.Update();
-		#endif
+        HDCustomizerManager.instance.Update();        
+		GameServerManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
         {
@@ -323,21 +345,38 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private long LastPauseTime { get; set; }
 
-    public void OnApplicationPause(bool pause)
-    {
-        Debug.Log("OnApplicationPause " + pause);
+    // It has to be an IEnumerator to increase unsent events chances of being sent
+    public IEnumerator OnApplicationPause(bool pause)
+    {        
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Debug.Log("OnApplicationPause " + pause);
+
+        // Unsent events shouldn't be stored when the game is getting paused because the procedure might take longer than the time that the OS concedes and if the procedure
+        // doesn't finish then events can get lost (HDK-1897)
+        HDTrackingManager.Instance.SaveOfflineUnsentEventsEnabled = !pause;
 
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
         {
         	if ( GameAds.isInstanceCreated && GameAds.instance.IsWaitingToPlayAnAd())
-        		GameAds.instance.StopWaitingToPlayAnAd();
+            {
+                if ( GameAds.instance.GetAdType() != AdProvider.AdType.Interstitial )
+        		    GameAds.instance.StopWaitingToPlayAnAd();
+            }
 
-            HDTrackingManager.Instance.Notify_ApplicationPaused();
+           HDTrackingManager.Instance.Notify_ApplicationPaused();
+           ScheduleLocalNotifications();
         }
         else
         {
             HDTrackingManager.Instance.Notify_ApplicationResumed();
+            CancelLocalNotifications();
+            
+            if ( GameCenterManager.SharedInstance.CheckIfInitialised() )
+            {
+                bool auth = GameCenterManager.SharedInstance.CheckIfAuthenticated();
+            }
+            
         }
 
         // If the persistences are not being synced then we need to make sure the local progress will be stored when going to pause
@@ -432,8 +471,63 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 m_storeManager.OnApplicationPause(pause);
             }
             */            
-        }        
-    }    
+        }
+
+        return null;     
+    }        
+
+    private void ScheduleLocalNotifications()
+    {
+		if ( UsersManager.currentUser != null )
+        {
+        	// Mission notifications
+			bool waiting = false;
+			double seconds = 0;
+
+            UserMissions userMissions = UsersManager.currentUser.userMissions;
+            if (userMissions != null)
+            {
+                for (Mission.Difficulty i = Mission.Difficulty.EASY; i < Mission.Difficulty.COUNT; i++)
+                {
+                    if (userMissions.ExistsMission(i))
+                    {
+                        Mission m = userMissions.GetMission(i);
+                        if (m.state == Mission.State.COOLDOWN)
+                        {
+                            waiting = true;
+                            if (m.cooldownRemaining.TotalSeconds > seconds)
+                                seconds = m.cooldownRemaining.TotalSeconds;
+                        }
+                    }
+                }
+            }
+
+			if ( waiting )
+			{
+				HDNotificationsManager.instance.ScheduleNotification("sku.not.02", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_MISSIONS"), "Action", (int)seconds);
+			}
+			/*
+			// Chests notification
+			int max = UsersManager.currentUser.dailyChests.Length;
+			bool missingChests = false;
+			for (int i = 0; i < max && !missingChests; i++) 
+			{
+				if ( UsersManager.currentUser.dailyChests[i].state == Chest.State.COLLECTED )
+					missingChests = true;
+			}
+			if ( missingChests )
+			{
+				HDNotificationsManager.instance.ScheduleNotification("sku.not.03", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_CHESTS"), "Action", (int) ChestManager.timeToReset.TotalSeconds );
+			}
+			*/
+        }
+    }
+
+    private void CancelLocalNotifications()
+    {
+		HDNotificationsManager.instance.CancelNotification("sku.not.02");
+		// HDNotificationsManager.instance.CancelNotification("sku.not.03");
+    }
 
     #region game
     private bool Game_IsInGame { get; set; }
@@ -453,6 +547,32 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Game_OnPaused(bool value)
     {
         Game_IsPaused = value;
+    }
+
+    /// <summary>
+    /// Checks whether or not the customizer needs to reload rules and if so the cached data are reloaded.
+    /// </summary>
+    /// <returns><c>true</c> if the customizer had changes pending to be applied.</returns>
+    public bool Game_ApplyCustomizer()
+    {
+        bool rulesReloaded = HDCustomizerManager.instance.Apply();
+
+        // If rules have been reloaded then cached data have to be updated
+        if (rulesReloaded)
+        {
+            Game_OnRulesUpdated();
+        }
+
+        return rulesReloaded;
+    }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    private void Game_OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
     }
     #endregion
 
@@ -554,9 +674,62 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
         }
     }
-#endregion
+    #endregion
 
-#region memory_profiler
+    #region language
+    private string m_languageRequested;
+    private bool m_languageNeedsToBeUpdated;
+
+    private void Language_Reset()
+    {
+        m_languageNeedsToBeUpdated = true;
+        m_languageRequested = null;
+    }
+
+    private void Language_OnChanged()
+    {
+        m_languageNeedsToBeUpdated = true;
+    }
+
+    private void Language_OnSetInServer(FGOL.Server.Error error, GameServerManager.ServerResponse response)
+    {
+        // It's stored only if the server has stored it successfully
+        if (error == null && !string.IsNullOrEmpty(m_languageRequested))
+        {
+            PersistencePrefs.SetServerLanguage(m_languageRequested);            
+        }
+
+        m_languageRequested = null;
+    }
+
+    private void Language_Update()
+    {
+        // We need to way for ContentManager to be ready in order to make sure that current laguange has been loaded in LocalizationManager
+        // Checks that language has changed and there's no a request already being processed
+        if (ContentManager.m_ready && m_languageNeedsToBeUpdated && m_languageRequested == null)
+        {
+            m_languageNeedsToBeUpdated = false;
+
+            string currentLanguage = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
+            string serverLanguage = PersistencePrefs.GetServerLanguage();
+            if (currentLanguage != serverLanguage)
+            {
+                DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, currentLanguage);
+                if (langDef != null)
+                {
+                    string serverCode = langDef.Get("serverCode");
+                    if (!string.IsNullOrEmpty(serverCode))
+                    {
+                        m_languageRequested = currentLanguage;
+                        GameServerManager.SharedInstance.SetLanguage(serverCode, Language_OnSetInServer);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region memory_profiler
     private bool m_memoryProfilerIsEnabled = false;
     private bool MemoryProfiler_IsEnabled
     {
@@ -601,7 +774,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
         public override void onAuthenticationFinished()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFinished");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationFinished", ControlPanel.ELogChannel.GameCenter);
+            }            
 
 #if UNITY_ANDROID
 			// On android if player login we make sure it will try at start again
@@ -615,13 +791,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onAuthenticationFailed()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationFailed");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationFailed", ControlPanel.ELogChannel.GameCenter);
+            }
+             
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED);
         }
 
         public override void onAuthenticationCancelled()
         {
-            Debug.Log("GameCenterDelegate onAuthenticationCancelled");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onAuthenticationCancelled", ControlPanel.ELogChannel.GameCenter);
+            }
+
 #if UNITY_ANDROID
 			// On android if player cancells the authentication we will not ask again
 			CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false" , false);
@@ -631,36 +815,53 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         public override void onUnauthenticated()
         {
-            Debug.Log("GameCenterDelegate onUnauthenticated");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);
+            }
+
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
         public override void onGetToken(JSONNode kTokenDataJSON)
         {
-            Debug.Log("GameCenterDelegate onGetToken: " + kTokenDataJSON.ToString() + 
-                " userID = " + GameCenterManager.SharedInstance.GetUserId() + 
-                " userName = " + GameCenterManager.SharedInstance.GetUserName());
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetToken: " + kTokenDataJSON.ToString() +
+                " userID = " + GameCenterManager.SharedInstance.GetUserId() +
+                " userName = " + GameCenterManager.SharedInstance.GetUserName(), 
+                ControlPanel.ELogChannel.GameCenter);
+            }
         }
 
         public override void onNotAuthenticatedException()
         {
-            Debug.Log("GameCenterDelegate onNotAuthenticatedException");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onNotAuthenticatedException", ControlPanel.ELogChannel.GameCenter);
+            }
         }
 
         public override void onGetAchievementsInfo(Dictionary<string, GameCenterManager.GameCenterAchievement> kAchievementsInfo)
         {
-            Debug.Log("GameCenterListener: onGetAchievementsInfo");
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetAchievementsInfo", ControlPanel.ELogChannel.GameCenter);
+            }
 
             foreach (KeyValuePair<string, GameCenterManager.GameCenterAchievement> kEntry in kAchievementsInfo)
             {
                 GameCenterManager.GameCenterAchievement kAchievement = (GameCenterManager.GameCenterAchievement)kEntry.Value;
 
-                Debug.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount);
+                ControlPanel.Log("-----------------------------------------\nachievement: " + kEntry.Key + "\ndesc: " + kAchievement.m_strDescription + "\npercent: " + kAchievement.m_fPercentComplete + "\nunlocked: " + kAchievement.m_iIsUnlocked + "\ncurrent: " + kAchievement.m_iCurrentAmount + "\namount: " + kAchievement.m_iTotalAmount, ControlPanel.ELogChannel.GameCenter);
             }
         }
         public override void onGetLeaderboardScore(string strLeaderboardSKU, int iScore, int iRank)
         {
-            Debug.Log("GameCenterListener: onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank);
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                ControlPanel.Log("onGetLeaderboardScore " + strLeaderboardSKU + " : " + iScore + " , " + iRank, ControlPanel.ELogChannel.GameCenter);
+            }
         }
     }
     private GameCenterListener m_gameCenterListener = null;
@@ -682,11 +883,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				kAchievementsData[iSKUIdx].m_strSKU = kEntry.Value.Get("sku");
 				if (kEntry.Value.Has ("amount"))
 				{
-#if UNITY_IOS
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);
-#elif UNITY_ANDROID
-					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount");
-#endif				
+					kAchievementsData[iSKUIdx].m_iAmount = kEntry.Value.GetAsInt("amount") / kEntry.Value.GetAsInt("stepSize", 1);			
 				}
 				else
 				{
@@ -803,6 +1000,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         return returnValue;
     }
+    #endregion
+
+    #region exception    
+    private class HDExceptionListener : CyExceptions.ExceptionListener
+    {
+        /// <summary>
+        /// Time in seconds that has to pass between two exceptions report
+        /// </summary>
+        private const float EXCEPTION_TIME_BETWEEN_REPORTS = 5 * 60f;
+
+        /// <summary>
+        /// Timestamp of the latest exception reported. It's stored to prevent tracking from getting spammed when an exception is reported every frame
+        /// </summary>
+        private float m_exceptionLatestTimestamp = 0f;
+
+        public override void OnUnhandledException(string logString, string stackTrace, LogType type)
+        {
+            if (type == LogType.Exception || type == LogType.Error)
+            {
+                float timeSinceLastException = Time.realtimeSinceStartup - m_exceptionLatestTimestamp;
+                if (timeSinceLastException >= EXCEPTION_TIME_BETWEEN_REPORTS)
+                {
+                    m_exceptionLatestTimestamp = Time.realtimeSinceStartup;
+
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                    {
+                        Log("OnUnhandledException logString = " + logString + " stackTrace = " + stackTrace + " type = " + type.ToString());
+                    }
+                 
+                    HDTrackingManager.Instance.Notify_Crash((type == LogType.Exception), type.ToString(), logString);
+                }
+            }
+        }
+    }    
     #endregion
 
     #region debug
@@ -1260,6 +1491,13 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	{
 		Debug.Log("OnAdPlayed result = " + success);
 	}
+
+    private bool m_debugUseAgeProtection = false;
+    private void Debug_TestSocialPlatformToggleAgeProtection()
+    {
+        m_debugUseAgeProtection = !m_debugUseAgeProtection;        
+        NeedsToRestartFlow = true;
+    }
 
     private const string LOG_CHANNEL = "[ApplicationManager]";
     private static void Log(string msg)

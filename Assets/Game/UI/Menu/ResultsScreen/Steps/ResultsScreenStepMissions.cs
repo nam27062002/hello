@@ -79,7 +79,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 					targetMission.InitWithParams(
 						missionDef,
 						DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
-						Random.Range(missionDef.GetAsFloat("objectiveBaseQuantityMin"), missionDef.GetAsFloat("objectiveBaseQuantityMax")),
+						RandomExt.Range(missionDef.GetAsLong("objectiveBaseQuantityMin"), missionDef.GetAsLong("objectiveBaseQuantityMax")),
 						Random.value < 0.5f	// 50% chace
 					);
 					targetMission.difficulty = Mission.Difficulty.MEDIUM;
@@ -166,16 +166,18 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 			// Play SFX
 			AudioController.Play(m_rewardSFX);
 
-			// Show some coins flying around!
-			CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
-				CurrencyTransferFX.COINS,
-				this.GetComponentInParent<Canvas>().transform,
-				_pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
-				m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
-			);
-			fx.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
-			fx.OnFinish.AddListener(() => { m_currencyFX.Remove(fx); });
-			m_currencyFX.Add(fx);
+			// Show some coins flying around! (unless skipped)
+			if(!m_skipped) {
+				CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+					CurrencyTransferFX.COINS,
+					this.GetComponentInParent<Canvas>().transform,
+					_pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),		// Offset Z so the coins don't collide with the UI elements
+					m_coinsCounter.transform.position + new Vector3(0f, 0f, -0.5f)
+				);
+				fx.totalDuration = m_coinsCounter.duration * 0.5f;	// Match the text animator duration (more or less)
+				fx.OnFinish.AddListener(() => { m_currencyFX.Remove(fx); });
+				m_currencyFX.Add(fx);
+			}
 		}, 0.15f);
 	}
 

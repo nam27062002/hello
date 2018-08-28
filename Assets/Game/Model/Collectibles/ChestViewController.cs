@@ -152,7 +152,8 @@ public class ChestViewController : MonoBehaviour {
 		StopAllFX();
 
 		// Play SFX
-		AudioController.Play(m_closeSFX);
+		if ( !string.IsNullOrEmpty(m_closeSFX) )
+			AudioController.Play(m_closeSFX);
 	}
 
 	/// <summary>

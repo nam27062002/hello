@@ -7,30 +7,46 @@ public class DragonPowerUp : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 
+
 	//------------------------------------------------------------------------//
 	// ATTRIBUTES															  //
 	//------------------------------------------------------------------------//
 	private bool m_warnEntities = false;
+
+	private static float sm_petPowerUpPercentage = 0f;
+	public static void AddPetPowerUpPercentage(float _percentage) {
+		sm_petPowerUpPercentage += _percentage;
+	}
+
+	private float m_entitySCMultiplier;
+	private float m_entityXPMultiplier;
+	private float m_entityScoreMultiplier;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
 	void Awake()
 	{
-		Entity.ResetSCMuliplier();
-		Entity.ResetScoreMultiplier();
-		Entity.ResetXpMultiplier();
+		m_entitySCMultiplier = 0f;
+		m_entityXPMultiplier = 0f;
+		m_entityScoreMultiplier = 0f;
 	}
 
 	void OnDestroy()
 	{
-		Entity.ResetSCMuliplier();
-		Entity.ResetScoreMultiplier();
-		Entity.ResetXpMultiplier();
+		Entity.AddSCMultiplier(-m_entitySCMultiplier);
+		Entity.AddXpMultiplier(-m_entityXPMultiplier);
+		Entity.AddScoreMultiplier(-m_entityScoreMultiplier);
 	}
 
 	void Start() 
 	{
+		InstanceManager.APPLY_DRAGON_MODIFIERS();
+
+		CPModifiers.ApplyDragonMods();
+
+		HDLiveEventsManager.instance.ApplyDragonMods();
+								
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		string dragonSku = "";
 		if (player != null) {
@@ -41,18 +57,30 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 
 		// Disguise power up
-		string disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
+		string disguise;
+		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
+			disguise = HDLiveEventsManager.instance.m_tournament.GetToUseSkin();
+		} else {
+			disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
+		}
+
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguise);
 		if (def != null) {
 			string powerUp = def.Get("powerup");
 			if(!string.IsNullOrEmpty(powerUp)){
-				SetPowerUp(powerUp);
+				SetPowerUp(powerUp, false);
 			}
 		}
 
-
 		// Pet power ups
-		List<string> pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
+		List<string> pets;
+		// Check if tournament
+		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
+			pets = HDLiveEventsManager.instance.m_tournament.GetToUsePets();
+		} else {
+			pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
+		}
+
 		for( int i = 0; i<pets.Count; i++ )
 		{
 			if ( !string.IsNullOrEmpty( pets[i] ) )
@@ -63,7 +91,7 @@ public class DragonPowerUp : MonoBehaviour {
 					string powerUp = petDef.Get("powerup");
 					if ( !string.IsNullOrEmpty( powerUp ) )
 					{
-						SetPowerUp(powerUp);
+						SetPowerUp(powerUp, true);
 					}
 				}
 			}
@@ -76,7 +104,7 @@ public class DragonPowerUp : MonoBehaviour {
 		}
 	}
 
-	void SetPowerUp( string powerUpSku )
+	void SetPowerUp( string powerUpSku, bool _fromPet )
 	{
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUpSku);
@@ -84,34 +112,42 @@ public class DragonPowerUp : MonoBehaviour {
 		if ( def != null )
 		{
 			string type = def.Get("type");
+			string category = def.Get("category");
+
+			float multiplier = 1f;
+			if (_fromPet) {
+				if (category.Equals("stats")) {
+					multiplier += sm_petPowerUpPercentage / 100f;
+				}
+			}
 
 			switch( type )
 			{
 				case "hp_increase":	// gives the player extra health
 				{
-					player.AddHealthBonus( def.GetAsFloat("param1"));
+					player.AddHealthBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
 				case "boost_increase":	// increases boost bar
 				{
-					player.AddBoostBonus( def.GetAsFloat("param1"));
+					player.AddBoostBonus( def.GetAsFloat("param1") * multiplier);
 				}break;
 				case "faster_boost": // increases boost refill rate
 				{
 					DragonBoostBehaviour boost = player.dragonBoostBehaviour;
 					if ( boost )
 					{
-						boost.AddRefillBonus( def.GetAsFloat("param1") );
+						boost.AddRefillBonus( def.GetAsFloat("param1") * multiplier );
 					}
 				}break;
 				case "fury_duration":	// Adds fury duration
 				{
-					DragonBreathBehaviour breath = player.GetComponent<DragonBreathBehaviour>();
+					DragonBreathBehaviour breath = player.breathBehaviour;
 					if ( breath != null )
-						breath.AddDurationBonus( def.GetAsFloat("param1") );
+						breath.AddDurationBonus( def.GetAsFloat("param1") * multiplier );
 				}break;
 				case "dive":	// lets you move inside water
 				{
-					DragonMotion motion = GetComponent<DragonMotion>();
+					DragonMotion motion = player.dragonMotion;
 					motion.canDive = true;
 				}break;
 				case "avoid":	// avoids numHits
@@ -141,15 +177,15 @@ public class DragonPowerUp : MonoBehaviour {
 					{
 						case "mine":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.MINE, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.MINE, percentage * multiplier );
 						}break;
 						case "poison":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.POISON, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.POISON, percentage * multiplier );
 						}break;
 						case "arrows":
 						{
-							healthBehaviour.AddDamageReduction( DamageType.ARROW, percentage );
+							healthBehaviour.AddArmorModifier( DamageType.ARROW, percentage * multiplier );
 						}break;
 					}
 				}break;
@@ -173,7 +209,7 @@ public class DragonPowerUp : MonoBehaviour {
 					for( int i = 0; i<from.Count; i++ )
 					{
 						if (!string.IsNullOrEmpty(from[i]))
-							healthBehaviour.AddEatingHpBoost( from[i], percentage);	
+							healthBehaviour.AddEatingHpBoost( from[i], percentage * multiplier);	
 					}
 
 				}break;
@@ -181,29 +217,36 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddEatingHpBoost(percentage);
+					healthBehaviour.AddEatingHpBoost(percentage * multiplier);
 				}break; 
 				case "reduce_life_drain":	// reduces lifedrain by param1 %
 				{
 					float percentage = def.GetAsFloat("param1");
 					DragonHealthBehaviour healthBehaviour = GetComponent<DragonHealthBehaviour>();
-					healthBehaviour.AddDrainReduceModifier( percentage );
+					healthBehaviour.AddDrainModifier( percentage * multiplier );
 				}break;
 				case "more_coin":	// Increase SC given for all preys by param1 %
 				{
-					
-					Entity.AddSCMultiplier( def.GetAsFloat("param1", 0));
+					float coins = def.GetAsFloat("param1", 0) * multiplier;
+					m_entitySCMultiplier += coins;
+					Entity.AddSCMultiplier(coins);
 					m_warnEntities = true;
 				}break;
 				case "score_increase":	// Increases score given for all preys by param1 %
 				{
+					float score = def.GetAsFloat("param1", 0) * multiplier;
+					m_entityScoreMultiplier += score;
+
 					// Increase score given by any prey by [param1]
-					Entity.AddScoreMultiplier( def.GetAsFloat("param1", 0));
+					Entity.AddScoreMultiplier(score);
 					m_warnEntities = true;
 				}break;
 				case "more_xp":
 				{
-					Entity.AddXpMultiplier( def.GetAsFloat("param1", 0));
+					float xp = def.GetAsFloat("param1", 0) * multiplier;
+					m_entityXPMultiplier += xp;
+
+					Entity.AddXpMultiplier(m_entityXPMultiplier);
 					m_warnEntities = true;
 				}break;
 				case "fury_size_increase":	// Increases fire size by param1 %
@@ -212,7 +255,7 @@ public class DragonPowerUp : MonoBehaviour {
 					float percentage = def.GetAsFloat("param1", 0);
 					if (fireBreath != null )
 					{
-						fireBreath.AddPowerUpLengthMultiplier( percentage );
+						fireBreath.AddPowerUpLengthMultiplier( percentage * multiplier );
 					}
 				}break;
 				case "speed_increase":	// Increases max speed by param1 %
@@ -220,13 +263,13 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonMotion motion = GetComponent<DragonMotion>();
 					if ( motion != null )
 					{
-						motion.AddSpeedPowerup( def.GetAsFloat("param1", 0));
+						motion.AddSpeedModifier( def.GetAsFloat("param1", 0) * multiplier);
 					}
 				}break;
 				case "vacuum":
 				{
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
-					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) );
+					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) * multiplier );
 				}break;
 				case "alcohol_resistance":
 				{
@@ -248,10 +291,10 @@ public class DragonPowerUp : MonoBehaviour {
 				{
 					string powerUp1 = def.Get("param1");
 					if ( !string.IsNullOrEmpty(powerUp1) )
-						SetPowerUp( powerUp1 );
+						SetPowerUp( powerUp1, _fromPet );
 					string powerUp2 = def.Get("param2");
 					if ( !string.IsNullOrEmpty(powerUp2) )
-						SetPowerUp( powerUp2 );
+						SetPowerUp( powerUp2, _fromPet );
 				}break;
 				default:
 				{
@@ -267,10 +310,10 @@ public class DragonPowerUp : MonoBehaviour {
 	/// <param name="_powerSku">Sku of the power whose description we want.</param>
 	/// <param name="_short">Whether to return the short or the long description.</param>
 	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
-	public static string GetDescription(string _powerSku, bool _short) {
+	public static string GetDescription(string _powerSku, bool _short, bool _fromPet) {
 		// Get definition
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _powerSku);
-		return GetDescription(def, _short);
+		return GetDescription(def, _short, _fromPet);
 	}
 
 	/// <summary>
@@ -280,9 +323,18 @@ public class DragonPowerUp : MonoBehaviour {
 	/// <param name="_powerSku">Sku of the power whose description we want.</param>
 	/// <param name="_short">Whether to return the short or the long description.</param>
 	/// <returns>The description for the given power. Empty string if power not known or no description available.</returns>
-	public static string GetDescription(DefinitionNode _powerDef, bool _short) {
+	public static string GetDescription(DefinitionNode _powerDef, bool _short, bool _fromPet) {
 		// Check definition
 		if(_powerDef == null) return "";
+
+		string category = _powerDef.Get("category");
+
+		float multiplier = 1f;
+		if (_fromPet) {
+			if (category.Equals("stats")) {
+				multiplier += sm_petPowerUpPercentage / 100f;
+			}
+		}
 
 		// Short or long description?
 		string fieldId = _short ? "tidDescShort" : "tidDesc";
@@ -294,14 +346,14 @@ public class DragonPowerUp : MonoBehaviour {
 			// Powers with custom formats
 			case "lower_damage":
 			case "lower_damage_origin": {
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param2")), color.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param2") * multiplier)), color.ToHexString("#"));
 			} break;
 
 			case "dragonram": {
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
 				} else {
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), color.ToHexString("#"));
 				}
 			} break;
 
@@ -317,7 +369,7 @@ public class DragonPowerUp : MonoBehaviour {
 				if(_short) {
 					return _powerDef.GetLocalized(fieldId, color.ToHexString("#"));
 				} else {
-					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2"), 0), color.ToHexString("#"));
+					return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsFloat("param2") * multiplier, 0), color.ToHexString("#"));
 				}
 			} break;
 
@@ -336,7 +388,7 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "faster_boost":
 			{
-				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber(_powerDef.GetAsInt("param1")), color.ToHexString("#"));
+				return _powerDef.GetLocalized(fieldId, StringUtils.FormatNumber((int)(_powerDef.GetAsFloat("param1") * multiplier)), color.ToHexString("#"));
 			} break;
 
 			// Rest of powers (no params)
@@ -382,6 +434,7 @@ public class DragonPowerUp : MonoBehaviour {
 			// Health
 			case "food_increase":
 			case "hp_increase":
+			case "combined":
 			{
 				return UIConstants.PET_CATEGORY_HEALTH;
 			} break;
@@ -436,6 +489,8 @@ public class DragonPowerUp : MonoBehaviour {
 			case "bomb":
 			case "stun":
 			case "findBonus":
+			case "tranformGold":
+			case "shoot_horns":
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
 			} break;

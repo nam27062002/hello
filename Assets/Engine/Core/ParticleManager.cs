@@ -119,7 +119,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	}
 
 	private void __PreBuild() {
-		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
@@ -157,46 +157,59 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		pc.version = "Master/";
 		pc.size = def.GetAsInt("count");
 
-		// npew read the current profile
+        // npew read the current profile
 		switch(FeatureSettingsManager.instance.Particles) {
 			case FeatureSettings.ELevel5Values.very_low:							
-			case FeatureSettings.ELevel5Values.low:
-				if (def.GetAsBool("lowVersion")) {
-					pc.version = "Low/";
-				}
-				pc.size = def.GetAsInt("countLow", pc.size);
-				break;
-
-			case FeatureSettings.ELevel5Values.high:
-				if (def.GetAsBool("highVersion")) {
-					pc.version = "High/";
-				}
-				pc.size = def.GetAsInt("countHigh", pc.size);
-				break;
-				
-			case FeatureSettings.ELevel5Values.very_high:
-				if (def.GetAsBool("veryHighVersion")) {
-					pc.version = "VeryHigh/";
-				}
-				pc.size = def.GetAsInt("countVeryHigh", pc.size);
-				break;
+            case FeatureSettings.ELevel5Values.low:              CheckLow(def, ref pc);	break;
+            case FeatureSettings.ELevel5Values.high:            CheckHigh(def, ref pc);	break;				
+			case FeatureSettings.ELevel5Values.very_high:   CheckVeryHigh(def, ref pc);	break;
 		}
 
 		// size is 0 if we dont want to use blood and the particle is blood
-		if ( !m_useBlood && def.GetAsBool("isBlood", false))
-		{
+		if (!m_useBlood && def.GetAsBool("isBlood", false)) {
 			pc.size = 0;
 		}
 
 		return pc;
 	}
 
+    private void CheckVeryHigh(DefinitionNode _def, ref PoolContainer _pc) {
+        bool checkLowerLevel = true;
+        if (_def.GetAsBool("veryHighVersion")) {
+            _pc.version = "VeryHigh/";
+            checkLowerLevel = false;
+        }
+
+        if (_def.Has("countVeryHigh")) {
+            _pc.size = _def.GetAsInt("countVeryHigh");
+            checkLowerLevel = false;
+        }
+
+        if (checkLowerLevel) {
+            CheckHigh(_def, ref _pc);
+        }
+    }
+
+    private void CheckHigh(DefinitionNode _def, ref PoolContainer _pc) {
+        if (_def.GetAsBool("highVersion")) {
+            _pc.version = "High/";
+        }
+        _pc.size = _def.GetAsInt("countHigh", _pc.size);
+    }
+
+    private void CheckLow(DefinitionNode _def, ref PoolContainer _pc) {
+        if (_def.GetAsBool("lowVersion")) {
+            _pc.version = "Low/";
+        }
+        _pc.size = _def.GetAsInt("countLow", _pc.size);
+    }
+
 
 	/// <summary>
 	/// Rebuild. When changin area, this funcion makes the proper changes to adapt to the area
 	/// </summary>
 	private void __Rebuild() {
-		m_useBlood = Prefs.GetBoolPlayer( GameSettings.BLOOD_ENABLED, true );
+        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
 		if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				Dictionary<string, PoolContainer> toDelete = new Dictionary<string, PoolContainer>( m_pools );
@@ -280,4 +293,71 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		m_pools.Clear();
 		m_iterator.Clear();
 	}
+
+	#region utils
+	/// <summary>
+	/// Inits the leveled particle. Search a particle with name "particle" from Particles levels to very low and, if found, instantiated it and sets _anchor as parent
+	/// </summary>
+	/// <returns>The leveled particle.</returns>
+	/// <param name="particle">Particle.</param>
+	/// <param name="_anchor">Anchor.</param>
+	public static ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
+	{
+		ParticleSystem ret = null;
+		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
+				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
+				level = level - 1
+				)
+		{
+			string path = "";
+			switch(level) {
+					//	path = "Particles/VeryLow/";
+					// break;
+				case FeatureSettings.ELevel5Values.very_low:
+				case FeatureSettings.ELevel5Values.low:
+						path = "Particles/Low/";
+					break;
+				case FeatureSettings.ELevel5Values.mid:
+						path = "Particles/Master/";
+					break;
+				case FeatureSettings.ELevel5Values.high:
+						path = "Particles/High/";
+					break;
+				case FeatureSettings.ELevel5Values.very_high:
+						path = "Particles/VeryHigh/";
+					break;
+			}
+			if ( !string.IsNullOrEmpty(path) )
+			{
+				GameObject go = Resources.Load<GameObject>( path + particle );
+				if ( go != null )
+				{
+					 ret = InitParticle( go,  _anchor);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/// <summary>
+	/// Inits the particle. Instantiates _prefa, stops particle and sets _anchor as parent
+	/// </summary>
+	/// <returns>The particle.</returns>
+	/// <param name="_prefab">Prefab.</param>
+	/// <param name="_anchor">Anchor.</param>
+	public static ParticleSystem InitParticle(GameObject _prefab, Transform _anchor)
+	{
+		if(_prefab == null) return null;
+
+		GameObject go = Instantiate(_prefab);
+		ParticleSystem psInstance = go.GetComponent<ParticleSystem>();
+		if(psInstance != null) {
+			psInstance.transform.SetParentAndReset(_anchor);
+			psInstance.Stop();
+			go.SetActive(false);
+		}
+		return psInstance;
+	}
+	#endregion
+
 }

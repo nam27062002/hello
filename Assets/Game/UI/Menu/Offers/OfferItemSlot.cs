@@ -29,10 +29,12 @@ public class OfferItemSlot : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Transform m_previewContainer = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
+	[Tooltip("Optional")] [SerializeField] private GameObject m_infoButton = null;
+	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
 	[Space]
 	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 	[Space]
-	[SerializeField] private GameObject m_separator = null;
+	[Tooltip("Optional")] [SerializeField] private GameObject m_separator = null;
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -133,7 +135,20 @@ public class OfferItemSlot : MonoBehaviour {
 
 		// Load new preview (if required)
 		if(reloadPreview) {
-			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D);
+			// Try loading the preferred preview type
+			// If there is no preview of the preferred type, try other types untill we have a valid preview
+			OfferItemPrefabs.PrefabType preferredPreviewType = m_allow3dPreview ? OfferItemPrefabs.PrefabType.PREVIEW_3D : OfferItemPrefabs.PrefabType.PREVIEW_2D;
+			GameObject previewPrefab = OfferItemPrefabs.GetPrefab(item.type, preferredPreviewType);
+			if(previewPrefab == null) {
+				// Loop will stop with a valid prefab
+				for(int i = 0; i < (int)OfferItemPrefabs.PrefabType.COUNT && previewPrefab == null; ++i) {
+					// Skip preferred type (already checked)
+					if(i == (int)preferredPreviewType) continue;
+					previewPrefab = OfferItemPrefabs.GetPrefab(item.type, (OfferItemPrefabs.PrefabType)i);
+				}
+			}
+
+			// Instantiate preview! :)
 			if(previewPrefab != null) {
 				GameObject previewInstance = GameObject.Instantiate<GameObject>(previewPrefab);
 				m_preview = previewInstance.GetComponent<IOfferItemPreview>();
@@ -143,19 +158,20 @@ public class OfferItemSlot : MonoBehaviour {
 		// Initialize preview with item data
 		if(m_preview != null) {
 			m_preview.InitFromItem(m_item);
-			m_preview.SetParentAndFit(m_previewContainer);
+			m_preview.SetParentAndFit(m_previewContainer as RectTransform);
 		}
 
 		// Set text - preview will given us the text already localized and all
 		if(m_preview != null) {
 			m_text.text = m_preview.GetLocalizedDescription();
 		} else {
-			m_text.text = "Unknown reward type";
+			// Something went very wrong :s
+			m_text.text = "Couldn't find a preview prefab for reward type " + item.type;
 		}
 
 		// Text color based on item rarity!
 		Gradient4 rarityGradient = null;
-		if(m_item.reward != null) {
+		if(m_item is Metagame.RewardPet && m_item.reward != null) {
 			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
 		} else {
 			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
@@ -167,6 +183,46 @@ public class OfferItemSlot : MonoBehaviour {
 			rarityGradient.bottomLeft,
 			rarityGradient.bottomRight
 		);
+
+		// Info button - depends on preview type
+		if(m_infoButton != null) {
+			if(m_preview != null) {
+				m_infoButton.SetActive(m_preview.showInfoButton);
+			} else {
+				m_infoButton.SetActive(false);
+			}
+		}
+
+		// Power info - only for some types
+		if(m_powerIcon != null) {
+			DefinitionNode powerDef = null;
+			switch(reward.type) {
+				case Metagame.RewardPet.TYPE_CODE: {
+					// Get the pet preview
+					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
+					if(petDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+					}
+				} break;
+
+				case Metagame.RewardSkin.TYPE_CODE: {
+					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
+					if(skinDef != null) {
+						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+					}
+				} break;
+
+				default: {
+					// No power to be displayed :)
+				} break;
+			}
+
+			// Show?
+			m_powerIcon.gameObject.SetActive(powerDef != null);
+
+			// Initialize
+			m_powerIcon.InitFromDefinition(powerDef, false);
+		}
 	}
 
 	/// <summary>
@@ -188,5 +244,15 @@ public class OfferItemSlot : MonoBehaviour {
 	private void OnLanguageChanged() {
 		// Reapply current reward
 		InitFromItem(m_item);
+	}
+
+	/// <summary>
+	/// Info button has been pressed.
+	/// </summary>
+	public void OnInfoButton() {
+		// If we have a valid preview, and this one supports info button, propagate the event
+		if(m_preview != null && m_preview.showInfoButton) {
+			m_preview.OnInfoButton();
+		}
 	}
 }

@@ -155,6 +155,12 @@ public class GameServerManagerCalety : GameServerManager {
             GameServerManager.SharedInstance.OnLogOut();
         }
 
+        public override void onCountryBlacklisted() {
+            CacheServerManager.SharedInstance.SetCountryBlacklisted(true);
+            GameServerManager.SharedInstance.OnLogOut();
+        }
+
+
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
 			Debug.TaggedLog(tag, "onUserBlackListed");
@@ -230,6 +236,7 @@ public class GameServerManagerCalety : GameServerManager {
     public override void Update()
     {
         Connection_Update();
+        Commands_Update();
     }
 
     /// <summary>
@@ -261,10 +268,23 @@ public class GameServerManagerCalety : GameServerManager {
 		kServerConfig.m_strClientPlatformBuild = "ios";
 #endif
 
-        kServerConfig.m_strServerApplicationSecretKey = "avefusilmagnifica";
+        kServerConfig.m_strApplicationParole = "avefusilmagnifica";
 
         kServerConfig.m_iConnectTimeOut = 6000;
         kServerConfig.m_iReadTimeOut = 6000;
+
+        // Social platform in Calety depends on our social platform (either Fb or Weibo), which depends on the user's country
+        SocialUtils.EPlatform socialPlatform = SocialPlatformManager.GetSocialPlatform();
+        switch (socialPlatform)
+        {
+            case SocialUtils.EPlatform.Facebook:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.FACEBOOK;
+                break;
+
+            case SocialUtils.EPlatform.Weibo:
+                settingsInstance.m_iSocialPlatformSelected = (int)CaletyConstants.eSocialPlatforms.WEIBO;
+                break;
+        }
         ServerManager.SharedInstance.Initialise(ref kServerConfig);
 
 		m_delegate = new GameSessionDelegate(Commands_OnResponse);
@@ -420,8 +440,8 @@ public class GameServerManagerCalety : GameServerManager {
     {
         //return m_delegate.m_logged;
         return Login_State == ELoginState.LoggedIn;
-	}  
-    
+	}   
+
     private void Login_OnLogged(bool logged)
     {
         if (logged && Login_State != ELoginState.LoggedIn)
@@ -527,6 +547,17 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.PendingTransactions_Confirm, parameters, callback);
     }
 
+    public override void SetLanguage(string serverCode, ServerCallback onDone)
+    {
+        JSONNode json = new JSONClass();
+        json["language"] = serverCode;
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+
+        Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);        
+    }
+
     override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
 	}
@@ -592,6 +623,79 @@ public class GameServerManagerCalety : GameServerManager {
 
 	#endregion
 
+#region HD_LiveEvents
+		
+	public override void HDEvents_GetMyEvents(ServerCallback _callback) {
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
+	}
+
+	public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetEventDefinition, parameters, _callback);
+	}
+
+	public override void HDEvents_GetMyProgess(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
+	}
+
+	public override void HDEvents_AddProgress(int _eventID, int _score, ServerCallback _callback) {
+		// Compose parameters and enqeue command
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		parameters.Add("progress", _score.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_AddProgress, parameters, _callback);
+	}
+
+    public override void HDEvents_GetLeaderboard(int _eventID, ServerCallback _callback)
+    {
+        // Compose parameters and enqeue command
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetLeaderboard, parameters, _callback);
+    }
+
+    public override void HDEvents_SetScore(int _eventID, int _score, SimpleJSON.JSONNode _build, ServerCallback _callback) {
+        // Compose parameters and enqeue command
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        parameters.Add("score", _score.ToString(JSON_FORMAT));
+		parameters.Add("returnData", "true");
+		parameters.Add("build", _build.ToString());
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
+    }
+
+	public override void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        parameters.Add("type", _type);
+		parameters.Add("amount", _amount.ToString(JSON_FORMAT));
+		parameters.Add("elo", _matchmakingValue.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_Enter, parameters, _callback);
+	}
+    
+
+	public override void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyReward, parameters, _callback);
+	}
+
+	public override void HDEvents_FinishMyEvent(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_FinishMyEvent, parameters, _callback);
+	}
+
+	public override void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {
+		Dictionary<string, string> parameters = new Dictionary<string, string>();
+		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetRefund, parameters, _callback);
+	}
+#endregion
+
 	//------------------------------------------------------------------------//
 	// INTERNAL COMMANDS MANAGEMENT											  //
 	//------------------------------------------------------------------------//
@@ -619,13 +723,26 @@ public class GameServerManagerCalety : GameServerManager {
         TrackLoading,
         PendingTransactions_Get,
         PendingTransactions_Confirm,
+        Language_Set,
 
         GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
 		GlobalEvents_GetState,		// params: int _eventID. Returns the current total value of an event
 		GlobalEvents_RegisterScore,	// params: int _eventID, float _score
 		GlobalEvents_GetRewards,	// params: int _eventID
-		GlobalEvents_GetLeadeboard	// params: int _eventID
+		GlobalEvents_GetLeadeboard,	// params: int _eventID
+
+
+		HDLiveEvents_GetMyEvents,
+		HDLiveEvents_GetEventDefinition,// params: int _eventID. Returns an event description
+        HDLiveEvents_GetMyProgress,		// params: int _eventID. Returns the event progres for this player
+        HDLiveEvents_AddProgress,	// params: int _eventID, _contribution on quests
+        HDLiveEvents_GetLeaderboard,   // params: int _eventID
+        HDLiveEvents_SetScore,     // params: int _eventID. _score on tournaments
+        HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
+		HDLiveEvents_GetMyReward,		// params: int _eventID
+		HDLiveEvents_FinishMyEvent,		// params: int _eventID
+		HDLiveEvents_GetRefund			// params: int _eventID
 	}    
 
 	/// <summary>
@@ -635,6 +752,7 @@ public class GameServerManagerCalety : GameServerManager {
 		public ECommand Cmd { get; private set; }
 		public Dictionary<string, string> Parameters { get; set; }
 		public ServerCallback Callback { get; private set; }
+        public float LastLogin { get; set; }
 
 		/// <summary>
 		/// 
@@ -652,15 +770,19 @@ public class GameServerManagerCalety : GameServerManager {
 			Cmd = cmd;
 			Parameters = parameters;
 			Callback = callback;
-		}        
+            LastLogin = 0f;
+        }        
 	}
 
 	/// <summary>
 	/// Pool of commands to reduce the impact in memory of sending commands to the server. Every time a <c>Command</c> object is needed we should check this pool first to get the object
 	/// and once we're done we have to return the object to this pool
 	/// </summary>
-	private Queue<Command> Commands_Pool { get; set; }
-	private Queue<Command> Commands_Queue { get; set; }
+	private Queue<Command> Commands_Pool { get; set; }	
+
+    private const int COMMANDS_PRIORITIES_COUNT = 2;
+
+    private List<Command>[] Commands_List { get; set; }
 
     private Command m_commandsCurrentCommand;
 	private Command Commands_CurrentCommand
@@ -670,17 +792,18 @@ public class GameServerManagerCalety : GameServerManager {
         {
             m_commandsCurrentCommand = value;
         }
-    }	
-
-	private bool m_CommandsIsEnabled;
+    }		
 	
 	/// <summary>
 	/// 
 	/// </summary>
 	private void Commands_Init() {
-		Commands_Pool = new Queue<Command>();
-		Commands_Queue = new Queue<Command>();   
-		m_CommandsIsEnabled = true;
+		Commands_Pool = new Queue<Command>();	
+        
+        Commands_List = new List<Command>[COMMANDS_PRIORITIES_COUNT];
+        for (int i = 0; i < COMMANDS_PRIORITIES_COUNT; i++) {
+            Commands_List[i] = new List<Command>();
+        }		
 	}
 
 	/// <summary>
@@ -711,82 +834,109 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 	}
 
+    private bool Commands_IsEmpty() {
+        bool returnValue = true;
+        for (int i = 0; i < COMMANDS_PRIORITIES_COUNT && returnValue; i++) {
+            returnValue = Commands_List[i].Count == 0;
+        }
+
+        return returnValue;
+    }
+
+    private void Commands_Update() {
+        if (Commands_CurrentCommand == null && !Commands_IsEmpty()) {            
+            // If the connection is down and there are commands to send then we try to recover the connection before trying to send any commands
+            if (m_connectionState == EConnectionState.Down) {
+                Connection_Recover(Commands_OnRecovered);
+            } else {
+                int count;
+                int i;
+                Command command = null;
+                ELoginState loginState = Login_State;
+
+                // Picks a command to be processed
+                for (i = 0; i < COMMANDS_PRIORITIES_COUNT; i++) {
+                    count = Commands_List[i].Count;
+
+                    for (int j = 0; j < count && command == null; j++) {
+                        command = Commands_List[i][j];
+
+                        // The command needs the user to be logged in before being processed
+                        if (Commands_NeedsToBeLoggedIn(command.Cmd)) {                            
+                            switch (loginState) {
+                                case ELoginState.LoggingIn:
+                                    // This command can't be processed yet because log in process is still being processed
+                                    command = null;
+                                    break;                                
+                            }
+                        }                        
+                    }
+
+                    if (command != null) {
+                        break;
+                    }
+                }
+
+                // Processes the command
+                if (command != null) {
+                    if (Commands_NeedsToBeLoggedIn(command.Cmd)) {
+                        if (loginState == ELoginState.NotLoggedIn) {
+                            // If this command hasn't triggered a log in process yet then it has to do it
+                            if (command.LastLogin == 0f) {
+                                command.LastLogin = Time.realtimeSinceStartup;
+
+                                // It shouldn't be processed yet. It will have another chance once the recovery process is completed
+                                command = null;
+                                Connection_Recover(Commands_OnRecovered);
+                            }
+                        }
+                    } 
+                    
+                    if (command != null) {                        
+                        // The command has to be deleted from the list                    
+                        Commands_List[i].Remove(command);
+                        Commands_ProcessCommand(command);
+                    }                            
+                }
+            }            
+        }
+    }
+
+    private void Commands_ProcessCommand(Command command) {
+        Commands_CurrentCommand = command;
+        
+        //Make sure we have a valid parameters object as before or after command callbacks may modify it
+        if (command.Parameters == null)
+        {
+            command.Parameters = new Dictionary<string, string>();
+        }
+
+        command.Parameters["version"] = Globals.GetApplicationVersion();
+        command.Parameters["platform"] = Globals.GetPlatform().ToString();
+
+        Commands_RunCommand(command);        
+    }
+
+    private void Commands_OnRecovered() {                    
+        // If the connection couldn't be recovered then all commands have to be discarded
+        if (m_connectionState == EConnectionState.Down) {
+            Commands_OnServerDown();
+        }        
+    }
+
 	/// <summary>
 	/// 
 	/// </summary>
 	private void Commands_EnqueueCommand(ECommand command, Dictionary<string, string> parameters, ServerCallback callback, bool highPriority=false) {
 		Command cmd = Commands_GetCommand();
-		cmd.Setup(command, parameters, callback);       
-
-        // If no command is being processed and the queue is empty then it's run immeditaly
-        if (Commands_CurrentCommand == null && (Commands_IsQueueEmpty() || highPriority)) {			
-			Commands_PrepareToRunCommand(cmd);
-		} else {
-
-            Commands_Queue.Enqueue(cmd);            
-		}       
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private Command Commands_DequeueCommand() {
-        return Commands_Queue.Dequeue();
-	}
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private bool Commands_IsQueueEmpty() {
-		return Commands_Queue.Count == 0;
-	}		
-
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Commands_PrepareToRunCommand(Command command, int retries = 0)
-    {
-        Action onReady = delegate()
-        {
-            Commands_CurrentCommand = command;
-
-            if (m_connectionState == EConnectionState.Up || m_connectionState == EConnectionState.Recovering)
-            {
-                //Make sure we have a valid parameters object as before or after command callbacks may modify it
-                if (command.Parameters == null)
-                {
-                    command.Parameters = new Dictionary<string, string>();
-                }
-
-                command.Parameters["version"] = Globals.GetApplicationVersion();
-                command.Parameters["platform"] = Globals.GetPlatform().ToString();
-                
-                Commands_RunCommand(command);
-            }
-            else
-            {             
-                Commands_OnExecuteCommandDone(Connection_GetServerDownError(), null);                
-            }          
-        };
+		cmd.Setup(command, parameters, callback);
+        
+        int index = (highPriority) ? 0 : 1;
+        Commands_List[index].Add(cmd);
 
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("PrepareToRunCommand " + command.Cmd);
-
-        // If the command requires to be logged to the server and the game is not logged yet then we need to login before sending the command
-        if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn() && m_connectionState != EConnectionState.Recovering)
-        {
-            Connection_SetState(EConnectionState.Down);
-        }
-
-        if (FeatureSettingsManager.instance.IsAutomaticReloginEnabled() && m_connectionState == EConnectionState.Down)
-        {
-            Connection_Recover(onReady);
-        }
-        else
-        {
-            onReady();
-        }
-	}    
+            Log("Command requested " + command.ToString());
+	}		    
 
     private bool Commands_NeedsToBeLoggedIn(ECommand command)
     {
@@ -803,6 +953,17 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.GlobalEvents_RegisterScore:
             case ECommand.PendingTransactions_Get:
             case ECommand.PendingTransactions_Confirm:
+
+            case ECommand.HDLiveEvents_GetMyEvents:
+			case ECommand.HDLiveEvents_GetEventDefinition:
+			case ECommand.HDLiveEvents_GetMyProgress:
+			case ECommand.HDLiveEvents_AddProgress:
+            case ECommand.HDLiveEvents_GetLeaderboard:
+            case ECommand.HDLiveEvents_SetScore:
+            case ECommand.HDLiveEvents_Enter:
+			case ECommand.HDLiveEvents_GetMyReward:
+			case ECommand.HDLiveEvents_FinishMyEvent:
+			case ECommand.HDLiveEvents_GetRefund:
                 returnValue = true;
                 break;
         }
@@ -825,13 +986,17 @@ public class GameServerManagerCalety : GameServerManager {
         //        
 		if(Commands_CurrentCommand == command) {
 
-            // If the command needs to be logged in but the game is not currently logged in then an error is returned
-            // TODO: To force login before sending the command
-            if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn())
-            {
+            // If there's no connection then request timeout error is simulated
+            if (m_connectionState == EConnectionState.Down) {
+                // Request timeout
+                Commands_OnResponse(null, 408);
+                return;
+            } else if (Commands_NeedsToBeLoggedIn(command.Cmd) && !IsLoggedIn()) {
+                // If the command needs to be logged in but the game is not currently logged in then an error is returned            
                 if (FeatureSettingsManager.IsDebugEnabled)                
                     LogError("Command " + command.Cmd + " requires the user to be logged in but she's not");
 
+                // Unauthorized error is simulated
                 Commands_OnResponse(null, 401);
                 return;
             }
@@ -947,6 +1112,75 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
 					// progress					
 				}break;
+
+				case ECommand.HDLiveEvents_GetMyEvents:{
+                    Dictionary<string, string> kParams = new Dictionary<string, string>();
+                    kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
+                    Command_SendCommand( COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
+				}break;
+				case ECommand.HDLiveEvents_GetEventDefinition:
+				case ECommand.HDLiveEvents_GetMyProgress:
+                case ECommand.HDLiveEvents_GetLeaderboard:
+				case ECommand.HDLiveEvents_GetMyReward:
+				case ECommand.HDLiveEvents_FinishMyEvent: 
+				case ECommand.HDLiveEvents_GetRefund: {					
+					Dictionary<string, string> kParams = new Dictionary<string, string>();						
+					kParams["eventId"] = parameters["eventId"];
+					string global_event_command = "";
+					switch( command.Cmd )
+					{
+						case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF;break;
+						case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS;break;
+                        case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
+						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
+						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
+						case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND;break;
+					}
+
+                    Command_SendCommand( global_event_command, kParams );					
+				}break;
+				case ECommand.HDLiveEvents_Enter:
+				{
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					kParams["type"] = parameters["type"];
+					kParams["amount"] = parameters["amount"];
+					kParams["elo"] = parameters["elo"];
+					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
+				}break;
+				case ECommand.HDLiveEvents_AddProgress: {
+					Dictionary<string, string> kParams = new Dictionary<string, string>();							
+					kParams["eventId"] = parameters["eventId"];
+					kParams["progress"] = parameters["progress"];
+					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, kParams, parameters, "");
+					// progress					
+				}break;
+                case ECommand.HDLiveEvents_SetScore:{
+                    Dictionary<string, string> kParams = new Dictionary<string, string>();
+                    kParams["eventId"] = parameters["eventId"];
+                    kParams["score"] = parameters["score"];
+					kParams["returnData"] = parameters["returnData"];
+                    string body = "";
+                    if ( parameters.ContainsKey("build") )
+                    {
+                    	body = parameters["build"];
+                    	parameters.Remove("build");
+                    }
+                    Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, body);
+                    // progress                 
+                }
+                break;
+                case ECommand.Language_Set: {
+                    JSONClass data = null;
+                    string paramsAsString = parameters["body"];
+                    if (!string.IsNullOrEmpty(paramsAsString))
+                    {
+                        data = JSON.Parse(paramsAsString) as JSONClass;
+                    }
+                   
+                    Command_SendCommandAsGameAction(COMMAND_LANGUAGE_SET, data, false);
+                }
+                break;
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
@@ -981,6 +1215,9 @@ public class GameServerManagerCalety : GameServerManager {
             }            
         }
 
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Command " + commandName + " sent");
+
         ServerManager.SharedInstance.SendCommand(commandName, urlParams, headerParams, body);
 
         // Connection checker timer is reseted because a request is already being sent
@@ -1011,13 +1248,7 @@ public class GameServerManagerCalety : GameServerManager {
             if (callback != null) {
                 callback(error, result);
             }
-        }
-
-		// If no command is being processed and there's a command enqueued then that command is processed
-		// We need to verify that Commands_CurrentCommand is null because the callback called right above might have call another command
-		if(m_CommandsIsEnabled && Commands_CurrentCommand == null && !Commands_IsQueueEmpty()) {			
-			Commands_PrepareToRunCommand(Commands_DequeueCommand());
-		}
+        }		
 	}
 
 	/// <summary>
@@ -1026,6 +1257,15 @@ public class GameServerManagerCalety : GameServerManager {
 	private bool Commands_OnResponse(string responseData, int statusCode) {
 		Error error = null;
 		ServerResponse response = null;
+
+        // Makes sure there's a command waiting for the response
+        if (Commands_CurrentCommand == null) {
+            return false;
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Command " + Commands_CurrentCommand.Cmd.ToString() + " response received");
+        }
 
 		// 426 code means that there's a new version of the application available. We simulate that the response was 200 (SUCCESS) because we don't want to force the
 		// user to upgrade        
@@ -1251,9 +1491,7 @@ public class GameServerManagerCalety : GameServerManager {
 		return error == null;       
 	}
 
-	private void Commands_OnServerDown() {
-		m_CommandsIsEnabled = false;
-
+	private void Commands_OnServerDown() {		
 		Error error = new ServerConnectionError("Server down");
 		ServerCallback callback;
 
@@ -1268,27 +1506,33 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 
 		// Clears commands pending to be sent to server manager
-		Command command;        
-		while (!Commands_IsQueueEmpty()) {
-			command = Commands_DequeueCommand();
-			callback = command.Callback;
-			Commands_ReturnCommand(command);
-			if (callback != null) {
-				callback(error, null);
-			}
-		}    
+		Command command;
 
-		m_CommandsIsEnabled = true;
+        for (int i = 0; i < COMMANDS_PRIORITIES_COUNT; i++) {
+            for (int j = 0; j < Commands_List[i].Count; j++) {
+                command = Commands_List[i][j];
+                callback = command.Callback;
+                Commands_ReturnCommand(command);
+                if (callback != null)
+                {
+                    callback(error, null);
+                }
+			}
+
+            Commands_List[i].Clear();
+        }       
 	}
 
 	private string Commands_ToString() {
-		string str = "COMMANDS QUEUE: ";
-		if (Commands_Queue != null) {
-			Command[] commands = Commands_Queue.ToArray();
-			int count = commands.Length;
-			for (int i = 0; i < count; i++) {
-			str += commands[i].Cmd.ToString() + System.Environment.NewLine;
-			}
+		string str = "COMMANDS LIST: ";
+		if (Commands_List != null) {
+            for (int i = 0; i < COMMANDS_PRIORITIES_COUNT; i++) {
+                str += "--------------PRIORITY " + i + "-----------------------" + System.Environment.NewLine;
+                int count = Commands_List[i].Count;
+                for (int j = 0; j < count; j++) {
+                    str += Commands_List[i][j].Cmd.ToString() + System.Environment.NewLine;
+                }
+            }
 		}
 
 		str += System.Environment.NewLine + " CURRENT COMMAND: ";
@@ -1322,9 +1566,21 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
-    
+
+	private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/levent/get";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/levent/getProgress";
+    private const string COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS = "/api/levent/addProgress";
+    private const string COMMAND_HD_LIVE_EVENTS_SET_SCORE = "/api/levent/setScore";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";
+    private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
+    private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
+	private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
+
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
+    private const string COMMAND_LANGUAGE_SET = "language";
 
     /// <summary>
     /// Initialize Calety's NetworkManager.
@@ -1350,7 +1606,8 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_PLAYTEST_A, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_PLAYTEST_B, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);                
+        nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_LANGUAGE_SET, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
         nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
@@ -1358,6 +1615,17 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_REWARDS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);        
+
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_SET_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_ENTER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
     }    
 
     /// <summary>
@@ -1444,7 +1712,7 @@ public class GameServerManagerCalety : GameServerManager {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Trying to recover connection....");
 
-        Action<bool> onRecoverDone = delegate (bool success) {
+        Action<bool> onRecoverDone = delegate (bool success) {            
             EConnectionState state = (success) ? EConnectionState.Up : EConnectionState.Down;
             
             // Threre's connection again
@@ -1567,13 +1835,14 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Log(string message) {
-		Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));        
-	}
+	    Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
+        //Debug.Log("<color=cyan>" + LOG_CHANNEL + " " + message + " at " + Time.realtimeSinceStartup + " </color>");
+    }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void LogWarning(string message) {
+    /// <summary>
+    /// 
+    /// </summary>
+    private void LogWarning(string message) {
 		Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
 	}
 

@@ -22,7 +22,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float UPDATE_FREQUENCY = 1;	// Seconds
+	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -49,7 +49,8 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Get latest data from the manager
-		RefreshData(true);
+		RefreshData();
+		RefreshVisibility(false, true);		// [AOC] Attempting to fix https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-1862
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
@@ -87,13 +88,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Force a refresh of the offers manager asking for new featured offers to be displayed
 	/// </summary>
-	/// <param name="_refreshManager">Force a refresh on the manager?</param>
-	public void RefreshData(bool _refreshManager) {
-		// Tell the manager to update packs
-		if(_refreshManager) {
-			OffersManager.instance.Refresh();
-		}
-
+	public void RefreshData() {
 		// Get featured offer
 		m_targetOffer = OffersManager.featuredOffer;
 
@@ -108,19 +103,17 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// Refresh the timer. To be called periodically.
 	/// </summary>
 	private void RefreshTimer() {
-		// Skip if no target offer
-		if(m_targetOffer == null) return;
-
-		// Is featured offer still valid?
-		m_targetOffer = OffersManager.instance.RefreshFeaturedOffer();
-		if(m_targetOffer != null) {
-			// Yes!! Update text
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-			m_timerText.text = TimeUtils.FormatTime(
-				System.Math.Max(0, (m_targetOffer.endDate - serverTime).TotalSeconds), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
-				4
-			);
+		// Is offer still valid?
+		if(ValidateOffer()) {
+			if(m_targetOffer.isTimed) {
+				m_timerText.text = TimeUtils.FormatTime(
+					System.Math.Max(0, m_targetOffer.remainingTime.TotalSeconds), // Just in case, never go negative
+					TimeUtils.EFormat.ABBREVIATIONS,
+					4
+				);
+			} else {
+				m_timerText.text = string.Empty;
+			}
 		} else {
 			// No!! Hide ourselves
 			m_showConditioner.targetAnimator.Hide();
@@ -130,12 +123,25 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// Check whether the icon can be displayed or not.
 	/// </summary>
-	private void RefreshVisibility() {
-		// Consider conditional shower
-		m_showConditioner.targetAnimator.Set(
-			m_targetOffer != null
-			&& m_showConditioner.Check()
-		);
+	private void RefreshVisibility(bool _animate = true, bool _force = false) {
+		// Same conditions as the show conditioner
+		bool show = ValidateOffer() && m_showConditioner.Check();
+		if(_force) {
+			m_showConditioner.targetAnimator.ForceSet(show, _animate);
+		} else {
+			m_showConditioner.targetAnimator.Set(show, _animate);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL UTILS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Is the target offer pack valid?
+	/// </summary>
+	/// <returns><c>true</c> if the target offer pack is valid and active, <c>false</c> otherwise.</returns>
+	private bool ValidateOffer() {
+		return m_targetOffer != null && m_targetOffer.isActive;
 	}
 
 	//------------------------------------------------------------------------//
@@ -147,30 +153,36 @@ public class OfferFeaturedIcon : MonoBehaviour {
 	/// <param name="_anim">Animation.</param>
 	private void OnShowCheck(ShowHideAnimator _anim) {
 		// Only show if we have a valid featured offer!
-		if(m_targetOffer == null) _anim.SetCheckFailed();
+		if(!ValidateOffer()) _anim.SetCheckFailed();
 	}
 
 	/// <summary>
 	/// Button has been pressed!
 	/// </summary>
 	public void OnTap() {
+		// Just in case, ignore if target offer is not valid!!
+		if(!ValidateOffer()) return;
+
 		// Show popup!
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"));
 	}
 
 	/// <summary>
 	/// The offers manager has been reloaded.
 	/// </summary>
 	private void OnOffersReloaded() {
-		RefreshData(false);
+		RefreshData();
 	}
 
 	/// <summary>
 	/// Offers list has changed.
 	/// </summary>
 	private void OnOffersChanged() {
-		RefreshData(false);
+		RefreshData();
 	}
 }

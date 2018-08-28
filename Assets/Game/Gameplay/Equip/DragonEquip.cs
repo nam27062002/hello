@@ -75,7 +75,24 @@ public class DragonEquip : MonoBehaviour {
 
 		// Equip current disguise
 		if (m_equipOnAwake){
-			EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+			if ( m_menuMode )
+			{
+				EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+			}
+			else
+			{
+				// Check if tournament/build active
+				if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+				{
+					string skin = HDLiveEventsManager.instance.m_tournament.GetToUseSkin();
+					EquipDisguise(skin);
+				}
+				else
+				{
+					EquipDisguise(UsersManager.currentUser.GetEquipedDisguise(m_dragonSku));
+				}
+
+			}
 		}
 	}
 
@@ -90,18 +107,17 @@ public class DragonEquip : MonoBehaviour {
 			if (renderers != null) {
 				for (int i = 0; i < renderers.Length; i++) {
 					Renderer renderer = renderers[i];
-					Material material;
-					if ( Application.isPlaying )
+					if ( renderer.tag == "DragonBody" || renderer.tag == "DragonWings" )
 					{
-						material = renderer.material;
-					}else{
-						material = renderer.sharedMaterial;	
-					}
+						Material material;
+						if ( Application.isPlaying )
+						{
+							material = renderer.material;
+						}else{
+							material = renderer.sharedMaterial;	
+						}
 
-					if ( material != null )
-					{
-						string name = material.shader.name;
-						if ( name.Contains("Dragon standard") )
+						if ( material != null )
 						{
 							m_renderers.Add( renderer );
 							// Stores the materials of this renderer in a dictionary for direct access//
@@ -150,6 +166,15 @@ public class DragonEquip : MonoBehaviour {
 		// Equip current pets loadout
 		if (m_equipPets) {
 			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+			if ( !m_menuMode )
+			{
+				// Check if tournament
+				if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+				{
+					pets = HDLiveEventsManager.instance.m_tournament.GetToUsePets();
+				}
+			}
+
 			for(int i = 0; i < pets.Count; i++) {
 				EquipPet(pets[i], i);
 			}
@@ -192,6 +217,10 @@ public class DragonEquip : MonoBehaviour {
 				}
 			}
 			m_renderers[i].materials = materials;
+			if (m_renderers[i].tag == "DragonWings")
+			{
+				m_renderers[i].material.renderQueue += 10;	
+			}
 		}
 
 		// Remove old body parts
@@ -267,6 +296,18 @@ public class DragonEquip : MonoBehaviour {
 						}
 					}
 				}
+			}
+		}
+
+		// Patch to allow balrog rainbow disguise to change the trails effect
+		if ( !m_menuMode )
+		{
+			// Try to modify particles
+			string trails = def.Get("trails");
+			if ( !string.IsNullOrEmpty(trails) )
+			{
+				DragonParticleController particleController = GetComponentInChildren<DragonParticleController>();
+				particleController.m_trailsParticle.name = trails;
 			}
 		}
 
@@ -428,30 +469,29 @@ public class DragonEquip : MonoBehaviour {
 		}
 
 		for (int i = 0; i < m_renderers.Count; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			List<Material> materials = m_materials[id];
-			int count = materials.Count;
-			for (int m = 0; m < count; m++) {
-				string shaderName = materials[m].shader.name;
-                if (shaderName.Contains("Dragon standard"))
-                {
+			if ( m_renderers[i].tag == "DragonBody" || m_renderers[i].tag == "DragonWings" )
+			{
+				bool isWings = m_renderers[i].tag == "DragonWings";
+				int id = m_renderers[i].GetInstanceID();
+				List<Material> materials = m_materials[id];
+				int count = materials.Count;
+				for (int m = 0; m < count; m++) 
+				{
                     if (lockEffect)
                     {
                         materials[m].SetOverrideTag("Lock", "");
                     }
-
-                    string tag = materials[m].GetTag("RenderType", false);
-                    if (tag.Contains("TransparentCutout"))
+                    if (isWings)
                     {
                         materials[m] = m_wingsMaterial;
                     }
-                    else if (tag.Contains("Opaque"))
+                    else
                     {
                         materials[m] = m_bodyMaterial;
                     }
-                }
+				}
+				m_renderers[i].materials = materials.ToArray();
 			}
-			m_renderers[i].materials = materials.ToArray();
 		}
 	}
 
@@ -545,18 +585,18 @@ public class DragonEquip : MonoBehaviour {
 
 			// Adjust scale and parenting
 			if(m_menuMode) {
-				MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
-				if ( dragonPreview )
-				{
-					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
-					newInstance.transform.localScale = Vector3.one *  ((def.GetAsFloat("petScale") * transform.localScale.x) / def.GetAsFloat("scaleMin"));
-				}
-
 				// In menu mode, make it a child of the dragon so it inherits scale factor
-				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform);	// [AOC] Compensate scale factor with the dragon using the worldPositionStays parameter
+				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, false);
 				newInstance.transform.localPosition = Vector3.zero;
 				newInstance.transform.localRotation = Quaternion.identity;
-				// newInstance.transform.localScale = Vector3.one;
+
+				// Different scale factor depending on dragon
+				MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
+				if(dragonPreview) {
+					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
+					//newInstance.transform.localScale = Vector3.one * ((def.GetAsFloat("petScaleMenu") * transform.localScale.x) / def.GetAsFloat("scaleMin"));
+					newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / def.GetAsFloat("scaleMin"));
+				}
 
 				// Initialize preview and launch intro animation
 				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();

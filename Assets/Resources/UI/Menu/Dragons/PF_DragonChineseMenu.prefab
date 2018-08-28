@@ -25,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 189342}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.350196, y: 27.37679, z: 11.471572}
+  m_LocalPosition: {x: -176.33032, y: -535.94635, z: -2.8165836}
   m_LocalScale: {x: 1.05, y: 1.05, z: 1.05}
   m_Children:
   - {fileID: 4078950310267648}
@@ -83,7 +83,13 @@ MonoBehaviour:
     m_allowFaceDetails: 0
     m_loopsMin: 1
     m_loopsMax: 1
+    m_special: 0
     m_timeToNext: 0
+    m_isPreferedAnimation: 0
+    m_animationLevel: 4
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
+  m_bloodParticle: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -1154,7 +1160,7 @@ GameObject:
   - component: {fileID: 137084874993677356}
   m_Layer: 12
   m_Name: Dragon_Chinese_HI
-  m_TagString: Untagged
+  m_TagString: DragonBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2378,6 +2384,7 @@ MonoBehaviour:
   - Dragon_LMoustache_6
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
 --- !u!114 &114056118948726866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2392,6 +2399,7 @@ MonoBehaviour:
   m_parentName: Dragon_Neck1
   m_parentRoot: {fileID: 442300}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114152458654549274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2466,6 +2474,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 442300}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114417760552060304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2480,6 +2489,7 @@ MonoBehaviour:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 442300}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114501804575997354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2494,6 +2504,7 @@ MonoBehaviour:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 442300}
   m_worldPositionStays: 0
+  m_resetScale: 0
 --- !u!114 &114622395952090872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2537,6 +2548,7 @@ MonoBehaviour:
   - Dragon_RMoustache_6
   springSpeed: 10
   m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
 --- !u!114 &114874595229306164
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2563,6 +2575,7 @@ MonoBehaviour:
   - Dragon_Tail6
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
+  m_disableOnResults: 0
 --- !u!114 &114917653607987128
 MonoBehaviour:
   m_ObjectHideFlags: 1

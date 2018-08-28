@@ -15,3 +15,21 @@
 -dontwarn com.vungle.**
 -keep class com.vungle.** { *; }
 -keep class javax.inject.*
+
+# ironSource
+-keepclassmembers class com.ironsource.sdk.controller.IronSourceWebView$JSInterface {public *;}
+-keepclassmembers class * implements android.os.Parcelable {public static final android.os.Parcelable$Creator *;}
+-keep public class com.google.android.gms.ads.** {public *;}
+-keep class com.ironsource.** { *;}
+-keep class com.ironsource.adapters.** { *;}
+-keep class com.ironsource.unity.androidbridge.** { *;}
+
+-keepclassmembers class * { 
+    @android.webkit.JavascriptInterface <methods>; 
+}
+# Keep ADCNative class members unobfuscated
+-keepclassmembers class com.adcolony.sdk.ADCNative** {
+    *;
+ }
+
+

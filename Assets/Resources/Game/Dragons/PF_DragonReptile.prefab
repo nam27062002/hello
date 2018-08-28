@@ -340,7 +340,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -168.56738, y: 95.102325, z: -5.648277}
+  m_LocalPosition: {x: -209.83789, y: 108.70546, z: -62.516613}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -564,11 +564,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fc55bb9f3dab45f69260a937e250b5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_sku: dragon_reptile
   m_invulnerableTime: 5
   m_alcoholDrain: 1
+  m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
+    type: 2}
 --- !u!114 &11419346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -578,8 +580,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15467f0022fed4eb987a8de2bafce36d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_damageAnimationThreshold: 0
   m_dotAnimationThreshold: 0
 --- !u!114 &11434386
@@ -591,15 +593,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71011e82423ab49ada052e344c2f1209, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_levelUp: {fileID: 1617233673352068, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 488014}
-  m_revive: {fileID: 1000013542236594, guid: 82956920db58f3446a7b0e159de4e931, type: 2}
+  m_reviveParticle: Dragon/PS_Revive
   m_reviveAnchor: {fileID: 4508739910658776}
   m_petRevive:
     name: PS_ReviveFromPet
-    path: 
+    path:
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -658,7 +660,7 @@ MonoBehaviour:
   m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
     name: Dragon/PS_BreakingShield
-    path: 
+    path:
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -698,7 +700,7 @@ MonoBehaviour:
   m_bodyParticles: []
   m_trailsParticle:
     name: PS_Boost
-    path: 
+    path:
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -736,8 +738,8 @@ MonoBehaviour:
     scale: 1
   m_trailsAnchor: {fileID: 4507447752647026}
   m_landingParticle:
-    name: 
-    path: 
+    name:
+    path:
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -773,6 +775,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+  m_megaFireRush: PS_MegaFireCharge
+  m_megaFireRushAnchor: {fileID: 4359138985248960}
 --- !u!114 &11438592
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -782,8 +786,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95e7a49c765b74dfaaa8e8fd4dbb21fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_stunnedTime: 0.5
   m_velocityBlendRate: 256
   m_rotBlendRate: 350
@@ -804,6 +808,7 @@ MonoBehaviour:
   m_dragonAirBoostForce: 4.7
   m_dragonAirFreeFallMultiplier: 1.2
   m_dragonAirBoostFallMultiplier: 1
+  m_dragonAirEnterSpeedMultiplier: 1
   m_startingParabolic: 0
   m_dragonWaterGravityModifier: 0.3
   m_spinSpeed: 90
@@ -841,8 +846,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -856,8 +861,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 0
 --- !u!114 &11442574
 MonoBehaviour:
@@ -868,8 +873,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de3db92dd92254a81a8ebe0536116ec0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_curseColor: {r: 0, g: 1, b: 0, a: 1}
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_reduceInnerColorInsideWater: 0
@@ -882,8 +887,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4516bf8218c7f4818bf4a7422979e15b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   moving: 0
   action: 0
 --- !u!114 &11444600
@@ -895,8 +900,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 1
 --- !u!114 &11455772
 MonoBehaviour:
@@ -907,8 +912,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 090ee74b4c8f446638d451fe04e3c3c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_menuMode: 0
   m_equipPets: 1
   m_equipOnAwake: 1
@@ -921,8 +926,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Fire_Dummy
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -936,8 +941,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90a8dcc19fcdf47c48738f4a9245cade, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &11483596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -947,8 +952,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 2
 --- !u!114 &11487054
 MonoBehaviour:
@@ -959,8 +964,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a2fe1b5a7a344b88962c88a1f75241e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &11491102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -970,8 +975,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 5
 --- !u!1001 &100100000
 Prefab:
@@ -1824,7 +1829,7 @@ GameObject:
   - component: {fileID: 137106243503596434}
   m_Layer: 12
   m_Name: Dragon_Reptilius_LOW
-  m_TagString: Untagged
+  m_TagString: DragonBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2932,7 +2937,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470509311117520}
-  m_LocalRotation: {x: -0.0069095423, y: 0.62825555, z: 0.005579951, w: 0.77795637}
+  m_LocalRotation: {x: 0.0020157716, y: 0.82287836, z: -0.0029192464, w: 0.5682065}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3095,7 +3100,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114000011697174064
@@ -3107,8 +3112,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1669b0a062dc66842ab1bca41a93ebe4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   AudioObjectPrefab: {fileID: 100000, guid: b4423c09d0d59459584b60e427e2871a, type: 2}
   Persistent: 0
   UnloadAudioClipsOnDestroy: 1
@@ -3124,7 +3129,7 @@ MonoBehaviour:
   _ambienceSoundCrossFadeTime_Out: 0
   AudioCategories:
   - Name: SFX
-    _parentCategoryName: 
+    _parentCategoryName:
     AudioObjectPrefab: {fileID: 0}
     AudioItems:
     - Name: Dragon_Flaps
@@ -3151,7 +3156,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 71c3395da958d894abefc88c7c796f18, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3169,7 +3174,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 2e1b5711be2b98649b6c242eb97f35c1, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3187,7 +3192,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 7c0d4958de97943448708f899dd1b4de, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3205,7 +3210,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: e176eb2a9557f3841b53ed0c585fed59, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3223,7 +3228,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 1fc5d29198949d3469996915d688903f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3241,7 +3246,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 1cdae8a877b3029478dd204edcfdc157, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3259,7 +3264,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 0122773878eb3b24797b73dd35b2097f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3298,7 +3303,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 52e2a93bba22d41448b2982e774b2833, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3316,7 +3321,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 41d0024df4d931f40bfca11e0edf7297, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3334,7 +3339,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4df70521cdb56384e9d6bef3213c36fb, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3352,7 +3357,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: d827fefe27d4734418954982faf6aedb, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3370,7 +3375,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 05cfada424e2da344adc9e1b6eccda67, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3388,7 +3393,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: f84eebf74d262734c9e6a6ec41392f15, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3406,7 +3411,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 80d58320077eda0459580705188bd19a, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3445,7 +3450,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 34fff14b6938119499f6bc7e6ddf80b2, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3484,7 +3489,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4401bfbdfca610c4d9b37fd6fe2d0052, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3502,7 +3507,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: f60adf23cb1871342a665a67ac1cba73, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3520,7 +3525,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 18b2a073b6d2da24b85480c4efaf6a21, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3538,7 +3543,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 1ca10a2b6279c934b939aa6e7f5c0185, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3556,7 +3561,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 25053406f0bcb6447b24056382175e03, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3574,7 +3579,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 78b2b14061414434db5c2d0d4ebb206a, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3592,7 +3597,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 41f2e8be09264154ab18463e0ad8021f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3610,7 +3615,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: a92d8b0c23a0f9e40a8430a04836c3f3, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3628,7 +3633,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 68f73bc1dee5a5b45b37f67dfc9f3e8e, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3646,7 +3651,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: e3f92c5ac59590f47b218a9e37b975bb, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3685,7 +3690,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 7536103a1f22a974f9236ddf60dfb8be, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3724,7 +3729,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: bdc2e7b725f2bd04f9716a55a6f6ed90, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3742,7 +3747,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: b9c317e216f283e478ea33ba761ca25d, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3760,7 +3765,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 15a7899970ad3814482d3d034de50bf3, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3778,7 +3783,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 8ee45fb2cdc9e094aaeb6cbe717df03c, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3817,7 +3822,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 5e0eb134c27392a4da89d679585dd20b, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3835,7 +3840,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 0949ff3831d54d04893f11faef8739cf, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3874,7 +3879,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4753273a61aff864888542e339588f84, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3892,7 +3897,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 66c45c30fb96f3c42a6e49eea9390494, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3910,7 +3915,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: bdcc9b209b9915e4d8d1f636428e98fb, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3949,7 +3954,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 25cb18669c615a34cab89f478950f36f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3967,7 +3972,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: b74976b6ae5e07f409d2de6257ddfd28, type: 3}
         Volume: 1
         PitchShift: 0
@@ -3985,7 +3990,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: d9054128cd2c76a44a1a3189dd7d82af, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4024,7 +4029,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4be2990b451781848832c23bfffe31b2, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4042,7 +4047,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 8b7fee54a7be1f84f832871b0f0967ce, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4060,7 +4065,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: f619864a21673214da10b6eb6248edd0, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4099,7 +4104,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 6ca53a8b49818de4bbb3734f2d665c57, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4117,7 +4122,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: a1feebf56aa30fe4ca2812c65590bcad, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4135,7 +4140,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4a9cc5f64d0112540a27d1c97faf8b3f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4174,7 +4179,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 12ece40ad196b7c40afd295b84ea05eb, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4192,7 +4197,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: fc2fcb18498972b43928e9e39264e4b2, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4231,7 +4236,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 4ffecfe50cb00d44c9bf9537780999d6, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4270,7 +4275,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 86b09b0c9455f8b49a1dc2b6d5cac5ad, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4288,7 +4293,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: c31b94a06a57f7b47b42150f0c7e1a63, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4306,7 +4311,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 75580151e8db0bb43998f56286e7be20, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4324,7 +4329,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 96768bd803f715a409c040e493b9045f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4342,7 +4347,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 90e1ce7ee6fea9e449280ac3645fd889, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4360,7 +4365,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: c563fb017c6ca3a4cae828216fd4aa6a, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4378,7 +4383,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 793b90025af8e554885ed8d3399da8fc, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4396,7 +4401,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: f67e5fa6c9db73749b6c3dbf154e9919, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4414,7 +4419,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: a019df8b91bb65e46a1f2b32329d6e9b, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4432,7 +4437,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 840cbadea84af084eba753f3e8f63f3b, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4471,7 +4476,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: c10ce18d080a7ba40a9baa50e2347f47, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4489,7 +4494,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: ede416b5e5b738247ba778be502c094f, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4507,7 +4512,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 2ee2b525f75fc0e40b3b80d44c21d6aa, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4525,7 +4530,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: daafeca2016cd6a46b765b0e90e1d543, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4543,7 +4548,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: dbd1ab0c7d7154f42859a1e656736487, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4561,7 +4566,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 11fd733d620abfe4b93caad6cd519311, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4579,7 +4584,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 30174b2bb3d01b749819ea5cf1d0f1a0, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4597,7 +4602,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 383e69195185d5a4d9525ba6ce922742, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4615,7 +4620,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: e162c008d9adb4346a07c059799ddf81, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4633,7 +4638,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 0f262cb64434343418d431eb286b9133, type: 3}
         Volume: 1
         PitchShift: 0
@@ -4672,7 +4677,7 @@ MonoBehaviour:
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
-        ItemModeAudioID: 
+        ItemModeAudioID:
         Clip: {fileID: 8300000, guid: 740154a65cc4f2e4c8101f3ac1fc4ea2, type: 3}
         Volume: 0.5
         PitchShift: 0
@@ -4685,6 +4690,45 @@ MonoBehaviour:
         ClipStartTime: 0
         FadeIn: 2
         FadeOut: 5
+        RandomStartPosition: 0
+        individualSettings: []
+    - Name: hd_megafire_charge
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID:
+        Clip: {fileID: 8300000, guid: a55d21f502ee1aa4b92a238fbaac3b2c, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
@@ -4702,7 +4746,7 @@ MonoBehaviour:
   _volume: 1
   _currentInspectorSelection:
     currentCategoryIndex: 0
-    currentItemIndex: 15
+    currentItemIndex: 16
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
@@ -4715,8 +4759,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d4f046f2599a458bb03fc1113fe6c5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_minEatAnimTime: 0.1
   m_eatDistance: 1.1
   m_eatDetectionRadiusMultiplier: 2.25
@@ -4761,7 +4805,7 @@ MonoBehaviour:
     scale: 1.2
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
-    path: 
+    path:
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -4797,7 +4841,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-  m_burpSound: 
+  m_burpSound:
   m_canEatEntities: 1
   m_randomSpeedRange:
     min: 1
@@ -4811,8 +4855,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
+  m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
@@ -4829,8 +4874,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 8
 --- !u!114 &114040247693789928
 MonoBehaviour:
@@ -4841,8 +4886,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_root: {fileID: 4822292292194580}
   m_partsNames:
   - Dragon_Tail_R6 1
@@ -4858,8 +4903,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 11
 --- !u!114 &114100482591571702
 MonoBehaviour:
@@ -4870,8 +4915,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -4885,8 +4930,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114186013223127380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4896,8 +4941,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Tail2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -4911,18 +4956,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_wingsIdleSound: Dragon_Idle_Flaps
   m_wingsFlyingSound: Dragon_Flaps
   m_eatSound: Dragon_Eat_2
-  m_eatHoldSound: 
+  m_eatHoldSound:
   m_wingsWindSound: Dragon_wind_boost
   m_wingsStrongFlap: Dragon_Strong_Flap
   m_levelUpSound: Level_Up
   m_starvingSound: Dragon_hungry
   m_hitSound: Dragon_Impact
-  m_poisonHitSound: 
+  m_poisonHitSound:
   m_enterWaterSound: Dragon_Water_In_Soft
   m_enterWaterWithSplashSound: Dragon_Water_In_Hard
   m_exitWaterSound: Dragon_Water_Out_Soft
@@ -4931,12 +4976,13 @@ MonoBehaviour:
   m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
     type: 2}
   m_waterDeepToSnapshot: 4
-  m_hiccupSound: 
+  m_hiccupSound:
   m_gruntSound: Dragon_Grunt
   m_gruntToEatProbability: 25
   m_onDeadSound: hd_dragon_dead
   m_onCorpseSound: hd_dragon_dead
   m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: hd_megafire_charge
 --- !u!114 &114234946029892500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4946,8 +4992,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -4961,8 +5007,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Tail2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -4976,8 +5022,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114249126001234876
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4987,8 +5033,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_root: {fileID: 4769686040664888}
   m_partsNames:
   - Dragon_Neck2
@@ -5015,8 +5061,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Spine_1
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5030,8 +5076,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114348980643496190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5041,8 +5087,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114387031804607410
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5052,8 +5098,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 10
 --- !u!114 &114395344109004228
 MonoBehaviour:
@@ -5064,8 +5110,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Spine_3
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5079,8 +5125,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114420880568451890
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5090,8 +5136,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_point: 9
 --- !u!114 &114427472023750822
 MonoBehaviour:
@@ -5102,8 +5148,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8180520c26cf541b3a9537c7609c595d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_prefab: {fileID: 1908670640234622, guid: 3421d5a81eb724dcf948c6cc7b16ba7b, type: 2}
   m_targetParent: {fileID: 4992652123397368}
   m_delay: 0
@@ -5116,8 +5162,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Spine_3
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5131,8 +5177,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Spine_2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5146,8 +5192,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Tail3
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5161,8 +5207,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Tail3
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5176,8 +5222,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114721872982256142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5187,8 +5233,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Head
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5202,8 +5248,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5217,8 +5263,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ba1c905da34946d68ce50345b05e48f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_overrideCamera: {fileID: 0}
 --- !u!114 &114845724019468908
 MonoBehaviour:
@@ -5229,8 +5275,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Hip
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5244,8 +5290,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c394be8faf4554797800097a3f452252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_root: {fileID: 4822292292194580}
   m_partsNames:
   - Dragon_Tail_R6
@@ -5261,8 +5307,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Neck2
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5276,8 +5322,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a17f5651d14a4b0aba4d2d89ad8fca5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114980042657157424
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5287,8 +5333,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Chest
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5302,8 +5348,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_parentName: Dragon_Tail1
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
@@ -5346,7 +5392,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 8a4dffb54d6e34c5490a8b00f9828f76, type: 2}
+  - {fileID: 2100000, guid: 73f3a3de238d64e318d3bdb948cd1d99, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

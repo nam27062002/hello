@@ -14,6 +14,9 @@ public class PersistencePrefs
     // We want the cloud save to stores per device instead of per profile
     private static string KEY_CLOUD_SAVE_ENABLED = "cloudSaveEnabled";
 
+    // Social platform used: Facebook, Weibo
+    private static string KEY_SOCIAL_PLATFORM_KEY = "socialPlatform";
+
     private static string KEY_SOCIAL_ID = "socialId";
 
     private static string KEY_SOCIAL_PROFILE_NAME = "socialProfileName";
@@ -30,16 +33,21 @@ public class PersistencePrefs
     // User's profile name. The name instead of the level is stored in order to prevent the wrong profile from being applied if we happen to add/remove profile levels
     private static string KEY_USER_PROFILE_NAME = "userProfileLevel";
 
+    // User's language set in server
+    private static string KEY_SERVER_LANGUAGE = "serverLanguage";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
         KEY_CLOUD_SAVE_ENABLED,
+        KEY_SOCIAL_PLATFORM_KEY,
         KEY_SOCIAL_ID,
         KEY_SOCIAL_PROFILE_NAME,
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
-        KEY_USER_PROFILE_NAME
+        KEY_USER_PROFILE_NAME,
+        KEY_SERVER_LANGUAGE
     };        
 
     public static bool IsDirty = false;
@@ -115,7 +123,23 @@ public class PersistencePrefs
         SetString(KEY_USER_PROFILE_NAME, value);
     }
 
+    public static string GetServerLanguage()
+    {
+        return PlayerPrefs.GetString(KEY_SERVER_LANGUAGE, null);        
+    }
+
+    public static void SetServerLanguage(string value)
+    {
+        SetString(KEY_SERVER_LANGUAGE, value);
+    }
+
     #region social
+    public static string Social_PlatformKey
+    {
+        get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
+        set { SetString(KEY_SOCIAL_PLATFORM_KEY, value); }
+    }
+
     public static string Social_Id
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_ID, null); }

@@ -295,18 +295,10 @@ public class AmbientHazard : MonoBehaviour {
 		m_visualActivationCheckTimer = 0f;
 
 		// Apply to model
-		if(m_view != null) m_view.SetActive(_visible);
+		//if(m_view != null) m_view.SetActive(_visible);
 
 		// Particles
 		if (m_visible) {
-			// If particles are not created, do it now
-			if (m_particlesObj == null) {
-				LoadParticles();
-				// Particles are automatically started when spawned from the pool
-				// Stop them if hazard is not active
-				if(m_state == State.IDLE || m_state == State.ACTIVATING) ActivateParticles(false);
-			}
-
 			if ( m_state == State.ACTIVATING || m_state == State.ACTIVE )
 			{
 				// In case always

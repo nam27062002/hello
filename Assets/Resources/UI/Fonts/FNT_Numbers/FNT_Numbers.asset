@@ -18,7 +18,7 @@ MonoBehaviour:
   m_fontInfo:
     Name: Movavi Grotesque
     PointSize: 24
-    Scale: 0
+    Scale: 1
     CharacterCount: 18
     LineHeight: 24
     Baseline: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
     UnderlineThickness: 1.2
     strikethrough: 4.7954545
     strikethroughThickness: 1.2
-    TabWidth: 0
+    TabWidth: 60
     Padding: 3
     AtlasWidth: 128
     AtlasHeight: 128
@@ -255,7 +255,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: FNT_Numbers Material
-  m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
+  m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -356,6 +356,8 @@ Texture2D:
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
   serializedVersion: 2
   m_Width: 128
   m_Height: 128
@@ -367,10 +369,13 @@ Texture2D:
   m_ImageCount: 1
   m_TextureDimension: 2
   m_TextureSettings:
+    serializedVersion: 2
     m_FilterMode: 1
     m_Aniso: 1
     m_MipBias: 0
-    m_WrapMode: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
   m_LightmapFormat: 0
   m_ColorSpace: 0
   image data: 16384

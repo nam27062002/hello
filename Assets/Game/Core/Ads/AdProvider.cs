@@ -1,0 +1,197 @@
+﻿using UnityEngine;
+
+/// <summary>
+/// This class is responsible for hiding the ad provider implementation
+/// </summary>
+public abstract class AdProvider
+{
+    public enum AdType
+    {
+        None,
+        V4VC,
+        Interstitial
+    }
+
+    public delegate void VoidDelegate();
+    public VoidDelegate onVideoAdOpen;
+    public VoidDelegate onVideoAdClosed;
+
+    public delegate void OnPlayVideoCallback(bool giveReward, int duration, string msg);        
+
+    public class Ad
+    {
+        public AdType Type { get; set; }
+        public OnPlayVideoCallback Callback { get; set; }
+        public int Timeout { get; set; }
+        private float CurrentAdStartTimestamp { get; set; }        
+
+        public Ad()
+        {
+            Clear();
+        }
+
+        public void Clear()
+        {
+            Type = AdType.None;
+            Callback = null;            
+            CurrentAdStartTimestamp = 0f;
+            Timeout = 0;
+        }
+
+        public void Setup(AdType type, OnPlayVideoCallback callback, int timeout = 1)
+        {
+            Clear();
+            Type = type;
+            Callback = callback;
+            Timeout = timeout;
+        }
+        
+        public void Play()
+        {
+            CurrentAdStartTimestamp = Time.unscaledTime;
+        }
+
+        public void OnPlayed(bool videoPlayed, string msg)
+        {
+            if (Callback != null)
+            {
+                Callback(videoPlayed, GetDuration(), msg);
+            }            
+        }
+
+        private int GetDuration()
+        {
+            return (int)(Time.unscaledTime - CurrentAdStartTimestamp);
+        }
+    }
+
+    protected Ad m_ad;
+
+    public string GetInfo()
+    {
+        return GetId() + " " + ExtendedGetInfo();
+    }
+
+    protected virtual string ExtendedGetInfo()
+    {
+        return "";
+    }
+
+    public void Init(bool useAgeProtection)
+    {        
+        m_ad = new Ad();
+
+        ExtendedInit(useAgeProtection);
+    }
+
+    protected virtual void ExtendedInit(bool useAgeProtection) {}
+
+    public void ShowInterstitial(OnPlayVideoCallback callback)
+    {
+        if (IsProcessingAnAd())
+        {           
+            callback(false, 0, "An ad is already in process, skipping this new petition");
+            return;            
+        }
+
+        m_ad.Setup(AdType.Interstitial, callback, FeatureSettingsManager.instance.GetAdTimeout());               
+        ExtendedShowInterstitial();
+    }
+
+    protected virtual void ExtendedShowInterstitial() { }
+
+    protected void OnShowInterstitial(bool videoPlayed, string msg=null)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+			Log("Interstitial played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);
+        }
+
+        if (m_ad.Type == AdType.Interstitial)
+        {
+            OnAdPlayed(m_ad, videoPlayed, msg);
+        }
+    }
+
+    public void ShowRewarded(OnPlayVideoCallback callback)
+    {
+        if (IsProcessingAnAd())
+        {
+            callback(false, 0, "An ad is already in process, skipping this new petition");
+            return;
+        }
+
+        m_ad.Setup(AdType.V4VC, callback, FeatureSettingsManager.instance.GetAdTimeout());
+        ExtendedShowRewarded();
+    }   
+
+    protected virtual void ExtendedShowRewarded() { }
+
+    protected void OnShowRewarded(bool videoPlayed, string msg=null)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+			Log("Rewarded played = " + videoPlayed + " msg = " + msg + " m_ad.Type = " + m_ad.Type);
+        }
+
+        if (m_ad.Type == AdType.V4VC)
+        {
+            OnAdPlayed(m_ad, videoPlayed, msg);
+        }        
+    }    
+    
+    private bool IsProcessingAnAd()
+    {
+        return m_ad.Type != AdType.None;        
+    }
+    
+    public AdType GetAdType()
+    {
+        return m_ad.Type;
+    }
+
+    public void OnAdPlayed(Ad ad, bool videoPlayed, string msg=null)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Ad type " + ad.Type + " played with success = " + videoPlayed + " msg = " + msg);
+        }
+
+        if (ad == m_ad)
+        {
+            m_ad.OnPlayed(videoPlayed, msg);
+            m_ad.Clear();
+        }
+    }    
+
+    public abstract string GetId();
+
+    public virtual bool IsWaitingToPlayAnAnd() { return false; }
+
+    public virtual void StopWaitingToPlayAnAd() {}
+
+	public virtual void ShowDebugInfo() {}
+
+    #region log
+    private const bool LOG_USE_COLOR = false;
+    private const string LOG_CHANNEL = "[AdProvider] ";
+    private const string LOG_CHANNEL_COLOR = "<color=cyan>" + LOG_CHANNEL;
+
+    public static void Log(string msg)
+    {
+        if (LOG_USE_COLOR)
+        {
+            Debug.Log(LOG_CHANNEL_COLOR + msg + " </color>");
+        }
+        else
+        {
+            Debug.Log(LOG_CHANNEL + msg);
+        }
+    }
+
+    public static void LogError(string msg)
+    {
+        Debug.LogError(LOG_CHANNEL + msg);
+    }
+    #endregion
+}

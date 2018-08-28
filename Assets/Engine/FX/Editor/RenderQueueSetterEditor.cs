@@ -56,9 +56,12 @@ public class RenderQueueSetterEditor : Editor {
 		DrawDefaultInspector();
 
 		// Add a button to apply the changes
-		if(GUILayout.Button("Apply", GUILayout.Height (30f))) {
-			m_targetRenderQueueSetter.Apply();
-		}
+		// Only in play mode!
+		EditorGUI.BeginDisabledGroup(!Application.isPlaying); {
+			if(GUILayout.Button("Apply (Only in Play Mode!)", GUILayout.Height (30f))) {
+				m_targetRenderQueueSetter.Apply();
+			}
+		} EditorGUI.EndDisabledGroup();
 	}
 
 	/// <summary>

@@ -102,7 +102,7 @@ public class ContentManager
 
         if (UseDeltaContent)
 		{            
-            ContentDeltaManager.SharedInstance.RequestAssetsLUT(ServerManager.SharedInstance.GetServerConfig().m_strServerApplicationSecretKey);
+            ContentDeltaManager.SharedInstance.RequestAssetsLUT(ServerManager.SharedInstance.GetServerConfig().m_strApplicationParole);
         }  
         else
         {
@@ -136,6 +136,10 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
+		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
+
         // kDefinitionFiles.Add(DefinitionsCategory.SETTINGS, );
 
         // Progression
@@ -175,8 +179,15 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.GOLDEN_EGGS, new string[] { "Rules/goldenEggDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.EGG_REWARDS, new string[] { "Rules/eggRewardDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[] { "Rules/chestRewardDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.PREREG_REWARDS, new string[] { "Rules/preRegRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
+            // Interstitials
+        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
+
+		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
+		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
 
         // Disguises
         kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions" });
@@ -197,7 +208,6 @@ public class ContentManager
         // Economy
         kDefinitionFiles.Add(DefinitionsCategory.SHOP_PACKS, new string[]{"Rules/shopPacksDefinitions"});
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
-		kDefinitionFiles.Add(DefinitionsCategory.OFFER_ITEMS, new string[]{"Rules/offerItemsDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
 
         // ADD HERE ANY NEW DEFINITIONS FILE!

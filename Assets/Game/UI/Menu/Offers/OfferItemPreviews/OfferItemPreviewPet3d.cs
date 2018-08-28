@@ -27,7 +27,6 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private MenuPetLoader m_petPreview = null;
-	[SerializeField] private UI3DScaler m_scaler = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -44,6 +43,19 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 
 		// Initialize pet loader with the target pet preview!
 		m_petPreview.Load(m_item.reward.sku);
+
+		// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
+		if(m_petPreview.petInstance != null) {
+			ParticleSystem[] ps = m_petPreview.petInstance.GetComponentsInChildren<ParticleSystem>();
+			for(int i = 0; i < ps.Length; ++i) {
+				// [AOC] At this point the popup containing this preview hasn't yet been 
+				// registered into the PopupManager, so we need to count for it in order 
+				// for the disabler to work as expected.
+				// By doing this, we are assuming the item preview belongs ALWAYS to a popup.
+				DisableOnPopup disabler = ps[i].gameObject.AddComponent<DisableOnPopup>();
+				disabler.refPopupCount = PopupManager.openPopupsCount + 1;
+			}
+		}
 	}
 
 	/// <summary>
@@ -64,14 +76,26 @@ public class OfferItemPreviewPet3d : IOfferItemPreview {
 	/// Set this preview's parent and adjust its size to fit it.
 	/// </summary>
 	/// <param name="_t">New parent!</param>
-	public override void SetParentAndFit(Transform _t) {
+	public override void SetParentAndFit(RectTransform _t) {
 		// Let parent do its thing
 		base.SetParentAndFit(_t);
 
-		// Refresh scaler
-		m_scaler.Refresh(true, true);
-
 		// Refresh particle scaler
 		m_petPreview.pscaler.DoScale();
+	}
+
+	/// <summary>
+	/// The info button has been pressed.
+	/// </summary>
+	override public void OnInfoButton() {
+		// Intiialize info popup
+		PopupController popup = PopupManager.LoadPopup(PopupInfoPet.PATH_SIMPLE);
+		popup.GetComponent<PopupInfoPet>().Init(m_def);
+
+		// Move it forward in Z so it doesn't conflict with our 3d preview!
+		popup.transform.SetLocalPosZ(-2500f);
+
+		// Open it!
+		popup.Open();
 	}
 }

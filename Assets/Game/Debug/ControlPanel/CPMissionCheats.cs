@@ -84,7 +84,7 @@ public class CPMissionCheats : MonoBehaviour {
 		}
 
 		// Get amount from linked input field
-		float amount = float.Parse(m_valueInput.text);
+		long amount = long.Parse(m_valueInput.text);
 
 		// Compute amount to add
 		switch(_operation) {
@@ -94,10 +94,6 @@ public class CPMissionCheats : MonoBehaviour {
 
 			case Operation.REMOVE: {
 				amount = m.objective.currentValue - amount;
-			} break;
-
-			case Operation.SET: {
-				amount = amount;
 			} break;
 		}
 

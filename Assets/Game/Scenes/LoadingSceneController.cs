@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -127,6 +128,94 @@ public class LoadingSceneController : SceneController {
     }
 
 
+    private class GDPRListener : GDPRManager.GDPRListenerBase
+    {
+        public bool m_infoRecievedFromServer = false;
+        public string m_userCountry = "";
+        public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
+        {
+            base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
+            m_userCountry = strUserCountryByIP;
+            m_infoRecievedFromServer = true;
+            Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
+        }
+
+        public static bool IsValidCountry(string countryStr)
+        {
+            bool ret = true;
+            if (string.IsNullOrEmpty(countryStr) || countryStr.Equals("Unknown"))
+                ret = false;
+            return ret;
+        }
+    }
+
+    GDPRListener m_gdprListener = new GDPRListener();
+
+    Dictionary<string, int> m_ageRestrictions = new Dictionary<string, int>()
+    {
+          {"US", 13},
+          {"AT", 16},
+          {"BE", 16},
+          {"BG", 16},
+          {"HR", 16},
+          {"CY", 16},
+          {"CZ", 16},
+          {"DK", 16},
+          {"EE", 16},
+          {"FI", 16},
+          {"FR", 16},
+          {"DE", 16},
+          {"GR", 16},
+          {"HU", 16},
+          {"IE", 16},
+          {"IT", 16},
+          {"LV", 16},
+          {"LT", 16},
+          {"LU", 16},
+          {"MT", 16},
+          {"NL", 16},
+          {"PL", 16},
+          {"PT", 16},
+          {"RO", 16},
+          {"SK", 16},
+          {"SI", 16},
+          {"ES", 16},
+          {"SE", 16},
+          {"GB", 16}
+    };
+
+    Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
+    {
+        {"AT", true},
+        {"BE", true},
+        {"BG", true},
+        {"HR", true},
+        {"CY", true},
+        {"CZ", true},
+        {"DK", true},
+        {"EE", true},
+        {"FI", true},
+        {"FR", true},
+        {"DE", true},
+        {"GR", true},
+        {"HU", true},
+        {"IE", true},
+        {"IT", true},
+        {"LV", true},
+        {"LT", true},
+        {"LU", true},
+        {"MT", true},
+        {"NL", true},
+        {"PL", true},
+        {"PT", true},
+        {"RO", true},
+        {"SK", true},
+        {"SI", true},
+        {"ES", true},
+        {"SE", true},
+        {"GB", true}
+    };
+    
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -151,14 +240,20 @@ public class LoadingSceneController : SceneController {
         WAITING_SAVE_FACADE,
     	WAITING_SOCIAL_AUTH,
     	WAITING_ANDROID_PERMISSIONS,
-        WAITING_FOR_RULES,
+        WAITING_COUNTRY_CODE,
+        WAITING_TERMS,
+        WAITING_FOR_RULES,        
         LOADING_RULES,
-        SHOWING_UPGRADE_POPUP,        
+        CREATING_SINGLETONS,
+        WAITING_FOR_CUSTOMIZER,
+        SHOWING_UPGRADE_POPUP,
+        SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
 	private AndroidPermissionsListener m_androidPermissionsListener = null;
 	private string m_buildVersion;
+    private bool m_waitingTermsDone = false;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -183,8 +278,9 @@ public class LoadingSceneController : SceneController {
 
 		// Used for android permissions
 		PopupManager.CreateInstance(true);
-        // Initialize localization
-        SetSavedLanguage();      
+        
+		// Initialize localization
+        SetSavedLanguage();
     }    
 
 	/// <summary>
@@ -297,9 +393,16 @@ public class LoadingSceneController : SceneController {
 			strLanguageSku = LocalizationManager.SharedInstance.GetDefaultSystemLanguage();
         }
 
-		// TO REMOVE to enable multilanguage support. Quick implementation to make sure only english will be set
-		strLanguageSku = "lang_english";
-        LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
+        // If language sku not found or not enabled in current platform, use english instead
+        DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, strLanguageSku);
+        if(langDef == null
+        || (Application.platform == RuntimePlatform.Android && !langDef.GetAsBool("android"))
+        || (Application.platform == RuntimePlatform.IPhonePlayer && !langDef.GetAsBool("iOS"))) {
+            strLanguageSku = "lang_english";
+        }
+
+        // Initialize localization manager
+		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
 		if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
@@ -311,6 +414,11 @@ public class LoadingSceneController : SceneController {
     /// Called every frame.
     /// </summary>
     void Update() {       
+
+        if (m_state != State.SHOWING_COUNTRY_BLACKLISTED_POPUP &&
+            CacheServerManager.SharedInstance.IsCountryBlacklisted()) {
+            SetState(State.SHOWING_COUNTRY_BLACKLISTED_POPUP);
+        } 
 
     	switch( m_state )
     	{
@@ -337,18 +445,80 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_FOR_RULES:
             {
                 if (ContentManager.ready)
-                {
-                    // The state is not changed to WAITING_SAVE_FACADE yet because we want to be sure that other scripts checking for ContentManager.ready
+                {                    
+                    // The state is not changed to CREATING_SINGLETONS yet because we want to be sure that other scripts checking for ContentManager.ready
                     // in their Update() (for example FeatureSettingsManager, which has to load game settings according to rules and server) have time to do 
                     // their stuff before the flow goes on
-                    SetState(State.LOADING_RULES);                        
+                    SetState(State.LOADING_RULES);                    
                 }
-            }break;
+            }break;            
             case State.LOADING_RULES:
             {
                 // A tick is enought to do this state stuff as we just want to wait a tick so all scripts have the chance to realize content is ready
-                SetState(State.WAITING_SAVE_FACADE);                    
+                SetState(State.WAITING_COUNTRY_CODE);
             }break;
+            case State.WAITING_COUNTRY_CODE:
+            {
+                if (m_gdprListener.m_infoRecievedFromServer)
+                {
+                    string country = m_gdprListener.m_userCountry;
+                    // Recieved values are not good
+                    if ( !GDPRListener.IsValidCountry(country))
+                    {
+
+                        string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
+                        int localeAge = -1;
+                        bool localeRequiresConsent = false;
+                        if (m_ageRestrictions.ContainsKey(localeCountryCode))
+                        {
+                            localeAge = m_ageRestrictions[localeCountryCode];
+                        }
+                        if (m_requiresConsent.ContainsKey(localeCountryCode))
+                        {
+                            localeRequiresConsent = m_requiresConsent[localeCountryCode];
+                        }
+                        Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeAge + " Consent: " + localeRequiresConsent +" </color>");
+                        GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeAge, localeRequiresConsent, false);
+                    }
+                    else
+                    {
+                        Debug.Log("<color=YELLOW>"+country+"</color>");
+                    }
+                    
+                    SetState( State.WAITING_TERMS );
+                }
+            }break;
+            case State.WAITING_TERMS:
+            {
+                if (m_waitingTermsDone){
+                    SetState(State.CREATING_SINGLETONS);
+                }
+            }break;
+            case State.CREATING_SINGLETONS:
+            {
+                if (FeatureSettingsManager.instance.IsCustomizerBlocker)
+                {
+                    SetState(State.WAITING_FOR_CUSTOMIZER);
+                }
+                else
+                {                        
+                    SetState(State.WAITING_SAVE_FACADE);
+                }                    
+            }
+            break;
+            case State.WAITING_FOR_CUSTOMIZER:
+            {
+                if (HDCustomizerManager.instance.IsReady())
+                {
+                    // Applies the customizer
+                    ApplicationManager.instance.Game_ApplyCustomizer();
+                    SetState(State.WAITING_SAVE_FACADE);
+                }
+            }
+            break;
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {}
+            break;
             default:
     		{
 				// Update load progress
@@ -391,82 +561,137 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
+		// Actions to perform when leaving a specific state
+		switch(m_state) {
+			case State.LOADING_RULES: {
+				// Initialize fonts before showing any other popup
+				// Do it here because we need the Android permissions to be given and the rules to be loaded
+				FontManager.instance.Init();
+			} break;
+		}
+
+		// Switch state
         m_state = state;
 
+		// Actions to perform when entering a specific state
         switch (state)
-        {            
+        {           
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {
+                PopupManager.OpenPopupInstant(PopupCountryBlacklisted.PATH);
+            }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
-        	}break;
-            case State.WAITING_SAVE_FACADE:
+            }break;
+            case State.WAITING_COUNTRY_CODE:
+                {
+                    GDPRManager.SharedInstance.Initialise(false);
+                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.RequestCountryAndAge();
+                }break;
+            case State.WAITING_TERMS:
             {
-				// [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
-        		// No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
-        		ApplicationManager.CreateInstance();
+				bool termsNeeded = PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION;
+				bool ageNeeded = GDPRManager.SharedInstance.IsAgePopupNeededToBeShown();
+				bool consentNeeded = GDPRManager.SharedInstance.IsConsentPopupNeededToBeShown();
+				if(termsNeeded || ageNeeded || consentNeeded)
+                {
+					// Different popup depending on requirement
+					string popupPath = string.Empty;
+					if(ageNeeded || consentNeeded) {
+						Debug.Log("<color=RED>LEGAL COPPA / GDPR</color>");
+						popupPath = PopupConsentLoadingCoppaGdpr.PATH_COPPA_GDPR;
+					} else {
+						Debug.Log("<color=RED>LEGAL ROTW</color>");
+						popupPath = PopupConsentLoading.PATH;
+					}
 
-        		AntiCheatsManager.CreateInstance();
+					// Open popup
+					PopupController popupController = PopupManager.LoadPopup(popupPath);
+					popupController.GetComponent<PopupConsentLoading>().Init();
+					popupController.OnClosePostAnimation.AddListener(OnTermsDone);
+					popupController.Open();
+					HDTrackingManager.Instance.Notify_Calety_Funnel_Load(FunnelData_Load.Steps._01_copa_gpr);
+                }
+                else
+                {
+                    OnTermsDone();
+                }
+                
+            }break;
+            case State.CREATING_SINGLETONS:
+            {
+                // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
+                // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
+                ApplicationManager.CreateInstance();
 
-				// The stuff that this manager handles has to be done only once, regardless the game reboots
-				FeatureSettingsManager.CreateInstance(false);
+                AntiCheatsManager.CreateInstance();
 
-				if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
-		            // Initialize local mini-tracking session!
-		            // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
-		            MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
-		        }
+                // The stuff that this manager handles has to be done only once, regardless the game reboots
+                FeatureSettingsManager.CreateInstance(false);
 
-				HDTrackingManager.Instance.Init();
+                if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
+                {
+                    // Initialize local mini-tracking session!
+                    // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
+                    MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
+                }
+
+                HDTrackingManager.Instance.Init();
                 HDCustomizerManager.instance.Initialise();
 
-				UsersManager.CreateInstance();
+                UsersManager.CreateInstance();
 
-		        // Game		        
+                // Game		        
                 PersistenceFacade.instance.Reset();
 
-				// Meta
-				SeasonManager.CreateInstance(true);
-		        DragonManager.CreateInstance(true);
-				LevelManager.CreateInstance(true);
-				MissionManager.CreateInstance(true);
-				ChestManager.CreateInstance(true);
-				RewardManager.CreateInstance(true);
-				EggManager.CreateInstance(true);
-				EggManager.InitFromDefinitions();
-				OffersManager.CreateInstance(true);	// Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
-				OffersManager.ValidateContent();	// Do this before customizer is applied (here is ok!)
+                // Social Platform with age restriction param
+                SocialPlatformManager.SharedInstance.Init( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() );
 
-				// Settings and setup
-				GameSettings.CreateInstance(false);
+                // Meta
+                SeasonManager.CreateInstance(true);
+                DragonManager.CreateInstance(true);
+                LevelManager.CreateInstance(true);
+                MissionManager.CreateInstance(true);
+                ChestManager.CreateInstance(true);
+                RewardManager.CreateInstance(true);
+                EggManager.CreateInstance(true);
+                EggManager.InitFromDefinitions();
+                OffersManager.CreateInstance(true); // Don't initialize yet, we'll wait for persistence to be loaded and customizer to received
+                OffersManager.ValidateContent();    // Do this before customizer is applied (here is ok!)
 
-				// Tech
-				GameSceneManager.CreateInstance(true);
-				FlowManager.CreateInstance(true);
-				PoolManager.CreateInstance(true);
-				ActionPointManager.CreateInstance(true);
-				ParticleManager.CreateInstance(true);
-				FirePropagationManager.CreateInstance(true);
-				SpawnerManager.CreateInstance(true);
-				SpawnerAreaManager.CreateInstance(true);
-				EntityManager.CreateInstance(true);
-				ViewManager.CreateInstance(true);
-				InstanceManager.CreateInstance(true);
-				FontManager.instance.Init();
+                // Settings and setup
+                GameSettings.CreateInstance(false);
 
-		        GameAds.CreateInstance(false);
-		        GameAds.instance.Init();
-                 
-            	ControlPanel.CreateInstance();
+                // Tech
+                GameSceneManager.CreateInstance(true);
+                HDLiveEventsManager.CreateInstance(true);
+                FlowManager.CreateInstance(true);
+                PoolManager.CreateInstance(true);
+                ActionPointManager.CreateInstance(true);
+                ParticleManager.CreateInstance(true);
+                FirePropagationManager.CreateInstance(true);
+                SpawnerManager.CreateInstance(true);
+                SpawnerAreaManager.CreateInstance(true);
+                EntityManager.CreateInstance(true);
+                ViewManager.CreateInstance(true);
+                InstanceManager.CreateInstance(true);
+
+                GameAds.CreateInstance(true);
+                GameAds.instance.Init();
+
+                ControlPanel.CreateInstance();
                 DragonManager.SetupUser(UsersManager.currentUser);
                 MissionManager.SetupUser(UsersManager.currentUser);
                 EggManager.SetupUser(UsersManager.currentUser);
                 ChestManager.SetupUser(UsersManager.currentUser);
                 GameStoreManager.SharedInstance.Initialize();
 
-				if ( ApplicationManager.instance.GameCenter_LoginOnStart() )
-				{
-					ApplicationManager.instance.GameCenter_Login();
-				}
+                if (ApplicationManager.instance.GameCenter_LoginOnStart())
+                {
+                    ApplicationManager.instance.GameCenter_Login();
+                }
 
                 HDNotificationsManager.CreateInstance();
                 HDNotificationsManager.instance.Initialise();
@@ -475,13 +700,19 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();
+            } break;
 
+           case State.WAITING_SAVE_FACADE:
+           {
                 StartLoadFlow();	            	                                
-          	}break;
+           }break;
         }
     }
 
-
+    private void OnTermsDone()
+    {
+        m_waitingTermsDone = true;
+    }
         
     private void StartLoadFlow()
     {
@@ -500,11 +731,14 @@ public class LoadingSceneController : SceneController {
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
 
                 // Initialize managers needing data from the loaded profile
-                GlobalEventManager.SetupUser(UsersManager.currentUser);
+                // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
+
+				// Live events cache
+				HDLiveEventsManager.instance.LoadEventsFromCache();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 
@@ -548,6 +782,7 @@ public class LoadingSceneController : SceneController {
         config.IsButtonCloseVisible = false;
 
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+		config.TextType = IPopupMessage.Config.ETextType.SYSTEM;	// By this point TMPro fonts haven't been loaded yet, show default font.
 
         if ( _warningSupport ){
 			config.TitleTid = "TID_TITLE_UNSUPPORTED_DEVICE";
