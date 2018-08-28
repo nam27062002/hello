@@ -9,6 +9,7 @@ public class UIGameEntitySignaler : MonoBehaviour {
     Camera m_uiCamera;
     public Transform m_signalPivot;
     public Transform m_steadyPivot;
+    public float m_addAngleOffScreen = 0;
 
     private void Start()
     {
@@ -41,7 +42,7 @@ public class UIGameEntitySignaler : MonoBehaviour {
                 Vector3 diff = clampedPosition - posScreen;
                 float rads = Mathf.Atan2(diff.y, diff.x);
                 float angle = Mathf.Rad2Deg * rads;
-                angle -= 90;
+                angle -= 90 + m_addAngleOffScreen;
                 // Apply rotation
                 // m_signalPivot.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
                 m_signalPivot.rotation = Quaternion.Lerp( m_signalPivot.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * 2);
