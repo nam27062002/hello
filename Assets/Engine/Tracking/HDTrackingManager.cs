@@ -172,7 +172,17 @@ public class HDTrackingManager
     public virtual void Notify_ApplicationResumed() {}
 
 
-    public virtual void Notify_MarketingID() {}
+    public enum EMarketingIdFrom
+    {
+        FirstLoading,
+        Settings
+    };
+
+    /// <summary>
+    /// Notifies marketing id.
+    /// </summary>
+    /// <param name="from">Where this method is called from</param>
+    public virtual void Notify_MarketingID(EMarketingIdFrom from) {}
 
     /// <summary>
     /// Called when the user starts a round.
@@ -465,6 +475,15 @@ public class HDTrackingManager
     /// <param name="tournamentSku">Sku of the currently available tournament</param>
     /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
     public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
+
+    public enum ERateThisAppResult
+    {
+        Yes,
+        No,
+        Later
+    };
+
+    public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
     #endregion
 
     #region log

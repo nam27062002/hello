@@ -292,7 +292,8 @@
 				{"storeInstalled": {"Status": "OK"}},
 				{"isHacker": {"Status": "OK"}},
 				{"deviceProfile": {"Status": "OK"}},
-				{"initialQuality": {"Status": "OK"}}
+				{"initialQuality": {"Status": "OK"}},
+        {"trackingID": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -511,6 +512,16 @@
       "custom.player.info": {
         "Parameters": [
           { "acq_marketing_id": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+	  "custom.game.ratethisapp": {
+        "Parameters": [
+          { "rateResult": { "Status": "OK" } },
+		  { "dragonProgression": { "Status": "OK" } }
         ],
         "APIs": [
           "dna",
@@ -913,7 +924,7 @@
             "Values": []
         },
         "acq_marketing_id": {
-            "Type": "TRACK_DNA_MARKETING_ID",
+            "Type": "STRING:64",
             "Values": []
         },
         "adsType": {
@@ -1241,6 +1252,14 @@
         "Values": []
       },
       "source": {
+        "Type": "STRING:5",
+        "Values": []
+      },      
+	  "trackingID": {
+        "Type": "STRING:80",
+        "Values": []
+      },
+	  "rateResult": {
         "Type": "STRING:5",
         "Values": []
       }
