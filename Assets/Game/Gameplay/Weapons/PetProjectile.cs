@@ -24,9 +24,11 @@ public class PetProjectile : Projectile {
     protected override void DealDamage() {
         Entity entity = m_hitCollider.GetComponent<Entity>();
         if (entity != null && entity.IsEdible(m_tier)) {
-            entity.machine.Bite();
-            entity.machine.BeginSwallowed(m_trasnform, true, IEntity.Type.PET);
-            entity.machine.EndSwallowed(m_trasnform);
+            if (entity.machine.CanBeBitten()) {
+                entity.machine.Bite();
+                entity.machine.BeginSwallowed(m_trasnform, true, IEntity.Type.PET);
+                entity.machine.EndSwallowed(m_trasnform);
+            }
         }
     }
 }

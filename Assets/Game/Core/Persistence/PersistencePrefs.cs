@@ -33,6 +33,15 @@ public class PersistencePrefs
     // User's profile name. The name instead of the level is stored in order to prevent the wrong profile from being applied if we happen to add/remove profile levels
     private static string KEY_USER_PROFILE_NAME = "userProfileLevel";
 
+    // User's language set in server
+    private static string KEY_SERVER_LANGUAGE = "serverLanguage";
+
+    // Latest marketing id notified
+    private static string KEY_LATEST_MARKETING_ID_NOTIFIED = "latestMarketingIdNotified";
+
+    // Marketing id. It's stored in prefs when it's retrieved successfully since it may take time to get it from device
+    private static string KEY_MARKETING_ID = "marketingId";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
@@ -43,7 +52,10 @@ public class PersistencePrefs
         KEY_SOCIAL_LOGGED_IN_WHEN_QUIT,
         KEY_SERVER_USER_ID,
         KEY_SAVEPATHS_LATEST_INDEX,
-        KEY_USER_PROFILE_NAME
+        KEY_USER_PROFILE_NAME,
+        KEY_SERVER_LANGUAGE,
+        KEY_LATEST_MARKETING_ID_NOTIFIED,
+        KEY_MARKETING_ID
     };        
 
     public static bool IsDirty = false;
@@ -118,6 +130,37 @@ public class PersistencePrefs
     {
         SetString(KEY_USER_PROFILE_NAME, value);
     }
+
+    public static string GetServerLanguage()
+    {
+        return PlayerPrefs.GetString(KEY_SERVER_LANGUAGE, null);        
+    }
+
+    public static void SetServerLanguage(string value)
+    {
+        SetString(KEY_SERVER_LANGUAGE, value);
+    }
+
+    public static string GetLatestMarketingIdNotified()
+    {
+        return PlayerPrefs.GetString(KEY_LATEST_MARKETING_ID_NOTIFIED, null);
+    }
+
+    public static void SetLatestMarketingIdNotified(string value)
+    {
+        SetString(KEY_LATEST_MARKETING_ID_NOTIFIED, value);
+    }
+
+    public static string GetMarketingId()
+    {
+        return PlayerPrefs.GetString(KEY_MARKETING_ID, null);
+    }
+
+    public static void SetMarketingId(string value)
+    {
+        SetString(KEY_MARKETING_ID, value);
+    }
+
 
     #region social
     public static string Social_PlatformKey

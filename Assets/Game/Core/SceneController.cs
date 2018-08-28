@@ -33,6 +33,8 @@ public class SceneController : MonoBehaviour {
 	};
 	public static Mode s_mode = Mode.DEFAULT;
 
+    public static bool s_playMenuButtonLock = false;
+
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//

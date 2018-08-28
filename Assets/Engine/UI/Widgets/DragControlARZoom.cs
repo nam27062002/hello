@@ -201,29 +201,11 @@ public class DragControlARZoom : MonoBehaviour {
         // Clamp new value to limits
         _value = m_actualRange.Clamp(_value);
 
-        ZoomChanged(_value);
         ARKitManager.SharedInstance.ChangeZoom(_value);
 
 		// Store new value
 		m_value = _value;
 	}
-
-    private void ZoomChanged(float fValue) {
-        float fInvScale = 1.0f / (ARKitManager.SharedInstance.GetAffectedARObjectsScale() / ARKitManager.c_fDefaultAffectedARObjectsScale);
-
-        float fNewFarCameraPlane = (12.0f - ((fValue / 10.0f) * 4.0f)) * fInvScale;
-
-        ARKitManager.SharedInstance.GetTrackingCamera().farClipPlane = fNewFarCameraPlane;
-
-        Camera[] kContentCameras = ARKitManager.SharedInstance.GetSceneContentObject().GetComponentsInChildren<Camera>();
-        if (kContentCameras != null) {
-            for (int i = 0; i < kContentCameras.Length; ++i) {
-                if (!kContentCameras[i].orthographic) {
-                    kContentCameras[i].farClipPlane = fNewFarCameraPlane;
-                }
-            }
-        }
-    }
 
 
 	/// <summary>

@@ -24,10 +24,15 @@ public class SnappingScrollRect : ScrollRect {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Selection changed event.
+	/// Selection changed event signature.
 	/// </summary>
 	[System.Serializable]
 	public class SelectionChangedEvent : UnityEvent<ScrollRectSnapPoint> { }
+
+	/// <summary>
+	/// Drag event signature.
+	/// </summary>
+	public class DragEvent : UnityEvent<PointerEventData> { }
 	
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -69,6 +74,8 @@ public class SnappingScrollRect : ScrollRect {
 	}
 
 	[Space]
+	[SerializeField] protected bool m_autoInitialSelection = true;
+
 	[SerializeField]
 	protected ScrollRectSnapPoint m_selectedPoint = null;
 	public ScrollRectSnapPoint selectedPoint {
@@ -76,17 +83,39 @@ public class SnappingScrollRect : ScrollRect {
 		set { SelectPoint(value); }
 	}
 
+	// Events
 	[SerializeField]
 	protected SelectionChangedEvent m_onSelectionChanged = new SelectionChangedEvent();
 	public SelectionChangedEvent onSelectionChanged { 
-		get { return m_onSelectionChanged; } 
-		set { m_onSelectionChanged = value; }
+		get { return m_onSelectionChanged; }
+	}
+
+	[SerializeField]
+	protected DragEvent m_onBeginDrag = new DragEvent();
+	public DragEvent onBeginDrag {
+		get { return m_onBeginDrag; }
+	}
+
+	[SerializeField]
+	protected DragEvent m_onEndDrag = new DragEvent();
+	public DragEvent onEndDrag {
+		get { return m_onEndDrag; }
+	}
+
+	[SerializeField]
+	protected DragEvent m_onDrag = new DragEvent();
+	public DragEvent onDrag {
+		get { return m_onDrag; }
 	}
 
 	// Internal
 	protected Tweener m_tweener = null;
 	protected bool m_dirty = false;
+
 	protected bool m_dragging = false;
+	public bool dragging {
+		get { return m_dragging; }
+	}
 	
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -122,7 +151,7 @@ public class SnappingScrollRect : ScrollRect {
 		if(m_dirty) {
 			// If a default selection is not defined, try to find one instead
 			if(m_selectedPoint == null) {
-				Snap();
+				if(m_autoInitialSelection) Snap();
 			} else {
 				ScrollToSelection();
 			}
@@ -343,6 +372,9 @@ public class SnappingScrollRect : ScrollRect {
 
 		// Selected point is no more
 		SelectPoint(null, false);
+
+		// Propagate
+		m_onBeginDrag.Invoke(_eventData);
 	}
 
 	/// <summary>
@@ -363,18 +395,23 @@ public class SnappingScrollRect : ScrollRect {
 			// Force it if content is out of the snap point (elastic behaviour simulation)
 			CheckBounds();
 		}
+
+		// Propagate
+		m_onEndDrag.Invoke(_eventData);
 	}
 
 	/// <summary>
 	/// Custom implementation of the OnDrag event.
-	/// Not actually needed, we're using it for debug purposes.
 	/// </summary>
 	/// <param name="_eventData">Event data.</param>
-	/*
 	override public void OnDrag(PointerEventData _eventData) {
 		base.OnDrag(_eventData);
 
-		// Pre-compute some values outside the loop
+		// Propagate
+		m_onDrag.Invoke(_eventData);
+
+		// DEBUG:
+		/*// Pre-compute some values outside the loop
 		Vector2 viewportSnapPos = snapPosViewport;
 
 		// Find nearest child to the snap point
@@ -431,6 +468,6 @@ public class SnappingScrollRect : ScrollRect {
 
 		bool outside = m_ContentBounds.min.x > viewportSnapPos.x || m_ContentBounds.max.x < viewportSnapPos.x;
 		Debug.Log((outside ? "<color=red>OUTSIDE!</color>" : "<color=lime>INSIDE!</color>"));
+		*/
 	}
-	*/
 }

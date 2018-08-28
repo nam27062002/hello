@@ -196,6 +196,9 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 			} break;
 
 			case State.DETECTING_SURFACE: {
+                //
+                ARKitManager.SharedInstance.ResetScene();
+
 				// Toggle target screen
 				GoToScreen((int)Screen.DETECTING_SURFACE);
 
@@ -205,12 +208,13 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Hide affected objects
 				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+                ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
 
 				// Notify AR manager
 				ARKitManager.SharedInstance.StartSurfaceDetection();
 
 				// Hide both tooltips, right one will be selected in the Update() loop
-				m_tooltip1.ForceHide(false);	
+				m_tooltip1.ForceHide(false);
 				m_tooltip2.ForceHide(false);
 			} break;
 
@@ -223,25 +227,29 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 
 				// Show content!
 				ToggleContentCameras(true);
-				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
-				ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+				ARKitManager.SharedInstance.ChangeZoom(1f);
 
 				// Show tooltip
 				m_tooltip3.RestartShow();
+
+				ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(true);
+                
+                //
+
 			} break;
 
 			case State.FINISH: {
+                // Restore affected objects
+                if(ARKitManager.s_pInstance != null) {
+                    ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
+                    ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
+                }
+                
 				// Close the AR session
 				ARKitManager.SharedInstance.FinishingARSession();
-
+                
 				// Finalize AR Game Manager
 				ARGameManager.SharedInstance.UnInitialise();
-
-				// Restore affected objects
-				if(ARKitManager.s_pInstance != null) {
-					ARKitManager.SharedInstance.ResetAffectedARObjectsTransform();
-					ARKitManager.SharedInstance.SetAffectedARObjectsEnabled(false);
-				}
 
 				// Restore main cameras
 				ToggleMainCameras(true);
@@ -253,8 +261,11 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 					m_dragonLoader.UnloadDragon();
 				}
 
-				// Go to OFF state
-				ChangeState(State.OFF);
+                // Target frame rate restored to 30fps
+                Application.targetFrameRate = 30;
+
+                // Go to OFF state
+                ChangeState(State.OFF);
 			} break;
 		}
 
@@ -364,7 +375,25 @@ public class PhotoScreenARFlow : NavigationScreenSystem {
 		} else {
 			// Cancel the whole flow
 			EndFlow();
+
+			// Show popup prompting the player to go to device settings to change permissions
+			IPopupMessage.Config popupConfig = IPopupMessage.GetConfig();
+			popupConfig.TitleTid = "TID_POPUP_AR_CAMERA_PERMISSION_TITLE";
+			popupConfig.MessageTid = "TID_POPUP_AR_CAMERA_PERMISSION_SETTINGS_DESC";
+			popupConfig.ConfirmButtonTid = "TID_POPUP_ANDROID_PERMISSION_SETTINGS";
+			popupConfig.OnConfirm = OnCameraPermissionGoToSettings;
+			popupConfig.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+			popupConfig.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.Close;
+			PopupManager.PopupMessage_Open(popupConfig);
 		}
+	}
+
+	/// <summary>
+	/// Player wants to go to system settings.
+	/// </summary>
+	private void OnCameraPermissionGoToSettings() {
+		// Go to system permissions screen
+		PermissionsManager.SharedInstance.OpenPermissionSettings();
 	}
 
 	/// <summary>

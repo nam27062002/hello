@@ -103,5 +103,27 @@ public class CPStats : MonoBehaviour {
             NotificationsManager.SharedInstance.SendGCMRegistryID();
         }*/
     }
+
+    public void Unity_RegisterNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound, true);
+#endif
+    }
+
+    public void Unity_ClearRemoteNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.ClearRemoteNotifications();
+#endif    
+    }
+    
+    public void Unity_UnregisterRemoteNotifications()
+    {
+#if UNITY_IOS
+        UnityEngine.iOS.NotificationServices.UnregisterForRemoteNotifications();
+#endif    
+    }
+    
     #endregion
 }
