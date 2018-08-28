@@ -484,7 +484,14 @@ public class HDTrackingManager
     };
 
     public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
-    #endregion
+
+    /// <summary>
+    /// Notifies an A/B experiment has just been applied.
+    /// </summary>
+    /// <param name="experimentName">Name of the experiment applied.</param>
+    /// <param name="experimentGroup">Name of the group of the experiment applied</param>
+    public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
+    #endregion    
 
     #region log
     private const bool LOG_USE_COLOR = false;

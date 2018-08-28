@@ -1193,6 +1193,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_RateThisAppShown(result, dragonProgression);
     }
+
+    public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
+    {
+        Track_ExperimentApplied(experimentName, experimentGroup);        
+    }    
     #endregion
 
     #region track	
@@ -1913,6 +1918,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_ExperimentApplied(string experimentName, string experimentGroup)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_ExperimentApplied experimentName = " + experimentName + " experimentGroup = " + experimentGroup);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.general.abtest.experiment");
+        {
+            Track_AddParamString(e, TRACK_PARAM_EXPERIMENT_NAME, experimentName);
+            Track_AddParamString(e, TRACK_PARAM_EXPERIMENT_GROUP, experimentGroup);
+        }
+        m_eventQueue.Enqueue(e);       
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -1961,6 +1979,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_EGG_FOUND = "eggFound";
     private const string TRACK_PARAM_ERROR_MESSAGE = "errorMessage";
     private const string TRACK_PARAM_ERROR_TYPE = "errorType";
+    private const string TRACK_PARAM_EXPERIMENT_NAME = "experimentName";
+    private const string TRACK_PARAM_EXPERIMENT_GROUP = "experimentGroup";
     private const string TRACK_PARAM_FB_DEF_LOGPURCHASE = "fb_def_logPurchase";
     private const string TRACK_PARAM_FB_DEF_CURRENCY = "fb_def_currency";
     private const string TRACK_PARAM_FIRE_RUSH = "fireRush";
