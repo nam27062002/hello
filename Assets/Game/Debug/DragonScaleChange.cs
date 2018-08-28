@@ -20,7 +20,7 @@ public class DragonScaleChange : MonoBehaviour {
 	
 	public void SetScale(float _scale) {
 		if (InstanceManager.player != null) {
-			InstanceManager.player.data.OffsetScaleValue(_scale - m_scale);
+			InstanceManager.player.data.SetOffsetScaleValue(_scale - m_scale);
 			InstanceManager.player.transform.localScale = new Vector3(_scale, _scale, _scale);
 			m_scale = _scale;
 		}
