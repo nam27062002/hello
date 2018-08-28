@@ -650,9 +650,9 @@ public class LoadingSceneController : SceneController {
                 SocialPlatformManager.SharedInstance.Init( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() );
 
                 // Meta
-                SeasonManager.CreateInstance(true);
+                SeasonManager.CreateInstance();
                 DragonManager.CreateInstance(true);
-                LevelManager.CreateInstance(true);
+                LevelManager.CreateInstance();
                 MissionManager.CreateInstance(true);
                 ChestManager.CreateInstance(true);
                 RewardManager.CreateInstance(true);
