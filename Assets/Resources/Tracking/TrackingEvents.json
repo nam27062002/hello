@@ -528,6 +528,16 @@
           "etl"
         ]
       },
+	  "custom.general.abtest.experiment": {
+        "Parameters": [
+          { "experimentName": { "Status": "OK" } },
+		  { "experimentGroup": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },	  
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1261,6 +1271,14 @@
       },
 	  "rateResult": {
         "Type": "STRING:5",
+        "Values": []
+      },
+	  "experimentName": {
+        "Type": "STRING:30",
+        "Values": []
+      },
+	  "experimentGroup": {
+        "Type": "STRING:30",
         "Values": []
       }
     }
