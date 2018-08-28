@@ -111,14 +111,17 @@ public class PopupConsentSettings : IPopupConsentGDPR {
 				Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, trackingConsented);
 				Prefs.SetBoolPlayer(IPopupConsentGDPR.ADS_CONSENT_KEY, adsConsented);
 
-				// We need to force logout so the game will login again when restarting and it will send whether or not the user is a child to the server, which is needed to ban children from tournaments
-				GameServerManager.SharedInstance.LogOut();
+                // According to design marketing id has to be sent after the user changes her consent
+                HDTrackingManager.Instance.Notify_MarketingID(HDTrackingManager.EMarketingIdFrom.Settings);
+
+                // We need to force logout so the game will login again when restarting and it will send whether or not the user is a child to the server, which is needed to ban children from tournaments
+                GameServerManager.SharedInstance.LogOut();
 				ApplicationManager.instance.NeedsToRestartFlow = true;
 			}
 		}
 
         int duration = Convert.ToInt32(Time.unscaledTime - m_timeAtOpen);
-        HDTrackingManager.Instance.Notify_ConsentPopupAccept(GDPRManager.SharedInstance.GetCachedUserAge(), trackingConsented, adsConsented, "1_1_1", duration);
+        HDTrackingManager.Instance.Notify_ConsentPopupAccept(GDPRManager.SharedInstance.GetCachedUserAge(), trackingConsented, adsConsented, "1_1_1", duration);        
 
 		// Close the popup
 		GetComponent<PopupController>().Close(true);
