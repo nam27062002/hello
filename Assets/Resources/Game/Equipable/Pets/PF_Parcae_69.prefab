@@ -553,8 +553,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4616578058982336}
   - component: {fileID: 65269954083532388}
-  - component: {fileID: 114049785474469086}
   - component: {fileID: 114366443172139492}
+  - component: {fileID: 114551584070061244}
   m_Layer: 16
   m_Name: weapon
   m_TagString: Untagged
@@ -1473,24 +1473,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tags: 0
   m_sku: pet_1
---- !u!114 &114049785474469086
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1904513017570948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 487c69078aee94524b48a9bbfd3b0daf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_timeBetweenHits: 0.5
-  m_damageType: 0
-  m_tier: 5
-  m_entityTags: 8
-  m_hitMask:
-    serializedVersion: 2
-    m_Bits: 65536
 --- !u!114 &114366443172139492
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1517,6 +1499,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 149ad3fbe96824237911aae39b27ab1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114551584070061244
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1904513017570948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ac372de865d64e5f8763a9236d0c3e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeBetweenHits: 0.5
+  m_damageType: 0
+  m_tier: 5
+  m_entityTags: 8
+  m_hitMask:
+    serializedVersion: 2
+    m_Bits: 65536
+  m_modifiers:
+    m_valueList:
+    - hpPercentage: 10
+      xpPercentage: 0
+      coinsPercentage: 0
+    - hpPercentage: 20
+      xpPercentage: 10
+      coinsPercentage: 0
+    - hpPercentage: 30
+      xpPercentage: 20
+      coinsPercentage: 10
+    m_keyList:
+    - Ghost01
+    - Ghost02
+    - Ghost03
 --- !u!114 &114630669737764882
 MonoBehaviour:
   m_ObjectHideFlags: 1
