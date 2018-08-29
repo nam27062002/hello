@@ -656,7 +656,7 @@ public class ReorderableArrayInspector : Editor {
 		else {
 			SerializedProperty targetProp = serializedObject.FindProperty(property.propertyPath);
 
-			bool isStartProp = targetProp.propertyPath.StartsWith("m_");
+			bool isStartProp = targetProp.propertyPath.StartsWith("m_Script");
 			using(new EditorGUI.DisabledScope(isStartProp)) {
 				EditorGUILayout.PropertyField(targetProp, targetProp.isExpanded);
 			}
