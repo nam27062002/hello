@@ -24,6 +24,7 @@ public class GameHUD : MonoBehaviour {
 	public GameObject m_speedGameObject;
 	public GameObject m_mapButtonGodRays;
 	public Button m_pauseButton;
+    public GameObject m_miscGroup;
 
 	private bool m_paused = false;
 	//------------------------------------------------------------------//
@@ -34,7 +35,8 @@ public class GameHUD : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
         if (FeatureSettingsManager.IsDebugEnabled)
-            Debug_Awake();        
+            Debug_Awake();
+        InstanceManager.gameHUD = this;
     }
     /*
     // Check back button on Android
@@ -46,6 +48,7 @@ public class GameHUD : MonoBehaviour {
     void OnDestroy() {
         if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
+        InstanceManager.gameHUD = null;
     }    
 
     bool CanPause(){		
