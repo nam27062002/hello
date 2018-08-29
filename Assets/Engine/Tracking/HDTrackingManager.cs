@@ -172,7 +172,17 @@ public class HDTrackingManager
     public virtual void Notify_ApplicationResumed() {}
 
 
-    public virtual void Notify_MarketingID() {}
+    public enum EMarketingIdFrom
+    {
+        FirstLoading,
+        Settings
+    };
+
+    /// <summary>
+    /// Notifies marketing id.
+    /// </summary>
+    /// <param name="from">Where this method is called from</param>
+    public virtual void Notify_MarketingID(EMarketingIdFrom from) {}
 
     /// <summary>
     /// Called when the user starts a round.
@@ -465,7 +475,23 @@ public class HDTrackingManager
     /// <param name="tournamentSku">Sku of the currently available tournament</param>
     /// <param name="currency"><c>NONE</c> if the tournament is for free, otherwise the currency name used to enter the tournament</param>
     public virtual void Notify_TournamentClickOnEnter(string tournamentSku, UserProfile.Currency currency) {}
-    #endregion
+
+    public enum ERateThisAppResult
+    {
+        Yes,
+        No,
+        Later
+    };
+
+    public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
+
+    /// <summary>
+    /// Notifies an A/B experiment has just been applied.
+    /// </summary>
+    /// <param name="experimentName">Name of the experiment applied.</param>
+    /// <param name="experimentGroup">Name of the group of the experiment applied</param>
+    public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
+    #endregion    
 
     #region log
     private const bool LOG_USE_COLOR = false;

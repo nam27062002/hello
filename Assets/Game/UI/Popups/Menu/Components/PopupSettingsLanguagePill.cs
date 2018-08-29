@@ -70,7 +70,7 @@ public class PopupSettingsLanguagePill : MonoBehaviour {
 		m_def = _languageDef;
 
 		// Set language name
-		m_nameText.Localize(m_def.Get("tidName"));  // [AOC] CHECK!! Each language in its own language
+		if(m_nameText != null) m_nameText.Localize(m_def.Get("tidName"));  // [AOC] CHECK!! Each language in its own language
 
 		// Initialize language image
 		m_flagImage.sprite = Resources.Load<Sprite>(UIConstants.LANGUAGE_ICONS_PATH + m_def.Get("icon"));
