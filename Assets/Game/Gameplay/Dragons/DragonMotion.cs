@@ -2001,7 +2001,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void OnAreaChangeEvent(Collider _other)
 	{
-		if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null )
+		if ( IsAliveState() && !m_dragon.changingArea && InstanceManager.gameSceneController != null )
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
