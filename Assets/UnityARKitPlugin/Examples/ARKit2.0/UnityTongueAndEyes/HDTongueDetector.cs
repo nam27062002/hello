@@ -16,6 +16,7 @@ public class HDTongueDetector : MonoBehaviour
 	private bool m_isRecording = false;
 	private bool m_recordAvailable = false;
 	private string m_buttonString = "Start Record!";
+	private AudioSource m_audio = null;
 
 	// Use this for initialization
 	void Start () 
@@ -23,6 +24,8 @@ public class HDTongueDetector : MonoBehaviour
 		UnityARSessionNativeInterface.ARFaceAnchorAddedEvent += FaceAdded;
 		UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent += FaceUpdated;
 		UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent += FaceRemoved;
+
+		m_audio = GetComponent<AudioSource> ();
 	}
 		
 	void recordButton()
@@ -104,6 +107,11 @@ public class HDTongueDetector : MonoBehaviour
 			fireEnabled = enableTongue;
 			fireRushPrefab.EnableFlame (fireEnabled);
 			fireRushPrefab.setEffectScale (m_effectScale, m_effectScale);
+			if (fireEnabled) {
+				m_audio.Play ();
+			} else {
+				m_audio.Stop ();
+			}
 		}
 	}
 }
