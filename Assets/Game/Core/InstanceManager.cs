@@ -64,6 +64,12 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		get { return instance.m_gameCamera; }
 		set { if(instance != null) instance.m_gameCamera = value; }
 	}
+    
+    private GameHUD m_gameHUD = null;
+    public static GameHUD gameHUD {
+        get { return instance.m_gameHUD; }
+        set { if(instance != null) instance.m_gameHUD = value; }
+    }
 
 	private MapCamera m_mapCamera = null;
 	public static MapCamera mapCamera {

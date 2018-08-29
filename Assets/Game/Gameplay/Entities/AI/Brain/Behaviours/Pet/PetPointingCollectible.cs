@@ -38,8 +38,7 @@ namespace AI {
 			PetPointingCollectibleTargetData m_data;
 			float m_speed;
 
-			GameObject m_visualCue;
-
+            UIGameEntitySpawn m_visualCue;
 
 			public override StateComponentData CreateData() {
 				return new PetPointingCollectibleTargetData();
@@ -51,6 +50,7 @@ namespace AI {
 
 
 			protected override void OnInitialise() {
+                base.OnInitialise();
 				m_data = m_pilot.GetComponentData<PetPointingCollectibleTargetData>();
 
 				m_player = InstanceManager.player;
@@ -66,12 +66,12 @@ namespace AI {
 				m_lettersManager = FindObjectOfType<HungryLettersManager>();
 
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
-
-				m_visualCue = m_pilot.FindObjectRecursive("visualCue");
+                m_visualCue = m_pilot.GetComponent<UIGameEntitySpawn>();
 
 			}
 
 			protected override void OnEnter(State oldState, object[] param){
+                base.OnEnter( oldState, param );
 				m_pointToObject = param[0] as GameObject;
 				m_pointToTransform = m_pointToObject.transform;
 
@@ -83,15 +83,19 @@ namespace AI {
 				m_pilot.SetMoveSpeed(m_speed);
 
 				// Show some placeholder visual clue
-				if (m_visualCue)
+				if (m_visualCue != null && m_visualCue.instance != null)
 				{
-					m_visualCue.SetActive(true);
+					m_visualCue.instance.SetActive(true);
+                    // Setup visual
+                    Transform tr = m_visualCue.instance.transform.FindTransformRecursive(GetSignalId());
+                    if (tr != null)
+                        tr.gameObject.SetActive( true );
 				}
 
 			}
 
 			override protected void OnUpdate(){
-
+                base.OnUpdate();
 				// TODO Improve this to use events
 				if ( egg )
 				{
@@ -135,12 +139,34 @@ namespace AI {
 			}
 
 			protected override void OnExit(State _newState){
-				// Hide placeholder visual
-				if (m_visualCue)
+                // Hide placeholder visual
+                base.OnExit(_newState);
+				if (m_visualCue && m_visualCue.instance )
 				{
-					m_visualCue.SetActive(false);
+                    m_visualCue.instance.SetActive(false);
+                    Transform tr = m_visualCue.instance.transform.FindTransformRecursive(GetSignalId());
+                    if (tr != null)
+                        tr.gameObject.SetActive( false );
 				}
 			}
+            
+            private string GetSignalId()
+            {
+                string ret = "";
+                if ( egg )
+                {
+                    ret = "egg";
+                }
+                else if ( chest )
+                {
+                    ret = "treasure";
+                }
+                else if ( letter )
+                {
+                    ret = "letter_" + HungryLettersManager.ToChar( letter.letter );
+                }
+                return ret;
+            }
 		}
 	}
 }
