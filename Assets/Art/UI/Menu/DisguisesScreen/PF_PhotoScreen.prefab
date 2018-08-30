@@ -1207,6 +1207,7 @@ GameObject:
   - component: {fileID: 114635299555439298}
   - component: {fileID: 114733721740487066}
   - component: {fileID: 114007052537502066}
+  - component: {fileID: 114239869504032126}
   m_Layer: 5
   m_Name: logo
   m_TagString: Untagged
@@ -1331,6 +1332,7 @@ GameObject:
   - component: {fileID: 114044297395635012}
   - component: {fileID: 114776424000939180}
   - component: {fileID: 114704009173122216}
+  - component: {fileID: 114993453235629326}
   m_Layer: 5
   m_Name: logo
   m_TagString: Untagged
@@ -3809,6 +3811,24 @@ MonoBehaviour:
       left: 0.5
       right: 0
       top: 0
+--- !u!114 &114239869504032126
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1555363886915022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcad63d37b1ca485cb5bc0dfd8b2db90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_image: {fileID: 114635299555439298}
+  m_defaultPath: UI/Common/Logo/logo
+  m_paths:
+  - languageSku: lang_japanese
+    logoPath: UI/Common/Logo/logo_jp
+  - languageSku: lang_chinese
+    logoPath: UI/Common/Logo/logo_zh
 --- !u!114 &114240400197190090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8672,6 +8692,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114993453235629326
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1579565689077794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcad63d37b1ca485cb5bc0dfd8b2db90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_image: {fileID: 114044297395635012}
+  m_defaultPath: UI/Common/Logo/logo
+  m_paths:
+  - languageSku: lang_japanese
+    logoPath: UI/Common/Logo/logo_jp
+  - languageSku: lang_chinese
+    logoPath: UI/Common/Logo/logo_zh
 --- !u!114 &114998494085506028
 MonoBehaviour:
   m_ObjectHideFlags: 1
