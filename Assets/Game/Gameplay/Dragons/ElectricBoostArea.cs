@@ -44,7 +44,8 @@ public class ElectricBoostArea : MonoBehaviour {
 		m_tier = InstanceManager.player.data.tier;
         m_timer = m_minTimerBetweenKills;
 
-        m_powerLevel = InstanceManager.player.data.m_powerLevel;
+        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
+        m_powerLevel = dataSpecial.m_powerLevel;
 
         m_tailUp.SetActive( m_powerLevel > 0 );
         m_tailDown.SetActive( m_powerLevel > 1 );
