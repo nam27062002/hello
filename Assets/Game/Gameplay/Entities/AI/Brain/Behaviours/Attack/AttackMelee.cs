@@ -27,8 +27,8 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<AttackMeleeData>();
                 m_entity = m_pilot.GetComponent<IEntity>(); 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
-
-				m_meleeWeapon.enabled = false;
+                m_meleeWeapon.entity = m_entity;
+                m_meleeWeapon.DisableWeapon();
 
 				base.OnInitialise();
 			}
@@ -36,8 +36,7 @@ namespace AI {
 			protected override void OnEnter(State _oldState, object[] _param) {
 				base.OnEnter(_oldState, _param);
 				m_meleeWeapon.damage = ((AttackMeleeData)m_data).damage;
-				m_meleeWeapon.entity = m_entity;
-				m_meleeWeapon.enabled = false;
+                m_meleeWeapon.DisableWeapon();
 
 				m_animEvents.onEnableWeapon += new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
 				m_animEvents.onDisableWeapon += new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
@@ -47,7 +46,7 @@ namespace AI {
 
 			protected override void OnExit(State _newState) {
 				base.OnExit(_newState);
-				m_meleeWeapon.enabled = false;
+                m_meleeWeapon.DisableWeapon();
 
 				m_animEvents.onEnableWeapon -= new PreyAnimationEvents.OnEnableWeaponDelegate(OnEnableWeapon);
 				m_animEvents.onDisableWeapon -= new PreyAnimationEvents.OnDisableWeaponDelegate(OnDisableWeapon);
@@ -64,11 +63,11 @@ namespace AI {
 			}
 
 			private void OnEnableWeapon() {
-				m_meleeWeapon.enabled = true;
+                m_meleeWeapon.EnableWeapon();
 			}
 
 			private void OnDisableWeapon() {
-				m_meleeWeapon.enabled = false;
+                m_meleeWeapon.DisableWeapon();
 			}
 		}
 	}

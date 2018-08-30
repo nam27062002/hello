@@ -9,7 +9,7 @@ public class PetMeleeWeapon : IMeleeWeapon {
     [SerializeField] private LayerMask m_hitMask = 0;
 
 
-
+    protected override void OnAwake() {}
     protected override void OnDealDamage() {}
     protected override void OnDisabled() {}
     protected override void OnEnabled() {}
@@ -33,6 +33,8 @@ public class PetMeleeWeapon : IMeleeWeapon {
                                 e.machine.Bite();
                                 e.machine.BeginSwallowed(m_transform, true, IEntity.Type.PET);
                                 e.machine.EndSwallowed(m_transform);
+
+                                OnEntityKilled(e);
                             }
                         }
                     }
@@ -40,4 +42,6 @@ public class PetMeleeWeapon : IMeleeWeapon {
             }
         }
     }
+
+    protected virtual void OnEntityKilled(Entity _e) {}
 }

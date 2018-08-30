@@ -22,9 +22,17 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	void Awake() {
 		m_transform = transform;
 		m_weapon = GetComponents<Collider>();
+
+        if (!enabled) {
+            for (int i = 0; i < m_weapon.Length; ++i) {
+                m_weapon[i].enabled = false;
+            }
+        }
+
+        OnAwake();
 	}
 
-	void OnEnable() {
+	public void EnableWeapon() {
 		for (int i = 0; i < m_weapon.Length; ++i) {
 			m_weapon[i].enabled = true;
 		}
@@ -36,14 +44,14 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 		OnEnabled();
 	}
 
-	void OnDisable() {
+    public void DisableWeapon() {
 		for (int i = 0; i < m_weapon.Length; ++i) {
 			m_weapon[i].enabled = false;
 		}
 		OnDisabled();
 	}
 
-	void Update() {
+    protected virtual void Update() {
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
 		}
@@ -63,7 +71,8 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	}
 
 
-	//----------------------------------------------------
+    //----------------------------------------------------
+    protected abstract void OnAwake();
 	protected abstract void OnEnabled();
 	protected abstract void OnDisabled();
 	protected abstract void OnDealDamage();

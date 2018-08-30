@@ -11,6 +11,8 @@ public class MeleeWeapon : IMeleeWeapon {
 
 	[SerializeField] private ViewParticleSpawner m_weaponParticle = null;
 
+    protected override void OnAwake() { }
+
 	protected override void OnEnabled() { 
 		if (m_trail) m_trail.Activate();
 		for (int i = 0; i < m_trailParticles.Length; i++) {

@@ -5,6 +5,7 @@ public class DOTMeleeWeapon : IMeleeWeapon {
 
 	[SerializeField] private float m_duration = 5f;
 
+    protected override void OnAwake() { }
 	protected override void OnEnabled() { }
 	protected override void OnDisabled() { }
 	protected override void OnDealDamage() {
