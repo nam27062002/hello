@@ -22,7 +22,12 @@ public class ElectricBoostArea : MonoBehaviour {
 	
 	private bool m_active = false;
     private int m_powerLevel = 0;
-    
+
+    public float m_minTimerBetweenKills = 0.5f;
+    protected float m_timer;
+
+    public GameObject m_tailUp;
+    public GameObject m_tailDown;
 
 	// Use this for initialization
 	void Start () {
@@ -37,76 +42,91 @@ public class ElectricBoostArea : MonoBehaviour {
 		m_motion = InstanceManager.player.dragonMotion;
 		m_extraRadius = 1;
 		m_tier = InstanceManager.player.data.tier;
+        m_timer = m_minTimerBetweenKills;
 
+        m_powerLevel = InstanceManager.player.data.m_powerLevel;
+
+        m_tailUp.SetActive( m_powerLevel > 0 );
+        m_tailDown.SetActive( m_powerLevel > 1 );
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        int max = m_circleAreas.Count;
+        int circleAreaCount = m_circleAreas.Count; 
 
 		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
-			if (!m_active)
-			{
-				m_active = true;
-			}
-
-            bool done = false;
-            
-            for (int i = 0; i < max && !done ; i++)
+            if (m_timer <= 0)
             {
-                Entity entity = GetFirstBurnableEntity((Vector2)m_circleAreas[i].center, m_circleAreas[i].radius);
-                if ( entity != null )
+                m_timer = m_minTimerBetweenKills;
+                
+                if (!m_active)
                 {
-                    AI.IMachine startingMachine =  entity.machine;
-                    if ( startingMachine != null)
+                    m_active = true;
+                }
+
+                bool done = false;
+
+                for (int i = 0; i < circleAreaCount && !done; i++)
+                {
+                    Entity entity = GetFirstBurnableEntity((Vector2)m_circleAreas[i].center, m_circleAreas[i].radius);
+                    if (entity != null)
                     {
-                        startingMachine.Burn(transform, m_type);
-                        
-                        // BLAST!!
-                        if ( m_powerLevel >= 2 )
+                        AI.IMachine startingMachine = entity.machine;
+                        if (startingMachine != null)
                         {
-                            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2) entity.circleArea.center , m_blastRadius, m_checkEntities);
-                            for (int j = 0; j < m_numCheckEntities; j++)
-                            {
-                                Entity blastEntity = m_checkEntities[j];
-                                if ( blastEntity.IsBurnable() && (blastEntity.IsBurnable(m_tier) || ( m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega )))
+                            startingMachine.Burn(transform, m_type);
+                            Vector3 startingPos = startingMachine.position;
+                            if (entity.circleArea != null)
+                                startingPos = entity.circleArea.center;
+                            // BLAST!!
+                            if (m_powerLevel >= 2)
+                            {   
+                                m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius, m_checkEntities);
+                                for (int j = 0; j < m_numCheckEntities; j++)
                                 {
-                                    AI.IMachine blastMachine =  blastEntity.machine;
-                                    if (blastMachine != null)
+                                    Entity blastEntity = m_checkEntities[j];
+                                    if (blastEntity.IsBurnable() && (blastEntity.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
                                     {
-                                        // Launch Lightning!
-                                        blastMachine.Burn(transform, m_type);
+                                        AI.IMachine blastMachine = blastEntity.machine;
+                                        if (blastMachine != null)
+                                        {
+                                            // Launch Lightning!
+                                            blastMachine.Burn(transform, m_type);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        
-                        // Chain
-                        if ( m_powerLevel >= 1 )
-                        {
-                            Entity chain1_entity = GetFirstBurnableEntity((Vector2) entity.circleArea.center, m_chainRadiusCheck);
-                            if ( chain1_entity != null )
+
+                            // Chain
+                            if (m_powerLevel >= 1)
                             {
-                                // Burn chain 1 entity
-                                AI.IMachine chain1_machine =  chain1_entity.machine;
-                                chain1_machine.Burn(transform, IEntity.Type.PLAYER);
-                                 
-                                // Chain Upgrade
-                                if ( m_powerLevel >= 3 )
+                                Entity chain1_entity = GetFirstBurnableEntity((Vector2)startingPos, m_chainRadiusCheck);
+                                if (chain1_entity != null)
                                 {
-                                    Entity chain2_entity = GetFirstBurnableEntity((Vector2) chain1_entity.circleArea.center, m_chainRadiusCheck);
-                                    if ( chain2_entity != null )
+                                    // Burn chain 1 entity
+                                    AI.IMachine chain1_machine = chain1_entity.machine;
+                                    chain1_machine.Burn(transform, IEntity.Type.PLAYER);
+
+                                    // Chain Upgrade
+                                    if (m_powerLevel >= 3)
                                     {
-                                        AI.IMachine chain2_machine =  chain2_entity.machine;
-                                        chain2_machine.Burn(transform, IEntity.Type.PLAYER);        
+                                        Vector3 entity1Pos = chain1_machine.position;
+                                        if (chain1_entity.circleArea != null)
+                                            entity1Pos = chain1_entity.circleArea.center;
+                                        Entity chain2_entity = GetFirstBurnableEntity((Vector2)entity1Pos, m_chainRadiusCheck);
+                                        if (chain2_entity != null)
+                                        {
+                                            AI.IMachine chain2_machine = chain2_entity.machine;
+                                            chain2_machine.Burn(transform, IEntity.Type.PLAYER);
+                                        }
                                     }
                                 }
                             }
+
+                            done = true;
                         }
-                           
-                        done = true;
                     }
                 }
             }
@@ -126,10 +146,13 @@ public class ElectricBoostArea : MonoBehaviour {
 		}
         m_extraRadius = Mathf.Clamp(m_extraRadius, 1, m_waterMultiplier);
         m_extraRadius = Mathf.Clamp(m_extraRadius, 1, m_waterMultiplier);
-        for (int i = 0; i < max; i++)
+        for (int i = 0; i < circleAreaCount; i++)
         {
             m_circleAreas[i].radius = m_originalRadius[i] * m_extraRadius;
         }
+
+        m_timer -= Time.deltaTime;
+        
 	}
     
     public Entity GetFirstBurnableEntity( Vector2 _center, float _radius )

@@ -85,25 +85,25 @@ public class DragonTint : MonoBehaviour
 		if ( m_renderers != null )
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Renderer renderer = m_renderers[i];
-			Material mat = renderer.material;
+			Renderer r = m_renderers[i];
+			Material mat = r.material;
 			string shaderName = mat.shader.name;
 			if ( shaderName.Contains("Dragon standard") )
 			{
-				if ( renderer.tag.Equals("DragonBody") )
+				if ( r.tag.Equals("DragonBody") )
 				{
 					bodyMaterial = mat;
-					bodyRenderers.Add( renderer );
+					bodyRenderers.Add( r );
 				}
-				else if ( renderer.tag.Equals("DragonWings") )
+				else if ( r.tag.Equals("DragonWings") )
 				{
 					wingsMaterial = mat;
-					wingsRenderers.Add( renderer );
+					wingsRenderers.Add( r );
 				}
 				else
 				{
 					diguiseMaterial = mat;
-					diguiseRenderers.Add( renderer );
+					diguiseRenderers.Add( r );
 				}
 
 				m_dragonRenderers.Add( m_renderers[i] );
