@@ -207,8 +207,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
-			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-			if(data.GetLockState() > DragonData.LockState.LOCKED) {
+			IDragonData data = DragonManager.GetDragonData(RATING_DRAGON);
+			if(data.GetLockState() > IDragonData.LockState.LOCKED) {
 				// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
 				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
 				if(_checked) {

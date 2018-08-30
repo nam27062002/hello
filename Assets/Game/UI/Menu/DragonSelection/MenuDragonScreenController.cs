@@ -44,8 +44,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	private MenuScreen m_goToScreen = MenuScreen.NONE;
-	private DragonData m_dragonToTease = null;
-	private DragonData m_dragonToReveal = null;
+	private IDragonData m_dragonToTease = null;
+	private IDragonData m_dragonToReveal = null;
 
     private bool m_showPendingTransactions = false;
 
@@ -134,8 +134,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 		#if UNITY_EDITOR
 		if(Input.GetKeyDown(KeyCode.U)) {
 			int order = DragonManager.currentDragon.def.GetAsInt("order");
-			if(order < DragonManager.dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
-				DragonData nextDragonData = DragonManager.dragonsByOrder[order + 1];
+			List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
+			if(order < dragonsByOrder.Count - 1) {	// Exclude if playing with last dragon
+				IDragonData nextDragonData = dragonsByOrder[order + 1];
 				if(nextDragonData != null) {
 					InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);
 					DOVirtual.DelayedCall(1f, () => { LaunchUnlockAnim(nextDragonData.def.sku, m_initialDelay, m_scrollDuration, true); });
@@ -308,7 +309,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void LaunchTeaseAnim(string _teaseDragonSku) {
 		// Aux vars
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_teaseDragonSku);
-		DragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
+		IDragonData dragonData = DragonManager.GetDragonData(_teaseDragonSku);
 
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -379,7 +380,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void LaunchRevealAnim(string _revealDragonSku) {
 		// Aux vars
 		MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(_revealDragonSku);
-		DragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
+		IDragonData dragonData = DragonManager.GetDragonData(_revealDragonSku);
 
 		DOTween.Sequence()
 			.AppendCallback(() => {
@@ -456,8 +457,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Check dragons to tease
 		// [AOC] Special case: if dragon scroll tutorial hasn't been yet completed, 
 		//		 mark target dragons as already teased to prevent conflict with the tutorial scroll animation
-		List<DragonData> toTease = DragonManager.GetDragonsByLockState(DragonData.LockState.TEASE);
-		List<DragonData> toReveal = DragonManager.GetDragonsByLockState(DragonData.LockState.REVEAL);
+		List<IDragonData> toTease = DragonManager.GetDragonsByLockState(IDragonData.LockState.TEASE);
+		List<IDragonData> toReveal = DragonManager.GetDragonsByLockState(IDragonData.LockState.REVEAL);
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
 			// Dragon scroll tutorial completed, pick first dragon to tease/reveal
 			m_dragonToTease = toTease.First();
@@ -506,8 +507,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// <param name="_to">Target screen.</param>
 	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// Hide all dragons that are not meant to be displayed
-		foreach (DragonData data in DragonManager.dragonsByOrder) {
-			if (data.lockState == DragonData.LockState.HIDDEN || data.lockState == DragonData.LockState.TEASE) {
+		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
+		foreach (IDragonData data in dragonsByOrder) {
+			if (data.lockState == IDragonData.LockState.HIDDEN || data.lockState == IDragonData.LockState.TEASE) {
 				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
 				slot.animator.Hide(true, false);	// Do not desactivate to allow async loading
 			}

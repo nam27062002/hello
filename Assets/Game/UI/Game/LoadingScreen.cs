@@ -74,7 +74,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// </summary>
 	public static void InitWithCurrentData() {
 		// Aux vars
-		DragonData currentDragon = null;
+		IDragonData currentDragon = null;
 		DefinitionNode skinDef = null;
 		List<string> pets = null;
 

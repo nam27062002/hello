@@ -60,7 +60,7 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	/// <param name="_sku">The sku of the selected dragon</param>
 	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
-		DragonData data = DragonManager.GetDragonData(_sku);
+		IDragonData data = DragonManager.GetDragonData(_sku);
 		if(data == null) return;
 
 		// Update price
@@ -73,11 +73,11 @@ public class MenuDragonUnlockCoins : MonoBehaviour {
 	public void OnUnlock() {
 		if (m_showConditions.CheckDragon(InstanceManager.menuSceneController.selectedDragon)){
 			// Get price and start purchase flow
-			DragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+			IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 			ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_DRAGON_COINS");
 			purchaseFlow.OnSuccess.AddListener(
 				(ResourcesFlow _flow) => {
-					bool wasntLocked = dragonData.GetLockState() <= DragonData.LockState.LOCKED;
+					bool wasntLocked = dragonData.GetLockState() <= IDragonData.LockState.LOCKED;
 
 					// Just acquire target dragon!
 					dragonData.Acquire();

@@ -43,8 +43,8 @@ public class DragonPlayer : MonoBehaviour {
 	}
 	[SerializeField] private float m_invulnerableTime = 5f;
 
-	private DragonData m_data = null;
-	public DragonData data { get { return m_data; }}
+	private IDragonData m_data = null;
+	public IDragonData data { get { return m_data; }}
 
 	[Header("Life & energy")]
 	private float m_health;
@@ -222,10 +222,11 @@ public class DragonPlayer : MonoBehaviour {
     			}
     			else
     			{
-    				// Use tmp data
-    				m_data = new DragonData();
-    				m_data.Init( DefinitionsManager.SharedInstance.GetDefinition( DefinitionsCategory.DRAGONS , m_sku)  );
-    				m_data.progression.SetToMaxLevel();
+					// Use tmp data
+					m_data = IDragonData.CreateFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_sku));
+					if(m_data is DragonDataClassic) {
+						(m_data as DragonDataClassic).progression.SetToMaxLevel();
+					}
     			}
     		}
     		else
@@ -277,7 +278,7 @@ public class DragonPlayer : MonoBehaviour {
 		m_holdPreyPoints = transform.GetComponentsInChildren<HoldPreyPoint>();
 
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 
@@ -296,7 +297,7 @@ public class DragonPlayer : MonoBehaviour {
 	void OnDestroy()
 	{
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
@@ -674,7 +675,7 @@ public class DragonPlayer : MonoBehaviour {
 	/// The dragon has leveled up.
 	/// </summary>
 	/// <param name="_data">The data of the dragon that just leveled up.</param>
-	private void OnLevelUp(DragonData _data) {
+	private void OnLevelUp(IDragonData _data) {
 		// Assume it's this dragon
 		// Make sure the dragon has the scale according to its level
 		// gameObject.transform.localScale = Vector3.one * m_defaultSize;

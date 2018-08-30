@@ -77,7 +77,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -85,7 +85,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -216,7 +216,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// A new dragon has been acquired.
 	/// </summary>
 	/// <param name="_dragon">The dragon that has just been acquired.</param>
-	private void OnDragonAcquired(DragonData _dragon) {
+	private void OnDragonAcquired(IDragonData _dragon) {
 		int ownedDragons = UsersManager.currentUser.GetNumOwnedDragons();
 		UsersManager.currentUser.userMissions.UnlockByDragonsNumber();
 	}

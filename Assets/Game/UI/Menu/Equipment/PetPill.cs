@@ -23,7 +23,7 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 public class PetPillData {
 	public DefinitionNode def;
-	public DragonData dragon;
+	public IDragonData dragon;
 }
 
 
@@ -132,7 +132,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 
 	public bool m_isNotInGatcha = false;
 
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 
 	// Events
 	public PetPillEvent OnPillTapped = new PetPillEvent();
@@ -202,7 +202,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 	/// </summary>
 	/// <param name="_petDef">The definition used to initialize the pill.</param>
 	/// <param name="_dragonData">The dragon we're tuning.</param> 
-	public void Init(DefinitionNode _petDef, DragonData _dragonData) {
+	public void Init(DefinitionNode _petDef, IDragonData _dragonData) {
 		// Store target dragon data
 		m_dragonData = _dragonData;
 

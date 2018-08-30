@@ -386,7 +386,7 @@ public class GameCamera : MonoBehaviour
 
 	private void MoveToSpawnPos( bool _levelEditor = false )
 	{
-		DragonData data = InstanceManager.player.data;
+		IDragonData data = InstanceManager.player.data;
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);

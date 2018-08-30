@@ -49,7 +49,7 @@ namespace AI {
 
 				m_owner = InstanceManager.player;
 				PetSearchCageTargetData data = m_pilot.GetComponentData<PetSearchCageTargetData>();
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * data.m_dragonSizeRangeMultiplier;
+				m_range = m_owner.data.maxScale * data.m_dragonSizeRangeMultiplier;
 			}
 
 			// The first element in _param must contain the amount of time without detecting an enemy

@@ -143,7 +143,7 @@ public class HUDStatBar : MonoBehaviour {
 			RefreshIcons();
 		}
 
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		m_timer = 10;
 		m_timerDuration = 10;
 		if ( m_type == Type.SuperFury )
@@ -174,7 +174,7 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	/// <summary>
@@ -527,7 +527,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_damageAnimationThreshold = DAMAGE_BAR_ANIMATION_THRESHOLD/size.x;
 	}
 
-	private void OnLevelUp(DragonData _data) 
+	private void OnLevelUp(IDragonData _data) 
 	{
 		ResizeBars();
 	}

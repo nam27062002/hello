@@ -47,7 +47,7 @@ public class PetSlotInfo : MonoBehaviour {
 	private int m_slotIdx = 0;
 
 	// Internal refs
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 
 	private ShowHideAnimator m_anim = null;
 	public ShowHideAnimator anim {
@@ -90,7 +90,7 @@ public class PetSlotInfo : MonoBehaviour {
 	/// Refresh the slot's info with a specific dragon data.
 	/// </summary>
 	/// <param name="_dragonData">The dragon data to be used to refresh this slot's info.</param>
-	public void Refresh(DragonData _dragonData, bool _animate) {
+	public void Refresh(IDragonData _dragonData, bool _animate) {
 		// Store dragon data
 		m_dragonData = _dragonData;
 

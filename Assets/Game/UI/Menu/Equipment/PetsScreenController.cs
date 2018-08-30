@@ -57,7 +57,7 @@ public class PetsScreenController : MonoBehaviour {
 	}
 
 	// Cache some data for faster access
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private string m_initialPetSku = "";
 
 	// Internal logic

@@ -186,8 +186,8 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Dragon Data
-	private Dictionary<string,DragonData> m_dragonsBySku;	// Owned Dragons by Sku
-	public Dictionary<string,DragonData> dragonsBySku
+	private Dictionary<string,IDragonData> m_dragonsBySku;	// Owned Dragons by Sku
+	public Dictionary<string,IDragonData> dragonsBySku
 	{
 		get{ return m_dragonsBySku; }
 	}
@@ -409,14 +409,14 @@ public class UserProfile : UserPersistenceSystem
         m_highScore = 0;
         m_superFuryProgression = 0;
 
-        // Dragons: The Dictionay and DragonData objects that contains are created only the first time because there are references to these objects somewhere else, so we just reset them
+        // Dragons: The Dictionay and IDragonData objects that contains are created only the first time because there are references to these objects somewhere else, so we just reset them
         List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
         if (m_dragonsBySku == null)
         {
-            m_dragonsBySku = new Dictionary<string, DragonData>();
+            m_dragonsBySku = new Dictionary<string, IDragonData>();
         }
                         
-        DragonData newDragonData = null;
+        IDragonData newDragonData = null;
         string dragonSku;
         for (int i = 0; i < defs.Count; i++)
         {
@@ -427,8 +427,7 @@ public class UserProfile : UserPersistenceSystem
             }
             else
             {
-                newDragonData = new DragonData();
-                newDragonData.Init(defs[i]);
+				newDragonData = IDragonData.CreateFromDef(defs[i]);
                 m_dragonsBySku[defs[i].sku] = newDragonData;
             }
         }        
@@ -729,7 +728,7 @@ public class UserProfile : UserPersistenceSystem
 	public int GetNumOwnedDragons()
 	{
 		int ret = 0;
-		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
+		foreach( KeyValuePair<string, IDragonData> pair in m_dragonsBySku )
 		{
 			if ( pair.Value.isOwned )
 				ret++;
@@ -884,7 +883,7 @@ public class UserProfile : UserPersistenceSystem
 		else
 		{
 			// Clean Dragon Data
-			foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+			foreach( KeyValuePair<string, IDragonData> pair in m_dragonsBySku)
 				pair.Value.ResetLoadedData();
 		}
 
@@ -1140,9 +1139,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Dragons
 		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
-		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
+		foreach( KeyValuePair<string,IDragonData> pair in m_dragonsBySku)
 		{
-			DragonData dragonData = pair.Value;
+			IDragonData dragonData = pair.Value;
 			dragons.Add( dragonData.Save() );
 		}
 		data.Add( "dragons", dragons );
@@ -1335,7 +1334,7 @@ public class UserProfile : UserPersistenceSystem
 	public int GetPetSlot(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Just find target pet's slot in the target dragon's loadout
 		return dragon.pets.IndexOf(_petSku);
@@ -1359,7 +1358,7 @@ public class UserProfile : UserPersistenceSystem
 	public int EquipPet(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Is pet already equipped?
 		if(dragon.pets.Contains(_petSku)) return -2;
@@ -1404,7 +1403,7 @@ public class UserProfile : UserPersistenceSystem
 	public int EquipPet(string _dragonSku, string _petSku, int _slotIdx) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Is pet already equipped?
 		if(dragon.pets.Contains(_petSku)) return -2;
@@ -1441,7 +1440,7 @@ public class UserProfile : UserPersistenceSystem
 	public int UnequipPet(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Check whether pet is equipped
 		int idx = dragon.pets.IndexOf(_petSku);
@@ -1466,7 +1465,7 @@ public class UserProfile : UserPersistenceSystem
 	public int UnequipPet(string _dragonSku, int _slotIdx) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Check slot index
 		if(_slotIdx < 0 || _slotIdx >= dragon.pets.Count) return -2;
@@ -1511,16 +1510,23 @@ public class UserProfile : UserPersistenceSystem
 		return data;
 	}
 
-    public DragonData GetHighestDragon() {
-        DragonData returnValue = null;
+	/// <summary>
+	/// Only CLASSIC dragons considered.
+	/// </summary>
+	public DragonDataClassic GetHighestDragon() {
+		DragonDataClassic returnValue = null;
 
         // Find the dragon with the highest level among all dragons acquired by the user.
         if (m_dragonsBySku != null) {            
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
+            foreach (KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+				// Skip if not classic
+				if(pair.Value.type != IDragonData.Type.CLASSIC) continue;
+
+				// Is it owned?
                 if (pair.Value.isOwned) {
                     int order = pair.Value.GetOrder();
                     if (returnValue == null || order > returnValue.GetOrder()) {
-                        returnValue = pair.Value;
+						returnValue = pair.Value as DragonDataClassic;
                     }
                 }
             }            
@@ -1535,7 +1541,7 @@ public class UserProfile : UserPersistenceSystem
     /// <returns></returns>
     public int GetPlayerProgress() {        
         // Find the dragon with the highest level among all dragons acquired by the user.
-        DragonData highestDragon = GetHighestDragon();        
+        IDragonData highestDragon = GetHighestDragon();        
         return (highestDragon == null) ? 0 : GetDragonProgress(highestDragon);        
     }
 
@@ -1547,7 +1553,7 @@ public class UserProfile : UserPersistenceSystem
     /// passed as a parameter is returned.
     /// </returns>
     public int GetDragonProgress(string _dragonSku) {
-        DragonData data = null;
+        IDragonData data = null;
         if (m_dragonsBySku != null && m_dragonsBySku.ContainsKey(_dragonSku)) {
             data = m_dragonsBySku[_dragonSku];
         }
@@ -1562,22 +1568,26 @@ public class UserProfile : UserPersistenceSystem
     /// <returns>0 is returned if <c>_dragonData</c> is null, otherwise a positive value representing the progress of the dragon data
     /// passed as a parameter is returned.
     /// </returns>
-    public int GetDragonProgress(DragonData _dragonData) {
+    public int GetDragonProgress(IDragonData _dragonData) {
         int returnValue = 0;
 
-        if (_dragonData != null) {
+		if (_dragonData != null && _dragonData is DragonDataClassic) {
             int highestOrder = _dragonData.GetOrder();
 
-            // Add up maxLevel of all dragons with a lower level.
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
-                if (pair.Value.GetOrder() < highestOrder) {
-                    // Since level start at 0 the amount of level is maxLevel + 1 
-                    returnValue += pair.Value.progression.maxLevel + 1;
-                }
+			// Add up maxLevel of all dragons with a lower level.
+			foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+				// [AOC] Exclude special dragons
+				if(pair.Value is DragonDataClassic) {
+					DragonDataClassic classicData = pair.Value as DragonDataClassic;
+					if(classicData.GetOrder() < highestOrder) {
+						// Since level start at 0 the amount of level is maxLevel + 1 
+						returnValue += classicData.progression.maxLevel + 1;
+					}
+				}
             }
 
             // Add up the current level of that highest dragon.
-            returnValue += _dragonData.progression.level;
+			returnValue += (_dragonData as DragonDataClassic).progression.level;
 
             // Dragon level starts at 0 but player progress starts at 1
             returnValue++;

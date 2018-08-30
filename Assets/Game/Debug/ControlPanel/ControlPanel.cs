@@ -327,7 +327,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         if ( Input.GetKeyDown(KeyCode.L )){
 			if ( InstanceManager.player != null ){
 				// Dispatch global event
-				Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
+				Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
 #endif

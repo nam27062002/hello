@@ -56,7 +56,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	[SerializeField] private Color m_fresnelColor = Color.gray;
 
 	// Internal
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private DragonTier m_loadedTier = DragonTier.COUNT;
 	private GameObject m_layoutInstance = null;
 
@@ -122,7 +122,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Initialize the popup with the given dragon info.
 	/// </summary>
 	/// <param name="_dragonData">Data of the dragon whose info we want to display.</param>
-	public void Init(DragonData _dragonData) {
+	public void Init(IDragonData _dragonData) {
 		// Initialize with currently selected dragon
 		m_dragonData = _dragonData;
 		Refresh();

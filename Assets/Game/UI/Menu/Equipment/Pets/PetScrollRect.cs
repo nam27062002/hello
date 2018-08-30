@@ -90,7 +90,7 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	public void Setup(DragonData _dragon) {
+	public void Setup(IDragonData _dragon) {
 		if(!Application.isPlaying) return;
 
 		foreach(List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {

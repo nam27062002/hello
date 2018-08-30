@@ -42,7 +42,7 @@ namespace AI {
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.petWanderSku);
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("wanderSpeedMultiplier");
 
-				m_maxFarDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * def.GetAsFloat("wanderDistanceMultiplier");
+				m_maxFarDistance = InstanceManager.player.data.maxScale * def.GetAsFloat("wanderDistanceMultiplier");
 				m_startRandom = Random.Range(0, 2 * Mathf.PI);
 				m_minorRandom = Random.Range( 2, 7);
 			}

@@ -184,7 +184,7 @@ public class DragonParticleController : MonoBehaviour
 
 	void OnEnable() {
 		// Register events
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -195,7 +195,7 @@ public class DragonParticleController : MonoBehaviour
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -333,7 +333,7 @@ public class DragonParticleController : MonoBehaviour
 
 	}
 
-	void OnLevelUp( DragonData data )
+	void OnLevelUp( IDragonData data )
 	{
 		m_levelUpInstance.gameObject.SetActive(true);
 		m_levelUpInstance.Play();

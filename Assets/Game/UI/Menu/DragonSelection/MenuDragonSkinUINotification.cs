@@ -79,7 +79,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 		}
 
 		// Notification visible if any of the skins of the currently selected dragon are marked as 'new'
-		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		IDragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 
 		// Get all the disguises of the selected dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", selectedDragonData.def.sku);
