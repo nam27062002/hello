@@ -207,9 +207,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// 1) Initial delta is always the first dragon
 		m_initialDelta = 0f;
 			
-		int dragonsToView = 9;
 		// 2) Last delta is the last visible dragon (teased included)
-		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+		int dragonsToView = 9;
+		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
 			// First non-hidden dragon (including teased dragons)
 			if(dragonsByOrder[i].isRevealed || dragonsByOrder[i].isTeased) {

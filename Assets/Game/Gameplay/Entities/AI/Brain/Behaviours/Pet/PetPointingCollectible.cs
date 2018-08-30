@@ -54,7 +54,8 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PetPointingCollectibleTargetData>();
 
 				m_player = InstanceManager.player;
-				float maxLevelScale = m_player.data.GetScaleAtLevel( m_player.data.progression.maxLevel );
+				float maxLevelScale = m_player.data.maxScale;
+
 				m_playerDistance = maxLevelScale * m_data.m_playerDistance;
 
 				m_closeRange = maxLevelScale * m_data.m_closeRangeMultiplier;

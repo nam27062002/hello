@@ -21,6 +21,8 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "special";
+
 	public const DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_2;
 
 	public enum Stat {
@@ -98,7 +100,17 @@ public class DragonDataSpecial : IDragonData {
 	}
 
 	public override float scale {
-		get { return m_specialTierDef.GetAsFloat("scale"); }
+		get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
+	}
+
+	public override float minScale {
+		// [AOC] TODO!!
+		get { return 1f; }
+	}
+
+	public override float maxScale {
+		// [AOC] TODO!!
+		get { return 1f; }
 	}
 
 	//------------------------------------------------------------------------//
@@ -111,6 +123,9 @@ public class DragonDataSpecial : IDragonData {
 	public override void Init(DefinitionNode _def) {
 		// Call parent
 		base.Init(_def);
+
+		// Type
+		m_type = Type.SPECIAL;
 	}
 
 	/// <summary>

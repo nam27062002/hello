@@ -73,7 +73,7 @@ public class CPMissionGenerator : MonoBehaviour {
 			// 2. Dragons
 			InitDropdownFromDefs(
 				m_ownedDragonDropdown, 
-				DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS)
+				DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE)
 			);
 
 			// 3. Mission type
@@ -107,7 +107,7 @@ public class CPMissionGenerator : MonoBehaviour {
 		if(!m_init) return;
 
 		// Figure out max tier
-		DragonData maxOwnedDragon = DragonManager.GetDragonData(GetSelectedOption(m_ownedDragonDropdown));
+		IDragonData maxOwnedDragon = DragonManager.GetDragonData(GetSelectedOption(m_ownedDragonDropdown));
 		if(maxOwnedDragon == null) return;
 		DragonTier maxTierUnlocked = maxOwnedDragon.tier;
 
@@ -131,7 +131,7 @@ public class CPMissionGenerator : MonoBehaviour {
 		if(!m_init) return;
 
 		// Figure out max tier
-		DragonData maxOwnedDragon = DragonManager.GetDragonData(GetSelectedOption(m_ownedDragonDropdown));
+		IDragonData maxOwnedDragon = DragonManager.GetDragonData(GetSelectedOption(m_ownedDragonDropdown));
 		if(maxOwnedDragon == null) return;
 		DragonTier maxTierUnlocked = maxOwnedDragon.tier;
 

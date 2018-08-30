@@ -229,10 +229,10 @@ public class MenuDragonLoader : MonoBehaviour {
 				prefabColumn = "resultsPrefab";
 
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				m_asyncRequest = Resources.LoadAsync<GameObject>(IDragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
 			}else{
 				// Instantiate the prefab and add it as child of this object
-				GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				GameObject dragonPrefab = Resources.Load<GameObject>(IDragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
 				if(dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 					ConfigureInstance( newInstance );

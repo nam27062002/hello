@@ -55,8 +55,11 @@ public class HUDXPBar : MonoBehaviour {
 	private void Update() {
 		// Only if player is alive
 		if(InstanceManager.player != null) {
+			// Only for CLASSIC dragons
+			if(InstanceManager.player.data.type != IDragonData.Type.CLASSIC) return;
+
 			// Aux vars
-			DragonProgression progression = InstanceManager.player.data.progression;
+			DragonProgression progression = (InstanceManager.player.data as DragonDataClassic).progression;
 			Range xpRange = progression.xpRange;
 
 			// Bar value

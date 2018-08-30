@@ -825,10 +825,11 @@ public class GameSceneController : GameSceneControllerBase {
         string dragonSkin = null;
 		List<string> pets = null;
         if (InstanceManager.player != null) {
-            DragonData dragonData = InstanceManager.player.data;
-            if (dragonData != null) {
-                if (dragonData.progression != null) {
-                    dragonXp = (int)dragonData.progression.xp;
+            IDragonData dragonData = InstanceManager.player.data;
+			if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
+				DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                if (progression != null) {
+                    dragonXp = (int)progression.xp;
                 }
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
@@ -852,10 +853,11 @@ public class GameSceneController : GameSceneControllerBase {
         int score = (int)RewardManager.score;
         int dragonProgress = 0;
         if (InstanceManager.player != null) {
-            DragonData dragonData = InstanceManager.player.data;
-            if (dragonData != null) {
-                if (dragonData.progression != null) {
-                    dragonXp = (int)dragonData.progression.xp;
+            IDragonData dragonData = InstanceManager.player.data;
+			if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
+				DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                if (progression != null) {
+                    dragonXp = (int)progression.xp;
                 }
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
@@ -882,7 +884,7 @@ public class GameSceneController : GameSceneControllerBase {
 
     private void Track_RunEnd(bool _quitGame) {
         DragonPlayer dragonPlayer = InstanceManager.player;
-        DragonData dragonData = null;
+        IDragonData dragonData = null;
         Vector3 deathCoordinates = Vector3.zero;
         if (dragonPlayer != null) {
             dragonData = dragonPlayer.data;
@@ -892,8 +894,11 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int timePlayed = (int)elapsedSeconds;
         int score = (int)RewardManager.score;
-        if (dragonData != null && dragonData.progression != null) {
-            dragonXp = (int)dragonData.progression.xp;
+		if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
+			DragonProgression progression = (dragonData as DragonDataClassic).progression;
+			if(progression != null) {
+				dragonXp = (int)progression.xp;
+			}
         }
 
         string deathType = null;

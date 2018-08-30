@@ -77,6 +77,12 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 		}
 
 		if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+			// Get some special data
+			int level = 0;
+			if(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
+				level = (DragonManager.currentDragon as DragonDataClassic).progression.level;
+			}
+
 			// Do it!
 			MiniTrackingEngine.TrackEvent(
 				"GAME_ENDED",
@@ -100,7 +106,7 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 				new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
 				new TrackingParam("xp_earn", RewardManager.xp),
 				new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
-				new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
+				new TrackingParam("current_level", level),
 				new TrackingParam("mission1_completed", missionCompleted[0]),
 				new TrackingParam("mission2_completed", missionCompleted[1]),
 				new TrackingParam("mission3_completed", missionCompleted[2]),

@@ -29,6 +29,11 @@ public abstract class IDragonData : IUISelectorItem {
 	public const string GAME_PREFAB_PATH = "Game/Dragons/";
 	public const string MENU_PREFAB_PATH = "UI/Menu/Dragons/";
 
+	public enum Type {
+		CLASSIC,
+		SPECIAL
+	}
+
 	// Dragons can be unlocked with coins when the previous tier is completed (all dragons in it at max level), or directly with PC.
 	public enum LockState {
 		ANY = -1,   // Any of the below states
@@ -44,9 +49,13 @@ public abstract class IDragonData : IUISelectorItem {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Members are serialized for debugging purposes, but dragon data is a volatile class
 	// Definition
 	[SerializeField] protected DefinitionNode m_def = null;
 	public DefinitionNode def { get { return m_def; } }
+
+	[SerializeField] protected Type m_type = Type.CLASSIC;
+	public Type type { get { return m_type; } }
 
 	[SerializeField] protected DefinitionNode m_tierDef = null;
 	public DefinitionNode tierDef { get { return m_tierDef; } }
@@ -67,13 +76,6 @@ public abstract class IDragonData : IUISelectorItem {
 	protected List<string> m_shadowFromDragons = new List<string>();
 	protected List<string> m_revealFromDragons = new List<string>();
 	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
-
-	// Stats
-	public abstract float maxHealth { get; }
-	public abstract float maxForce { get; }
-	public abstract float maxEatSpeedFactor { get; }
-	public abstract float baseEnergy { get; }
-	public abstract float scale { get; }
 
 	// Pets
 	// One entry per pet slot, will be empty if no pet is equipped in that slot
@@ -103,6 +105,18 @@ public abstract class IDragonData : IUISelectorItem {
 
 	// Debug
 	protected float m_scaleOffset = 0f;
+
+	//------------------------------------------------------------------------//
+	// ABSTRACT PROPERTIES												 	  //
+	//------------------------------------------------------------------------//
+	// Stats
+	public abstract float maxHealth { get; }
+	public abstract float maxForce { get; }
+	public abstract float maxEatSpeedFactor { get; }
+	public abstract float baseEnergy { get; }
+	public abstract float scale { get; }
+	public abstract float minScale { get; }
+	public abstract float maxScale { get; }
 
 	//------------------------------------------------------------------------//
 	// IUISelectorItem IMPLEMENTATION										  //
@@ -165,8 +179,7 @@ public abstract class IDragonData : IUISelectorItem {
 	public void Tease() {
 		m_teased = true;
 		PersistenceFacade.instance.Save_Request();
-		// [AOC] TODO!!
-		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
+		Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_TEASED, this);
 	}
 
 	/// <summary>
@@ -192,8 +205,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_revealed = true;
 
 		// Dispatch global event
-		// [AOC] TODO!!
-		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
+		Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -309,6 +321,31 @@ public abstract class IDragonData : IUISelectorItem {
 	//------------------------------------------------------------------------//
 	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Factory method.
+	/// </summary>
+	/// <returns>A new data for the given dragon definition.</returns>
+	/// <param name="_def">Dragon definition used to initialize the dragon data object.</param>
+	public static IDragonData CreateFromDef(DefinitionNode _def) {
+		// Check type
+		IDragonData newData = null;
+		string typeCode = _def.GetAsString("type", DragonDataClassic.TYPE_CODE);
+		switch(typeCode) {
+			case DragonDataClassic.TYPE_CODE: {
+				newData = new DragonDataClassic();
+			} break;
+
+			case DragonDataSpecial.TYPE_CODE: {
+				newData = new DragonDataSpecial();
+			} break;
+		}
+
+		Debug.Assert(newData != null, "Attempting to create a dragon data of unknown type " + typeCode);
+
+		newData.Init(_def);
+		return newData;
+	}
+
 	/// <summary>
 	/// Gets the default disguise for the given dragon def.
 	/// </summary>

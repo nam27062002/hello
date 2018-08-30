@@ -15,6 +15,6 @@ using UnityEngine;
 /// <summary>
 /// Auxiliar class to help with the scrolling logic.
 /// </summary>
-public class PopupDragonInfoScroller : UISelectorTemplate<DragonData> { 
+public class PopupDragonInfoScroller : UISelectorTemplate<IDragonData> { 
 	
 }

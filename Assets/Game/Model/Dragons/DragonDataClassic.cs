@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -21,6 +22,7 @@ public class DragonDataClassic : IDragonData {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "classic";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -57,6 +59,14 @@ public class DragonDataClassic : IDragonData {
 	public override float scale { 
 		get { return GetScaleAtLevel(progression.level); } 
 	}
+
+	public override float minScale {
+		get { return GetScaleAtLevel(0); }
+	}
+
+	public override float maxScale {
+		get { return GetScaleAtLevel(progression.maxLevel); }
+	}
 	
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE METHODS												  //
@@ -69,6 +79,9 @@ public class DragonDataClassic : IDragonData {
 		// Call parent
 		base.Init(_def);
 
+		// Type
+		m_type = Type.CLASSIC;
+
 		// Stats
 		m_healthRange = m_def.GetAsRange("health");
 		//TONI
@@ -80,8 +93,7 @@ public class DragonDataClassic : IDragonData {
 		m_scaleRange = m_def.GetAsRange("scale");
 
 		// Progression
-		// [AOC] TODO!!
-		//m_progression = new DragonProgression(this);
+		m_progression = new DragonProgression(this);
 	}
 
 	/// <summary>
@@ -126,7 +138,8 @@ public class DragonDataClassic : IDragonData {
 		int order = GetOrder();
 		if(order > 0) {     // First dragon should always be owned
 							// Check previous dragon's progression
-			if(!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
+			List<IDragonData> dragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
+			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
 				return LockState.LOCKED;
 			}
 		}

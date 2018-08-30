@@ -51,7 +51,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
 		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -108,7 +108,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
 		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------------//
@@ -150,7 +150,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	/// A dragon has been acquired.
 	/// </summary>
 	/// <param name="_data">Data of the dragon that has just been acquired.</param>
-	private void OnDragonAcquired(DragonData _data) {
+	private void OnDragonAcquired(IDragonData _data) {
 		// Reward scales with the biggest owned dragon. Update it.
 		RefreshReward();
 	}

@@ -83,7 +83,7 @@ public class Wardrobe
 	/// to the "NEW" state.
 	/// </summary>
 	/// <param name="_targetDragon">Target dragon.</param>
-	public void ProcessUnlockedSkins(DragonData _targetDragon) {
+	public void ProcessUnlockedSkins(IDragonData _targetDragon) {
 		// Skip if wardrobe not initialized
 		if(m_disguises == null) return;
 		if(_targetDragon == null) return;
@@ -93,10 +93,27 @@ public class Wardrobe
 		for(int i = 0; i < skinDefs.Count; i++) {
 			// Is the skin locked
 			if(GetSkinState(skinDefs[i].sku) == SkinState.LOCKED) {
-				// Have we reached the unlock level for this skin?
-				if(_targetDragon.progression.level >= skinDefs[i].GetAsInt("unlockLevel")) {
-					// Yes!! Mark it as "NEW"
-					SetSkinState(skinDefs[i].sku, SkinState.NEW);
+				switch(_targetDragon.type) {
+					case IDragonData.Type.CLASSIC: {
+						// Have we reached the unlock level for this skin?
+						if((_targetDragon as DragonDataClassic).progression.level >= skinDefs[i].GetAsInt("unlockLevel")) {
+							// Yes!! Mark it as "NEW"
+							SetSkinState(skinDefs[i].sku, SkinState.NEW);
+						}
+					} break;
+
+					case IDragonData.Type.SPECIAL:
+					default: {
+						// All skins unlocked for special dragons, skip "new" state
+						SetSkinState(skinDefs[i].sku, SkinState.OWNED);
+					} break;
+				}
+				// Depends on dragon type
+				if(_targetDragon is DragonDataClassic) {
+					
+				} else if(_targetDragon is DragonDataSpecial) {
+					// All skins unlocked for special dragons, skip "new" state
+					SetSkinState(skinDefs[i].sku, SkinState.OWNED);
 				}
 			}
 		}

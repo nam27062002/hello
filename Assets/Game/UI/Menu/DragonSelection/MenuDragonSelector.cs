@@ -19,7 +19,7 @@ using DG.Tweening;
 /// <summary>
 /// Select the current dragon in the menu screen.
 /// </summary>
-public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickHandler {
+public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -60,7 +60,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	private void Start() {
 		// Initialize items list
 		enableEvents = false;
-		Init(DragonManager.dragonsByOrder);
+		Init(DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC));
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
@@ -82,7 +82,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(string _sku) {
 		// Get data belonging to this sku
-		DragonData data = DragonManager.GetDragonData(_sku);
+		IDragonData data = DragonManager.GetDragonData(_sku);
 		if(data == null) return;
 		SelectItem(data);
 	}
@@ -95,7 +95,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// </summary>
 	/// <param name="_oldDragon">Data of the previously selected dragon.</param>
 	/// <param name="_newDragon">Data of the new dragon.</param>
-	public void OnSelectedDragonChanged(DragonData _oldDragon, DragonData _newDragon) {
+	public void OnSelectedDragonChanged(IDragonData _oldDragon, IDragonData _newDragon) {
 		if(_newDragon != null) {
 			// Notify game
 			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);

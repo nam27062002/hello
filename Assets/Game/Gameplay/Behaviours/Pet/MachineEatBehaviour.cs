@@ -35,7 +35,7 @@ public class MachineEatBehaviour : EatBehaviour {
 		m_limitEating = true;
 		m_limitEatingValue = 1;
 		m_holdDuration = 10;
-		SetupHoldParametersForTier( DragonData.TierToSku(m_eaterTier));
+		SetupHoldParametersForTier( IDragonData.TierToSku(m_eaterTier));
 
 		m_machine = GetComponent<AI.IMachine>();
 		m_attacker = GetComponent<IAttacker>();

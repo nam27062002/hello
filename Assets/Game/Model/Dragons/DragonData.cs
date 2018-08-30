@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// Every dragon ID must be linked to one DragonData in the DragonManager prefab.
 /// </summary>
 [Serializable]
-public class DragonData : IUISelectorItem {
+public class DragonData_OLD : IUISelectorItem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -134,7 +134,7 @@ public class DragonData : IUISelectorItem {
 		m_tier = (DragonTier)m_tierDef.GetAsInt("order");
 
 		// Progression
-		m_progression = new DragonProgression(this);
+		//m_progression = new DragonProgression(this);
 
 		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
 		if (!string.IsNullOrEmpty(shadowFromDragons)) {
@@ -281,9 +281,9 @@ public class DragonData : IUISelectorItem {
         int order = GetOrder();
 		if (order > 0) {		// First dragon should always be owned
 			// Check previous dragon's progression
-			if (!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
+			/*if (!DragonManager.classicDragonsByOrder[order - 1].progression.isMaxLevel) {
 				return LockState.LOCKED;
-			}
+			}*/
 		}
 
 		// d) Dragon available for to purchase with SC
@@ -296,7 +296,7 @@ public class DragonData : IUISelectorItem {
 
 		PersistenceFacade.instance.Save_Request();
 
-		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
+		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
 	}
 
 	// [AOC] DONE
@@ -321,7 +321,7 @@ public class DragonData : IUISelectorItem {
 		m_revealed = true;
 
 		// Dispatch global event
-		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
+		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
 	}
 
 	//------------------------------------------------------------------//

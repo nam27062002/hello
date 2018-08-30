@@ -252,7 +252,7 @@ public class Mission {
 	/// <returns>The cost of skipping this mission.</returns>
 	private int ComputeRemoveCostPC() {
 		// [AOC] Formula defined in the missionsDragonRelativeMetrics table
-		int ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED).Count;
+		int ownedDragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count;
 		float costPC = (float)ownedDragons * MissionManager.removeMissionPCCoefA + MissionManager.removeMissionPCCoefB;
 		return (int)System.Math.Round(costPC, MidpointRounding.AwayFromZero);	// [AOC] Unity's Mathf round methods round to the even number when .5, we want to round to the upper number instead -_-
 	}

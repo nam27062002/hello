@@ -77,7 +77,7 @@ public class PetCategoryTab : Tab {
 	/// </summary>
 	/// <param name="_category">Category.</param>
 	/// <param name="_dragonData">The dragon we're tuning.</param> 
-	public void Init(string _category, DragonData _dragonData) {
+	public void Init(string _category, IDragonData _dragonData) {
 		// Store target category
 		m_category = _category;
 

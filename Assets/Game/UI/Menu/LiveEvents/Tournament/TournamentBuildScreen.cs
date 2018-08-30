@@ -90,7 +90,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//-- Dragon ---------------------------------------------------//
 		string sku = m_tournament.GetToUseDragon();
-		DragonData dragonData = DragonManager.GetDragonData(sku);
+		IDragonData dragonData = DragonManager.GetDragonData(sku);
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
 		string disguiseSku = m_tournament.GetToUseSkin();

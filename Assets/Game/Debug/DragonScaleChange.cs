@@ -15,7 +15,7 @@ public class DragonScaleChange : MonoBehaviour {
 			m_slider.value = m_scale;
 		}
 
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
 	}
 	
 	public void SetScale(float _scale) {
@@ -26,7 +26,7 @@ public class DragonScaleChange : MonoBehaviour {
 		}
 	}
 
-	private void LevelUp(DragonData _data) {
+	private void LevelUp(IDragonData _data) {
 		m_scale = _data.scale;
 		m_slider.value = m_scale;
 	}

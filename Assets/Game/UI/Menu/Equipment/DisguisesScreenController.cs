@@ -62,7 +62,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill m_selectedPill;	// Pill corresponding to the selected disguise
 
 	// Other data
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private Wardrobe m_wardrobe = null;
 
 	// Internal references

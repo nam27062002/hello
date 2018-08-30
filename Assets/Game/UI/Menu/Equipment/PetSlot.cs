@@ -51,7 +51,7 @@ public class PetSlot : MonoBehaviour {
 		get { return m_slotIdx; }
 	}
 
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,7 +106,7 @@ public class PetSlot : MonoBehaviour {
 	/// Refresh the slot's info with a specific dragon data.
 	/// </summary>
 	/// <param name="_dragonData">The dragon data to be used to refresh this slot's info.</param>
-	public void Refresh(DragonData _dragonData, bool _animate) {
+	public void Refresh(IDragonData _dragonData, bool _animate) {
 		// Store dragon data
 		m_dragonData = _dragonData;
 

@@ -211,7 +211,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnEnable() {
 		// Subscribe to external events, based on type
 		switch(m_type) {
-			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.AddListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -265,7 +265,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnDisable() {
 		switch(m_type) {
 			// Unsubscribe from external events, based on type
-			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -524,7 +524,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A dragon has leveled up.
 	/// </summary>
 	/// <param name="_dragon">The dragon that has leveled up.</param>
-	private void OnLevelUp(DragonData _dragon) {
+	private void OnLevelUp(IDragonData _dragon) {
 		Show();
 	}
 

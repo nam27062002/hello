@@ -399,12 +399,25 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Current dragon progress
 		if(DragonManager.currentDragon != null) {
-			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
-			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+			// Depends on dragon type
+			switch(DragonManager.currentDragon.type) {
+				case IDragonData.Type.CLASSIC: {
+					DragonDataClassic data = DragonManager.currentDragon as DragonDataClassic;
+					instance.m_dragonInitialLevel = data.progression.level;
+					instance.m_dragonInitialLevelProgress = data.progression.progressCurrentLevel;
+				} break;
+
+				case IDragonData.Type.SPECIAL: {
+					// [AOC] TODO!!
+					instance.m_dragonInitialLevel = 1;
+					instance.m_dragonInitialLevelProgress = 0f;
+				} break;
+			}
 
 			// Next dragon locked?
-			DragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
-			if(nextDragonData != null) {
+			// [AOC] Only makes sense for CLASSIC dragons
+			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+			if(nextDragonData != null && DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
 				instance.m_nextDragonLocked = nextDragonData.isLocked;
 			} else {
 				instance.m_nextDragonLocked = false;
@@ -493,9 +506,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT )
+        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT 
+		    && InstanceManager.player.data.type == IDragonData.Type.CLASSIC )	// [AOC] Only CLASSIC dragons!
         {
-	        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
 			instance.m_xp += _reward.xp;
 		}
 		else

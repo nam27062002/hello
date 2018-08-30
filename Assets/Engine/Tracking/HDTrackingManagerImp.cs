@@ -2355,7 +2355,7 @@ public class HDTrackingManagerImp : HDTrackingManager
         int value = 0;
         if (UsersManager.currentUser != null)
         {
-            DragonData highestDragon = UsersManager.currentUser.GetHighestDragon();
+			DragonDataClassic highestDragon = UsersManager.currentUser.GetHighestDragon();
             if (highestDragon != null && highestDragon.progression != null)
             {
                 value = (int)highestDragon.progression.xp;
