@@ -12,6 +12,16 @@ ShaderVariantCollection:
       variants:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
+  - first: {fileID: 10720, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 10721, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON _ALPHATEST_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 0062837f20654ed4381d2a7620b0cbf9, type: 3}
     second:
       variants:
@@ -69,6 +79,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_ENABLED
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX AUTOMATICPANNING BLENDMODE_ALPHABLEND EXTENDED_PARTICLES
+          MEDIUM_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
         passType: 0
       - keywords: BLENDMODE_ADDITIVE MEDIUM_DETAIL_ON
         passType: 0
@@ -159,6 +172,9 @@ ShaderVariantCollection:
       - keywords: AUTOMATICPANNING BLENDMODE_PREMULTIPLY COLOR_RAMP DISSOLVE_ENABLED
           EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
         passType: 0
+      - keywords: BLENDMODE_ALPHABLEND EXTENDED_PARTICLES MEDIUM_DETAIL_ON NOISEUV
+          NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
+        passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
           MEDIUM_DETAIL_ON NOISEUV NOISE_TEXTURE_DISSOLVE
         passType: 0
@@ -174,10 +190,10 @@ ShaderVariantCollection:
         passType: 0
       - keywords: BLENDMODE_ADDITIVE MEDIUM_DETAIL_ON _ALPHAPREMULTIPLY_ON
         passType: 0
+      - keywords: BLENDMODE_ALPHABLEND DISSOLVE_EXTENDED EXTENDED_PARTICLES MEDIUM_DETAIL_ON
+        passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND DISSOLVE_EXTENDED EMISSIVEPOWER
           MEDIUM_DETAIL_ON
-        passType: 0
-      - keywords: BLENDMODE_ALPHABLEND DISSOLVE_EXTENDED EXTENDED_PARTICLES MEDIUM_DETAIL_ON
         passType: 0
       - keywords: BLENDMODE_ADDITIVE DISSOLVE_EXTENDED EXTENDED_PARTICLES MEDIUM_DETAIL_ON
         passType: 0
@@ -296,8 +312,8 @@ ShaderVariantCollection:
         passType: 4
       - keywords: FRESNEL FXLAYER_FIRE MEDIUM_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
-      - keywords: DOUBLESIDED FRESNEL FXLAYER_FIRE MEDIUM_DETAIL_ON NORMALMAP OPAQUESPECULAR
-          SPECULAR _ZWRITE_ON
+      - keywords: DOUBLESIDED FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
+          OPAQUESPECULAR SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: DOUBLESIDED FRESNEL FXLAYER_REFLECTION MEDIUM_DETAIL_ON NORMALMAP
           OPAQUEFRESNEL OPAQUESPECULAR SPECULAR _ZWRITE_ON
@@ -454,6 +470,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_NONE FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON VERTEXCOLOR_NONE
           _EMISSION _ZWRITE_ON
+        passType: 0
+      - keywords: EMISSIVE_NONE FOG MAINCOLOR_TEXTURE MEDIUM_DETAIL_ON OPAQUEALPHA
+          VERTEXCOLOR_NONE _EMISSION _ZWRITE_ON
         passType: 0
       - keywords: FOG MEDIUM_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION _NORMALMAP
         passType: 0
@@ -830,6 +849,21 @@ ShaderVariantCollection:
       - keywords: MEDIUM_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 1e5df5a56a7624e0981993663cf33154, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: abcf973b8dc974208a882fe4b8c6b73f, type: 3}
+    second:
+      variants:
+      - keywords: MEDIUM_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: aef340cb91e534f40870ff658a7aecee, type: 3}
     second:
       variants:
       - keywords: MEDIUM_DETAIL_ON
