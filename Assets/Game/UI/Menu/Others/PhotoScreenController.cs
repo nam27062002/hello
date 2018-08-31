@@ -39,14 +39,6 @@ public class PhotoScreenController : MonoBehaviour {
 		public DragControlRotation dragControl = null;
 		public DragControlZoom zoomControl = null;
 	}
-
-	[Serializable]
-	public class ShareData {
-		public string url = "";
-
-		[FileList("Resources/UI/Menu/QR_codes", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*", false)]
-		public string qrCodePath = "";
-	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -71,8 +63,6 @@ public class PhotoScreenController : MonoBehaviour {
 
 	[Separator("Share Data")]
 	[SerializeField] private Image m_qrContainer = null;
-	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
-	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
 
 	[Separator("AR")]
 	[SerializeField] private GameObject m_arButton = null;
@@ -95,17 +85,6 @@ public class PhotoScreenController : MonoBehaviour {
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
-	}
-
-	private ShareData shareData {
-		get {
-			// Select target share data based on platform
-			#if UNITY_IOS
-			return m_shareDataIOS;
-			#else
-			return m_shareDataAndroid;
-			#endif
-		}
 	}
 		
 	//------------------------------------------------------------------------//
@@ -135,7 +114,7 @@ public class PhotoScreenController : MonoBehaviour {
 		SetMode(m_mode);
 
 		// Load qr code
-		m_qrContainer.sprite = Resources.Load<Sprite>(shareData.qrCodePath);
+		m_qrContainer.sprite = Resources.Load<Sprite>(GameSettings.shareData.qrCodePath);
 	}
 
 	/// <summary>
@@ -244,7 +223,7 @@ public class PhotoScreenController : MonoBehaviour {
 		string caption = "";
 		switch(m_mode) {
 			case Mode.DRAGON: {
-				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", shareData.url);
+				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", GameSettings.shareData.url);
 			} break;
 
 			case Mode.EGG_REWARD: {
@@ -252,7 +231,7 @@ public class PhotoScreenController : MonoBehaviour {
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
 				switch(currentReward.type) {
 					case Metagame.RewardPet.TYPE_CODE: {
-						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", shareData.url);
+						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", GameSettings.shareData.url);
 					} break;
 				}
 			} break;
