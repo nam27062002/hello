@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: Parca
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE SELFILLUMINATE_NORMAL _ZWRITE_ON
+  m_ShaderKeywords: FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,7 +19,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6f12554afa0a30f4892015deb443a6a4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: d30cbde83e5b5db43a61b7aa94a50313, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -47,7 +47,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e84ddf07c4f4cd849b52723642b0bd4b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -78,16 +78,16 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
-    - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableFresnel: 0
+    - _EnableNormalMap: 1
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
-    - _EnableSpecular: 0
+    - _EnableSpecular: 1
     - _EnableVertexOffset: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 1.5
+    - _Fresnel: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -113,6 +113,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 1, g: 1, b: 1, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
+    - _SecondLightColor: {r: 0.6985294, g: 0.64716697, b: 0.64716697, a: 0}
+    - _SecondLightDir: {r: -0.113634214, g: -0.18716227, b: -0.97573435, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
