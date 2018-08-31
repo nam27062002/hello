@@ -28,8 +28,14 @@ public class DragonPlayer : MonoBehaviour {
 		AD,
 		PAYING,
 		FREE_REVIVE_PET,
+        MUMMY,
 		UNKNOWN	
 	};
+
+    public enum State {
+        NORMAL = 0,
+        MUMMY
+    };
 
 
 	//------------------------------------------------------------------//
@@ -196,6 +202,11 @@ public class DragonPlayer : MonoBehaviour {
 
 	public DragonCommonSettings m_dragonCommonSettings;
 
+
+    private State m_state;
+    public State state { get { return m_state; } }
+
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -283,6 +294,8 @@ public class DragonPlayer : MonoBehaviour {
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
 		}
+
+        m_state = State.NORMAL;
 	}
 
 	void OnDestroy()
@@ -415,6 +428,55 @@ public class DragonPlayer : MonoBehaviour {
 			playable = true;
 		}
 	}
+
+
+    /// <summary>
+    /// Starts the mummy mode.
+    /// </summary>
+    public void StartMummyMode() {
+        m_state = State.MUMMY;
+
+
+        // Store some previous values
+        DragonHealthModifier oldHealthModifier = ComputeHealthModifier();
+
+        // Reset stats
+        m_health = m_healthMax / 3f;
+        m_energy = m_energyMax;
+
+        // Modifiers
+        dragonBoostBehaviour.modInfiniteBoost = true;
+
+
+        // Update health modifier
+        m_currentHealthModifier = ComputeHealthModifier();
+
+        m_invulnerableAfterReviveTimer = m_invulnerableTime;
+        m_dragonMotion.Revive();
+
+        //TONI START
+        m_dragonHeatlhBehaviour.SetReviveBonusTime();
+        //TONI END
+
+        // If health modifier changed, notify game
+        if (m_currentHealthModifier != oldHealthModifier) {
+            Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+        }
+
+        // Notify revive to game
+        Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, ReviveReason.MUMMY);
+
+        ReviveScale();
+    }
+
+    private void EndMummyMode() {
+        // Modifiers
+        dragonBoostBehaviour.modInfiniteBoost = false;
+
+
+        m_state = State.NORMAL;
+    }
+
 
 	/// <summary>
 	/// Add/remove health to the dragon.
