@@ -493,7 +493,8 @@ public class HDCustomizerManager
         // Gets the experiment and if it has changed then tracking is notified
         CustomizerManager.Experiment experiment = CustomizerManager.SharedInstance.GetExperiment();
         if (experiment != null && (m_currentExperiment == null || (m_currentExperiment.m_strName == experiment.m_strName && m_currentExperiment.m_strGroupName == experiment.m_strGroupName)))
-        {            
+        {
+            Log("New experiment applied: name = " + experiment.m_strName + " groupName = " + experiment.m_strGroupName, true);
             HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.m_strName, experiment.m_strGroupName);            
         }
 
