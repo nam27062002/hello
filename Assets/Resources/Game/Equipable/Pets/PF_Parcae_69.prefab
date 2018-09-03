@@ -825,7 +825,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1596931664877450}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.66, z: -0.34}
   m_LocalScale: {x: 1.5708954, y: 1.1321778, z: 1.8254368}
   m_Children:
@@ -1197,8 +1197,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isPlaceHolder: 0
-  m_walkSpeed: 1
-  m_runSpeed: 2
+  m_walkSpeed: 5
+  m_runSpeed: 10
   m_minPlaybakSpeed: 1
   m_maxPlaybakSpeed: 1.5
   m_onBoostMaxPlaybackSpeed: 0
@@ -1439,7 +1439,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"tag":8,"maxValidTier":5,"minValidTier":0,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":10,"max":20},"dataType":"AI.Behaviour.PetSearchTaggedTargetData","editorFolded":false},{"speed":10,"arrivalRadius":2,"hasGuardState":false,"timeout":{"min":10,"max":20},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"tag":8,"maxValidTier":5,"minValidTier":0,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":3,"max":8},"dataType":"AI.Behaviour.PetSearchTaggedTargetData","editorFolded":false},{"speed":60,"arrivalRadius":2,"hasGuardState":false,"timeout":{"min":10,"max":10},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
   m_databaseKey: PF_Parcae_69
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
