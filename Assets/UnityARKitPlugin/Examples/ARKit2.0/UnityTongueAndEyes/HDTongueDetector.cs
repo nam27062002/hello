@@ -7,8 +7,8 @@ using UnityEngine.Apple.ReplayKit;
 
 public class HDTongueDetector : MonoBehaviour 
 {
-	public FireBreathDynamic fireRushPrefab;
-	public float m_effectScale = 1.0f;
+//	public FireBreathDynamic fireRushPrefab;
+//	public float m_effectScale = 1.0f;
 	private bool shapeEnabled = false;
 	private bool fireEnabled = false;
 	private Dictionary<string, float> currentBlendShapes;
@@ -18,6 +18,19 @@ public class HDTongueDetector : MonoBehaviour
 	private string m_buttonString = "Start Record!";
 	private AudioSource m_audio = null;
 
+	private ParticleSystem[] m_particlesArray = null;
+
+	private void enableParticles(bool enable)
+	{
+		foreach (ParticleSystem ps in m_particlesArray) {
+			if (enable) {
+				ps.Play ();
+			} else {
+				ps.Stop ();
+			}
+		}
+	}
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -26,6 +39,7 @@ public class HDTongueDetector : MonoBehaviour
 		UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent += FaceRemoved;
 
 		m_audio = GetComponent<AudioSource> ();
+		m_particlesArray = GetComponentsInChildren<ParticleSystem> ();
 	}
 		
 	void recordButton()
@@ -56,7 +70,8 @@ public class HDTongueDetector : MonoBehaviour
 	{
 		shapeEnabled = true;
 		currentBlendShapes = anchorData.blendShapes;
-		fireRushPrefab.EnableFlame (false, false);
+//		fireRushPrefab.EnableFlame (false, false);
+		enableParticles(false);
 	}
 
 	void FaceUpdated (ARFaceAnchor anchorData)
@@ -67,7 +82,8 @@ public class HDTongueDetector : MonoBehaviour
 	void FaceRemoved (ARFaceAnchor anchorData)
 	{
 		shapeEnabled = false;
-		fireRushPrefab.EnableFlame (false, false);
+//		fireRushPrefab.EnableFlame (false, false);
+		enableParticles(false);
 	}
 
 
@@ -105,8 +121,9 @@ public class HDTongueDetector : MonoBehaviour
 		}
 		if (enableTongue != fireEnabled) {
 			fireEnabled = enableTongue;
-			fireRushPrefab.EnableFlame (fireEnabled);
-			fireRushPrefab.setEffectScale (m_effectScale, m_effectScale);
+//			fireRushPrefab.EnableFlame (fireEnabled);
+//			fireRushPrefab.setEffectScale (m_effectScale, m_effectScale);
+			enableParticles(fireEnabled);
 			if (fireEnabled) {
 				m_audio.Play ();
 			} else {
