@@ -424,7 +424,7 @@ public class HUDStatBar : MonoBehaviour {
 	}
 
 	private float GetValue() {
-		if ( InstanceManager.player )
+		if (InstanceManager.player)
 		switch (m_type) {
 			case Type.Health: 	return InstanceManager.player.health;
 			case Type.Energy:	return InstanceManager.player.energy;

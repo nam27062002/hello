@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476f90a6cbdac4eb69432e3a345d1c01, type: 3}
+  m_Name: PetBrainMummy
+  m_EditorClassIdentifier: 
+  m_states:
+  - m_name: Wander
+    m_componentAssets:
+    - {fileID: 11400000, guid: 7aa033b6c69294a3f8ba3952e042d3c8, type: 2}
+    - {fileID: 11400000, guid: 4be382d33098c471caf973f4c4b74c81, type: 2}
+    - {fileID: 11400000, guid: 3d9730d63af44ba48b0cb0c4c94a845b, type: 2}
+  - m_name: Reviving
+    m_componentAssets:
+    - {fileID: 11400000, guid: 51fe21b3f17fdf3419053fe571bde8c5, type: 2}
+  m_transitionData:
+  - to: 1
+    id: onStartMummyRevive
+    from: 0
+  - to: 0
+    id: onMummyReviveDone
+    from: 1
+  m_firstState_A: 0
+  m_firstState_B: 0

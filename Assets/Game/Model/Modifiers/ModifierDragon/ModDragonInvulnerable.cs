@@ -12,4 +12,10 @@ public class ModDragonInvulnerable : ModifierDragon {
 		if (player)
 			player.modInvulnerable = true;
 	}
+
+    public override void Remove() {
+        DragonPlayer player = InstanceManager.player;
+        if (player)
+            player.modInvulnerable = false;
+    }
 }

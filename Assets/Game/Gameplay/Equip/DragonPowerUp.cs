@@ -287,6 +287,10 @@ public class DragonPowerUp : MonoBehaviour {
 						}
 					}
 				}break;
+                case "mummy": {
+                    int mummyStacks = def.GetAsInt("param1");
+                    player.AddMummyPower(mummyStacks);
+                }break;
 				case "combined":
 				{
 					string powerUp1 = def.Get("param1");

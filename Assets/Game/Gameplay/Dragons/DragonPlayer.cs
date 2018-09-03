@@ -32,7 +32,7 @@ public class DragonPlayer : MonoBehaviour {
 		UNKNOWN	
 	};
 
-    public enum State {
+    public enum Form {
         NORMAL = 0,
         MUMMY
     };
@@ -203,8 +203,13 @@ public class DragonPlayer : MonoBehaviour {
 	public DragonCommonSettings m_dragonCommonSettings;
 
 
-    private State m_state;
-    public State state { get { return m_state; } }
+    private Form m_form;
+    public Form form { get { return m_form; } }
+
+    private int m_mummyPowerStacks;
+    private float m_mummyHealthFactor;
+    private float m_mummyTime;
+    private List<Modifier> m_mummyModifiers;
 
 
 	//------------------------------------------------------------------//
@@ -289,13 +294,18 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+
+        if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
 		}
 
-        m_state = State.NORMAL;
+        m_mummyModifiers = new List<Modifier>();
+        m_mummyHealthFactor = m_data.def.GetAsFloat("mummyHealthFactor");
+        m_mummyTime = m_data.def.GetAsFloat("mummyDuration");
+        m_form = Form.NORMAL;
 	}
 
 	void OnDestroy()
@@ -306,7 +316,8 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-	}
+        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+    }
 
 	/// <summary>
 	/// The component has been enabled.
@@ -433,23 +444,19 @@ public class DragonPlayer : MonoBehaviour {
     /// <summary>
     /// Starts the mummy mode.
     /// </summary>
-    public void StartMummyMode() {
-        m_state = State.MUMMY;
-
+    public void StartMummyPower() {
+        m_form = Form.MUMMY;
 
         // Store some previous values
         DragonHealthModifier oldHealthModifier = ComputeHealthModifier();
 
         // Reset stats
-        m_health = m_healthMax / 3f;
+        m_health = m_healthMax * m_mummyHealthFactor;
         m_energy = m_energyMax;
-
-        // Modifiers
-        dragonBoostBehaviour.modInfiniteBoost = true;
-
+              
 
         // Update health modifier
-        m_currentHealthModifier = ComputeHealthModifier();
+        m_currentHealthModifier = null;
 
         m_invulnerableAfterReviveTimer = m_invulnerableTime;
         m_dragonMotion.Revive();
@@ -457,6 +464,16 @@ public class DragonPlayer : MonoBehaviour {
         //TONI START
         m_dragonHeatlhBehaviour.SetReviveBonusTime();
         //TONI END
+
+        // Modifiers
+        m_mummyModifiers.Add(new ModDragonInvulnerable(null));
+        m_mummyModifiers.Add(new ModDragonBoostUnlimited(null));
+        m_mummyModifiers.Add(new ModEntityScore(300f));
+        m_mummyModifiers.Add(new ModEntitySC(200f));
+        for (int i = 0; i < m_mummyModifiers.Count; ++i) {
+            m_mummyModifiers[i].Apply();
+        }
+        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
 
         // If health modifier changed, notify game
         if (m_currentHealthModifier != oldHealthModifier) {
@@ -469,12 +486,33 @@ public class DragonPlayer : MonoBehaviour {
         ReviveScale();
     }
 
-    private void EndMummyMode() {
+    public void MummyHealthDrain() {
+
+        //---10 segons-----------------------------------------------------------------
+        float drain = -((healthMax * m_mummyHealthFactor) / m_mummyTime) * Time.deltaTime;
+        //-----------------------------------------------------------------------------
+        
+        // Update health
+        float lastHealth = m_health;
+        m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + drain));
+
+        // Check for death!
+        if (lastHealth > 0f && m_health <= 0f) {
+            OnHealthZero(DamageType.DRAIN, null);
+        }
+    }
+
+    private void EndMummyPower() {
         // Modifiers
         dragonBoostBehaviour.modInfiniteBoost = false;
 
+        for (int i = 0; i < m_mummyModifiers.Count; ++i) {
+            m_mummyModifiers[i].Remove();
+        }
+        m_mummyModifiers.Clear();
+        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);        
 
-        m_state = State.NORMAL;
+        m_form = Form.NORMAL;
     }
 
 
@@ -487,54 +525,67 @@ public class DragonPlayer : MonoBehaviour {
 	public void AddLife(float _offset, DamageType _type, Transform _source) {
 		// If invulnerable and taking damage, don't apply
 		if(IsInvulnerable() && _offset < 0) return;
-
+        
 		// If cheat is enable
 		if(DebugSettings.invulnerable && _offset < 0) return;
 
-		// Store some variables
-		DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
+        if (m_form == Form.MUMMY && _offset > 0) return;
 
-		// Update health
-		m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
+        // Update health
+        float lastHealth = m_health;
+        m_health = Mathf.Min(m_healthMax, Mathf.Max(0, m_health + _offset));
 
 		// Check for death!
-		if(m_health <= 0f) 
+		if(lastHealth > 0f && m_health <= 0f) 
 		{
-			m_dragonMotion.Die();
-
-			// Check if free revive
-			if (m_freeRevives > 0)
-			{
-				m_freeRevives--;
-				ResetStats(true);
-				Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
-			}
-			// If I have an angel pet and aura still playing
-			else
-			{
-				// Send global event
-				Messenger.Broadcast<DamageType, Transform>(MessengerEvents.PLAYER_KO, _type, _source);	// Reason
-
-				// Clear any health modifiers
-				m_currentHealthModifier = null;
-				if(oldHealthModifier != m_currentHealthModifier) {
-					Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
-				}
-
-				// Make dragon unplayable (xD)
-				playable = false;
-			}
-		}
-		else
-		{
-			// Update health modifier
-			m_currentHealthModifier = ComputeHealthModifier();
+            OnHealthZero(_type, _source);
+        }
+		else if (lastHealth > 0f && m_health > 0f) {
+            // Store some variables
+            DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
+            // Update health modifier
+            m_currentHealthModifier = ComputeHealthModifier();
 			if(oldHealthModifier != m_currentHealthModifier) {
 				//Debug.Log("HEALTH MODIFIER CHANGE FROM " + (oldHealthModifier == null ? "none" : oldHealthModifier.def.sku) + " TO " + (m_currentHealthModifier == null ? "none" : m_currentHealthModifier.def.sku));
 				Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
 			}
 		}
 	}
+
+    private void OnHealthZero(DamageType _type, Transform _source) {
+        // Store some variables
+        DragonHealthModifier oldHealthModifier = m_currentHealthModifier;
+        
+        m_dragonMotion.Die();
+
+        if (m_form == Form.MUMMY) {
+            EndMummyPower();
+        }
+
+        // Check if free revive
+        if (CanUseMummyPower()) {
+            Messenger.Broadcast(MessengerEvents.PLAYER_MUMMY_REVIVE);
+            m_mummyPowerStacks--;
+        }
+        else if (CanUseFreeRevives()) {            
+            Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
+            m_freeRevives--;
+        }
+        // If I have an angel pet and aura still playing
+        else {
+            // Send global event
+            Messenger.Broadcast<DamageType, Transform>(MessengerEvents.PLAYER_KO, _type, _source);  // Reason
+
+            // Clear any health modifiers
+            m_currentHealthModifier = null;
+            if (oldHealthModifier != m_currentHealthModifier) {
+                Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
+            }
+
+            // Make dragon unplayable (xD)
+            playable = false;
+        }
+    }
 
 	/// <summary>
 	/// Add/remove energy to the dragon.
@@ -581,12 +632,18 @@ public class DragonPlayer : MonoBehaviour {
 		}
 	}
 
+    public void OnGameEnded() {
+        if (m_form == Form.MUMMY) {
+            EndMummyPower();
+        }
+    }
 
-	/// <summary>
-	/// Determines whether this instance is super fury on.
-	/// </summary>
-	/// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
-	public bool IsMegaFuryOn() {
+
+    /// <summary>
+    /// Determines whether this instance is super fury on.
+    /// </summary>
+    /// <returns><c>true</c> if this instance is super fury on; otherwise, <c>false</c>.</returns>
+    public bool IsMegaFuryOn() {
 		
 		return m_breathBehaviour.IsFuryOn() && m_breathBehaviour.type == DragonBreathBehaviour.Type.Mega;
 	}
@@ -782,6 +839,18 @@ public class DragonPlayer : MonoBehaviour {
 		return m_freeRevives;
 	}
 
+    public bool HasMummyPowerAvailable() {
+        return m_mummyPowerStacks > 0;
+    }
+
+    public bool CanUseMummyPower() {
+        return HasMummyPowerAvailable();
+    }
+
+    public bool CanUseFreeRevives() {
+        return !CanUseMummyPower() && GetReminingLives() > 0;
+    }
+
 	/// <summary>
 	/// Gets the tier when breaking. Because we can have the "Destroy" power up wich increases the 
 	/// tier on the dragon breaking things we have this function to ask on the proper places
@@ -830,6 +899,10 @@ public class DragonPlayer : MonoBehaviour {
 		m_energyBonus += value;
 		SetBoostBonus( m_energyBonus );
 	}
+
+    public void AddMummyPower(int _stacks) {
+        m_mummyPowerStacks += _stacks;
+    }
 
 	public void AddFreeRevives( int revives )
 	{

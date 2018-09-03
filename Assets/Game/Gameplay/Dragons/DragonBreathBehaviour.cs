@@ -422,7 +422,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
-		if ( m_state != State.BREATHING && m_state != State.PREWARM_BREATH) {
+		if ( m_state != State.BREATHING && m_state != State.PREWARM_BREATH && m_dragon.form != DragonPlayer.Form.MUMMY) {
 			m_currentFury = Mathf.Clamp(m_currentFury + _offset, 0, m_furyMax);
 		}
 	}
