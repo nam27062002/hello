@@ -5,6 +5,13 @@ using System;
 
 namespace AI {
 	namespace Behaviour {
+        public enum TargetPriority {
+            Any = 0,
+            SmallestTier,
+            BiggerTier
+        };
+
+
 		[System.Serializable]
         public class PetSearchTaggedTargetData : StateComponentData {
             public IEntity.Tag tag = 0;
@@ -12,6 +19,7 @@ namespace AI {
 			public DragonTier maxValidTier = DragonTier.TIER_4;
 			[Tooltip("Min tier this pet will consider target.")]
 			public DragonTier minValidTier = DragonTier.TIER_0;
+            public TargetPriority priority = TargetPriority.Any; 
 			public CheckType checkType;
 			public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
@@ -82,6 +90,7 @@ namespace AI {
 				} else {
 					Vector3 centerPos = m_owner.transform.position;
 
+                    Entity target = null;
 
 					m_numCheckEntities = EntityManager.instance.GetOverlapingEntities( centerPos , m_range, m_checkEntities);
 					for (int e = 0; e < m_numCheckEntities; e++) 
@@ -118,21 +127,38 @@ namespace AI {
                                     Vector3 dir = entity.circleArea.center - m_machine.position;
                                     bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
                                     if (!hasHit) {
-                                        // Check if closed? Not for the moment
-                                        m_transitionParam[0] = entity.transform;
-                                        if (entity.circleArea)
-                                            m_sensor.SetupEnemy(entity.transform, entity.circleArea.radius * entity.circleArea.radius, null);
-                                        else
-                                            m_sensor.SetupEnemy(entity.transform, 0, null);
-                                        m_machine.SetSignal(Signals.Type.Warning, true);
-                                        Transition(onEnemyTargeted, m_transitionParam);
-                                        break;
+                                        if (m_data.priority == TargetPriority.Any) {
+                                            target = entity;
+                                            break;
+                                        } else {
+                                            if (target == null) {
+                                                target = entity;
+                                            } else if (m_data.priority == TargetPriority.SmallestTier) {
+                                                if (entity.edibleFromTier < target.edibleFromTier) {
+                                                    target = entity;
+                                                }
+                                            } else if (m_data.priority == TargetPriority.BiggerTier) {
+                                                if (entity.edibleFromTier > target.edibleFromTier) {
+                                                    target = entity;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
 						}
 					}
 
+                    if (target != null) {
+                        // Check if closed? Not for the moment
+                        m_transitionParam[0] = target.transform;
+                        if (target.circleArea)
+                            m_sensor.SetupEnemy(target.transform, target.circleArea.radius * target.circleArea.radius, null);
+                        else
+                            m_sensor.SetupEnemy(target.transform, 0, null);
+                        m_machine.SetSignal(Signals.Type.Warning, true);
+                        Transition(onEnemyTargeted, m_transitionParam);
+                    }
 				}
 			}
 		}
