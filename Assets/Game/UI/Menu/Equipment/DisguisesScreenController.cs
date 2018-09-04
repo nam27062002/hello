@@ -119,7 +119,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Subscribe to animator's events
 		animator.OnShowPreAnimation.AddListener(OnShowPreAnimation);
-		animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
+        animator.OnHidePreAnimation.AddListener(OnHidePreAnimation);
 
 		// Subscribe to purchase buttons
 		m_SCButton.button.onClick.AddListener(OnPurchaseDisguiseButton);
@@ -175,7 +175,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from animatior events
 		animator.OnShowPreAnimation.RemoveListener(OnShowPreAnimation);
-		animator.OnHidePostAnimation.RemoveListener(OnHidePostAnimation);
+		animator.OnHidePreAnimation.RemoveListener(OnHidePreAnimation);
 
 		// Unsubscribe from purchase buttons
 		m_SCButton.button.onClick.RemoveListener(OnPurchaseDisguiseButton);
@@ -281,7 +281,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Setup the screen with the data of the currently selected dragon.
 	/// </summary>
 	/// <param name="_initialDisguiseSku">The disguise to focus. If it's from a different dragon than the current one, the target dragon will be selected. Leave empty to load current setup.</param>
-	public void Finalize() {
+	public void FinalizeScreen() {
 		// Restore equiped disguise on target dragon
 		bool newEquip = false;
 		if(m_equippedPill != null) {
@@ -343,9 +343,9 @@ public class DisguisesScreenController : MonoBehaviour {
 	/// Screen has just closed
 	/// </summary>
 	/// <param name="_animator">The animator that triggered the event.</param>
-	public void OnHidePostAnimation(ShowHideAnimator _animator) {
+	public void OnHidePreAnimation(ShowHideAnimator _animator) {
 		// Make sure screens are properly finalized
-		Finalize();
+		FinalizeScreen();
 
 		// Restore pets on the current dragon preview
 		if (InstanceManager.menuSceneController.selectedDragonPreview)

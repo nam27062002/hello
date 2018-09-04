@@ -351,7 +351,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				CheckCustomizerPopup();
 			} break;
 
-		case MenuScreen.DRAGON_SELECTION: {
+		    case MenuScreen.DRAGON_SELECTION: {
 				// Coming from any screen (high priority)
 				CheckPreRegRewards();
 				CheckShark();
@@ -373,9 +373,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 					} break;
 				}
 
+                CheckPromotedIAPs();
 				// Coming from any screen (low priority)
 				// Nothing for now
 			} break;
+            case MenuScreen.TOURNAMENT_INFO:
+            {
+                CheckPromotedIAPs();
+            }break;
 		}
 	}
 

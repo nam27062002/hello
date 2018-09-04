@@ -52,7 +52,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 
 	protected float m_currentFuryDuration;		// If fury Active, total time it lasts
-	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time 
+	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time
 
 
 	public enum Type
@@ -133,10 +133,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_dragon = GetComponent<DragonPlayer>();
 	}
 
-	void Start() 
+	void Start()
 	{
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
-		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();		
+		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();
 		m_animator = transform.Find("view").GetComponent<Animator>();
 		m_bounds2D = new Rect();
 
@@ -171,7 +171,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
-	private void OnEnable() 
+	private void OnEnable()
 	{
 	}
 
@@ -199,11 +199,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
-	
+
 	void OnDisable() {
 		if ( ApplicationManager.IsAlive )
 		{
-			if (m_state == State.BREATHING) 
+			if (m_state == State.BREATHING)
 			{
 				EndFury( false );
 			}
@@ -211,7 +211,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	}
 
 	public bool IsFuryOn() {
-		
+
 		return m_state == State.BREATHING;
 	}
 
@@ -286,7 +286,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 							break;
 						case Type.Mega:
 						{
-								
+
 						}
 						break;
 					}
@@ -295,7 +295,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 					{
 						EndFury();
 						m_animator.SetBool( GameConstants.Animator.BREATH, false);
-					} 
+					}
 					else
 					{
 						Breath();
@@ -309,7 +309,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 
 	protected virtual void OnEntityBurned(Transform t, Reward reward)
-	{	
+	{
 		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
 		m_dragon.AddLife( healthReward, DamageType.NONE, t );
 		m_dragon.AddEnergy(reward.energy);
@@ -350,14 +350,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		ChangeState(State.PREWARM_BREATH);
 	}
 
-	virtual protected void BeginFury( Type _type ) 
+	virtual protected void BeginFury( Type _type )
 	{
 		RecalculateSize();
 		m_type = _type;
 
 		ChangeState(State.BREATHING);
 	}
-	virtual protected void Breath() 
+	virtual protected void Breath()
 	{
 		m_fireNodeTimer -= Time.deltaTime;
 		if (m_fireNodeTimer <= 0) {
@@ -366,14 +366,14 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 	}
 
-	virtual protected void EndFury( bool increase_mega_fire = true ) 
+	virtual protected void EndFury( bool increase_mega_fire = true )
 	{
 		if ( m_type == Type.Standard && increase_mega_fire )
 			MegaFireUp();
 		ChangeState( State.NORMAL );
 	}
 
-	private void MegaFireUp() {		
+	private void MegaFireUp() {
 
 		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
 		{
@@ -396,7 +396,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 		else
 		{
-			UsersManager.currentUser.superFuryProgression = v;	
+			UsersManager.currentUser.superFuryProgression = v;
 		}
 	}
 
@@ -481,7 +481,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
     }
 
 
-    // 
+    //
     void ChangeState( State _newState )
     {
     	if ( m_state == _newState ) return;
@@ -547,6 +547,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
     		{
 				// With fury on boost is infinite
 				m_dragon.AddEnergy(m_dragon.energyMax);
+
+                // Reset megafire counter to 0 as soon as it starts
+                SetMegaFireValue(0);
 
 				m_prewarmFuryTimer = m_prewarmDuration;
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;

@@ -21,6 +21,12 @@ public class HungryLettersManager : MonoBehaviour
 	{
 		H = 0, U = 1, N = 2, G = 3, R = 4, Y = 5, EnumEnd = 6,
 	}
+    
+    public static char ToChar( CollectibleLetters letter )
+    {
+        char[] c = new char[]{'H', 'U', 'N', 'G', 'R', 'Y'};
+        return c[(int)letter];
+    }
 
 	//------------------------------------------------------------
 	// Inspector Variables:

@@ -164,6 +164,8 @@ public class HDCustomizerManager
 
     private bool m_needsToNotifyRulesChanged;
 
+    private CustomizerManager.Experiment m_currentExperiment;
+
     public void Initialise()
     {
         Reset();
@@ -185,6 +187,8 @@ public class HDCustomizerManager
 #endif
         SetIsNotifyFilesChangedEnabled(true);
         SetNeedsToNotifyRulesChanged(false);
+
+        m_currentExperiment = null;
     }
 
     public void Destroy()
@@ -485,7 +489,17 @@ public class HDCustomizerManager
     }        
 
     private void NotifyCustomizationFinished()
-    {        
+    {
+        // Gets the experiment and if it has changed then tracking is notified
+        CustomizerManager.Experiment experiment = CustomizerManager.SharedInstance.GetExperiment();
+        if (experiment != null && (m_currentExperiment == null || (m_currentExperiment.m_strName == experiment.m_strName && m_currentExperiment.m_strGroupName == experiment.m_strGroupName)))
+        {
+            Log("New experiment applied: name = " + experiment.m_strName + " groupName = " + experiment.m_strGroupName, true);
+            HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.m_strName, experiment.m_strGroupName);            
+        }
+
+        m_currentExperiment = experiment;
+
         SetState(EState.Done);
 
         if (FeatureSettingsManager.IsDebugEnabled)

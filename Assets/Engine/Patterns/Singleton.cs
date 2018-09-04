@@ -87,13 +87,14 @@ public class Singleton<T> where T : Singleton<T>, new() {
 		
 		// Make sure that only one thread is doing this!
 		lock(m_threadLock) {
+            // If forced, destroy existing instance
+            if(_force && m_instance != null) {
+                DestroyInstance();
+            }
+                
 			// Is the static instance created?
 			if(m_instance == null) {
-				// If forced, destroy existing instance
-				if(_force && m_instance != null) {
-					DestroyInstance();
-				}
-
+	
 				// If instance creation is locked, throw a warning
 				if(m_state == ISingleton.EState.CREATING_INSTANCE) {
 					Debug.LogWarning("[SingletonScriptableObject] Instance for " + typeof(T) + " is currently being created. Avoid calling the instance getter during the Awake function of your SingletonScriptableObject class.");

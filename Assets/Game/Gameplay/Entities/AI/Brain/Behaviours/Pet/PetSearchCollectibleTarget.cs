@@ -56,9 +56,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PetSearchCollectibleTargetData>();
 				m_range = m_owner.data.maxScale * m_data.m_dragonSizeRangeMultiplier;
 				m_range = m_range * m_range;
-
-				m_lettersManager = FindObjectOfType<HungryLettersManager>();
-
+				
 				switch( m_data.m_type )
 				{
 					case CollectibleType.EGG:
@@ -68,6 +66,14 @@ namespace AI {
 							m_eggTransform = CollectiblesManager.egg.transform;
 						}
 					}break;
+                    case CollectibleType.LETTERS:
+                    {
+                        m_lettersManager = FindObjectOfType<HungryLettersManager>();        
+                    }break;
+                    case CollectibleType.CHEST:
+                    {
+                        
+                    }break;
 				}
 
 			}

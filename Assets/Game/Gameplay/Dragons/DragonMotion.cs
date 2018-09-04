@@ -362,7 +362,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		int playerLayer = LayerMask.NameToLayer("Player");
 		int groundLayer = LayerMask.NameToLayer("PlayerGround");
 		Collider[] colliders = GetComponentsInChildren<Collider>();
-		List<Collider> hitColliders = new List<Collider>();
+		List<Collider> hitCollidersArray = new List<Collider>();
 		List<Collider> groundColliders = new List<Collider>();
 		for( int i = 0; i<colliders.Length; i++ )
 		{
@@ -370,7 +370,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			if ( colliderLayer == playerLayer)
 			{
 				// hitting collider
-				hitColliders.Add( colliders[i] );
+				hitCollidersArray.Add( colliders[i] );
 			}
 			else if ( colliderLayer == groundLayer )
 			{
@@ -379,8 +379,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 		}
 		m_groundColliders = groundColliders.ToArray();
-		m_hitCollidersSize = hitColliders.Count;
-		m_hitColliders = hitColliders.ToArray();
+		m_hitCollidersSize = hitCollidersArray.Count;
+		m_hitColliders = hitCollidersArray.ToArray();
 
 
 		// Find ground collider
@@ -624,7 +624,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_direction = Vector3.right;
 					m_desiredRotation = Quaternion.Euler(0,90.0f,0);
 					m_transform.rotation = m_desiredRotation;
-				}break;
+
+
+                    }break;
 				case State.Latching:
 				{
 					int size = m_groundColliders.Length;
@@ -1980,7 +1982,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void OnAreaChangeEvent(Collider _other)
 	{
-		if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null )
+        //if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null && _other.bounds.Intersects(m_mainGroundCollider.bounds))
+		if ( IsAliveState() && !m_dragon.changingArea && InstanceManager.gameSceneController != null && _other.bounds.Intersects(m_mainGroundCollider.bounds))
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )
