@@ -13,6 +13,8 @@ using UnityEditor;
 using UnityEditor.AnimatedValues;
 using System.IO;
 using UnityEngine.Rendering;
+using System.Collections.Generic;
+using System.Reflection;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -682,28 +684,30 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
-
         }
 
         Debug.Log(sChanged + " materials changed.");
 
     }
 
-    [MenuItem("Tools/Dragon/Mesh bounds")]
-    public static void MeshBounds()
+
+    static void DebugMaterial(Material mat)
     {
-        Mesh mesh = Selection.activeObject as Mesh;
-        if (mesh != null)
+        Debug.Log("Material name: " + mat.name);
+        Debug.Log("Shader name: " + mat.shader.name);
+
+        int propcount = ShaderUtil.GetPropertyCount(mat.shader);
+        for (int a = 0; a < propcount; a++)
         {
-            Bounds bounds = mesh.bounds;
-            Debug.Log("Bounds: x: " + mesh.bounds.size.x + " y: " + mesh.bounds.size.y + " z: " + mesh.bounds.size.z);
-        }
-        else
-        {
-            Debug.Log("Object isn't a valid mesh");
+            string propname = ShaderUtil.GetPropertyName(mat.shader, a);
+            ShaderUtil.ShaderPropertyType proptype = ShaderUtil.GetPropertyType(mat.shader, a);
+            Debug.Log("Propety name: " + propname + " type: " + proptype);
         }
 
     }
+
+
+
 
     [MenuItem("Tools/Dragon/Repair materials")]
     public static void RepairMaterials()
@@ -720,6 +724,7 @@ internal class DragonShaderGUI : ShaderGUI
         for (int c = 0; c < materialList.Length; c++)
         {
             Material mat = materialList[c];
+//            DebugMaterial(mat);
             if (mat.shader.name == "Hungry Dragon/Dragon/Dragon standard")
             {
                 bool mfixed = false;
@@ -804,5 +809,17 @@ internal class DragonShaderGUI : ShaderGUI
     static void DebugMaterial(Material mat, object obj)
     {
         Debug.Log("Material: " + mat.name + " " + obj);
+    }
+}
+
+
+public class FileModificationWarning : SaveAssetsProcessor
+{
+    static string[] OnWillSaveAssets(string[] paths)
+    {
+        Debug.Log("OnWillSaveAssets");
+        foreach (string path in paths)
+            Debug.Log(path);
+        return paths;
     }
 }
