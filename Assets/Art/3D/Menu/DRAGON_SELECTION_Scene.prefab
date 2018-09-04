@@ -775,7 +775,23 @@ GameObject:
   - component: {fileID: 114705085368948470}
   - component: {fileID: 114390121376202984}
   m_Layer: 0
-  m_Name: DragonSlot10
+  m_Name: DragonSlot11
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1616048090992070
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4981972442945324}
+  - component: {fileID: 114368210316605566}
+  m_Layer: 0
+  m_Name: Dragon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1011,6 +1027,24 @@ GameObject:
   - component: {fileID: 114173419591314152}
   m_Layer: 0
   m_Name: Dragon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1775557589499124
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4450992224609986}
+  - component: {fileID: 114836647832225602}
+  - component: {fileID: 114804681033343962}
+  - component: {fileID: 114296095942758778}
+  m_Layer: 0
+  m_Name: DragonSlot10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1823,6 +1857,7 @@ Transform:
   - {fileID: 4422583641504406}
   - {fileID: 4240839513729268}
   - {fileID: 4541456602472338}
+  - {fileID: 4450992224609986}
   - {fileID: 4637206433537528}
   m_Father: {fileID: 4153963491984516}
   m_RootOrder: 6
@@ -1914,7 +1949,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1407184264282318}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 52, y: 1.5, z: -7}
+  m_LocalPosition: {x: 51.999985, y: 1.5, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4045455619303854}
@@ -1947,6 +1982,20 @@ Transform:
   m_Father: {fileID: 4888883829017262}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -2, y: 161.029, z: -5.7960005}
+--- !u!4 &4450992224609986
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1775557589499124}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 185, y: 0.02999878, z: -7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4981972442945324}
+  m_Father: {fileID: 4316600771596750}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4452891631509654
 Transform:
   m_ObjectHideFlags: 1
@@ -2051,7 +2100,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1574196900638700}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 150, y: 0.30000305, z: -7}
+  m_LocalPosition: {x: 150, y: 0.2999878, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4609568784067680}
@@ -2196,12 +2245,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1610338463859896}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 185, y: 0.02999878, z: -7}
+  m_LocalPosition: {x: 220, y: 0.02999878, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4535705391348236}
   m_Father: {fileID: 4316600771596750}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4638199998130060
 Transform:
@@ -2291,7 +2340,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1610058845853392}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 94.729095, y: 0, z: 0}
+  m_LocalPosition: {x: 187.26529, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4970351888051676}
@@ -2689,6 +2738,19 @@ Transform:
   m_Father: {fileID: 4638199998130060}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -2.5200002, y: -63.682003, z: 5.169}
+--- !u!4 &4981972442945324
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1616048090992070}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4450992224609986}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 50, z: 0}
 --- !u!23 &23004355309612720
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -4687,7 +4749,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mode: 2
-  m_dragonSku: dragon_titan
+  m_dragonSku: dragon_goldheist
   m_disguiseSku: 
   m_anim: 0
   m_resetDragonScale: 0
@@ -4834,6 +4896,17 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114296095942758778
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1775557589499124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89402c4b2e51548908d5c15cb4f42761, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114306239512334276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4998,7 +5071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4422583641504406}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.4918919
+  m_delta: 0.25807804
   m_snapPoint: 7
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5026,6 +5099,30 @@ MonoBehaviour:
   m_mode: 0
   m_targetScreens: 09000000
   m_restartShowAnimation: 0
+--- !u!114 &114368210316605566
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1616048090992070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4307df3638f47a29e60f0bc3d5abee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mode: 2
+  m_dragonSku: dragon_titan
+  m_disguiseSku: 
+  m_anim: 0
+  m_resetDragonScale: 0
+  m_showPets: 1
+  m_hideResultsEquipment: 0
+  m_removeFresnel: 0
+  m_keepLayers: 1
+  m_useResultsScreen: 0
+  m_allowAltAnimations: 1
+  m_loadAsync: 1
+  m_placeholderDragonSku: dragon_classic
 --- !u!114 &114390121376202984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5097,7 +5194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4441279714878882}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.28108108
+  m_delta: 0.14747317
   m_snapPoint: 4
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5116,7 +5213,7 @@ MonoBehaviour:
   m_target: {fileID: 4637206433537528}
   m_path: {fileID: 114666108815201088}
   m_delta: 1
-  m_snapPoint: 10
+  m_snapPoint: 11
   m_linkMode: 2
   m_keepUpdated: 0
   m_offset: {x: 0, y: -1.47, z: 18}
@@ -5133,7 +5230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4329600603484696}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.42162162
+  m_delta: 0.22120976
   m_snapPoint: 6
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5188,7 +5285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4755700003525126}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.35135135
+  m_delta: 0.18434146
   m_snapPoint: 5
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5288,7 +5385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4240839513729268}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.6216216
+  m_delta: 0.32614258
   m_snapPoint: 8
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5489,9 +5586,15 @@ MonoBehaviour:
     m_handle1: {x: -11.55, y: -0, z: -0}
     m_handle2: {x: 11.55, y: 0, z: 0}
   - m_name: 
-    m_handleStyle: 1
+    m_handleStyle: 0
     m_locked: 0
     m_position: {x: 185, y: 0, z: 0}
+    m_handle1: {x: -11.55, y: -0, z: -0}
+    m_handle2: {x: 11.55, y: 0, z: 0}
+  - m_name: 
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: 220, y: 0, z: 0}
     m_handle1: {x: -11.55, y: -0, z: -0}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -5741,7 +5844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4662734482539304}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.14054054
+  m_delta: 0.073736586
   m_snapPoint: 2
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5793,6 +5896,69 @@ MonoBehaviour:
   m_altAnimationsMaxLevel: 10
   m_loadAsync: 1
   m_placeholderDragonSku: dragon_classic
+--- !u!114 &114804681033343962
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1775557589499124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 7
+  m_tweenDuration: 0.5
+  m_tweenValue: 0
+  m_tweenEase: 27
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114296095942758778}
+        m_MethodName: OnShowPostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114815826372559482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5806,7 +5972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4115358605947314}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.21081081
+  m_delta: 0.11060488
   m_snapPoint: 3
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5874,6 +6040,24 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114836647832225602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1775557589499124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c22d3e1ef68764567851c620699f9794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_target: {fileID: 4450992224609986}
+  m_path: {fileID: 114666108815201088}
+  m_delta: 0.5377283
+  m_snapPoint: 10
+  m_linkMode: 2
+  m_keepUpdated: 0
+  m_offset: {x: 0, y: -1.47, z: 18}
 --- !u!114 &114837011054481554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5887,7 +6071,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4098126007686474}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.07027027
+  m_delta: 0.036868293
   m_snapPoint: 1
   m_linkMode: 2
   m_keepUpdated: 0
@@ -5942,7 +6126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_target: {fileID: 4541456602472338}
   m_path: {fileID: 114666108815201088}
-  m_delta: 0.8108108
+  m_delta: 0.4254034
   m_snapPoint: 9
   m_linkMode: 2
   m_keepUpdated: 0
