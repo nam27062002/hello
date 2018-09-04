@@ -159,7 +159,7 @@ public class HDTongueDetector : MonoBehaviour
 	{
 		m_faceDetected = true;
 		m_currentBlendShapes = anchorData.blendShapes;
-		m_dragonAnimojiInstance.fireBreath.EnableFlame (false, false);
+		m_dragonAnimojiInstance.ToggleFire(false);
 
 		// Notify listeners
 		ControlPanel.Log(Colors.paleYellow.Tag("FACE DETECTED"));
@@ -182,7 +182,7 @@ public class HDTongueDetector : MonoBehaviour
 	void FaceRemoved (ARFaceAnchor anchorData)
 	{
 		m_faceDetected = false;
-		m_dragonAnimojiInstance.fireBreath.EnableFlame (false, false);
+		m_dragonAnimojiInstance.ToggleFire(false);
 
 		// Notify listeners
 		ControlPanel.Log(Colors.paleYellow.Tag("FACE REMOVED"));
@@ -204,9 +204,8 @@ public class HDTongueDetector : MonoBehaviour
 		}
 		if (enableTongue != m_tongueDetected) {
 			m_tongueDetected = enableTongue;
-			m_dragonAnimojiInstance.fireBreath.EnableFlame (m_tongueDetected);
-			m_dragonAnimojiInstance.fireBreath.setEffectScale (m_dragonAnimojiInstance.fireBreathScale, m_dragonAnimojiInstance.fireBreathScale);
-			if (m_tongueDetected) {
+			m_dragonAnimojiInstance.ToggleFire(m_tongueDetected);
+			if(m_tongueDetected) {
 				m_audio.Play ();
 
 				// Notify listeners

@@ -23,25 +23,32 @@ public class DragonAnimoji : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private FireBreathDynamic m_fireBreath = null;
-	public FireBreathDynamic fireBreath {
-		get { return m_fireBreath; }
-	}
-
-	[SerializeField] private float m_fireBreathScale = 1f;
-	public float fireBreathScale {
-		get { return m_fireBreathScale; }
-		set { m_fireBreathScale = value; }
-	}
+	// Internal refs
+	private ParticleSystem[] m_particlesArray = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	public void Awake() {
+		m_particlesArray = GetComponentsInChildren<ParticleSystem>();
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Toggle fire on/off.
+	/// </summary>
+	/// <param name="_on">Whether to enable or disable the fire effect.</param>
+	public void ToggleFire(bool _on) {
+		foreach(ParticleSystem ps in m_particlesArray) {
+			if(_on) {
+				ps.Play();
+			} else {
+				ps.Stop();
+			}
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
