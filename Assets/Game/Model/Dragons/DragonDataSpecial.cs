@@ -59,12 +59,7 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Progression
-	// [AOC] TODO!!
-	private int m_level = 0;
-	public int level {
-		get { return m_level; }
-	}
+
 	public int maxLevel = (int)Stat.COUNT * 10;	// [AOC] HARDCODED!! Should go to content
 	
 	// Stats
@@ -148,6 +143,28 @@ public class DragonDataSpecial : IDragonData {
     } 
     public override float cameraFrameWidthModifier{ 
         get{ return m_specialTierDef.GetAsFloat("cameraFrameWidthModifier"); }
+    }
+    
+    public override float healthDrain{ 
+        get { return m_specialTierDef.GetAsFloat("healthDrain"); } 
+    }
+    public override float healthDrainAmpPerSecond{ 
+        get { return m_specialTierDef.GetAsFloat("healthDrainAmpPerSecond"); } 
+    }
+    public override float sessionStartHealthDrainTime{ 
+        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainTime"); } 
+    }
+    public override float sessionStartHealthDrainModifier{ 
+        get { return m_specialTierDef.GetAsFloat("sessionStartHealthDrainModifier"); } 
+    }
+    public override float healthDrainSpacePlus{ 
+        get { return m_specialTierDef.GetAsFloat("healthDrainSpacePlus"); } 
+    }
+    public override float damageAnimationThreshold{ 
+        get { return m_specialTierDef.GetAsFloat("damageAnimationThreshold"); } 
+    }
+    public override float dotAnimationThreshold{ 
+        get { return m_specialTierDef.GetAsFloat("dotAnimationThreshold"); } 
     }
     
     public override string gamePrefab {
@@ -280,8 +297,24 @@ public class DragonDataSpecial : IDragonData {
         m_disguise = "";
         m_persistentDisguise = m_disguise;
     }
+    
+    public void RefershPowerLevelValue()
+    {
+        m_powerLevel = 0;
+        int level = GetLevel();
+        // Check Special Dragon power definitions
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_POWERS, "specialDragon", m_def.sku);
+        int max = defs.Count;
+        for (int i = 0; i < max; i++)
+        {
+            if (defs[i].GetAsInt("upgradeLevelToUnlock") <= level )
+            {
+                m_powerLevel++;
+            }
+        }
+    }
 
-    public int GetStepsLevel()
+    public int GetLevel()
     {
         int ret = 0;
         for (int i = 0; i < (int)Stat.COUNT; i++)

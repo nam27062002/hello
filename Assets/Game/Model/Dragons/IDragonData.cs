@@ -129,6 +129,15 @@ public abstract class IDragonData : IUISelectorItem {
         // Camera
     public abstract float defaultSize{ get; }
     public abstract float cameraFrameWidthModifier{ get; }    
+    
+        // Health related data
+    public abstract float healthDrain{ get; }
+    public abstract float healthDrainAmpPerSecond{ get; }
+    public abstract float sessionStartHealthDrainTime{ get; }
+    public abstract float sessionStartHealthDrainModifier{ get; }
+    public abstract float healthDrainSpacePlus{ get; }
+    public abstract float damageAnimationThreshold{ get; }
+    public abstract float dotAnimationThreshold{ get; }
 
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }

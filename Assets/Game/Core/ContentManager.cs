@@ -212,6 +212,8 @@ public class ContentManager
 
         // Specials
         kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_POWERS, new string[]{"Rules/specialDragonPowerDefinitions"});
+        
         
         // ADD HERE ANY NEW DEFINITIONS FILE!
 

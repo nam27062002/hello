@@ -840,7 +840,7 @@ public class GameSceneController : GameSceneControllerBase {
                 {
                     // TODO
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    dragonProgress = specialData.GetStepsLevel();
+                    dragonProgress = specialData.GetLevel();
                 }
                 dragonSkin = dragonData.diguise;
                 pets = dragonData.pets;

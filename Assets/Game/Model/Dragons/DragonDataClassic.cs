@@ -95,6 +95,28 @@ public class DragonDataClassic : IDragonData {
         get{ return m_def.GetAsFloat("cameraFrameWidthModifier"); }
     }
     
+    public override float healthDrain{ 
+        get { return m_def.GetAsFloat("healthDrain"); } 
+    }
+    public override float healthDrainAmpPerSecond{ 
+        get { return m_def.GetAsFloat("healthDrainAmpPerSecond"); } 
+    }
+    public override float sessionStartHealthDrainTime{ 
+        get { return m_def.GetAsFloat("sessionStartHealthDrainTime"); } 
+    }
+    public override float sessionStartHealthDrainModifier{ 
+        get { return m_def.GetAsFloat("sessionStartHealthDrainModifier"); } 
+    }
+    public override float healthDrainSpacePlus{ 
+        get { return m_def.GetAsFloat("healthDrainSpacePlus"); } 
+    }
+    public override float damageAnimationThreshold{ 
+        get { return m_def.GetAsFloat("damageAnimationThreshold"); } 
+    }
+    public override float dotAnimationThreshold{ 
+        get { return m_def.GetAsFloat("dotAnimationThreshold"); } 
+    }
+    
     public override string gamePrefab {
         get{
             return m_def.GetAsString("gamePrefab");
