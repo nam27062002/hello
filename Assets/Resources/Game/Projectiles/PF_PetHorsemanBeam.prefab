@@ -85,7 +85,7 @@ Transform:
   m_GameObject: {fileID: 1038133973596008}
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: -0.000000030908623, w: -0.000000030908623}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 16.020462, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4336817967787110}
   m_RootOrder: 0
@@ -97,7 +97,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363264916768824}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -174.4407, y: -3.4475574, z: -7.699422}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4151561353315876}
@@ -171,8 +171,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.59, y: 1.3, z: 1.31}
-  m_Center: {x: 0.003638992, y: -0.00023290748, z: -0.30984035}
+  m_Size: {x: 4, y: 4, z: 4}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114372304259190030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -186,10 +186,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 0
   m_chargeTime: 0
-  m_speed: 35
+  m_speed: 50
   m_rotationSpeed: 0
   m_rotationAxis: 2
-  m_maxTime: 5
+  m_maxTime: 3
   m_scaleTime: 1
   m_stopAtTarget: 0
   m_dieOutsideFrustum: 1
@@ -486,4 +486,4 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: -0.56}
+  m_Center: {x: 0, y: 0, z: 0}
