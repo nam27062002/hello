@@ -529,6 +529,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
+                    m_state = _newState;    // This is done so if in the event FURY_RUSH_TOGGLED someone checks if is fury on it says false. Check DragonPlayer CanIResumeEating
 				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
 		        m_type = Type.None;
     		}break;
