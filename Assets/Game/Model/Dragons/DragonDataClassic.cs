@@ -67,6 +67,12 @@ public class DragonDataClassic : IDragonData {
 	public override float maxScale {
 		get { return GetScaleAtLevel(progression.maxLevel); }
 	}
+    
+    public override string gamePrefab {
+        get{
+            return m_def.GetAsString("gamePrefab");
+        }
+    }
 	
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE METHODS												  //
@@ -79,6 +85,11 @@ public class DragonDataClassic : IDragonData {
 		// Call parent
 		base.Init(_def);
 
+        m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _def.GetAsString("tier"));
+        m_tier = (DragonTier)m_tierDef.GetAsInt("order");
+        m_pets = new List<string>();
+        m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
+        
 		// Type
 		m_type = Type.CLASSIC;
 

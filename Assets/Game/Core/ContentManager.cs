@@ -190,7 +190,7 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
 
         // Disguises
-        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions" });
 
         kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[] { "Rules/holdPreyTierSettingsDefinitions" });
 
@@ -210,6 +210,9 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
 
+        // Specials
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
+        
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 

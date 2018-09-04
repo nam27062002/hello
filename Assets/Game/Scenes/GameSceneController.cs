@@ -826,15 +826,24 @@ public class GameSceneController : GameSceneControllerBase {
 		List<string> pets = null;
         if (InstanceManager.player != null) {
             IDragonData dragonData = InstanceManager.player.data;
-			if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
-				DragonProgression progression = (dragonData as DragonDataClassic).progression;
-                if (progression != null) {
-                    dragonXp = (int)progression.xp;
+			if (dragonData != null) {
+                if (dragonData.type == IDragonData.Type.CLASSIC)
+                {
+    				DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                    if (progression != null) {
+                        dragonXp = (int)progression.xp;
+                    }
+    
+                    dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
                 }
-
-                dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+                else if ( dragonData.type == IDragonData.Type.SPECIAL )
+                {
+                    // TODO
+                    DragonDataSpecial specialData = dragonData as DragonDataSpecial;
+                    dragonProgress = specialData.GetStepsLevel();
+                }
                 dragonSkin = dragonData.diguise;
-				pets = dragonData.pets;
+                pets = dragonData.pets;
             }
         }
 

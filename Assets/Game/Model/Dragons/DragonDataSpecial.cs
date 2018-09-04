@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -36,10 +37,11 @@ public class DragonDataSpecial : IDragonData {
 	public class StatData {
 		// Level [0..N-1]
 		public int level = 0;
+            // max level that can be achieved on this stat
 		public int maxLevel = 9;
+            // Bonus range
+        public Range bonusRange = new Range();
 
-		public float baseValue = 100f;
-		public float valueInc = 10f;
 		public float value {
 			get { return GetValueForLevel(level); }
 		}
@@ -50,7 +52,7 @@ public class DragonDataSpecial : IDragonData {
 		/// <returns>The value of the skill for the requested level.</returns>
 		/// <param name="_level">Level.</param>
 		public float GetValueForLevel(int _level) {
-			return baseValue + valueInc * _level;
+			return bonusRange.Lerp(level / (float)maxLevel);
 		}
 	}
 
@@ -84,11 +86,17 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	// Stats - ranges to interpolate between min level and max level
 	public override float maxHealth {
-		get { return GetStat(Stat.HEALTH).value; }
+		get {
+            float baseValue = m_specialTierDef.GetAsFloat("health");
+            return  baseValue +  baseValue * GetStat(Stat.HEALTH).value;
+        }
 	}
 
 	public override float maxForce {
-		get { return m_specialTierDef.GetAsFloat("force"); }
+		get {
+            float baseValue = m_specialTierDef.GetAsFloat("force");
+            return baseValue + baseValue * GetStat(Stat.SPEED).value;
+        }
 	}
 
 	public override float maxEatSpeedFactor {
@@ -96,7 +104,10 @@ public class DragonDataSpecial : IDragonData {
 	}
 
 	public override float baseEnergy {
-		get { return m_specialTierDef.GetAsFloat("energyBase"); }
+		get {
+            float baseValue = m_specialTierDef.GetAsFloat("energyBase");
+            return baseValue + baseValue * GetStat(Stat.ENERGY).value; 
+        }
 	}
 
 	public override float scale {
@@ -113,6 +124,23 @@ public class DragonDataSpecial : IDragonData {
 		get { return 1f; }
 	}
 
+    public override string gamePrefab {
+        get{
+            return m_specialTierDef.GetAsString("gamePrefab");
+        }
+    }
+
+    //------------------------------------------------------------------------//
+    // CONSTRUCTOR                                                            //
+    //------------------------------------------------------------------------//
+    public DragonDataSpecial()
+    {
+        for (int i = 0; i < (int)Stat.COUNT; i++)
+        {
+            m_stats[i] = new StatData();
+        }
+    }
+
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE METHODS												  //
 	//------------------------------------------------------------------------//
@@ -123,10 +151,29 @@ public class DragonDataSpecial : IDragonData {
 	public override void Init(DefinitionNode _def) {
 		// Call parent
 		base.Init(_def);
+        
+        m_pets = new List<string>();
+        SetTier(DragonTier.TIER_0);
+        LoadStatDef( _def );
 
-		// Type
+        // Type
 		m_type = Type.SPECIAL;
 	}
+    
+    private void LoadStatDef( DefinitionNode _def )
+    {
+        StatData healthStat = GetStat(Stat.HEALTH);
+        healthStat.maxLevel = _def.GetAsInt("hpBonusSteps", 10);
+        healthStat.bonusRange = _def.GetAsRange("hpBonus");
+        
+        StatData speedStat = GetStat(Stat.SPEED);
+        speedStat.maxLevel = _def.GetAsInt("speedBonusSteps", 10);
+        speedStat.bonusRange = _def.GetAsRange("speedBonus");
+        
+        StatData energyData = GetStat(Stat.ENERGY);
+        energyData.maxLevel = _def.GetAsInt("boostBonusSteps", 10);
+        energyData.bonusRange = _def.GetAsRange("boostBonus");
+    }
 
 	/// <summary>
 	/// Gets the current lock state of this dragon.
@@ -184,6 +231,39 @@ public class DragonDataSpecial : IDragonData {
 	public StatData GetStat(Stat _skill) {
 		return m_stats[(int)_skill];
 	}
+    
+    public void SetTier(DragonTier _tier)
+    {
+        // m_specialTierDef = 
+        string tierSku = TierToSku(_tier);
+        m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
+        m_tier = _tier;
+
+        m_specialTierDef = null;
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
+        int max = defs.Count;
+        for (int i = 0; i < max && m_specialTierDef == null ; i++)
+        {
+            if (defs[i].Get("tier").Equals(tierSku))
+                m_specialTierDef = defs[i];
+        }
+
+        m_pets.Clear();
+        m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
+        
+        m_disguise = "";
+        m_persistentDisguise = m_disguise;
+    }
+
+    public int GetStepsLevel()
+    {
+        int ret = 0;
+        for (int i = 0; i < (int)Stat.COUNT; i++)
+        {
+            ret += m_stats[i].level;
+        }
+        return ret;
+    }
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //

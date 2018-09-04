@@ -284,7 +284,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
         // Get the data for the new dragon
 		DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
         
-		//data.SetTier( _tier );
+		data.SetTier(_tier);
         data.m_powerLevel = powerLevel;
 
 		/*
@@ -296,7 +296,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
         Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
 
         // Load the prefab for the dragon with the given ID
-        GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + data.def.GetAsString("gamePrefab"));
+        GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + data.gamePrefab);
 
         Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
 

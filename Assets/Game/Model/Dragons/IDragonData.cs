@@ -118,6 +118,9 @@ public abstract class IDragonData : IUISelectorItem {
 	public abstract float minScale { get; }
 	public abstract float maxScale { get; }
 
+
+    // Other Abstract attributes
+    public abstract string gamePrefab{ get; }
 	//------------------------------------------------------------------------//
 	// IUISelectorItem IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -147,8 +150,6 @@ public abstract class IDragonData : IUISelectorItem {
 	public virtual void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
-		m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _def.GetAsString("tier"));
-		m_tier = (DragonTier)m_tierDef.GetAsInt("order");
 
 		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragons)) {
@@ -165,8 +166,6 @@ public abstract class IDragonData : IUISelectorItem {
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
 		m_persistentDisguise = m_disguise;
-		m_pets = new List<string>();
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
 
 		// Other values
 		m_scaleOffset = 0;
@@ -334,7 +333,6 @@ public abstract class IDragonData : IUISelectorItem {
 			case DragonDataClassic.TYPE_CODE: {
 				newData = new DragonDataClassic();
 			} break;
-
 			case DragonDataSpecial.TYPE_CODE: {
 				newData = new DragonDataSpecial();
 			} break;
@@ -352,6 +350,7 @@ public abstract class IDragonData : IUISelectorItem {
 	/// <returns>The definition of the default disguise to be used by the given dragon.</returns>
 	/// <param name="_dragonSku">The dragon whose default skin we want.</param>
 	public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
+        
 		// Get all the disguises for the given dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);
 
