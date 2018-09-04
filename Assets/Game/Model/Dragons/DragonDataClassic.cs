@@ -87,6 +87,14 @@ public class DragonDataClassic : IDragonData {
         get{ return m_def.GetAsFloat("boostMultiplier"); }
     }
     
+    public override float defaultSize{
+        get{ return m_def.GetAsFloat("defaultSize"); }
+    }
+    
+    public override float cameraFrameWidthModifier{ 
+        get{ return m_def.GetAsFloat("cameraFrameWidthModifier"); }
+    }
+    
     public override string gamePrefab {
         get{
             return m_def.GetAsString("gamePrefab");

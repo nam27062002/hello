@@ -142,6 +142,13 @@ public class DragonDataSpecial : IDragonData {
     public override float boostMultiplier{ 
         get{ return m_specialTierDef.GetAsFloat("boostMultiplier"); }
     }
+
+    public override float defaultSize{
+        get{ return m_specialTierDef.GetAsFloat("defaultSize"); }
+    } 
+    public override float cameraFrameWidthModifier{ 
+        get{ return m_specialTierDef.GetAsFloat("cameraFrameWidthModifier"); }
+    }
     
     public override string gamePrefab {
         get{

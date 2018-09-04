@@ -491,8 +491,8 @@ public class GameCamera : MonoBehaviour
 		DragonPlayer pi = obj.GetComponent<DragonPlayer>();
 		if(pi != null)
 		{
-			float size = pi.data.def.GetAsFloat("defaultSize");
-			float cameraFrameWidthModifier = pi.data.def.GetAsFloat("cameraFrameWidthModifier");
+            float size = pi.data.defaultSize;
+			float cameraFrameWidthModifier = pi.data.cameraFrameWidthModifier;
 			SetFrameWidthIncrement( size, cameraFrameWidthModifier );
 		}
 		else

@@ -125,6 +125,10 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float airGravityModifier{ get; }
     public abstract float waterGravityModifier{ get; }
     public abstract float boostMultiplier{ get; }
+    
+        // Camera
+    public abstract float defaultSize{ get; }
+    public abstract float cameraFrameWidthModifier{ get; }    
 
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }
