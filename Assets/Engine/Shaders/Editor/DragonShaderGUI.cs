@@ -706,8 +706,85 @@ internal class DragonShaderGUI : ShaderGUI
 
     }
 
+    public static bool RepairDragonMaterial(Material mat)
+    {
+        bool mfixed = false;
+        if (mat.shader.name == "Hungry Dragon/Dragon/Dragon standard")
+        {
+            Texture refTex = mat.GetTexture("_ReflectionMap");
+            Texture fireTex = mat.GetTexture("_FireMap");
 
+            int fxLayer = (int)mat.GetFloat("FXLayer");
+            switch (fxLayer)
+            {
+                case 0:
+                    if (refTex != null)
+                    {
+                        mat.SetTexture("_ReflectionMap", null);
+                        DebugMaterial(mat, "it has no effect layer but contains an unused reflection map");
+                        mfixed = true;
+                    }
 
+                    if (fireTex != null)
+                    {
+                        mat.SetTexture("_FireMap", null);
+                        DebugMaterial(mat, "it has no effect layer but contains an unused fire map");
+                        mfixed = true;
+                    }
+                    break;
+
+                case 1:
+                    if (fireTex != null)
+                    {
+                        mat.SetTexture("_FireMap", null);
+                        DebugMaterial(mat, "it has a reflection layer but contains an unused fire map");
+                        mfixed = true;
+                    }
+
+                    if (mat.GetFloat("_ReflectionAmount") == 0.0f)
+                    {
+                        mat.SetTexture("_ReflectionMap", null);
+                        mat.SetFloat("FXLayer", 0.0f);
+                        DebugMaterial(mat, "it has a reflection layer but reflection amount = 0");
+                        mfixed = true;
+                    }
+                    break;
+
+                case 2:
+                    if (refTex != null)
+                    {
+                        mat.SetTexture("_ReflectionMap", null);
+                        DebugMaterial(mat, "it has a fire layer but contains an unused reflection map");
+                        mfixed = true;
+                    }
+
+                    if (mat.GetFloat("_FireAmount") == 0.0f)
+                    {
+                        mat.SetTexture("_FireMap", null);
+                        mat.SetFloat("FXLayer", 0.0f);
+                        DebugMaterial(mat, "it has a fire layer but fire amount = 0");
+                        mfixed = true;
+                    }
+                    break;
+            }
+
+            int cull = (int)mat.GetFloat("_Cull");
+
+            if (cull != 0 && mat.IsKeywordEnabled(kw_doubleSided))
+            {
+                SetKeyword(mat, kw_doubleSided, false);
+                mat.SetFloat("_EnableDoublesided", 0.0f);
+                DebugMaterial(mat, "its cull mode = " + (cull == 1 ? "Front" : "Back") + " and double sided is set");
+                mfixed = true;
+            }
+
+            if (mfixed)
+            {
+                EditorUtility.SetDirty(mat);
+            }
+        }
+        return mfixed;
+    }
 
     [MenuItem("Tools/Dragon/Repair materials")]
     public static void RepairMaterials()
@@ -724,84 +801,11 @@ internal class DragonShaderGUI : ShaderGUI
         for (int c = 0; c < materialList.Length; c++)
         {
             Material mat = materialList[c];
-//            DebugMaterial(mat);
-            if (mat.shader.name == "Hungry Dragon/Dragon/Dragon standard")
+            if (RepairDragonMaterial(mat))
             {
-                bool mfixed = false;
-
-                Texture refTex = mat.GetTexture("_ReflectionMap");
-                Texture fireTex = mat.GetTexture("_FireMap");
-
-                int fxLayer = (int)mat.GetFloat("FXLayer");
-                switch (fxLayer)
-                {
-                    case 0:
-                        if (refTex != null)
-                        {
-                            mat.SetTexture("_ReflectionMap", null);
-                            DebugMaterial(mat, "it has no effect layer but contains an unused reflection map");
-                            mfixed = true;
-                        }
-
-                        if (fireTex != null)
-                        {
-                            mat.SetTexture("_FireMap", null);
-                            DebugMaterial(mat, "it has no effect layer but contains an unused fire map");
-                            mfixed = true;
-                        }
-                        break;
-
-                    case 1:
-                        if (fireTex != null)
-                        {
-                            mat.SetTexture("_FireMap", null);
-                            DebugMaterial(mat, "it has a reflection layer but contains an unused fire map");
-                            mfixed = true;
-                        }
-
-                        if (mat.GetFloat("_ReflectionAmount") == 0.0f)
-                        {
-                            mat.SetTexture("_ReflectionMap", null);
-                            mat.SetFloat("FXLayer", 0.0f);
-                            DebugMaterial(mat, "it has a reflection layer but reflection amount = 0");
-                            mfixed = true;
-                        }
-                        break;
-
-                    case 2:
-                        if (refTex != null)
-                        {
-                            mat.SetTexture("_ReflectionMap", null);
-                            DebugMaterial(mat, "it has a fire layer but contains an unused reflection map");
-                            mfixed = true;
-                        }
-
-                        if (mat.GetFloat("_FireAmount") == 0.0f)
-                        {
-                            mat.SetTexture("_FireMap", null);
-                            mat.SetFloat("FXLayer", 0.0f);
-                            DebugMaterial(mat, "it has a fire layer but fire amount = 0");
-                            mfixed = true;
-                        }
-                        break;
-                }
-
-                int cull = (int)mat.GetFloat("_Cull");
-
-                if (cull != 0 && mat.IsKeywordEnabled(kw_doubleSided))
-                {
-                    SetKeyword(mat, kw_doubleSided, false);
-                    mat.SetFloat("_EnableDoublesided", 0.0f);
-                    DebugMaterial(mat, "its cull mode = " + (cull == 1 ? "Front" : "Back") + " and double sided is set");
-                    mfixed = true;
-                }
-
-                if (mfixed)
-                {
-                    EditorUtility.SetDirty(mat);
-                    sChanged++;
-                }
+                sChanged++;
             }
+//            DebugMaterial(mat);
         }
         Debug.Log("Total " + sChanged + " materials changed.");
     }
@@ -819,7 +823,17 @@ public class FileModificationWarning : SaveAssetsProcessor
     {
         Debug.Log("OnWillSaveAssets");
         foreach (string path in paths)
-            Debug.Log(path);
+        {
+            if (path.Contains(".mat"))
+            {
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (mat != null)
+                {
+                    DragonShaderGUI.RepairDragonMaterial(mat);
+                }
+            }
+
+        }
         return paths;
     }
 }
