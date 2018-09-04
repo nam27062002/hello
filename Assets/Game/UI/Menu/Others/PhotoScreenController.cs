@@ -64,9 +64,10 @@ public class PhotoScreenController : MonoBehaviour {
 	[Separator("Share Data")]
 	[SerializeField] private Image m_qrContainer = null;
 
-	[Separator("AR")]
+	[Separator("AR and Animoji")]
 	[SerializeField] private GameObject m_arButton = null;
 	[SerializeField] private PhotoScreenARFlow m_arFlow = null;
+	[SerializeField] private GameObject m_animojiButton = null;
 
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
@@ -331,6 +332,12 @@ public class PhotoScreenController : MonoBehaviour {
 		// Initialize AR stuff
 		m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
 		m_arFlow.gameObject.SetActive(false);
+
+		// Allow animoji?
+		m_animojiButton.SetActive(
+			m_mode == Mode.DRAGON && 
+			AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon)
+		);
 	}
 
 	/// <summary>
