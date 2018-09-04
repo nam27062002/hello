@@ -118,6 +118,13 @@ public abstract class IDragonData : IUISelectorItem {
 	public abstract float minScale { get; }
 	public abstract float maxScale { get; }
 
+        // Movement
+    public abstract float mass{ get; }
+    public abstract float friction{ get; }
+    public abstract float gravityModifier{ get; }
+    public abstract float airGravityModifier{ get; }
+    public abstract float waterGravityModifier{ get; }
+    public abstract float boostMultiplier{ get; }
 
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }

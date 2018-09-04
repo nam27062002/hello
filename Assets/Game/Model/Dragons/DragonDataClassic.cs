@@ -68,6 +68,25 @@ public class DragonDataClassic : IDragonData {
 		get { return GetScaleAtLevel(progression.maxLevel); }
 	}
     
+    public override float mass{ 
+        get{ return m_def.GetAsFloat("mass"); }
+    }
+    public override float friction{ 
+        get{ return m_def.GetAsFloat("friction"); }
+    }
+    public override float gravityModifier{ 
+        get{ return m_def.GetAsFloat("gravityModifier"); }
+    }
+    public override float airGravityModifier{ 
+        get{ return m_def.GetAsFloat("airGravityModifier"); }
+    }
+    public override float waterGravityModifier{ 
+        get{ return m_def.GetAsFloat("waterGravityModifier"); }
+    }
+    public override float boostMultiplier{ 
+        get{ return m_def.GetAsFloat("boostMultiplier"); }
+    }
+    
     public override string gamePrefab {
         get{
             return m_def.GetAsString("gamePrefab");

@@ -123,7 +123,26 @@ public class DragonDataSpecial : IDragonData {
 		// [AOC] TODO!!
 		get { return 1f; }
 	}
-
+    
+    public override float mass{ 
+        get{ return m_specialTierDef.GetAsFloat("mass"); }
+    }
+    public override float friction{ 
+        get{ return m_specialTierDef.GetAsFloat("friction"); }
+    }
+    public override float gravityModifier{ 
+        get{ return m_specialTierDef.GetAsFloat("gravityModifier"); }
+    }
+    public override float airGravityModifier{ 
+        get{ return m_specialTierDef.GetAsFloat("airGravityModifier"); }
+    }
+    public override float waterGravityModifier{ 
+        get{ return m_specialTierDef.GetAsFloat("waterGravityModifier"); }
+    }
+    public override float boostMultiplier{ 
+        get{ return m_specialTierDef.GetAsFloat("boostMultiplier"); }
+    }
+    
     public override string gamePrefab {
         get{
             return m_specialTierDef.GetAsString("gamePrefab");
