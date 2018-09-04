@@ -12,16 +12,6 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
-  - first: {fileID: 10720, guid: 0000000000000000f000000000000000, type: 0}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 10721, guid: 0000000000000000f000000000000000, type: 0}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON _ALPHATEST_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 0062837f20654ed4381d2a7620b0cbf9, type: 3}
     second:
       variants:
@@ -30,6 +20,8 @@ ShaderVariantCollection:
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
+      - keywords: LOW_DETAIL_ON _ALPHATEST_ON
+        passType: 0
       - keywords: BLENDMODE_ADDITIVEDOUBLE LOW_DETAIL_ON
         passType: 0
       - keywords: BLENDMODE_ALPHABLEND LOW_DETAIL_ON
@@ -148,6 +140,9 @@ ShaderVariantCollection:
       - keywords: APPLY_RGB_COLOR_VERTEX AUTOMATICPANNING BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
           LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA
         passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY COLOR_TINT DISSOLVE_ENABLED
+          EXTENDED_PARTICLES LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA
+        passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
           LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
         passType: 0
@@ -195,8 +190,6 @@ ShaderVariantCollection:
           LOW_DETAIL_ON
         passType: 0
       - keywords: BLENDMODE_ADDITIVE DISSOLVE_EXTENDED EXTENDED_PARTICLES LOW_DETAIL_ON
-        passType: 0
-      - keywords: LOW_DETAIL_ON _ALPHATEST_ON
         passType: 0
   - first: {fileID: 4800000, guid: 057ac1be4a48b2c4eabf08f13b7feda6, type: 3}
     second:
@@ -310,10 +303,13 @@ ShaderVariantCollection:
         passType: 4
       - keywords: FRESNEL FXLAYER_FIRE LOW_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
-      - keywords: DOUBLESIDED FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUESPECULAR
+      - keywords: BLENDFRESNEL FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP
+          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUESPECULAR
           SPECULAR _ZWRITE_ON
         passType: 4
-      - keywords: DOUBLESIDED FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUEFRESNEL
+      - keywords: FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUEFRESNEL
           OPAQUESPECULAR SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SPECULAR
@@ -837,21 +833,6 @@ ShaderVariantCollection:
       - keywords: LOW_DETAIL_ON
         passType: 0
   - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 1e5df5a56a7624e0981993663cf33154, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: abcf973b8dc974208a882fe4b8c6b73f, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: aef340cb91e534f40870ff658a7aecee, type: 3}
     second:
       variants:
       - keywords: LOW_DETAIL_ON
