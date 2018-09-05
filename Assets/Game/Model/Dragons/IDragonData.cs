@@ -143,7 +143,14 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float healthDrainSpacePlus{ get; }
     public abstract float damageAnimationThreshold{ get; }
     public abstract float dotAnimationThreshold{ get; }
-
+    
+       // Energy
+    public abstract float energyDrain{ get; }
+    public abstract float energyRefillRate{ get; }
+    
+        // Misc
+    public abstract float statsBarRatio{ get; }
+        
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }
 	//------------------------------------------------------------------------//

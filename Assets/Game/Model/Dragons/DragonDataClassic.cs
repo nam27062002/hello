@@ -129,6 +129,19 @@ public class DragonDataClassic : IDragonData {
         get { return m_def.GetAsFloat("dotAnimationThreshold"); } 
     }
     
+    // Energy
+    public override float energyDrain{ 
+        get { return m_def.GetAsFloat("energyDrain"); } 
+    }
+    public override float energyRefillRate{ 
+        get { return m_def.GetAsFloat("energyRefillRate"); } 
+    }
+    
+    // Misc
+    public override float statsBarRatio{ 
+        get { return m_def.GetAsFloat("statsBarRatio"); } 
+    }
+    
     public override string gamePrefab {
         get{
             return m_def.GetAsString("gamePrefab");

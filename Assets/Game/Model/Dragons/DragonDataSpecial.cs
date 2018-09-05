@@ -179,6 +179,19 @@ public class DragonDataSpecial : IDragonData {
         get { return m_specialTierDef.GetAsFloat("dotAnimationThreshold"); } 
     }
     
+    // Energy
+    public override float energyDrain{ 
+        get { return m_specialTierDef.GetAsFloat("energyDrain"); } 
+    }
+    public override float energyRefillRate{ 
+        get { return m_specialTierDef.GetAsFloat("energyRefillRate"); } 
+    }
+    
+    // Misc
+    public override float statsBarRatio{ 
+        get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 
+    }
+    
     public override string gamePrefab {
         get{
             return m_specialTierDef.GetAsString("gamePrefab");
