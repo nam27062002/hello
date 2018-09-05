@@ -22,7 +22,7 @@ public class DragonDataClassic : IDragonData {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string TYPE_CODE = "classic";
+	public const string TYPE_CODE = "normal";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
