@@ -272,7 +272,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			
 	}
     
-    public static void LoadSpecialDragon( string _sku, DragonTier _tier, int powerLevel)
+    public static void LoadSpecialDragon( string _sku, DragonTier _tier, int powerLevel, int hpLevel, int speedLevel, int energyLevel)
     {
         // Destroy any previously created player
         GameObject playerObj = GameObject.Find(GameSettings.playerName);
@@ -283,6 +283,10 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 
         // Get the data for the new dragon
 		DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
+
+        data.GetStat(DragonDataSpecial.Stat.HEALTH).level = hpLevel;
+        data.GetStat(DragonDataSpecial.Stat.SPEED).level = speedLevel;
+        data.GetStat(DragonDataSpecial.Stat.ENERGY).level = energyLevel;
         
 		data.SetTier(_tier);
         data.m_powerLevel = powerLevel;

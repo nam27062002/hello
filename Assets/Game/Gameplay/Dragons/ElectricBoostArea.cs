@@ -84,7 +84,7 @@ public class ElectricBoostArea : MonoBehaviour {
                             // BLAST!!
                             if (m_powerLevel >= 2)
                             {   
-                                m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius, m_checkEntities);
+                                m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius * m_extraRadius, m_checkEntities);
                                 for (int j = 0; j < m_numCheckEntities; j++)
                                 {
                                     Entity blastEntity = m_checkEntities[j];

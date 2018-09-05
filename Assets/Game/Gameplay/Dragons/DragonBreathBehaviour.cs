@@ -142,8 +142,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		m_tier = m_dragon.data.tier;
 
-		// Init content cache
-		m_furyBase = m_dragon.data.def.GetAsFloat("furyMax");
+        // Init content cache
+        m_furyBase = m_dragon.data.furyMax;
 		m_furyMax = m_furyBase;
 		m_currentFury = 0;
 

@@ -83,14 +83,14 @@ public class DragonDataSpecial : IDragonData {
 	public override float maxHealth {
 		get {
             float baseValue = m_specialTierDef.GetAsFloat("health");
-            return  baseValue +  baseValue * GetStat(Stat.HEALTH).value;
+            return  baseValue +  baseValue * (GetStat(Stat.HEALTH).value / 100.0f);
         }
 	}
 
 	public override float maxForce {
 		get {
             float baseValue = m_specialTierDef.GetAsFloat("force");
-            return baseValue + baseValue * GetStat(Stat.SPEED).value;
+            return baseValue + baseValue * (GetStat(Stat.SPEED).value / 100.0f);
         }
 	}
 
@@ -101,7 +101,7 @@ public class DragonDataSpecial : IDragonData {
 	public override float baseEnergy {
 		get {
             float baseValue = m_specialTierDef.GetAsFloat("energyBase");
-            return baseValue + baseValue * GetStat(Stat.ENERGY).value; 
+            return baseValue + baseValue * (GetStat(Stat.ENERGY).value / 100.0f); 
         }
 	}
 
@@ -118,6 +118,10 @@ public class DragonDataSpecial : IDragonData {
 		// [AOC] TODO!!
 		get { return 1f; }
 	}
+    
+    public override float furyMax{ 
+        get{ return m_specialTierDef.GetAsFloat("furyMax"); }
+    }
     
     public override float mass{ 
         get{ return m_specialTierDef.GetAsFloat("mass"); }

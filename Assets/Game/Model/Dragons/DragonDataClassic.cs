@@ -68,6 +68,10 @@ public class DragonDataClassic : IDragonData {
 		get { return GetScaleAtLevel(progression.maxLevel); }
 	}
     
+    public override float furyMax{ 
+        get{ return m_def.GetAsFloat("furyMax"); }
+    }
+    
     public override float mass{ 
         get{ return m_def.GetAsFloat("mass"); }
     }

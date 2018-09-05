@@ -80,7 +80,9 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string SPECIAL_DRAGON_SKU                      = "SPECIAL_DRAGON_SKU";
     public const string SPECIAL_DRAGON_TIER                     = "SPECIAL_DRAGON_TIER";
     public const string SPECIAL_DRAGON_POWER_LEVEL              = "SPECIAL_DRAGON_POWER_LEVEL";
-    
+    public const string SPECIAL_DRAGON_HP_BOOST_LEVEL           = "SPECIAL_DRAGON_HP_BOOST_LEVEL";
+    public const string SPECIAL_DRAGON_SPEED_BOOST_LEVEL        = "SPECIAL_DRAGON_SPEED_BOOST_LEVEL";
+    public const string SPECIAL_DRAGON_ENERGY_BOOST_LEVEL       = "SPECIAL_DRAGON_ENERGY_BOOST_LEVEL";
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
