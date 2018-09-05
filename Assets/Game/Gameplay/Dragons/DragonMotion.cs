@@ -118,6 +118,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		get {return m_boostSpeedMultiplier;}
 		set { m_boostSpeedMultiplier = value; }
 	}
+    DragonBoostBehaviour m_boost;
 
 	private float m_holdSpeedMultiplier;
 	public float holdSpeedMultiplier
@@ -334,7 +335,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_animator			= m_transform.Find("view").GetComponent<Animator>();
 		m_flyLoopBehaviour	= m_animator.GetBehaviour<FlyLoopBehaviour>();
 		m_dragon			= GetComponent<DragonPlayer>();
-		// m_health			= GetComponent<DragonHealthBehaviour>();
+        // m_health			= GetComponent<DragonHealthBehaviour>();
+        m_boost             = GetComponent<DragonBoostBehaviour>();
 		m_controls 			= GetComponent<DragonControlPlayer>();
 		m_animationEventController = GetComponentInChildren<DragonAnimationEvents>();
 		m_particleController = GetComponentInChildren<DragonParticleController>();
@@ -691,7 +693,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 #endif
 		switch (m_state) {
 			case State.Idle:
-				if (m_controls.moving || boostSpeedMultiplier > 1) {
+				if (m_controls.moving || m_boost.IsBoostActive()) {
 					ChangeState(State.Fly);
 				}
 				break;
@@ -1162,7 +1164,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private void UpdateMovementImpulse( float _deltaTime, Vector3 impulse)
 	{
 		CheckGround( out m_raycastHit);
-		if (boostSpeedMultiplier > 1)
+		if (m_boost.IsBoostActive())
         {
 			if (impulse == GameConstants.Vector3.zero)
             {
@@ -1311,7 +1313,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// impulse direction
 		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-		if (boostSpeedMultiplier > 1)
+		if ( m_boost.IsBoostActive() )
 		{
 			if (!m_startingParabolic) {
 				m_startingParabolic = true;
@@ -1331,7 +1333,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Calculate gravity acceleration
 		Vector3 gravityAcceleration = GameConstants.Vector3.zero;
 		gravityAcceleration = GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier;
-		if ( boostSpeedMultiplier <= 1 )
+		if ( !m_boost.IsBoostActive() )
 		{
 			float distance = (m_transform.position.y - SpaceStart);
 			if (distance > 0) {
@@ -1348,7 +1350,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		float impulseMag = impulseCapped.magnitude;
 		m_impulse += (acceleration * _deltaTime) - (impulseCapped.normalized * m_dragonFricction * impulseMag * _deltaTime);	// drag only on x coordinate
 
-		if ( boostSpeedMultiplier > 1 )	// if boosting push up
+		if ( m_boost.IsBoostActive() )	// if boosting push up
 		{
 			float distance = (m_transform.position.y - m_startParabolicPosition.y);
 			if (distance >= 1){
