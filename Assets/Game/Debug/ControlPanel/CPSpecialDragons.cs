@@ -18,8 +18,19 @@ public class CPSpecialDragons : MonoBehaviour {
         m_specialPowerLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL).ToString(); 
         m_specialHPBoostLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_HP_BOOST_LEVEL).ToString(); 
         m_specialSpeedBoostLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_SPEED_BOOST_LEVEL).ToString(); 
-        m_specialEnergyBoostLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL).ToString(); 
+        m_specialEnergyBoostLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL).ToString();
+
+        int max = m_specialDragonsDropDown.options.Count;
+        string dragonSku = PlayerPrefs.GetString(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
+        for (int i = 0; i < max; i++)
+        {
+            if ( m_specialDragonsDropDown.options[i].text.Equals(dragonSku) )
+            {
+                m_specialDragonsDropDown.value = i;
+            }
+        }
     }
+    
 
     public void SetSpecialDragon( int _item  )
     {
