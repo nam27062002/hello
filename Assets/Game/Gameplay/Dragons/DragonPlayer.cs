@@ -47,7 +47,7 @@ public class DragonPlayer : MonoBehaviour {
 	public IDragonData data { get { return m_data; }}
 
 	[Header("Life & energy")]
-	private float m_health;
+	[SerializeField] private float m_health;
 	public float health { get { return m_health; } }
 
 	[SerializeField] private float m_energy;
@@ -246,8 +246,8 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.baseEnergy;
 
-		m_alcoholMax = m_data.def.GetAsFloat("maxAlcohol");
-		m_alcoholDrain = m_data.def.GetAsFloat("alcoholDrain", 1f);
+        m_alcoholMax = m_data.maxAlcohol;
+        m_alcoholDrain = m_data.alcoholDrain;
 
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
