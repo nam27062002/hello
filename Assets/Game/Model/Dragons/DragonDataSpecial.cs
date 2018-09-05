@@ -119,10 +119,18 @@ public class DragonDataSpecial : IDragonData {
 		get { return 1f; }
 	}
     
+    // Fury
     public override float furyMax{ 
         get{ return m_specialTierDef.GetAsFloat("furyMax"); }
     }
+    public override float furyBaseDuration{ 
+        get{ return m_specialTierDef.GetAsFloat("furyBaseDuration"); }
+    }
+    public override float furyScoreMultiplier{ 
+        get{ return m_specialTierDef.GetAsFloat("furyScoreMultiplier", 2); }
+    }
     
+    // Movement
     public override float mass{ 
         get{ return m_specialTierDef.GetAsFloat("mass"); }
     }

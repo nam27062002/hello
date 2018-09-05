@@ -68,10 +68,18 @@ public class DragonDataClassic : IDragonData {
 		get { return GetScaleAtLevel(progression.maxLevel); }
 	}
     
+    // Fury
     public override float furyMax{ 
         get{ return m_def.GetAsFloat("furyMax"); }
     }
+    public override float furyBaseDuration{ 
+        get{ return m_def.GetAsFloat("furyBaseDuration"); }
+    }
+    public override float furyScoreMultiplier{ 
+        get{ return m_def.GetAsFloat("furyScoreMultiplier", 2); }
+    }
     
+    // Movement
     public override float mass{ 
         get{ return m_def.GetAsFloat("mass"); }
     }

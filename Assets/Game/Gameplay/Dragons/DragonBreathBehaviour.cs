@@ -153,7 +153,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		// Get the level
 		AddDurationBonus(0);
-		m_fireRushMultiplier = m_dragon.data.def.GetAsFloat("furyScoreMultiplier", 2);
+        m_fireRushMultiplier = m_dragon.data.furyScoreMultiplier;
 
 		m_furyRushesCompleted = 0;
 		m_scoreToAddForNextFuryRushes = (int)(AdditionalGoldRushCompletitionPercentageForConsecutiveRushes * (float)m_furyMax);
@@ -182,7 +182,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	public void SetDurationBonus( float furyBonus )
 	{
-		m_furyBaseDuration = m_dragon.data.def.GetAsFloat("furyBaseDuration");
+        m_furyBaseDuration = m_dragon.data.furyBaseDuration;
 		m_furyDurationBonus = furyBonus;
 		m_furyDuration = m_furyBaseDuration + (m_furyDurationBonus / 100.0f * m_furyBaseDuration);
 	}
