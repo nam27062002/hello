@@ -34,6 +34,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		INIT,
 		PREVIEW,
+		COUNTDOWN,
 		RECORDING,
 		SHARING,
 		FINISH,
@@ -43,6 +44,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 	private const float TONGUE_REMINDER_TIME = 20f;
 	private const float MAX_RECORDING_TIME = 10f;
+	private const float COUNTDOWN = 3f;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -59,11 +61,16 @@ public class AnimojiScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_faceNotDetectedGroup = null;
 	[SerializeField] private ShowHideAnimator m_tongueReminderGroup = null;
 	[SerializeField] private ShowHideAnimator m_previewModeGroup = null;
+	[SerializeField] private ShowHideAnimator m_countdownGroup = null;
 	[SerializeField] private ShowHideAnimator m_recordingModeGroup = null;
 
 	// Other components
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_recordingTimeText = null;
+	[SerializeField] private Animator m_countdownAnim = null;
+	[SerializeField] private TextMeshProUGUI m_countdownText = null;
+
+	[Space]
+	[SerializeField] private Slider m_recordingTimeBar = null;
 
 	// Public properties
 	private State m_state = State.OFF;
@@ -78,6 +85,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 	// Internal logic
 	private float m_tongueReminderTimer = 0f;
+	private float m_countdownTimer = 0f;
 	private float m_recordingTimer = 0f;
 
 	//------------------------------------------------------------------------//
@@ -125,15 +133,19 @@ public class AnimojiScreenController : MonoBehaviour {
 		m_mainSceneCameras = new Camera[] {
 			InstanceManager.menuSceneController.mainCamera
 		};
+
+		// Initialize recording progress bar
+		m_recordingTimeBar.minValue = 0f;
+		m_recordingTimeBar.maxValue = MAX_RECORDING_TIME;
+		m_recordingTimeBar.value = 0f;
 	}
 
 	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		// Tongue reminder
-		// Only in some states
-		if(m_state == State.PREVIEW || m_state == State.RECORDING) {
+		// Tongue reminder - only in PREVIEW state
+		if(m_state == State.PREVIEW) {
 			// Update tongue reminder timer
 			if(m_tongueReminderTimer > 0f) {
 				m_tongueReminderTimer -= Time.deltaTime;
@@ -143,25 +155,46 @@ public class AnimojiScreenController : MonoBehaviour {
 			RefreshInfoUI();
 		}
 
-		// Recording timer
+		// Countdown timer - only in COUNTDOWN state
+		if(m_state == State.COUNTDOWN) {
+			// Update timer
+			if(m_countdownTimer > 0f) {
+				// Detect when we change second
+				float newTime = m_countdownTimer - Time.deltaTime;
+				if(Mathf.FloorToInt(m_countdownTimer) != Mathf.FloorToInt(newTime)) {
+					// Update text and trigger anim
+					SetCountdown(newTime, true);
+
+					// SFX (except for last tick)
+					if(newTime > 0f) {
+						AudioController.Play("hd_padlock");
+					}
+				}
+
+				// Update timer
+				m_countdownTimer = newTime;
+
+				// Countdown ended?
+				if(m_countdownTimer <= 0f) {
+					m_countdownTimer = 0f;
+					ChangeState(State.RECORDING);
+				}
+			}
+		}
+
+		// Recording timer - only in RECORDING state
 		if(m_state == State.RECORDING) {
 			// Update timer
 			m_recordingTimer -= Time.deltaTime;
+
+			// Update progress bar
+			m_recordingTimeBar.value = m_recordingTimeBar.maxValue - m_recordingTimer;	// Move forward
 
 			// If timer has ended, change state
 			if(m_recordingTimer <= 0f) {
 				m_recordingTimer = 0f;
 				ChangeState(State.SHARING);
 			}
-
-			// Update text
-			m_recordingTimeText.text = TimeUtils.FormatTime(
-				m_recordingTimer, 
-				TimeUtils.EFormat.DIGITS_0_PADDING, 
-				2, 
-				TimeUtils.EPrecision.MINUTES, 
-				true
-			);
 		}
 	}
 
@@ -202,8 +235,8 @@ public class AnimojiScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true);
 
 				// Load Animoji Scene
-				GameObject scenePrefab = Resources.Load<GameObject>(HDTongueDetector.PREFAB_PATH);
-				Debug.Assert(scenePrefab != null, "COULDN'T LOADE ANIMOJI SCENE PREFAB (" + HDTongueDetector.PREFAB_PATH + ")", this);
+				GameObject scenePrefab = Resources.Load<GameObject>(HDTongueDetector.SCENE_PREFAB_PATH);
+				Debug.Assert(scenePrefab != null, "COULDN'T LOADE ANIMOJI SCENE PREFAB (" + HDTongueDetector.SCENE_PREFAB_PATH + ")", this);
 
 				// Instantiate it
 				m_animojiSceneInstance = GameObject.Instantiate<GameObject>(scenePrefab);
@@ -232,6 +265,15 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				// Turn game off
 				ToggleMainCameras(false);
+			} break;
+
+			case State.COUNTDOWN: {
+				// Toggle views
+				SelectUI(true);
+
+				// Reset and initialize countdown timer
+				m_countdownTimer = COUNTDOWN;
+				SetCountdown(m_countdownTimer, false);
 			} break;
 
 			case State.RECORDING: {
@@ -325,7 +367,12 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		// Apply
 		m_faceNotDetectedGroup.Set(!faceDetected);
-		m_tongueReminderGroup.Set(faceDetected && !tongueDetected && tongueReminderTimeout);
+		m_tongueReminderGroup.Set(
+			faceDetected && 
+			!tongueDetected && 
+			tongueReminderTimeout &&
+			m_state != State.RECORDING		// Not while recording!
+		);
 	}
 
 	/// <summary>
@@ -338,7 +385,7 @@ public class AnimojiScreenController : MonoBehaviour {
 			RefreshInfoUI();
 		} else {
 			m_faceNotDetectedGroup.ForceHide(_animate);
-			m_tongueReminderGroup.ForceHide(_animate);
+			m_tongueReminderGroup.ForceSet(m_state == State.COUNTDOWN, _animate);	// Always show tongue reminder in COUNTDOWN state
 		}
 
 		// Init screen
@@ -346,6 +393,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		// Preview mode
 		m_previewModeGroup.Set(m_state == State.PREVIEW, _animate);
+		
+		// Countdown UI
+		m_countdownGroup.Set(m_state == State.COUNTDOWN, _animate);
 
 		// Recording mode
 		m_recordingModeGroup.Set(m_state == State.RECORDING, _animate);
@@ -363,6 +413,21 @@ public class AnimojiScreenController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Update countdown text and optionally trigger animation.
+	/// </summary>
+	/// <param name="_seconds">Remaining seconds.</param>
+	/// <param name="_triggerAnim">Launch animation?</param>
+	private void SetCountdown(float _seconds, bool _triggerAnim) {
+		// Set text
+		m_countdownText.text = StringUtils.FormatNumber(
+			Mathf.FloorToInt(_seconds) + 1	// Don't show 0
+		);
+
+		// Trigger anim
+		m_countdownAnim.SetTrigger("launch");
 	}
 
 	//------------------------------------------------------------------------//
@@ -413,7 +478,7 @@ public class AnimojiScreenController : MonoBehaviour {
 		if(m_state != State.PREVIEW) return;
 
 		// Go to next state
-		ChangeState(State.RECORDING);
+		ChangeState(State.COUNTDOWN);
 	}
 
 	/// <summary>
