@@ -12,9 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
 using UnityEngine.UI;
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
 using UnityEngine.Apple.ReplayKit;
-#endif
 using UnityEngine.Events;
 
 //----------------------------------------------------------------------------//
@@ -26,7 +24,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(AudioSource))]
 public class HDTongueDetector : MonoBehaviour 
 {
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -122,6 +119,9 @@ public class HDTongueDetector : MonoBehaviour
 		if(ReplayKit.isRecording) return;
 
 		// Do it!
+		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
+		ReplayKit.Discard ();
+
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
 		ReplayKit.StartRecording(true);
 	}
@@ -144,7 +144,10 @@ public class HDTongueDetector : MonoBehaviour
 	/// </summary>
 	public void ShowPreview() {
 		// Make sure we have something to preview
-		if(!ReplayKit.recordingAvailable) return;
+		if (!ReplayKit.recordingAvailable) {
+			Debug.Log ("No recording available!!!");
+			return;
+		}
 
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("SHOW PREVIEW"));
@@ -223,5 +226,4 @@ public class HDTongueDetector : MonoBehaviour
 			}
 		}
 	}
-#endif
 }

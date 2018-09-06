@@ -90,6 +90,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	private float m_tongueReminderTimer = 0f;
 	private float m_countdownTimer = 0f;
 	private float m_recordingTimer = 0f;
+	private float m_sharingTimer = 0f;
 
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
@@ -199,6 +200,20 @@ public class AnimojiScreenController : MonoBehaviour {
 				ChangeState(State.SHARING);
 			}
 		}
+
+		if (m_state == State.SHARING) {
+			if (ReplayKit.recordingAvailable) {
+				ControlPanel.Log (Colors.paleYellow.Tag ("RECORD AVAILABLE!"));
+				m_animojiSceneController.ShowPreview ();
+				ChangeState (State.PREVIEW);
+			} else {
+				m_sharingTimer -= Time.deltaTime;
+				if (m_sharingTimer <= 0f) {
+					ControlPanel.Log (Colors.red.Tag ("SHARING TIME OUT!"));
+					ChangeState (State.PREVIEW);
+				}
+			}
+		}
 	}
 
 	/// <summary>
@@ -300,6 +315,8 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Toggle views
 				SelectUI(true);
 
+				m_sharingTimer = 5f;
+
 #if UNITY_EDITOR
 				// Simulate sharing with some delay
 				UIFeedbackText.CreateAndLaunch(
@@ -313,12 +330,14 @@ public class AnimojiScreenController : MonoBehaviour {
 					ChangeState(State.PREVIEW);
 				}, 1f);
 #else
+	/*			
 				// Open native share dialog
 				m_animojiSceneController.ShowPreview();
 
 				// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
 				// See https://forum.unity.com/threads/replaykit-detect-preview-controller-finished.450509/
 				ChangeState(State.PREVIEW);
+	*/
 #endif
 			} break;
 
