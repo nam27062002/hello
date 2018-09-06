@@ -201,16 +201,24 @@ public class AnimojiScreenController : MonoBehaviour {
 			}
 		}
 
-		if (m_state == State.SHARING) {
-			if (ReplayKit.recordingAvailable) {
-				ControlPanel.Log (Colors.paleYellow.Tag ("RECORD AVAILABLE!"));
-				m_animojiSceneController.ShowPreview ();
-				ChangeState (State.PREVIEW);
+		// Sharing window - only in SHARING state
+		if(m_state == State.SHARING) {
+			// Is video file ready?
+			if(ReplayKit.recordingAvailable) {
+				// Yes! Open native share dialog
+				ControlPanel.Log(Colors.paleYellow.Tag("RECORD AVAILABLE!"));
+				m_animojiSceneController.ShowPreview();
+
+				// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
+				// See https://forum.unity.com/threads/replaykit-detect-preview-controller-finished.450509/
+				ChangeState(State.PREVIEW);
 			} else {
+				// No! Update timeout timer
 				m_sharingTimer -= Time.deltaTime;
-				if (m_sharingTimer <= 0f) {
-					ControlPanel.Log (Colors.red.Tag ("SHARING TIME OUT!"));
-					ChangeState (State.PREVIEW);
+				if(m_sharingTimer <= 0f) {
+					// Timeout! Skip video sharing
+					ControlPanel.Log(Colors.red.Tag ("SHARING TIME OUT!"));
+					ChangeState(State.PREVIEW);
 				}
 			}
 		}
@@ -283,6 +291,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				// Turn game off
 				ToggleMainCameras(false);
+
+				// Turn music off
+				AudioController.PauseMusic(0.5f);
 			} break;
 
 			case State.COUNTDOWN: {
@@ -315,6 +326,8 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Toggle views
 				SelectUI(true);
 
+				// We will change back to the preview state whenever the video file is ready
+				// Add a timeout in case there was some error recording the video
 				m_sharingTimer = 5f;
 
 #if UNITY_EDITOR
@@ -329,15 +342,6 @@ public class AnimojiScreenController : MonoBehaviour {
 				UbiBCN.CoroutineManager.DelayedCall(() => {
 					ChangeState(State.PREVIEW);
 				}, 1f);
-#else
-	/*			
-				// Open native share dialog
-				m_animojiSceneController.ShowPreview();
-
-				// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
-				// See https://forum.unity.com/threads/replaykit-detect-preview-controller-finished.450509/
-				ChangeState(State.PREVIEW);
-	*/
 #endif
 			} break;
 
@@ -360,6 +364,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				// Turn game back on
 				ToggleMainCameras(true);
+
+				// Restore music
+				AudioController.UnpauseMusic(0.5f);
 
 				// Show game HUD
 				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
