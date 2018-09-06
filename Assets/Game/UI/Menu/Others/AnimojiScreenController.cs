@@ -342,6 +342,9 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.FINISH: {
+				// Discard any recorded video
+				ReplayKit.Discard ();
+
 				// Toggle views
 				SelectUI(true);
 
