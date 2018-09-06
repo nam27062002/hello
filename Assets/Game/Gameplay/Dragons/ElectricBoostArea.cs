@@ -29,8 +29,22 @@ public class ElectricBoostArea : MonoBehaviour {
     public GameObject m_tailUp;
     public GameObject m_tailDown;
 
+    public GameObject m_lightningPrefab;
+
+    private const int NUM_LIGHTNINGS = 3;
+    GameObject[] m_lightningInstances = new GameObject[NUM_LIGHTNINGS];
+    ParticleSystem[] m_lightningPS = new ParticleSystem[NUM_LIGHTNINGS];
+
 	// Use this for initialization
 	void Start () {
+
+        for (int i = 0; i < NUM_LIGHTNINGS; i++)
+        {
+            m_lightningInstances[i] = Instantiate<GameObject>(m_lightningPrefab);
+            m_lightningPS[i] = m_lightningInstances[i].GetComponent<ParticleSystem>();
+        }
+        
+    
         m_originalRadius.Clear();
         for (int i = 0; i < m_circleAreas.Count; i++)
         {
@@ -81,6 +95,9 @@ public class ElectricBoostArea : MonoBehaviour {
                             Vector3 startingPos = startingMachine.position;
                             if (entity.circleArea != null)
                                 startingPos = entity.circleArea.center;
+
+
+                            SpawnLightning(0, m_circleAreas[i].center, startingPos);
                             // BLAST!!
                             if (m_powerLevel >= 2)
                             {   
@@ -109,18 +126,24 @@ public class ElectricBoostArea : MonoBehaviour {
                                     // Burn chain 1 entity
                                     AI.IMachine chain1_machine = chain1_entity.machine;
                                     chain1_machine.Burn(transform, IEntity.Type.PLAYER);
+                                    Vector3 entity1Pos = chain1_machine.position;
+                                    if (chain1_entity.circleArea != null)
+                                        entity1Pos = chain1_entity.circleArea.center;
+                                            
+                                    SpawnLightning(1, startingPos, entity1Pos);
 
                                     // Chain Upgrade
                                     if (m_powerLevel >= 3)
                                     {
-                                        Vector3 entity1Pos = chain1_machine.position;
-                                        if (chain1_entity.circleArea != null)
-                                            entity1Pos = chain1_entity.circleArea.center;
                                         Entity chain2_entity = GetFirstBurnableEntity((Vector2)entity1Pos, m_chainRadiusCheck);
                                         if (chain2_entity != null)
                                         {
                                             AI.IMachine chain2_machine = chain2_entity.machine;
                                             chain2_machine.Burn(transform, IEntity.Type.PLAYER);
+                                            Vector3 entity2Pos = chain1_machine.position;
+                                            if (chain2_entity.circleArea != null)
+                                                entity2Pos = chain2_entity.circleArea.center;
+                                            SpawnLightning(2, entity1Pos, entity2Pos);
                                         }
                                     }
                                 }
@@ -169,5 +192,15 @@ public class ElectricBoostArea : MonoBehaviour {
             }
         }
         return ret;
+    }
+    
+    private void SpawnLightning( int index, Vector3 start, Vector3 end )
+    {
+        m_lightningInstances[index].transform.position = start;
+        Vector3 dir = start - end;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg + 90.0f;
+        m_lightningInstances[index].transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        m_lightningInstances[index].transform.localScale = GameConstants.Vector3.one * dir.magnitude;
+        m_lightningPS[index].Play();
     }
 }
