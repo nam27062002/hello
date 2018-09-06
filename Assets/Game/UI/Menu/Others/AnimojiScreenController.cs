@@ -271,6 +271,9 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.COUNTDOWN: {
+				// Flow control
+				Debug.Assert(oldState == State.PREVIEW, "FSM Exception! Can't transition from state " + oldState + " to state " + _newState, this);
+
 				// Toggle views
 				SelectUI(true);
 
@@ -280,9 +283,6 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.RECORDING: {
-				// Flow control
-				Debug.Assert(oldState == State.PREVIEW, "FSM Exception! Can't transition from state " + oldState + " to state " + _newState, this);
-
 				// Toggle views
 				SelectUI(true);
 
