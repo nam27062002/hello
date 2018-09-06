@@ -209,6 +209,7 @@ public class DragonPlayer : MonoBehaviour {
     private int m_mummyPowerStacks;
     private float m_mummyHealthFactor;
     private float m_mummyTime;
+    private float m_mummyDrain;
     private List<Modifier> m_mummyModifiers;
 
 
@@ -480,6 +481,10 @@ public class DragonPlayer : MonoBehaviour {
             Messenger.Broadcast<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, oldHealthModifier, m_currentHealthModifier);
         }
 
+        //----------------------------------------------------------------
+        m_mummyDrain = -((healthMax * m_mummyHealthFactor) / m_mummyTime);
+        //----------------------------------------------------------------
+
         // Notify revive to game
         Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, ReviveReason.MUMMY);
 
@@ -487,10 +492,7 @@ public class DragonPlayer : MonoBehaviour {
     }
 
     public void MummyHealthDrain() {
-
-        //---10 segons-----------------------------------------------------------------
-        float drain = -((healthMax * m_mummyHealthFactor) / m_mummyTime) * Time.deltaTime;
-        //-----------------------------------------------------------------------------
+        float drain = m_mummyDrain * Time.deltaTime;
         
         // Update health
         float lastHealth = m_health;
@@ -877,7 +879,9 @@ public class DragonPlayer : MonoBehaviour {
 		m_healthBase = m_data.maxHealth;
 		m_healthBonus = value;
 		m_healthMax = m_healthBase + (m_healthBonus / 100.0f * m_healthBase);
-		m_health = m_healthMax;
+		
+        if (m_form == Form.NORMAL)
+            m_health = m_healthMax;
 	}
 
 	public void AddHealthBonus(float value)
