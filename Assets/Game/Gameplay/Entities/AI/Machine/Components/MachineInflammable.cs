@@ -25,6 +25,7 @@ namespace AI {
 		[SerializeField] private float m_burningTime = 0f;
 		[SerializeField] private bool m_canBeDissolved = true;
 		[SerializeField] private List<Renderer> m_ashExceptions = new List<Renderer>();
+        [SerializeField] private List<GameObject> m_disableOnBurn = new List<GameObject>();
 
 		private float m_actualBurningTime = 0;
 		public float burningTime { get { return m_actualBurningTime; } }
@@ -61,7 +62,10 @@ namespace AI {
 			for( int i = 0; i < m_ashExceptions.Count; i++ )
 				m_ashExceptions[i].enabled = true;
 
-			m_state = State.Idle;
+            for (int i = 0; i < m_disableOnBurn.Count; i++)
+                m_disableOnBurn[i].SetActive(true);
+
+            m_state = State.Idle;
 			m_nextState = State.Idle;
 		}
 
@@ -74,8 +78,11 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
-			// Initialize some death info
-			m_entity.onDieStatus.source = _source;
+            for (int i = 0; i < m_disableOnBurn.Count; i++)
+                m_disableOnBurn[i].SetActive(false);
+
+            // Initialize some death info
+            m_entity.onDieStatus.source = _source;
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
 
 			if (m_pilot != null) {
