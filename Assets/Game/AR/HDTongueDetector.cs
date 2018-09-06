@@ -27,15 +27,8 @@ public class HDTongueDetector : MonoBehaviour
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PREFAB_PATH = "AR/Animojis/PF_AnimojiSceneSetup";
-
-	// [AOC] TODO!! Hardcoded prefab paths
-	private const string PREFAB_DIR = "AR/Animojis/";
-	private static Dictionary<string, string> s_prefabPaths = new Dictionary<string, string> {
-		{ "dragon_baby",        PREFAB_DIR + "PF_DragonBabyAnimoji" },
-		{ "dragon_bug",         PREFAB_DIR + "PF_DragonBabyAnimoji" },
-		{ "dragon_classic",     PREFAB_DIR + "PF_DragonBabyAnimoji" }
-	};
+	public const string SCENE_PREFAB_PATH = "AR/Animojis/PF_AnimojiSceneSetup";
+	private const string ANIMOJI_PREFABS_DIR = "AR/Animojis/";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -73,7 +66,12 @@ public class HDTongueDetector : MonoBehaviour
 	/// <returns>Whether the requested dragon supports animojis or not.</returns>
 	/// <param name="_dragonSku">Dragon sku.</param>
 	public static bool IsDragonSupported(string _dragonSku) {
-		return s_prefabPaths.ContainsKey(_dragonSku);
+		// Check content
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
+		if(dragonDef == null) return false;
+
+		// Dragon is supported if it has an animoji prefab assigned to it :)
+		return dragonDef.Has("animojiPrefab");
 	}
 
 	//------------------------------------------------------------------------//
@@ -102,13 +100,15 @@ public class HDTongueDetector : MonoBehaviour
 		Debug.Assert(IsDragonSupported(_dragonSku), "DRAGON " + _dragonSku + " DOESN'T SUPPORT ANIMOJIS!", this);
 
 		// Load dragon head prefab
-		GameObject prefab = Resources.Load<GameObject>(s_prefabPaths[_dragonSku]);
-		Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + s_prefabPaths[_dragonSku], this);
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
+		string prefabPath = dragonDef.GetAsString("animojiPrefab");
+		GameObject prefab = Resources.Load<GameObject>(ANIMOJI_PREFABS_DIR + prefabPath);
+		Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + ANIMOJI_PREFABS_DIR + prefabPath, this);
 
 		// Instantiate it and get controller reference
 		GameObject dragonInstance = GameObject.Instantiate<GameObject>(prefab, m_dragonAnimojiAnchor, false);
 		m_dragonAnimojiInstance = dragonInstance.GetComponentInChildren<DragonAnimoji>();
-		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + s_prefabPaths[_dragonSku] + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
+		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + ANIMOJI_PREFABS_DIR + prefabPath + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
 	}
 
 	/// <summary>
@@ -120,7 +120,7 @@ public class HDTongueDetector : MonoBehaviour
 
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
-		ReplayKit.StartRecording();
+		ReplayKit.StartRecording(true);
 	}
 
 	/// <summary>
