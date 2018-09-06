@@ -30,7 +30,7 @@ public class UISocialSetup : MonoBehaviour
 		Toggle(m_webItem, true);    // So far website is enabled everywhere :P
 
 		Toggle(m_weiboItem, socialPlatform == SocialUtils.EPlatform.Weibo);
-		Toggle(m_weChatItem, isChina);
+		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL));	// Hide it while the URL is not defined
 	}		
 
 	/// <summary>
