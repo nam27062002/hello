@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
 using UnityEngine.UI;
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 using UnityEngine.Apple.ReplayKit;
+#endif
 using UnityEngine.Events;
 
 //----------------------------------------------------------------------------//
@@ -24,6 +26,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(AudioSource))]
 public class HDTongueDetector : MonoBehaviour 
 {
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -220,4 +223,5 @@ public class HDTongueDetector : MonoBehaviour
 			}
 		}
 	}
+#endif
 }

@@ -10,7 +10,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.iOS;
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 using UnityEngine.Apple.ReplayKit;
+#endif
 using UnityEngine.SceneManagement;
 
 using System;
@@ -26,6 +28,7 @@ using TMPro;
 /// Main controller for the animoji menu screen.
 /// </summary>
 public class AnimojiScreenController : MonoBehaviour {
+#if (UNITY_IOS || UNITY_EDITOR_OSX)
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -98,12 +101,12 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <param name="_dragonSku">Dragon sku to be checked.</param>
 	public static bool IsSupported(string _dragonSku) {
 		// Editor
-#if(UNITY_EDITOR)
+#if (UNITY_EDITOR)
 		// Requested dragon supported?
 		if(!HDTongueDetector.IsDragonSupported(_dragonSku)) return false;
 
 		return true;
-#elif(UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
+#elif (UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
 		// AR supported?
 		if(!ARKitManager.SharedInstance.IsARKitAvailable()) return false;
 
@@ -491,4 +494,5 @@ public class AnimojiScreenController : MonoBehaviour {
 		// Go to next state
 		ChangeState(State.SHARING);
 	}
+#endif
 }
