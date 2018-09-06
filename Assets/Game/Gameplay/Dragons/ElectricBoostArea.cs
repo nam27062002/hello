@@ -46,10 +46,14 @@ public class ElectricBoostArea : MonoBehaviour {
         
     
         m_originalRadius.Clear();
+        float scale = InstanceManager.player.data.scale;
         for (int i = 0; i < m_circleAreas.Count; i++)
         {
+            m_circleAreas[i].radius = m_circleAreas[i].radius * scale;
             m_originalRadius.Add( m_circleAreas[i].radius );
         }
+        m_blastRadius *= scale;
+        m_chainRadiusCheck *= scale;
         
 		m_boost = InstanceManager.player.dragonBoostBehaviour;
 		m_breath = InstanceManager.player.breathBehaviour;
