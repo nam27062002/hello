@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonMissileLauncher : MonoBehaviour {
+public class DragonHelicopterPowers : MonoBehaviour {
 
 	public float m_fireRate;
 	private float m_timer;
@@ -15,6 +15,10 @@ public class DragonMissileLauncher : MonoBehaviour {
 	public string m_projectileName;
 	private float m_rangeSize;
 	public float m_dragonRangeMultiplier = 10;
+    
+    // power level 1 -> misiles
+    // power level 2 -> bombas
+    // power level 3 -> dron
 	// Use this for initialization
 	void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
