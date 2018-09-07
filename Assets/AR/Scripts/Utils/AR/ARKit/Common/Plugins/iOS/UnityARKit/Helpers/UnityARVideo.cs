@@ -34,6 +34,7 @@ namespace UnityEngine.XR.iOS
 
 		void InitializeCommandBuffer()
 		{
+			Debug.Log (">>>>>>>>>>>>>>>>>>>>>>>>  UnityARVideo.InitializeCommandBuffer");
 			m_VideoCommandBuffer = new CommandBuffer(); 
 			m_VideoCommandBuffer.Blit(null, BuiltinRenderTextureType.CurrentActive, m_ClearMaterial);
 			GetComponent<Camera>().AddCommandBuffer(CameraEvent.BeforeForwardOpaque, m_VideoCommandBuffer);
@@ -43,6 +44,7 @@ namespace UnityEngine.XR.iOS
 
 		void OnDestroy()
 		{
+			Debug.Log (">>>>>>>>>>>>>>>>>>>>>>>>>  UnityARVideo.RemoveCommandBuffer");
 			GetComponent<Camera>().RemoveCommandBuffer(CameraEvent.BeforeForwardOpaque, m_VideoCommandBuffer);
 			UnityARSessionNativeInterface.ARFrameUpdatedEvent -= UpdateFrame;
 			bCommandBufferInitialized = false;
