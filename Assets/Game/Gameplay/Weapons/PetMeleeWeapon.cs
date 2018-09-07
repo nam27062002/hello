@@ -8,14 +8,12 @@ public class PetMeleeWeapon : IMeleeWeapon {
     [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
 
-
     protected override void OnAwake() {}
     protected override void OnDealDamage() {}
     protected override void OnDisabled() {}
     protected override void OnEnabled() {}
 
-    protected override void OnTriggerEnter(Collider _other) { }
-    protected void OnTriggerExit(Collider _other) {
+    protected override void OnTriggerEnter(Collider _other) {
         int layer = (1 << _other.gameObject.layer);
         if ((layer & m_hitMask.value) > 0) {
             Entity e = _other.GetComponent<Entity>();
