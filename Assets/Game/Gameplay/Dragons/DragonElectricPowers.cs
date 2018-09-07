@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElectricBoostArea : MonoBehaviour {
+public class DragonElectricPowers : MonoBehaviour {
 
 	public List<CircleArea2D> m_circleAreas = new List<CircleArea2D>();
     private List<float> m_originalRadius = new List<float>();
