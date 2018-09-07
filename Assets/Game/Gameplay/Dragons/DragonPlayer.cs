@@ -118,10 +118,10 @@ public class DragonPlayer : MonoBehaviour {
 			// Store new value
 			m_playable = value;
 
-			// Enable/disable all the components that make the dragon playable
-			// Add as many as needed
-			// GetComponent<DragonControlPlayer>().enabled = value;	// Move around
-			GetComponent<DragonEatBehaviour>().enabled = value;		// Eat stuff
+            // Enable/disable all the components that make the dragon playable
+            // Add as many as needed
+            // GetComponent<DragonControlPlayer>().enabled = value;	// Move around
+            if (m_dragonEatBehaviour != null) m_dragonEatBehaviour.enabled = value;// Eat stuff
 			GetComponent<DragonHealthBehaviour>().enabled = value;	// Receive damage
 			GetComponent<DragonBoostBehaviour>().enabled = value;	// Boost
 		}
@@ -615,7 +615,8 @@ public class DragonPlayer : MonoBehaviour {
 
 	public void StartIntroMovement( bool useLevelEditor = false )
 	{
-		m_dragonEatBehaviour.enabled = true;
+        if(m_dragonEatBehaviour != null)
+		    m_dragonEatBehaviour.enabled = true;
 		GameObject spawnPointObj = null;
 		if(useLevelEditor) {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
@@ -870,12 +871,13 @@ public class DragonPlayer : MonoBehaviour {
 	}
 	public void PauseEating()
 	{
-		m_dragonEatBehaviour.PauseEating();
+        if (m_dragonEatBehaviour != null)
+		    m_dragonEatBehaviour.PauseEating();
 	}
 
 	public void TryResumeEating()
 	{
-		if (CanIResumeEating())
+		if (CanIResumeEating() && m_dragonEatBehaviour != null)
 			m_dragonEatBehaviour.ResumeEating();
 	}
 

@@ -33,9 +33,9 @@ GameObject:
   - component: {fileID: 11442574}
   - component: {fileID: 11455772}
   - component: {fileID: 11487054}
-  - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 114585417369074534}
   m_Layer: 12
   m_Name: PF_DragonHelicopter
   m_TagString: Player
@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -169.89583, y: 105.01166, z: -12.543285}
+  m_LocalPosition: {x: -171.5231, y: 106.909225, z: -15.896951}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -794,6 +794,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1015651459064182
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4375371460449288}
+  - component: {fileID: 114729026297690748}
+  m_Layer: 12
+  m_Name: Machinegun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1039213011156268
 GameObject:
   m_ObjectHideFlags: 1
@@ -912,6 +928,7 @@ GameObject:
   - component: {fileID: 4386827514685816}
   - component: {fileID: 95846892188893758}
   - component: {fileID: 114894148266862562}
+  - component: {fileID: 114073089386962974}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -1541,8 +1558,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4797803397123450}
+  - component: {fileID: 114781343545021468}
   m_Layer: 12
-  m_Name: GameObject
+  m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1753,9 +1771,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4326386978690468}
-  - component: {fileID: 114356879736278246}
   m_Layer: 12
-  m_Name: Missiles
+  m_Name: PowerAnchors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1846,6 +1863,22 @@ GameObject:
   - component: {fileID: 4819648896140470}
   m_Layer: 0
   m_Name: Master_Dummy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1519046904632100
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4394342256771156}
+  - component: {fileID: 114463517058806796}
+  m_Layer: 12
+  m_Name: Missile2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2980,8 +3013,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4933230024237530}
+  - component: {fileID: 114290099627988926}
   m_Layer: 12
-  m_Name: GameObject
+  m_Name: Missile1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3108,7 +3142,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.04868833, y: 0.6057591, z: 0.037178755, w: 0.7932864}
+  m_LocalRotation: {x: -0.0031617924, y: 0.5576411, z: 0.0021240837, w: 0.83007336}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3867,7 +3901,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4933230024237530}
+  - {fileID: 4394342256771156}
   - {fileID: 4797803397123450}
+  - {fileID: 4375371460449288}
   m_Father: {fileID: 414586}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3954,6 +3990,19 @@ Transform:
   m_Father: {fileID: 490078}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4375371460449288
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1015651459064182}
+  m_LocalRotation: {x: 0.042459812, y: -0.110689074, z: 0.99293303, w: -0.005401596}
+  m_LocalPosition: {x: -0.0000010132791, y: -0.2004242, z: 0.55639654}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4326386978690468}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 12.6710005, y: 5.0280004, z: 181.18199}
 --- !u!4 &4376947776048804
 Transform:
   m_ObjectHideFlags: 1
@@ -4000,6 +4049,19 @@ Transform:
   m_Father: {fileID: 414586}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4394342256771156
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1519046904632100}
+  m_LocalRotation: {x: 0.15237017, y: 0.82907045, z: 0.5338119, w: 0.066861734}
+  m_LocalPosition: {x: 0.38481766, y: 1.3705292, z: -3.4858556}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4326386978690468}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: -59.855003, y: -213.004, z: 40.184002}
 --- !u!4 &4403195173330760
 Transform:
   m_ObjectHideFlags: 1
@@ -4740,13 +4802,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1378751316552190}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.7, y: -0.62, z: -1.92}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.0019403992, y: -0.7122974, z: 0.7018729, w: -0.0017882285}
+  m_LocalPosition: {x: 0.49387676, y: -1.1361008, z: -2.588013}
+  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
   m_Children: []
   m_Father: {fileID: 4326386978690468}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 90.897, y: 340.325, z: 520.313}
 --- !u!4 &4799129679362912
 Transform:
   m_ObjectHideFlags: 1
@@ -5110,13 +5172,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1958246896853062}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.58, y: -0.47, z: -2.01}
+  m_LocalRotation: {x: -0.17084724, y: 0.8262427, z: 0.52818847, w: -0.09566233}
+  m_LocalPosition: {x: -0.38481766, y: 1.3705292, z: -3.4858556}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4326386978690468}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -57.154003, y: -141.375, z: -44.979004}
 --- !u!4 &4933818105337698
 Transform:
   m_ObjectHideFlags: 1
@@ -5251,7 +5313,7 @@ Animator:
   m_GameObject: {fileID: 1094761281916526}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9d71b6d5578530547bcd12094b58f25f, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 540159fd96b3b45719594dae3abc71a1, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -6879,104 +6941,6 @@ MonoBehaviour:
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
---- !u!114 &114000012469074318
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d4f046f2599a458bb03fc1113fe6c5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_minEatAnimTime: 0.1
-  m_eatDistance: 1.1
-  m_eatDetectionRadiusMultiplier: 2.25
-  m_eatDetectionSpeedRadiusMultiplier: 0.1
-  m_holdingBloodParticle:
-    name: PS_Blood_Explosion
-    path: Blood
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1.2
-    orientate: 0
-  m_holdingFreezeParticle:
-    name: PS_IceExplosionSmall
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-    orientate: 0
-  m_burpSound: 
-  m_canEatEntities: 1
-  m_randomSpeedRange:
-    min: 1
-    max: 1.5
 --- !u!114 &114000012705948140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7022,6 +6986,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114073089386962974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1094761281916526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6a7178f5f9142e086c0caa1982c993, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_machinegunDistance: 4
+  m_machinegunAngle: 75
+  m_machingegunAnchor: {fileID: 4375371460449288}
+  m_machinegunParticle: {fileID: 0}
+  m_missilesFireRate: 1
+  m_missilesFirePositions:
+  - {fileID: 4933230024237530}
+  - {fileID: 4394342256771156}
+  m_missilesProjectileName: 
+  m_missilesRange: 10
+  m_bombFireRate: 1
+  m_bombProjectileName: 
+  m_bombFirePosition: {fileID: 4797803397123450}
 --- !u!114 &114121441661292500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7126,6 +7114,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 2
+--- !u!114 &114290099627988926
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1958246896853062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dummy_L_MLauncher_3
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114301989633168440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7152,23 +7155,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114356879736278246
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1500755317974876}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb6a7178f5f9142e086c0caa1982c993, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_fireRate: 1
-  m_firePositions:
-  - {fileID: 4933230024237530}
-  - {fileID: 4797803397123450}
-  m_projectileName: PF_DragonHeliMissile
-  m_dragonRangeMultiplier: 10
 --- !u!114 &114358693023512254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7215,6 +7201,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114463517058806796
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1519046904632100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dummy_R_MLauncher_3
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114563986907158534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7226,6 +7227,104 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114585417369074534
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d4f046f2599a458bb03fc1113fe6c5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minEatAnimTime: 0.1
+  m_eatDistance: 1.6
+  m_eatDetectionRadiusMultiplier: 2.15
+  m_eatDetectionSpeedRadiusMultiplier: 0.1
+  m_holdingBloodParticle:
+    name: PS_Blood_Explosion
+    path: Blood
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1.2
+    orientate: 0
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
+  m_burpSound: 
+  m_canEatEntities: 1
+  m_randomSpeedRange:
+    min: 1
+    max: 1.5
 --- !u!114 &114626458753400776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7267,6 +7366,21 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114729026297690748
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1015651459064182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_HeadMachineGun
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114777803639561814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7279,6 +7393,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dragon_Tail5
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+--- !u!114 &114781343545021468
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1378751316552190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_Body
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
