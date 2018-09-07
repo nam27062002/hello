@@ -407,8 +407,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Movement Setup
 		RecalculateDragonForce();
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
-		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
-		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
+		m_dragonMass = m_dragon.data.mass;
+		m_dragonFricction = m_dragon.data.friction;
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
 		m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
