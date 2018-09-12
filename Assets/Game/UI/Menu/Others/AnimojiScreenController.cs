@@ -85,6 +85,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	private Camera[] m_mainSceneCameras = null;
 	private GameObject m_animojiSceneInstance = null;
 	private HDTongueDetector m_animojiSceneController = null;
+	private UnityARVideo m_unityARVideo = null;
 
 	// Internal logic
 	private float m_tongueReminderTimer = 0f;
@@ -271,6 +272,9 @@ public class AnimojiScreenController : MonoBehaviour {
 				m_animojiSceneController = m_animojiSceneInstance.GetComponentInChildren<HDTongueDetector>();
 				Debug.Assert(m_animojiSceneController != null, "Couldn't find HDTongueDetector!", this);
 
+				m_unityARVideo = m_animojiSceneInstance.GetComponentInChildren<UnityARVideo> ();
+				Debug.Assert (m_unityARVideo != null, "Couldn't find UnityARVideo", this);
+
 				// Initialize controller
 				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
 				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
@@ -352,18 +356,21 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Toggle views
 				SelectUI(true);
 
+				// Turn game back on
+				ToggleMainCameras(true);
+
 				// Unload Animoji Scene
 				m_animojiSceneController.onFaceAdded.RemoveListener(OnFaceDetected);
 				m_animojiSceneController.onTongueLost.RemoveListener(OnTongueLost);
-				m_animojiSceneController = null;
-				GameObject.Destroy(m_animojiSceneInstance);
-				m_animojiSceneInstance = null;
+//				GameObject.Destroy (m_animojiSceneController.gameObject);
+//				m_animojiSceneController = null;
+				
+
+				GameObject.Destroy(m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
+				GameObject.Destroy(m_unityARVideo.gameObject);
 
 				// Switch back to original orientation
 				Screen.orientation = ScreenOrientation.AutoRotation;
-
-				// Turn game back on
-				ToggleMainCameras(true);
 
 				// Restore music
 				AudioController.UnpauseMusic(0.5f);
@@ -372,15 +379,21 @@ public class AnimojiScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 
 				// Close the AR session
-				ARKitManager.SharedInstance.FinishingARSession();
+//				ARKitManager.SharedInstance.FinishingARSession();
 
 				// Finalize AR Game Manager
-				ARGameManager.SharedInstance.UnInitialise();
+//				ARGameManager.SharedInstance.UnInitialise();
+				// Target frame rate restored to 30fps
+				Application.targetFrameRate = 30;
 
 				// Go to OFF state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {
+					GameObject.Destroy(m_animojiSceneInstance);
+					m_animojiSceneInstance = null;
 					ChangeState(State.OFF);
+					Debug.Log (">>>>>>>>>>>>Animoji screen controller: delayed call : changestate(OFF);");
 				}, 0.15f);
+				Debug.Log (">>>>>>>>>>>>Animoji screen controller: Finish state end");
 			} break;
 		}
 	}

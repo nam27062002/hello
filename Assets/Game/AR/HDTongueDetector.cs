@@ -49,7 +49,7 @@ public class HDTongueDetector : MonoBehaviour
 
 	private Dictionary<string, float> m_currentBlendShapes;
 	private AudioSource m_audio = null;
-	private DragonAnimoji m_dragonAnimojiInstance = null;
+	public DragonAnimoji m_dragonAnimojiInstance = null;
 
 	// Events
 	public UnityEvent onFaceAdded = new UnityEvent();
@@ -74,6 +74,11 @@ public class HDTongueDetector : MonoBehaviour
 		return dragonDef.Has("animojiPrefab");
 	}
 
+
+	void OnDestroy()
+	{
+		Destroy(m_dragonAnimojiInstance.gameObject);
+	}
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -109,6 +114,8 @@ public class HDTongueDetector : MonoBehaviour
 		GameObject dragonInstance = GameObject.Instantiate<GameObject>(prefab, m_dragonAnimojiAnchor, false);
 		m_dragonAnimojiInstance = dragonInstance.GetComponentInChildren<DragonAnimoji>();
 		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + ANIMOJI_PREFABS_DIR + prefabPath + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
+
+		m_dragonAnimojiInstance.gameObject.SetActive (false);
 	}
 
 	/// <summary>
@@ -165,6 +172,7 @@ public class HDTongueDetector : MonoBehaviour
 	{
 		m_faceDetected = true;
 		m_currentBlendShapes = anchorData.blendShapes;
+		m_dragonAnimojiInstance.gameObject.SetActive (true);
 		m_dragonAnimojiInstance.ToggleFire(false);
 
 		// Notify listeners
@@ -189,6 +197,7 @@ public class HDTongueDetector : MonoBehaviour
 	{
 		m_faceDetected = false;
 		m_dragonAnimojiInstance.ToggleFire(false);
+		m_dragonAnimojiInstance.gameObject.SetActive (false);
 
 		// Notify listeners
 		ControlPanel.Log(Colors.paleYellow.Tag("FACE REMOVED"));
