@@ -87,7 +87,7 @@ public class DragonHelicopterPowers : MonoBehaviour {
                 {
                     if ( (entity.hideNeedTierMessage ) && !entity.IsEdible( m_tier ) && !m_killEverything)
                         continue;
-                    Vector3 dir = m_machingegunAnchor.forward;
+                    Vector3 dir = -m_machingegunAnchor.right;
                     // Start bite attempt
                     Vector3 heading = (entity.transform.position - arcOrigin);
                     float dot = Vector3.Dot(heading, dir);
@@ -155,7 +155,7 @@ public class DragonHelicopterPowers : MonoBehaviour {
 			{
 				if ( alternateTarget == null ){
 					alternateTarget = preys[i].transform;
-				}else if ( Vector3.Dot( originTransform.forward, preys[i].transform.position - originTransform.position) > 0 ){
+				}else if ( Vector3.Dot( -originTransform.right, preys[i].transform.position - originTransform.position) > 0 ){
 					target = preys[i].transform;
 				}
 			}
@@ -214,7 +214,7 @@ public class DragonHelicopterPowers : MonoBehaviour {
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(m_machingegunAnchor.position, m_machinegunDistance);
 
-        Vector2 dir = (Vector2)m_machingegunAnchor.forward;
+        Vector2 dir = (Vector2)(-m_machingegunAnchor.right);
         dir.Normalize();
         
         Vector2 dUp = dir.RotateDegrees(m_machinegunAngle/2.0f);

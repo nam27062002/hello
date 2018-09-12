@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -171.5231, y: 106.909225, z: -15.896951}
+  m_LocalPosition: {x: -221.96988, y: 102.01861, z: 2.3920307}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -804,7 +804,7 @@ GameObject:
   - component: {fileID: 4375371460449288}
   - component: {fileID: 114729026297690748}
   m_Layer: 12
-  m_Name: Machinegun
+  m_Name: mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -980,6 +980,22 @@ GameObject:
   m_Name: attack_1
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1120850412532480
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4313163229858286}
+  - component: {fileID: 114296837610127538}
+  m_Layer: 12
+  m_Name: Machinegun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -3142,7 +3158,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.0031617924, y: 0.5576411, z: 0.0021240837, w: 0.83007336}
+  m_LocalRotation: {x: -0.05566503, y: 0.42108822, z: 0.025902163, w: 0.90493935}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3861,6 +3877,19 @@ Transform:
   m_Father: {fileID: 4726443600864820}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4313163229858286
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1120850412532480}
+  m_LocalRotation: {x: -0.7025942, y: -0.078850284, z: 0.70290834, w: 0.07787096}
+  m_LocalPosition: {x: -0.000000059604645, y: -0.2004242, z: 0.55639654}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4326386978690468}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 12.6710005, y: 5.0280004, z: 181.18199}
 --- !u!4 &4314126749550600
 Transform:
   m_ObjectHideFlags: 1
@@ -3903,6 +3932,7 @@ Transform:
   - {fileID: 4933230024237530}
   - {fileID: 4394342256771156}
   - {fileID: 4797803397123450}
+  - {fileID: 4313163229858286}
   - {fileID: 4375371460449288}
   m_Father: {fileID: 414586}
   m_RootOrder: 5
@@ -3996,12 +4026,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1015651459064182}
-  m_LocalRotation: {x: 0.042459812, y: -0.110689074, z: 0.99293303, w: -0.005401596}
-  m_LocalPosition: {x: -0.0000010132791, y: -0.2004242, z: 0.55639654}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7024896, y: -0.07880319, z: 0.70301294, w: 0.07791796}
+  m_LocalPosition: {x: 0.00096392643, y: -0.4435196, z: 1.6329195}
+  m_LocalScale: {x: 1.0000012, y: 1.0000021, z: 1.0000013}
   m_Children: []
   m_Father: {fileID: 4326386978690468}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 12.6710005, y: 5.0280004, z: 181.18199}
 --- !u!4 &4376947776048804
 Transform:
@@ -6999,7 +7029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_machinegunDistance: 4
   m_machinegunAngle: 75
-  m_machingegunAnchor: {fileID: 4375371460449288}
+  m_machingegunAnchor: {fileID: 4313163229858286}
   m_machinegunParticle: {fileID: 0}
   m_missilesFireRate: 1
   m_missilesFirePositions:
@@ -7126,6 +7156,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_parentName: Dummy_L_MLauncher_3
+  m_parentRoot: {fileID: 414586}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+--- !u!114 &114296837610127538
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1120850412532480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Dragon_HeadMachineGun
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
@@ -7377,7 +7422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parentName: Dragon_HeadMachineGun
+  m_parentName: Dummy_HeadMachineGun
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
