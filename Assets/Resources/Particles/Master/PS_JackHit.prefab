@@ -55,8 +55,10 @@ GameObject:
   - component: {fileID: 4652781500898188}
   - component: {fileID: 198947096597947530}
   - component: {fileID: 199553033064962490}
+  - component: {fileID: 114040236064238038}
+  - component: {fileID: 114571663622546486}
   m_Layer: 0
-  m_Name: PS_JackHit High
+  m_Name: PS_JackHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,6 +136,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114040236064238038
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706200922372562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b59a055c2689445e3a50e56c1c8e6a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114571663622546486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706200922372562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 1.5
+  m_returnTo: 1
+  m_disableOnInvisible: 1
+  m_alwaysActive: 1
 --- !u!198 &198069119598593576
 ParticleSystem:
   m_ObjectHideFlags: 1
