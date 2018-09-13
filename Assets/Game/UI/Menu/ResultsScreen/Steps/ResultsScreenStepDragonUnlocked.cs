@@ -36,6 +36,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
 
 	// Internal
@@ -117,6 +118,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 		// Stats
 		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(m_dragonData.maxHealth, 0);
 		if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(m_dragonData.baseEnergy, 0);
+		if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(m_dragonData.maxSpeed * 10f, 0);	// x10 to show nicer numbers
 
 		// Price - only SC, dragon is already unlocked!
 		float priceSC = def.GetAsFloat("unlockPriceCoins");
