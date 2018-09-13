@@ -1006,6 +1006,8 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfigAndOptions(ARKitWorldTrackingSessionConfiguration config, UnityARSessionRunOption runOptions)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitWorldTrackingSessionConfiguration config, UnityARSessionRunOption runOptions)");
+
 #if !UNITY_EDITOR && UNITY_IOS
             StartWorldTrackingSessionWithOptions (m_NativeARSession, config, runOptions);
 #elif UNITY_EDITOR
@@ -1015,6 +1017,7 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitWorldTrackingSessionConfiguration config)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitWorldTrackingSessionConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartWorldTrackingSession(m_NativeARSession, config);
 #elif UNITY_EDITOR
@@ -1025,11 +1028,13 @@ namespace UnityEngine.XR.iOS
 
         public void Run()
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.Run()");
             RunWithConfig(new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.Horizontal));
         }
 
         public void RunWithConfigAndOptions(ARKitSessionConfiguration config, UnityARSessionRunOption runOptions)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitSessionConfiguration config, UnityARSessionRunOption runOptions)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartSessionWithOptions (m_NativeARSession, config, runOptions);
 #endif
@@ -1037,6 +1042,7 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitSessionConfiguration config)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitSessionConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartSession(m_NativeARSession, config);
 #endif
@@ -1044,6 +1050,7 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfigAndOptions(ARKitFaceTrackingConfiguration config, UnityARSessionRunOption runOptions)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitFaceTrackingConfiguration config, UnityARSessionRunOption runOptions)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartFaceTrackingSessionWithOptions (m_NativeARSession, config, runOptions);
 #elif UNITY_EDITOR
@@ -1053,6 +1060,7 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitFaceTrackingConfiguration config)
         {
+			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitFaceTrackingConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartFaceTrackingSession(m_NativeARSession, config);
 #elif UNITY_EDITOR

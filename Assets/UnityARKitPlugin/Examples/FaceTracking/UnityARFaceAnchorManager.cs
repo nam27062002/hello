@@ -58,6 +58,6 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		
+		Debug.Log (">>>>>>>>>>>>>>> UnityARFaceAnchorManager.OnDestroy()");
 	}
 }

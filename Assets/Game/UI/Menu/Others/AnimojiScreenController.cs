@@ -86,6 +86,8 @@ public class AnimojiScreenController : MonoBehaviour {
 	private GameObject m_animojiSceneInstance = null;
 	private HDTongueDetector m_animojiSceneController = null;
 	private UnityARVideo m_unityARVideo = null;
+	private UnityARFaceAnchorManager m_unityARFaceAnchorManager = null;
+	private ARCameraTracker m_ARCameraTracker = null;
 
 	// Internal logic
 	private float m_tongueReminderTimer = 0f;
@@ -149,6 +151,11 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		if (m_state == State.OFF) {
+			// if state equals OFF returns
+			return;
+		}
+
 		// Tongue reminder - only in PREVIEW state
 		if(m_state == State.PREVIEW) {
 			// Update tongue reminder timer
@@ -275,6 +282,12 @@ public class AnimojiScreenController : MonoBehaviour {
 				m_unityARVideo = m_animojiSceneInstance.GetComponentInChildren<UnityARVideo> ();
 				Debug.Assert (m_unityARVideo != null, "Couldn't find UnityARVideo", this);
 
+				m_ARCameraTracker = m_animojiSceneInstance.GetComponentInChildren<ARCameraTracker> ();
+				Debug.Assert (m_ARCameraTracker != null, "Couldn't find UnityARVideo", this);
+
+				m_unityARFaceAnchorManager = m_animojiSceneInstance.GetComponentInChildren<UnityARFaceAnchorManager> ();
+				Debug.Assert (m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
+
 				// Initialize controller
 				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
 				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
@@ -363,11 +376,29 @@ public class AnimojiScreenController : MonoBehaviour {
 				m_animojiSceneController.onFaceAdded.RemoveListener(OnFaceDetected);
 				m_animojiSceneController.onTongueLost.RemoveListener(OnTongueLost);
 //				GameObject.Destroy (m_animojiSceneController.gameObject);
-//				m_animojiSceneController = null;
-				
+//				m_animojiSceneController = null;				
 
-				GameObject.Destroy(m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
-				GameObject.Destroy(m_unityARVideo.gameObject);
+				Debug.Log (">>>>>> Destroying UnityARVideo component");
+				GameObject.Destroy (m_unityARVideo.gameObject);
+				m_unityARVideo = null;
+
+				Debug.Log (">>>>>> Destroying DragonAnimoji component");
+				GameObject.Destroy (m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
+				m_animojiSceneController.m_dragonAnimojiInstance = null;
+				Debug.Log (">>>>>> Destroying HDTongueDetector component");
+				m_animojiSceneController.UnsubscribeDelegates ();
+				GameObject.Destroy (m_animojiSceneController.gameObject);
+				m_animojiSceneController = null;
+				Debug.Log (">>>>>> Destroying PF_AnimojiSceneSetup root");
+				GameObject.Destroy(m_animojiSceneInstance);
+				m_animojiSceneInstance = null;
+				Debug.Log (">>>>>> Destroying UnityARFaceAnchorManager component");
+				GameObject.Destroy (m_unityARFaceAnchorManager.gameObject);
+				m_unityARFaceAnchorManager = null;
+				Debug.Log (">>>>>> Destroying ARCameraTracker component");
+				GameObject.Destroy (m_ARCameraTracker.gameObject);
+				m_ARCameraTracker = null;
+//				UnityARSessionNativeInterface.GetARSessionNativeInterface ().RunWithConfigAndOptions (sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
 
 				// Switch back to original orientation
 				Screen.orientation = ScreenOrientation.AutoRotation;
@@ -379,20 +410,21 @@ public class AnimojiScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 
 				// Close the AR session
-//				ARKitManager.SharedInstance.FinishingARSession();
+				ARKitManager.SharedInstance.FinishingARSession();
 
 				// Finalize AR Game Manager
-//				ARGameManager.SharedInstance.UnInitialise();
+				ARGameManager.SharedInstance.UnInitialise();
+
 				// Target frame rate restored to 30fps
 				Application.targetFrameRate = 30;
 
 				// Go to OFF state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {
-					GameObject.Destroy(m_animojiSceneInstance);
-					m_animojiSceneInstance = null;
+//					GameObject.Destroy(m_animojiSceneInstance);
+//					m_animojiSceneInstance = null;
 					ChangeState(State.OFF);
 					Debug.Log (">>>>>>>>>>>>Animoji screen controller: delayed call : changestate(OFF);");
-				}, 0.15f);
+				}, 0.25f);
 				Debug.Log (">>>>>>>>>>>>Animoji screen controller: Finish state end");
 			} break;
 		}
