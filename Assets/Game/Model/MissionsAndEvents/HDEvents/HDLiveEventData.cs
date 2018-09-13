@@ -202,7 +202,7 @@ public abstract class HDLiveEventData {
 				{
 					m_state = State.REFUND;
 				}break;
-                case "7":
+                case "6":
                 case "requires_update":
                 {
                     m_state = State.REQUIRES_UPDATE;
