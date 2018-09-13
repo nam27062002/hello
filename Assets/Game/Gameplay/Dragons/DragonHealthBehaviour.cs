@@ -104,35 +104,37 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update() 
 	{
-		// Apply health drain
-		float drain = GetModifiedDamageForCurrentHealth( m_healthDrainPerSecond, true);
+        if (m_dragon.form == DragonPlayer.Form.MUMMY) {
+            m_dragon.MummyHealthDrain();
+        } else {
+            // Apply health drain
+            float drain = GetModifiedDamageForCurrentHealth(m_healthDrainPerSecond, true);
 
-		// Check power ups 
-		//drain = drain - drain * m_drainModifier / 100.0f;
+            // Check power ups 
+            //drain = drain - drain * m_drainModifier / 100.0f;
 
-		m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
+            m_dragon.AddLife(-drain * Time.deltaTime, DamageType.DRAIN, null);
 
-		// Apply damage over time if not changing area
-		if ( !m_dragon.changingArea )
-		{
-			// Reverse iterating since we will be removing them from the list when expired
-			for(int i = m_dots.Count - 1; i >= 0; i--) {
-				// Apply damage
-				float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
-				ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, m_dots[i].source, false);		// No hit animation!
+            // Apply damage over time if not changing area
+            if (!m_dragon.changingArea) {
+                // Reverse iterating since we will be removing them from the list when expired
+                for (int i = m_dots.Count - 1; i >= 0; i--) {
+                    // Apply damage
+                    float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
+                    ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, m_dots[i].source, false);        // No hit animation!
 
-				// Update timer and check for dot finish
-				m_dots[i].timer -= Time.deltaTime;
-				if(m_dots[i].timer <= 0) {
-					m_dots.RemoveAt(i);
-				}
-			}
-		}
-
-		#if DEBUG
-			if ( Input.GetKeyDown( KeyCode.M) )
-				m_dragon.AddLife( -m_dragon.health, DamageType.NONE, null );
-		#endif
+                    // Update timer and check for dot finish
+                    m_dots[i].timer -= Time.deltaTime;
+                    if (m_dots[i].timer <= 0) {
+                        m_dots.RemoveAt(i);
+                    }
+                }
+            }
+#if DEBUG
+            if (Input.GetKeyDown(KeyCode.M))
+                m_dragon.AddLife(-m_dragon.health, DamageType.NONE, null);
+#endif
+        }
 	}
 
 	//TONI START

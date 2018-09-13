@@ -1,8 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 
 abstract public class IEntity :  MonoBehaviour, ISpawnable {
+    [Flags]
+    public enum Tag {
+        Animal      = (1 << 1),
+        Flying      = (1 << 2),
+        Ghost       = (1 << 3),
+        Goblin      = (1 << 4),
+        Human       = (1 << 5),
+        Machine     = (1 << 6),
+        Witch       = (1 << 7)
+    }
+
+
 	// Used externally to differientiate between types of entities
 	public enum Type {
 		PLAYER,
@@ -30,6 +41,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
             return ENTITY_PREFABS_PATH;
         }
     }
+
+    //----------------------------------------------//
+    [SerializeField][EnumMask] private Tag m_tags = 0;
+    public bool HasTag(Tag _tag) {
+        return (m_tags & _tag) != 0;
+    }
+    //----------------------------------------------//
 
 	private int m_allowEdible;
 	public bool allowEdible { get { return m_allowEdible == 0; } set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } }

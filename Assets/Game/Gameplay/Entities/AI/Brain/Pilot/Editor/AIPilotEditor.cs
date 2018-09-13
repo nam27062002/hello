@@ -167,7 +167,11 @@ public class AIPilotEditor : Editor {
 
 		// Enum
 		else if(_f.FieldType.IsEnum) {
-			return EditorGUILayout.EnumPopup(fieldName, (Enum)_currentValue);
+            if(Attribute.GetCustomAttribute(_f.FieldType, typeof(FlagsAttribute)) != null) {
+                return EditorGUILayout.EnumFlagsField(fieldName, (Enum)_currentValue);
+            } else {
+                return EditorGUILayout.EnumPopup(fieldName, (Enum)_currentValue);
+            }
 		}
 
 		// String
