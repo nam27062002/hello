@@ -10,7 +10,15 @@ public class PetMummyViewControl : ViewControl {
     }
 
 
+    [Separator("Pet Mummy")]
+    [SerializeField] private Vector3 m_basePosition;
+    [SerializeField] private Vector3 m_topPosition;
+
+    [SerializeField] private ParticleSystem m_effect;
+
+
     private DragonPlayer m_dragon;
+    private Transform m_effectTransform;
     private float m_powerStatus;
     private State m_state;
 
@@ -23,16 +31,21 @@ public class PetMummyViewControl : ViewControl {
         }
 
         m_dragon = InstanceManager.player;
+        m_effectTransform = m_effect.transform;
+
         OnInit();
 	}
 
     private void OnInit() {
         m_powerStatus = 1f;
+        m_effect.Stop(true);
         m_state = State.IDLE;
     }
 
     private void onStateExit(int shortName) {
         if (shortName == REVIVE_HASH) {
+            m_effectTransform.localPosition = m_basePosition;
+            m_effect.Play(true);
             m_state = State.POWER_ACTIVE;
         }
     }
@@ -41,14 +54,23 @@ public class PetMummyViewControl : ViewControl {
         base.CustomUpdate();
 
         if (m_state == State.POWER_ACTIVE) {
-            m_powerStatus = m_dragon.health / m_dragon.mummyHealthMax; 
+            m_powerStatus = m_dragon.health / m_dragon.mummyHealthMax;
+
+            m_effectTransform.localPosition = Vector3.Lerp(m_basePosition, m_topPosition, 1f - m_powerStatus);
+
             if (m_powerStatus <= float.Epsilon) {
                 if (m_dragon.HasMummyPowerAvailable()) {
                     OnInit();
                 } else {
                     // destroy it
+                    Object.Destroy(gameObject);
                 }
             }
         }
+    }
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.DrawCube(transform.position + m_basePosition, GameConstants.Vector3.one * 0.25f);
+        Gizmos.DrawCube(transform.position + m_topPosition, GameConstants.Vector3.one * 0.25f);
     }
 }
