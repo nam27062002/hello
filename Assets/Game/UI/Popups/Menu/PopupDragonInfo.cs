@@ -37,6 +37,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private Localizer m_tierInfoText = null;
@@ -143,6 +144,9 @@ public class PopupDragonInfo : MonoBehaviour {
 
 		// Boost
 		m_energyText.text = StringUtils.FormatNumber(m_dragonData.baseEnergy, 0);
+
+		// Speed
+		m_speedText.text = StringUtils.FormatNumber(m_dragonData.maxSpeed * 10f, 0);	// x10 to show nicer numbers
 
 		// Tier data (only if different than the last loaded)
 		if(m_loadedTier != m_dragonData.tier) {

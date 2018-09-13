@@ -85,6 +85,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -100,6 +101,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -158,6 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: FallingRock
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
@@ -195,6 +198,7 @@ MonoBehaviour:
   m_scaleTime: 1
   m_stopAtTarget: 0
   m_dieOutsideFrustum: 0
+  m_dieOnHit: 1
   m_defaultDamage: 7
   m_damageType: 8
   m_radius: 0
@@ -239,6 +243,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onChargeParticle:
     name: 
     path: 
@@ -277,6 +282,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onHitParticle:
     name: PS_IceExplosion
     path: 
@@ -315,6 +321,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatParticle:
     name: PS_IceExplosion
     path: 
@@ -353,6 +360,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnParticle:
     name: PS_IceExplosion
     path: 
@@ -391,6 +399,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_missHitSpawnsParticle: 1
   m_stickOnDragonTime: 0
   m_dieTime: 0

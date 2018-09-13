@@ -130,7 +130,9 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float airGravityModifier{ get; }
     public abstract float waterGravityModifier{ get; }
     public abstract float boostMultiplier{ get; }
-    
+    public virtual float maxSpeed {
+        get { return (maxForce / friction) / mass; }    // Copied from DragonMotion to show stats on the menu
+    }
         // Camera
     public abstract float defaultSize{ get; }
     public abstract float cameraFrameWidthModifier{ get; }    

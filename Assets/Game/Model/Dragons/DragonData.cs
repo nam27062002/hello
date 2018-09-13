@@ -73,6 +73,20 @@ public class DragonData_OLD : IUISelectorItem {
 	private Range m_forceRange = new Range();
 	public float maxForce { get { return GetMaxForceAtLevel(progression.level); }}
 
+	private float m_mass = 1f;
+	public float mass {
+		get { return m_mass; }
+	}
+
+	private float m_friction = 1f;
+	public float friction {
+		get { return m_friction; }
+	}
+
+	public float maxSpeed {
+		get { return (maxForce / m_friction) / m_mass; }	// Copied from DragonMotion to show stats on the menu
+	}
+
 	private Range m_eatSpeedFactorRange = new Range();
 	public float maxEatSpeedFactor { get { return GetMaxEatSpeedFactorAtLevel(progression.level); }}
 
@@ -152,6 +166,8 @@ public class DragonData_OLD : IUISelectorItem {
 		m_healthRange = m_def.GetAsRange("health");
 		//TONI
 		m_forceRange = m_def.GetAsRange("force");
+		m_friction = m_def.GetAsFloat("friction");
+		m_mass = m_def.GetAsFloat("mass");
 		m_eatSpeedFactorRange = m_def.GetAsRange ("eatSpeedFactor");
 		m_energyBaseRange = m_def.GetAsRange("energyBase");
 		//m_baseEnergy = m_def.GetAsFloat("energyBase");
