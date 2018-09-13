@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonHelicopterPowers : MonoBehaviour {
-
-	
-	
-
+public class DragonHelicopterPowers : MonoBehaviour 
+{
 	DragonBoostBehaviour m_playerBoost;
 	DragonMotion m_playerMotion;
+    DragonBreathBehaviour m_playerBreath;
     Animator m_animator;
     int m_powerLevel = 0;
     DragonTier m_tier;
@@ -46,7 +44,8 @@ public class DragonHelicopterPowers : MonoBehaviour {
 	void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
 		m_playerMotion = InstanceManager.player.dragonMotion;
-	
+        m_playerBreath = InstanceManager.player.breathBehaviour;
+        
         m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
         m_tier = InstanceManager.player.data.tier;
         m_animator = GetComponent<Animator>();
@@ -69,7 +68,7 @@ public class DragonHelicopterPowers : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         InstanceManager.player.dragonEatBehaviour.enabled = false;  // Dirty code to test
-		if ( m_playerBoost.IsBoostActive() )
+		if ( m_playerBoost.IsBoostActive() || m_playerBreath.IsFuryOn())
 		{
             if ( !m_machinegunFiring )
             {
@@ -164,9 +163,10 @@ public class DragonHelicopterPowers : MonoBehaviour {
 			target = alternateTarget;
 
         GameObject go = m_missilesPoolHandler.GetInstance();
-        IProjectile projectile = go.GetComponent<IProjectile>();
-            
-        projectile.AttachTo(originTransform);   
+        HelicopterProjectile projectile = go.GetComponent<HelicopterProjectile>();
+        projectile.m_fireTier = m_tier;
+        projectile.transform.position = originTransform.position;
+        projectile.transform.rotation = originTransform.rotation;
 		if ( target != null )
 		{	
 			projectile.Shoot(target, transform.forward, 9999, originTransform);
@@ -202,9 +202,12 @@ public class DragonHelicopterPowers : MonoBehaviour {
         Transform originTransform = m_bombFirePosition;
 
         GameObject go = m_bombsPoolHandler.GetInstance();
-        IProjectile projectile = go.GetComponent<IProjectile>();
-        projectile.AttachTo(originTransform);   
-        projectile.ShootTowards(transform.forward, 100 ,9999, originTransform);
+        HelicopterProjectile projectile = go.GetComponent<HelicopterProjectile>();
+        projectile.m_fireTier = m_tier;
+        projectile.transform.position = originTransform.position;
+        projectile.transform.rotation = originTransform.rotation;
+        projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);
+        
     }
 
     protected virtual void OnDrawGizmos()

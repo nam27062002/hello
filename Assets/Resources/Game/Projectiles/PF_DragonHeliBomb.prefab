@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 114175296510890580}
   - component: {fileID: 114954653416055262}
   m_Layer: 4
-  m_Name: PF_DragonHeliMissile
+  m_Name: PF_DragonHeliBomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,10 +27,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0.00000013155935, y: -0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -208.57246, y: 106.6153, z: -34.341797}
+  m_LocalPosition: {x: -212.44289, y: 106.51788, z: -32.409985}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4397055297022264}
+  - {fileID: 4324105355212466}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cb470657b1c542bfb885d23d4cd392a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_moveType: 1
+  m_moveType: 4
   m_arrowSpeed: 40
   m_arrowMaxDuration: 5
 --- !u!1001 &100100000
@@ -146,29 +146,29 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173528}
   m_IsPrefabParent: 1
---- !u!1 &1211461895836506
+--- !u!1 &1124361100719496
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4397055297022264}
-  - component: {fileID: 33336061545651002}
-  - component: {fileID: 23291186765913870}
+  - component: {fileID: 4324105355212466}
+  - component: {fileID: 33083511209051508}
+  - component: {fileID: 23110323732913528}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4397055297022264
+--- !u!4 &4324105355212466
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
+  m_GameObject: {fileID: 1124361100719496}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -176,12 +176,12 @@ Transform:
   m_Father: {fileID: 408412}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23291186765913870
+--- !u!23 &23110323732913528
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
+  m_GameObject: {fileID: 1124361100719496}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -210,13 +210,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33336061545651002
+--- !u!33 &33083511209051508
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_GameObject: {fileID: 1124361100719496}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &114175296510890580
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -293,5 +293,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
