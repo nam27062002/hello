@@ -28,21 +28,12 @@ public class MenuPlayScreen : MonoBehaviour {
 	public Button m_fbConnectButton;
     public Button m_weiboConnectButton;
 
-    [SerializeField]
-    private GameObject m_incentivizeRoot = null;
+    [SerializeField] private GameObject m_incentivizeRoot = null;
+    [SerializeField] private Localizer m_incentivizeLabelLocalizer = null; 
 
-    [SerializeField]
-    private Localizer m_incentivizeLabelLocalizer = null; 
-
-    private static bool m_firstTimeMenu = true;
-
-    private Transform m_tournamentBtn;
-
-
-
+	// Internal
+	private static bool m_firstTimeMenu = true;
 	private static bool create_mods = true;
-
-
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -53,7 +44,7 @@ public class MenuPlayScreen : MonoBehaviour {
     private void Awake() 
 	{   
         PersistenceFacade.Texts_LocalizeIncentivizedSocial(m_incentivizeLabelLocalizer);
-        m_tournamentBtn = transform.FindTransformRecursive("BtnTournament");
+        
         Refresh();
 
 		//create modifiers HERE
@@ -126,11 +117,6 @@ public class MenuPlayScreen : MonoBehaviour {
 
         m_incentivizeRoot.SetActive(FeatureSettingsManager.instance.IsIncentivisedLoginEnabled() && socialState != UserProfile.ESocialState.LoggedInAndIncentivised);
         m_badge.SetActive(SocialPlatformManager.SharedInstance.GetIsEnabled() && !SocialIsLoggedIn);
-
-        if (m_tournamentBtn)
-        {
-            m_tournamentBtn.gameObject.SetActive(HDLiveEventsManager.instance.m_tournament.EventExists());
-        }
     }    
     
    	
