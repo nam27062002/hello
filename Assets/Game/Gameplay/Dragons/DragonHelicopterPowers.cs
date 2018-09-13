@@ -163,16 +163,18 @@ public class DragonHelicopterPowers : MonoBehaviour
 			target = alternateTarget;
 
         GameObject go = m_missilesPoolHandler.GetInstance();
-        HelicopterProjectile projectile = go.GetComponent<HelicopterProjectile>();
-        projectile.m_fireTier = m_tier;
+        PetProjectile projectile = go.GetComponent<PetProjectile>();
+        projectile.tier = m_tier;
         projectile.transform.position = originTransform.position;
         projectile.transform.rotation = originTransform.rotation;
 		if ( target != null )
-		{	
+		{
+            projectile.motionType = Projectile.MotionType.Homing;
 			projectile.Shoot(target, transform.forward, 9999, originTransform);
 		}
         else 
         {
+            projectile.motionType = Projectile.MotionType.Linear;
             projectile.ShootTowards(transform.forward, go.GetComponent<ProjectileMotion>().m_arrowSpeed, 9999, originTransform);
         }
 			
@@ -202,8 +204,8 @@ public class DragonHelicopterPowers : MonoBehaviour
         Transform originTransform = m_bombFirePosition;
 
         GameObject go = m_bombsPoolHandler.GetInstance();
-        HelicopterProjectile projectile = go.GetComponent<HelicopterProjectile>();
-        projectile.m_fireTier = m_tier;
+        PetProjectile projectile = go.GetComponent<PetProjectile>();
+        projectile.tier = m_tier;
         projectile.transform.position = originTransform.position;
         projectile.transform.rotation = originTransform.rotation;
         projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);

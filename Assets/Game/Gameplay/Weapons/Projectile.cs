@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Projectile : TriggerCallbackReceiver, IProjectile {
 
-	private enum MotionType {
+	public enum MotionType {
 		Linear = 0,
 		Homing,
 		Parabolic,
@@ -29,8 +29,18 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 
 	[SeparatorAttribute("Motion")]
 	[SerializeField] private MotionType m_motionType = MotionType.Linear;
+    public MotionType motionType 
+    { 
+        get { return m_motionType; }
+        set { m_motionType = value; } 
+    }
 	[SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
+    public float speed 
+    { 
+        get { return m_speed; }
+        set { m_speed = value; } 
+    }
 	[SerializeField] private float m_rotationSpeed = 0f;
 	[SerializeField] private RotationAxis m_rotationAxis = RotationAxis.Up;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
@@ -440,15 +450,15 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		m_poolHandler.ReturnInstance(gameObject);
 	}
 
-	public void Explode(bool _triggeredByPlayer) {
+	public void Explode(bool _dealDamage) {
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-            DealExplosiveDamage(_triggeredByPlayer);
+            DealExplosiveDamage(_dealDamage);
 		} else {
-			if (_triggeredByPlayer) {
+			if (_dealDamage) {
                 DealDamage();
 			}
 
-			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
+			if (m_missHitSpawnsParticle || _dealDamage) {				
 				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_transform.rotation);
 			}
 		}
@@ -456,14 +466,14 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		if (!string.IsNullOrEmpty(m_onHitAudio))
 			AudioController.Play(m_onHitAudio, m_transform.position);
 
-        if (m_dieOnHit || !_triggeredByPlayer) {
+        if (m_dieOnHit || !_dealDamage) {
             if (m_entity != null) {
                 if (EntityManager.instance != null) {
                     EntityManager.instance.UnregisterEntity(m_entity);
                 }
             }
 
-            if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
+            if (m_stickOnDragonTime > 0f && _dealDamage) {
                 StickOnCollider();
             } else {
                 Die();
