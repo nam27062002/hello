@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 11404390}
   - component: {fileID: 5476966}
   - component: {fileID: 135304990021057800}
-  - component: {fileID: 114175296510890580}
   - component: {fileID: 114954653416055262}
+  - component: {fileID: 114995174083965744}
   m_Layer: 4
   m_Name: PF_DragonHeliBomb
   m_TagString: Untagged
@@ -217,7 +217,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1124361100719496}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114175296510890580
+--- !u!114 &114954653416055262
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -225,10 +225,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 173528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32940d0579fed4a93820a45a586a5e99, type: 3}
+  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_viewParticle: PS_Fireball
+  offset: {x: 0, y: 0}
+  radius: 2.150628
+  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+--- !u!114 &114995174083965744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319bf25a8079f40a0b7c8d511a5f30bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_viewParticle: 
   m_explosionParticle:
     name: 
     path: 
@@ -268,21 +282,7 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
-  m_fireTier: 2
---- !u!114 &114954653416055262
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 2.150628
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
+  m_fireTier: 0
 --- !u!135 &135304990021057800
 SphereCollider:
   m_ObjectHideFlags: 1
