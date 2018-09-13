@@ -547,32 +547,34 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			_type = MaterialType.NORMAL;
 		}
 		m_materialType = _type;
-        
+
 		// Restore materials
-		for (int i = 0; i < m_renderers.Length; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].sharedMaterials;
-			for (int m = 0; m < materials.Length; m++) {
-				switch (_type) {
-					case MaterialType.GOLD: 	materials[m] = sm_goldenMaterial;  		break;
-					case MaterialType.GOLD_FREEZE: 	materials[m] = sm_goldenFreezeMaterial;  	break;
-					case MaterialType.FREEZE:	materials[m] = m_materialsFrozen[id][m]; break;						
-					case MaterialType.NORMAL: {
-							Material mat = m_materials[id][m]; 
-							if (m_skins.Count > 0) {				
-								for (int s = 0; s < m_skins.Count; s++) {
+		if(m_renderers != null) {
+			for(int i = 0; i < m_renderers.Length; i++) {
+				int id = m_renderers[i].GetInstanceID();
+				Material[] materials = m_renderers[i].sharedMaterials;
+				for(int m = 0; m < materials.Length; m++) {
+					switch(_type) {
+						case MaterialType.GOLD: materials[m] = sm_goldenMaterial; break;
+						case MaterialType.GOLD_FREEZE: materials[m] = sm_goldenFreezeMaterial; break;
+						case MaterialType.FREEZE: materials[m] = m_materialsFrozen[id][m]; break;
+						case MaterialType.NORMAL: {
+							Material mat = m_materials[id][m];
+							if(m_skins.Count > 0) {
+								for(int s = 0; s < m_skins.Count; s++) {
 									float rnd = UnityEngine.Random.Range(0f, 100f);
-									if (rnd < m_skins[s].chance) {
+									if(rnd < m_skins[s].chance) {
 										mat = m_skins[s].skin;
 										break;
 									}
 								}
 							}
 							materials[m] = mat;
-						}	break;
+						} break;
+					}
 				}
+				m_renderers[i].sharedMaterials = materials;
 			}
-			m_renderers[i].sharedMaterials = materials;
 		}
     }
 
