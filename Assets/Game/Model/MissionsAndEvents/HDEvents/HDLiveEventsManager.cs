@@ -178,7 +178,10 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         int max = m_types.Count;
         for (int i = 0; i < max; i++)
         {
-            if (m_managers[i].EventExists() && m_managers[i].data.m_state != HDLiveEventData.State.FINALIZED )
+            if (    m_managers[i].EventExists() && 
+                    m_managers[i].data.m_state != HDLiveEventData.State.FINALIZED &&
+                    m_managers[i].data.m_state != HDLiveEventData.State.REQUIRES_UPDATE
+                    )
             {
                 CacheServerManager.SharedInstance.SetVariable( m_types[i] , m_managers[i].ToJson().ToString());
             }

@@ -147,7 +147,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		if(m_teasingGroup != null) m_teasingGroup.SetActive(state == HDLiveEventData.State.TEASING);
 
 		// Active
-		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning());
+		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning() || m_tournamentManager.RequiresUpdate());
 		if(m_newBanner != null) m_newBanner.gameObject.SetActive(state == HDLiveEventData.State.NOT_JOINED);
 
 		// Rewards
@@ -177,6 +177,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				state == HDLiveEventData.State.TEASING
 				|| state == HDLiveEventData.State.NOT_JOINED
 				|| state == HDLiveEventData.State.JOINED
+                || state == HDLiveEventData.State.REQUIRES_UPDATE
 			);
 
 			// Set text
@@ -221,7 +222,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				case HDLiveEventData.State.TEASING:
 				case HDLiveEventData.State.NOT_JOINED:
 				case HDLiveEventData.State.JOINED:
-				case HDLiveEventData.State.REWARD_AVAILABLE: {
+				case HDLiveEventData.State.REWARD_AVAILABLE: 
+                case HDLiveEventData.State.REQUIRES_UPDATE: 
+                {
 					// Must have a valid definition first
 					if(m_tournamentManager.data.definition != null && m_tournamentManager.data.definition.initialized) {
 						show = true;
@@ -241,7 +244,16 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        if (SceneController.s_playMenuButtonLock == false) {
+        if ( m_tournamentManager.RequiresUpdate() )
+        {
+            // Show update popup!
+            PopupManager.OpenPopupInstant( PopupUpdateEvents.PATH );
+            
+            // Go to tournament info screen
+            HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen("no_tournament");
+        }
+        else if (SceneController.s_playMenuButtonLock == false) 
+        {
             SceneController.s_playMenuButtonLock = true;
 
             // Change game mode

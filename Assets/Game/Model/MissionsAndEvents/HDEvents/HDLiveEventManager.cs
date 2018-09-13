@@ -107,6 +107,16 @@ public abstract class HDLiveEventManager
         return ret;
     }
 
+    public virtual bool RequiresUpdate()
+    {
+        bool ret = false;
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.REQUIRES_UPDATE;
+        }
+        return ret;
+    }
+
     public virtual void CleanData()
     {
         if (data != null){
