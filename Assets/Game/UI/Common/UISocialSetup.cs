@@ -22,15 +22,16 @@ public class UISocialSetup : MonoBehaviour
 		// Aux vars
 		SocialUtils.EPlatform socialPlatform = SocialPlatformManager.SharedInstance.GetPlatform();
 		bool isChina = PlatformUtils.Instance.IsChina();
+		bool isUnderage = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();	// Don't show social platforms or external links to underage players!
 
-		Toggle(m_fbItem, socialPlatform == SocialUtils.EPlatform.Facebook);
-		Toggle(m_twitterItem, !isChina);
-		Toggle(m_instagramItem, !isChina);
+		Toggle(m_fbItem, socialPlatform == SocialUtils.EPlatform.Facebook && !isUnderage);
+		Toggle(m_twitterItem, !isChina && !isUnderage);
+		Toggle(m_instagramItem, !isChina && !isUnderage);
 
-		Toggle(m_webItem, true);    // So far website is enabled everywhere :P
+		Toggle(m_webItem, !isUnderage);
 
-		Toggle(m_weiboItem, socialPlatform == SocialUtils.EPlatform.Weibo);
-		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL));	// Hide it while the URL is not defined
+		Toggle(m_weiboItem, socialPlatform == SocialUtils.EPlatform.Weibo && !isUnderage);
+		Toggle(m_weChatItem, isChina && !string.IsNullOrEmpty(GameSettings.WE_CHAT_URL) && !isUnderage);	// Hide it while the URL is not defined
 	}		
 
 	/// <summary>
