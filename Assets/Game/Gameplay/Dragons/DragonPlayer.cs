@@ -212,6 +212,8 @@ public class DragonPlayer : MonoBehaviour {
     private float m_mummyDrain;
     private List<Modifier> m_mummyModifiers;
 
+    public float mummyHealthMax { get { return m_healthMax * m_mummyHealthFactor; } }
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -569,7 +571,7 @@ public class DragonPlayer : MonoBehaviour {
             Messenger.Broadcast(MessengerEvents.PLAYER_MUMMY_REVIVE);
             m_mummyPowerStacks--;
         }
-        else if (CanUseFreeRevives()) {            
+        else if (CanUseFreeRevives()) {   
             Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
             m_freeRevives--;
         }
