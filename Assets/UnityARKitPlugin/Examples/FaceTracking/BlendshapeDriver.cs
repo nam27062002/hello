@@ -18,7 +18,13 @@ public class BlendshapeDriver : MonoBehaviour {
 		}
 	}
 
-	void FaceAdded (ARFaceAnchor anchorData)
+    private void OnDestroy()
+    {
+        UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
+        UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
+    }
+
+    void FaceAdded (ARFaceAnchor anchorData)
 	{
 		currentBlendShapes = anchorData.blendShapes;
 	}

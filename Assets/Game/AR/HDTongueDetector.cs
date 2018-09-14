@@ -74,17 +74,16 @@ public class HDTongueDetector : MonoBehaviour
 		return dragonDef.Has("animojiPrefab");
 	}
 
-	public void UnsubscribeDelegates()
-	{
-		//Unsubscribe delegates
-		UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
-		UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
-		UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent -= FaceRemoved;
-	}
-
 	void OnDestroy()
 	{
 		Debug.Log (">>>>>>>>>>>>>>>>>>>>>>>>>> HDTongueDetector.OnDestroy()");
+        
+        //Subscribe delegates
+        UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
+        UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
+        UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent -= FaceRemoved;
+
+
 //		Destroy(m_dragonAnimojiInstance.gameObject);
 	}
 	//------------------------------------------------------------------------//
