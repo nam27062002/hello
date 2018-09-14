@@ -25,6 +25,8 @@ public class PhotoScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string ANIMOJI_TUTORIAL_KEY = "ANIMOJI_TUTORIAL";
+
 	// Should be set before navigating to the screen
 	public enum Mode {
 		DRAGON = 0,
@@ -68,6 +70,7 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private GameObject m_arButton = null;
 	[SerializeField] private PhotoScreenARFlow m_arFlow = null;
 	[SerializeField] private GameObject m_animojiButton = null;
+	[SerializeField] private UINotification m_animojiNotification = null;
 
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
@@ -83,6 +86,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 	// AR Internal
 	private bool m_isARAvailable = false;
+	private bool m_isAnimojiAvailable = false;
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
@@ -329,17 +333,26 @@ public class PhotoScreenController : MonoBehaviour {
 		currentMode.dragControl.gameObject.SetActive(false);
 		currentMode.zoomControl.gameObject.SetActive(false);
 
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
         // Initialize AR stuff
         m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
 		m_arFlow.gameObject.SetActive(false);
 
 		// Allow animoji?
-		m_animojiButton.SetActive(
-			m_mode == Mode.DRAGON && 
-			AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon)
-		);
-#endif
+		m_isAnimojiAvailable = (m_mode == Mode.DRAGON) && AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon);
+		m_animojiButton.SetActive(m_isAnimojiAvailable);
+
+		// Animoji tutorial?
+		bool isAnimojiTutorialCompleted = Prefs.GetBoolPlayer(ANIMOJI_TUTORIAL_KEY, false);
+		if(m_isAnimojiAvailable && !isAnimojiTutorialCompleted) {
+			// Show popup (after some delay)
+			UbiBCN.CoroutineManager.DelayedCall(() => {
+				PopupManager.OpenPopupInstant("");  // [AOC] TODO!!
+			}, 1f);
+
+			// Mark tutorial as completed
+			Prefs.SetBoolPlayer(ANIMOJI_TUTORIAL_KEY, true);
+		}
+		m_animojiNotification.Set(m_isAnimojiAvailable && !isAnimojiTutorialCompleted);
 	}
 
 	/// <summary>
