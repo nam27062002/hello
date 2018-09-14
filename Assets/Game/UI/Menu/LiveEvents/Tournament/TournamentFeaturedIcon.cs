@@ -50,6 +50,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	// Internal
 	private HDTournamentManager m_tournamentManager;
 	private bool m_waitingRewardsData = false;
+    private bool m_waitingDefinition = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -266,8 +267,17 @@ public class TournamentFeaturedIcon : MonoBehaviour {
             // Prevent spamming
             if (m_waitingRewardsData) return;
 
-            // Request rewards data and wait for it to be loaded
-            m_tournamentManager.RequestRewards();
+            // if info is from cache wait to recieve definitions!
+            if ( HDLiveEventsManager.instance.m_cacheInfo )
+            {
+                m_waitingDefinition = true;
+                m_tournamentManager.RequestDefinition(true);
+            }
+            else
+            {
+                // Request rewards data and wait for it to be loaded
+                m_tournamentManager.RequestRewards();
+            }            
 
             // Show busy screen
             BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
@@ -311,6 +321,30 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
 		RefreshData();
+        if ( m_waitingDefinition && m_waitingRewardsData )
+        {
+            m_waitingDefinition = false;
+            if ( _error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+            {
+                // Request rewards data and wait for it to be loaded
+                m_tournamentManager.RequestRewards();
+            }
+            else
+            {
+                m_waitingRewardsData = false;
+
+                // Hide busy screen
+                BusyScreen.Hide(this);
+        
+                // Show error message
+                UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+                    LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
+                    new Vector2(0.5f, 0.33f),
+                    this.GetComponentInParent<Canvas>().transform as RectTransform
+                );
+                text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+            }
+        }
 	}
 
 	private void OnStateUpdated() {
