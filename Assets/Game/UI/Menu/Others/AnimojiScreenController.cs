@@ -102,11 +102,16 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <returns><c>true</c> if current device, OS and given dragon support animoji.</returns>
 	/// <param name="_dragonSku">Dragon sku to be checked.</param>
 	public static bool IsSupported(string _dragonSku) {
-		// Editor
-#if (UNITY_EDITOR)
-		// Requested dragon supported?
-		if(!HDTongueDetector.IsDragonSupported(_dragonSku)) return false;
+		return IsDeviceSupported() && HDTongueDetector.IsDragonSupported(_dragonSku);
+	}
 
+	/// <summary>
+	/// Check whether Animoji is supported for current device.
+	/// </summary>
+	/// <returns><c>true</c> if current device and OS support animoji.</returns>
+	public static bool IsDeviceSupported() {
+		// Editor
+#if(UNITY_EDITOR)
 		return true;
 #elif (UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
 		// AR supported?
@@ -117,9 +122,6 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		// ReplayKit supported?
 		if(!ReplayKit.APIAvailable) return false;
-
-		// Requested dragon supported?
-		if(!HDTongueDetector.IsDragonSupported(_dragonSku)) return false;
 
 		return true;
 #else
