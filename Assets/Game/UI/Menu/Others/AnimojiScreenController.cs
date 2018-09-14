@@ -99,12 +99,21 @@ public class AnimojiScreenController : MonoBehaviour {
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Check whether Animoji is supported for current device and dragon.
+	/// Check whether Animoji is supported for current device and a specific dragon.
 	/// </summary>
 	/// <returns><c>true</c> if current device, OS and given dragon support animoji.</returns>
 	/// <param name="_dragonSku">Dragon sku to be checked.</param>
 	public static bool IsSupported(string _dragonSku) {
-		return IsDeviceSupported() && HDTongueDetector.IsDragonSupported(_dragonSku);
+		return IsDeviceSupported() && IsDragonSupported(_dragonSku);
+	}
+
+	/// <summary>
+	/// Check whether Animoji is supported for a specific dragon.
+	/// </summary>
+	/// <returns><c>true</c> if given dragon supports animoji.</returns>
+	/// <param name="_dragonSku">Dragon sku to be checked.</param>
+	public static bool IsDragonSupported(string _dragonSku) {
+		return HDTongueDetector.IsDragonSupported(_dragonSku);
 	}
 
 	/// <summary>

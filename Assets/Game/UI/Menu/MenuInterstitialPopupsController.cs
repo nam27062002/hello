@@ -333,6 +333,30 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		m_popupDisplayed = true;
 	}
 
+	/// <summary>
+	/// Checks the animoji tutorial popup.
+	/// </summary>
+	private void CheckAnimojiTutorial() {
+		// Ignore if a popup has already been displayed in this iteration
+		if(m_popupDisplayed) return;
+
+		// Never if animojis not supported in this device
+		if(!AnimojiScreenController.IsDeviceSupported()) return;
+
+		// Don't if tutorial is already completed
+		if(Prefs.GetBoolPlayer(PopupInfoAnimoji.ANIMOJI_TUTORIAL_KEY, false)) return;
+
+		// Is photo feature available? (FTUX)
+		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentInParent<ShowOnTutorialStep>();
+		if(photoTutorialTrigger != null) {
+			if(!photoTutorialTrigger.Check()) return;
+		}
+
+		// All checks passed! Show the popup
+		m_currentPopup = PopupManager.OpenPopupInstant(PopupInfoAnimoji.PATH);
+		m_popupDisplayed = true;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -355,6 +379,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				// Coming from any screen (high priority)
 				CheckPreRegRewards();
 				CheckShark();
+				CheckAnimojiTutorial();
 
 				// Coming from specific screens
 				switch(_from) {
