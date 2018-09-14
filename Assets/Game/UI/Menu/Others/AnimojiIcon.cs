@@ -48,6 +48,7 @@ public class AnimojiIcon : MonoBehaviour {
 		Refresh();
 
 		// Subscribe to external events
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChange);
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
@@ -56,6 +57,7 @@ public class AnimojiIcon : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChange);
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
@@ -69,6 +71,16 @@ public class AnimojiIcon : MonoBehaviour {
 		// Animoji must be available for current device and selected dragon
 		// AnimojiScreen does all the work for us :)
 		bool animojiSupported = AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon);
+
+		// Don't show in some screens (mainly reward screens which will show the photo button for pets)
+		switch(InstanceManager.menuSceneController.currentScreen) {
+			case MenuScreen.OPEN_EGG:
+			case MenuScreen.EVENT_REWARD:
+			case MenuScreen.PENDING_REWARD:
+			case MenuScreen.TOURNAMENT_REWARD: {
+				animojiSupported = false;
+			} break;
+		}
 
 		// Use animation if possible
 		if(m_animator != null) {
@@ -86,6 +98,15 @@ public class AnimojiIcon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_dragonSku">Sku of the newly selected dragon.</param>
 	private void OnDragonSelected(string _dragonSku) {
+		Refresh();
+	}
+
+	/// <summary>
+	/// Screen change started.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Destination screen.</param>
+	private void OnScreenChange(MenuScreen _from, MenuScreen _to) {
 		Refresh();
 	}
 }
