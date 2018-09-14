@@ -391,7 +391,8 @@ public class DragonParticleController : MonoBehaviour
 	}
 
     public void CastMummyPower() {
-        ParticleSystem ps = ParticleManager.InitLeveledParticle(m_mummyPower, m_reviveAnchor);
+        ParticleSystem ps = ParticleManager.InitLeveledParticle(m_mummyPower, null);
+        ps.transform.position = transform.position;
         ps.gameObject.SetActive(true);
         ps.Play();
     }

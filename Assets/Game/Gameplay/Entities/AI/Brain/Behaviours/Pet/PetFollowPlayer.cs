@@ -47,7 +47,7 @@ namespace AI {
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.petWanderSku);
                 m_speed = dragon.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("wanderSpeedMultiplier");
 
-                m_maxFarDistance = dragon.data.GetScaleAtLevel( dragon.data.progression.maxLevel) * def.GetAsFloat("wanderDistanceMultiplier");				
+                m_maxFarDistance = dragon.data.GetScaleAtLevel( dragon.data.progression.maxLevel);
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {				

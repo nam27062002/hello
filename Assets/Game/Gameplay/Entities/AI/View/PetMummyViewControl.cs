@@ -70,13 +70,12 @@ public class PetMummyViewControl : ViewControl {
                     OnInit();
                 } else {
                     m_timer = m_dyingTimer;
-                    m_machine.isKinematic = true;
+                    m_machine.SetSignal(AI.Signals.Type.FallDown, true);
                     m_animator.SetTrigger(GameConstants.Animator.DEAD);
                     m_state = State.DYING;
                 }
             }
         } else if (m_state == State.DYING) {
-            m_machine.position = m_machine.position + GameConstants.Vector3.down * 5f * Time.deltaTime;
             m_timer -= Time.deltaTime;
             if (m_timer <= 0f) {
                 Object.Destroy(gameObject);
