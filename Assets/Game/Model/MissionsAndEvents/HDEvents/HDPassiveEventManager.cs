@@ -36,27 +36,23 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDPassiveEventManager() {
-		
+		m_data = new HDPassiveEventData();
+        m_passiveEventData = m_data as HDPassiveEventData;
+        m_passiveEventDefinition = m_passiveEventData.definition as HDPassiveEventDefinition;
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~HDPassiveEventManager() {
-		
+        m_data = null;
+        m_passiveEventData = null;
+        m_passiveEventDefinition = null;
 	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Create the data object for this live event manager.
-	/// </summary>
-	public override void BuildData() {
-		m_data = new HDPassiveEventData();
-		m_passiveEventData = m_data as HDPassiveEventData;
-		m_passiveEventDefinition = m_passiveEventData.definition as HDPassiveEventDefinition;
-	}
 
 	/// <summary>
 	/// Check for state changes based on timestamps.

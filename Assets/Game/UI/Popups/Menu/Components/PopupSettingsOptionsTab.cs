@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
 
@@ -24,6 +25,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
+	[SerializeField] private ShowHideAnimator m_languageNameAnim = null;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
 	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
@@ -95,6 +97,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
     }
 
 	void Update() {
+		// Language initialization pending?
 		if (!m_languageInitialized) {
 			// Focus curent language
 			m_languageInitialized = true;
@@ -103,6 +106,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
 				SelectCurrentLanguage();
 				m_languageScrollList.onSelectionChanged.AddListener(OnLanguageSelectionChanged);
+				m_languageScrollList.onBeginDrag.AddListener(OnLanguageDragBegin);
+				m_languageNameAnim.ForceShow(false);
 			}, 1);
 		}
 	}
@@ -156,7 +161,20 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 			}
 		}
 
+		// Notify the rest of the game!
 		Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
+
+		// Make sure language name is visible
+		m_languageNameAnim.ForceShow();
+	}
+
+	/// <summary>
+	/// Language scroll list drag begun.
+	/// </summary>
+	/// <param name="_selectedPoint">Selected point.</param>
+	public void OnLanguageDragBegin(PointerEventData _eventData) {
+		// Hide language name while dragging
+		m_languageNameAnim.Hide(true, false);
 	}
 
 	/// <summary>

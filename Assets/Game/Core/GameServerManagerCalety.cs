@@ -155,6 +155,12 @@ public class GameServerManagerCalety : GameServerManager {
             GameServerManager.SharedInstance.OnLogOut();
         }
 
+        public override void onCountryBlacklisted() {
+            CacheServerManager.SharedInstance.SetCountryBlacklisted(true);
+            GameServerManager.SharedInstance.OnLogOut();
+        }
+
+
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
 			Debug.TaggedLog(tag, "onUserBlackListed");

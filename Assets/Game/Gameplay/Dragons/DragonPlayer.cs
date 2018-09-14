@@ -748,6 +748,10 @@ public class DragonPlayer : MonoBehaviour {
 	public bool IsAlive() {
 		return health > 0;
 	}
+    
+    public bool IsIntroMovement(){
+        return m_dragonMotion.state == DragonMotion.State.Intro;
+    }
 	
 	/// <summary>
 	/// Whether the dragon can take damage or not.

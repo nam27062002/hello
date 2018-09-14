@@ -548,6 +548,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
     		}break;
 			case State.PREWARM_BREATH:
     		{
+                // Reset megafire counter to 0 as soon as it starts
+                SetMegaFireValue(0);
+            
 				m_prewarmFuryTimer = m_prewarmDuration;
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;

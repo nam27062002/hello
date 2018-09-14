@@ -22,7 +22,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 	[SerializeField] private bool m_useAnimator;
 
-	[SeparatorAttribute("Fire Nodes auto setup")]
+    [SeparatorAttribute("Fire Nodes auto setup")]
+    [SerializeField] private MonoBehaviour[] m_viewScripts = new MonoBehaviour[0];
+
+    [SeparatorAttribute("Fire Nodes auto setup")]
 	[SerializeField] private int m_boxelSize = 2;
 	[SerializeField] private float m_hitRadius = 1.5f;
 
@@ -153,7 +156,10 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		enabled = true;
 
 		m_view.SetActive(true);
-		m_viewBurned.SetActive(false);
+        for(int i = 0; i < m_viewScripts.Length; ++i) {
+            m_viewScripts[i].enabled = true;
+        }
+        m_viewBurned.SetActive(false);
 
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Reset();
@@ -189,7 +195,12 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				if (m_useAnimator) {
 					m_view.SetActive(false);
 				}
-				m_viewBurned.SetActive(true);
+
+                for (int i = 0; i < m_viewScripts.Length; ++i) {
+                    m_viewScripts[i].enabled = false;
+                }
+
+                m_viewBurned.SetActive(true);
 
 				SwitchViewToDissolve();
 

@@ -91,7 +91,10 @@ public class ProbabilitySet {
 	public UnityEngine.Random.State randomState {
 		get { 
 			if(!m_randomStateInitialized) {
-				m_randomState = UnityEngine.Random.state;
+                UnityEngine.Random.State oldState = UnityEngine.Random.state;
+                UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+                m_randomState = UnityEngine.Random.state;
+                UnityEngine.Random.state = oldState;
 				m_randomStateInitialized = true;
 			}
 			return m_randomState; 

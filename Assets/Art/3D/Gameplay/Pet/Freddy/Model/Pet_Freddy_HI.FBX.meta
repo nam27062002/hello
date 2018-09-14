@@ -1,9 +1,7 @@
 fileFormatVersion: 2
 guid: 18bde9d6283d549b58686874b98fa5ca
-timeCreated: 1497257181
-licenseType: Pro
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: Fire_Dummy
     100002: Freddy_DivingGoggles_HI
@@ -49,6 +47,7 @@ ModelImporter:
     100082: Pet_Tongue1
     100084: Pet_Tongue2
     100086: Pet_Tongue3
+    100088: Point001
     400000: Fire_Dummy
     400002: Freddy_DivingGoggles_HI
     400004: Freddy_HI
@@ -93,6 +92,7 @@ ModelImporter:
     400082: Pet_Tongue1
     400084: Pet_Tongue2
     400086: Pet_Tongue3
+    400088: Point001
     2300000: Freddy_DivingGoggles_HI
     2300002: Freddy_MetallicArmor_HI
     3300000: Freddy_DivingGoggles_HI
@@ -102,20 +102,25 @@ ModelImporter:
     4300004: Freddy_DivingGoggles_HI
     9500000: //RootNode
     13700000: Freddy_HI
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -123,6 +128,8 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths:
     - Pet_Hip
+    - Pet_Hip/Pet_Head
+    extraUserProperties: []
     clipAnimations: []
     isReadable: 1
   meshes:
@@ -130,13 +137,18 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -146,6 +158,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
