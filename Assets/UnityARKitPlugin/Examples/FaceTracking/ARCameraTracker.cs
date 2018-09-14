@@ -17,6 +17,7 @@ public class ARCameraTracker : MonoBehaviour {
 
 	void OnDestroy()
 	{
+		Debug.Log (">>>>>>>>>>>>>>> ARCameraTracker.OnDestroy()");
 	}
 
 	void FirstFrameUpdate(UnityARCamera cam)
