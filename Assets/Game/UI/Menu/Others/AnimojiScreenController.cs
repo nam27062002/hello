@@ -388,7 +388,6 @@ public class AnimojiScreenController : MonoBehaviour {
 				GameObject.Destroy (m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
 				m_animojiSceneController.m_dragonAnimojiInstance = null;
 				Debug.Log (">>>>>> Destroying HDTongueDetector component");
-				m_animojiSceneController.UnsubscribeDelegates ();
 				GameObject.Destroy (m_animojiSceneController.gameObject);
 				m_animojiSceneController = null;
 				Debug.Log (">>>>>> Destroying PF_AnimojiSceneSetup root");
