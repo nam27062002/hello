@@ -357,6 +357,11 @@ public class DragonPlayer : MonoBehaviour {
 			yield return null;
 		}
 		gameObject.transform.localScale = Vector3.one * m_defaultSize;
+
+        if (m_form == Form.MUMMY) {
+            m_particleController.StartMummySmoke();
+        }
+
 		playable = true;
 	}
 
@@ -492,8 +497,6 @@ public class DragonPlayer : MonoBehaviour {
         //----------------------------------------------------------------
         m_mummyDrain = -((healthMax * m_mummyHealthFactor) / m_mummyTime);
         //----------------------------------------------------------------
-
-        m_particleController.StartMummySmoke();
 
         // Notify revive to game
         Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, ReviveReason.MUMMY);

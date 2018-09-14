@@ -6,20 +6,26 @@ public class PetMummyViewControl : ViewControl {
 
     private enum State {
         IDLE = 0,
-        POWER_ACTIVE
+        POWER_ACTIVE,
+        DYING
     }
 
 
     [Separator("Pet Mummy")]
-    [SerializeField] private Vector3 m_basePosition;
-    [SerializeField] private Vector3 m_topPosition;
+    [SerializeField] private Vector3 m_basePosition = GameConstants.Vector3.zero;
+    [SerializeField] private Vector3 m_topPosition = GameConstants.Vector3.zero;
 
-    [SerializeField] private ParticleSystem m_effect;
+    [SerializeField] private ParticleSystem m_effect = null;
+    [SerializeField] private float m_dyingTimer = 1f;
 
 
     private DragonPlayer m_dragon;
     private Transform m_effectTransform;
+
+    private AI.IMachine m_machine;
+
     private float m_powerStatus;
+    private float m_timer;
     private State m_state;
 
 
@@ -33,6 +39,7 @@ public class PetMummyViewControl : ViewControl {
         m_dragon = InstanceManager.player;
         m_effectTransform = m_effect.transform;
 
+        m_machine = GetComponent<AI.IMachine>();
         OnInit();
 	}
 
@@ -62,9 +69,17 @@ public class PetMummyViewControl : ViewControl {
                 if (m_dragon.HasMummyPowerAvailable()) {
                     OnInit();
                 } else {
-                    // destroy it
-                    Object.Destroy(gameObject);
+                    m_timer = m_dyingTimer;
+                    m_machine.isKinematic = true;
+                    m_animator.SetTrigger(GameConstants.Animator.DEAD);
+                    m_state = State.DYING;
                 }
+            }
+        } else if (m_state == State.DYING) {
+            m_machine.position = m_machine.position + GameConstants.Vector3.down * 5f * Time.deltaTime;
+            m_timer -= Time.deltaTime;
+            if (m_timer <= 0f) {
+                Object.Destroy(gameObject);
             }
         }
     }
