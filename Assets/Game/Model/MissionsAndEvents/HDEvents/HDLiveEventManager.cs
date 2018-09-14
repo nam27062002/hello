@@ -335,13 +335,20 @@ public abstract class HDLiveEventManager
 		HDLiveEventsManager.ResponseLog("Refund", _error, _response);
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
-		{
-			Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
-			UsersManager.currentUser.PushReward(r);			
+
+        switch (outErr) {
+            case HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR:
+            Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
+            UsersManager.currentUser.PushReward(r);
             FinishEvent();
             ClearEvent();
-		}
+            break;
+
+            case HDLiveEventsManager.ComunicationErrorCodes.NOTHING_PENDING:            
+            FinishEvent();
+            ClearEvent();
+            break;
+        }
 	}
 
 #endregion

@@ -76,6 +76,10 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string noiseMapText = "Noise Texture";
         readonly public static string fireAmountText = "Fire amount";
         readonly public static string fireSpeedText = "Fire speed";
+        readonly public static string colorRampMapText = "Color Ramp Texture";
+        readonly public static string colorRampID0Text = "Color Ramp id 0";
+        readonly public static string colorRampID1Text = "Color Ramp id 1";
+        readonly public static string colorRampAmountText = "Color Ramp Amount";
 
         readonly public static string dissolveAmountText = "Dissolve amount";
         readonly public static string dissolveUpperLimitText = "Dissolve upper limit";
@@ -122,6 +126,10 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_dissolveUpperLimit;
     MaterialProperty mp_dissolveLowerLimit;
     MaterialProperty mp_dissolveMargin;
+
+    MaterialProperty mp_colorRampAmount;
+    MaterialProperty mp_colorRampID0;
+    MaterialProperty mp_colorRampID1;
 
     MaterialProperty mp_colorMultiply;
     MaterialProperty mp_colorAdd;
@@ -221,6 +229,10 @@ internal class DragonShaderGUI : ShaderGUI
         mp_dissolveUpperLimit = FindProperty("_DissolveUpperLimit", props);
         mp_dissolveLowerLimit = FindProperty("_DissolveLowerLimit", props);
         mp_dissolveMargin = FindProperty("_DissolveMargin", props);
+
+        mp_colorRampAmount = FindProperty("_ColorRampAmount", props);
+        mp_colorRampID0 = FindProperty("_ColorRampID0", props);
+        mp_colorRampID1 = FindProperty("_ColorRampID1", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
         mp_stencilMask = FindProperty("_StencilMask", props);
@@ -339,6 +351,12 @@ internal class DragonShaderGUI : ShaderGUI
                 materialEditor.ShaderProperty(mp_dissolveUpperLimit, Styles.dissolveUpperLimitText);
                 materialEditor.ShaderProperty(mp_dissolveLowerLimit, Styles.dissolveLowerLimitText);
                 materialEditor.ShaderProperty(mp_dissolveMargin, Styles.dissolveMarginText);
+                break;
+            case 4:     //FXLayer_Colorize
+                materialEditor.TextureProperty(mp_fireMap, Styles.colorRampMapText, true);
+                materialEditor.ShaderProperty(mp_colorRampID0, Styles.colorRampID0Text);
+                materialEditor.ShaderProperty(mp_colorRampID1, Styles.colorRampID1Text);
+                materialEditor.ShaderProperty(mp_colorRampAmount, Styles.colorRampAmountText);
                 break;
         }
 

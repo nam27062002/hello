@@ -65,11 +65,17 @@ namespace Metagame {
 		/// Implementation of the abstract Collect() method.
 		/// </summary>
 		override protected void DoCollect() {
+			// Aux vars
+			string dragonSku = m_def.GetAsString("dragonSku");
+
 			// Own the skin
 			UsersManager.currentUser.wardrobe.SetSkinState(m_sku, Wardrobe.SkinState.OWNED);
 
 			// Immediately equip it!
-			UsersManager.currentUser.EquipDisguise(m_def.GetAsString("dragonSku"), m_sku, true);
+			UsersManager.currentUser.EquipDisguise(dragonSku, m_sku, true);
+
+			// Notify game
+			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_DISGUISE_CHANGE, dragonSku);
 		}
 
 		/// <summary>
