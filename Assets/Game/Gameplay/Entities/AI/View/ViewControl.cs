@@ -119,7 +119,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private Renderer[] m_renderers;
 	private Dictionary<int, List<Material>> m_materials;
 	private Dictionary<int, List<Material>> m_materialsFrozen;
-	private List<Material> m_materialList;
+	protected List<Material> m_materialList;
 
 
 	private int m_vertexCount;
