@@ -236,7 +236,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193748}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.7}
+  m_LocalPosition: {x: 0, y: 0.379, z: -0.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 431226}
@@ -288,7 +288,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -191.2599, y: 100.7465, z: -9.073707}
+  m_LocalPosition: {x: -351.38544, y: 98.296585, z: -4.9571347}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -345,7 +345,6 @@ Transform:
   - {fileID: 4311268015124118}
   - {fileID: 4738184124401418}
   - {fileID: 4338407781323092}
-  - {fileID: 4882570905392054}
   m_Father: {fileID: 414586}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2986,23 +2985,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1993703773380976
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4882570905392054}
-  - component: {fileID: 65591231799378618}
-  - component: {fileID: 114480955019122160}
-  m_Layer: 12
-  m_Name: hit_tail1
-  m_TagString: Player
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!4 &4000010372385576
 Transform:
   m_ObjectHideFlags: 1
@@ -3179,7 +3161,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.0021158261, y: 0.7655374, z: 0.0025175423, w: 0.6433831}
+  m_LocalRotation: {x: -0, y: 0.6621733, z: -0, w: 0.7493507}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4591,19 +4573,6 @@ Transform:
   m_Father: {fileID: 4197767659471300}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4882570905392054
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1993703773380976}
-  m_LocalRotation: {x: -0.010558778, y: 0.707025, z: 0.010557574, w: -0.7070309}
-  m_LocalPosition: {x: 0.0000012295153, y: 0.043928623, z: -0.82810926}
-  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
-  m_Children: []
-  m_Father: {fileID: 431226}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: -24.282001, y: 0, z: 0}
 --- !u!4 &4893443109799798
 Transform:
   m_ObjectHideFlags: 1
@@ -4845,7 +4814,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1896870994859662}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -4874,18 +4843,6 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2.3, y: 0.59, z: 0.61}
-  m_Center: {x: 0, y: 0.04, z: 0}
---- !u!65 &65591231799378618
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1993703773380976}
-  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.04, y: 0.69, z: 0.61}
   m_Center: {x: 0, y: 0.04, z: 0}
 --- !u!65 &65972579512564030
 BoxCollider:
@@ -7052,21 +7009,6 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
---- !u!114 &114480955019122160
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1993703773380976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_parentName: Dragon_Tail1
-  m_parentRoot: {fileID: 414586}
-  m_worldPositionStays: 1
-  m_resetScale: 0
 --- !u!114 &114524651562498104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7172,7 +7114,7 @@ SphereCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193748}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d06b7a7d5a93548118434f079ec35f7f, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
