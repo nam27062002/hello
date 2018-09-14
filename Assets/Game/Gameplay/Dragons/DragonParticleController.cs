@@ -9,11 +9,19 @@ public class DragonParticleController : MonoBehaviour
 	public Transform m_levelUpAnchor;
 	private ParticleSystem m_levelUpInstance;
 
+
 	[Space]
 	public string m_reviveParticle = "Dragon/PS_Revive";
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
 	public ParticleData m_petRevive;
+
+
+    //[Space]
+    private string m_mummyPower = "Dragon/PS_MummyPower";
+    private string m_mummySmoke = "Dragon/PS_MummySmokePower";
+    private ParticleSystem m_mummySmokeInstance;
+
 
 	[Space]
 	public GameObject m_bubbles;
@@ -382,6 +390,23 @@ public class DragonParticleController : MonoBehaviour
 		instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
 	}
 
+    public void CastMummyPower() {
+        ParticleSystem ps = ParticleManager.InitLeveledParticle(m_mummyPower, m_reviveAnchor);
+        ps.gameObject.SetActive(true);
+        ps.Play();
+    }
+
+    public void StartMummySmoke() {
+        m_mummySmokeInstance = ParticleManager.InitLeveledParticle(m_mummySmoke, m_reviveAnchor);
+        m_mummySmokeInstance.gameObject.SetActive(true);
+        m_mummySmokeInstance.Play();
+    }
+
+    public void EndMummySmoke() {
+        m_mummySmokeInstance.Stop();
+        m_toDeactivate.Add(m_mummySmokeInstance);
+    }
+
 	void OnRevive(DragonPlayer.ReviveReason reason)
 	{
 		switch( reason )
@@ -396,6 +421,7 @@ public class DragonParticleController : MonoBehaviour
 					m_toDeactivate.Add( m_reviveInstance );
 				}
 			}break;
+            case DragonPlayer.ReviveReason.MUMMY:
 			case DragonPlayer.ReviveReason.FREE_REVIVE_PET:
 			{
 				

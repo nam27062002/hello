@@ -15,6 +15,7 @@ namespace AI {
 			{
 				m_pilot.Stop();
 				DragonPlayer player = InstanceManager.player;
+                player.particleController.CastMummyPower();
                 player.dragonMotion.OnPetPreFreeRevive();
 
 				float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;

@@ -135,7 +135,12 @@ public class DragonPlayer : MonoBehaviour {
 		get { return m_playable; }
 	}
 
-	// References
+    // References
+    DragonParticleController m_particleController = null;
+    public DragonParticleController particleController {
+        get { return m_particleController; }
+    }
+
 	private DragonBreathBehaviour m_breathBehaviour = null;
 	public DragonBreathBehaviour breathBehaviour
 	{
@@ -279,7 +284,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Initialize stats
 		ResetStats(false);
 
-		// Get external refernces
+        // Get external refernces
+        m_particleController = GetComponentInChildren<DragonParticleController>();
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
@@ -464,9 +470,9 @@ public class DragonPlayer : MonoBehaviour {
         m_invulnerableAfterReviveTimer = m_invulnerableTime;
         m_dragonMotion.Revive();
 
-        //TONI START
+        // TONI START
         m_dragonHeatlhBehaviour.SetReviveBonusTime();
-        //TONI END
+        // TONI END
 
         // Modifiers
         m_mummyModifiers.Add(new ModDragonInvulnerable(null));
@@ -486,6 +492,8 @@ public class DragonPlayer : MonoBehaviour {
         //----------------------------------------------------------------
         m_mummyDrain = -((healthMax * m_mummyHealthFactor) / m_mummyTime);
         //----------------------------------------------------------------
+
+        m_particleController.StartMummySmoke();
 
         // Notify revive to game
         Messenger.Broadcast<ReviveReason>(MessengerEvents.PLAYER_REVIVE, ReviveReason.MUMMY);
@@ -507,6 +515,8 @@ public class DragonPlayer : MonoBehaviour {
     }
 
     private void EndMummyPower() {
+        m_particleController.EndMummySmoke();
+
         // Modifiers
         dragonBoostBehaviour.modInfiniteBoost = false;
 
