@@ -16,7 +16,7 @@ struct v2f {
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
-#if defined(FXLAYER_FIRE)
+#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE)
 	fixed2 screenPos : TEXCOORD1;
 #endif
 };
@@ -60,6 +60,12 @@ uniform sampler2D _FireMap;
 uniform float4 _FireMap_ST;
 uniform float _FireAmount;
 uniform float _FireSpeed;
+#elif defined (FXLAYER_DISSOLVE)
+uniform sampler2D _FireMap;
+uniform float _DissolveAmount;
+uniform float _DissolveLowerLimit;
+uniform float _DissolveUpperLimit;
+uniform float _DissolveMargin;
 #endif
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
@@ -81,7 +87,7 @@ v2f vert(appdata_t v)
 	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
 	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
 #endif
-
+//	v.vertex.x *= 0.25;
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
@@ -117,6 +123,9 @@ v2f vert(appdata_t v)
 
 #if defined(FXLAYER_FIRE)
 	o.screenPos = (v.vertex.xy / v.vertex.w) * _FireMap_ST.xy * 0.1;
+#elif defined(FXLAYER_DISSOLVE)
+	fixed limit = smoothstep(_DissolveUpperLimit, _DissolveLowerLimit + _DissolveMargin, v.vertex.x);
+	o.screenPos = fixed2(0.0, limit);
 #endif
 
 	return o;
@@ -127,7 +136,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 main = tex2D(_MainTex, i.texcoord);
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-#ifdef CUTOFF
+#if defined (CUTOFF) && !defined(FXLAYER_DISSOLVE) 
 	clip(main.a - _Cutoff);
 #endif
 
@@ -186,6 +195,13 @@ fixed4 frag(v2f i) : SV_Target
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
 
+#elif defined (FXLAYER_DISSOLVE)
+	fixed noise = tex2D(_FireMap, i.texcoord).r * _DissolveMargin;
+	fixed limit = i.screenPos.y - noise;
+	fixed border = step(0.01, limit - _DissolveAmount);
+
+	clip(limit - _DissolveAmount);
+	col = lerp(main, fixed4(1.0, 0.3, 0.0, 1.0), 1.0 - border);
 #else
 	col = main;
 

@@ -25,7 +25,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 		SELECTABLE_INTERACTABLE,
 		CANVAS_GROUP_INTERACTABLE
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -66,7 +66,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// Check whether required conditions are met or not.
 	/// </summary>
 	/// <returns>Whether all the conditions to show the object are met or not.</returns>
-	private bool Check() {
+	public bool Check() {
 		// Skip if current user profile is not ready
 		if(UsersManager.currentUser == null) {
 			return true;
@@ -94,7 +94,7 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	/// <summary>
 	/// Check current tutorial state and apply visibility.
 	/// </summary>
-	private void Apply() {
+	public void Apply() {
 		// Toggle on or off?
 		bool toggle = Check();
 

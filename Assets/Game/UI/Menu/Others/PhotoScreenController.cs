@@ -83,6 +83,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 	// AR Internal
 	private bool m_isARAvailable = false;
+	private bool m_isAnimojiAvailable = false;
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
@@ -329,17 +330,13 @@ public class PhotoScreenController : MonoBehaviour {
 		currentMode.dragControl.gameObject.SetActive(false);
 		currentMode.zoomControl.gameObject.SetActive(false);
 
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
         // Initialize AR stuff
         m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
 		m_arFlow.gameObject.SetActive(false);
 
 		// Allow animoji?
-		m_animojiButton.SetActive(
-			m_mode == Mode.DRAGON && 
-			AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon)
-		);
-#endif
+		m_isAnimojiAvailable = (m_mode == Mode.DRAGON) && AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon);
+		m_animojiButton.SetActive(m_isAnimojiAvailable);
 	}
 
 	/// <summary>

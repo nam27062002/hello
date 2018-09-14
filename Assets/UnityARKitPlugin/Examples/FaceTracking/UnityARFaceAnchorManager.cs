@@ -12,6 +12,7 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Debug.Log( "UnityARFaceAnchorManager Start" );
 		m_session = UnityARSessionNativeInterface.GetARSessionNativeInterface();
 
 		Application.targetFrameRate = 60;
@@ -20,19 +21,18 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 		config.enableLightEstimation = true;
 
 		if (config.IsSupported ) {
-			
-			m_session.RunWithConfig (config);
-
+			m_session.RunWithConfigAndOptions (config, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors);
+            Debug.Log( "UnityARFaceAnchorManager Register" );
 			UnityARSessionNativeInterface.ARFaceAnchorAddedEvent += FaceAdded;
 			UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent += FaceUpdated;
 			UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent += FaceRemoved;
-
 		}
 
 	}
 
 	void FaceAdded (ARFaceAnchor anchorData)
 	{
+        Debug.Log( "UnityARFaceAnchorManager FaceAdded" );
 		anchorPrefab.transform.position = UnityARMatrixOps.GetPosition (anchorData.transform);
 		anchorPrefab.transform.rotation = UnityARMatrixOps.GetRotation (anchorData.transform);
 		anchorPrefab.SetActive (true);
@@ -42,22 +42,22 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 	{
 		anchorPrefab.transform.position = UnityARMatrixOps.GetPosition (anchorData.transform);
 		anchorPrefab.transform.rotation = UnityARMatrixOps.GetRotation (anchorData.transform);
+        Debug.Log( "UnityARFaceAnchorManager FaceUpdated ");
+        anchorPrefab.SetActive (true);
 	}
 
 	void FaceRemoved (ARFaceAnchor anchorData)
 	{
+        Debug.Log( "UnityARFaceAnchorManager FaceRemoved" );
 		anchorPrefab.SetActive (false);
 	}
 
 
-
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
 	void OnDestroy()
 	{
 		Debug.Log (">>>>>>>>>>>>>>> UnityARFaceAnchorManager.OnDestroy()");
+        UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
+        UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
+        UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent -= FaceRemoved;
 	}
 }

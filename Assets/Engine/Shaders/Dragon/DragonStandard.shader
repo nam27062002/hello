@@ -39,6 +39,11 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
 		_FireSpeed("Fire speed", float) = 1.0
 
+		_DissolveAmount("Dissolve amount", Range(0.0, 1.0)) = 0.0
+		_DissolveUpperLimit("Dissolve upper", float) = 1.0
+		_DissolveLowerLimit("Dissolve lower limit", float) = -1.0
+		_DissolveMargin("Dissolve margin", float) = 0.1
+
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
@@ -63,7 +68,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(VERTEXOFFSET)] _EnableVertexOffset("Enable vertex offset", Float) = 0.0
 
 		/// Enum Material Properties
-		[KeywordEnum(None, Reflection, Fire)] FXLayer("Additional FX layer", Float) = 0
+		[KeywordEnum(None, Reflection, Fire, Dissolve)] FXLayer("Additional FX layer", Float) = 0
 		[KeywordEnum(Normal, AutoInnerLight, BlinkLights)] SelfIlluminate("Additional FX layer", Float) = 0
 			
 	}
@@ -106,7 +111,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature	__ VERTEXOFFSET
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
-			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
+			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
