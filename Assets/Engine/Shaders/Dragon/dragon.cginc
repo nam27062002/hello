@@ -66,6 +66,13 @@ uniform float _DissolveAmount;
 uniform float _DissolveLowerLimit;
 uniform float _DissolveUpperLimit;
 uniform float _DissolveMargin;
+#elif defined (FXLAYER_COLORIZE)
+uniform sampler2D _FireMap;
+uniform float4 _FireMap_TexelSize;
+uniform float4 _FireMap_ST;
+uniform float _ColorRampAmount;
+uniform float _ColorRampID0;
+uniform float _ColorRampID1;
 #endif
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
@@ -202,6 +209,15 @@ fixed4 frag(v2f i) : SV_Target
 
 	clip(limit - _DissolveAmount);
 	col = lerp(main, fixed4(1.0, 0.3, 0.0, 1.0), 1.0 - border);
+
+#elif defined (FXLAYER_COLORIZE)
+	fixed4 col0 = tex2D(_FireMap, fixed2(main.r, (_ColorRampID0 + 0.5) * _FireMap_TexelSize.y));
+	fixed4 col1 = tex2D(_FireMap, fixed2(main.r, (_ColorRampID1 + 0.5) * _FireMap_TexelSize.y));
+	col = lerp(col0, col1, _ColorRampAmount);
+	col = lerp(main, col, detail.b);
+
+//	col = _FireMap_ST;
+
 #else
 	col = main;
 
