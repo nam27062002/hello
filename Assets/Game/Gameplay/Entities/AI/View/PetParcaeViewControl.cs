@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -6,12 +7,15 @@ public class PetParcaeViewControl : ViewControl {
     //--------------------------------------------------------------------------
     [Serializable]
     public class PetParcaeColorsDictionary : SerializableDictionary<string, ColorRange> { }
+    [Serializable]
+    public class PetParcaeRampDictionary : SerializableDictionary<string, int> { }
     //--------------------------------------------------------------------------
 
 
     //--------------------------------------------------------------------------
     [Separator("Pet Parcae")]
     [SerializeField] private PetParcaeColorsDictionary m_colors;
+    [SerializeField] private PetParcaeRampDictionary m_colorRampIndex;
     [SerializeField] private string m_idleKey;
     [SerializeField] private ParticleSystem m_smoke;
     //--------------------------------------------------------------------------
@@ -20,6 +24,10 @@ public class PetParcaeViewControl : ViewControl {
     //--------------------------------------------------------------------------
     private ColorRange m_currentColor;
     private bool m_applyColor;
+
+    private int m_rampIndexA;
+    private int m_rampIndexB;
+    private float m_rampT;
     //--------------------------------------------------------------------------
 
 
@@ -27,6 +35,9 @@ public class PetParcaeViewControl : ViewControl {
         base.Awake();
 
         m_currentColor = m_colors.Get(m_idleKey);
+        m_rampIndexA = m_rampIndexB = m_colorRampIndex.Get(m_idleKey);
+
+        m_rampT = 1f;
         ApplyColor();
     }
 
@@ -35,6 +46,13 @@ public class PetParcaeViewControl : ViewControl {
 
         if (m_applyColor) {
             ApplyColor();
+        }
+
+        if (m_rampT < 1f) {
+            m_rampT += Time.deltaTime;
+            for (int i = 0; i < m_materialList.Count; ++i) {
+                m_materialList[i].SetFloat("_ColorRampAmount", m_rampT);
+            }
         }
     }
 
@@ -47,6 +65,12 @@ public class PetParcaeViewControl : ViewControl {
         ColorRange color = m_colors.Get(_key);
         if (m_currentColor != color) {
             m_currentColor = color;
+
+            m_rampIndexA = m_rampIndexB;
+            m_rampIndexB = m_colorRampIndex.Get(_key);
+
+            m_rampT = 0f;
+
             m_applyColor = true;
         }
     }
@@ -61,6 +85,13 @@ public class PetParcaeViewControl : ViewControl {
             gradient.color = m_currentColor.GetRandom();
         }
         main.startColor = gradient;
+
+        // update materials
+        for (int i = 0; i < m_materialList.Count; ++i) {
+            m_materialList[i].SetFloat("_ColorRampID0", m_rampIndexA);
+            m_materialList[i].SetFloat("_ColorRampID1", m_rampIndexB);
+            m_materialList[i].SetFloat("_ColorRampAmount", m_rampT);
+        }
 
         m_applyColor = false;
     }

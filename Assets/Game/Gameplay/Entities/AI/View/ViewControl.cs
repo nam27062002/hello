@@ -269,8 +269,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 					Material mat = materials[m];
 					if (m_showDamageFeedback) mat = new Material(materials[m]);
 
-					m_materialList.Add(mat);
-					m_materials[renderID].Add(mat);
+                    if (mat != null) {
+                        m_materialList.Add(mat);
+                    }
+					
+                    m_materials[renderID].Add(mat);
 					if ( mat != null ){
 						m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
 					}else{
