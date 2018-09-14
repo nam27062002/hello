@@ -12,9 +12,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using System.IO;
-using UnityEngine.Rendering;
-using System.Collections.Generic;
-using System.Reflection;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -25,14 +22,14 @@ internal class DragonShaderGUI : ShaderGUI
     //------------------------------------------------------------------------//
     // CONSTANTS AND ENUMERATORS											  //
     //------------------------------------------------------------------------//
-    /*
-        public enum BlendMode
-        {
-            Opaque,
-            Cutout,
-            Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
-        }
-    */
+/*
+    public enum BlendMode
+    {
+        Opaque,
+        Cutout,
+        Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
+    }
+*/
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
@@ -76,9 +73,18 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string additionalFXLayerText = "Additional FX layer";
         readonly public static string reflectionMapText = "Reflection Texture";
         readonly public static string reflectionAmountText = "Reflection amount";
-        readonly public static string fireMapText = "Fire Texture";
+        readonly public static string noiseMapText = "Noise Texture";
         readonly public static string fireAmountText = "Fire amount";
         readonly public static string fireSpeedText = "Fire speed";
+        readonly public static string colorRampMapText = "Color Ramp Texture";
+        readonly public static string colorRampID0Text = "Color Ramp id 0";
+        readonly public static string colorRampID1Text = "Color Ramp id 1";
+        readonly public static string colorRampAmountText = "Color Ramp Amount";
+
+        readonly public static string dissolveAmountText = "Dissolve amount";
+        readonly public static string dissolveUpperLimitText = "Dissolve upper limit";
+        readonly public static string dissolveLowerLimitText = "Dissolve lower limit";
+        readonly public static string dissolveMarginText = "Dissolve margin";
 
         readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
         readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix and water dragon. Applied as (Fire Amount) * (Detail Texture.b)";
@@ -107,7 +113,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_specExponent;
     MaterialProperty mp_fresnel;
     MaterialProperty mp_fresnelColor;
-    //    MaterialProperty mp_ambientAdd;
+//    MaterialProperty mp_ambientAdd;
     MaterialProperty mp_secondLightDir;
     MaterialProperty mp_secondLightColor;
 
@@ -116,6 +122,14 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_fireMap;
     MaterialProperty mp_fireAmount;
     MaterialProperty mp_fireSpeed;
+    MaterialProperty mp_dissolveAmount;
+    MaterialProperty mp_dissolveUpperLimit;
+    MaterialProperty mp_dissolveLowerLimit;
+    MaterialProperty mp_dissolveMargin;
+
+    MaterialProperty mp_colorRampAmount;
+    MaterialProperty mp_colorRampID0;
+    MaterialProperty mp_colorRampID1;
 
     MaterialProperty mp_colorMultiply;
     MaterialProperty mp_colorAdd;
@@ -204,13 +218,21 @@ internal class DragonShaderGUI : ShaderGUI
 
         mp_fresnel = FindProperty("_Fresnel", props);
         mp_fresnelColor = FindProperty("_FresnelColor", props);
-        //        mp_ambientAdd = FindProperty("_AmbientAdd", props);
+//        mp_ambientAdd = FindProperty("_AmbientAdd", props);
 
         mp_reflectionMap = FindProperty("_ReflectionMap", props);
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
         mp_fireMap = FindProperty("_FireMap", props);
         mp_fireAmount = FindProperty("_FireAmount", props);
         mp_fireSpeed = FindProperty("_FireSpeed", props);
+        mp_dissolveAmount = FindProperty("_DissolveAmount", props);
+        mp_dissolveUpperLimit = FindProperty("_DissolveUpperLimit", props);
+        mp_dissolveLowerLimit = FindProperty("_DissolveLowerLimit", props);
+        mp_dissolveMargin = FindProperty("_DissolveMargin", props);
+
+        mp_colorRampAmount = FindProperty("_ColorRampAmount", props);
+        mp_colorRampID0 = FindProperty("_ColorRampID0", props);
+        mp_colorRampID1 = FindProperty("_ColorRampID1", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
         mp_stencilMask = FindProperty("_StencilMask", props);
@@ -264,12 +286,12 @@ internal class DragonShaderGUI : ShaderGUI
         {
             setBlendMode(material, blendMode);
         }
-        /*
-                if (blendMode == 1)
-                {
-                    materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
-                }
-        */
+/*
+        if (blendMode == 1)
+        {
+            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
+        }
+*/
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
         materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
@@ -289,7 +311,7 @@ internal class DragonShaderGUI : ShaderGUI
         {
             materialEditor.ShaderProperty(mp_specExponent, Styles.specularPowerText);
             RotationDrawer.setColor(mp_secondLightColor.colorValue);
-            //            RotationDrawer.setTargetPoint(mp_secondLightDir.vectorValue.x, mp_secondLightDir.vectorValue.y);
+//            RotationDrawer.setTargetPoint(mp_secondLightDir.vectorValue.x, mp_secondLightDir.vectorValue.y);
             RotationDrawer.setSpecularPow(mp_specExponent.floatValue);
             materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
             materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
@@ -318,9 +340,23 @@ internal class DragonShaderGUI : ShaderGUI
 
             case 2:     //FXLayer_Fire
                 EditorGUILayout.HelpBox(Styles.fireLayerText, MessageType.Info);
-                materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, true);
+                materialEditor.TextureProperty(mp_fireMap, Styles.noiseMapText, true);
                 materialEditor.ShaderProperty(mp_fireAmount, Styles.fireAmountText);
                 materialEditor.ShaderProperty(mp_fireSpeed, Styles.fireSpeedText);
+                break;
+
+            case 3:     //FXLayer_Dissolve
+                materialEditor.TextureProperty(mp_fireMap, Styles.noiseMapText, true);
+                materialEditor.ShaderProperty(mp_dissolveAmount, Styles.dissolveAmountText);
+                materialEditor.ShaderProperty(mp_dissolveUpperLimit, Styles.dissolveUpperLimitText);
+                materialEditor.ShaderProperty(mp_dissolveLowerLimit, Styles.dissolveLowerLimitText);
+                materialEditor.ShaderProperty(mp_dissolveMargin, Styles.dissolveMarginText);
+                break;
+            case 4:     //FXLayer_Colorize
+                materialEditor.TextureProperty(mp_fireMap, Styles.colorRampMapText, true);
+                materialEditor.ShaderProperty(mp_colorRampID0, Styles.colorRampID0Text);
+                materialEditor.ShaderProperty(mp_colorRampID1, Styles.colorRampID1Text);
+                materialEditor.ShaderProperty(mp_colorRampAmount, Styles.colorRampAmountText);
                 break;
         }
 
@@ -368,7 +404,7 @@ internal class DragonShaderGUI : ShaderGUI
         {
             bool value = (mp_cullMode.floatValue == 0.0f);
             SetKeyword(material, kw_doubleSided, value);
-            material.SetFloat("_EnableDoublesided", value ? 1.0f : 0.0f);
+            material.SetFloat("_EnableDoublesided", value ? 1.0f: 0.0f);
         }
 
         materialEditor.ShaderProperty(mp_zWrite, Styles.zWriteText);
@@ -389,17 +425,17 @@ internal class DragonShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
-        //        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+//        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         materialEditor.ShaderProperty(mp_stencilMask, Styles.stencilMaskText);
 
-        /*      EditorGUILayout.LabelField(Styles.stencilMaskText);
-                int stencilMask = EditorGUILayout.IntField(material.renderQueue);
-                if (material.renderQueue != renderQueue)
-                {
-                    material.renderQueue = renderQueue;
-                }
-        */
-        //        EditorGUILayout.EndHorizontal();
+/*      EditorGUILayout.LabelField(Styles.stencilMaskText);
+        int stencilMask = EditorGUILayout.IntField(material.renderQueue);
+        if (material.renderQueue != renderQueue)
+        {
+            material.renderQueue = renderQueue;
+        }
+*/
+//        EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.EndVertical();
 
@@ -453,11 +489,11 @@ internal class DragonShaderGUI : ShaderGUI
             case 0:                         //Opaque
                 material.SetOverrideTag("RenderType", "Opaque");
                 material.SetOverrideTag("Queue", "Geometry");
-                material.SetFloat("_SrcBlend", (float)BlendMode.One);
-                material.SetFloat("_DstBlend", (float)BlendMode.Zero);
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
                 material.SetFloat("_ZWrite", 1.0f);
                 ///                material.renderQueue = 2000;
-                material.SetFloat("_Cull", (float)CullMode.Back);
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 SetKeyword(material, kw_cutOff, false);
                 SetKeyword(material, kw_doubleSided, false);
                 SetKeyword(material, kw_opaqueAlpha, true);
@@ -470,11 +506,11 @@ internal class DragonShaderGUI : ShaderGUI
             case 1:                         //Cutout
                 material.SetOverrideTag("RenderType", "TransparentCutout");
                 material.SetOverrideTag("Queue", "AlphaTest");
-                material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 //                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 1.0f);
-                material.SetFloat("_Cull", (float)CullMode.Off);
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
                 SetKeyword(material, kw_cutOff, true);
                 SetKeyword(material, kw_doubleSided, true);
                 SetKeyword(material, kw_opaqueAlpha, false);
@@ -486,11 +522,11 @@ internal class DragonShaderGUI : ShaderGUI
             case 2:                         //Transparent
                 material.SetOverrideTag("RenderType", "Transparent");
                 material.SetOverrideTag("Queue", "Transparent");
-                material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-                material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 //                material.renderQueue = 3000;
                 material.SetFloat("_ZWrite", 0.0f);
-                material.SetFloat("_Cull", (float)CullMode.Back);
+                material.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Back);
                 SetKeyword(material, kw_cutOff, false);
                 SetKeyword(material, kw_doubleSided, true);
                 SetKeyword(material, kw_opaqueAlpha, false);
@@ -518,6 +554,8 @@ internal class DragonShaderGUI : ShaderGUI
     public static void ReplaceOldScenaryShaders()
     {
         Debug.Log("Obtaining material list");
+
+        //        EditorUtility.("Material keyword reset", "Obtaining Material list ...", "");
 
         Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
@@ -684,156 +722,28 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorUtility.SetDirty(mat);
                 sChanged++;
             }
+
         }
 
         Debug.Log(sChanged + " materials changed.");
 
     }
 
-
-    static void DebugMaterial(Material mat)
+    [MenuItem("Tools/Dragon/Mesh bounds")]
+    public static void MeshBounds()
     {
-        Debug.Log("Material name: " + mat.name);
-        Debug.Log("Shader name: " + mat.shader.name);
-
-        int propcount = ShaderUtil.GetPropertyCount(mat.shader);
-        for (int a = 0; a < propcount; a++)
+        Mesh mesh = Selection.activeObject as Mesh;
+        if (mesh != null)
         {
-            string propname = ShaderUtil.GetPropertyName(mat.shader, a);
-            ShaderUtil.ShaderPropertyType proptype = ShaderUtil.GetPropertyType(mat.shader, a);
-            Debug.Log("Propety name: " + propname + " type: " + proptype);
+            Bounds bounds = mesh.bounds;
+            Debug.Log("Bounds: x: " + mesh.bounds.size.x + " y: " + mesh.bounds.size.y + " z: " + mesh.bounds.size.z);
+        }
+        else
+        {
+            Debug.Log("Object isn't a valid mesh");
         }
 
     }
 
-    public static bool RepairDragonMaterial(Material mat)
-    {
-        bool mfixed = false;
-        if (mat.shader.name == "Hungry Dragon/Dragon/Dragon standard")
-        {
-            Texture refTex = mat.GetTexture("_ReflectionMap");
-            Texture fireTex = mat.GetTexture("_FireMap");
 
-            int fxLayer = (int)mat.GetFloat("FXLayer");
-            switch (fxLayer)
-            {
-                case 0:
-                    if (refTex != null)
-                    {
-                        mat.SetTexture("_ReflectionMap", null);
-                        DebugMaterial(mat, "it has no effect layer but contains an unused reflection map");
-                        mfixed = true;
-                    }
-
-                    if (fireTex != null)
-                    {
-                        mat.SetTexture("_FireMap", null);
-                        DebugMaterial(mat, "it has no effect layer but contains an unused fire map");
-                        mfixed = true;
-                    }
-                    break;
-
-                case 1:
-                    if (fireTex != null)
-                    {
-                        mat.SetTexture("_FireMap", null);
-                        DebugMaterial(mat, "it has a reflection layer but contains an unused fire map");
-                        mfixed = true;
-                    }
-
-                    if (mat.GetFloat("_ReflectionAmount") == 0.0f)
-                    {
-                        mat.SetTexture("_ReflectionMap", null);
-                        mat.SetFloat("FXLayer", 0.0f);
-                        DebugMaterial(mat, "it has a reflection layer but reflection amount = 0");
-                        mfixed = true;
-                    }
-                    break;
-
-                case 2:
-                    if (refTex != null)
-                    {
-                        mat.SetTexture("_ReflectionMap", null);
-                        DebugMaterial(mat, "it has a fire layer but contains an unused reflection map");
-                        mfixed = true;
-                    }
-
-                    if (mat.GetFloat("_FireAmount") == 0.0f)
-                    {
-                        mat.SetTexture("_FireMap", null);
-                        mat.SetFloat("FXLayer", 0.0f);
-                        DebugMaterial(mat, "it has a fire layer but fire amount = 0");
-                        mfixed = true;
-                    }
-                    break;
-            }
-
-            int cull = (int)mat.GetFloat("_Cull");
-
-            if (cull != 0 && mat.IsKeywordEnabled(kw_doubleSided))
-            {
-                SetKeyword(mat, kw_doubleSided, false);
-                mat.SetFloat("_EnableDoublesided", 0.0f);
-                DebugMaterial(mat, "its cull mode = " + (cull == 1 ? "Front" : "Back") + " and double sided is set");
-                mfixed = true;
-            }
-
-            if (mfixed)
-            {
-                EditorUtility.SetDirty(mat);
-            }
-        }
-        return mfixed;
-    }
-
-    [MenuItem("Tools/Dragon/Repair materials")]
-    public static void RepairMaterials()
-    {
-        Debug.Log("Obtaining material list");
-
-        Material[] materialList;
-        AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
-
-        Shader shader = Shader.Find("Hungry Dragon/Dragon/Dragon standard");
-
-        int sChanged = 0;
-
-        for (int c = 0; c < materialList.Length; c++)
-        {
-            Material mat = materialList[c];
-            if (RepairDragonMaterial(mat))
-            {
-                sChanged++;
-            }
-//            DebugMaterial(mat);
-        }
-        Debug.Log("Total " + sChanged + " materials changed.");
-    }
-
-    static void DebugMaterial(Material mat, object obj)
-    {
-        Debug.Log("Material: " + mat.name + " " + obj);
-    }
-}
-
-
-public class FileModificationWarning : SaveAssetsProcessor
-{
-    static string[] OnWillSaveAssets(string[] paths)
-    {
-        Debug.Log("OnWillSaveAssets");
-        foreach (string path in paths)
-        {
-            if (path.Contains(".mat"))
-            {
-                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
-                if (mat != null)
-                {
-                    DragonShaderGUI.RepairDragonMaterial(mat);
-                }
-            }
-
-        }
-        return paths;
-    }
 }
