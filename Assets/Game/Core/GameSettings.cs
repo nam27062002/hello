@@ -125,19 +125,25 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
 	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
+	[SerializeField] private ShareData m_shareDataChina = new ShareData();
 	public static ShareData shareData {
 		get {
 			// Select target share data based on platform
-		#if UNITY_IOS
-			return instance.m_shareDataIOS;
-		#else
-			return instance.m_shareDataAndroid;
-		#endif
+			// Also specific data for China!
+			if(PlatformUtils.Instance.IsChina()) {
+				return instance.m_shareDataChina;
+			} else {
+#if UNITY_IOS
+				return instance.m_shareDataIOS;
+#else
+				return instance.m_shareDataAndroid;
+#endif
+			}
 		}
 	}
 
 	// Social Links
-	[Separator("Social Links")]
+	[Space]
 	[SerializeField] private string m_facebookURL = "https://www.facebook.com/HungryDragonGame";
 	public static string FACEBOOK_URL {
 		get { return instance.m_facebookURL; }
