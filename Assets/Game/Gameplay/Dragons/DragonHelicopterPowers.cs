@@ -67,7 +67,7 @@ public class DragonHelicopterPowers : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        InstanceManager.player.dragonEatBehaviour.enabled = false;  // Dirty code to test
+        // InstanceManager.player.dragonEatBehaviour.enabled = false;  // Dirty code to test
 		if ( m_playerBoost.IsBoostActive() || m_playerBreath.IsFuryOn())
 		{
             if ( !m_machinegunFiring )
@@ -170,12 +170,12 @@ public class DragonHelicopterPowers : MonoBehaviour
 		if ( target != null )
 		{
             projectile.motionType = Projectile.MotionType.Homing;
-			projectile.Shoot(target, transform.forward, 9999, originTransform);
+			projectile.Shoot(target, originTransform.forward, 9999, originTransform);
 		}
         else 
         {
             projectile.motionType = Projectile.MotionType.Linear;
-            projectile.ShootTowards(transform.forward, go.GetComponent<ProjectileMotion>().m_arrowSpeed, 9999, originTransform);
+            projectile.ShootTowards(originTransform.forward, projectile.speed, 9999, originTransform);
         }
 			
 	}
