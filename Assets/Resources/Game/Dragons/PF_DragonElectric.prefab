@@ -324,7 +324,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -201.28674, y: 117.95894, z: -20.501839}
+  m_LocalPosition: {x: -212.70052, y: 119.40766, z: -60.929688}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -334,7 +334,6 @@ Transform:
   - {fileID: 4000010580654418}
   - {fileID: 4546326248425088}
   - {fileID: 4992652123397368}
-  - {fileID: 4888064215444996}
   - {fileID: 4861840287144134}
   - {fileID: 4116495168958554}
   m_Father: {fileID: 0}
@@ -1356,22 +1355,6 @@ GameObject:
   - component: {fileID: 4003849102128326}
   m_Layer: 0
   m_Name: Dragon_Tail_2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1254105772429488
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4888064215444996}
-  - component: {fileID: 114644530576529822}
-  m_Layer: 16
-  m_Name: LightningSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2443,7 +2426,7 @@ Transform:
   - {fileID: 4993329950962076}
   - {fileID: 4864273375480212}
   m_Father: {fileID: 414586}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4134279938840336
 Transform:
@@ -3077,7 +3060,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470509311117520}
-  m_LocalRotation: {x: -0.01446503, y: 0.741322, z: 0.015985677, w: 0.67080325}
+  m_LocalRotation: {x: -0.0025812963, y: 0.8058062, z: 0.0035125853, w: 0.5921634}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3133,7 +3116,7 @@ Transform:
   - {fileID: 4818712784776830}
   - {fileID: 4962520249693898}
   m_Father: {fileID: 414586}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4864273375480212
 Transform:
@@ -3173,19 +3156,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4943496017546190}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4888064215444996
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1254105772429488}
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.15, z: -3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 414586}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4889380353624598
 Transform:
@@ -5496,59 +5466,6 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
---- !u!114 &114644530576529822
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1254105772429488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activationMode: 0
-  m_parent: {fileID: 0}
-  m_view: {fileID: 0}
-  m_particleDatas:
-  - name: PS_ElectricWormLightning
-    path: 
-    changeStartColor: 0
-    startColor: {r: 0, g: 0, b: 0, a: 0}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 0}
-      key1: {r: 0, g: 0, b: 0, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-    orientate: 0
 --- !u!114 &114696917699964296
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9538,7 +9455,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1878491178
+  randomSeed: -406200081
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9995,7 +9912,7 @@ ParticleSystem:
     m_MeshNormalOffset: 0
     m_Mesh: {fileID: 0}
     m_MeshRenderer: {fileID: 0}
-    m_SkinnedMeshRenderer: {fileID: 0}
+    m_SkinnedMeshRenderer: {fileID: 137958070439902550}
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 0
     alignToDirection: 0
@@ -16311,7 +16228,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -26210180
+  randomSeed: -1017651788
   InitialModule:
     serializedVersion: 3
     enabled: 1
