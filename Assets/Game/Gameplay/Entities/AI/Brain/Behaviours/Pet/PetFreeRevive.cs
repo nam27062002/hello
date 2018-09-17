@@ -12,62 +12,29 @@ namespace AI {
 			public const string onStartFreeRevive = "onStartFreeRevive";
 
 			PetFreeRevive(){
-				Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnRevive);
 			}
 
 			~PetFreeRevive(){
-				Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnFreeRevive);
+				Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnRevive);
 			}
-
-			private bool m_revive = true;
-			private bool m_executeFreeRevive = false;
+            			
+			private bool m_executeRevive = false;
 			private float m_executingRevive = 0f;
 
 			protected override void OnUpdate(){
-				if ( m_executeFreeRevive ){
-					m_executeFreeRevive = false;
+				if ( m_executeRevive ){
+					m_executeRevive = false;
 					Transition(onStartFreeRevive);
 				}
 			}
-			/*
-			protected override void OnUpdate(){
-				if ( m_executeFreeRevive ){
-					m_executeFreeRevive = false;
-					// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
-					Messenger.Broadcast(GameEvents.PLAYER_PET_PRE_FREE_REVIVE);
 
-					// Make pet lose aura!
-					Transform t = m_machine.transform.FindTransformRecursive("PS_ReviveAura");
-					if (t != null)
-					{
-						ParticleSystem[] particles = t.GetComponentsInChildren<ParticleSystem>();
-						for( int i = 0; i<particles.Length; i++ )
-							particles[i].Stop();
-					}
-
-					// Revive animation
-					m_pilot.PressAction(Pilot.Action.Button_A);
-
-				}
-				else if ( m_executingRevive > 0 )
-				{
-					m_executingRevive -= Time.deltaTime;
-					if ( m_executingRevive <= 0 )
-					{
-						m_pilot.ReleaseAction(Pilot.Action.Button_A);
-						// Hide Harp and Halo
-
-						InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
-					}
-				}
-			}
-			*/
-
-			void OnFreeRevive( DamageType _type, Transform _source ){
-				if (  m_revive && InstanceManager.player != null && !InstanceManager.player.IsAlive() ){
-					m_revive = false;
-					m_executeFreeRevive = true;
-					// Transition(onStartFreeRevive);
+			void OnRevive(){
+                DragonPlayer dragon = InstanceManager.player;
+                if (dragon != null && !dragon.IsAlive()) {
+                    if (dragon.CanUseFreeRevives()) {
+                        m_executeRevive = true;
+                    }
 				}
 			}
 		}

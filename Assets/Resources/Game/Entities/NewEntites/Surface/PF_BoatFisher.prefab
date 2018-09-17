@@ -121,7 +121,6 @@ MonoBehaviour:
   m_waterSplashParticle:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -155,7 +154,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -163,7 +164,6 @@ MonoBehaviour:
   m_onEatenParticle:
     name: PS_Blood_Explosion
     path: Blood
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 1
     startColor: {r: 1, g: 0, b: 0, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -197,11 +197,12 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 0.75
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -235,13 +236,14 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_villager_dead
   m_firePoints: []
   m_burnParticle:
     name: PF_BonfireToon
     path: 
-    offset: {x: 0, y: 1.05, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -275,12 +277,13 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 1.05, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
     path: 
-    offset: {x: 0, y: 0, z: 0}
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -314,7 +317,9 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -334,6 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 32
   m_sku: BoatFisher
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
@@ -534,6 +540,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -549,6 +556,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -627,6 +635,7 @@ MonoBehaviour:
   m_parentName: Human_Spine1
   m_parentRoot: {fileID: 475722}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114253485604361224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -681,6 +690,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[]'
   m_databaseKey: PF_BoatFisher
   m_updateMachinePos: 0
@@ -698,6 +708,7 @@ MonoBehaviour:
   m_parentName: Human_R_Weapon_01
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!136 &136000011231704714
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -720,6 +731,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -735,6 +747,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

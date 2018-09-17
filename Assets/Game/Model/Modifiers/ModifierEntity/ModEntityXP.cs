@@ -11,6 +11,11 @@ public class ModEntityXP : ModifierEntity {
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
+    public ModEntityXP(float _percentage) : base(null) {
+        m_percentage = _percentage;
+        BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
+    }
+
 	public override void Apply() {
 		Entity.AddXpMultiplier(m_percentage);
 	}
