@@ -80,6 +80,11 @@ public class PetMummyViewControl : ViewControl {
                     m_timer = m_dyingTimer;
                     m_machine.SetSignal(AI.Signals.Type.FallDown, true);
                     m_animator.SetTrigger(GameConstants.Animator.DEAD);
+
+                    for (int i = 0; i < m_materialList.Count; ++i) {
+                        m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 1f);
+                    }
+
                     m_state = State.DYING;
                 }
             }
