@@ -53,8 +53,10 @@ public class HUDRevive : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		// Subscribe to external events
-		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+        // Subscribe to external events
+        Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnPlayerStartRevie);
+        Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnPlayerStartRevie);
+        Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 		m_timer.Stop();
@@ -72,8 +74,10 @@ public class HUDRevive : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+        // Unsubscribe from external events
+        Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnPlayerStartRevie);
+        Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnPlayerStartRevie);
+        Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnPlayerRevive);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
@@ -216,7 +220,11 @@ public class HUDRevive : MonoBehaviour {
 		Time.timeScale = 0.25f;
 	}
 
-	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
+    private void OnPlayerStartRevie() {
+        Time.timeScale = 0.25f;
+    }
+
+    private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
 		// Stop timer
 		m_timer.Stop();

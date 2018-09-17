@@ -22,7 +22,7 @@ public class PopupPreRegRewards : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Message/PF_PopupPreRegRewards";
+	public const string PATH = "UI/Popups/OtherInfo/PF_PopupPreRegRewards";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

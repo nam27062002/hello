@@ -456,7 +456,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
@@ -464,7 +463,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
@@ -480,7 +478,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_animator.SetBool(GameConstants.Animator.DRUNK, _active);
 	}
 
-	private void OnPetPreFreeRevive()
+	public void OnPetPreFreeRevive()
 	{
 		m_impulse = Vector3.zero;
 		m_rbody.velocity = m_impulse;
