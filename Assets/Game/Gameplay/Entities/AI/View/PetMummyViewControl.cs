@@ -46,7 +46,7 @@ public class PetMummyViewControl : ViewControl {
     private void OnInit() {
         m_powerStatus = 1f;
         for (int i = 0; i < m_materialList.Count; ++i) {
-            m_materialList[i].SetFloat("_DissolveAmount", 0f);
+            m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 0f);
         }
         m_machine.SetSignal(AI.Signals.Type.FallDown, false);
         m_effect.Stop(true);
@@ -70,7 +70,7 @@ public class PetMummyViewControl : ViewControl {
             m_effectTransform.localPosition = Vector3.Lerp(m_basePosition, m_topPosition, 1f - m_powerStatus);
 
             for (int i = 0; i < m_materialList.Count; ++i) {
-                m_materialList[i].SetFloat("_DissolveAmount", 1f - m_powerStatus);
+                m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 1f - m_powerStatus);
             }
 
             if (m_powerStatus <= float.Epsilon) {

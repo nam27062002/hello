@@ -26,9 +26,17 @@ namespace GameConstants
 		public static readonly int FOG_END = Shader.PropertyToID("_FogEnd");
 		public static readonly int FOG_TEXTURE = Shader.PropertyToID("_FogTexture");
 
+
 		public static readonly int LERP_VALUE = Shader.PropertyToID("_LerpValue");
 		public static readonly int START_TIME = Shader.PropertyToID("_StartTime");
 		public static readonly int START_POSITION = Shader.PropertyToID("_StartPosition");
 
+
+        public static readonly int DISSOLVE_AMOUNT = Shader.PropertyToID("_DissolveAmount");
+
+
+        public static readonly int COLOR_RAMP_ID_0      = Shader.PropertyToID("_ColorRampID0");
+        public static readonly int COLOR_RAMP_ID_1      = Shader.PropertyToID("_ColorRampID1");
+        public static readonly int COLOR_RAMP_AMOUNT    = Shader.PropertyToID("_ColorRampAmount");
 	}
 }
