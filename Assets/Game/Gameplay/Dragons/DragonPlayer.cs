@@ -135,7 +135,12 @@ public class DragonPlayer : MonoBehaviour {
 		get { return m_playable; }
 	}
 
-	// References
+    // References
+    DragonParticleController m_particleController = null;
+    public DragonParticleController particleController {
+        get { return m_particleController; }
+    }
+
 	private DragonBreathBehaviour m_breathBehaviour = null;
 	public DragonBreathBehaviour breathBehaviour
 	{
@@ -212,6 +217,8 @@ public class DragonPlayer : MonoBehaviour {
     private float m_mummyDrain;
     private List<Modifier> m_mummyModifiers;
 
+    public float mummyHealthMax { get { return m_healthMax * m_mummyHealthFactor; } }
+
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -284,7 +291,8 @@ public class DragonPlayer : MonoBehaviour {
 		// Initialize stats
 		ResetStats(false);
 
-		// Get external refernces
+        // Get external refernces
+        m_particleController = GetComponentInChildren<DragonParticleController>();
 		m_breathBehaviour = GetComponent<DragonBreathBehaviour>();
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
@@ -357,6 +365,11 @@ public class DragonPlayer : MonoBehaviour {
 			yield return null;
 		}
 		gameObject.transform.localScale = Vector3.one * m_defaultSize;
+
+        if (m_form == Form.MUMMY) {
+            m_particleController.StartMummySmoke();
+        }
+
 		playable = true;
 	}
 
@@ -470,9 +483,9 @@ public class DragonPlayer : MonoBehaviour {
         m_invulnerableAfterReviveTimer = m_invulnerableTime;
         m_dragonMotion.Revive();
 
-        //TONI START
+        // TONI START
         m_dragonHeatlhBehaviour.SetReviveBonusTime();
-        //TONI END
+        // TONI END
 
         // Modifiers
         m_mummyModifiers.Add(new ModDragonInvulnerable(null));
@@ -513,6 +526,8 @@ public class DragonPlayer : MonoBehaviour {
     }
 
     private void EndMummyPower() {
+        m_particleController.EndMummySmoke();
+
         // Modifiers
         dragonBoostBehaviour.modInfiniteBoost = false;
 
@@ -577,7 +592,7 @@ public class DragonPlayer : MonoBehaviour {
             Messenger.Broadcast(MessengerEvents.PLAYER_MUMMY_REVIVE);
             m_mummyPowerStacks--;
         }
-        else if (CanUseFreeRevives()) {
+        else if (CanUseFreeRevives()) {   
             Messenger.Broadcast(MessengerEvents.PLAYER_FREE_REVIVE);
             m_freeRevives--;
         }

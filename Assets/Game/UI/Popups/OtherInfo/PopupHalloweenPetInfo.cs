@@ -1,4 +1,4 @@
-// PopupSharkPetReward.cs
+// PopupHalloweenPetInfo.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/07/2018.
@@ -18,19 +18,17 @@ using System.Collections.Generic;
 /// Controller for the Pre-registration rewards popup.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupSharkPetReward : PopupInfoPet {
+public class PopupHalloweenPetInfo : PopupInfoPet {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Message/PF_PopupSharkPetReward";
-	public const string PET_SKU = "pet_68";
+	public const string PATH = "UI/Popups/OtherInfo/PF_PopupHalloweenPetInfo";
+	public const string PET_SKU = "pet_69";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Internal
-	private bool m_collected = false;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -70,29 +68,5 @@ public class PopupSharkPetReward : PopupInfoPet {
 
 		// Restore menu HUD
 		InstanceManager.menuSceneController.GetUICanvasGO().SetActive(true);
-	}
-
-	/// <summary>
-	/// The collect button has been pressed. Start the collect flow.
-	/// </summary>
-	public void OnCollectButton() {
-		// Make sure it doesn't happen twice!
-		if(m_collected) return;
-		m_collected = true;
-
-		// Close all open popups
-		PopupManager.Clear(true);
-
-		// Make sure selected dragon is owned
-		InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);  // Current dragon is the last owned selected dragon
-
-		// Move to the pets screen, focusing on the rewarded pet
-		// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
-		MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-			PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
-			petScreen.Initialize(PET_SKU);
-			screensController.GoToScreen(MenuScreen.PETS, true);
-		}, 1);
 	}
 }

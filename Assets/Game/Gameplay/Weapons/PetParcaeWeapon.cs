@@ -16,6 +16,8 @@ public class PetParcaeWeapon : PetMeleeWeapon {
     [SerializeField] private ParcaeModifierDictionary m_modifiers;
     [SerializeField] private float m_modTime = 5f;
 
+    [SerializeField] private PetParcaeViewControl m_view;
+
 
     //--------------------------------------------------------------------------
     private ModData m_currentMod = null;
@@ -58,6 +60,8 @@ public class PetParcaeWeapon : PetMeleeWeapon {
             if (nextMod != m_currentMod) {
                 RemoveMods();
                 ApplyMod(nextMod);
+
+                m_view.SetColor(_e.sku);
             }
             m_modsTimer = m_modTime;
         }
@@ -85,6 +89,8 @@ public class PetParcaeWeapon : PetMeleeWeapon {
 
             m_currentMod = null;
             m_modsTimer = 0f;
+
+            m_view.SetIdleColor();
 
             Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
         }

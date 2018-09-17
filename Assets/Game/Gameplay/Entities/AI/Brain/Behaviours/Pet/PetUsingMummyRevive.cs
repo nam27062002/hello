@@ -15,6 +15,9 @@ namespace AI {
 			{
 				m_pilot.Stop();
 				DragonPlayer player = InstanceManager.player;
+                player.particleController.CastMummyPower();
+                player.dragonMotion.OnPetPreFreeRevive();
+
 				float distance = player.data.maxScale * 6;
 				Vector3 dir = Vector3.back;
 				m_pilot.transform.position = player.transform.position + dir * distance;
