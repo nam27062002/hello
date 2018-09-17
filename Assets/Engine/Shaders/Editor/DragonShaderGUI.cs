@@ -95,6 +95,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
         readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
         readonly public static string blinkLightsSelfIluminationText = "Reptile dragon rings self ilumination.";
+        readonly public static string EmissiveSelfIluminationText = "Emission based on _InnerLightColor.xyz * Detail Texture.r * _InnerLightColor.a";
 
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string cullModeText = "Cull Mode";
@@ -381,6 +382,12 @@ internal class DragonShaderGUI : ShaderGUI
             case 2:     //SELFILLUMINATE_BLINKLIGHTS
                 EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 3:     //SELFILLUMINATE_EMISSIVE
+                EditorGUILayout.HelpBox(Styles.EmissiveSelfIluminationText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
                 materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;
