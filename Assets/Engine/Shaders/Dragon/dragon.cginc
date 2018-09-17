@@ -236,6 +236,9 @@ fixed4 frag(v2f i) : SV_Target
 	float anim = 1.0 + sin(_Time.y * _InnerLightWaveSpeed); // _SinTime.w * 0.5f;
 	fixed3 selfIlluminate = col.xyz * anim * detail.r * _InnerLightColor.xyz * _InnerLightAdd;
 
+#elif defined(SELFILLUMINATE_EMISSIVE)
+	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, detail.r * _InnerLightColor.a * _InnerLightAdd);
+
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination
 

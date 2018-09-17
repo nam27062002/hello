@@ -73,7 +73,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire, Dissolve, Colorize)] FXLayer("Additional FX layer", Float) = 0
-		[KeywordEnum(Normal, AutoInnerLight, BlinkLights)] SelfIlluminate("Additional FX layer", Float) = 0
+		[KeywordEnum(Normal, AutoInnerLight, BlinkLights, Emissive)] SelfIlluminate("Emission layer", Float) = 0
 			
 	}
 
@@ -114,7 +114,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ OPAQUESPECULAR
 			#pragma shader_feature	__ VERTEXOFFSET
 
-			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
+			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
 
 			#include "UnityCG.cginc" 
