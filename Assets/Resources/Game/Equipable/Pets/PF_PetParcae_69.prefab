@@ -610,8 +610,8 @@ MonoBehaviour:
     m_valueList:
     - a: {r: 0.13316432, g: 0, b: 0.19117647, a: 1}
       b: {r: 0.13275862, g: 0, b: 0.25, a: 1}
-    - a: {r: 0, g: 0.43351924, b: 0.6102941, a: 1}
-      b: {r: 0, g: 0.2929513, b: 0.3897059, a: 1}
+    - a: {r: 0.07450981, g: 0.3529412, b: 0.6313726, a: 1}
+      b: {r: 0.04705883, g: 0.14509805, b: 0.37647063, a: 1}
     - a: {r: 0.35851932, g: 0, b: 0.5147059, a: 1}
       b: {r: 0.19447263, g: 0, b: 0.47794116, a: 1}
     - a: {r: 0.3602941, g: 0, b: 0, a: 1}
@@ -622,7 +622,18 @@ MonoBehaviour:
     - Ghost02
     - Ghost03
   m_colorRampIndex:
-    m_valueList: 03000000000000000100000002000000
+    m_valueList: 03000000000000000200000001000000
+    m_keyList:
+    - idle
+    - Ghost01
+    - Ghost02
+    - Ghost03
+  m_colorFresnel:
+    m_valueList:
+    - {r: 0.17647058, g: 0.17647058, b: 0.17647058, a: 0}
+    - {r: 0.028114192, g: 0.13881381, b: 0.38235295, a: 0}
+    - {r: 0.23210424, g: 0.067149654, b: 0.39705884, a: 0}
+    - {r: 0.5661765, g: 0.09773285, b: 0.07077206, a: 0}
     m_keyList:
     - idle
     - Ghost01
@@ -719,7 +730,7 @@ MonoBehaviour:
   m_airMotion:
     m_mass: 10
     m_defaultUpVector: 0
-    m_orientationSpeed: 60
+    m_orientationSpeed: 120
     m_dragonStyleRotation: 1
     m_faceDirection: 1
     m_rollRotation: 0

@@ -9,6 +9,8 @@ public class PetParcaeViewControl : ViewControl {
     public class PetParcaeColorsDictionary : SerializableDictionary<string, ColorRange> { }
     [Serializable]
     public class PetParcaeRampDictionary : SerializableDictionary<string, int> { }
+    [Serializable]
+    public class PetParcaeFresnelDictionary : SerializableDictionary<string, Color> { }
     //--------------------------------------------------------------------------
 
 
@@ -16,6 +18,7 @@ public class PetParcaeViewControl : ViewControl {
     [Separator("Pet Parcae")]
     [SerializeField] private PetParcaeColorsDictionary m_colors;
     [SerializeField] private PetParcaeRampDictionary m_colorRampIndex;
+    [SerializeField] private PetParcaeFresnelDictionary m_colorFresnel;
     [SerializeField] private string m_idleKey;
     [SerializeField] private ParticleSystem m_smoke;
     //--------------------------------------------------------------------------
@@ -25,6 +28,7 @@ public class PetParcaeViewControl : ViewControl {
     private ColorRange m_currentColor;
     private bool m_applyColor;
 
+    private Color m_fresnelColor;
     private int m_rampIndexA;
     private int m_rampIndexB;
     private float m_rampT;
@@ -49,7 +53,7 @@ public class PetParcaeViewControl : ViewControl {
         }
 
         if (m_rampT < 1f) {
-            m_rampT += Time.deltaTime;
+            m_rampT += Time.deltaTime * 0.5f;
             for (int i = 0; i < m_materialList.Count; ++i) {
                 m_materialList[i].SetFloat("_ColorRampAmount", m_rampT);
             }
@@ -68,8 +72,9 @@ public class PetParcaeViewControl : ViewControl {
 
             m_rampIndexA = m_rampIndexB;
             m_rampIndexB = m_colorRampIndex.Get(_key);
-
             m_rampT = 0f;
+
+            m_fresnelColor = m_colorFresnel.Get(_key);
 
             m_applyColor = true;
         }
@@ -91,6 +96,7 @@ public class PetParcaeViewControl : ViewControl {
             m_materialList[i].SetFloat("_ColorRampID0", m_rampIndexA);
             m_materialList[i].SetFloat("_ColorRampID1", m_rampIndexB);
             m_materialList[i].SetFloat("_ColorRampAmount", m_rampT);
+            m_materialList[i].SetColor("_FresnelColor", m_fresnelColor);
         }
 
         m_applyColor = false;
