@@ -359,7 +359,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		int playerLayer = LayerMask.NameToLayer("Player");
 		int groundLayer = LayerMask.NameToLayer("PlayerGround");
 		Collider[] colliders = GetComponentsInChildren<Collider>();
-		List<Collider> hitColliders = new List<Collider>();
+		List<Collider> hitCollidersArray = new List<Collider>();
 		List<Collider> groundColliders = new List<Collider>();
 		for( int i = 0; i<colliders.Length; i++ )
 		{
@@ -367,7 +367,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			if ( colliderLayer == playerLayer)
 			{
 				// hitting collider
-				hitColliders.Add( colliders[i] );
+				hitCollidersArray.Add( colliders[i] );
 			}
 			else if ( colliderLayer == groundLayer )
 			{
@@ -376,8 +376,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			}
 		}
 		m_groundColliders = groundColliders.ToArray();
-		m_hitCollidersSize = hitColliders.Count;
-		m_hitColliders = hitColliders.ToArray();
+		m_hitCollidersSize = hitCollidersArray.Count;
+		m_hitColliders = hitCollidersArray.ToArray();
 
 
 		// Find ground collider
@@ -407,8 +407,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Movement Setup
 		RecalculateDragonForce();
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
-		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
-		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
+		m_dragonMass = m_dragon.data.mass;
+		m_dragonFricction = m_dragon.data.friction;
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
 		m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
@@ -621,7 +621,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 					m_direction = Vector3.right;
 					m_desiredRotation = Quaternion.Euler(0,90.0f,0);
 					m_transform.rotation = m_desiredRotation;
-				}break;
+
+
+                    }break;
 				case State.Latching:
 				{
 					int size = m_groundColliders.Length;
@@ -680,7 +682,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// </summary>
 	void Update() {
 
-#if UNITY_EDITOR	
+#if UNITY_EDITOR
 	if ( Input.GetKeyDown(KeyCode.B) )
 		Bounce( GameConstants.Vector3.up );
 #endif
@@ -1109,7 +1111,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		m_rbody.angularVelocity = m_angularVelocity;
 		if ( m_spinning )
-		{	
+		{
 			float d = Vector3.Dot(m_direction, m_transform.forward);
 			if (d > 0)
 			{
@@ -1378,7 +1380,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		//if ((m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 425 && (m_impulse.y < -10)) {
 		if (m_lastSpeed > (absoluteMaxSpeed * m_dragonAirFreeFallMultiplier) && m_direction.y < 0f) {
 			RotateToDirection (m_direction, false, true);
-		} else 
+		} else
 		{
 			RotateToDirection (m_direction);
 		}
@@ -1530,7 +1532,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		if(blendRate > Mathf.Epsilon)
 		{
-			
+
 			/*
 			float angle = dir.ToAngleDegrees();
 			float roll = angle;
@@ -1543,7 +1545,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 			m_desiredRotation = MathUtils.DragonRotation( rads );
 
 			Vector3 eulerRot 	= m_desiredRotation.eulerAngles;
-			if (m_capVerticalRotation) 
+			if (m_capVerticalRotation)
 			{
 				// top cap
 				if (eulerRot.z > m_capUpRotationAngle && eulerRot.z < 180 - m_capUpRotationAngle)
@@ -1731,28 +1733,28 @@ public class DragonMotion : MonoBehaviour, IMotion {
         if (!m_waterMovement)
         {
             m_waterMovement = true;
-            
+
     		m_waterDeepLimit = false;
-    
+
     		bool createsSplash = false;
     		// Trigger particles
     		if ( m_particleController != null )
     			createsSplash = m_particleController.OnEnterWater( _other );
-    
+
     		// Trigger animation
     		m_animationEventController.OnInsideWater(createsSplash);
-    
+
     		if ( m_state != State.Latching )
     		{
     			if ( m_impulse.y < 0 )
     			{
     				m_impulse = m_impulse * 2.0f;
     			}
-    
+
     			// Change state
     			ChangeState(State.InsideWater);
     		}
-    
+
     		// Notify game
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
         }
@@ -1763,24 +1765,24 @@ public class DragonMotion : MonoBehaviour, IMotion {
         if (m_waterMovement)
         {
             m_waterMovement = false;
-            
+
     		if (m_animator )
     			m_animator.SetBool(GameConstants.Animator.BOOST, false);
-    
+
     		bool createsSplash = false;
     		// Trigger particles
     		if (m_particleController != null)
     			createsSplash = m_particleController.OnExitWater( _other );
-    
+
     		// Trigger animation
     		m_animationEventController.OnExitWater(createsSplash);
-    
+
     		if ( m_state != State.Latching )
     		{
     			// Wait a second
     			ChangeState( State.ExitingWater );
     		}
-    
+
     		// Notify game
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
         }
@@ -1999,7 +2001,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	public void OnAreaChangeEvent(Collider _other)
 	{
-		if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null )
+        //if ( !m_dragon.changingArea && InstanceManager.gameSceneController != null && _other.bounds.Intersects(m_mainGroundCollider.bounds))
+		if ( IsAliveState() && !m_dragon.changingArea && InstanceManager.gameSceneController != null && _other.bounds.Intersects(m_mainGroundCollider.bounds))
 		{
 			string destinationArea = _other.GetComponent<AreaPortal>().m_areaPortal;
 			if ( LevelManager.currentArea != destinationArea )

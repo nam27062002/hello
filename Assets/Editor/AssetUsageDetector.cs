@@ -99,6 +99,17 @@ namespace AssetUsageDetectorNamespace
             return false;
         }
 
+        public bool ContainsObject(Object nodeObject)
+        {
+            for (int i = 0; i < references.Count; i++)
+            {
+                if (references[i].ContainsObject(nodeObject))
+                    return true;
+            }
+
+            return false;
+        }
+
         // Add all the Object's in this container to the set
         public void AddObjectsTo(HashSet<Object> objectsSet)
         {
@@ -145,25 +156,28 @@ namespace AssetUsageDetectorNamespace
             {
                 int[] linksToFollow = referencePathsShortUnique[i].pathLinksToFollow;
 
-                // Find the last two nodes in this path
-                ReferenceNode nodeBeforeLast = referencePathsShortUnique[i].startNode;
-                for (int j = 0; j < linksToFollow.Length - 1; j++)
-                    nodeBeforeLast = nodeBeforeLast[linksToFollow[j]].targetNode;
-
-                // Check if these two nodes are unique
-                bool isUnique = true;
-                for (int j = 0; j < referencePathsShortest.Count; j++)
+                if (linksToFollow.Length > 0)
                 {
-                    ReferencePath path = referencePathsShortest[j];
-                    if (path.startNode == nodeBeforeLast && path.pathLinksToFollow[0] == linksToFollow[linksToFollow.Length - 1])
-                    {
-                        isUnique = false;
-                        break;
-                    }
-                }
+                    // Find the last two nodes in this path
+                    ReferenceNode nodeBeforeLast = referencePathsShortUnique[i].startNode;
+                    for (int j = 0; j < linksToFollow.Length - 1; j++)
+                        nodeBeforeLast = nodeBeforeLast[linksToFollow[j]].targetNode;
 
-                if (isUnique)
-                    referencePathsShortest.Add(new ReferencePath(nodeBeforeLast, new int[1] { linksToFollow[linksToFollow.Length - 1] }));
+                    // Check if these two nodes are unique
+                    bool isUnique = true;
+                    for (int j = 0; j < referencePathsShortest.Count; j++)
+                    {
+                        ReferencePath path = referencePathsShortest[j];
+                        if (path.startNode == nodeBeforeLast && path.pathLinksToFollow[0] == linksToFollow[linksToFollow.Length - 1])
+                        {
+                            isUnique = false;
+                            break;
+                        }
+                    }
+
+                    if (isUnique)
+                        referencePathsShortest.Add(new ReferencePath(nodeBeforeLast, new int[1] { linksToFollow[linksToFollow.Length - 1] }));
+                }
             }
         }
 
@@ -448,6 +462,21 @@ namespace AssetUsageDetectorNamespace
             }
 
             GUILayout.EndHorizontal();
+        }
+
+        public bool ContainsObject(Object nodeObject)
+        {
+            bool returnValue = nodeObject as Object == nodeObject || UnityObject == nodeObject;
+            if (!returnValue && links != null)
+            {
+                int count = links.Count;
+                for (int i = 0; i < count && !returnValue; i++)
+                {
+                    returnValue = links[i].targetNode.ContainsObject(nodeObject);
+                }
+            }
+
+            return returnValue;
         }
 
         // Draw only this node on GUI
@@ -971,6 +1000,8 @@ namespace AssetUsageDetectorNamespace
             }
         }
 
+        private bool searchInApk = true;        
+
         void OnGUI()
         {
             // Make the window scrollable
@@ -1061,92 +1092,101 @@ namespace AssetUsageDetectorNamespace
 
                 GUILayout.Box("SEARCH IN", GL_EXPAND_WIDTH);
 
-                searchInAssetsFolder = EditorGUILayout.ToggleLeft("Project view (Assets folder)", searchInAssetsFolder);
+                searchInApk = EditorGUILayout.ToggleLeft("In APK", searchInApk);
+                searchInApk = !EditorGUILayout.ToggleLeft("Custom", !searchInApk);
 
                 GUILayout.Space(10);
 
-                if (EditorApplication.isPlaying)
+                if (!searchInApk)
                 {
-                    searchInAllScenes = false;
-                    searchInScenesInBuild = false;
+                    searchInAssetsFolder = EditorGUILayout.ToggleLeft("Project view (Assets folder)", searchInAssetsFolder);
+
+                    if (EditorApplication.isPlaying)
+                    {
+                        searchInAllScenes = false;
+                        searchInScenesInBuild = false;
+                    }
+                    else if (searchInAllScenes)
+                        GUI.enabled = false;
+
+                    searchInOpenScenes = EditorGUILayout.ToggleLeft("Currently open (loaded) scene(s)", searchInOpenScenes);
+
+                    if (EditorApplication.isPlaying)
+                        GUI.enabled = false;
+
+                    searchInScenesInBuild = EditorGUILayout.ToggleLeft("Scenes in Build Settings", searchInScenesInBuild);
+
+                    if (searchInScenesInBuild)
+                    {
+                        GUILayout.BeginHorizontal();
+                        GUILayout.Space(35);
+
+                        searchInScenesInBuildTickedOnly = EditorGUILayout.ToggleLeft("Ticked only", searchInScenesInBuildTickedOnly, GL_WIDTH_100);
+                        searchInScenesInBuildTickedOnly = !EditorGUILayout.ToggleLeft("All", !searchInScenesInBuildTickedOnly, GL_WIDTH_100);
+
+                        GUILayout.EndHorizontal();
+                    }
+
+                    if (!EditorApplication.isPlaying)
+                        GUI.enabled = true;
+
+                    searchInAllScenes = EditorGUILayout.ToggleLeft("All scenes in the project", searchInAllScenes);
                 }
-                else if (searchInAllScenes)
-                    GUI.enabled = false;
-
-                searchInOpenScenes = EditorGUILayout.ToggleLeft("Currently open (loaded) scene(s)", searchInOpenScenes);
-
-                if (EditorApplication.isPlaying)
-                    GUI.enabled = false;
-
-                searchInScenesInBuild = EditorGUILayout.ToggleLeft("Scenes in Build Settings", searchInScenesInBuild);
-
-                if (searchInScenesInBuild)
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Space(35);
-
-                    searchInScenesInBuildTickedOnly = EditorGUILayout.ToggleLeft("Ticked only", searchInScenesInBuildTickedOnly, GL_WIDTH_100);
-                    searchInScenesInBuildTickedOnly = !EditorGUILayout.ToggleLeft("All", !searchInScenesInBuildTickedOnly, GL_WIDTH_100);
-
-                    GUILayout.EndHorizontal();
-                }
-
-                if (!EditorApplication.isPlaying)
-                    GUI.enabled = true;
-
-                searchInAllScenes = EditorGUILayout.ToggleLeft("All scenes in the project", searchInAllScenes);
 
                 GUI.enabled = true;
 
                 GUILayout.Space(10);
 
-                GUILayout.Box("SEARCH SETTINGS", GL_EXPAND_WIDTH);
+                if (!searchInApk)
+                {
+                    GUILayout.Box("SEARCH SETTINGS", GL_EXPAND_WIDTH);
 
-                GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.Label(new GUIContent("> Search depth: " + searchDepthLimit, "Depth limit for recursively searching variables of objects"), GL_WIDTH_250);
+                    GUILayout.Label(new GUIContent("> Search depth: " + searchDepthLimit, "Depth limit for recursively searching variables of objects"), GL_WIDTH_250);
 
-                searchDepthLimit = (int)GUILayout.HorizontalSlider(searchDepthLimit, 0, 4);
+                    searchDepthLimit = (int)GUILayout.HorizontalSlider(searchDepthLimit, 0, 4);
 
-                GUILayout.EndHorizontal();
+                    GUILayout.EndHorizontal();
 
-                GUILayout.Label("> Search variables:");
+                    GUILayout.Label("> Search variables:");
 
-                GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.Space(35);
+                    GUILayout.Space(35);
 
-                if (EditorGUILayout.ToggleLeft("Public", (fieldModifiers & BindingFlags.Public) == BindingFlags.Public, GL_WIDTH_100))
-                    fieldModifiers |= BindingFlags.Public;
-                else
-                    fieldModifiers &= ~BindingFlags.Public;
+                    if (EditorGUILayout.ToggleLeft("Public", (fieldModifiers & BindingFlags.Public) == BindingFlags.Public, GL_WIDTH_100))
+                        fieldModifiers |= BindingFlags.Public;
+                    else
+                        fieldModifiers &= ~BindingFlags.Public;
 
-                if (EditorGUILayout.ToggleLeft("Non-public", (fieldModifiers & BindingFlags.NonPublic) == BindingFlags.NonPublic, GL_WIDTH_100))
-                    fieldModifiers |= BindingFlags.NonPublic;
-                else
-                    fieldModifiers &= ~BindingFlags.NonPublic;
+                    if (EditorGUILayout.ToggleLeft("Non-public", (fieldModifiers & BindingFlags.NonPublic) == BindingFlags.NonPublic, GL_WIDTH_100))
+                        fieldModifiers |= BindingFlags.NonPublic;
+                    else
+                        fieldModifiers &= ~BindingFlags.NonPublic;
 
-                GUILayout.EndHorizontal();
+                    GUILayout.EndHorizontal();
 
-                GUILayout.Label("> Search properties (can be slow):");
+                    GUILayout.Label("> Search properties (can be slow):");
 
-                GUILayout.BeginHorizontal();
+                    GUILayout.BeginHorizontal();
 
-                GUILayout.Space(35);
+                    GUILayout.Space(35);
 
-                if (EditorGUILayout.ToggleLeft("Public", (propertyModifiers & BindingFlags.Public) == BindingFlags.Public, GL_WIDTH_100))
-                    propertyModifiers |= BindingFlags.Public;
-                else
-                    propertyModifiers &= ~BindingFlags.Public;
+                    if (EditorGUILayout.ToggleLeft("Public", (propertyModifiers & BindingFlags.Public) == BindingFlags.Public, GL_WIDTH_100))
+                        propertyModifiers |= BindingFlags.Public;
+                    else
+                        propertyModifiers &= ~BindingFlags.Public;
 
-                if (EditorGUILayout.ToggleLeft("Non-public", (propertyModifiers & BindingFlags.NonPublic) == BindingFlags.NonPublic, GL_WIDTH_100))
-                    propertyModifiers |= BindingFlags.NonPublic;
-                else
-                    propertyModifiers &= ~BindingFlags.NonPublic;
+                    if (EditorGUILayout.ToggleLeft("Non-public", (propertyModifiers & BindingFlags.NonPublic) == BindingFlags.NonPublic, GL_WIDTH_100))
+                        propertyModifiers |= BindingFlags.NonPublic;
+                    else
+                        propertyModifiers &= ~BindingFlags.NonPublic;
 
-                GUILayout.EndHorizontal();
+                    GUILayout.EndHorizontal();
 
-                GUILayout.Space(10);
+                    GUILayout.Space(10);
+                }
 
                 // Don't let the user press the GO button without any valid search location
                 if (!searchInAllScenes && !searchInOpenScenes && !searchInScenesInBuild && !searchInAssetsFolder)
@@ -1466,6 +1506,8 @@ namespace AssetUsageDetectorNamespace
             return true;
         }
 
+        private const string RESOURCES_PATH = "Assets/Resources";
+
         // Search for references!
         private void ExecuteQuery()
         {
@@ -1518,6 +1560,12 @@ namespace AssetUsageDetectorNamespace
             searchRenderers = false;
             searchMaterialsForShader = false;
             searchMaterialsForTexture = false;
+
+            string[] searchInFolder = null;
+            if (searchInApk)
+            {
+                searchInFolder = new string[] { RESOURCES_PATH };
+            }
 
             for (int i = 0; i < assetsToSearch.Count; i++)
             {
@@ -1615,16 +1663,16 @@ namespace AssetUsageDetectorNamespace
 
             // Find the scenes to search for references
             HashSet<string> scenesToSearch = new HashSet<string>();
-            if (searchInAllScenes)
+            if (searchInAllScenes && !searchInApk)
             {
                 // Get all scenes from the Assets folder
-                string[] scenesTemp = AssetDatabase.FindAssets("t:SceneAsset");
+                string[] scenesTemp = AssetDatabase.FindAssets("t:SceneAsset", searchInFolder);
                 for (int i = 0; i < scenesTemp.Length; i++)
                     scenesToSearch.Add(AssetDatabase.GUIDToAssetPath(scenesTemp[i]));
             }
             else
             {
-                if (searchInOpenScenes)
+                if (searchInOpenScenes && !searchInApk)
                 {
                     // Get all open (and loaded) scenes
                     for (int i = 0; i < EditorSceneManager.loadedSceneCount; i++)
@@ -1635,13 +1683,13 @@ namespace AssetUsageDetectorNamespace
                     }
                 }
 
-                if (searchInScenesInBuild)
+                if (searchInScenesInBuild || searchInApk)
                 {
                     // Get all scenes in build settings
                     EditorBuildSettingsScene[] scenesTemp = EditorBuildSettings.scenes;
                     for (int i = 0; i < scenesTemp.Length; i++)
                     {
-                        if (!searchInScenesInBuildTickedOnly || scenesTemp[i].enabled)
+                        if ((!searchInScenesInBuildTickedOnly && !searchInApk)|| scenesTemp[i].enabled)
                             scenesToSearch.Add(scenesTemp[i].path);
                     }
                 }
@@ -1651,37 +1699,57 @@ namespace AssetUsageDetectorNamespace
             searchSerializableVariablesOnly = true;
 
             // Don't search assets if searched object is a scene object as assets can't hold references to scene objects
-            if (searchInAssetsFolder && searchedType != SearchedType.SceneObject)
+            if ((searchInAssetsFolder || searchInApk) && searchedType != SearchedType.SceneObject)
             {
-                currentReferenceHolder = new ReferenceHolder("Project View (Assets)", false);
+                string title = (searchInApk) ? "Resources" : "Project View (Assets)";
+                currentReferenceHolder = new ReferenceHolder(title, false);                                
 
                 // Search through all the prefabs and imported models in the project
-                string[] pathsToAssets = AssetDatabase.FindAssets("t:GameObject");
+                string[] pathsToAssets = AssetDatabase.FindAssets("t:GameObject", searchInFolder);
                 for (int i = 0; i < pathsToAssets.Length; i++)
                     SearchGameObjectRecursively(AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(pathsToAssets[i])));
 
                 // Search through all the scriptable objects in the project
-                pathsToAssets = AssetDatabase.FindAssets("t:ScriptableObject");
+                pathsToAssets = AssetDatabase.FindAssets("t:ScriptableObject", searchInFolder);
                 for (int i = 0; i < pathsToAssets.Length; i++)
                     BeginSearchObject(AssetDatabase.LoadAssetAtPath<ScriptableObject>(AssetDatabase.GUIDToAssetPath(pathsToAssets[i])));
 
                 // If a searched asset is shader or texture, search through all the materials in the project
                 if (searchMaterialAssets)
                 {
-                    pathsToAssets = AssetDatabase.FindAssets("t:Material");
+                    pathsToAssets = AssetDatabase.FindAssets("t:Material", searchInFolder);
                     for (int i = 0; i < pathsToAssets.Length; i++)
                         BeginSearchObject(AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(pathsToAssets[i])));
-                }
+                }             
 
                 // Search through all the animation clips in the project
-                pathsToAssets = AssetDatabase.FindAssets("t:AnimationClip");
+                pathsToAssets = AssetDatabase.FindAssets("t:AnimationClip", searchInFolder);
                 for (int i = 0; i < pathsToAssets.Length; i++)
                     BeginSearchObject(AssetDatabase.LoadAssetAtPath<AnimationClip>(AssetDatabase.GUIDToAssetPath(pathsToAssets[i])));
 
                 // Search through all the animator controllers in the project
-                pathsToAssets = AssetDatabase.FindAssets("t:RuntimeAnimatorController");
+                pathsToAssets = AssetDatabase.FindAssets("t:RuntimeAnimatorController", searchInFolder);
                 for (int i = 0; i < pathsToAssets.Length; i++)
                     BeginSearchObject(AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(AssetDatabase.GUIDToAssetPath(pathsToAssets[i])));
+
+                // Checks if the asset is in Resources, if so then it has to be added
+                if (searchInApk)
+                {
+                    string path;
+                    foreach (Object asset in assetsSet)
+                    {
+                        path = AssetDatabase.GetAssetPath(asset);
+                        if (path.StartsWith(RESOURCES_PATH))
+                        {
+                            if (!currentReferenceHolder.ContainsObject(asset))
+                            {
+                                ReferenceNode searchResult = SearchObject(asset);
+                                if (searchResult != null)
+                                    currentReferenceHolder.AddReference(searchResult);
+                            }
+                        }
+                    }
+                }
 
                 // If a reference is found in the Project view, save the results
                 if (currentReferenceHolder.NumberOfReferences > 0)

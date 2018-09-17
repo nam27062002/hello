@@ -247,6 +247,7 @@ public class LoadingSceneController : SceneController {
         CREATING_SINGLETONS,
         WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
+        SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
     }
     private State m_state = State.NONE;
@@ -414,6 +415,11 @@ public class LoadingSceneController : SceneController {
     /// </summary>
     void Update() {       
 
+        if (m_state != State.SHOWING_COUNTRY_BLACKLISTED_POPUP &&
+            CacheServerManager.SharedInstance.IsCountryBlacklisted()) {
+            SetState(State.SHOWING_COUNTRY_BLACKLISTED_POPUP);
+        } 
+
     	switch( m_state )
     	{
     		case State.NONE:
@@ -510,6 +516,9 @@ public class LoadingSceneController : SceneController {
                 }
             }
             break;
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {}
+            break;
             default:
     		{
 				// Update load progress
@@ -558,6 +567,13 @@ public class LoadingSceneController : SceneController {
 				// Initialize fonts before showing any other popup
 				// Do it here because we need the Android permissions to be given and the rules to be loaded
 				FontManager.instance.Init();
+
+				// This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
+				// The stuff that this manager handles has to be done only once, regardless the game reboots
+				FeatureSettingsManager.CreateInstance(false);                
+
+				// Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
+				HDTrackingManager.Instance.Init();                
 			} break;
 		}
 
@@ -566,7 +582,11 @@ public class LoadingSceneController : SceneController {
 
 		// Actions to perform when entering a specific state
         switch (state)
-        {            
+        {           
+            case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
+            {
+                PopupManager.OpenPopupInstant(PopupCountryBlacklisted.PATH);
+            }break;
         	case State.SHOWING_UPGRADE_POPUP:
         	{
         		PopupManager.OpenPopupInstant( PopupUpgrade.PATH );
@@ -614,18 +634,14 @@ public class LoadingSceneController : SceneController {
                 ApplicationManager.CreateInstance();
 
                 AntiCheatsManager.CreateInstance();
-
-                // The stuff that this manager handles has to be done only once, regardless the game reboots
-                FeatureSettingsManager.CreateInstance(false);
-
+				                
                 if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
                 {
                     // Initialize local mini-tracking session!
                     // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
                     MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
                 }
-
-                HDTrackingManager.Instance.Init();
+					                
                 HDCustomizerManager.instance.Initialise();
 
                 UsersManager.CreateInstance();
@@ -637,9 +653,9 @@ public class LoadingSceneController : SceneController {
                 SocialPlatformManager.SharedInstance.Init( GDPRManager.SharedInstance.IsAgeRestrictionEnabled() );
 
                 // Meta
-                SeasonManager.CreateInstance(true);
+                SeasonManager.CreateInstance();
                 DragonManager.CreateInstance(true);
-                LevelManager.CreateInstance(true);
+                LevelManager.CreateInstance();
                 MissionManager.CreateInstance(true);
                 ChestManager.CreateInstance(true);
                 RewardManager.CreateInstance(true);
@@ -696,9 +712,15 @@ public class LoadingSceneController : SceneController {
         }
     }
 
+    /// <summary>
+    /// Callback called when the terms flow related stuff is done, either because terms flow didn't need to be triggered or because the user has just followed all the terms flow
+    /// </summary>
     private void OnTermsDone()
     {
         m_waitingTermsDone = true;
+
+        // We need to notify marketing id. According to design this event has to be sent once the terms flow is done. It has to be sent only if there's new information
+        HDTrackingManager.Instance.Notify_MarketingID(HDTrackingManager.EMarketingIdFrom.FirstLoading);
     }
         
     private void StartLoadFlow()

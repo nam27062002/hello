@@ -73,9 +73,18 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string additionalFXLayerText = "Additional FX layer";
         readonly public static string reflectionMapText = "Reflection Texture";
         readonly public static string reflectionAmountText = "Reflection amount";
-        readonly public static string fireMapText = "Fire Texture";
+        readonly public static string noiseMapText = "Noise Texture";
         readonly public static string fireAmountText = "Fire amount";
         readonly public static string fireSpeedText = "Fire speed";
+        readonly public static string colorRampMapText = "Color Ramp Texture";
+        readonly public static string colorRampID0Text = "Color Ramp id 0";
+        readonly public static string colorRampID1Text = "Color Ramp id 1";
+        readonly public static string colorRampAmountText = "Color Ramp Amount";
+
+        readonly public static string dissolveAmountText = "Dissolve amount";
+        readonly public static string dissolveUpperLimitText = "Dissolve upper limit";
+        readonly public static string dissolveLowerLimitText = "Dissolve lower limit";
+        readonly public static string dissolveMarginText = "Dissolve margin";
 
         readonly public static string reflectionLayerText = "Reflection layer are actually used by chinese dragon. Applied as (Reflection Texture intensity) * (Reflection Amount) * (Detail Texture.b)";
         readonly public static string fireLayerText = "Fire layer are actually used by pet Phoenix and water dragon. Applied as (Fire Amount) * (Detail Texture.b)";
@@ -86,6 +95,7 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
         readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
         readonly public static string blinkLightsSelfIluminationText = "Reptile dragon rings self ilumination.";
+        readonly public static string EmissiveSelfIluminationText = "Emission based on _InnerLightColor.xyz * Detail Texture.r * _InnerLightColor.a";
 
         readonly public static string blendModeText = "Blend Mode";
         readonly public static string cullModeText = "Cull Mode";
@@ -113,6 +123,14 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_fireMap;
     MaterialProperty mp_fireAmount;
     MaterialProperty mp_fireSpeed;
+    MaterialProperty mp_dissolveAmount;
+    MaterialProperty mp_dissolveUpperLimit;
+    MaterialProperty mp_dissolveLowerLimit;
+    MaterialProperty mp_dissolveMargin;
+
+    MaterialProperty mp_colorRampAmount;
+    MaterialProperty mp_colorRampID0;
+    MaterialProperty mp_colorRampID1;
 
     MaterialProperty mp_colorMultiply;
     MaterialProperty mp_colorAdd;
@@ -208,6 +226,14 @@ internal class DragonShaderGUI : ShaderGUI
         mp_fireMap = FindProperty("_FireMap", props);
         mp_fireAmount = FindProperty("_FireAmount", props);
         mp_fireSpeed = FindProperty("_FireSpeed", props);
+        mp_dissolveAmount = FindProperty("_DissolveAmount", props);
+        mp_dissolveUpperLimit = FindProperty("_DissolveUpperLimit", props);
+        mp_dissolveLowerLimit = FindProperty("_DissolveLowerLimit", props);
+        mp_dissolveMargin = FindProperty("_DissolveMargin", props);
+
+        mp_colorRampAmount = FindProperty("_ColorRampAmount", props);
+        mp_colorRampID0 = FindProperty("_ColorRampID0", props);
+        mp_colorRampID1 = FindProperty("_ColorRampID1", props);
 
         mp_BlendMode = FindProperty("_BlendMode", props);
         mp_stencilMask = FindProperty("_StencilMask", props);
@@ -315,9 +341,23 @@ internal class DragonShaderGUI : ShaderGUI
 
             case 2:     //FXLayer_Fire
                 EditorGUILayout.HelpBox(Styles.fireLayerText, MessageType.Info);
-                materialEditor.TextureProperty(mp_fireMap, Styles.fireMapText, true);
+                materialEditor.TextureProperty(mp_fireMap, Styles.noiseMapText, true);
                 materialEditor.ShaderProperty(mp_fireAmount, Styles.fireAmountText);
                 materialEditor.ShaderProperty(mp_fireSpeed, Styles.fireSpeedText);
+                break;
+
+            case 3:     //FXLayer_Dissolve
+                materialEditor.TextureProperty(mp_fireMap, Styles.noiseMapText, true);
+                materialEditor.ShaderProperty(mp_dissolveAmount, Styles.dissolveAmountText);
+                materialEditor.ShaderProperty(mp_dissolveUpperLimit, Styles.dissolveUpperLimitText);
+                materialEditor.ShaderProperty(mp_dissolveLowerLimit, Styles.dissolveLowerLimitText);
+                materialEditor.ShaderProperty(mp_dissolveMargin, Styles.dissolveMarginText);
+                break;
+            case 4:     //FXLayer_Colorize
+                materialEditor.TextureProperty(mp_fireMap, Styles.colorRampMapText, true);
+                materialEditor.ShaderProperty(mp_colorRampID0, Styles.colorRampID0Text);
+                materialEditor.ShaderProperty(mp_colorRampID1, Styles.colorRampID1Text);
+                materialEditor.ShaderProperty(mp_colorRampAmount, Styles.colorRampAmountText);
                 break;
         }
 
@@ -342,6 +382,12 @@ internal class DragonShaderGUI : ShaderGUI
             case 2:     //SELFILLUMINATE_BLINKLIGHTS
                 EditorGUILayout.HelpBox(Styles.blinkLightsSelfIluminationText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_innerLightWaveSpeed, Styles.innerLightWaveSpeedText);
+                materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
+                materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
+                break;
+
+            case 3:     //SELFILLUMINATE_EMISSIVE
+                EditorGUILayout.HelpBox(Styles.EmissiveSelfIluminationText, MessageType.Info);
                 materialEditor.ShaderProperty(mp_innerLightAdd, Styles.innerLightAddText);
                 materialEditor.ShaderProperty(mp_innerLightColor, Styles.innerLightColorText);
                 break;

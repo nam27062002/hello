@@ -20,7 +20,7 @@ using System.IO;
 /// 
 /// </summary>
 [Serializable]
-public class HDLiveEventManager
+public abstract class HDLiveEventManager
 {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
@@ -47,31 +47,10 @@ public class HDLiveEventManager
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
-    /// <summary>
-    /// Default constructor.
-    /// </summary>
-    public HDLiveEventManager()
-    {
-    	BuildData();
-    }
-
-    /// <summary>
-    /// Destructor
-    /// </summary>
-    ~HDLiveEventManager()
-    {
-    	
-    }
-
-    public virtual void BuildData()
-    {
-    	m_data = new HDLiveEventData();
-    }
 
     public virtual bool EventExists()
     {
         bool ret = false;
-        HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
 			ret = data.definition.m_eventId == data.m_eventId;
@@ -91,7 +70,6 @@ public class HDLiveEventManager
     public virtual bool IsRunning()
     {
 		bool ret = false;
-        HDLiveEventData data = GetEventData();
 		if (data != null && data.m_eventId > 0)
         {
             ret = data.m_state == HDLiveEventData.State.NOT_JOINED || data.m_state == HDLiveEventData.State.JOINED;
@@ -102,7 +80,6 @@ public class HDLiveEventManager
 	public virtual bool IsTeasing()
 	{
 		bool ret = false;
-        HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0 )
         {
             ret = data.m_state == HDLiveEventData.State.TEASING;
@@ -113,7 +90,6 @@ public class HDLiveEventManager
 	public virtual bool IsRewardPending()
 	{
 		bool ret = false;
-        HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0 )
         {
             ret = data.m_state == HDLiveEventData.State.REWARD_AVAILABLE;
@@ -124,7 +100,6 @@ public class HDLiveEventManager
     public virtual bool HasValidDefinition()
     {
         bool ret = false;
-        HDLiveEventData data = GetEventData();
         if (data != null && data.m_eventId > 0)
         {
             ret = data.definition.m_eventId == data.m_eventId;
@@ -134,7 +109,6 @@ public class HDLiveEventManager
 
     public virtual void CleanData()
     {
-        HDLiveEventData data = GetEventData();
         if (data != null){
             data.Clean();
       	}
@@ -144,17 +118,11 @@ public class HDLiveEventManager
     {
         // Create new object, initialize and return it
         SimpleJSON.JSONClass ret = null;
-        HDLiveEventData data = GetEventData();
         if (data != null)
         {
             ret = data.ToJson();
         }
         return ret;
-    }
-
-    public virtual HDLiveEventData GetEventData()
-    {
-        return m_data;
     }
 
     public virtual void OnNewStateInfo(SimpleJSON.JSONNode _data)
@@ -168,7 +136,6 @@ public class HDLiveEventManager
     /// <param name="_data">Data.</param>
     public virtual void ParseData(SimpleJSON.JSONNode _data)
     {
-        HDLiveEventData data = GetEventData();
         if (data != null)
         {
         	int oldId = data.m_eventId;
@@ -205,7 +172,6 @@ public class HDLiveEventManager
 
     public virtual void ParseDefinition(SimpleJSON.JSONNode _data)
     {
-        HDLiveEventData data = GetEventData();
         if (data != null)
         {
             data.ParseDefinition(_data);
@@ -235,7 +201,6 @@ public class HDLiveEventManager
 	        }
 	        else
 	        {
-	            HDLiveEventData data = GetEventData();
 	            GameServerManager.SharedInstance.HDEvents_GetDefinition(data.m_eventId, RequestEventDefinitionResponse);    
 	        }
 	        ret = true;
@@ -260,7 +225,6 @@ public class HDLiveEventManager
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			int eventId = responseJson["code"].AsInt;
-            HDLiveEventData data = GetEventData();
             if (data != null && data.m_eventId == eventId)
             {
             	bool wasActive = m_isActive;
@@ -297,7 +261,6 @@ public class HDLiveEventManager
 	        }
 	        else
 	        {
-	            HDLiveEventData data = GetEventData();
 				GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
 	        }
         }
@@ -334,7 +297,6 @@ public class HDLiveEventManager
         }
         else
         {
-            HDLiveEventData data = GetEventData();
 			GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);    
         }
 
@@ -364,7 +326,6 @@ public class HDLiveEventManager
 		}
 		else
 		{
-			HDLiveEventData data = GetEventData();
 			GameServerManager.SharedInstance.HDEvents_GetRefund(data.m_eventId, GetRefundResponse);    
 		}
 	}
@@ -374,13 +335,20 @@ public class HDLiveEventManager
 		HDLiveEventsManager.ResponseLog("Refund", _error, _response);
 		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
-		{
-			Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
-			UsersManager.currentUser.PushReward(r);			
+
+        switch (outErr) {
+            case HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR:
+            Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
+            UsersManager.currentUser.PushReward(r);
             FinishEvent();
             ClearEvent();
-		}
+            break;
+
+            case HDLiveEventsManager.ComunicationErrorCodes.NOTHING_PENDING:            
+            FinishEvent();
+            ClearEvent();
+            break;
+        }
 	}
 
 #endregion
@@ -391,7 +359,6 @@ public class HDLiveEventManager
     {
     	if (!m_isActive)
     	{    		
-    		HDLiveEventData data = GetEventData();		
 			if (data.m_state < HDLiveEventData.State.FINALIZED) {
 				m_isActive = true;
 				if (data != null && data.definition != null)
@@ -410,7 +377,6 @@ public class HDLiveEventManager
 		if (m_isActive)
     	{
     		m_isActive = false;
-    		HDLiveEventData data = GetEventData();
     		List<Modifier> mods = data.definition.m_otherMods;
 			for (int i = 0; i < mods.Count; i++) {
     			mods[i].Remove();
@@ -420,7 +386,6 @@ public class HDLiveEventManager
 
     public void ApplyDragonMods()
     {
-		HDLiveEventData data = GetEventData();
 		List<Modifier> mods = data.definition.m_dragonMods;
 		for (int i = 0; i < mods.Count; i++) {
     		mods[ i ].Apply();
