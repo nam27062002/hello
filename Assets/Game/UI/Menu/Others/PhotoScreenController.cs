@@ -73,6 +73,7 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private Image m_qrContainer = null;
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
 	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
+	[SerializeField] private ShareData m_shareDataChina = new ShareData();
 
 	[Separator("AR")]
 	[SerializeField] private GameObject m_arButton = null;
@@ -100,11 +101,16 @@ public class PhotoScreenController : MonoBehaviour {
 	private ShareData shareData {
 		get {
 			// Select target share data based on platform
-			#if UNITY_IOS
-			return m_shareDataIOS;
-			#else
-			return m_shareDataAndroid;
-			#endif
+			// Also exception for China!
+			if(PlatformUtils.Instance.IsChina()) {
+				return m_shareDataChina;
+			} else {
+#if UNITY_IOS
+				return m_shareDataIOS;
+#else
+				return m_shareDataAndroid;
+#endif
+			}
 		}
 	}
 		

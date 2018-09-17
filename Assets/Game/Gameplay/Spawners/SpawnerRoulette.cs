@@ -149,7 +149,6 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	// this spawner will kill its entities if it is outside camera disable area
 	public bool MustCheckCameraBounds() 	{ return false; }
 	public bool IsRespawingPeriodically() 	{ return true; }
-	public bool SpawnersCheckCurrents()		{ return false; }
 
 	public bool CanRespawn() {
 		if (m_state == State.Idle) {

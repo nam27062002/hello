@@ -35,10 +35,11 @@ namespace AI {
 
 			private float m_timer;
 
-			protected PreyAnimationEvents m_animEvents;
+            private Vector3 m_targetOffset;			
 
 			protected Vector3 m_facingTarget = Vector3.zero;
 			public Vector3 facingTarget { get{ return m_facingTarget; }}
+            protected PreyAnimationEvents m_animEvents;
 
 
 			protected override void OnInitialise() {
@@ -64,6 +65,13 @@ namespace AI {
 				m_onAttachProjectileEventDone = true;
 				m_onDamageEventDone = true;
 				m_onAttackEndEventDone = true;
+
+                Entity entity = m_machine.enemy.GetComponent<Entity>();
+                if (entity != null && entity.circleArea != null) {
+                    m_targetOffset = entity.circleArea.offset;
+                } else {
+                    m_targetOffset = GameConstants.Vector3.zero;   
+                }
 			}
 
 			protected override void OnExit(State _newState) {
@@ -92,12 +100,14 @@ namespace AI {
 						{
 							bool startAttack = true;
 							if (m_data.forceFaceToShoot) {
+                                Vector3 enemyPos = m_machine.enemy.position + m_targetOffset;
+
 								// Check angle to know if we can shoot
 								Vector3 dir = Vector3.right;
 								if (m_data.facing > 0) {
-									dir = m_machine.enemy.position - m_machine.position;
+                                    dir = enemyPos - m_machine.position;
 								} else {
-									dir = m_machine.position - m_machine.enemy.position;
+                                    dir = m_machine.position - enemyPos;
 								}
 							
 								Vector3 pilotDir = m_pilot.transform.forward;
@@ -107,7 +117,7 @@ namespace AI {
 									FacingToShoot();
 								} else {
 									// Save shooting position
-									m_facingTarget = m_machine.enemy.position;
+                                    m_facingTarget = enemyPos;
 								}
 							}
 
@@ -144,11 +154,13 @@ namespace AI {
 				m_pilot.PressAction(Pilot.Action.Attack);
 
 				if (m_data.faceEnemy) {
-					Vector3 dir = Vector3.zero;
+                    Vector3 dir = Vector3.zero;
+                    Vector3 enemyPos = m_machine.enemy.position + m_targetOffset;
+					
 					if (m_data.facing > 0) {
-						dir = m_machine.enemy.position - m_machine.position;
+                        dir = enemyPos - m_machine.position;
 					} else {
-						dir = m_machine.position - m_machine.enemy.position;
+                        dir = m_machine.position - enemyPos;
 					}
 
 					if (m_data.faceEnemyY) {						
