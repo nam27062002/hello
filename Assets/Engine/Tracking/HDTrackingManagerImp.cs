@@ -1755,7 +1755,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             switch (m_playingMode) {
                 case EPlayingMode.TUTORIAL: {
                         playingModeStr = "Tutorial";
-                        rank = m_firstUXFunnel.currentStep + "-" + m_firstUXFunnel.stepCount;
+                        rank = (m_firstUXFunnel.currentStep + 1) + "-" + m_firstUXFunnel.stepCount; // 1-5, 2-5,... ,5-5
                     }
                     break;
                 case EPlayingMode.PVE: {
