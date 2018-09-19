@@ -186,8 +186,9 @@ public class HDTongueDetector : MonoBehaviour
 		// Notify listeners
 		ControlPanel.Log(Colors.paleYellow.Tag("FACE DETECTED"));
 		onFaceAdded.Invoke();
+		Debug.Log (">>>>>>>>>FACE ADDED");
 	}
-
+		
 	/// <summary>
 	/// A face has been updated.
 	/// </summary>
@@ -210,16 +211,28 @@ public class HDTongueDetector : MonoBehaviour
 		// Notify listeners
 		ControlPanel.Log(Colors.paleYellow.Tag("FACE REMOVED"));
 		onFaceRemoved.Invoke();
+		Debug.Log (">>>>>>>>>FACE REMOVED");
 	}
+
+	private bool m_lastFaceDetected = false;
 
 	// Update is called once per frame
 	void Update () {
 		bool enableTongue = false;
 
-		if (m_faceDetected) 
-		{
-			if (m_currentBlendShapes.ContainsKey (ARBlendShapeLocation.TongueOut)) 
-			{
+		if (m_faceDetected != m_lastFaceDetected) {
+			m_dragonAnimojiInstance.gameObject.SetActive (m_faceDetected);
+			m_lastFaceDetected = m_faceDetected;
+
+			if (m_faceDetected) {
+				Debug.Log (">>>>>>>>>FACE DETECTED");
+			} else {
+				Debug.Log (">>>>>>>>>FACE REMOVED");
+			}
+		}
+
+		if (m_faceDetected) {
+			if (m_currentBlendShapes.ContainsKey (ARBlendShapeLocation.TongueOut)) {
 				enableTongue = (m_currentBlendShapes [ARBlendShapeLocation.TongueOut] > 0.5f);
 
 			}
