@@ -2198,6 +2198,74 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6bdb1dbdf791d4f01884dda3f7edd93d, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &322351214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 322351215}
+  - component: {fileID: 322351217}
+  - component: {fileID: 322351216}
+  m_Layer: 5
+  m_Name: HalloweenDeco
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &322351215
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 322351214}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1233163271}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 399, y: 295}
+  m_Pivot: {x: 0, y: 1}
+--- !u!114 &322351216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 322351214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: d529d70f64bf1704590b594b60c1aa8b, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &322351217
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 322351214}
 --- !u!1 &369869345
 GameObject:
   m_ObjectHideFlags: 0
@@ -7629,6 +7697,65 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1211711672}
   m_Script: {fileID: 11500000, guid: b058f69ef77694990963f634220a2e57, type: 3}
+--- !u!1 &1233163270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1233163271}
+  - component: {fileID: 1233163272}
+  m_Layer: 5
+  m_Name: SeasonalDecoration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1233163271
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1233163270}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 322351215}
+  m_Father: {fileID: 2043489421}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1233163272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1233163270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets: []
+  - sku: xmas
+    targets: []
+  - sku: halloween
+    targets:
+    - obj: {fileID: 322351214}
+      action: 0
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
 --- !u!1001 &1246622459
 Prefab:
   m_ObjectHideFlags: 0
@@ -11056,6 +11183,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1912328340827256, guid: 1257acbfd3f484a2882fdb582fa6cf3c, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1257acbfd3f484a2882fdb582fa6cf3c, type: 2}
   m_IsPrefabParent: 0
@@ -11958,7 +12089,7 @@ RectTransform:
   - {fileID: 2105178252}
   - {fileID: 1732829222}
   m_Father: {fileID: 2043489421}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -15065,6 +15196,11 @@ Prefab:
       propertyPath: m_AnchoredPosition.x
       value: -0.0078125
       objectReference: {fileID: 0}
+    - target: {fileID: 224723321954139522, guid: cd3af2c465b6e4bcd9530b6d3ac36313,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: -89.99988
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cd3af2c465b6e4bcd9530b6d3ac36313, type: 2}
   m_IsPrefabParent: 0
@@ -15698,6 +15834,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 1233163271}
   - {fileID: 2048565664}
   - {fileID: 1720042964}
   m_Father: {fileID: 500947307}
@@ -15813,7 +15950,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22416352, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99, type: 2}
       propertyPath: m_RootOrder
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 22416352, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99, type: 2}
       propertyPath: m_AnchoredPosition.x
@@ -16338,6 +16475,30 @@ Prefab:
       propertyPath: m_Name
       value: TMP SubMeshUI [TextMeshPro/Sprite]
       objectReference: {fileID: 0}
+    - target: {fileID: 224223205287797886, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 22478066, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 224498608130570006, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224721390638006010, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 224483267413282290, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0ff1e2a0f1ff44ec291a4aa0c7cd5c99, type: 2}
   m_IsPrefabParent: 0
@@ -16380,6 +16541,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1720042964}
     m_Modifications:
+    - target: {fileID: 114742678132936554, guid: 641a149f0c87545119ddcb9cf63cf971,
+        type: 2}
+      propertyPath: m_seasonsData.Array.size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 22437780, guid: 641a149f0c87545119ddcb9cf63cf971, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -17053,7 +17219,7 @@ Prefab:
     - target: {fileID: 224000013578416706, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 1228.804
+      value: 1024.0039
       objectReference: {fileID: 0}
     - target: {fileID: 114458595223952790, guid: 641a149f0c87545119ddcb9cf63cf971,
         type: 2}
@@ -17074,6 +17240,11 @@ Prefab:
         type: 2}
       propertyPath: m_sharedMaterial
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114742678132936554, guid: 641a149f0c87545119ddcb9cf63cf971,
+        type: 2}
+      propertyPath: m_seasonsData.Array.data[4].sku
+      value: midAutumnFestival
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 641a149f0c87545119ddcb9cf63cf971, type: 2}
