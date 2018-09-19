@@ -380,8 +380,8 @@ if $BUILD_IOS; then
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
     # Generate Archive
-    print_builder "Cleaning XCode build"
-    xcodebuild clean -project "${PROJECT_NAME}" -configuration Release -alltargets
+    # print_builder "Cleaning XCode build"
+    # xcodebuild clean -project "${PROJECT_NAME}" -configuration Release -alltargets
 
     security unlock-keychain -p Ubisoft001
 
