@@ -48,14 +48,14 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Alert, true);
 
 				m_meleeWeapon = m_pilot.FindComponentRecursive<IMeleeWeapon>();
-				m_meleeWeapon.enabled = false;
+                m_meleeWeapon.entity = m_entity;
+                m_meleeWeapon.enabled = false;
 			}
 
 			protected override void OnEnter(State oldState, object[] param) {
 				base.OnEnter(oldState, param);
 
-				m_meleeWeapon.damage = m_data.damage;
-				m_meleeWeapon.entity = m_entity;
+				m_meleeWeapon.damage = m_data.damage;				
 				m_meleeWeapon.enabled = true;
 
 				m_speed = 0;
