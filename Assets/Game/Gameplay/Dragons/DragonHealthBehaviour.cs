@@ -105,7 +105,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	void Update() 
 	{
         if (m_dragon.form == DragonPlayer.Form.MUMMY) {
-            m_dragon.MummyHealthDrain();
+            if (!m_dragon.changingArea) {
+                m_dragon.MummyHealthDrain();
+            }
         } else {
             // Apply health drain
             float drain = GetModifiedDamageForCurrentHealth(m_healthDrainPerSecond, true);
