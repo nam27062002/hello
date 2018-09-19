@@ -398,8 +398,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
     public override void OnTriggerStay(Collider _other) { }
     public override void OnTriggerExit(Collider _other) { }
 
-	public void OnEaten() {		
-		GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+    public void OnBite() {
+        GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
 
         if (go != null) {
             FollowTransform ft = go.GetComponent<FollowTransform>();
@@ -408,7 +408,9 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
                 ft.m_offset = m_onEatParticle.offset;
             }
         }
+    }
 
+	public void OnEaten() {		
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
 				EntityManager.instance.UnregisterEntity(m_entity);
