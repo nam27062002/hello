@@ -77,8 +77,9 @@ public class DragonHelicopterPowers : MonoBehaviour
                     m_machinegunParticle.Play();
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
+            arcOrigin.z = 0;
             // Machinegun killing
-            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(m_machingegunAnchor.position, m_machinegunDistance, m_checkEntities);
+            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(arcOrigin, m_machinegunDistance, m_checkEntities);
             for (int e = 0; e < m_numCheckEntities; e++) 
             {
                 Entity entity = m_checkEntities[e];
@@ -217,7 +218,9 @@ public class DragonHelicopterPowers : MonoBehaviour
         if (m_machingegunAnchor == null)
             return;
         Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(m_machingegunAnchor.position, m_machinegunDistance);
+        Vector3 arcOrigin = m_machingegunAnchor.position;
+        arcOrigin.z = 0;
+        Gizmos.DrawWireSphere(arcOrigin, m_machinegunDistance);
 
         Vector2 dir = (Vector2)(-m_machingegunAnchor.right);
         dir.Normalize();
