@@ -36,6 +36,9 @@ public class AnimojiScreenController : MonoBehaviour {
 		OFF,
 
 		INIT,
+		CAMERA_PERMISSIONS_REQUEST,
+		MICROPHONE_PERMISSIONS_REQUEST,
+		NO_PERMISSIONS_ERROR,
 		PREVIEW,
 		COUNTDOWN,
 		RECORDING,
@@ -45,9 +48,28 @@ public class AnimojiScreenController : MonoBehaviour {
 		COUNT
 	}
 
+	/// <summary>
+	/// Permissions listener implementation to interact with Calety's PermissionsManager.
+	/// </summary>
+	public class PermissionsListener : PermissionsManager.PermissionsListenerBase {
+		public AnimojiScreenController parentScreen = null;
+
+		public override void onIOSPermissionResult(PermissionsManager.EIOSPermission ePermission, PermissionsManager.EPermissionStatus eStatus) {
+			parentScreen.OnIOSPermissionResult(ePermission, eStatus);
+		}
+
+		public override void onAndroidPermissionResult(string strPermission, PermissionsManager.EPermissionStatus eStatus) {
+			parentScreen.OnAndroidPermissionResult(strPermission, eStatus);
+		}
+	} 
+
 	private const float TONGUE_REMINDER_TIME = 20f;
 	private const float MAX_RECORDING_TIME = 10f;
 	private const float COUNTDOWN = 3f;
+
+	// Android permissions
+	private const string ANDROID_CAMERA_PERMISSION = "android.permission.CAMERA";    // See https://developer.android.com/reference/android/Manifest.permission#CAMERA
+	private const string ANDROID_MICROPHONE_PERMISSION = "android.permission.RECORD_AUDIO";    // See https://developer.android.com/reference/android/Manifest.permission#RECORD_AUDIO
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -66,6 +88,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_previewModeGroup = null;
 	[SerializeField] private ShowHideAnimator m_countdownGroup = null;
 	[SerializeField] private ShowHideAnimator m_recordingModeGroup = null;
+	[SerializeField] private ShowHideAnimator m_permissionsErrorGroup = null;
 
 	// Other components
 	[Space]
@@ -94,6 +117,9 @@ public class AnimojiScreenController : MonoBehaviour {
 	private float m_countdownTimer = 0f;
 	private float m_recordingTimer = 0f;
 	private float m_sharingTimer = 0f;
+
+	// Permissions handling
+	private PermissionsListener m_permissionsListener = null;
 
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
@@ -156,90 +182,108 @@ public class AnimojiScreenController : MonoBehaviour {
 		m_recordingTimeBar.minValue = 0f;
 		m_recordingTimeBar.maxValue = MAX_RECORDING_TIME;
 		m_recordingTimeBar.value = 0f;
+
+		// Setup permissions listener
+		m_permissionsListener = new PermissionsListener();
+		m_permissionsListener.parentScreen = this;
+		PermissionsManager.SharedInstance.AddPermissionsListener(m_permissionsListener);
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Clear permissions listener
+		PermissionsManager.SharedInstance.RemovePermissionsListener(m_permissionsListener);
+		m_permissionsListener = null;
 	}
 
 	/// <summary>
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-		if (m_state == State.OFF) {
-			// if state equals OFF returns
-			return;
-		}
+		// Different actions based on current state
+		switch(m_state) {
+			case State.OFF: {
+				// Don't do anything at all!
+				return;
+			} break;
 
-		// Tongue reminder - only in PREVIEW state
-		if(m_state == State.PREVIEW) {
-			// Update tongue reminder timer
-			if(m_tongueReminderTimer > 0f) {
-				m_tongueReminderTimer -= Time.deltaTime;
-			}
+			case State.CAMERA_PERMISSIONS_REQUEST:
+			case State.MICROPHONE_PERMISSIONS_REQUEST: {
+				// Wait until permission is granted/denied
+			} break;
 
-			// Show the right UI
-			RefreshInfoUI();
-		}
+			case State.PREVIEW: {
+				// Update tongue reminder timer
+				if(m_tongueReminderTimer > 0f) {
+					m_tongueReminderTimer -= Time.deltaTime;
+				}
 
-		// Countdown timer - only in COUNTDOWN state
-		if(m_state == State.COUNTDOWN) {
-			// Update timer
-			if(m_countdownTimer > 0f) {
-				// Detect when we change second
-				float newTime = m_countdownTimer - Time.deltaTime;
-				if(Mathf.FloorToInt(m_countdownTimer) != Mathf.FloorToInt(newTime)) {
-					// Update text and trigger anim
-					SetCountdown(newTime, true);
+				// Show the right UI
+				RefreshInfoUI();
+			} break;
 
-					// SFX (except for last tick)
-					if(newTime > 0f) {
-						AudioController.Play("hd_padlock");
+			case State.COUNTDOWN: {
+				// Update countdown timer
+				if(m_countdownTimer > 0f) {
+					// Detect when we change second
+					float newTime = m_countdownTimer - Time.deltaTime;
+					if(Mathf.FloorToInt(m_countdownTimer) != Mathf.FloorToInt(newTime)) {
+						// Update text and trigger anim
+						SetCountdown(newTime, true);
+
+						// SFX (except for last tick)
+						if(newTime > 0f) {
+							AudioController.Play("hd_padlock");
+						}
+					}
+
+					// Update timer
+					m_countdownTimer = newTime;
+
+					// Countdown ended?
+					if(m_countdownTimer <= 0f) {
+						m_countdownTimer = 0f;
+						ChangeState(State.RECORDING);
 					}
 				}
+			} break;
 
+			case State.RECORDING: {
 				// Update timer
-				m_countdownTimer = newTime;
+				m_recordingTimer -= Time.deltaTime;
 
-				// Countdown ended?
-				if(m_countdownTimer <= 0f) {
-					m_countdownTimer = 0f;
-					ChangeState(State.RECORDING);
+				// Update progress bar
+				m_recordingTimeBar.value = m_recordingTimeBar.maxValue - m_recordingTimer;  // Move forward
+
+				// If timer has ended, change state
+				if(m_recordingTimer <= 0f) {
+					m_recordingTimer = 0f;
+					ChangeState(State.SHARING);
 				}
-			}
-		}
+			} break;
 
-		// Recording timer - only in RECORDING state
-		if(m_state == State.RECORDING) {
-			// Update timer
-			m_recordingTimer -= Time.deltaTime;
+			case State.SHARING: {
+				// Is video file ready?
+				if(ReplayKit.recordingAvailable) {
+					// Yes! Open native share dialog
+					ControlPanel.Log(Colors.paleYellow.Tag("RECORD AVAILABLE!"));
+					m_animojiSceneController.ShowPreview();
 
-			// Update progress bar
-			m_recordingTimeBar.value = m_recordingTimeBar.maxValue - m_recordingTimer;	// Move forward
-
-			// If timer has ended, change state
-			if(m_recordingTimer <= 0f) {
-				m_recordingTimer = 0f;
-				ChangeState(State.SHARING);
-			}
-		}
-
-		// Sharing window - only in SHARING state
-		if(m_state == State.SHARING) {
-			// Is video file ready?
-			if(ReplayKit.recordingAvailable) {
-				// Yes! Open native share dialog
-				ControlPanel.Log(Colors.paleYellow.Tag("RECORD AVAILABLE!"));
-				m_animojiSceneController.ShowPreview();
-
-				// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
-				// See https://forum.unity.com/threads/replaykit-detect-preview-controller-finished.450509/
-				ChangeState(State.PREVIEW);
-			} else {
-				// No! Update timeout timer
-				m_sharingTimer -= Time.deltaTime;
-				if(m_sharingTimer <= 0f) {
-					// Timeout! Skip video sharing
-					ControlPanel.Log(Colors.red.Tag ("SHARING TIME OUT!"));
+					// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
+					// See https://forum.unity.com/threads/replaykit-detect-preview-controller-finished.450509/
 					ChangeState(State.PREVIEW);
+				} else {
+					// No! Update timeout timer
+					m_sharingTimer -= Time.deltaTime;
+					if(m_sharingTimer <= 0f) {
+						// Timeout! Skip video sharing
+						ControlPanel.Log(Colors.red.Tag("SHARING TIME OUT!"));
+						ChangeState(State.PREVIEW);
+					}
 				}
-			}
+			} break;
 		}
 	}
 
@@ -437,6 +481,27 @@ public class AnimojiScreenController : MonoBehaviour {
 				}, 0.25f);
 				Debug.Log (">>>>>>>>>>>>Animoji screen controller: Finish state end");
 			} break;
+
+			case State.CAMERA_PERMISSIONS_REQUEST: {
+				// Toggle views
+				SelectUI(true);
+
+				// Check current permission status and act accordingly
+				ProcessCameraPermission();
+			} break;
+
+			case State.MICROPHONE_PERMISSIONS_REQUEST: {
+				// Toggle views
+				SelectUI(true);
+
+				// Check current permission status and act accordingly
+				ProcessMicrophonePermission();
+			} break;
+
+			case State.NO_PERMISSIONS_ERROR: {
+				// Toggle views
+				SelectUI(true);
+			} break;
 		}
 	}
 
@@ -475,8 +540,14 @@ public class AnimojiScreenController : MonoBehaviour {
 			m_tongueReminderGroup.ForceSet(m_state == State.COUNTDOWN, _animate);	// Always show tongue reminder in COUNTDOWN state
 		}
 
-		// Init screen
-		m_busyGroup.Set(m_state == State.INIT || m_state == State.FINISH, _animate);
+		// Loading screen
+		m_busyGroup.Set(
+			m_state == State.INIT || 
+			m_state == State.FINISH ||
+			m_state == State.CAMERA_PERMISSIONS_REQUEST ||
+			m_state == State.MICROPHONE_PERMISSIONS_REQUEST
+			, _animate
+		);
 
 		// Preview mode
 		m_previewModeGroup.Set(m_state == State.PREVIEW, _animate);
@@ -486,6 +557,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		// Recording mode
 		m_recordingModeGroup.Set(m_state == State.RECORDING, _animate);
+
+		// Permissions error
+		m_permissionsErrorGroup.Set(m_state == State.NO_PERMISSIONS_ERROR, _animate);
 	}
 
 	/// <summary>
@@ -515,6 +589,159 @@ public class AnimojiScreenController : MonoBehaviour {
 
 		// Trigger anim
 		m_countdownAnim.SetTrigger("launch");
+	}
+
+	//------------------------------------------------------------------------//
+	// PERMISSION METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Decide what to do based on current camera permission status.
+	/// </summary>
+	/// <param name="_requestAllowed">Allow requesting permission if not defined.</param>
+	private void ProcessCameraPermission(bool _requestAllowed = true) {
+		// Get current permission status
+		switch(GetCameraPermission()) {
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED:
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED: {
+				// Check mic permission
+				ChangeState(State.MICROPHONE_PERMISSIONS_REQUEST);
+			} break;
+
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED: {
+				// Show error message
+				ChangeState(State.NO_PERMISSIONS_ERROR);
+			} break;
+
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED: {
+				// Request permission (if allowed)
+				if(_requestAllowed) {
+					RequestCameraPermission();
+				} else {
+					ChangeState(State.NO_PERMISSIONS_ERROR);
+				}
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Get current status of the Camera permission depending on current platform.
+	/// </summary>
+	/// <returns>The camera permission status.</returns>
+	private PermissionsManager.EPermissionStatus GetCameraPermission() {
+#if UNITY_IOS
+		return PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Camera);
+#elif UNITY_ANDROID
+		return PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_CAMERA_PERMISSION);
+#endif
+	}
+
+	/// <summary>
+	/// Request permission to use the camera in the current platform.
+	/// OnCameraPermission() callback will be invoked when done.
+	/// </summary>
+	private void RequestCameraPermission() {
+#if UNITY_IOS
+		PermissionsManager.SharedInstance.RequestIOSPermission(PermissionsManager.EIOSPermission.Camera);
+#elif UNITY_ANDROID
+		PermissionsManager.SharedInstance.RequestAndroidPermission(ANDROID_CAMERA_PERMISSION);
+#endif
+	} 
+
+	/// <summary>
+	/// Decide what to do based on current microphone permission status.
+	/// </summary>
+	/// <param name="_requestAllowed">Allow requesting permission if not defined.</param>
+	private void ProcessMicrophonePermission(bool _requestAllowed = true) {
+		switch(GetMicrophonePermission()) {
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED:
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED: {
+				// We're good to go!
+				ChangeState(State.PREVIEW);
+			} break;
+
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED: {
+				// Show error message
+				ChangeState(State.NO_PERMISSIONS_ERROR);
+			} break;
+
+			case PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED: {
+				// Request permission (if allowed)
+				if(_requestAllowed) {
+					RequestMicrophonePermission();
+				} else {
+					ChangeState(State.NO_PERMISSIONS_ERROR);
+				}
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Get current status of the Microphone permission depending on current platform.
+	/// </summary>
+	/// <returns>The microphone permission status.</returns>
+	private PermissionsManager.EPermissionStatus GetMicrophonePermission() {
+#if UNITY_IOS
+		return PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Microphone);
+#elif UNITY_ANDROID
+		return PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_MICROPHONE_PERMISSION);
+#endif
+	}
+
+	/// <summary>
+	/// Request permission to use the microphone in the current platform.
+	/// OnMicrophonePermission() callback will be invoked when done.
+	/// </summary>
+	private void RequestMicrophonePermission() {
+#if UNITY_IOS
+		PermissionsManager.SharedInstance.RequestIOSPermission(PermissionsManager.EIOSPermission.Microphone);
+#elif UNITY_ANDROID
+		PermissionsManager.SharedInstance.RequestAndroidPermission(ANDROID_MICROPHONE_PERMISSION);
+#endif
+	}
+
+	/// <summary>
+	/// We've received a permission change for iOS.
+	/// </summary>
+	/// <param name="_permission">Permission that has been modified.</param>
+	/// <param name="_status">New permission status.</param>
+	private void OnIOSPermissionResult(PermissionsManager.EIOSPermission _permission, PermissionsManager.EPermissionStatus _status) {
+		// Which permission has been changed?
+		switch(_permission) {
+			case PermissionsManager.EIOSPermission.Camera: {
+				ProcessCameraPermission(false);	// Prevent going into an infinite permission request loop
+			} break;
+
+			case PermissionsManager.EIOSPermission.Microphone: {
+				ProcessMicrophonePermission(false);	// Prevent going into an infinite permission request loop
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// We've received a permission change for Android.
+	/// </summary>
+	/// <param name="_permission">Permission that has been modified.</param>
+	/// <param name="_status">New permission status.</param>
+	private void OnAndroidPermissionResult(string _permission, PermissionsManager.EPermissionStatus _status) {
+		// Which permission has been changed?
+		switch(_permission) {
+			case ANDROID_CAMERA_PERMISSION: {
+				ProcessCameraPermission(false);	// Prevent going into an infinite permission request loop
+			} break;
+
+			case ANDROID_MICROPHONE_PERMISSION: {
+				ProcessMicrophonePermission(false);	// Prevent going into an infinite permission request loop
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Go to device settings.
+	/// </summary>
+	public void OnPermissionSettingsButton() {
+		// Go to device settings
+		// [AOC] Calety does it for us! :)
+		PermissionsManager.SharedInstance.OpenPermissionSettings();
 	}
 
 	//------------------------------------------------------------------------//
