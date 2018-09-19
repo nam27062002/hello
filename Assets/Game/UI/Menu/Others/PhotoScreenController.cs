@@ -39,14 +39,6 @@ public class PhotoScreenController : MonoBehaviour {
 		public DragControlRotation dragControl = null;
 		public DragControlZoom zoomControl = null;
 	}
-
-	[Serializable]
-	public class ShareData {
-		public string url = "";
-
-		[FileList("Resources/UI/Menu/QR_codes", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*", false)]
-		public string qrCodePath = "";
-	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -71,13 +63,11 @@ public class PhotoScreenController : MonoBehaviour {
 
 	[Separator("Share Data")]
 	[SerializeField] private Image m_qrContainer = null;
-	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
-	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
-	[SerializeField] private ShareData m_shareDataChina = new ShareData();
 
-	[Separator("AR")]
+	[Separator("AR and Animoji")]
 	[SerializeField] private GameObject m_arButton = null;
 	[SerializeField] private PhotoScreenARFlow m_arFlow = null;
+	[SerializeField] private GameObject m_animojiButton = null;
 
 	// Public properties
 	private Mode m_mode = Mode.DRAGON;
@@ -93,25 +83,10 @@ public class PhotoScreenController : MonoBehaviour {
 
 	// AR Internal
 	private bool m_isARAvailable = false;
+	private bool m_isAnimojiAvailable = false;
 
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
-	}
-
-	private ShareData shareData {
-		get {
-			// Select target share data based on platform
-			// Also exception for China!
-			if(PlatformUtils.Instance.IsChina()) {
-				return m_shareDataChina;
-			} else {
-#if UNITY_IOS
-				return m_shareDataIOS;
-#else
-				return m_shareDataAndroid;
-#endif
-			}
-		}
 	}
 		
 	//------------------------------------------------------------------------//
@@ -141,7 +116,7 @@ public class PhotoScreenController : MonoBehaviour {
 		SetMode(m_mode);
 
 		// Load qr code
-		m_qrContainer.sprite = Resources.Load<Sprite>(shareData.qrCodePath);
+		m_qrContainer.sprite = Resources.Load<Sprite>(GameSettings.shareData.qrCodePath);
 	}
 
 	/// <summary>
@@ -250,7 +225,7 @@ public class PhotoScreenController : MonoBehaviour {
 		string caption = "";
 		switch(m_mode) {
 			case Mode.DRAGON: {
-				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", shareData.url);
+				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", GameSettings.shareData.url);
 			} break;
 
 			case Mode.EGG_REWARD: {
@@ -258,7 +233,7 @@ public class PhotoScreenController : MonoBehaviour {
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
 				switch(currentReward.type) {
 					case Metagame.RewardPet.TYPE_CODE: {
-						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", shareData.url);
+						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", GameSettings.shareData.url);
 					} break;
 				}
 			} break;
@@ -355,9 +330,13 @@ public class PhotoScreenController : MonoBehaviour {
 		currentMode.dragControl.gameObject.SetActive(false);
 		currentMode.zoomControl.gameObject.SetActive(false);
 
-		// Initialize AR stuff
-		m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
+        // Initialize AR stuff
+        m_arButton.SetActive(m_mode == Mode.DRAGON && m_isARAvailable);
 		m_arFlow.gameObject.SetActive(false);
+
+		// Allow animoji?
+		m_isAnimojiAvailable = (m_mode == Mode.DRAGON) && AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon);
+		m_animojiButton.SetActive(m_isAnimojiAvailable);
 	}
 
 	/// <summary>

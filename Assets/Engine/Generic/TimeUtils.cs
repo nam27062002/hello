@@ -42,7 +42,8 @@ public class TimeUtils {
 		WORDS_WITHOUT_0_VALUES,			// 1 year 2 days 3 hours 5 seconds
 		ABBREVIATIONS,					// 1y 2d 3h 0m 5s
 		ABBREVIATIONS_WITHOUT_0_VALUES,	// 1y 2d 3h 5s
-		DIGITS							// 0001:03 02:03:04
+		DIGITS,							// 1:03 2:03:04
+		DIGITS_0_PADDING				// 0001:03 02:03:04
 	};
 
 	private static readonly ulong[] SECONDS_IN_PRECISION = {
@@ -216,10 +217,14 @@ public class TimeUtils {
 					}
 				} break;
 					
-				case EFormat.DIGITS: {
+				case EFormat.DIGITS:
+				case EFormat.DIGITS_0_PADDING: {
 					// Specification says "YYYY:DD HH:MM:SS"
-					// No zero-padding on the first field
-					bool zeroPadding = i > firstIdx;
+					bool zeroPadding = true;
+					if(_format == EFormat.DIGITS) {
+						// No zero-padding on the first field
+						zeroPadding = i > firstIdx;
+					}
 
 					// Put value properly formatted
 					if(i == (int)EPrecision.YEARS) {
