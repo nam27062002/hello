@@ -275,13 +275,23 @@ public class PersistenceFacade
     #endregion
 
     #region save
+
+    private bool Save_IsSaving { get; set; }
+
 	public void Save_Request(bool immediate=false)
 	{
         // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
         // if this method is called when the engine is not ready (for example, when restarting the app)
-        if (Config.LocalDriver.IsLoadedInGame)
+        if (Config.LocalDriver.IsLoadedInGame && !Save_IsSaving)
         {
-            Config.LocalDriver.Save(null);
+            Save_IsSaving = true;
+
+            Action onDone = delegate ()
+            {
+                Save_IsSaving = false;
+            };            
+
+            Config.LocalDriver.Save(onDone);
 
             if (FeatureSettingsManager.instance.IsTrackingStoreUnsentOnSaveGameEnabled)
             {
