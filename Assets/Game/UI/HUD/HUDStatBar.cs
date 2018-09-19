@@ -43,6 +43,9 @@ public class HUDStatBar : MonoBehaviour {
 
 	private class BarData {
 		public Slider slider = null;
+        public UIGradient_OLD gradient = null;
+        public Color color1 = Color.white;
+        public Color color2 = Color.white;
 	}
 
 	//------------------------------------------------------------------//
@@ -97,6 +100,9 @@ public class HUDStatBar : MonoBehaviour {
 			child = transform.Find(barNames[i]);
 			if(child != null) {
 				m_bars[i].slider = child.GetComponent<Slider>();
+                m_bars[i].gradient = child.GetComponentInChildren<UIGradient_OLD>(); // keep a copy of the original colors
+                m_bars[i].color1 = m_bars[i].gradient.color1;
+                m_bars[i].color2 = m_bars[i].gradient.color2;
 			}
 		}
 
@@ -139,7 +145,8 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			// Check remaining lives to show more health Icons!
 			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+            Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+            Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
 			RefreshIcons();
 		}
 
@@ -165,6 +172,7 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 			Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+            Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
 		}
 		else if (m_type == Type.Energy)
 		{
@@ -447,12 +455,27 @@ public class HUDStatBar : MonoBehaviour {
 	void OnPlayerKo(DamageType _type, Transform _source)
 	{
 		RefreshIcons();
+
+        int i = (int)Bars.BASE;
+        m_bars[i].gradient.color1 = m_bars[i].color1;
+        m_bars[i].gradient.color2 = m_bars[i].color2;
 	}
 
 	void OnFreeRevive()
 	{
-		RefreshIcons( true );
+        RefreshIcons( true );
+
+        int i = (int)Bars.BASE;
+        m_bars[i].gradient.color1 = m_bars[i].color1;
+        m_bars[i].gradient.color2 = m_bars[i].color2;
 	}
+
+    void OnMummyRevive()
+    {
+        int i = (int)Bars.BASE;
+        m_bars[i].gradient.color1 = new Color(201f / 255f, 140f / 255f, 9f / 255f);
+        m_bars[i].gradient.color2 = new Color(116f / 255f, 83f / 255f, 10f / 255f);
+    }
 
 	private void RefreshIcons( bool showAnimations = false )
 	{
