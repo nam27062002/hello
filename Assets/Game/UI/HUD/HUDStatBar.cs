@@ -474,7 +474,7 @@ public class HUDStatBar : MonoBehaviour {
     {
         int i = (int)Bars.BASE;
         m_bars[i].gradient.color1 = new Color(201f / 255f, 140f / 255f, 9f / 255f);
-        m_bars[i].gradient.color2 = new Color(116f / 255f, 83f / 255f, 10f / 255f);
+        m_bars[i].gradient.color2 = new Color(124f / 255f, 112f / 255f, 84f / 255f);
     }
 
 	private void RefreshIcons( bool showAnimations = false )
