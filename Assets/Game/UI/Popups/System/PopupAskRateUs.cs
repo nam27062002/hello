@@ -17,8 +17,10 @@ public class PopupAskRateUs : MonoBehaviour {
 		DeviceUtilsManager.SharedInstance.OpenMarketForRating();
 #endif
 
-		// Set to never ask again
-		Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
+        Track_Result(HDTrackingManager.ERateThisAppResult.Yes);        
+
+        // Set to never ask again
+        Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
 		GetComponent<PopupController>().Close(true);
 	}
 
@@ -39,15 +41,23 @@ public class PopupAskRateUs : MonoBehaviour {
 			Prefs.SetStringPlayer( Prefs.RATE_FUTURE_DATE, futureTime.ToString());
 		}
 
-		Prefs.SetIntPlayer( Prefs.RATE_LATERS, laters);
+        Track_Result(HDTrackingManager.ERateThisAppResult.Later);
 
-		GetComponent<PopupController>().Close(true);
+        Prefs.SetIntPlayer( Prefs.RATE_LATERS, laters);        
+        GetComponent<PopupController>().Close(true);
 	}
 
 	public void OnNeverAskAgain()
 	{
-		// Set to never ask again
-		Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
+        Track_Result(HDTrackingManager.ERateThisAppResult.No);
+
+        // Set to never ask again
+        Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
 		GetComponent<PopupController>().Close(true);
 	}
+
+    private void Track_Result(HDTrackingManager.ERateThisAppResult result)
+    {     
+        HDTrackingManager.Instance.Notify_RateThisApp(result);
+    }
 }

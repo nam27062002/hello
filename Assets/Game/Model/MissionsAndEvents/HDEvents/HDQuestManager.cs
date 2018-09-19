@@ -46,6 +46,10 @@ public class HDQuestManager : HDLiveEventManager{
 	/// Default constructor.
 	/// </summary>
 	public HDQuestManager() {
+        m_data = new HDQuestData();
+        m_questData = m_data as HDQuestData;
+        m_questDefinition = m_questData.definition as HDQuestDefinition;
+        
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
@@ -55,17 +59,13 @@ public class HDQuestManager : HDLiveEventManager{
 	/// Destructor
 	/// </summary>
 	~HDQuestManager() {
+        m_data = null;
+        m_questData = null;
+        m_questDefinition = null;
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
-
-	public override void BuildData()
-    {
-		m_data = new HDQuestData();
-		m_questData = m_data as HDQuestData;
-		m_questDefinition = m_questData.definition as HDQuestDefinition;
-    }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
@@ -134,7 +134,6 @@ public class HDQuestManager : HDLiveEventManager{
 	        }
 	        else
 	        {
-	            HDLiveEventData data = GetEventData();
 	            GameServerManager.SharedInstance.HDEvents_GetMyProgess(data.m_eventId, RequestProgressResponse);            
 	        }
 	        ret = true;
@@ -149,10 +148,10 @@ public class HDQuestManager : HDLiveEventManager{
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			HDQuestData data = GetEventData() as HDQuestData;
-            if (data != null )
+            HDQuestData questData = data as HDQuestData;
+            if (questData != null )
             {
-				data.ParseProgress( responseJson );
+				questData.ParseProgress( responseJson );
             }
 			Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 		}
@@ -178,7 +177,6 @@ public class HDQuestManager : HDLiveEventManager{
 		}
 		else
 		{
-			HDLiveEventData data = GetEventData();
 			GameServerManager.SharedInstance.HDEvents_AddProgress(data.m_eventId, contribution, OnContributeResponse);    
 		}
 	}
@@ -190,10 +188,10 @@ public class HDQuestManager : HDLiveEventManager{
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			HDQuestData data = GetEventData() as HDQuestData;
-            if (data != null )
+            HDQuestData questData = data as HDQuestData;
+            if (questData != null )
             {
-				data.ParseProgress( responseJson );
+				questData.ParseProgress( responseJson );
 
 				int contribution = m_lastContribution;
 				float _keysMultiplier = m_lastKeysMultiplier;
@@ -208,10 +206,10 @@ public class HDQuestManager : HDLiveEventManager{
 					else 		  		mult = HDTrackingManager.EEventMultiplier.golden_key;
 				}
 
-				HDTrackingManager.Instance.Notify_GlobalEventRunDone(data.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
+				HDTrackingManager.Instance.Notify_GlobalEventRunDone(questData.m_eventId, m_questDefinition.m_goal.m_type , (int)GetRunScore(), contribution, mult);	// TODO: we have no player score anymore!
 
-				if ( data.m_state == HDLiveEventData.State.NOT_JOINED )
-					data.m_state = HDLiveEventData.State.JOINED;
+				if ( questData.m_state == HDLiveEventData.State.NOT_JOINED )
+					questData.m_state = HDLiveEventData.State.JOINED;
             }	
 		}
 

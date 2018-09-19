@@ -115,6 +115,7 @@ namespace AI {
 		public void Bite() {
 			if (!IsDying()) {
 				m_beingEaten = true;
+                m_projectile.OnBite();
 				m_edible.Bite();
 			}
 		}

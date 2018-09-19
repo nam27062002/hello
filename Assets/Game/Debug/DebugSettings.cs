@@ -74,7 +74,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	public const string SHOW_HIDDEN_PETS						= "SHOW_HIDDEN_PETS";
 
-    //------------------------------------------------------------------//
+	//------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
     // Mainly shortcuts, all settings can be accessed using the Prefs class
@@ -141,7 +141,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	// Server debugging tools
 	// Only in editor!
-	[Separator("Server debugging tools")]
+	[Separator("Server Debug Tools")]
 	[SerializeField] private bool m_useDebugServer = false;
 	public static bool useDebugServer {
 		get { return instance.m_useDebugServer; }
@@ -155,16 +155,36 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	}
 
 	// UI settings
+	[Separator("UI Debug Tools")]
+	[SerializeField] private bool m_useUnitySafeArea = false;
+	public static bool useUnitySafeArea {
+		get { return instance.m_useUnitySafeArea; }
+	}
+
+	[SerializeField] private bool m_useDebugSafeArea = false;
+
+	[Comment("- iPhone X: 132, 63, 2172, 1062")]
+	[SerializeField] private Rect m_debugSafeArea = new Rect();
+	public static Rect debugSafeArea {
+		get {
+			if(instance.m_useDebugSafeArea) {
+				return instance.m_debugSafeArea;
+			} else {
+				return new Rect(0f, 0f, Screen.width, Screen.height);
+			}
+		}
+	}
+
 	[HideEnumValues(false, true)]
 	[SerializeField] private UIConstants.SpecialDevice m_simulatedSpecialDevice = UIConstants.SpecialDevice.NONE;
 	public static UIConstants.SpecialDevice simulatedSpecialDevice {
-		get { 
+		get {
 			// Only in editor
-			#if UNITY_EDITOR
-			return instance.m_simulatedSpecialDevice; 
-			#else
+#if UNITY_EDITOR
+			return instance.m_simulatedSpecialDevice;
+#else
 			return UIConstants.SpecialDevice.NONE;
-			#endif
+#endif
 		}
 		set { instance.m_simulatedSpecialDevice = value; }
 	}

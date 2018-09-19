@@ -11,6 +11,8 @@ public class MeleeWeapon : IMeleeWeapon {
 
 	[SerializeField] private ViewParticleSpawner m_weaponParticle = null;
 
+    protected override void OnAwake() { }
+
 	protected override void OnEnabled() { 
 		if (m_trail) m_trail.Activate();
 		for (int i = 0; i < m_trailParticles.Length; i++) {
@@ -50,7 +52,10 @@ public class MeleeWeapon : IMeleeWeapon {
 
 			dragonMotion.AddForce(knockBack);
 		}
-		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_transform, true, m_entity.sku, m_entity);
+
+        Entity e = null;
+        if (m_entity is Entity) { e = m_entity as Entity; }
+		InstanceManager.player.dragonHealthBehaviour.ReceiveDamage(m_damage, m_damageType, m_transform, true, m_entity.sku, e);
 	}
 
 }
