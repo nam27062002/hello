@@ -399,7 +399,15 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
     public override void OnTriggerExit(Collider _other) { }
 
 	public void OnEaten() {		
-		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+		GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+        if (go != null) {
+            FollowTransform ft = go.GetComponent<FollowTransform>();
+            if (ft != null) {
+                ft.m_follow = InstanceManager.player.dragonEatBehaviour.mouth;
+                ft.m_offset = m_onEatParticle.offset;
+            }
+        }
 
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
