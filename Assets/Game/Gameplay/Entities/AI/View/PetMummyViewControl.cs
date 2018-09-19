@@ -27,6 +27,9 @@ public class PetMummyViewControl : ViewControl {
     private float m_powerStatus;
     private float m_timer;
     private State m_state;
+    
+    [SeparatorAttribute("Special Audios")]
+    public string m_reviveAudio = "";
 
 
 	protected override void Awake() {
@@ -96,8 +99,20 @@ public class PetMummyViewControl : ViewControl {
         }
     }
 
+    protected override void OnSpecialAnimationEnter(SpecialAnims _anim) 
+    {
+        base.OnSpecialAnimationEnter(_anim);
+        // Play Audio
+        if ( !string.IsNullOrEmpty(m_reviveAudio) ) {
+            AudioController.Play( m_reviveAudio );
+        }
+    }
+    
+
     private void OnDrawGizmosSelected() {
         Gizmos.DrawCube(transform.position + m_basePosition, GameConstants.Vector3.one * 0.25f);
         Gizmos.DrawCube(transform.position + m_topPosition, GameConstants.Vector3.one * 0.25f);
     }
+    
+     
 }
