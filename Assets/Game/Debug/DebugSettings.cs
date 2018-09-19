@@ -157,6 +157,10 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	// UI settings
 	[Separator("UI Debug Tools")]
 	[SerializeField] private bool m_useUnitySafeArea = false;
+	public static bool useUnitySafeArea {
+		get { return instance.m_useUnitySafeArea; }
+	}
+
 	[SerializeField] private bool m_useDebugSafeArea = false;
 
 	[Comment("- iPhone X: 132, 63, 2172, 1062")]

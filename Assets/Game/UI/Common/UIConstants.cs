@@ -4,8 +4,6 @@
 // Created by Alger Ortín Castellví on DD/MM/2016.
 // Copyright (c) 2016 Ubisoft. All rights reserved.
 
-//#define USE_UNITY_SAFE_AREA
-
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -326,41 +324,43 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get {
 			// If not yet initialized, do it now
 			if(m_safeArea == null) {
-#if !USE_UNITY_SAFE_AREA
-				// Select target safe area based on special device
-				return instance.m_safeAreas[(int)specialDevice];
-#else
-				// Unity's safe area is in Screen pixels
-				// Normalize and multiply by our Canvases reference resolution (hardcoded)
+				// Use Unity's safeArea or custom ones based on device?
+				// [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
+				if(!DebugSettings.useUnitySafeArea) {
+					// Select target safe area based on special device
+					return instance.m_safeAreas[(int)specialDevice];
+				} else {
+					// Unity's safe area is in Screen pixels
+					// Normalize and multiply by our Canvases reference resolution (hardcoded)
 #if UNITY_EDITOR
-				// Use DebugSettings to simulate different safe areas
-				Rect systemSafeArea = DebugSettings.debugSafeArea;
+					// Use DebugSettings to simulate different safe areas
+					Rect systemSafeArea = DebugSettings.debugSafeArea;
 #else
 				Rect systemSafeArea = Screen.safeArea;
 #endif
-				ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
+					ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
 
-				// Normalize with screen size
-				Rect normalizedSafeArea = new Rect(
-					systemSafeArea.x / Screen.width,
-					systemSafeArea.y / Screen.height,
-					systemSafeArea.width / Screen.width,
-					systemSafeArea.height / Screen.height
-				);
-				ControlPanel.Log(Colors.orange.Tag("NORMALIZED SAFE AREA: " + normalizedSafeArea.ToString()));
+					// Normalize with screen size
+					Rect normalizedSafeArea = new Rect(
+						systemSafeArea.x / Screen.width,
+						systemSafeArea.y / Screen.height,
+						systemSafeArea.width / Screen.width,
+						systemSafeArea.height / Screen.height
+					);
+					ControlPanel.Log(Colors.orange.Tag("NORMALIZED SAFE AREA: " + normalizedSafeArea.ToString()));
 
-				// Scale back to our canvases reference resolution
-				// Keep Aspect Ratio!
-				Vector2 canvasSize = CANVAS_SIZE;
-				ControlPanel.Log(Colors.orange.Tag("ar: " + ASPECT_RATIO + " | canvas: " + canvasSize.x + ", " + canvasSize.y));
-				m_safeArea = new UISafeArea(
-					normalizedSafeArea.xMin * canvasSize.x,
-					(1f - normalizedSafeArea.yMax) * canvasSize.y,
-					(1f - normalizedSafeArea.xMax) * canvasSize.x,
-					normalizedSafeArea.yMin * canvasSize.y
-				);
-				ControlPanel.Log(Colors.orange.Tag("SAFE AREA: " + m_safeArea.ToString()));
-#endif
+					// Scale back to our canvases reference resolution
+					// Keep Aspect Ratio!
+					Vector2 canvasSize = CANVAS_SIZE;
+					ControlPanel.Log(Colors.orange.Tag("ar: " + ASPECT_RATIO + " | canvas: " + canvasSize.x + ", " + canvasSize.y));
+					m_safeArea = new UISafeArea(
+						normalizedSafeArea.xMin * canvasSize.x,
+						(1f - normalizedSafeArea.yMax) * canvasSize.y,
+						(1f - normalizedSafeArea.xMax) * canvasSize.x,
+						normalizedSafeArea.yMin * canvasSize.y
+					);
+					ControlPanel.Log(Colors.orange.Tag("SAFE AREA: " + m_safeArea.ToString()));
+				}
 			}
 			return m_safeArea;
 		}
