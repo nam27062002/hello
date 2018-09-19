@@ -12,7 +12,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
 using UnityEngine.UI;
+#if (UNITY_IOS)
 using UnityEngine.Apple.ReplayKit;
+#endif
 using UnityEngine.Events;
 
 //----------------------------------------------------------------------------//
@@ -130,8 +132,9 @@ public class HDTongueDetector : MonoBehaviour
 	/// Start recording process.
 	/// </summary>
 	public void StartRecording() {
-		// Prevent spamming
-		if(ReplayKit.isRecording) return;
+#if (UNITY_IOS)
+        // Prevent spamming
+        if(ReplayKit.isRecording) return;
 
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
@@ -139,18 +142,21 @@ public class HDTongueDetector : MonoBehaviour
 
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
 		ReplayKit.StartRecording(true);
+#endif
 	}
 
 	/// <summary>
 	/// Stop recording process.
 	/// </summary>
 	public void StopRecording() {
+#if (UNITY_IOS)
 		// Prevent spamming
 		if(!ReplayKit.isRecording) return;
 
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("STOP RECORDING"));
 		ReplayKit.StopRecording();
+#endif
 	}
 
 	/// <summary>
@@ -158,6 +164,7 @@ public class HDTongueDetector : MonoBehaviour
 	/// Will be ignored if a record is not available.
 	/// </summary>
 	public void ShowPreview() {
+#if (UNITY_IOS)
 		// Make sure we have something to preview
 		if (!ReplayKit.recordingAvailable) {
 			Debug.Log ("No recording available!!!");
@@ -167,6 +174,7 @@ public class HDTongueDetector : MonoBehaviour
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("SHOW PREVIEW"));
 		ReplayKit.Preview();
+#endif
 	}
 
 	//------------------------------------------------------------------------//

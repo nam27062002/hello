@@ -28,7 +28,7 @@ using TMPro;
 /// Main controller for the animoji menu screen.
 /// </summary>
 public class AnimojiScreenController : MonoBehaviour {
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
+//#if (UNITY_IOS || UNITY_EDITOR_OSX)
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -150,7 +150,9 @@ public class AnimojiScreenController : MonoBehaviour {
 		// Editor
 #if(UNITY_EDITOR)
 		return true;
-#elif (UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
+#elif (UNITY_ANDROID)
+        return false;
+#elif (UNITY_IOS || UNITY_EDITOR_OSX)
 		// AR supported?
 		if(!ARKitManager.SharedInstance.IsARKitAvailable()) return false;
 
@@ -164,15 +166,15 @@ public class AnimojiScreenController : MonoBehaviour {
 #else
 		return false;
 #endif
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		// Gather scene cameras
 		m_mainSceneCameras = new Camera[] {
 			InstanceManager.menuSceneController.mainCamera
@@ -265,8 +267,13 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.SHARING: {
-				// Is video file ready?
-				if(ReplayKit.recordingAvailable) {
+                    // Is video file ready?
+#if (UNITY_IOS)
+                    bool recAvailable = ReplayKit.recordingAvailable;
+#else
+                    bool recAvailable = false;
+#endif
+                    if(recAvailable) {
 					// Yes! Open native share dialog
 					ControlPanel.Log(Colors.paleYellow.Tag("RECORD AVAILABLE!"));
 					m_animojiSceneController.ShowPreview();
@@ -418,8 +425,10 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.FINISH: {
-				// Discard any recorded video
-				ReplayKit.Discard ();
+                // Discard any recorded video
+#if (UNITY_IOS)
+                ReplayKit.Discard ();
+#endif
 
 				// Toggle views
 				SelectUI(true);
@@ -805,5 +814,6 @@ public class AnimojiScreenController : MonoBehaviour {
 		// Go to next state
 		ChangeState(State.SHARING);
 	}
-#endif
+//#elif UNITY_ANDROID
+//#endif
 }

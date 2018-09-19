@@ -275,13 +275,23 @@ public class PersistenceFacade
     #endregion
 
     #region save
+
+    private bool Save_IsSaving { get; set; }
+
 	public void Save_Request(bool immediate=false)
 	{
         // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
         // if this method is called when the engine is not ready (for example, when restarting the app)
-        if (Config.LocalDriver.IsLoadedInGame)
+        if (Config.LocalDriver.IsLoadedInGame && !Save_IsSaving)
         {
-            Config.LocalDriver.Save(null);
+            Save_IsSaving = true;
+
+            Action onDone = delegate ()
+            {
+                Save_IsSaving = false;
+            };            
+
+            Config.LocalDriver.Save(onDone);
 
             if (FeatureSettingsManager.instance.IsTrackingStoreUnsentOnSaveGameEnabled)
             {
@@ -485,7 +495,7 @@ public class PersistenceFacade
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
+        config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);     
     }
 
@@ -509,15 +519,18 @@ public class PersistenceFacade
     /// This popup is shown when an error arises because the persistence saved is corrupted
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
     /// </summary>    
-    public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
+    public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm, Action onContinue)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
         config.MessageTid = "Corrupted progress saved. Please, retry";
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
+        config.OnCancel = onContinue;
+        // Back button is disabled in order to make sure that the user is aware when making such an important decision
+        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;        
         PopupManager.PopupMessage_Open(config);
     }
 
@@ -532,8 +545,7 @@ public class PersistenceFacade
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
         config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);              
     }
 

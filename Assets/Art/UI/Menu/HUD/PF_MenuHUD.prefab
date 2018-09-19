@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 114520243985734964}
   - component: {fileID: 114307795833372686}
   - component: {fileID: 114542279022892426}
+  - component: {fileID: 114891451479952990}
   m_Layer: 5
   m_Name: HUDCurrencyCounters
   m_TagString: Untagged
@@ -4557,6 +4558,30 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114891451479952990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 159062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets: []
+  - sku: xmas
+    targets: []
+  - sku: halloween
+    targets:
+    - obj: {fileID: 1614868099078034}
+      action: 0
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
 --- !u!114 &114901059665064956
 MonoBehaviour:
   m_ObjectHideFlags: 1
