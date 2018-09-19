@@ -156,8 +156,14 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
 	// UI settings
 	[Separator("UI Debug Tools")]
-	[Comment("- iPhone X: 132, 63, 2172, 1062")]
+	[SerializeField] private bool m_useUnitySafeArea = false;
+	public static bool useUnitySafeArea {
+		get { return instance.m_useUnitySafeArea; }
+	}
+
 	[SerializeField] private bool m_useDebugSafeArea = false;
+
+	[Comment("- iPhone X: 132, 63, 2172, 1062")]
 	[SerializeField] private Rect m_debugSafeArea = new Rect();
 	public static Rect debugSafeArea {
 		get {
@@ -167,6 +173,20 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 				return new Rect(0f, 0f, Screen.width, Screen.height);
 			}
 		}
+	}
+
+	[HideEnumValues(false, true)]
+	[SerializeField] private UIConstants.SpecialDevice m_simulatedSpecialDevice = UIConstants.SpecialDevice.NONE;
+	public static UIConstants.SpecialDevice simulatedSpecialDevice {
+		get {
+			// Only in editor
+#if UNITY_EDITOR
+			return instance.m_simulatedSpecialDevice;
+#else
+			return UIConstants.SpecialDevice.NONE;
+#endif
+		}
+		set { instance.m_simulatedSpecialDevice = value; }
 	}
 
     //------------------------------------------------------------------//

@@ -30,7 +30,7 @@ using DG.Tweening;
 /// <summary>
 /// Small tool to capture a screen and save it to a file.
 /// </summary>
-public abstract class CaptureTool : MonoBehaviour {
+public abstract class  CaptureTool : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -73,7 +73,7 @@ public abstract class CaptureTool : MonoBehaviour {
 	[SerializeField] private AspectRatioFitter m_picturePreviewRatioFitter = null;
 
 	[Separator("Camera Control")]
-	[SerializeField] private Camera m_mainCamera = null;
+	[SerializeField] protected Camera m_mainCamera = null;
 	[SerializeField] private float m_cameraMoveSpeed = 0.05f;
 	[SerializeField] private float m_cameraRotateSpeed = 0.5f;
 	[SerializeField] private Slider m_cameraSensitivitySlider = null;
@@ -199,12 +199,6 @@ public abstract class CaptureTool : MonoBehaviour {
 			m_mainCamera.transform.Translate(offset, Space.Self);
 		}
 
-		// Store camera values to restore them next time
-		if(offset != Vector3.zero) { 
-			Prefs.SetVector3Editor(GetKey(CAMERA_POS_KEY), m_mainCamera.transform.position);
-			Prefs.SetVector3Editor(GetKey(CAMERA_ROT_KEY), m_mainCamera.transform.eulerAngles);
-		}
-
 		// Camera FOV
 		float fovOffset = 0f;
 		if(Input.GetKey(m_cameraFovDownKey)) {
@@ -221,7 +215,7 @@ public abstract class CaptureTool : MonoBehaviour {
 		}
 
 		// Apply camera FOV
-		if(fovOffset != 0f) {
+		if(Math.Abs(fovOffset) > Mathf.Epsilon) {
 			m_mainCamera.fieldOfView = Mathf.Clamp(m_mainCamera.fieldOfView + fovOffset, 1f, 179f);
 		}
 
@@ -246,11 +240,20 @@ public abstract class CaptureTool : MonoBehaviour {
 		// Store current values to restore it next time
 		Prefs.SetIntEditor(GetKey(CAPTURE_MODE_KEY), m_modeDropdown.value);
 		Prefs.SetFloatEditor(GetKey(TIME_SCALE_KEY), Time.timeScale);
+
+		Prefs.SetVector3Editor(GetKey(CAMERA_POS_KEY), m_mainCamera.transform.position);
+		Prefs.SetVector3Editor(GetKey(CAMERA_ROT_KEY), m_mainCamera.transform.eulerAngles);
+		Prefs.SetFloatEditor(GetKey(CAMERA_FOV_KEY), m_mainCamera.fieldOfView);
 	}
 
 	//------------------------------------------------------------------------//
 	// TO BE IMPLEMENTED BY HEIRS											  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Put the camera at the default position, rotation, fov.
+	/// </summary>
+	abstract protected void ResetCamera();
+	
 	/// <summary>
 	/// Get the filename of the screenshot. No extension, can include subfolders.
 	/// </summary>
@@ -482,5 +485,12 @@ public abstract class CaptureTool : MonoBehaviour {
 
 		// Update text
 		m_cameraSensitiviyText.text = _newValue.ToString("0.00");
+	}
+
+	/// <summary>
+	/// Reset camera's position, FOV, rotation.
+	/// </summary>
+	public void OnResetCameraButton() {
+		ResetCamera();
 	}
 }
