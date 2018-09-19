@@ -60,7 +60,8 @@ namespace AI {
 
 			protected override void OnEnter(State oldState, object[] param) {
 				m_animEvents.onJumpImpulse   += new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
-				m_animEvents.onJumpReception += new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
+                m_animEvents.onJumpFallDown  += new SpartakusAnimationEvents.OnJumpFallDownDelegate(FallDown);
+                m_animEvents.onJumpReception += new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
 				m_animEvents.onDizzyRecover  += new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
 				m_pilot.PressAction(Pilot.Action.Attack);
@@ -75,6 +76,7 @@ namespace AI {
 				m_meleeWeapon.enabled = false;
 
 				m_animEvents.onJumpImpulse   -= new SpartakusAnimationEvents.OnJumpImpulseDelegate(Jump);
+                m_animEvents.onJumpFallDown  -= new SpartakusAnimationEvents.OnJumpFallDownDelegate(FallDown);
 				m_animEvents.onJumpReception -= new SpartakusAnimationEvents.OnJumpReceptionDelegate(EndAttack);
 				m_animEvents.onDizzyRecover  -= new SpartakusAnimationEvents.OnDizzyRecoverDelegate(DizzyRecover);
 
@@ -130,6 +132,10 @@ namespace AI {
 				m_machine.SetVelocity(new Vector3(m_data.jumpVelocityH * direction.x, m_data.jumpVelocityV, 0f));
 			}
 
+            private void FallDown() {
+                m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
+            }
+
 			private void EndAttack() {
 				m_meleeWeapon.enabled = false;
 				m_pilot.Stop();
@@ -142,8 +148,7 @@ namespace AI {
 					}
 				} else {
 					m_pilot.PressAction(Pilot.Action.Button_B);
-					m_machine.SetSignal(Signals.Type.InvulnerableBite, false);
-
+					
 					m_timer = m_data.dizzyTime;
 
 					m_attackState = AttackState.Dizzy;
