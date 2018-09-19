@@ -4,6 +4,8 @@ using System.Collections;
 public class AngelViewControl : ViewControl {
 
 	private static int SPECIAL_HASH = Animator.StringToHash("Special");
+    [SeparatorAttribute("Special Audios")]
+    public string m_reviveAudio = "";
 
 	protected override void Awake() {
 		base.Awake();
@@ -27,4 +29,13 @@ public class AngelViewControl : ViewControl {
 		transform.FindTransformRecursive("Aura_LOW").gameObject.SetActive(false);
 		transform.FindTransformRecursive("Harp_LOW").gameObject.SetActive(false);
 	}
+    
+    protected override void OnSpecialAnimationEnter(SpecialAnims _anim) 
+    {
+        base.OnSpecialAnimationEnter(_anim);
+        // Play Audio
+        if ( !string.IsNullOrEmpty(m_reviveAudio) ) {
+            AudioController.Play( m_reviveAudio );
+        }
+    }
 }
