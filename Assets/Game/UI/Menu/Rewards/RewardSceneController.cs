@@ -87,6 +87,7 @@ public class RewardSceneController : MonoBehaviour {
 	[SerializeField] private string m_eggTapSFX = "";
 	[SerializeField] private string m_goldenEggCompletedSFX = "";
 	[SerializeField] private string m_goldenEggIntroSFX = "";
+	[SerializeField] private string m_halloweenPetSFX = "";
 
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
@@ -341,7 +342,11 @@ public class RewardSceneController : MonoBehaviour {
 
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
-		seq.AppendInterval(0.05f);	// Initial delay
+
+		// Initial delay
+		seq.AppendInterval(0.05f);
+
+		// Scale Up
 		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
 
 		// Trigger UI animation
@@ -621,7 +626,13 @@ public class RewardSceneController : MonoBehaviour {
 		TriggerFX(m_rarityFXSetup[(int)m_currentReward.rarity].openFX);
 
 		// Trigger SFX
-		AudioController.Play(m_rarityFXSetup[(int)m_currentReward.rarity].sfx);
+		// [AOC] Special SFX if it's a Halloween reward!
+		Metagame.RewardEgg r = m_currentReward as Metagame.RewardEgg;
+		if(r != null && r.reward.def.GetAsString("associatedSeason") == "halloween") {
+			AudioController.Play(m_halloweenPetSFX);
+		} else {
+			AudioController.Play(m_rarityFXSetup[(int)m_currentReward.rarity].sfx);
+		}
 
 		// Program reward animation
 		UbiBCN.CoroutineManager.DelayedCall(OnEggExplosionAnimFinished, 0.35f, false);
