@@ -388,7 +388,7 @@ if $BUILD_IOS; then
     print_builder "Archiving"
     rm -rf "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}"    # just in case
     sed -i "" "s|ProvisioningStyle = Automatic;|ProvisioningStyle = Manual;|" "${PROJECT_NAME}/project.pbxproj" # for archive to work we need it to be manual
-    xcodebuild archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
+    xcodebuild clean archive -project "${PROJECT_NAME}" -configuration Release -scheme "Unity-iPhone" -archivePath "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM}" PROVISIONING_PROFILE="${PROVISIONING_PROFILE_UUID}" CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}"
 
     # Generate IPA file
     print_builder "Exporting IPA"
