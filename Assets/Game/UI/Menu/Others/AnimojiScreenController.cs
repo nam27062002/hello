@@ -195,9 +195,12 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Clear permissions listener
-		PermissionsManager.SharedInstance.RemovePermissionsListener(m_permissionsListener);
-		m_permissionsListener = null;
+        if (ApplicationManager.IsAlive)
+        {
+            // Clear permissions listener
+            PermissionsManager.SharedInstance.RemovePermissionsListener(m_permissionsListener);
+            m_permissionsListener = null;
+        }
 	}
 
 	/// <summary>
