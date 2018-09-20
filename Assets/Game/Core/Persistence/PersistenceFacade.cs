@@ -528,9 +528,7 @@ public class PersistenceFacade
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
-        config.OnCancel = onContinue;
-        // Back button is disabled in order to make sure that the user is aware when making such an important decision
-        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;        
+        config.OnCancel = onContinue;        
         PopupManager.PopupMessage_Open(config);
     }
 
