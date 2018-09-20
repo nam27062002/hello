@@ -17,6 +17,11 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON _EMISSION
         passType: 0
+  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
@@ -336,9 +341,6 @@ ShaderVariantCollection:
         passType: 4
       - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
         passType: 4
-      - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
-          SPECULAR
-        passType: 4
       - keywords: FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP SELFILLUMINATE_BLINKLIGHTS
           SPECULAR
         passType: 4
@@ -363,15 +365,24 @@ ShaderVariantCollection:
       - keywords: BLENDFRESNEL CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE HI_DETAIL_ON
           NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON
         passType: 4
-      - keywords: BLENDFRESNEL FRESNEL FXLAYER_NONE HI_DETAIL_ON NORMALMAP OPAQUESPECULAR
-          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
-        passType: 4
       - keywords: CUTOFF FXLAYER_DISSOLVE HI_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
           SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_COLORIZE HI_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
-      - keywords: BLENDFRESNEL FRESNEL FXLAYER_COLORIZE HI_DETAIL_ON NORMALMAP SPECULAR
+      - keywords: BLENDFRESNEL FXLAYER_COLORIZE HI_DETAIL_ON NORMALMAP SPECULAR
+        passType: 4
+      - keywords: EMISSIVE FRESNEL FXLAYER_NONE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
+          GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+          HI_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: EMISSIVE EMISSIVE_NONE FOG FRESNEL FXLAYER_NONE GLOWEFFECT_MULTIPLY_COLOR_OFF
+          GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF
+          GLOWEFFECT_USE_VERTEXCOLOR_OFF HI_DETAIL_ON MAINCOLOR_TEXTURE NORMALMAP
+          SELFILLUMINATE_BLINKLIGHTS SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
+        passType: 4
+      - keywords: COLORRAMP EMISSIVE FRESNEL FXLAYER_COLORIZE HI_DETAIL_ON NORMALMAP
+          SELFILLUMINATE_EMISSIVE SPECULAR _NORMALMAP _ZWRITE_ON
         passType: 4
   - first: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
     second:
@@ -387,6 +398,9 @@ ShaderVariantCollection:
       - keywords: EMISSIVE_NONE HI_DETAIL_ON NORMALMAP OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
         passType: 0
       - keywords: EMISSIVE_NONE HI_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _EMISSION
+          _ZWRITE_ON
+        passType: 0
+      - keywords: EMISSIVE_NONE FOG HI_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE
           _ZWRITE_ON
         passType: 0
       - keywords: HI_DETAIL_ON _NORMALMAP
@@ -492,6 +506,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_NONE FOG HI_DETAIL_ON MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE
           _EMISSION _ZWRITE_ON
+        passType: 0
+      - keywords: EMISSIVE_NONE FOG HI_DETAIL_ON MAINCOLOR_TEXTURE SPECULAR VERTEXCOLOR_NONE
+          _ZWRITE_ON
         passType: 0
       - keywords: FOG HI_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION _NORMALMAP
         passType: 0
@@ -650,6 +667,11 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 57c2c07a0719d4fafab7a4f8a84d1767, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 5b1f5a679f94a1e4f813453a9b9087c7, type: 3}
     second:
       variants:
@@ -671,6 +693,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: FOG HI_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION
         passType: 0
+      - keywords: EMISSIVE_NONE FOG HI_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE
+          _ZWRITE_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
     second:
       variants:
@@ -682,8 +707,6 @@ ShaderVariantCollection:
       - keywords: EMISSIVE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
           GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
           HI_DETAIL_ON
-        passType: 4
-      - keywords: COLORRAMP EMISSIVE HI_DETAIL_ON _NORMALMAP
         passType: 4
   - first: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
     second:
@@ -823,6 +846,16 @@ ShaderVariantCollection:
       variants:
       - keywords: HI_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
+    second:
+      variants:
+      - keywords: HI_DETAIL_ON _ALPHAPREMULTIPLY_ON
+        passType: 0
   - first: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
     second:
       variants:
@@ -842,24 +875,4 @@ ShaderVariantCollection:
       variants:
       - keywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
           GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF HI_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON _ALPHAPREMULTIPLY_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 57c2c07a0719d4fafab7a4f8a84d1767, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
-    second:
-      variants:
-      - keywords: HI_DETAIL_ON
         passType: 0
