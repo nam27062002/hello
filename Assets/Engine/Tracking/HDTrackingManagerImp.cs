@@ -1630,6 +1630,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
+            // If the user is minor then analytics and marketing have to be reported as disabled
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled())
+            {
+                _enableAnalytics = false;
+                _enableMarketing = false;
+            }
+
             e.data.Add(TRACK_PARAM_AGE, _age);
             e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
             e.data.Add(TRACK_PARAM_DURATION, _duration);
