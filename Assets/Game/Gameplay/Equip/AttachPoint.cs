@@ -35,6 +35,7 @@ public class AttachPoint : MonoBehaviour {
 
 	public void EquipPet(Equipable _pet) {
 		m_item = _pet;
+        _pet.attachPoint = point;
 		// m_item.transform.position = transform.position;
 
 		AI.IMachine machine = m_item.GetComponent<AI.IMachine>();
