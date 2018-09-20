@@ -331,7 +331,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		//Health Drain Amplitude over time
 		if (includeHealthDrainAmp)
 		{
-			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * m_drainModifier / 100f;
+            float drain = m_drainModifier;
+            if (m_drainModifier < 0)
+                drain = m_drainModifier;
+			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * drain / 100f;
 			damage = damage + (damage * (m_gameController.elapsedSeconds * amp));
 
             //Add Space Drain 
