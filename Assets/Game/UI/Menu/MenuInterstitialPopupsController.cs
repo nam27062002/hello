@@ -347,7 +347,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(Prefs.GetBoolPlayer(PopupInfoAnimoji.ANIMOJI_TUTORIAL_KEY, false)) return;
 
 		// Is photo feature available? (FTUX)
-		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentInParent<ShowOnTutorialStep>();
+		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentsInParent<ShowOnTutorialStep>(true)[0];	// [AOC] GetComponentInParent<T>() doesn't include disabled objects (and the parent object can actually be inactive triggered by the same ShowOnTutorialStep component we're looking for xD), so we're forced to use GetComponentsInParent<T>(bool includeInactive)[0] instead.
 		if(photoTutorialTrigger != null) {
 			if(!photoTutorialTrigger.Check()) return;
 		}
