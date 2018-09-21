@@ -562,7 +562,11 @@ public class AnimojiScreenController : MonoBehaviour {
 		bool tongueReminderTimeout = m_tongueReminderTimer <= 0f;
 
 		// Apply
-		m_faceNotDetectedGroup.Set(!faceDetected);
+		m_faceNotDetectedGroup.Set(
+			!faceDetected && 
+			m_state == State.PREVIEW	// Not while recording (or near it)
+		);
+
 		m_tongueReminderGroup.Set(
 			faceDetected && 
 			!tongueDetected && 
@@ -628,9 +632,13 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <param name="_triggerAnim">Launch animation?</param>
 	private void SetCountdown(float _seconds, bool _triggerAnim) {
 		// Set text
-		m_countdownText.text = StringUtils.FormatNumber(
-			Mathf.FloorToInt(_seconds) + 1	// Don't show 0
-		);
+		if(_seconds >= 0) {	// Don't show 0
+			m_countdownText.text = StringUtils.FormatNumber(
+				Mathf.FloorToInt(_seconds) + 1
+			);
+		} else {
+			m_countdownText.text = string.Empty;
+		}
 
 		// Trigger anim
 		m_countdownAnim.SetTrigger("launch");
