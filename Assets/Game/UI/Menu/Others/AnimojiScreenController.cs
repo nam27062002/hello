@@ -371,7 +371,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 			case State.RECORDING: {
 				// Toggle views
-				SelectUI(true);
+				SelectUI(false);	// No animation so no UI is recorded during a fade animation
 
 				// Do it!
 				m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
