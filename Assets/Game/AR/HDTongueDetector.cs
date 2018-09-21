@@ -193,9 +193,8 @@ public class HDTongueDetector : MonoBehaviour
 		m_dragonAnimojiInstance.ToggleFire(false);
 
 		// Notify listeners
-		ControlPanel.Log(Colors.paleYellow.Tag("FACE DETECTED"));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI]] FACE DETECTED"));
 		onFaceAdded.Invoke();
-		Debug.Log (">>>>>>>>>FACE ADDED");
 	}
 		
 	/// <summary>
@@ -205,6 +204,15 @@ public class HDTongueDetector : MonoBehaviour
 	void FaceUpdated (ARFaceAnchor anchorData)
 	{
 		m_currentBlendShapes = anchorData.blendShapes;
+
+		if(m_faceDetected != anchorData.isTracked) {
+			ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI]] FORCING FACE DETECTED/REMOVED"));
+			if(anchorData.isTracked) {
+				FaceAdded(anchorData);
+			} else {
+				FaceRemoved(anchorData);
+			}			
+		}
 	}
 
 	/// <summary>
@@ -218,9 +226,8 @@ public class HDTongueDetector : MonoBehaviour
 		m_dragonAnimojiInstance.gameObject.SetActive (false);
 
 		// Notify listeners
-		ControlPanel.Log(Colors.paleYellow.Tag("FACE REMOVED"));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] FACE REMOVED"));
 		onFaceRemoved.Invoke();
-		Debug.Log (">>>>>>>>>FACE REMOVED");
 	}
 
 	private bool m_lastFaceDetected = false;

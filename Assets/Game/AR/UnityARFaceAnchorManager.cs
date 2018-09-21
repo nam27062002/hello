@@ -9,10 +9,10 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 	private GameObject anchorPrefab;
 
 	private UnityARSessionNativeInterface m_session;
+	private bool m_sesionInit = false;
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log( "UnityARFaceAnchorManager Start" );
 		m_session = UnityARSessionNativeInterface.GetARSessionNativeInterface();
 
 		Application.targetFrameRate = 60;
@@ -22,17 +22,18 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 
 		if (config.IsSupported ) {
 			m_session.RunWithConfigAndOptions (config, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors);
-            Debug.Log( "UnityARFaceAnchorManager Register" );
+			Debug.Log( "UnityARFaceAnchorManager Register" );
+
 			UnityARSessionNativeInterface.ARFaceAnchorAddedEvent += FaceAdded;
 			UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent += FaceUpdated;
 			UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent += FaceRemoved;
+			m_sesionInit = true;
 		}
 
 	}
 
 	void FaceAdded (ARFaceAnchor anchorData)
 	{
-        Debug.Log( "UnityARFaceAnchorManager FaceAdded" );
 		anchorPrefab.transform.position = UnityARMatrixOps.GetPosition (anchorData.transform);
 		anchorPrefab.transform.rotation = UnityARMatrixOps.GetRotation (anchorData.transform);
 		anchorPrefab.SetActive (true);
@@ -40,24 +41,37 @@ public class UnityARFaceAnchorManager : MonoBehaviour {
 
 	void FaceUpdated (ARFaceAnchor anchorData)
 	{
-		anchorPrefab.transform.position = UnityARMatrixOps.GetPosition (anchorData.transform);
-		anchorPrefab.transform.rotation = UnityARMatrixOps.GetRotation (anchorData.transform);
-        Debug.Log( "UnityARFaceAnchorManager FaceUpdated ");
-        anchorPrefab.SetActive (true);
+		if (anchorPrefab.activeSelf != anchorData.isTracked) 
+		{
+			anchorPrefab.SetActive (anchorData.isTracked);
+		}
+
+		if (anchorData.isTracked) 
+		{
+			anchorPrefab.transform.position = UnityARMatrixOps.GetPosition (anchorData.transform);
+			anchorPrefab.transform.rotation = UnityARMatrixOps.GetRotation (anchorData.transform);
+		}
 	}
 
 	void FaceRemoved (ARFaceAnchor anchorData)
 	{
-        Debug.Log( "UnityARFaceAnchorManager FaceRemoved" );
 		anchorPrefab.SetActive (false);
 	}
 
 
+
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
 	void OnDestroy()
 	{
-		Debug.Log (">>>>>>>>>>>>>>> UnityARFaceAnchorManager.OnDestroy()");
-        UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
-        UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
-        UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent -= FaceRemoved;
+
+		if (m_sesionInit) {
+			UnityARSessionNativeInterface.ARFaceAnchorAddedEvent -= FaceAdded;
+			UnityARSessionNativeInterface.ARFaceAnchorUpdatedEvent -= FaceUpdated;
+			UnityARSessionNativeInterface.ARFaceAnchorRemovedEvent -= FaceRemoved;
+		}		
 	}
 }

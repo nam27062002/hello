@@ -53,6 +53,8 @@ public class MenuTransitionManager : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Safety time period between transitions (to avoid breaking the UI if tapping 2 buttons for example)
+	private const float TRANSITION_SAFETY_PERIOD = 0.5f;
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -99,7 +101,13 @@ public class MenuTransitionManager : MonoBehaviour {
 	public List<MenuScreen> screenHistory {
 		get { return m_screenHistory; }
 	}
-	
+
+	// Transition protection
+	private bool m_transitionAllowed = true;
+	public bool transitionAllowed {
+		get { return m_transitionAllowed; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -149,6 +157,12 @@ public class MenuTransitionManager : MonoBehaviour {
 	public void GoToScreen(MenuScreen _targetScreen, bool _animate) {
 		Debug.Log("Changing screen from " + Colors.coral.Tag(m_currentScreen.ToString()) + " to " + Colors.aqua.Tag(_targetScreen.ToString()));
 
+		// Block if transitions are not allowed at this moment
+		if(!m_transitionAllowed) {
+			Debug.Log("BLOCKED");
+			return;
+		}
+
 		// Ignore if screen is already active
 		if(_targetScreen == m_currentScreen) return;
 
@@ -181,6 +195,10 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Notify game a screen transition has just happen and animation is about to start
 		Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, m_currentScreen);
+
+		// Prevent any transition during a safety period (to avoid breaking the UI if tapping 2 buttons for example)
+		m_transitionAllowed = false;
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_transitionAllowed = true; }, TRANSITION_SAFETY_PERIOD);
 
 		// Perform transition
 		// Do we have a valid transition data from current screen to target screen?
