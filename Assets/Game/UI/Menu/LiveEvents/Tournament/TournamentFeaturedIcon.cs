@@ -313,6 +313,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+            SceneController.s_playMenuButtonLock = false;    // We allow players to try again
 		}
 	}
 
