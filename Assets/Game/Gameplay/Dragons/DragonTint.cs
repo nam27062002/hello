@@ -78,8 +78,8 @@ public class DragonTint : MonoBehaviour
 		Material wingsMaterial = null;
 		List<Renderer> wingsRenderers = new List<Renderer>();
 
-		Material diguiseMaterial = null;
-		List<Renderer> diguiseRenderers = new List<Renderer>();
+        Dictionary<string, Material> joinMaterial = new Dictionary<string, Material>();
+        Dictionary<string, List<Renderer>> disguiseRenderers = new Dictionary<string, List<Renderer>>();
 
 
 		if ( m_renderers != null )
@@ -102,8 +102,21 @@ public class DragonTint : MonoBehaviour
 				}
 				else
 				{
-					diguiseMaterial = mat;
-					diguiseRenderers.Add( renderer );
+                    if ( !joinMaterial.ContainsKey( mat.name ) )
+                    {
+                        joinMaterial.Add(mat.name, mat);    
+                    }
+                    if ( disguiseRenderers.ContainsKey( mat.name ) ) 
+                    {
+                            disguiseRenderers[mat.name].Add( renderer );
+                    }
+                    else
+                    {
+                            // List<Renderer> rends = new List<Renderer>();
+                            // rends.Add( renderer );
+                            disguiseRenderers.Add(mat.name, new List<Renderer> { renderer });
+                    }
+					
 				}
 
 				m_dragonRenderers.Add( m_renderers[i] );
@@ -130,14 +143,17 @@ public class DragonTint : MonoBehaviour
 			AddMaterialInfo( wingsMaterial );
 		}
 
-		if ( diguiseMaterial )
-		{
-			max = diguiseRenderers.Count;
-			for (int i = 0; i < max; i++) {
-				diguiseRenderers[i].material = diguiseMaterial;
-			}
-			AddMaterialInfo( diguiseMaterial );
-		}
+        foreach(KeyValuePair<string, Material> pair1 in joinMaterial)
+        {
+            List<Renderer> rends = disguiseRenderers[pair1.Key];
+            int num = rends.Count;
+            for (int i = 0; i < num; i++)
+            {
+                rends[i].material = pair1.Value;
+            }
+        }
+            
+        
 
 		m_materialsCount = m_materials.Count;
 	}

@@ -22,7 +22,7 @@ public class PopupInfoAnimoji : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Tutorial/PF_PopupInfoAnimoji";
+	public const string PATH = "UI/Popups/OtherInfo/PF_PopupInfoAnimoji";
 	public const string ANIMOJI_TUTORIAL_KEY = "ANIMOJI_TUTORIAL";
 
 	//------------------------------------------------------------------------//

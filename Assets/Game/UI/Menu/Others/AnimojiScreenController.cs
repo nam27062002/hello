@@ -38,7 +38,8 @@ public class AnimojiScreenController : MonoBehaviour {
 		INIT,
 		CAMERA_PERMISSIONS_REQUEST,
 		MICROPHONE_PERMISSIONS_REQUEST,
-		NO_PERMISSIONS_ERROR,
+		PERMISSIONS_OK,
+		PERMISSIONS_ERROR,
 		PREVIEW,
 		COUNTDOWN,
 		RECORDING,
@@ -55,6 +56,7 @@ public class AnimojiScreenController : MonoBehaviour {
 		public AnimojiScreenController parentScreen = null;
 
 		public override void onIOSPermissionResult(PermissionsManager.EIOSPermission ePermission, PermissionsManager.EPermissionStatus eStatus) {
+			
 			parentScreen.OnIOSPermissionResult(ePermission, eStatus);
 		}
 
@@ -120,6 +122,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 	// Permissions handling
 	private PermissionsListener m_permissionsListener = null;
+	private bool m_microphonePermissionGiven = false;
 
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
@@ -189,15 +192,19 @@ public class AnimojiScreenController : MonoBehaviour {
 		m_permissionsListener = new PermissionsListener();
 		m_permissionsListener.parentScreen = this;
 		PermissionsManager.SharedInstance.AddPermissionsListener(m_permissionsListener);
+		ControlPanel.Log(Colors.aqua.Tag("[ANIMOJI] PERMISSIONS MANAGER LISTENER INITIALIZED | " + m_permissionsListener));
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Clear permissions listener
-		PermissionsManager.SharedInstance.RemovePermissionsListener(m_permissionsListener);
-		m_permissionsListener = null;
+        if (ApplicationManager.IsAlive)
+        {
+            // Clear permissions listener
+            PermissionsManager.SharedInstance.RemovePermissionsListener(m_permissionsListener);
+            m_permissionsListener = null;
+        }
 	}
 
 	/// <summary>
@@ -267,15 +274,15 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.SHARING: {
-                    // Is video file ready?
+                // Is video file ready?
 #if (UNITY_IOS)
-                    bool recAvailable = ReplayKit.recordingAvailable;
+                bool recAvailable = ReplayKit.recordingAvailable;
 #else
-                    bool recAvailable = false;
+                bool recAvailable = false;
 #endif
-                    if(recAvailable) {
+                if(recAvailable) {
 					// Yes! Open native share dialog
-					ControlPanel.Log(Colors.paleYellow.Tag("RECORD AVAILABLE!"));
+					ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] RECORD AVAILABLE!"));
 					m_animojiSceneController.ShowPreview();
 
 					// We don't really have a way to know when the native dialog finishes, so instantly move back to the PREVIEW state
@@ -286,7 +293,7 @@ public class AnimojiScreenController : MonoBehaviour {
 					m_sharingTimer -= Time.deltaTime;
 					if(m_sharingTimer <= 0f) {
 						// Timeout! Skip video sharing
-						ControlPanel.Log(Colors.red.Tag("SHARING TIME OUT!"));
+						ControlPanel.Log(Colors.red.Tag("[ANIMOJI] SHARING TIME OUT!"));
 						ChangeState(State.PREVIEW);
 					}
 				}
@@ -299,7 +306,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newState">State to change to.</param>
 	private void ChangeState(State _newState) {
-		ControlPanel.Log(Colors.paleYellow.Tag("Changing state from " + m_state + " to " + _newState));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Changing state from " + m_state + " to " + _newState));
 
 		// Stuff to do when leaving a state
 		switch(m_state) {
@@ -330,34 +337,9 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Hide game HUD
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true);
 
-				// Load Animoji Scene
-				GameObject scenePrefab = Resources.Load<GameObject>(HDTongueDetector.SCENE_PREFAB_PATH);
-				Debug.Assert(scenePrefab != null, "COULDN'T LOADE ANIMOJI SCENE PREFAB (" + HDTongueDetector.SCENE_PREFAB_PATH + ")", this);
-
-				// Instantiate it
-				m_animojiSceneInstance = GameObject.Instantiate<GameObject>(scenePrefab);
-
-				// Get animoji controller reference
-				m_animojiSceneController = m_animojiSceneInstance.GetComponentInChildren<HDTongueDetector>();
-				Debug.Assert(m_animojiSceneController != null, "Couldn't find HDTongueDetector!", this);
-
-				m_unityARVideo = m_animojiSceneInstance.GetComponentInChildren<UnityARVideo> ();
-				Debug.Assert (m_unityARVideo != null, "Couldn't find UnityARVideo", this);
-
-				m_ARCameraTracker = m_animojiSceneInstance.GetComponentInChildren<ARCameraTracker> ();
-				Debug.Assert (m_ARCameraTracker != null, "Couldn't find UnityARVideo", this);
-
-				m_unityARFaceAnchorManager = m_animojiSceneInstance.GetComponentInChildren<UnityARFaceAnchorManager> ();
-				Debug.Assert (m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
-
-				// Initialize controller
-				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
-				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
-				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
-
-				// Go to PREVIEW state after some delay
+				// Go to next state after a frame
 				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					ChangeState(State.PREVIEW);
+					ChangeState(State.CAMERA_PERMISSIONS_REQUEST);
 				}, 1);
 			} break;
 
@@ -392,7 +374,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				SelectUI(true);
 
 				// Do it!
-				m_animojiSceneController.StartRecording();
+				m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
 
 				// Reset timer
 				m_recordingTimer = MAX_RECORDING_TIME;
@@ -436,31 +418,49 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Turn game back on
 				ToggleMainCameras(true);
 
-				// Unload Animoji Scene
-				m_animojiSceneController.onFaceAdded.RemoveListener(OnFaceDetected);
-				m_animojiSceneController.onTongueLost.RemoveListener(OnTongueLost);
-//				GameObject.Destroy (m_animojiSceneController.gameObject);
-//				m_animojiSceneController = null;				
+				// Unsubscribe from external events
+				if(m_animojiSceneController != null) {
+					m_animojiSceneController.onFaceAdded.RemoveListener(OnFaceDetected);
+					m_animojiSceneController.onTongueLost.RemoveListener(OnTongueLost);
+				}
+				
+				// Destroy the different AR components
+				if(m_unityARVideo != null) {
+					ControlPanel.Log("[ANIMOJI] Destroying UnityARVideo component");
+					GameObject.Destroy(m_unityARVideo.gameObject);
+					m_unityARVideo = null;
+				}
 
-				Debug.Log (">>>>>> Destroying UnityARVideo component");
-				GameObject.Destroy (m_unityARVideo.gameObject);
-				m_unityARVideo = null;
+				if(m_animojiSceneController != null) {
+					if(m_animojiSceneController.m_dragonAnimojiInstance != null) {
+						ControlPanel.Log("[ANIMOJI] Destroying DragonAnimoji component");
+						GameObject.Destroy(m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
+						m_animojiSceneController.m_dragonAnimojiInstance = null;
+					}
+					
+					ControlPanel.Log("[ANIMOJI] Destroying HDTongueDetector component");
+					GameObject.Destroy(m_animojiSceneController.gameObject);
+					m_animojiSceneController = null;
+				}
 
-				Debug.Log (">>>>>> Destroying DragonAnimoji component");
-				GameObject.Destroy (m_animojiSceneController.m_dragonAnimojiInstance.gameObject);
-				m_animojiSceneController.m_dragonAnimojiInstance = null;
-				Debug.Log (">>>>>> Destroying HDTongueDetector component");
-				GameObject.Destroy (m_animojiSceneController.gameObject);
-				m_animojiSceneController = null;
-				Debug.Log (">>>>>> Destroying PF_AnimojiSceneSetup root");
-				GameObject.Destroy(m_animojiSceneInstance);
-				m_animojiSceneInstance = null;
-				Debug.Log (">>>>>> Destroying UnityARFaceAnchorManager component");
-				GameObject.Destroy (m_unityARFaceAnchorManager.gameObject);
-				m_unityARFaceAnchorManager = null;
-				Debug.Log (">>>>>> Destroying ARCameraTracker component");
-				GameObject.Destroy (m_ARCameraTracker.gameObject);
-				m_ARCameraTracker = null;
+				if(m_animojiSceneInstance != null) {
+					ControlPanel.Log("[ANIMOJI] Destroying PF_AnimojiSceneSetup root");
+					GameObject.Destroy(m_animojiSceneInstance);
+					m_animojiSceneInstance = null;
+				}
+
+				if(m_unityARFaceAnchorManager != null) {
+					ControlPanel.Log("[ANIMOJI] Destroying UnityARFaceAnchorManager component");
+					GameObject.Destroy(m_unityARFaceAnchorManager.gameObject);
+					m_unityARFaceAnchorManager = null;
+				}
+
+				if(m_ARCameraTracker != null) {
+					ControlPanel.Log("[ANIMOJI] Destroying ARCameraTracker component");
+					GameObject.Destroy(m_ARCameraTracker.gameObject);
+					m_ARCameraTracker = null;
+				}
+
 //				UnityARSessionNativeInterface.GetARSessionNativeInterface ().RunWithConfigAndOptions (sessionConfig, UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors | UnityARSessionRunOption.ARSessionRunOptionResetTracking);
 
 				// Switch back to original orientation
@@ -486,9 +486,9 @@ public class AnimojiScreenController : MonoBehaviour {
 //					GameObject.Destroy(m_animojiSceneInstance);
 //					m_animojiSceneInstance = null;
 					ChangeState(State.OFF);
-					Debug.Log (">>>>>>>>>>>>Animoji screen controller: delayed call : changestate(OFF);");
+					ControlPanel.Log("[ANIMOJI] Animoji screen controller: delayed call : changestate(OFF);");
 				}, 0.25f);
-				Debug.Log (">>>>>>>>>>>>Animoji screen controller: Finish state end");
+				ControlPanel.Log("[ANIMOJI] Animoji screen controller: Finish state end");
 			} break;
 
 			case State.CAMERA_PERMISSIONS_REQUEST: {
@@ -507,7 +507,42 @@ public class AnimojiScreenController : MonoBehaviour {
 				ProcessMicrophonePermission();
 			} break;
 
-			case State.NO_PERMISSIONS_ERROR: {
+		case State.PERMISSIONS_OK: {
+				// Toggle views
+				SelectUI(true);
+
+				// Load Animoji Scene
+				GameObject scenePrefab = Resources.Load<GameObject>(HDTongueDetector.SCENE_PREFAB_PATH);
+				Debug.Assert(scenePrefab != null, "COULDN'T LOAD ANIMOJI SCENE PREFAB (" + HDTongueDetector.SCENE_PREFAB_PATH + ")", this);
+
+				// Instantiate it
+				m_animojiSceneInstance = GameObject.Instantiate<GameObject>(scenePrefab);
+
+				// Get animoji controller reference
+				m_animojiSceneController = m_animojiSceneInstance.GetComponentInChildren<HDTongueDetector>();
+				Debug.Assert(m_animojiSceneController != null, "Couldn't find HDTongueDetector!", this);
+
+				m_unityARVideo = m_animojiSceneInstance.GetComponentInChildren<UnityARVideo>();
+				Debug.Assert(m_unityARVideo != null, "Couldn't find UnityARVideo", this);
+
+				m_ARCameraTracker = m_animojiSceneInstance.GetComponentInChildren<ARCameraTracker>();
+				Debug.Assert(m_ARCameraTracker != null, "Couldn't find UnityARVideo", this);
+
+				m_unityARFaceAnchorManager = m_animojiSceneInstance.GetComponentInChildren<UnityARFaceAnchorManager>();
+				Debug.Assert(m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
+
+				// Initialize controller
+				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
+				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
+				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
+
+				// Go to next state after a frame
+				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+					ChangeState(State.PREVIEW);
+				}, 1);
+			} break;
+
+			case State.PERMISSIONS_ERROR: {
 				// Toggle views
 				SelectUI(true);
 			} break;
@@ -554,7 +589,8 @@ public class AnimojiScreenController : MonoBehaviour {
 			m_state == State.INIT || 
 			m_state == State.FINISH ||
 			m_state == State.CAMERA_PERMISSIONS_REQUEST ||
-			m_state == State.MICROPHONE_PERMISSIONS_REQUEST
+			m_state == State.MICROPHONE_PERMISSIONS_REQUEST ||
+			m_state == State.PERMISSIONS_OK
 			, _animate
 		);
 
@@ -568,7 +604,7 @@ public class AnimojiScreenController : MonoBehaviour {
 		m_recordingModeGroup.Set(m_state == State.RECORDING, _animate);
 
 		// Permissions error
-		m_permissionsErrorGroup.Set(m_state == State.NO_PERMISSIONS_ERROR, _animate);
+		m_permissionsErrorGroup.Set(m_state == State.PERMISSIONS_ERROR, _animate);
 	}
 
 	/// <summary>
@@ -618,7 +654,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED: {
 				// Show error message
-				ChangeState(State.NO_PERMISSIONS_ERROR);
+				ChangeState(State.PERMISSIONS_ERROR);
 			} break;
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED: {
@@ -626,7 +662,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				if(_requestAllowed) {
 					RequestCameraPermission();
 				} else {
-					ChangeState(State.NO_PERMISSIONS_ERROR);
+					ChangeState(State.PERMISSIONS_ERROR);
 				}
 			} break;
 		}
@@ -637,11 +673,14 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>The camera permission status.</returns>
 	private PermissionsManager.EPermissionStatus GetCameraPermission() {
+		PermissionsManager.EPermissionStatus permissionStatus = PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED;
 #if UNITY_IOS
-		return PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Camera);
+		permissionStatus = PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Camera);
 #elif UNITY_ANDROID
-		return PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_CAMERA_PERMISSION);
+		permissionStatus = PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_CAMERA_PERMISSION);
 #endif
+		ControlPanel.Log(Colors.aqua.Tag("[ANIMOJI] Camera Permission: " + permissionStatus));
+		return permissionStatus;
 	}
 
 	/// <summary>
@@ -649,6 +688,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// OnCameraPermission() callback will be invoked when done.
 	/// </summary>
 	private void RequestCameraPermission() {
+		ControlPanel.Log(Colors.aqua.Tag("[ANIMOJI] Requesting Camera Permission..."));
 #if UNITY_IOS
 		PermissionsManager.SharedInstance.RequestIOSPermission(PermissionsManager.EIOSPermission.Camera);
 #elif UNITY_ANDROID
@@ -661,16 +701,15 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_requestAllowed">Allow requesting permission if not defined.</param>
 	private void ProcessMicrophonePermission(bool _requestAllowed = true) {
+		// [AOC] Microphone permission is not blocker, the video will just get recorded without audio
 		switch(GetMicrophonePermission()) {
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED:
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED: {
-				// We're good to go!
-				ChangeState(State.PREVIEW);
+				m_microphonePermissionGiven = true;
 			} break;
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED: {
-				// Show error message
-				ChangeState(State.NO_PERMISSIONS_ERROR);
+				m_microphonePermissionGiven = false;
 			} break;
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED: {
@@ -678,10 +717,13 @@ public class AnimojiScreenController : MonoBehaviour {
 				if(_requestAllowed) {
 					RequestMicrophonePermission();
 				} else {
-					ChangeState(State.NO_PERMISSIONS_ERROR);
+					m_microphonePermissionGiven = false;
 				}
 			} break;
 		}
+
+		// We're good to go!
+		ChangeState(State.PERMISSIONS_OK);
 	}
 
 	/// <summary>
@@ -689,11 +731,14 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>The microphone permission status.</returns>
 	private PermissionsManager.EPermissionStatus GetMicrophonePermission() {
+		PermissionsManager.EPermissionStatus permissionStatus = PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED;
 #if UNITY_IOS
-		return PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Microphone);
+		permissionStatus = PermissionsManager.SharedInstance.GetIOSPermissionStatus(PermissionsManager.EIOSPermission.Microphone);
 #elif UNITY_ANDROID
-		return PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_MICROPHONE_PERMISSION);
+		permissionStatus = PermissionsManager.SharedInstance.GetAndroidPermissionStatus(ANDROID_MICROPHONE_PERMISSION);
 #endif
+		ControlPanel.Log(Colors.aqua.Tag("[ANIMOJI] Microphone Permission: " + permissionStatus));
+		return permissionStatus;
 	}
 
 	/// <summary>
@@ -701,6 +746,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// OnMicrophonePermission() callback will be invoked when done.
 	/// </summary>
 	private void RequestMicrophonePermission() {
+		ControlPanel.Log(Colors.aqua.Tag("[ANIMOJI] Requesting Microphone Permission..."));
 #if UNITY_IOS
 		PermissionsManager.SharedInstance.RequestIOSPermission(PermissionsManager.EIOSPermission.Microphone);
 #elif UNITY_ANDROID
@@ -714,6 +760,8 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <param name="_permission">Permission that has been modified.</param>
 	/// <param name="_status">New permission status.</param>
 	private void OnIOSPermissionResult(PermissionsManager.EIOSPermission _permission, PermissionsManager.EPermissionStatus _status) {
+		ControlPanel.Log(Colors.coral.Tag("[ANIMOJI] ON IOS PERMISSION RESULT | " + _permission + " | " + _status));
+
 		// Which permission has been changed?
 		switch(_permission) {
 			case PermissionsManager.EIOSPermission.Camera: {
@@ -732,6 +780,8 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <param name="_permission">Permission that has been modified.</param>
 	/// <param name="_status">New permission status.</param>
 	private void OnAndroidPermissionResult(string _permission, PermissionsManager.EPermissionStatus _status) {
+	ControlPanel.Log(Colors.coral.Tag("[ANIMOJI] ON ANDROID PERMISSION RESULT | " + _permission + " | " + _status));
+
 		// Which permission has been changed?
 		switch(_permission) {
 			case ANDROID_CAMERA_PERMISSION: {
@@ -748,9 +798,14 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// Go to device settings.
 	/// </summary>
 	public void OnPermissionSettingsButton() {
-		// Go to device settings
-		// [AOC] Calety does it for us! :)
-		PermissionsManager.SharedInstance.OpenPermissionSettings();
+		// Go to device settings (after some delay to give time for the flow to be finished)
+		UbiBCN.CoroutineManager.DelayedCall(() => {
+			// [AOC] Calety does it for us! :)
+			PermissionsManager.SharedInstance.OpenPermissionSettings();
+		}, 1f);
+
+		// Go back to previous screen to restart permissions settings
+		OnBackButton();
 	}
 
 	//------------------------------------------------------------------------//

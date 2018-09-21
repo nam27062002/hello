@@ -523,14 +523,20 @@ public class PersistenceFacade
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
-        config.MessageTid = "Corrupted progress saved. Please, retry";
+        config.MessageTid = "TID_SAVE_ERROR_CORRUPTED";
+        string uid = GameSessionManager.SharedInstance.GetUID();
+        if (string.IsNullOrEmpty(uid))
+        {
+            uid = "-1";
+        }
+
+        config.MessageParams = new string[] { "" + uid };
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
-        config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onConfirm;        
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
         config.OnCancel = onContinue;
-        // Back button is disabled in order to make sure that the user is aware when making such an important decision
-        config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.None;        
+        config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
     }
 
