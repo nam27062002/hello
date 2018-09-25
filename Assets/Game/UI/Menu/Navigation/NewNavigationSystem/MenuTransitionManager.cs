@@ -154,11 +154,11 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="_targetScreen">Target screen.</param>
 	/// <param name="_animate">Whether to animate or do it instantly.</param>
-	public void GoToScreen(MenuScreen _targetScreen, bool _animate) {
+	public void GoToScreen(MenuScreen _targetScreen, bool _animate, bool _forceTransition = false) {
 		Debug.Log("Changing screen from " + Colors.coral.Tag(m_currentScreen.ToString()) + " to " + Colors.aqua.Tag(_targetScreen.ToString()));
 
 		// Block if transitions are not allowed at this moment
-		if(!m_transitionAllowed) {
+        if(!m_transitionAllowed && !_forceTransition) {
 			Debug.Log("BLOCKED");
 			return;
 		}
