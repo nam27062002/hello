@@ -138,8 +138,8 @@ public class HDTongueDetector : MonoBehaviour
         if(ReplayKit.isRecording) return;
 
 		// Do it!
-		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
-		ReplayKit.Discard ();
+//		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
+//		ReplayKit.Discard ();
 
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
 		ReplayKit.StartRecording(_enableMicrophone);
