@@ -131,19 +131,23 @@ public class HDTongueDetector : MonoBehaviour
 	/// <summary>
 	/// Start recording process.
 	/// </summary>
+	/// <returns>Did the recording start properly?</returns>
 	/// <param name="_enableMicrophone">Record audio as well?</param>
-	public void StartRecording(bool _enableMicrophone) {
+	public bool StartRecording(bool _enableMicrophone) {
 #if (UNITY_IOS)
         // Prevent spamming
-        if(ReplayKit.isRecording) return;
+        if(ReplayKit.isRecording) return false;
 
 		// Do it!
 		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
 		ReplayKit.Discard ();
 
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
-		ReplayKit.StartRecording(_enableMicrophone);
+		bool success = ReplayKit.StartRecording(_enableMicrophone);
+
+		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING RESULT: " + success));
 #endif
+		return false;
 	}
 
 	/// <summary>

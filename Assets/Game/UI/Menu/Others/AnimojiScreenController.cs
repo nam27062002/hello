@@ -230,7 +230,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				}
 
 				// Show the right UI
-				RefreshInfoUI();
+				RefreshInfoUI(true);
 			} break;
 
 			case State.COUNTDOWN: {
@@ -373,11 +373,20 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Toggle views
 				SelectUI(false);	// No animation so no UI is recorded during a fade animation
 
-				// Do it!
-				m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
-
-				// Reset timer
+				// Reset timer and wait for timeout
 				m_recordingTimer = MAX_RECORDING_TIME;
+
+				// Tell the controller to start recording
+				bool recordingStarted = m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
+
+				// Was there any issue when starting the recording?
+				// A case of failure could be not granting the Screen Record permissions
+				if(!recordingStarted) {
+					// Yes! Go back to PREVIEW state
+					UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+						ChangeState(State.PREVIEW);
+					}, 1);
+				}	
 			} break;
 
 			case State.SHARING: {
@@ -555,7 +564,8 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <summary>
 	/// Refresh the info UI based on face detection state.
 	/// </summary>
-	private void RefreshInfoUI() {
+	/// <param name="_animate">Perform animations?</param>
+	private void RefreshInfoUI(bool _animate) {
 		// Check conditions
 		bool faceDetected = m_animojiSceneController.faceDetected;
 		bool tongueDetected = m_animojiSceneController.tongueDetected;
@@ -564,14 +574,16 @@ public class AnimojiScreenController : MonoBehaviour {
 		// Apply
 		m_faceNotDetectedGroup.Set(
 			!faceDetected && 
-			m_state == State.PREVIEW	// Not while recording (or near it)
+			m_state == State.PREVIEW,	// Not while recording (or near it)
+			_animate
 		);
 
 		m_tongueReminderGroup.Set(
 			faceDetected && 
 			!tongueDetected && 
 			tongueReminderTimeout &&
-			m_state != State.RECORDING		// Not while recording!
+			m_state != State.RECORDING,		// Not while recording!
+			_animate
 		);
 	}
 
@@ -582,7 +594,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	private void SelectUI(bool _animate) {
 		// Face not detected warning and tongue reminder
 		if(m_state == State.PREVIEW || m_state == State.RECORDING) {
-			RefreshInfoUI();
+			RefreshInfoUI(_animate);
 		} else {
 			m_faceNotDetectedGroup.ForceHide(_animate);
 			m_tongueReminderGroup.ForceSet(m_state == State.COUNTDOWN, _animate);	// Always show tongue reminder in COUNTDOWN state
