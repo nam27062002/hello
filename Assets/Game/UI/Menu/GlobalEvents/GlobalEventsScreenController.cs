@@ -130,7 +130,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			{
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
 			}
 			else
 			{
