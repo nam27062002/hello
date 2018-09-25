@@ -865,11 +865,11 @@ public class DragonPlayer : MonoBehaviour {
     }
 
     public bool CanUseMummyPower() {
-        return HasMummyPowerAvailable();
+        return !CanUseFreeRevives() && HasMummyPowerAvailable();
     }
 
     public bool CanUseFreeRevives() {
-        return !CanUseMummyPower() && GetReminingLives() > 0;
+        return GetReminingLives() > 0;
     }
 
 	/// <summary>
