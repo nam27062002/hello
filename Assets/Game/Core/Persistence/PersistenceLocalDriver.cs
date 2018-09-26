@@ -317,7 +317,7 @@ public class PersistenceLocalDriver
     public void Update() {}
 
     #region SavePaths
-    private const bool SAVE_PATHS_MULTIPLE_ENABLED = false;
+    private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
     private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;
 
     private string[] mSavePaths;    

@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4260669437074598}
   - component: {fileID: 20007992308652792}
   - component: {fileID: 124226203209713926}
-  - component: {fileID: 114268469289550094}
-  - component: {fileID: 114435577134156118}
+  - component: {fileID: 114059647863125248}
+  - component: {fileID: 114451952609199292}
   m_Layer: 0
   m_Name: ARCamera
   m_TagString: MainCamera
@@ -38,7 +38,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4530710343415004}
-  - component: {fileID: 114487148453607364}
+  - component: {fileID: 114815947201902700}
   m_Layer: 0
   m_Name: ARFaceAnchorManager
   m_TagString: Untagged
@@ -208,7 +208,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.01
   far clip plane: 30
   field of view: 60
   orthographic: 0
@@ -308,6 +308,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114059647863125248
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1342133212630612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a4b6acd582a14203ad36dea32d269cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ClearMaterial: {fileID: 2100000, guid: e5989df018ac6454eb936ab3e3b8f6d7, type: 2}
 --- !u!114 &114119333718845828
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -320,6 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragonAnimojiAnchor: {fileID: 4881635238584572}
+  m_dragonAnimojiInstance: {fileID: 0}
   onFaceAdded:
     m_PersistentCalls:
       m_Calls: []
@@ -352,7 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackedCamera: {fileID: 20007992308652792}
---- !u!114 &114268469289550094
+--- !u!114 &114451952609199292
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -360,22 +373,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342133212630612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b58ecea7a196242dd879c814ac05084c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4eb681b26f7c342ab9d678f47436c45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClearMaterial: {fileID: 2100000, guid: f1d9352050a75486f878ab19fa578f16, type: 2}
---- !u!114 &114435577134156118
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1342133212630612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce437cef046e841aabd6070890e79d41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114487148453607364
+--- !u!114 &114815947201902700
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -383,7 +384,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1347630385636752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbb9909788bbd469bbce3102485cc0d9, type: 3}
+  m_Script: {fileID: 11500000, guid: c57295d69b39e40599c2a23e844f2983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   anchorPrefab: {fileID: 1639052030889348}

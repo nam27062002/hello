@@ -96,15 +96,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		// The session will be started later on because we need to wait for persistence to be loaded (since it may contain the trackind id required to start the session) and some
 		// events may be reported before the persistence is loaded
 		Track_StartSessionEvent();
-		Track_MobileStartEvent();
-
-		HDTrackingEvent e = new HDTrackingEvent("custom.session.started");
-		{
-			string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
-			Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
-		}
-		m_eventQueue.Enqueue(e);
-
 
         Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
@@ -294,6 +285,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
         // Start Tracking manager
         // Sends the start session event        
         Track_GameStart();
+
+		// We need to wait until this method is called to send this event because it has a parameter that needs persistence to be loaded
+		Track_MobileStartEvent();
+
+		HDTrackingEvent e = new HDTrackingEvent("custom.session.started");
+		{
+			string fullClientVersion = GameSettings.internalVersion.ToString() + "." + ServerManager.SharedInstance.GetRevisionVersion();
+			Track_AddParamString(e, TRACK_PARAM_VERSION_REVISION, fullClientVersion);
+		}
+		m_eventQueue.Enqueue(e);
         //-------------------------------
 
         if (Session_IsFirstTime) {
@@ -1630,6 +1631,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
+            // If the user is minor then analytics and marketing have to be reported as disabled
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled())
+            {
+                _enableAnalytics = false;
+                _enableMarketing = false;
+            }
+
             e.data.Add(TRACK_PARAM_AGE, _age);
             e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
             e.data.Add(TRACK_PARAM_DURATION, _duration);
