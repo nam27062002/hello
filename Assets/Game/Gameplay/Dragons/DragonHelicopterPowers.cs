@@ -96,6 +96,8 @@ public class DragonHelicopterPowers : MonoBehaviour
                         // Check arc
                         Vector3 circleCenter = entity.circleArea.center;
                         circleCenter.z = 0;
+                        dir.z = 0;
+                        dir.Normalize();
                         if (MathUtils.TestArcVsCircle( arcOrigin, m_machinegunAngle, m_machinegunDistance, dir, circleCenter, entity.circleArea.radius))
                         {
                             // Kill!
