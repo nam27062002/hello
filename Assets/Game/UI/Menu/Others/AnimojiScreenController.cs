@@ -294,10 +294,11 @@ public class AnimojiScreenController : MonoBehaviour {
 							this.GetComponentInParent<Canvas>().transform as RectTransform
 						).text.color = Colors.red;
 					}
-
-					// Clear ReplayKit
-					ReplayKit.StopRecording();
+#if UNITY_IOS
+                    // Clear ReplayKit
+                    ReplayKit.StopRecording();
 					ReplayKit.Discard();
+#endif
 
 					// Cancel recording (go back to initial state)
 					ChangeState(State.PREVIEW);
@@ -639,15 +640,20 @@ public class AnimojiScreenController : MonoBehaviour {
 			_animate
 		);
 
-		// Don't allow recording if ReplayKit is reporting an error (most likely permission denied)
-		m_recordButton.SetActive(string.IsNullOrEmpty(ReplayKit.lastError));
-	}
+#if UNITY_IOS
+        string lastError = ReplayKit.lastError;
+#else
+        string lastError = "";
+#endif
+        // Don't allow recording if ReplayKit is reporting an error (most likely permission denied)
+        m_recordButton.SetActive(string.IsNullOrEmpty(lastError));
+    }
 
-	/// <summary>
-	/// Show/hide UI groups based on current states.
-	/// </summary>
-	/// <param name="_animate">Perform animations?</param>
-	private void SelectUI(bool _animate) {
+    /// <summary>
+    /// Show/hide UI groups based on current states.
+    /// </summary>
+    /// <param name="_animate">Perform animations?</param>
+    private void SelectUI(bool _animate) {
 		// Face not detected warning and tongue reminder
 		if(m_state == State.PREVIEW || m_state == State.RECORDING) {
 			RefreshInfoUI(_animate);
@@ -717,10 +723,14 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// </summary>
 	/// <returns>Last parsed error code. Empty string if no error or error unknown.</returns>
 	private string ParseReplayKitLastError() {
-		// Get last error
-		string lastError = ReplayKit.lastError;
-		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit lastError: " + lastError));
-		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit isRecording: " + ReplayKit.isRecording));
+        // Get last error
+#if UNITY_IOS
+        string lastError = ReplayKit.lastError;
+#else
+        string lastError = "";
+#endif
+        ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit lastError: " + lastError));
+//		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit isRecording: " + ReplayKit.isRecording));
 
 		// Protect from null
 		if(string.IsNullOrEmpty(lastError)) {
