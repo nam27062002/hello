@@ -17,6 +17,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON _EMISSION
         passType: 0
+  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
     second:
       variants:
@@ -65,9 +70,15 @@ ShaderVariantCollection:
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_ENABLED
           EXTENDED_PARTICLES LOW_DETAIL_ON NOISE_TEXTURE_DISSOLVE
         passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX DISSOLVE_ENABLED EXTENDED_PARTICLES LOW_DETAIL_ON
+          NOISE_TEXTURE NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
+        passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_ENABLED
           EMISSIVEPOWER EXTENDED_PARTICLES LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_DISSOLVE
           NOISE_TEXTURE_EMISSION
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_NONE
+          EXTENDED_PARTICLES LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_ENABLED
           EXTENDED_PARTICLES LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_DISSOLVE
@@ -136,6 +147,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
           LOW_DETAIL_ON NOISE_TEXTURE_DISSOLVE
+        passType: 0
+      - keywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED EXTENDED_PARTICLES
+          LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_DISSOLVE NOISE_TEXTURE_EMISSION
         passType: 0
       - keywords: APPLY_RGB_COLOR_VERTEX AUTOMATICPANNING BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
           LOW_DETAIL_ON NOISE_TEXTURE NOISE_TEXTURE_ALPHA
@@ -303,11 +317,11 @@ ShaderVariantCollection:
         passType: 4
       - keywords: FRESNEL FXLAYER_FIRE LOW_DETAIL_ON NORMALMAP SPECULAR
         passType: 4
-      - keywords: BLENDFRESNEL FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP
-          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
-        passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUESPECULAR
           SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: BLENDFRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUESPECULAR
+          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
         passType: 4
       - keywords: FRESNEL FXLAYER_REFLECTION LOW_DETAIL_ON NORMALMAP OPAQUEFRESNEL
           OPAQUESPECULAR SPECULAR _ZWRITE_ON
@@ -320,7 +334,8 @@ ShaderVariantCollection:
       - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
           _EMISSION
         passType: 4
-      - keywords: FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL SPECULAR
+      - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
+          SPECULAR
         passType: 4
       - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP OPAQUEALPHA SELFILLUMINATE_NORMAL
           SPECULAR
@@ -334,6 +349,12 @@ ShaderVariantCollection:
       - keywords: BLENDFRESNEL FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
           SPECULAR
         passType: 4
+      - keywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP
+          SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_BLINKLIGHTS
+          SPECULAR _ZWRITE_ON
+        passType: 4
       - keywords: FRESNEL FXLAYER_NONE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_BLINKLIGHTS
           SPECULAR _ZWRITE_ON
         passType: 4
@@ -345,6 +366,25 @@ ShaderVariantCollection:
         passType: 4
       - keywords: BLENDFRESNEL CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE LOW_DETAIL_ON
           NORMALMAP OPAQUESPECULAR SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: CUTOFF FXLAYER_DISSOLVE LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL
+          SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: FRESNEL FXLAYER_COLORIZE LOW_DETAIL_ON NORMALMAP SPECULAR
+        passType: 4
+      - keywords: BLENDFRESNEL FXLAYER_COLORIZE LOW_DETAIL_ON NORMALMAP SPECULAR
+        passType: 4
+      - keywords: EMISSIVE FRESNEL FXLAYER_NONE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
+          GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
+          LOW_DETAIL_ON NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+        passType: 4
+      - keywords: EMISSIVE EMISSIVE_NONE FOG FRESNEL FXLAYER_NONE GLOWEFFECT_MULTIPLY_COLOR_OFF
+          GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF
+          GLOWEFFECT_USE_VERTEXCOLOR_OFF LOW_DETAIL_ON MAINCOLOR_TEXTURE NORMALMAP
+          SELFILLUMINATE_BLINKLIGHTS SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
+        passType: 4
+      - keywords: COLORRAMP EMISSIVE FRESNEL FXLAYER_COLORIZE LOW_DETAIL_ON NORMALMAP
+          SELFILLUMINATE_EMISSIVE SPECULAR _NORMALMAP _ZWRITE_ON
         passType: 4
   - first: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
     second:
@@ -360,6 +400,9 @@ ShaderVariantCollection:
       - keywords: EMISSIVE_NONE LOW_DETAIL_ON NORMALMAP OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
         passType: 0
       - keywords: EMISSIVE_NONE LOW_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE _EMISSION
+          _ZWRITE_ON
+        passType: 0
+      - keywords: EMISSIVE_NONE FOG LOW_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE
           _ZWRITE_ON
         passType: 0
       - keywords: LOW_DETAIL_ON _NORMALMAP
@@ -465,6 +508,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: EMISSIVE_NONE FOG LOW_DETAIL_ON MAINCOLOR_TEXTURE OPAQUEALPHA VERTEXCOLOR_NONE
           _EMISSION _ZWRITE_ON
+        passType: 0
+      - keywords: EMISSIVE_NONE FOG LOW_DETAIL_ON MAINCOLOR_TEXTURE SPECULAR VERTEXCOLOR_NONE
+          _ZWRITE_ON
         passType: 0
       - keywords: FOG LOW_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION _NORMALMAP
         passType: 0
@@ -623,6 +669,11 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 57c2c07a0719d4fafab7a4f8a84d1767, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 5b1f5a679f94a1e4f813453a9b9087c7, type: 3}
     second:
       variants:
@@ -644,6 +695,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: FOG LOW_DETAIL_ON OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION
         passType: 0
+      - keywords: EMISSIVE_NONE FOG LOW_DETAIL_ON MAINCOLOR_TEXTURE VERTEXCOLOR_NONE
+          _ZWRITE_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 6a206d3664d59fc4e912085ba47c4b98, type: 3}
     second:
       variants:
@@ -656,8 +710,6 @@ ShaderVariantCollection:
       - keywords: EMISSIVE GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF
           GLOWEFFECT_USE_GLOWTEX_OFF GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF
           LOW_DETAIL_ON
-        passType: 4
-      - keywords: COLORRAMP EMISSIVE LOW_DETAIL_ON _NORMALMAP
         passType: 4
   - first: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
     second:
@@ -797,6 +849,16 @@ ShaderVariantCollection:
       variants:
       - keywords: LOW_DETAIL_ON
         passType: 0
+  - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
+    second:
+      variants:
+      - keywords: LOW_DETAIL_ON _ALPHAPREMULTIPLY_ON
+        passType: 0
   - first: {fileID: 4800000, guid: f5d01bbba3dd4e94a9d60ae9526d5186, type: 3}
     second:
       variants:
@@ -816,24 +878,4 @@ ShaderVariantCollection:
       variants:
       - keywords: GLOWEFFECT_MULTIPLY_COLOR_OFF GLOWEFFECT_USE_GLOWCOLOR_OFF GLOWEFFECT_USE_GLOWTEX_OFF
           GLOWEFFECT_USE_MAINTEX_OFF GLOWEFFECT_USE_VERTEXCOLOR_OFF LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 025775b2b3616154f9eec0261bb8a581, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: f3570630f31ec4223a549b595d8cbb53, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON _ALPHAPREMULTIPLY_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: 57c2c07a0719d4fafab7a4f8a84d1767, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
-        passType: 0
-  - first: {fileID: 4800000, guid: ef7b8eec959eb4f1e9fa97bc86273848, type: 3}
-    second:
-      variants:
-      - keywords: LOW_DETAIL_ON
         passType: 0

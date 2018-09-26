@@ -96,5 +96,6 @@ namespace GameConstants
 		public static readonly int COUNTDOWN = UnityEngine.Animator.StringToHash("countdown");
 		public static readonly int BEEP = UnityEngine.Animator.StringToHash("beep");
 
+        public static readonly int ENABLED = UnityEngine.Animator.StringToHash("enabled");
 	}
 }

@@ -947,7 +947,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":30,"type":0,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.5,"playerDistance":6,"closeRangeMultiplier":20,"farRangeMultiplier":40,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":200,"type":0,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.5,"playerDistance":6,"closeRangeMultiplier":20,"farRangeMultiplier":180,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetColumbo_57
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1080,6 +1080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: pet_57
 --- !u!114 &114118088953280992
 MonoBehaviour:
@@ -1164,6 +1165,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 1
