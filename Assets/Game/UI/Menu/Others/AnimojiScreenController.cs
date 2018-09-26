@@ -96,6 +96,7 @@ public class AnimojiScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private Animator m_countdownAnim = null;
 	[SerializeField] private TextMeshProUGUI m_countdownText = null;
+	[SerializeField] private GameObject m_recordButton = null;
 
 	[Space]
 	[SerializeField] private Slider m_recordingTimeBar = null;
@@ -294,6 +295,10 @@ public class AnimojiScreenController : MonoBehaviour {
 						).text.color = Colors.red;
 					}
 
+					// Clear ReplayKit
+					ReplayKit.StopRecording();
+					ReplayKit.Discard();
+
 					// Cancel recording (go back to initial state)
 					ChangeState(State.PREVIEW);
 				} else {
@@ -423,7 +428,11 @@ public class AnimojiScreenController : MonoBehaviour {
 				m_recordingTimer = MAX_RECORDING_TIME;
 
 				// Tell the controller to start recording
-				m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
+				try {
+					m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
+				} catch(Exception _e) {
+					ControlPanel.Log(Colors.red.Tag("[ANIMOJI] START RECORDING EXCEPTION: " + _e.ToString()));
+				}
 			} break;
 
 			case State.SHARING: {
@@ -629,6 +638,9 @@ public class AnimojiScreenController : MonoBehaviour {
 			m_state != State.RECORDING,		// Not while recording!
 			_animate
 		);
+
+		// Don't allow recording if ReplayKit is reporting an error (most likely permission denied)
+		m_recordButton.SetActive(string.IsNullOrEmpty(ReplayKit.lastError));
 	}
 
 	/// <summary>
@@ -708,6 +720,7 @@ public class AnimojiScreenController : MonoBehaviour {
 		// Get last error
 		string lastError = ReplayKit.lastError;
 		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit lastError: " + lastError));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit isRecording: " + ReplayKit.isRecording));
 
 		// Protect from null
 		if(string.IsNullOrEmpty(lastError)) {
