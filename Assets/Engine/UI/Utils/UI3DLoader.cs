@@ -274,9 +274,9 @@ public class UI3DLoader : MonoBehaviour {
 	/// <param name="_obj">Object to be destroyed.</param>
 	private void SafeDestroy(Object _obj) {
 		if(Application.isPlaying) {
-			GameObject.Destroy(m_loadedInstance);
+			GameObject.Destroy(_obj);
 		} else {
-			GameObject.DestroyImmediate(m_loadedInstance);
+			GameObject.DestroyImmediate(_obj);
 		}
 	}
 

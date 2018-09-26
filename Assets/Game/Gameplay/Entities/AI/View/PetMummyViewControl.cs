@@ -27,6 +27,9 @@ public class PetMummyViewControl : ViewControl {
     private float m_powerStatus;
     private float m_timer;
     private State m_state;
+    
+    [SeparatorAttribute("Special Audios")]
+    public string m_reviveAudio = "";
 
 
 	protected override void Awake() {
@@ -46,7 +49,7 @@ public class PetMummyViewControl : ViewControl {
     private void OnInit() {
         m_powerStatus = 1f;
         for (int i = 0; i < m_materialList.Count; ++i) {
-            m_materialList[i].SetFloat("_DissolveAmount", 0f);
+            m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 0f);
         }
         m_machine.SetSignal(AI.Signals.Type.FallDown, false);
         m_effect.Stop(true);
@@ -70,7 +73,7 @@ public class PetMummyViewControl : ViewControl {
             m_effectTransform.localPosition = Vector3.Lerp(m_basePosition, m_topPosition, 1f - m_powerStatus);
 
             for (int i = 0; i < m_materialList.Count; ++i) {
-                m_materialList[i].SetFloat("_DissolveAmount", 1f - m_powerStatus);
+                m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 1f - m_powerStatus);
             }
 
             if (m_powerStatus <= float.Epsilon) {
@@ -80,6 +83,11 @@ public class PetMummyViewControl : ViewControl {
                     m_timer = m_dyingTimer;
                     m_machine.SetSignal(AI.Signals.Type.FallDown, true);
                     m_animator.SetTrigger(GameConstants.Animator.DEAD);
+
+                    for (int i = 0; i < m_materialList.Count; ++i) {
+                        m_materialList[i].SetFloat(GameConstants.Material.DISSOLVE_AMOUNT, 1f);
+                    }
+
                     m_state = State.DYING;
                 }
             }
@@ -91,8 +99,20 @@ public class PetMummyViewControl : ViewControl {
         }
     }
 
+    protected override void OnSpecialAnimationEnter(SpecialAnims _anim) 
+    {
+        base.OnSpecialAnimationEnter(_anim);
+        // Play Audio
+        if ( !string.IsNullOrEmpty(m_reviveAudio) ) {
+            AudioController.Play( m_reviveAudio );
+        }
+    }
+    
+
     private void OnDrawGizmosSelected() {
         Gizmos.DrawCube(transform.position + m_basePosition, GameConstants.Vector3.one * 0.25f);
         Gizmos.DrawCube(transform.position + m_topPosition, GameConstants.Vector3.one * 0.25f);
     }
+    
+     
 }

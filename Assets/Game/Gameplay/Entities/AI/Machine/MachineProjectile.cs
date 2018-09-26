@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace AI {
@@ -122,7 +122,7 @@ namespace AI {
 
 		public void Bite() {
 			if (!IsDying()) {
-				m_dyingReason = IEntity.DyingReason.EATEN;
+                m_projectile.OnBite();
 				m_edible.Bite();
 			}
 		}

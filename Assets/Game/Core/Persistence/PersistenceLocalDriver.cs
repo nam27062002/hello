@@ -62,9 +62,9 @@ public class PersistenceLocalDriver
 	}
 
 	protected virtual void ExtendedLoad()
-	{        
-        int currentIndex = SavePaths_LatestIndex;
-        int latestIndex = SavePaths_LatestIndex;
+	{                
+        int currentIndex = SavePaths_LatestIndex;        
+        int latestIndex = currentIndex;
         string savePath;
 
         // Tries different paths until no paths are left or one of them contains a file that exists and it's not corrupted
@@ -234,7 +234,7 @@ public class PersistenceLocalDriver
 			break;
 
             case PersistenceStates.ESaveState.Corrupted:
-                PersistenceFacade.Popups_OpenLocalSaveCorruptedError(onRetry);
+                PersistenceFacade.Popups_OpenLocalSaveCorruptedError(onRetry, onDone);
                 break;
 
 			default:
@@ -317,7 +317,7 @@ public class PersistenceLocalDriver
     public void Update() {}
 
     #region SavePaths
-    private const bool SAVE_PATHS_MULTIPLE_ENABLED = false;
+    private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
     private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;
 
     private string[] mSavePaths;    
@@ -344,7 +344,7 @@ public class PersistenceLocalDriver
         for (int i = 0; i  < SAVE_PATHS_COUNT; i++)
         {
             name = key;
-            if (SAVE_PATHS_MULTIPLE_ENABLED)
+            if (SAVE_PATHS_MULTIPLE_ENABLED && i > 0)
             {
                 name += "_" + i;
             }
@@ -395,7 +395,8 @@ public class PersistenceLocalDriver
     {
         if (SavePaths_Data == null)
         {
-            SavePaths_Data = new PersistenceData(path);
+            // We need to use the same key as Data so it can be decrypted
+            SavePaths_Data = new PersistenceData(Data.Key);
         }
         else
         {

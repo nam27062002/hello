@@ -97,7 +97,6 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner {
     }
 
 	public bool MustCheckCameraBounds(){ return true; }
-	public bool SpawnersCheckCurrents(){ return false; }
 
 	protected void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
         Transform t = spawning.transform;

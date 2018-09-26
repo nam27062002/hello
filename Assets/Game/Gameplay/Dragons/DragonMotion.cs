@@ -432,6 +432,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_lastSpeed = 0;
 		m_suction = m_eatBehaviour.suction;
 
+        RegionManager.Init();
+        m_regionManager = RegionManager.Instance;        
+        
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -753,11 +756,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		UpdateBodyBending();
 
-		if(m_regionManager == null)
-		{
-			RegionManager.Init();
-			m_regionManager = RegionManager.Instance;
-		}
 		CheckForCurrents();
 		CheckAllowGlide();
 

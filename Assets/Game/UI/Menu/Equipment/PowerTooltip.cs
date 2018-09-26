@@ -86,10 +86,14 @@ public class PowerTooltip : MonoBehaviour {
 
 		// Name and description
 		// Name
-		m_nameText.Localize(_powerDef.Get("tidName"));
+		if(m_nameText != null) {
+			m_nameText.Localize(_powerDef.Get("tidName"));
+		}
 
 		// Desc
-		m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);	// Custom formatting depending on powerup type, already localized
+		if(m_descriptionText != null) {
+			m_descriptionText.text = DragonPowerUp.GetDescription(_powerDef, false, _mode == PowerIcon.Mode.PET);   // Custom formatting depending on powerup type, already localized
+		}
 	}
 
 	public void InitFromDefinition(IModifierDefinition _modDef) {
@@ -104,10 +108,14 @@ public class PowerTooltip : MonoBehaviour {
 
 		// Name and description
 		// Name
-		m_nameText.Localize(_modDef.def.Get("tidName"));
+		if(m_nameText != null) {
+			m_nameText.Localize(_modDef.def.Get("tidName"));
+		}
 
 		// Desc
-		m_descriptionText.text = _modDef.GetDescription();
+		if(m_descriptionText != null) {
+			m_descriptionText.text = _modDef.GetDescription();
+		}
 	}
 
 	/// <summary>

@@ -190,8 +190,6 @@ public class SpawnerStar : AbstractSpawner {
 		m_respawnTime = -1;
 	}                
 
-	public override bool SpawnersCheckCurrents() { return false; }
-
 	public void UpdateBounds() {
 		m_rect.min = Vector3.zero;
 		m_rect.max = Vector3.zero;

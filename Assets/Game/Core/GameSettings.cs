@@ -19,6 +19,7 @@ using System.Collections.Generic;
 /// Global setup of the game and non-critical player settings stored in the device's cache.
 /// </summary>
 public class GameSettings : SingletonScriptableObject<GameSettings> {
+	
 	//------------------------------------------------------------------------//
 	// DEFAULT VALUES														  //
 	// Add here any new setting that needs initialization!					  //
@@ -43,6 +44,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		}
 	}
 
+	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
 	// Audio Settings
 	public const string SOUND_ENABLED = "GAME_SETTINGS_SOUND_ENABLED";	// bool, default true
 	public const string MUSIC_ENABLED = "GAME_SETTINGS_MUSIC_ENABLED";	// bool, default true
@@ -65,6 +69,13 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	public const string SHOW_BIG_AMOUNT_CONFIRMATION_POPUP = "SHOW_BIG_AMOUNT_CONFIRMATION_POPUP";	// bool, default true
 	public const string SHOW_EXIT_RUN_CONFIRMATION_POPUP = "SHOW_EXIT_RUN_CONFIRMATION_POPUP";	// bool, default true
 
+	[Serializable]
+	public class ShareData {
+		public string url = "";
+
+		[FileList("Resources/UI/Menu/QR_codes", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*", false)]
+		public string qrCodePath = "";
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -110,8 +121,29 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private int m_enableSharkPetRewardPopupAtRun = 3;
 	public static int ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN { get { return instance.m_enableSharkPetRewardPopupAtRun; }}
 
+	// Social
+	[Separator("Social")]
+	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
+	[SerializeField] private ShareData m_shareDataAndroid = new ShareData();
+	[SerializeField] private ShareData m_shareDataChina = new ShareData();
+	public static ShareData shareData {
+		get {
+			// Select target share data based on platform
+			// Also specific data for China!
+			if(PlatformUtils.Instance.IsChina()) {
+				return instance.m_shareDataChina;
+			} else {
+#if UNITY_IOS
+				return instance.m_shareDataIOS;
+#else
+				return instance.m_shareDataAndroid;
+#endif
+			}
+		}
+	}
+
 	// Social Links
-	[Separator("Social Links")]
+	[Space]
 	[SerializeField] private string m_facebookURL = "https://www.facebook.com/HungryDragonGame";
 	public static string FACEBOOK_URL {
 		get { return instance.m_facebookURL; }
