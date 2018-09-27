@@ -148,6 +148,14 @@ public class Mission {
 		m_cooldownNotified = false;
 	}
 
+    public void EnableTracker(bool _enable) {
+        if (_enable && m_state == State.ACTIVE) {
+            m_objective.enabled = true;
+        } else {
+            m_objective.enabled = false;
+        }
+    }
+
 	/// <summary>
 	/// Sets the state of the mission. Use carefully - ideally only from MissionManager.
 	/// The new state wont be checked (we can go to the same state as we are, all actions will be performed).
@@ -170,8 +178,6 @@ public class Mission {
 			} break;
 
 			case State.ACTIVE: {
-				// Start objective
-				m_objective.enabled = true;
 			} break;
 
 			case State.ACTIVATION_PENDING: {
@@ -327,7 +333,7 @@ public class Mission {
 		// Restore objective
 		if(m_objective != null) {
 			m_objective.tracker.InitValue(_data["currentValue"].AsLong);
-			m_objective.enabled = (m_state == State.ACTIVE);
+			m_objective.enabled = false;
 		}
 
 		// [AOC] If mission is active but objective is already completed, something went wrong
