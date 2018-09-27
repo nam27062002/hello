@@ -139,9 +139,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4095527641152946}
   - component: {fileID: 114673303330039868}
-  - component: {fileID: 114399061008687530}
   m_Layer: 0
-  m_Name: LabDragonSelectionSnapPoint
+  m_Name: LabPetsSnapPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -614,6 +613,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
   m_IsActive: 1
+--- !u!1 &1850517205491548
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4548669788701200}
+  - component: {fileID: 114056344446470280}
+  - component: {fileID: 114399061008687530}
+  m_Layer: 0
+  m_Name: LabDragonSelectionSnapPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1864984709098058
 GameObject:
   m_ObjectHideFlags: 1
@@ -725,13 +741,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1110731770952224}
-  m_LocalRotation: {x: -0.04929024, y: 0.12010394, z: -0.00029057596, w: 0.9915369}
-  m_LocalPosition: {x: -208.2, y: -906.8, z: 58.4}
+  m_LocalRotation: {x: 0.08254731, y: 0, z: 0, w: 0.99658716}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4984294277935578}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -5.6050005, y: -1066.152, z: -0.71500003}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 5.7106, y: 0, z: 0}
 --- !u!4 &4097948156382986
 Transform:
   m_ObjectHideFlags: 1
@@ -948,6 +964,19 @@ Transform:
   m_Father: {fileID: 4097948156382986}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4548669788701200
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1850517205491548}
+  m_LocalRotation: {x: -0.04929024, y: 0.12010394, z: -0.00029057596, w: 0.9915369}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4984294277935578}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -5.6050005, y: -1066.152, z: -0.71500003}
 --- !u!4 &4569430730846432
 Transform:
   m_ObjectHideFlags: 1
@@ -1033,7 +1062,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1278704879280288}
   m_LocalRotation: {x: -0.04929024, y: 0.12010394, z: -0.00029057596, w: 0.9915369}
-  m_LocalPosition: {x: -210, y: -906.8, z: 56.7}
+  m_LocalPosition: {x: 9.9, y: 4.1, z: 40.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4984294277935578}
@@ -1187,11 +1216,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1743001946807622}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 159, y: 537, z: 0}
+  m_LocalPosition: {x: -48.1, y: -369.6, z: 57.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4095527641152946}
+  - {fileID: 4548669788701200}
   - {fileID: 4689775488775782}
+  - {fileID: 4095527641152946}
   m_Father: {fileID: 4097948156382986}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2327,6 +2357,32 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 400, y: 250, z: 500}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114056344446470280
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1850517205491548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ff496381399492a9aae003c352473a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  changePosition: 1
+  changeRotation: 1
+  changeFov: 1
+  fov: 70
+  changeNear: 1
+  near: 1
+  changeFar: 1
+  far: 800
+  darkenScreen: 0
+  darkScreenDistance: 50
+  darkScreenColor: {r: 0, g: 0, b: 0, a: 0.8}
+  darkScreenRenderQueue: 3030
+  livePreview: 1
+  drawGizmos: 1
+  gizmoColor: {r: 0.034482718, g: 1, b: 0, a: 0.49803922}
 --- !u!114 &114173491013032070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2407,7 +2463,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1110731770952224}
+  m_GameObject: {fileID: 1850517205491548}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84bce71a0f6d243409968290ee318b06, type: 3}
@@ -2415,6 +2471,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_updateMode: 1
   m_linkedPoints:
+  - curve: {fileID: 0}
+    pointId: LAB_DRAGON_SELECTION
   - curve: {fileID: 0}
     pointId: LAB_DRAGON_SELECTION
 --- !u!114 &114457944397787968
@@ -2524,18 +2582,18 @@ MonoBehaviour:
   changePosition: 1
   changeRotation: 1
   changeFov: 1
-  fov: 70
-  changeNear: 1
+  fov: 45
+  changeNear: 0
   near: 1
-  changeFar: 1
-  far: 800
-  darkenScreen: 0
-  darkScreenDistance: 50
-  darkScreenColor: {r: 0, g: 0, b: 0, a: 0.8}
-  darkScreenRenderQueue: 3030
+  changeFar: 0
+  far: 500
+  darkenScreen: 1
+  darkScreenDistance: 5
+  darkScreenColor: {r: 0.00097318436, g: 0.078, b: 0.13235295, a: 0.5882353}
+  darkScreenRenderQueue: 3501
   livePreview: 1
   drawGizmos: 1
-  gizmoColor: {r: 0.034482718, g: 1, b: 0, a: 0.49803922}
+  gizmoColor: {r: 1, g: 0, b: 0.972414, a: 0.49803922}
 --- !u!114 &114714278064408210
 MonoBehaviour:
   m_ObjectHideFlags: 1

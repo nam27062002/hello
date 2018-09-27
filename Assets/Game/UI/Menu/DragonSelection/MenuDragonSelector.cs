@@ -145,7 +145,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
 			if(pet != null) {
 				// Yes! Go to the pet screen
-				targetScreen = MenuScreen.PETS;
+				targetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentDragon();	// [AOC] Lab or regular pet screen?
 
 				// Do a fun animation on the pet!
 				pet.SetAnim(MenuPetPreview.Anim.IN);

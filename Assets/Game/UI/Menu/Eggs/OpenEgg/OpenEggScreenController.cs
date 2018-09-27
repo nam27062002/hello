@@ -289,9 +289,10 @@ public class OpenEggScreenController : MonoBehaviour {
 				// Go to the pets screen
 				// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
 				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+					MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentDragon();
+					PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 					petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
-					screensController.GoToScreen(MenuScreen.PETS, true);
+					screensController.GoToScreen(targetPetScreen, true, false, false);	// [AOC] Don't allow going back to this screen!
 				}, 1);
 			} break;
 		}

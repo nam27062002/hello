@@ -221,7 +221,7 @@ public class MenuSceneController : SceneController {
 	/// </summary>
     /// <param name="_screen">Target screen.</param>
     public void GoToScreen(MenuScreen _screen, bool _forceTransition = false) {
-        transitionManager.GoToScreen(_screen, true, _forceTransition);
+        transitionManager.GoToScreen(_screen, true, _forceTransition, true);
 	}
 
 	/// <summary>
@@ -248,6 +248,21 @@ public class MenuSceneController : SceneController {
 		GoToScreen(MenuScreen.OPEN_EGG);
 
 		return true;
+	}
+
+	//------------------------------------------------------------------//
+	// UTILS															//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Returns the right pet screen ID (PETS or LAB_PETS) based on current dragon.
+	/// </summary>
+	/// <returns>The pet screen for current dragon.</returns>
+	public MenuScreen GetPetScreenForCurrentDragon() {
+		// Is the current dragon a special one?
+		if(DragonManager.currentDragon.type == IDragonData.Type.SPECIAL) {
+			return MenuScreen.LAB_PETS;
+		}
+		return MenuScreen.PETS;
 	}
 
 	//------------------------------------------------------------------//
