@@ -183,7 +183,8 @@ public class MenuScreensControllerToolbar {
 		Handles.BeginGUI(); {
 			// Compute size
 			Rect viewport = SceneView.currentDrawingSceneView.camera.pixelRect;
-			Rect size = new Rect(0, 0, s_maxWidth + 30, viewport.height * 0.5f);    // [AOC] For some weird reason both Screen.height and viewport.height are giving double than units used by the GUI system
+			viewport = EditorGUIUtility.PixelsToPoints(viewport);	// [AOC] For Retina displays, convert units
+			Rect size = new Rect(0, 0, s_maxWidth + 30, viewport.height);	// Add extra space for the scroll bar
 
 			// Draw folding button
 			// Setup as if it was not expanded
@@ -285,10 +286,10 @@ public class MenuScreensControllerToolbar {
 	/// <returns>If a screen button has been pressed, target screen..</returns>
 	private static void DoGroupLayout(ScreensGroup _group, ref MenuScreen _screenToEdit) {
 		// Main Screens Foldable Group
-		bool expanded = Prefs.GetBoolEditor(_group.key, true);
-		expanded = EditorGUILayout.Foldout(expanded, _group.displayName);
-		Prefs.SetBoolEditor(_group.key, expanded);
-		if(expanded) {
+		bool groupExpanded = Prefs.GetBoolEditor(_group.key, true);
+		groupExpanded = EditorGUILayout.Foldout(groupExpanded, _group.displayName);
+		Prefs.SetBoolEditor(_group.key, groupExpanded);
+		if(groupExpanded) {
 			// Indent in
 			EditorGUI.indentLevel++;
 
