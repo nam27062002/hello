@@ -212,6 +212,12 @@ public class UserProfile : UserPersistenceSystem
 		get{ return m_userMissions; }
 	}
 
+    UserSpecialMissions m_userSpecialMissions;
+    public UserSpecialMissions userSpecialMissions
+    {
+        get { return m_userSpecialMissions; }
+    }
+
 	AchievementsTracker m_achievements;
 	public AchievementsTracker achievements
 	{
@@ -441,8 +447,13 @@ public class UserProfile : UserPersistenceSystem
 		// Missions and achievements
 		if(m_userMissions != null) m_userMissions.ClearAllMissions();
         m_userMissions = new UserMissions();
+
+        if (m_userSpecialMissions != null) m_userSpecialMissions.ClearAllMissions();
+        m_userSpecialMissions = new UserSpecialMissions();
+
         m_achievements = new AchievementsTracker();
 
+        //
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
         m_incubationTimeReference = 0;
@@ -484,6 +495,12 @@ public class UserProfile : UserPersistenceSystem
         {
         	m_userMissions.ClearAllMissions();
         	m_userMissions = null;
+        }
+
+        if (m_userSpecialMissions != null)
+        {
+            m_userSpecialMissions.ClearAllMissions();
+            m_userSpecialMissions = null;
         }
     }
 
@@ -910,6 +927,12 @@ public class UserProfile : UserPersistenceSystem
 			m_userMissions.Load(_data["missions"]);
 		}
 
+        m_userSpecialMissions.ClearAllMissions();
+        if (_data.ContainsKey("missionsSpecial")) {
+            m_userSpecialMissions.Load(_data["missionsSpecial"]);
+        }
+
+        // Achievements
 		m_achievements.Initialize();
 		if ( _data.ContainsKey("achievements") ){
 			m_achievements.Load( _data["achievements"] );
@@ -1166,6 +1189,8 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
+        data.Add("missionsSpecial", m_userSpecialMissions.Save());
+
 		data.Add("achievements", m_achievements.Save());
 
 		data.Add("eggs", SaveEggData());

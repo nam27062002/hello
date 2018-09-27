@@ -30,6 +30,7 @@ public class SceneController : MonoBehaviour {
 	{
 		DEFAULT,
 		TOURNAMENT,
+        SPECIAL_DRAGONS
 	};
 	public static Mode s_mode = Mode.DEFAULT;
 
