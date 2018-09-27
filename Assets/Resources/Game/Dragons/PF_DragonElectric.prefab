@@ -65,8 +65,8 @@ GameObject:
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000011697174064}
   - component: {fileID: 114953852002885348}
-  - component: {fileID: 114141246206416228}
   - component: {fileID: 114716062075415202}
+  - component: {fileID: 114085871297933036}
   m_Layer: 12
   m_Name: PF_DragonElectric
   m_TagString: Player
@@ -324,7 +324,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -212.70052, y: 119.40766, z: -60.929688}
+  m_LocalPosition: {x: -89.46843, y: 52.519325, z: -4.9072266}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -3060,7 +3060,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470509311117520}
-  m_LocalRotation: {x: -0.0025812963, y: 0.8058062, z: 0.0035125853, w: 0.5921634}
+  m_LocalRotation: {x: -0.013660694, y: 0.67983717, z: 0.012667729, w: 0.73312646}
   m_LocalPosition: {x: 0, y: 0, z: -0.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3207,8 +3207,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1449934677553110}
-  m_LocalRotation: {x: 0.6963643, y: 0.12278789, z: -0.6963643, w: -0.12278779}
-  m_LocalPosition: {x: 0, y: 0.133, z: -0.26}
+  m_LocalRotation: {x: -0.7069668, y: 0.014070222, z: 0.7069668, w: -0.014070075}
+  m_LocalPosition: {x: -0.000000059604645, y: 0.45774078, z: 0.47070318}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 470162}
@@ -5183,6 +5183,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114085871297933036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prewarmDuration: 1
+  m_breathSound: Dragon_Burst Mode
+  m_superBreathSound: Dragon_Burst Mode
+  m_length: 6
+  m_dragonFlameStandard: {fileID: 197018, guid: bbcc97d7b953d4b00a47fde608352c3e,
+    type: 2}
+  m_dragonFlameSuper: {fileID: 197018, guid: 705bfe014038649f8a23385e6c895b05, type: 2}
 --- !u!114 &114100482591571702
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5224,73 +5242,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114141246206416228
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48f0dabda9d774437bbff41bb90ad77d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prewarmDuration: 0.5
-  m_breathSound: Dragon_Burst Mode
-  m_superBreathSound: Dragon_Burst Mode
-  m_segmentLength: 0.5
-  m_maxAmplitude: 0.01
-  m_widthCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_widthMultiplier: 4
-  m_offsetRays: 2
-  m_rayMaterial: {fileID: 2100000, guid: b9b6ff8aa13cc56479ce02cd514ba4cd, type: 2}
-  m_numRays: 1
-  m_maxAmplitude2: 0.4
-  m_widthCurve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: -1.7027029
-      outSlope: -1.7027029
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_widthMultiplier2: 1.3
-  m_offsetRays2: 0.5
-  m_rayMaterial2: {fileID: 2100000, guid: adc2e2b7b4c93384fa7832413a25dfaa, type: 2}
-  m_logicDetectionSize: 1
-  m_numRays2: 2
-  m_length: 50
-  m_particleStartPrefab: {fileID: 1640325906173098, guid: 7eb001a62292aff43b15c99ff7130d4f,
-    type: 2}
-  m_particleEndPrefab: {fileID: 1212766883835268, guid: dda51534af76ce745a66d49feaa56263,
-    type: 2}
 --- !u!114 &114191842339356412
 MonoBehaviour:
   m_ObjectHideFlags: 1
