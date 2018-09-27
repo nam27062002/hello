@@ -95,6 +95,8 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -103,6 +105,8 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+        Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
+        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
 	/// <summary>
@@ -261,4 +265,27 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
             m_currentModeMissions.UnlockByDragonsNumber();
         }
 	}
+
+    private void OnGameStarted() {
+        if (m_user != null) {
+            switch (SceneController.s_mode) {
+                case SceneController.Mode.DEFAULT:
+                m_user.userMissions.EnableTracker(true);
+                m_user.userSpecialMissions.EnableTracker(false);
+                break;
+
+                case SceneController.Mode.SPECIAL_DRAGONS:
+                m_user.userMissions.EnableTracker(true);
+                m_user.userSpecialMissions.EnableTracker(false);
+                break;
+            }
+        }
+    }
+
+    private void OnGameEnded() {
+        if (m_user != null) {
+            m_user.userMissions.EnableTracker(false);
+            m_user.userSpecialMissions.EnableTracker(false);
+        }
+    }
 }

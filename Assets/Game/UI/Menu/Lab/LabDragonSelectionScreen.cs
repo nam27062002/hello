@@ -76,4 +76,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+    public void OnBackButton() {
+        SceneController.s_mode = SceneController.Mode.DEFAULT;
+    }
 }

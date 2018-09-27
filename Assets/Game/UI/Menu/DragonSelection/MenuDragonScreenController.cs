@@ -558,4 +558,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
 		}
 	}
+
+    public void OnLabButton() {
+        SceneController.s_mode = SceneController.Mode.SPECIAL_DRAGONS;
+    }
 }

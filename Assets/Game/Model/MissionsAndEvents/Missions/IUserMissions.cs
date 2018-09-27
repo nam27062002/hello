@@ -52,14 +52,19 @@ public abstract class IUserMissions {
 						if(m_missions[i].state != Mission.State.ACTIVATION_PENDING) {
 							m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
 						}
-					}
-					else {
+					} else {
 						m_missions[i].ChangeState(Mission.State.ACTIVE);
 					}
 				}
 			}
 		}
 	}
+
+    public void EnableTracker(bool _enable) {
+        for (int i = 0; i < m_missions.Length; i++) {
+            m_missions[i].EnableTracker(_enable);
+        }
+    }
 
     public bool ExistsMission(Mission.Difficulty _difficulty) {
         return m_missions != null && m_missions[(int)_difficulty] != null;

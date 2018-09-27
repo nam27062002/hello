@@ -50,9 +50,7 @@ public class MissionPill : MonoBehaviour {
 	private Mission m_mission = null;
 	public Mission mission {
 		get {
-			if(m_mission == null) {
-				m_mission = MissionManager.GetMission(m_missionDifficulty);
-			}
+			m_mission = MissionManager.GetMission(m_missionDifficulty);
 			return m_mission;
 		}
 	}

@@ -353,6 +353,10 @@ public class ResultsScreenController : MonoBehaviour {
 				}
 			} break;
 
+            case GameSceneController.Mode.SPECIAL_DRAGONS: {
+                    GameVars.menuInitialScreen = MenuScreen.LAB_DRAGON_SELECTION;  
+            } break;
+
 			default: {
 				GameVars.menuInitialScreen = MenuScreen.NONE;	// By setting NONE, default behaviour will apply (dragon selection) (MenuTransitionManager::Start)
 			} break;

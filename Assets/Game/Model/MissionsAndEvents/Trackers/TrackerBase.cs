@@ -42,7 +42,7 @@ public class TrackerBase {
 		set { SetValue(value); }
 	}
 
-	private bool m_enabled = true;
+	private bool m_enabled = false;
 	public bool enabled {
 		get { return m_enabled; }
 		set { m_enabled = value; }
@@ -214,8 +214,8 @@ public class TrackerBase {
 			case "critical_time":	return new TrackerCriticalTime();
 			case "eat_dizzy":		return new TrackerEatDizzy(_params);
 			// new missions TODO
-			case "eat_gold": return new TrackerEatGolden(_params);
-			case "eat_suicidal": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
+			case "eat_gold":        return new TrackerEatGolden(_params);
+			case "eat_suicidal":    return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
 			case "eat_spec_anim_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
 			//-----------------------------------
 
