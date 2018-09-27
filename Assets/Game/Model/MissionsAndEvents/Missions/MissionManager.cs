@@ -53,7 +53,17 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
 	// Internal
 	private UserProfile m_user;
-    private IUserMissions m_currentModeMissions;
+    private IUserMissions m_currentModeMissions { 
+        get {
+            if (m_user != null) {
+                switch (SceneController.s_mode) {
+                    case SceneController.Mode.DEFAULT: return m_user.userMissions; 
+                    case SceneController.Mode.SPECIAL_DRAGONS: return m_user.userSpecialMissions; 
+                }
+            }
+
+            return null;
+        }}
 
 
 
@@ -174,12 +184,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
     /// </summary>
     /// <param name="user">User.</param>
     public static void SetupUser(UserProfile user) {
-        instance.m_user = user;
-        SetMode(SceneController.s_mode);
-    }
-
-    public static void SetMode(SceneController.Mode _mode) {
-        instance.__SetMode(_mode);
+        instance.m_user = user;    
     }
 
 	/// <summary>
@@ -241,15 +246,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
-    private void __SetMode(SceneController.Mode _mode) {
-        if (m_user != null) {
-            switch(_mode) {
-                case SceneController.Mode.DEFAULT:          m_currentModeMissions = m_user.userMissions;        break;
-                case SceneController.Mode.SPECIAL_DRAGONS:  m_currentModeMissions = m_user.userSpecialMissions; break;
-                case SceneController.Mode.TOURNAMENT:       m_currentModeMissions = null;                       break;
-            }
-        }
-    }
+
 
 
 
