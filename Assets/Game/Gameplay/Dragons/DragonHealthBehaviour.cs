@@ -105,7 +105,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	void Update() 
 	{
         if (m_dragon.form == DragonPlayer.Form.MUMMY) {
-            m_dragon.MummyHealthDrain();
+            if (!m_dragon.changingArea) {
+                m_dragon.MummyHealthDrain();
+            }
         } else {
             // Apply health drain
             float drain = GetModifiedDamageForCurrentHealth(m_healthDrainPerSecond, true);
@@ -329,7 +331,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		//Health Drain Amplitude over time
 		if (includeHealthDrainAmp)
 		{
-			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * m_drainModifier / 100f;
+            float drain = m_drainModifier;
+            if (m_drainModifier < 0)
+                drain = m_drainModifier;
+			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * drain / 100f;
 			damage = damage + (damage * (m_gameController.elapsedSeconds * amp));
 
             //Add Space Drain 

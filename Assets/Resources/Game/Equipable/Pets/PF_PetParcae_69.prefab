@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 114006488069001840}
   - component: {fileID: 54000013371132386}
   - component: {fileID: 135000013338795870}
+  - component: {fileID: 114510687102185858}
   m_Layer: 0
   m_Name: PF_PetParcae_69
   m_TagString: Pet
@@ -338,7 +339,7 @@ MonoBehaviour:
     min: 0
     max: 3
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"tag":8,"maxValidTier":5,"minValidTier":0,"priority":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":3,"max":3},"dataType":"AI.Behaviour.PetSearchTaggedTargetData","editorFolded":false},{"speed":30,"arrivalRadius":2,"hasGuardState":false,"timeout":{"min":3,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"tag":8,"maxValidTier":5,"minValidTier":0,"priority":2,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":6,"max":10},"dataType":"AI.Behaviour.PetSearchTaggedTargetData","editorFolded":false},{"speed":30,"arrivalRadius":2,"hasGuardState":false,"timeout":{"min":3,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
   m_databaseKey: PF_PetParcae_69
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -600,7 +601,7 @@ MonoBehaviour:
     orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 0
-  m_onAttackAudio: 
+  m_onAttackAudio: hd_pet_parcae_attack
   m_onAttackDealDamageAudio: 
   m_onScaredAudio: 
   m_onPanicAudio: 
@@ -608,14 +609,14 @@ MonoBehaviour:
   m_skins: []
   m_colors:
     m_valueList:
-    - a: {r: 0.13316432, g: 0, b: 0.19117647, a: 1}
-      b: {r: 0.13275862, g: 0, b: 0.25, a: 1}
-    - a: {r: 0.07450981, g: 0.3529412, b: 0.6313726, a: 1}
-      b: {r: 0.04705883, g: 0.14509805, b: 0.37647063, a: 1}
-    - a: {r: 0.35851932, g: 0, b: 0.5147059, a: 1}
-      b: {r: 0.19447263, g: 0, b: 0.47794116, a: 1}
-    - a: {r: 0.3602941, g: 0, b: 0, a: 1}
-      b: {r: 0.31617647, g: 0, b: 0.21587227, a: 1}
+    - a: {r: 0.25882354, g: 0.22745098, b: 0.28627452, a: 1}
+      b: {r: 0, g: 0, b: 0, a: 1}
+    - a: {r: 0, g: 0.95686275, b: 1, a: 1}
+      b: {r: 0.047058824, g: 0.14509805, b: 0.3764706, a: 1}
+    - a: {r: 0.6862745, g: 0.09411765, b: 1, a: 1}
+      b: {r: 0.19607843, g: 0, b: 0.47843137, a: 1}
+    - a: {r: 0.94509804, g: 0.05882353, b: 0.05882353, a: 1}
+      b: {r: 0.36078432, g: 0, b: 0, a: 1}
     m_keyList:
     - idle
     - Ghost01
@@ -656,6 +657,93 @@ MonoBehaviour:
   m_parentRoot: {fileID: 424588}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114510687102185858
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1669b0a062dc66842ab1bca41a93ebe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioObjectPrefab: {fileID: 100000, guid: da33f6e5087024c7fa342d3a7c14fa3a, type: 2}
+  Persistent: 0
+  UnloadAudioClipsOnDestroy: 0
+  UsePooledAudioObjects: 1
+  PlayWithZeroVolume: 0
+  EqualPowerCrossfade: 0
+  musicCrossFadeTime: 0
+  ambienceSoundCrossFadeTime: 0
+  specifyCrossFadeInAndOutSeperately: 0
+  _musicCrossFadeTime_In: 0
+  _musicCrossFadeTime_Out: 0
+  _ambienceSoundCrossFadeTime_In: 0
+  _ambienceSoundCrossFadeTime_Out: 0
+  AudioCategories:
+  - Name: SFX
+    _parentCategoryName: 
+    AudioObjectPrefab: {fileID: 0}
+    AudioItems:
+    - Name: hd_pet_parcae_attack
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 1
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: 9410b06919b91ff41ac34e4a2eb84c3a, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    _volume: 1
+    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+  musicPlaylists:
+  - name: Default
+    playlistItems: []
+  musicPlaylist: []
+  loopPlaylist: 0
+  shufflePlaylist: 0
+  crossfadePlaylist: 0
+  delayBetweenPlaylistTracks: 1
+  _isAdditionalAudioController: 1
+  _audioDisabled: 0
+  _volume: 1
+  _currentInspectorSelection:
+    currentCategoryIndex: 0
+    currentItemIndex: 0
+    currentSubitemIndex: 0
+    currentPlaylistEntryIndex: 0
+    currentPlaylistIndex: 0
 --- !u!114 &114551584070061244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -677,11 +765,11 @@ MonoBehaviour:
   m_modifiers:
     m_valueList:
     - hpPercentage: 10
-      xpPercentage: 0
-      coinsPercentage: 0
+      xpPercentage: 5
+      coinsPercentage: 2
     - hpPercentage: 15
       xpPercentage: 10
-      coinsPercentage: 0
+      coinsPercentage: 5
     - hpPercentage: 20
       xpPercentage: 15
       coinsPercentage: 10
@@ -689,7 +777,7 @@ MonoBehaviour:
     - Ghost01
     - Ghost02
     - Ghost03
-  m_modTime: 5
+  m_modTime: 12
   m_view: {fileID: 114006488069001840}
 --- !u!114 &114630669737764882
 MonoBehaviour:

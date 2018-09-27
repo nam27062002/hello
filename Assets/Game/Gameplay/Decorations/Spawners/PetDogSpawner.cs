@@ -135,7 +135,6 @@ public class PetDogSpawner : AbstractSpawner {
 		}
     }
 
-	public override bool SpawnersCheckCurrents(){ return true; }
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
 		m_operatorEntity = spawning;

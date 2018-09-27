@@ -94,7 +94,8 @@ public abstract class AdProvider
             return;            
         }
 
-        m_ad.Setup(AdType.Interstitial, callback, FeatureSettingsManager.instance.GetAdTimeout());               
+        m_ad.Setup(AdType.Interstitial, callback, FeatureSettingsManager.instance.GetAdTimeout()); 
+		m_ad.Play();
         ExtendedShowInterstitial();
     }
 
@@ -122,6 +123,7 @@ public abstract class AdProvider
         }
 
         m_ad.Setup(AdType.V4VC, callback, FeatureSettingsManager.instance.GetAdTimeout());
+		m_ad.Play();
         ExtendedShowRewarded();
     }   
 

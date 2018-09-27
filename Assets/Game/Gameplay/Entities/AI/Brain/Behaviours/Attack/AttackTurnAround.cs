@@ -46,7 +46,11 @@ namespace AI {
 				}
 
 				m_entity = m_pilot.GetComponent<Entity>();
-				m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
+                for (int i = 0; i < m_meleeWeapons.Count; ++i) {                 
+                    m_meleeWeapons[i].entity = m_entity;
+                }
+
+                m_animEvents = m_pilot.FindComponentRecursive<PreyAnimationEvents>();
 
 				OnDisableWeapon();
 			}

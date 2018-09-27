@@ -219,9 +219,9 @@ public class MenuSceneController : SceneController {
 	/// <summary>
 	/// Go to the target screen.
 	/// </summary>
-	/// <param name="_targetScreen">Target screen.</param>
-	public void GoToScreen(MenuScreen _screen) {
-		transitionManager.GoToScreen(_screen, true);
+    /// <param name="_screen">Target screen.</param>
+    public void GoToScreen(MenuScreen _screen, bool _forceTransition = false) {
+        transitionManager.GoToScreen(_screen, true, _forceTransition);
 	}
 
 	/// <summary>

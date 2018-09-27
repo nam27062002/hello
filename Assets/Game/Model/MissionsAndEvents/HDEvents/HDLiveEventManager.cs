@@ -41,6 +41,12 @@ public abstract class HDLiveEventManager
 		get { return m_data; }
 	}
 
+    private bool m_waitingForNewDefinition = true;
+    public bool isWaitingForNewDefinition
+    {
+        get { return m_waitingForNewDefinition; }
+    }
+
 	// Internal
 	protected int m_rewardLevel = -1;	// Response to the get_my_rewards request
 
@@ -194,6 +200,7 @@ public abstract class HDLiveEventManager
     	bool ret = false;
     	if ( _force || ShouldRequestDefinition() )
     	{
+            m_waitingForNewDefinition = true;
 	        m_shouldRequestDefinition = false;
 	        if ( HDLiveEventsManager.TEST_CALLS )
 	        {
@@ -209,7 +216,7 @@ public abstract class HDLiveEventManager
     }
 
 	protected delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
-	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
+    protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse)
 	{
 		yield return new WaitForSeconds(0.5f);
 		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
@@ -242,6 +249,7 @@ public abstract class HDLiveEventManager
 				}
             }
 		}
+        m_waitingForNewDefinition = false;
 		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }
 
@@ -390,6 +398,25 @@ public abstract class HDLiveEventManager
 		for (int i = 0; i < mods.Count; i++) {
     		mods[ i ].Apply();
 		}
+    }
+
+    public bool HasModOfType(Type _type)
+    {
+        List<Modifier> mods = data.definition.m_otherMods;
+        for (int i = 0; i < mods.Count; i++) {
+            if (mods[i].GetType() == _type) {
+                return true;
+            }
+        }
+
+        mods = data.definition.m_dragonMods;
+        for (int i = 0; i < mods.Count; i++) {
+            if (mods[i].GetType() == _type) {
+                return true;
+            }
+        }
+
+        return false;
     }
 #endregion
 
