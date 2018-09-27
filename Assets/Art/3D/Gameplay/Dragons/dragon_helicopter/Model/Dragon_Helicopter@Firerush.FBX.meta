@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 05d0e1560247c43ea8729036205520d2
+guid: f93bf66ea0d854a77aaa25398d40b30d
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -118,7 +118,10 @@ ModelImporter:
     100224: Dragon_RLeg_Digit_3_2
     100226: Dragon_RLeg_Platform
     100228: Dragon_Spine
-    100230: Master_Dummy
+    100230: Fire_Dummy
+    100232: Master_Dummy
+    100234: SuctionPoint
+    100236: SwallowPoint
     400000: Dragon_Belt_1_1
     400002: Dragon_Belt_1_2
     400004: Dragon_Belt_2_1
@@ -234,8 +237,13 @@ ModelImporter:
     400224: Dragon_RLeg_Digit_3_2
     400226: Dragon_RLeg_Platform
     400228: Dragon_Spine
-    400230: Master_Dummy
-    7400000: Take 001
+    400230: Fire_Dummy
+    400232: Master_Dummy
+    400234: SuctionPoint
+    400236: SwallowPoint
+    7400000: Firerush_intro
+    7400002: Firerush_loop
+    7400004: Firerush_outro
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -263,7 +271,91 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Firerush_intro
+      takeName: Dragon_Helicopter_Firerush_MIGUEL
+      firstFrame: 0
+      lastFrame: 26
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Firerush_loop
+      takeName: Dragon_Helicopter_Firerush_MIGUEL
+      firstFrame: 26
+      lastFrame: 52
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Firerush_outro
+      takeName: Dragon_Helicopter_Firerush_MIGUEL
+      firstFrame: 52
+      lastFrame: 78
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
