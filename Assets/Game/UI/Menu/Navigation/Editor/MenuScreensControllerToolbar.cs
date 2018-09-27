@@ -60,6 +60,7 @@ public class MenuScreensControllerToolbar {
 		GOALS_SCREENS,
 		REWARD_SCREENS,
 		TOURNAMENT_SCREENS,
+		LAB_SCREENS,
 
 		COUNT
 	}
