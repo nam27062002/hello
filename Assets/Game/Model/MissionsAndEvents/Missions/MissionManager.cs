@@ -87,8 +87,6 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 			m_removeMissionPCCoefA = difficultyDefs[i].GetAsFloat("removeMissionPCCoefA");
 			m_removeMissionPCCoefB = difficultyDefs[i].GetAsFloat("removeMissionPCCoefB");
 		}
-
-        __SetMode(SceneController.s_mode);
 	}
 
 	/// <summary>
