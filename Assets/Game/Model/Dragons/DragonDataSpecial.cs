@@ -315,20 +315,27 @@ public class DragonDataSpecial : IDragonData {
         m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
         m_tier = _tier;
 
-        m_specialTierDef = null;
-        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
-        int max = defs.Count;
-        for (int i = 0; i < max && m_specialTierDef == null ; i++)
-        {
-            if (defs[i].Get("tier").Equals(tierSku))
-                m_specialTierDef = defs[i];
-        }
+        m_specialTierDef = GetDragonTierDef(m_def.sku, _tier);
 
         m_pets.Clear();
         m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
         
         m_disguise = "";
         m_persistentDisguise = m_disguise;
+    }
+    
+    public static DefinitionNode GetDragonTierDef(string specialDragonSku, DragonTier _tier)
+    {
+        DefinitionNode ret = null;
+        string tierSku = TierToSku(_tier); 
+        List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", specialDragonSku);
+        int max = defs.Count;
+        for (int i = 0; i < max && ret == null ; i++)
+        {
+            if (defs[i].Get("tier").Equals(tierSku))
+                ret = defs[i];
+        }
+        return ret;
     }
     
     public void RefershPowerLevelValue()
