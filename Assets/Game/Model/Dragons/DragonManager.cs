@@ -40,8 +40,27 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	private List<IDragonData> m_specialDragonsByOrder = null;
 
 	// Shortcut to get the data of the currently selected dragon
+	// [AOC] Adding support for different dragon types
 	public static IDragonData currentDragon {
-		get { return GetDragonData(instance.m_user.currentDragon); }
+		get { 
+			switch(SceneController.s_mode) {
+				case SceneController.Mode.SPECIAL_DRAGONS: {
+					return currentSpecialDragon;
+				} break;
+
+				default: {
+					return currentClassicDragon;
+				} break;
+			}
+		}
+	}
+
+	public static DragonDataClassic currentClassicDragon {
+		get { return GetDragonData(instance.m_user.currentClassicDragon) as DragonDataClassic; }
+	}
+
+	public static DragonDataSpecial currentSpecialDragon {
+		get { return GetDragonData(instance.m_user.currentSpecialDragon) as DragonDataSpecial; }
 	}
 
 	// Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)

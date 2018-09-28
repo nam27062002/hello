@@ -284,12 +284,12 @@ public class OpenEggScreenController : MonoBehaviour {
 		switch(m_scene.eggData.rewardData.reward.type) {
 			case Metagame.RewardPet.TYPE_CODE: {
 				// Make sure selected dragon is owned
-				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+				InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is always owned
 
 				// Go to the pets screen
 				// Add a frame of delay to make sure everyone has been notified that the selected dragon has changed
 				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentDragon();
+					MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();
 					PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 					petScreen.Initialize(m_scene.eggData.rewardData.reward.sku);
 					screensController.GoToScreen(targetPetScreen, true, false, false);	// [AOC] Don't allow going back to this screen!

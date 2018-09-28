@@ -162,7 +162,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
 			m_dragonSlot.LoadDragon(tournament.GetToUseDragon(), tournament.GetToUseSkin());
 		} else {
-			m_dragonSlot.LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
+			m_dragonSlot.LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
 		}
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
 		m_dragonSlot.dragonInstance.DisableMovesOnResults();

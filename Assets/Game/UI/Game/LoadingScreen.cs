@@ -84,7 +84,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
 			pets = tournament.GetToUsePets();
 		} else {
-			currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+			currentDragon = DragonManager.currentDragon;
 			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 			pets = currentDragon.pets;
 		}

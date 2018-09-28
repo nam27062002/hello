@@ -54,6 +54,9 @@ public abstract class IDragonData : IUISelectorItem {
 	[SerializeField] protected DefinitionNode m_def = null;
 	public DefinitionNode def { get { return m_def; } }
 
+	[SerializeField] protected string m_sku = string.Empty;
+	public string sku { get { return m_sku; } }
+
 	[SerializeField] protected Type m_type = Type.CLASSIC;
 	public Type type { get { return m_type; } }
 
@@ -188,6 +191,7 @@ public abstract class IDragonData : IUISelectorItem {
 	public virtual void Init(DefinitionNode _def) {
 		// Store definition
 		m_def = _def;
+		m_sku = m_def.sku;
 
 		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragons)) {

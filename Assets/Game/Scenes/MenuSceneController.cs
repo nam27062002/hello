@@ -109,7 +109,7 @@ public class MenuSceneController : SceneController {
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
-			m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
+			m_selectedDragon = UsersManager.currentUser.currentClassicDragon;	// UserProfile should be loaded and initialized by now
 		} else {
 			// Forced dragon
 			//SetSelectedDragon(GameVars.menuInitialDragon);
@@ -257,9 +257,9 @@ public class MenuSceneController : SceneController {
 	/// Returns the right pet screen ID (PETS or LAB_PETS) based on current dragon.
 	/// </summary>
 	/// <returns>The pet screen for current dragon.</returns>
-	public MenuScreen GetPetScreenForCurrentDragon() {
+	public MenuScreen GetPetScreenForCurrentMode() {
 		// Is the current dragon a special one?
-		if(DragonManager.currentDragon.type == IDragonData.Type.SPECIAL) {
+		if(s_mode == Mode.SPECIAL_DRAGONS) {
 			return MenuScreen.LAB_PETS;
 		}
 		return MenuScreen.PETS;
@@ -290,9 +290,11 @@ public class MenuSceneController : SceneController {
 		m_selectedDragon = _sku;
 
 		// If owned and different from profile's current dragon, update profile
-		if(_sku != UsersManager.currentUser.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
+		// [AOC] Consider the newly selected dragon's type
+		IDragonData selectedDragonData = DragonManager.GetDragonData(_sku);
+		if(_sku != UsersManager.currentUser.GetCurrentDragon(selectedDragonData.type) && selectedDragonData.isOwned) {
 			// Update profile
-			UsersManager.currentUser.currentDragon = _sku;
+			UsersManager.currentUser.SetCurrentDragon(selectedDragonData.type, _sku);
 
             // Save persistence
             PersistenceFacade.instance.Save_Request();

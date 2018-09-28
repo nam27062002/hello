@@ -135,12 +135,20 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Game Settings
-	private string m_currentDragon;
-	public string currentDragon {
-		get { return m_currentDragon; }
+	private string m_currentClassicDragon;
+	public string currentClassicDragon {
+		get { return m_currentClassicDragon; }
 		set {
-            m_currentDragon = value;
+            m_currentClassicDragon = value;
         }
+	}
+
+	private string m_currentSpecialDragon;
+	public string currentSpecialDragon {
+		get { return m_currentSpecialDragon; }
+		set {
+			m_currentSpecialDragon = value;
+		}
 	}
 
 	private string m_currentLevel;
@@ -407,7 +415,7 @@ public class UserProfile : UserPersistenceSystem
         // Define some custom values
         m_currencies[(int)Currency.KEYS].max = 10;  // [AOC] TODO!! Get from content
         
-        m_currentDragon = "";
+        m_currentClassicDragon = "";
         m_currentLevel = "";
 
         m_tutorialStep = TutorialStep.ALL;   
@@ -742,21 +750,6 @@ public class UserProfile : UserPersistenceSystem
 		Messenger.Broadcast(MessengerEvents.PROFILE_MAP_UNLOCKED);
 	}
 
-	/// <summary>
-	/// Gets the number OF owned dragons.
-	/// </summary>
-	/// <returns>The number owned dragons.</returns>
-	public int GetNumOwnedDragons()
-	{
-		int ret = 0;
-		foreach( KeyValuePair<string, IDragonData> pair in m_dragonsBySku )
-		{
-			if ( pair.Value.isOwned )
-				ret++;
-		}
-		return ret;
-	}
-
     //------------------------------------------------------------------------//
     // PUBLIC PERSISTENCE METHODS											  //
     //------------------------------------------------------------------------//   
@@ -823,9 +816,15 @@ public class UserProfile : UserPersistenceSystem
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
-			m_currentDragon = profile["currentDragon"];
+			m_currentClassicDragon = profile["currentDragon"];
 		else
-			m_currentDragon = "";
+			m_currentClassicDragon = "";
+
+		if(profile.ContainsKey("currentSpecialDragon"))
+			m_currentSpecialDragon = profile["currentSpecialDragon"];
+		else
+			m_currentSpecialDragon = "";
+
 		if ( profile.ContainsKey("currentLevel") )
 			m_currentLevel = profile["currentLevel"];
 		else
@@ -1164,7 +1163,8 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
 
 		// Game settings
-		profile.Add("currentDragon",m_currentDragon);
+		profile.Add("currentDragon",m_currentClassicDragon);
+		profile.Add("currentSpecialDragon", m_currentSpecialDragon);
 		profile.Add("currentLevel",m_currentLevel);
 		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -1559,6 +1559,53 @@ public class UserProfile : UserPersistenceSystem
 		// [AOC] Sick of insane bugs, make sure the user ID is valid!
 		data.userID = this.userId;
 		return data;
+	}
+
+	//------------------------------------------------------------------------//
+	// DRAGONS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get current dragon of a given type.
+	/// </summary>
+	/// <returns>The current dragon of that type.</returns>
+	/// <param name="_type">Dragon type.</param>
+	public string GetCurrentDragon(IDragonData.Type _type) {
+		switch(_type) {
+			case IDragonData.Type.CLASSIC: return m_currentClassicDragon;
+			case IDragonData.Type.SPECIAL: return m_currentSpecialDragon;
+		}
+		return m_currentClassicDragon;
+	}
+
+	/// <summary>
+	/// Set current dragon of a given type.
+	/// Won't validate that the given dragon sku actually belongs to the given type.
+	/// </summary>
+	/// <param name="_type">Dragon type.</param>
+	/// <param name="_sku">Dragon sku.</param>
+	public void SetCurrentDragon(IDragonData.Type _type, string _sku) {
+		switch(_type) {
+			case IDragonData.Type.CLASSIC: {
+				m_currentClassicDragon = _sku;
+			} break;
+
+			case IDragonData.Type.SPECIAL: {
+				m_currentSpecialDragon = _sku;
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Gets the number OF owned dragons.
+	/// </summary>
+	/// <returns>The number owned dragons.</returns>
+	public int GetNumOwnedDragons() {
+		int ret = 0;
+		foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+			if(pair.Value.isOwned)
+				ret++;
+		}
+		return ret;
 	}
 
 	/// <summary>
