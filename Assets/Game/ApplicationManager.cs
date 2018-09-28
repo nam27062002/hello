@@ -504,10 +504,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 			if ( waiting )
 			{
-                HDNotificationsManager.instance.ScheduleNewMissionsAvailableNotification((int)seconds);
+                HDNotificationsManager.instance.ScheduleNewMissionsNotification((int)seconds);
 			}
-			/*
+			
 			// Chests notification
+            /*
 			int max = UsersManager.currentUser.dailyChests.Length;
 			bool missingChests = false;
 			for (int i = 0; i < max && !missingChests; i++) 
@@ -517,7 +518,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			}
 			if ( missingChests )
 			{
-				HDNotificationsManager.instance.ScheduleNotification("sku.not.03", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_CHESTS"), "Action", (int) ChestManager.timeToReset.TotalSeconds );
+				HDNotificationsManager.instance.ScheduleNewChestsNotification((int) ChestManager.timeToReset.TotalSeconds );
 			}
 			*/
         }
@@ -525,8 +526,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void CancelLocalNotifications()
     {
-		HDNotificationsManager.instance.CancelNewMissionsAvailableNotification();
-		// HDNotificationsManager.instance.CancelNotification("sku.not.03");
+		HDNotificationsManager.instance.CancelNewMissionsNotification();
+		//HDNotificationsManager.instance.CancelNewChestsNotification();
     }
 
     #region game
@@ -1445,7 +1446,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_ScheduleNotification()
     {
         HDNotificationsManager.instance.ScheduleEggHatchedNotification(5);
-        HDNotificationsManager.instance.ScheduleNewMissionsAvailableNotification(10);
+        HDNotificationsManager.instance.ScheduleNewMissionsNotification(10);
     }
 
     private void Debug_OnLevelReset()
