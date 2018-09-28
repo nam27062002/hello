@@ -39,6 +39,9 @@ public class DragonHelicopterPowers : MonoBehaviour
     public float m_bombFireRate;
     public string m_bombProjectileName;
     public Transform m_bombFirePosition;
+
+    [Header("Power Level 3 - Custom Pet")]
+    public string m_petSku = "";
     
 	// Use this for initialization
 	void Start () {
@@ -57,6 +60,14 @@ public class DragonHelicopterPowers : MonoBehaviour
         float scale = InstanceManager.player.data.scale;
         m_missilesRange = m_missilesRange * scale;
         m_machinegunDistance = m_machinegunDistance * scale;
+        
+        
+        // Check if we need to spawn the drone!
+        if ( m_powerLevel >= 3 )
+        {
+            DragonEquip equip = transform.parent.GetComponent<DragonEquip>();
+            equip.EquipPet(m_petSku, 4);
+        }
         
 	}
 
