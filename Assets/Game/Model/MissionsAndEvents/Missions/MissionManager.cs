@@ -65,7 +65,11 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
             return null;
         }}
 
+    private static float sm_powerUpSCMultiplier = 0f; // Soft currency modifier multiplier
+    public static float powerUpSCMultiplier { get { return sm_powerUpSCMultiplier; } }
 
+    private static float sm_powerUpGFMultiplier = 0f; // Soft currency modifier multiplier
+    public static float powerUpGFMultiplier { get { return sm_powerUpGFMultiplier; } }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -197,10 +201,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
         if (instance.m_currentModeMissions == null) return;
 
 		// Check all missions
-
-        //TODO: REWORK REWARDS
-        int coins = instance.m_currentModeMissions.ProcessMissions();
-		instance.m_user.EarnCurrency(UserProfile.Currency.SOFT, (ulong)coins, false, HDTrackingManager.EEconomyGroup.REWARD_MISSION);
+        instance.m_currentModeMissions.ProcessMissions();
 	}
 
 	/// <summary>
@@ -243,14 +244,22 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_SKIPPED, GetMission(_difficulty));
 	}
 
-	
+    // Modifiers
+    public static void AddSCMultiplier(float value) {
+        sm_powerUpSCMultiplier += value;
+        instance.UpdateMissionRewards();
+    }
 
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
 
-
-
+    private void UpdateMissionRewards() {
+        if (m_user != null) {
+            m_user.userMissions.UpdateRewards();
+            m_user.userSpecialMissions.UpdateRewards();
+        }
+    }
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//

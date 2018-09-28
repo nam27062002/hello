@@ -13,13 +13,13 @@ public class ModGamePlaySC : ModifierGamePlay {
 
 	public override void Apply() {
 		Entity.AddSCMultiplier(m_percentage);
-		Mission.AddSCMultiplier(m_percentage);
+		MissionManager.AddSCMultiplier(m_percentage);
 		Chest.AddSCMultiplier(m_percentage);
 	}
 
 	public override void Remove () {
 		Entity.AddSCMultiplier(-m_percentage);
-		Mission.AddSCMultiplier(-m_percentage);
+        MissionManager.AddSCMultiplier(-m_percentage);
 		Chest.AddSCMultiplier(-m_percentage);
 	}
 }

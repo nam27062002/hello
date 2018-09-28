@@ -69,7 +69,7 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 			Mission m = MissionManager.GetMission((Mission.Difficulty)i);
 			if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				missionCompleted[i] = true;
-				missionReward[i] = m.rewardCoins;
+                missionReward[i] = (int)m.reward.amount;
 			} else {
 				missionCompleted[i] = false;
 				missionReward[i] = 0;

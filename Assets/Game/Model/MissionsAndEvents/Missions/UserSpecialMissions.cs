@@ -9,6 +9,18 @@ public class UserSpecialMissions : UserMissions {
         m_defTypesCategory = DefinitionsCategory.MISSION_TYPES;
     }
 
+    public override void UpdateRewards() {
+        for (int i = 0; i < m_missions.Length; i++) {
+            Mission mission = m_missions[i];
+            if (mission != null) {
+                if (mission.reward != null) {
+                    mission.reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
+                    mission.updated = true;
+                }
+            }
+        }
+    }
+
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
@@ -20,12 +32,16 @@ public class UserSpecialMissions : UserMissions {
         return 1f;
     }
 
-    protected override float ComputeRewardModifier() {
+    protected override float ComputeRemovePCCostModifier() {
         return 1f;
     }
 
-    protected override float ComputeRemovePCCostModifier() {
-        return 1f;
+    protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
+        long amount = (long)_difficulty + 1;
+        Metagame.Reward reward = new Metagame.RewardGoldenFragments(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
+        reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
+
+        return reward;
     }
 
     //nothing to do here

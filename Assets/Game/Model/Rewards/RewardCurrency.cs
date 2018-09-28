@@ -19,14 +19,13 @@ namespace Metagame {
 		}
 
 		protected void Init(string _type, long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) {
-			base.Init(_type);
-			m_amount = _amount;
+			base.Init(_type, _amount);			
 			m_rarity = _rarity;
             EconomyGroup = _economyGroup;
 		}
 
 		override protected void DoCollect() {
-			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false, EconomyGroup);
+			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)amount, false, EconomyGroup);
 		}
 
 		override public SimpleJSON.JSONNode ToJson() {

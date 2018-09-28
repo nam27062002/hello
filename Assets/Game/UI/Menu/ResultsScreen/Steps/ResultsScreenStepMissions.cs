@@ -81,7 +81,6 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 						DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
 						RandomExt.Range(missionDef.GetAsLong("objectiveBaseQuantityMin"), missionDef.GetAsLong("objectiveBaseQuantityMax")),
 						Random.value < 0.5f,	// 50% chace
-                        1f,
                         DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count
 					);
 					targetMission.difficulty = Mission.Difficulty.MEDIUM;
@@ -162,7 +161,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 		// [AOC] Give it some delay!
 		UbiBCN.CoroutineManager.DelayedCall(() => {
 			// Update counter
-			m_controller.totalCoins += _pill.mission.rewardCoins;
+            m_controller.totalCoins += _pill.mission.reward.amount;
 			m_coinsCounter.SetValue(m_controller.totalCoins, true);
 
 			// Play SFX
