@@ -109,6 +109,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	/// The selected object on the scroll list has changed.
 	/// </summary>
 	/// <param name="_newSelectedPoint">The new selected node object of the scrolllist.</param>
+	[System.Obsolete("To be used if the dragon scroll was to be handled by a SnappingScroll rect (which currently is not)")]
 	public void OnScrollSelectedDragonChanged(ScrollRectSnapPoint _newSelectedPoint) {
 		// Skip if null (shouldn't happen)
 		if(_newSelectedPoint == null) return;
@@ -196,22 +197,23 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 
 		// Go to the target screen, if any
 		// Only if enabled!
-		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
-		if(targetScreen != MenuScreen.NONE) {
-			// Check conditions
-			MenuSceneController menuController = InstanceManager.menuSceneController;
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+			if(targetScreen != MenuScreen.NONE) {
+				// Check conditions
+				MenuSceneController menuController = InstanceManager.menuSceneController;
 
-			// a) Current dragon is owned
-			if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
+				// a) Current dragon is owned
+				if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
 
-			// b) Camera is not tweening (scrolling between dragons)
-			if(menuController.isTweening) return;
+				// b) Camera is not tweening (scrolling between dragons)
+				if(menuController.isTweening) return;
 
-			// c) We're not scrolling between dragons
-			if(menuController.dragonScroller.cameraAnimator.isTweening) return;
+				// c) We're not scrolling between dragons
+				if(menuController.dragonScroller.cameraAnimator.isTweening) return;
 
-			// Everything ok! Go to the disguises screen
-			menuController.GoToScreen(targetScreen);
+				// Everything ok! Go to the disguises screen
+				menuController.GoToScreen(targetScreen);
+			}
 		}
 	}
 }
