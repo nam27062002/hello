@@ -56,7 +56,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
     private IUserMissions m_currentModeMissions { 
         get {
             if (m_user != null) {
-                switch (SceneController.s_mode) {
+                switch (SceneController.mode) {
                     case SceneController.Mode.DEFAULT: return m_user.userMissions; 
                     case SceneController.Mode.SPECIAL_DRAGONS: return m_user.userSpecialMissions; 
                 }
@@ -277,7 +277,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
     private void OnGameStarted() {
         if (m_user != null) {
-            switch (SceneController.s_mode) {
+            switch (SceneController.mode) {
                 case SceneController.Mode.DEFAULT:
                 m_user.userMissions.EnableTracker(true);
                 m_user.userSpecialMissions.EnableTracker(false);

@@ -43,7 +43,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	// [AOC] Adding support for different dragon types
 	public static IDragonData currentDragon {
 		get { 
-			switch(SceneController.s_mode) {
+			switch(SceneController.mode) {
 				case SceneController.Mode.SPECIAL_DRAGONS: {
 					return currentSpecialDragon;
 				} break;
@@ -334,12 +334,20 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		instance.m_dragonsBySku = user.dragonsBySku;
 
 		// Initialize ordered list
-		// [AOC] Only classic dragons
+		// Classic dragons
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_classicDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
 			instance.m_classicDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+		}
+
+		// Special dragons
+		defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataSpecial.TYPE_CODE);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		instance.m_specialDragonsByOrder.Clear();
+		for(int i = 0; i < defs.Count; i++) {
+			instance.m_specialDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
 		}
 	}
 

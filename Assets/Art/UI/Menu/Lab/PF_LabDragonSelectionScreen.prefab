@@ -166,9 +166,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14fc5f281d3bf4dfaaf60ae04f03e8cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_loop: 0
+  m_loop: 1
   m_minDragDistance: 50
   m_selectedIdx: 0
+  m_dragonType: 1
   m_animId: scale
   m_animDuration: 0.1
   m_animValue: {x: 1.25, y: 1.25, z: 1.25}
@@ -1438,7 +1439,6 @@ GameObject:
   - component: {fileID: 114936033363921146}
   - component: {fileID: 114342545648969654}
   - component: {fileID: 114511894936934700}
-  - component: {fileID: 114004989600458160}
   - component: {fileID: 114729846542130236}
   - component: {fileID: 95557916625293234}
   - component: {fileID: 114476793631991564}
@@ -4132,7 +4132,6 @@ GameObject:
   - component: {fileID: 114635679971857252}
   - component: {fileID: 114783701640418178}
   - component: {fileID: 114904595000487436}
-  - component: {fileID: 114249235720489208}
   - component: {fileID: 114936142113817770}
   - component: {fileID: 95578183759618370}
   - component: {fileID: 114503270317995702}
@@ -12871,29 +12870,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114004989600458160
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1114544313495854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 114511894936934700}
-  m_checkSelectedDragon: 1
-  m_hideForDragons: 2
-  m_targetDragonSku: 
-  m_showIfShadow: 1
-  m_showIfLocked: 1
-  m_showIfAvailable: 1
-  m_showIfOwned: 1
-  m_checkScreens: 1
-  m_mode: 0
-  m_targetScreens: 01000000
-  m_restartShowAnimation: 0
 --- !u!114 &114005971818402358
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14404,29 +14380,6 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
---- !u!114 &114249235720489208
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1544696396610656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 114904595000487436}
-  m_checkSelectedDragon: 1
-  m_hideForDragons: 1
-  m_targetDragonSku: 
-  m_showIfShadow: 1
-  m_showIfLocked: 1
-  m_showIfAvailable: 1
-  m_showIfOwned: 1
-  m_checkScreens: 1
-  m_mode: 0
-  m_targetScreens: 01000000
-  m_restartShowAnimation: 0
 --- !u!114 &114249918599765514
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -16988,6 +16941,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd22088bbb7344b508de48cbbb57f423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_dragonNameText: {fileID: 114335453356635554}
+  m_dragonDescText: {fileID: 114382740634652710}
 --- !u!114 &114597079428616432
 MonoBehaviour:
   m_ObjectHideFlags: 1

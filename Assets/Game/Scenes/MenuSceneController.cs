@@ -38,6 +38,10 @@ public class MenuSceneController : SceneController {
 		get { return m_selectedDragon; }
 	}
 
+	public IDragonData selectedDragonData {
+		get { return DragonManager.GetDragonData(m_selectedDragon); }
+	}
+
 	private string m_selectedLevel = "";
 	public string selectedLevel {
 		get { return m_selectedLevel; }
@@ -259,7 +263,7 @@ public class MenuSceneController : SceneController {
 	/// <returns>The pet screen for current dragon.</returns>
 	public MenuScreen GetPetScreenForCurrentMode() {
 		// Is the current dragon a special one?
-		if(s_mode == Mode.SPECIAL_DRAGONS) {
+		if(mode == Mode.SPECIAL_DRAGONS) {
 			return MenuScreen.LAB_PETS;
 		}
 		return MenuScreen.PETS;

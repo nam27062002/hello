@@ -375,7 +375,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	private void MegaFireUp() {
 
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			if (tournamentMegaFireValue < m_superFuryMax)
 				tournamentMegaFireValue++;
@@ -390,7 +390,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	private void SetMegaFireValue( int v)
 	{
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			tournamentMegaFireValue = v;
 		}
@@ -403,7 +403,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	public int GetMegaFireValue()
 	{
 		int ret = 0;
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			ret = tournamentMegaFireValue;
 		}

@@ -49,7 +49,6 @@ GameObject:
   - component: {fileID: 114000012964683374}
   - component: {fileID: 95000011491343478}
   - component: {fileID: 114000011211629116}
-  - component: {fileID: 114670918538422472}
   m_Layer: 5
   m_Name: ButtonLab_TMP
   m_TagString: Untagged
@@ -530,6 +529,7 @@ MonoBehaviour:
   m_loop: 0
   m_minDragDistance: 50
   m_selectedIdx: 0
+  m_dragonType: 0
   m_animId: scale
   m_animDuration: 0.1
   m_animValue: {x: 1.25, y: 1.25, z: 1.25}
@@ -1135,17 +1135,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114670918538422472}
-        m_MethodName: OnNavigationButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 114000011211629116}
         m_MethodName: Play
         m_Mode: 5
@@ -20553,18 +20542,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114670918538422472
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 106884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 17
 --- !u!114 &114671122087190754
 MonoBehaviour:
   m_ObjectHideFlags: 1
