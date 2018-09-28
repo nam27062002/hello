@@ -133,6 +133,8 @@ public class ContentManager
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
 
+        kDefinitionFiles.Add(DefinitionsCategory.NOTIFICATIONS, new string[] { "Rules/notificationsDefinitions" });
+
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });
         kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3" });

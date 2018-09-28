@@ -221,7 +221,7 @@ public class Egg {
 				GenerateReward();
 			} break;
 			case State.READY:{
-				if(!m_testMode) HDNotificationsManager.instance.CancelNotification("sku.not.01");
+				if(!m_testMode) HDNotificationsManager.instance.CancelEggHatchedNotification();
 			}break;
 		}
 
@@ -237,7 +237,7 @@ public class Egg {
 	/// If the egg is incubating it schedules the egg notification.
 	/// </summary>
 	public void ScheduleEggNotification(){
-		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationRemaining.TotalSeconds));
+		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleEggHatchedNotification((int)(incubationRemaining.TotalSeconds));
 	}
 
 	/// <summary>

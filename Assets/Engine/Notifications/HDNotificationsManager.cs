@@ -109,17 +109,53 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         }
     }
 
-    public void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
+    private const string SKU_EGG_HATCHED = "sku.not.01";
+    private const string SKU_NEW_MISSIONS_AVAILABLE = "sku.not.02";
+
+    public void ScheduleEggHatchedNotification(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_EGG_HATCHED, "Action", seconds);        
+    }
+
+    public void CancelEggHatchedNotification()
+    {
+        CancelNotification(SKU_EGG_HATCHED);
+    }
+
+    public void ScheduleNewMissionsAvailableNotification(int seconds)
+    {        
+        ScheduleNotificationFromSku(SKU_NEW_MISSIONS_AVAILABLE, "Action", seconds);
+    }
+
+    public void CancelNewMissionsAvailableNotification()
+    {
+        CancelNotification(SKU_NEW_MISSIONS_AVAILABLE);
+    }
+
+    private void ScheduleNotificationFromSku(string strSKU, string strAction, int iTimeLeft)
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, strSKU);
+        string body = "";
+        if (def != null)
+        {
+            body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+        }
+
+        ScheduleNotification(strSKU, body, "Action", iTimeLeft);
+    }
+
+    private void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
     {
         Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
         NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
     }
 
-    public void CancelNotification(string strSKU)
+    private void CancelNotification(string strSKU)
     {
 		Log("CancelNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU);
     	NotificationsManager.SharedInstance.CancelNotification(strSKU);
     }
+
 
     #region log
     private const string LOG_CHANNEL = "[HDNotificationsManager]";

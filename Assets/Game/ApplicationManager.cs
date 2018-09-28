@@ -504,7 +504,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
 			if ( waiting )
 			{
-				HDNotificationsManager.instance.ScheduleNotification("sku.not.02", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_NEW_MISSIONS"), "Action", (int)seconds);
+                HDNotificationsManager.instance.ScheduleNewMissionsAvailableNotification((int)seconds);
 			}
 			/*
 			// Chests notification
@@ -525,7 +525,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     private void CancelLocalNotifications()
     {
-		HDNotificationsManager.instance.CancelNotification("sku.not.02");
+		HDNotificationsManager.instance.CancelNewMissionsAvailableNotification();
 		// HDNotificationsManager.instance.CancelNotification("sku.not.03");
     }
 
@@ -1444,7 +1444,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
     public void Debug_ScheduleNotification()
     {
-        HDNotificationsManager.instance.ScheduleNotification("sku.not.01", "A ver que pasa...", "Action", 5);
+        HDNotificationsManager.instance.ScheduleEggHatchedNotification(5);
+        HDNotificationsManager.instance.ScheduleNewMissionsAvailableNotification(10);
     }
 
     private void Debug_OnLevelReset()

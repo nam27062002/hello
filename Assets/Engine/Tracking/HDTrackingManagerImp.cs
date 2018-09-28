@@ -1231,7 +1231,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
         string typeNotif = "";
         if (openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_LOCAL_NOTIFICATION || openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_PUSH_NOTIFICATION)
         {
-            typeNotif = DeviceUtilsManager.SharedInstance.strNotificationSku;
+            string sku = DeviceUtilsManager.SharedInstance.strNotificationSku;           
+            if (!string.IsNullOrEmpty(sku))
+            {
+                DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, sku);
+                if (def != null)
+                {
+                    typeNotif = def.Get("trackingSku");
+                }
+            }
         }
 
         if (FeatureSettingsManager.IsDebugEnabled)
