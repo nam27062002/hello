@@ -27,6 +27,9 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[Separator]
+	[SerializeField] private IDragonData.Type m_dragonType = IDragonData.Type.CLASSIC;
+
 	// Dragon animation
 	[Separator("Dragon tap animation")]
 	[List("scale", "move", "rotate")]
@@ -60,7 +63,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	private void Start() {
 		// Initialize items list
 		enableEvents = false;
-		Init(DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC));
+		Init(DragonManager.GetDragonsByOrder(m_dragonType));
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.menuSceneController.selectedDragon;

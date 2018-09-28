@@ -230,7 +230,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		// Choose steps sequence based on current game mode
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				m_activeSequence = m_tournamentStepsSequence;
 			} break;
@@ -342,7 +342,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		// Tell the menu where to go based on current game mode (or other modifiers)
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Unless score was dismissed due to some error, in which case we'll return to the PLAY screen
 				ResultsScreenStepTournamentSync syncStep = GetStep(Step.TOURNAMENT_SYNC) as ResultsScreenStepTournamentSync;

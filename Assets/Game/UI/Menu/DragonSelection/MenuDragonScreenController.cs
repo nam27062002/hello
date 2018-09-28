@@ -559,7 +559,14 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Lab button has been pressed.
+	/// </summary>
     public void OnLabButton() {
-        SceneController.s_mode = SceneController.Mode.SPECIAL_DRAGONS;
+		// Change mode
+		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+
+		// Go to lab main screen!
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
     }
 }
