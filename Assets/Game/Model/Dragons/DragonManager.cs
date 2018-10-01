@@ -114,14 +114,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsFirstDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		if (order == 0) {
 			return true;
 		} else {
 			bool isFirst = true;
 			List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-			for (int i = order - 1; order >= 0; --order) {
+			for (int i = order - 1; order >= 0 && i < matchingDragonsByOrder.Count; --order) {
 				isFirst = isFirst && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isFirst;
@@ -133,14 +134,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsLastDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		if (order == instance.m_classicDragonsByOrder.Count - 1) {
 			return true;
 		} else {
 			bool isLast = true;
-			for (int i = order + 1; order < matchingDragonsByOrder.Count; ++order) {
+			for (int i = order + 1; order < matchingDragonsByOrder.Count && i < matchingDragonsByOrder.Count; ++order) {
 				isLast = isLast && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isLast;
@@ -170,7 +172,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		IDragonData data = GetDragonData(_sku);
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		int order = data.GetOrder();
-		if(order > 0) {	// Exclude if first dragon
+		if(order > 0 && order < matchingDragonsByOrder.Count) {	// Exclude if first dragon
 			return matchingDragonsByOrder[order - 1];
 		}
 
