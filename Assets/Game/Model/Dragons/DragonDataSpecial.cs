@@ -129,6 +129,9 @@ public class DragonDataSpecial : IDragonData {
     public override float furyScoreMultiplier{ 
         get{ return m_specialTierDef.GetAsFloat("furyScoreMultiplier", 2); }
     }
+    public override float furyBaseLength{ 
+        get{ return m_specialTierDef.GetAsFloat("furyBaseLength"); }
+    }
     
     // Movement
     public override float mass{ 
