@@ -198,10 +198,26 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
         }
     }
 
-	/// <summary>
-	/// Checks whether the Rating popup must be opened or not and does it.
-	/// </summary>
-	private void CheckRating() {
+    private void CheckInterstitialCP2()
+    {
+        if (FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials())
+        {
+            if (GameAds.instance.GetRunsToInterstitial() <= 0)
+            {
+                // Lets be loading friendly
+                StartCoroutine(LaunchInterstitial());
+            }
+            else
+            {
+                GameAds.instance.ReduceRunsToInterstitial();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks whether the Rating popup must be opened or not and does it.
+    /// </summary>
+    private void CheckRating() {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
@@ -389,6 +405,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
+                        CheckInterstitialCP2();
 					} break;
 
 					// Coming from PLAY screen

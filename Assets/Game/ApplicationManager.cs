@@ -1499,6 +1499,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         NeedsToRestartFlow = true;
     }
 
+    private void Debug_TestCP2Interstitial()
+    {
+        HDCP2Manager.Instance.ShowInterstitial(false);
+    }
+
     private const string LOG_CHANNEL = "[ApplicationManager]";
     private static void Log(string msg)
     {
