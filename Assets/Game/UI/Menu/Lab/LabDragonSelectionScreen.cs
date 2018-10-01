@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -23,7 +24,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-
+	// Exposed references
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[SerializeField] private Localizer m_dragonDescText = null;
 	

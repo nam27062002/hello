@@ -59,13 +59,14 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Dragon selector - responsible to set selected dragon
-	private MenuDragonSelector m_dragonSelector = null;
+	private MenuDragonSelector m_classicDragonSelector = null;
+	private MenuDragonSelector m_specialDragonSelector = null;
 	public MenuDragonSelector dragonSelector {
 		get {
-			if(m_dragonSelector == null) {
-				m_dragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+			switch(mode) {
+				case Mode.SPECIAL_DRAGONS: return m_specialDragonSelector;
 			}
-			return m_dragonSelector;
+			return m_classicDragonSelector;
 		}
 	}
 
@@ -107,13 +108,18 @@ public class MenuSceneController : SceneController {
 		// Call parent
 		base.Awake();
 		Application.lowMemory += OnLowMemory;
+
+		// Initialize references
+		m_classicDragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+		m_specialDragonSelector = GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
-			m_selectedDragon = UsersManager.currentUser.currentClassicDragon;	// UserProfile should be loaded and initialized by now
+			m_selectedDragon = DragonManager.currentDragon.sku;
 		} else {
 			// Forced dragon
 			//SetSelectedDragon(GameVars.menuInitialDragon);
