@@ -38,6 +38,10 @@ public class MenuSceneController : SceneController {
 		get { return m_selectedDragon; }
 	}
 
+	public IDragonData selectedDragonData {
+		get { return DragonManager.GetDragonData(m_selectedDragon); }
+	}
+
 	private string m_selectedLevel = "";
 	public string selectedLevel {
 		get { return m_selectedLevel; }
@@ -55,13 +59,14 @@ public class MenuSceneController : SceneController {
 	}
 
 	// Dragon selector - responsible to set selected dragon
-	private MenuDragonSelector m_dragonSelector = null;
+	private MenuDragonSelector m_classicDragonSelector = null;
+	private MenuDragonSelector m_specialDragonSelector = null;
 	public MenuDragonSelector dragonSelector {
 		get {
-			if(m_dragonSelector == null) {
-				m_dragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+			switch(mode) {
+				case Mode.SPECIAL_DRAGONS: return m_specialDragonSelector;
 			}
-			return m_dragonSelector;
+			return m_classicDragonSelector;
 		}
 	}
 
@@ -103,13 +108,18 @@ public class MenuSceneController : SceneController {
 		// Call parent
 		base.Awake();
 		Application.lowMemory += OnLowMemory;
+
+		// Initialize references
+		m_classicDragonSelector = GetScreenData(MenuScreen.DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+		m_specialDragonSelector = GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.FindComponentRecursive<MenuDragonSelector>();
+
 		// Initialize the selected level in a similar fashion
 		m_selectedLevel = UsersManager.currentUser.currentLevel;		// UserProfile should be loaded and initialized by now
 
 		// Define initial selected dragon
 		if(string.IsNullOrEmpty(GameVars.menuInitialDragon)) {
 			// Default behaviour: Last dragon used
-			m_selectedDragon = UsersManager.currentUser.currentDragon;	// UserProfile should be loaded and initialized by now
+			m_selectedDragon = DragonManager.currentDragon.sku;
 		} else {
 			// Forced dragon
 			//SetSelectedDragon(GameVars.menuInitialDragon);
@@ -257,9 +267,9 @@ public class MenuSceneController : SceneController {
 	/// Returns the right pet screen ID (PETS or LAB_PETS) based on current dragon.
 	/// </summary>
 	/// <returns>The pet screen for current dragon.</returns>
-	public MenuScreen GetPetScreenForCurrentDragon() {
+	public MenuScreen GetPetScreenForCurrentMode() {
 		// Is the current dragon a special one?
-		if(DragonManager.currentDragon.type == IDragonData.Type.SPECIAL) {
+		if(mode == Mode.SPECIAL_DRAGONS) {
 			return MenuScreen.LAB_PETS;
 		}
 		return MenuScreen.PETS;
@@ -290,9 +300,11 @@ public class MenuSceneController : SceneController {
 		m_selectedDragon = _sku;
 
 		// If owned and different from profile's current dragon, update profile
-		if(_sku != UsersManager.currentUser.currentDragon && DragonManager.GetDragonData(_sku).isOwned) {
+		// [AOC] Consider the newly selected dragon's type
+		IDragonData selectedDragonData = DragonManager.GetDragonData(_sku);
+		if(_sku != UsersManager.currentUser.GetCurrentDragon(selectedDragonData.type) && selectedDragonData.isOwned) {
 			// Update profile
-			UsersManager.currentUser.currentDragon = _sku;
+			UsersManager.currentUser.SetCurrentDragon(selectedDragonData.type, _sku);
 
             // Save persistence
             PersistenceFacade.instance.Save_Request();

@@ -40,8 +40,27 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	private List<IDragonData> m_specialDragonsByOrder = null;
 
 	// Shortcut to get the data of the currently selected dragon
+	// [AOC] Adding support for different dragon types
 	public static IDragonData currentDragon {
-		get { return GetDragonData(instance.m_user.currentDragon); }
+		get { 
+			switch(SceneController.mode) {
+				case SceneController.Mode.SPECIAL_DRAGONS: {
+					return currentSpecialDragon;
+				} break;
+
+				default: {
+					return currentClassicDragon;
+				} break;
+			}
+		}
+	}
+
+	public static DragonDataClassic currentClassicDragon {
+		get { return GetDragonData(instance.m_user.currentClassicDragon) as DragonDataClassic; }
+	}
+
+	public static DragonDataSpecial currentSpecialDragon {
+		get { return GetDragonData(instance.m_user.currentSpecialDragon) as DragonDataSpecial; }
 	}
 
 	// Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)
@@ -95,14 +114,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsFirstDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		if (order == 0) {
 			return true;
 		} else {
 			bool isFirst = true;
 			List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-			for (int i = order - 1; order >= 0; --order) {
+			for (int i = order - 1; order >= 0 && i < matchingDragonsByOrder.Count; --order) {
 				isFirst = isFirst && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isFirst;
@@ -114,14 +134,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsLastDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		if (order == instance.m_classicDragonsByOrder.Count - 1) {
 			return true;
 		} else {
 			bool isLast = true;
-			for (int i = order + 1; order < matchingDragonsByOrder.Count; ++order) {
+			for (int i = order + 1; order < matchingDragonsByOrder.Count && i < matchingDragonsByOrder.Count; ++order) {
 				isLast = isLast && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isLast;
@@ -151,7 +172,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		IDragonData data = GetDragonData(_sku);
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		int order = data.GetOrder();
-		if(order > 0) {	// Exclude if first dragon
+		if(order > 0 && order < matchingDragonsByOrder.Count) {	// Exclude if first dragon
 			return matchingDragonsByOrder[order - 1];
 		}
 
@@ -315,12 +336,20 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		instance.m_dragonsBySku = user.dragonsBySku;
 
 		// Initialize ordered list
-		// [AOC] Only classic dragons
+		// Classic dragons
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_classicDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
 			instance.m_classicDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+		}
+
+		// Special dragons
+		defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataSpecial.TYPE_CODE);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		instance.m_specialDragonsByOrder.Clear();
+		for(int i = 0; i < defs.Count; i++) {
+			instance.m_specialDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
 		}
 	}
 

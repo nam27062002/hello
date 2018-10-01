@@ -47,10 +47,15 @@ public class Mission {
 		COUNT
 	}
 
-	private static float sm_powerUpSCMultiplier = 0; // Soft currency modifier multiplier
-	public static void AddSCMultiplier(float value) {
-		sm_powerUpSCMultiplier += value;
-	}
+    public enum RewardBonusType {
+        SOFT_CURRENCY = 0,
+        GOLDEN_FRAGMENTS,
+        HARD_CURRENCY,
+
+        COUNT
+    }
+
+
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -74,13 +79,15 @@ public class Mission {
 	public MissionObjective objective { get { return m_objective; }}
 
     // Economy
+    private Metagame.Reward m_reward;
     private float m_rewardScaleFactor = 1f;
     private float m_removePCFactor = 1f;
 
-	public int rewardCoins { get { return ComputeRewardCoins(); }}
-    public int rewardGoldenFragments { get { return ComputeRewardGoldenFragments(); }}
+    public Metagame.Reward reward { get { return m_reward; } set { m_reward = value; updated = true; }}
 	public int removeCostPC { get { return ComputeRemoveCostPC(); }}
 	public int skipCostPC { get { return ComputeSkipCostPC(); }}
+
+    public bool updated { get; set; }
 
 	// State
 	private State m_state = State.ACTIVE;
@@ -108,7 +115,7 @@ public class Mission {
 	/// <param name="_missionDef">Mission definition.</param>
 	/// <param name="_targetValue">Target value.</param>
 	/// <param name="_singleRun">Is it a single run mission?</param>
-    public void InitWithParams(DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun, float _rewardScaleFactor, float _removePCFactor) {
+    public void InitWithParams(DefinitionNode _missionDef, DefinitionNode _typeDef, long _targetValue, bool _singleRun, float _removePCFactor) {
 		// Store definitions
 		m_def = _missionDef;
 		m_typeDef = _typeDef;
@@ -123,7 +130,6 @@ public class Mission {
 		m_objective = new MissionObjective(this, m_def, m_typeDef, _targetValue, _singleRun);
 		m_objective.OnObjectiveComplete.AddListener(OnObjectiveComplete);
 
-        m_rewardScaleFactor = _rewardScaleFactor;
         m_removePCFactor = _removePCFactor;
 
 		m_skipTimeWithAds = false;
@@ -240,24 +246,6 @@ public class Mission {
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Compute the coins rewarded by completing the mission at the current game state.
-	/// Reward is computed dynamically based on MissionManager.maxRewardPerDifficulty and a formula
-	/// depending on amount of unlocked dragons, etc.
-	/// Reward doesn't depend on the type of mission, just its difficulty.
-	/// </summary>
-	/// <returns>The amount of coins to be given upon completing the mission.</returns>
-	private int ComputeRewardCoins() {
-        int coins = (int)(MissionManager.maxRewardPerDifficulty[(int)difficulty] * m_rewardScaleFactor);
-		coins += Mathf.FloorToInt((coins * sm_powerUpSCMultiplier) / 100.0f);
-
-		return coins;
-	}
-
-    private int ComputeRewardGoldenFragments() {
-        return Mathf.FloorToInt(1f * m_rewardScaleFactor);
-    }
-
-	/// <summary>
 	/// Compute the PC cost of removing this mission (skipping it).
 	/// Cost is computed dynamically based on MissionManager coeficients and a formula
 	/// depending on amount of unlocked dragons, etc.
@@ -308,7 +296,7 @@ public class Mission {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	/// <returns>Whether the mission was successfully loaded</returns>
-    public bool Load(SimpleJSON.JSONNode _data, float _rewardScaleFactor, float _removePCCost) {
+    public bool Load(SimpleJSON.JSONNode _data, float _removePCCost) {
 		// Read values from persistence object
 		// [AOC] Protection in case mission skus change
 		DefinitionNode missionDef = MissionManager.GetDef(_data["sku"]);
@@ -320,7 +308,6 @@ public class Mission {
 			DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
 			_data["targetValue"].AsLong, 
 			_data["singleRun"].AsBool,
-            _rewardScaleFactor,
             _removePCCost
 		);
 

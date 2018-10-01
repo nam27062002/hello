@@ -207,8 +207,11 @@ namespace Metagame {
 		public UserProfile.Currency currency { get { return m_currency; } }
 
 		// Rewarded amount
-		protected long m_amount = 1;
-		public long amount { get { return m_amount; } }
+		private long m_amount = 1;
+        public long amount { get { return m_amount + UnityEngine.Mathf.FloorToInt((m_amount * m_bonusPercentage) / 100.0f); } }
+
+        protected float m_bonusPercentage;
+        public float bonusPercentage { set { m_bonusPercentage = value; } }
 
 		// Sku of the rewarded item, if any
 		protected string m_sku = "";
@@ -241,10 +244,16 @@ namespace Metagame {
 			m_rarity = Rarity.COMMON;
 			m_currency = UserProfile.Currency.NONE;
 			m_amount = 1;
+            m_bonusPercentage = 0f;
 			m_sku = string.Empty;
 			m_def = null;
 			m_replacement = null;
 		}
+
+        protected void Init(string _type, long _amount) {
+            Init(_type);
+            m_amount = _amount;
+        }
 
 		//------------------------------------------------------------------------//
 		// PUBLIC METHODS														  //

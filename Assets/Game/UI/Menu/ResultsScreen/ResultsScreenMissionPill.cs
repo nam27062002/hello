@@ -84,7 +84,7 @@ public class ResultsScreenMissionPill : MonoBehaviour {
 		m_missionText.text = m_mission.objective.GetDescription();
 
 		// Reward
-		m_rewardText.text = UIConstants.GetIconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+        m_rewardText.text = UIConstants.GetIconString(m_mission.reward.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
 
 		// Change Icon
 		m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));

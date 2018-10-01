@@ -72,7 +72,7 @@ public class MenuSelectedDragonLoader : MonoBehaviour {
 		}
 
 		// Load selected dragon
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentClassicDragon);
 		if(def != null) {
 			// Instantiate the prefab and add it as child of this object
 			GameObject dragonPrefab = Resources.Load<GameObject>(IDragonData.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));

@@ -152,7 +152,7 @@ public class LevelManager : Singleton<LevelManager> {
 
 
 		// Load area by dragon
-		m_currentArea = def.Get(UsersManager.currentUser.currentDragon);
+		m_currentArea = def.Get(DragonManager.currentDragon.sku);
 		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
 		if ( areaOperations != null )
 			loadingTasks.AddRange( areaOperations );

@@ -234,7 +234,7 @@ public class PassiveEventIcon : MonoBehaviour {
 					// Loading Screen
 					if(LoadingScreen.isVisible) {
 						// Check tournament mode
-						switch(GameSceneController.s_mode) {
+						switch(GameSceneController.mode) {
 							case GameSceneController.Mode.DEFAULT: {
 								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.NORMAL_MODE);
 							} break;
@@ -271,7 +271,7 @@ public class PassiveEventIcon : MonoBehaviour {
 					// Ingame / Results
 					else {
 						// Check tournament mode
-						switch(GameSceneController.s_mode) {
+						switch(GameSceneController.mode) {
 							case GameSceneController.Mode.DEFAULT: {
 								show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.NORMAL_MODE);
 							} break;

@@ -93,8 +93,7 @@ public abstract class IUserMissions {
 	/// Process active missions:
 	/// Give rewards for those completed and replace them by newly generated missions.
 	/// </summary>
-	public int ProcessMissions() {
-		int coinsToReward = 0;
+	public void ProcessMissions() {		
 		// Check all missions
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
@@ -102,8 +101,8 @@ public abstract class IUserMissions {
 			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				HDTrackingManager.Instance.Notify_Missions(m, HDTrackingManager.EActionsMission.done);
 
-				// Give reward
-				coinsToReward += m.rewardCoins;
+                // Give reward
+                m.reward.Collect();
 
 				// Generate new mission
 				m = GenerateNewMission((Mission.Difficulty)i);
@@ -118,7 +117,6 @@ public abstract class IUserMissions {
 				m.ChangeState(Mission.State.ACTIVE);
 			}
 		}
-		return coinsToReward;
 	}
 
 	/// <summary>
@@ -150,6 +148,8 @@ public abstract class IUserMissions {
 		// Let mission handle it
 		m.SkipCooldownTimer(_seconds, _useAd, _useHC);
 	}
+
+    public abstract void UpdateRewards();
 
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
@@ -314,7 +314,8 @@ public abstract class IUserMissions {
 		ClearMission(_difficulty);	// Terminate any mission at the requested slot first
 		Mission newMission = new Mission();
 		newMission.difficulty = _difficulty;
-        newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRewardModifier(), ComputeRemovePCCostModifier());
+        newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRemovePCCostModifier());
+        newMission.reward = BuildReward(_difficulty);
 		m_missions[(int)_difficulty] = newMission;
 
 		// Check whether the new mission should be locked or not (deprecated)
@@ -330,8 +331,10 @@ public abstract class IUserMissions {
 
     protected abstract bool IsMissionLocked(Mission.Difficulty _difficulty);
     protected abstract float ComputeValueModifier(Mission.Difficulty _difficulty, bool _singleRun);
-    protected abstract float ComputeRewardModifier();
     protected abstract float ComputeRemovePCCostModifier();
+
+    protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
+
 
 	/// <summary>
 	/// Properly delete the mission at the given difficulty slot.
@@ -407,10 +410,12 @@ public abstract class IUserMissions {
 				m_missions[i].difficulty = (Mission.Difficulty)i;
 				
 				// Load data into the target mission
-                bool success = m_missions[i].Load(activeMissions[i], ComputeRewardModifier(), ComputeRemovePCCostModifier());
+                bool success = m_missions[i].Load(activeMissions[i], ComputeRemovePCCostModifier());
 
-				// If an error ocurred while loading the mission, generate a new one
-				if(!success) {
+                // If an error ocurred while loading the mission, generate a new one
+                if (success) {
+                    m_missions[i].reward = BuildReward((Mission.Difficulty)i);
+                } else {
 					GenerateNewMission((Mission.Difficulty)i);
 				}
 			}

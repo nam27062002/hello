@@ -16,6 +16,17 @@ public class UserMissions : IUserMissions {
         m_defTypesCategory = DefinitionsCategory.MISSION_TYPES;
     }
 
+    public override void UpdateRewards() {
+        for (int i = 0; i < m_missions.Length; i++) {
+            Mission mission = m_missions[i];
+            if (mission != null) {
+                if (mission.reward != null) {
+                    mission.reward.bonusPercentage = MissionManager.powerUpSCMultiplier;
+                    mission.updated = true;
+                }
+            }
+        }
+    }
 
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
@@ -84,14 +95,16 @@ public class UserMissions : IUserMissions {
         return totalModifier;
     }
 
-    protected override float ComputeRewardModifier() {
-        // Scale the reward based on max owned dragon
-        DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
-        return rewardScaleFactorDef != null ? rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier") : 1f;
-    }
-
     protected override float ComputeRemovePCCostModifier() {
         return DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count;
+    }
+
+    protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
+        long amount = (long)(MissionManager.maxRewardPerDifficulty[(int)_difficulty] * DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count);
+        Metagame.Reward reward = new Metagame.RewardSoftCurrency(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
+        reward.bonusPercentage = MissionManager.powerUpSCMultiplier;
+
+        return reward;
     }
 
     //------------------------------------------------------------------------//
