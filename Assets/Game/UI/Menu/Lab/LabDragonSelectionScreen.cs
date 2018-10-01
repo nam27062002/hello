@@ -10,6 +10,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using DG.Tweening;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -27,6 +29,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	// Exposed references
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[SerializeField] private Localizer m_dragonDescText = null;
+	[Space]
+	[SerializeField] private Localizer m_unlockInfoText = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -35,7 +39,17 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Initialize unlock info text
+		if(m_unlockInfoText != null) {
+			DefinitionNode unlockTierDef = DefinitionsManager.SharedInstance.GetDefinition(
+				DefinitionsCategory.DRAGON_TIERS, IDragonData.TierToSku(DragonDataSpecial.MIN_TIER_TO_UNLOCK)
+			);
 
+			m_unlockInfoText.Localize(
+				m_unlockInfoText.tid,
+				UIConstants.GetSpriteTag(unlockTierDef.GetAsString("icon"))
+			);
+		}
 	}
 
 	/// <summary>
@@ -80,6 +94,35 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Launch the acquire animation!
+	/// </summary>
+	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
+	public void LaunchAcquireAnim(string _acquiredDragonSku) {
+		// Program animation
+		DOTween.Sequence()
+			.AppendCallback(() => {
+				// Lock all input
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+
+				// Throw out some fireworks!
+				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
+
+				// Trigger SFX
+				AudioController.Play("hd_unlock_dragon");
+			})
+			.AppendInterval(1f)     // Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
+			.AppendCallback(() => {
+				// Unlock input
+				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+			})
+			.SetAutoKill(true)
+			.Play();
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Refresh with data from a target dragon.
