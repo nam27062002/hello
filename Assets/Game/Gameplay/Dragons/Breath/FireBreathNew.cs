@@ -96,7 +96,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     {
     	if ( m_dragon )
     	{
-			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+            float furyBaseLength = m_dragon.data.furyBaseLength;
 			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
 
 			dragonFlameStandardInstance.setEffectScale(m_length / 2.0f, transform.localScale.x);

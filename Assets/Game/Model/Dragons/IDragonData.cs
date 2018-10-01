@@ -125,6 +125,7 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float furyMax { get; }
     public abstract float furyBaseDuration { get; }
     public abstract float furyScoreMultiplier { get; }
+    public abstract float furyBaseLength { get; }
 
         // Movement
     public abstract float mass{ get; }
