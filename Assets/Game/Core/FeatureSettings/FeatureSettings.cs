@@ -132,7 +132,7 @@ public class FeatureSettings
     public const string KEY_CP2 = "cp2";
 
     // Max time to wait for log in social platform to finish
-    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeou";
+    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
 
     // Examples of how to use different type datas
     /*
