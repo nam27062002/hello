@@ -19,7 +19,9 @@ public class DragonHelicopterPowers : MonoBehaviour
     public float m_machinegunDistance = 1;
     public float m_machinegunAngle = 90;
     public Transform m_machingegunAnchor;
-    public ParticleSystem m_machinegunParticle;
+    public string m_machineGunParticleName;
+    public Transform m_machineGunParticleTransform;
+    protected ParticleSystem m_machinegunParticle;
     
     
     // Missiles - Power Level 1
@@ -42,9 +44,17 @@ public class DragonHelicopterPowers : MonoBehaviour
 
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
-    
-	// Use this for initialization
-	void Start () {
+
+    private void Awake()
+    {
+        if (!string.IsNullOrEmpty(m_machineGunParticleName)){
+            m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
+            m_machinegunParticle.gameObject.SetActive( true );
+        }
+        
+    }
+    // Use this for initialization
+    void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
 		m_playerMotion = InstanceManager.player.dragonMotion;
         m_playerBreath = InstanceManager.player.breathBehaviour;
