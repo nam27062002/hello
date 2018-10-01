@@ -229,7 +229,7 @@ public class DragonDataSpecial : IDragonData {
 		base.Init(_def);
         
         m_pets = new List<string>();
-        SetTier(DragonTier.TIER_0);
+        SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
         LoadStatDef( _def );
 
         // Type
@@ -310,7 +310,6 @@ public class DragonDataSpecial : IDragonData {
     
     public void SetTier(DragonTier _tier)
     {
-        // m_specialTierDef = 
         string tierSku = TierToSku(_tier);
         m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, tierSku);
         m_tier = _tier;

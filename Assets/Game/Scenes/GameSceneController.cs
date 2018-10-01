@@ -175,8 +175,7 @@ public class GameSceneController : GameSceneControllerBase {
         }
 
         // Load the dragon
-
-        // TO REMOVE!!!!
+		// DEBUG: Special dragon testing
         if ( FeatureSettingsManager.IsDebugEnabled && Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
         {
             // Hola soy special SPECIAAAAAAL
@@ -187,7 +186,7 @@ public class GameSceneController : GameSceneControllerBase {
             int hpBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_HP_BOOST_LEVEL, 0);
             int speedBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_SPEED_BOOST_LEVEL, 0);
             int energyBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL, 0);
-            DragonManager.LoadSpecialDragon(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
             
         }
         else
