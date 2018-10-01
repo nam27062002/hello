@@ -288,6 +288,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             //Debug_TestSocialPlatformToggleAgeProtection();
             // ---------------------------        
 
+            // ---------------------------
+            // Test CP2 interstitial
+            //Debug_TestCP2Interstitial();
+            // ---------------------------        
+
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
