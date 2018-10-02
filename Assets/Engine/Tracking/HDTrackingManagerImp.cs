@@ -1203,17 +1203,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     #region animoji
     private string dragon_name;
-    private int recordigs;
+    private int recordings;
     private int duration;
     public override void Notify_AnimojiStart()
     {
         dragon_name = InstanceManager.menuSceneController.selectedDragon;
-        recordigs = 0;
+        recordings = 0;
         duration = (int)Time.realtimeSinceStartup;
+    }
+    public override void Notify_AnimojiRecord()
+    {
+        recordings++;
     }
     public override void Notify_AnimojiExit()
     {
-        Track_AnimojiEvent(dragon_name, recordigs, (int)(Time.realtimeSinceStartup - duration));
+        Track_AnimojiEvent(dragon_name, recordings, (int)(Time.realtimeSinceStartup - duration));
     }
     #endregion
 

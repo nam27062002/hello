@@ -500,6 +500,11 @@ public class HDTrackingManager
     public virtual void Notify_AnimojiStart() { }
 
     /// <summary>
+    /// Called when user records a video on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiRecord() { }
+
+    /// <summary>
     /// Called when user exits animoji menu section
     /// </summary>
     public virtual void Notify_AnimojiExit() { }
