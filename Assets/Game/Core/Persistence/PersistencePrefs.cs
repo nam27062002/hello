@@ -85,6 +85,7 @@ public class PersistencePrefs
 #if UNITY_EDITOR
             return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE);
 #else
+            // It always returns DEFAULT_PROFILE to make sure that the file with the progress will be found
             return PersistenceProfile.DEFAULT_PROFILE;
 #endif
         }
