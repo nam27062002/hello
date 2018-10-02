@@ -108,7 +108,7 @@ public class HDCP2Manager
     }
 
     /// <summary>
-    /// Returns whether or not there's a CP2 interstitial available to be shown
+    /// Returns whether or not there's a CP2 interstitial available to be played
     /// </summary>
     /// <returns></returns>
     private bool IsInterstitialAvailable()
@@ -133,7 +133,7 @@ public class HDCP2Manager
         return timeToWait;
     }
 
-    private void ShowInterstitialInternal(Action<bool> onDone)
+    private void PlayInterstitialInternal(Action<bool> onDone)
     {
         if (IsInterstitialAvailable())
         {
@@ -197,16 +197,16 @@ public class HDCP2Manager
     }
 
     /// <summary>
-    /// Shows a cp2 interstitial if there's one available.
+    /// Plays a cp2 interstitial if there's one available.
     /// </summary>
     /// <param name="checkRestrictionPerUser">Whether or not user's restrictions should be checked too</param>
-    public void ShowInterstitial(bool checkRestrictionPerUser)
+    public void PlayInterstitial(bool checkRestrictionPerUser)
     {
         if (checkRestrictionPerUser)
         {
             if (CanUserPlayInterstitial())
             {
-                ShowInterstitialInternal(OnRestrictedPlayPromo);
+                PlayInterstitialInternal(OnRestrictedPlayPromo);
             }
             else if (FeatureSettingsManager.IsDebugEnabled)
             {
@@ -216,7 +216,7 @@ public class HDCP2Manager
         }
         else
         {
-            ShowInterstitialInternal(OnPlayPromo);
+            PlayInterstitialInternal(OnPlayPromo);
         }
     }
 
