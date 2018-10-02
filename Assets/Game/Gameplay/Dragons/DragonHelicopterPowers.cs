@@ -45,13 +45,13 @@ public class DragonHelicopterPowers : MonoBehaviour
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
 
+
     private void Awake()
     {
         if (!string.IsNullOrEmpty(m_machineGunParticleName)){
             m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
             m_machinegunParticle.gameObject.SetActive( true );
         }
-        
     }
     // Use this for initialization
     void Start () {
@@ -79,11 +79,13 @@ public class DragonHelicopterPowers : MonoBehaviour
             equip.EquipPet(m_petSku, 4);
         }
         
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 	
 	// Update is called once per frame
@@ -253,6 +255,14 @@ public class DragonHelicopterPowers : MonoBehaviour
         Vector2 dDown = dir.RotateDegrees(-m_machinegunAngle/2.0f);
         Debug.DrawLine( m_machingegunAnchor.position, m_machingegunAnchor.position + (Vector3)(dDown * m_machinegunDistance) );
         
+    }
+
+    void OnFuryToggled(bool toogle, DragonBreathBehaviour.Type type)
+    {
+        if ( type == DragonBreathBehaviour.Type.Mega )
+        {
+            m_animator.SetBool( GameConstants.Animator.MEGA, toogle );
+        }
     }
 
 }

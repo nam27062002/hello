@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 114000011637225726}
   - component: {fileID: 54000013371132386}
   - component: {fileID: 135000013338795870}
+  - component: {fileID: 114898040241279070}
+  - component: {fileID: 114881512935365020}
   m_Layer: 0
   m_Name: PF_PetHelicopterDrone
   m_TagString: Pet
@@ -30,7 +32,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -187.83795, y: 101.40711, z: -43.472656}
+  m_LocalPosition: {x: -235.33376, y: 104.069046, z: 3.1526234}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4024617933336028}
@@ -151,6 +153,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1293674701791118
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4248774132350344}
+  - component: {fileID: 65101454088625942}
+  - component: {fileID: 114211815583682432}
+  m_Layer: 14
+  m_Name: weapon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1438618477426106
 GameObject:
   m_ObjectHideFlags: 1
@@ -162,6 +181,21 @@ GameObject:
   - component: {fileID: 137362686192472546}
   m_Layer: 0
   m_Name: Drago_Dron
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1518374752237344
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4876574071649732}
+  m_Layer: 0
+  m_Name: particleAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -213,19 +247,34 @@ Transform:
   m_Father: {fileID: 424588}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4248774132350344
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1293674701791118}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4613833819952600}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -85.15301, y: 0, z: 0}
 --- !u!4 &4613833819952600
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1716554159617040}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.3696597, y: -0, z: -0, w: 0.9291673}
   m_LocalPosition: {x: 0, y: -0.497, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4248774132350344}
+  - {fileID: 4876574071649732}
   m_Father: {fileID: 424588}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: -31.254002, y: -359.661, z: -180.176}
+  m_LocalEulerAnglesHint: {x: 43.389004, y: -360, z: -360}
 --- !u!4 &4692427467510064
 Transform:
   m_ObjectHideFlags: 1
@@ -252,6 +301,19 @@ Transform:
   m_Father: {fileID: 4024617933336028}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4876574071649732
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1518374752237344}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4613833819952600}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54000013371132386
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -267,6 +329,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &65101454088625942
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1293674701791118}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 6, z: 0.5}
+  m_Center: {x: 0, y: -3, z: 0}
 --- !u!95 &95660784024930776
 Animator:
   serializedVersion: 3
@@ -533,12 +607,12 @@ MonoBehaviour:
   m_energy: 30
   m_energyDrainSec: 1
   m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: cbf1a873ae53d422c93e98b74ffc920a, type: 2}
+  m_brainResource: {fileID: 11400000, guid: f51110aa35e6f456da4bfd53a0c2c814, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"projectileName":"PF_Unicorn_Horn","projectileSpawnTransformName":"shoot","damage":5,"canFollowTarget":false,"consecutiveAttacks":2,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":25,"dataType":"AI.Behaviour.AttackRangedData","editorFolded":false},{"maxValidTier":3,"minValidTier":0,"checkType":1,"dragonSizeRangeMultiplier":8,"shutdownRange":{"min":1,"max":1.5},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":true},{"speed":30,"arrivalRadius":2,"hasGuardState":false,"timeout":{"min":0,"max":0},"dataType":"AI.Behaviour.PursuitData","editorFolded":true},{"pivotName":"shoot","dataType":"AI.Behaviour.LookAtAttackTargetData","editorFolded":true},{"maxValidTier":4,"minValidTier":0,"checkType":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":1,"max":3},"dataType":"AI.Behaviour.PetSearchShootTargetData","editorFolded":true},{"duration":1,"damage":5,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":false,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeNoAnimationData","editorFolded":true}]'
   m_databaseKey: PF_PetHelicopterDrone
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -572,6 +646,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tags: 0
   m_sku: pet_72
+--- !u!114 &114211815583682432
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1293674701791118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 487c69078aee94524b48a9bbfd3b0daf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_timeBetweenHits: 0.1
+  m_damageType: 0
+  m_tier: 4
+  m_entityTags: 0
+  m_hitMask:
+    serializedVersion: 2
+    m_Bits: 14745600
+  m_killEverything: 1
 --- !u!114 &114331436663143220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -624,7 +717,7 @@ MonoBehaviour:
     m_defaultUpVector: 0
     m_orientationSpeed: 360
     m_dragonStyleRotation: 0
-    m_faceDirection: 1
+    m_faceDirection: 0
     m_rollRotation: 0
     m_rollAngle: 35
     m_limitHorizontalRotation: 0
@@ -633,6 +726,121 @@ MonoBehaviour:
     m_limitVerticalRotation: 1
     m_faceUpAngle: 320
     m_faceDownAngle: 40
+--- !u!114 &114881512935365020
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_minEatAnimTime: 1
+  m_eatDistance: 1
+  m_eatDetectionRadiusMultiplier: 2.75
+  m_eatDetectionSpeedRadiusMultiplier: 0.15
+  m_holdingBloodParticle:
+    name: PS_Blood_Explosion_Medium
+    path: Blood
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
+  m_holdingFreezeParticle:
+    name: PS_IceExplosionSmall
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
+  m_burpSound: 
+  m_canEatEntities: 0
+  m_eaterTier: 0
+  m_isPet: 0
+  m_isAquatic: 0
+  m_canMultipleLatchOnPlayer: 0
+  m_damageOnBitePlayer: 10
+  m_ignoreBadJunk: 1
+--- !u!114 &114898040241279070
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a15e6063c404592b8849ce609d6516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_particleParent: {fileID: 4876574071649732}
+  m_particleName: PS_SpecialMachineShotgun
+  m_action: 4096
 --- !u!114 &114992998793360810
 MonoBehaviour:
   m_ObjectHideFlags: 1
