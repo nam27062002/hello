@@ -70,6 +70,10 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 					new StepSetup(ResultsScreenController.Step.TOURNAMENT_INVALID_RUN, true, false, "Tournament, run didn't count for the tournament (i.e. \"Eat 100 birds as fast as possible\" but you died before reaching 100 birds)"),
 					new StepSetup(ResultsScreenController.Step.TOURNAMENT_SYNC, true, false, "Tournament, sync with server, apply rewards and do tracking"),
 
+					new StepSetup(ResultsScreenController.Step.LEAGUE_SCORE, true, true, "Special Dragons League, show run score and \"new high score\" if moving up the ladder"),
+					new StepSetup(ResultsScreenController.Step.LEAGUE_LEADERBOARD, true, false, "Special Dragons League, show leaderboard changes"),
+					new StepSetup(ResultsScreenController.Step.LEAGUE_SYNC, true, false, "Special Dragons League, sync with server, apply rewards and do tracking"),
+
 					new StepSetup(ResultsScreenController.Step.COUNT, false, false, "")
 				};
 			}
@@ -147,7 +151,8 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 
 			// Reorderable Lists
 			else if(p.name == "m_tournamentStepsSequence"
-				|| p.name == "m_defaultStepsSequence") {
+				|| p.name == "m_defaultStepsSequence"
+			    || p.name == "m_specialDragonStepsSequence") {
 				base.DrawPropertySortableArray(p);
 			}
 

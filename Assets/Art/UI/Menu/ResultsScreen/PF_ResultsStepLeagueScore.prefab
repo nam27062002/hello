@@ -73,12 +73,12 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224842359519690652}
-  - component: {fileID: 114118236730016964}
+  - component: {fileID: 114646408680477708}
   - component: {fileID: 114909304334993436}
   - component: {fileID: 114608481432194608}
   - component: {fileID: 114419960597458494}
   m_Layer: 5
-  m_Name: PF_ResultsStepTournamentScore
+  m_Name: PF_ResultsStepLeagueScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -676,31 +676,6 @@ MonoBehaviour:
   m_tid: TID_RESULTS_SCORE
   m_caseType: 1
   m_replacements: []
---- !u!114 &114118236730016964
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1170027153309008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bb2c813471ae4cbfbc96e0bba8cc211, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_darkScreen: 0
-  m_darkScreenColor: {r: 0, g: 0, b: 0, a: 0.5}
-  OnFinished:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  m_skipAllowed: 1
-  m_tapToContinue: {fileID: 114085141974306852}
-  m_sequence: {fileID: 114909304334993436}
-  m_scoreText: {fileID: 114650445229651516}
-  m_highScoreText: {fileID: 114875223575622332}
-  m_scoreIcon: {fileID: 114497855025644866}
-  m_newHighScoreAnim: {fileID: 114453634620478620}
 --- !u!114 &114127624708583790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1914,7 +1889,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 459fab2743f67a142963d60f09f45fb0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3ebc31014d1d9d343aa9d93a52334380, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2039,7 +2014,7 @@ MonoBehaviour:
   OnBackButton:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114118236730016964}
+      - m_Target: {fileID: 114646408680477708}
         m_MethodName: OnTapToContinue
         m_Mode: 1
         m_Arguments:
@@ -2126,6 +2101,30 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114646408680477708
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1170027153309008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425511bae77f14eaba2180b139c1a368, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_darkScreen: 0
+  m_darkScreenColor: {r: 0, g: 0, b: 0, a: 0.5}
+  OnFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  m_skipAllowed: 1
+  m_tapToContinue: {fileID: 114085141974306852}
+  m_sequence: {fileID: 114909304334993436}
+  m_scoreText: {fileID: 114650445229651516}
+  m_highScoreText: {fileID: 114875223575622332}
+  m_newHighScoreAnim: {fileID: 114453634620478620}
 --- !u!114 &114650445229651516
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2236,7 +2235,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114118236730016964}
+      - m_Target: {fileID: 114646408680477708}
         m_MethodName: OnTapToContinue
         m_Mode: 1
         m_Arguments:
@@ -2463,7 +2462,7 @@ MonoBehaviour:
     OnStart:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114118236730016964}
+        - m_Target: {fileID: 114646408680477708}
           m_MethodName: OnShowNewHighScore
           m_Mode: 1
           m_Arguments:
@@ -16932,7 +16931,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0017242432}
+  m_AnchoredPosition: {x: 0, y: -0.0017089844}
   m_SizeDelta: {x: -49, y: -49}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224807026500603556
@@ -17091,7 +17090,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 2.7, y: 23.3}
+  m_AnchoredPosition: {x: 2.7000122, y: 23.3}
   m_SizeDelta: {x: -214.2, y: 230.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &225339376155926974

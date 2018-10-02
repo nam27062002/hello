@@ -49,7 +49,14 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Never during FTUX
-		return UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_CHESTS_AT_RUN;
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) return false;
+
+		// With special dragons, only if we've collected an egg
+		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			return m_controller.eggFound;
+		}
+
+		return true;
 	}
 
 	/// <summary>
@@ -97,6 +104,14 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Perform all required initializations for the chest slots.
 	/// </summary>
 	private void InitChests() {
+		// In special dragon mode, don't show any chests
+		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			for(int i = 0; i < m_chestSlots.Length; ++i) {
+				m_chestSlots[i].gameObject.SetActive(false);
+			}
+			return;
+		}
+
 		// How many chests?
 		int collectedAndPending = 0;
 		List<Chest> sortedChests = new List<Chest>();
@@ -178,6 +193,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// A chest has entered, show its reward if appliable.
 	/// </summary>
 	public void OnChestRewardCheck() {
+		// In special dragon mode, don't show any chests
+		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			return;
+		}
+
 		// Until we've checked all the chests!
 		if(m_checkedChests >= m_chestSlots.Length) return;
 
@@ -228,6 +248,11 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
 	public void DoSummary() {
+		// Not in special dragon mode
+		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			return;
+		}
+
 		m_controller.summary.ShowCollectibles(m_collectedChests, m_controller.eggFound ? 1 : 0);
 	}
 
