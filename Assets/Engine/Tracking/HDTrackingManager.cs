@@ -491,7 +491,19 @@ public class HDTrackingManager
     /// <param name="experimentName">Name of the experiment applied.</param>
     /// <param name="experimentGroup">Name of the group of the experiment applied</param>
     public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
-    #endregion    
+    #endregion
+
+    #region animoji
+    /// <summary>
+    /// Called when user enters on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiStart() { }
+
+    /// <summary>
+    /// Called when user exits animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiExit() { }
+    #endregion
 
     #region log
     private const bool LOG_USE_COLOR = false;
