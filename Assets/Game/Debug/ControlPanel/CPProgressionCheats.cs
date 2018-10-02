@@ -384,9 +384,6 @@ public class CPProgressionCheats : MonoBehaviour {
 			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
 		}
 
-		// Mark all golden eggs as collected
-		UsersManager.currentUser.goldenEggsCollected = 100; // Dirty, but should do the trick xD
-
         // Save persistence
         PersistenceFacade.instance.Save_Request(false);
     }
@@ -408,8 +405,6 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Clear collected eggs and fragments
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
         // Save!
         PersistenceFacade.instance.Save_Request(false);
@@ -430,8 +425,6 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Clear pet collection and eggs and fragments
 		UsersManager.currentUser.petCollection.Reset();
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
 		// Iterate all the pets list and randomly unlock some of them
 		float unlockChance = 0.5f;
@@ -445,81 +438,11 @@ public class CPProgressionCheats : MonoBehaviour {
 
 			// Increase collected eggs (pets come from eggs!)
 			UsersManager.currentUser.eggsCollected++;
-
-			// If special, increase collected golden eggs
-			if(petDef.Get("rarity") == Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)) {
-				UsersManager.currentUser.goldenEggsCollected++;
-			}
 		}
-
-		// Initialize current amount of golden fragments to a random value within the limit
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (long)Random.Range(0, EggManager.goldenEggRequiredFragments), 0);
 
         // Save!
         PersistenceFacade.instance.Save_Request(false);
     }
-
-	/// <summary>
-	/// Reset only the special pets to lock state.
-	/// Resets golden egg fragments and collected golden eggs count as well.
-	/// </summary>
-	public void OnResetSpecialPets() {
-		// Get all special pets
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL));
-
-		// Clear equipped pets
-		foreach(KeyValuePair<string, IDragonData> kvp in DragonManager.dragonsBySku) {
-			for(int i = 0; i < petDefs.Count; i++) {
-				UsersManager.currentUser.UnequipPet(kvp.Key, petDefs[i].sku);
-			}
-		}
-
-		// Remove from collection
-		for(int i = 0; i < petDefs.Count; i++) {
-			UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
-		}
-
-		// Clear collected data
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
-		UsersManager.currentUser.goldenEggsCollected = 0;
-
-        // Save!
-        PersistenceFacade.instance.Save_Request(false);
-    }
-
-	/// <summary>
-	/// Reset the state of pets and golden fragments to force a golden egg after opening the next egg.
-	/// </summary>
-	public void OnForceGoldenEgg() {
-		// Unlock all pets except the special ones
-		// This will force the next egg to give a duplicate and therefore golden fragments
-		string specialRaritySku = Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL);
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
-		for(int i = 0; i < petDefs.Count; i++) {
-			// Is it a special pet?
-			if(petDefs[i].Get("rarity") == specialRaritySku) {
-				// Unequip from all dragons
-				foreach(KeyValuePair<string, IDragonData> kvp in DragonManager.dragonsBySku) {
-					UsersManager.currentUser.UnequipPet(kvp.Key, petDefs[i].sku);
-				}
-
-				// Remove from collection
-				UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
-			} else {
-				// Make sure pet is unlocked
-				UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
-			}
-		}
-
-		// Give almost all the golden fragments required to complete the first golden egg
-		// so when the next egg gives us some gf we will complete the golden egg
-		// Clear collected data
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, EggManager.goldenEggRequiredFragments - 1, 0);
-
-		// Save!
-		PersistenceFacade.instance.Save_Request(false);
-	}
 
    	/// <summary>
 	/// Reset all map upgrades

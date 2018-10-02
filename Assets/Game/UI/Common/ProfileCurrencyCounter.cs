@@ -187,9 +187,5 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	/// The text animator has finished.
 	/// </summary>
 	private void OnTextAnimFinished() {
-		if(m_currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-			// Hide if all golden eggs have been collected (but don't disable, otherwise it will never again be enabled!)
-			this.gameObject.ForceGetComponent<CanvasGroup>().alpha = EggManager.allGoldenEggsCollected ? 0f : 1f;
-		}
 	}
 }

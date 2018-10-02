@@ -159,10 +159,6 @@ public class MenuPetPreview : MonoBehaviour {
             {
 				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.RARE]);
             }
-            else if (rarity == "special")
-            {
-				setFresnelColor(UIConstants.RARITY_COLORS[(int)Metagame.Reward.Rarity.SPECIAL]);
-            }
 
         } else {
 

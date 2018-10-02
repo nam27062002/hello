@@ -90,15 +90,6 @@ namespace Metagame {
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 
-		override protected void DoCollect() {
-			base.DoCollect();
-
-			if (EggManager.goldenEggCompleted) {
-				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG, EconomyGroup.ToString());
-				UsersManager.currentUser.PushReward(reward);
-			}
-		}
-
 		public override string GetTID(bool _plural) {
 			return "TID_GOLDEN_FRAGMENTS_NAME";	// No singular version :/
 		}
