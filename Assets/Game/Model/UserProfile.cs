@@ -264,12 +264,6 @@ public class UserProfile : UserPersistenceSystem
 		set; 
 	}
 
-	private int m_goldenEggsCollected;
-	public int goldenEggsCollected {
-		get { return m_goldenEggsCollected; }
-		set { m_goldenEggsCollected = value; }
-	}
-
 	private int m_openEggTriesWithoutRares;
 	public int openEggTriesWithoutRares {
 		get { return m_openEggTriesWithoutRares; }
@@ -467,7 +461,6 @@ public class UserProfile : UserPersistenceSystem
         m_incubationTimeReference = 0;
         m_incubationEndTimestamp = DateTime.MinValue;
         eggsCollected = 0;
-        m_goldenEggsCollected = 0;
 		m_openEggTriesWithoutRares = 0;
 
         m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];   // Should always have the same length
@@ -1104,9 +1097,6 @@ public class UserProfile : UserPersistenceSystem
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
 
-		// Golden egg
-		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
-
 		// Dynamic Probability data
 		m_openEggTriesWithoutRares = _data["openEggTriesWithoutRares"].AsInt;
     }
@@ -1283,9 +1273,6 @@ public class UserProfile : UserPersistenceSystem
 
         // Eggs collected
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-
-		// Golden eggs
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Dynamic Probability data
 		data.Add("openEggTriesWithoutRares", m_openEggTriesWithoutRares.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));

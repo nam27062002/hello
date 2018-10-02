@@ -50,7 +50,7 @@ public partial class GlobalEvent {
 				if(reward.amount >= 5) {
 					reward.rarity = Metagame.Reward.Rarity.EPIC;
 				} else if(reward.amount >= 3) {
-					reward.rarity = Metagame.Reward.Rarity.SPECIAL;
+                    reward.rarity = Metagame.Reward.Rarity.RARE;
 				} else {
 					reward.rarity = Metagame.Reward.Rarity.COMMON;
 				}
