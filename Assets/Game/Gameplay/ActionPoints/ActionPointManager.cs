@@ -13,6 +13,13 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	//------------------------------------------------------------------------//
 	// Spawners collection
 	private List<ActionPoint> m_actionPoints = null;
+	private List<ActionPoint> actionPoints {
+		get { 
+			if(m_actionPoints == null) m_actionPoints = new List<ActionPoint>();
+			return m_actionPoints;
+		}
+	}
+
 	private QuadTree<ActionPoint> m_actionPointsTree = null;
 
 
@@ -52,10 +59,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	/// <param name="_actionPoint">The action point to be added.</param>
 	public void Register(ActionPoint _actionPoint) {
-		if (m_actionPoints == null) {
-			m_actionPoints = new List<ActionPoint>();
-		}
-		m_actionPoints.Add(_actionPoint);
+		actionPoints.Add(_actionPoint);
 		if (m_actionPointsTree != null) m_actionPointsTree.Insert(_actionPoint);
 	}
 
@@ -64,7 +68,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	/// <param name="_actionPoint">The action point to be removed.</param>
 	public void Unregister(ActionPoint _actionPoint) {
-		m_actionPoints.Remove(_actionPoint);
+		actionPoints.Remove(_actionPoint);
 		if (m_actionPointsTree != null) m_actionPointsTree.Remove(_actionPoint);
 	}
 
@@ -96,13 +100,14 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 		}
 
 		m_actionPointsTree = new QuadTree<ActionPoint>(bounds.x, bounds.y, bounds.width, bounds.height);
-		for(int i = 0; i < m_actionPoints.Count; i++) {
-			m_actionPointsTree.Insert(m_actionPoints[i]);
+		List<ActionPoint> points = actionPoints;	// Make sure list is initialized by calling the property
+		for(int i = 0; i < points.Count; i++) {
+			m_actionPointsTree.Insert(points[i]);
 		}
 	}
 
 	private void OnGameEnded() {
-		m_actionPoints.Clear();
+		actionPoints.Clear();
 	}
 
 	//------------------------------------------------------------------------//
