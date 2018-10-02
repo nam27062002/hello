@@ -243,7 +243,7 @@ public class CPServerTab : MonoBehaviour {
 
     public void OnButton6()
     {
-        HDCP2Manager.Instance.ShowInterstitial(false);        
+        HDCP2Manager.Instance.PlayInterstitial(false);        
     }
 
     private void OnIntersitialDone( bool success )
