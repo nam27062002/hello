@@ -115,14 +115,10 @@ namespace Metagame {
 
 			// Get the reward definition
 			DefinitionNode rewardTypeDef = null;
-			if (m_sku.Equals(Egg.SKU_GOLDEN_EGG)) {
-				rewardTypeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, "pet_special");
+			if (m_hasCustomWeights) {
+				rewardTypeDef = EggManager.GenerateReward(m_weightIDs);
 			} else {
-				if (m_hasCustomWeights) {
-					rewardTypeDef = EggManager.GenerateReward(m_weightIDs);
-				} else {
-					rewardTypeDef = EggManager.GenerateReward();
-				}
+				rewardTypeDef = EggManager.GenerateReward();
 			}
 
 			// Nothing else to do if def is null
@@ -168,28 +164,9 @@ namespace Metagame {
 					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
 						// Get that specific pet!
 						petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
-					}
+					}				
 
-					// b) Special case if golden egg
-					else if (rarity == Rarity.SPECIAL) {
-						// We should never be opening a special egg when all of them are already collected, but check just in case!
-						if(!EggManager.allGoldenEggsCollected) {
-							// Get a random special pet, but make sure it's one we don't have. If we have it, just reroll the dice.
-							// Still add a safeguard just in case
-							int maxTries = 100;
-							int tryCount = 0;
-							do { 
-								petDef = petDefs.GetRandomValue();
-								tryCount++;
-							} while (UsersManager.currentUser.petCollection.IsPetUnlocked(petDef.sku) && tryCount < maxTries);
-						} else {
-							// This should never happen!
-							// We should never be opening a golden egg when all golden eggs had been collected
-							Debug.LogError("We should never be opening a golden egg when all golden eggs had been collected");
-						}
-					}
-
-					// c) Normal case: random pet of the target rarity
+					// b) Normal case: random pet of the target rarity
 					else {
 						// If tutorial is not completed, choose from a limited pool
 						if (!m_hasCustomWeights && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
@@ -254,8 +231,7 @@ namespace Metagame {
 						Color[] colorTags = {
 							UIConstants.GetRarityColor(Rarity.COMMON),
 							UIConstants.GetRarityColor(Rarity.RARE),
-							UIConstants.GetRarityColor(Rarity.EPIC),
-							UIConstants.GetRarityColor(Rarity.SPECIAL)
+							UIConstants.GetRarityColor(Rarity.EPIC)
 						};
 						Debug.Log(Colors.purple.Tag("EGG REWARD GENERATED FOR EGG " + m_sku + ":\n") + colorTags[(int)m_reward.rarity].Tag(m_reward.ToString()));
 						#endif

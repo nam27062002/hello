@@ -51,14 +51,8 @@ public class RewardInfoUI : MonoBehaviour {
 	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_goldenFragmentCounter = null;
-	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounterText = null;
-	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
-	[SerializeField] private ShowHideAnimator m_goldenEggAllCollectedInfo = null;
-	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
 	[SerializeField] private string m_goldenFragmentsSFX = "";
-	[Space]
-	[SerializeField] private float m_goldFragmentsCounterDelay = 3f;
+	
 
 	[SeparatorAttribute("SC Reward")]
 	[SerializeField] private Localizer m_scTitle = null;
@@ -190,11 +184,6 @@ public class RewardInfoUI : MonoBehaviour {
 				// Title - singular?
 				string tid = (_rewardData.amount == 1) ? "TID_EGG_REWARD_FRAGMENT_SING" : "TID_EGG_REWARD_FRAGMENT";
 				m_goldenFragmentTitle.Localize(tid, StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
-
-				// Fragments counter
-				m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
-				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.amount, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
-				UbiBCN.CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_goldFragmentsCounterDelay, false);	// Sync with animation
 			} break;
 
 			// Coins
@@ -250,40 +239,7 @@ public class RewardInfoUI : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Refresh the golden fragment counter text.
-	/// </summary>
-	/// <param name="_amount">Amount to display.</param>
-	/// <param name="_animate">Whether to animate or not.</param>
-	private void RefreshGoldenFragmentCounter(long _amount, bool _animate) {
-		// Special case if we've actually completed the egg
-		// Special case if all golden eggs have already been collected
-		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
-		bool allEggsCollected = EggManager.goldenEggRequiredFragments < 0;	// Will return -1 if all eggs are collected
-
-		// Compose new string
-		if(!goldenEggCompleted && !allEggsCollected) {
-			m_goldenFragmentCounterText.text = UIConstants.GetIconString(
-				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)),
-				UIConstants.IconType.GOLDEN_FRAGMENTS,
-				UIConstants.IconAlignment.LEFT
-			);
-		}
-
-		// Set different elements visibility
-		m_goldenFragmentCounter.Set(!goldenEggCompleted && !allEggsCollected, _animate);
-		m_goldenEggCompletedInfo.Set(goldenEggCompleted && !allEggsCollected, _animate);
-		m_goldenEggAllCollectedInfo.Set(allEggsCollected, _animate);
-
-		// Animate?
-		if(_animate) {
-			// Trigger Particle FX
-			m_goldenFragmentCounterFX.Play();
-
-			// Trigger SFX
-			AudioController.Play(m_goldenEggCompletedSFX);
-		}
-	}
+	
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

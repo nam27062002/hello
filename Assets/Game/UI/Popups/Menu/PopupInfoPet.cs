@@ -44,7 +44,6 @@ public class PopupInfoPet : MonoBehaviour {
 	[SerializeField] private GameObject m_lockedInfo = null;
 	[Space]
 	[SerializeField] private GameObject m_basicLock = null;
-	[SerializeField] private GameObject m_specialLock = null;
 	[SerializeField] private Localizer m_unlockInfoText = null;
 
 	[Separator("Scrolling Between Pets (Optional)")]
@@ -196,18 +195,10 @@ public class PopupInfoPet : MonoBehaviour {
 
 		// Initialize lock info
 		if(!owned) {
-			// Special pets are unlocked with golden fragments!
-			bool isSpecial = (rarity == Metagame.Reward.Rarity.SPECIAL);
+			if(m_basicLock != null) m_basicLock.SetActive(true);
 
-			if(m_basicLock != null) m_basicLock.SetActive(!isSpecial);
-			if(m_specialLock != null) m_specialLock.SetActive(isSpecial);
-
-			if(m_unlockInfoText != null) {
-				if(isSpecial) {
-					m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO_SPECIAL");
-				} else {
-					m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO");
-				}
+			if(m_unlockInfoText != null) {				
+				m_unlockInfoText.Localize("TID_PET_UNLOCK_INFO");				
 			}
 		}
 

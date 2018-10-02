@@ -41,7 +41,7 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 	// Settings
 	// Serialized just for debugging, it's initialized from content
 	[SerializeField] private ProbabilitySet m_rewardDropRate = new ProbabilitySet();
-	[SerializeField] private List<int> m_goldenEggRequiredFragments = new List<int>();
+	
 
 	// Inventory
 	public static Egg[] inventory {
@@ -77,28 +77,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		}
 	}
 
-	// Golden egg managements
-	public static int goldenEggRequiredFragments {
-		get { 
-			// If all eggs are collected, return -1
-			if(instance.m_user.goldenEggsCollected < instance.m_goldenEggRequiredFragments.Count) {
-				return instance.m_goldenEggRequiredFragments[instance.m_user.goldenEggsCollected]; 
-			}
-			return -1;
-		}
-	}
-
-	public static int goldenEggFragments {
-		get { return (int)instance.m_user.goldenEggFragments; }
-	}
-
-	public static bool goldenEggCompleted {
-		get { return !allGoldenEggsCollected && goldenEggFragments >= goldenEggRequiredFragments; }
-	}
-
-	public static bool allGoldenEggsCollected {
-		get { return instance.m_user.goldenEggsCollected >= instance.m_goldenEggRequiredFragments.Count; }
-	}
 
 	private static float[] sm_weightIDs = {1f, 2f, 3f};
 	public static void SetWeightIDs(float[] _weightIDs) {
@@ -174,14 +152,6 @@ public class EggManager : UbiBCN.SingletonMonoBehaviour<EggManager> {
 		if(PlayerPrefs.HasKey(RANDOM_STATE_PREFS_KEY)) {
 			UnityEngine.Random.State s = instance.m_rewardDropRate.randomState;
 			instance.m_rewardDropRate.randomState = s.Deserialize(PlayerPrefs.GetString(RANDOM_STATE_PREFS_KEY));
-		}
-
-		// Initialize required golden egg fragments requirements
-		instance.m_goldenEggRequiredFragments.Clear();
-		List<DefinitionNode> goldenEggDefinitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.GOLDEN_EGGS);
-		DefinitionsManager.SharedInstance.SortByProperty(ref goldenEggDefinitions, "order", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < goldenEggDefinitions.Count; i++) {
-			instance.m_goldenEggRequiredFragments.Add(goldenEggDefinitions[i].GetAsInt("fragmentsRequired"));
 		}
 	}
 

@@ -24,7 +24,7 @@ public class Egg {
 	//------------------------------------------------------------------------//
 	public const string SKU_STANDARD_EGG = "egg_standard";
 	public const string SKU_PREMIUM_EGG = "egg_premium";
-	public const string SKU_GOLDEN_EGG = "egg_golden";
+
 	public const string PREFAB_PATH = "UI/Metagame/Eggs/";
 
 	// Respect indices for the animation controller!!
@@ -306,12 +306,6 @@ public class Egg {
 
 			// Increase collected eggs counter
 			UsersManager.currentUser.eggsCollected++;
-
-			// If golden egg, increase total and reset fragments counter
-			if(def.sku == SKU_GOLDEN_EGG) {
-				UsersManager.currentUser.SpendCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)EggManager.goldenEggRequiredFragments);	// If we have extra fragments, they will be kept in the profile
-				UsersManager.currentUser.goldenEggsCollected++;
-			}
 
 	        // Save persistence
 	        PersistenceFacade.instance.Save_Request();

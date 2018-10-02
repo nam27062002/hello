@@ -49,7 +49,6 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Internal
 	private State m_state = State.IDLE;
-	private bool m_goldenFragmentsTutorial = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -174,9 +173,7 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// An animation for a reward has started in the 3d scene!
 	/// </summary>
 	private void OnSceneAnimStarted() {
-		m_goldenFragmentsTutorial = false;
-
-		// What type of reward are we opening?
+        // What type of reward are we opening?
 		// Egg
 		if(m_scene.currentReward is Metagame.RewardEgg) {
 			// Hide HUD and buttons
@@ -194,8 +191,7 @@ public class OpenEggScreenController : MonoBehaviour {
 			// Launch the reward UI animation
 			// Aux vars
 			Metagame.Reward finalReward = m_scene.eggData.rewardData.reward;
-			bool goldenEggCompleted = EggManager.goldenEggCompleted;
-
+			
 			// Special initializations when reward is duplicated
 			ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
 			if(finalReward.WillBeReplaced()) {
@@ -203,15 +199,7 @@ public class OpenEggScreenController : MonoBehaviour {
 				photoAnimator.ForceHide(false);
 
 				// Don't show call to action button if the reward is a duplicate
-				m_callToActionButton.SetActive(false);
-
-				// Which is the replacement currency?
-				if(finalReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-					// If it's the first time we're getting golden fragments, show info popup
-					if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
-						m_goldenFragmentsTutorial = true;	
-					}
-				}
+				m_callToActionButton.SetActive(false);				
 			} else {
 				// Photo button only enabled if reward is not a duplicate!
 				photoAnimator.Show();	// Only animate if showing
@@ -223,8 +211,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			// Don't show back button if we've completed a golden egg!
 			// Don't show either if rewarding a pet and tutorial not yet completed (force going to collection)
-			bool hideBackButton = goldenEggCompleted
-				|| (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
+			bool hideBackButton = (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
 			m_backButton.SetActive(!hideBackButton);
 
 			// Same with egg buy button
@@ -242,25 +229,11 @@ public class OpenEggScreenController : MonoBehaviour {
 		// Change logic state
 		m_state = State.IDLE;
 
-		// Show popup after some extra delay
-		if (m_goldenFragmentsTutorial){
-			// Tracking
-			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
-			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
-
-			PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-			m_goldenFragmentsTutorial = false;
-		}
-
-
 		// Show final panel
 		m_finalPanel.Show();
 
 		// Same with HUD - unless golden egg was completed
-		if(!EggManager.goldenEggCompleted) {
-			InstanceManager.menuSceneController.hud.animator.Show();
-		}
+		InstanceManager.menuSceneController.hud.animator.Show();
 
 		// Stop listeneing the 3D scene
 		m_scene.OnAnimStarted.RemoveListener(OnSceneAnimStarted);

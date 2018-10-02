@@ -88,8 +88,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	private Vector3 m_direction;
 	public Vector3 direction { get { return m_direction; } }
 
-	private Vector3 m_velocity;
-	public Vector3 velocity { get { return m_velocity; } }
+	protected Vector3 m_velocity;
+	public Vector3 velocity { get { return m_velocity; } set { m_velocity = value; } }
 
 	protected Transform m_transform;
 	public Vector3 upVector { get { return m_transform.up; } }

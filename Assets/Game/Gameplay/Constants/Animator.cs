@@ -98,5 +98,11 @@ namespace GameConstants
 		public static readonly int BEEP = UnityEngine.Animator.StringToHash("beep");
 
         public static readonly int ENABLED = UnityEngine.Animator.StringToHash("enabled");
+        
+        
+        // HELICOPTER DRAGON
+        public static readonly int MISSILE = UnityEngine.Animator.StringToHash("missile");
+        public static readonly int BOMB = UnityEngine.Animator.StringToHash("bomb");
+        public static readonly int NECK_DISTANCE = UnityEngine.Animator.StringToHash("neckDistance");
 	}
 }
