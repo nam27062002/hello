@@ -7,6 +7,7 @@ public class DragonHelicopterPowers : MonoBehaviour
 	DragonBoostBehaviour m_playerBoost;
 	DragonMotion m_playerMotion;
     DragonBreathBehaviour m_playerBreath;
+    DragonEatBehaviour m_eatBehaviour;
     Animator m_animator;
     int m_powerLevel = 0;
     DragonTier m_tier;
@@ -45,6 +46,7 @@ public class DragonHelicopterPowers : MonoBehaviour
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
 
+    protected float m_neckDistance = 0;
 
     private void Awake()
     {
@@ -59,6 +61,7 @@ public class DragonHelicopterPowers : MonoBehaviour
 		m_playerMotion = InstanceManager.player.dragonMotion;
         m_playerMotion.canDive = true;  // This dragon can move freely inside water
         m_playerBreath = InstanceManager.player.breathBehaviour;
+        m_eatBehaviour = InstanceManager.player.dragonEatBehaviour;
         
         m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
         m_tier = InstanceManager.player.data.tier;
@@ -91,6 +94,20 @@ public class DragonHelicopterPowers : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
+
+        // Enlargin neck
+        Transform target = m_eatBehaviour.GetAttackTarget();
+        if ( target == null )
+        {
+            m_neckDistance = Mathf.Lerp(m_neckDistance, 0, Time.deltaTime * 10);
+        }
+        else
+        {
+            // Distance to target?
+            m_neckDistance = Mathf.Lerp(m_neckDistance, 1, Time.deltaTime * 10);
+        }
+        m_animator.SetFloat( GameConstants.Animator.NECK_DISTANCE, m_neckDistance );
+        
         // InstanceManager.player.dragonEatBehaviour.enabled = false;  // Dirty code to test
 		if ( m_playerBoost.IsBoostActive() || m_playerBreath.IsFuryOn())
 		{
@@ -139,7 +156,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_missileTimer -= Time.deltaTime;
                 if ( m_missileTimer <= 0 )
                 {
-                    m_animator.SetTrigger("missile");
+                    m_animator.SetTrigger( GameConstants.Animator.MISSILE );
                     m_missileTimer += m_missilesFireRate;
                 }
             }
@@ -149,7 +166,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_bombTimer -= Time.deltaTime;
                 if ( m_bombTimer <= 0 )
                 {
-                    m_animator.SetTrigger("bomb");
+                    m_animator.SetTrigger(GameConstants.Animator.BOMB);
                     m_bombTimer += m_bombFireRate;
                 }
             }
