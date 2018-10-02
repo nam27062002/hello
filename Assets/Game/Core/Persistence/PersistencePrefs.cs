@@ -80,9 +80,16 @@ public class PersistencePrefs
 
     public static string ActiveProfileName
     {
-        get { return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE); }
+        get
+        {
+#if UNITY_EDITOR
+            return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE);
+#else
+            return PersistenceProfile.DEFAULT_PROFILE;
+#endif
+        }
 
-		set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
+        set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
     }
 
     public static bool IsCloudSaveEnabled
@@ -162,7 +169,7 @@ public class PersistencePrefs
     }
 
 
-    #region social
+#region social
     public static string Social_PlatformKey
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
@@ -186,7 +193,7 @@ public class PersistencePrefs
         get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 1) == 1; }
         set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
     }
-    #endregion
+#endregion
 
     private static void SetInt(string key, int value)
     {
