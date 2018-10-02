@@ -57,6 +57,7 @@ public class DragonHelicopterPowers : MonoBehaviour
     void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
 		m_playerMotion = InstanceManager.player.dragonMotion;
+        m_playerMotion.canDive = true;  // This dragon can move freely inside water
         m_playerBreath = InstanceManager.player.breathBehaviour;
         
         m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
@@ -235,6 +236,7 @@ public class DragonHelicopterPowers : MonoBehaviour
         projectile.transform.position = originTransform.position;
         projectile.transform.rotation = originTransform.rotation;
         projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);
+        projectile.velocity = GameConstants.Vector3.up * Mathf.Min(m_playerMotion.velocity.y, -projectile.speed);
         
     }
 

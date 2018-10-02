@@ -93,6 +93,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		public bool m_stopInsideWater = false;
 		public bool m_stopWhenDead = false;
+        public bool m_stopOutsideWater = false;
 		public ParticleSystem m_particleReference;
 	}
 
@@ -566,6 +567,7 @@ public class DragonParticleController : MonoBehaviour
 		{
 			if ( (m_insideWater && m_bodyParticles[i].m_stopInsideWater)
 				|| (!m_alive && m_bodyParticles[i].m_stopWhenDead)
+                || (!m_insideWater && m_bodyParticles[i].m_stopOutsideWater)
 			)
 			{
 				if (m_bodyParticles[i].m_particleReference.isPlaying)
