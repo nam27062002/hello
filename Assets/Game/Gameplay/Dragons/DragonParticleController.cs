@@ -63,7 +63,7 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_waterAirLimitParticle;
 	private ParticleSystem m_waterAirLimitInstance = null;
 
-	[Space]
+    [Space]
 	public string m_corpseAsset = "";
 	private ParticleHandler m_corpseHandler;
 
@@ -354,7 +354,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			SpawnCorpse();
 		}
