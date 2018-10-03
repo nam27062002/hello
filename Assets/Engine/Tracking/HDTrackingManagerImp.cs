@@ -413,6 +413,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 #endif
             {
                 State = EState.SessionStarted;
+
+				// CP2 needs session in ubiservices to be created before being initialised
+				HDCP2Manager.Instance.Initialise();
             }
             break;
 

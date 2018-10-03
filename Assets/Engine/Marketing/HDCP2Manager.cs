@@ -24,9 +24,7 @@ public class HDCP2Manager
         PlayingPromo
     };
 
-    private EState m_state = EState.None;
-
-    private bool m_isInitialised = false;
+    private EState m_state = EState.None;	   
 
     private CP2Listener m_listener = null;
 
@@ -37,9 +35,7 @@ public class HDCP2Manager
         if (!IsInitialised() && CanBeInitialised())
         {
             if (FeatureSettingsManager.IsDebugEnabled)
-                ControlPanel.Log("INIT CP2......");
-
-            m_isInitialised = true;
+                ControlPanel.Log("INIT CP2......");				          
 
             m_listener = new CP2Listener();
             CP2Manager.SharedInstance.SetListener(m_listener);
@@ -60,7 +56,7 @@ public class HDCP2Manager
                 CP2Manager.CrossPromotionConfig kCrossPromotionConfig = new CP2Manager.CrossPromotionConfig();
                 kCrossPromotionConfig.m_strLocalCP2DataPath = "data.zip";
                 kCrossPromotionConfig.m_bIsDEVEnvironment = (settingsInstance.m_iBuildEnvironmentSelected != (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
-                kCrossPromotionConfig.m_strGameCode = "728";
+				kCrossPromotionConfig.m_strGameCode = "728";
                 kCrossPromotionConfig.m_strAdZone = "7: Gameplay to Main Menu loading";
                 kCrossPromotionConfig.m_strCountry = countryCode;
                 kCrossPromotionConfig.m_strLevelReached = "" + playerProgress;
@@ -73,7 +69,7 @@ public class HDCP2Manager
 
     private bool IsInitialised()
     {
-        return m_isInitialised;
+		return CP2Manager.SharedInstance.CheckIfInitialised();
     }
 
     private bool CanBeInitialised()
@@ -113,7 +109,7 @@ public class HDCP2Manager
     /// <returns></returns>
     private bool IsInterstitialAvailable()
     {
-        return IsInitialised() && FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && m_state == EState.None;               
+		return FeatureSettingsManager.instance.IsCP2InterstitialEnabled() && IsInitialised() && m_state == EState.None;               
     }
 
     private bool CanUserPlayInterstitial()
