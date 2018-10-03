@@ -15,7 +15,19 @@ public class PetProjectile : Projectile
     [SerializeField] CircleArea2D m_explosionArea;
     [SerializeField] IEntity.Type m_firingEntityType = IEntity.Type.PET;
     private Rect m_rect;
-    
+    [SerializeField] bool m_explodeIfHomingtargetNull = false;
+
+    protected override void Update()
+    {
+        base.Update();
+        if ( m_explodeIfHomingtargetNull && m_state == State.Shot && m_motionType == MotionType.Homing)
+        {
+            if ( m_target == null || !m_target.gameObject.activeInHierarchy )
+            {
+                Explode(false);
+            }
+        }
+    }
 
     public override void OnTriggerEnter(Collider _other) {
         if (m_state == State.Shot) {
@@ -71,6 +83,11 @@ public class PetProjectile : Projectile
         m_rect.center = m_explosionArea.center;
         m_rect.height = m_rect.width = m_explosionArea.radius;
         FirePropagationManager.instance.FireUpNodes(m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero, m_firingEntityType);
+        
+        if (m_missHitSpawnsParticle || _dealDamage) {               
+            m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, Quaternion.Inverse(m_transform.rotation) );
+        }
+            
     }
     
     bool Overlaps( CircleAreaBounds _fireNodeBounds )
