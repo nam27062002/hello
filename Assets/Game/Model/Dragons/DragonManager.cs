@@ -82,6 +82,12 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		}
 	}
 
+    public static DragonTier maxSpecialDragonTierUnlocked {
+        get {
+            return DragonTier.TIER_1;
+        }
+    }
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//

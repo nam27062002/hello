@@ -303,12 +303,39 @@ public abstract class IUserMissions {
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
         // 2. Compute and apply modifiers to the target value
-        float totalModifier = ComputeValueModifier(_difficulty, _singleRun);
+        float totalModifier = 0f;
+
+        // 2.1. Dragon modifier - additive
+        DefinitionNode dragonModifierDef = GetDragonModifierDef();
+        if (dragonModifierDef != null) {
+            totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
+            Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+        }
+
+        // 2.2. Difficulty modifier - additive
+        DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
+        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
+        if (difficultyModifierDef != null) {
+            totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
+            Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+        }
+
+        // 2.3. Single run modifier - multiplicative
+        if (_singleRun) {
+            DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
+            if (singleRunModifierDef != null) {
+                totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
+                Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+            }
+        }
 
 		// 2.4. Apply modifier and round final value
 		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
+
+        // 2.5. Compute remove cost
+
 
 		// 3. We got everything we need! Create the new mission
 		ClearMission(_difficulty);	// Terminate any mission at the requested slot first
@@ -330,7 +357,11 @@ public abstract class IUserMissions {
 	}
 
     protected abstract bool IsMissionLocked(Mission.Difficulty _difficulty);
-    protected abstract float ComputeValueModifier(Mission.Difficulty _difficulty, bool _singleRun);
+
+
+    protected abstract DefinitionNode GetDragonModifierDef();
+
+
     protected abstract float ComputeRemovePCCostModifier();
 
     protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
