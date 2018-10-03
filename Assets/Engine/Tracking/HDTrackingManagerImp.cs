@@ -1959,12 +1959,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);       
     }
 
-    private void Track_AnimojiEvent(string dragonName, int recordings, int duration)
+    
+
+	private void Track_AnimojiEvent(string dragonName, int recordings, int duration)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
             Log("Track_Animoji_event = dragon name:" + dragonName + " recordings = " + recordings + " duration secs = " + duration);
 
-        HDTrackingEvent e = new HDTrackingEvent("custom.game.animokis");
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.animojis");
         {
             Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
             e.data.Add(TRACK_PARAM_RECORDINGS, recordings);
