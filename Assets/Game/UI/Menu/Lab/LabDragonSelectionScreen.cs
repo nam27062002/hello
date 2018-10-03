@@ -31,6 +31,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[SerializeField] private Localizer m_dragonDescText = null;
 	[Space]
 	[SerializeField] private Localizer m_unlockInfoText = null;
+	[Space]
+	[SerializeField] private GameObject m_loadingUI = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,6 +51,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 				m_unlockInfoText.tid,
 				UIConstants.GetSpriteTag(unlockTierDef.GetAsString("icon"))
 			);
+		}
+
+		// Initialize 3D scene
+		LabDragonSelectionScene scene3d = InstanceManager.menuSceneController.transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d as LabDragonSelectionScene;
+		if(scene3d != null) {
+			// Link loading UI - will be controlled by the 3D scene
+			scene3d.loadingUI = m_loadingUI;
 		}
 	}
 
