@@ -51,9 +51,9 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Never during FTUX
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN) return false;
 
-		// With special dragons, only if we've collected an egg
+		// Never show with special dragons (but we'll use this step to hide the chests on the Init())
 		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			return m_controller.eggFound;
+			return false;
 		}
 
 		return true;
@@ -75,8 +75,14 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Initialize chests.
 		InitChests();
 
-		// Hide egg
-		m_controller.scene.eggSlot.gameObject.SetActive(false);
+		// Initialize egg
+		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+			// Show egg if found
+			m_controller.scene.eggSlot.gameObject.SetActive(m_controller.eggFound);
+		} else {
+			// Start with egg hidden
+			m_controller.scene.eggSlot.gameObject.SetActive(false);
+		}
 	}
 
 	/// <summary>
