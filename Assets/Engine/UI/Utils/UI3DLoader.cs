@@ -199,11 +199,7 @@ public class UI3DLoader : MonoBehaviour {
 	private void InstantiatePrefab(GameObject _prefabObj) {
 		// If we have something loaded, destroy it
 		if(m_loadedInstance != null) {
-			if(Application.isPlaying) {
-				GameObject.Destroy(m_loadedInstance);
-			} else {
-				GameObject.DestroyImmediate(m_loadedInstance);
-			}
+			SafeDestroy(m_loadedInstance);
 			m_loadedInstance = null;
 		}
 
@@ -221,7 +217,10 @@ public class UI3DLoader : MonoBehaviour {
 
 			// Remove dangerous scripts
 			CollisionEventForwarding cef = m_loadedInstance.FindComponentRecursive<CollisionEventForwarding>();
-			GameObject.Destroy(cef);
+			if(cef != null) {
+				SafeDestroy(cef);
+				cef = null;
+			}
 
 			// Reset position
 			m_loadedInstance.transform.localPosition = Vector3.zero;
@@ -267,6 +266,18 @@ public class UI3DLoader : MonoBehaviour {
 
 		// Do it! ^^
 		RefreshScaler();
+	}
+
+	/// <summary>
+	/// Destroy the object using the appropriate method based on whether the application is playing or not.
+	/// </summary>
+	/// <param name="_obj">Object to be destroyed.</param>
+	private void SafeDestroy(Object _obj) {
+		if(Application.isPlaying) {
+			GameObject.Destroy(_obj);
+		} else {
+			GameObject.DestroyImmediate(_obj);
+		}
 	}
 
 	//------------------------------------------------------------------------//

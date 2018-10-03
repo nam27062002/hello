@@ -70,4 +70,18 @@ public static partial class CustomEditorStyles {
 			return s_separatorAttributeLabelStyle;
 		}
 	}
+
+	private static GUIStyle s_simpleBox = null;
+	public static GUIStyle simpleBox {
+		get { 
+			if(s_simpleBox == null) {
+				s_simpleBox = new GUIStyle(GUI.skin.box);
+				s_simpleBox.normal.background = Texture2D.whiteTexture;
+				s_simpleBox.active.background = Texture2D.whiteTexture;
+				s_simpleBox.focused.background = Texture2D.whiteTexture;
+				s_simpleBox.hover.background = Texture2D.whiteTexture;
+			}
+			return s_simpleBox;
+		}
+	}
 }

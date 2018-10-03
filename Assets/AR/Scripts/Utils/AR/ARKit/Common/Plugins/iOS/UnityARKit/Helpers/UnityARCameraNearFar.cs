@@ -1,10 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
 using UnityEngine.XR.iOS;
-#endif
 
 [RequireComponent(typeof(Camera))]
 public class UnityARCameraNearFar : MonoBehaviour {
@@ -23,10 +20,7 @@ public class UnityARCameraNearFar : MonoBehaviour {
 	{
 		currentNearZ = attachedCamera.nearClipPlane;
 		currentFarZ = attachedCamera.farClipPlane;
-
-#if (UNITY_IOS || UNITY_EDITOR_OSX)
 		UnityARSessionNativeInterface.GetARSessionNativeInterface ().SetCameraClipPlanes (currentNearZ, currentFarZ);
-#endif
 	}
 	
 	// Update is called once per frame

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour, IProjectile {
+public class Projectile : TriggerCallbackReceiver, IProjectile {
 
 	private enum MotionType {
 		Linear = 0,
@@ -38,6 +37,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 	[SerializeField] private float m_scaleTime = 1f;
 	[SerializeField] private bool m_stopAtTarget = false;
 	[SerializeField] private bool m_dieOutsideFrustum = true;
+    [SerializeField] private bool m_dieOnHit = true;
 
 	[SeparatorAttribute("Weapon")]
 	[SerializeField] private float m_defaultDamage = 0f;
@@ -48,11 +48,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	[SeparatorAttribute("Visual")]
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
-	[SerializeField] private ParticleData m_onAttachParticle;
-	[SerializeField] private ParticleData m_onChargeParticle;
-	[SerializeField] private ParticleData m_onHitParticle;
-	[SerializeField] private ParticleData m_onEatParticle;
-	[SerializeField] private ParticleData m_onBurnParticle;
+	[SerializeField] private ParticleData m_onAttachParticle = null;
+    [SerializeField] private ParticleData m_onChargeParticle = null;
+    [SerializeField] private ParticleData m_onHitParticle = null;
+    [SerializeField] private ParticleData m_onEatParticle = null;
+    [SerializeField] private ParticleData m_onBurnParticle = null;
 	[SerializeField] private bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
@@ -81,8 +81,8 @@ public class Projectile : MonoBehaviour, IProjectile {
 	private Vector3 m_velocity;
 	public Vector3 velocity { get { return m_velocity; } }
 
-	protected Transform m_trasnform;
-	public Vector3 upVector { get { return m_trasnform.up; } }
+	protected Transform m_transform;
+	public Vector3 upVector { get { return m_transform.up; } }
 
 
 	private float m_distanceToTarget;
@@ -108,7 +108,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	// Use this for initialization
 	void Awake() {
-		m_trasnform = transform;
+		m_transform = transform;
 
 		m_entity = GetComponent<Entity>();
 		m_machine = GetComponent<AI.MachineProjectile>();
@@ -123,11 +123,11 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_onHitParticle.CreatePool();
 		}
 
+        m_onEatParticle.CreatePool();
+        m_onBurnParticle.CreatePool();
 		m_onChargeParticle.CreatePool();
 		m_onAttachParticle.CreatePool();
-		m_onEatParticle.CreatePool();
-		m_onBurnParticle.CreatePool();
-
+		
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 
@@ -152,17 +152,17 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 
 		//save real parent to restore this when the arrow is shot
-		m_oldParent = m_trasnform.parent;
+		m_oldParent = m_transform.parent;
 
 		if (m_machine != null) {
 			m_machine.Spawn(null);
 		}
 
 		//reset transforms, so we don't have any displacement
-		m_trasnform.parent = _parent;
-		m_trasnform.localPosition = _offset;
-		m_trasnform.localRotation = Quaternion.identity;
-		m_trasnform.localScale = Vector3.one;
+		m_transform.parent = _parent;
+		m_transform.localPosition = _offset;
+		m_transform.localRotation = Quaternion.identity;
+		m_transform.localScale = Vector3.one;
 
 		m_damage = m_defaultDamage;
 
@@ -183,7 +183,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_targetPosition = m_target.position;
 
 		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
-		else 									m_direction = _target.position - m_trasnform.position;
+		else 									m_direction = _target.position - m_transform.position;
 
 		m_distanceToTarget = m_direction.sqrMagnitude;
 		m_direction.Normalize();
@@ -197,7 +197,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_direction = _direction;
 
 		m_distanceToTarget = float.MaxValue;
-		m_targetPosition = m_trasnform.position + m_direction * m_distanceToTarget;
+		m_targetPosition = m_transform.position + m_direction * m_distanceToTarget;
 		m_target = null;
 
 		DoShoot(_speed, _damage);
@@ -211,7 +211,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		m_targetPosition = _target;
 
 		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
-		else 									m_direction = _target - m_trasnform.position;
+		else 									m_direction = _target - m_transform.position;
 
 		m_distanceToTarget = m_direction.sqrMagnitude;
 		m_direction.Normalize();
@@ -221,7 +221,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 	private void DoShoot(float _speed, float _damage) {
 		if (m_oldParent) {
-			m_trasnform.parent = m_oldParent;
+			m_transform.parent = m_oldParent;
 			m_oldParent = null;
 		}
 
@@ -232,13 +232,13 @@ public class Projectile : MonoBehaviour, IProjectile {
 
 		m_velocity = m_direction * _speed;
 
-		m_position = m_trasnform.position;
+		m_position = m_transform.position;
 		m_lastPosition = m_position;
 		m_startPosition = m_position;
 
 		Vector3 newDir = Vector3.RotateTowards(Vector3.forward, -m_direction, 2f * Mathf.PI, 0.0f);
-		m_trasnform.rotation = Quaternion.AngleAxis(90f, newDir) * Quaternion.LookRotation(newDir);
-		m_trasnform.localScale = Vector3.one;
+		m_transform.rotation = Quaternion.AngleAxis(90f, newDir) * Quaternion.LookRotation(newDir);
+		m_transform.localScale = Vector3.one;
 
 		//
 		for (int i = 0; i < m_activateOnShoot.Count; i++) {
@@ -300,17 +300,17 @@ public class Projectile : MonoBehaviour, IProjectile {
 						Vector3 dir = m_position - m_lastPosition;
 						dir.Normalize();
 						dir = Vector3.RotateTowards(Vector3.forward, -dir, 2f * Mathf.PI, 0.0f);
-						m_trasnform.rotation = Quaternion.AngleAxis(90f, dir) * Quaternion.LookRotation(dir);
+						m_transform.rotation = Quaternion.AngleAxis(90f, dir) * Quaternion.LookRotation(dir);
 					}
 				}
 
 				if (m_rotationSpeed > 0f) {
-					Vector3 axis = m_trasnform.up;
+					Vector3 axis = m_transform.up;
 
-					if (m_rotationAxis == RotationAxis.Right) 			axis = m_trasnform.right;
-					else if (m_rotationAxis == RotationAxis.Forward)	axis = m_trasnform.forward;
+					if (m_rotationAxis == RotationAxis.Right) 			axis = m_transform.right;
+					else if (m_rotationAxis == RotationAxis.Forward)	axis = m_transform.forward;
 
-					m_trasnform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, axis) * m_trasnform.rotation;
+					m_transform.rotation = Quaternion.AngleAxis(m_elapsedTime * 240f * m_rotationSpeed, axis) * m_transform.rotation;
 				}
 			} else {
 				Die();
@@ -365,7 +365,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 						m_position = m_startPosition + (m_velocity + Vector3.down * 0.5f * 0.98f * m_elapsedTime) * m_elapsedTime;
 						break;
 				}
-				m_trasnform.position = m_position;
+				m_transform.position = m_position;
 
 				// impact checks
 				if (m_stopAtTarget) {
@@ -380,7 +380,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 
-	protected virtual void OnTriggerEnter(Collider _other) {
+	public override void OnTriggerEnter(Collider _other) {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
 				m_hitCollider = _other;
@@ -395,9 +395,22 @@ public class Projectile : MonoBehaviour, IProjectile {
 		}
 	}
 
-	public void OnEaten() {		
-		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+    public override void OnTriggerStay(Collider _other) { }
+    public override void OnTriggerExit(Collider _other) { }
 
+    public void OnBite() {
+        GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+        if (go != null) {
+            FollowTransform ft = go.GetComponent<FollowTransform>();
+            if (ft != null) {
+                ft.m_follow = InstanceManager.player.dragonEatBehaviour.mouth;
+                ft.m_offset = m_onEatParticle.offset;
+            }
+        }
+    }
+
+	public void OnEaten() {		
 		if (m_entity != null) {
 			if (EntityManager.instance != null)	{
 				EntityManager.instance.UnregisterEntity(m_entity);
@@ -432,24 +445,26 @@ public class Projectile : MonoBehaviour, IProjectile {
 			}
 
 			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
-				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_trasnform.rotation);
+				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_transform.rotation);
 			}
 		}
 
 		if (!string.IsNullOrEmpty(m_onHitAudio))
-			AudioController.Play(m_onHitAudio, m_trasnform.position);
-		
-		if (m_entity != null) {
-			if (EntityManager.instance != null)	{
-				EntityManager.instance.UnregisterEntity(m_entity);
-			}
-		}
+			AudioController.Play(m_onHitAudio, m_transform.position);
 
-		if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
-			StickOnCollider();
-		} else {
-			Die();
-		}
+        if (m_dieOnHit || !_triggeredByPlayer) {
+            if (m_entity != null) {
+                if (EntityManager.instance != null) {
+                    EntityManager.instance.UnregisterEntity(m_entity);
+                }
+            }
+
+            if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
+                StickOnCollider();
+            } else {
+                Die();
+            }
+        }
 	}
 
     protected virtual void DealExplosiveDamage(bool _triggeredByPlayer) {
@@ -477,7 +492,7 @@ public class Projectile : MonoBehaviour, IProjectile {
         if (actualKnockback > 0) {
             DragonMotion dragonMotion = player.dragonMotion;
 
-            Vector3 knockBackDirection = dragonMotion.transform.position - m_trasnform.position;
+            Vector3 knockBackDirection = dragonMotion.transform.position - m_transform.position;
             knockBackDirection.z = 0f;
             knockBackDirection.Normalize();
 
@@ -494,7 +509,7 @@ public class Projectile : MonoBehaviour, IProjectile {
 			m_activateOnShoot[i].SetActive(false);
 		}
 
-		m_trasnform.parent = m_hitCollider.transform;
+		m_transform.parent = m_hitCollider.transform;
 		m_timer = m_stickOnDragonTime;
 	}
 

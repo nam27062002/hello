@@ -109,7 +109,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Do we have a screen change pending?
-		if(m_goToScreen != MenuScreen.NONE) {
+        if(m_goToScreen != MenuScreen.NONE && InstanceManager.menuSceneController.transitionManager.transitionAllowed) {
 			// Which screen?
 			switch(m_goToScreen) {
 				case MenuScreen.EVENT_REWARD: {

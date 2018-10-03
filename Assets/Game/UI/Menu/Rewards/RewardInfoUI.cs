@@ -224,7 +224,7 @@ public class RewardInfoUI : MonoBehaviour {
 		m_extraInfoText.text = _extraInfo;
 
 		// Program finish callback
-		UbiBCN.CoroutineManager.DelayedCall(() => { OnAnimFinished.Invoke(); }, totalAnimDuration, false);
+		UbiBCN.CoroutineManager.DelayedCall(OnAnimationFinished, totalAnimDuration, false);
 	}
 
 	/// <summary>
@@ -311,5 +311,24 @@ public class RewardInfoUI : MonoBehaviour {
 	/// </summary>
 	public void OnRewardGoldenFragmentsIn() {
 		AudioController.Play(m_goldenFragmentsSFX);
+	}
+
+	/// <summary>
+	/// Animation finished callback.
+	/// </summary>
+	private void OnAnimationFinished() {
+		// Perform some extra stuff
+		switch(m_reward.type) {
+			// Pet
+			case Metagame.RewardPet.TYPE_CODE: {
+				// [AOC] 1.14 Halloween pet needs some explanation, so let's show a popup for this one
+				if(m_reward.def.sku == PopupHalloweenPetInfo.PET_SKU && !m_reward.WillBeReplaced()) {	// Not when it's a duplicate!
+					PopupManager.OpenPopupInstant(PopupHalloweenPetInfo.PATH);
+				}
+			} break;
+		}
+
+		// Notify listeners
+		OnAnimFinished.Invoke();
 	}
 }

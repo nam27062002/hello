@@ -61,8 +61,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		MATCHMAKING_ERROR, //(617,200),
 		QUEST_IS_OVER, //(618,200),
     	IS_NOT_A_QUEST, //(619,200);
+        EVENT_STILL_ACTIVE,//(620,200),
+        NOTHING_PENDING,//(621,200),
+        EVENT_TTL_EXPIRED,//(622,200);
 
-    	NO_ERROR
+        NO_ERROR
     };
 
     public HDTournamentManager m_tournament = new HDTournamentManager();
@@ -258,7 +261,10 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 							case 617: outErr = HDLiveEventsManager.ComunicationErrorCodes.MATCHMAKING_ERROR;break;
 							case 618: outErr = HDLiveEventsManager.ComunicationErrorCodes.QUEST_IS_OVER;break;
 							case 619: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_QUEST;break;
-						}
+                            case 620: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_STILL_ACTIVE;break;
+                            case 621: outErr = HDLiveEventsManager.ComunicationErrorCodes.NOTHING_PENDING; break;
+                            case 622: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED; break;
+                        }
             		}
             	}
             	else

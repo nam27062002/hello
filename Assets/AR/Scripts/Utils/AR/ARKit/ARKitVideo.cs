@@ -57,7 +57,7 @@ public class ARKitVideo : MonoBehaviour
     public void OnPreRender()
     {
 		ARTextureHandles handles = UnityARSessionNativeInterface.GetARSessionNativeInterface ().GetARVideoTextureHandles();
-        if (handles.textureY == System.IntPtr.Zero || handles.textureCbCr == System.IntPtr.Zero)
+        if (handles.TextureY == System.IntPtr.Zero || handles.TextureCbCr == System.IntPtr.Zero)
         {
             return;
         }
@@ -71,7 +71,7 @@ public class ARKitVideo : MonoBehaviour
         // Texture Y
         if (_videoTextureY == null) {
           _videoTextureY = Texture2D.CreateExternalTexture(currentResolution.width, currentResolution.height,
-              TextureFormat.R8, false, false, (System.IntPtr)handles.textureY);
+              TextureFormat.R8, false, false, (System.IntPtr)handles.TextureY);
           _videoTextureY.filterMode = FilterMode.Bilinear;
           _videoTextureY.wrapMode = TextureWrapMode.Repeat;
           m_ClearMaterial.SetTexture("_textureY", _videoTextureY);
@@ -80,14 +80,14 @@ public class ARKitVideo : MonoBehaviour
         // Texture CbCr
         if (_videoTextureCbCr == null) {
           _videoTextureCbCr = Texture2D.CreateExternalTexture(currentResolution.width, currentResolution.height,
-              TextureFormat.RG16, false, false, (System.IntPtr)handles.textureCbCr);
+              TextureFormat.RG16, false, false, (System.IntPtr)handles.TextureCbCr);
           _videoTextureCbCr.filterMode = FilterMode.Bilinear;
           _videoTextureCbCr.wrapMode = TextureWrapMode.Repeat;
           m_ClearMaterial.SetTexture("_textureCbCr", _videoTextureCbCr);
         }
 
-        _videoTextureY.UpdateExternalTexture(handles.textureY);
-        _videoTextureCbCr.UpdateExternalTexture(handles.textureCbCr);
+        _videoTextureY.UpdateExternalTexture(handles.TextureY);
+        _videoTextureCbCr.UpdateExternalTexture(handles.TextureCbCr);
 
 		m_ClearMaterial.SetMatrix("_DisplayTransform", _displayTransform);
     }

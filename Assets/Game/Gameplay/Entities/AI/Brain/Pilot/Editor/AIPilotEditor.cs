@@ -79,7 +79,7 @@ public class AIPilotEditor : Editor {
 
         // Draw the data list!
         Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
-        if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null) {
+        if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null && m_targetAIPilot.brain.current != null) {
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
         }
@@ -167,7 +167,11 @@ public class AIPilotEditor : Editor {
 
 		// Enum
 		else if(_f.FieldType.IsEnum) {
-			return EditorGUILayout.EnumPopup(fieldName, (Enum)_currentValue);
+            if(Attribute.GetCustomAttribute(_f.FieldType, typeof(FlagsAttribute)) != null) {
+                return EditorGUILayout.EnumFlagsField(fieldName, (Enum)_currentValue);
+            } else {
+                return EditorGUILayout.EnumPopup(fieldName, (Enum)_currentValue);
+            }
 		}
 
 		// String
