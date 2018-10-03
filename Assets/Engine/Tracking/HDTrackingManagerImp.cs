@@ -1198,7 +1198,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
     {
         Track_ExperimentApplied(experimentName, experimentGroup);        
-    }    
+    }
+    #endregion
+
+    #region animoji
+    private string dragon_name;
+    private int recordings;
+    private int duration;
+    public override void Notify_AnimojiStart()
+    {
+        dragon_name = InstanceManager.menuSceneController.selectedDragon;
+        recordings = 0;
+        duration = (int)Time.realtimeSinceStartup;
+    }
+    public override void Notify_AnimojiRecord()
+    {
+        recordings++;
+    }
+    public override void Notify_AnimojiExit()
+    {
+        Track_AnimojiEvent(dragon_name, recordings, (int)(Time.realtimeSinceStartup - duration));
+    }
     #endregion
 
     #region track	
@@ -1939,6 +1959,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);       
     }
 
+    
+
+	private void Track_AnimojiEvent(string dragonName, int recordings, int duration)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_Animoji_event = dragon name:" + dragonName + " recordings = " + recordings + " duration secs = " + duration);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.animojis");
+        {
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_RECORDINGS, recordings);
+            e.data.Add(TRACK_PARAM_DURATION, duration);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -1979,6 +2015,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_DEATH_TYPE = "deathType";
     private const string TRACK_PARAM_DELTA_XP = "deltaXp";
     private const string TRACK_PARAM_DEVICE_PROFILE = "deviceProfile";
+    private const string TRACK_PARAM_DRAGON = "dragon";
     private const string TRACK_PARAM_DRAGON_PROGRESSION = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN = "dragonSkin";
     private const string TRACK_PARAM_DURATION = "duration";
@@ -2054,6 +2091,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RANK = "rank";
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
+    private const string TRACK_PARAM_RECORDINGS = "recordings";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
