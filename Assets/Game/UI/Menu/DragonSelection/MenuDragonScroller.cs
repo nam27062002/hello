@@ -323,6 +323,11 @@ public class MenuDragonScroller : MonoBehaviour {
 		if(m_menuTransitionManager == null) return;
 		if(m_menuTransitionManager.currentScreenData == null) return;
 
+		// Only classic dragons
+		IDragonData dragonData = DragonManager.GetDragonData(_sku);
+		if(dragonData == null) return;
+		if(dragonData.type != IDragonData.Type.CLASSIC) return;
+
 		// Move camera to the newly selected dragon
 		// If the current menu screen is not using the dragon selection 3D scene, skip animation
 		ScreenData dragonSelectionScreenData = m_menuTransitionManager.GetScreenData(MenuScreen.DRAGON_SELECTION);
