@@ -9,7 +9,9 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_IOS
 using UnityEngine.Apple.ReplayKit;
+#endif
 
 using System.Text;
 using System.Collections.Generic;
@@ -91,8 +93,9 @@ public class ReplayKitTest : MonoBehaviour {
 	/// Called every frame.
 	/// </summary>
 	private void Update() {
-		// Set buttons visibility
-		m_startRecordingButton.interactable = !ReplayKit.isRecording;
+#if UNITY_IOS
+        // Set buttons visibility
+        m_startRecordingButton.interactable = !ReplayKit.isRecording;
 		m_stopRecordingButton.interactable = ReplayKit.isRecording;
 		m_previewButton.interactable = ReplayKit.recordingAvailable;
 
@@ -102,12 +105,23 @@ public class ReplayKitTest : MonoBehaviour {
 
 		// Log lastError
 		Log(ParseReplayKitLastErrorCode(), ReplayKit.lastError);
-	}
+#else
+        // Set buttons visibility
+        m_startRecordingButton.interactable = false;
+        m_stopRecordingButton.interactable = false;
+        m_previewButton.interactable = false;
 
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
+        // Show status vars
+        m_isRecordingText.text = "isRecording: false";
+        m_recordAvailableText.text = "recordingAvailable: false";
+
+#endif
+    }
+
+    /// <summary>
+    /// Destructor.
+    /// </summary>
+    private void OnDestroy() {
 		m_startRecordingButton.onClick.RemoveListener(OnStartRecording);
 		m_stopRecordingButton.onClick.RemoveListener(OnStopRecording);
 		m_previewButton.onClick.RemoveListener(OnShowPreview);
@@ -169,11 +183,15 @@ public class ReplayKitTest : MonoBehaviour {
 	/// </summary>
 	/// <returns>Last parsed error code. Empty string if no error or error unknown.</returns>
 	private string ParseReplayKitLastErrorCode() {
-		// Get last error
-		string lastError = ReplayKit.lastError;
+        // Get last error
+#if UNITY_IOS
+        string lastError = ReplayKit.lastError;
+#else
+        string lastError = "";
+#endif
 
-		// Protect from null
-		if(string.IsNullOrEmpty(lastError)) {
+        // Protect from null
+        if (string.IsNullOrEmpty(lastError)) {
 			return "0";
 		}
 
@@ -204,7 +222,8 @@ public class ReplayKitTest : MonoBehaviour {
 	/// Start recording button has been pressed.
 	/// </summary>
 	public void OnStartRecording() {
-		if(ReplayKit.isRecording) {
+#if UNITY_IOS
+        if(ReplayKit.isRecording) {
 			ShowFeedback("Already Recording!");
 			return;
 		}
@@ -212,29 +231,34 @@ public class ReplayKitTest : MonoBehaviour {
 		if(ReplayKit.recordingAvailable) ReplayKit.Discard();
 
 		ReplayKit.StartRecording();
+#endif
 	}
 
 	/// <summary>
 	/// Stop recording button has been pressed.
 	/// </summary>
 	public void OnStopRecording() {
+#if UNITY_IOS
 		if(!ReplayKit.isRecording) {
 			ShowFeedback("No Recording in progress!");
 			return;
 		}
 
 		ReplayKit.StopRecording();
-	}
+#endif
+    }
 
-	/// <summary>
-	/// Show preview button has been pressed.
-	/// </summary>
-	public void OnShowPreview() {
-		if(!ReplayKit.recordingAvailable) {
+    /// <summary>
+    /// Show preview button has been pressed.
+    /// </summary>
+    public void OnShowPreview() {
+#if UNITY_IOS
+        if (!ReplayKit.recordingAvailable) {
 			ShowFeedback("Recording Not Available!");
 			return;
 		}
 
 		ReplayKit.Preview();
-	}
+#endif
+    }
 }

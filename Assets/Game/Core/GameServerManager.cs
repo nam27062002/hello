@@ -322,6 +322,10 @@ public class GameServerManager
     }
 
     public virtual void SetLanguage(string serverCode, ServerCallback onDone) {}
+    
+    public virtual void PCSpent(int amount, string group, ServerCallback onDone){}
+
+    public virtual void PCEarned(int amount, string group, bool paid, ServerCallback onDone){}
 
     //------------------------------------------------------------------------//
     // GLOBAL EVENTS														  //
