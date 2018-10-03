@@ -14,14 +14,14 @@ public class PersistenceLocalDriver
         set
         {
             mData = value;
-            if (mData == null)
+                        
+            string key = (mData == null) ? null : mData.Key;      
+            if (string.IsNullOrEmpty(key))
             {
-                SavePaths_Reset();
+                key = PersistenceProfile.DEFAULT_PROFILE;
             }
-            else
-            {
-                SavePaths_Generate(mData.Key);
-            }
+
+            SavePaths_Generate(key);            
         }
     }
 
@@ -320,18 +320,7 @@ public class PersistenceLocalDriver
     private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
     private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;
 
-    private string[] mSavePaths;    
-
-    private void SavePaths_Reset()
-    {
-        if (mSavePaths != null)
-        {
-            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
-            {
-                mSavePaths[i] = null;
-            }
-        }
-    }
+    private string[] mSavePaths;        
 
     private void SavePaths_Generate(string key)
     {        
