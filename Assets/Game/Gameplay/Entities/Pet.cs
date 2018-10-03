@@ -48,14 +48,7 @@ public class Pet : IEntity {
 		Rigidbody _rigidbody = GetComponent<Rigidbody>();
 		if ( _rigidbody )
 		{
-			if ( FeatureSettingsManager.instance.IfPetRigidbodyInterpolates )
-			{
-				_rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-			}
-			else
-			{
-				_rigidbody.interpolation = RigidbodyInterpolation.None;
-			}
+			_rigidbody.interpolation = RigidbodyInterpolation.None;
 		}
 	}
 

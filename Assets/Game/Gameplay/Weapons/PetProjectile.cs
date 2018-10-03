@@ -3,17 +3,27 @@
 public class PetProjectile : Projectile {
     [SeparatorAttribute]
     [SerializeField] private DragonTier m_tier = DragonTier.TIER_0;
+    [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
     [SerializeField] private LayerMask m_groundMask = 0;
 
 
-    protected override void OnTriggerEnter(Collider _other) {
+    public override void OnTriggerEnter(Collider _other) {
         if (m_state == State.Shot) {
             if (m_machine == null || !m_machine.IsDying()) {
                 m_hitCollider = _other;
                 int layer = (1 << _other.gameObject.layer);
                 if ((layer & m_hitMask.value) > 0) {
-                    Explode(true);
+                    bool tagMatch = true;
+
+                    if (m_entityTags > 0) {
+                        Entity e = m_hitCollider.GetComponent<Entity>();
+                        tagMatch = (e != null) && e.HasTag(m_entityTags);
+                    }
+
+                    if (tagMatch) {
+                        Explode(true);
+                    }
                 } else if ((layer & m_groundMask.value) > 0) {
                     Explode(false);
                 }
@@ -26,8 +36,8 @@ public class PetProjectile : Projectile {
         if (entity != null && entity.IsEdible(m_tier)) {
             if (entity.machine.CanBeBitten()) {
                 entity.machine.Bite();
-                entity.machine.BeginSwallowed(m_trasnform, true, IEntity.Type.PET);
-                entity.machine.EndSwallowed(m_trasnform);
+                entity.machine.BeginSwallowed(m_transform, true, IEntity.Type.PET);
+                entity.machine.EndSwallowed(m_transform);
             }
         }
     }

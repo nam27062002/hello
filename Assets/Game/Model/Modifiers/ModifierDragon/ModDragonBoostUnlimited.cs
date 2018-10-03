@@ -12,4 +12,10 @@ public class ModDragonBoostUnlimited : ModifierDragon {
 		if (boost)
 			boost.modInfiniteBoost = true;
 	}
+
+    public override void Remove() {
+        DragonBoostBehaviour boost = InstanceManager.player.dragonBoostBehaviour;
+        if (boost)
+            boost.modInfiniteBoost = false;
+    }
 }

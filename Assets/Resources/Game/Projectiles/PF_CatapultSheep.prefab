@@ -792,6 +792,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
 --- !u!114 &114518533810459924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -803,6 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: Sheep
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 0
@@ -826,6 +828,7 @@ MonoBehaviour:
   m_scaleTime: 0.5
   m_stopAtTarget: 0
   m_dieOutsideFrustum: 1
+  m_dieOnHit: 1
   m_defaultDamage: 75
   m_damageType: 0
   m_radius: 0
@@ -870,6 +873,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onChargeParticle:
     name: 
     path: 
@@ -908,6 +912,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onHitParticle:
     name: PS_Blood_Explosion
     path: Blood
@@ -946,8 +951,9 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatParticle:
-    name: PS_Blood_Explosion_Medium
+    name: PS_Blood_Explosion
     path: Blood
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -984,6 +990,46 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
+  m_onBurnParticle:
+    name: 
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
   m_missHitSpawnsParticle: 1
   m_stickOnDragonTime: 0
   m_dieTime: 0
@@ -1023,6 +1069,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1038,6 +1085,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

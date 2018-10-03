@@ -14,7 +14,6 @@ namespace AI {
 			float m_timer;
 			protected override void OnEnter(State _oldState, object[] _param)
 			{
-				
 				// InstanceManager.player.ResetStats(true, DragonPlayer.ReviveReason.FREE_REVIVE_PET);	// do it on next update?
 				Messenger.Broadcast(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE);
 
@@ -29,7 +28,9 @@ namespace AI {
 
 				m_pilot.Stop();
 				DragonPlayer player = InstanceManager.player;
-				float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
+                player.dragonMotion.OnPetPreFreeRevive();
+
+                float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
 				Vector3 dir = Vector3.back;
 				m_pilot.transform.position = player.transform.position + dir * distance;
 				m_pilot.SetDirection( Vector3.right , true);

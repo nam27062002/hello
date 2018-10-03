@@ -25,6 +25,7 @@ public class GameHUD : MonoBehaviour {
 	public GameObject m_mapButtonGodRays;
 	public Button m_pauseButton;
     public GameObject m_miscGroup;
+    public Animator m_fireRushGroup;
 
 	private bool m_paused = false;
 	//------------------------------------------------------------------//
@@ -37,6 +38,7 @@ public class GameHUD : MonoBehaviour {
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_Awake();
         InstanceManager.gameHUD = this;
+        Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
     }
     /*
     // Check back button on Android
@@ -49,6 +51,7 @@ public class GameHUD : MonoBehaviour {
         if (ApplicationManager.IsAlive && FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
         InstanceManager.gameHUD = null;
+        Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
     }    
 
     bool CanPause(){		
@@ -135,6 +138,10 @@ public class GameHUD : MonoBehaviour {
 		popupController.OnClosePostAnimation.RemoveListener(Unpause);
 		popupController.OnClosePostAnimation.AddListener(Unpause);
 	}
+
+    void OnRevive(DragonPlayer.ReviveReason _reason) {
+        m_fireRushGroup.SetBool(GameConstants.Animator.ENABLED, _reason != DragonPlayer.ReviveReason.MUMMY);
+    }
 
 #region debug
     private void Debug_Awake() {

@@ -11,10 +11,22 @@ public class ModDragonLifeGain : ModifierDragon {
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
+    public ModDragonLifeGain(float _percentage) : base(null) {
+        m_percentage = _percentage;
+        BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
+    }
+
 	public override void Apply() {
 		DragonHealthBehaviour healthBehaviour = InstanceManager.player.dragonHealthBehaviour;
 		if (healthBehaviour)
 			healthBehaviour.AddEatingHpBoost(m_percentage);
 	}
 
+    public override void Remove() {
+        if (InstanceManager.player != null) {
+            DragonHealthBehaviour healthBehaviour = InstanceManager.player.dragonHealthBehaviour;
+            if (healthBehaviour)
+                healthBehaviour.AddEatingHpBoost(-m_percentage);
+        }
+    }
 }

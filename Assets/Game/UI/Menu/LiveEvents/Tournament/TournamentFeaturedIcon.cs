@@ -50,6 +50,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	// Internal
 	private HDTournamentManager m_tournamentManager;
 	private bool m_waitingRewardsData = false;
+    private bool m_waitingDefinition = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -241,41 +242,42 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        if (SceneController.s_playMenuButtonLock == false) {
-            SceneController.s_playMenuButtonLock = true;
+        // Change game mode
+        SceneController.s_mode = SceneController.Mode.TOURNAMENT;
+        HDLiveEventsManager.instance.SwitchToTournament();
 
-            // Change game mode
-            SceneController.s_mode = SceneController.Mode.TOURNAMENT;
-            HDLiveEventsManager.instance.SwitchToTournament();
+        // Send Tracking event
+        HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
 
-            // Send Tracking event
-            HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
-
-            // Go to tournament info screen
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
-        }
+        // Go to tournament info screen
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
 	}
 
 	/// <summary>
 	/// Collect Rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-        if (SceneController.s_playMenuButtonLock == false) {
-            SceneController.s_playMenuButtonLock = true;
+        // Prevent spamming
+        if (m_waitingRewardsData) return;
 
-            // Prevent spamming
-            if (m_waitingRewardsData) return;
-
+        // if info is from cache wait to recieve definitions!
+        if ( HDLiveEventsManager.instance.m_cacheInfo )
+        {
+            m_waitingDefinition = true;
+            m_tournamentManager.RequestDefinition(true);
+        }
+        else
+        {
             // Request rewards data and wait for it to be loaded
             m_tournamentManager.RequestRewards();
+        }            
 
-            // Show busy screen
-            BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
-            BusyScreen.Show(this);
+        // Show busy screen
+        BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+        BusyScreen.Show(this);
 
-            // Toggle flag
-            m_waitingRewardsData = true;
-        }
+        // Toggle flag
+        m_waitingRewardsData = true;
 	}
 
 	/// <summary>
@@ -294,7 +296,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -303,6 +305,17 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournamentManager.data.m_eventId == _eventId
+                )
+                {
+                    m_tournamentManager.ForceFinishByError();
+                }
+
 		}
 	}
 
@@ -311,6 +324,30 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
 		RefreshData();
+        if ( m_waitingDefinition && m_waitingRewardsData )
+        {
+            m_waitingDefinition = false;
+            if ( _error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+            {
+                // Request rewards data and wait for it to be loaded
+                m_tournamentManager.RequestRewards();
+            }
+            else
+            {
+                m_waitingRewardsData = false;
+
+                // Hide busy screen
+                BusyScreen.Hide(this);
+        
+                // Show error message
+                UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+                    LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
+                    new Vector2(0.5f, 0.33f),
+                    this.GetComponentInParent<Canvas>().transform as RectTransform
+                );
+                text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+            }
+        }
 	}
 
 	private void OnStateUpdated() {

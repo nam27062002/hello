@@ -407,8 +407,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		// Movement Setup
 		RecalculateDragonForce();
 		// m_dargonAcceleration = m_dragon.data.def.GetAsFloat("speedBase");
-		m_dragonMass = m_dragon.data.def.GetAsFloat("mass");
-		m_dragonFricction = m_dragon.data.def.GetAsFloat("friction");
+		m_dragonMass = m_dragon.data.mass;
+		m_dragonFricction = m_dragon.data.friction;
 		m_dragonGravityModifier = m_dragon.data.def.GetAsFloat("gravityModifier");
 		m_dragonAirGravityModifier = m_dragon.data.def.GetAsFloat("airGravityModifier");
         m_dragonWaterGravityModifier = m_dragon.data.def.GetAsFloat("waterGravityModifier");
@@ -427,6 +427,9 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_lastSpeed = 0;
 		m_suction = m_eatBehaviour.suction;
 
+        RegionManager.Init();
+        m_regionManager = RegionManager.Instance;        
+        
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -453,7 +456,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
@@ -461,7 +463,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPetPreFreeRevive);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
@@ -477,7 +478,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_animator.SetBool(GameConstants.Animator.DRUNK, _active);
 	}
 
-	private void OnPetPreFreeRevive()
+	public void OnPetPreFreeRevive()
 	{
 		m_impulse = Vector3.zero;
 		m_rbody.velocity = m_impulse;
@@ -771,11 +772,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 		UpdateBodyBending();
 
-		if(m_regionManager == null)
-		{
-			RegionManager.Init();
-			m_regionManager = RegionManager.Instance;
-		}
 		CheckForCurrents();
 		CheckAllowGlide();
 
