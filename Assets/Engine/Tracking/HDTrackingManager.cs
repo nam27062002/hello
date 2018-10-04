@@ -268,7 +268,7 @@ public class HDTrackingManager
     /// <param name="moneyCurrencyCode">Currency type earned</param>
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
-    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {}
+    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance, bool paid) {}
 
 
     /// <summary>
@@ -491,7 +491,24 @@ public class HDTrackingManager
     /// <param name="experimentName">Name of the experiment applied.</param>
     /// <param name="experimentGroup">Name of the group of the experiment applied</param>
     public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
-    #endregion    
+    #endregion
+
+    #region animoji
+    /// <summary>
+    /// Called when user enters on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiStart() { }
+
+    /// <summary>
+    /// Called when user records a video on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiRecord() { }
+
+    /// <summary>
+    /// Called when user exits animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiExit() { }
+    #endregion
 
     #region log
     private const bool LOG_USE_COLOR = false;

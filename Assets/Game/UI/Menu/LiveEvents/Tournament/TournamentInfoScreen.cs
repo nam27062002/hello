@@ -191,7 +191,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 		HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
 
 		// [AOC] TODO!! Select fixed or flexible build screen!
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP);
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
 	}
 
 	/// <summary>
@@ -226,7 +226,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -235,7 +235,17 @@ public class TournamentInfoScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournament.data.m_eventId == _eventId
+                )
+                {
+                    m_tournament.ForceFinishByError();
+                }
 		}
 	}
 

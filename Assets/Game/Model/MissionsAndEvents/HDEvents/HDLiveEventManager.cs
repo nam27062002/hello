@@ -357,8 +357,25 @@ public abstract class HDLiveEventManager
             ClearEvent();
             break;
         }
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }
 	}
 
+    // If there is an error we should clear we will call this
+    public void ForceFinishByError()
+    {
+        FinishEvent();
+        ClearEvent();
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }   
+    }
+    
 #endregion
 
 #region mods_activation
@@ -398,6 +415,25 @@ public abstract class HDLiveEventManager
 		for (int i = 0; i < mods.Count; i++) {
     		mods[ i ].Apply();
 		}
+    }
+
+    public bool HasModOfType(Type _type)
+    {
+        List<Modifier> mods = data.definition.m_otherMods;
+        for (int i = 0; i < mods.Count; i++) {
+            if (mods[i].GetType() == _type) {
+                return true;
+            }
+        }
+
+        mods = data.definition.m_dragonMods;
+        for (int i = 0; i < mods.Count; i++) {
+            if (mods[i].GetType() == _type) {
+                return true;
+            }
+        }
+
+        return false;
     }
 #endregion
 

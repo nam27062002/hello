@@ -96,11 +96,13 @@ public class AnimojiScreenController : MonoBehaviour {
 	[Space]
 	[SerializeField] private Animator m_countdownAnim = null;
 	[SerializeField] private TextMeshProUGUI m_countdownText = null;
+	[SerializeField] private GameObject m_recordButton = null;
 
 	[Space]
 	[SerializeField] private Slider m_recordingTimeBar = null;
 
 	// Public properties
+	private State m_nextState = State.COUNT;	// Using COUNT as "none"
 	private State m_state = State.OFF;
 	public State state {
 		get { return m_state; }
@@ -211,6 +213,14 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
+		// If a state change is pending, do it and finish
+		if(m_nextState != State.COUNT) {
+			State nextState = m_nextState;
+			m_nextState = State.COUNT;
+			ChangeState(nextState);
+			return;
+		}
+
 		// Different actions based on current state
 		switch(m_state) {
 			case State.OFF: {
@@ -230,7 +240,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				}
 
 				// Show the right UI
-				RefreshInfoUI();
+				RefreshInfoUI(true);
 			} break;
 
 			case State.COUNTDOWN: {
@@ -260,16 +270,51 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.RECORDING: {
-				// Update timer
-				m_recordingTimer -= Time.deltaTime;
+				// If player denies permission to record the screen, abort recording
+				string errorCode = ParseReplayKitLastError();
+				if(!string.IsNullOrEmpty(errorCode)) {
+					// Give some feedback
+					// Specific message for some error codes
+					string message = string.Empty;
+					switch(errorCode) {
+						case "-5801": {	// Permission denied
+							message = string.Empty; // Don't show any message
+						} break;
 
-				// Update progress bar
-				m_recordingTimeBar.value = m_recordingTimeBar.maxValue - m_recordingTimer;  // Move forward
+						default: {
+							message = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR") + " (" + errorCode + ")";// "Something went wrong! (-5801)"
+						} break;
+					}
 
-				// If timer has ended, change state
-				if(m_recordingTimer <= 0f) {
-					m_recordingTimer = 0f;
-					ChangeState(State.SHARING);
+					// Show feedback
+					if(!string.IsNullOrEmpty(message)) {
+						UIFeedbackText.CreateAndLaunch(
+							message,
+							GameConstants.Vector2.center,
+							this.GetComponentInParent<Canvas>().transform as RectTransform
+						).text.color = Colors.red;
+					}
+#if UNITY_IOS
+                    // Clear ReplayKit
+                    ReplayKit.StopRecording();
+					ReplayKit.Discard();
+#endif
+
+					// Cancel recording (go back to initial state)
+					ChangeState(State.PREVIEW);
+				} else {
+					// No error
+					// Update timer
+					m_recordingTimer -= Time.deltaTime;
+
+					// Update progress bar
+					m_recordingTimeBar.value = m_recordingTimeBar.maxValue - m_recordingTimer;  // Move forward
+
+					// If timer has ended, change state
+					if(m_recordingTimer <= 0f) {
+						m_recordingTimer = 0f;
+						ChangeState(State.SHARING);
+					}
 				}
 			} break;
 
@@ -294,6 +339,15 @@ public class AnimojiScreenController : MonoBehaviour {
 					if(m_sharingTimer <= 0f) {
 						// Timeout! Skip video sharing
 						ControlPanel.Log(Colors.red.Tag("[ANIMOJI] SHARING TIME OUT!"));
+
+						// Give some feedback
+						UIFeedbackText.CreateAndLaunch(
+							LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR"),	// "Something went wrong!"
+							GameConstants.Vector2.center,
+							this.GetComponentInParent<Canvas>().transform as RectTransform
+						).text.color = Colors.red;
+
+						// Go to initial state
 						ChangeState(State.PREVIEW);
 					}
 				}
@@ -338,9 +392,10 @@ public class AnimojiScreenController : MonoBehaviour {
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true);
 
 				// Go to next state after a frame
-				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					ChangeState(State.CAMERA_PERMISSIONS_REQUEST);
-				}, 1);
+				ChangeStateOnNextFrame(State.CAMERA_PERMISSIONS_REQUEST);
+
+                // Notify animoji tracking event start
+                HDTrackingManagerImp.Instance.Notify_AnimojiStart();
 			} break;
 
 			case State.PREVIEW: {
@@ -371,13 +426,17 @@ public class AnimojiScreenController : MonoBehaviour {
 
 			case State.RECORDING: {
 				// Toggle views
-				SelectUI(true);
+				SelectUI(false);	// No animation so no UI is recorded during a fade animation
 
-				// Do it!
-				m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
-
-				// Reset timer
+				// Reset timer and wait for timeout
 				m_recordingTimer = MAX_RECORDING_TIME;
+
+				// Tell the controller to start recording
+				try {
+					m_animojiSceneController.StartRecording(m_microphonePermissionGiven);
+				} catch(Exception _e) {
+					ControlPanel.Log(Colors.red.Tag("[ANIMOJI] START RECORDING EXCEPTION: " + _e.ToString()));
+				}
 			} break;
 
 			case State.SHARING: {
@@ -481,6 +540,9 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Target frame rate restored to 30fps
 				Application.targetFrameRate = 30;
 
+                // Notify animoji tracking event exit
+                HDTrackingManagerImp.Instance.Notify_AnimojiExit();
+
 				// Go to OFF state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {
 //					GameObject.Destroy(m_animojiSceneInstance);
@@ -537,9 +599,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
 
 				// Go to next state after a frame
-				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-					ChangeState(State.PREVIEW);
-				}, 1);
+				ChangeStateOnNextFrame(State.PREVIEW);
 			} break;
 
 			case State.PERMISSIONS_ERROR: {
@@ -549,36 +609,60 @@ public class AnimojiScreenController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Change the logic state on the next frame.
+	/// If another state change was pending, it will be overriden.
+	/// </summary>
+	/// <param name="_newState">State to change to.</param>
+	private void ChangeStateOnNextFrame(State _newState) {
+		m_nextState = _newState;
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Refresh the info UI based on face detection state.
 	/// </summary>
-	private void RefreshInfoUI() {
+	/// <param name="_animate">Perform animations?</param>
+	private void RefreshInfoUI(bool _animate) {
 		// Check conditions
 		bool faceDetected = m_animojiSceneController.faceDetected;
 		bool tongueDetected = m_animojiSceneController.tongueDetected;
 		bool tongueReminderTimeout = m_tongueReminderTimer <= 0f;
 
 		// Apply
-		m_faceNotDetectedGroup.Set(!faceDetected);
+		m_faceNotDetectedGroup.Set(
+			!faceDetected && 
+			m_state == State.PREVIEW,	// Not while recording (or near it)
+			_animate
+		);
+
 		m_tongueReminderGroup.Set(
 			faceDetected && 
 			!tongueDetected && 
 			tongueReminderTimeout &&
-			m_state != State.RECORDING		// Not while recording!
+			m_state != State.RECORDING,		// Not while recording!
+			_animate
 		);
-	}
 
-	/// <summary>
-	/// Show/hide UI groups based on current states.
-	/// </summary>
-	/// <param name="_animate">Perform animations?</param>
-	private void SelectUI(bool _animate) {
+#if UNITY_IOS
+        string lastError = ReplayKit.lastError;
+#else
+        string lastError = "";
+#endif
+        // Don't allow recording if ReplayKit is reporting an error (most likely permission denied)
+        m_recordButton.SetActive(string.IsNullOrEmpty(lastError));
+    }
+
+    /// <summary>
+    /// Show/hide UI groups based on current states.
+    /// </summary>
+    /// <param name="_animate">Perform animations?</param>
+    private void SelectUI(bool _animate) {
 		// Face not detected warning and tongue reminder
 		if(m_state == State.PREVIEW || m_state == State.RECORDING) {
-			RefreshInfoUI();
+			RefreshInfoUI(_animate);
 		} else {
 			m_faceNotDetectedGroup.ForceHide(_animate);
 			m_tongueReminderGroup.ForceSet(m_state == State.COUNTDOWN, _animate);	// Always show tongue reminder in COUNTDOWN state
@@ -628,12 +712,55 @@ public class AnimojiScreenController : MonoBehaviour {
 	/// <param name="_triggerAnim">Launch animation?</param>
 	private void SetCountdown(float _seconds, bool _triggerAnim) {
 		// Set text
-		m_countdownText.text = StringUtils.FormatNumber(
-			Mathf.FloorToInt(_seconds) + 1	// Don't show 0
-		);
+		if(_seconds >= 0) {	// Don't show 0
+			m_countdownText.text = StringUtils.FormatNumber(
+				Mathf.FloorToInt(_seconds) + 1
+			);
+		} else {
+			m_countdownText.text = string.Empty;
+		}
 
 		// Trigger anim
 		m_countdownAnim.SetTrigger("launch");
+	}
+
+	/// <summary>
+	/// Parses the replay kit last error.
+	/// </summary>
+	/// <returns>Last parsed error code. Empty string if no error or error unknown.</returns>
+	private string ParseReplayKitLastError() {
+        // Get last error
+#if UNITY_IOS
+        string lastError = ReplayKit.lastError;
+#else
+        string lastError = "";
+#endif
+        ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit lastError: " + lastError));
+//		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] Replay Kit isRecording: " + ReplayKit.isRecording));
+
+		// Protect from null
+		if(string.IsNullOrEmpty(lastError)) {
+			return string.Empty;
+		}
+		
+		// [AOC] GOING TO HELL!! Only way to know is consulting the ReplayKit.lastError string and compare with known error codes
+		// Possible Errors (from https://github.com/tijme/reverse-engineering/blob/master/Billy%20Ellis%20ARM%20Explotation/iPhoneOS9.3.sdk/System/Library/Frameworks/ReplayKit.framework/Headers/RPError.h):
+		// RPRecordingErrorUnknown = -5800,
+		// RPRecordingErrorUserDeclined = -5801, // The user declined app recording.
+		// RPRecordingErrorDisabled = -5802, // App recording has been disabled via parental controls.
+		// RPRecordingErrorFailedToStart = -5803, // Recording failed to start
+		// RPRecordingErrorFailed = -5804, // Failed during recording
+		// RPRecordingErrorInsufficientStorage = -5805, // Insufficient storage for recording.
+		// RPRecordingErrorInterrupted = -5806, // Recording interrupted by other app
+		// RPRecordingErrorContentResize = -5807 // Recording interrupted by multitasking and Content Resizing
+		string[] codes = new string[] { "-5800", "-5801", "-5802", "-5803", "-5804", "-5805", "-5806", "-5807" };
+		for(int i = 0; i < codes.Length; ++i) {
+			if(lastError.Contains(codes[i])) {
+				// Error found! Return its code
+				return codes[i];
+			}
+		}
+		return string.Empty;
 	}
 
 	//------------------------------------------------------------------------//
@@ -649,12 +776,12 @@ public class AnimojiScreenController : MonoBehaviour {
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_RESTRICTED:
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_GRANTED: {
 				// Check mic permission
-				ChangeState(State.MICROPHONE_PERMISSIONS_REQUEST);
+				ChangeStateOnNextFrame(State.MICROPHONE_PERMISSIONS_REQUEST);
 			} break;
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_DENIED: {
 				// Show error message
-				ChangeState(State.PERMISSIONS_ERROR);
+				ChangeStateOnNextFrame(State.PERMISSIONS_ERROR);
 			} break;
 
 			case PermissionsManager.EPermissionStatus.E_PERMISSION_NOT_DETERMINED: {
@@ -662,7 +789,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				if(_requestAllowed) {
 					RequestCameraPermission();
 				} else {
-					ChangeState(State.PERMISSIONS_ERROR);
+					ChangeStateOnNextFrame(State.PERMISSIONS_ERROR);
 				}
 			} break;
 		}
@@ -716,6 +843,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Request permission (if allowed)
 				if(_requestAllowed) {
 					RequestMicrophonePermission();
+					return;	// Don't change state!
 				} else {
 					m_microphonePermissionGiven = false;
 				}
@@ -723,7 +851,7 @@ public class AnimojiScreenController : MonoBehaviour {
 		}
 
 		// We're good to go!
-		ChangeState(State.PERMISSIONS_OK);
+		ChangeStateOnNextFrame(State.PERMISSIONS_OK);
 	}
 
 	/// <summary>
