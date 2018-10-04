@@ -147,6 +147,7 @@ public class HDTongueDetector : MonoBehaviour
 
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING RESULT: " + success));
 #endif
+        HDTrackingManagerImp.Instance.Notify_AnimojiRecord();
 		return false;
 	}
 

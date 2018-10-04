@@ -393,6 +393,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				// Go to next state after a frame
 				ChangeStateOnNextFrame(State.CAMERA_PERMISSIONS_REQUEST);
+
+                // Notify animoji tracking event start
+                HDTrackingManagerImp.Instance.Notify_AnimojiStart();
 			} break;
 
 			case State.PREVIEW: {
@@ -536,6 +539,9 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				// Target frame rate restored to 30fps
 				Application.targetFrameRate = 30;
+
+                // Notify animoji tracking event exit
+                HDTrackingManagerImp.Instance.Notify_AnimojiExit();
 
 				// Go to OFF state after some delay
 				UbiBCN.CoroutineManager.DelayedCall(() => {
