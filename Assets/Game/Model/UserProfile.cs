@@ -560,7 +560,7 @@ public class UserProfile : UserPersistenceSystem
 		Messenger.Broadcast<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
         if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
-            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
+            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount, _paid);
         }
     }
 
