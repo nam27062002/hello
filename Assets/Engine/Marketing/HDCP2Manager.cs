@@ -35,7 +35,7 @@ public class HDCP2Manager
         if (!IsInitialised() && CanBeInitialised())
         {
             if (FeatureSettingsManager.IsDebugEnabled)
-                ControlPanel.Log("INIT CP2......");				          
+                Log("INIT CP2......");				          
 
             m_listener = new CP2Listener();
             CP2Manager.SharedInstance.SetListener(m_listener);
@@ -114,9 +114,7 @@ public class HDCP2Manager
 
     private bool CanUserPlayInterstitial()
     {
-        // Checks that the minimum time since a cp2 interstitial was last played has passed        
-        long latestTimestamp = PersistencePrefs.GetCp2InterstitialLatestAt();
-        long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - latestTimestamp;
+        // Checks that the minimum time since a cp2 interstitial was last played has passed               
         return GetUserRestrictionTimeToWait() <= 0f;
     }   
 
@@ -153,7 +151,7 @@ public class HDCP2Manager
     {
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Log("Playing promo " + promoType.ToString());
+			Log("Playing promo " + promoType.ToString() + " listener is not null = " + (m_listener != null));
         }
 
         SetState(EState.PlayingPromo);
