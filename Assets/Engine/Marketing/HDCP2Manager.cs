@@ -114,8 +114,10 @@ public class HDCP2Manager
 
     private bool CanUserPlayInterstitial()
     {
+        // We don't want to interrupt any tutorial
         // Checks that the minimum time since a cp2 interstitial was last played has passed               
-        return GetUserRestrictionTimeToWait() <= 0f;
+        UserProfile profile = UsersManager.currentUser;
+        return profile != null && profile.IsTutorialStepCompleted(TutorialStep.ALL) && GetUserRestrictionTimeToWait() <= 0f;        
     }   
 
     private float GetUserRestrictionTimeToWait()
