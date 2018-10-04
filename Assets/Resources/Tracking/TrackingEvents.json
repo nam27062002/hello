@@ -425,6 +425,17 @@
                 "etl"
             ]
         },
+		"custom.game.animojis": {
+            "Parameters": [
+				{"dragon": {"Status": "OK"}},
+				{"recordings": {"Status": "OK"}},
+				{"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -1279,6 +1290,14 @@
       },
 	  "experimentGroup": {
         "Type": "STRING:30",
+        "Values": []
+      },
+      "dragon": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+      "recordings": {
+        "Type": "INT:4",
         "Values": []
       }
     }
