@@ -63,6 +63,7 @@ public abstract class IUserMissions {
     public void EnableTracker(bool _enable) {
         for (int i = 0; i < m_missions.Length; i++) {
             m_missions[i].EnableTracker(_enable);
+            Debug.Log(Color.yellow.Tag("MISSION OBJECTIVE ENABLED[" + _enable + "]:\n" + m_missions[i].def.sku + " | " + m_missions[i].state));
         }
     }
 

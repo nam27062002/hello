@@ -332,12 +332,17 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
         if (m_user != null) {
             switch (SceneController.mode) {
                 case SceneController.Mode.DEFAULT:
-                m_user.userMissions.EnableTracker(true);
+                m_user.userMissions.EnableTracker(UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN);
                 m_user.userSpecialMissions.EnableTracker(false);
                 break;
 
                 case SceneController.Mode.SPECIAL_DRAGONS:
-                m_user.userMissions.EnableTracker(true);
+                m_user.userMissions.EnableTracker(false);
+                m_user.userSpecialMissions.EnableTracker(true);
+                break;
+
+                case SceneController.Mode.TOURNAMENT:
+                m_user.userMissions.EnableTracker(false);
                 m_user.userSpecialMissions.EnableTracker(false);
                 break;
             }
