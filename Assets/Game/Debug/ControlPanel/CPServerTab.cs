@@ -241,7 +241,12 @@ public class CPServerTab : MonoBehaviour {
         GameAds.instance.ShowInterstitial(OnIntersitialDone);
     }
 
-	private void OnIntersitialDone( bool success )
+    public void OnButton6()
+    {
+        HDCP2Manager.Instance.PlayInterstitial(false);        
+    }
+
+    private void OnIntersitialDone( bool success )
     {
         string msg = "OnInterstitialDone success = " + success;
         Output(msg);

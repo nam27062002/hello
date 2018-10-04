@@ -1709,7 +1709,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2);
     }
 
-	public static bool MenuDragonsAsyncLoading
+    public bool IsCP2InterstitialEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2_INTERSTITIAL);
+    }
+
+    public int GetCP2InterstitialFrequency()
+    {
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_FREQUENCY);
+    }
+
+    public static bool MenuDragonsAsyncLoading
     {
         get
         {                  
