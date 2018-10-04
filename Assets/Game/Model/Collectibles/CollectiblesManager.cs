@@ -167,8 +167,9 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Get all the chests in the scene
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
-			// Special case: chests are disabled during FTUX and TOURNAMENT
-			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT) {
+            // Special case: chests are disabled during FTUX, TOURNAMENT and SPECIAL DRAGONS
+			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT
+               || SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}

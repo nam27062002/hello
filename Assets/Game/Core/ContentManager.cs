@@ -155,6 +155,13 @@ public class ContentManager
             "Rules/missionOtherModifiersDefinitions"
         });
 
+        kDefinitionFiles.Add(DefinitionsCategory.MISSION_SPECIAL_DIFFICULTIES, new string[] { "Rules/specialMissionDifficultyDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, new string[]{
+            "Rules/missionDifficultyModifiersDefinitions",
+            "Rules/missionSpecialDragonModifiersDefinitions",
+            "Rules/missionOtherModifiersDefinitions"
+        });
+
         // Dragons
         kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[] { "Rules/dragonDefinitions", "Rules/specialDragonDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[] { "Rules/dragonTierDefinitions" });

@@ -26,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0.00000013155935, y: -0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -161.8964, y: 105.56944, z: -9.088631}
+  m_LocalPosition: {x: -140.75595, y: 128.94249, z: -4.7097015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4821977047660924}
@@ -227,13 +227,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 1
   m_chargeTime: 0
-  m_speed: 5
+  m_speed: 15
   m_rotationSpeed: 360
-  m_rotationAxis: 0
-  m_maxTime: 10
+  m_rotationAxis: 2
+  m_maxTime: 5
   m_scaleTime: 1
   m_stopAtTarget: 0
-  m_dieOutsideFrustum: 1
+  m_dieOutsideFrustum: 0
   m_dieOnHit: 1
   m_defaultDamage: 0
   m_damageType: 4
@@ -450,6 +450,7 @@ MonoBehaviour:
     m_Bits: 1208615440
   m_explosionArea: {fileID: 114954653416055262}
   m_firingEntityType: 0
+  m_explodeIfHomingtargetNull: 1
 --- !u!114 &114954653416055262
 MonoBehaviour:
   m_ObjectHideFlags: 1

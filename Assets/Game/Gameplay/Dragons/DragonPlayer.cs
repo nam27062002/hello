@@ -219,6 +219,7 @@ public class DragonPlayer : MonoBehaviour {
 
     public float mummyHealthMax { get { return m_healthMax * m_mummyHealthFactor; } }
 
+    public bool m_alwaysSpawnCorpse = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

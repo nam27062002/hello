@@ -40,7 +40,7 @@ public class UserMissions : IUserMissions {
             // Is the mission locked?
             if(m_missions[i].state == Mission.State.LOCKED) {
                 // Do we have enough dragons?
-                if(UsersManager.currentUser.GetNumOwnedDragons() >= MissionManager.GetDragonsRequiredToUnlockMissionDifficulty((Mission.Difficulty) i)) {
+                if(UsersManager.currentUser.GetNumOwnedDragons() >= MissionManager.GetDragonsToUnlock(SceneController.Mode.DEFAULT, (Mission.Difficulty) i)) {
                     m_missions[i].ChangeState(Mission.State.ACTIVE);
                 }
             }
@@ -61,38 +61,11 @@ public class UserMissions : IUserMissions {
     }
 
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
-        return UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsRequiredToUnlockMissionDifficulty(_difficulty);
+        return UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsToUnlock(SceneController.Mode.DEFAULT, _difficulty);
     }
 
-    protected override float ComputeValueModifier(Mission.Difficulty _difficulty, bool _singleRun) {
-        float totalModifier = 0f;
-        string _dragonModifierSku = DragonManager.biggestOwnedDragon.def.sku;
-
-        // 2.1. Dragon modifier - additive
-        DefinitionNode dragonModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, _dragonModifierSku);  // Matching sku
-        if (dragonModifierDef != null) {
-            totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
-            Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
-        }
-
-        // 2.2. Difficulty modifier - additive
-        DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
-        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
-        if (difficultyModifierDef != null) {
-            totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
-            Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
-        }
-
-        // 2.3. Single run modifier - multiplicative
-        if (_singleRun) {
-            DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
-            if (singleRunModifierDef != null) {
-                totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
-                Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
-            }
-        }
-
-        return totalModifier;
+    protected override DefinitionNode GetDragonModifierDef() {
+        return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);  // Matching sku
     }
 
     protected override float ComputeRemovePCCostModifier() {
@@ -100,7 +73,7 @@ public class UserMissions : IUserMissions {
     }
 
     protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
-        long amount = (long)(MissionManager.maxRewardPerDifficulty[(int)_difficulty] * DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count);
+        long amount = (long)(MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.DEFAULT, _difficulty) * DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count);
         Metagame.Reward reward = new Metagame.RewardSoftCurrency(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
         reward.bonusPercentage = MissionManager.powerUpSCMultiplier;
 

@@ -158,7 +158,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	void OnKo( DamageType type , Transform _source)
 	{
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			PlaySound(m_onCorpseSound);
 		}

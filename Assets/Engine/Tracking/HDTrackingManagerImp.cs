@@ -804,12 +804,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <param name="moneyCurrencyCode">Currency type earned</param>
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
-    public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {
+    /// <param name="_paid">The user recieved this by paying
+    public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance, bool paid) {
         // All currencies earned during a round should be collected so a single event with the accumulated amount is sent at the end of the round in order to avoid spamming tracking
         if (economyGroup == EEconomyGroup.REWARD_RUN && Session_IsARoundRunning) {
-            Session_AccumRewardInRun(moneyCurrencyCode, amountDelta);
+            Session_AccumRewardInRun(moneyCurrencyCode, amountDelta, paid);
         } else {
-            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
+            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance, paid);
         }
     }
 
@@ -1392,9 +1393,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_ITEM, itemID);
         }
         m_eventQueue.Enqueue(e);
+        
+        // Send pc spent event
+        if ( moneyCurrency.Equals("HardCurrency") )
+        {
+            // Send event
+            GameServerManager.SharedInstance.PCSpent( (int)moneyPrice, economyGroup, PCFluctuationResponse);
+        }
     }
 
-    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance) {
+    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance, bool paid) {
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_EarnResources economyGroup = " + economyGroup + " moneyCurrency = " + moneyCurrency + " moneyPrice = " + amountDelta + " amountBalance = " + amountBalance);
         }
@@ -1412,6 +1420,50 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
         }
         m_eventQueue.Enqueue(e);
+
+        // Send pc earn event
+        if (moneyCurrency.Equals("HardCurrency"))
+        {
+            // Send event
+            GameServerManager.SharedInstance.PCEarned(amountDelta, economyGroup, paid, PCFluctuationResponse);
+        }
+    }
+    
+    private void PCFluctuationResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
+    {
+        if (error != null){
+            Debug.LogError(error.ToString());
+        } 
+        else if  (response != null)
+        {
+            if (response["response"] != null)
+            {
+                SimpleJSON.JSONNode ret = SimpleJSON.JSONNode.Parse(response["response"] as string);
+                if ( ret != null )
+                {
+                    if (ret.ContainsKey("errorCode"))
+                    {
+                        int errorInt = ret["errorCode"];
+                        switch (errorInt)
+                        {
+                            case 623:   // JSON_SYNTAX_ERROR
+                            {
+                            }break;
+                            case 624:   // BUSSINES_ERROR
+                            {
+                            }break;
+                            case 610:   // UNEXPECTED_ERROR
+                            {
+                            }break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning("NO Response");
+            }
+        }
     }
 
     private void Track_CustomerSupportRequested() {
@@ -2433,6 +2485,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private int Session_HungryLettersCount { get; set; }
 
     private Dictionary<UserProfile.Currency, int> Session_RewardsInRound;
+    private Dictionary<UserProfile.Currency, int> Session_RewardsInRoundPaid;
 
     private bool Session_IsARoundRunning { get; set; }
 
@@ -2453,6 +2506,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (Session_RewardsInRound != null) {
             Session_RewardsInRound.Clear();
         }
+        if (Session_RewardsInRoundPaid != null) {
+            Session_RewardsInRoundPaid.Clear();
+        }
     }
 
     private void Session_NotifyRoundStart() {
@@ -2460,34 +2516,62 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (Session_RewardsInRound != null) {
             Session_RewardsInRound.Clear();
         }
+        if (Session_RewardsInRoundPaid != null) {
+            Session_RewardsInRoundPaid.Clear();
+        }
     }
 
     private void Session_NotifyRoundEnd() {
         Session_IsARoundRunning = false;
-
+        
+        string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
+        UserProfile userProfile = UsersManager.currentUser;
+            
         if (Session_RewardsInRound != null) {
-            string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
-            UserProfile userProfile = UsersManager.currentUser;
-
             // TrackingManager is notified with all currencies earned during the run
             foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound) {
                 if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key));
+                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                }
+            }
+        }
+
+        if (Session_RewardsInRoundPaid != null) {
+            // TrackingManager is notified with all currencies earned during the run
+            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRoundPaid) {
+                if (pair.Value > 0) {
+                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
                 }
             }
         }
     }
 
-    private void Session_AccumRewardInRun(UserProfile.Currency currency, int amount) {
-        if (Session_RewardsInRound == null) {
-            Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+    private void Session_AccumRewardInRun(UserProfile.Currency currency, int amount, bool paid) {
+        if ( paid )
+        {
+            if (Session_RewardsInRoundPaid == null) {
+                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>();
+            }
+            
+            if (Session_RewardsInRoundPaid.ContainsKey(currency)) {
+                int currentAmount = Session_RewardsInRoundPaid[currency];
+                Session_RewardsInRoundPaid[currency] = currentAmount + amount;
+            } else {
+                Session_RewardsInRoundPaid.Add(currency, amount);
+            }
         }
-
-        if (Session_RewardsInRound.ContainsKey(currency)) {
-            int currentAmount = Session_RewardsInRound[currency];
-            Session_RewardsInRound[currency] = currentAmount + amount;
-        } else {
-            Session_RewardsInRound.Add(currency, amount);
+        else
+        {
+            if (Session_RewardsInRound == null) {
+                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+            }
+            
+            if (Session_RewardsInRound.ContainsKey(currency)) {
+                int currentAmount = Session_RewardsInRound[currency];
+                Session_RewardsInRound[currency] = currentAmount + amount;
+            } else {
+                Session_RewardsInRound.Add(currency, amount);
+            }
         }
     }
     #endregion

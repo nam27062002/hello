@@ -357,8 +357,25 @@ public abstract class HDLiveEventManager
             ClearEvent();
             break;
         }
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }
 	}
 
+    // If there is an error we should clear we will call this
+    public void ForceFinishByError()
+    {
+        FinishEvent();
+        ClearEvent();
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }   
+    }
+    
 #endregion
 
 #region mods_activation

@@ -305,6 +305,17 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournamentManager.data.m_eventId == _eventId
+                )
+                {
+                    m_tournamentManager.ForceFinishByError();
+                }
+
 		}
 	}
 
