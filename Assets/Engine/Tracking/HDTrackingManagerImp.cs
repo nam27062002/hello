@@ -309,11 +309,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (!AreSDKsInitialised) {
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             InitDNA(settingsInstance);
-            InitAppsFlyer(settingsInstance);
-
-            if (FeatureSettingsManager.instance.IsCP2Enabled()) {
-                InitCP2();
-            }
+            InitAppsFlyer(settingsInstance);            
 
             AreSDKsInitialised = true;
         }
@@ -396,50 +392,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             TrackingManager.SharedInstance.Initialise(kTrackingConfig);
         }
-    }
-
-    private void InitCP2() {
-        // At the moment CP2 doesn't support api level 19 (it uses a function that doesn't exist under api level 19)
-#if !UNITY_EDITOR && UNITY_ANDROID
-        var clazz = new AndroidJavaClass("android.os.Build$VERSION");
-        if (clazz != null)
-        {
-            int apiLevel = clazz.GetStatic<int>("SDK_INT");
-
-            if (apiLevel < 19)
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    ControlPanel.Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
-
-                return;
-            }
-        }
-#endif
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            ControlPanel.Log("INIT CP2......");
-
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if (settingsInstance != null) {
-            int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
-            int playerProgress = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
-            string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
-            if (string.IsNullOrEmpty(countryCode)) {
-                countryCode = "UNKNOWN";
-            }
-
-            CP2Manager.CrossPromotionConfig kCrossPromotionConfig = new CP2Manager.CrossPromotionConfig();
-            kCrossPromotionConfig.m_strLocalCP2DataPath = "data.zip";
-            kCrossPromotionConfig.m_bIsDEVEnvironment = (settingsInstance.m_iBuildEnvironmentSelected != (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
-            kCrossPromotionConfig.m_strGameCode = "728";
-            kCrossPromotionConfig.m_strAdZone = "7: Gameplay to Main Menu loading";
-            kCrossPromotionConfig.m_strCountry = countryCode;
-            kCrossPromotionConfig.m_strLevelReached = "" + playerProgress;
-            kCrossPromotionConfig.m_strIAPCount = "" + totalPurchases;
-
-            CP2Manager.SharedInstance.Initialise(kCrossPromotionConfig);
-        }
-    }
+    }    
 
     public override void Update() {
         switch (State) {
@@ -460,6 +413,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 #endif
             {
                 State = EState.SessionStarted;
+
+				// CP2 needs session in ubiservices to be created before being initialised
+				HDCP2Manager.Instance.Initialise();
             }
             break;
 
@@ -933,7 +889,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
-        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Home_Page");
+        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Homepage");
     }
 
     public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
