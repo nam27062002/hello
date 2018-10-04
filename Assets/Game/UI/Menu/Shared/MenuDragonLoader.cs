@@ -20,7 +20,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public enum Mode {
-		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (UserProfile.currentDragon)
+		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (DragonManager.currentDragon)
 		SELECTED_DRAGON,	// Automatically loads and updates SELECTED dragon (MenuSceneController.selectedDragon)
 		MANUAL				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
 	}
@@ -361,7 +361,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
+					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}

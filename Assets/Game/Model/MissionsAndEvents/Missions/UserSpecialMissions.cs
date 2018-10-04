@@ -9,6 +9,18 @@ public class UserSpecialMissions : UserMissions {
         m_defTypesCategory = DefinitionsCategory.MISSION_TYPES;
     }
 
+    public override void UpdateRewards() {
+        for (int i = 0; i < m_missions.Length; i++) {
+            Mission mission = m_missions[i];
+            if (mission != null) {
+                if (mission.reward != null) {
+                    mission.reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
+                    mission.updated = true;
+                }
+            }
+        }
+    }
+
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
@@ -16,16 +28,20 @@ public class UserSpecialMissions : UserMissions {
         return false;
     }
     
-    protected override float ComputeValueModifier(Mission.Difficulty _difficulty, bool _singleRun) {
-        return 1f;
-    }
-
-    protected override float ComputeRewardModifier() {
-        return 1f;
+    protected override DefinitionNode GetDragonModifierDef() {
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", DragonManager.maxSpecialDragonTierUnlocked.ToString());
     }
 
     protected override float ComputeRemovePCCostModifier() {
-        return 1f;
+        return (float)DragonManager.maxSpecialDragonTierUnlocked;
+    }
+
+    protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
+        long amount = (long)MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.SPECIAL_DRAGONS, _difficulty);
+        Metagame.Reward reward = new Metagame.RewardGoldenFragments(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
+        reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
+
+        return reward;
     }
 
     //nothing to do here

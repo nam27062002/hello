@@ -455,7 +455,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Survival bonus
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode != SceneController.Mode.TOURNAMENT) {
+		if(GameSceneController.mode != SceneController.Mode.TOURNAMENT) {
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 	}
@@ -506,7 +506,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT 
+        if ( SceneController.mode != SceneController.Mode.TOURNAMENT 
 		    && InstanceManager.player.data.type == IDragonData.Type.CLASSIC )	// [AOC] Only CLASSIC dragons!
         {
 			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
@@ -578,7 +578,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	private void CheckSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return;
 
 		// Show feedback to the user every minute
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
@@ -620,7 +620,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return 0;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return 0;
 
 		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();

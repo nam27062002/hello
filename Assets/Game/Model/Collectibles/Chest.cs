@@ -33,6 +33,7 @@ public class Chest {
 	public enum RewardType {
 		SC = 0,
 		PC,
+        GF,
 
 		COUNT
 	}
@@ -69,6 +70,11 @@ public class Chest {
 					case "pc": {
 						type = RewardType.PC;
 					} break;
+
+                    case "gf": {
+                        type = RewardType.GF;
+                    }
+                    break;
 				}
 			}
 		}

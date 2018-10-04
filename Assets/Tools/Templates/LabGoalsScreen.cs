@@ -80,6 +80,16 @@ public class LabGoalsScreen : MonoBehaviour {
 	/// The Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
+		// If no special dragon is available, show error message
+		if(DragonManager.currentSpecialDragon == null) {
+			UIFeedbackText.CreateAndLaunch(
+				"TID_LAB_ERROR_NO_SPECIAL_DRAGON_OWNED",
+				GameConstants.Vector2.center,
+				GetComponentInParent<Canvas>().transform as RectTransform
+			).text.color = UIConstants.ERROR_MESSAGE_COLOR;
+			return;
+		}
+
 		// Tracking
 		// [AOC] TODO!! Tournament as reference:
 		//HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);

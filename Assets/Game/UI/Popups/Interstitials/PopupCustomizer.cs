@@ -378,11 +378,12 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+						MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Different pet screen if the current dragon is a special one
+						PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
@@ -390,7 +391,7 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(MenuScreen.PETS, true);
+						screensController.GoToScreen(targetPetScreen, true);
 					} break;
 
 					case "global_event": {
@@ -405,7 +406,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the skins screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;

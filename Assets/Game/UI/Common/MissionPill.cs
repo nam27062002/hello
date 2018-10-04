@@ -50,9 +50,7 @@ public class MissionPill : MonoBehaviour {
 	private Mission m_mission = null;
 	public Mission mission {
 		get {
-			if(m_mission == null) {
-				m_mission = MissionManager.GetMission(m_missionDifficulty);
-			}
+			m_mission = MissionManager.GetMission(m_missionDifficulty);
 			return m_mission;
 		}
 	}
@@ -119,8 +117,13 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update time-dependant fields
-		if(mission != null && mission.state == Mission.State.COOLDOWN) {
-			RefreshCooldownTimers();
+		if(mission != null) {
+            if (mission.state == Mission.State.COOLDOWN) {
+                RefreshCooldownTimers();
+            }
+            if(mission.updated) {
+                Refresh();
+            }
 		}
 	}
 
@@ -160,6 +163,8 @@ public class MissionPill : MonoBehaviour {
 		// Shared stuff
 		// Shared mission difficulty text
 		RefreshDifficulty(this.FindComponentRecursive<Localizer>("DifficultyTextTitle"), true);
+
+        mission.updated = false;
 	}
 
 	/// <summary>
@@ -178,8 +183,13 @@ public class MissionPill : MonoBehaviour {
 			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
 		}
 
+        UIConstants.IconType icon = UIConstants.IconType.NONE;
+        switch (m_mission.reward.currency) {
+            case UserProfile.Currency.SOFT:             icon = UIConstants.IconType.COINS;              break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS: icon = UIConstants.IconType.GOLDEN_FRAGMENTS;   break;
+        }
 		// Reward
-		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.GetIconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+        m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.GetIconString(m_mission.reward.amount, icon, UIConstants.IconAlignment.LEFT);
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)

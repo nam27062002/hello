@@ -52,14 +52,19 @@ public abstract class IUserMissions {
 						if(m_missions[i].state != Mission.State.ACTIVATION_PENDING) {
 							m_missions[i].ChangeState(Mission.State.ACTIVATION_PENDING);
 						}
-					}
-					else {
+					} else {
 						m_missions[i].ChangeState(Mission.State.ACTIVE);
 					}
 				}
 			}
 		}
 	}
+
+    public void EnableTracker(bool _enable) {
+        for (int i = 0; i < m_missions.Length; i++) {
+            m_missions[i].EnableTracker(_enable);
+        }
+    }
 
     public bool ExistsMission(Mission.Difficulty _difficulty) {
         return m_missions != null && m_missions[(int)_difficulty] != null;
@@ -88,8 +93,7 @@ public abstract class IUserMissions {
 	/// Process active missions:
 	/// Give rewards for those completed and replace them by newly generated missions.
 	/// </summary>
-	public int ProcessMissions() {
-		int coinsToReward = 0;
+	public void ProcessMissions() {		
 		// Check all missions
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// Is mission completed?
@@ -97,8 +101,8 @@ public abstract class IUserMissions {
 			if(m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				HDTrackingManager.Instance.Notify_Missions(m, HDTrackingManager.EActionsMission.done);
 
-				// Give reward
-				coinsToReward += m.rewardCoins;
+                // Give reward
+                m.reward.Collect();
 
 				// Generate new mission
 				m = GenerateNewMission((Mission.Difficulty)i);
@@ -113,7 +117,6 @@ public abstract class IUserMissions {
 				m.ChangeState(Mission.State.ACTIVE);
 			}
 		}
-		return coinsToReward;
 	}
 
 	/// <summary>
@@ -145,6 +148,8 @@ public abstract class IUserMissions {
 		// Let mission handle it
 		m.SkipCooldownTimer(_seconds, _useAd, _useHC);
 	}
+
+    public abstract void UpdateRewards();
 
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
@@ -298,18 +303,46 @@ public abstract class IUserMissions {
 		Debug.Log("\tTarget Value:  <color=yellow>" + targetValue + "</color> [" + _missionDef.GetAsFloat("objectiveBaseQuantityMin") + ", " + _missionDef.GetAsFloat("objectiveBaseQuantityMax") + "]");
 
         // 2. Compute and apply modifiers to the target value
-        float totalModifier = ComputeValueModifier(_difficulty, _singleRun);
+        float totalModifier = 0f;
+
+        // 2.1. Dragon modifier - additive
+        DefinitionNode dragonModifierDef = GetDragonModifierDef();
+        if (dragonModifierDef != null) {
+            totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
+            Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+        }
+
+        // 2.2. Difficulty modifier - additive
+        DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
+        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
+        if (difficultyModifierDef != null) {
+            totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
+            Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+        }
+
+        // 2.3. Single run modifier - multiplicative
+        if (_singleRun) {
+            DefinitionNode singleRunModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, "single_run");
+            if (singleRunModifierDef != null) {
+                totalModifier *= 1f - singleRunModifierDef.GetAsFloat("quantityModifier");
+                Debug.Log("\tSingle Run Modifier " + singleRunModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
+            }
+        }
 
 		// 2.4. Apply modifier and round final value
 		targetValue = Mathf.RoundToInt(targetValue * totalModifier);
 		targetValue = (long)Mathf.Max(targetValue, 1);	// Just in case, avoid 0 or negative values!
 		Debug.Log("\t<color=lime>Final Target Value: " + targetValue + "</color>");
 
+        // 2.5. Compute remove cost
+
+
 		// 3. We got everything we need! Create the new mission
 		ClearMission(_difficulty);	// Terminate any mission at the requested slot first
 		Mission newMission = new Mission();
 		newMission.difficulty = _difficulty;
-        newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRewardModifier(), ComputeRemovePCCostModifier());
+        newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRemovePCCostModifier());
+        newMission.reward = BuildReward(_difficulty);
 		m_missions[(int)_difficulty] = newMission;
 
 		// Check whether the new mission should be locked or not (deprecated)
@@ -324,9 +357,15 @@ public abstract class IUserMissions {
 	}
 
     protected abstract bool IsMissionLocked(Mission.Difficulty _difficulty);
-    protected abstract float ComputeValueModifier(Mission.Difficulty _difficulty, bool _singleRun);
-    protected abstract float ComputeRewardModifier();
+
+
+    protected abstract DefinitionNode GetDragonModifierDef();
+
+
     protected abstract float ComputeRemovePCCostModifier();
+
+    protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
+
 
 	/// <summary>
 	/// Properly delete the mission at the given difficulty slot.
@@ -402,10 +441,12 @@ public abstract class IUserMissions {
 				m_missions[i].difficulty = (Mission.Difficulty)i;
 				
 				// Load data into the target mission
-                bool success = m_missions[i].Load(activeMissions[i], ComputeRewardModifier(), ComputeRemovePCCostModifier());
+                bool success = m_missions[i].Load(activeMissions[i], ComputeRemovePCCostModifier());
 
-				// If an error ocurred while loading the mission, generate a new one
-				if(!success) {
+                // If an error ocurred while loading the mission, generate a new one
+                if (success) {
+                    m_missions[i].reward = BuildReward((Mission.Difficulty)i);
+                } else {
 					GenerateNewMission((Mission.Difficulty)i);
 				}
 			}

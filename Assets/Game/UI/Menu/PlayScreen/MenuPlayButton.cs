@@ -35,7 +35,7 @@ public class MenuPlayButton : MenuNavigationButton {
 	/// Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        SceneController.s_mode = SceneController.Mode.DEFAULT;
+		SceneController.SetMode(SceneController.Mode.DEFAULT);
         HDLiveEventsManager.instance.SwitchToQuest();
         // Depends on the tutorial status
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {

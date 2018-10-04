@@ -40,8 +40,27 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	private List<IDragonData> m_specialDragonsByOrder = null;
 
 	// Shortcut to get the data of the currently selected dragon
+	// [AOC] Adding support for different dragon types
 	public static IDragonData currentDragon {
-		get { return GetDragonData(instance.m_user.currentDragon); }
+		get { 
+			switch(SceneController.mode) {
+				case SceneController.Mode.SPECIAL_DRAGONS: {
+					return currentSpecialDragon;
+				} break;
+
+				default: {
+					return currentClassicDragon;
+				} break;
+			}
+		}
+	}
+
+	public static DragonDataClassic currentClassicDragon {
+		get { return GetDragonData(instance.m_user.currentClassicDragon) as DragonDataClassic; }
+	}
+
+	public static DragonDataSpecial currentSpecialDragon {
+		get { return GetDragonData(instance.m_user.currentSpecialDragon) as DragonDataSpecial; }
 	}
 
 	// Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)
@@ -62,6 +81,12 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			return null;
 		}
 	}
+
+    public static DragonTier maxSpecialDragonTierUnlocked {
+        get {
+            return DragonTier.TIER_1;
+        }
+    }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -95,14 +120,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsFirstDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		if (order == 0) {
 			return true;
 		} else {
 			bool isFirst = true;
 			List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
-			for (int i = order - 1; order >= 0; --order) {
+			for (int i = order - 1; order >= 0 && i < matchingDragonsByOrder.Count; --order) {
 				isFirst = isFirst && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isFirst;
@@ -114,14 +140,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsLastDragon(string _sku) {
 		IDragonData data = GetDragonData(_sku);
-		int order = data.GetOrder();
+		if(data == null) return false;
 
+		int order = data.GetOrder();
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		if (order == instance.m_classicDragonsByOrder.Count - 1) {
 			return true;
 		} else {
 			bool isLast = true;
-			for (int i = order + 1; order < matchingDragonsByOrder.Count; ++order) {
+			for (int i = order + 1; order < matchingDragonsByOrder.Count && i < matchingDragonsByOrder.Count; ++order) {
 				isLast = isLast && (matchingDragonsByOrder[i].GetLockState() <= IDragonData.LockState.TEASE);
 			}
 			return isLast;
@@ -151,7 +178,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		IDragonData data = GetDragonData(_sku);
 		List<IDragonData> matchingDragonsByOrder = GetDragonsByOrder(data.type);
 		int order = data.GetOrder();
-		if(order > 0) {	// Exclude if first dragon
+		if(order > 0 && order < matchingDragonsByOrder.Count) {	// Exclude if first dragon
 			return matchingDragonsByOrder[order - 1];
 		}
 
@@ -250,6 +277,19 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to instantiate on the scene.</param>
 	public static void LoadDragon(string _sku) {
+		// Get the data for the new dragon
+		IDragonData data = DragonManager.GetDragonData(_sku);
+		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
+
+		// Load prefab for this dragon data
+		LoadDragon(data);
+	}
+
+	/// <summary>
+	/// Load the dragon from its dragon data
+	/// </summary>
+	/// <param name="_data">Data of the dragon to be loaded.</param>
+	private static void LoadDragon(IDragonData _data) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {
@@ -257,70 +297,39 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			playerObj = null;
 		}
 
-		// Get the data for the new dragon
-		IDragonData data = DragonManager.GetDragonData(_sku);
-		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
-
 		// Load the prefab for the dragon with the given ID
-		GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + data.def.GetAsString("gamePrefab"));
-
-		Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
+		GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + _data.gamePrefab);
+		Debug.Assert(prefabObj != null, "The prefab defined to dragon " + _data.sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property
 		playerObj = Instantiate<GameObject>(prefabObj);
 		playerObj.name = GameSettings.playerName;
-			
 	}
     
-    public static void LoadSpecialDragon( string _sku, DragonTier _tier, int powerLevel, int hpLevel, int speedLevel, int energyLevel)
-    {
-        // Destroy any previously created player
-        GameObject playerObj = GameObject.Find(GameSettings.playerName);
-        if(playerObj != null) {
-            DestroyImmediate(playerObj);
-            playerObj = null;
-        }
-
-        // Get the data for the new dragon
-		DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
-
-        data.GetStat(DragonDataSpecial.Stat.HEALTH).level = hpLevel;
-        data.GetStat(DragonDataSpecial.Stat.SPEED).level = speedLevel;
-        data.GetStat(DragonDataSpecial.Stat.ENERGY).level = energyLevel;
-        
-		data.SetTier(_tier);
-        data.m_powerLevel = powerLevel;
-
-		/*
-        Range xpRange = data.progression.xpRange;
-        float xpSetup = xpRange.Lerp( (float)_tier/ (float)DragonTier.TIER_4);
-        data.progression.SetXp_DEBUG(xpSetup);
-        */
-        
-        Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
-
-        // Load the prefab for the dragon with the given ID
-        GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + data.gamePrefab);
-
-        Debug.Assert(data != null, "The prefab defined to dragon " + _sku + " couldn't be found");
-
-        // Create a new instance - will automatically be added to the InstanceManager.player property
-        playerObj = Instantiate<GameObject>(prefabObj);
-        playerObj.name = GameSettings.playerName;
-    }
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="user">User.</param>
 	public static void SetupUser( UserProfile user)
 	{
 		instance.m_user = user;
 		instance.m_dragonsBySku = user.dragonsBySku;
 
 		// Initialize ordered list
-		// [AOC] Only classic dragons
+		// Classic dragons
 		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
 		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 		instance.m_classicDragonsByOrder.Clear();
 		for(int i = 0; i < defs.Count; i++) {
 			instance.m_classicDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
+		}
+
+		// Special dragons
+		defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataSpecial.TYPE_CODE);
+		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
+		instance.m_specialDragonsByOrder.Clear();
+		for(int i = 0; i < defs.Count; i++) {
+			instance.m_specialDragonsByOrder.Add(instance.m_dragonsBySku[defs[i].sku]);
 		}
 	}
 
@@ -329,5 +338,41 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 	/// </summary>
 	public static bool IsReady() {
 		return instance.m_user != null;
+	}
+
+	//------------------------------------------------------------------//
+	// DEBUG METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_sku">Sku.</param>
+	/// <param name="_tier">Tier.</param>
+	/// <param name="powerLevel">Power level.</param>
+	/// <param name="hpLevel">Hp level.</param>
+	/// <param name="speedLevel">Speed level.</param>
+	/// <param name="energyLevel">Energy level.</param>
+	public static void LoadSpecialDragon_DEBUG(string _sku, DragonTier _tier, int powerLevel, int hpLevel, int speedLevel, int energyLevel) {
+		// Get the data for the new dragon
+		DragonDataSpecial data = DragonManager.GetDragonData(_sku) as DragonDataSpecial;
+		Debug.Assert(data != null, "Attempting to load dragon with id " + _sku + ", but the manager has no data linked to this id");
+
+		// Override stats to match debug ones
+		// [AOC] Maybe create a copy to avoid overriding actual dragon stats?
+		data.GetStat(DragonDataSpecial.Stat.HEALTH).level = hpLevel;
+		data.GetStat(DragonDataSpecial.Stat.SPEED).level = speedLevel;
+		data.GetStat(DragonDataSpecial.Stat.ENERGY).level = energyLevel;
+
+		data.SetTier(_tier);
+		data.m_powerLevel = powerLevel;
+
+		/*
+        Range xpRange = data.progression.xpRange;
+        float xpSetup = xpRange.Lerp( (float)_tier/ (float)DragonTier.TIER_4);
+        data.progression.SetXp_DEBUG(xpSetup);
+        */
+
+		// Load it!
+		LoadDragon(data);
 	}
 }

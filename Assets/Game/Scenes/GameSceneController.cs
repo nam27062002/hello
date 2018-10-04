@@ -175,18 +175,18 @@ public class GameSceneController : GameSceneControllerBase {
         }
 
         // Load the dragon
-
-        // TO REMOVE!!!!
+		// DEBUG: Special dragon testing
         if ( FeatureSettingsManager.IsDebugEnabled && Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
         {
             // Hola soy special SPECIAAAAAAL
+			// [AOC] xDDDDDDDD
             string dragon = Prefs.GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
             DragonTier dragonTier = ( DragonTier )Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_TIER, 0);
             int powerLevel = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL, 0);
             int hpBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_HP_BOOST_LEVEL, 0);
             int speedBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_SPEED_BOOST_LEVEL, 0);
             int energyBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL, 0);
-            DragonManager.LoadSpecialDragon(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
             
         }
         else
@@ -198,7 +198,7 @@ public class GameSceneController : GameSceneControllerBase {
             }
             else
             {
-                DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
+				DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
             }
 
         }

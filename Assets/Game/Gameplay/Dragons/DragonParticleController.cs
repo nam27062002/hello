@@ -63,7 +63,7 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_waterAirLimitParticle;
 	private ParticleSystem m_waterAirLimitInstance = null;
 
-	[Space]
+    [Space]
 	public string m_corpseAsset = "";
 	private ParticleHandler m_corpseHandler;
 
@@ -93,6 +93,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		public bool m_stopInsideWater = false;
 		public bool m_stopWhenDead = false;
+        public bool m_stopOutsideWater = false;
 		public ParticleSystem m_particleReference;
 	}
 
@@ -353,7 +354,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			SpawnCorpse();
 		}
@@ -566,6 +567,7 @@ public class DragonParticleController : MonoBehaviour
 		{
 			if ( (m_insideWater && m_bodyParticles[i].m_stopInsideWater)
 				|| (!m_alive && m_bodyParticles[i].m_stopWhenDead)
+                || (!m_insideWater && m_bodyParticles[i].m_stopOutsideWater)
 			)
 			{
 				if (m_bodyParticles[i].m_particleReference.isPlaying)

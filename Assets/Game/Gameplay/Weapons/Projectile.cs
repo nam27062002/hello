@@ -28,7 +28,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	//---------------------------------------------------------------------------------------
 
 	[SeparatorAttribute("Motion")]
-	[SerializeField] private MotionType m_motionType = MotionType.Linear;
+	[SerializeField] protected MotionType m_motionType = MotionType.Linear;
     public MotionType motionType 
     { 
         get { return m_motionType; }
@@ -60,10 +60,10 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
 	[SerializeField] private ParticleData m_onAttachParticle = null;
     [SerializeField] private ParticleData m_onChargeParticle = null;
-    [SerializeField] private ParticleData m_onHitParticle = null;
+    [SerializeField] protected ParticleData m_onHitParticle = null;
     [SerializeField] private ParticleData m_onEatParticle = null;
     [SerializeField] private ParticleData m_onBurnParticle = null;
-	[SerializeField] private bool m_missHitSpawnsParticle = true;
+	[SerializeField] protected bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
 
@@ -78,18 +78,18 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 
 	private Vector3 m_startPosition;
 	private Vector3 m_lastPosition;
-	private Vector3 m_position;
+	protected Vector3 m_position;
 	public Vector3 position { get { return m_position; } }
 
-	private Transform m_target;
+	protected Transform m_target;
 	private Vector3 m_targetPosition;
 	public Vector3 target { get { return m_targetPosition; } }
 
 	private Vector3 m_direction;
 	public Vector3 direction { get { return m_direction; } }
 
-	private Vector3 m_velocity;
-	public Vector3 velocity { get { return m_velocity; } }
+	protected Vector3 m_velocity;
+	public Vector3 velocity { get { return m_velocity; } set { m_velocity = value; } }
 
 	protected Transform m_transform;
 	public Vector3 upVector { get { return m_transform.up; } }
@@ -274,7 +274,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	}
 
 	// Update is called once per frame
-	private void Update () {
+	protected virtual void Update () {
 		if (m_state == State.Charging) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {

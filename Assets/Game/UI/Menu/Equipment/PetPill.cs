@@ -120,11 +120,6 @@ public class PetPill : ScrollRectItem<PetPillData> {
 		get { return m_slot >= 0; }
 	}
 
-	private bool m_special = false;
-	public bool special {
-		get { return m_special; }
-	}
-
 	private DefinitionNode m_seasonDef = null;	// If it's a seasonal pet, store its target season
 	public DefinitionNode seasonDef {
 		get { return m_seasonDef; }
@@ -215,8 +210,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 		// Store definition and some data
 		m_def = _petDef;
 		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(_petDef.Get("rarity"));
-		m_special = (rarity == Metagame.Reward.Rarity.SPECIAL);
-
+		
 		// Load preview
 		if(m_preview != null) {
 			if (m_useAsycLoading)
@@ -338,12 +332,6 @@ public class PetPill : ScrollRectItem<PetPillData> {
 		// Status flags
 		m_locked = !petCollection.IsPetUnlocked(m_def.sku);
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
-
-		// Hide power icon for locked special pets
-		if(m_powerIcon != null) {
-			bool isSpecialAndLocked = m_special && m_locked;
-			m_powerIcon.transform.parent.gameObject.SetActive(!isSpecialAndLocked);
-		}
 
 		// Color highlight when equipped
 		if(m_frameColorFX != null) {

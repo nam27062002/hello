@@ -169,7 +169,7 @@ public class MenuDragonPaginator : TabSystem {
 			// Does this dragon belong to the target tier?
 			if(dragons[i].tier == _tier) {
 				// Yes!! Select it and return
-				InstanceManager.menuSceneController.dragonSelector.SelectItem(i);
+				InstanceManager.menuSceneController.SetSelectedDragon(dragons[i].sku);
 
 				// Play audio corresponding to this tier
 				AudioController.Play(UIConstants.GetDragonTierSFX(_tier));

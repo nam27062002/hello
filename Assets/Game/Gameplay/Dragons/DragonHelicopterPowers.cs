@@ -7,6 +7,7 @@ public class DragonHelicopterPowers : MonoBehaviour
 	DragonBoostBehaviour m_playerBoost;
 	DragonMotion m_playerMotion;
     DragonBreathBehaviour m_playerBreath;
+    DragonEatBehaviour m_eatBehaviour;
     Animator m_animator;
     int m_powerLevel = 0;
     DragonTier m_tier;
@@ -19,7 +20,9 @@ public class DragonHelicopterPowers : MonoBehaviour
     public float m_machinegunDistance = 1;
     public float m_machinegunAngle = 90;
     public Transform m_machingegunAnchor;
-    public ParticleSystem m_machinegunParticle;
+    public string m_machineGunParticleName;
+    public Transform m_machineGunParticleTransform;
+    protected ParticleSystem m_machinegunParticle;
     
     
     // Missiles - Power Level 1
@@ -39,12 +42,26 @@ public class DragonHelicopterPowers : MonoBehaviour
     public float m_bombFireRate;
     public string m_bombProjectileName;
     public Transform m_bombFirePosition;
-    
-	// Use this for initialization
-	void Start () {
+
+    [Header("Power Level 3 - Custom Pet")]
+    public string m_petSku = "";
+
+    protected float m_neckDistance = 0;
+
+    private void Awake()
+    {
+        if (!string.IsNullOrEmpty(m_machineGunParticleName)){
+            m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
+            m_machinegunParticle.gameObject.SetActive( true );
+        }
+    }
+    // Use this for initialization
+    void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
 		m_playerMotion = InstanceManager.player.dragonMotion;
+        m_playerMotion.canDive = true;  // This dragon can move freely inside water
         m_playerBreath = InstanceManager.player.breathBehaviour;
+        m_eatBehaviour = InstanceManager.player.dragonEatBehaviour;
         
         m_powerLevel = (InstanceManager.player.data as DragonDataSpecial).m_powerLevel;
         m_tier = InstanceManager.player.data.tier;
@@ -58,15 +75,39 @@ public class DragonHelicopterPowers : MonoBehaviour
         m_missilesRange = m_missilesRange * scale;
         m_machinegunDistance = m_machinegunDistance * scale;
         
+        
+        // Check if we need to spawn the drone!
+        if ( m_powerLevel >= 3 )
+        {
+            DragonEquip equip = transform.parent.GetComponent<DragonEquip>();
+            equip.EquipPet(m_petSku, 4);
+        }
+        
+        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+        // Enlargin neck
+        Transform target = m_eatBehaviour.GetAttackTarget();
+        if ( target == null )
+        {
+            m_neckDistance = Mathf.Lerp(m_neckDistance, 0, Time.deltaTime * 10);
+        }
+        else
+        {
+            // Distance to target?
+            m_neckDistance = Mathf.Lerp(m_neckDistance, 1, Time.deltaTime * 10);
+        }
+        m_animator.SetFloat( GameConstants.Animator.NECK_DISTANCE, m_neckDistance );
+        
         // InstanceManager.player.dragonEatBehaviour.enabled = false;  // Dirty code to test
 		if ( m_playerBoost.IsBoostActive() || m_playerBreath.IsFuryOn())
 		{
@@ -115,7 +156,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_missileTimer -= Time.deltaTime;
                 if ( m_missileTimer <= 0 )
                 {
-                    m_animator.SetTrigger("missile");
+                    m_animator.SetTrigger( GameConstants.Animator.MISSILE );
                     m_missileTimer += m_missilesFireRate;
                 }
             }
@@ -125,7 +166,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_bombTimer -= Time.deltaTime;
                 if ( m_bombTimer <= 0 )
                 {
-                    m_animator.SetTrigger("bomb");
+                    m_animator.SetTrigger(GameConstants.Animator.BOMB);
                     m_bombTimer += m_bombFireRate;
                 }
             }
@@ -212,6 +253,7 @@ public class DragonHelicopterPowers : MonoBehaviour
         projectile.transform.position = originTransform.position;
         projectile.transform.rotation = originTransform.rotation;
         projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);
+        projectile.velocity = GameConstants.Vector3.up * Mathf.Min(m_playerMotion.velocity.y, -projectile.speed);
         
     }
 
@@ -232,6 +274,14 @@ public class DragonHelicopterPowers : MonoBehaviour
         Vector2 dDown = dir.RotateDegrees(-m_machinegunAngle/2.0f);
         Debug.DrawLine( m_machingegunAnchor.position, m_machingegunAnchor.position + (Vector3)(dDown * m_machinegunDistance) );
         
+    }
+
+    void OnFuryToggled(bool toogle, DragonBreathBehaviour.Type type)
+    {
+        if ( type == DragonBreathBehaviour.Type.Mega )
+        {
+            m_animator.SetBool( GameConstants.Animator.MEGA, toogle );
+        }
     }
 
 }

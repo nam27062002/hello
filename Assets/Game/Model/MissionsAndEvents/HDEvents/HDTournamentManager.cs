@@ -401,7 +401,7 @@ public class HDTournamentManager : HDLiveEventManager {
     	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) ){
 			ret = def.m_build.m_dragon;
 		}else{
-			ret = UsersManager.currentUser.currentDragon;
+			ret = UsersManager.currentUser.currentClassicDragon;	// [AOC] TODO!! Allow special dragons?
 		}
 		return ret;
     }

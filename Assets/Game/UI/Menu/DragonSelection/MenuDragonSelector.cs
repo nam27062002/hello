@@ -27,6 +27,9 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[Separator]
+	[SerializeField] private IDragonData.Type m_dragonType = IDragonData.Type.CLASSIC;
+
 	// Dragon animation
 	[Separator("Dragon tap animation")]
 	[List("scale", "move", "rotate")]
@@ -60,7 +63,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	private void Start() {
 		// Initialize items list
 		enableEvents = false;
-		Init(DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC));
+		Init(DragonManager.GetDragonsByOrder(m_dragonType));
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
@@ -109,6 +112,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	/// The selected object on the scroll list has changed.
 	/// </summary>
 	/// <param name="_newSelectedPoint">The new selected node object of the scrolllist.</param>
+	[System.Obsolete("To be used if the dragon scroll was to be handled by a SnappingScroll rect (which currently is not)")]
 	public void OnScrollSelectedDragonChanged(ScrollRectSnapPoint _newSelectedPoint) {
 		// Skip if null (shouldn't happen)
 		if(_newSelectedPoint == null) return;
@@ -145,7 +149,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
 			if(pet != null) {
 				// Yes! Go to the pet screen
-				targetScreen = MenuScreen.PETS;
+				targetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Lab or regular pet screen?
 
 				// Do a fun animation on the pet!
 				pet.SetAnim(MenuPetPreview.Anim.IN);
@@ -196,22 +200,23 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 
 		// Go to the target screen, if any
 		// Only if enabled!
-		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
-		if(targetScreen != MenuScreen.NONE) {
-			// Check conditions
-			MenuSceneController menuController = InstanceManager.menuSceneController;
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+			if(targetScreen != MenuScreen.NONE) {
+				// Check conditions
+				MenuSceneController menuController = InstanceManager.menuSceneController;
 
-			// a) Current dragon is owned
-			if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
+				// a) Current dragon is owned
+				if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
 
-			// b) Camera is not tweening (scrolling between dragons)
-			if(menuController.isTweening) return;
+				// b) Camera is not tweening (scrolling between dragons)
+				if(menuController.isTweening) return;
 
-			// c) We're not scrolling between dragons
-			if(menuController.dragonScroller.cameraAnimator.isTweening) return;
+				// c) We're not scrolling between dragons
+				if(menuController.dragonScroller.cameraAnimator.isTweening) return;
 
-			// Everything ok! Go to the disguises screen
-			menuController.GoToScreen(targetScreen);
+				// Everything ok! Go to the disguises screen
+				menuController.GoToScreen(targetScreen);
+			}
 		}
 	}
 }

@@ -558,4 +558,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
 		}
 	}
+
+	/// <summary>
+	/// Lab button has been pressed.
+	/// </summary>
+    public void OnLabButton() {
+		// Change mode
+		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+
+		// Go to lab main screen!
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+    }
 }

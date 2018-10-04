@@ -9,9 +9,9 @@ GameObject:
   m_Component:
   - component: {fileID: 408412}
   - component: {fileID: 5476966}
-  - component: {fileID: 135304990021057800}
   - component: {fileID: 114954653416055262}
   - component: {fileID: 114164665440002328}
+  - component: {fileID: 65206503666511416}
   m_Layer: 19
   m_Name: PF_DragonHeliMissile
   m_TagString: Untagged
@@ -26,10 +26,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 173528}
   m_LocalRotation: {x: 0.00000013155935, y: -0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -206.21619, y: 109.718475, z: -7.323242}
+  m_LocalPosition: {x: -140.75595, y: 128.94249, z: -4.7097015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4397055297022264}
+  - {fileID: 4821977047660924}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -131,42 +131,42 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173528}
   m_IsPrefabParent: 1
---- !u!1 &1211461895836506
+--- !u!1 &1385343099063694
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4397055297022264}
-  - component: {fileID: 33336061545651002}
-  - component: {fileID: 23291186765913870}
-  m_Layer: 19
-  m_Name: Cube
+  - component: {fileID: 4821977047660924}
+  - component: {fileID: 33951146797742576}
+  - component: {fileID: 23672540355524018}
+  m_Layer: 0
+  m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4397055297022264
+--- !u!4 &4821977047660924
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1385343099063694}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23291186765913870
+--- !u!23 &23672540355524018
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
+  m_GameObject: {fileID: 1385343099063694}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -175,7 +175,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 5140bc5c2e3cd7742a507cde9cef8c89, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -183,7 +183,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_PreserveUVs: 1
+  m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 0
@@ -195,13 +195,25 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33336061545651002
+--- !u!33 &33951146797742576
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1211461895836506}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_GameObject: {fileID: 1385343099063694}
+  m_Mesh: {fileID: 4300000, guid: 8f9704c8adf353f4cbf52d40a22376a9, type: 3}
+--- !u!65 &65206503666511416
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 173528}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: -0.2}
 --- !u!114 &114164665440002328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -215,13 +227,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 1
   m_chargeTime: 0
-  m_speed: 20
+  m_speed: 15
   m_rotationSpeed: 360
-  m_rotationAxis: 0
-  m_maxTime: 10
+  m_rotationAxis: 2
+  m_maxTime: 5
   m_scaleTime: 1
   m_stopAtTarget: 0
-  m_dieOutsideFrustum: 1
+  m_dieOutsideFrustum: 0
   m_dieOnHit: 1
   m_defaultDamage: 0
   m_damageType: 4
@@ -308,7 +320,7 @@ MonoBehaviour:
     scale: 1
     orientate: 0
   m_onHitParticle:
-    name: 
+    name: PS_DirectionalExplosion
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -345,7 +357,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-    orientate: 0
+    orientate: 1
   m_onEatParticle:
     name: 
     path: 
@@ -435,9 +447,10 @@ MonoBehaviour:
     m_Bits: 65011712
   m_groundMask:
     serializedVersion: 2
-    m_Bits: 134742544
+    m_Bits: 1208615440
   m_explosionArea: {fileID: 114954653416055262}
   m_firingEntityType: 0
+  m_explodeIfHomingtargetNull: 1
 --- !u!114 &114954653416055262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -452,15 +465,3 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   radius: 2.150628
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!135 &135304990021057800
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 173528}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}

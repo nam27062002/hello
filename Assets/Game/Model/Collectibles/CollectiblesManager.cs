@@ -138,7 +138,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// </summary>
 	private void InitLevelEggs() {
 		// Eggs disabled during FTUX and Tournament
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_EGGS_AT_RUN || SceneController.s_mode == SceneController.Mode.TOURNAMENT) {
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_EGGS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT) {
 			// Don't pick any egg, call the SelectCollectible method with an invalid name to hide all eggs on scene
 			instance.m_egg = SelectCollectible<CollectibleEgg>(CollectibleEgg.TAG, string.Empty);
 		}
@@ -167,8 +167,9 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 		// Get all the chests in the scene
 		GameObject[] chestSpawners = GameObject.FindGameObjectsWithTag(CollectibleChest.TAG);	// Finding by tag is much faster than finding by type
 		if(chestSpawners.Length > 0) {
-			// Special case: chests are disabled during FTUX and TOURNAMENT
-			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.s_mode == SceneController.Mode.TOURNAMENT) {
+            // Special case: chests are disabled during FTUX, TOURNAMENT and SPECIAL DRAGONS
+			if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_CHESTS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT
+               || SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
 				for(int i = 0; i < chestSpawners.Length; i++) {
 					GameObject.Destroy(chestSpawners[i]);
 				}

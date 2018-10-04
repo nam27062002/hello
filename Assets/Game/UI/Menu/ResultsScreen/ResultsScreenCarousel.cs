@@ -168,7 +168,6 @@ public class ResultsScreenCarousel : MonoBehaviour {
 							DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
 							Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
 							Random.value < 0.5f,	// 50% chace
-                            1f,
                             DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count
 						);
 						targetMission.difficulty = Mission.Difficulty.MEDIUM;

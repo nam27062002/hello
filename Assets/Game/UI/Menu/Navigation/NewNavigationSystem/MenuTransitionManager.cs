@@ -154,7 +154,9 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="_targetScreen">Target screen.</param>
 	/// <param name="_animate">Whether to animate or do it instantly.</param>
-	public void GoToScreen(MenuScreen _targetScreen, bool _animate, bool _forceTransition = false) {
+	/// <param name="_forceTransition">Top priority, allows to interrupt an ongoing transition.</param>
+	/// <param name="_allowBack">If set to <c>false</c>, overrides the current screen's setup and doesn't store it to the navigation history.</param>
+	public void GoToScreen(MenuScreen _targetScreen, bool _animate, bool _forceTransition = false, bool _allowBack = true) {
 		Debug.Log("Changing screen from " + Colors.coral.Tag(m_currentScreen.ToString()) + " to " + Colors.aqua.Tag(_targetScreen.ToString()));
 
 		// Block if transitions are not allowed at this moment
@@ -183,7 +185,8 @@ public class MenuTransitionManager : MonoBehaviour {
 			} else {
 				// Moving forward to a new screen!
 				// Don't add to history if going back to this screen is not allowed
-				if(fromScreenData != null && fromScreenData.ui.allowBackToThisScreen) {
+				// Don't add also if the caller had explicitely requested so
+				if(fromScreenData != null && fromScreenData.ui.allowBackToThisScreen && _allowBack) {
 					m_screenHistory.Add(m_currentScreen);
 				}
 			} 

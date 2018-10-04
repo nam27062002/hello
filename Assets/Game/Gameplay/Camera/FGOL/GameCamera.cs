@@ -400,7 +400,10 @@ public class GameCamera : MonoBehaviour
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
 
-		Vector3 pos = spawnPointObj.transform.position;
+		Vector3 pos = GameConstants.Vector3.zero;
+		if(spawnPointObj != null) {
+			pos = spawnPointObj.transform.position;
+		}
 		m_position = pos;
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;

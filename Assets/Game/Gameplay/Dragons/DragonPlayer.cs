@@ -219,6 +219,7 @@ public class DragonPlayer : MonoBehaviour {
 
     public float mummyHealthMax { get { return m_healthMax * m_mummyHealthFactor; } }
 
+    public bool m_alwaysSpawnCorpse = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -238,7 +239,7 @@ public class DragonPlayer : MonoBehaviour {
         else
         {
     		// Get data from dragon manager
-    		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+    		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
     			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
     			{

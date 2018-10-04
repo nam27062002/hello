@@ -46,6 +46,9 @@ public class DefinitionsCategory
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
 	public const string MISSION_MODIFIERS = "MISSION_MODIFIERS";
 
+    public const string MISSION_SPECIAL_DIFFICULTIES = "MISSION_SPECIAL_DIFFICULTIES";
+    public const string MISSION_SPECIAL_MODIFIERS = "MISSION_SPECIAL_MODIFIERS";
+
 	// Dragons
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
