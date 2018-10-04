@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 4366594525305566}
   - component: {fileID: 198901051320471700}
   - component: {fileID: 199596541513172006}
+  - component: {fileID: 114232926541847372}
   m_Layer: 0
   m_Name: PS_ElectricDead
   m_TagString: Untagged
@@ -165,6 +166,21 @@ Transform:
   m_Father: {fileID: 4366594525305566}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -130.173, z: 0}
+--- !u!114 &114232926541847372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1255823133153922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 554e9c1e563a14f8990e41f925e29008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activeTime: 2
+  m_returnTo: 1
+  m_disableOnInvisible: 0
+  m_alwaysActive: 1
 --- !u!198 &198291424640046782
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -14153,7 +14169,7 @@ ParticleSystem:
   lengthInSec: 3
   simulationSpeed: 1
   stopAction: 0
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
