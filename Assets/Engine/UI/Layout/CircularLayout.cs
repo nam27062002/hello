@@ -29,8 +29,22 @@ public class CircularLayout : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private bool m_skipMinAngle = false;
+	public bool skipMinAngle {
+		get { return m_skipMinAngle; }
+		set { m_skipMinAngle = value; Refresh(); }
+	}
+
 	[SerializeField] private bool m_skipMaxAngle = false;
+	public bool skipMaxAngle {
+		get { return m_skipMaxAngle; }
+		set { m_skipMaxAngle = value; Refresh(); }
+	}
+
 	[SerializeField] private Range m_angleRange = new Range(0f, 360f);
+	public Range angleRange {
+		get { return m_angleRange; }
+		set { m_angleRange = value; Refresh(); }
+	}
 
 	// Internal
 	private RectTransform[] m_items = null;
@@ -43,7 +57,7 @@ public class CircularLayout : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Do a first refresh
-		SetupLayout();
+		Refresh();
 	}
 
 	/// <summary>
@@ -51,7 +65,7 @@ public class CircularLayout : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Refresh
-		SetupLayout();
+		Refresh();
 	}
 
 	/// <summary>
@@ -60,7 +74,7 @@ public class CircularLayout : MonoBehaviour {
 	private void Update() {
 		// Check for transform changes
 		if(transform.hasChanged) {
-			SetupLayout();
+			Refresh();
 		}
 	}
 
@@ -70,7 +84,7 @@ public class CircularLayout : MonoBehaviour {
 	/// <summary>
 	/// Do the layout!
 	/// </summary>
-	private void SetupLayout() {
+	private void Refresh() {
 		// Refresh items list
 		int childCount = transform.childCount;
 		int activeItemCount = -1;
