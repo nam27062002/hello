@@ -932,7 +932,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
-        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Home_Page");
+        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Homepage");
     }
 
     public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
