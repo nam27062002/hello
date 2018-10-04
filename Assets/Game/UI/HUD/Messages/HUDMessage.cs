@@ -153,6 +153,7 @@ public class HUDMessage : MonoBehaviour {
 	private bool m_isBoosting = false;
 	private float m_boostingTimer = 0f;
 	private float m_boostSpawnTimer = 0f;
+    private string m_defaultText = "";
 
 	private bool m_gameStarted = false;
 	private bool m_hasEverPerformedAction = false;
@@ -182,6 +183,7 @@ public class HUDMessage : MonoBehaviour {
 
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
+            
 				// Select target setup
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
 					m_currentBoostSetup = m_boostMessageSetup;
@@ -204,6 +206,10 @@ public class HUDMessage : MonoBehaviour {
 	{
 		  // Deactivate all childs
         SetOthersVisible( false );
+        if ( m_type == Type.BOOST_REMINDER )
+        {
+            m_defaultText = LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction);
+        }
 	}
 
 	/// <summary>
@@ -353,6 +359,13 @@ public class HUDMessage : MonoBehaviour {
 					// Do we need to show ther reminder? Not while we're boosting!
 					if(m_boostSpawnTimer <= 0f) {
 						// Show feedback!
+                        if ( !m_visible )
+                        {
+                            // Check boost tid
+                            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                            text.text = m_defaultText;
+                        }
+                        
 						// Don't reset timers if it couldn't be shown! Will be displayed asap
 						if(Show()) {
 							m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;

@@ -137,6 +137,12 @@ public abstract class IDragonData : IUISelectorItem {
     public virtual float maxSpeed {
         get { return (maxForce / friction) / mass; }    // Copied from DragonMotion to show stats on the menu
     }
+    public float energyRequiredToBoost{
+        get{ return m_def.GetAsFloat("energyRequiredToBoost", 0.2f); }
+    }
+    public float energyRestartThreshold{
+         get{ return m_def.GetAsFloat("energyRestartThreshold", 1); }
+    }
         // Camera
     public abstract float defaultSize{ get; }
     public abstract float cameraFrameWidthModifier{ get; }    
@@ -160,6 +166,7 @@ public abstract class IDragonData : IUISelectorItem {
     
         // Misc
     public abstract float statsBarRatio{ get; }
+    public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
         
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }

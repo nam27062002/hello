@@ -32,6 +32,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		get { return m_energyRequiredToBoost; }
 		set { m_energyRequiredToBoost = value; }
 	}
+    private float m_energyRestartThreshold = 1.0f;   // Percent of total energy required to restart
+    
 	private float m_boostMultiplier;
 	public float boostMultiplier
 	{
@@ -87,8 +89,12 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_energyRefillBase = m_dragon.data.energyRefillRate;
 		SetRefillBonus( m_energyRefillBonus );
         m_boostMultiplier = m_dragon.data.boostMultiplier;
-		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+        // m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+        m_energyRequiredToBoost = m_dragon.data.energyRequiredToBoost;// DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.energyMax;
+
+        m_energyRestartThreshold = m_dragon.data.energyRestartThreshold;
+        m_energyRestartThreshold *= m_dragon.energyMax;
 	}
 
 	void Start() {
@@ -154,10 +160,17 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		} else if(m_dragon.energy < m_dragon.energyMax) {
 			//DebugUtils.Log("<color=yellow>refilling " + m_dragon.energy + "</color>");
 			m_dragon.AddEnergy(Time.deltaTime * m_energyRefill);
-		} else {
-			// [AOC] Max energy reached, mark as ready
-			if(m_CPAutoRestart) m_ready = true;
 		}
+        
+        if(m_CPAutoRestart)
+        {
+            // Energy required to restart
+            if (!m_active && m_dragon.energy >= m_energyRestartThreshold)
+            {
+                 m_ready = true;
+            }
+        }
+            
 	}
 
 	private void StartBoost()
