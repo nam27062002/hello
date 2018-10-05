@@ -208,7 +208,7 @@ public class HUDMessage : MonoBehaviour {
         SetOthersVisible( false );
         if ( m_type == Type.BOOST_REMINDER )
         {
-            m_defaultText = LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction);
+            m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
         }
 	}
 

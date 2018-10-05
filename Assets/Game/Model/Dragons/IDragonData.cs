@@ -166,7 +166,8 @@ public abstract class IDragonData : IUISelectorItem {
     
         // Misc
     public abstract float statsBarRatio{ get; }
-    public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
+    public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
+    public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
         
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }

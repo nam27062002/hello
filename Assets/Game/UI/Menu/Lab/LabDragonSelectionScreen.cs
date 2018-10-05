@@ -54,7 +54,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		}
 
 		// Initialize 3D scene
-		LabDragonSelectionScene scene3d = InstanceManager.menuSceneController.transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d as LabDragonSelectionScene;
+        LabDragonSelectionScene scene3d = InstanceManager.menuSceneController.transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d as LabDragonSelectionScene;
 		if(scene3d != null) {
 			// Link loading UI - will be controlled by the 3D scene
 			scene3d.loadingUI = m_loadingUI;

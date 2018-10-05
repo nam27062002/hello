@@ -45,7 +45,9 @@ public class TrackerBase {
 	private bool m_enabled = false;
 	public bool enabled {
 		get { return m_enabled; }
-		set { m_enabled = value; }
+		set { 
+            m_enabled = value; 
+        }
 	}
 
 	protected Mode m_mode = Mode.GENERIC;
