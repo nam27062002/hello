@@ -42,6 +42,7 @@ public class DragonHelicopterPowers : MonoBehaviour
     public float m_bombFireRate;
     public string m_bombProjectileName;
     public Transform m_bombFirePosition;
+    protected bool m_hatchOpen = false;
 
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
@@ -163,10 +164,17 @@ public class DragonHelicopterPowers : MonoBehaviour
             
             if ( m_powerLevel >= 2 )
             {
+                if (!m_hatchOpen)
+                {
+                    m_hatchOpen = true;
+                    m_animator.SetBool(GameConstants.Animator.BOMB, true);
+                    m_bombTimer = m_bombFireRate;
+                }
+                
                 m_bombTimer -= Time.deltaTime;
                 if ( m_bombTimer <= 0 )
                 {
-                    m_animator.SetTrigger(GameConstants.Animator.BOMB);
+                    OnLaunchBomb();
                     m_bombTimer += m_bombFireRate;
                 }
             }
@@ -178,6 +186,12 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_machinegunFiring = false;
                 if ( m_machinegunParticle != null )
                     m_machinegunParticle.Stop();
+            }
+            
+            if ( m_hatchOpen )
+            {
+                m_hatchOpen = false;
+                m_animator.SetBool(GameConstants.Animator.BOMB, false);
             }
         }
 	}

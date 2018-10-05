@@ -1,17 +1,18 @@
 fileFormatVersion: 2
-guid: ba3f4f2441c9e4f47b52cb2eb4adbd61
+guid: e02eca1b991984918a8a7adc5d9ba719
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: Dragon_Body
     100002: //RootNode
-    100004: Dragon_L_MLauncher_3
-    100006: Dragon_R_MLauncher_3
+    100004: Dragon_L_BombHatch
+    100006: Dragon_R_BombHatch
     400000: Dragon_Body
     400002: //RootNode
-    400004: Dragon_L_MLauncher_3
-    400006: Dragon_R_MLauncher_3
-    7400000: Missil_Attck
+    400004: Dragon_L_BombHatch
+    400006: Dragon_R_BombHatch
+    7400000: Bomb_Hatch_Open
+    7400002: Bomb_Hatch_Close
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -41,10 +42,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Missil_Attck
-      takeName: Take 001
+      name: Bomb_Hatch_Open
+      takeName: Dragon_Helicopter_Flying_evolution
       firstFrame: 0
-      lastFrame: 14
+      lastFrame: 13
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -63,14 +64,35 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.69442225
-        functionName: OnLaunchMissile1
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Bomb_Hatch_Close
+      takeName: Dragon_Helicopter_Flying_evolution
+      firstFrame: 13
+      lastFrame: 26
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
