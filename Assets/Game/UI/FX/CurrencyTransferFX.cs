@@ -27,6 +27,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string COINS = "UI/FX/PF_CoinsTransferFX";
+    public const string GOLDEN_FRAGMENTS = "UI/FX/PF_GoldenFragmentsTransferFX";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

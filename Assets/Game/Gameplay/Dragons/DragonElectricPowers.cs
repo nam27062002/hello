@@ -204,7 +204,7 @@ public class DragonElectricPowers : MonoBehaviour {
         Vector3 dir = start - end;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg + 90.0f;
         m_lightningInstances[index].transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        m_lightningInstances[index].transform.localScale = GameConstants.Vector3.one * dir.magnitude;
+        m_lightningInstances[index].transform.localScale = GameConstants.Vector3.one * dir.magnitude * 0.5f;
         m_lightningPS[index].Play();
     }
 }

@@ -159,6 +159,12 @@ public class ResultsScreenController : MonoBehaviour {
 		set { m_totalPc = value; }
 	}
 
+    private long m_totalGf = 0;
+    public long totalGf {
+        get { return m_totalGf; }
+        set { m_totalGf = value; }
+    }
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -204,6 +210,8 @@ public class ResultsScreenController : MonoBehaviour {
 		// Initialize some internal vars
 		m_totalCoins = UsersManager.currentUser.coins - this.coins;		// Coins have been added in real-time, so start the results screen counter with the amount of coins we had before the run
 		m_totalPc = UsersManager.currentUser.pc;
+        m_totalGf = UsersManager.currentUser.goldenEggFragments;
+
 		m_eggFound = false;
 		switch(CPResultsScreenTest.eggMode) {
 			case CPResultsScreenTest.EggTestMode.FOUND: {
@@ -238,7 +246,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		// Choose steps sequence based on current game mode
-		switch(GameSceneController.mode) {
+		switch(SceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				m_activeSequence = m_tournamentStepsSequence;
 			} break;

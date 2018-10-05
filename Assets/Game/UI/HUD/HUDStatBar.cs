@@ -160,6 +160,9 @@ public class HUDStatBar : MonoBehaviour {
 
 		if (m_type == Type.Energy)
 		{
+            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+            string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
+            text.text = t;
 			Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
 
