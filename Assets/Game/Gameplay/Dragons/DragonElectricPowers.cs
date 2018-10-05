@@ -37,6 +37,10 @@ public class DragonElectricPowers : MonoBehaviour {
     GameObject[] m_lightningInstances = new GameObject[NUM_LIGHTNINGS];
     ParticleSystem[] m_lightningPS = new ParticleSystem[NUM_LIGHTNINGS];
 
+    public Renderer m_boostRenderer;
+    protected Material m_boostMaterial;
+    private float m_boostDelta = 0;
+
 	// Use this for initialization
 	void Start () {
 
@@ -75,8 +79,15 @@ public class DragonElectricPowers : MonoBehaviour {
             m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
-        
-	}
+
+        int max = m_boostRenderer.materials.Length;
+        m_boostMaterial = m_boostRenderer.material;
+        for (int i = 0; i < max; i++)
+        {
+            m_boostRenderer.materials[i] = m_boostMaterial;
+        }
+        m_boostDelta = 0;
+    }
     
     
 	
@@ -84,6 +95,17 @@ public class DragonElectricPowers : MonoBehaviour {
 	void Update () {
 
         int circleAreaCount = m_circleAreas.Count; 
+
+        // BOOST VIEW CONTROL
+        if ( m_boost.IsBoostActive() )
+        {
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0.37f, Time.deltaTime * 10);
+        }
+        else
+        {
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0, Time.deltaTime * 10);
+        }
+        m_boostMaterial.SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);
 
 		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
@@ -221,7 +243,7 @@ public class DragonElectricPowers : MonoBehaviour {
         m_lightningInstances[index].transform.localScale = GameConstants.Vector3.one * dir.magnitude * 0.5f;
         m_lightningPS[index].Play();
         
-        if (string.IsNullOrEmpty(m_lightningSound))
+        if (!string.IsNullOrEmpty(m_lightningSound))
             AudioController.Play( m_lightningSound, transform );
     }
     
