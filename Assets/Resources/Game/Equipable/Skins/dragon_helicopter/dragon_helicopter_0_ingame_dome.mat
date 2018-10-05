@@ -9,7 +9,7 @@ Material:
   m_Name: dragon_helicopter_0_ingame_dome
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
   m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL
-    SPECULAR
+    SPECULAR _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -74,9 +74,16 @@ Material:
     - SelfIlluminate: 0
     - _BlendMode: 2
     - _BumpScale: 1
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 0
     - _Cutoff: 0.413
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 10
     - _EmissionScaleUI: 0
     - _EnableBlendFresnel: 0
@@ -106,7 +113,7 @@ Material:
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
