@@ -32,6 +32,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
+    [SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	// Internal
 	private int m_collectedChests = 0;
@@ -92,6 +93,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+        m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	/// <summary>
@@ -101,6 +103,7 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 		// Instantly finish counter texts animations
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+        m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -220,10 +223,16 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 				} break;
 
 				case Chest.RewardType.PC: {
-					// Update total rewarded coins and update counter
+					// Update total rewarded pc and update counter
 					m_controller.totalPc += targetChest.rewardData.amount;
 					m_pcCounter.SetValue(m_controller.totalPc, true);
 				} break;
+
+                case Chest.RewardType.GF: {
+                    // Update total rewarded gf and update counter
+                    m_controller.totalGf += targetChest.rewardData.amount;
+                    m_gfCounter.SetValue(m_controller.totalGf, true);
+                } break;
 			}
 
 			// Update counters

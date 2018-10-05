@@ -53,7 +53,7 @@ public class ChestsScreenSlot : MonoBehaviour, IPointerClickHandler {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+    private void Awake() {
 		// Instantiate the chest view
 		GameObject chestPrefab = Resources.Load<GameObject>(ChestViewController.PREFAB_PATH);
 		GameObject chestObj = GameObject.Instantiate<GameObject>(chestPrefab);

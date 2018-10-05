@@ -77,10 +77,6 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-		// Apply rewards to user profile
-		RewardManager.ApplyEndOfGameRewards();
-		PersistenceFacade.instance.Save_Request(true);
-
 		// Send score!
 		SendScore();
 	}
