@@ -224,7 +224,7 @@ public class Entity : IEntity {
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
-		if(!m_isGolden && _reason != DyingReason.BURNED) {
+		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
 			newReward.coins = 0;
 		}
 
