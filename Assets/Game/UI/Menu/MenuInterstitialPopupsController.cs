@@ -27,7 +27,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	private bool m_popupDisplayed = false;
-	private bool m_waitForCustomPopup = false;
+    private bool m_adDisplayed = false;
+    private bool m_waitForCustomPopup = false;
 	private float m_waitTimeOut;
 
 	private PopupController m_currentPopup = null;
@@ -168,40 +169,44 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     /// <summary>
     /// Checks the interstitial ads.
     /// </summary>
-    private void CheckInterstitialAds()
-    {
-        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() )
-        {
-            if ( GameAds.instance.GetRunsToInterstitial() <= 0 )
-            {
+    private void CheckInterstitialAds() {
+        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() ) {
+            if ( GameAds.instance.GetRunsToInterstitial() <= 0 ) {
                 // Lets be loading friendly
                 StartCoroutine( LaunchInterstitial() );
-            }
-            else
-            {
+            } else {
                 GameAds.instance.ReduceRunsToInterstitial();
             }
         }
     }
 
-    IEnumerator LaunchInterstitial()
-    {
+    IEnumerator LaunchInterstitial() {
+        m_adDisplayed = true;
         yield return new WaitForSeconds(0.25f);
         PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
     }
 
     private void InterstitialCallback( bool rewardGiven )
     {
-        if ( rewardGiven )
-        {
+        if ( rewardGiven ) {
             GameAds.instance.ResetRunsToInterstitial();
         }
     }
 
-	/// <summary>
-	/// Checks whether the Rating popup must be opened or not and does it.
-	/// </summary>
-	private void CheckRating() {
+    private void CheckInterstitialCP2() {
+        // CP2 interstitial has the lowest priority so if the user has already seen a popup or an ad then cp2 interstitial shouldn't be shown
+        if (m_popupDisplayed || m_adDisplayed) return;
+
+        bool checkUserRestriction = true;
+        if (HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
+            HDCP2Manager.Instance.PlayInterstitial(checkUserRestriction);
+        }
+    }
+
+    /// <summary>
+    /// Checks whether the Rating popup must be opened or not and does it.
+    /// </summary>
+    private void CheckRating() {
 		// Ignore if a popup has already been displayed in this iteration
 		if(m_popupDisplayed) return;
 
@@ -389,6 +394,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
+                        CheckInterstitialCP2();
 					} break;
 
 					// Coming from PLAY screen
