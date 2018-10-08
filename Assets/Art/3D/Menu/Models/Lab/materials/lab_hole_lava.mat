@@ -6,11 +6,11 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: lab_lava
-  m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: ADDITIVE_BLEND BLENDMODE_ALPHABLEND BLEND_TEXTURE DISSOLVE_NONE
-    EMISSIVE_NONE EXTENDED_PARTICLES MAINCOLOR_TEXTURE NOISE_TEXTURE NOISE_TEXTURE_EMISSION
-    VERTEXCOLOR_NONE _ZWRITE_ON
+  m_Name: lab_hole_lava
+  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
+  m_ShaderKeywords: ADDITIVE_BLEND BLENDMODE_ALPHABLEND BLEND_TEXTURE EMISSIVE_NONE
+    EXTENDED_PARTICLES MAINCOLOR_TEXTURE NOISE_TEXTURE NOISE_TEXTURE_EMISSION VERTEXCOLOR_NONE
+    _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -61,7 +61,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 52087b35a5c22f447a65daff361e0a2d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5bba23ad82071774aae899ebf28d815b, type: 3}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _NormalTex:
@@ -93,7 +93,7 @@ Material:
     - _BlendMode: 3
     - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
-    - _ColorMultiplier: 8
+    - _ColorMultiplier: 4.87
     - _Cull: 2
     - _CutOff: 0.5
     - _Cutoff: 0.5
@@ -102,7 +102,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 10
-    - _EmissionSaturation: 1.36
+    - _EmissionSaturation: 1
     - _EmissivePower: 1
     - _EnableAdditiveBlend: 1
     - _EnableAlphaDissolve: 0
@@ -158,7 +158,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BackColor: {r: 0, g: 0, b: 0, a: 0}
-    - _BasicColor: {r: 0, g: 0.7205882, b: 0.12423937, a: 0.456}
+    - _BasicColor: {r: 0, g: 0.7205882, b: 0.30314395, a: 0.456}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
