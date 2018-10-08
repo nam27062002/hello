@@ -309,11 +309,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (!AreSDKsInitialised) {
             CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
             InitDNA(settingsInstance);
-            InitAppsFlyer(settingsInstance);
-
-            if (FeatureSettingsManager.instance.IsCP2Enabled()) {
-                InitCP2();
-            }
+            InitAppsFlyer(settingsInstance);            
 
             AreSDKsInitialised = true;
         }
@@ -396,50 +392,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             TrackingManager.SharedInstance.Initialise(kTrackingConfig);
         }
-    }
-
-    private void InitCP2() {
-        // At the moment CP2 doesn't support api level 19 (it uses a function that doesn't exist under api level 19)
-#if !UNITY_EDITOR && UNITY_ANDROID
-        var clazz = new AndroidJavaClass("android.os.Build$VERSION");
-        if (clazz != null)
-        {
-            int apiLevel = clazz.GetStatic<int>("SDK_INT");
-
-            if (apiLevel < 19)
-            {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                    ControlPanel.Log("CP2 can't be initialized because apiLevel (" + apiLevel + ") is lower than 19");
-
-                return;
-            }
-        }
-#endif
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-            ControlPanel.Log("INIT CP2......");
-
-        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-        if (settingsInstance != null) {
-            int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
-            int playerProgress = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
-            string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
-            if (string.IsNullOrEmpty(countryCode)) {
-                countryCode = "UNKNOWN";
-            }
-
-            CP2Manager.CrossPromotionConfig kCrossPromotionConfig = new CP2Manager.CrossPromotionConfig();
-            kCrossPromotionConfig.m_strLocalCP2DataPath = "data.zip";
-            kCrossPromotionConfig.m_bIsDEVEnvironment = (settingsInstance.m_iBuildEnvironmentSelected != (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);
-            kCrossPromotionConfig.m_strGameCode = "728";
-            kCrossPromotionConfig.m_strAdZone = "7: Gameplay to Main Menu loading";
-            kCrossPromotionConfig.m_strCountry = countryCode;
-            kCrossPromotionConfig.m_strLevelReached = "" + playerProgress;
-            kCrossPromotionConfig.m_strIAPCount = "" + totalPurchases;
-
-            CP2Manager.SharedInstance.Initialise(kCrossPromotionConfig);
-        }
-    }
+    }    
 
     public override void Update() {
         switch (State) {
@@ -460,6 +413,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 #endif
             {
                 State = EState.SessionStarted;
+
+				// CP2 needs session in ubiservices to be created before being initialised
+				HDCP2Manager.Instance.Initialise();
             }
             break;
 
@@ -933,7 +889,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_ConsentPopupDisplay(bool _sourceSettings) {
-        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Home_Page");
+        Track_ConsentPopupDisplay((_sourceSettings) ? "Settings_Page" : "Homepage");
     }
 
     public override void Notify_ConsentPopupAccept(int _age, bool _enableAnalytics, bool _enableMarketing, string _modVersion, int _duration) {
@@ -1199,7 +1155,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
     public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
     {
         Track_ExperimentApplied(experimentName, experimentGroup);        
-    }    
+    }
+    #endregion
+
+    #region animoji
+    private string dragon_name;
+    private int recordings;
+    private int duration;
+    public override void Notify_AnimojiStart()
+    {
+        dragon_name = InstanceManager.menuSceneController.selectedDragon;
+        recordings = 0;
+        duration = (int)Time.realtimeSinceStartup;
+    }
+    public override void Notify_AnimojiRecord()
+    {
+        recordings++;
+    }
+    public override void Notify_AnimojiExit()
+    {
+        Track_AnimojiEvent(dragon_name, recordings, (int)(Time.realtimeSinceStartup - duration));
+    }
     #endregion
 
     #region track	
@@ -1991,6 +1967,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);       
     }
 
+    
+
+	private void Track_AnimojiEvent(string dragonName, int recordings, int duration)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_Animoji_event = dragon name:" + dragonName + " recordings = " + recordings + " duration secs = " + duration);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.animojis");
+        {
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_RECORDINGS, recordings);
+            e.data.Add(TRACK_PARAM_DURATION, duration);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2031,6 +2023,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_DEATH_TYPE = "deathType";
     private const string TRACK_PARAM_DELTA_XP = "deltaXp";
     private const string TRACK_PARAM_DEVICE_PROFILE = "deviceProfile";
+    private const string TRACK_PARAM_DRAGON = "dragon";
     private const string TRACK_PARAM_DRAGON_PROGRESSION = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN = "dragonSkin";
     private const string TRACK_PARAM_DURATION = "duration";
@@ -2106,6 +2099,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RANK = "rank";
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
+    private const string TRACK_PARAM_RECORDINGS = "recordings";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";

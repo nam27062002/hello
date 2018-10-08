@@ -104,13 +104,21 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		if (FeatureSettingsManager.IsDebugEnabled)
 			AdProvider.Log("ShowInterstitial processing...");
 
-        GetAdProvider().ShowInterstitial(onShowInterstitial);       
+        AdProvider adProvider = GetAdProvider();        
+        CurrentAdPurpose = EAdPurpose.INTERSTITIAL;
+
+        // Ad has been requested is tracked
+        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(CurrentAdPurpose), Track_EAdPurposeToRewardType(CurrentAdPurpose), true, adProvider.GetId());
+
+        adProvider.ShowInterstitial(onShowInterstitial);       
 	}	
 
     private void onShowInterstitial(bool giveReward, int duration, string msg)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
+
+        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 
         if ( giveReward ){
             PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, 0);
@@ -189,18 +197,19 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		GetAdProvider().ShowDebugInfo();
 	}
 
-#region track    
+    #region track    
     private string Track_EAdPurposeToAdType(EAdPurpose adPurpose)
     {
-        return adPurpose.ToString();
+        return (adPurpose == EAdPurpose.INTERSTITIAL) ? "Display_Video" : adPurpose.ToString();        
     }
 
     private string Track_EAdPurposeToRewardType(EAdPurpose adPurpose)
     {
-        // Same string is sent for RewardType and AdType
-        return Track_EAdPurposeToAdType(adPurpose);
+        // Must be empty for interstitial videos and the same as AdType for rewarded videos.
+        return (adPurpose == EAdPurpose.INTERSTITIAL) ? "" : Track_EAdPurposeToAdType(adPurpose);
     }
-#endregion
+    #endregion
+
     #region interstitial
 
     public bool IsValidUserForInterstitials()

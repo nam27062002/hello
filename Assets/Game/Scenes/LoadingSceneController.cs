@@ -738,7 +738,7 @@ public class LoadingSceneController : SceneController {
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
-
+				              
                 // Initialize managers needing data from the loaded profile
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
