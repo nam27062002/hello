@@ -38,14 +38,19 @@ public class DragonElectricPowers : MonoBehaviour {
     ParticleSystem[] m_lightningPS = new ParticleSystem[NUM_LIGHTNINGS];
 
     public Renderer m_boostRenderer;
-    protected Material[] m_boostMaterials;
-    protected int m_boostMaterialCount;
+    protected Material m_boostMaterial;
     private float m_boostDelta = 0;
 
     private void Awake()
     {
-        m_boostMaterials = m_boostRenderer.materials;
-        m_boostMaterialCount = m_boostRenderer.materials.Length;
+        Material[] mats = m_boostRenderer.materials;
+        m_boostMaterial = mats[0];
+        int max = mats.Length;
+        for (int i = 0; i < max; i++)
+        {
+            mats[i] = m_boostMaterial;
+        }
+        m_boostRenderer.materials = mats;
         m_boostDelta = 0;
     }
 
@@ -193,11 +198,7 @@ public class DragonElectricPowers : MonoBehaviour {
 			}
 		}
 
-        for (int i = 0; i < m_boostMaterialCount; i++)
-        {
-            m_boostRenderer.materials[i].SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);
-        }
-        
+        m_boostMaterial.SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);        
 
 		if ( m_motion.IsInsideWater() ){
 			m_extraRadius += Time.deltaTime;
