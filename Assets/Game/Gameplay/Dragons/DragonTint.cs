@@ -82,22 +82,25 @@ public class DragonTint : MonoBehaviour
         Dictionary<string, List<Renderer>> disguiseRenderers = new Dictionary<string, List<Renderer>>();
 
 
-		if ( m_renderers != null )
+		if ( m_renderers != null)
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
+            
 			Renderer r = m_renderers[i];
-			Material mat = r.material;
+            Material mat = r.material;
 			string shaderName = mat.shader.name;
 			if ( shaderName.Contains("Dragon standard") )
 			{
 				if ( r.tag.Equals("DragonBody") )
 				{
-					bodyMaterial = mat;
+                    if ( bodyMaterial == null )
+					    bodyMaterial = mat;
 					bodyRenderers.Add( r );
 				}
 				else if ( r.tag.Equals("DragonWings") )
 				{
-					wingsMaterial = mat;
+                    if ( wingsMaterial == null )
+					    wingsMaterial = mat;
 					wingsRenderers.Add( r );
 				}
 				else

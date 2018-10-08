@@ -38,11 +38,19 @@ public class DragonElectricPowers : MonoBehaviour {
     ParticleSystem[] m_lightningPS = new ParticleSystem[NUM_LIGHTNINGS];
 
     public Renderer m_boostRenderer;
-    protected Material m_boostMaterial;
+    protected Material[] m_boostMaterials;
+    protected int m_boostMaterialCount;
     private float m_boostDelta = 0;
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
+        m_boostMaterials = m_boostRenderer.materials;
+        m_boostMaterialCount = m_boostRenderer.materials.Length;
+        m_boostDelta = 0;
+    }
+
+    // Use this for initialization
+    void Start () {
 
         for (int i = 0; i < NUM_LIGHTNINGS; i++)
         {
@@ -79,36 +87,16 @@ public class DragonElectricPowers : MonoBehaviour {
             m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
-
-        int max = m_boostRenderer.materials.Length;
-        m_boostMaterial = m_boostRenderer.material;
-        for (int i = 0; i < max; i++)
-        {
-            m_boostRenderer.materials[i] = m_boostMaterial;
-        }
-        m_boostDelta = 0;
     }
-    
-    
 	
 	// Update is called once per frame
 	void Update () {
 
         int circleAreaCount = m_circleAreas.Count; 
 
-        // BOOST VIEW CONTROL
-        if ( m_boost.IsBoostActive() )
-        {
-            m_boostDelta = Mathf.Lerp(m_boostDelta, 0.37f, Time.deltaTime * 10);
-        }
-        else
-        {
-            m_boostDelta = Mathf.Lerp(m_boostDelta, 0, Time.deltaTime * 10);
-        }
-        m_boostMaterial.SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);
-
 		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0.37f, Time.deltaTime * 10);
             if (m_timer <= 0)
             {
                 m_timer = m_minTimerBetweenKills;
@@ -197,11 +185,19 @@ public class DragonElectricPowers : MonoBehaviour {
 		}
 		else
 		{
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0, Time.deltaTime * 10);
+        
 			if (m_active)
 			{
 				m_active = false;
 			}
 		}
+
+        for (int i = 0; i < m_boostMaterialCount; i++)
+        {
+            m_boostRenderer.materials[i].SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);
+        }
+        
 
 		if ( m_motion.IsInsideWater() ){
 			m_extraRadius += Time.deltaTime;
