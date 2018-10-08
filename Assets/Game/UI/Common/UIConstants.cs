@@ -104,7 +104,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_uiSpritesheetPath; }
 	}
 
-	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Disguises/";
+	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Dragons/Disguises/";
 	public static string DISGUISE_ICONS_PATH {
 		get { return instance.m_disguiseIconsPath; }
 	}
