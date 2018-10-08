@@ -292,16 +292,19 @@ public class DragonDataSpecial : IDragonData {
         StatData healthStat = GetStat(Stat.HEALTH);
         healthStat.maxLevel = _def.GetAsInt("hpBonusSteps", 10);
         healthStat.valueRange = _def.GetAsRange("hpBonus");
+        healthStat.valueRange *= 0.01f;
 		healthStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "health");
         
         StatData speedStat = GetStat(Stat.SPEED);
         speedStat.maxLevel = _def.GetAsInt("speedBonusSteps", 10);
         speedStat.valueRange = _def.GetAsRange("speedBonus");
+        speedStat.valueRange *= 0.01f;
 		speedStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "speed");
         
         StatData energyData = GetStat(Stat.ENERGY);
         energyData.maxLevel = _def.GetAsInt("boostBonusSteps", 10);
         energyData.valueRange = _def.GetAsRange("boostBonus");
+        energyData.valueRange *= 0.01f;
 		energyData.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "energy");
     }
 
