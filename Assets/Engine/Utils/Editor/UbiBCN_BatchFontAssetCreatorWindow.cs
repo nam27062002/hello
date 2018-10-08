@@ -585,7 +585,8 @@ namespace BatchFontCreator
 						_container.output_feedback = missingGlyphReport;
 				} else {
 					// [AOC] Add character to the glyph report
-					addedGlyphReport += '\n' + (char)m_font_glyphInfo[i].id;
+					//addedGlyphReport += '\n' + (char)m_font_glyphInfo[i].id;
+					addedGlyphReport += "\n" + (char)m_font_glyphInfo[i].id;
 				}
             }
 
