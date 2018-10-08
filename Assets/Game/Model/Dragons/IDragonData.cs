@@ -416,8 +416,21 @@ public abstract class IDragonData : IUISelectorItem {
 	/// Obtain the sku of a given Dragon Tier.
 	/// </summary>
 	/// <returns>The sku matching the requested tier.</returns>
-	/// <param name="_tier">Tier to be checked.</param>
+	/// <param name="_tier">Tier to be converted.</param>
 	public static string TierToSku(DragonTier _tier) {
 		return "tier_" + ((int)_tier);
+	}
+
+	/// <summary>
+	/// Obtain the Tier enum value from its sku.
+	/// </summary>
+	/// <returns>The tier enum value corresponding to the given tier sku.</returns>
+	/// <param name="_tierSku">Tier sku to be converted.</param>
+	public static DragonTier SkuToTier(string _tierSku) {
+		DefinitionNode tierDefinition = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, _tierSku);
+		if(tierDefinition != null) {
+			return (DragonTier)tierDefinition.GetAsInt("order");
+		}
+		return DragonTier.COUNT;
 	}
 }
