@@ -4,6 +4,9 @@ struct appdata_t {
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
+#ifdef VERTEXOFFSET
+	float4 color : COLOR;
+#endif
 };
 
 struct v2f {
@@ -16,7 +19,7 @@ struct v2f {
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
-#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE)
+#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE) || defined(VERTEXOFFSET)
 	fixed2 screenPos : TEXCOORD1;
 #endif
 };
@@ -91,8 +94,8 @@ v2f vert(appdata_t v)
 	v2f o;
 
 #if defined(VERTEXOFFSET)
-	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
-	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
+	float smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
+	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
 #endif
 //	v.vertex.x *= 0.25;
 	o.vertex = UnityObjectToClipPos(v.vertex);
