@@ -46,6 +46,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		Messenger.AddListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		m_dragonLoader.onDragonLoaded += OnDragonPreviewLoaded;
+
+		// Destroy any loaded dragon preview
+		UnloadDragonPreview();
 	}
 
 	/// <summary>

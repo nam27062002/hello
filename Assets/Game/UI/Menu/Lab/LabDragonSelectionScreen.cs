@@ -32,6 +32,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] private Localizer m_unlockInfoText = null;
 	[Space]
+	[SerializeField] private Localizer m_upgradeLockedInfoText = null;
+	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
 	
 	//------------------------------------------------------------------------//
@@ -59,13 +61,6 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 			// Link loading UI - will be controlled by the 3D scene
 			scene3d.loadingUI = m_loadingUI;
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
 	}
 
 	/// <summary>
