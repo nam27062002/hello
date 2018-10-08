@@ -34,6 +34,9 @@ public class UITooltip : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private RectTransform m_arrow = null;
 	[SerializeField] private ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
+	[Separator("Optional")]
+	[SerializeField] private TMPro.TextMeshProUGUI m_titleText = null;
+	[SerializeField] private TMPro.TextMeshProUGUI m_messageText = null;
 
 	// Other references
 	private ShowHideAnimator m_animator = null;
@@ -77,6 +80,27 @@ public class UITooltip : MonoBehaviour {
 				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, _offset);
 				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, _offset);
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// Initialize the tooltip with the given texts.
+	/// If the tooltip has no textfields assigned, will be ignored.
+	/// If a text is left empty, its corresponding textfield will be disabled.
+	/// </summary>
+	/// <param name="_title">Title string.</param>
+	/// <param name="_text">Text string.</param>
+	public void InitWithText(string _title, string _text) {
+		// Title
+		if(m_titleText != null) {
+			m_titleText.text = _title;
+			m_titleText.gameObject.SetActive(!string.IsNullOrEmpty(_title));
+		}
+
+		// Message
+		if(m_messageText != null) {
+			m_messageText.text = _text;
+			m_messageText.gameObject.SetActive(!string.IsNullOrEmpty(_text));
 		}
 	}
 
