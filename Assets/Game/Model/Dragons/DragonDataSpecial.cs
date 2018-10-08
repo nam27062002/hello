@@ -433,7 +433,7 @@ public class DragonDataSpecial : IDragonData {
 		m_pets.Clear();
 		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
 
-		m_disguise = "";
+		m_disguise = GetDefaultDisguise(m_def.sku).sku;
 		m_persistentDisguise = m_disguise;
 	}
     
