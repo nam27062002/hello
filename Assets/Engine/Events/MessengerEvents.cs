@@ -241,6 +241,11 @@ public enum MessengerEvents {
 	TIMES_UP,
 	TARGET_REACHED,
 
+	// Lab/Special Dragons
+	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
+	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
+	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+
 	COUNT
 }
 
