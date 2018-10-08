@@ -167,6 +167,7 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[] { "Rules/dragonTierDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_PROGRESSION, new string[] { "Rules/dragonProgressionDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, new string[] { "Rules/dragonHealthModifiersDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_STATS, new string[] { "Rules/dragonStatsDefinitions" });
 
         // Entites
         kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions" });
