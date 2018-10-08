@@ -11,7 +11,8 @@ public class DragonElectricPowers : MonoBehaviour {
     public float m_waterMultiplier = 2;
     public float m_chainRadiusCheck = 2;
     public float m_blastRadius = 2;
-    
+    public string m_blastParticle = "Dragon/PS_ElectricExplosion";
+    public ParticleSystem m_blastParticleSystem;
     
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
@@ -30,10 +31,15 @@ public class DragonElectricPowers : MonoBehaviour {
     public GameObject m_tailDown;
 
     public GameObject m_lightningPrefab;
+    public string m_lightningSound;
 
     private const int NUM_LIGHTNINGS = 3;
     GameObject[] m_lightningInstances = new GameObject[NUM_LIGHTNINGS];
     ParticleSystem[] m_lightningPS = new ParticleSystem[NUM_LIGHTNINGS];
+
+    public Renderer m_boostRenderer;
+    protected Material m_boostMaterial;
+    private float m_boostDelta = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -67,12 +73,39 @@ public class DragonElectricPowers : MonoBehaviour {
 
         m_tailUp.SetActive( m_powerLevel > 0 );
         m_tailDown.SetActive( m_powerLevel > 1 );
-	}
+        
+        if (m_powerLevel >= 2)
+        {
+            m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
+            m_blastParticleSystem.gameObject.SetActive(true);
+        }
+
+        int max = m_boostRenderer.materials.Length;
+        m_boostMaterial = m_boostRenderer.material;
+        for (int i = 0; i < max; i++)
+        {
+            m_boostRenderer.materials[i] = m_boostMaterial;
+        }
+        m_boostDelta = 0;
+    }
+    
+    
 	
 	// Update is called once per frame
 	void Update () {
 
         int circleAreaCount = m_circleAreas.Count; 
+
+        // BOOST VIEW CONTROL
+        if ( m_boost.IsBoostActive() )
+        {
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0.37f, Time.deltaTime * 10);
+        }
+        else
+        {
+            m_boostDelta = Mathf.Lerp(m_boostDelta, 0, Time.deltaTime * 10);
+        }
+        m_boostMaterial.SetFloat( GameConstants.Material.OPACITY_SATURATION , m_boostDelta);
 
 		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
@@ -104,7 +137,10 @@ public class DragonElectricPowers : MonoBehaviour {
                             SpawnLightning(0, m_circleAreas[i].center, startingPos);
                             // BLAST!!
                             if (m_powerLevel >= 2)
-                            {   
+                            {
+                                // Spawn particle!
+                                m_blastParticleSystem.transform.position = startingPos;
+                                m_blastParticleSystem.Play();
                                 m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius * m_extraRadius, m_checkEntities);
                                 for (int j = 0; j < m_numCheckEntities; j++)
                                 {
@@ -206,5 +242,10 @@ public class DragonElectricPowers : MonoBehaviour {
         m_lightningInstances[index].transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         m_lightningInstances[index].transform.localScale = GameConstants.Vector3.one * dir.magnitude * 0.5f;
         m_lightningPS[index].Play();
+        
+        if (!string.IsNullOrEmpty(m_lightningSound))
+            AudioController.Play( m_lightningSound, transform );
     }
+    
+    
 }
