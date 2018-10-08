@@ -152,6 +152,8 @@ public class CircularLayout : MonoBehaviour {
 	/// Editor helper.
 	/// </summary>
 	private void OnDrawGizmosSelected() {
+		if(!this.isActiveAndEnabled) return;
+
 		RectTransform rt = this.transform as RectTransform;
 		Handles.matrix = rt.localToWorldMatrix;
 		Handles.color = Colors.WithAlpha(Colors.skyBlue, 0.25f);

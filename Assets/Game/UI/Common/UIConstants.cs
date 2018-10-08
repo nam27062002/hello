@@ -159,6 +159,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_liveEventsIconsPath; }
 	}
 
+	[SerializeField] private string m_dragonStatsIconsPath = "UI/Metagame/Dragons/Stats/";
+	public static string DRAGON_STATS_ICONS_PATH {
+		get { return instance.m_dragonStatsIconsPath; }
+	}
+
 	[SerializeField] private string m_leagueIconsPath = "UI/Metagame/Leagues/";
 	public static string LEAGUE_ICONS_PATH {
 		get { return instance.m_leagueIconsPath; }

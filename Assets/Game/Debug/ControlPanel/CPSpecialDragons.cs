@@ -13,6 +13,10 @@ public class CPSpecialDragons : MonoBehaviour {
     public TMPro.TextMeshProUGUI m_specialSpeedBoostLevelLabel;
     public TMPro.TextMeshProUGUI m_specialEnergyBoostLevelLabel;
 
+	[Space]
+	public CPBoolPref m_useSpecialToggle = null;
+	public CanvasGroup m_interactableGroup = null;
+
     public void Awake()
     {
         m_specialPowerLevelLabel.text = PlayerPrefs.GetInt(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL).ToString(); 
@@ -30,9 +34,12 @@ public class CPSpecialDragons : MonoBehaviour {
             }
         }
     }
-    
 
-    public void SetSpecialDragon( int _item  )
+	public void OnEnable() {
+		m_interactableGroup.interactable = Prefs.GetBoolPlayer(m_useSpecialToggle.id);
+	}
+
+	public void SetSpecialDragon( int _item  )
     {
         PlayerPrefs.SetString(DebugSettings.SPECIAL_DRAGON_SKU, m_specialDragonsDropDown.options[_item].text );
     }
@@ -102,4 +109,18 @@ public class CPSpecialDragons : MonoBehaviour {
         PlayerPrefs.SetInt(param, level );
     }
     
+	public void OnResetSpecialDragons() {
+		List<IDragonData> dragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);
+		if(dragons != null) {
+			int i;
+			int count = dragons.Count;
+			for(i = 0; i < count; i++) {
+				// Reset dragon data
+				dragons[i].ResetLoadedData();
+			}
+
+			// Save persistence
+			PersistenceFacade.instance.Save_Request(false);
+		}
+	}
 }

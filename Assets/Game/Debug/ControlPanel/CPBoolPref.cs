@@ -24,6 +24,9 @@ public class CPBoolPref : CPPrefBase {
 	[Space]
 	[SerializeField] private bool m_defaultValue = false;
 	[SerializeField] private Toggle m_toggle;
+	public Toggle toggle {
+		get { return m_toggle; }
+	}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
