@@ -4,6 +4,9 @@ struct appdata_t {
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
+#ifdef VERTEXOFFSET
+	float4 color : COLOR;
+#endif
 };
 
 struct v2f {
@@ -16,7 +19,7 @@ struct v2f {
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
-#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE)
+#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE) || defined(VERTEXOFFSET)
 	fixed2 screenPos : TEXCOORD1;
 #endif
 };
@@ -51,6 +54,11 @@ uniform float4 _SecondLightColor;
 uniform float _SpecExponent;
 #endif
 
+
+#if defined(VERTEXOFFSET)
+uniform float _VOAmplitude;
+uniform float _VOSpeed;
+#endif
 
 #if defined (FXLAYER_REFLECTION)
 uniform samplerCUBE _ReflectionMap;
@@ -91,8 +99,35 @@ v2f vert(appdata_t v)
 	v2f o;
 
 #if defined(VERTEXOFFSET)
-	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
-	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
+	float smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
+//	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
+
+	float wave = sin((_Time.y * _VOSpeed) + v.vertex.y + v.vertex.x) * smooth * _VOAmplitude;
+
+	float4 axis = float4(
+#if defined(VERTEXOFFSETX)
+		1.0,
+#else
+		0.0,
+#endif
+
+#if defined(VERTEXOFFSETY)
+		1.0,
+#else
+		0.0,
+#endif
+
+#if defined(VERTEXOFFSETZ)
+		1.0,
+#else
+		0.0,
+#endif
+		0.0
+	);
+
+	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	v.vertex += axis * wave;
+
 #endif
 //	v.vertex.x *= 0.25;
 	o.vertex = UnityObjectToClipPos(v.vertex);
