@@ -55,6 +55,11 @@ uniform float _SpecExponent;
 #endif
 
 
+#if defined(VERTEXOFFSET)
+uniform float _VOAmplitude;
+uniform float _VOSpeed;
+#endif
+
 #if defined (FXLAYER_REFLECTION)
 uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
@@ -95,7 +100,34 @@ v2f vert(appdata_t v)
 
 #if defined(VERTEXOFFSET)
 	float smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
-	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
+//	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
+
+	float wave = sin((_Time.y * _VOSpeed) + v.vertex.y + v.vertex.x) * smooth * _VOAmplitude;
+
+	float4 axis = float4(
+#if defined(VERTEXOFFSETX)
+		1.0,
+#else
+		0.0,
+#endif
+
+#if defined(VERTEXOFFSETY)
+		1.0,
+#else
+		0.0,
+#endif
+
+#if defined(VERTEXOFFSETZ)
+		1.0,
+#else
+		0.0,
+#endif
+		0.0
+	);
+
+	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	v.vertex += axis * wave;
+
 #endif
 //	v.vertex.x *= 0.25;
 	o.vertex = UnityObjectToClipPos(v.vertex);
