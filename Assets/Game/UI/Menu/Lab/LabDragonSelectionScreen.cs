@@ -33,6 +33,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[SerializeField] private Localizer m_unlockInfoText = null;
 	[Space]
 	[SerializeField] private Localizer m_upgradeLockedInfoText = null;
+	[SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
 	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
 	
@@ -146,6 +147,11 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Dragon desc
 		if(m_dragonDescText != null) {
 			m_dragonDescText.Localize(_dragonData.def.GetAsString("tidDesc"));
+		}
+
+		// Dragon stats
+		for(int i = 0; i < m_stats.Length; ++i) {
+			m_stats[i].InitFromData(_dragonData as DragonDataSpecial);
 		}
 	}
 

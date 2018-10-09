@@ -22,6 +22,13 @@ public class LabStatUpgrader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private enum AnimState {
+		READY = 0,
+		LOCKED = 1,
+		MAXED = 2
+	}
+
+	private const string ANIM_STATE_PARAM_ID = "state";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -30,13 +37,13 @@ public class LabStatUpgrader : MonoBehaviour {
 	[HideEnumValues(false, true)]
 	[SerializeField] private DragonDataSpecial.Stat m_stat = DragonDataSpecial.Stat.HEALTH;
 	[Space]
-	[SerializeField] private Image[] m_icons = new Image[0];
 	[SerializeField] private Animator m_stateAnimator = null;
 	[Space]
 	[SerializeField] private Image m_progressBar = null;
 	[Comment("Children will be considered separators. If more separators are needed, last child will be clone as many times as neede.")]
 	[SerializeField] private CircularLayout m_separatorsContainer = null;
 	[Space]
+	[SerializeField] private Image[] m_icons = new Image[0];
 	[SerializeField] private Localizer m_priceText = null;
 	[SerializeField] private NumberTextAnimator m_valueText = null;
 	[SerializeField] private RectTransform m_feedbackAnchor = null;
@@ -80,41 +87,6 @@ public class LabStatUpgrader : MonoBehaviour {
 		if(m_valueText != null) {
 			m_valueText.CustomTextSetter = OnSetValueText;
 		}
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
 	}
 
 	//------------------------------------------------------------------------//
@@ -218,6 +190,25 @@ public class LabStatUpgrader : MonoBehaviour {
 				StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true),
 				StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
 			);
+		}
+
+		// Change animation state
+		if(m_stateAnimator != null) {
+			// Figure out state for this dragon/stat combo
+			AnimState state = AnimState.READY;
+			
+			// Is it maxed out?
+			if(m_statData.level == m_statData.maxLevel) {
+				state = AnimState.MAXED;
+			}
+
+			// Is it locked? (don't check if maxed out)
+			else if(!m_dragonData.CanUpgradeStats()) {
+				state = AnimState.LOCKED;
+			}
+
+			// Apply!
+			m_stateAnimator.SetInteger(ANIM_STATE_PARAM_ID, (int)state);
 		}
 	}
 
