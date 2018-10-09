@@ -292,7 +292,8 @@
 				{"storeInstalled": {"Status": "OK"}},
 				{"isHacker": {"Status": "OK"}},
 				{"deviceProfile": {"Status": "OK"}},
-				{"initialQuality": {"Status": "OK"}}
+				{"initialQuality": {"Status": "OK"}},
+        {"trackingID": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -424,6 +425,17 @@
                 "etl"
             ]
         },
+		"custom.game.animojis": {
+            "Parameters": [
+				{"dragon": {"Status": "OK"}},
+				{"recordings": {"Status": "OK"}},
+				{"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -517,6 +529,26 @@
           "etl"
         ]
       },
+	  "custom.game.ratethisapp": {
+        "Parameters": [
+          { "rateResult": { "Status": "OK" } },
+		  { "dragonProgression": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },
+	  "custom.general.abtest.experiment": {
+        "Parameters": [
+          { "experimentName": { "Status": "OK" } },
+		  { "experimentGroup": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },	  
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -913,7 +945,7 @@
             "Values": []
         },
         "acq_marketing_id": {
-            "Type": "TRACK_DNA_MARKETING_ID",
+            "Type": "STRING:64",
             "Values": []
         },
         "adsType": {
@@ -1241,7 +1273,31 @@
         "Values": []
       },
       "source": {
+        "Type": "STRING:20",
+        "Values": []
+      },      
+	  "trackingID": {
+        "Type": "STRING:80",
+        "Values": []
+      },
+	  "rateResult": {
         "Type": "STRING:5",
+        "Values": []
+      },
+	  "experimentName": {
+        "Type": "STRING:30",
+        "Values": []
+      },
+	  "experimentGroup": {
+        "Type": "STRING:30",
+        "Values": []
+      },
+      "dragon": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+      "recordings": {
+        "Type": "INT:4",
         "Values": []
       }
     }

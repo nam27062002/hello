@@ -392,7 +392,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	private void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
 		}
 	}
 
@@ -413,7 +413,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -422,7 +422,17 @@ public class TournamentBuildScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournament.data.m_eventId == _eventId
+                )
+                {
+                    m_tournament.ForceFinishByError();
+                }
 		}
 	}
 }

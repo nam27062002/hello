@@ -231,8 +231,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 
 	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {}
 
-	public virtual bool SpawnersCheckCurrents(){ return false; }
-
 	public void DrawStateGizmos() {}
 
     /*

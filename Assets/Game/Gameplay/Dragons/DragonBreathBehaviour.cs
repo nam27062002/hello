@@ -422,7 +422,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	/// </summary>
 	/// <param name="_offset">The amount of fury to be added/removed.</param>
 	public void AddFury(float _offset) {
-		if ( m_state != State.BREATHING && m_state != State.PREWARM_BREATH) {
+		if ( m_state != State.BREATHING && m_state != State.PREWARM_BREATH && m_dragon.form != DragonPlayer.Form.MUMMY) {
 			m_currentFury = Mathf.Clamp(m_currentFury + _offset, 0, m_furyMax);
 		}
 	}
@@ -548,6 +548,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
     		}break;
 			case State.PREWARM_BREATH:
     		{
+                // Reset megafire counter to 0 as soon as it starts
+                SetMegaFireValue(0);
+            
 				m_prewarmFuryTimer = m_prewarmDuration;
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;

@@ -55,10 +55,14 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
+        m_data = new HDTournamentData();
+        m_tournamentData = m_data as HDTournamentData;
+        m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
+        
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
-
+        
 		m_isLeaderboardReady = false;
 	}
 
@@ -66,17 +70,13 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Destructor
 	/// </summary>
 	~HDTournamentManager() {
+        m_data = null;
+        m_tournamentData = null;
+        m_tournamentDefinition = null;
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
-
-	public override void BuildData()
-    {
-		m_data = new HDTournamentData();
-		m_tournamentData = m_data as HDTournamentData;
-		m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
-    }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
@@ -117,7 +117,6 @@ public class HDTournamentManager : HDLiveEventManager {
 	        }
 	        else
 	        {
-	            HDLiveEventData data = GetEventData();
 	            GameServerManager.SharedInstance.HDEvents_GetLeaderboard(data.m_eventId, LeaderboardResponse);    
 	        }
 			ret = true;
@@ -142,14 +141,14 @@ public class HDTournamentManager : HDLiveEventManager {
 		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			HDTournamentData data = m_data as HDTournamentData;
-            if (data != null )
+			HDTournamentData tournamentData = m_data as HDTournamentData;
+            if (tournamentData != null )
             {
             	if ( responseJson.ContainsKey("c") )// Is cheater
             	{
             		AntiCheatsManager.MarkUserAsCheater();
             	}
-            	data.ParseLeaderboard( responseJson );
+            	tournamentData.ParseLeaderboard( responseJson );
 				m_isLeaderboardReady = true;
 
 				// We have new leaderobard data! Reset cache timer
@@ -197,8 +196,6 @@ public class HDTournamentManager : HDLiveEventManager {
         }
         else
         {
-            HDLiveEventData data = GetEventData();
-
             	// Build
             SimpleJSON.JSONClass _build = new SimpleJSON.JSONClass();
             _build.Add("dragon", GetToUseDragon());
@@ -285,8 +282,8 @@ public class HDTournamentManager : HDLiveEventManager {
 		{
 			m_runWasValid = false;
 			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.GetEventData() as HDTournamentData;
-			HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+			HDTournamentData tournamentData = HDLiveEventsManager.instance.m_tournament.data as HDTournamentData;
+			HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
 			m_runningGoal = def.m_goal;
 
 			switch( def.m_goal.m_mode )
@@ -385,8 +382,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
     public bool UsingProgressionDragon()
     {
-		HDTournamentData data = m_data as HDTournamentData;
-    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		HDTournamentData tournamentData = m_data as HDTournamentData;
+    	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
     	bool ret = false;
     	if (string.IsNullOrEmpty( def.m_build.m_dragon))
     	{
@@ -399,8 +396,8 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		string ret;
 		// NOTE: Here we should check datas last dragon used to return as it will be the prefered dragon
-    	HDTournamentData data = m_data as HDTournamentData;
-    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	HDTournamentData tournamentData = m_data as HDTournamentData;
+    	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
     	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) ){
 			ret = def.m_build.m_dragon;
 		}else{
@@ -415,8 +412,8 @@ public class HDTournamentManager : HDLiveEventManager {
     public string GetToUseSkin()
     {
 		string ret;
-    	HDTournamentData data = m_data as HDTournamentData;
-    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+    	HDTournamentData tournamentData = m_data as HDTournamentData;
+    	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
     	if ( !string.IsNullOrEmpty( def.m_build.m_skin) )
 			ret = def.m_build.m_skin;
 		else
@@ -427,8 +424,8 @@ public class HDTournamentManager : HDLiveEventManager {
     public List<string> GetToUsePets()
     {
     	List<string> ret;
-		HDTournamentData data = m_data as HDTournamentData;
-    	HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		HDTournamentData tournamentData = m_data as HDTournamentData;
+    	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
     	if ( def.m_build.m_pets.Count > 0 )
     	{
 			ret = def.m_build.m_pets;
@@ -457,8 +454,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// </summary>
 	public long GetRunScore() {
 		
-		HDTournamentData data = m_data as HDTournamentData;
-		HDTournamentDefinition def = data.definition as HDTournamentDefinition;
+		HDTournamentData tournamentData = m_data as HDTournamentData;
+		HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
 		long ret = -1;
 		switch ( def.m_goal.m_mode )
 		{
@@ -486,8 +483,8 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// The overall best score (the one registered in the leaderboard)
 	/// </summary>
 	public long GetBestScore() {
-		HDTournamentData data = m_data as HDTournamentData;
-		return data.m_score;
+		HDTournamentData tournamentData = m_data as HDTournamentData;
+		return tournamentData.m_score;
 	}
 
 	/// <summary>

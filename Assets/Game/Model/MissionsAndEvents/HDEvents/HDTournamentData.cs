@@ -59,21 +59,8 @@ public class HDTournamentData : HDLiveEventData {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentData() {
-
-	}
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	~HDTournamentData() {
-
-	}
-
-	protected override void BuildDefinition()
-	{
-		m_definition = new HDTournamentDefinition();
-	}
-
+        m_definition = new HDTournamentDefinition();
+	}	
 
 	public override void Clean()
 	{

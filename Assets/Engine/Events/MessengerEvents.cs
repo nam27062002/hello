@@ -113,9 +113,10 @@ public enum MessengerEvents {
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
 	PLAYER_KO,					// params: DamageType _type, Transform _source
 	PLAYER_DIED,				// no params
-	PLAYER_PET_PRE_FREE_REVIVE,			// no params
+	PLAYER_PET_PRE_FREE_REVIVE,// no params
 	PLAYER_FREE_REVIVE,			// no params
-	PLAYER_REVIVE,				// no params
+    PLAYER_MUMMY_REVIVE,        // no params
+    PLAYER_REVIVE,				// no params
 	PLAYER_LEAVING_AREA,		// no params
 	PLAYER_ENTERING_AREA,		// no params
 	PLAYER_ASK_PETS_EATING,		// DragonMotion.PetsEatingTest. If one pets is still eating should put the attribute to true to let know the dragon it still cannot change area

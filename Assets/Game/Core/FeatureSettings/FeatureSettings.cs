@@ -131,8 +131,14 @@ public class FeatureSettings
     // Whether or not CP2 is enabled
     public const string KEY_CP2 = "cp2";
 
+    // Whether or not CP2 interstital is enabled
+    public const string KEY_CP2_INTERSTITIAL = "cp2Interstital";
+
+    // Min time in seconds between two consecutive interstitial
+    public const string KEY_CP2_INTERSTITIAL_FREQUENCY = "cp2InterstitialFrequency";    
+
     // Max time to wait for log in social platform to finish
-    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeou";
+    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
 
     // Examples of how to use different type datas
     /*
@@ -327,6 +333,14 @@ public class FeatureSettings
 
             key = KEY_CP2;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL_FREQUENCY;
+            data = new DataInt(key, EValueType.Int, 0);
             Datas.Add(key, data);
 
             key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;

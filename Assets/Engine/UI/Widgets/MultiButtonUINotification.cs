@@ -83,7 +83,7 @@ public class MultiButtonUINotification : MonoBehaviour {
 		if(m_notification != null) {
 			// If the button is unfolded, just hide the notification
 			if(!m_multiButton.folded) {
-				m_notification.Hide();
+				m_notification.Hide(true, true);
 			} else {
 				// Look for notification in the children
 				bool childNotifications = false;

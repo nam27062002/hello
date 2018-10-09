@@ -17,7 +17,7 @@ using System;
 /// 
 /// </summary>
 [Serializable]
-public class HDLiveEventData {
+public abstract class HDLiveEventData {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -34,7 +34,8 @@ public class HDLiveEventData {
 		JOINED,
 		REWARD_AVAILABLE,
 		FINALIZED,
-		REFUND
+		REFUND,
+        REQUIRES_UPDATE
 	};
 	public State m_state = State.NONE;
 
@@ -49,6 +50,7 @@ public class HDLiveEventData {
 			DateTime now = GameServerManager.SharedInstance.GetEstimatedServerTime();
 			switch(m_state) {
 				case State.TEASING:	return m_definition.m_startTimestamp - now;		break;
+                case State.REQUIRES_UPDATE:
 				case State.NOT_JOINED:
 				case State.JOINED:	return m_definition.m_endTimestamp - now;		break;
 				default:			return new TimeSpan();				break;
@@ -63,20 +65,7 @@ public class HDLiveEventData {
 	/// Default constructor.
 	/// </summary>
 	public HDLiveEventData() {
-		BuildDefinition();
-	}
-
-	protected virtual void BuildDefinition()
-	{
 		m_definition = new HDLiveEventDefinition();
-	}
-
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	~HDLiveEventData() {
-
 	}
 
 	/// <summary>
@@ -155,6 +144,10 @@ public class HDLiveEventData {
 			{
 				stateStr = "joined";
 			}break;
+            case State.REQUIRES_UPDATE:
+            {
+                stateStr = "requires_update";
+            }break;
 		}
 		ret.Add("status", stateStr);
 
@@ -209,6 +202,11 @@ public class HDLiveEventData {
 				{
 					m_state = State.REFUND;
 				}break;
+                case "6":
+                case "requires_update":
+                {
+                    m_state = State.REQUIRES_UPDATE;
+                }break;
 			}
 		}
 

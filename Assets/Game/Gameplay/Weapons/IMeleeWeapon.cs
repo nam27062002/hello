@@ -5,14 +5,14 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	[SerializeField] private float m_timeBetweenHits = 0.5f;
 	[SerializeField] protected DamageType m_damageType = DamageType.NORMAL;
 
-	protected Transform m_transform;
+    protected Transform m_transform;
 	private Collider[] m_weapon;
 
 	protected float m_damage;
 	public float damage { set { m_damage = value; } }
 
-	protected Entity m_entity;
-	public Entity entity { set { m_entity = value; } }
+    protected IEntity m_entity;
+    public IEntity entity { set { m_entity = value; } }
 
 	private float m_timer;
 	private float m_timerPosition;
@@ -22,9 +22,17 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	void Awake() {
 		m_transform = transform;
 		m_weapon = GetComponents<Collider>();
+
+        if (!enabled) {
+            for (int i = 0; i < m_weapon.Length; ++i) {
+                m_weapon[i].enabled = false;
+            }
+        }
+
+        OnAwake();
 	}
 
-	void OnEnable() {
+	public void EnableWeapon() {
 		for (int i = 0; i < m_weapon.Length; ++i) {
 			m_weapon[i].enabled = true;
 		}
@@ -36,14 +44,14 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 		OnEnabled();
 	}
 
-	void OnDisable() {
+    public void DisableWeapon() {
 		for (int i = 0; i < m_weapon.Length; ++i) {
 			m_weapon[i].enabled = false;
 		}
 		OnDisabled();
 	}
 
-	void Update() {
+    protected virtual void Update() {
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
 		}
@@ -55,7 +63,7 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter(Collider _other) {
+    protected virtual void OnTriggerEnter(Collider _other) {
 		if (m_timer <= 0f && _other.CompareTag("Player")) {
 			OnDealDamage();
 			m_timer = m_timeBetweenHits;
@@ -63,7 +71,8 @@ public abstract class IMeleeWeapon : MonoBehaviour {
 	}
 
 
-	//----------------------------------------------------
+    //----------------------------------------------------
+    protected abstract void OnAwake();
 	protected abstract void OnEnabled();
 	protected abstract void OnDisabled();
 	protected abstract void OnDealDamage();

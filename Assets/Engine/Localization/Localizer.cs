@@ -36,7 +36,7 @@ public class Localizer : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[Comment("Will be overwritten if the Localize(_tid, _params) method is invoked")]
-	[SerializeField] private string m_tid = "";
+	[SerializeField] protected string m_tid = "";
 	public string tid {
 		get { return m_tid; }
 	}
@@ -67,7 +67,7 @@ public class Localizer : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	public void Awake() {
+	public virtual void Awake() {
 		// Check required stuff
 		m_text = GetComponent<TextMeshProUGUI>();
 		DebugUtils.Assert(m_text != null, "Required member!");

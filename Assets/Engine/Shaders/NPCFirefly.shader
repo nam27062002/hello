@@ -16,7 +16,7 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 	{
 		Pass
 		{
-			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" "LightMode" = "ForwardBase" }
+			Tags { "Queue"="Geometry" "RenderType"="Opaque" "LightMode" = "ForwardBase" }
 			Cull Back
 			ZWrite on
 
@@ -31,6 +31,9 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+
+			#pragma multi_compile __ FREEZE
+			#pragma multi_compile __ TINT
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

@@ -38,7 +38,6 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
 
-
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"

@@ -90,6 +90,18 @@ public class DisguisesCaptureTool : CaptureTool {
 	// PARENT OVERRIDES														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Put the camera at the default position, rotation, fov.
+	/// </summary>
+	protected override void ResetCamera() {
+		m_mainCamera.transform.SetPositionAndRotation(
+			new Vector3(1f, 2f, -10f),
+			Quaternion.Euler(0f, 0f, 0f)
+		);
+
+		m_mainCamera.fieldOfView = 30f;
+	}
+
+	/// <summary>
 	/// Get the filename of the screenshot. No extension, can include subfolders.
 	/// </summary>
 	/// <returns>The filename of the screenshot.</returns>

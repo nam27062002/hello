@@ -51,8 +51,21 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private bool m_isReady;
 
-    public static float m_OriginalScreenWidth = Screen.width;
-    public static float m_OriginalScreenHeight = Screen.height;
+
+	private static Resolution m_nativeResolution = new Resolution {
+		width = Screen.width,
+		height = Screen.height,
+		refreshRate = 0
+	};
+
+	public static Resolution NativeResolution {
+		get {
+			return m_nativeResolution;
+		}	
+	}
+
+    public static int m_OriginalScreenWidth = Screen.width;
+    public static int m_OriginalScreenHeight = Screen.height;
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -71,6 +84,10 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
         m_OriginalScreenWidth = Screen.width;
         m_OriginalScreenHeight = Screen.height;
+
+		m_nativeResolution.width = m_OriginalScreenWidth;
+		m_nativeResolution.height = m_OriginalScreenHeight;
+		m_nativeResolution.refreshRate = Screen.currentResolution.refreshRate;
 
         Server_Reset();
 
@@ -1692,7 +1709,17 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2);
     }
 
-	public static bool MenuDragonsAsyncLoading
+    public bool IsCP2InterstitialEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2_INTERSTITIAL);
+    }
+
+    public int GetCP2InterstitialFrequency()
+    {
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_FREQUENCY);
+    }
+
+    public static bool MenuDragonsAsyncLoading
     {
         get
         {                  

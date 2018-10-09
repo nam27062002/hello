@@ -37,5 +37,7 @@ public enum MenuScreen {
 	TOURNAMENT_DRAGON_SETUP,
 	TOURNAMENT_REWARD,
 
+	ANIMOJI,
+
 	COUNT
 }

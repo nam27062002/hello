@@ -10,27 +10,34 @@ public class TournamentInfoScreen : MonoBehaviour {
 
 	//----------------------------------------------------------------//
 
-	[SerializeField] private TextMeshProUGUI m_timerText;
+    [SerializeField] private TextMeshProUGUI m_timerText = null;
+
+    [SeparatorAttribute("Info group")]
+    [SerializeField] private GameObject m_infoGroup = null;
+    [SerializeField] private GameObject m_infoGroupLoading = null;
 
 	[SeparatorAttribute("Goal")]
-	[SerializeField] private TextMeshProUGUI m_goalText;
-	[SerializeField] private Image m_goalIcon;
+    [SerializeField] private TextMeshProUGUI m_goalText = null;
+    [SerializeField] private Image m_goalIcon = null;
 
 	[SeparatorAttribute("Modifiers")]
-	[SerializeField] private ModifierIcon[] m_modifier;
+    [SerializeField] private ModifierIcon[] m_modifier = null;
 
 	[SeparatorAttribute("Location")]
-	[SerializeField] private GameObject m_mapContainer;
-	[SerializeField] private TextMeshProUGUI m_areaText;
-	[SerializeField] private Image m_areaIcon;
+    [SerializeField] private GameObject m_mapContainer = null;
+    [SerializeField] private TextMeshProUGUI m_areaText = null;
+    [SerializeField] private Image m_areaIcon = null;
 
 	[SeparatorAttribute("Leaderboard")]
-	[SerializeField] private TournamentLeaderboardView m_leaderboard;
+    [SerializeField] private TournamentLeaderboardView m_leaderboard = null;
 
 	[SeparatorAttribute("Rewards")]
 	[SerializeField] private GameObject m_rewardsRoot = null;
 	[SerializeField] private Transform m_rewardsContainer = null;
 	[SerializeField] private GameObject m_rewardPrefab = null;
+
+    [SeparatorAttribute("Buttons")]
+    [SerializeField] private Button m_playButton = null;
 
 
 	//----------------------------------------------------------------//
@@ -46,6 +53,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 
 	/// <summary>
@@ -54,69 +62,87 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+        Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
+
+    private void OnNewDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _error) {
+        if (m_tournament != null && m_tournament.data.m_eventId == _eventID) {
+            Refresh();
+        }
+    }
 
 	/// <summary>
 	/// Refresh all the info in the screen.
 	/// </summary>
 	void Refresh() {
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
-		m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
-		if (m_definition != null) {
-			//GOALS
-			m_goalText.text = m_tournament.GetDescription();
-			m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
+        if (m_tournament.isWaitingForNewDefinition) {
+            m_infoGroup.SetActive(false);
+            m_infoGroupLoading.SetActive(true);
+            m_playButton.interactable = false;
+        } else {
+            m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
-			//MODIFIERS
-			List<IModifierDefinition> mods = new List<IModifierDefinition>();
-			for (int i = 0; i < m_definition.m_dragonMods.Count; ++i) {
-				mods.Add(m_definition.m_dragonMods[i]);
-			}
+            m_infoGroup.SetActive(true);
+            m_infoGroupLoading.SetActive(false);
+            m_playButton.interactable = true;
 
-			for (int i = 0; i < m_definition.m_otherMods.Count; ++i) {
-				mods.Add(m_definition.m_otherMods[i]);
-			}
+            if (m_definition != null) {
+                //GOALS
+                m_goalText.text = m_tournament.GetDescription();
+                m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
 
-			for (int i = 0; i < m_modifier.Length; ++i) {
-				if (i < mods.Count) {
-					m_modifier[i].InitFromDefinition(mods[i]);
-				} else {
-					m_modifier[i].gameObject.SetActive(false);
-				}
-			}
+                //MODIFIERS
+                List<IModifierDefinition> mods = new List<IModifierDefinition>();
+                for (int i = 0; i < m_definition.m_dragonMods.Count; ++i) {
+                    mods.Add(m_definition.m_dragonMods[i]);
+                }
 
-			//MAP
-			m_mapContainer.SetActive(!string.IsNullOrEmpty(m_definition.m_goal.m_area));
-			m_areaText.text = m_definition.m_goal.m_area;
+                for (int i = 0; i < m_definition.m_otherMods.Count; ++i) {
+                    mods.Add(m_definition.m_otherMods[i]);
+                }
 
-			//LEADERBOARD
-			if (m_tournament.data.m_state <= HDLiveEventData.State.NOT_JOINED) {
-				m_leaderboard.gameObject.SetActive(false);
-			} else {
-				m_leaderboard.gameObject.SetActive(true);
-			}
+                for (int i = 0; i < m_modifier.Length; ++i) {
+                    if (i < mods.Count) {
+                        m_modifier[i].InitFromDefinition(mods[i]);
+                    } else {
+                        m_modifier[i].gameObject.SetActive(false);
+                    }
+                }
 
-			//REWARDS
-			if(m_tournament.data.m_state == HDLiveEventData.State.NOT_JOINED) {
-				m_rewardsRoot.SetActive(true);
+                //MAP
+                m_mapContainer.SetActive(!string.IsNullOrEmpty(m_definition.m_goal.m_area));
+                m_areaText.text = m_definition.m_goal.m_area;
 
-				// Clear any existing reward view
-				m_rewardsContainer.DestroyAllChildren(false);
+                //LEADERBOARD
+                if (m_tournament.data.m_state <= HDLiveEventData.State.NOT_JOINED) {
+                    m_leaderboard.gameObject.SetActive(false);
+                } else {
+                    m_leaderboard.gameObject.SetActive(true);
+                }
 
-				// Instantiate and initialize rewards views
-				for(int i = 0; i < m_definition.m_rewards.Count; ++i) {
-					GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
-					TournamentRewardView view = newInstance.GetComponent<TournamentRewardView>();
-					view.InitFromReward(m_definition.m_rewards[i]);
-				}
-			} else {
-				m_rewardsRoot.SetActive(false);
-			}
+                //REWARDS
+                if (m_tournament.data.m_state == HDLiveEventData.State.NOT_JOINED) {
+                    m_rewardsRoot.SetActive(true);
 
-			//TIMER
-			UpdatePeriodic();
-		}
+                    // Clear any existing reward view
+                    m_rewardsContainer.DestroyAllChildren(false);
+
+                    // Instantiate and initialize rewards views
+                    for (int i = 0; i < m_definition.m_rewards.Count; ++i) {
+                        GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
+                        TournamentRewardView view = newInstance.GetComponent<TournamentRewardView>();
+                        view.InitFromReward(m_definition.m_rewards[i]);
+                    }
+                } else {
+                    m_rewardsRoot.SetActive(false);
+                }
+
+                //TIMER
+                UpdatePeriodic();
+            }
+        }
 	}
 
 	/// <summary>
@@ -165,7 +191,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 		HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
 
 		// [AOC] TODO!! Select fixed or flexible build screen!
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP);
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
 	}
 
 	/// <summary>
@@ -200,7 +226,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -209,7 +235,17 @@ public class TournamentInfoScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournament.data.m_eventId == _eventId
+                )
+                {
+                    m_tournament.ForceFinishByError();
+                }
 		}
 	}
 

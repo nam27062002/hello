@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking.PlayerConnection;
 using System.Text;
-using Utils; 
+using UnityEngine.XR.iOS.Utils; 
 
 #if (UNITY_IOS || UNITY_EDITOR_OSX)
 
@@ -193,7 +193,7 @@ public class ARKitRemoteConnected : MonoBehaviour
 	{
 		serializableFromEditorMessage sfem = new serializableFromEditorMessage ();
 		sfem.subMessageId = SubMessageIds.editorInitARKit;
-		serializableARSessionConfiguration ssc = new serializableARSessionConfiguration (startAlignment, planeDetection, getPointCloud, enableLightEstimation); 
+		serializableARSessionConfiguration ssc = new serializableARSessionConfiguration (startAlignment, planeDetection, getPointCloud, enableLightEstimation, true); 
 		UnityARSessionRunOption roTracking = resetTracking ? UnityARSessionRunOption.ARSessionRunOptionResetTracking : 0;
 		UnityARSessionRunOption roAnchors = removeExistingAnchors ? UnityARSessionRunOption.ARSessionRunOptionRemoveExistingAnchors : 0;
 		sfem.arkitConfigMsg = new serializableARKitInit (ssc, roTracking | roAnchors);

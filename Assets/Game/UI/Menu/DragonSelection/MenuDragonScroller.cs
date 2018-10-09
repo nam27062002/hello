@@ -319,14 +319,21 @@ public class MenuDragonScroller : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	private void OnDragonSelected(string _sku) {
+		// Check required stuff
+		if(m_menuTransitionManager == null) return;
+		if(m_menuTransitionManager.currentScreenData == null) return;
+
 		// Move camera to the newly selected dragon
 		// If the current menu screen is not using the dragon selection 3D scene, skip animation
-		MenuScreenScene currentScene = m_menuTransitionManager.currentScreenData.scene3d;
-		MenuScreenScene dragonSelectionScene = m_menuTransitionManager.GetScreenData(MenuScreen.DRAGON_SELECTION).scene3d;
-		if(currentScene == dragonSelectionScene) {
-			FocusDragon(_sku, true);
-		} else {
-			FocusDragon(_sku, false);
+		ScreenData dragonSelectionScreenData = m_menuTransitionManager.GetScreenData(MenuScreen.DRAGON_SELECTION);
+		if(dragonSelectionScreenData != null) {
+			MenuScreenScene currentScene = m_menuTransitionManager.currentScreenData.scene3d;
+			MenuScreenScene dragonSelectionScene = dragonSelectionScreenData.scene3d;
+			if(currentScene == dragonSelectionScene) {
+				FocusDragon(_sku, true);
+			} else {
+				FocusDragon(_sku, false);
+			}
 		}
 	}
 
