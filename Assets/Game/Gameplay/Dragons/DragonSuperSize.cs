@@ -10,6 +10,9 @@ public class DragonSuperSize : MonoBehaviour {
 	protected DragonEatBehaviour m_eat;
 
 	protected float m_sizeUpMultiplier;
+    public float sizeUpMultiplier{
+        get{ return m_sizeUpMultiplier; }
+    }
 	protected float m_speedUpMultiplier;
 	protected float m_biteUpMultiplier;
 	protected bool m_invincible;

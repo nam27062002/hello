@@ -41,6 +41,8 @@ public class DragonElectricPowers : MonoBehaviour {
     protected Material m_boostMaterial;
     private float m_boostDelta = 0;
 
+    private float m_superSizeMultiplier = 1;
+
     private void Awake()
     {
         Material[] mats = m_boostRenderer.materials;
@@ -92,10 +94,16 @@ public class DragonElectricPowers : MonoBehaviour {
             m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
+        Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    private void OnDestroy()
+    {
+        Messenger.RemoveListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
+    }
+
+    // Update is called once per frame
+    void Update () {
 
         int circleAreaCount = m_circleAreas.Count; 
 
@@ -134,7 +142,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                 // Spawn particle!
                                 m_blastParticleSystem.transform.position = startingPos;
                                 m_blastParticleSystem.Play();
-                                m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius * m_extraRadius, m_checkEntities);
+                                m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)startingPos, m_blastRadius * m_extraRadius * m_superSizeMultiplier, m_checkEntities);
                                 for (int j = 0; j < m_numCheckEntities; j++)
                                 {
                                     Entity blastEntity = m_checkEntities[j];
@@ -153,7 +161,8 @@ public class DragonElectricPowers : MonoBehaviour {
                             // Chain
                             if (m_powerLevel >= 1)
                             {
-                                Entity chain1_entity = GetFirstBurnableEntity((Vector2)startingPos, m_chainRadiusCheck);
+                                float chainRadiusCheck = m_chainRadiusCheck * m_superSizeMultiplier;
+                                Entity chain1_entity = GetFirstBurnableEntity((Vector2)startingPos, chainRadiusCheck);
                                 if (chain1_entity != null)
                                 {
                                     // Burn chain 1 entity
@@ -168,7 +177,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                     // Chain Upgrade
                                     if (m_powerLevel >= 3)
                                     {
-                                        Entity chain2_entity = GetFirstBurnableEntity((Vector2)entity1Pos, m_chainRadiusCheck);
+                                        Entity chain2_entity = GetFirstBurnableEntity((Vector2)entity1Pos, chainRadiusCheck);
                                         if (chain2_entity != null)
                                         {
                                             AI.IMachine chain2_machine = chain2_entity.machine;
@@ -206,10 +215,11 @@ public class DragonElectricPowers : MonoBehaviour {
 			m_extraRadius -= Time.deltaTime;
 		}
         m_extraRadius = Mathf.Clamp(m_extraRadius, 1, m_waterMultiplier);
-        m_extraRadius = Mathf.Clamp(m_extraRadius, 1, m_waterMultiplier);
+        
+        
         for (int i = 0; i < circleAreaCount; i++)
         {
-            m_circleAreas[i].radius = m_originalRadius[i] * m_extraRadius;
+            m_circleAreas[i].radius = m_originalRadius[i] * m_extraRadius * m_superSizeMultiplier;
         }
 
         m_timer -= Time.deltaTime;
@@ -244,5 +254,12 @@ public class DragonElectricPowers : MonoBehaviour {
             AudioController.Play( m_lightningSound, transform );
     }
     
-    
+    private void OnSuperSizeToggle(bool _active)
+    {
+        DragonSuperSize superSize = InstanceManager.player.GetComponent<DragonSuperSize>();
+        if ( superSize != null )
+        {
+            m_superSizeMultiplier = _active ? superSize.sizeUpMultiplier : 1;
+        }
+    }
 }
