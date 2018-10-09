@@ -35,9 +35,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private GameObject m_bloodToggle;
 	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
 
-	// Internal
-	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
-
 
 	private int m_graphicsMaxLevel = 4;
 	private int m_initialGraphicsQualityLevel = -1;
