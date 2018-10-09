@@ -84,7 +84,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 
     public static DragonTier maxSpecialDragonTierUnlocked {
         get {
-            return DragonTier.TIER_1;
+			// Iterate all special dragons and find the one with the biggest tier
+			DragonTier maxTier = DragonTier.TIER_1; // Specials start at tier 1
+			for(int i = 0; i < instance.m_specialDragonsByOrder.Count; ++i) {
+				// Only owned dragons, of course
+				if(instance.m_specialDragonsByOrder[i].isOwned) {
+					maxTier = (DragonTier)Mathf.Max((int)maxTier, (int)instance.m_specialDragonsByOrder[i].tier);
+				}
+			}
+			return maxTier;
         }
     }
 

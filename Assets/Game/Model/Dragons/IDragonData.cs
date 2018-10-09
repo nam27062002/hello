@@ -318,20 +318,28 @@ public abstract class IDragonData : IUISelectorItem {
 		m_disguise = m_persistentDisguise;
 
 		// Pets
-		// We must have all the slots, enforce list's size
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
-		if(_data.ContainsKey("pets")) {
-			SimpleJSON.JSONArray equip = _data["pets"].AsArray;
-			for(int i = 0; i < equip.Count && i < m_pets.Count; i++) {
-				m_pets[i] = equip[i];
-			}
-		}
+		LoadPets(_data);
 
 		// Tracking
 		if(_data.ContainsKey("gamesPlayed")) {
 			m_gamesPlayed = _data["gamesPlayed"].AsInt;
 		} else {
 			m_gamesPlayed = 0;
+		}
+	}
+
+	/// <summary>
+	/// Load the pets persistence.
+	/// </summary>
+	/// <param name="_dragonPersistenceData">Dragon persistence data.</param>
+	protected void LoadPets(SimpleJSON.JSONNode _dragonPersistenceData) {
+		// We must have all the slots, enforce list's size
+		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
+		if(_dragonPersistenceData.ContainsKey("pets")) {
+			SimpleJSON.JSONArray equip = _dragonPersistenceData["pets"].AsArray;
+			for(int i = 0; i < equip.Count && i < m_pets.Count; i++) {
+				m_pets[i] = equip[i];
+			}
 		}
 	}
 

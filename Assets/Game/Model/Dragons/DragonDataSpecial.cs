@@ -34,67 +34,6 @@ public class DragonDataSpecial : IDragonData {
 		COUNT
 	}
 
-	/// <summary>
-	/// Auxiliar data class representing a single dragon stat.
-	/// </summary>
-	public class StatData {
-		/// <summary>
-		/// Stat definition, containing info like icon, tid, etc.
-		/// </summary>
-		public DefinitionNode def = null;
-
-		/// <summary>
-		/// Dragon whom this stat belongs to
-		/// </summary>
-		public DragonDataSpecial parentDragon = null;
-
-		/// <summary>
-		/// Level [0..N-1]
-		/// </summary>
-		public int level = 0;
-        
-		/// <summary>
-		/// Max level that can be achieved on this stat
-		/// </summary>
-		public int maxLevel = 9;
-        
-		/// <summary>
-		/// Bonus range
-		/// Percentage bonus, i.e. 0.25 -> +25%
-		/// </summary>
-		public Range valueRange = new Range();
-
-		/// <summary>
-		/// Stat value at current level
-		/// Percentage bonus, i.e. 0.25 -> +25% 
-		/// </summary>
-		public float value {
-			get { return GetValueForLevel(level); }
-		}
-
-		/// <summary>
-		/// Current level delta [0..1]
-		/// </summary>
-		public float progress {
-			get { return level / (float)maxLevel; }
-		}
-
-		/// <summary>
-		/// Amount increased for every level
-		/// Percentage bonus, i.e. 0.05 -> +5%
-		/// </summary>
-		public float valueStep = 0f;
-
-		/// <summary>
-		/// Compute the value corresponding to a given level.
-		/// </summary>
-		/// <returns>The value of the skill for the requested level.</returns>
-		/// <param name="_level">Level.</param>
-		public float GetValueForLevel(int _level) {
-			return valueRange.Lerp(progress);
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -102,20 +41,19 @@ public class DragonDataSpecial : IDragonData {
 	public int maxLevel = (int)Stat.COUNT * 10;	// [AOC] HARDCODED!! Should go to content
 	
 	// Stats
-	// [AOC] TODO!!
-	private StatData[] m_stats = new StatData[(int)Stat.COUNT];
+	private DragonStatData[] m_stats = new DragonStatData[(int)Stat.COUNT];
 	private long m_statUpgradePriceBase = 0;
 	private long m_statUpgradePriceCoefA = 0;
 	private long m_statUpgradePriceCoefB = 0;
 
 	// Tier
-	// [AOC] TODO!!
 	private DefinitionNode m_specialTierDef = null;
+	private List<DefinitionNode> m_specialTierDefsByOrder = null;
+	public List<DefinitionNode> specialTierDefsByOrder {
+		get { return m_specialTierDefsByOrder; }
+	}
 
 	// Power
-	// [AOC] TODO!!
-
-	// Debug
 	public int m_powerLevel = 0;
 
 	//------------------------------------------------------------------------//
@@ -258,7 +196,7 @@ public class DragonDataSpecial : IDragonData {
     {
         for (int i = 0; i < (int)Stat.COUNT; i++)
         {
-            m_stats[i] = new StatData();
+            m_stats[i] = new DragonStatData();
 			m_stats[i].parentDragon = this;
         }
     }
@@ -273,10 +211,14 @@ public class DragonDataSpecial : IDragonData {
 	public override void Init(DefinitionNode _def) {
 		// Call parent
 		base.Init(_def);
+
+		// Init tier definitions
+		m_specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
+		DefinitionsManager.SharedInstance.SortByProperty(ref m_specialTierDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
         
         m_pets = new List<string>();
         SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
-        LoadStatDef( _def );
+		InitStats();
 
 		// Eco vars
 		m_statUpgradePriceBase = _def.GetAsLong("stepPrice", 0);
@@ -287,21 +229,23 @@ public class DragonDataSpecial : IDragonData {
 		m_type = Type.SPECIAL;
 	}
     
-    private void LoadStatDef( DefinitionNode _def )
+    private void InitStats()
     {
-        StatData healthStat = GetStat(Stat.HEALTH);
-        healthStat.maxLevel = _def.GetAsInt("hpBonusSteps", 10);
-        healthStat.valueRange = _def.GetAsRange("hpBonus");
+		if(m_def == null) return;
+
+		DragonStatData healthStat = GetStat(Stat.HEALTH);
+		healthStat.maxLevel = m_def.GetAsInt("hpBonusSteps", 10);
+		healthStat.valueRange = m_def.GetAsRange("hpBonus");
 		healthStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "health");
         
-        StatData speedStat = GetStat(Stat.SPEED);
-        speedStat.maxLevel = _def.GetAsInt("speedBonusSteps", 10);
-        speedStat.valueRange = _def.GetAsRange("speedBonus");
+		DragonStatData speedStat = GetStat(Stat.SPEED);
+		speedStat.maxLevel = m_def.GetAsInt("speedBonusSteps", 10);
+		speedStat.valueRange = m_def.GetAsRange("speedBonus");
 		speedStat.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "speed");
         
-        StatData energyData = GetStat(Stat.ENERGY);
-        energyData.maxLevel = _def.GetAsInt("boostBonusSteps", 10);
-        energyData.valueRange = _def.GetAsRange("boostBonus");
+		DragonStatData energyData = GetStat(Stat.ENERGY);
+		energyData.maxLevel = m_def.GetAsInt("boostBonusSteps", 10);
+		energyData.valueRange = m_def.GetAsRange("boostBonus");
 		energyData.def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_STATS, "energy");
     }
 
@@ -358,7 +302,7 @@ public class DragonDataSpecial : IDragonData {
 	/// </summary>
 	/// <returns>The stat data.</returns>
 	/// <param name="_stat">Stat to be obtained.</param>
-	public StatData GetStat(Stat _stat) {
+	public DragonStatData GetStat(Stat _stat) {
 		return m_stats[(int)_stat];
 	}
 
@@ -373,6 +317,32 @@ public class DragonDataSpecial : IDragonData {
 	}
 
 	/// <summary>
+	/// Check whether this dragon can upgrade stats or not.
+	/// Depends on biggest unlocked tier on normal progression.
+	/// Doesn't check stats max level (use each stat's data for that).
+	/// </summary>
+	/// <returns>Whether this dragon can upgrade stats or not.</returns>
+	public bool CanUpgradeStats() {
+		// Never if max level reached
+		int nextLevel = GetLevel() + 1;
+		if(nextLevel > maxLevel) return false;
+
+		// Check if this dragon's next level unlocks a new tier
+		DefinitionNode nextTierDef = null;
+		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
+			// Is this tier unlocked next level?
+			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") == nextLevel) {
+				// Is next tier restricted by the classic dragons biggest owned tier?
+				nextTierDef = m_specialTierDefsByOrder[i];
+				DragonTier requiredClassicTier = SkuToTier(nextTierDef.GetAsString("mainProgressionRestriction"));
+				return requiredClassicTier <= DragonManager.biggestOwnedDragon.tier;
+			}
+		}
+
+		return false;
+	}
+
+	/// <summary>
 	/// Perform a stat level up.
 	/// Will trigger SPECIAL_DRAGON_STAT_UPGRADED.
 	/// May also trigger SPECIAL_DRAGON_POWER_UPGRADED and SPECIAL_DRAGON_TIER_UPGRADED events.
@@ -380,7 +350,7 @@ public class DragonDataSpecial : IDragonData {
 	/// <param name="_stat">Stat to be increased.</param>
 	public void UpgradeStat(Stat _stat) {
 		// Get stat data
-		StatData statData = GetStat(_stat);
+		DragonStatData statData = GetStat(_stat);
 
 		// Ignore if stat is maxed out
 		if(statData.level == statData.maxLevel) return;
@@ -430,8 +400,8 @@ public class DragonDataSpecial : IDragonData {
 
 		m_specialTierDef = GetDragonTierDef(m_def.sku, m_tier);
 
-		m_pets.Clear();
-		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);   // Enforce pets list size to number of slots
+		// Enforce pets list size to number of slots
+		m_pets.Resize(m_tierDef.GetAsInt("maxPetEquipped", 0), string.Empty);
 
 		m_disguise = GetDefaultDisguise(m_def.sku).sku;
 		m_persistentDisguise = m_disguise;
@@ -469,14 +439,16 @@ public class DragonDataSpecial : IDragonData {
 
 		// Check Tier definitions for this dragon
 		DefinitionNode biggestTierDef = null;
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
-		DefinitionsManager.SharedInstance.SortByProperty(ref defs, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
-		for(int i = 0; i < defs.Count; ++i) {
-			if(defs[i].GetAsInt("upgradeLevelToUnlock") <= level) {
-				biggestTierDef = defs[i];
+		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
+			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= level) {
+				biggestTierDef = m_specialTierDefsByOrder[i];
 			}
 		}
 
+		// Save new tier
+		if(biggestTierDef != null) {
+			SetTier(biggestTierDef);
+		}
 	}
 
 	/// <summary>
@@ -525,7 +497,10 @@ public class DragonDataSpecial : IDragonData {
 		base.ResetLoadedData();
 
 		// Custom data
-
+		// Stats
+		for(int i = 0; i < m_stats.Length; ++i) {
+			m_stats[i].level = 0;
+		}
 	}
 
 	/// <summary>
@@ -537,7 +512,27 @@ public class DragonDataSpecial : IDragonData {
 		base.Load(_data);
 
 		// Custom data
+		// Stats
+		SimpleJSON.JSONArray statsData = null;
+		if(_data.ContainsKey("stats")) {
+			statsData = _data["stats"].AsArray;
+		}
 
+		int statsDataCount = statsData == null ? 0 : statsData.Count;
+		for(int i = 0; i < m_stats.Length; ++i) {
+			if(i < statsData.Count) {
+				m_stats[i].Load(statsData[i]);
+			}
+		}
+
+		// Power level - Based on level, so just do a refresh
+		RefreshPowerLevel();
+
+		// Tier - Based on level, so just do a refresh
+		RefreshTier();
+
+		// By changing tier, pet slots might change, so reload pets (the base already did it)
+		LoadPets(_data);
 	}
 
 	/// <summary>
@@ -549,6 +544,11 @@ public class DragonDataSpecial : IDragonData {
 		base.Save(ref _data);
 
 		// Custom data
-
+		// Stats
+		SimpleJSON.JSONArray statsData = new SimpleJSON.JSONArray();
+		for(int i = 0; i < m_stats.Length; ++i) {
+			statsData.Add(m_stats[i].Save());
+		}
+		_data.Add("stats", statsData);
 	}
 }

@@ -50,7 +50,7 @@ public class LabStatUpgrader : MonoBehaviour {
 
 	// Internal data
 	private DragonDataSpecial m_dragonData = null;
-	private DragonDataSpecial.StatData m_statData = null;
+	private DragonStatData m_statData = null;
 
 	// Internal references
 	private GameObject m_separatorPrefab = null;
