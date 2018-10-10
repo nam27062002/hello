@@ -37,7 +37,7 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-
+	// Progression
 	public int maxLevel = (int)Stat.COUNT * 10;	// [AOC] HARDCODED!! Should go to content
 	
 	// Stats
@@ -45,6 +45,17 @@ public class DragonDataSpecial : IDragonData {
 	private long m_statUpgradePriceBase = 0;
 	private long m_statUpgradePriceCoefA = 0;
 	private long m_statUpgradePriceCoefB = 0;
+
+	public bool allStatsMaxed {
+		get {
+			for(int i = 0; i < m_stats.Length; ++i) {
+				if(m_stats[i].level < m_stats[i].maxLevel) {
+					return false;	// No need to keep checking
+				}
+			}
+			return true;
+		}
+	}
 
 	// Tier
 	private DefinitionNode m_specialTierDef = null;
@@ -54,12 +65,13 @@ public class DragonDataSpecial : IDragonData {
 	}
 
 	// Power
-	public int m_powerLevel = 0;
+	public int powerLevel = 0;
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE PROPERTIES											  //
 	//------------------------------------------------------------------------//
 	// Stats - ranges to interpolate between min level and max level
+	#region Base Stats
 	public override float maxHealth {
 		get {
             float baseValue = m_specialTierDef.GetAsFloat("health");
@@ -84,7 +96,10 @@ public class DragonDataSpecial : IDragonData {
             return baseValue + baseValue * (GetStat(Stat.ENERGY).value); 
         }
 	}
+	#endregion
 
+	// Scale
+	#region Scale
 	public override float scale {
 		get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
 	}
@@ -98,9 +113,11 @@ public class DragonDataSpecial : IDragonData {
 		// [AOC] TODO!!
 		get { return 1f; }
 	}
-    
-    // Fury
-    public override float furyMax{ 
+	#endregion
+
+	// Fury
+	#region Fury
+	public override float furyMax{ 
         get{ return m_specialTierDef.GetAsFloat("furyMax"); }
     }
     public override float furyBaseDuration{ 
@@ -112,9 +129,11 @@ public class DragonDataSpecial : IDragonData {
     public override float furyBaseLength{ 
         get{ return m_specialTierDef.GetAsFloat("furyBaseLength"); }
     }
-    
-    // Movement
-    public override float mass{ 
+	#endregion
+
+	// Movement
+	#region Movement
+	public override float mass{ 
         get{ return m_specialTierDef.GetAsFloat("mass"); }
     }
     public override float friction{ 
@@ -161,9 +180,11 @@ public class DragonDataSpecial : IDragonData {
     public override float dotAnimationThreshold{ 
         get { return m_specialTierDef.GetAsFloat("dotAnimationThreshold"); } 
     }
-    
-    // Energy
-    public override float energyDrain{ 
+	#endregion
+
+	// Energy
+	#region Other Parent Properties
+	public override float energyDrain{ 
         get { return m_specialTierDef.GetAsFloat("energyDrain"); } 
     }
     public override float energyRefillRate{ 
@@ -188,11 +209,12 @@ public class DragonDataSpecial : IDragonData {
             return m_specialTierDef.GetAsString("gamePrefab");
         }
     }
+#endregion
 
-    //------------------------------------------------------------------------//
-    // CONSTRUCTOR                                                            //
-    //------------------------------------------------------------------------//
-    public DragonDataSpecial()
+	//------------------------------------------------------------------------//
+	// CONSTRUCTOR                                                            //
+	//------------------------------------------------------------------------//
+	public DragonDataSpecial()
     {
         for (int i = 0; i < (int)Stat.COUNT; i++)
         {
@@ -322,15 +344,15 @@ public class DragonDataSpecial : IDragonData {
 	/// <summary>
 	/// Check whether this dragon can upgrade stats or not.
 	/// Depends on biggest unlocked tier on normal progression.
-	/// Doesn't check stats max level (use each stat's data for that).
+	/// Doesn't check individual stats max level (use each stat's data for that), just if all stats are maxed.
 	/// </summary>
 	/// <returns>Whether this dragon can upgrade stats or not.</returns>
 	public bool CanUpgradeStats() {
-		// Never if max level reached
-		int nextLevel = GetLevel() + 1;
-		if(nextLevel > maxLevel) return false;
+		// Never if all stats are maxed!
+		if(allStatsMaxed) return false;
 
 		// Check if this dragon's next level unlocks a new tier
+		int nextLevel = GetLevel() + 1;
 		DefinitionNode nextTierDef = null;
 		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
 			// Is this tier unlocked next level?
@@ -342,7 +364,8 @@ public class DragonDataSpecial : IDragonData {
 			}
 		}
 
-		return false;
+		// Nothing preventing stats upgrade
+		return true;
 	}
 
 	/// <summary>
@@ -359,7 +382,7 @@ public class DragonDataSpecial : IDragonData {
 		if(statData.level == statData.maxLevel) return;
 
 		// Cache current values to detect upgrades
-		int oldPowerLevel = m_powerLevel;
+		int oldPowerLevel = powerLevel;
 		DragonTier oldTier = tier;
 
 		// Increase stat level
@@ -373,7 +396,7 @@ public class DragonDataSpecial : IDragonData {
 		Messenger.Broadcast<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, this, _stat);
 
 		// Look for upgrades and notify listeners
-		if(oldPowerLevel != m_powerLevel) {
+		if(oldPowerLevel != powerLevel) {
 			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, this);
 		}
 
@@ -409,6 +432,25 @@ public class DragonDataSpecial : IDragonData {
 		m_disguise = GetDefaultDisguise(m_def.sku).sku;
 		m_persistentDisguise = m_disguise;
 	}
+
+	/// <summary>
+	/// Find the classic tier required for the next tier upgrade.
+	/// </summary>
+	/// <returns>The next required tier. DragonTier.COUNT if none.</returns>
+	public DragonTier GetNextRequiredTier() {
+		// Find next tier upgrade
+		int level = GetLevel();
+		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
+			// Is it the next tier upgrade?
+			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") > level) {
+				// Return required tier
+				return SkuToTier(m_specialTierDefsByOrder[i].GetAsString("mainProgressionRestriction"));
+			}
+		}
+
+		// No next tier upgrade found (probably we're max level)
+		return DragonTier.COUNT;
+	}
     
 	/// <summary>
 	/// Update this dragon's power level based on current dragon level.
@@ -416,7 +458,7 @@ public class DragonDataSpecial : IDragonData {
 	public void RefreshPowerLevel()
     {
 		// Reset power level
-        m_powerLevel = 0;
+        powerLevel = 0;
 
 		// Get dragon's current level
         int level = GetLevel();
@@ -428,7 +470,7 @@ public class DragonDataSpecial : IDragonData {
         {
             if (defs[i].GetAsInt("upgradeLevelToUnlock") <= level )
             {
-                m_powerLevel++;
+                powerLevel++;
             }
         }
     }

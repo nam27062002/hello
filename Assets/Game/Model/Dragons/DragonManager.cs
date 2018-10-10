@@ -372,7 +372,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		data.GetStat(DragonDataSpecial.Stat.ENERGY).level = energyLevel;
 
 		data.SetTier(_tier);
-		data.m_powerLevel = powerLevel;
+		data.powerLevel = powerLevel;
 
 		/*
         Range xpRange = data.progression.xpRange;
