@@ -616,4 +616,22 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string GetDragonTierSFX(DragonTier _tier) {
 		return instance.m_dragonTiersSFX[(int)_tier];
 	}
+
+	/// <summary>
+	/// Given a dragon tier, get the icon linked to it.
+	/// Use in combination with GetSpriteTag() to insert the icon within a text
+	/// </summary>
+	/// <returns>The id of the requested dragon tier icon.</returns>
+	/// <param name="_tier">Tier whose icon is required.</param>
+	public static string GetDragonTierIcon(DragonTier _tier) {
+		// Get definition of the wanted tier
+		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(
+			DefinitionsCategory.DRAGON_TIERS, 
+			IDragonData.TierToSku(_tier)
+		);
+		if(tierDef == null) return string.Empty;
+
+		// Return icon name
+		return tierDef.GetAsString("icon");
+	}
 }
