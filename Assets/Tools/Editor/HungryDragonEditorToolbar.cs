@@ -251,9 +251,10 @@ public class HungryDragonEditorToolbar : EditorWindow {
 
 			// Multipurpose button
 			if(GUILayout.Button(new GUIContent("MR", "Find missing and/or null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
-				FindMissingReferencesTool.FindMissingReferences(false/*, 
-					new Type[] { typeof(UnityEngine.Sprite) },
-					new Type[] { typeof(UnityEngine.UI.Image) }*/
+				FindMissingReferencesTool.FindMissingReferences(false, 
+                    new Type[] { typeof(TMPro.TMP_SubMeshUI) },			// [AOC] Exclude TMP_SubMeshUI, which generates a lot of stupid missing refs
+					null, //new Type[] { typeof(UnityEngine.UI.Image) },
+                    true												// [AOC] Use filter as exclude list
 				);
 			}
 
