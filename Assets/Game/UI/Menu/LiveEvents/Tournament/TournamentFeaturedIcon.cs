@@ -1,6 +1,6 @@
 // TournamentFeaturedIcon.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 31/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -33,7 +33,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 	[Separator("Shared")]
 	[SerializeField] private Localizer m_timerText = null;
-	
+
 	[Separator("Teasing")]
 	[SerializeField] private GameObject m_teasingGroup = null;
 
@@ -143,12 +143,12 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Toggle visibility of target object based on tournament state
 		HDLiveEventData.State state = m_tournamentManager.data.m_state;
-		
+
 		// Teasing
 		if(m_teasingGroup != null) m_teasingGroup.SetActive(state == HDLiveEventData.State.TEASING);
 
 		// Active
-		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning());
+		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning() || m_tournamentManager.RequiresUpdate());
 		if(m_newBanner != null) m_newBanner.gameObject.SetActive(state == HDLiveEventData.State.NOT_JOINED);
 
 		// Rewards
@@ -178,6 +178,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				state == HDLiveEventData.State.TEASING
 				|| state == HDLiveEventData.State.NOT_JOINED
 				|| state == HDLiveEventData.State.JOINED
+                || state == HDLiveEventData.State.REQUIRES_UPDATE
 			);
 
 			// Set text
@@ -222,7 +223,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				case HDLiveEventData.State.TEASING:
 				case HDLiveEventData.State.NOT_JOINED:
 				case HDLiveEventData.State.JOINED:
-				case HDLiveEventData.State.REWARD_AVAILABLE: {
+				case HDLiveEventData.State.REWARD_AVAILABLE:
+                case HDLiveEventData.State.REQUIRES_UPDATE:
+                {
 					// Must have a valid definition first
 					if(m_tournamentManager.data.definition != null && m_tournamentManager.data.definition.initialized) {
 						show = true;
@@ -242,15 +245,26 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        // Change game mode
-		SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-        HDLiveEventsManager.instance.SwitchToTournament();
+			if ( m_tournamentManager.RequiresUpdate() )
+			{
+					// Show update popup!
+					PopupManager.OpenPopupInstant( PopupUpdateEvents.PATH );
 
-        // Send Tracking event
-        HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+					// Go to tournament info screen
+					HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen("no_tournament");
+			}
+			else
+			{
+        		// Change game mode
+	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+    	    	HDLiveEventsManager.instance.SwitchToTournament();
+	
+    	    	// Send Tracking event
+        		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
 
-        // Go to tournament info screen
-        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+        		// Go to tournament info screen
+        		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+			}
 	}
 
 	/// <summary>
@@ -270,7 +284,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
         {
             // Request rewards data and wait for it to be loaded
             m_tournamentManager.RequestRewards();
-        }            
+        }
 
         // Show busy screen
         BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
@@ -338,7 +352,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
                 // Hide busy screen
                 BusyScreen.Hide(this);
-        
+
                 // Show error message
                 UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
                     LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),
