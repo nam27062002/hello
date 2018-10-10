@@ -157,7 +157,7 @@ Transform:
   m_GameObject: {fileID: 1003074949328994}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
@@ -176,7 +176,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 2dc0bb021404947d686eea81501d9280, type: 2}
+  - {fileID: 2100000, guid: 5140bc5c2e3cd7742a507cde9cef8c89, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -202,7 +202,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1003074949328994}
-  m_Mesh: {fileID: 4300000, guid: 745f2db200b7a46aba890e3c46efab7e, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 8f9704c8adf353f4cbf52d40a22376a9, type: 3}
 --- !u!65 &65012777694762388
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -240,7 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 3
   m_chargeTime: 0
-  m_speed: 4
+  m_speed: 1.5
   m_rotationSpeed: 0
   m_rotationAxis: 0
   m_maxTime: 0
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_dieOnHit: 1
   m_defaultDamage: 0
   m_damageType: 4
-  m_radius: 0
+  m_radius: 2.5
   m_knockback: 0
   m_knockbackTier: 4
   m_activateOnShoot: []
@@ -476,5 +476,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 2.150628
+  radius: 2.5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
