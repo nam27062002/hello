@@ -104,8 +104,10 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 	/// </summary>
 	public void OnUnlock() {
 		// Make sure we can do it
-		if(!m_showConditions.CheckDragon(InstanceManager.menuSceneController.selectedDragon)) {
-			return;
+		if(m_showConditions != null) {
+			if(!m_showConditions.CheckDragon(InstanceManager.menuSceneController.selectedDragon)) {
+				return;
+			}
 		}
 
 		// Get price and start purchase flow

@@ -73,6 +73,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
 
 		// Do a first refresh
 		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
@@ -84,6 +85,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
 	}
 
 	/// <summary>
@@ -213,5 +215,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void OnDragonSelected(string _sku) {
 		// Get new dragon's data from the dragon manager and do the refresh logic
 		InitWithDragon(DragonManager.GetDragonData(_sku), true);
+	}
+
+	/// <summary>
+	/// A dragon stat has been upgraded.
+	/// </summary>
+	private void OnStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
+		// Let's just refresh for now
+		Refresh(true);
 	}
 }
