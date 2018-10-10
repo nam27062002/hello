@@ -283,9 +283,14 @@ public class LabStatUpgrader : MonoBehaviour {
 		if(m_dragonData == null || m_statData == null) return;
 
 		// Initialize tooltip
+		// [AOC] Exception for ENERGY stat, who has a custom name for each dragon!
+		string statName = m_statData.def.GetLocalized("tidName");
+		if(m_stat == DragonDataSpecial.Stat.ENERGY) {
+			statName = m_dragonData.def.GetLocalized("tidBoostAction", statName);	// Default to base stat name
+		}
 		_tooltip.InitWithText(
 			string.Empty,
-			m_statData.def.GetLocalized("tidName")
+			statName
 		);
 	}
 }
