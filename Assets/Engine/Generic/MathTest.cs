@@ -28,5 +28,28 @@ public class MathTest
         return ret;
     }
     
+    public static bool TestCircleVsRect( Vector2 center, float radius, Rect r )
+    {
+        bool ret = false;
+        Vector2 distance = GameConstants.Vector2.zero;
+        distance.x = Mathf.Abs(center.x - r.center.x);
+        distance.y = Mathf.Abs(center.y - r.center.y);
+
+        // too far away
+        if (distance.x > (r.width/2.0f + radius)) { return false; }
+        if (distance.y > (r.height/2.0f + radius)) { return false; }
+
+        // center inside rectangle
+        if (distance.x <= (r.width/2.0f)) { return true; } 
+        if (distance.y <= (r.height/2.0f)) { return true; }
+
+        // Other cases
+        // sqr magnitude
+        float cornerDistance_sq = Mathf.Pow( (distance.x - r.width/2), 2) + Mathf.Pow((distance.y - r.height/2), 2);
+
+        ret = (cornerDistance_sq <= (radius*radius));
+        return ret;
+    }
+    
 
 }
