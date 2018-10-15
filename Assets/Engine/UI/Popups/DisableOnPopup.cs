@@ -28,6 +28,10 @@ public class DisableOnPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed setup
+	[Comment("Leave negative to use the amount of popups open at the moment this component is enabled.")]
+	[SerializeField] private int m_refPopupCount = -1;
+
 	// Optional animator to be used
 	[Comment("Optional animator to be used instead of directly activating/deactivating the GameObject.")]
 	[SerializeField] private ShowHideAnimator m_animator = null;
@@ -40,7 +44,6 @@ public class DisableOnPopup : MonoBehaviour {
 
 	// Internal
 	private bool m_pendingActivation = false;
-	private int m_refPopupCount = -1;
 	public int refPopupCount {
 		get { return m_refPopupCount; }
 		set { m_refPopupCount = value; }
@@ -66,6 +69,15 @@ public class DisableOnPopup : MonoBehaviour {
 		// If target popups was not manually defined, store current popup count as reference
 		if(m_refPopupCount < 0) {
 			m_refPopupCount = PopupManager.openPopupsCount;
+
+			// If this component belongs to a popup, increase ref amount to include parent popup (who is not still opened)
+			PopupController parentPopup = GetComponentInParent<PopupController>();
+			if(parentPopup != null) {
+				// Don't if already counted
+				if(!PopupManager.openedPopups.Contains(parentPopup)) {
+					m_refPopupCount++;
+				}
+			}
 		}
 	}
 
