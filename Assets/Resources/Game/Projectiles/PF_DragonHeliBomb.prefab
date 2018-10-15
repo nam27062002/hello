@@ -157,7 +157,7 @@ Transform:
   m_GameObject: {fileID: 1003074949328994}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 408412}
   m_RootOrder: 0
@@ -240,7 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_motionType: 3
   m_chargeTime: 0
-  m_speed: 4
+  m_speed: 1.5
   m_rotationSpeed: 0
   m_rotationAxis: 0
   m_maxTime: 0
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_dieOnHit: 1
   m_defaultDamage: 0
   m_damageType: 4
-  m_radius: 0
+  m_radius: 2.5
   m_knockback: 0
   m_knockbackTier: 4
   m_activateOnShoot: []
@@ -461,7 +461,6 @@ MonoBehaviour:
   m_groundMask:
     serializedVersion: 2
     m_Bits: 1208615424
-  m_explosionArea: {fileID: 114954653416055262}
   m_firingEntityType: 0
   m_explodeIfHomingtargetNull: 0
 --- !u!114 &114954653416055262
@@ -476,5 +475,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 0, y: 0}
-  radius: 2.150628
+  radius: 2.5
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}

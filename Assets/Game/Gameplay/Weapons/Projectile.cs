@@ -52,7 +52,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SeparatorAttribute("Weapon")]
 	[SerializeField] private float m_defaultDamage = 0f;
 	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
-	[SerializeField] private float m_radius = 0f;
+	[SerializeField] protected float m_radius = 0f;
 	[SerializeField] private float m_knockback = 0f;
 	[SerializeField] private DragonTier m_knockbackTier = DragonTier.TIER_4;
 

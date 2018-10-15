@@ -80,14 +80,7 @@ public class CircleArea2D : MonoBehaviour, Area {
 
 	public bool Overlaps(Vector2 _center, float _radius)
 	{
-		float sqrMagnitude = ((Vector2)this.center - _center).sqrMagnitude;
-		float test = (_radius + this.radius);
-		test = test * test;
-		if ( sqrMagnitude <= test )
-		{
-			return true;
-		}
-		return false;
+        return MathTest.TestCircleVsCircle(_center, _radius, this.center, this.radius);
 	}
 
 	public bool Overlaps( CircleArea2D _circle )
