@@ -483,16 +483,17 @@ public class DragonDataSpecial : IDragonData {
 		int level = GetLevel();
 
 		// Check Tier definitions for this dragon
-		DefinitionNode biggestTierDef = null;
+        string biggestTierSku = "tier_0";
 		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
 			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= level) {
-				biggestTierDef = m_specialTierDefsByOrder[i];
+				biggestTierSku = m_specialTierDefsByOrder[i].Get("tier");
 			}
 		}
-
+        
+        DefinitionNode biggestTierDefNode = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS, biggestTierSku);
 		// Save new tier
-		if(biggestTierDef != null) {
-			SetTier(biggestTierDef);
+		if(biggestTierDefNode != null) {
+			SetTier(biggestTierDefNode);
 		}
 	}
 
