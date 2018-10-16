@@ -262,10 +262,10 @@ public class LabStatUpgrader : MonoBehaviour {
 	/// <param name="_animator">The number animator requesting the formatting.</param>
 	public void OnSetValueText(NumberTextAnimator _animator) {
 		// Percentage bonus format
-		// [AOC] Because number animator only works with longs, the value is converted to 100 to have double digit precision.
+		// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
 		//       Format it properly
 		float value = _animator.currentValue / 100f;
-		_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + _animator.currentValue, true);
+		_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + value, true);
 	}
 
 	/// <summary>
