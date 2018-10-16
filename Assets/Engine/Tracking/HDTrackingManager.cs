@@ -513,6 +513,13 @@ public class HDTrackingManager
     public virtual void Notify_AnimojiExit() { }
     #endregion
 
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public virtual void Notify_LabEnter() { }
+    #endregion
+
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";

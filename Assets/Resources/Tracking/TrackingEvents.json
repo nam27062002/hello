@@ -436,6 +436,17 @@
                 "etl"
             ]
         },
+		"custom.lab.entry": {
+            "Parameters": [
+				{"playerProgress": {"Status": "OK"}},
+				{"goldenFragments": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -1297,6 +1308,14 @@
 		"Values": []
       },
       "recordings": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "goldenFragments": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "hardCurrency": {
         "Type": "INT:4",
         "Values": []
       }

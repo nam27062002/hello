@@ -1178,6 +1178,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     #endregion
 
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public override void Notify_LabEnter()
+    {        
+        Track_LabEnter();
+    }
+    #endregion
+
     #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
@@ -1983,6 +1993,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_LabEnter()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabEnter");
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.entry");
+        {
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerGoldenFragments(e);
+            Track_AddParamPlayerPC(e);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2043,7 +2067,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_GENDER = "gender";
     private const string TRACK_PARAM_GLOBAL_EVENT_ID = "glbEventID";
     private const string TRACK_PARAM_GLOBAL_EVENT_TYPE = "glbEventType";
+    private const string TRACK_PARAM_GOLDEN_FRAGMENTS = "goldenFragments";
     private const string TRACK_PARAM_GPURAM = "gpuRam";
+    private const string TRACK_PARAM_HARD_CURRENCY = "hardCurrency";
     private const string TRACK_PARAM_HC_EARNED = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
@@ -2212,6 +2238,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
         _e.data.Add(TRACK_PARAM_PLAYER_PROGRESS, value);
     }
+
+    private void Track_AddParamPlayerGoldenFragments(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.goldenEggFragments : 0;
+        _e.data.Add(TRACK_PARAM_GOLDEN_FRAGMENTS, value);
+    }
+
+    private void Track_AddParamPlayerPC(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.pc : 0;
+        _e.data.Add(TRACK_PARAM_HARD_CURRENCY, value);
+    }            
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;
