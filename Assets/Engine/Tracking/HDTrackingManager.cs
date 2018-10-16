@@ -78,7 +78,9 @@ public class HDTrackingManager
         SHOP_PURCHASE_RESUMED,           // Reward given when resuming a purchase that was interrupted
 
 		SPECIAL_DRAGON_UNLOCK,
-		SPECIAL_DRAGON_UPGRADE
+		SPECIAL_DRAGON_UPGRADE,
+        SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
+        LAB_REWARD_MISSION               // When user gets reward from Lab Mission
     };
 
 	public enum EFunnels
