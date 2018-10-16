@@ -231,10 +231,11 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Disable slider if dragon cannot be changed
-		slider.interactable = (targetDragon != null);
+		bool validDragon = (targetDragon != null && targetDragon.type == IDragonData.Type.CLASSIC);
+		slider.interactable = validDragon;
 
 		// Initialize slider
-		if(targetDragon == null) {
+		if(validDragon) {
 			slider.minValue = 0f;
 			slider.maxValue = 1f;
 			slider.value = 0f;
