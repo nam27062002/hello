@@ -447,6 +447,17 @@
                 "etl"
             ]
         },
+		"custom.lab.gamestart": {
+            "Parameters": [
+				{"labProgression": {"Status": "OK"}},
+				{"labPower": {"Status": "OK"}},
+				{"currentLeague": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },		
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -1318,6 +1329,18 @@
 	  "hardCurrency": {
         "Type": "INT:4",
         "Values": []
+      },
+	  "labProgression": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "labPower": {
+		"Type": "STRING:30",
+		"Values": []
+      },
+	  "currentLeague": {
+		"Type": "STRING:30",
+		"Values": []
       }
     }
 }

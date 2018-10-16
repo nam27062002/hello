@@ -518,6 +518,14 @@ public class HDTrackingManager
     /// Called when the user clicks on the lab button
     /// </summary>
     public virtual void Notify_LabEnter() { }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="labProgression">Current lab progression level</param>
+    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public virtual void Notify_LabGameStart(int labProgression, string labPower, string currentLeague) { }
     #endregion
 
     #region log

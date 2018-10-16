@@ -1186,6 +1186,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {        
         Track_LabEnter();
     }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="labProgression">Current lab progression level</param>
+    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public override void Notify_LabGameStart(int labProgression, string labPower, string currentLeague)
+    {
+        Track_LabGameStart(labProgression, labPower, currentLeague);
+    }
     #endregion
 
     #region track
@@ -2007,6 +2018,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_LabGameStart(int labProgression, string labPower, string currentLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabGameStart labProgression = " + labProgression + " labPower = " + labPower + " currentLeague = " + currentLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
+        {
+            e.data.Add(TRACK_PARAM_LAB_PROGRESSION, labProgression);
+            Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2036,6 +2061,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
     private const string TRACK_PARAM_CURRENCY = "currency";
+    private const string TRACK_PARAM_CURRENT_LEAGUE = "currentLeague";
     private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
     private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
     private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
@@ -2086,6 +2112,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_ITEM = "item";
     private const string TRACK_PARAM_ITEM_ID = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY = "itemQuantity";
+    private const string TRACK_PARAM_LAB_PROGRESSION = "labProgression";
+    private const string TRACK_PARAM_LAB_POWER = "labPower";
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
