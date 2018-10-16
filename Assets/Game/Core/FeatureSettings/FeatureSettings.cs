@@ -86,6 +86,9 @@ public class FeatureSettings
     // This key decides if lightmap will be used on this profile
     public const string KEY_LIGHTMAP = "lightmap";
 
+    // This key decides if special dragon helicopter destoys breakables
+    public const string KEY_HELICOPTER_DESTROYS = "helicopterDestroys";
+    
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -206,6 +209,11 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
+            // helicopter Destroys: enable/disable special dragon helicopter destroying
+            key = KEY_HELICOPTER_DESTROYS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+            
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
