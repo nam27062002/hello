@@ -385,7 +385,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		ResultsScreen,
 		LiveEvents,
         Store,
-        CP2
+        CP2,
         Persistence
     };
     
