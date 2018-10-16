@@ -526,6 +526,14 @@ public class HDTrackingManager
     /// <param name="labPower">Current lab power (tier)</param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
     public virtual void Notify_LabGameStart(int labProgression, string labPower, string currentLeague) { }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
     #endregion
 
     #region log

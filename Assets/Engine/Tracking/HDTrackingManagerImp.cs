@@ -1197,6 +1197,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         Track_LabGameStart(labProgression, labPower, currentLeague);
     }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public override void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        Track_LabResult(ranking, currentLeague, upcomingLeague);
+    }
     #endregion
 
     #region track
@@ -2032,6 +2043,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabResult ranking = " + ranking + " currentLeague = " + currentLeague + " upcomingLeague = " + upcomingLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.result");
+        {
+            e.data.Add(TRACK_PARAM_RANKING, ranking);            
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);
+            Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2151,6 +2176,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED = "pvpMatchesPlayed";
     private const string TRACK_PARAM_RADIUS = "radius";
     private const string TRACK_PARAM_RANK = "rank";
+    private const string TRACK_PARAM_RANKING = "ranking";
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
@@ -2187,6 +2213,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TRIGGERED = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
+    private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
