@@ -17,10 +17,9 @@ Shader "Hungry Dragon/NPC/NPC Gold Freeze"
 	
 	Subshader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		Pass
-		{
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
-			
+		{			
 			Stencil
 			{
 				Ref[_StencilMask]
