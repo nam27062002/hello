@@ -96,17 +96,17 @@ public class PopupCustomizer : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class TitleField : Field<TextMeshProUGUI> {
+	public class TitleField : Field<Text> {
 		public TitleField() : base(FieldType.TEXT, CaletyKey.TITLE) {}
 	}
 
 	[System.Serializable]
-	public class MessageField : Field<TextMeshProUGUI> {
+	public class MessageField : Field<Text> {
 		public MessageField() : base(FieldType.TEXTAREA, CaletyKey.TEXT) {}
 	}
 
 	[System.Serializable]
-	public class TextField : Field<TextMeshProUGUI> {
+	public class TextField : Field<Text> {
 		public TextField() : base(FieldType.TEXT, CaletyKey.TEXT) {}
 	}
 
@@ -217,7 +217,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 			// Iterate through all textfields in the popup and try to find a text for them in the json
 			for (int i = 0; i < m_textFields.Count; ++i) {
-				TextMeshProUGUI textField = m_textFields[i].element;
+				Text textField = m_textFields[i].element;
 
 				if (textField != null) {
 					// Set the text from the json, or empty string if the json doesn't have a text for this textfield
@@ -249,7 +249,7 @@ public class PopupCustomizer : MonoBehaviour {
 				m_buttonFields[i].element.gameObject.SetActive(true);
 
 				// Set text
-				TextMeshProUGUI txt = m_buttonFields[i].element.GetComponentInChildren<TextMeshProUGUI>();
+				Text txt = m_buttonFields[i].element.GetComponentInChildren<Text>();
 				if (txt != null) {
 					txt.text = m_localizedConfig.m_kPopupButtons[i].m_strText;
 				}
