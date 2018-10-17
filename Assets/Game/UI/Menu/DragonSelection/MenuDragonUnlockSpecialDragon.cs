@@ -206,7 +206,6 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_flow">The flow that triggered the event.</param>
 	private void OnTransactionCanceled(ResourcesFlow _flow) {
-		Debug.Log(Colors.lime.Tag("CANCELED " + _flow.name));
 		// Reset transaction cached data
 		ResetTransactionData();
 	}
