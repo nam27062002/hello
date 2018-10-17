@@ -251,6 +251,9 @@ public class DragonDataSpecial : IDragonData {
 		m_type = Type.SPECIAL;
 	}
     
+	/// <summary>
+	/// Initialize stats data from the current dragon definition.
+	/// </summary>
     private void InitStats()
     {
 		if(m_def == null) return;
@@ -387,6 +390,7 @@ public class DragonDataSpecial : IDragonData {
 
 		// Increase stat level
 		statData.level++;
+		Debug.Log(Colors.lime.Tag((statData.level - 1) + " -> " + statData.level + " / " + statData.maxLevel));
 
 		// Refresh power and tier
 		RefreshPowerLevel();
