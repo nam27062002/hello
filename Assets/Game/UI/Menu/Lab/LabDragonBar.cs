@@ -1,19 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class LabDragonBar : MonoBehaviour {
 
-    [SerializeField] private GameObject m_elementLevelPrefab;
-    [SerializeField] private GameObject m_elementSkillPrefab;
-    [SerializeField] private GameObject m_elementTierPrefab;
+    [SerializeField] private GameObject m_elementLevelPrefab = null;
+    [SerializeField] private GameObject m_elementSkillPrefab = null;
+    [SerializeField] private GameObject m_elementTierPrefab = null;
 
-    [SerializeField] private RectTransform m_content;
+    [SerializeField] private RectTransform m_content = null;
 
     [SerializeField] private float m_blankSpace = 5f;
-    [SerializeField] private AnimationCurve m_scaleTiersCurve;
-    [SerializeField] private AnimationCurve m_scaleLevelsCurve;
-    [SerializeField] private AnimationCurve m_positionLevelsCurve;
+    [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
+    [SerializeField] private AnimationCurve m_scaleLevelsCurve = null;
+    [SerializeField] private AnimationCurve m_positionLevelsCurve = null;
     [SerializeField] private float m_positionCurveScale = 10f;
 
 
@@ -23,7 +22,6 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private int[] m_debugLevelSkill = { 5, 15, 25 };
     [Space]
     [SerializeField] private int m_debugCurrentLevel = 1;
-    [SerializeField] private int m_debugUnlockedTier = 1;
 
 
     private List<LabDragonBarElement> m_levelElements = new List<LabDragonBarElement>();
@@ -84,6 +82,9 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         for (int i = 0; i < m_skillElements.Count; ++i) {
+            if (i < m_iconSkill.Length) {
+                m_skillElements[i].SetIcon(m_iconSkill[i]);
+            }
             m_skillElements[i].gameObject.SetActive(false);
         }
     }
@@ -119,7 +120,6 @@ public class LabDragonBar : MonoBehaviour {
         for (int i = 0; i < m_levelTier.Length; ++i) {
             float scale = m_scaleTiersCurve.Evaluate(m_levelTier[i] / m_maxLevel);
             float width = m_tierElements[0].GetWidth() * scale;
-
 
             tiersWidth += width + m_blankSpace * 2f;
         }
