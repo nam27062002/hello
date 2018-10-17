@@ -49,11 +49,22 @@ public class DragonHelicopterPowers : MonoBehaviour
 
     protected float m_neckDistance = 0;
 
+    RaycastHit[] results;
+    int layerMask;
+    bool destroys = false;
+    int destroyFrame = 0;
+    
     private void Awake()
     {
         if (!string.IsNullOrEmpty(m_machineGunParticleName)){
             m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
             m_machinegunParticle.gameObject.SetActive( true );
+        }
+        destroys = FeatureSettingsManager.instance.IsHelicopterDestroying;
+        if ( destroys )
+        {
+            results = new RaycastHit[3];
+            layerMask = 1 << LayerMask.NameToLayer("Triggers") | 1 << LayerMask.NameToLayer("Obstacle");
         }
     }
     // Use this for initialization
@@ -120,6 +131,11 @@ public class DragonHelicopterPowers : MonoBehaviour
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
             arcOrigin.z = 0;
+            
+            Vector3 dir = -m_machingegunAnchor.right;
+            dir.z = 0;
+            dir.Normalize();
+            
             // Machinegun killing
             m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(arcOrigin, m_machinegunDistance, m_checkEntities);
             for (int e = 0; e < m_numCheckEntities; e++) 
@@ -129,7 +145,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 {
                     if ( (entity.hideNeedTierMessage ) && !entity.IsEdible( m_tier ) && !m_killEverything)
                         continue;
-                    Vector3 dir = -m_machingegunAnchor.right;
+                    
                     // Start bite attempt
                     Vector3 heading = (entity.transform.position - arcOrigin);
                     float dot = Vector3.Dot(heading, dir);
@@ -138,8 +154,6 @@ public class DragonHelicopterPowers : MonoBehaviour
                         // Check arc
                         Vector3 circleCenter = entity.circleArea.center;
                         circleCenter.z = 0;
-                        dir.z = 0;
-                        dir.Normalize();
                         if (MathUtils.TestArcVsCircle( arcOrigin, m_machinegunAngle, m_machinegunDistance, dir, circleCenter, entity.circleArea.radius))
                         {
                             // Kill!
@@ -178,7 +192,26 @@ public class DragonHelicopterPowers : MonoBehaviour
                     m_bombTimer += m_bombFireRate;
                 }
             }
-		}
+
+            if ( destroys )
+            {
+                destroyFrame++;
+                if ( destroyFrame % 2 == 0 )
+                {
+                    destroyFrame = 0;
+                    // Break things
+                    int num = Physics.RaycastNonAlloc(arcOrigin, dir, results, m_machinegunDistance, layerMask);
+                    for (int i = 0; i < num; i++)
+                    {
+                        DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
+                        if ( decoration != null && decoration.CanBreakByShooting())
+                        {
+                            decoration.Break();
+                        }
+                    }
+                }
+            }
+        }
         else
         {
             if ( m_machinegunFiring )
