@@ -93,12 +93,23 @@ public class LabStatUpgrader : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Subscribe to external events
+		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
+
 		// Make sure we're displaying the right info
 		// [AOC] Delay by one frame to do it when the object is actually enabled
 		UbiBCN.CoroutineManager.DelayedCallByFrames(
 			() => { Refresh(false); },
 			1
 		);
+	}
+
+	/// <summary>
+	/// Component has been disabled
+	/// </summary>
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnDragonStatUpgraded);
 	}
 
 	//------------------------------------------------------------------------//
@@ -237,30 +248,7 @@ public class LabStatUpgrader : MonoBehaviour {
 
 		// Launch transaction
 		ResourcesFlow purchaseFlow = new ResourcesFlow("UPGRADE_SPECIAL_DRAGON_STAT");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				// Tracking
-				// [AOC] TODO!!
-				//HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
-
-				// Show a nice feedback animation
-				UIFeedbackText.CreateAndLaunch(
-					StringUtils.MultiplierToPercentageIncrease(1f + m_statData.valueStep, true),
-					m_feedbackAnchor,
-					GameConstants.Vector2.zero,
-					m_feedbackAnchor
-				);
-
-				// Trigger SFX
-				AudioController.Play("hd_reward_golden_fragments");
-
-				// Do it
-				m_dragonData.UpgradeStat(m_stat);
-
-				// Refresh visuals
-				Refresh(true);
-			}
-		);
+		purchaseFlow.OnSuccess.AddListener(OnUpgradePurchaseSuccess);
 		purchaseFlow.Begin(
 			m_dragonData.GetStatUpgradePrice(m_stat), 
 			UserProfile.Currency.GOLDEN_FRAGMENTS, 
@@ -270,10 +258,45 @@ public class LabStatUpgrader : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// The upgrade purchase has been successful.
+	/// </summary>
+	/// <param name="_flow">The Resources Flow that triggered the event.</param>
+	private void OnUpgradePurchaseSuccess(ResourcesFlow _flow) {
+		// Tracking
+		// [AOC] TODO!!
+		//HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+
+		// Show a nice feedback animation
+		UIFeedbackText.CreateAndLaunch(
+			StringUtils.MultiplierToPercentageIncrease(1f + m_statData.valueStep, true),
+			m_feedbackAnchor,
+			GameConstants.Vector2.zero,
+			m_feedbackAnchor
+		);
+
+		// Trigger SFX
+		AudioController.Play("hd_reward_golden_fragments");
+
+		// Do it
+		// Visuals will get refreshed when receiving the SPECIAL_DRAGON_STAT_UPGRADED event
+		m_dragonData.UpgradeStat(m_stat);
+	}
+
+	/// <summary>
+	/// A special dragon stat has been upgraded.
+	/// </summary>
+	/// <param name="_dragonData">Target dragon data.</param>
+	/// <param name="_stat">Target stat.</param>
+	private void OnDragonStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
+		// Refresh visuals regardles of the stat (we might get locked)
+		Refresh(true);
+	}
+
+	/// <summary>
 	/// The value number animator needs to format a new value.
 	/// </summary>
 	/// <param name="_animator">The number animator requesting the formatting.</param>
-	public void OnSetValueText(NumberTextAnimator _animator) {
+	private void OnSetValueText(NumberTextAnimator _animator) {
 		// Percentage bonus format
 		// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
 		//       Format it properly

@@ -406,6 +406,9 @@ public class DragonDataSpecial : IDragonData {
 		if(oldTier != tier) {
 			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, this);
 		}
+
+		// Save persistence!
+		PersistenceFacade.instance.Save_Request();
 	}
     
 	/// <summary>
