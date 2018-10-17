@@ -235,7 +235,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		slider.interactable = validDragon;
 
 		// Initialize slider
-		if(validDragon) {
+		if(!validDragon) {
 			slider.minValue = 0f;
 			slider.maxValue = 1f;
 			slider.value = 0f;
