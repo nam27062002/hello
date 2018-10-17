@@ -27,6 +27,12 @@ public class BezierCurvePointModifier : MonoBehaviour {
 		MANUAL
 	}
 
+	private enum ActionSource {
+		ENABLE,
+		UPDATE,
+		OTHER
+	}
+
 	[System.Serializable]
 	public class PointData {
 		public BezierCurve curve = null;
@@ -48,14 +54,14 @@ public class BezierCurvePointModifier : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		AutoApply();
+		AutoApply(ActionSource.ENABLE);
 	}
 
 	/// <summary>
 	/// Called every frame during play mode, only called when something in the scene changed during edit mode.
 	/// </summary>
 	private void Update() {
-		AutoApply();
+		AutoApply(ActionSource.UPDATE);
 	}
 
 	//------------------------------------------------------------------------//
@@ -83,14 +89,19 @@ public class BezierCurvePointModifier : MonoBehaviour {
 	/// <summary>
 	/// Check whether apply can be actually triggered, and do it.
 	/// </summary>
-	private void AutoApply() {
+	private void AutoApply(ActionSource _source = ActionSource.OTHER) {
 		switch(m_updateMode) {
 			case UpdateMode.ALWAYS: {
 				Apply();
 			} break;
 
 			case UpdateMode.ONLY_EDIT_MODE: {
-				if(!Application.isPlaying) Apply();
+				// Always apply on OnEnable, even if not in edit mode
+				if(_source == ActionSource.ENABLE) {
+					Apply();
+				} else if(!Application.isPlaying) {
+					Apply();
+				}
 			} break;
 		}
 	}

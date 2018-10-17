@@ -176,7 +176,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         // Load the dragon
 		// DEBUG: Special dragon testing
-        if ( FeatureSettingsManager.IsDebugEnabled && Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        if ( /*FeatureSettingsManager.IsDebugEnabled &&*/ Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
         {
             // Hola soy special SPECIAAAAAAL
 			// [AOC] xDDDDDDDD

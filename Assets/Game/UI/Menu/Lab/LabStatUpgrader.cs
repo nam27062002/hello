@@ -89,6 +89,18 @@ public class LabStatUpgrader : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	private void OnEnable() {
+		// Make sure we're displaying the right info
+		// [AOC] Delay by one frame to do it when the object is actually enabled
+		UbiBCN.CoroutineManager.DelayedCallByFrames(
+			() => { Refresh(false); },
+			1
+		);
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -180,7 +192,13 @@ public class LabStatUpgrader : MonoBehaviour {
 		if(m_valueText != null) {
 			// [AOC] Because number animator only works with longs, convert to 100 to have double digit precision.
 			//       The custom text formatter will properly display the percentage amount
-			m_valueText.SetValue((long)(m_statData.value * 100), _animate);
+			long longValue = (long)Mathf.RoundToInt(m_statData.value * 100f);
+			//long longValue = (long)(m_statData.value * 100f);		// [AOC] This doesn't work properly! 3f -> 2l WTF!
+			Debug.Log(
+				Colors.red.Tag(m_statData.value + " -> " + (m_statData.value * 100f) + " -> " + longValue
+			    + "\n" + m_statData.valueRange.ToString() + " | " + m_statData.valueStep)
+			);
+			m_valueText.SetValue(longValue, _animate);
 		}
 
 		// Refresh upgrade price
@@ -262,10 +280,11 @@ public class LabStatUpgrader : MonoBehaviour {
 	/// <param name="_animator">The number animator requesting the formatting.</param>
 	public void OnSetValueText(NumberTextAnimator _animator) {
 		// Percentage bonus format
-		// [AOC] Because number animator only works with longs, the value is converted to 100 to have double digit precision.
+		// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
 		//       Format it properly
 		float value = _animator.currentValue / 100f;
-		_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + _animator.currentValue, true);
+		Debug.Log(Colors.orange.Tag(_animator.currentValue + " | " + value));
+		_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + value, true);
 	}
 
 	/// <summary>

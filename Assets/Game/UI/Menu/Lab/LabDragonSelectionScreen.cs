@@ -27,6 +27,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Separator("References")]
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[SerializeField] private Localizer m_dragonDescText = null;
 	[Space]
@@ -36,6 +37,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
 	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
+	[Separator("Config")]
+	[Tooltip("Use it to sync with animation")]
+	[SerializeField] private float m_dragonChangeInfoDelay = 0.15f;
 
 	// Cache some data
 	private DragonDataSpecial m_dragonData = null;
@@ -213,8 +217,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Get new dragon's data from the dragon manager and do the refresh logic
-		InitWithDragon(DragonManager.GetDragonData(_sku), true);
+		// [AOC] Add some delay to sync with UI animation
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				// Get new dragon's data from the dragon manager and do the refresh logic
+				InitWithDragon(DragonManager.GetDragonData(_sku), true);
+			}, m_dragonChangeInfoDelay
+		);
 	}
 
 	/// <summary>

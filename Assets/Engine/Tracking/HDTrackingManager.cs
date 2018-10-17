@@ -78,7 +78,9 @@ public class HDTrackingManager
         SHOP_PURCHASE_RESUMED,           // Reward given when resuming a purchase that was interrupted
 
 		SPECIAL_DRAGON_UNLOCK,
-		SPECIAL_DRAGON_UPGRADE
+		SPECIAL_DRAGON_UPGRADE,
+        SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
+        LAB_REWARD_MISSION               // When user gets reward from Lab Mission
     };
 
 	public enum EFunnels
@@ -511,6 +513,29 @@ public class HDTrackingManager
     /// Called when user exits animoji menu section
     /// </summary>
     public virtual void Notify_AnimojiExit() { }
+    #endregion
+
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public virtual void Notify_LabEnter() { }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="labProgression">Current lab progression level</param>
+    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public virtual void Notify_LabGameStart(int labProgression, string labPower, string currentLeague) { }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
     #endregion
 
     #region log

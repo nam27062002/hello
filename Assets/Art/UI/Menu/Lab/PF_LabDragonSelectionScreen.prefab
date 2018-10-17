@@ -16714,7 +16714,18 @@ MonoBehaviour:
   m_checkScreenBounds: 1
   OnTooltipOpen:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114912678812970236}
+        m_MethodName: OnTooltipOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UITooltipTrigger+TooltipEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114086630217861726
@@ -16905,7 +16916,7 @@ MonoBehaviour:
   m_arrow: {fileID: 224029426402602592}
   m_arrowDir: 0
   m_titleText: {fileID: 0}
-  m_messageText: {fileID: 0}
+  m_messageText: {fileID: 114355872297453654}
 --- !u!114 &114091845106723162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18113,6 +18124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47cb4c8fd4f7a45e481525a55b840ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_refPopupCount: -1
   m_animator: {fileID: 114358481732232600}
   m_onPopupOpened:
     m_PersistentCalls:
@@ -19263,7 +19275,18 @@ MonoBehaviour:
   m_checkScreenBounds: 1
   OnTooltipOpen:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114039252463776248}
+        m_MethodName: OnTooltipOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UITooltipTrigger+TooltipEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114307787349231918
@@ -21159,8 +21182,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114741795543197314}
-        m_MethodName: OnSkipButton
+      - m_Target: {fileID: 114912678812970236}
+        m_MethodName: OnUpgradeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23270,8 +23293,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114741795543197314}
-        m_MethodName: OnSkipButton
+      - m_Target: {fileID: 114059352231575268}
+        m_MethodName: OnUpgradeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23341,6 +23364,7 @@ MonoBehaviour:
   - {fileID: 114059352231575268}
   - {fileID: 114912678812970236}
   m_loadingUI: {fileID: 1818620571745420}
+  m_dragonChangeInfoDelay: 0.15
 --- !u!114 &114597079428616432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -23952,7 +23976,18 @@ MonoBehaviour:
   m_checkScreenBounds: 1
   OnTooltipOpen:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114059352231575268}
+        m_MethodName: OnTooltipOpen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UITooltipTrigger+TooltipEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!114 &114635425438280456
@@ -24938,8 +24973,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114741795543197314}
-        m_MethodName: OnSkipButton
+      - m_Target: {fileID: 114039252463776248}
+        m_MethodName: OnUpgradeButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -268,6 +268,11 @@ public class ResourcesFlow {
 						OpenMissingPCPopup(m_missingAmount);
 					}
 				} break;
+
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: {
+					// Open the popup
+					OpenMissingGFPopup(m_missingAmount);
+				} break;
 			}
 		}
 
@@ -478,6 +483,26 @@ public class ResourcesFlow {
 
 		coinsPopup.OnCancel.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		coinsPopup.OnCancel.AddListener(Cancel);
+
+		popup.Open();
+		m_popups.Add(popup);
+
+		// Change state
+		ChangeState(State.SHOWING_MISSING_CURRENCY);
+	}
+
+	/// <summary>
+	/// Open the missing Golden Fragments popup.
+	/// </summary>
+	private void OpenMissingGFPopup(long _missingAmount) {
+		// Show popup informing how to obtain Golden Fragments
+		PopupController popup = PopupManager.LoadPopup(ResourcesFlowMissingGFPopup.PATH);
+		ResourcesFlowMissingGFPopup gfPopup = popup.GetComponent<ResourcesFlowMissingGFPopup>();
+		gfPopup.Init(_missingAmount);
+
+		// GF can't be bought, so when the popup is done, the Resources Flow will always be canceled
+		gfPopup.OnFinish.RemoveAllListeners();		// We're recycling popups, so we don't want events to be added twice!
+		gfPopup.OnFinish.AddListener(Cancel);
 
 		popup.Open();
 		m_popups.Add(popup);

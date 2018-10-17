@@ -163,6 +163,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { instance.m_debugServerDelayRange = value; }
 	}
 
+	[SerializeField] private bool m_useLiveEventsDebugCalls = false;
+	public static bool useLiveEventsDebugCalls {
+		get { return instance.m_useLiveEventsDebugCalls; }
+		set { instance.m_useLiveEventsDebugCalls = value; }
+	}
+
 	// UI settings
 	[Separator("UI Debug Tools")]
 	[SerializeField] private bool m_useUnitySafeArea = false;

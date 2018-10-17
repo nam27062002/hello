@@ -146,7 +146,7 @@ public class DragonElectricPowers : MonoBehaviour {
                                 for (int j = 0; j < m_numCheckEntities; j++)
                                 {
                                     Entity blastEntity = m_checkEntities[j];
-                                    if (blastEntity.IsBurnable() && (blastEntity.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
+                                    if ( blastEntity.circleArea != null && blastEntity.IsBurnable() && (blastEntity.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
                                     {
                                         AI.IMachine blastMachine = blastEntity.machine;
                                         if (blastMachine != null)
@@ -233,7 +233,7 @@ public class DragonElectricPowers : MonoBehaviour {
         for (int i = 0; i < m_numCheckEntities && ret == null; i++)
         {
             Entity prey = m_checkEntities[i];
-            if (prey.IsBurnable() && (prey.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
+            if (prey.circleArea != null && prey.IsBurnable() && (prey.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
             {
                 ret = prey;
             }

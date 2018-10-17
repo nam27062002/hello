@@ -1178,6 +1178,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     #endregion
 
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public override void Notify_LabEnter()
+    {        
+        Track_LabEnter();
+    }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="labProgression">Current lab progression level</param>
+    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public override void Notify_LabGameStart(int labProgression, string labPower, string currentLeague)
+    {
+        Track_LabGameStart(labProgression, labPower, currentLeague);
+    }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public override void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        Track_LabResult(ranking, currentLeague, upcomingLeague);
+    }
+    #endregion
+
     #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
@@ -1983,6 +2015,48 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_LabEnter()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabEnter");
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.entry");
+        {
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerGoldenFragments(e);
+            Track_AddParamPlayerPC(e);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    private void Track_LabGameStart(int labProgression, string labPower, string currentLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabGameStart labProgression = " + labProgression + " labPower = " + labPower + " currentLeague = " + currentLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
+        {
+            e.data.Add(TRACK_PARAM_LAB_PROGRESSION, labProgression);
+            Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    private void Track_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabResult ranking = " + ranking + " currentLeague = " + currentLeague + " upcomingLeague = " + upcomingLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.result");
+        {
+            e.data.Add(TRACK_PARAM_RANKING, ranking);            
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);
+            Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2012,6 +2086,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
     private const string TRACK_PARAM_CURRENCY = "currency";
+    private const string TRACK_PARAM_CURRENT_LEAGUE = "currentLeague";
     private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
     private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
     private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
@@ -2043,7 +2118,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_GENDER = "gender";
     private const string TRACK_PARAM_GLOBAL_EVENT_ID = "glbEventID";
     private const string TRACK_PARAM_GLOBAL_EVENT_TYPE = "glbEventType";
+    private const string TRACK_PARAM_GOLDEN_FRAGMENTS = "goldenFragments";
     private const string TRACK_PARAM_GPURAM = "gpuRam";
+    private const string TRACK_PARAM_HARD_CURRENCY = "hardCurrency";
     private const string TRACK_PARAM_HC_EARNED = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
@@ -2060,6 +2137,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_ITEM = "item";
     private const string TRACK_PARAM_ITEM_ID = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY = "itemQuantity";
+    private const string TRACK_PARAM_LAB_PROGRESSION = "labProgression";
+    private const string TRACK_PARAM_LAB_POWER = "labPower";
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
@@ -2097,6 +2176,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED = "pvpMatchesPlayed";
     private const string TRACK_PARAM_RADIUS = "radius";
     private const string TRACK_PARAM_RANK = "rank";
+    private const string TRACK_PARAM_RANKING = "ranking";
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
@@ -2133,6 +2213,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TRIGGERED = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
+    private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
@@ -2212,6 +2293,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
         _e.data.Add(TRACK_PARAM_PLAYER_PROGRESS, value);
     }
+
+    private void Track_AddParamPlayerGoldenFragments(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.goldenEggFragments : 0;
+        _e.data.Add(TRACK_PARAM_GOLDEN_FRAGMENTS, value);
+    }
+
+    private void Track_AddParamPlayerPC(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.pc : 0;
+        _e.data.Add(TRACK_PARAM_HARD_CURRENCY, value);
+    }            
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;

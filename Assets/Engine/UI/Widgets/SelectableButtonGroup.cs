@@ -30,6 +30,10 @@ public class SelectableButtonGroup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private List<SelectableButton> m_buttons = new List<SelectableButton>();
+    public List<SelectableButton> buttons{
+        get{ return m_buttons; }
+        set{ m_buttons = value; }
+    }
 	[SerializeField] private int m_initialSelectedIdx = 0;
 
 	// Events
