@@ -327,7 +327,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				{
 					m_purchaseFlow.OnSuccess.RemoveListener( OnEntrancePayAccepted );
 					m_purchaseFlow.OnSuccess.AddListener( OnPayAndPlay );
-					m_purchaseFlow.DoTransaction(false);
+					m_purchaseFlow.DoTransaction();
 				}
 				else
 				{
