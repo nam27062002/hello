@@ -390,6 +390,7 @@ public class DragonDataSpecial : IDragonData {
 
 		// Increase stat level
 		statData.level++;
+		Debug.Log(Colors.lime.Tag((statData.level - 1) + " -> " + statData.level + " / " + statData.maxLevel));
 
 		// Refresh power and tier
 		RefreshPowerLevel();

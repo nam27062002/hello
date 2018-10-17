@@ -71,7 +71,7 @@ public class DragonStatData {
 	/// Percentage bonus, i.e. 0.05 -> +5%
 	/// </summary>
 	public float valueStep {
-		get { return valueRange.distance / (float)(maxLevel + 1);  }
+		get { return valueRange.distance / (float)maxLevel;  }
 	}
 
 	//------------------------------------------------------------------------//
