@@ -27,6 +27,7 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private AspectRatioFitter m_target = null;
 	[SerializeField] private Image m_referenceImage = null;
+    [SerializeField] private float m_minAspectRatio = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,12 +50,19 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 		Debug.Assert(m_target != null, Colors.red.Tag("TARGET AspectRatioFitter NOT DEFINED"), this);
 		Debug.Assert(m_referenceImage != null, Colors.red.Tag("REFERENCE IMAGE NOT DEFINED"), this);
 		Debug.Assert(m_referenceImage.sprite != null, Colors.red.Tag("REFERENCE IMAGE HAS NO SPRITE ASSIGNED"), this);
-
-		// Figure out image's original AR
-		float ar = m_referenceImage.sprite.bounds.size.x / m_referenceImage.sprite.bounds.size.y;
-
-		// Define it as aspect ratio fitter target AR
-		m_target.aspectRatio = ar;
+        // Figure out image's original AR
+        float ar = m_referenceImage.sprite.bounds.size.x / m_referenceImage.sprite.bounds.size.y;
+        float w = Screen.width;
+        float h = Screen.height;
+        float r = w / h;
+        if ( r < m_minAspectRatio )
+        {
+            ar = m_minAspectRatio;
+        }
+        
+        // Define it as aspect ratio fitter target AR
+        m_target.aspectRatio = ar;
+		
 	}
 
 	//------------------------------------------------------------------------//
