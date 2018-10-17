@@ -402,7 +402,6 @@ public class DragonDataSpecial : IDragonData {
 
 		// Increase stat level
 		statData.level++;
-		Debug.Log(Colors.lime.Tag((statData.level - 1) + " -> " + statData.level + " / " + statData.maxLevel));
 
 		// Refresh power and tier
 		RefreshPowerLevel();
@@ -419,6 +418,9 @@ public class DragonDataSpecial : IDragonData {
 		if(oldTier != tier) {
 			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, this);
 		}
+
+		// Save persistence!
+		PersistenceFacade.instance.Save_Request();
 	}
     
 	/// <summary>

@@ -47,6 +47,12 @@ public class DragonHelicopterPowers : MonoBehaviour
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
 
+    [Header("Other")]
+    public List<Transform> m_scaleParticles = new List<Transform>();
+    public float m_minParticleScale = 0.5f;
+    public float m_maxParticleScale = 1.1f;
+    protected float m_particleScale = 1;
+
     protected float m_neckDistance = 0;
 
     RaycastHit[] results;
@@ -66,6 +72,8 @@ public class DragonHelicopterPowers : MonoBehaviour
             results = new RaycastHit[3];
             layerMask = 1 << LayerMask.NameToLayer("Triggers") | 1 << LayerMask.NameToLayer("Obstacle");
         }
+        
+        
     }
     // Use this for initialization
     void Start () {
@@ -211,6 +219,9 @@ public class DragonHelicopterPowers : MonoBehaviour
                     }
                 }
             }
+
+            m_particleScale += Time.deltaTime * 10;
+            if (m_particleScale > m_maxParticleScale) m_particleScale = m_maxParticleScale;
         }
         else
         {
@@ -226,8 +237,17 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_hatchOpen = false;
                 m_animator.SetBool(GameConstants.Animator.BOMB, false);
             }
+            
+            m_particleScale -= Time.deltaTime * 10;
+            if (m_particleScale < m_minParticleScale) m_particleScale = m_minParticleScale;
         }
-	}
+
+        int max = m_scaleParticles.Count;
+        for (int i = 0; i < max; i++)
+        {
+            m_scaleParticles[i].localScale = GameConstants.Vector3.one * m_particleScale;
+        }
+    }
 
 	private void FireMissile( int index )
 	{
