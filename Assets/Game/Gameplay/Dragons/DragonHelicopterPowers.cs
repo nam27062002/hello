@@ -49,6 +49,8 @@ public class DragonHelicopterPowers : MonoBehaviour
 
     [Header("Other")]
     public List<Transform> m_scaleParticles = new List<Transform>();
+    public float m_minParticleScale = 0.5f;
+    public float m_maxParticleScale = 1.1f;
     protected float m_particleScale = 1;
 
     protected float m_neckDistance = 0;
@@ -219,7 +221,7 @@ public class DragonHelicopterPowers : MonoBehaviour
             }
 
             m_particleScale += Time.deltaTime * 10;
-            if (m_particleScale > 1.1f) m_particleScale = 1.1f;
+            if (m_particleScale > m_maxParticleScale) m_particleScale = m_maxParticleScale;
         }
         else
         {
@@ -237,7 +239,7 @@ public class DragonHelicopterPowers : MonoBehaviour
             }
             
             m_particleScale -= Time.deltaTime * 10;
-            if (m_particleScale < 0.8f) m_particleScale = 0.8f;
+            if (m_particleScale < m_minParticleScale) m_particleScale = m_minParticleScale;
         }
 
         int max = m_scaleParticles.Count;
