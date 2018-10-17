@@ -98,6 +98,7 @@ namespace GameConstants
 		public static readonly int BEEP = UnityEngine.Animator.StringToHash("beep");
 
         public static readonly int ENABLED = UnityEngine.Animator.StringToHash("enabled");
+        public static readonly int STATE = UnityEngine.Animator.StringToHash("state");
         
         
         // HELICOPTER DRAGON
