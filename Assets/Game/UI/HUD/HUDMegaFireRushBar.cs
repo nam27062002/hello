@@ -27,6 +27,7 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 	private enum State {
 		Setup = 0,
 		Filling_Up,
+        PreActive,
 		Active
 	}
 
@@ -76,12 +77,13 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 		}
 
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-
+        Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnMegafuryPrewardm);
 		m_state = State.Filling_Up;
 	}
 
 	void OnDestroy() {		
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnMegafuryPrewardm);
 	}
 
 	/// <summary>
@@ -116,8 +118,16 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 					}
 				}
 			}
-		}
+		} else if (m_state == State.PreActive ) {
+            // We com from fillin up. All slots should be filled at this point. We don't need to do anything
+        }
 	}
+    
+    void OnMegafuryPrewardm(DragonBreathBehaviour.Type type, float duration) {
+        if ( type == DragonBreathBehaviour.Type.Mega ) {
+            m_state = State.PreActive;
+        }
+    }
 
 	void OnFuryToggled(bool _active, DragonBreathBehaviour.Type type) {
 		if (type == DragonBreathBehaviour.Type.Mega) {			

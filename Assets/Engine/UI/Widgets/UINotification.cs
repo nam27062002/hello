@@ -53,6 +53,13 @@ public class UINotification : ShowHideAnimator {
 			.Pause();
 	}
 
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	protected void OnEnable() {
+		if(m_idleSequence != null) m_idleSequence.Restart();
+	}
+
 	//------------------------------------------------------------------------//
 	// FACTORY METHOS														  //
 	//------------------------------------------------------------------------//
@@ -105,7 +112,7 @@ public class UINotification : ShowHideAnimator {
 	/// </summary>
 	/// <param name="_animate">Whether to use animations or not.</param>
 	/// <param name="_disableAfterAnimation">Whether to disable the object once the animation has finished or not. Only for non-custom tween animations.</param>
-	public virtual void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
+	public override void Hide(bool _animate = true, bool _disableAfterAnimation = true) {
 		// Pause to avoid conflicting with hide animation
 		if(m_tweenType == TweenType.SCALE || m_tweenType == TweenType.CUSTOM) {
 			m_idleSequence.Pause();

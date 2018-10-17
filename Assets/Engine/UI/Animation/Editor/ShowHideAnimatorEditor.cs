@@ -44,7 +44,7 @@ public class ShowHideAnimatorEditor : Editor {
 	/// <summary>
 	/// The editor has been enabled - target object selected.
 	/// </summary>
-	private void OnEnable() {
+	protected virtual void OnEnable() {
 		// Get target object
 		m_targetAnimator = target as ShowHideAnimator;
 	}
@@ -52,7 +52,7 @@ public class ShowHideAnimatorEditor : Editor {
 	/// <summary>
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
-	private void OnDisable() {
+	protected virtual void OnDisable() {
 		// Clear target object
 		m_targetAnimator = null;
 	}

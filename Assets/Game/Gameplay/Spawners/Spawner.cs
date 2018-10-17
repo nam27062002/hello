@@ -123,8 +123,6 @@ public class Spawner : AbstractSpawner {
 
 	[SerializeField] private int m_maxSpawns;
 
-	[SerializeField] private bool m_checkCurrents = false;
-
 
 	//-----------------------------------------------
 	// Attributes
@@ -651,7 +649,6 @@ public class Spawner : AbstractSpawner {
 		return endConditionsOk;
 	}    
 
-	public override bool SpawnersCheckCurrents(){ return m_checkCurrents; }
 
 	protected virtual AreaBounds GetArea() {
 		Area area = GetComponent<Area>();

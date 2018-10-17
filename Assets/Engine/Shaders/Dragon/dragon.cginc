@@ -4,6 +4,9 @@ struct appdata_t {
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 tangent : TANGENT;
+#ifdef VERTEXOFFSET
+	float4 color : COLOR;
+#endif
 };
 
 struct v2f {
@@ -16,7 +19,7 @@ struct v2f {
 	float3 binormalWorld : TEXCOORD4;
 #endif
 	fixed3 viewDir : TEXCOORD5;
-#if defined(FXLAYER_FIRE)
+#if defined(FXLAYER_FIRE) || defined(FXLAYER_DISSOLVE) || defined(VERTEXOFFSET)
 	fixed2 screenPos : TEXCOORD1;
 #endif
 };
@@ -52,6 +55,11 @@ uniform float _SpecExponent;
 #endif
 
 
+#if defined(VERTEXOFFSET)
+uniform float _VOAmplitude;
+uniform float _VOSpeed;
+#endif
+
 #if defined (FXLAYER_REFLECTION)
 uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
@@ -60,6 +68,19 @@ uniform sampler2D _FireMap;
 uniform float4 _FireMap_ST;
 uniform float _FireAmount;
 uniform float _FireSpeed;
+#elif defined (FXLAYER_DISSOLVE)
+uniform sampler2D _FireMap;
+uniform float _DissolveAmount;
+uniform float _DissolveLowerLimit;
+uniform float _DissolveUpperLimit;
+uniform float _DissolveMargin;
+#elif defined (FXLAYER_COLORIZE)
+uniform sampler2D _FireMap;
+uniform float4 _FireMap_TexelSize;
+uniform float4 _FireMap_ST;
+uniform float _ColorRampAmount;
+uniform float _ColorRampID0;
+uniform float _ColorRampID1;
 #endif
 
 #ifdef SELFILLUMINATE_AUTOINNERLIGHT
@@ -78,10 +99,37 @@ v2f vert(appdata_t v)
 	v2f o;
 
 #if defined(VERTEXOFFSET)
-	float smooth = smoothstep(0.7, -0.0, v.vertex.x);
-	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 10.0) * 0.12 * smooth;
+	float smooth = v.color.r;		//smoothstep(0.7, -0.0, v.vertex.z);
+//	v.vertex.xyz += v.normal * sin(v.vertex.x * 3.0 + _Time.y * 5.0) * 0.2 * smooth;
+
+	float wave = sin((_Time.y * _VOSpeed) + v.vertex.y + v.vertex.x) * smooth * _VOAmplitude;
+
+	float4 axis = float4(
+#if defined(VERTEXOFFSETX)
+		1.0,
+#else
+		0.0,
 #endif
 
+#if defined(VERTEXOFFSETY)
+		1.0,
+#else
+		0.0,
+#endif
+
+#if defined(VERTEXOFFSETZ)
+		1.0,
+#else
+		0.0,
+#endif
+		0.0
+	);
+
+	//float4 tvertex = v.vertex + float4(sin((_Time.y * hMult * _SpeedWave ) * 0.525) * hMult * 0.08, 0.0, 0.0, 0.0f);
+	v.vertex += axis * wave;
+
+#endif
+//	v.vertex.x *= 0.25;
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 
@@ -117,6 +165,9 @@ v2f vert(appdata_t v)
 
 #if defined(FXLAYER_FIRE)
 	o.screenPos = (v.vertex.xy / v.vertex.w) * _FireMap_ST.xy * 0.1;
+#elif defined(FXLAYER_DISSOLVE)
+	fixed limit = smoothstep(_DissolveUpperLimit, _DissolveLowerLimit + _DissolveMargin, v.vertex.x);
+	o.screenPos = fixed2(0.0, limit);
 #endif
 
 	return o;
@@ -127,7 +178,7 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 main = tex2D(_MainTex, i.texcoord);
 	fixed4 detail = tex2D(_DetailTex, i.texcoord);
 
-#ifdef CUTOFF
+#if defined (CUTOFF) && !defined(FXLAYER_DISSOLVE) 
 	clip(main.a - _Cutoff);
 #endif
 
@@ -186,6 +237,22 @@ fixed4 frag(v2f i) : SV_Target
 	float fireMask = _FireAmount * detail.b;
 	col = lerp(main, intensity, fireMask); // lerp(fixed4(1.0, 0.0, 0.0, 1.0), fixed4(1.0, 1.0, 0.0, 1.0), intensity);
 
+#elif defined (FXLAYER_DISSOLVE)
+	fixed noise = tex2D(_FireMap, i.texcoord).r * _DissolveMargin;
+	fixed limit = i.screenPos.y - noise;
+	fixed border = step(0.01, limit - _DissolveAmount);
+
+	clip(limit - _DissolveAmount);
+	col = lerp(main, fixed4(1.0, 0.3, 0.0, 1.0), 1.0 - border);
+
+#elif defined (FXLAYER_COLORIZE)
+	fixed4 col0 = tex2D(_FireMap, fixed2(main.r, (_ColorRampID0 + 0.5) * _FireMap_TexelSize.y));
+	fixed4 col1 = tex2D(_FireMap, fixed2(main.r, (_ColorRampID1 + 0.5) * _FireMap_TexelSize.y));
+	col = lerp(col0, col1, _ColorRampAmount);
+	col = lerp(main, col, detail.b);
+
+//	col = _FireMap_ST;
+
 #else
 	col = main;
 
@@ -203,6 +270,9 @@ fixed4 frag(v2f i) : SV_Target
 #elif defined (SELFILLUMINATE_BLINKLIGHTS)			//Used by reptile rings
 	float anim = 1.0 + sin(_Time.y * _InnerLightWaveSpeed); // _SinTime.w * 0.5f;
 	fixed3 selfIlluminate = col.xyz * anim * detail.r * _InnerLightColor.xyz * _InnerLightAdd;
+
+#elif defined(SELFILLUMINATE_EMISSIVE)
+	fixed3 selfIlluminate = lerp(fixed3(0.0, 0.0, 0.0), _InnerLightColor.xyz, detail.r * _InnerLightColor.a * _InnerLightAdd);
 
 #else
 	fixed3 selfIlluminate = (col.xyz * (detail.r * _InnerLightAdd * _InnerLightColor.xyz));	//fire rush illumination

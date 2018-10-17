@@ -324,6 +324,8 @@ public class UserProfile : UserPersistenceSystem
 
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+    
+    public List<string> m_visitedZones = new List<string>();
 
 	//--------------------------------------------------------------------------
 
@@ -466,6 +468,8 @@ public class UserProfile : UserPersistenceSystem
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
+        m_visitedZones = new List<string>();
+
         SocialState = ESocialState.NeverLoggedIn;
     }
 
@@ -540,7 +544,7 @@ public class UserProfile : UserPersistenceSystem
 		Messenger.Broadcast<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
         if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
-            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
+            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount, _paid);
         }
     }
 
@@ -1016,6 +1020,19 @@ public class UserProfile : UserPersistenceSystem
 				m_offerPacksPersistenceData.Add(kvp.Key, kvp.Value as JSONClass);
 			}
 		}
+
+        // Visited Zones
+        key = "visitedZones";
+        m_visitedZones.Clear();
+        if(_data.ContainsKey(key)) {
+            // Parse json object into the list
+            JSONArray zonesArray = _data[key] as JSONArray;
+            int max = zonesArray.Count;
+            for (int i = 0; i < max; i++)
+            {
+                m_visitedZones.Add(zonesArray[i]);
+            }
+        }
 	}
 
 	/// <summary>
@@ -1195,7 +1212,16 @@ public class UserProfile : UserPersistenceSystem
 		}
 		data.Add("offerPacks", offersData);
 
-		// Return it
+        // Visited Zones
+        JSONArray zonesArray = new SimpleJSON.JSONArray();
+        int max = m_visitedZones.Count;
+        for (int i = 0; i < max; i++)
+        {
+            zonesArray.Add(m_visitedZones[i]);
+        }
+        data.Add("visitedZones", zonesArray);
+
+        // Return it
 		return data;
 	}
 

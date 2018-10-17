@@ -11,6 +11,11 @@ public class ModEntitySC : ModifierEntity {
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
+    public ModEntitySC(float _percentage) : base(null) {
+        m_percentage = _percentage;
+        BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
+    }
+
 	public override void Apply() {
 		Entity.AddSCMultiplier(m_percentage);
 	}

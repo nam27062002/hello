@@ -12,6 +12,10 @@ using DG.Tweening;
 using System.Text;
 using TMPro;
 
+#if UNITY_IOS
+using UnityEngine.iOS;
+#endif
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -43,9 +47,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public enum SpecialDevice {
 		NONE,
 		IPHONE_X,
-        ANDROID_MAX_ASPECT_RATIO,
-        COUNT
-    }
+		ANDROID_MAX_ASPECT_RATIO,
+		COUNT
+	}
 
 	//------------------------------------------------------------------------//
 	// STATIC MEMBERS														  //
@@ -177,27 +181,21 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_petCategoryColorSpecial = Color.white;
 	[SerializeField] private Color m_petCategoryColorDefault = Color.white;
 
-	public static Color PET_CATEGORY_EAT { get { return instance.m_petCategoryColorEat; }}
-	public static Color PET_CATEGORY_HEALTH { get { return instance.m_petCategoryColorHealth; }}
-	public static Color PET_CATEGORY_SPEED { get { return instance.m_petCategoryColorSpeed; }}
-	public static Color PET_CATEGORY_SCORE { get { return instance.m_petCategoryColorScore; }}
-	public static Color PET_CATEGORY_FIRE { get { return instance.m_petCategoryColorFire; }}
-	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; }}
-	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; }}
-	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; }}
-    #endregion
+	public static Color PET_CATEGORY_EAT { get { return instance.m_petCategoryColorEat; } }
+	public static Color PET_CATEGORY_HEALTH { get { return instance.m_petCategoryColorHealth; } }
+	public static Color PET_CATEGORY_SPEED { get { return instance.m_petCategoryColorSpeed; } }
+	public static Color PET_CATEGORY_SCORE { get { return instance.m_petCategoryColorScore; } }
+	public static Color PET_CATEGORY_FIRE { get { return instance.m_petCategoryColorFire; } }
+	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; } }
+	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; } }
+	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
+	#endregion
 
-
-    // -------------------------------------------------------------------------
-    // 
-    #region MinAspectRatio
-    private static float MIN_ASPECT_RATIO_TO_SUPPORT_ROUND_CORNERS = 1.95f; // (16:9) is 1.77 )
-    #endregion
-
-    // -------------------------------------------------------------------------
-    // Open Egg animation setup
-    #region OpenEggAnimSetup
-    [SerializeField] private float m_openEggExplosionDuration = 3.6f;	// Sync with actual animation
+	// -----------------------------------------------------------------------//
+	// Open Egg animation setup												  //
+	// -----------------------------------------------------------------------//
+	#region OpenEggAnimSetup
+	[SerializeField] private float m_openEggExplosionDuration = 3.6f;   // Sync with actual animation
 	public static float openEggExplosionDuration {
 		get { return instance.m_openEggExplosionDuration; }
 	}
@@ -209,12 +207,13 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 	[SerializeField] private Ease m_openEggSpinEase = Ease.OutExpo;
 	public static Ease openEggSpinEase {
-		get { return instance.m_openEggSpinEase;}
+		get { return instance.m_openEggSpinEase; }
 	}
 	#endregion
 
-	// -------------------------------------------------------------------------
-	// Results animation setup
+	// -----------------------------------------------------------------------//
+	// Results animation setup												  //
+	//------------------------------------------------------------------------//
 	#region ResultsAnimSetup
 	[Tooltip("Units per second, the whole bar is 1 unit")]
 	[SerializeField] private float m_resultsXPBarSpeed = 0.15f;
@@ -234,12 +233,13 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 	#endregion
 
-	// -------------------------------------------------------------------------
-	// Menu animation setup
+	// -----------------------------------------------------------------------//
+	// Menu animation setup													  //
+	//------------------------------------------------------------------------//
 	#region MenuAnimationSetup
 	[SerializeField] private float m_menuCameraTransitionDuration = 0.5f;
 	public static float menuCameraTransitionDuration {
-		get { 
+		get {
 			// Check if it has been override in the Control Panel
 			float duration = PlayerPrefs.GetFloat(DebugSettings.MENU_CAMERA_TRANSITION_DURATION, instance.m_menuCameraTransitionDuration);
 			if(duration <= 0) duration = instance.m_menuCameraTransitionDuration;
@@ -248,9 +248,29 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	}
 	#endregion
 
-	// -------------------------------------------------------------------------
-	// Other constants
+	// -----------------------------------------------------------------------//
+	// Other Constants														  //
+	//------------------------------------------------------------------------//
 	#region OtherConstants
+	[SerializeField] private Vector2 m_canvasReferenceResolution = new Vector2(2048f, 1536f);
+	public static Vector2 CANVAS_REFERENCE_RESOLUTION {
+		get { return instance.m_canvasReferenceResolution; }
+	}
+
+	public static Vector2 CANVAS_SIZE {
+		get {
+			return new Vector2(
+				CANVAS_REFERENCE_RESOLUTION.y * ASPECT_RATIO,
+				CANVAS_REFERENCE_RESOLUTION.y
+			);
+		}
+	}
+
+	public static float ASPECT_RATIO {
+		get { return (float)Screen.width / (float)Screen.height; }
+	}
+
+
 	[SerializeField] private float m_mapMarkersDepth = -50f;
 	public static float MAP_MARKERS_DEPTH {
 		get { return instance.m_mapMarkersDepth; }
@@ -261,7 +281,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_dragonTiersSFX; }
 	}
 
-	[SerializeField] private UISafeArea[] m_safeAreas = new UISafeArea[0];
+	[Space]
+	[Tooltip("width/height, 16:9 is 1.77")]
+	[SerializeField] private float m_androidSafeAreaAspectRatioThreshold = 1.95f; // (16:9) is 1.77 )
 	private bool m_specialDeviceInitialized = false;
 	private SpecialDevice m_specialDevice = SpecialDevice.NONE;
 	public static SpecialDevice specialDevice {
@@ -274,35 +296,76 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
 				}
 
+#if UNITY_IOS
 				// Is it an iPhone X?
-				#if UNITY_IOS
-				else if(UnityEngine.iOS.Device.generation == UnityEngine.iOS.DeviceGeneration.iPhoneX) {
+				else if(Device.generation == DeviceGeneration.iPhoneX ||
+				        Device.generation > DeviceGeneration.iPhoneX) {		// [AOC] HACK!! Small trick to support newest iPhone Xs. Should be replaced by the proper enum values as soon as they are available
 					instance.m_specialDevice = SpecialDevice.IPHONE_X;
 				}
-				#elif UNITY_ANDROID
-                else
-                {
-                    float ar = (float)Screen.width / (float)Screen.height;
-                    if (ar > MIN_ASPECT_RATIO_TO_SUPPORT_ROUND_CORNERS)
-                    {
-                        instance.m_specialDevice = SpecialDevice.ANDROID_MAX_ASPECT_RATIO;
-                    }
-                }
-                #endif
-                // Mark as initialized!
-                instance.m_specialDeviceInitialized = true;
+#elif UNITY_ANDROID
+				// Is it an Android with huge aspect ratio? (likely to have rounded corners or notches)
+                else {
+					float ar = (float)Screen.width / (float)Screen.height;
+					if(ar > instance.m_androidSafeAreaAspectRatioThreshold) {
+						instance.m_specialDevice = SpecialDevice.ANDROID_MAX_ASPECT_RATIO;
+					}
+				}
+#endif
+				// Mark as initialized!
+				instance.m_specialDeviceInitialized = true;
 			}
 			return instance.m_specialDevice;
 		}
 	}
 
+	[SerializeField] private UISafeArea[] m_safeAreas = new UISafeArea[0];
+	private static UISafeArea m_safeArea = null;
 	public static UISafeArea safeArea {
 		get {
-			// Select target safe area based on special device
-			return instance.m_safeAreas[(int)specialDevice];
+			// If not yet initialized, do it now
+			if(m_safeArea == null) {
+				// Use Unity's safeArea or custom ones based on device?
+				// [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
+				if(!DebugSettings.useUnitySafeArea) {
+					// Select target safe area based on special device
+					return instance.m_safeAreas[(int)specialDevice];
+				} else {
+					// Unity's safe area is in Screen pixels
+					// Normalize and multiply by our Canvases reference resolution (hardcoded)
+#if UNITY_EDITOR
+					// Use DebugSettings to simulate different safe areas
+					Rect systemSafeArea = DebugSettings.debugSafeArea;
+#else
+				Rect systemSafeArea = Screen.safeArea;
+#endif
+					ControlPanel.Log(Colors.orange.Tag("SYSTEM SAFE AREA: " + systemSafeArea.ToString()));
+
+					// Normalize with screen size
+					Rect normalizedSafeArea = new Rect(
+						systemSafeArea.x / Screen.width,
+						systemSafeArea.y / Screen.height,
+						systemSafeArea.width / Screen.width,
+						systemSafeArea.height / Screen.height
+					);
+					ControlPanel.Log(Colors.orange.Tag("NORMALIZED SAFE AREA: " + normalizedSafeArea.ToString()));
+
+					// Scale back to our canvases reference resolution
+					// Keep Aspect Ratio!
+					Vector2 canvasSize = CANVAS_SIZE;
+					ControlPanel.Log(Colors.orange.Tag("ar: " + ASPECT_RATIO + " | canvas: " + canvasSize.x + ", " + canvasSize.y));
+					m_safeArea = new UISafeArea(
+						normalizedSafeArea.xMin * canvasSize.x,
+						(1f - normalizedSafeArea.yMax) * canvasSize.y,
+						(1f - normalizedSafeArea.xMax) * canvasSize.x,
+						normalizedSafeArea.yMin * canvasSize.y
+					);
+					ControlPanel.Log(Colors.orange.Tag("SAFE AREA: " + m_safeArea.ToString()));
+				}
+			}
+			return m_safeArea;
 		}
 	}
-	#endregion
+#endregion
 
 	//------------------------------------------------------------------------//
 	// NON-STATIC MEMBERS													  //
@@ -319,9 +382,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	private void OnEnable() {
 		// Reset some runtime vars to their initial value
 		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
-		// Special device
-		m_specialDevice = SpecialDevice.NONE;
-		m_specialDeviceInitialized = false;
+		m_safeArea = null;
 	}
 
 	/// <summary>

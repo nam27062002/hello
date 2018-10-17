@@ -30,6 +30,7 @@ public class ResultsSceneEggSlot : MonoBehaviour {
 		get { return m_eggLoader; }
 	}
 
+    public string m_eggResultsSound = "hd_results_egg";
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -76,10 +77,15 @@ public class ResultsSceneEggSlot : MonoBehaviour {
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(inDelay);	// Initial delay
 
+        seq.AppendCallback(() => {
+            // Play SFX
+            AudioController.Play(m_eggResultsSound);
+        });
+        
 		// Up
 		seq.Append(m_eggLoader.transform.DOScale(eggSlotScale, inDuration * 0.9f).SetEase(Ease.OutBack));
 		seq.Join(m_eggLoader.transform.DOLocalMoveY(0.25f, inDuration * 0.9f).SetRelative(true).SetEase(Ease.OutBack));
-
+        
 		// Restore particles and make sure scale is ok
 		seq.AppendCallback(() => {
 			for(int i = 0; i < particles.Length; ++i) {

@@ -102,3 +102,8 @@ MKLINK /d Plugins %strPathToCaletySDK%\..\..\calety\Calety\UnityProject\Assets\C
 
 :finishNoCalety
 
+
+
+
+
+

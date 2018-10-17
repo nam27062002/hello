@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
 
@@ -24,6 +25,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private SnappingScrollRect m_languageScrollList = null;
+	[SerializeField] private ShowHideAnimator m_languageNameAnim = null;
 	[Space]
 	[SerializeField] private Slider m_graphicsQualitySlider = null;
 	[SerializeField] private CanvasGroup m_graphicsQualityCanvasGroup = null;
@@ -33,10 +35,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	[SerializeField] private GameObject m_bloodToggle;
 	[SerializeField] private GameObject m_gameCenterForChildrenGroup = null;
 
-	// Internal
-	private List<PopupSettingsLanguagePill> m_pills = new List<PopupSettingsLanguagePill>();
-
-	private bool m_languageInitialized = false;
 
 	private int m_graphicsMaxLevel = 4;
 	private int m_initialGraphicsQualityLevel = -1;
@@ -48,37 +46,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	public void Awake() {
-		// Clear all content of the scroll list (used to do the layout)
-		m_languageScrollList.content.DestroyAllChildren(false);
-
-		// Cache language definitions, exluding those not supported by current platform
-		List<DefinitionNode> languageDefs = null;
-		if(Application.platform == RuntimePlatform.Android) {
-			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "android", "true");
-		} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.LOCALIZATION, "iOS", "true");
-		} else {
-			languageDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LOCALIZATION);
-		}
-
-		// Sort definitions by "order" field, create a pill for each language and init with selected language
-		DefinitionsManager.SharedInstance.SortByProperty(ref languageDefs, "order", DefinitionsManager.SortType.NUMERIC);
-		GameObject prefab = Resources.Load<GameObject>(LANGUAGE_PILL_PATH);
-		for(int i = 0; i < languageDefs.Count; i++) {
-			// Create and initialize pill
-			GameObject pillObj = GameObject.Instantiate<GameObject>(prefab, m_languageScrollList.content.transform, false);
-			PopupSettingsLanguagePill pill = pillObj.GetComponent<PopupSettingsLanguagePill>();
-			pill.InitFromDef(languageDefs[i]);
-			m_pills.Add(pill);
-		}
-		prefab = null;
-
-		if(m_pills.Count == 1) {
-			m_languageScrollList.enabled = false;
-		}
-
-		m_languageInitialized = false;
-
+    
 		// Toggle some components on/off if Age Restriction is enabled
 		bool ageRestriction = GDPRManager.SharedInstance.IsAgeRestrictionEnabled();
 		if(m_bloodToggle != null) {
@@ -94,34 +62,6 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 		}
     }
 
-	void Update() {
-		if (!m_languageInitialized) {
-			// Focus curent language
-			m_languageInitialized = true;
-
-			// Delay a frame to give time for everything to get initialized
-			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
-				SelectCurrentLanguage();
-				m_languageScrollList.onSelectionChanged.AddListener(OnLanguageSelectionChanged);
-			}, 1);
-		}
-	}
-
-	/// <summary>
-	/// Focus the currently selected language.
-	/// </summary>
-	private void SelectCurrentLanguage() {
-		// Scroll to initial language pill
-		string currentLangSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
-		for(int i = 0; i < m_pills.Count; i++) {
-			// Is it the selected one?
-			if(m_pills[i].def.sku == currentLangSku) {
-				// Yes! Snap to it and break the loop
-				m_languageScrollList.SelectPoint(m_pills[i].GetComponent<ScrollRectSnapPoint>(), false);
-				break;
-			}
-		}
-	}
 
 	/// <summary>
 	/// Update the graphics quality textfield with the current selected value.
@@ -135,29 +75,7 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
-	/// <summary>
-	/// A new pill has been selected on the snapping scroll list.
-	/// </summary>
-	/// <param name="_selectedPoint">Selected point.</param>
-	public void OnLanguageSelectionChanged(ScrollRectSnapPoint _selectedPoint) {
-		if(_selectedPoint == null) return;
 
-		// Find selected language
-		DefinitionNode newLangDef = _selectedPoint.GetComponent<PopupSettingsLanguagePill>().def;
-
-		// Change localization!
-		if(LocalizationManager.SharedInstance.SetLanguage(newLangDef.sku)) {
-			// Store new language
-			PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, newLangDef.sku);
-
-			// [AOC] If the setting is enabled, replace missing TIDs for english ones
-			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
-				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
-			}
-		}
-
-		Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
-	}
 
 	/// <summary>
 	/// The graphics quality slider has changed its value.
@@ -248,11 +166,8 @@ public class PopupSettingsOptionsTab : MonoBehaviour {
 
 	}
 
-	public void OnShow(){
-		m_languageInitialized = false;
-	}
-
-	public void OnHide() {
-		m_languageScrollList.onSelectionChanged.RemoveListener(OnLanguageSelectionChanged);
-	}
+    
+    public void OnLanguageBtn(){
+        PopupManager.OpenPopupInstant(PopupLanguageSelector.PATH);
+    }
 }

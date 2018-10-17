@@ -74,7 +74,7 @@ public class MenuDragonSkinUINotification : MonoBehaviour {
 
 		// Don't show during the FTUXP
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN)) {
-			m_notification.Hide();
+			m_notification.Hide(true, true);
 			return;
 		}
 

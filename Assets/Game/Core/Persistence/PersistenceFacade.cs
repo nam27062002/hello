@@ -275,13 +275,23 @@ public class PersistenceFacade
     #endregion
 
     #region save
+
+    private bool Save_IsSaving { get; set; }
+
 	public void Save_Request(bool immediate=false)
 	{
         // Makes sure that local persistence has already been loaded in game so we can be sure that default persistence is not saved 
         // if this method is called when the engine is not ready (for example, when restarting the app)
-        if (Config.LocalDriver.IsLoadedInGame)
+        if (Config.LocalDriver.IsLoadedInGame && !Save_IsSaving)
         {
-            Config.LocalDriver.Save(null);
+            Save_IsSaving = true;
+
+            Action onDone = delegate ()
+            {
+                Save_IsSaving = false;
+            };            
+
+            Config.LocalDriver.Save(onDone);
 
             if (FeatureSettingsManager.instance.IsTrackingStoreUnsentOnSaveGameEnabled)
             {
@@ -485,7 +495,7 @@ public class PersistenceFacade
         config.ConfirmButtonTid = "TID_GEN_RETRY";
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
+        config.IsButtonCloseVisible = false;        
         PopupManager.PopupMessage_Open(config);     
     }
 
@@ -509,14 +519,23 @@ public class PersistenceFacade
     /// This popup is shown when an error arises because the persistence saved is corrupted
     /// https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/28%29No+disk+access
     /// </summary>    
-    public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm)
+    public static void Popups_OpenLocalSaveCorruptedError(Action onConfirm, Action onContinue)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_FAILED_NAME";
-        config.MessageTid = "Corrupted progress saved. Please, retry";
+        config.MessageTid = "TID_SAVE_ERROR_CORRUPTED";
+        string uid = GameSessionManager.SharedInstance.GetUID();
+        if (string.IsNullOrEmpty(uid))
+        {
+            uid = "-1";
+        }
+
+        config.MessageParams = new string[] { "" + uid };
         config.ConfirmButtonTid = "TID_GEN_RETRY";
-        config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
+        config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
+        config.OnConfirm = onConfirm;        
+        config.CancelButtonTid = "TID_GEN_CONTINUE";
+        config.OnCancel = onContinue;
         config.IsButtonCloseVisible = false;
         PopupManager.PopupMessage_Open(config);
     }
@@ -532,8 +551,7 @@ public class PersistenceFacade
         config.MessageTid = "TID_SOCIAL_ERROR_CONNECTION_DESC";
         config.MessageParams = new string[] { SocialPlatformManager.SharedInstance.GetPlatformName() };
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
-        config.OnConfirm = onConfirm;
-        config.IsButtonCloseVisible = false;
+        config.OnConfirm = onConfirm;        
         PopupManager.PopupMessage_Open(config);              
     }
 
@@ -783,17 +801,17 @@ public class PersistenceFacade
             msg = LOG_CHANNEL + msg;
         }
 
-        Debug.Log(msg);
+        ControlPanel.Log(msg);
     }
 
     public static void LogError(string msg)
     {
-        Debug.LogError(LOG_CHANNEL + msg);
+        ControlPanel.LogError(LOG_CHANNEL + msg);
     }
 
 	public static void LogWarning(string msg)
     {
-        Debug.LogWarning(LOG_CHANNEL + msg);
+        ControlPanel.LogWarning(LOG_CHANNEL + msg);
     }
 	#endregion
 }

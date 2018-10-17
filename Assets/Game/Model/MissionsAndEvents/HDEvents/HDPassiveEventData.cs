@@ -34,20 +34,8 @@ public class HDPassiveEventData : HDLiveEventData {
 	/// Default constructor.
 	/// </summary>
 	public HDPassiveEventData() {
-
+        m_definition = new HDPassiveEventDefinition();
 	}
 
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	~HDPassiveEventData() {
 
-	}
-
-	/// <summary>
-	/// Create the definition object for this live event data.
-	/// </summary>
-	protected override void BuildDefinition() {
-		m_definition = new HDPassiveEventDefinition();
-	}
 }

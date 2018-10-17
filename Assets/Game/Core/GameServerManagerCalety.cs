@@ -155,6 +155,12 @@ public class GameServerManagerCalety : GameServerManager {
             GameServerManager.SharedInstance.OnLogOut();
         }
 
+        public override void onCountryBlacklisted() {
+            CacheServerManager.SharedInstance.SetCountryBlacklisted(true);
+            GameServerManager.SharedInstance.OnLogOut();
+        }
+
+
 		// Notify the game that a new version of the app is released. Show a popup that redirects to the store.
 		public override void onUserBlackListed() {
 			Debug.TaggedLog(tag, "onUserBlackListed");
@@ -549,8 +555,35 @@ public class GameServerManagerCalety : GameServerManager {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("body", json.ToString());
 
-        Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);        
+        Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);
     }
+    
+    public override void PCSpent(int amount, string group, ServerCallback onDone)
+    {
+        SendCurencyFluctuation( "hc", -amount, false, group, onDone );
+    }
+
+    public override void PCEarned(int amount, string group, bool paid, ServerCallback onDone)
+    {
+        SendCurencyFluctuation( "hc", amount, paid , group, onDone );
+    }
+    
+    private void SendCurencyFluctuation(string currency, int amount, bool paid, string action, ServerCallback onDone)
+    {
+        JSONNode json = new JSONClass();
+        json["currency"] = currency;
+        json["amount"] = amount;
+        json["type"] = paid ? "paid" : "free";
+        json["action"] = action;
+
+        Dictionary<string, string> parameters = new Dictionary<string, string>
+        {
+            { "body", json.ToString() }
+        };
+
+        Commands_EnqueueCommand(ECommand.CurrencyFluctuation, parameters, onDone);
+    }
+    
 
     override public void GlobalEvent_TMPCustomizer(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_TMPCustomizer, null, _callback);
@@ -718,6 +751,7 @@ public class GameServerManagerCalety : GameServerManager {
         PendingTransactions_Get,
         PendingTransactions_Confirm,
         Language_Set,
+        CurrencyFluctuation,
 
         GlobalEvents_TMPCustomizer,
 		GlobalEvents_GetEvent,		// params: int _eventID. Returns an event description
@@ -1175,6 +1209,16 @@ public class GameServerManagerCalety : GameServerManager {
                     Command_SendCommandAsGameAction(COMMAND_LANGUAGE_SET, data, false);
                 }
                 break;
+                case ECommand.CurrencyFluctuation:{
+                    JSONClass data = null;
+                    string paramsAsString = parameters["body"];
+                    if (!string.IsNullOrEmpty(paramsAsString))
+                    {
+                        data = JSON.Parse(paramsAsString) as JSONClass;
+                    }
+                    Command_SendCommandAsGameAction(COMMAND_CURRENCY_FLUCTUATION, data, false);
+                }
+                break;
                 default: {
                     if (FeatureSettingsManager.IsDebugEnabled)
                         LogWarning("Missing call to the server in GameServerManagerCalety.Commands_RunCommand() form command " + command.Cmd);
@@ -1575,6 +1619,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
     private const string COMMAND_LANGUAGE_SET = "language";
+    private const string COMMAND_CURRENCY_FLUCTUATION = "currencyfluctuation";
 
     /// <summary>
     /// Initialize Calety's NetworkManager.
@@ -1602,6 +1647,7 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_TRACK_LOADING, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_PENDING_TRANSACTIONS_GET, NetworkManager.EPacketEncryption.E_ENCRYPTION_AES, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_LANGUAGE_SET, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+        // nm.RegistryEndPoint(COMMAND_CURRENCY_FLUCTUATION, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
         nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_GLOBAL_EVENTS_GET_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);

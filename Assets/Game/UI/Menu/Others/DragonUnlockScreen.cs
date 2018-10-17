@@ -37,6 +37,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_healthText = null;
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private DragControlRotation m_dragController = null;
 
@@ -45,47 +46,6 @@ public class DragonUnlockScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
-
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-
-	}
-
-	/// <summary>
-	/// Called every frame
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-		
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -118,6 +78,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 		if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 		if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
 		if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
+		if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(dragonData.maxSpeed * 10f, 0);	// x10 to show nicer numbers
 
 		// Disable drag controller
 		if(m_dragController != null) m_dragController.gameObject.SetActive(false);

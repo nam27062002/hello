@@ -29,6 +29,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		EVENT_ACTIVE,
 		LOADING,
 		RETRY_REWARDS,
+        REQUIRES_UPDATE,
 
 		COUNT
 	};
@@ -130,7 +131,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			{
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);	
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
 			}
 			else
 			{
@@ -198,7 +199,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 					case HDLiveEventData.State.JOINED: {
 						targetPanel = Panel.EVENT_ACTIVE;
 					} break;
-
+                    case HDLiveEventData.State.REQUIRES_UPDATE:
+                    {
+                        targetPanel = Panel.REQUIRES_UPDATE;
+                    }break;
 					default: {
 						targetPanel = Panel.NO_EVENT;
 					} break;
@@ -309,6 +313,14 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// Send the player to the update button
+    /// </summary>
+    public void OnUpdateButton()
+    {
+        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);
+    }
+
 	void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err)
 	{
 		if ( _err == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
@@ -326,54 +338,5 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	{
 		yield return new WaitForSeconds(0.5f);
 		Refresh();
-	}
-	
-
-	/// <summary>
-	/// The Facebook button has been pressed.
-	/// </summary>
-	public void OnFacebookButton() {
-		OpenUrlDelayed("https://www.facebook.com/HungryDragonGame");
-	}
-
-    /// <summary>
-	/// The Weibo button has been pressed.
-	/// </summary>
-	public void OnWeiboButton() {
-        OpenUrlDelayed("https://www.weibo.com/ubichinamobile");
-    }
-
-    /// <summary>
-    /// The Twitter button has been pressed.
-    /// </summary>
-    public void OnTwitterButton() {
-		OpenUrlDelayed("https://twitter.com/_HungryDragon");
-	}
-
-	/// <summary>
-	/// The Instagram button has been pressed.
-	/// </summary>
-	public void OnInstagramButton() {
-		OpenUrlDelayed("https://www.instagram.com/hungrydragongame");
-	}
-
-	/// <summary>
-	/// The Web button has been pressed.
-	/// </summary>
-	public void OnWebButton() {
-		OpenUrlDelayed("http://blog.ubi.com/");
-	}
-
-	/// <summary>
-	/// Opens the URL after a short delay.
-	/// </summary>
-	/// <param name="_url">URL to be opened.</param>
-	private void OpenUrlDelayed(string _url) {
-		// Add some delay to give enough time for SFX to be played before losing focus
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				Application.OpenURL(_url);
-			}, 0.15f
-		);
 	}
 }

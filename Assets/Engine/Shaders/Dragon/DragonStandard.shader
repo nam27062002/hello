@@ -39,6 +39,18 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
 		_FireSpeed("Fire speed", float) = 1.0
 
+		_DissolveAmount("Dissolve amount", Range(0.0, 1.0)) = 0.0
+		_DissolveUpperLimit("Dissolve upper", float) = 1.0
+		_DissolveLowerLimit("Dissolve lower limit", float) = -1.0
+		_DissolveMargin("Dissolve margin", float) = 0.1
+
+		_ColorRampAmount("Color ramp amount", Range(0.0, 1.0)) = 0.0
+		_ColorRampID0("Color ramp id 0", float) = 0.0
+		_ColorRampID1("Color ramp id 1", float) = 0.0
+
+		_VOAmplitude("Vertex offset amplitude", float) = 0.3
+		_VOSpeed("Vertex offset speed", float) = 3.0
+
 		// Blending state
 		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 1.0 //"One"
@@ -60,11 +72,15 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(OPAQUEFRESNEL)] _EnableOpaqueFresnel("Enable opaque fresnel", Float) = 0
 		[Toggle(OPAQUESPECULAR)] _EnableOpaqueSpecular("Enable opaque specular", Float) = 0
 		[Toggle(BLENDFRESNEL)] _EnableBlendFresnel("Enable blend fresnel", Float) = 0.0
-		[Toggle(VERTEXOFFSET)] _EnableVertexOffset("Enable vertex offset", Float) = 0.0
+
+		[Toggle(VERTEXOFFSET)]	_EnableVertexOffset("Enable vertex offset", Float) = 0.0
+		[Toggle(VERTEXOFFSETX)] _EnableVertexOffsetX("Vertex offset X", Float) = 0.0
+		[Toggle(VERTEXOFFSETY)] _EnableVertexOffsetY("Vertex offset Y", Float) = 0.0
+		[Toggle(VERTEXOFFSETZ)] _EnableVertexOffsetZ("Vertex offset Z", Float) = 0.0
 
 		/// Enum Material Properties
-		[KeywordEnum(None, Reflection, Fire)] FXLayer("Additional FX layer", Float) = 0
-		[KeywordEnum(Normal, AutoInnerLight, BlinkLights)] SelfIlluminate("Additional FX layer", Float) = 0
+		[KeywordEnum(None, Reflection, Fire, Dissolve, Colorize)] FXLayer("Additional FX layer", Float) = 0
+		[KeywordEnum(Normal, AutoInnerLight, BlinkLights, Emissive)] SelfIlluminate("Emission layer", Float) = 0
 			
 	}
 
@@ -104,9 +120,12 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature  __ BLENDFRESNEL
 			#pragma shader_feature  __ OPAQUESPECULAR
 			#pragma shader_feature	__ VERTEXOFFSET
+			#pragma shader_feature	__ VERTEXOFFSETX
+			#pragma shader_feature	__ VERTEXOFFSETY
+			#pragma shader_feature	__ VERTEXOFFSETZ
 
-			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS
-			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE
+			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
+			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"

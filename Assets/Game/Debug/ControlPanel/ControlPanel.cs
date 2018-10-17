@@ -384,7 +384,9 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         GameCenter,
 		ResultsScreen,
 		LiveEvents,
-        Store
+        Store,
+        CP2,
+        Persistence
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -396,6 +398,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
 		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
         Log_SetupChannel(ELogChannel.Store, "Store", Colors.coral);
+        Log_SetupChannel(ELogChannel.CP2, "CP2", Colors.blue);
+        Log_SetupChannel(ELogChannel.Persistence, "Persistence", Colors.fuchsia);
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)
