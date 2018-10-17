@@ -12,10 +12,10 @@ public class LabDragonBarElement : MonoBehaviour {
 
     //---[Published Attributes]-------------------------------------------------
     [Separator("State Control")]
-    [SerializeField] private Animator m_animator;
+    [SerializeField] private Animator m_animator = null;
 
     [Separator("Bar")]
-    [SerializeField] private RectTransform m_scaleTransform;
+    [SerializeField] private RectTransform m_scaleTransform = null;
 
 
     //---[Attributes]-----------------------------------------------------------
@@ -35,6 +35,12 @@ public class LabDragonBarElement : MonoBehaviour {
     //---[Generic Methods]------------------------------------------------------
     private void Awake() {
         __transform = GetComponent<RectTransform>();
+
+        m_state = State.LOCKED;
+    }
+
+    private void OnEnable() {
+        m_animator.SetInteger(GameConstants.Animator.STATE, (int)m_state);
     }
 
 

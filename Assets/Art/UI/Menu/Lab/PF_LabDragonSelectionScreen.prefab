@@ -8122,6 +8122,8 @@ GameObject:
   m_Component:
   - component: {fileID: 224962134316151680}
   - component: {fileID: 114392729522242010}
+  - component: {fileID: 114726999323041606}
+  - component: {fileID: 114483217127302320}
   m_Layer: 5
   m_Name: DragonBar
   m_TagString: Untagged
@@ -20849,21 +20851,21 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0.0010986328
-      inSlope: 0.10866203
-      outSlope: 0.10866203
+      inSlope: 1.8292866
+      outSlope: 1.8292866
       tangentMode: 0
     - serializedVersion: 2
       time: 1.0037842
       value: -0.0048675537
-      inSlope: -0.18123293
-      outSlope: -0.18123293
+      inSlope: -4.656281
+      outSlope: -4.656281
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_positionCurveScale: 400
-  m_debugMaxLevel: 28
-  m_debugLevelTier: 010000000a000000130000001c000000
+  m_positionCurveScale: 40
+  m_debugMaxLevel: 29
+  m_debugLevelTier: 000000000a000000130000001c000000
   m_debugLevelSkill: 050000000e00000017000000
   m_debugCurrentLevel: 13
   m_debugUnlockedTier: 3
@@ -22089,6 +22091,58 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222273869900613322}
   m_TextComponent: {fileID: 114765508532642124}
   m_materialReferenceIndex: 1
+--- !u!114 &114483217127302320
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1770801142423480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 4
+  m_tweenDuration: 0.15
+  m_tweenValue: 300
+  m_tweenEase: 27
+  m_tweenDelay: 0.15
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114483997655625420
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -23358,6 +23412,7 @@ MonoBehaviour:
   m_dragonNameText: {fileID: 114335453356635554}
   m_dragonDescText: {fileID: 114382740634652710}
   m_unlockInfoText: {fileID: 114030685509417084}
+  m_dragonExpBar: {fileID: 114392729522242010}
   m_upgradeLockedInfoText: {fileID: 114491010748700348}
   m_stats:
   - {fileID: 114039252463776248}
@@ -24745,6 +24800,29 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114726999323041606
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1770801142423480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114483217127302320}
+  m_checkSelectedDragon: 1
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 0
+  m_mode: 0
+  m_targetScreens: 
+  m_restartShowAnimation: 1
 --- !u!114 &114727210797670432
 MonoBehaviour:
   m_ObjectHideFlags: 1
