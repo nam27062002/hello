@@ -179,12 +179,6 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Skip if dragon data is not valid
 		if(m_dragonData == null) return;
 
-		// Dragon description
-		if(m_dragonDescText != null) {
-			// Show only if dragon is not owned
-			m_dragonDescText.gameObject.SetActive(!m_dragonData.isOwned);
-		}
-
 		// Upgrade locked info
 		if(m_upgradeLockedInfoText != null) {
 			// Show if no more upgrades are possible

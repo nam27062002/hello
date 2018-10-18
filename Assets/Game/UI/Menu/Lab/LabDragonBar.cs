@@ -8,6 +8,7 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private GameObject m_elementTierPrefab = null;
 
     [SerializeField] private RectTransform m_content = null;
+    [SerializeField] private UITooltip m_tooltip = null;
 
     [SerializeField] private float m_blankSpace = 5f;
     [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
@@ -36,7 +37,7 @@ public class LabDragonBar : MonoBehaviour {
     private int m_currentLevel;
     private int[] m_unlockClassicTier;
 
-    private string[] m_iconSkill;
+    private List<DefinitionNode> m_definitionSkill;
 
 
     //---[Generic Methods]------------------------------------------------------
@@ -73,6 +74,10 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         //Hide everything
+        if (m_tooltip != null) {
+            m_tooltip.gameObject.SetActive(false);
+        }
+
         for (int i = 0; i < m_levelElements.Count; ++i) {
             m_levelElements[i].gameObject.SetActive(false);
         }
@@ -82,9 +87,10 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         for (int i = 0; i < m_skillElements.Count; ++i) {
-            if (i < m_iconSkill.Length) {
-                m_skillElements[i].SetIcon(m_iconSkill[i]);
+            if (i < m_definitionSkill.Count) {
+                m_skillElements[i].SetDefinition(m_definitionSkill[i]);
             }
+            m_skillElements[i].SetTooltip(m_tooltip);
             m_skillElements[i].gameObject.SetActive(false);
         }
     }
@@ -211,12 +217,10 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         //skills
-        List<DefinitionNode> powerDefs = _dragonData.specialPowerDefsByOrder;
-        m_iconSkill = new string[powerDefs.Count];
-        m_levelSkill = new int[powerDefs.Count];
-        for (int i = 0; i < powerDefs.Count; ++i) {
-            m_iconSkill[i] = powerDefs[i].Get("icon");
-            m_levelSkill[i] = powerDefs[i].GetAsInt("upgradeLevelToUnlock");
+        m_definitionSkill = _dragonData.specialPowerDefsByOrder;
+        m_levelSkill = new int[m_definitionSkill.Count];
+        for (int i = 0; i < m_definitionSkill.Count; ++i) {
+            m_levelSkill[i] = m_definitionSkill[i].GetAsInt("upgradeLevelToUnlock");
         }
 
         m_currentLevel = _dragonData.GetLevel();
@@ -232,7 +236,7 @@ public class LabDragonBar : MonoBehaviour {
         m_currentLevel = m_debugCurrentLevel;
         m_unlockClassicTier = new int[] {1, 2, 3, 4};
 
-        m_iconSkill = new string[3];
+        m_definitionSkill = new List<DefinitionNode>(3);
 
         CreateElements();
         ArrangeElements();
