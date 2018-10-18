@@ -190,8 +190,8 @@ public abstract class IUserMissions {
 			List<DefinitionNode> missionDefs = new List<DefinitionNode>();
 			List<DefinitionNode> typeDefs = new List<DefinitionNode>();
 
-			// 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
-			DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
+            // 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
+            DragonTier maxTierUnlocked = GetMaxTierUnlocked();
             typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(m_defTypesCategory);
 			typeDefs = typeDefs.FindAll(
 				(DefinitionNode _def) => { 
@@ -315,7 +315,7 @@ public abstract class IUserMissions {
 
         // 2.2. Difficulty modifier - additive
         DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
-        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
+        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "difficulty", difficultyDef.Get("difficulty"));
         if (difficultyModifierDef != null) {
             totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
             Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
@@ -357,14 +357,11 @@ public abstract class IUserMissions {
 		return m_missions[(int)_difficulty];
 	}
 
+
+    protected abstract DragonTier GetMaxTierUnlocked();
     protected abstract bool IsMissionLocked(Mission.Difficulty _difficulty);
-
-
     protected abstract DefinitionNode GetDragonModifierDef();
-
-
     protected abstract float ComputeRemovePCCostModifier();
-
     protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
 
 

@@ -60,6 +60,10 @@ public class UserMissions : IUserMissions {
         UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED);
     }
 
+    protected override DragonTier GetMaxTierUnlocked() {
+        return DragonManager.biggestOwnedDragon.tier;
+    }
+
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
         return UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsToUnlock(SceneController.Mode.DEFAULT, _difficulty);
     }
