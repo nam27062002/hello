@@ -193,6 +193,13 @@ public class TournamentInfoScreen : MonoBehaviour {
 		// [AOC] TODO!! Select fixed or flexible build screen!
         InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
 	}
+    
+    /// <summary>
+    /// Back button has been pressed.
+    /// </summary>
+    public void OnBackButton() {
+        SceneController.SetMode(SceneController.Mode.DEFAULT);
+    }
 
 	/// <summary>
 	/// Force a refresh every time we enter the tab!
