@@ -27,15 +27,20 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Separator("References")]
 	[SerializeField] private Localizer m_dragonNameText = null;
 	[SerializeField] private Localizer m_dragonDescText = null;
 	[Space]
 	[SerializeField] private Localizer m_unlockInfoText = null;
 	[Space]
-	[SerializeField] private Localizer m_upgradeLockedInfoText = null;
+    [SerializeField] private LabDragonBar m_dragonExpBar = null;
+    [SerializeField] private Localizer m_upgradeLockedInfoText = null;
 	[SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
 	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
+	[Separator("Config")]
+	[Tooltip("Use it to sync with animation")]
+	[SerializeField] private float m_dragonChangeInfoDelay = 0.15f;
 
 	// Cache some data
 	private DragonDataSpecial m_dragonData = null;
@@ -156,13 +161,14 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 			m_dragonDescText.Localize(m_dragonData.def.GetAsString("tidDesc"));
 		}
 
-		// Dragon stats
-		for(int i = 0; i < m_stats.Length; ++i) {
+        // Dragon exp and stats
+        m_dragonExpBar.BuildFromDragonData(m_dragonData);
+        for(int i = 0; i < m_stats.Length; ++i) {
 			m_stats[i].InitFromData(m_dragonData);
 		}
 
 		// First refresh
-		Refresh(_animate);
+        Refresh(_animate);
 	}
 
 	/// <summary>
@@ -172,12 +178,6 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void Refresh(bool _animate) {
 		// Skip if dragon data is not valid
 		if(m_dragonData == null) return;
-
-		// Dragon description
-		if(m_dragonDescText != null) {
-			// Show only if dragon is not owned
-			m_dragonDescText.gameObject.SetActive(!m_dragonData.isOwned);
-		}
 
 		// Upgrade locked info
 		if(m_upgradeLockedInfoText != null) {
@@ -213,8 +213,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Get new dragon's data from the dragon manager and do the refresh logic
-		InitWithDragon(DragonManager.GetDragonData(_sku), true);
+		// [AOC] Add some delay to sync with UI animation
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				// Get new dragon's data from the dragon manager and do the refresh logic
+				InitWithDragon(DragonManager.GetDragonData(_sku), true);
+			}, m_dragonChangeInfoDelay
+		);
 	}
 
 	/// <summary>
@@ -223,5 +228,6 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	private void OnStatUpgraded(DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat) {
 		// Let's just refresh for now
 		Refresh(true);
+        m_dragonExpBar.AddLevel();
 	}
 }

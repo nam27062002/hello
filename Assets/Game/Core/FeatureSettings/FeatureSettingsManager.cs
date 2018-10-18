@@ -1604,6 +1604,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_LIGHTMAP);
         }
     }
+    
+    public bool IsHelicopterDestroying
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_HELICOPTER_DESTROYS);
+        }
+    }
 
     public FeatureSettings.ELevel2Values EntitiesLOD
     {

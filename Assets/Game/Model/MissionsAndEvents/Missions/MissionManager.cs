@@ -51,7 +51,7 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
 	// Internal
 	private UserProfile m_user;
-    private IUserMissions m_currentModeMissions { 
+    public IUserMissions currentModeMissions { 
         get {
             if (m_user != null) {
                 switch (SceneController.mode) {
@@ -127,8 +127,8 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	private void Update() {
 		bool gaming = InstanceManager.gameSceneController != null;
-        if (m_currentModeMissions != null) 
-            m_currentModeMissions.CheckActivation(!gaming);
+        if (currentModeMissions != null) 
+            currentModeMissions.CheckActivation(!gaming);
 	}
 
 
@@ -230,9 +230,20 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
     /// <returns>The mission with the given difficulty.</returns>
     /// <param name="_difficulty">The difficulty of the mission to be returned.</param>
     public static Mission GetMission(Mission.Difficulty _difficulty) {
-        if (instance.m_currentModeMissions == null) return null;
+        if (instance.currentModeMissions == null) return null;
 
-        return instance.m_currentModeMissions.GetMission(_difficulty);
+        return instance.currentModeMissions.GetMission(_difficulty);
+    }
+    
+    /// <summary>
+    /// Returns if the mission is from the lab
+    /// </summary>
+    /// <returns><c>true</c>, if special mission, <c>false</c> otherwise.</returns>
+    /// <param name="_mission">Mission.</param>
+    public static bool IsSpecial(Mission _mission)
+    {
+        bool ret = instance.m_user.userSpecialMissions.GetMission(_mission.difficulty) == _mission;
+        return ret;
     }
 
 	//------------------------------------------------------------------//
@@ -251,10 +262,10 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// Give rewards for those completed and replace them by newly generated missions.
 	/// </summary>
 	public static void ProcessMissions() {
-        if (instance.m_currentModeMissions == null) return;
+        if (instance.currentModeMissions == null) return;
 
 		// Check all missions
-        instance.m_currentModeMissions.ProcessMissions();
+        instance.currentModeMissions.ProcessMissions();
 	}
 
 	/// <summary>
@@ -265,9 +276,9 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
 	public static void RemoveMission(Mission.Difficulty _difficulty) {
-        if (instance.m_currentModeMissions == null) return;
+        if (instance.currentModeMissions == null) return;
 
-        instance.m_currentModeMissions.RemoveMission(_difficulty);
+        instance.currentModeMissions.RemoveMission(_difficulty);
 
 		// Dispatch global event
 		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_REMOVED, GetMission(_difficulty));
@@ -284,14 +295,14 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// <param name="_seconds">Time to skip. Use -1 for the whole cooldown duration.</param>
 	public static void SkipMission(Mission.Difficulty _difficulty, float _seconds, bool _useAd, bool _useHC) {
 		// Nothing to do if not initialized
-        if(instance.m_currentModeMissions == null) return;
+        if(instance.currentModeMissions == null) return;
 
 		// UserMissions will take care of it
-        instance.m_currentModeMissions.SkipMission(_difficulty, _seconds, _useAd, _useHC);
+        instance.currentModeMissions.SkipMission(_difficulty, _seconds, _useAd, _useHC);
 
 		// Instantly check if mission has changed state
 		bool gaming = InstanceManager.gameSceneController != null;
-        instance.m_currentModeMissions.CheckActivation(!gaming);
+        instance.currentModeMissions.CheckActivation(!gaming);
 
 		// Dispatch global event
 		Messenger.Broadcast<Mission>(MessengerEvents.MISSION_SKIPPED, GetMission(_difficulty));
@@ -322,9 +333,9 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 	/// </summary>
 	/// <param name="_dragon">The dragon that has just been acquired.</param>
 	private void OnDragonAcquired(IDragonData _dragon) {
-        if (m_currentModeMissions != null) {
+        if (currentModeMissions != null) {
             int ownedDragons = UsersManager.currentUser.GetNumOwnedDragons();
-            m_currentModeMissions.UnlockByDragonsNumber();
+            currentModeMissions.UnlockByDragonsNumber();
         }
 	}
 

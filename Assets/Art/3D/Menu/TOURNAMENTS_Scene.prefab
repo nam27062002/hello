@@ -2310,21 +2310,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1648414851342510
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4422845795818254}
-  m_Layer: 0
-  m_Name: LookAt
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1650791465780172
 GameObject:
   m_ObjectHideFlags: 1
@@ -2869,6 +2854,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4611959788567058}
+  - component: {fileID: 114921755840989356}
+  - component: {fileID: 114164689908811978}
   m_Layer: 0
   m_Name: LAB_DECO
   m_TagString: Untagged
@@ -3574,8 +3561,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1110731770952224}
-  m_LocalRotation: {x: -0.022233808, y: 0.06188179, z: -0.0015004217, w: 0.9978347}
-  m_LocalPosition: {x: 8.8, y: -9.7, z: -7.9}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4984294277935578}
@@ -4184,13 +4171,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1050478957411084}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.10911622, y: 0.06177708, z: 0.003898641, w: 0.9920998}
+  m_LocalPosition: {x: -17.2, y: 6.2924194, z: -141.4}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4812732068819220}
-  m_Father: {fileID: 4422845795818254}
-  m_RootOrder: 0
+  m_Father: {fileID: 4611959788567058}
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4265221484454210
 Transform:
@@ -4600,20 +4587,6 @@ Transform:
   m_Father: {fileID: 4162490062393274}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4422845795818254
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1648414851342510}
-  m_LocalRotation: {x: -0.08715574, y: 0, z: 0, w: 0.9961947}
-  m_LocalPosition: {x: 0, y: -4, z: 10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4264057282200070}
-  m_Father: {fileID: 4548669788701200}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -10.684001, y: -14.341001, z: 0.002}
 --- !u!4 &4431247736108276
 Transform:
   m_ObjectHideFlags: 1
@@ -4948,11 +4921,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1850517205491548}
-  m_LocalRotation: {x: -0.022233808, y: 0.06188179, z: -0.0015004217, w: 0.9978347}
-  m_LocalPosition: {x: 8.8, y: -9.7, z: -7.9}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4422845795818254}
+  m_Children: []
   m_Father: {fileID: 4984294277935578}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -2.532, y: 7.1050005, z: -0.33}
@@ -5151,6 +5123,7 @@ Transform:
   - {fileID: 4587793144682902}
   - {fileID: 4048714203226552}
   - {fileID: 4919048010400590}
+  - {fileID: 4264057282200070}
   m_Father: {fileID: 4097948156382986}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5411,8 +5384,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1278704879280288}
-  m_LocalRotation: {x: -0.022233808, y: 0.06188179, z: -0.0015004217, w: 0.9978347}
-  m_LocalPosition: {x: 8.8, y: -9.7, z: -7.9}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4984294277935578}
@@ -6256,8 +6229,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1743001946807622}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -48.1, y: -369.6, z: 57.2}
+  m_LocalRotation: {x: -0.09138878, y: 0.06158888, z: -0.0057596415, w: 0.9938922}
+  m_LocalPosition: {x: -39, y: -384.9336, z: 65.145706}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4548669788701200}
@@ -6265,7 +6238,7 @@ Transform:
   - {fileID: 4095527641152946}
   m_Father: {fileID: 4097948156382986}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -2.532, y: 7.1050005, z: -0.33}
 --- !u!4 &4988358718709880
 Transform:
   m_ObjectHideFlags: 1
@@ -8135,7 +8108,7 @@ MonoBehaviour:
   changePosition: 1
   changeRotation: 1
   changeFov: 1
-  fov: 60.9
+  fov: 80
   changeNear: 1
   near: 1
   changeFar: 1
@@ -8197,6 +8170,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 12
+--- !u!114 &114164689908811978
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1830822633447896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 1
+  m_tweenDuration: 0.25
+  m_tweenValue: 1
+  m_tweenEase: 27
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 1
+  m_canBeTriggeredByParents: 1
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114173491013032070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8211,7 +8236,7 @@ MonoBehaviour:
   changePosition: 1
   changeRotation: 1
   changeFov: 1
-  fov: 35
+  fov: 100
   changeNear: 1
   near: 1
   changeFar: 1
@@ -8504,6 +8529,8 @@ MonoBehaviour:
   m_linkedPoints:
   - curve: {fileID: 0}
     pointId: TOURNAMENTS_INFO
+  - curve: {fileID: 0}
+    pointId: TOURNAMENTS_INFO
 --- !u!114 &114509140556571584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8702,7 +8729,7 @@ MonoBehaviour:
   changePosition: 1
   changeRotation: 1
   changeFov: 1
-  fov: 45
+  fov: 100
   changeNear: 0
   near: 1
   changeFar: 0
@@ -8740,7 +8767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84bce71a0f6d243409968290ee318b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_updateMode: 0
+  m_updateMode: 1
   m_linkedPoints:
   - curve: {fileID: 0}
     pointId: DRAGON_SELECTION
@@ -8926,6 +8953,29 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4812732068819220}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114921755840989356
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1830822633447896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114164689908811978}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 0
+  m_targetScreens: 110000001200000013000000
+  m_restartShowAnimation: 0
 --- !u!114 &114940274018715994
 MonoBehaviour:
   m_ObjectHideFlags: 1

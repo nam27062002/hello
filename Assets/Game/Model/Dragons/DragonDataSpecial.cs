@@ -64,6 +64,11 @@ public class DragonDataSpecial : IDragonData {
 		get { return m_specialTierDefsByOrder; }
 	}
 
+    private List<DefinitionNode> m_specialPowerDefsByOrder = null;
+    public List<DefinitionNode> specialPowerDefsByOrder {
+        get { return m_specialPowerDefsByOrder; }
+    }
+
 	// Power
 	public int powerLevel = 0;
 
@@ -237,7 +242,10 @@ public class DragonDataSpecial : IDragonData {
 		// Init tier definitions
 		m_specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", m_def.sku);
 		DefinitionsManager.SharedInstance.SortByProperty(ref m_specialTierDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
-        
+
+        m_specialPowerDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_POWERS, "specialDragon", m_def.sku);
+        DefinitionsManager.SharedInstance.SortByProperty(ref m_specialPowerDefsByOrder, "upgradeLevelToUnlock", DefinitionsManager.SortType.NUMERIC);
+
         m_pets = new List<string>();
         SetTier(DragonTier.TIER_1);		// [AOC] Special dragons start at tier S!
 		InitStats();
@@ -251,6 +259,9 @@ public class DragonDataSpecial : IDragonData {
 		m_type = Type.SPECIAL;
 	}
     
+	/// <summary>
+	/// Initialize stats data from the current dragon definition.
+	/// </summary>
     private void InitStats()
     {
 		if(m_def == null) return;
@@ -355,14 +366,18 @@ public class DragonDataSpecial : IDragonData {
 		int nextLevel = GetLevel() + 1;
 		DefinitionNode nextTierDef = null;
 		for(int i = 0; i < m_specialTierDefsByOrder.Count; ++i) {
-			// Is this tier unlocked next level?
-			if(m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") == nextLevel) {
-				// Is next tier restricted by the classic dragons biggest owned tier?
-				nextTierDef = m_specialTierDefsByOrder[i];
-				DragonTier requiredClassicTier = SkuToTier(nextTierDef.GetAsString("mainProgressionRestriction"));
-				return requiredClassicTier <= DragonManager.biggestOwnedDragon.tier;
-			}
-		}
+            // Is this tier unlocked next level?
+            if (m_specialTierDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") >= nextLevel) {
+                nextTierDef = m_specialTierDefsByOrder[i];
+                break;
+            }
+        }
+
+        if (nextTierDef != null) {
+            // Is next tier restricted by the classic dragons biggest owned tier?
+            DragonTier requiredClassicTier = SkuToTier(nextTierDef.GetAsString("mainProgressionRestriction"));
+            return requiredClassicTier <= DragonManager.biggestOwnedDragon.tier;
+        }
 
 		// Nothing preventing stats upgrade
 		return true;
@@ -403,6 +418,9 @@ public class DragonDataSpecial : IDragonData {
 		if(oldTier != tier) {
 			Messenger.Broadcast<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, this);
 		}
+
+		// Save persistence!
+		PersistenceFacade.instance.Save_Request();
 	}
     
 	/// <summary>
@@ -464,11 +482,11 @@ public class DragonDataSpecial : IDragonData {
         int level = GetLevel();
 
 		// Check Special Dragon power definitions
-		List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_POWERS, "specialDragon", m_def.sku);
-        int max = defs.Count;
+		
+        int max = m_specialPowerDefsByOrder.Count;
         for (int i = 0; i < max; i++)
         {
-            if (defs[i].GetAsInt("upgradeLevelToUnlock") <= level )
+            if (m_specialPowerDefsByOrder[i].GetAsInt("upgradeLevelToUnlock") <= level )
             {
                 powerLevel++;
             }

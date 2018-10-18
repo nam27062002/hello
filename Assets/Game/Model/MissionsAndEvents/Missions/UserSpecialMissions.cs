@@ -24,12 +24,20 @@ public class UserSpecialMissions : UserMissions {
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
+    protected override DragonTier GetMaxTierUnlocked() {
+        return DragonManager.maxSpecialDragonTierUnlocked;
+    }
+
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
         return false;
     }
     
     protected override DefinitionNode GetDragonModifierDef() {
-        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", DragonManager.maxSpecialDragonTierUnlocked.ToString());
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", IDragonData.TierToSku(DragonManager.maxSpecialDragonTierUnlocked));
+    }
+
+    protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", _sku);
     }
 
     protected override float ComputeRemovePCCostModifier() {

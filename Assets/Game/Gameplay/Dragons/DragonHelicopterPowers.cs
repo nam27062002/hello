@@ -47,14 +47,33 @@ public class DragonHelicopterPowers : MonoBehaviour
     [Header("Power Level 3 - Custom Pet")]
     public string m_petSku = "";
 
+    [Header("Other")]
+    public List<Transform> m_scaleParticles = new List<Transform>();
+    public float m_minParticleScale = 0.5f;
+    public float m_maxParticleScale = 1.1f;
+    protected float m_particleScale = 1;
+
     protected float m_neckDistance = 0;
 
+    RaycastHit[] results;
+    int layerMask;
+    bool destroys = false;
+    int destroyFrame = 0;
+    
     private void Awake()
     {
         if (!string.IsNullOrEmpty(m_machineGunParticleName)){
             m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
             m_machinegunParticle.gameObject.SetActive( true );
         }
+        destroys = FeatureSettingsManager.instance.IsHelicopterDestroying;
+        if ( destroys )
+        {
+            results = new RaycastHit[3];
+            layerMask = 1 << LayerMask.NameToLayer("Triggers") | 1 << LayerMask.NameToLayer("Obstacle");
+        }
+        
+        
     }
     // Use this for initialization
     void Start () {
@@ -120,6 +139,11 @@ public class DragonHelicopterPowers : MonoBehaviour
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
             arcOrigin.z = 0;
+            
+            Vector3 dir = -m_machingegunAnchor.right;
+            dir.z = 0;
+            dir.Normalize();
+            
             // Machinegun killing
             m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities(arcOrigin, m_machinegunDistance, m_checkEntities);
             for (int e = 0; e < m_numCheckEntities; e++) 
@@ -129,7 +153,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                 {
                     if ( (entity.hideNeedTierMessage ) && !entity.IsEdible( m_tier ) && !m_killEverything)
                         continue;
-                    Vector3 dir = -m_machingegunAnchor.right;
+                    
                     // Start bite attempt
                     Vector3 heading = (entity.transform.position - arcOrigin);
                     float dot = Vector3.Dot(heading, dir);
@@ -138,8 +162,6 @@ public class DragonHelicopterPowers : MonoBehaviour
                         // Check arc
                         Vector3 circleCenter = entity.circleArea.center;
                         circleCenter.z = 0;
-                        dir.z = 0;
-                        dir.Normalize();
                         if (MathUtils.TestArcVsCircle( arcOrigin, m_machinegunAngle, m_machinegunDistance, dir, circleCenter, entity.circleArea.radius))
                         {
                             // Kill!
@@ -178,7 +200,29 @@ public class DragonHelicopterPowers : MonoBehaviour
                     m_bombTimer += m_bombFireRate;
                 }
             }
-		}
+
+            if ( destroys )
+            {
+                destroyFrame++;
+                if ( destroyFrame % 2 == 0 )
+                {
+                    destroyFrame = 0;
+                    // Break things
+                    int num = Physics.RaycastNonAlloc(arcOrigin, dir, results, m_machinegunDistance, layerMask);
+                    for (int i = 0; i < num; i++)
+                    {
+                        DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
+                        if ( decoration != null && decoration.CanBreakByShooting())
+                        {
+                            decoration.Break();
+                        }
+                    }
+                }
+            }
+
+            m_particleScale += Time.deltaTime * 10;
+            if (m_particleScale > m_maxParticleScale) m_particleScale = m_maxParticleScale;
+        }
         else
         {
             if ( m_machinegunFiring )
@@ -193,8 +237,17 @@ public class DragonHelicopterPowers : MonoBehaviour
                 m_hatchOpen = false;
                 m_animator.SetBool(GameConstants.Animator.BOMB, false);
             }
+            
+            m_particleScale -= Time.deltaTime * 10;
+            if (m_particleScale < m_minParticleScale) m_particleScale = m_minParticleScale;
         }
-	}
+
+        int max = m_scaleParticles.Count;
+        for (int i = 0; i < max; i++)
+        {
+            m_scaleParticles[i].localScale = GameConstants.Vector3.one * m_particleScale;
+        }
+    }
 
 	private void FireMissile( int index )
 	{

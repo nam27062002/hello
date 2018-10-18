@@ -60,12 +60,20 @@ public class UserMissions : IUserMissions {
         UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.FIRST_MISSIONS_GENERATED);
     }
 
+    protected override DragonTier GetMaxTierUnlocked() {
+        return DragonManager.biggestOwnedDragon.tier;
+    }
+
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
         return UsersManager.currentUser.GetNumOwnedDragons() < MissionManager.GetDragonsToUnlock(SceneController.Mode.DEFAULT, _difficulty);
     }
 
     protected override DefinitionNode GetDragonModifierDef() {
         return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);  // Matching sku
+    }
+
+    protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
+        return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, _sku);  // Matching sku
     }
 
     protected override float ComputeRemovePCCostModifier() {
