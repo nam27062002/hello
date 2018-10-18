@@ -36,6 +36,10 @@ public class UserSpecialMissions : UserMissions {
         return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", IDragonData.TierToSku(DragonManager.maxSpecialDragonTierUnlocked));
     }
 
+    protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", _sku);
+    }
+
     protected override float ComputeRemovePCCostModifier() {
         return (float)DragonManager.maxSpecialDragonTierUnlocked;
     }

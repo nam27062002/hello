@@ -72,6 +72,10 @@ public class UserMissions : IUserMissions {
         return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);  // Matching sku
     }
 
+    protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
+        return DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, _sku);  // Matching sku
+    }
+
     protected override float ComputeRemovePCCostModifier() {
         return DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count;
     }
