@@ -202,6 +202,16 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// The screen is about to be displayed.
+	/// </summary>
+	public void OnShowPreAnimation() {
+		// Trigger intro popup?
+		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
+			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
+		}
+	} 
+
+	/// <summary>
 	/// Back button has been pressed.
 	/// </summary>
     public void OnBackButton() {

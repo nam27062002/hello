@@ -80,7 +80,8 @@ public class HDTrackingManager
 		SPECIAL_DRAGON_UNLOCK,
 		SPECIAL_DRAGON_UPGRADE,
         SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
-        LAB_REWARD_MISSION               // When user gets reward from Lab Mission
+        LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
+		LAB_UNLOCKED_GIFT				 // When player unlocks the lab for the first time, a gift is given
     };
 
 	public enum EFunnels
