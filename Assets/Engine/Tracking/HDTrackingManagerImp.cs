@@ -985,6 +985,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_Missions(Mission _mission, EActionsMission _action) {
+    
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Notify_Missions " + _action.ToString());
         }
@@ -993,7 +994,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (e != null) {
             Track_AddParamString(e, TRACK_PARAM_MISSION_TYPE, _mission.def.Get("type"));
             Track_AddParamString(e, TRACK_PARAM_MISSION_TARGET, _mission.def.Get("params"));
-            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, _mission.difficulty.ToString());
+            string difficulty = _mission.difficulty.ToString();
+            if (MissionManager.IsSpecial(_mission))
+            {
+                difficulty = "LAB_" + difficulty;
+            }
+            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, difficulty);
             Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
             Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
             Track_AddParamSessionsCount(e);
