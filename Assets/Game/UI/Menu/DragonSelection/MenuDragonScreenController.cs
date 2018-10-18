@@ -67,7 +67,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         m_showPendingTransactions = false;
 
         // Subscribe to external events.
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);        
+        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
         // Check whether we need to move to another screen
         // Check order is relevant!
@@ -297,6 +297,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// Check for new tease/reveals
 				CheckPendingReveals();
+
+				// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
+				if(m_dragonToReveal == null && m_dragonToTease == null) {
+					PopupLabUnlocked.Check();
+				}
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -364,6 +369,12 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+
+					// Check the lab unlocked popup!
+					// [AOC] After some delay to wait for the scroll anim to return
+					UbiBCN.CoroutineManager.DelayedCall(() => {
+						PopupLabUnlocked.Check();
+					}, 0.5f);
 				}
 
 				// Toggle flag
@@ -429,16 +440,23 @@ public class MenuDragonScreenController : MonoBehaviour {
 				dragonData.Reveal();
 				CheckPendingReveals();
 
-				if (m_dragonToTease == null && m_dragonToReveal == null) {
+				// No more dragons to reveal! Go back to current dragon
+				if(m_dragonToTease == null && m_dragonToReveal == null) {
 					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
 					}
-                    for (int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
-                        m_toHideOnTeaseAnim[i].ForceShow(true);
-                    }
+					for(int i = 0; i < m_toHideOnTeaseAnim.Length; i++) {
+						m_toHideOnTeaseAnim[i].ForceShow(true);
+					}
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
+
+					// Check the lab unlocked popup!
+					// [AOC] After some delay to wait for the scroll anim to return
+					UbiBCN.CoroutineManager.DelayedCall(() => {
+						PopupLabUnlocked.Check();
+					}, 0.5f);
 				}
 
 				// Toggle flag
@@ -497,6 +515,14 @@ public class MenuDragonScreenController : MonoBehaviour {
 		} else {
 			// Check whether we need to launch any other animation
 			CheckPendingReveals();
+
+			// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
+			if(m_dragonToReveal == null && m_dragonToTease == null) {
+				// [AOC] After some delay to wait for the scroll anim to return
+				UbiBCN.CoroutineManager.DelayedCall(() => {
+					PopupLabUnlocked.Check();
+				}, 0.25f);
+			}
 		}
 	}
 

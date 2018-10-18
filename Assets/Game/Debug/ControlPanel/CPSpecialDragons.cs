@@ -123,4 +123,12 @@ public class CPSpecialDragons : MonoBehaviour {
 			PersistenceFacade.instance.Save_Request(false);
 		}
 	}
+
+	public void OnResetLabIntroPopup() {
+		Prefs.SetBoolPlayer(PopupLabIntro.DISPLAYED_KEY, false);
+	}
+
+	public void OnResetLabUnlockedPopup() {
+		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LAB_UNLOCKED, false);
+	}
 }
