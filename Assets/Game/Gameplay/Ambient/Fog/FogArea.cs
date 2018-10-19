@@ -31,7 +31,18 @@ public class FogArea : MonoBehaviour
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 	}
 
-	void OnTriggerEnter( Collider other)
+    private void OnDisable()
+    {
+        if ( m_playerInside )
+        {
+            m_playerInside = false;
+            if ( m_fogManager != null )
+                m_fogManager.DeactivateArea( this );
+            transform.localScale = m_startScale;
+        }
+    }
+
+    void OnTriggerEnter( Collider other)
 	{
 		if ( other.CompareTag("Player") && !m_playerInside)	
 		{

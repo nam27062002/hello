@@ -23,6 +23,7 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private int[] m_debugLevelSkill = { 5, 15, 25 };
     [Space]
     [SerializeField] private int m_debugCurrentLevel = 1;
+    [SerializeField] private int m_debugMaxTierUnlocked = 3;
 
 
     private List<LabDragonBarElement> m_levelElements = new List<LabDragonBarElement>();
@@ -36,6 +37,7 @@ public class LabDragonBar : MonoBehaviour {
     private int[] m_levelSkill;
     private int m_currentLevel;
     private int[] m_unlockClassicTier;
+    private int m_maxTierUnlocked;
 
     private List<DefinitionNode> m_definitionSkill;
 
@@ -155,7 +157,7 @@ public class LabDragonBar : MonoBehaviour {
             if (i <= m_currentLevel) {
                 elementState = LabDragonBarElement.State.OWNED;
             } else {
-                if (m_unlockClassicTier[m_tierElementIndex] <= (int)DragonManager.biggestOwnedDragon.tier) {
+                if (m_unlockClassicTier[m_tierElementIndex] <= m_maxTierUnlocked) {
                     elementState = LabDragonBarElement.State.AVAILABLE;
                 } else {
                     elementState = LabDragonBarElement.State.LOCKED;
@@ -224,6 +226,7 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         m_currentLevel = _dragonData.GetLevel();
+        m_maxTierUnlocked = (int)DragonManager.biggestOwnedDragon.tier;
 
         CreateElements();
         ArrangeElements();
@@ -235,6 +238,8 @@ public class LabDragonBar : MonoBehaviour {
         m_levelSkill = m_debugLevelSkill;
         m_currentLevel = m_debugCurrentLevel;
         m_unlockClassicTier = new int[] {1, 2, 3, 4};
+
+        m_maxTierUnlocked = m_debugMaxTierUnlocked;
 
         m_definitionSkill = new List<DefinitionNode>(3);
 

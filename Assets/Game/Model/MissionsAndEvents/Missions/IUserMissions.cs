@@ -190,8 +190,8 @@ public abstract class IUserMissions {
 			List<DefinitionNode> missionDefs = new List<DefinitionNode>();
 			List<DefinitionNode> typeDefs = new List<DefinitionNode>();
 
-			// 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
-			DragonTier maxTierUnlocked = DragonManager.biggestOwnedDragon.tier;
+            // 1. Get available mission types (based on current max dragon tier unlocked and current mission types)
+            DragonTier maxTierUnlocked = GetMaxTierUnlocked();
             typeDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(m_defTypesCategory);
 			typeDefs = typeDefs.FindAll(
 				(DefinitionNode _def) => { 
@@ -280,7 +280,7 @@ public abstract class IUserMissions {
 		Debug.Log("\tSingle run?: <color=yellow>" + singleRun + "</color>");
 
 		// 6. All ready! Generate the mission!
-		return GenerateNewMission(_difficulty, selectedMissionDef, selectedTypeDef, singleRun);
+		return GenerateNewMission(_difficulty, selectedMissionDef, selectedTypeDef, singleRun, "");
 	}
 
 	/// <summary>
@@ -293,7 +293,7 @@ public abstract class IUserMissions {
 	/// <param name="_missionDef">The mission to be generated.</param>
     /// <param name="_typeDef">The type of the mission to be generated.</param>
 	/// <param name="_singleRun">Single run mission?</param>
-	protected Mission GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, bool _singleRun) {
+	protected Mission GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, bool _singleRun, string _forceModifierSku) {
 		// 1. Compute target value based on mission min/max range
 		long targetValue = 0;
 
@@ -307,7 +307,14 @@ public abstract class IUserMissions {
         float totalModifier = 0f;
 
         // 2.1. Dragon modifier - additive
-        DefinitionNode dragonModifierDef = GetDragonModifierDef();
+        DefinitionNode dragonModifierDef = null;
+
+        if (string.IsNullOrEmpty(_forceModifierSku)) {
+            dragonModifierDef = GetDragonModifierDef();
+        } else {
+            dragonModifierDef = GetForcedDragonModifierDef(_forceModifierSku);
+        }
+
         if (dragonModifierDef != null) {
             totalModifier += dragonModifierDef.GetAsFloat("quantityModifier");
             Debug.Log("\tDragon Modifier " + dragonModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
@@ -315,7 +322,7 @@ public abstract class IUserMissions {
 
         // 2.2. Difficulty modifier - additive
         DefinitionNode difficultyDef = MissionManager.GetDifficultyDef(_difficulty);
-        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, difficultyDef.sku);
+        DefinitionNode difficultyModifierDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_MODIFIERS, "difficulty", difficultyDef.Get("difficulty"));
         if (difficultyModifierDef != null) {
             totalModifier += difficultyModifierDef.GetAsFloat("quantityModifier");
             Debug.Log("\tDifficulty Modifier " + difficultyModifierDef.GetAsFloat("quantityModifier") + "\n\tTotal modifier: " + totalModifier);
@@ -357,14 +364,12 @@ public abstract class IUserMissions {
 		return m_missions[(int)_difficulty];
 	}
 
+
+    protected abstract DragonTier GetMaxTierUnlocked();
     protected abstract bool IsMissionLocked(Mission.Difficulty _difficulty);
-
-
     protected abstract DefinitionNode GetDragonModifierDef();
-
-
+    protected abstract DefinitionNode GetForcedDragonModifierDef(string _sku);
     protected abstract float ComputeRemovePCCostModifier();
-
     protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
 
 
@@ -395,26 +400,26 @@ public abstract class IUserMissions {
     /// </summary>
     public abstract void UnlockByDragonsNumber();
 
-	
 
-	//------------------------------------------------------------------------//
-	// DEBUG METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// DEBUG ONLY!
-	/// Create a new mission with the given parameters.
-	/// A new target value will be computed based on algorithm factors.
-	/// If a mission already exists at the given difficulty slot, it will be immediately terminated.
-	/// </summary>
-	/// <returns>The newly created mission.</returns>
-	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
-	/// <param name="_missionDef">The mission to be generated.</param>
-	/// <param name="_missionDef">The type of the mission to be generated.</param>
-	/// <param name="_dragonModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
-	/// <param name="_singleRun">Single run mission?</param>
-	public Mission DEBUG_GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, string _dragonModifierSku, bool _singleRun) {
+
+    //------------------------------------------------------------------------//
+    // DEBUG METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// DEBUG ONLY!
+    /// Create a new mission with the given parameters.
+    /// A new target value will be computed based on algorithm factors.
+    /// If a mission already exists at the given difficulty slot, it will be immediately terminated.
+    /// </summary>
+    /// <returns>The newly created mission.</returns>
+    /// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
+    /// <param name="_missionDef">The mission to be generated.</param>
+    /// <param name="_missionDef">The type of the mission to be generated.</param>
+    /// <param name="_singleRun">Single run mission?</param>
+    /// <param name="_forceModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
+    public Mission DEBUG_GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, bool _singleRun, string _forceModifierSku) {
 		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG) " + _difficulty + "</color>");
-		return GenerateNewMission(_difficulty, _missionDef, _typeDef, /*_dragonModifierSku, */_singleRun);
+        return GenerateNewMission(_difficulty, _missionDef, _typeDef, _singleRun, _forceModifierSku);
 	}
 
 

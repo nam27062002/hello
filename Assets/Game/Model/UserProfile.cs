@@ -1594,6 +1594,22 @@ public class UserProfile : UserPersistenceSystem
 		}
 		return ret;
 	}
+    
+    /// <summary>
+    /// Gets the number owned special dragons.
+    /// </summary>
+    /// <returns>The number owned special dragons.</returns>
+    public int GetNumOwnedSpecialDragons()
+    {
+        int ret = 0;
+        foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+            if (pair.Value.isOwned && (pair.Value is DragonDataSpecial))
+            {
+                ret++;
+            }
+        }
+        return ret;
+    }
 
 	/// <summary>
 	/// Only CLASSIC dragons considered.

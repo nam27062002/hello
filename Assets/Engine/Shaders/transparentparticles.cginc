@@ -77,7 +77,8 @@ v2f vert(appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color = v.color;
 
-	o.texcoord = TRANSFORM_TEX(v.texcoord + _Panning.xy * _Time.yy, _MainTex);
+//	o.texcoord = TRANSFORM_TEX(v.texcoord + _Panning.xy * _Time.yy, _MainTex);
+	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Panning.xy * _Time.yy);
 
 #if defined(NOISE_TEXTURE)
 

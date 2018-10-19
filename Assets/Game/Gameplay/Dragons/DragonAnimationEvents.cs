@@ -232,7 +232,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
 		{
 			m_wingsIdleSoundAO.Stop();
-			m_wingsFlyingSoundAO = null;
+			m_wingsIdleSoundAO = null;
 		}
 	}
 

@@ -304,13 +304,19 @@ public class CPMissionGenerator : MonoBehaviour {
 			return;
 		}
 
+        if (SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+            //we will use the tier of the selected dragon instead of the sku
+            IDragonData data = DragonManager.GetDragonData(ownedDragonSku);
+            ownedDragonSku = IDragonData.TierToSku(data.tier);
+        }
+
 		// Everything ok! Do it!
-		Mission newMission = UsersManager.currentUser.userMissions.DEBUG_GenerateNewMission(
+        Mission newMission = MissionManager.instance.currentModeMissions.DEBUG_GenerateNewMission(
 			difficulty,
 			missionDef,
-			typeDef,
-			ownedDragonSku,
-			singleRun
+			typeDef,			
+			singleRun,
+            ownedDragonSku
 		);
 
 		// Save persistence

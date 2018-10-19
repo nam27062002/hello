@@ -24,12 +24,20 @@ public class UserSpecialMissions : UserMissions {
     //------------------------------------------------------------------//
     // INTERNAL METHODS                                                 //
     //------------------------------------------------------------------//
+    protected override DragonTier GetMaxTierUnlocked() {
+        return DragonManager.maxSpecialDragonTierUnlocked;
+    }
+
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
         return false;
     }
     
     protected override DefinitionNode GetDragonModifierDef() {
-        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", DragonManager.maxSpecialDragonTierUnlocked.ToString());
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", IDragonData.TierToSku(DragonManager.maxSpecialDragonTierUnlocked));
+    }
+
+    protected override DefinitionNode GetForcedDragonModifierDef(string _sku) {
+        return DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, "tier", _sku);
     }
 
     protected override float ComputeRemovePCCostModifier() {
@@ -38,7 +46,7 @@ public class UserSpecialMissions : UserMissions {
 
     protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
         long amount = (long)MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.SPECIAL_DRAGONS, _difficulty);
-        Metagame.Reward reward = new Metagame.RewardGoldenFragments(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
+        Metagame.Reward reward = new Metagame.RewardGoldenFragments(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.LAB_REWARD_MISSION, "");
         reward.bonusPercentage = MissionManager.powerUpGFMultiplier;
 
         return reward;

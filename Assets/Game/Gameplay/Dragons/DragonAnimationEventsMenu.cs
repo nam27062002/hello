@@ -49,5 +49,26 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
 	{
 		transform.parent.GetComponent<MenuDragonPreview>().EndBlood();
 	}
+    
+    // This function is called by Results_intro of the helicopter
+    public void TurnOffPropulsors()
+    {
+        DeactivateFlame("Leg_r");
+        DeactivateFlame("Leg_l");
+        DeactivateFlame("Arm_r");
+        DeactivateFlame("Arm_l");
+    }
+    
+    protected void DeactivateFlame( string childName )
+    {
+        Transform tr = transform.FindTransformRecursive(childName);
+        if ( tr != null )
+        {
+            ParticleSystem ps = tr.GetComponentInChildren<ParticleSystem>();
+            if (ps != null)
+                ps.Stop();
+        }
+        
+    }
 
 }

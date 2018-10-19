@@ -985,6 +985,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_Missions(Mission _mission, EActionsMission _action) {
+    
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Notify_Missions " + _action.ToString());
         }
@@ -993,7 +994,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (e != null) {
             Track_AddParamString(e, TRACK_PARAM_MISSION_TYPE, _mission.def.Get("type"));
             Track_AddParamString(e, TRACK_PARAM_MISSION_TARGET, _mission.def.Get("params"));
-            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, _mission.difficulty.ToString());
+            string difficulty = _mission.difficulty.ToString();
+            if (MissionManager.IsSpecial(_mission))
+            {
+                difficulty = "LAB_" + difficulty;
+            }
+            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, difficulty);
             Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
             Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
             Track_AddParamSessionsCount(e);
@@ -1190,12 +1196,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <summary>
     /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
     /// </summary>
-    /// <param name="labProgression">Current lab progression level</param>
-    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="dragonName">Name of the current Lab Dragon</param>
+    /// <param name="labHp">HP level of the current Lab Dragon </param>
+    /// <param name="labSpeed">Speed level of the current Lab Dragon</param>
+    /// <param name="labBoost">Boost level of the current Lab Dragon.</param> 
+    /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
+    /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public override void Notify_LabGameStart(int labProgression, string labPower, string currentLeague)
+    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
     {
-        Track_LabGameStart(labProgression, labPower, currentLeague);
+        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague);
     }
 
     /// <summary>
@@ -2029,15 +2039,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_LabGameStart(int labProgression, string labPower, string currentLeague)
+    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Track_LabGameStart labProgression = " + labProgression + " labPower = " + labPower + " currentLeague = " + currentLeague);
+            Log("Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
+                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague);
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
         {
-            e.data.Add(TRACK_PARAM_LAB_PROGRESSION, labProgression);
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_LAB_HP, labHp);
+            e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
+            e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
             Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            e.data.Add(TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED, totalSpecialDragonsUnlocked);
             Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
         }
         m_eventQueue.Enqueue(e);
@@ -2137,8 +2152,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_ITEM = "item";
     private const string TRACK_PARAM_ITEM_ID = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY = "itemQuantity";
-    private const string TRACK_PARAM_LAB_PROGRESSION = "labProgression";
+    private const string TRACK_PARAM_LAB_BOOST = "labBoost";
+    private const string TRACK_PARAM_LAB_HP = "labHp";
     private const string TRACK_PARAM_LAB_POWER = "labPower";
+    private const string TRACK_PARAM_LAB_SPEED = "labSpeed";    
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
@@ -2208,6 +2225,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOTAL_DURATION = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES = "totalPurchases";
+    private const string TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED = "totalSpecialDragonsUnlocked";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
