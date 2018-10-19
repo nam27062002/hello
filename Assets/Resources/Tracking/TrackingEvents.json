@@ -449,8 +449,12 @@
         },
 		"custom.lab.gamestart": {
             "Parameters": [
-				{"labProgression": {"Status": "OK"}},
+				{"dragon": {"Status": "OK"}},
+				{"labHp": {"Status": "OK"}},
+				{"labSpeed": {"Status": "OK"}},
+				{"labBoost": {"Status": "OK"}},
 				{"labPower": {"Status": "OK"}},
+				{"totalSpecialDragonsUnlocked": {"Status": "OK"}},
 				{"currentLeague": {"Status": "OK"}}
             ],
             "APIs": [
@@ -1344,13 +1348,25 @@
 	  "hardCurrency": {
         "Type": "INT:4",
         "Values": []
+      },	  
+	  "labHp": {
+		"Type": "INT:4",
+		"Values": []
       },
-	  "labProgression": {
-        "Type": "INT:4",
-        "Values": []
+	  "labSpeed": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labBoost": {
+		"Type": "INT:4",
+		"Values": []
       },
 	  "labPower": {
 		"Type": "STRING:30",
+		"Values": []
+      },
+	  "totalSpecialDragonsUnlocked": {
+		"Type": "INT:4",
 		"Values": []
       },
 	  "currentLeague": {
