@@ -62,7 +62,8 @@ public class PopupLabUnlocked : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Compute GF reward to be given
-		m_gfReward = DragonDataSpecial.LAB_UNLOCK_GF_REWARD;
+		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		m_gfReward = settingsDef.GetAsLong("goldenFragmentsGivenTutorial");
 	}
 
 	/// <summary>
