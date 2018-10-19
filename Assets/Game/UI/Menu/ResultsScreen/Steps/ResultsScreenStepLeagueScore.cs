@@ -40,6 +40,9 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
+		// [AOC] Disabled for 1.16 until 1.18
+		return false;
+
 		// Always show for now
 		return true;
 	}
