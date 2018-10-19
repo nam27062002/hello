@@ -27,9 +27,9 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 		Pass
 		{
-			Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" }
 			ZWrite off
 			Cull back
 			Blend SrcAlpha OneMinusSrcAlpha

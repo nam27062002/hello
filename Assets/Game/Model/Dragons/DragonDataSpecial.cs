@@ -24,7 +24,9 @@ public class DragonDataSpecial : IDragonData {
 	//------------------------------------------------------------------------//
 	public const string TYPE_CODE = "special";
 
+	// [AOC] TODO!! Move to content
 	public const DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_2;
+	public const long LAB_UNLOCK_GF_REWARD = 40;
 
 	public enum Stat {
 		HEALTH = 0,
@@ -207,6 +209,10 @@ public class DragonDataSpecial : IDragonData {
     // Misc
     public override float statsBarRatio{ 
         get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 
+    }
+    
+    public override float petScale{ 
+        get{ return m_specialTierDef.GetAsFloat("petScale"); } 
     }
     
     public override string gamePrefab {

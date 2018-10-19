@@ -234,6 +234,17 @@ public class MissionManager : UbiBCN.SingletonMonoBehaviour<MissionManager> {
 
         return instance.currentModeMissions.GetMission(_difficulty);
     }
+    
+    /// <summary>
+    /// Returns if the mission is from the lab
+    /// </summary>
+    /// <returns><c>true</c>, if special mission, <c>false</c> otherwise.</returns>
+    /// <param name="_mission">Mission.</param>
+    public static bool IsSpecial(Mission _mission)
+    {
+        bool ret = instance.m_user.userSpecialMissions.GetMission(_mission.difficulty) == _mission;
+        return ret;
+    }
 
 	//------------------------------------------------------------------//
 	// PUBLIC SINGLETON METHODS											//
