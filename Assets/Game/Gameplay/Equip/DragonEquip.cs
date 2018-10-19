@@ -597,8 +597,17 @@ public class DragonEquip : MonoBehaviour {
 				MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
 				if(dragonPreview) {
 					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
-					//newInstance.transform.localScale = Vector3.one * ((def.GetAsFloat("petScaleMenu") * transform.localScale.x) / def.GetAsFloat("scaleMin"));
-					newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / def.GetAsFloat("scaleMin"));
+					if ( def.Get("type") == "special" ) 
+                    {
+                        List<DefinitionNode> specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", def.sku);
+                        DefinitionsManager.SharedInstance.SortByProperty(ref specialTierDefsByOrder, "scale", DefinitionsManager.SortType.NUMERIC);
+                        newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / specialTierDefsByOrder[0].GetAsFloat("scale"));
+                    }
+                    else
+                    {
+                        newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / def.GetAsFloat("scaleMin"));
+                    }
+					
 				}
 
 				// Initialize preview and launch intro animation
