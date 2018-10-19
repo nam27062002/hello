@@ -283,7 +283,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	private const float m_introDisplacement = 75;
 	public float introDisplacement{ get{return m_introDisplacement * m_transform.localScale.x;} }
 	public AnimationCurve m_introDisplacementCurve;
-	public float m_introStopAnimationDelta = 0.1f;
+    public bool m_useBoostOnIntro = true;
 
 	private AI.IMachine m_holdPrey = null;
 	private Transform m_holdPreyTransform = null;
@@ -620,7 +620,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 				case State.Intro:
 				{
 					m_rbody.isKinematic = true;
-					m_animator.SetBool(GameConstants.Animator.BOOST, true);
+					m_animator.SetBool(GameConstants.Animator.BOOST, m_useBoostOnIntro);
 					m_animator.SetBool(GameConstants.Animator.MOVE, true);
 					m_introTimer = m_introDuration;
 					m_impulse = Vector3.zero;
