@@ -39,19 +39,32 @@ public class PopupLabUnlocked : MonoBehaviour {
 	/// If all checks are passed, opens the popup.
 	/// </summary>
 	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
-	public static PopupController Check() {
+	public static PopupController CheckAndOpen() {
+		// All checks passed?
+		if(Check()) {
+			// Show the popup
+			return PopupManager.OpenPopupInstant(PATH);
+		}
+		return null;
+	}
+
+	/// <summary>
+	/// Check whether the popup must be triggered considering the current profile.
+	/// </summary>
+	/// <returns>Must the popup be displayed?</returns>
+	public static bool Check() {
 		// Don't if already displayed
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LAB_UNLOCKED)) {
-			return null;
+			return false;
 		}
 
 		// Don't if a dragon of the required tier is not yet owned
 		if(DragonManager.biggestOwnedDragon.tier < DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
-			return null;
+			return false;
 		}
 
-		// All checks passed! Show the popup
-		return PopupManager.OpenPopupInstant(PATH);
+		// All checks passed! Popup must be displayed
+		return true;
 	}
 
 	//------------------------------------------------------------------------//
@@ -62,7 +75,8 @@ public class PopupLabUnlocked : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Compute GF reward to be given
-		m_gfReward = DragonDataSpecial.LAB_UNLOCK_GF_REWARD;
+		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings");
+		m_gfReward = settingsDef.GetAsLong("goldenFragmentsGivenTutorial");
 	}
 
 	/// <summary>

@@ -411,7 +411,6 @@ GameObject:
   - component: {fileID: 4998179308179796}
   - component: {fileID: 114258942164230734}
   - component: {fileID: 65003577250334474}
-  - component: {fileID: 114196426561996150}
   - component: {fileID: 114435236162591852}
   m_Layer: 16
   m_Name: Lab_FogSetup
@@ -419,7 +418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1098146256429424
 GameObject:
   m_ObjectHideFlags: 1
@@ -1097,6 +1096,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1306352663117156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4954038520765688}
+  - component: {fileID: 114534752520836364}
+  - component: {fileID: 114629857390751098}
+  m_Layer: 0
+  m_Name: FogActivator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1313418791414476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,7 +1123,6 @@ GameObject:
   - component: {fileID: 4946559348531580}
   - component: {fileID: 114225837947770272}
   - component: {fileID: 65212606190133746}
-  - component: {fileID: 114587468426402424}
   - component: {fileID: 114335316434859160}
   m_Layer: 16
   m_Name: Tournaments_FogSetup
@@ -1115,7 +1130,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1315421067958688
 GameObject:
   m_ObjectHideFlags: 1
@@ -3607,6 +3622,7 @@ Transform:
   - {fileID: 4122843919175552}
   - {fileID: 4984294277935578}
   - {fileID: 4998179308179796}
+  - {fileID: 4954038520765688}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6230,6 +6246,19 @@ Transform:
   m_Father: {fileID: 4477963172881366}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4954038520765688
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1306352663117156}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4097948156382986}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4967827551625062
 Transform:
   m_ObjectHideFlags: 1
@@ -8295,29 +8324,6 @@ MonoBehaviour:
   livePreview: 1
   drawGizmos: 1
   gizmoColor: {r: 0, g: 1, b: 0.50344825, a: 0.49803922}
---- !u!114 &114196426561996150
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1096851067345586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 114435236162591852}
-  m_checkSelectedDragon: 0
-  m_hideForDragons: 0
-  m_targetDragonSku: 
-  m_showIfShadow: 0
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_checkScreens: 1
-  m_mode: 0
-  m_targetScreens: 110000001200000013000000
-  m_restartShowAnimation: 0
 --- !u!114 &114220173674781740
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8440,7 +8446,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 3
       m_NumAlphaKeys: 2
-    m_fogStart: 53.8
+    m_fogStart: 25.91
     m_fogEnd: 433.7
   m_isFireFog: 0
   m_drawInside: 0
@@ -8766,6 +8772,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 25
+--- !u!114 &114534752520836364
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1306352663117156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114435236162591852}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 0
+  m_targetScreens: 110000001200000013000000
+  m_restartShowAnimation: 0
 --- !u!114 &114536873834159396
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8808,12 +8837,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragonLoader: {fileID: 114940274018715994}
---- !u!114 &114587468426402424
+--- !u!114 &114615397953396906
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1313418791414476}
+  m_GameObject: {fileID: 1983146149570334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_point: 22
+--- !u!114 &114629857390751098
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1306352663117156}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
@@ -8831,18 +8872,6 @@ MonoBehaviour:
   m_mode: 0
   m_targetScreens: 0c0000000d0000000e0000000f000000
   m_restartShowAnimation: 0
---- !u!114 &114615397953396906
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1983146149570334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ece7f0589cf74ddf97a0a63886f8499, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_point: 22
 --- !u!114 &114631703115955346
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -300,7 +300,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
 				if(m_dragonToReveal == null && m_dragonToTease == null) {
-					PopupLabUnlocked.Check();
+					PopupLabUnlocked.CheckAndOpen();
 				}
 			})
 			.SetAutoKill(true)
@@ -373,7 +373,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					// Check the lab unlocked popup!
 					// [AOC] After some delay to wait for the scroll anim to return
 					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.Check();
+						PopupLabUnlocked.CheckAndOpen();
 					}, 0.5f);
 				}
 
@@ -455,7 +455,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					// Check the lab unlocked popup!
 					// [AOC] After some delay to wait for the scroll anim to return
 					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.Check();
+						PopupLabUnlocked.CheckAndOpen();
 					}, 0.5f);
 				}
 
@@ -520,7 +520,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 			if(m_dragonToReveal == null && m_dragonToTease == null) {
 				// [AOC] After some delay to wait for the scroll anim to return
 				UbiBCN.CoroutineManager.DelayedCall(() => {
-					PopupLabUnlocked.Check();
+					if(PopupLabUnlocked.Check()) {
+						// If some other popup is open, wait for it to be closed before opening the lab unlocked one
+						if(PopupManager.openPopupsCount > 0) {
+							Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+						} else {
+							PopupLabUnlocked.CheckAndOpen();
+						}
+					}
+					PopupLabUnlocked.CheckAndOpen();
 				}, 0.25f);
 			}
 		}
@@ -598,4 +606,22 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Go to lab main screen!
 		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
     }
+
+	/// <summary>
+	/// A popup has been closed.
+	/// </summary>
+	/// <param name="_popup">Popup that triggered the event.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// If we're receiving this, means that the lab unlocked popup is pending to be displayed
+		// Check whether we can do it
+		// If there are still some opened popups, don't do anything
+		if(PopupManager.openPopupsCount > 0) return;
+
+		// We can!
+		// Unsubscribe from event
+		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+
+		// Open the popup
+		PopupLabUnlocked.CheckAndOpen();
+	}
 }
