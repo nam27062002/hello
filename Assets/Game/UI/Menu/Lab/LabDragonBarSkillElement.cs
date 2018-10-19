@@ -13,7 +13,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 
     public void SetDefinition(DefinitionNode _def) {
         m_def = _def;
-        //m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + m_def.Get("icon");
+        m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + m_def.Get("icon"));
     }
 
     public void SetTooltip(UITooltip _tooltip) {
