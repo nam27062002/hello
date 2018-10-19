@@ -136,7 +136,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 		m_pcFlow.Begin(
 			GetPrice(currency), 
 			currency, 
-			HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON, 
+			HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UNLOCK, 
 			m_transactionDragonData.def,
 			false		// [AOC] DON'T PERFORM THE TRANSACTION! We will do it manually once both flows have been successful
 		);

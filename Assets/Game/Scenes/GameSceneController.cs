@@ -826,6 +826,7 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
+        bool isSpecial = false;
 		List<string> pets = null;
         if (InstanceManager.player != null) {
             IDragonData dragonData = InstanceManager.player.data;
@@ -841,6 +842,7 @@ public class GameSceneController : GameSceneControllerBase {
                 }
                 else if ( dragonData.type == IDragonData.Type.SPECIAL )
                 {
+                    isSpecial = true;
                     // TODO
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
                     dragonProgress = specialData.GetLevel();
@@ -854,6 +856,24 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.InitValue(0);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+
+        
+        if (isSpecial)
+        {
+            DragonDataSpecial specialData = InstanceManager.player.data as DragonDataSpecial;
+            string powerLevel = "P" + specialData.powerLevel;
+            int specialOwned = UsersManager.currentUser.GetNumOwnedSpecialDragons();
+            HDTrackingManager.Instance.Notify_LabGameStart(specialData.sku,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.SPEED).level,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level,
+                                                            powerLevel,
+                                                            specialOwned,
+                                                            ""
+                                                            );
+        }
+            
+        
 
         // Automatic connection system is disabled during the round in order to ease performance
         GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);

@@ -589,6 +589,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Lab button has been pressed.
 	/// </summary>
     public void OnLabButton() {
+        // Tracking
+        HDTrackingManager.Instance.Notify_LabEnter();
+    
 		// Change mode
 		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
 
