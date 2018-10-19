@@ -110,6 +110,10 @@ public class DragonDataSpecial : IDragonData {
 		get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
 	}
 
+    public float scaleMenu {
+        get { return m_specialTierDef.GetAsFloat("scaleMenu", 1f); }
+    }
+
 	public override float minScale {
 		// [AOC] TODO!!
 		get { return 1f; }
