@@ -196,7 +196,11 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		get {
 			// Only in editor
 #if UNITY_EDITOR
-			return instance.m_simulatedSpecialDevice;
+			if(instance.m_useDebugSafeArea) {
+				return instance.m_simulatedSpecialDevice;
+			} else {
+				return UIConstants.SpecialDevice.NONE;
+			}
 #else
 			return UIConstants.SpecialDevice.NONE;
 #endif
