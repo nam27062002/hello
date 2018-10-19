@@ -13,7 +13,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 
     public void SetDefinition(DefinitionNode _def) {
         m_def = _def;
-        //m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + m_def.Get("icon");
+		m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + m_def.Get("icon"));
     }
 
     public void SetTooltip(UITooltip _tooltip) {
@@ -23,6 +23,6 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
     }
 
     public void OnTooltipOpen() {
-        m_tooltip.Init(m_def.Get("tidName"), m_def.Get("tidDesc"), m_icon.sprite);
+		m_tooltip.Init(m_def.GetLocalized("tidName"), m_def.GetLocalized("tidDesc"), m_icon.sprite);
     }
 }
