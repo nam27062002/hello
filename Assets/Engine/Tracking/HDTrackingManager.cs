@@ -525,10 +525,14 @@ public class HDTrackingManager
     /// <summary>
     /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
     /// </summary>
-    /// <param name="labProgression">Current lab progression level</param>
-    /// <param name="labPower">Current lab power (tier)</param>
+    /// <param name="dragonName">Name of the current Lab Dragon</param>
+    /// <param name="labHp">HP level of the current Lab Dragon </param>
+    /// <param name="labSpeed">Speed level of the current Lab Dragon</param>
+    /// <param name="labBoost">Boost level of the current Lab Dragon.</param> 
+    /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
+    /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public virtual void Notify_LabGameStart(int labProgression, string labPower, string currentLeague) { }
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
 
     /// <summary>
     /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 

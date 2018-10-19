@@ -1106,7 +1106,8 @@ AnimatorState:
   - {fileID: 110170522}
   - {fileID: 110107168}
   - {fileID: 1101797127074447798}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114629629365362078}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1515,7 +1516,8 @@ AnimatorStateMachine:
     - {fileID: 110910420}
     - {fileID: 1109827123576316766}
     - {fileID: 1109341392142124944}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114490593925113840}
   m_AnyStatePosition: {x: 324, y: 348, z: 0}
   m_EntryPosition: {x: 324, y: 84, z: 0}
   m_ExitPosition: {x: 324, y: 300, z: 0}
@@ -1948,6 +1950,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1b07fd33e7240299cde3d7efb23480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114490593925113840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 250b7783a83b1480d92aecc3b4a80466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_message: Fly
 --- !u!114 &114613797786300426
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1962,6 +1976,18 @@ MonoBehaviour:
   m_resetTime:
     min: 2.5
     max: 4
+--- !u!114 &114629629365362078
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 250b7783a83b1480d92aecc3b4a80466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_message: Idle
 --- !u!206 &206027994007025556
 BlendTree:
   m_ObjectHideFlags: 1

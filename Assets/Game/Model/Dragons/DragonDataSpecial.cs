@@ -211,6 +211,10 @@ public class DragonDataSpecial : IDragonData {
         get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 
     }
     
+    public override float petScale{ 
+        get{ return m_specialTierDef.GetAsFloat("petScale"); } 
+    }
+    
     public override string gamePrefab {
         get{
             return m_specialTierDef.GetAsString("gamePrefab");
