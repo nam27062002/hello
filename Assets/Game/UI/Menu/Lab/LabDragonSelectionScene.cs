@@ -29,11 +29,16 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		get { return m_dragonLoader; }
 	}
 
+	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the special dragon.")]
+	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+
 	// Internal references
 	private GameObject m_loadingUI = null;
 	public GameObject loadingUI {
 		set { m_loadingUI = value; }
 	}
+
+	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -42,9 +47,13 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Store original camera snap point for the photo screen
+		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).cameraSetup;
+
 		// Subscribe to external events
 		Messenger.AddListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 		m_dragonLoader.onDragonLoaded += OnDragonPreviewLoaded;
 
 		// Destroy any loaded dragon preview
@@ -58,6 +67,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 		m_dragonLoader.onDragonLoaded -= OnDragonPreviewLoaded;
 	}
 
@@ -131,5 +141,34 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	private void OnDragonPreviewLoaded(MenuDragonLoader _loader) {
 		// Toggle loading UI off
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// The menu screen change animation is about to start.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+		// Check params
+		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+
+		// Aux vars
+		MenuScreenScene fromScene = InstanceManager.menuSceneController.GetScreenData(_from).scene3d;
+		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenData(_to).scene3d;
+
+		// Entering a screen using this scene
+		if(toScene != null && toScene.gameObject == this.gameObject) {
+			// Override camera snap point for the photo screen
+			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
+		}
+
+		// Leaving a screen using this scene
+		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
+			// Do some stuff if not going to take a picture of the reward
+			if(_to != MenuScreen.PHOTO) {
+				// Restore default camera snap point for the photo screen
+				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
+			}
+		}
 	}
 }
