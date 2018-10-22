@@ -122,16 +122,16 @@ public class LabDragonBar : MonoBehaviour {
     }
 
     private void ArrangeElements() {
-        float contentWidth = m_content.sizeDelta.x;
+        float contentWidth = m_content.rect.width;
 
         // sum up the space reserved for Tier icons
         float tiersWidth = 0f;
 
         for (int i = 0; i < m_levelTier.Length; ++i) {
-            float scale = m_scaleTiersCurve.Evaluate(m_levelTier[i] / m_maxLevel);
+            float scale = m_scaleTiersCurve.Evaluate((float)m_levelTier[i] / m_maxLevel);
             float width = m_tierElements[0].GetWidth() * scale;
 
-            tiersWidth += width + m_blankSpace * 2f;
+            tiersWidth += width + m_blankSpace ;
         }
 
         // sum up the space reserved levels and skills
@@ -142,7 +142,8 @@ public class LabDragonBar : MonoBehaviour {
         float levelScale = levelWidth / m_levelElements[0].GetWidth();
 
         // order all the elements. Each element has its pivot at bottom center corner
-        float deltaX = 0f;
+        float deltaX = -m_content.rect.width * m_content.pivot.x;
+        float deltaY = -(m_content.rect.height * 0.5f) * m_content.pivot.y;
 
         m_sortedElements.Clear();
 
@@ -201,7 +202,7 @@ public class LabDragonBar : MonoBehaviour {
             float width = element.GetWidth() * scaleFactor;
 
             deltaX += (width + m_blankSpace) * 0.5f;
-            element.SetPos(deltaX, posY + offsetY);
+            element.SetPos(deltaX, deltaY + posY + offsetY);
             deltaX += (width + m_blankSpace) * 0.5f;
 
             element.gameObject.SetActive(true);
