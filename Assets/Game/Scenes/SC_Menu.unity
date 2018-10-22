@@ -7857,6 +7857,54 @@ Light:
   m_PrefabParentObject: {fileID: 108497102004434934, guid: b096840370805a4448d4f76df4b54d8c,
     type: 2}
   m_PrefabInternal: {fileID: 1049871558}
+--- !u!1 &1054594227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1054594228}
+  - component: {fileID: 1054594229}
+  m_Layer: 0
+  m_Name: MusicController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1054594228
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1054594227}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1807090613}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1054594229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1054594227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a7db6b069e84418a904e2a286eed6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_mainMusicKey: hd_menu_music
+  m_fireRushMusic: 
+  m_megaFireRushMusic: 
+  m_musicFadeOut: 1
+  m_musicVolume: 1
+  minSecondsToSwitchMusic: 0
+  m_defaultAudioSnapshot: {fileID: 24500003, guid: f9c941808b0b54fa79ff7aae4e1db556,
+    type: 2}
 --- !u!114 &1123996182 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114459373678202542, guid: 0b11dadf12e0840af85ce66eb22f713a,
@@ -15433,6 +15481,7 @@ Transform:
   - {fileID: 1602931162}
   - {fileID: 249500770}
   - {fileID: 2024134338}
+  - {fileID: 1054594228}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
