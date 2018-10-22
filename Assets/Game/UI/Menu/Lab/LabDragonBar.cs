@@ -8,7 +8,8 @@ public class LabDragonBar : MonoBehaviour {
     [SerializeField] private GameObject m_elementTierPrefab = null;
 
     [SerializeField] private RectTransform m_content = null;
-    [SerializeField] private UITooltip m_tooltip = null;
+	[SerializeField] private LabDragonBarTooltip m_skillTooltip = null;
+	[SerializeField] private LabDragonBarTooltip m_tierTooltip = null;
 
     [SerializeField] private float m_blankSpace = 5f;
     [SerializeField] private AnimationCurve m_scaleTiersCurve = null;
@@ -61,7 +62,7 @@ public class LabDragonBar : MonoBehaviour {
             for (int i = m_skillElements.Count; i < m_levelSkill.Length; ++i) {
                 GameObject go = Instantiate(m_elementSkillPrefab);
                 go.transform.SetParent(m_content.transform, false);
-                m_skillElements.Add(go.GetComponent<LabDragonBarSkillElement>());
+				m_skillElements.Add(go.GetComponent<LabDragonBarSkillElement>());
             }
         }
 
@@ -76,8 +77,8 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         //Hide everything
-        if (m_tooltip != null) {
-            m_tooltip.gameObject.SetActive(false);
+        if (m_skillTooltip != null) {
+            m_skillTooltip.gameObject.SetActive(false);
         }
 
         for (int i = 0; i < m_levelElements.Count; ++i) {
@@ -85,14 +86,15 @@ public class LabDragonBar : MonoBehaviour {
         }
 
         for (int i = 0; i < m_tierElements.Count; ++i) {
-            m_tierElements[i].gameObject.SetActive(false);               
+			m_tierElements[i].SetTooltip(m_tierTooltip);
+            m_tierElements[i].gameObject.SetActive(false);   
         }
 
         for (int i = 0; i < m_skillElements.Count; ++i) {
             if (i < m_definitionSkill.Count) {
                 m_skillElements[i].SetDefinition(m_definitionSkill[i]);
             }
-            m_skillElements[i].SetTooltip(m_tooltip);
+            m_skillElements[i].SetTooltip(m_skillTooltip);
             m_skillElements[i].gameObject.SetActive(false);
         }
     }
@@ -172,6 +174,8 @@ public class LabDragonBar : MonoBehaviour {
                 element = m_tierElements[m_tierElementIndex];
                 element.SetGlobalScale(scaleFactor, scaleFactor);
 
+				(element as LabDragonBarTierElement).SetUnlockInfo(i, (DragonTier)m_tierElementIndex);
+
                 m_tierElementIndex++;
             } else if (m_levelSkill.IndexOf(i) >= 0) {
                 // this is a level with a skill
@@ -179,6 +183,8 @@ public class LabDragonBar : MonoBehaviour {
 
                 element = m_skillElements[m_skillElementIndex];
                 element.SetLocalScale(scaleFactor, 1f);
+
+				(element as LabDragonBarSkillElement).SetUnlockInfo(i, (DragonTier)m_tierElementIndex - 1);
 
                 m_skillElementIndex++;
             } else {

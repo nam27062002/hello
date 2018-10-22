@@ -124,7 +124,7 @@ public class UITooltip : MonoBehaviour {
     /// <param name="_title">Title string.</param>
     /// <param name="_text">Text string.</param>
     /// <param name="_icon">Icon sprite.</param>
-    public void Init(string _title, string _text, Sprite _icon) {
+    public virtual void Init(string _title, string _text, Sprite _icon) {
 		// Title
 		if(m_titleText != null) {
 			m_titleText.text = _title;
@@ -142,9 +142,8 @@ public class UITooltip : MonoBehaviour {
             if (_icon != null) {
                 m_icon.sprite = _icon;
                 m_icon.color = Color.white;
-            } else {
-                m_icon.gameObject.SetActive(false);
             }
+			m_icon.gameObject.SetActive(_icon != null);
         }
 	}
 

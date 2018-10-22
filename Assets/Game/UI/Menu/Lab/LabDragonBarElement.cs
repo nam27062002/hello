@@ -29,7 +29,7 @@ public class LabDragonBarElement : MonoBehaviour {
         }
     }
 
-    private State m_state;
+    protected State m_state;
 
 
     //---[Generic Methods]------------------------------------------------------
