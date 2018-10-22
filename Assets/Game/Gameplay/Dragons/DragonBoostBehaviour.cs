@@ -121,7 +121,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		bool activate = m_controls.action || m_dragon.changingArea;
+		bool activate = m_controls.action || (m_dragon.changingArea && m_motion.m_useBoostOnIntro);
 
 #if UNITY_EDITOR
         activate = activate || Input.GetKey(KeyCode.X);
