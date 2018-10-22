@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5463216}
   - component: {fileID: 11499796}
   - component: {fileID: 11474738}
+  - component: {fileID: 114957535205314490}
   m_Layer: 0
   m_Name: PF_DragonHelicopterMenu
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185464}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -387.7502, y: -674.2577, z: 29.780216}
+  m_LocalPosition: {x: -390.0451, y: -661.2132, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4766388478193662}
@@ -4665,7 +4666,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1285402828274436}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.47, y: -1.96, z: 1}
+  m_LocalPosition: {x: -0.55, y: -1.09, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4766388478193662}
@@ -5994,6 +5995,23 @@ MonoBehaviour:
   m_parentRoot: {fileID: 420758}
   m_worldPositionStays: 1
   m_resetScale: 0
+--- !u!114 &114957535205314490
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79deb15a7ab99481aa85ca7f0e8e9790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_elementsPerPowerLevel:
+  - element: []
+  - element: []
+  - element:
+    - type: 1
+      name: pet_72
 --- !u!114 &114984704826009648
 MonoBehaviour:
   m_ObjectHideFlags: 1

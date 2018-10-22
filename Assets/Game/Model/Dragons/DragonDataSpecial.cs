@@ -26,7 +26,6 @@ public class DragonDataSpecial : IDragonData {
 
 	// [AOC] TODO!! Move to content
 	public const DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_2;
-	public const long LAB_UNLOCK_GF_REWARD = 40;
 
 	public enum Stat {
 		HEALTH = 0,
@@ -110,6 +109,10 @@ public class DragonDataSpecial : IDragonData {
 	public override float scale {
 		get { return m_specialTierDef.GetAsFloat("scale") + m_scaleOffset; }
 	}
+
+    public float scaleMenu {
+        get { return m_specialTierDef.GetAsFloat("scaleMenu", 1f); }
+    }
 
 	public override float minScale {
 		// [AOC] TODO!!

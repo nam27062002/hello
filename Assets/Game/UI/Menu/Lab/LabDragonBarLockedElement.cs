@@ -7,6 +7,14 @@ public class LabDragonBarLockedElement : LabDragonBarElement {
     [Separator("Lock")]
     [SerializeField] private GameObject m_lock;
 
+	protected int m_unlockLevel;
+	protected DragonTier m_requiredTier;
+
+	public void SetUnlockInfo(int _unlockLevel, DragonTier _requiredTier) {
+		m_unlockLevel = _unlockLevel;
+		m_requiredTier = _requiredTier;
+	}
+
     protected override void OnLocked() {
         m_lock.SetActive(true);
     }

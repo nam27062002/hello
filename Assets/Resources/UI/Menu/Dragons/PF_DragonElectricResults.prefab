@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 5426352}
   - component: {fileID: 114462059673221986}
   - component: {fileID: 11455772}
+  - component: {fileID: 114039670743108624}
   m_Layer: 0
   m_Name: PF_DragonElectricResults
   m_TagString: Untagged
@@ -146,7 +147,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -584.1673, y: 14.8433, z: -114.4359}
+  m_LocalPosition: {x: 57.56, y: 2.6, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 470162}
@@ -2103,6 +2104,25 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114039670743108624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79deb15a7ab99481aa85ca7f0e8e9790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_elementsPerPowerLevel:
+  - element: []
+  - element:
+    - type: 0
+      name: Tail_Up
+  - element:
+    - type: 0
+      name: Tail_Down
 --- !u!114 &114077402523937666
 MonoBehaviour:
   m_ObjectHideFlags: 1
