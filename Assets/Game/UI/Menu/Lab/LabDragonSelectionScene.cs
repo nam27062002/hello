@@ -31,6 +31,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the special dragon.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+    
+    [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
+    [SerializeField] private ParticleSystem m_loadedDragonParticle = null;
 
 	// Internal references
 	private GameObject m_loadingUI = null;
@@ -82,6 +85,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	private void LoadDragonPreview(string _sku) {
 		// Toggle loading UI on (will be disabled once the dragon preview is loaded)
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(true);
+        if (m_loadingDragonParticle != null) m_loadingDragonParticle.Play();
 
 		// Load the new dragon with its current skin!
 		IDragonData dragonData = DragonManager.GetDragonData(_sku);
@@ -141,6 +145,8 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	private void OnDragonPreviewLoaded(MenuDragonLoader _loader) {
 		// Toggle loading UI off
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(false);
+        if (m_loadedDragonParticle != null) m_loadedDragonParticle.Play();
+        if (m_loadingDragonParticle != null) m_loadingDragonParticle.Stop();
 	}
 
 	/// <summary>
