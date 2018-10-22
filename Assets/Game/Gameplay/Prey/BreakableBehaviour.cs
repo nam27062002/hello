@@ -21,6 +21,10 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private GameObject m_activateOnDestroy;
 
 	//----------------------------------------------------------------------
+    public delegate void OnBreakDelegate();
+    public OnBreakDelegate onBreak;
+
+    //----------------------------------------------------------------------
 
 	private int m_remainingHits;
 
@@ -52,17 +56,18 @@ public class BreakableBehaviour : MonoBehaviour
 		}
 	}
 
-	void Start() {		
-		CreatePool();			
-		m_initialViewPos = m_view.localPosition;
-	}
+    void Start() {
+        CreatePool();
+        m_initialViewPos = m_view.localPosition;
+    }
 
 	void OnEnable() {
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
 			m_wobbler = GetComponent<Wobbler>();		
-		m_wobbler.enabled = false;
+        if (m_wobbler != null)
+            m_wobbler.enabled = false;
 
 		if (m_collider == null)
 			m_collider = GetComponent<Collider>();
@@ -173,6 +178,8 @@ public class BreakableBehaviour : MonoBehaviour
 
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
+
+        onBreak();
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));
