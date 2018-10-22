@@ -116,9 +116,9 @@ Shader "Hungry Dragon/Scenary/Scenary Standard"
 				#pragma shader_feature EMISSIVE_NONE EMISSIVE_BLINK EMISSIVE_REFLECTIVE EMISSIVE_CUSTOM EMISSIVE_COLOR
 				#pragma shader_feature MAINCOLOR_TEXTURE MAINCOLOR_COLOR
 
-				#pragma shader_feature __ LIGHTMAP_ON
-				#pragma shader_feature __ FORCE_LIGHTMAP
-				#pragma shader_feature LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
+				#pragma multi_compile __ LIGHTMAP_ON
+				#pragma multi_compile __ FORCE_LIGHTMAP
+				#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
