@@ -155,6 +155,13 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+        // If we are comming from the game we need to force dragon loading
+        if ( _from == MenuScreen.NONE && _to == MenuScreen.LAB_DRAGON_SELECTION )
+        {
+            // Load current special dragon
+            LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon);
+        }
+    
 		// Check params
 		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
 
