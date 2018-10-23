@@ -84,7 +84,20 @@ public class MenuSceneController : SceneController {
 
 	// Current dragon 3D preview
 	public MenuDragonPreview selectedDragonPreview {
-		get { return dragonScroller.GetDragonPreview(selectedDragon); }
+		get {
+			// Depends on game mode
+			switch(mode) {
+				case Mode.DEFAULT: {
+					return dragonScroller.GetDragonPreview(selectedDragon);
+				} break;
+				         
+				case Mode.SPECIAL_DRAGONS: {
+					LabDragonSelectionScene scene = transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d as LabDragonSelectionScene;
+					return scene.dragonLoader.dragonInstance;
+				} break;
+			}
+			return null;
+		}
 	}
 
 	// Is the camera moving around?
