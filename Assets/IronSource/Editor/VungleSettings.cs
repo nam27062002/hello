@@ -22,8 +22,8 @@ namespace IronSource.Editor
 			project.AddFrameworkToProject (targetId, "MediaPlayer.framework", false);
 			project.AddFrameworkToProject (targetId, "UIKit.framework", false);
 			
-			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.tbd", "Frameworks/libz.tbd", PBXSourceTree.Sdk));
-			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libsqlite3.tbd", "Frameworks/libsqlite3.tbd", PBXSourceTree.Sdk));
+			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.dylib", "Frameworks/libz.dylib", PBXSourceTree.Sdk));
+			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libsqlite3.dylib", "Frameworks/libsqlite3.dylib", PBXSourceTree.Sdk));
 
 			// Custom Link Flag
 			project.AddBuildProperty (targetId, "OTHER_LDFLAGS", "-ObjC");
