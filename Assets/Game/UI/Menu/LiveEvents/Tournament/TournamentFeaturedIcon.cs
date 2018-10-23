@@ -30,16 +30,16 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_root = null;
-
-	[Separator("Shared")]
-	[SerializeField] private Localizer m_timerText = null;
+    	
 
 	[Separator("Teasing")]
 	[SerializeField] private GameObject m_teasingGroup = null;
+    [SerializeField] private Localizer m_teasingTimerText = null;
 
 	[Separator("Active")]
 	[SerializeField] private GameObject m_activeGroup = null;
 	[SerializeField] private GameObject m_newBanner = null;
+    [SerializeField] private Localizer m_activeTimerText = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardsGroup = null;
@@ -172,24 +172,25 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
-		if(m_timerText != null) {
-			// Show only in specific states
-			m_timerText.gameObject.SetActive(
-				state == HDLiveEventData.State.TEASING
-				|| state == HDLiveEventData.State.NOT_JOINED
-				|| state == HDLiveEventData.State.JOINED
-                || state == HDLiveEventData.State.REQUIRES_UPDATE
-			);
 
+        Localizer text = null;
+
+        if (state == HDLiveEventData.State.TEASING) {
+            text = m_teasingTimerText;
+        } else {
+            text = m_activeTimerText;
+        }
+
+        if(text != null) {
 			// Set text
-			if(m_timerText.gameObject.activeSelf) {
+            if(text.gameObject.activeSelf) {
 				// Different TID based on tournament state
 				string tid = "TID_TOURNAMENT_ICON_ENDS_IN";
 				if(state == HDLiveEventData.State.TEASING) {
 					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
 				}
 
-				m_timerText.Localize(tid,
+                text.Localize(tid,
 					TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
