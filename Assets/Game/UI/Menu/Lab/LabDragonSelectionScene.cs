@@ -34,6 +34,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
     
     [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
     [SerializeField] private ParticleSystem m_loadedDragonParticle = null;
+    [SerializeField] private TweenSequence m_tweenSequence = null;
 
 	// Internal references
 	private GameObject m_loadingUI = null;
@@ -61,6 +62,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 		// Destroy any loaded dragon preview
 		UnloadDragonPreview();
+        if ( m_tweenSequence != null )
+        {
+            m_tweenSequence.OnFinished.AddListener(RescaleParticles);
+        }
+        
 	}
 
 	/// <summary>
@@ -147,7 +153,18 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(false);
         if (m_loadedDragonParticle != null) m_loadedDragonParticle.Play();
         if (m_loadingDragonParticle != null) m_loadingDragonParticle.Stop();
+        if (m_tweenSequence != null)
+        {
+            m_dragonLoader.transform.localScale = GameConstants.Vector3.zero;
+            m_tweenSequence.Launch();
+        }
 	}
+
+    void RescaleParticles()
+    {
+        if (m_dragonLoader != null)
+            m_dragonLoader.RescaleParticles();
+    }
 
 	/// <summary>
 	/// The menu screen change animation is about to start.
@@ -155,6 +172,13 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// <param name="_from">Screen we come from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+        // If we are comming from the game we need to force dragon loading
+        if ( _from == MenuScreen.NONE && _to == MenuScreen.LAB_DRAGON_SELECTION )
+        {
+            // Load current special dragon
+            LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon);
+        }
+    
 		// Check params
 		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
 
