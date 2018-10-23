@@ -252,6 +252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4264057282200070}
   - component: {fileID: 114940274018715994}
+  - component: {fileID: 114993453727214320}
   m_Layer: 0
   m_Name: LabDragonLoader
   m_TagString: Untagged
@@ -9351,6 +9352,7 @@ MonoBehaviour:
   m_photoCameraSnapPoint: {fileID: 114491188735596700}
   m_loadingDragonParticle: {fileID: 198768358795927898}
   m_loadedDragonParticle: {fileID: 198785366046125654}
+  m_tweenSequence: {fileID: 114993453727214320}
 --- !u!114 &114608876975095938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9815,6 +9817,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 13
+--- !u!114 &114993453727214320
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1050478957411084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 835513619b1d043b3996091fae1c93e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_totalDuration: 0.5
+  m_elements:
+  - name: 
+    type: 2
+    target: {fileID: 4264057282200070}
+    startTime: 0
+    endTime: 0.5
+    from: 0
+    ease: 27
+    floatValue: 0
+    vectorValue: {x: 2, y: 2, z: 2}
+    OnStart:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+    OnEnd:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+  OnFinished:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!137 &137132899045525154
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

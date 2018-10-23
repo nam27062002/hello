@@ -34,6 +34,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
     
     [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
     [SerializeField] private ParticleSystem m_loadedDragonParticle = null;
+    [SerializeField] private TweenSequence m_tweenSequence = null;
 
 	// Internal references
 	private GameObject m_loadingUI = null;
@@ -147,6 +148,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(false);
         if (m_loadedDragonParticle != null) m_loadedDragonParticle.Play();
         if (m_loadingDragonParticle != null) m_loadingDragonParticle.Stop();
+        if (m_tweenSequence != null)
+        {
+            m_dragonLoader.transform.localScale = GameConstants.Vector3.zero;
+            m_tweenSequence.Launch();
+        }
 	}
 
 	/// <summary>
