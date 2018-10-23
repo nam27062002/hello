@@ -62,6 +62,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 		// Destroy any loaded dragon preview
 		UnloadDragonPreview();
+        if ( m_tweenSequence != null )
+        {
+            m_tweenSequence.OnFinished.AddListener(RescaleParticles);
+        }
+        
 	}
 
 	/// <summary>
@@ -154,6 +159,12 @@ public class LabDragonSelectionScene : MenuScreenScene {
             m_tweenSequence.Launch();
         }
 	}
+
+    void RescaleParticles()
+    {
+        if (m_dragonLoader != null)
+            m_dragonLoader.RescaleParticles();
+    }
 
 	/// <summary>
 	/// The menu screen change animation is about to start.
