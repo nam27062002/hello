@@ -42,6 +42,10 @@ public class BezierCurvePointModifier : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[Comment("This component will modify the selected curve points whenever the " +
+	         "position of this object is changed. Use it to automatically update " +
+	         "the camera paths when moving decorations and camera snap points around.")]
+
 	[Tooltip("Be aware of performance!!")]
 	[SerializeField] private UpdateMode m_updateMode = UpdateMode.ALWAYS;
 
