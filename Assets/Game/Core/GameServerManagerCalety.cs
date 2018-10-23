@@ -2,6 +2,7 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
+using Calety.Server;
 using FGOL.Server;
 using SimpleJSON;
 using System;
@@ -246,7 +247,7 @@ public class GameServerManagerCalety : GameServerManager {
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 
 		// Init server game details
-		ServerManager.ServerConfig kServerConfig = new ServerManager.ServerConfig();
+		ServerConfig kServerConfig = new ServerConfig();
 
 		if(settingsInstance != null) {
 			kServerConfig.m_strServerURL = settingsInstance.m_strLocalServerURL[settingsInstance.m_iBuildEnvironmentSelected];
@@ -1778,7 +1779,7 @@ public class GameServerManagerCalety : GameServerManager {
         InternalCheckConnection((Error checkError) => {
             if (checkError == null) {
                 // Logs in server
-                InternalAuth((Error error, GameServerManager.ServerResponse response) => {
+                InternalAuth((Error error, ServerResponse response) => {
                     bool isLoggedInServer = IsLoggedIn();
 
                     // If it's logged in server then tries to sync
