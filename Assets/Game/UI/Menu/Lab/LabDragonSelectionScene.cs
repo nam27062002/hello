@@ -51,7 +51,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// </summary>
 	private void Awake() {
 		// Store original camera snap point for the photo screen
-		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).cameraSetup;
+		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
 
 		// Subscribe to external events
 		Messenger.AddListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
