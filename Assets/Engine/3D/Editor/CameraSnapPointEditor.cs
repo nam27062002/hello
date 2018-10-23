@@ -104,7 +104,6 @@ public class CameraSnapPointEditor : Editor {
 		EditorGUILayout.Space();
 
 		// Main toggles
-		m_targetSnapPoint.changePosition = EditorGUILayout.Toggle("Position", m_targetSnapPoint.changePosition);
 		m_targetSnapPoint.changeRotation = EditorGUILayout.Toggle("Rotation", m_targetSnapPoint.changeRotation);
 
 		// Optional values - single line

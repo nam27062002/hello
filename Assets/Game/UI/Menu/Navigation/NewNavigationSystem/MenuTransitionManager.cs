@@ -337,6 +337,9 @@ public class MenuTransitionManager : MonoBehaviour {
 				int initialPoint = _t.path.GetPointIdx(_t.initialPathPoint);
 				int finalPoint = _t.path.GetPointIdx(_t.finalPathPoint);
 
+				// Prevent snap point to change the position as well (the dynamic path will control it instead)
+				_toScreenData.cameraSetup.changePosition = false;
+
 				// If animating, kill tween
 				if(m_cameraTween != null) {
 					m_cameraTween.Kill();
@@ -395,9 +398,13 @@ public class MenuTransitionManager : MonoBehaviour {
 					.OnComplete(OnCameraTweenCompleted);
 			}
 
+			// Path not defined, lerp position
+			else {
+				_toScreenData.cameraSetup.changePosition = true;
+			}
+
 			// Camera rotation and properties will just be lerped using the snap points
 			TweenParams tweenParams = new TweenParams().SetEase(_ease);
-			_toScreenData.cameraSetup.changePosition = false;
 			_toScreenData.cameraSetup.TweenTo(m_camera, _duration, tweenParams);
 		}
 	}
