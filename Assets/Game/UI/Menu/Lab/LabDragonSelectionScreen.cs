@@ -76,6 +76,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+        
+    
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
@@ -88,23 +90,10 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+    
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
-	}
-
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
 	}
 
 	//------------------------------------------------------------------------//
@@ -205,6 +194,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
+    
+        InstanceManager.musicController.Ambience_Play("hd_lab_music", gameObject);
+    
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
 			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
@@ -215,6 +207,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// Back button has been pressed.
 	/// </summary>
     public void OnBackButton() {
+        // AudioController.PlayMusic("hd_menu_music");
+        InstanceManager.musicController.Ambience_Stop("hd_lab_music", gameObject);
+        
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
     }
 

@@ -152,8 +152,9 @@ public class MenuSceneController : SceneController {
 
 	protected IEnumerator Start()
 	{
-		// Start menu music!
-		AudioController.PlayMusic("hd_menu_music");
+        // Start menu music!
+        // AudioController.PlayMusic("hd_menu_music");
+        InstanceManager.musicController.IsEnabled = true;
 
 		// Make sure loading screen is hidden
 		LoadingScreen.Toggle(false, false);
