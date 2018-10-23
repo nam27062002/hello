@@ -235,4 +235,20 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		Refresh(true);
         m_dragonExpBar.AddLevel();
 	}
+
+	/// <summary>
+	/// Info button has been pressed.
+	/// </summary>
+	public void OnInfoButton() {
+		// Skip if dragon data is not valid
+		if(m_dragonData == null) return;
+
+		// Tracking
+		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupSpecialDragonInfo.PATH);
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
+
+		// Open the dragon info popup and initialize it with the current dragon's data
+		PopupSpecialDragonInfo popup = PopupManager.OpenPopupInstant(PopupSpecialDragonInfo.PATH).GetComponent<PopupSpecialDragonInfo>();
+		popup.Init(m_dragonData);
+	}
 }
