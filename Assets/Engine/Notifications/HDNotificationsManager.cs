@@ -107,19 +107,72 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 				EggManager.incubatingEgg.ScheduleEggNotification();
 	        }
         }
+    }   
+
+    private void ScheduleNotificationFromSku(string strSKU, string strAction, int iTimeLeft)
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, strSKU);
+        string body = "";
+        if (def != null)
+        {
+            body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+        }
+
+        ScheduleNotification(strSKU, body, "Action", iTimeLeft);
     }
 
-    public void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
+    private void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
     {
         Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
         NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
     }
 
-    public void CancelNotification(string strSKU)
+    private void CancelNotification(string strSKU)
     {
 		Log("CancelNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU);
     	NotificationsManager.SharedInstance.CancelNotification(strSKU);
     }
+
+    #region game
+    // Add here the game related code
+
+    private const string SKU_EGG_HATCHED = "sku.not.01";
+    private const string SKU_NEW_MISSIONS = "sku.not.02";
+    private const string SKU_NEW_CHESTS = "sku.not.03";
+
+    private const string DEFAULT_ACTION = "Action";
+
+    public void ScheduleEggHatchedNotification(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_EGG_HATCHED, DEFAULT_ACTION, seconds);
+    }
+
+    public void CancelEggHatchedNotification()
+    {
+        CancelNotification(SKU_EGG_HATCHED);
+    }
+
+    public void ScheduleNewMissionsNotification(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_NEW_MISSIONS, DEFAULT_ACTION, seconds);
+    }
+
+    public void CancelNewMissionsNotification()
+    {
+        CancelNotification(SKU_NEW_MISSIONS);
+    }
+
+    public void ScheduleNewChestsNotification(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
+    }
+
+    public void CancelNewChestsNotification()
+    {
+        CancelNotification(SKU_NEW_CHESTS);
+    }
+    #endregion
+
 
     #region log
     private const string LOG_CHANNEL = "[HDNotificationsManager]";

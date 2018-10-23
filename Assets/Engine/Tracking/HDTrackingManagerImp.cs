@@ -1243,8 +1243,31 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_AddParamProviderAuth(e);
         Track_AddParamPlayerID(e);
         Track_AddParamServerAccID(e);
+
+        DeviceUtilsManager.SharedInstance.CheckAppOpenedBy();
+        Calety.DeviceUtils.EAppOpenedBy openedBy = DeviceUtilsManager.SharedInstance.m_eAppOpenedBy;
+
+        string typeNotif = "";
+        if (openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_LOCAL_NOTIFICATION || openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_PUSH_NOTIFICATION)
+        {
+            string sku = DeviceUtilsManager.SharedInstance.strNotificationSku;           
+            if (!string.IsNullOrEmpty(sku))
+            {
+                DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, sku);
+                if (def != null)
+                {
+                    typeNotif = def.Get("trackingSku");
+                }
+            }
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            ControlPanel.Log("typeNotif = " + typeNotif + " openedBy = " + openedBy);
+        }
+
         // "" is sent because Calety doesn't support this yet
-        Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
+        Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, typeNotif);
         Track_AddParamLanguage(e);
         Track_AddParamUserTimezone(e);
         Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());

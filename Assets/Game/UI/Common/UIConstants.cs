@@ -334,9 +334,22 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get {
 			// If not yet initialized, do it now
 			if(m_safeArea == null) {
-				// Use Unity's safeArea or custom ones based on device?
-				// [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
-				if(!DebugSettings.useUnitySafeArea) {
+
+#if (!UNITY_EDITOR && UNITY_ANDROID)
+                //  Use Calety cutout safe area for Android 9
+                if (DeviceUtilsManager.SharedInstance.DeviceHasCutout())
+                {
+                    short[] safe = DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea();
+                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]); 
+                    m_safeArea = new UISafeArea(
+                        (float)safe[0], (float)safe[2], (float)safe[1], (float)safe[3]);
+
+                }
+                else
+#endif
+                // Use Unity's safeArea or custom ones based on device?
+                // [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
+                if (!DebugSettings.useUnitySafeArea) {
 					// Select target safe area based on special device
 					return instance.m_safeAreas[(int)specialDevice];
 				} else {

@@ -36,6 +36,7 @@ public class DefinitionsCategory
 	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA2 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA2";
 	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA3 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA3";
 	public const string SEASONS = "SEASONS";
+    public const string NOTIFICATIONS = "NOTIFICATIONS";
 
 	// Progression
 	public const string LEVELS = "LEVELS";
