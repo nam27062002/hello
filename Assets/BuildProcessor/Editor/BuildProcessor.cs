@@ -17,7 +17,7 @@ public class PlatformBuilderHelper
     public readonly static string resourcesFolder = "Resources";
 
 
-    public static bool platformBuilderReady = false;
+    public static bool platformResourcesReady = false;
 }
 
 
@@ -26,7 +26,7 @@ public class BuildPreProcessor : IPreprocessBuild {
 
 	public void OnPreprocessBuild(BuildTarget target, string path)
 	{
-        PlatformBuilderHelper.platformBuilderReady = false;
+        PlatformBuilderHelper.platformResourcesReady = false;
         Debug.Log ("Preprocessing build for: " + target.ToString () + " platform");
 		string dpath = PlatformBuilderHelper.getRelativePlatformResourcesPath();
 
@@ -47,18 +47,25 @@ public class BuildPreProcessor : IPreprocessBuild {
             }
         }
 
-        Debug.Log("Moving folder: " + platformPath + " to " + resourcesPath);
-        string err = AssetDatabase.MoveAsset(platformPath, resourcesPath);
-
-        PlatformBuilderHelper.platformBuilderReady = string.IsNullOrEmpty(err);
-
-        if (PlatformBuilderHelper.platformBuilderReady)
+        if (AssetDatabase.IsValidFolder(platformPath))
         {
-            Debug.Log("Ok!");
+            Debug.Log("Moving folder: " + platformPath + " to " + resourcesPath);
+            string err = AssetDatabase.MoveAsset(platformPath, resourcesPath);
+
+            PlatformBuilderHelper.platformResourcesReady = string.IsNullOrEmpty(err);
+
+            if (PlatformBuilderHelper.platformResourcesReady)
+            {
+                Debug.Log("Ok!");
+            }
+            else
+            {
+                Debug.Log("Error! : " + err);
+            }
         }
         else
         {
-            Debug.Log("Error! : " + err);
+            Debug.Log("No specific assets for  " + target.ToString() + " platform.");
         }
     }
 }
@@ -70,7 +77,7 @@ public class BuildPostProcessor : IPostprocessBuild {
 	public void OnPostprocessBuild(BuildTarget target, string path)
 	{
 		Debug.Log ("Postprocessing build for: " + target.ToString () + " platform");
-        if (PlatformBuilderHelper.platformBuilderReady)
+        if (PlatformBuilderHelper.platformResourcesReady)
         {
             string dpath = PlatformBuilderHelper.getRelativePlatformResourcesPath();
             string resourcesPath = dpath + PlatformBuilderHelper.resourcesFolder;
@@ -88,7 +95,6 @@ public class BuildPostProcessor : IPostprocessBuild {
                 {
                     Debug.Log("Error! : " + err);
                 }
-
             }
             else
             {
