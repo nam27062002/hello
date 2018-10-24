@@ -43,11 +43,16 @@ public class LabDragonBar : MonoBehaviour {
     private List<DefinitionNode> m_definitionSkill;
 
 
-    //---[Generic Methods]------------------------------------------------------
+	//---[Generic Methods]------------------------------------------------------
+	private void Awake() {
+		// Clear any placeholder bar left from UI editing
+		m_content.DestroyAllChildren(false);
+		DestroyElements();
+	}
 
 
-    //---[Build Methods]--------------------------------------------------------
-    private void CreateElements() {
+	//---[Build Methods]--------------------------------------------------------
+	private void CreateElements() {
         int levelElementsCount = m_maxLevel - m_levelTier.Length - m_levelSkill.Length;
 
         if (levelElementsCount > m_levelElements.Count) {
