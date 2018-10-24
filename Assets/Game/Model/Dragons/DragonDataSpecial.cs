@@ -60,6 +60,10 @@ public class DragonDataSpecial : IDragonData {
 
 	// Tier
 	private DefinitionNode m_specialTierDef = null;
+	public DefinitionNode specialTierDef {
+		get { return m_specialTierDef; }
+	}
+
 	private List<DefinitionNode> m_specialTierDefsByOrder = null;
 	public List<DefinitionNode> specialTierDefsByOrder {
 		get { return m_specialTierDefsByOrder; }
