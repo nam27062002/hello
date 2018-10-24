@@ -506,16 +506,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        if ( SceneController.mode != SceneController.Mode.TOURNAMENT 
-		    && InstanceManager.player.data.type == IDragonData.Type.CLASSIC )	// [AOC] Only CLASSIC dragons!
-        {
+        bool skipXP = false;
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+            skipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.9f;
+        } else {
+            skipXP = SceneController.mode == SceneController.Mode.TOURNAMENT || InstanceManager.player.data.type != IDragonData.Type.CLASSIC;// [AOC] Only CLASSIC dragons!
+        }
+            
+        if ( skipXP ) {
+            _reward.xp = 0;
+        } else {
 			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
 			instance.m_xp += _reward.xp;
 		}
-		else
-		{
-			_reward.xp = 0;
-		}
+		
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
