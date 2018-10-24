@@ -13,7 +13,7 @@ namespace IronSource.Editor
 {
 	public class IronSourceBuildPostprocessor
 	{
-		[PostProcessBuild]
+//		[PostProcessBuild]
 		public static void OnPostprocessBuild (BuildTarget buildTarget, string buildPath)
 		{
 			if (buildTarget == BuildTarget.iOS) {
