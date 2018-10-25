@@ -2934,6 +2934,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224223814416226694}
+  - component: {fileID: 114794526198659420}
   - component: {fileID: 222417573890961210}
   - component: {fileID: 114778526470761042}
   - component: {fileID: 114671122087190754}
@@ -2941,7 +2942,6 @@ GameObject:
   - component: {fileID: 114293800717384788}
   - component: {fileID: 114520535036279872}
   - component: {fileID: 114036973660957084}
-  - component: {fileID: 114358390858919622}
   m_Layer: 5
   m_Name: ButtonExtended
   m_TagString: Untagged
@@ -20486,21 +20486,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114358390858919622
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1057036455503718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 737a1a1ab5eb94825945691d146c286a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_mode: 1
-  m_reverseMode: 0
-  m_targetSteps: 
-  m_targetRuns: 4
 --- !u!114 &114361020096603340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -23139,7 +23124,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11498108}
+      - m_Target: {fileID: 114794526198659420}
         m_MethodName: OnLabButton
         m_Mode: 1
         m_Arguments:
@@ -24125,6 +24110,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114794526198659420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1057036455503718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ccb0ac28224b4e3faed097633e8e2b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_target: {fileID: 114671122087190754}
 --- !u!114 &114800045143633312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -72087,7 +72084,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 62.075, y: 10.270016}
+  m_AnchoredPosition: {x: 62.075012, y: 10.27002}
   m_SizeDelta: {x: 124.15, y: 256.45996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224091848327317890
@@ -72367,7 +72364,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 62.075, y: 10.270016}
+  m_AnchoredPosition: {x: 62.075012, y: 10.27002}
   m_SizeDelta: {x: 124.15, y: 256.45996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186965907044362
@@ -72603,7 +72600,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1604.3495, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 76.3}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224281823425576766
@@ -72775,7 +72772,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 62.075, y: 10.270016}
+  m_AnchoredPosition: {x: 62.075012, y: 10.27002}
   m_SizeDelta: {x: 124.15, y: 256.45996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224354458796593016
@@ -73285,7 +73282,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 273.625, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224595465313617816
@@ -74295,7 +74292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 244.89, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224975980020231162
@@ -74387,8 +74384,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 240, y: -95}
-  m_SizeDelta: {x: 340, y: 80}
+  m_AnchoredPosition: {x: 196.72, y: -95}
+  m_SizeDelta: {x: 273.44, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224995002672760540
 RectTransform:

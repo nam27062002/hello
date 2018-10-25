@@ -122,11 +122,8 @@ public class PopupLabUnlocked : MonoBehaviour {
 		// Go to the lab main screen after a short delay
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => {
-				// Change mode
-				SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
-
-				// Go to lab main screen!
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+				// Lab button does the trick for us
+				LabButton.GoToLab();
 			}, 0.25f
 		);
 	} 
