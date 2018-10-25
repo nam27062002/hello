@@ -4,8 +4,6 @@
 // Created by Alger Ortín Castellví on 04/10/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-//#define BONUS_PERCENTAGE_FORMAT
-
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -29,6 +27,13 @@ public class LabStatUpgrader : MonoBehaviour {
 		LOCKED = 1,
 		MAXED = 2
 	}
+
+	private enum Mode {
+		PERCENTAGE_BONUS,
+		ABSOLUTE_VALUE,
+		LEVEL_PROGRESSION
+	}
+	private const Mode MODE = Mode.LEVEL_PROGRESSION;
 
 	private const string ANIM_STATE_PARAM_ID = "state";
 
@@ -206,42 +211,74 @@ public class LabStatUpgrader : MonoBehaviour {
 
 		// Refresh value text
 		if(m_valueText != null) {
-#if BONUS_PERCENTAGE_FORMAT
-			// [AOC] Because number animator only works with longs, convert to 100 to have double digit precision.
-			//       The custom text formatter will properly display the percentage amount
-			long longValue = (long)Mathf.RoundToInt(m_statData.value * 100f);
-			m_valueText.SetValue(longValue, _animate);
-#else
-			float value = 0f;
-			switch(m_stat) {
-				case DragonDataSpecial.Stat.HEALTH: value = m_dragonData.maxHealth; break;
-				case DragonDataSpecial.Stat.SPEED: value = m_dragonData.maxSpeed * 10f; break;
-				case DragonDataSpecial.Stat.ENERGY: value = m_dragonData.baseEnergy; break;
+			switch(MODE) {
+				case Mode.PERCENTAGE_BONUS: {
+					// [AOC] Because number animator only works with longs, convert to 100 to have double digit precision.
+					//       The custom text formatter will properly display the percentage amount
+					long longValue = (long)Mathf.RoundToInt(m_statData.value * 100f);
+					m_valueText.SetValue(longValue, _animate);
+				} break;
+
+				case Mode.ABSOLUTE_VALUE: {
+					float value = 0f;
+					switch(m_stat) {
+						case DragonDataSpecial.Stat.HEALTH: value = m_dragonData.maxHealth; break;
+						case DragonDataSpecial.Stat.SPEED: value = m_dragonData.maxSpeed * 10f; break;
+						case DragonDataSpecial.Stat.ENERGY: value = m_dragonData.baseEnergy; break;
+					}
+					long longValue = (long)Mathf.RoundToInt(value);
+					m_valueText.SetValue(longValue, _animate);
+				} break;
+
+				case Mode.LEVEL_PROGRESSION: {
+					long longValue = (long)m_statData.level;
+					m_valueText.SetValue(longValue, false);		// [AOC] We're going 1 by 1, so animating looks super-weird
+				} break;
 			}
-			long longValue = (long)Mathf.RoundToInt(value);
-			m_valueText.SetValue(longValue, _animate);
-#endif
 		}
 
 		// Refresh upgrade price
 		if(m_priceText != null) {
-#if BONUS_PERCENTAGE_FORMAT
-			m_formattedStepValue = StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true);
-#else
-			float baseValue = 0f;
-			switch(m_stat) {
-				case DragonDataSpecial.Stat.HEALTH: baseValue = m_dragonData.specialTierDef.GetAsFloat("health"); 		break;
-				case DragonDataSpecial.Stat.SPEED: baseValue = m_dragonData.specialTierDef.GetAsFloat("force") * 10f; 	break;
-				case DragonDataSpecial.Stat.ENERGY: baseValue = m_dragonData.specialTierDef.GetAsFloat("energyBase"); 	break;
+			switch(MODE) {
+				case Mode.PERCENTAGE_BONUS: {
+					m_formattedStepValue = StringUtils.MultiplierToPercentageIncrease(m_statData.valueStep + 1, true);
+
+					m_priceText.Localize(
+						m_priceText.tid,
+						m_formattedStepValue,
+						StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
+					);
+				} break;
+
+				case Mode.ABSOLUTE_VALUE: {
+					float baseValue = 0f;
+					switch(m_stat) {
+						case DragonDataSpecial.Stat.HEALTH: baseValue = m_dragonData.specialTierDef.GetAsFloat("health"); break;
+						case DragonDataSpecial.Stat.SPEED: baseValue = m_dragonData.specialTierDef.GetAsFloat("force") * 10f; break;
+						case DragonDataSpecial.Stat.ENERGY: baseValue = m_dragonData.specialTierDef.GetAsFloat("energyBase"); break;
+					}
+					long longValue = (long)Mathf.RoundToInt(baseValue * m_statData.valueStep);
+					m_formattedStepValue = "+" + StringUtils.FormatNumber(longValue);
+
+					m_priceText.Localize(
+						m_priceText.tid,
+						m_formattedStepValue,
+						StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
+					);
+				} break;
+
+				case Mode.LEVEL_PROGRESSION: {
+					m_formattedStepValue = string.Empty;
+
+					// Disable localizer and just show the price
+					m_priceText.enabled = false;
+					m_priceText.text.text = UIConstants.GetIconString(
+						m_dragonData.GetStatUpgradePrice(m_stat),
+						UserProfile.Currency.GOLDEN_FRAGMENTS,
+						UIConstants.IconAlignment.LEFT
+					);
+				} break;
 			}
-			long longValue = (long)Mathf.RoundToInt(baseValue * m_statData.valueStep);
-			m_formattedStepValue = "+" + StringUtils.FormatNumber(longValue);
-#endif
-			m_priceText.Localize(
-				m_priceText.tid,
-				m_formattedStepValue,
-				StringUtils.FormatNumber(m_dragonData.GetStatUpgradePrice(m_stat))
-			);
 		}
 
 		// Change animation state
@@ -295,12 +332,28 @@ public class LabStatUpgrader : MonoBehaviour {
 		//HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
 
 		// Show a nice feedback animation
-		UIFeedbackText.CreateAndLaunch(
-			m_formattedStepValue,
-			m_feedbackAnchor,
-			GameConstants.Vector2.zero,
-			m_feedbackAnchor
-		);
+		switch(MODE) {
+			case Mode.PERCENTAGE_BONUS:
+			case Mode.ABSOLUTE_VALUE: {
+				// Preformatted step value
+				UIFeedbackText.CreateAndLaunch(
+					m_formattedStepValue,
+					m_feedbackAnchor,
+					GameConstants.Vector2.zero,
+					m_feedbackAnchor
+				);
+			} break;
+
+			case Mode.LEVEL_PROGRESSION: {
+				// "Level up!"
+				UIFeedbackText.CreateAndLaunch(
+					LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_LEVEL_UP"),
+					m_feedbackAnchor,
+					GameConstants.Vector2.zero,
+					m_feedbackAnchor
+				);
+			} break;
+		}
 
 		// Trigger SFX
 		AudioController.Play("hd_reward_golden_fragments");
@@ -325,15 +378,32 @@ public class LabStatUpgrader : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animator">The number animator requesting the formatting.</param>
 	private void OnSetValueText(NumberTextAnimator _animator) {
-#if BONUS_PERCENTAGE_FORMAT
-		// Percentage bonus format
-		// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
-		//       Format it properly
-		float value = _animator.currentValue / 100f;
-		_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + value, true);
-#else
-		_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
-#endif
+		switch(MODE) {
+			case Mode.PERCENTAGE_BONUS: {
+				// Percentage bonus format
+				// [AOC] Because number animator only works with longs, the value is converted to 100s to have double digit precision.
+				//       Format it properly
+				float value = _animator.currentValue / 100f;
+				_animator.text.text = StringUtils.MultiplierToPercentageIncrease(1f + value, true);
+			} break;
+
+			case Mode.ABSOLUTE_VALUE: {
+				_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
+			} break;
+
+			case Mode.LEVEL_PROGRESSION: {
+				if(m_statData == null) {
+					_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
+				}
+
+				// "5/30"
+				_animator.text.text = LocalizationManager.SharedInstance.Localize(
+					"TID_FRACTION",
+					StringUtils.FormatNumber(_animator.currentValue),
+					StringUtils.FormatNumber(m_statData.maxLevel)
+				);
+			} break;
+		}
 	}
 
 	/// <summary>
@@ -350,15 +420,25 @@ public class LabStatUpgrader : MonoBehaviour {
 		// Nothing to do if either dragon or stat data are not valid
 		if(m_dragonData == null || m_statData == null) return;
 
-		// Initialize tooltip
+		// Stat name
 		// [AOC] Exception for ENERGY stat, who has a custom name for each dragon!
 		string statName = m_statData.def.GetLocalized("tidName");
 		if(m_stat == DragonDataSpecial.Stat.ENERGY) {
 			statName = m_dragonData.def.GetLocalized("tidBoostAction", statName);	// Default to base stat name
 		}
+
+		// Stat value
+		float value = 0f;
+		switch(m_stat) {
+			case DragonDataSpecial.Stat.HEALTH: value = m_dragonData.maxHealth; 		break;
+			case DragonDataSpecial.Stat.SPEED:	value = m_dragonData.maxSpeed * 10f; 	break;
+			case DragonDataSpecial.Stat.ENERGY: value = m_dragonData.baseEnergy; 		break;
+		}
+
+		// Initialize tooltip
 		_tooltip.InitWithText(
-			string.Empty,
-			statName
+			UIConstants.GetDragonStatColor(m_stat).Tag(statName),	// Stat name of the color of the stat
+			StringUtils.FormatNumber(value, 0)
 		);
 	}
 }
