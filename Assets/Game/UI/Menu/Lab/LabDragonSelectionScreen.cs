@@ -111,10 +111,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
 
 				// Throw out some fireworks!
-				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
-
-				// Trigger SFX
-				AudioController.Play("hd_unlock_dragon");
+				LabDragonSelectionScene scene = InstanceManager.menuSceneController.transitionManager.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).scene3d.GetComponent<LabDragonSelectionScene>();
+				scene.LaunchDragonPurchasedFX();
 			})
 			.AppendInterval(1f)     // Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {

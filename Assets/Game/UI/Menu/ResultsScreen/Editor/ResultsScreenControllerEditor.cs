@@ -74,6 +74,8 @@ public class ResultsScreenControllerEditor : ReorderableArrayInspector {
 					new StepSetup(ResultsScreenController.Step.LEAGUE_LEADERBOARD, true, false, "Special Dragons League, show leaderboard changes"),
 					new StepSetup(ResultsScreenController.Step.LEAGUE_SYNC, true, false, "Special Dragons League, sync with server, apply rewards and do tracking"),
 
+					new StepSetup(ResultsScreenController.Step.PAUSE, true, true, "Simple step to add a \"Tap To Continue\" pause"),
+
 					new StepSetup(ResultsScreenController.Step.COUNT, false, false, "")
 				};
 			}

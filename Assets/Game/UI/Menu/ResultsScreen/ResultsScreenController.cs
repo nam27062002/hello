@@ -41,6 +41,8 @@ public class ResultsScreenController : MonoBehaviour {
 		LEAGUE_LEADERBOARD,		// Special Dragons League, show leaderboard changes
 		LEAGUE_SYNC,			// Special Dragons League, sync with server, apply rewards and do tracking
 
+		PAUSE,					// Simple step to add a "Tap To Continue" pause
+
 		COUNT
 	}
 

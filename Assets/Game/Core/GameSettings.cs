@@ -121,6 +121,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private int m_enableSharkPetRewardPopupAtRun = 3;
 	public static int ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN { get { return instance.m_enableSharkPetRewardPopupAtRun; }}
 
+	[SerializeField] private int m_enableLabAtRun = 4;
+	public static int ENABLE_LAB_AT_RUN { get { return instance.m_enableLabAtRun; } }
+
 	// Social
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
