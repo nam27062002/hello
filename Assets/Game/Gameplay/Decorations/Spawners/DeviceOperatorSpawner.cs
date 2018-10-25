@@ -139,7 +139,11 @@ public class DeviceOperatorSpawner : AbstractSpawner {
             m_operator = null;
             m_operatorPilot = null;
 
-			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+            if (_killedByPlayer) {
+                m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();    
+            } else {
+                m_respawnTime = 0f;
+            }			
         }
     }    
     //-------------------------------------------------------------------

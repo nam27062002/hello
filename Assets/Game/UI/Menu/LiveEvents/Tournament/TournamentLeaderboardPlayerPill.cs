@@ -38,6 +38,10 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 	[SerializeField] private Color[] m_positionTextColors = new Color[4];
 	[SerializeField] private Text m_nameText = null;
 	[SerializeField] private TextMeshProUGUI m_scoreText = null;
+    [Space]
+    [SerializeField] private Image m_iconImage = null;
+    [SerializeField] private Sprite m_iconScore = null;
+    [SerializeField] private Sprite m_iconClock = null;
 
 
 	//------------------------------------------------------------------------//
@@ -72,10 +76,18 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 
 		// Get social info
 		// Set name
-		if(m_nameText != null) m_nameText.text = data.leaderboardLine.m_name;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+		if(m_nameText != null) m_nameText.text = data.leaderboardLine.m_name;   // [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
-		// Set score
-		m_scoreText.text = StringUtils.FormatBigNumber(data.leaderboardLine.m_score, 2, 1000000d);
+
+        // Set score
+        HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+        m_scoreText.text = tournament.FormatScore(data.leaderboardLine.m_score);
+
+        if (tournament.IsTimeBasedScore()) {
+            m_iconImage.sprite = m_iconClock; 
+        } else {
+            m_iconImage.sprite = m_iconScore;
+        }
 	}
 
 	public override void Animate(int _index) {}
