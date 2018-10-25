@@ -65,6 +65,10 @@ public class MenuTransitionManager : MonoBehaviour {
 	}
 
 	[SerializeField] private BezierCurve m_dynamicPath = null;
+	public BezierCurve dynamicPath {
+		get { return m_dynamicPath; }
+	}
+
 	[Space]
 	[SerializeField] private float m_defaultTransitionDuration = 0.5f;
 	[SerializeField] private Ease m_defaultTransitionEase = Ease.InOutCubic;
@@ -327,7 +331,8 @@ public class MenuTransitionManager : MonoBehaviour {
 		} else {
 			// Yes! Animated transition!
 			// Lerp path (if defined)
-			if(_t.path != null) {
+			bool usePath = _t.path != null;
+			if(usePath) {
 				// Dynamic path will copy the original transition path and then 
 				// lerp it with the current camera position replacing the first point
 
@@ -406,6 +411,9 @@ public class MenuTransitionManager : MonoBehaviour {
 			// Camera rotation and properties will just be lerped using the snap points
 			TweenParams tweenParams = new TweenParams().SetEase(_ease);
 			_toScreenData.cameraSetup.TweenTo(m_camera, _duration, tweenParams);
+
+			// Notify game a camera transition is about to start!
+			Messenger.Broadcast<MenuScreen, MenuScreen, bool>(MessengerEvents.MENU_CAMERA_TRANSITION_START, m_prevScreen, m_currentScreen, usePath);
 		}
 	}
 
