@@ -60,6 +60,10 @@ public class DragonDataSpecial : IDragonData {
 
 	// Tier
 	private DefinitionNode m_specialTierDef = null;
+	public DefinitionNode specialTierDef {
+		get { return m_specialTierDef; }
+	}
+
 	private List<DefinitionNode> m_specialTierDefsByOrder = null;
 	public List<DefinitionNode> specialTierDefsByOrder {
 		get { return m_specialTierDefsByOrder; }
@@ -72,6 +76,12 @@ public class DragonDataSpecial : IDragonData {
 
 	// Power
 	public int powerLevel = 0;
+	public DefinitionNode biggestPowerDef {
+		get {
+			if(powerLevel == 0) return null;
+			return m_specialPowerDefsByOrder[powerLevel - 1]; 
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE PROPERTIES											  //
@@ -429,7 +439,7 @@ public class DragonDataSpecial : IDragonData {
 		}
 
 		// Save persistence!
-		PersistenceFacade.instance.Save_Request();
+		PersistenceFacade.instance.Save_Request(true);
 	}
     
 	/// <summary>

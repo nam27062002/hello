@@ -7,11 +7,29 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
     [Separator("Skill")]
     [SerializeField] private Image m_icon = null;
 
+	[SerializeField] private ParticleSystem m_unlockFX = null;
+
     private DefinitionNode m_def;
 	private LabDragonBarTooltip m_tooltip;
 
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
 
-    public void SetDefinition(DefinitionNode _def) {
+		// Subscribe to external events
+		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnSkillUpgraded);
+	}
+
+	protected override void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
+		// Unsubscribe from external events
+		// Subscribe to external events
+		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnSkillUpgraded);
+	}
+
+	public void SetDefinition(DefinitionNode _def) {
         m_def = _def;
 		m_icon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + m_def.Get("icon"));
     }
@@ -39,4 +57,19 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 			m_state == State.AVAILABLE || m_state == State.OWNED
 		);
     }
+
+	private void OnSkillUpgraded(DragonDataSpecial _dragonData) {
+		// Unlocked skill upgrade matches the one represented by this element?
+		if(_dragonData.biggestPowerDef == null) return;
+		Debug.Log(Color.cyan.Tag(m_def.sku + " | " + _dragonData.biggestPowerDef.sku));
+		if(m_def.sku == _dragonData.biggestPowerDef.sku) {
+			// Show some VFX
+			if(m_unlockFX != null) {
+				m_unlockFX.Play();
+			}
+
+			// SFX
+			AudioController.Play("hd_lab_power_upgraded");
+		}
+	}
 }

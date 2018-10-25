@@ -6,10 +6,30 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
     [SerializeField] private Sprite[] m_tierIconSprites;
 
     [SerializeField] private Image m_icon;
+	[SerializeField] private ParticleSystem m_unlockFX = null;
 
 	private LabDragonBarTooltip m_tooltip;
+	private DragonTier m_tier = DragonTier.COUNT;
+
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
+		// Subscribe to external events
+		Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgraded);
+	}
+
+	protected override void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
+		// Unsubscribe from external events
+		// Subscribe to external events
+		Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgraded);
+	}
 
     public void SetTier(int _index) {
+		m_tier = (DragonTier)(_index + 1);
         m_icon.sprite = m_tierIconSprites[_index];
     }
 
@@ -35,5 +55,18 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 			m_unlockLevel,
 			m_state == State.AVAILABLE || m_state == State.OWNED
 		);
+	}
+
+	private void OnTierUpgraded(DragonDataSpecial _dragonData) {
+		// Unlocked tier matches the one represented by this element?
+		if(m_tier == _dragonData.tier) {
+			// Show some VFX
+			if(m_unlockFX != null) {
+				m_unlockFX.Play();
+			}
+
+			// SFX
+			AudioController.Play("hd_lab_tier_upgraded");
+		}
 	}
 }

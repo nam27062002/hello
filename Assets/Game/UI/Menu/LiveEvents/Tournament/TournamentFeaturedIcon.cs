@@ -39,7 +39,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	[Separator("Active")]
 	[SerializeField] private GameObject m_activeGroup = null;
 	[SerializeField] private GameObject m_newBanner = null;
-    [SerializeField] private Localizer m_activeTimerText = null;
+	[SerializeField] private TextMeshProUGUI m_activeTimerText = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardsGroup = null;
@@ -172,33 +172,28 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
-
-        Localizer text = null;
-
-        if (state == HDLiveEventData.State.TEASING) {
-            text = m_teasingTimerText;
-        } else {
-            text = m_activeTimerText;
-        }
-
-        if(text != null) {
-			// Set text
-            if(text.gameObject.activeSelf) {
-				// Different TID based on tournament state
-				string tid = "TID_TOURNAMENT_ICON_ENDS_IN";
-				if(state == HDLiveEventData.State.TEASING) {
-					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
-				}
-
-                text.Localize(tid,
-					TimeUtils.FormatTime(
+		string timeString = TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
-						4
-					)
-				);
+						3
+					);
+
+        if (state == HDLiveEventData.State.TEASING) {
+			if(m_teasingTimerText != null) {
+				if(m_teasingTimerText.gameObject.activeSelf) {
+					m_teasingTimerText.Localize(
+						"TID_TOURNAMENT_ICON_STARTS_IN",
+						timeString
+					);
+				}
 			}
-		}
+        } else {
+			if(m_activeTimerText != null) {
+				if(m_activeTimerText.gameObject.activeSelf) {
+					m_activeTimerText.text = timeString;	// [AOC] Not enough space for "Ends In" with the new layout
+				}
+			}
+        }
 
 		// Manage timer expiration when the icon is visible
 		if(_checkExpiration && remainingSeconds <= 0) {
