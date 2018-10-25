@@ -596,13 +596,15 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// </summary>
 	public string FormatScore(long _score) {
 		// Seconds
-		if ( m_tournamentDefinition.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK 
-			|| m_tournamentDefinition.m_goal.m_type.Contains("time")
-		)
+        if ( IsTimeBasedScore() )
 		{
 			return TimeUtils.FormatTime((double)_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);	// MM:SS
 		}
 
 		return StringUtils.FormatNumber(_score);
 	}
+
+    public bool IsTimeBasedScore() {
+        return m_tournamentDefinition.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.TIME_ATTACK || m_tournamentDefinition.m_goal.m_type.Contains("time");
+    }
 }
