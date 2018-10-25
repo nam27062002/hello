@@ -594,20 +594,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Lab button has been pressed.
-	/// </summary>
-    public void OnLabButton() {
-        // Tracking
-        HDTrackingManager.Instance.Notify_LabEnter();
-    
-		// Change mode
-		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
-
-		// Go to lab main screen!
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
-    }
-
-	/// <summary>
 	/// A popup has been closed.
 	/// </summary>
 	/// <param name="_popup">Popup that triggered the event.</param>

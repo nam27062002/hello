@@ -31,10 +31,13 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the special dragon.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
-    
+	[Space] 
     [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
     [SerializeField] private ParticleSystem m_loadedDragonParticle = null;
     [SerializeField] private TweenSequence m_tweenSequence = null;
+	[Space]
+	[SerializeField] private GameObject m_dragonPurchasedFX = null;
+	[SerializeField] private Transform m_dragonPurchasedFXAnchor = null;
 
 	// Internal references
 	private GameObject m_loadingUI = null;
@@ -107,6 +110,28 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 		// Unload dragon preview
 		m_dragonLoader.UnloadDragon();
+	}
+
+	/// <summary>
+	/// Launches the dragon purchased FX on the selected dragon.
+	/// </summary>
+	public void LaunchDragonPurchasedFX() {
+		// Check required stuff
+		if(m_dragonPurchasedFX == null) return;
+
+		// Create a new instance of the FX and put it on the dragon loader
+		GameObject newObj = Instantiate<GameObject>(
+			m_dragonPurchasedFX, 
+			m_dragonPurchasedFXAnchor,
+			false
+		);
+
+		// Auto-destroy after the FX has finished
+		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
+		destructor.lifeTime = 9f;   // Sync with FX duration!
+
+		// Trigger SFX
+		AudioController.Play("hd_unlock_dragon");
 	}
 
 	//------------------------------------------------------------------------//
