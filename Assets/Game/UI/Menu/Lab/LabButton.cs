@@ -45,7 +45,7 @@ public class LabButton : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Subscribe to external events
-		Messenger.RemoveListener<IDragonData>(MessengerEvents.TUTORIAL_STEP_TOGGLED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------------//
