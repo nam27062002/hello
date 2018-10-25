@@ -40,7 +40,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
 
 	// Internal
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private bool m_dragonUnlocked = false;
 	
 	//------------------------------------------------------------------------//

@@ -137,7 +137,7 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 					}
 
 					// Load dragon definitions and sort them by order
-					List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
+					List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DRAGONS, "type", DragonDataClassic.TYPE_CODE);
 					DefinitionsManager.SharedInstance.SortByProperty(ref defs, "order", DefinitionsManager.SortType.NUMERIC);
 
 					// Load dragon previews!
@@ -166,7 +166,7 @@ public class DragonMenuToolsEditorWindow : EditorWindow {
 							}
 
 							// Instantiate the prefab and add it as child of the slot
-							GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + defs[i].GetAsString("menuPrefab"));
+							GameObject dragonPrefab = Resources.Load<GameObject>(IDragonData.MENU_PREFAB_PATH + defs[i].GetAsString("menuPrefab"));
 							GameObject dragonObj = PrefabUtility.InstantiatePrefab(dragonPrefab) as GameObject;
 							dragonObj.transform.SetParent(slots[i].transform, false);
 							dragonObj.name = dragonPrefab.name;	// Remove the "(Clone)" text

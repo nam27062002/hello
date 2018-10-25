@@ -146,6 +146,10 @@ public class ChestManager : UbiBCN.SingletonMonoBehaviour<ChestManager> {
 				case Chest.RewardType.PC: {
 					instance.m_user.EarnCurrency(UserProfile.Currency.HARD, (ulong)rewardData.amount, false, HDTrackingManager.EEconomyGroup.REWARD_CHEST);
 				} break;
+
+                case Chest.RewardType.GF: {
+                    instance.m_user.EarnCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)rewardData.amount, false, HDTrackingManager.EEconomyGroup.REWARD_CHEST);
+                } break;
 			}
 		}
 

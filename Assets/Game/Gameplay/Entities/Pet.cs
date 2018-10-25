@@ -84,9 +84,4 @@ public class Pet : IEntity {
 	{
 		base.CustomFixedUpdate();
 	}
-
-	override public bool CanBeSmashed()
-	{
-		return false;
-	}
 }

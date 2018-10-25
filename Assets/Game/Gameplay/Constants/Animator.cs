@@ -15,6 +15,7 @@ namespace GameConstants
 		//
 		public static readonly int DRUNK = UnityEngine.Animator.StringToHash("drunk");
 		public static readonly int BREATH = UnityEngine.Animator.StringToHash("breath");
+        public static readonly int MEGA = UnityEngine.Animator.StringToHash("mega");
 		public static readonly int STARVING = UnityEngine.Animator.StringToHash("starving");
 		public static readonly int FLY_DOWN = UnityEngine.Animator.StringToHash("fly down");
 		public static readonly int SWIM = UnityEngine.Animator.StringToHash("swim");
@@ -36,6 +37,7 @@ namespace GameConstants
 		public static readonly int IMPACT = UnityEngine.Animator.StringToHash("impact");
 		public static readonly int HOLDED = UnityEngine.Animator.StringToHash("holded");
 		public static readonly int BEND = UnityEngine.Animator.StringToHash("Bend");
+		public static readonly int SONIC_FORM = UnityEngine.Animator.StringToHash("SonicForm");
 
 		public static readonly int ROTATE_LEFT = UnityEngine.Animator.StringToHash("rotate left");
 		public static readonly int ROTATE_RIGHT = UnityEngine.Animator.StringToHash("rotate right");
@@ -96,5 +98,12 @@ namespace GameConstants
 		public static readonly int BEEP = UnityEngine.Animator.StringToHash("beep");
 
         public static readonly int ENABLED = UnityEngine.Animator.StringToHash("enabled");
+        public static readonly int STATE = UnityEngine.Animator.StringToHash("state");
+        
+        
+        // HELICOPTER DRAGON
+        public static readonly int MISSILE = UnityEngine.Animator.StringToHash("missile");
+        public static readonly int BOMB = UnityEngine.Animator.StringToHash("bomb");
+        public static readonly int NECK_DISTANCE = UnityEngine.Animator.StringToHash("neckDistance");
 	}
 }

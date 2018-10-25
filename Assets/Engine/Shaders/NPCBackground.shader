@@ -11,9 +11,9 @@ Shader "Hungry Dragon/NPC/NPC Background"
 
 	SubShader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		Pass
 		{
-			Tags { "Queue" = "Geometry" "RenderType" = "Opaque" }
 			Cull Back
 
 			ZWrite on

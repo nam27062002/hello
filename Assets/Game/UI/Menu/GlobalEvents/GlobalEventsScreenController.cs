@@ -29,6 +29,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		EVENT_ACTIVE,
 		LOADING,
 		RETRY_REWARDS,
+        REQUIRES_UPDATE,
 
 		COUNT
 	};
@@ -198,7 +199,10 @@ public class GlobalEventsScreenController : MonoBehaviour {
 					case HDLiveEventData.State.JOINED: {
 						targetPanel = Panel.EVENT_ACTIVE;
 					} break;
-
+                    case HDLiveEventData.State.REQUIRES_UPDATE:
+                    {
+                        targetPanel = Panel.REQUIRES_UPDATE;
+                    }break;
 					default: {
 						targetPanel = Panel.NO_EVENT;
 					} break;
@@ -308,6 +312,14 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
+
+    /// <summary>
+    /// Send the player to the update button
+    /// </summary>
+    public void OnUpdateButton()
+    {
+        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);
+    }
 
 	void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err)
 	{

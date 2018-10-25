@@ -15,9 +15,9 @@ Shader "Hungry Dragon/NPC/NPC Gold"
 	
 	Subshader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 		Pass
 		{
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" }
 			
 			Stencil
 			{

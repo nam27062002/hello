@@ -554,6 +554,7 @@ namespace BatchFontCreator
 			_container.settings.fontSize = m_font_faceInfo.pointSize;
 
             string missingGlyphReport = string.Empty;
+			string addedGlyphReport = string.Empty;
 
 			string colorTag = m_font_faceInfo.characterCount == _container.character_Count ? "<color=#C0ffff>" : "<color=#ffff00>";
             string colorTag2 = "<color=#C0ffff>";
@@ -567,9 +568,12 @@ namespace BatchFontCreator
 
 			missingGlyphReport += "\n" + output_count_label + "<b>" + colorTag + m_font_faceInfo.characterCount + "/" + _container.character_Count + "</color></b>";
 
-            // Report missing requested glyph
+            // Report added/missing requested glyph
             missingGlyphReport += "\n\n<color=#ffff00><b>Missing Characters</b></color>";
             missingGlyphReport += "\n----------------------------------------";
+
+			addedGlyphReport += "\n\n<color=#00ff00><b>Added Characters</b></color>";
+			addedGlyphReport += "\n----------------------------------------";
 
 			_container.output_feedback = missingGlyphReport;
 
@@ -579,16 +583,23 @@ namespace BatchFontCreator
 
                     if (missingGlyphReport.Length < 16300)
 						_container.output_feedback = missingGlyphReport;
-                }
+				} else {
+					// [AOC] Add character to the glyph report
+					//addedGlyphReport += '\n' + (char)m_font_glyphInfo[i].id;
+					addedGlyphReport += "\n" + (char)m_font_glyphInfo[i].id;
+				}
             }
 
+			string glyphReportPath = tool_folder_path + "GlyphReport" + _container.fontTTF.name + ".txt";
+
             if (missingGlyphReport.Length > 16300)
-				_container.output_feedback += "\n\n<color=#ffff00>Report truncated.</color>\n<color=#c0ffff>See</color> \"TextMesh Pro\\Glyph Report.txt\"";
+				_container.output_feedback += "\n\n<color=#ffff00>Report truncated.</color>\n<color=#c0ffff>See</color> \"" + glyphReportPath + "\"";
 
             // Save Missing Glyph Report file
-			string path = Application.dataPath + tool_folder_path + "GlyphReport" + _container.fontTTF.name + ".txt";
-            missingGlyphReport = System.Text.RegularExpressions.Regex.Replace(missingGlyphReport, @"<[^>]*>", string.Empty);
-			System.IO.File.WriteAllText(path, missingGlyphReport);
+			string path = Application.dataPath + glyphReportPath;
+			missingGlyphReport = System.Text.RegularExpressions.Regex.Replace(missingGlyphReport, @"<[^>]*>", string.Empty);
+			File.WriteAllText(path, missingGlyphReport);
+			File.AppendAllText(path, addedGlyphReport);
             AssetDatabase.Refresh();
         }
 

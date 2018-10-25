@@ -57,7 +57,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     //------------------------------------------------------------------------//
 
 
-    // Load funnel events are tracked by two different apis (Calety and Razolytics). 
+    // Load funnel events are tracked by two different apis (Calety and Razolytics).
     private FunnelData_Load m_loadFunnelCalety;
     private FunnelData_LoadRazolytics m_loadFunnelRazolytics;
 
@@ -88,7 +88,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Init() {
-        base.Init();        
+        base.Init();
 
         Reset();
 
@@ -218,7 +218,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
         string houstonTransactionID = _storeTransactionID;
-        string promotionType = null; // Not implemented yet            
+        string promotionType = null; // Not implemented yet
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
 
         Session_IsNotifyOnPauseEnabled = true;
@@ -237,7 +237,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
-        // We need to reinitialize TrackingManager if it has already been initialized, otherwise we simply do nothing since it will be initialize properly 
+        // We need to reinitialize TrackingManager if it has already been initialized, otherwise we simply do nothing since it will be initialize properly
         if (IsStartSessionNotified) {
             //InitTrackingManager();
         }
@@ -283,7 +283,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         //-------------------------------
         // Start Tracking manager
-        // Sends the start session event        
+        // Sends the start session event
         Track_GameStart();
 
 		// We need to wait until this method is called to send this event because it has a parameter that needs persistence to be loaded
@@ -299,7 +299,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (Session_IsFirstTime) {
             Track_StartPlayingMode(EPlayingMode.TUTORIAL);
-        }        
+        }
 
         // We need to wait for the session to be started to send the first Calety funnel step
         Notify_Calety_Funnel_Load(FunnelData_Load.Steps._02_persistance);
@@ -322,18 +322,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (!SESSION_RETRIES_ENABLED)
         {
-            SetRetrySessionCreationIsEnabled(false);       
+            SetRetrySessionCreationIsEnabled(false);
         }
 
 		if (settingsInstance != null)
 		{
 		string strDNAGameVersion = "UAT";
 		if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION)
-		{            
+		{
 		    strDNAGameVersion = "Full";
             clientVersion += "_PROD";
 		}
-        
+
 		List<string> kEventNameFilters = new List<string> ();
 		kEventNameFilters.Add ("custom");
 
@@ -442,7 +442,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     private void FlushEventQueue() {
-        // Makes sure that events can be sent (game.start events has already been sent and Ubiservices session has been created)     
+        // Makes sure that events can be sent (game.start events has already been sent and Ubiservices session has been created)
         if (Session_GameStartSent && State == EState.SessionStarted) {
             HDTrackingEvent e;
             while (m_eventQueue.Count > 0) {
@@ -453,7 +453,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
     }
 
-    #region notify   
+    #region notify
     private bool Notify_MeetsEventRequirements(string e) {
         bool returnValue = false;
         switch (e) {
@@ -584,18 +584,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Session_PlayTime = 0f;
     }
 
-    private const string MARKETING_ID_NOT_AVAILABLE = "NotAvailable";    
+    private const string MARKETING_ID_NOT_AVAILABLE = "NotAvailable";
 
     public override void Notify_MarketingID(EMarketingIdFrom from) {
         // Gets marketing id. It tries to get it from prefs first because it's immediate. If it's empty then it tries to get it from the device
         string marketingId = PersistencePrefs.GetMarketingId();
         if (string.IsNullOrEmpty(marketingId)) {
             marketingId = GameSessionManager.SharedInstance.GetDeviceMarketingID();
-            
+
             if (string.IsNullOrEmpty(marketingId)) {
                 marketingId = MARKETING_ID_NOT_AVAILABLE;
             } else {
-                // Marketing id is stored in prefs once retrieved successfully from device in order to be able to use it immediately next time it's required 
+                // Marketing id is stored in prefs once retrieved successfully from device in order to be able to use it immediately next time it's required
                 // since retrieving it from device may take a while
                 PersistencePrefs.SetMarketingId(marketingId);
             }
@@ -605,24 +605,24 @@ public class HDTrackingManagerImp : HDTrackingManager {
         bool needsToNotify = from == EMarketingIdFrom.Settings;
 
         // From first loading marketing id has to be notified only when no marketing id has been notified yet or when a valid marketing id is retrieved
-        if (from == EMarketingIdFrom.FirstLoading) {                        
-            string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();            
+        if (from == EMarketingIdFrom.FirstLoading) {
+            string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
             needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
-                     (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);                    
+                     (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);
         }
 
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());
         }
 
-        if (needsToNotify) {            
+        if (needsToNotify) {
             Track_MarketingID(marketingId);
         }
     }
 
     /// <summary>
     /// Called when the user starts a round
-    /// </summary>    
+    /// </summary>
     public override void Notify_RoundStart(int dragonXp, int dragonProgression, string dragonSkin, List<string> pets) {
         // Resets the amount of runs in the current round because a new round has just started
         Session_RunsAmountInCurrentRound = 0;
@@ -686,13 +686,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_IAPStarted() {
-        // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and 
+        // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and
         // session started event shouldn't be sent when the app is resumed once the iap is completed
         Session_IsNotifyOnPauseEnabled = false;
     }
 
     /// <summary>
-    /// /// Called when the user completed an in app purchase.    
+    /// /// Called when the user completed an in app purchase.
     /// </summary>
     /// <param name="storeTransactionID">transaction ID returned by the platform</param>
     /// <param name="houstonTransactionID">transaction ID returned by houston</param>
@@ -756,16 +756,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <summary>
     /// Called when the user earned some resources
     /// </summary>
-    /// <param name="economyGroup">ID used to identify the type of item the user has earned. Example UNLOCK_DRAGON</param>        
+    /// <param name="economyGroup">ID used to identify the type of item the user has earned. Example UNLOCK_DRAGON</param>
     /// <param name="moneyCurrencyCode">Currency type earned</param>
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
-    public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {
+    /// <param name="_paid">The user recieved this by paying
+    public override void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance, bool paid) {
         // All currencies earned during a round should be collected so a single event with the accumulated amount is sent at the end of the round in order to avoid spamming tracking
         if (economyGroup == EEconomyGroup.REWARD_RUN && Session_IsARoundRunning) {
-            Session_AccumRewardInRun(moneyCurrencyCode, amountDelta);
+            Session_AccumRewardInRun(moneyCurrencyCode, amountDelta, paid);
         } else {
-            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance);
+            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance, paid);
         }
     }
 
@@ -777,27 +778,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     /// <summary>
-    /// Called when an ad has been requested by the user. 
+    /// Called when an ad has been requested by the user.
     /// <param name="adType">Ad Type.</param>
     /// <param name="rewardType">Type of reward given for watching the ad.</param>
     /// <param name="adIsAvailable"><c>true</c>c> if the ad is available, <c>false</c> otherwise.</param>
-    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// <param name="provider">Ad Provider. Optional.</param>
     /// </summary>
     public override void Notify_AdStarted(string adType, string rewardType, bool adIsAvailable, string provider = null) {
         Track_AdStarted(adType, rewardType, adIsAvailable, provider);
 
-        // The app is paused when an ad is played. According to BI session closed event shouldn't be sent when the app is paused to play an ad and 
+        // The app is paused when an ad is played. According to BI session closed event shouldn't be sent when the app is paused to play an ad and
         // session started event shouldn't be sent when the app is resumed once the ad is over
         Session_IsNotifyOnPauseEnabled = false;
     }
 
     /// <summary>
     /// Called then the ad requested by the user has finished
-    /// <param name="adType">Ad Type.</param>    
+    /// <param name="adType">Ad Type.</param>
     /// <param name="adIsLoaded"><c>true</c>c> if the ad was effectively viewed, <c>false</c> otherwise.</param>
     /// <param name="maxReached"><c>true</c> if the user has reached the limit of ad viewing authorized by the app. Used for reward ads</param>
     /// <param name="adViewingDuration">Duration in seconds of the ad viewing.</param>
-    /// <param name="provider">Ad Provider. Optional.</param>    
+    /// <param name="provider">Ad Provider. Optional.</param>
     /// </summary>
     public override void Notify_AdFinished(string adType, bool adIsLoaded, bool maxReached, int adViewingDuration = 0, string provider = null) {
         if (adIsLoaded && TrackingPersistenceSystem != null) {
@@ -984,6 +985,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     public override void Notify_Missions(Mission _mission, EActionsMission _action) {
+    
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Notify_Missions " + _action.ToString());
         }
@@ -992,7 +994,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (e != null) {
             Track_AddParamString(e, TRACK_PARAM_MISSION_TYPE, _mission.def.Get("type"));
             Track_AddParamString(e, TRACK_PARAM_MISSION_TARGET, _mission.def.Get("params"));
-            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, _mission.difficulty.ToString());
+            string difficulty = _mission.difficulty.ToString();
+            if (MissionManager.IsSpecial(_mission))
+            {
+                difficulty = "LAB_" + difficulty;
+            }
+            Track_AddParamString(e, TRACK_PARAM_MISSION_DIFFICULTY, difficulty);
             Track_AddParamString(e, TRACK_PARAM_MISSION_VALUE, StringUtils.FormatBigNumber(_mission.objective.targetValue));
             Track_AddParamString(e, TRACK_PARAM_ACTION, _action.ToString());
             Track_AddParamSessionsCount(e);
@@ -1142,7 +1149,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     public override void Notify_RateThisApp(ERateThisAppResult result) {
         int dragonProgression = 0;
-        DragonData dragonData = DragonManager.currentDragon;
+        IDragonData dragonData = DragonManager.currentDragon;
         if (dragonData != null)
         {
             dragonProgression = UsersManager.currentUser.GetDragonProgress(dragonData);
@@ -1177,7 +1184,43 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     #endregion
 
-    #region track	
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public override void Notify_LabEnter()
+    {        
+        Track_LabEnter();
+    }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="dragonName">Name of the current Lab Dragon</param>
+    /// <param name="labHp">HP level of the current Lab Dragon </param>
+    /// <param name="labSpeed">Speed level of the current Lab Dragon</param>
+    /// <param name="labBoost">Boost level of the current Lab Dragon.</param> 
+    /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
+    /// <param name="totalSpecialDragonsUnlocked"></param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    {
+        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague);
+    }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public override void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        Track_LabResult(ranking, currentLeague, upcomingLeague);
+    }
+    #endregion
+
+    #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
 
@@ -1195,13 +1238,36 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private void Track_GameStart() {
         HDTrackingEvent e = new HDTrackingEvent("game.start");
-        
+
         Track_AddParamSubVersion(e);
         Track_AddParamProviderAuth(e);
         Track_AddParamPlayerID(e);
         Track_AddParamServerAccID(e);
+
+        DeviceUtilsManager.SharedInstance.CheckAppOpenedBy();
+        Calety.DeviceUtils.EAppOpenedBy openedBy = DeviceUtilsManager.SharedInstance.m_eAppOpenedBy;
+
+        string typeNotif = "";
+        if (openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_LOCAL_NOTIFICATION || openedBy == Calety.DeviceUtils.EAppOpenedBy.E_OPENED_BY_PUSH_NOTIFICATION)
+        {
+            string sku = DeviceUtilsManager.SharedInstance.strNotificationSku;           
+            if (!string.IsNullOrEmpty(sku))
+            {
+                DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, sku);
+                if (def != null)
+                {
+                    typeNotif = def.Get("trackingSku");
+                }
+            }
+        }
+
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            ControlPanel.Log("typeNotif = " + typeNotif + " openedBy = " + openedBy);
+        }
+
         // "" is sent because Calety doesn't support this yet
-        Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, "");
+        Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, typeNotif);
         Track_AddParamLanguage(e);
         Track_AddParamUserTimezone(e);
         Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
@@ -1223,7 +1289,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_SendEvent(e);
 
-        Session_GameStartSent = true;        
+        Session_GameStartSent = true;
     }
 
     private void Track_MarketingID(string marketingId) {
@@ -1259,9 +1325,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         HDTrackingEvent e = new HDTrackingEvent("custom.mobile.start");
         {
             Track_AddParamAbTesting(e);
-            Track_AddParamPlayerProgress(e);            
+            Track_AddParamPlayerProgress(e);
         }
-        m_eventQueue.Enqueue(e);        
+        m_eventQueue.Enqueue(e);
     }
 
     private void Track_EtlStartEvent() {
@@ -1269,7 +1335,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Log("Track_EtlStartEvent");
         }
 
-        HDTrackingEvent e = new HDTrackingEvent("custom.etl.session.start");        
+        HDTrackingEvent e = new HDTrackingEvent("custom.etl.session.start");
         //Track_SendEvent(e);
 		m_eventQueue.Enqueue(e);
     }
@@ -1279,7 +1345,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Log("Track_EtlEndEvent");
         }
 
-        HDTrackingEvent e = new HDTrackingEvent("custom.etl.session.end");        
+        HDTrackingEvent e = new HDTrackingEvent("custom.etl.session.end");
         m_eventQueue.Enqueue(e);
     }
 
@@ -1368,9 +1434,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_ITEM, itemID);
         }
         m_eventQueue.Enqueue(e);
+
+        // Send pc spent event
+        if ( moneyCurrency.Equals("HardCurrency") )
+        {
+            // Send event
+            GameServerManager.SharedInstance.PCSpent( (int)moneyPrice, economyGroup, PCFluctuationResponse);
+        }
     }
 
-    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance) {
+    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance, bool paid) {
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_EarnResources economyGroup = " + economyGroup + " moneyCurrency = " + moneyCurrency + " moneyPrice = " + amountDelta + " amountBalance = " + amountBalance);
         }
@@ -1388,6 +1461,50 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_ECO_GROUP, economyGroup);
         }
         m_eventQueue.Enqueue(e);
+
+        // Send pc earn event
+        if (moneyCurrency.Equals("HardCurrency"))
+        {
+            // Send event
+            GameServerManager.SharedInstance.PCEarned(amountDelta, economyGroup, paid, PCFluctuationResponse);
+        }
+    }
+
+    private void PCFluctuationResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
+    {
+        if (error != null){
+            Debug.LogError(error.ToString());
+        }
+        else if  (response != null)
+        {
+            if (response["response"] != null)
+            {
+                SimpleJSON.JSONNode ret = SimpleJSON.JSONNode.Parse(response["response"] as string);
+                if ( ret != null )
+                {
+                    if (ret.ContainsKey("errorCode"))
+                    {
+                        int errorInt = ret["errorCode"];
+                        switch (errorInt)
+                        {
+                            case 623:   // JSON_SYNTAX_ERROR
+                            {
+                            }break;
+                            case 624:   // BUSSINES_ERROR
+                            {
+                            }break;
+                            case 610:   // UNEXPECTED_ERROR
+                            {
+                            }break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning("NO Response");
+            }
+        }
     }
 
     private void Track_CustomerSupportRequested() {
@@ -1895,7 +2012,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Log("Track_RateThisAppShown result = " + result + " dragonProgression = " + dragonProgression);
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.ratethisapp");
-        {            
+        {
             Track_AddParamString(e, TRACK_PARAM_RATE_RESULT, result.ToString());
             e.data.Add(TRACK_PARAM_DRAGON_PROGRESSION, dragonProgression);
         }
@@ -1912,10 +2029,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_EXPERIMENT_NAME, experimentName);
             Track_AddParamString(e, TRACK_PARAM_EXPERIMENT_GROUP, experimentGroup);
         }
-        m_eventQueue.Enqueue(e);       
+        m_eventQueue.Enqueue(e);
     }
 
-    
+
 
 	private void Track_AnimojiEvent(string dragonName, int recordings, int duration)
     {
@@ -1931,6 +2048,53 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
+    private void Track_LabEnter()
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabEnter");
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.entry");
+        {
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerGoldenFragments(e);
+            Track_AddParamPlayerPC(e);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
+                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
+        {
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_LAB_HP, labHp);
+            e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
+            e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
+            Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            e.data.Add(TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED, totalSpecialDragonsUnlocked);
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    private void Track_LabResult(int ranking, string currentLeague, string upcomingLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_LabResult ranking = " + ranking + " currentLeague = " + currentLeague + " upcomingLeague = " + upcomingLeague);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.result");
+        {
+            e.data.Add(TRACK_PARAM_RANKING, ranking);            
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);
+            Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -1938,7 +2102,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     // -------------------------------------------------------------
     // Params
-    // -------------------------------------------------------------    
+    // -------------------------------------------------------------
 
     // Please, respect the alphabetic order, string order
     private const string TRACK_PARAM_AB_TESTING = "abtesting";
@@ -1960,6 +2124,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
     private const string TRACK_PARAM_CURRENCY = "currency";
+    private const string TRACK_PARAM_CURRENT_LEAGUE = "currentLeague";
     private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
     private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
     private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
@@ -1991,7 +2156,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_GENDER = "gender";
     private const string TRACK_PARAM_GLOBAL_EVENT_ID = "glbEventID";
     private const string TRACK_PARAM_GLOBAL_EVENT_TYPE = "glbEventType";
+    private const string TRACK_PARAM_GOLDEN_FRAGMENTS = "goldenFragments";
     private const string TRACK_PARAM_GPURAM = "gpuRam";
+    private const string TRACK_PARAM_HARD_CURRENCY = "hardCurrency";
     private const string TRACK_PARAM_HC_EARNED = "hcEarned";
     private const string TRACK_PARAM_HC_REVIVE = "hcRevive";
     private const string TRACK_PARAM_HIGHEST_BASE_MULTIPLIER = "highestBaseMultiplier";
@@ -2008,6 +2175,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_ITEM = "item";
     private const string TRACK_PARAM_ITEM_ID = "itemID";
     private const string TRACK_PARAM_ITEM_QUANTITY = "itemQuantity";
+    private const string TRACK_PARAM_LAB_BOOST = "labBoost";
+    private const string TRACK_PARAM_LAB_HP = "labHp";
+    private const string TRACK_PARAM_LAB_POWER = "labPower";
+    private const string TRACK_PARAM_LAB_SPEED = "labSpeed";    
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
@@ -2045,6 +2216,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_PVP_MATCHES_PLAYED = "pvpMatchesPlayed";
     private const string TRACK_PARAM_RADIUS = "radius";
     private const string TRACK_PARAM_RANK = "rank";
+    private const string TRACK_PARAM_RANKING = "ranking";
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
@@ -2076,11 +2248,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOTAL_DURATION = "totalDuration";
     private const string TRACK_PARAM_TOTAL_PLAYTIME = "totalPlaytime";
     private const string TRACK_PARAM_TOTAL_PURCHASES = "totalPurchases";
+    private const string TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED = "totalSpecialDragonsUnlocked";
     private const string TRACK_PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
+    private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
@@ -2144,9 +2318,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private void Track_AddParamHighestDragonXp(HDTrackingEvent _e) {
         int value = 0;
-        if (UsersManager.currentUser != null) {
-            DragonData highestDragon = UsersManager.currentUser.GetHighestDragon();
-            if (highestDragon != null && highestDragon.progression != null) {
+        if (UsersManager.currentUser != null)
+        {
+			DragonDataClassic highestDragon = UsersManager.currentUser.GetHighestDragon();
+            if (highestDragon != null && highestDragon.progression != null)
+            {
                 value = (int)highestDragon.progression.xp;
             }
         }
@@ -2158,6 +2334,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
         int value = (UsersManager.currentUser != null) ? UsersManager.currentUser.GetPlayerProgress() : 0;
         _e.data.Add(TRACK_PARAM_PLAYER_PROGRESS, value);
     }
+
+    private void Track_AddParamPlayerGoldenFragments(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.goldenEggFragments : 0;
+        _e.data.Add(TRACK_PARAM_GOLDEN_FRAGMENTS, value);
+    }
+
+    private void Track_AddParamPlayerPC(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.pc : 0;
+        _e.data.Add(TRACK_PARAM_HARD_CURRENCY, value);
+    }            
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;
@@ -2326,7 +2514,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     private void Track_AddParamTrackingID(HDTrackingEvent _e) {
-        Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID); 
+        Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID);
     }
     #endregion
 
@@ -2379,7 +2567,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private float Session_PlayTime { get; set; }
 
     /// <summary>
-    /// This flag states whether or not the user has started any rounds. This is used to start DNA session. DNA session starts when the user 
+    /// This flag states whether or not the user has started any rounds. This is used to start DNA session. DNA session starts when the user
     /// starts the first round since the application started
     /// </summary>
     private bool Session_AnyRoundsStarted { get; set; }
@@ -2425,6 +2613,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private int Session_HungryLettersCount { get; set; }
 
     private Dictionary<UserProfile.Currency, int> Session_RewardsInRound;
+    private Dictionary<UserProfile.Currency, int> Session_RewardsInRoundPaid;
 
     private bool Session_IsARoundRunning { get; set; }
 
@@ -2445,6 +2634,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (Session_RewardsInRound != null) {
             Session_RewardsInRound.Clear();
         }
+        if (Session_RewardsInRoundPaid != null) {
+            Session_RewardsInRoundPaid.Clear();
+        }
     }
 
     private void Session_NotifyRoundStart() {
@@ -2452,34 +2644,62 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (Session_RewardsInRound != null) {
             Session_RewardsInRound.Clear();
         }
+        if (Session_RewardsInRoundPaid != null) {
+            Session_RewardsInRoundPaid.Clear();
+        }
     }
 
     private void Session_NotifyRoundEnd() {
         Session_IsARoundRunning = false;
 
-        if (Session_RewardsInRound != null) {
-            string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
-            UserProfile userProfile = UsersManager.currentUser;
+        string economyGroupString = EconomyGroupToString(EEconomyGroup.REWARD_RUN);
+        UserProfile userProfile = UsersManager.currentUser;
 
+        if (Session_RewardsInRound != null) {
             // TrackingManager is notified with all currencies earned during the run
             foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound) {
                 if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key));
+                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                }
+            }
+        }
+
+        if (Session_RewardsInRoundPaid != null) {
+            // TrackingManager is notified with all currencies earned during the run
+            foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRoundPaid) {
+                if (pair.Value > 0) {
+                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
                 }
             }
         }
     }
 
-    private void Session_AccumRewardInRun(UserProfile.Currency currency, int amount) {
-        if (Session_RewardsInRound == null) {
-            Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
-        }
+    private void Session_AccumRewardInRun(UserProfile.Currency currency, int amount, bool paid) {
+        if ( paid )
+        {
+            if (Session_RewardsInRoundPaid == null) {
+                Session_RewardsInRoundPaid = new Dictionary<UserProfile.Currency, int>();
+            }
 
-        if (Session_RewardsInRound.ContainsKey(currency)) {
-            int currentAmount = Session_RewardsInRound[currency];
-            Session_RewardsInRound[currency] = currentAmount + amount;
-        } else {
-            Session_RewardsInRound.Add(currency, amount);
+            if (Session_RewardsInRoundPaid.ContainsKey(currency)) {
+                int currentAmount = Session_RewardsInRoundPaid[currency];
+                Session_RewardsInRoundPaid[currency] = currentAmount + amount;
+            } else {
+                Session_RewardsInRoundPaid.Add(currency, amount);
+            }
+        }
+        else
+        {
+            if (Session_RewardsInRound == null) {
+                Session_RewardsInRound = new Dictionary<UserProfile.Currency, int>();
+            }
+
+            if (Session_RewardsInRound.ContainsKey(currency)) {
+                int currentAmount = Session_RewardsInRound[currency];
+                Session_RewardsInRound[currency] = currentAmount + amount;
+            } else {
+                Session_RewardsInRound.Add(currency, amount);
+            }
         }
     }
     #endregion
@@ -2556,7 +2776,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     #endregion
 
 
-    #region debug    
+    #region debug
     private void Debug_Update() {
         if (Input.GetKeyDown(KeyCode.S)) {
             //Notify_RoundStart(0, 0, null, null);
@@ -2565,4 +2785,3 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     #endregion
 }
-

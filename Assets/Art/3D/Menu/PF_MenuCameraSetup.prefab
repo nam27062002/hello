@@ -75,6 +75,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!1 &1337483194453704
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4787602057671158}
+  - component: {fileID: 114536702636035498}
+  m_Layer: 0
+  m_Name: TournamentsPath
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!1 &1419870450253086
 GameObject:
   m_ObjectHideFlags: 1
@@ -122,6 +138,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!1 &1629544343589286
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4338459401100544}
+  - component: {fileID: 114772806950227362}
+  m_Layer: 0
+  m_Name: LabPath
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1662092790214558
 GameObject:
   m_ObjectHideFlags: 1
@@ -170,7 +202,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1771264964763360
 GameObject:
   m_ObjectHideFlags: 1
@@ -181,7 +213,7 @@ GameObject:
   - component: {fileID: 4096881646141480}
   - component: {fileID: 114534590626307924}
   m_Layer: 0
-  m_Name: TournamentsPath
+  m_Name: Lab_Rewards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,6 +269,35 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1884756050831602
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4034798735650162}
+  - component: {fileID: 114197307404962394}
+  m_Layer: 0
+  m_Name: TournamentsPathFromSeleciton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4034798735650162
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1884756050831602}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -150, y: 0.0000004172325, z: 6.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4040923863046358}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4040923863046358
 Transform:
   m_ObjectHideFlags: 1
@@ -253,7 +314,10 @@ Transform:
   - {fileID: 4313205243540498}
   - {fileID: 4377216972818528}
   - {fileID: 4376165932682144}
+  - {fileID: 4787602057671158}
+  - {fileID: 4338459401100544}
   - {fileID: 4096881646141480}
+  - {fileID: 4034798735650162}
   m_Father: {fileID: 4773014895585714}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -268,7 +332,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4040923863046358}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4194129944314038
 Transform:
@@ -322,6 +386,19 @@ Transform:
   m_Father: {fileID: 4040923863046358}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4338459401100544
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1629544343589286}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -150, y: 0, z: 6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4040923863046358}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4376165932682144
 Transform:
   m_ObjectHideFlags: 1
@@ -354,8 +431,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1781636983171874}
-  m_LocalRotation: {x: 0.020942422, y: -0, z: -0, w: 0.9997807}
-  m_LocalPosition: {x: -146.5709, y: -186.5, z: 0}
+  m_LocalRotation: {x: -0.059032112, y: 0.06174356, z: -0.0037545334, w: 0.9963377}
+  m_LocalPosition: {x: -392, y: -659, z: 65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4899149457982194}
@@ -408,8 +485,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1546796507365632}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.032506917, y: -0, z: -0, w: 0.99947155}
+  m_LocalPosition: {x: 0, y: -8.55, z: -42.5384}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4679548235048146}
@@ -418,6 +495,19 @@ Transform:
   - {fileID: 4498074707646650}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: -3.726, y: 0, z: 0}
+--- !u!4 &4787602057671158
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1337483194453704}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -150, y: 0, z: 6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4040923863046358}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4899149457982194
 Transform:
@@ -449,8 +539,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 1
-  far clip plane: 1200
-  field of view: 30
+  far clip plane: 800
+  field of view: 80
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -556,6 +646,44 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294934495
   m_MaxRayIntersections: 0
+--- !u!114 &114197307404962394
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1884756050831602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8ffd229cb784280b81d0dbc6cacff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawColor: {r: 0.2784314, g: 0.20784314, b: 1, a: 1}
+  lineThickness: 5
+  pointSize: 1
+  constantSize: 1
+  lockAxis: 000000
+  lockHandlersAxis: 000000
+  m_points:
+  - m_name: DRAGON_SELECTION
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: 23.098923, y: -180.33804, z: 24.885399}
+    m_handle1: {x: -32.654507, y: -84.089134, z: -108.84933}
+    m_handle2: {x: 0, y: 0, z: 0}
+  - m_name: 
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: -75.854126, y: -435.1536, z: -304.96103}
+    m_handle1: {x: 72.509315, y: 121.15764, z: -6.9788513}
+    m_handle2: {x: -72.509315, y: -121.15764, z: 6.9788513}
+  - m_name: TOURNAMENTS_INFO
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: -254, y: -643.3496, z: 51.55552}
+    m_handle1: {x: 58.78814, y: 68.70469, z: -117.65046}
+    m_handle2: {x: 0, y: 0, z: 0}
+  m_resolution: 30
+  _close: 0
 --- !u!114 &114223205425487668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -577,7 +705,7 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 13.429092, y: -186.5, z: 0}
+    m_position: {x: 33.098923, y: -180.33804, z: 30.885399}
     m_handle1: {x: 7.7597437, y: -8.795384, z: -52.607258}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
@@ -601,7 +729,7 @@ MonoBehaviour:
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 316.1, y: -672.1, z: 26.68}
+    m_position: {x: 316.1, y: -666.64545, z: 25.954979}
     m_handle1: {x: -5.4108806, y: 8.396671, z: -73.226616}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -639,7 +767,7 @@ MonoBehaviour:
   - m_name: PLAY
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 0, y: 345.85, z: 0.03000021}
+    m_position: {x: 0, y: 350.49506, z: 65.49448}
     m_handle1: {x: 0, y: -29.7, z: -1.9899001}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
@@ -651,7 +779,7 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 3.4290924, y: -186.5, z: -6}
+    m_position: {x: 23.098923, y: -180.33804, z: 24.885399}
     m_handle1: {x: 4.3890014, y: 31.845001, z: -0}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -712,6 +840,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8ffd229cb784280b81d0dbc6cacff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  drawColor: {r: 1, g: 0.7159162, b: 1, a: 1}
+  lineThickness: 5
+  pointSize: 1
+  constantSize: 1
+  lockAxis: 000000
+  lockHandlersAxis: 000000
+  m_points:
+  - m_name: LAB_DRAGON_SELECTION
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: -242, y: -659, z: 59}
+    m_handle1: {x: 69.92248, y: 4.0260043, z: -101.71184}
+    m_handle2: {x: 0, y: 0, z: 0}
+  - m_name: 
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: -30.113708, y: -646.8, z: -249.21768}
+    m_handle1: {x: -123.16949, y: 1.7180912, z: 8.77423}
+    m_handle2: {x: 123.16949, y: -1.7180912, z: -8.77423}
+  - m_name: REWARDS
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: 306.1, y: -666.64545, z: 19.954979}
+    m_handle1: {x: -110.95053, y: 6.5490017, z: -88.82698}
+    m_handle2: {x: 0, y: 0, z: 0}
+  m_resolution: 30
+  _close: 0
+--- !u!114 &114536702636035498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1337483194453704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8ffd229cb784280b81d0dbc6cacff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   drawColor: {r: 0.2784314, g: 0.20784314, b: 1, a: 1}
   lineThickness: 5
   pointSize: 1
@@ -734,19 +900,19 @@ MonoBehaviour:
   - m_name: TOURNAMENTS_INFO
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: -254, y: -646.8, z: 50.7}
+    m_position: {x: -254, y: -643.3496, z: 51.55552}
     m_handle1: {x: 58.15543, y: 112.81277, z: -91.12775}
     m_handle2: {x: -58.15543, y: -112.81277, z: 91.12775}
   - m_name: DRAGON_SETUP
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: -252.20001, y: -646.8, z: 52.4}
+    m_position: {x: -252.20001, y: -643.46, z: 53.251926}
     m_handle1: {x: -0.593996, y: -0, z: -0.5610003}
     m_handle2: {x: 0.593996, y: 0, z: 0.5610003}
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -252.20001, y: -646.8, z: 52.4}
+    m_position: {x: -252.20001, y: -643.46, z: 53.251926}
     m_handle1: {x: -0, y: -0, z: -0}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -772,19 +938,19 @@ MonoBehaviour:
   - m_name: CHESTS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -12.089996, y: -537, z: 193.21}
+    m_position: {x: -12.089996, y: -542.652, z: 200.91177}
     m_handle1: {x: 4.319699, y: 0.56100404, z: -17.328304}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: GLOBAL_EVENTS
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 1, y: -535.3, z: 140.7}
+    m_position: {x: 1, y: -537.5435, z: 148.6232}
     m_handle1: {x: -1.193636, y: -0.1547983, z: 17.82683}
     m_handle2: {x: 1.193636, y: 0.1547983, z: -17.82683}
   - m_name: MISSIONS
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 1.0186462, y: -535.3, z: -2.566249}
+    m_position: {x: 1.0186462, y: -528.23413, z: 5.659733}
     m_handle1: {x: -1.4743936, y: 0.6092798, z: 47.25094}
     m_handle2: {x: 1.4743936, y: -0.6092798, z: -47.25094}
   - m_name: 
@@ -808,8 +974,46 @@ MonoBehaviour:
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 316.1, y: -672.1, z: 26.68}
+    m_position: {x: 316.1, y: -666.64545, z: 25.954979}
     m_handle1: {x: -6.1019588, y: -0.42055666, z: -72.713776}
+    m_handle2: {x: 0, y: 0, z: 0}
+  m_resolution: 30
+  _close: 0
+--- !u!114 &114772806950227362
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1629544343589286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e8ffd229cb784280b81d0dbc6cacff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawColor: {r: 0.592468, g: 0.39489618, b: 0.6102941, a: 1}
+  lineThickness: 5
+  pointSize: 1
+  constantSize: 1
+  lockAxis: 000000
+  lockHandlersAxis: 000000
+  m_points:
+  - m_name: DRAGON_SELECTION
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: 23.098923, y: -180.33804, z: 24.885399}
+    m_handle1: {x: -32.654507, y: -94.28494, z: -102.353584}
+    m_handle2: {x: 0, y: 0, z: 0}
+  - m_name: 
+    m_handleStyle: 0
+    m_locked: 0
+    m_position: {x: -75.854126, y: -466.05, z: -285.27695}
+    m_handle1: {x: 69.11961, y: 124.802185, z: -8.894747}
+    m_handle2: {x: -69.11961, y: -124.802185, z: 8.894747}
+  - m_name: LAB_DRAGON_SELECTION
+    m_handleStyle: 1
+    m_locked: 0
+    m_position: {x: -242, y: -659, z: 59}
+    m_handle1: {x: 54.82814, y: 63.673508, z: -113.6114}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
   _close: 0
@@ -834,37 +1038,37 @@ MonoBehaviour:
   - m_name: DRAGON_SELECTION
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 13.429092, y: -186.5, z: 0}
-    m_handle1: {x: 1.089001, y: -49.86506, z: -2.6503246}
+    m_position: {x: 33.098923, y: -180.33804, z: 30.885399}
+    m_handle1: {x: -10.922645, y: -49.86506, z: -3.18039}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 0, y: -337.60623, z: -9.637545}
-    m_handle1: {x: -0.50749373, y: 47.333103, z: 15.939045}
-    m_handle2: {x: 0.50749373, y: -47.333103, z: -15.939045}
+    m_handle1: {x: 5.185741, y: 48.222046, z: 16.23839}
+    m_handle2: {x: -5.185741, y: -48.222046, z: -16.23839}
   - m_name: 
     m_handleStyle: 0
     m_locked: 0
     m_position: {x: 0, y: -494.28586, z: -103.64443}
-    m_handle1: {x: -0.31197923, y: 60.547363, z: -1.6737686}
-    m_handle2: {x: 0.31197923, y: -60.547363, z: 1.6737686}
+    m_handle1: {x: -0.31048587, y: 60.257545, z: -2.1553483}
+    m_handle2: {x: 0.31048587, y: -60.257545, z: 2.1553483}
   - m_name: MISSIONS
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 1.0186462, y: -535.3, z: -2.566249}
+    m_position: {x: 1.0186462, y: -528.23413, z: 5.659733}
     m_handle1: {x: -0.14529407, y: 5.95911, z: -35.501797}
     m_handle2: {x: 0.14529407, y: -5.95911, z: 35.501797}
   - m_name: GLOBAL_EVENTS
     m_handleStyle: 0
     m_locked: 0
-    m_position: {x: 1, y: -535.3, z: 140.7}
+    m_position: {x: 1, y: -537.5435, z: 148.6232}
     m_handle1: {x: 3.1584058, y: 0.40960217, z: -47.17047}
     m_handle2: {x: -3.1584058, y: -0.40960217, z: 47.17047}
   - m_name: CHESTS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: -12.089996, y: -537, z: 193.21}
+    m_position: {x: -12.089996, y: -542.652, z: 200.91177}
     m_handle1: {x: 4.319699, y: 0.56100404, z: -17.328304}
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 30
@@ -890,7 +1094,7 @@ MonoBehaviour:
   - m_name: PLAY
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 10, y: 345.85, z: 6.03}
+    m_position: {x: 10, y: 350.49506, z: 71.49448}
     m_handle1: {x: 3.3707426, y: -140.59637, z: -60.431686}
     m_handle2: {x: 0, y: 0, z: 0}
   - m_name: 
@@ -914,7 +1118,7 @@ MonoBehaviour:
   - m_name: REWARDS
     m_handleStyle: 1
     m_locked: 0
-    m_position: {x: 316.1, y: -672.1, z: 26.68}
+    m_position: {x: 316.1, y: -666.64545, z: 25.954979}
     m_handle1: {x: -8.920444, y: 13.304132, z: -73.226616}
     m_handle2: {x: -0, y: -0, z: 0}
   m_resolution: 30

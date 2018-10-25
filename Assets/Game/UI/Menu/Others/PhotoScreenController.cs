@@ -280,7 +280,7 @@ public class PhotoScreenController : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.DRAGON: {
 				// Initialize dragon info
-				DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+				IDragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 				m_targetName = dragonData.def.GetLocalized("tidName");
 				if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
 				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));

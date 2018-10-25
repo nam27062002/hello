@@ -68,6 +68,8 @@ namespace AI {
 
 		bool Burn(Transform _transform, IEntity.Type _source, bool instant = false );
 
+		bool Smash( IEntity.Type _source );
+
 		void SetVelocity(Vector3 _v);
 		void AddExternalForce(Vector3 _f);
 

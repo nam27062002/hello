@@ -12,10 +12,10 @@ public class ModGamePlayMissionReward : ModifierGamePlay {
 	}
 
 	public override void Apply() {
-		Mission.AddSCMultiplier(m_percentage);
+		MissionManager.AddSCMultiplier(m_percentage);
 	}
 
 	public override void Remove() {
-		Mission.AddSCMultiplier(-m_percentage);
+        MissionManager.AddSCMultiplier(-m_percentage);
 	}
 }

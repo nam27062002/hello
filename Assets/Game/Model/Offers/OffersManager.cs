@@ -51,7 +51,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Subscribe to game events that might change offers list (segmentation)
 		Messenger.AddListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
 		Messenger.AddListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
 		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
@@ -74,7 +74,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
 		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
@@ -294,7 +294,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void OnGameStateChanged2(string _p1) { 
 		OnGameStateChanged(); 
 	}
-	private void OnGameStateChanged3(DragonData _p1) { 
+	private void OnGameStateChanged3(IDragonData _p1) { 
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged4(Egg _p1) { 

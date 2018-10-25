@@ -31,11 +31,15 @@ public class ResultsScreenController : MonoBehaviour {
 		GLOBAL_EVENT_CONTRIBUTION,		// Optional, if there is an active event and the player has a score to add to it
 		GLOBAL_EVENT_NO_CONTRIBUTION,	// Optional, if there is an active event but the player didn't score
 
-		TOURNAMENT_COINS,		// Tournament, gold obtained during the run
+		TOURNAMENT_COINS,		// Tournament, gold obtained during the run (same as REWARDS step, but no survival bonus)
 		TOURNAMENT_SCORE,		// Tournament, show run score
 		TOURNAMENT_LEADERBOARD,	// Tournament, show leaderboard changes
 		TOURNAMENT_INVALID_RUN,	// Tournament, run didn't count for the tournament (i.e. "Eat 100 birds as fast as possible" but you died before reaching 100 birds)
 		TOURNAMENT_SYNC,		// Tournament, sync with server, apply rewards and do tracking
+
+		LEAGUE_SCORE,			// Special Dragons League, show run score and "new high score" if moving up the ladder
+		LEAGUE_LEADERBOARD,		// Special Dragons League, show leaderboard changes
+		LEAGUE_SYNC,			// Special Dragons League, sync with server, apply rewards and do tracking
 
 		COUNT
 	}
@@ -58,6 +62,10 @@ public class ResultsScreenController : MonoBehaviour {
 	[Reorderable]
 	[HideEnumValues(true, true)]
 	[SerializeField] private Step[] m_defaultStepsSequence = new Step[0];
+
+	[Reorderable]
+	[HideEnumValues(true, true)]
+	[SerializeField] private Step[] m_specialDragonStepsSequence = new Step[0];
 
 	// Other references
 	private ResultsSceneSetup m_scene = null;
@@ -151,6 +159,12 @@ public class ResultsScreenController : MonoBehaviour {
 		set { m_totalPc = value; }
 	}
 
+    private long m_totalGf = 0;
+    public long totalGf {
+        get { return m_totalGf; }
+        set { m_totalGf = value; }
+    }
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -196,6 +210,8 @@ public class ResultsScreenController : MonoBehaviour {
 		// Initialize some internal vars
 		m_totalCoins = UsersManager.currentUser.coins - this.coins;		// Coins have been added in real-time, so start the results screen counter with the amount of coins we had before the run
 		m_totalPc = UsersManager.currentUser.pc;
+        m_totalGf = UsersManager.currentUser.goldenEggFragments;
+
 		m_eggFound = false;
 		switch(CPResultsScreenTest.eggMode) {
 			case CPResultsScreenTest.EggTestMode.FOUND: {
@@ -230,9 +246,13 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		// Choose steps sequence based on current game mode
-		switch(GameSceneController.s_mode) {
+		switch(SceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				m_activeSequence = m_tournamentStepsSequence;
+			} break;
+
+			case GameSceneController.Mode.SPECIAL_DRAGONS: {
+				m_activeSequence = m_specialDragonStepsSequence;
 			} break;
 
 			default: {
@@ -342,7 +362,7 @@ public class ResultsScreenController : MonoBehaviour {
 		}
 
 		// Tell the menu where to go based on current game mode (or other modifiers)
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Unless score was dismissed due to some error, in which case we'll return to the PLAY screen
 				ResultsScreenStepTournamentSync syncStep = GetStep(Step.TOURNAMENT_SYNC) as ResultsScreenStepTournamentSync;
@@ -352,6 +372,10 @@ public class ResultsScreenController : MonoBehaviour {
 					GameVars.menuInitialScreen = MenuScreen.TOURNAMENT_INFO;
 				}
 			} break;
+
+            case GameSceneController.Mode.SPECIAL_DRAGONS: {
+                    GameVars.menuInitialScreen = MenuScreen.LAB_DRAGON_SELECTION;  
+            } break;
 
 			default: {
 				GameVars.menuInitialScreen = MenuScreen.NONE;	// By setting NONE, default behaviour will apply (dragon selection) (MenuTransitionManager::Start)

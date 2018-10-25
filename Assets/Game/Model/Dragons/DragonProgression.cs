@@ -61,8 +61,8 @@ public class DragonProgression : SerializableClass {
 
 	// Internal
 	// Only to be set once
-	[NonSerialized] private DragonData m_owner = null;	// [AOC] Avoid recursive serialization!!
-	public DragonData owner { get { return m_owner; }}
+	[NonSerialized] private DragonDataClassic m_owner = null;	// [AOC] Avoid recursive serialization!!
+	public DragonDataClassic owner { get { return m_owner; }}
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -71,7 +71,7 @@ public class DragonProgression : SerializableClass {
 	/// Parametrized constructor.
 	/// </summary>
 	/// <param name="_owner">The dragon data this progression belongs to.</param>
-	public DragonProgression(DragonData _owner) {
+	public DragonProgression(DragonDataClassic _owner) {
 		// Store owner dragon
 		m_owner = _owner;
 
@@ -162,7 +162,7 @@ public class DragonProgression : SerializableClass {
 			// "Level Down", which is not possible in normal gameplay so we have to do it manually
 			while(m_level > newLevel) {
 				m_level--;
-				Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
+				Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
 			}
 		}
 	}
@@ -224,7 +224,7 @@ public class DragonProgression : SerializableClass {
 			levelUpCount++;
 
 			// Dispatch global event
-			Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
+			Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, m_owner);
 		}
 
 		return levelUpCount;

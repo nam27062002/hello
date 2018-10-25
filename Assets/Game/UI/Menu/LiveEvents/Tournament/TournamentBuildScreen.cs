@@ -90,7 +90,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		//-- Dragon ---------------------------------------------------//
 		string sku = m_tournament.GetToUseDragon();
-		DragonData dragonData = DragonManager.GetDragonData(sku);
+		IDragonData dragonData = DragonManager.GetDragonData(sku);
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
 		string disguiseSku = m_tournament.GetToUseSkin();
@@ -327,7 +327,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				{
 					m_purchaseFlow.OnSuccess.RemoveListener( OnEntrancePayAccepted );
 					m_purchaseFlow.OnSuccess.AddListener( OnPayAndPlay );
-					m_purchaseFlow.DoTransaction(false);
+					m_purchaseFlow.DoTransaction();
 				}
 				else
 				{
@@ -422,7 +422,17 @@ public class TournamentBuildScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournament.data.m_eventId == _eventId
+                )
+                {
+                    m_tournament.ForceFinishByError();
+                }
 		}
 	}
 }

@@ -54,7 +54,7 @@ namespace AI {
 				m_owner = InstanceManager.player;
 				m_ownerTransform = m_owner.transform;
 				m_data = m_pilot.GetComponentData<PetSearchCollectibleTargetData>();
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.m_dragonSizeRangeMultiplier;
+				m_range = m_owner.data.maxScale * m_data.m_dragonSizeRangeMultiplier;
 				m_range = m_range * m_range;
 				
 				switch( m_data.m_type )

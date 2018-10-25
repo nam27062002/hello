@@ -36,21 +36,9 @@ public class HDQuestData : HDLiveEventData {
 	/// Default constructor.
 	/// </summary>
 	public HDQuestData() {
-
+        m_definition = new HDQuestDefinition();
 	}
 
-	protected override void BuildDefinition()
-	{
-		m_definition = new HDQuestDefinition();
-	}
-
-
-	/// <summary>
-	/// Destructor
-	/// </summary>
-	~HDQuestData() {
-
-	}
 
 	public override void Clean()
 	{

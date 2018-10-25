@@ -55,8 +55,11 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	/// Init this step.
 	/// </summary>
 	override protected void DoInit() {
+		// Only for CLASSIC dragons!
+		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+
 		// Aux vars
-		DragonProgression progression = DragonManager.currentDragon.progression;
+	    DragonProgression progression = (DragonManager.currentDragon as DragonDataClassic).progression;
 
 		// Gather levels before and after the run
 		// Consider cheats!

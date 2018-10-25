@@ -328,7 +328,7 @@ public class RewardSceneController : MonoBehaviour {
 		}
 
 		// Trigger UI animation
-		float duration = (_eggReward.sku == Egg.SKU_GOLDEN_EGG) ? 3.5f : 0.25f;
+		float duration = 0.25f;
 		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, duration, false);
 	}
 
@@ -739,25 +739,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// The whole open reward animation has finished.
 	/// </summary>
 	private void OnAnimationFinish() {
-		// If next reward is a golden egg, instantly open it!
-		if(UsersManager.currentUser.rewardStack.Count > 0) {
-			Metagame.Reward nextReward = UsersManager.currentUser.rewardStack.Peek();
-			if(nextReward != null && nextReward.sku == Egg.SKU_GOLDEN_EGG) {
-				// Give it some delay!
-				UbiBCN.CoroutineManager.DelayedCall(() => { 
-					// Do it!
-					OpenReward();
-
-					// Trigger some FX to make it more beautiful
-					TriggerFX(m_goldenFragmentsSwapFX);
-
-					// SFX
-					AudioController.Play(m_goldenEggIntroSFX);
-				}, m_goldenEggDelay, false);
-				return;
-			}
-		}
-
 		// Notify external script
 		OnAnimFinished.Invoke();
 	}

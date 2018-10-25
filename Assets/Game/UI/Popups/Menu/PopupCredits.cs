@@ -96,7 +96,20 @@ public class PopupCredits : MonoBehaviour {
 				// Does line start with "//"?
 				if(!line.StartsWith("//")) {
 					// No! Valid line
-					sb.AppendLine(line);
+					int tidIndex = 0;
+					StringBuilder bline = new StringBuilder (line);
+					while (true) {
+						tidIndex = line.IndexOf ("TID", tidIndex);
+						if (tidIndex < 0)
+							break;
+							
+						int closeIndex = line.IndexOf ('>', tidIndex);
+						string tidtoken = line.Substring (tidIndex, closeIndex - tidIndex);
+						string tidtokencl = line.Substring (tidIndex - 1, closeIndex - tidIndex + 2);
+						bline.Replace (tidtokencl, LocalizationManager.SharedInstance.Localize (tidtoken));
+						tidIndex = closeIndex;
+					}
+					sb.AppendLine(bline.ToString());
 				}
 			}
 		}

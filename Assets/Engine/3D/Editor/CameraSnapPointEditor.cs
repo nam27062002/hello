@@ -21,13 +21,14 @@ public class CameraSnapPointEditor : Editor {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private string TARGET_CAMERA_NAME_KEY = "CameraSnapPointEditor.TargetCameraName";
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	private CameraSnapPoint m_targetSnapPoint = null;
 	private Camera m_editionCamera = null;
-	private Camera m_customTargetCamera = null;
+	private Camera m_targetCamera = null;
 
 	private SerializedProperty m_livePreviewProp = null;
 
@@ -103,7 +104,6 @@ public class CameraSnapPointEditor : Editor {
 		EditorGUILayout.Space();
 
 		// Main toggles
-		m_targetSnapPoint.changePosition = EditorGUILayout.Toggle("Position", m_targetSnapPoint.changePosition);
 		m_targetSnapPoint.changeRotation = EditorGUILayout.Toggle("Rotation", m_targetSnapPoint.changeRotation);
 
 		// Optional values - single line
@@ -154,11 +154,11 @@ public class CameraSnapPointEditor : Editor {
 		// Color
 		m_targetSnapPoint.gizmoColor = EditorGUILayout.ColorField("Gizmo Color", m_targetSnapPoint.gizmoColor);
 
-		// Apply to target camera
-		EditorGUILayout.BeginHorizontal(); {
-			// Label
-			EditorGUILayout.PrefixLabel("Apply to camera");
+		// Camera editing tools
+		EditorGUILayoutExt.Separator("Edit Tools");
 
+		// Apply from/to target camera
+		EditorGUILayout.BeginVertical(); {
 			// Camera selection - exclude UI cameras
 			Camera[] sceneCameras = GameObject.FindObjectsOfType<Camera>();
 			List<Camera> validCameras = new List<Camera>();
@@ -166,18 +166,45 @@ public class CameraSnapPointEditor : Editor {
 				// Exclude UI cameras, for now it's enough by checking the name
 				if(!sceneCameras[i].name.Contains("UI")) {
 					validCameras.Add(sceneCameras[i]);
+
+					// If target camera is not yet defined, try loading it from prefs
+					if(m_targetCamera == null) {
+						if(sceneCameras[i].name == EditorPrefs.GetString(TARGET_CAMERA_NAME_KEY)) {
+							m_targetCamera = sceneCameras[i];
+						}
+					}
 				}
 			}
-			m_customTargetCamera = EditorGUILayoutExt.Popup<Camera>("", m_customTargetCamera, validCameras.ToArray());
-
-			// Apply button
-			bool wasEnabled = GUI.enabled;
-			GUI.enabled = (m_customTargetCamera != null);
-			if(GUILayout.Button("Apply")) {
-				m_targetSnapPoint.Apply(m_customTargetCamera);
+			Camera newTargetCamera = EditorGUILayoutExt.Popup<Camera>("Reference Camera", m_targetCamera, validCameras.ToArray());
+			if(newTargetCamera != m_targetCamera) {
+				// Store new camera
+				m_targetCamera = newTargetCamera;
+				EditorPrefs.SetString(TARGET_CAMERA_NAME_KEY, newTargetCamera.name);
 			}
-			GUI.enabled = wasEnabled;
-		} EditorGUILayout.EndHorizontal();
+
+			// Buttons
+			EditorGUI.BeginDisabledGroup(m_targetCamera == null); {
+				// Apply button
+				if(GUILayout.Button("Apply to Ref Camera")) {
+					m_targetSnapPoint.Apply(m_targetCamera);
+				}
+
+				// Read buttons
+				if(GUILayout.Button("Read transform from Ref Camera")) {
+					m_targetSnapPoint.transform.position = m_targetCamera.transform.position;
+					m_targetSnapPoint.transform.rotation = m_targetCamera.transform.rotation;
+				}
+
+				if(GUILayout.Button("Read FOV from Ref Camera")) {
+					m_targetSnapPoint.fov = m_targetCamera.fieldOfView;
+				}
+
+				if(GUILayout.Button("Read planes from Ref Camera")) {
+					m_targetSnapPoint.near = m_targetCamera.nearClipPlane;
+					m_targetSnapPoint.far = m_targetCamera.farClipPlane;
+				}
+			} EditorGUI.EndDisabledGroup();
+		} EditorGUILayout.EndVertical();
 
 		// Store new values
 		if(EditorGUI.EndChangeCheck()) {

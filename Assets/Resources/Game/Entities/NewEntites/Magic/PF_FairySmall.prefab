@@ -89,7 +89,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1665422686474302}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -157.23253, y: 131.89592, z: 0}
+  m_LocalPosition: {x: 12.248152, y: 20.425919, z: 9.569593}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4508106183156954}
@@ -466,6 +466,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 3
@@ -502,7 +503,7 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"boostSpeed":7,"panicSpeed":9,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":6,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
-  m_databaseKey: PF_FairySmall
+  m_databaseKey: PF_FairySmall (1)
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 4
   m_avoidCollisions: 1
@@ -559,7 +560,7 @@ MonoBehaviour:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 4
     offset: {x: 0, y: 0, z: 0}
-    scale: 0.12
+    scale: 0.8
     orientate: 0
 --- !u!114 &114889369581921186
 MonoBehaviour:
@@ -572,6 +573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: FairySmall
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -596,6 +598,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -611,6 +614,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

@@ -100,86 +100,49 @@ public class EggReward {
 
 				// Special case if golden egg
 				List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", raritySku);
-				if(m_rarity == Metagame.Reward.Rarity.SPECIAL) {
-					// Get a random special pet, but make sure it's one we don't have. If we have it, just reroll the dice.
-					// [AOC] Unless forcing a specific sku from cheats!
-					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
-						// Get that specific pet!
-						m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
-					} else {
-						// Default behaviour
-						m_itemDef = petDefs.GetRandomValue();
-					}
+				// Select a pet from the given rarity
+				// Forcing a specific sku from cheats!
+				if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
+					// Get that specific pet!
+					m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
+				} 
 
-					// We should never open a special egg when all of them are already collected, but check just in case!
-					if(!EggManager.allGoldenEggsCollected) {
-						// Still add a safeguard just in case
-						int maxTries = 100;
-						int tryCount = 0;
-						while(UsersManager.currentUser.petCollection.IsPetUnlocked(m_itemDef.sku) && tryCount < maxTries) {
-							m_itemDef = petDefs.GetRandomValue();
-							tryCount++;
-						}
-					} else {
-						// This should never happen!
-						// We should never be opening a golden egg when all golden eggs had been collected
-						// Put fake values to easily detect if it happens
+				// If tutorial is not completed, choose from a limited pool
+				else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
+					do {
+						m_itemDef = petDefs.GetRandomValue();
+					} while(!m_itemDef.GetAsBool("startingPool"));
+				} 
+
+				// Default behaviour: random pet of the target rarity
+				else {
+					// Default behaviour
+					m_itemDef = petDefs.GetRandomValue();
+				}
+
+				// If the pet is already owned, give special egg part or coins instead
+				// Cheat support
+				switch(CPGachaTest.duplicateMode) {
+					case CPGachaTest.DuplicateMode.DEFAULT: {
+						m_duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(m_itemDef.sku);
+					} break;
+					
+					case CPGachaTest.DuplicateMode.ALWAYS: {
 						m_duplicated = true;
-						m_fragments = 9999;
-						m_coins = 9999;
-					}
-				} else {
-					// Select a pet from the given rarity
-					// Forcing a specific sku from cheats!
-					if(CPGachaTest.rewardChanceMode == CPGachaTest.RewardChanceMode.FORCED_PET_SKU) {
-						// Get that specific pet!
-						m_itemDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, CPGachaTest.forcedPetSku);
-					} 
+					} break;
+					
+					case CPGachaTest.DuplicateMode.NEVER: {
+						m_duplicated = false;
+					} break;
+					
+					case CPGachaTest.DuplicateMode.RANDOM: {
+						m_duplicated = Random.value > 0.5f;
+					} break;
+				}
 
-					// If tutorial is not completed, choose from a limited pool
-					else if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD)) {
-						do {
-							m_itemDef = petDefs.GetRandomValue();
-						} while(!m_itemDef.GetAsBool("startingPool"));
-					} 
-
-					// Default behaviour: random pet of the target rarity
-					else {
-						// Default behaviour
-						m_itemDef = petDefs.GetRandomValue();
-					}
-
-					// If the pet is already owned, give special egg part or coins instead
-					// Cheat support
-					switch(CPGachaTest.duplicateMode) {
-						case CPGachaTest.DuplicateMode.DEFAULT: {
-							m_duplicated = UsersManager.currentUser.petCollection.IsPetUnlocked(m_itemDef.sku);
-						} break;
-						
-						case CPGachaTest.DuplicateMode.ALWAYS: {
-							m_duplicated = true;
-						} break;
-						
-						case CPGachaTest.DuplicateMode.NEVER: {
-							m_duplicated = false;
-						} break;
-						
-						case CPGachaTest.DuplicateMode.RANDOM: {
-							m_duplicated = Random.value > 0.5f;
-						} break;
-					}
-
-					// If duplicated, give alternative rewards
-					if(m_duplicated) {
-						// Have all golden eggs been collected?
-						if(EggManager.allGoldenEggsCollected) {
-							// Yes! Give coins rather than golden egg fragments (based on rarity)
-							m_coins = _rewardDef.GetAsLong("duplicateCoinsGiven");
-						} else {
-							// No! Give golden egg fragments based on rarity
-							m_fragments = _rewardDef.GetAsInt("duplicateFragmentsGiven");
-						}
-					}
+				// If duplicated, give alternative rewards
+				if(m_duplicated) {
+					m_coins = _rewardDef.GetAsLong("duplicateCoinsGiven");						
 				}
 
 				Debug.Log("EGG REWARD GENERATED:\n" + this.ToString());
@@ -190,7 +153,7 @@ public class EggReward {
 	/// <summary>
 	/// For debug purposes.
 	/// </summary>
-	public string ToString() {
+	public override string ToString() {
 		return "Type: " + m_type + "\n" +
 			"Def: " + (m_def == null ? "NULL" : m_def.sku) + "\n" +
 			"Item Def: " + (m_itemDef == null ? "NULL" : m_itemDef.sku) + "\n" +

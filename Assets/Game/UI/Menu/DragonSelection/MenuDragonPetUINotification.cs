@@ -82,7 +82,7 @@ public class MenuDragonPetUINotification : MonoBehaviour {
 		bool show = true;
 
 		// a) Is dragon owned?
-		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		IDragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		show &= selectedDragonData.isOwned;
 
 		// b) Has any empty slot?

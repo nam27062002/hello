@@ -190,7 +190,7 @@ namespace AI {
 			protected virtual void OnAttachProjectileExtended() {}
 
 
-			private void OnAnimDealDamage() {
+			protected void OnAnimDealDamage() {
 				if (!m_onDamageEventDone) {
 					m_onDamageEventDone = true;
 					OnAnimDealDamageExtended();
@@ -199,7 +199,7 @@ namespace AI {
 			protected virtual void OnAnimDealDamageExtended() {}
 
 
-			private void OnAnimEnd() {
+			protected void OnAnimEnd() {
 				if (!m_onAttackEndEventDone) {
 					m_onAttackEndEventDone = true;
 					OnAnimEndExtended();

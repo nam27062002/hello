@@ -523,7 +523,7 @@ public class OfferPack {
 
 		// Dragons
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
-			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= DragonData.LockState.LOCKED) return false;
+			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= IDragonData.LockState.LOCKED) return false;
 		}
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
 			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;

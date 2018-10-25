@@ -219,18 +219,20 @@ public class Entity : IEntity {
     /// </summary>
     /// <returns>The reward to be given to the player when killing this unit.</returns>
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
-    public override Reward GetOnKillReward(bool _burnt) {
+    public override Reward GetOnKillReward(DyingReason _reason) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
-		if(!m_isGolden && !_burnt) {
+		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
 			newReward.coins = 0;
 		}
 
-		if (_burnt) {
+		if (_reason == DyingReason.BURNED) {
 			newReward.alcohol = 0;
 			newReward.fury = 0;
+		}else if ( _reason == DyingReason.DESTROYED ){
+			newReward.alcohol = 0;
 		}
 
 		// Give PC?
@@ -273,8 +275,8 @@ public class Entity : IEntity {
 		return m_isEdible && !((m_edibleFromTier <= _tier) || (m_canBeGrabbed && m_grabFromTier <= _tier) || (m_canBeLatchedOn && m_latchFromTier <= _tier));
 	}
 
-	override public bool CanBeSmashed() {
-		return true;
+	public bool CanBeSmashed( DragonTier _tier ) {
+		return IsEdible(_tier) || CanBeHolded( _tier );
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) {

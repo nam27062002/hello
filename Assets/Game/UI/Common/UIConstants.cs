@@ -104,7 +104,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_uiSpritesheetPath; }
 	}
 
-	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Disguises/";
+	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Dragons/Disguises/";
 	public static string DISGUISE_ICONS_PATH {
 		get { return instance.m_disguiseIconsPath; }
 	}
@@ -157,6 +157,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private string m_liveEventsIconsPath = "UI/Metagame/Powers/";
 	public static string LIVE_EVENTS_ICONS_PATH {
 		get { return instance.m_liveEventsIconsPath; }
+	}
+
+	[SerializeField] private string m_dragonStatsIconsPath = "UI/Metagame/Dragons/Stats/";
+	public static string DRAGON_STATS_ICONS_PATH {
+		get { return instance.m_dragonStatsIconsPath; }
+	}
+
+	[SerializeField] private string m_leagueIconsPath = "UI/Metagame/Leagues/";
+	public static string LEAGUE_ICONS_PATH {
+		get { return instance.m_leagueIconsPath; }
 	}
 	#endregion
 
@@ -324,9 +334,22 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get {
 			// If not yet initialized, do it now
 			if(m_safeArea == null) {
-				// Use Unity's safeArea or custom ones based on device?
-				// [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
-				if(!DebugSettings.useUnitySafeArea) {
+
+#if (!UNITY_EDITOR && UNITY_ANDROID)
+                //  Use Calety cutout safe area for Android 9
+                if (DeviceUtilsManager.SharedInstance.DeviceHasCutout())
+                {
+                    short[] safe = DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea();
+                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]); 
+                    m_safeArea = new UISafeArea(
+                        (float)safe[0], (float)safe[2], (float)safe[1], (float)safe[3]);
+
+                }
+                else
+#endif
+                // Use Unity's safeArea or custom ones based on device?
+                // [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
+                if (!DebugSettings.useUnitySafeArea) {
 					// Select target safe area based on special device
 					return instance.m_safeAreas[(int)specialDevice];
 				} else {
@@ -605,5 +628,23 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_tier">Dragon tier whose SFX we want.</param>
 	public static string GetDragonTierSFX(DragonTier _tier) {
 		return instance.m_dragonTiersSFX[(int)_tier];
+	}
+
+	/// <summary>
+	/// Given a dragon tier, get the icon linked to it.
+	/// Use in combination with GetSpriteTag() to insert the icon within a text
+	/// </summary>
+	/// <returns>The id of the requested dragon tier icon.</returns>
+	/// <param name="_tier">Tier whose icon is required.</param>
+	public static string GetDragonTierIcon(DragonTier _tier) {
+		// Get definition of the wanted tier
+		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(
+			DefinitionsCategory.DRAGON_TIERS, 
+			IDragonData.TierToSku(_tier)
+		);
+		if(tierDef == null) return string.Empty;
+
+		// Return icon name
+		return tierDef.GetAsString("icon");
 	}
 }

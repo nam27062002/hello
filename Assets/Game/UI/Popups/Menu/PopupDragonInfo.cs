@@ -31,41 +31,44 @@ public class PopupDragonInfo : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
+	[Comment("All elements are optional")]
 	[Separator("UI Elements")]
 
-	[SerializeField] private Localizer m_dragonNameText = null;
+	[SerializeField] protected Localizer m_dragonNameText = null;
+	[SerializeField] protected Localizer m_dragonDescText = null;
+	[SerializeField] protected Image m_dragonIcon = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_healthText = null;
-	[SerializeField] private TextMeshProUGUI m_energyText = null;
-	[SerializeField] private TextMeshProUGUI m_speedText = null;
+	[SerializeField] protected TextMeshProUGUI m_healthText = null;
+	[SerializeField] protected TextMeshProUGUI m_energyText = null;
+	[SerializeField] protected TextMeshProUGUI m_speedText = null;
 	[Space]
-	[SerializeField] private Image m_tierIcon = null;
-	[SerializeField] private Localizer m_tierInfoText = null;
+	[SerializeField] protected Image m_tierIcon = null;
+	[SerializeField] protected Localizer m_tierInfoText = null;
 
 	// Edibles/Destructibles layout
 	[Separator("Entities Layout")]
-	[SerializeField] private Transform m_layoutContainer = null;
+	[SerializeField] protected Transform m_layoutContainer = null;
 	public Transform layoutContainer { get { return m_layoutContainer; }}
 	[FileListAttribute("Resources/UI/Popups/Menu/DragonInfoLayouts", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
-	[SerializeField] private string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
+	[SerializeField] protected string[] m_layoutPrefabs = new string[(int)DragonTier.COUNT];
 	[Space]
-	[SerializeField] private float m_timeBetweenLoaders = 0.5f;	// From FGOL
-	[SerializeField] private int m_framesBetweenLoaders = 5;	// From FGOL
+	[SerializeField] protected float m_timeBetweenLoaders = 0.5f;	// From FGOL
+	[SerializeField] protected int m_framesBetweenLoaders = 5;	// From FGOL
 	[Space]
-	[SerializeField] private Shader m_entitiesPreviewShader = null;
-	[SerializeField] [Range(0f, 5f)] private float m_fresnelFactor = 3f;
-	[SerializeField] private Color m_fresnelColor = Color.gray;
+	[SerializeField] protected Shader m_entitiesPreviewShader = null;
+	[SerializeField] [Range(0f, 5f)] protected float m_fresnelFactor = 3f;
+	[SerializeField] protected Color m_fresnelColor = Color.gray;
 
 	// Internal
-	private DragonData m_dragonData = null;
-	private DragonTier m_loadedTier = DragonTier.COUNT;
-	private GameObject m_layoutInstance = null;
+	protected IDragonData m_dragonData = null;
+	protected DragonTier m_loadedTier = DragonTier.COUNT;
+	protected GameObject m_layoutInstance = null;
 
 	// Loaders logic
-	private UI3DLoader[] m_loaders = null;
-	private int m_loaderIdx = 0;
-	private IEnumerator m_loaderDelayCoroutine = null;
-	private bool m_openAnimFinished = false;
+	protected UI3DLoader[] m_loaders = null;
+	protected int m_loaderIdx = 0;
+	protected IEnumerator m_loaderDelayCoroutine = null;
+	protected bool m_openAnimFinished = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -73,7 +76,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected void Awake() {
 		// Subscribe to popup controller events
 		PopupController popup = GetComponent<PopupController>();
 		popup.OnOpenPostAnimation.AddListener(OnOpenPostAnimation);
@@ -83,7 +86,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <summary>
 	/// Destructor.
 	/// </summary>
-	private void OnDestroy() {
+	protected void OnDestroy() {
 		// If we have a layout loaded, destroy it
 		if(m_layoutInstance != null) {
 			GameObject.Destroy(m_layoutInstance);
@@ -101,7 +104,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <summary>
 	/// Something has changed on the inspector.
 	/// </summary>
-	private void OnValidate() {
+	protected void OnValidate() {
 		// Layouts array has fixed size
 		m_layoutPrefabs.Resize((int)DragonTier.COUNT);
 
@@ -123,7 +126,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Initialize the popup with the given dragon info.
 	/// </summary>
 	/// <param name="_dragonData">Data of the dragon whose info we want to display.</param>
-	public void Init(DragonData _dragonData) {
+	public void Init(IDragonData _dragonData) {
 		// Initialize with currently selected dragon
 		m_dragonData = _dragonData;
 		Refresh();
@@ -132,38 +135,60 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// <summary>
 	/// Refresh the popup with the info from the currently selected dragon (in the scroller).
 	/// </summary>
-	private void Refresh() {
+	protected virtual void Refresh() {
 		// Only if current data is valid
 		if(m_dragonData == null) return;
 
-		// Dragon name and icon
-		m_dragonNameText.Localize(m_dragonData.def.Get("tidName"));
+		// Dragon name
+		if(m_dragonNameText != null) {
+			m_dragonNameText.Localize(m_dragonData.def.Get("tidName"));
+		}
+
+		// Dragon description
+		if(m_dragonDescText != null) {
+			m_dragonDescText.Localize(m_dragonData.def.Get("tidDesc"));
+		}
+
+		// Dragon icon
+		if(m_dragonIcon != null) {
+			m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/icon_disguise_0");
+		}
 
 		// HP
-		m_healthText.text = StringUtils.FormatNumber(m_dragonData.maxHealth, 0);
+		if(m_healthText != null) {
+			m_healthText.text = StringUtils.FormatNumber(m_dragonData.maxHealth, 0);
+		}
 
 		// Boost
-		m_energyText.text = StringUtils.FormatNumber(m_dragonData.baseEnergy, 0);
+		if(m_energyText != null) {
+			m_energyText.text = StringUtils.FormatNumber(m_dragonData.baseEnergy, 0);
+		}
 
 		// Speed
-		m_speedText.text = StringUtils.FormatNumber(m_dragonData.maxSpeed * 10f, 0);	// x10 to show nicer numbers
+		if(m_speedText != null) {
+			m_speedText.text = StringUtils.FormatNumber(m_dragonData.maxSpeed * 10f, 0);    // x10 to show nicer numbers
+		}
 
 		// Tier data (only if different than the last loaded)
 		if(m_loadedTier != m_dragonData.tier) {
 			// Tier icon
 			string tierIcon = m_dragonData.tierDef.GetAsString("icon");
-			m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+			if(m_tierIcon != null) {
+				m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, tierIcon);
+			}
 
 			// Tier description
-			// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
-			// multiplier during <color=%U4>Fire Rush</color>
-			int numPets = m_dragonData.pets.Count;	// Dragon data has as many slots as defined for this dragon
-			m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION", 
-				UIConstants.GetSpriteTag(tierIcon),
-				(numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")),	// Singular/Plural
-				StringUtils.FormatNumber(numPets),	
-				"x" + StringUtils.FormatNumber(m_dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0)
-			);
+			if(m_tierInfoText != null) {
+				// %U0 dragons can equip <color=%U1>%U2 pets</color> and give a <color=%U1>%U3</color> 
+				// multiplier during <color=%U4>Fire Rush</color>
+				int numPets = m_dragonData.pets.Count;  // Dragon data has as many slots as defined for this dragon
+				m_tierInfoText.Localize("TID_DRAGON_INFO_TIER_DESCRIPTION",
+					UIConstants.GetSpriteTag(tierIcon),
+					(numPets > 1 ? LocalizationManager.SharedInstance.Localize("TID_PET_PLURAL") : LocalizationManager.SharedInstance.Localize("TID_PET")), // Singular/Plural
+					StringUtils.FormatNumber(numPets),
+					"x" + StringUtils.FormatNumber(m_dragonData.def.GetAsFloat("furyScoreMultiplier", 2), 0)
+				);
+			}
 
 			// Edible/destructible layout corresponding to this dragon's tier
 			LoadLayout(m_dragonData.tier);
@@ -180,7 +205,10 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Loads the layout linked to the given tier.
 	/// </summary>
 	/// <param name="_tier">Tier whose layout we want.</param>
-	private void LoadLayout(DragonTier _tier) {
+	protected void LoadLayout(DragonTier _tier) {
+		// Ignore if no container is defined
+		if(m_layoutContainer == null) return;
+
 		// If we already have a layout loaded, destroy it
 		if(m_layoutInstance != null) {
 			GameObject.Destroy(m_layoutInstance);
@@ -224,7 +252,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Nothing will happen if index out of bounds or loaders array not initialized.
 	/// </summary>
 	/// <param name="_idx">Index of the loader to be started.</param>
-	private IEnumerator StartLoader(int _idx) {
+	protected IEnumerator StartLoader(int _idx) {
 		// Do some checks
 		if(m_loaders == null) yield break;
 		if(_idx < 0 || _idx >= m_loaders.Length) yield break;
@@ -245,7 +273,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Automatically enable/disable loaders depending on the popup's animation.
 	/// Prevents instantiations while scale is not 1.
 	/// </summary>
-	private void ToggleLoaders() {
+	protected void ToggleLoaders() {
 		bool toggle = (m_openAnimFinished);
 
 		if(m_loaders != null) {
@@ -260,7 +288,7 @@ public class PopupDragonInfo : MonoBehaviour {
 	/// Apply the entities shaders modifications to the given game object.
 	/// </summary>
 	/// <param name="_go">Target game object.</param>
-	private void UpdateShaders(GameObject _go) {
+	protected void UpdateShaders(GameObject _go) {
 		// Ignore if object not valid
 		if(_go == null) return;
 

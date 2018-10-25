@@ -65,5 +65,7 @@ public enum TutorialStep {
 
 	PRE_REG_REWARDS				= 1 << 22,
 
+	LAB_UNLOCKED				= 1 << 23,
+
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

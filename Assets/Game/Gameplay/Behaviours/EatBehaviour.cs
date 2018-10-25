@@ -1165,7 +1165,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		if (m_suction == null) {
 			MouthCache();
 		}
-		if ( m_motion == null )
+		if ( m_motion == null || m_mouth == null)
 			return;
 
 		float angularSpeed = m_motion.angularVelocity.magnitude;

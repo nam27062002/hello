@@ -38,7 +38,7 @@ namespace AI {
 				m_data = m_pilot.GetComponentData<PetTakePreyToPlayerData>();
 
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * m_data.m_speedMultiplier;
-				m_frontDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
+				m_frontDistance = InstanceManager.player.data.maxScale * 6;
 				m_eatBehaviour = m_machine.GetComponent<EatBehaviour>();
 				m_petDogSpawner = m_machine.GetComponent<PetDogSpawner>();
 				m_transitionParam = new object[1];

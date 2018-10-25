@@ -19,7 +19,7 @@ using DG.Tweening;
 /// <summary>
 /// Select the current dragon in the menu screen.
 /// </summary>
-public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickHandler {
+public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClickHandler {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -27,6 +27,9 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
+	[Separator]
+	[SerializeField] private IDragonData.Type m_dragonType = IDragonData.Type.CLASSIC;
+
 	// Dragon animation
 	[Separator("Dragon tap animation")]
 	[List("scale", "move", "rotate")]
@@ -60,7 +63,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	private void Start() {
 		// Initialize items list
 		enableEvents = false;
-		Init(DragonManager.dragonsByOrder);
+		Init(DragonManager.GetDragonsByOrder(m_dragonType));
 
 		// Figure out initial index
 		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
@@ -82,7 +85,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// <param name="_sku">The sku of the dragon we want to be the current one.</param>
 	public void SetSelectedDragon(string _sku) {
 		// Get data belonging to this sku
-		DragonData data = DragonManager.GetDragonData(_sku);
+		IDragonData data = DragonManager.GetDragonData(_sku);
 		if(data == null) return;
 		SelectItem(data);
 	}
@@ -95,7 +98,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// </summary>
 	/// <param name="_oldDragon">Data of the previously selected dragon.</param>
 	/// <param name="_newDragon">Data of the new dragon.</param>
-	public void OnSelectedDragonChanged(DragonData _oldDragon, DragonData _newDragon) {
+	public void OnSelectedDragonChanged(IDragonData _oldDragon, IDragonData _newDragon) {
 		if(_newDragon != null) {
 			// Notify game
 			Messenger.Broadcast<string>(MessengerEvents.MENU_DRAGON_SELECTED, _newDragon.def.sku);
@@ -109,6 +112,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 	/// The selected object on the scroll list has changed.
 	/// </summary>
 	/// <param name="_newSelectedPoint">The new selected node object of the scrolllist.</param>
+	[System.Obsolete("To be used if the dragon scroll was to be handled by a SnappingScroll rect (which currently is not)")]
 	public void OnScrollSelectedDragonChanged(ScrollRectSnapPoint _newSelectedPoint) {
 		// Skip if null (shouldn't happen)
 		if(_newSelectedPoint == null) return;
@@ -145,7 +149,7 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 			// Look for pets first, since pets are children of dragons and looking for dragons will result in a false positive!
 			if(pet != null) {
 				// Yes! Go to the pet screen
-				targetScreen = MenuScreen.PETS;
+				targetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Lab or regular pet screen?
 
 				// Do a fun animation on the pet!
 				pet.SetAnim(MenuPetPreview.Anim.IN);
@@ -196,22 +200,23 @@ public class MenuDragonSelector : UISelectorTemplate<DragonData>, IPointerClickH
 
 		// Go to the target screen, if any
 		// Only if enabled!
-		if(!Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) return;
-		if(targetScreen != MenuScreen.NONE) {
-			// Check conditions
-			MenuSceneController menuController = InstanceManager.menuSceneController;
+		if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+			if(targetScreen != MenuScreen.NONE) {
+				// Check conditions
+				MenuSceneController menuController = InstanceManager.menuSceneController;
 
-			// a) Current dragon is owned
-			if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
+				// a) Current dragon is owned
+				if(!DragonManager.GetDragonData(menuController.selectedDragon).isOwned) return;
 
-			// b) Camera is not tweening (scrolling between dragons)
-			if(menuController.isTweening) return;
+				// b) Camera is not tweening (scrolling between dragons)
+				if(menuController.isTweening) return;
 
-			// c) We're not scrolling between dragons
-			if(menuController.dragonScroller.cameraAnimator.isTweening) return;
+				// c) We're not scrolling between dragons
+				if(menuController.dragonScroller.cameraAnimator.isTweening) return;
 
-			// Everything ok! Go to the disguises screen
-			menuController.GoToScreen(targetScreen);
+				// Everything ok! Go to the disguises screen
+				menuController.GoToScreen(targetScreen);
+			}
 		}
 	}
 }

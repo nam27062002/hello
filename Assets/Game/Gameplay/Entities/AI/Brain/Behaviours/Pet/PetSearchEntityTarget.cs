@@ -75,7 +75,7 @@ namespace AI {
 				PetSearchEntityTargetData data = m_pilot.GetComponentData<PetSearchEntityTargetData>();
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.m_petSeachEntitySku);
 
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * def.GetAsFloat("searchDistanceMultiplier");
+				m_range = m_owner.data.maxScale * def.GetAsFloat("searchDistanceMultiplier");
 				m_preferedRangeMultiplier = def.GetAsFloat("preferedRangeMultiplier");
 				m_preferedEntities = def.GetAsList<string>("preferedEntitiesList");
 				m_searchButNoEatList = def.GetAsList<string>("searchButNoEatEntityList");

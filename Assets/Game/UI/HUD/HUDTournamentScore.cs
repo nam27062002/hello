@@ -35,7 +35,7 @@ public class HUDTournamentScore : HudWidget {
 	/// </summary>
 	override protected void Awake() {
 		base.Awake();
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			HDTournamentData _data = HDLiveEventsManager.instance.m_tournament.data as HDTournamentData;
 			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;

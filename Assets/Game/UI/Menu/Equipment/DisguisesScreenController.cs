@@ -25,7 +25,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const int MAX_PILLS = 9;
-	private const string PILL_PATH = "UI/Metagame/Disguises/PF_DisguisesPill";
+	private const string PILL_PREFAB_NAME = "PF_DisguisesPill";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -62,7 +62,7 @@ public class DisguisesScreenController : MonoBehaviour {
 	private DisguisePill m_selectedPill;	// Pill corresponding to the selected disguise
 
 	// Other data
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private Wardrobe m_wardrobe = null;
 
 	// Internal references
@@ -104,7 +104,7 @@ public class DisguisesScreenController : MonoBehaviour {
 
 		// Instantiate pills - as many as needed!
 		m_pills = new DisguisePill[MAX_PILLS];
-		GameObject prefab = Resources.Load<GameObject>(PILL_PATH);
+		GameObject prefab = Resources.Load<GameObject>(UIConstants.DISGUISE_ICONS_PATH + PILL_PREFAB_NAME);
 		for (int i = 0; i < MAX_PILLS; i++) {
 			GameObject pill = (GameObject)GameObject.Instantiate(prefab, m_scrollList.content.transform, false);
 			pill.transform.localScale = Vector3.one;

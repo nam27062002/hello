@@ -27,10 +27,9 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 		Pass
 		{
-
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 			Cull Back
 
 			ZWrite on

@@ -237,8 +237,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 			}
 		}
 	}
+    
+    public bool CanBreakByShooting()
+    {
+        return m_effect != ZoneManager.ZoneEffect.S && enabled && m_spawned;
+    }
 
-	void Break() {
+	public void Break() {
 		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {

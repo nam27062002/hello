@@ -30,8 +30,12 @@ public class SceneController : MonoBehaviour {
 	{
 		DEFAULT,
 		TOURNAMENT,
+        SPECIAL_DRAGONS
 	};
-	public static Mode s_mode = Mode.DEFAULT;
+	private static Mode s_mode = Mode.DEFAULT;
+	public static Mode mode {
+		get { return s_mode; }
+	}
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -70,6 +74,69 @@ public class SceneController : MonoBehaviour {
 		// be creating a new object while destroying current scene, which is quite 
 		// problematic for Unity.
 		if(InstanceManager.isInstanceCreated) InstanceManager.sceneController = null;
+	}
+
+	//------------------------------------------------------------------//
+	// STATIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Change current game mode.
+	/// Will trigger the GAME_MODE_CHANGED messenger event.
+	/// </summary>
+	/// <param name="_newMode">New mode.</param>
+	public static void SetMode(Mode _newMode) {
+		// Log
+		Debug.Log(Colors.orange.Tag("Changing Game Mode from " + s_mode + " to " + _newMode));
+
+		// Specific actions to perform when leaving a mode
+		switch(s_mode) {
+			case Mode.DEFAULT: {
+				
+			} break;
+
+			case Mode.SPECIAL_DRAGONS: {
+				
+			} break;
+
+			case Mode.TOURNAMENT: {
+
+			} break;
+		}
+
+		// Swap mode
+		Mode oldMode = s_mode;
+		s_mode = _newMode;
+
+		// Specific actions to perform when entering a new mode
+		switch(s_mode) {
+			case Mode.DEFAULT: {
+				// Set selected dragon to the current classic dragon
+				if(InstanceManager.menuSceneController != null) {
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentClassicDragon.sku);
+				}
+			} break;
+
+			case Mode.SPECIAL_DRAGONS: {
+				// Set selected dragon to the current special dragon
+				if(InstanceManager.menuSceneController != null) {
+					// Current special dragon can be null if no special dragon has been unlocked yet
+					string selectedDragonSku = "";
+					if(DragonManager.currentSpecialDragon != null) {
+						selectedDragonSku = DragonManager.currentSpecialDragon.sku;
+					} else {
+						selectedDragonSku = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL).First().sku;	// Select first dragon
+					}
+					InstanceManager.menuSceneController.SetSelectedDragon(selectedDragonSku);
+				}
+			} break;
+
+			case Mode.TOURNAMENT: {
+
+			} break;
+		}
+
+		// Notify game
+		Messenger.Broadcast<Mode, Mode>(MessengerEvents.GAME_MODE_CHANGED, oldMode, _newMode);
 	}
 }
 

@@ -34,7 +34,7 @@ public class TrackerUnlockDragon : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquire);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquire);
 	}
 
 	/// <summary>
@@ -52,7 +52,7 @@ public class TrackerUnlockDragon : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquire);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquire);
 
 		// Call parent
 		base.Clear();
@@ -65,7 +65,7 @@ public class TrackerUnlockDragon : TrackerBase {
 	/// A chest has been collected.
 	/// </summary>
 	/// <param name="_chest">The collected chest.</param>
-	private void OnDragonAcquire(DragonData _dragon) {
+	private void OnDragonAcquire(IDragonData _dragon) {
 		if(m_targetSkus.Contains(_dragon.def.sku)) {
 			// Found!
 			currentValue++;

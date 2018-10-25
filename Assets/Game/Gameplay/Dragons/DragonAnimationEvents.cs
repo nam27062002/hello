@@ -80,7 +80,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -112,7 +112,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (m_eventsRegistered)
 		{
-			Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+			Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 			Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -133,7 +133,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	private void OnLevelUp(DragonData _data) 
+	private void OnLevelUp(IDragonData _data) 
 	{
 		PlaySound(m_levelUpSound);
 		// m_animator.SetTrigger("LevelUp");
@@ -158,7 +158,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	void OnKo( DamageType type , Transform _source)
 	{
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			PlaySound(m_onCorpseSound);
 		}
@@ -232,7 +232,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
 		{
 			m_wingsIdleSoundAO.Stop();
-			m_wingsFlyingSoundAO = null;
+			m_wingsIdleSoundAO = null;
 		}
 	}
 

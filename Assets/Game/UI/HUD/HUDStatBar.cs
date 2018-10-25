@@ -150,7 +150,7 @@ public class HUDStatBar : MonoBehaviour {
 			RefreshIcons();
 		}
 
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		m_timer = 10;
 		m_timerDuration = 10;
 		if ( m_type == Type.SuperFury )
@@ -160,6 +160,9 @@ public class HUDStatBar : MonoBehaviour {
 
 		if (m_type == Type.Energy)
 		{
+            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+            string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
+            text.text = t;
 			Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
 		}
 
@@ -182,7 +185,7 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 		}
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
 
 	/// <summary>
@@ -446,7 +449,7 @@ public class HUDStatBar : MonoBehaviour {
 	{
 		if ( InstanceManager.player )
 		switch (m_type) {
-			case Type.Health: 	return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
+			case Type.Health: 	return InstanceManager.player.data.statsBarRatio;// .GetAsFloat("statsBarRatio");
 			case Type.Energy:	return 0.01f;//return InstanceManager.player.data.def.GetAsFloat("statsBarRatio");
 		}
 		return 0.01f;
@@ -550,7 +553,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_damageAnimationThreshold = DAMAGE_BAR_ANIMATION_THRESHOLD/size.x;
 	}
 
-	private void OnLevelUp(DragonData _data) 
+	private void OnLevelUp(IDragonData _data) 
 	{
 		ResizeBars();
 	}

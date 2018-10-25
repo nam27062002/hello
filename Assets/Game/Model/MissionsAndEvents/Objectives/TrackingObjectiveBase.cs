@@ -50,7 +50,8 @@ public abstract class TrackingObjectiveBase {
 	// State
 	public bool enabled {
 		get { return m_tracker.enabled; }
-		set { m_tracker.enabled = value; }
+		set { 
+            m_tracker.enabled = value; }
 	}
 
 	// UI and other data

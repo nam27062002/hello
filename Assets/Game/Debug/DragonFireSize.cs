@@ -12,7 +12,7 @@ public class DragonFireSize : MonoBehaviour {
 	private FireLightning m_fireLightning;
 
 	void Awake() {
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
 	}
 
 	void Start() {
@@ -38,7 +38,7 @@ public class DragonFireSize : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, LevelUp);
 	}
 	
 	public void SetSize(float _size) 
@@ -66,7 +66,7 @@ public class DragonFireSize : MonoBehaviour {
 		}
 	}
 
-	private void LevelUp(DragonData _data) 
+	private void LevelUp(IDragonData _data) 
 	{
 	}
 }

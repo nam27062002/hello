@@ -29,8 +29,7 @@ public class CameraSnapPoint : MonoBehaviour {
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
 	// Exposed parameters
-	// Position/Rotation toggles
-	public bool changePosition = true;
+	// Rotation toggle
 	public bool changeRotation = true;
 
 	// Optional Parameters
@@ -53,6 +52,9 @@ public class CameraSnapPoint : MonoBehaviour {
 	public bool livePreview = true;
 	public bool drawGizmos = true;
 	public Color gizmoColor = new Color(0f, 1f, 1f, 0.25f);
+
+	// Runtime-only setup
+	[NonSerialized] public bool changePosition = true;
 
 	//------------------------------------------------------------------//
 	// STATIC MEMBERS													//

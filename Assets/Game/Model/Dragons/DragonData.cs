@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// Every dragon ID must be linked to one DragonData in the DragonManager prefab.
 /// </summary>
 [Serializable]
-public class DragonData : IUISelectorItem {
+public class DragonData_OLD : IUISelectorItem {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -131,9 +131,12 @@ public class DragonData : IUISelectorItem {
 	// Debug
 	private float m_scaleOffset = 0f;
 
+    public int m_powerLevel = 0;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	// [AOC] DONE
 	/// <summary>
 	/// Initialization using a definition. Should be called immediately after the constructor.
 	/// </summary>
@@ -145,7 +148,7 @@ public class DragonData : IUISelectorItem {
 		m_tier = (DragonTier)m_tierDef.GetAsInt("order");
 
 		// Progression
-		m_progression = new DragonProgression(this);
+		//m_progression = new DragonProgression(this);
 
 		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
 		if (!string.IsNullOrEmpty(shadowFromDragons)) {
@@ -180,7 +183,15 @@ public class DragonData : IUISelectorItem {
 		// Other values
 		m_scaleOffset = 0;
 	}
+    
+	// [AOC] NOT NEEDED (DEBUG ONLY)
+    public void SetTier( DragonTier _tier )
+    {
+        m_tierDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGON_TIERS,  TierToSku( _tier ) );
+        m_tier = (DragonTier)m_tierDef.GetAsInt("order");
+    }
 
+	// [AOC] DONE
 	public bool CanBeSelected() {
 		return GetLockState() > LockState.HIDDEN;
 	}
@@ -189,6 +200,7 @@ public class DragonData : IUISelectorItem {
 	//------------------------------------------------------------------//
 	// PUBLIC METHODS													//
 	//------------------------------------------------------------------//
+	// [AOC] DONE
 	/// <summary>
 	/// Compute the max health at a specific level.
 	/// </summary>
@@ -199,22 +211,26 @@ public class DragonData : IUISelectorItem {
 		return m_healthRange.Lerp(levelDelta);
 	}
 
+	// [AOC] DONE
 	//TONI
 	public float GetMaxForceAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_forceRange.Lerp(levelDelta);
 	}
 
+	// [AOC] DONE
 	public float GetMaxEatSpeedFactorAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_eatSpeedFactorRange.Lerp(levelDelta);
 	}
 
+	// [AOC] DONE
 	public float GetMaxEnergyBaseAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_energyBaseRange.Lerp(levelDelta);
 	}
 
+	// [AOC] DONE
 	/// <summary>
 	/// Compute the scale at a specific level.
 	/// </summary>
@@ -225,17 +241,20 @@ public class DragonData : IUISelectorItem {
 		return m_scaleRange.Lerp(levelDelta) + m_scaleOffset;
 	}
 
+	// [AOC] DONE
 	/// <summary>
 	/// Offsets the scale value.
 	/// </summary>
-	public void OffsetScaleValue(float _scale) {
+	public void SetOffsetScaleValue(float _scale) {
 		m_scaleOffset += _scale;
 	}
 
+	// [AOC] DONE
     public int GetOrder() {
         return (def == null) ? -1 : def.GetAsInt("order");
     }
 
+	// [AOC] DONE
 	/// <summary>
 	/// Gets the current lock state of this dragon.
 	/// </summary>
@@ -278,29 +297,32 @@ public class DragonData : IUISelectorItem {
         int order = GetOrder();
 		if (order > 0) {		// First dragon should always be owned
 			// Check previous dragon's progression
-			if (!DragonManager.dragonsByOrder[order - 1].progression.isMaxLevel) {
+			/*if (!DragonManager.classicDragonsByOrder[order - 1].progression.isMaxLevel) {
 				return LockState.LOCKED;
-			}
+			}*/
 		}
 
 		// d) Dragon available for to purchase with SC
 		return LockState.AVAILABLE;
 	}
 
+	// [AOC] DONE
 	public void Tease() {
 		m_teased = true;
 
 		PersistenceFacade.instance.Save_Request();
 
-		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
+		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_TEASED, this);
 	}
 
+	// [AOC] DONE
 	public void Reveal() {
 		m_teased = true;
 		m_revealed = true;
 		PersistenceFacade.instance.Save_Request();
 	}
 
+	// [AOC] DONE
 	/// <summary>
 	/// Unlock this dragon (will be OWNED from now on). Doesn't do any currency transaction.
 	/// Triggers the DRAGON_ACQUIRED event.
@@ -315,12 +337,13 @@ public class DragonData : IUISelectorItem {
 		m_revealed = true;
 
 		// Dispatch global event
-		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
+		//Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
 	}
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//
 	//------------------------------------------------------------------//
+	// [AOC] DONE
 	public void ResetLoadedData()
 	{	
 		m_owned = false;
@@ -335,6 +358,7 @@ public class DragonData : IUISelectorItem {
 		m_gamesPlayed = 0;
 	}
 
+	// [AOC] DONE
 	/// <summary>
 	/// Load state from a persistence object.
 	/// </summary>
@@ -381,6 +405,7 @@ public class DragonData : IUISelectorItem {
 		}
 	}
 
+	// [AOC] DONE
 	/// <summary>
 	/// Create and return a persistence save data object initialized with the data.
 	/// </summary>
@@ -416,6 +441,7 @@ public class DragonData : IUISelectorItem {
 	//------------------------------------------------------------------------//
 	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
+	// [AOC] DONE
 	/// <summary>
 	/// Gets the default disguise for the given dragon def.
 	/// </summary>
@@ -432,6 +458,7 @@ public class DragonData : IUISelectorItem {
 		return defList[0];
 	}
 
+	// [AOC] DONE
 	public static string TierToSku( DragonTier _tier)
 	{
 		return "tier_" + ((int)_tier);

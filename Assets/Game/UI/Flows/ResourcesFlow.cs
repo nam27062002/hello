@@ -268,15 +268,44 @@ public class ResourcesFlow {
 						OpenMissingPCPopup(m_missingAmount);
 					}
 				} break;
+
+				case UserProfile.Currency.GOLDEN_FRAGMENTS: {
+					// Open the popup
+					OpenMissingGFPopup(m_missingAmount);
+				} break;
 			}
 		}
 
 		// Everything ok! Do the transaction
 		else {
+			// Confirmation required?
+			// Only if confirmation popup is enabled
+			if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
+				// Final PC cost?
+				long finalPCAmount = 0;
+
+				// a) Purchasing with PC (no extra PC cost when purchasing with PC)
+				if(m_currency == UserProfile.Currency.HARD) {
+					finalPCAmount = m_finalAmount;
+				}
+
+				// b) Not enough resources
+				else {
+					finalPCAmount = m_extraPCCost;
+				}
+
+				// Final PC amount over threshold?
+				if(finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
+					// Show confirmation popup
+					OpenBigAmountConfirmationPopup(finalPCAmount, () => { TryTransaction(false); });    // Do the transaction on success
+					return; // Don't do anything else until confirmed by user
+				}
+			}
+
 			// Everything ok!
-			if ( m_finishTransaction ){
-				DoTransaction(_askConfirmationForBigPCAmounts);
-			}else{
+			if(m_finishTransaction) {
+				DoTransaction();
+			} else {
 				// Change state
 		        ChangeState(State.FINISHED_SUCCESS);
 
@@ -296,32 +325,7 @@ public class ResourcesFlow {
 	/// from PC, so there is no need to manually do intermediate transactions 
 	/// other than purchasing more PC for the extra cost.
 	/// </summary>
-	/// <param name="_askConfirmationForBigPCAmounts">If set to true, a confirmation popup will be triggered for big PC amounts and the transaction wont happen until the popup is confirmed.</param>
-	public void DoTransaction(bool _askConfirmationForBigPCAmounts) {
-		// Confirmation required?
-		// Only if confirmation popup is enabled
-		if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
-			// Final PC cost?
-			long finalPCAmount = 0;
-
-			// a) Purchasing with PC (no extra PC cost when purchasing with PC)
-			if(m_currency == UserProfile.Currency.HARD) {
-				finalPCAmount = m_finalAmount;
-			}
-
-			// b) Not enough resources
-			else {
-				finalPCAmount = m_extraPCCost;
-			}
-
-			// Final PC amount over threshold?
-			if(finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
-				// Show confirmation popup
-				OpenBigAmountConfirmationPopup(finalPCAmount, () => { TryTransaction(false); });	// Do the transaction on success
-				return;	// Don't do anything else until confirmed by user
-			}
-		}
-
+	public void DoTransaction() {
 		// Transaction confirmed!
 		// Just in case, doublecheck that the player has enough currencies
 		if(m_finalAmount > UsersManager.currentUser.GetCurrency(m_currency)
@@ -478,6 +482,26 @@ public class ResourcesFlow {
 
 		coinsPopup.OnCancel.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		coinsPopup.OnCancel.AddListener(Cancel);
+
+		popup.Open();
+		m_popups.Add(popup);
+
+		// Change state
+		ChangeState(State.SHOWING_MISSING_CURRENCY);
+	}
+
+	/// <summary>
+	/// Open the missing Golden Fragments popup.
+	/// </summary>
+	private void OpenMissingGFPopup(long _missingAmount) {
+		// Show popup informing how to obtain Golden Fragments
+		PopupController popup = PopupManager.LoadPopup(ResourcesFlowMissingGFPopup.PATH);
+		ResourcesFlowMissingGFPopup gfPopup = popup.GetComponent<ResourcesFlowMissingGFPopup>();
+		gfPopup.Init(_missingAmount);
+
+		// GF can't be bought, so when the popup is done, the Resources Flow will always be canceled
+		gfPopup.OnFinish.RemoveAllListeners();		// We're recycling popups, so we don't want events to be added twice!
+		gfPopup.OnFinish.AddListener(Cancel);
 
 		popup.Open();
 		m_popups.Add(popup);

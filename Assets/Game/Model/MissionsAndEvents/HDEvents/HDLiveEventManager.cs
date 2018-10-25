@@ -113,6 +113,16 @@ public abstract class HDLiveEventManager
         return ret;
     }
 
+    public virtual bool RequiresUpdate()
+    {
+        bool ret = false;
+        if (data != null && data.m_eventId > 0 )
+        {
+            ret = data.m_state == HDLiveEventData.State.REQUIRES_UPDATE;
+        }
+        return ret;
+    }
+
     public virtual void CleanData()
     {
         if (data != null){
@@ -357,8 +367,25 @@ public abstract class HDLiveEventManager
             ClearEvent();
             break;
         }
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }
 	}
 
+    // If there is an error we should clear we will call this
+    public void ForceFinishByError()
+    {
+        FinishEvent();
+        ClearEvent();
+        // Get My Events
+        // Request new event data
+        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveEventsManager.instance.RequestMyEvents(true);
+        }   
+    }
+    
 #endregion
 
 #region mods_activation

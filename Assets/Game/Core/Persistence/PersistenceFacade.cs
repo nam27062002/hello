@@ -801,17 +801,17 @@ public class PersistenceFacade
             msg = LOG_CHANNEL + msg;
         }
 
-        Debug.Log(msg);
+        ControlPanel.Log(msg);
     }
 
     public static void LogError(string msg)
     {
-        Debug.LogError(LOG_CHANNEL + msg);
+        ControlPanel.LogError(LOG_CHANNEL + msg);
     }
 
 	public static void LogWarning(string msg)
     {
-        Debug.LogWarning(LOG_CHANNEL + msg);
+        ControlPanel.LogWarning(LOG_CHANNEL + msg);
     }
 	#endregion
 }

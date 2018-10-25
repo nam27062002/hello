@@ -31,28 +31,49 @@ public class MissionPill : MonoBehaviour {
 	// MEMBERS															//
 	//------------------------------------------------------------------//
 	// Setup
-	[Separator]
+	[Separator("Setup")]
 	[HideEnumValues(false, true)]
 	[SerializeField] private Mission.Difficulty m_missionDifficulty = Mission.Difficulty.EASY;
 	[SerializeField] private bool m_showProgressForSingleRunMissions = false;	// It doesn't make sense to show progress for single-run missions in the menu
-	
-	// References - keep references to objects that are often accessed
-	[Separator]
-	[SerializeField] private GameObject m_cooldownObj = null;
-	[SerializeField] private GameObject m_activeObj = null;
 
-	// Cooldown group
-	private TextMeshProUGUI m_cooldownText = null;
-	private Slider m_cooldownBar = null;
-	private Localizer m_skipCostText = null;	// Optional
+	// References - keep references to objects that are often accessed
+	[Separator("Active State")]
+	[SerializeField] private GameObject m_activeObj = null;
+	[Space]
+	[SerializeField] private Image m_missionIcon = null;
+	[SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
+	[SerializeField] private TextMeshProUGUI m_rewardText = null;
+	[SerializeField] private GameObject m_missionCompletedObj = null;
+	[Space]
+	[SerializeField] private GameObject m_progressGroup = null;
+	[SerializeField] private TextMeshProUGUI m_progressText = null;
+	[SerializeField] private Slider m_progressBar = null;
+	[Space]
+	[SerializeField] private Localizer m_removeCostText = null;
+	[SerializeField] private GameObject m_removeFreeButton = null;
+	[SerializeField] private GameObject m_removePaidButton = null;
+	[Space]
+	[SerializeField] private Localizer m_targetAreaText = null;
+	[SerializeField] private Localizer m_targetDragonText = null;
+	
+	[Separator("Cooldown State")]
+	[SerializeField] private GameObject m_cooldownObj = null;
+	[Space]
+	[SerializeField] private Localizer m_cooldownInfoText = null;
+	[SerializeField] private TextMeshProUGUI m_cooldownTimeText = null;
+	[SerializeField] private Slider m_cooldownBar = null;
+	[Space]
+	[SerializeField] private Localizer m_cooldownSkipFreeText = null;
+	[SerializeField] private Localizer m_cooldownSkipPaidText = null;
+
+	[Separator("Other Refs")]
+	[SerializeField] private Localizer m_difficultyText = null;
 
 	// Data
 	private Mission m_mission = null;
 	public Mission mission {
 		get {
-			if(m_mission == null) {
-				m_mission = MissionManager.GetMission(m_missionDifficulty);
-			}
+			m_mission = MissionManager.GetMission(m_missionDifficulty);
 			return m_mission;
 		}
 	}
@@ -67,12 +88,6 @@ public class MissionPill : MonoBehaviour {
 		// Check required references
 		Debug.Assert(m_cooldownObj != null, "Required reference!");
 		Debug.Assert(m_activeObj != null, "Required reference!");
-
-		// Find other references
-		// [AOC] Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
-		m_cooldownText = m_cooldownObj.FindComponentRecursive<TextMeshProUGUI>("CooldownTimeText");
-		m_cooldownBar = m_cooldownObj.FindComponentRecursive<Slider>("CooldownBar");
-		m_skipCostText = m_cooldownObj.FindComponentRecursive<Localizer>("TextCost");
 
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(MessengerEvents.MISSION_REMOVED, OnMissionRemoved);
@@ -119,8 +134,13 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update time-dependant fields
-		if(mission != null && mission.state == Mission.State.COOLDOWN) {
-			RefreshCooldownTimers();
+		if(mission != null) {
+            if (mission.state == Mission.State.COOLDOWN) {
+                RefreshCooldownTimers();
+            }
+            if(mission.updated) {
+                Refresh();
+            }
 		}
 	}
 
@@ -159,7 +179,9 @@ public class MissionPill : MonoBehaviour {
 
 		// Shared stuff
 		// Shared mission difficulty text
-		RefreshDifficulty(this.FindComponentRecursive<Localizer>("DifficultyTextTitle"), true);
+		RefreshDifficulty(m_difficultyText, true);
+
+        mission.updated = false;
 	}
 
 	/// <summary>
@@ -167,59 +189,59 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActive() {
 		// Mission description
-		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("MissionText").text = m_mission.objective.GetDescription();
+		m_missionDescriptionText.text = m_mission.objective.GetDescription();
 
 		// Progress
 		// Optionally hide progress for singlerun missions
 		bool show = !m_mission.objective.singleRun || m_showProgressForSingleRunMissions;
-		m_activeObj.FindObjectRecursive("ProgressGroup").SetActive(show);
+		m_progressGroup.SetActive(show);
 		if(show) {
-			m_activeObj.FindComponentRecursive<TextMeshProUGUI>("ProgressText").text = m_mission.objective.GetProgressString();
-			m_activeObj.FindComponentRecursive<Slider>("ProgressBar").value = m_mission.objective.progress;
+			m_progressText.text = m_mission.objective.GetProgressString();
+			m_progressBar.value = m_mission.objective.progress;
 		}
 
+        UIConstants.IconType icon = UIConstants.IconType.NONE;
+        switch (m_mission.reward.currency) {
+            case UserProfile.Currency.SOFT:             icon = UIConstants.IconType.COINS;              break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS: icon = UIConstants.IconType.GOLDEN_FRAGMENTS;   break;
+        }
 		// Reward
-		m_activeObj.FindComponentRecursive<TextMeshProUGUI>("RewardText").text = UIConstants.GetIconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+		m_rewardText.text = UIConstants.GetIconString(m_mission.reward.amount, icon, UIConstants.IconAlignment.LEFT);
 
 		// Remove cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		Localizer removeCostText = m_activeObj.FindComponentRecursive<Localizer>("TextCost");
-		if(removeCostText != null) {
-			removeCostText.Localize(removeCostText.tid, StringUtils.FormatNumber(m_mission.removeCostPC));
+		if(m_removeCostText!= null) {
+			m_removeCostText.Localize(m_removeCostText.tid, StringUtils.FormatNumber(m_mission.removeCostPC));
 		}
 
 		// Check if this mission is complete
-		GameObject completedObj = m_activeObj.FindObjectRecursive("CompletedMission");
-		if (completedObj != null) completedObj.SetActive(m_mission.objective.isCompleted);
+		if(m_missionCompletedObj != null) m_missionCompletedObj.SetActive(m_mission.objective.isCompleted);
 
 		// Change Icon
-		GameObject iconBoxObj = m_activeObj.FindObjectRecursive("IconBox");
-		if (iconBoxObj != null) {
-			Image img = iconBoxObj.FindObjectRecursive("Image").GetComponent<Image>();
-			Sprite spr = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
-			img.sprite = spr;
-		}
+		m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
 
 		// Where
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		Localizer whereText = m_activeObj.FindComponentRecursive<Localizer>("TextPlaceValue");
-		if(whereText != null) {
-			whereText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
+		if(m_targetAreaText != null) {
+			m_targetAreaText.Localize("TID_MISSIONS_WHERE_ANY_LEVEL");
 		}
 
 		// With
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
-		Localizer withText = m_activeObj.FindComponentRecursive<Localizer>("TextWithValue");
-		if(withText != null) {
-			withText.Localize("TID_MISSIONS_WITH_ANY_DRAGON");
+		if(m_targetDragonText != null) {
+			m_targetDragonText.Localize("TID_MISSIONS_WITH_ANY_DRAGON");
 		}
 
 		// Difficulty
-		RefreshDifficulty(m_activeObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+		RefreshDifficulty(m_difficultyText, true);
 
+		// Buttons
 		RefreshRemovePayButtons();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	private void RefreshRemovePayButtons()
 	{
 		// Check if ads availables to skip mission
@@ -231,11 +253,13 @@ public class MissionPill : MonoBehaviour {
 			ftux = m_mission.def.sku.Contains("ftux");
 		}
 
-		GameObject watchAd = m_activeObj.FindObjectRecursive("ButtonWatchAd");
-		if(watchAd != null) watchAd.SetActive( !ftux && canPayWithAds );
+		if(m_removeFreeButton != null) {
+			m_removeFreeButton.SetActive(!ftux && canPayWithAds);
+		}
 
-		GameObject removeButton = m_activeObj.FindObjectRecursive("ButtonRemoveMission");
-		if(removeButton != null) removeButton.SetActive( !ftux && !canPayWithAds );
+		if(m_removePaidButton != null) {
+			m_removePaidButton.SetActive(!ftux && !canPayWithAds);
+		}
 	}
 
 	/// <summary>
@@ -284,22 +308,21 @@ public class MissionPill : MonoBehaviour {
 		RefreshCooldownTimers();
 
 		// Info text
-		m_cooldownObj.FindComponentRecursive<Localizer>("CooldownInfoText").Localize("TID_MISSIONS_NEXT_MISSION_IN");
+		m_cooldownInfoText.Localize("TID_MISSIONS_NEXT_MISSION_IN");
 
 		// Cooldown bar
 		m_cooldownBar.gameObject.SetActive(true);
 
 		// Difficulty
-		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+		RefreshDifficulty(m_difficultyText, true);
 
 		// Skip with ad button
-		Localizer skipWithAdText = m_cooldownObj.FindComponentRecursive<Localizer>("TextAd");
-		if(skipWithAdText != null) {
+		if(m_cooldownSkipFreeText != null) {
 			// If the remaining time is lower than skip time, don't put time at all
 			if(m_mission.cooldownRemaining.TotalSeconds < Mission.SECONDS_SKIPPED_WITH_AD) {
-				skipWithAdText.Localize(TID_SKIP_FREE);
+				m_cooldownSkipFreeText.Localize(TID_SKIP_FREE);
 			} else {
-				skipWithAdText.Localize(
+				m_cooldownSkipFreeText.Localize(
 					TID_SKIP_PARTIAL,
 					StringUtils.FormatNumber(Mission.SECONDS_SKIPPED_WITH_AD/60f, 0)
 				);
@@ -313,9 +336,9 @@ public class MissionPill : MonoBehaviour {
 	private void RefreshCooldownTimers() {
         // Since cooldown must be refreshed every frame, keep the reference to the objects rather than finding them every time
         // Cooldown remaining time
-        if (m_cooldownText != null) {
+        if (m_cooldownTimeText != null) {
             double seconds = m_mission.cooldownRemaining.TotalSeconds;
-            m_cooldownText.text = TimeUtils.FormatTime(seconds, (seconds < 60f)? TimeUtils.EFormat.ABBREVIATIONS : TimeUtils.EFormat.DIGITS, 3);
+            m_cooldownTimeText.text = TimeUtils.FormatTime(seconds, (seconds < 60f)? TimeUtils.EFormat.ABBREVIATIONS : TimeUtils.EFormat.DIGITS, 3);
         }
 
 		// Cooldown bar
@@ -323,8 +346,8 @@ public class MissionPill : MonoBehaviour {
 
 		// Skip cost
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) {
-			m_skipCostText.Localize(m_skipCostText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
+		if(m_cooldownSkipPaidText != null) {
+			m_cooldownSkipPaidText.Localize(m_cooldownSkipPaidText.tid, StringUtils.FormatNumber(m_mission.skipCostPC));
 		}
 	}
 
@@ -333,20 +356,20 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void RefreshActivationPending() {
 		// Info text
-		m_cooldownObj.FindComponentRecursive<Localizer>("CooldownInfoText").Localize("TID_MISSIONS_ACTIVATION_PENDING");
+		m_cooldownInfoText.Localize("TID_MISSIONS_ACTIVATION_PENDING");
 
 		// Cooldown remaining time
-		m_cooldownText.text = "";
+		m_cooldownTimeText.text = "";
 
 		// Cooldown bar
 		m_cooldownBar.gameObject.SetActive(false);
 
 		// Skip cost - shouldn't exist in ACTIVATION_PENDING state, but just in case
 		// [AOC] The pill might not have it (e.g. in-game pill)
-		if(m_skipCostText != null) m_skipCostText.Localize("");
+		if(m_cooldownSkipPaidText != null) m_cooldownSkipPaidText.Localize("");
 
 		// Difficulty
-		RefreshDifficulty(m_cooldownObj.FindComponentRecursive<Localizer>("DifficultyText"), true);
+		RefreshDifficulty(m_difficultyText, true);
 	}
 
 	/// <summary>

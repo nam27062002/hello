@@ -20,10 +20,9 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		Pass
 		{
-			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
-
 //			Blend SrcAlpha OneMinusSrcAlpha
 //			Cull Off
 //			Lighting Off

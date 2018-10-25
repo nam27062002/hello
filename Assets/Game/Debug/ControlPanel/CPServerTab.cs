@@ -191,7 +191,7 @@ public class CPServerTab : MonoBehaviour {
 		string paramString = GetInputText(_input);
 
 		// Forces a crash
-		DragonData data = null;
+		IDragonData data = null;
 		data.ToString();
 
 		// Do stuff!		

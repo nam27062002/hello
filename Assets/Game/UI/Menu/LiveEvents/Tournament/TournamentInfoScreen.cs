@@ -193,6 +193,13 @@ public class TournamentInfoScreen : MonoBehaviour {
 		// [AOC] TODO!! Select fixed or flexible build screen!
         InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
 	}
+    
+    /// <summary>
+    /// Back button has been pressed.
+    /// </summary>
+    public void OnBackButton() {
+        SceneController.SetMode(SceneController.Mode.DEFAULT);
+    }
 
 	/// <summary>
 	/// Force a refresh every time we enter the tab!
@@ -235,7 +242,17 @@ public class TournamentInfoScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournament.data.m_eventId == _eventId
+                )
+                {
+                    m_tournament.ForceFinishByError();
+                }
 		}
 	}
 

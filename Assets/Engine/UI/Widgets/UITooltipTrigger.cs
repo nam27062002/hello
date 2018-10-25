@@ -35,6 +35,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	private UITooltip m_tooltip = null;
 	public UITooltip tooltip {
 		get { return m_tooltip; }
+        set { m_tooltip = value; }
 	}
 
 	[SerializeField] private string m_prefabPath = "";
