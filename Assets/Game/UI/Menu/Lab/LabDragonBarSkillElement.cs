@@ -61,7 +61,6 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 	private void OnSkillUpgraded(DragonDataSpecial _dragonData) {
 		// Unlocked skill upgrade matches the one represented by this element?
 		if(_dragonData.biggestPowerDef == null) return;
-		Debug.Log(Color.cyan.Tag(m_def.sku + " | " + _dragonData.biggestPowerDef.sku));
 		if(m_def.sku == _dragonData.biggestPowerDef.sku) {
 			// Show some VFX
 			if(m_unlockFX != null) {

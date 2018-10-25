@@ -394,14 +394,14 @@ public class LabStatUpgrader : MonoBehaviour {
 			case Mode.LEVEL_PROGRESSION: {
 				if(m_statData == null) {
 					_animator.text.text = StringUtils.FormatNumber(_animator.currentValue);
+				} else {
+					// "5/30"
+					_animator.text.text = LocalizationManager.SharedInstance.Localize(
+						"TID_FRACTION",
+						StringUtils.FormatNumber(_animator.currentValue),
+						StringUtils.FormatNumber(m_statData.maxLevel)
+					);
 				}
-
-				// "5/30"
-				_animator.text.text = LocalizationManager.SharedInstance.Localize(
-					"TID_FRACTION",
-					StringUtils.FormatNumber(_animator.currentValue),
-					StringUtils.FormatNumber(m_statData.maxLevel)
-				);
 			} break;
 		}
 	}
