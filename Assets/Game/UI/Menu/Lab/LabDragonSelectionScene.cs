@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -31,6 +32,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the special dragon.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+	[SerializeField] private CameraSnapPoint m_notOwnedCameraSnapPoint = null;
 	[Space] 
     [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
     [SerializeField] private ParticleSystem m_loadedDragonParticle = null;
@@ -40,12 +42,16 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	[SerializeField] private Transform m_dragonPurchasedFXAnchor = null;
 
 	// Internal references
+	private ScreenData m_labScreenData = null;
+
 	private GameObject m_loadingUI = null;
 	public GameObject loadingUI {
 		set { m_loadingUI = value; }
 	}
 
+	// Camera snap points backups
 	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
+	private CameraSnapPoint m_defaultCameraSnapPoint = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -54,13 +60,19 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Gather references
+		m_labScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION);
+		m_defaultCameraSnapPoint = m_labScreenData.cameraSetup;
+
 		// Store original camera snap point for the photo screen
 		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
 
 		// Subscribe to external events
 		Messenger.AddListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.AddListener<MenuScreen, MenuScreen, bool>(MessengerEvents.MENU_CAMERA_TRANSITION_START, OnMenuCameraTransitionStart);
 		m_dragonLoader.onDragonLoaded += OnDragonPreviewLoaded;
 
 		// Destroy any loaded dragon preview
@@ -79,7 +91,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+		Messenger.RemoveListener<MenuScreen, MenuScreen, bool>(MessengerEvents.MENU_CAMERA_TRANSITION_START, OnMenuCameraTransitionStart);
 		m_dragonLoader.onDragonLoaded -= OnDragonPreviewLoaded;
 	}
 
@@ -134,6 +148,34 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		AudioController.Play("hd_unlock_dragon");
 	}
 
+	/// <summary>
+	/// Select the camera snap point to use based on selected dragon ownership status.
+	/// Will modify the ScreenData for this screen in the transitions manager.
+	/// </summary>
+	public void SelectCameraSnapPoint() {
+		// Is selected dragon owned?
+		if(InstanceManager.menuSceneController.selectedDragonData.isOwned) {
+			m_labScreenData.cameraSetup = m_defaultCameraSnapPoint;
+		} else {
+			m_labScreenData.cameraSetup = m_notOwnedCameraSnapPoint;
+		}
+	}
+
+	/// <summary>
+	/// Update camera based on current selected dragon.
+	/// It is assumed that SelectCameraSnapPoint() has been previously called.
+	/// </summary>
+	public void RefreshCamera() {
+		// Lerp position as well
+		TweenParams tweenParams = new TweenParams().SetEase(Ease.OutQuad);
+		m_labScreenData.cameraSetup.changePosition = true;
+		m_labScreenData.cameraSetup.TweenTo(
+			InstanceManager.menuSceneController.mainCamera, 
+			0.15f, 
+			tweenParams
+		);
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -167,6 +209,20 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 		// Load newly selected special dragon
 		LoadDragonPreview(_sku);
+
+		// Update camera
+		SelectCameraSnapPoint();
+		RefreshCamera();
+	}
+
+	/// <summary>
+	/// A dragon has been acquired.
+	/// </summary>
+	/// <param name="_data">The newly selected dragon.</param>
+	private void OnDragonAcquired(IDragonData _data) {
+		// Update camera
+		SelectCameraSnapPoint();
+		RefreshCamera();
 	}
 
 	/// <summary>
@@ -213,6 +269,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 
 		// Entering a screen using this scene
 		if(toScene != null && toScene.gameObject == this.gameObject) {
+			// Select the right camera snap point for this screen
+			SelectCameraSnapPoint();
+
 			// Override camera snap point for the photo screen
 			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
 		}
@@ -224,6 +283,28 @@ public class LabDragonSelectionScene : MenuScreenScene {
 				// Restore default camera snap point for the photo screen
 				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
 			}
+		}
+	}
+
+	/// <summary>
+	/// The menu camera is about to start a transition.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	/// <param name="_usingPath">Using a path or lerping?</param>
+	private void OnMenuCameraTransitionStart(MenuScreen _from, MenuScreen _to, bool _usingPath) {
+		// Don't care at all if not using path
+		if(!_usingPath) return;
+
+		// Entering a screen using this scene
+		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenData(_to).scene3d;
+		if(toScene != null && toScene.gameObject == this.gameObject) {
+			// Camera snap point has already been selected (on the MenuScreenTransitionStart callback)
+			// We just need to update the dynamic path
+			// Adjust dynamic path to end at the target snap point
+			BezierCurve path = InstanceManager.menuSceneController.transitionManager.dynamicPath;
+			BezierPoint finalPoint = path.GetPoint(path.pointCount - 1);
+			finalPoint.globalPosition = m_labScreenData.cameraSetup.transform.position;
 		}
 	}
 }
