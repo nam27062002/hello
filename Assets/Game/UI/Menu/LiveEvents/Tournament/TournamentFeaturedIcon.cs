@@ -194,7 +194,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 					TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
-						4
+						2
 					)
 				);
 			}
