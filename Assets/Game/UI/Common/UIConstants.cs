@@ -201,6 +201,14 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
 	#endregion
 
+	// -------------------------------------------------------------------------
+	// Misc colors
+	#region MiscColors
+	[SerializeField] private Color m_dragonStatColorHp = Color.red;
+	[SerializeField] private Color m_dragonStatColorSpeed = Color.cyan;
+	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
+	#endregion
+
 	// -----------------------------------------------------------------------//
 	// Open Egg animation setup												  //
 	// -----------------------------------------------------------------------//
@@ -481,6 +489,20 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case "defense":	return instance.m_petCategoryColorDefense; break;
 			case "special":	return instance.m_petCategoryColorSpecial; break;
 			default: 		return instance.m_petCategoryColorDefault; break;
+		}
+	}
+
+	/// <summary>
+	/// Get the color assigned to a specific dragon stat.
+	/// </summary>
+	/// <returns>The color linked to the requested dragpm stat.</returns>
+	/// <param name="_stat">Stat whose color we want.</param>
+	public static Color GetDragonStatColor(DragonDataSpecial.Stat _stat) {
+		switch(_stat) {
+			case DragonDataSpecial.Stat.HEALTH:	return instance.m_dragonStatColorHp;		break;
+			case DragonDataSpecial.Stat.SPEED:	return instance.m_dragonStatColorSpeed;		break;
+			case DragonDataSpecial.Stat.ENERGY:	return instance.m_dragonStatColorEnergy;	break;
+			default: return Color.white; break;
 		}
 	}
 

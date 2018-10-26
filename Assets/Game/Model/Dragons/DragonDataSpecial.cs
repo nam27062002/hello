@@ -76,6 +76,12 @@ public class DragonDataSpecial : IDragonData {
 
 	// Power
 	public int powerLevel = 0;
+	public DefinitionNode biggestPowerDef {
+		get {
+			if(powerLevel == 0) return null;
+			return m_specialPowerDefsByOrder[powerLevel - 1]; 
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE PROPERTIES											  //
@@ -433,7 +439,7 @@ public class DragonDataSpecial : IDragonData {
 		}
 
 		// Save persistence!
-		PersistenceFacade.instance.Save_Request();
+		PersistenceFacade.instance.Save_Request(true);
 	}
     
 	/// <summary>

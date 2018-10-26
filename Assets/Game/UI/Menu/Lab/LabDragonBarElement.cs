@@ -39,10 +39,13 @@ public class LabDragonBarElement : MonoBehaviour {
         m_state = State.LOCKED;
     }
 
-    private void OnEnable() {
+    protected virtual void OnEnable() {
         m_animator.SetInteger(GameConstants.Animator.STATE, (int)m_state);
     }
 
+	protected virtual void OnDisable() {
+
+	}
 
     //---[Queries]--------------------------------------------------------------
     public void SetPos(float _x, float _y) {
