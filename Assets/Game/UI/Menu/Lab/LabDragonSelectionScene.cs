@@ -171,7 +171,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		m_labScreenData.cameraSetup.changePosition = true;
 		m_labScreenData.cameraSetup.TweenTo(
 			InstanceManager.menuSceneController.mainCamera, 
-			0.15f, 
+			0.25f, 
 			tweenParams
 		);
 	}
