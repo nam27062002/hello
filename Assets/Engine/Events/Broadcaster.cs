@@ -29,8 +29,8 @@ public class Broadcaster
     public static void Broadcast( BroadcastEventType type )
     {
         List<IBroadcastListener> listeners = m_listeners[(int)type];
-        int max = listeners.Count;
-        for (int i = 0; i < max; i++)
+        int start = listeners.Count - 1 ;
+        for (int i = start; i >= 0; --i)
         {
             listeners[i].OnBroadcastSignal(type, m_defaultInfo);
         }
