@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager> {
+public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -37,7 +37,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -46,10 +46,20 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //

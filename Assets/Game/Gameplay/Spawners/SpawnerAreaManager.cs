@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManager> {
+public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManager>, IBroadcastListener {
 
 	private const float CELL_SIZE = 5f;
 
@@ -22,7 +22,7 @@ public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManag
 		m_spawners = new List<ISpawner>();
 
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
 
@@ -31,16 +31,26 @@ public class SpawnerAreaManager : UbiBCN.SingletonMonoBehaviour<SpawnerAreaManag
 	/// </summary>
 	protected override void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 
 		base.OnDestroy();
 	}
 
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>

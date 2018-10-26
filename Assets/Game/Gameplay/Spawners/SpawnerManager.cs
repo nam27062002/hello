@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton to manage all the spawners in a level in an efficient way.
 /// </summary>
-public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
+public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -91,7 +91,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
     /// </summary>
     private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
@@ -103,13 +103,24 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaEnter);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}        
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// Called every frame.
 	/// </summary>

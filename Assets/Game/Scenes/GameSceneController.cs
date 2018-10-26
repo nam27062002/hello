@@ -574,8 +574,8 @@ public class GameSceneController : GameSceneControllerBase {
 				// Init game camera
 				InstanceManager.gameCamera.Init();
 
-				// Dispatch game event
-				Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
+                // Dispatch game event
+                Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
 				// Don't make it playable until the countdown ends

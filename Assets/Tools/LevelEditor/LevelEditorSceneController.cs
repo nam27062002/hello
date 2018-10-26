@@ -202,7 +202,7 @@ namespace LevelEditor {
 			InitLevelMap();
 
 			// Simulate level loaded
-			Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();

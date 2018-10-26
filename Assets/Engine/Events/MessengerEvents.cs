@@ -77,7 +77,7 @@ public enum MessengerEvents {
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
 	
 	// Game logic events
-	GAME_LEVEL_LOADED,			// no params
+	// GAME_LEVEL_LOADED,			// no params
 	GAME_STARTED,				// no params
 	GAME_COUNTDOWN_STARTED,		// no params
 	GAME_COUNTDOWN_ENDED,		// no params

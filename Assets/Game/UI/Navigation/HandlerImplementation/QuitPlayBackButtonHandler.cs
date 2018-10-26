@@ -1,25 +1,36 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-public class QuitPlayBackButtonHandler : BackButtonHandler {
+public class QuitPlayBackButtonHandler : BackButtonHandler, IBroadcastListener {
 
 	bool m_changingArea = false;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	private void OnEnable() {
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
 
 	private void OnDisable() {
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Register);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Unregister);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                Register();
+            }break;
+        }
+    }
 
 	public void OnAreaEnter()
 	{

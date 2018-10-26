@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Audio;
 
-public class MusicController : MonoBehaviour
+public class MusicController : MonoBehaviour, IBroadcastListener
 {
     #region monobehaviour
     // Use this for initialization
@@ -12,7 +12,7 @@ public class MusicController : MonoBehaviour
         InstanceManager.musicController = this;
 
         Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener<bool, DragonBreathBehaviour.Type> (MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
 
         Reset();        
@@ -23,10 +23,21 @@ public class MusicController : MonoBehaviour
     void OnDestroy()
     {
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
-        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
         InstanceManager.musicController = null;
     }	        	
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                    OnGameLevelLoaded();
+            }break;
+        }
+    }
 
     void Update()
     {

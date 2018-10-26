@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
+public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
 	// Constants
 	//-----------------------------------------------
@@ -95,7 +95,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
@@ -104,10 +104,21 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
+    }
+    
     void OnDestroy() {
 		if (ApplicationManager.IsAlive) {
 			if (SpawnerManager.isInstanceCreated)
