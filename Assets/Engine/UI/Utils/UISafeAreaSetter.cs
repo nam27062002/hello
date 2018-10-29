@@ -49,7 +49,15 @@ public class UISafeAreaSetter : MonoBehaviour {
 	public List<Action> actions {
 		get { return m_actions;  }
 	}
-	
+
+	// Debug only
+#if UNITY_EDITOR
+	[SerializeField] private Vector2 m_originalOffsetMin = Vector2.zero;
+	[SerializeField] private Vector2 m_originalOffsetMax = Vector2.zero;
+	[SerializeField] private Vector2 m_originalAnchoredPos = Vector2.zero;
+	[SerializeField] private RectOffset m_originalLayoutPadding = new RectOffset();
+#endif
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -64,6 +72,17 @@ public class UISafeAreaSetter : MonoBehaviour {
 	/// First update call.
 	/// </summary>
 	private void Start() {
+		// Debug only: backup original values
+#if UNITY_EDITOR
+		RectTransform rt = GetComponent<RectTransform>();
+		m_originalOffsetMin = rt.offsetMin;
+		m_originalOffsetMax = rt.offsetMax;
+		m_originalAnchoredPos = rt.anchoredPosition;
+		HorizontalOrVerticalLayoutGroup layout = GetComponent<HorizontalOrVerticalLayoutGroup>();
+		if(layout != null) {
+			m_originalLayoutPadding = layout.padding;
+		}
+#endif
 		Apply();
 	}
 
@@ -83,6 +102,17 @@ public class UISafeAreaSetter : MonoBehaviour {
 	public void Apply() {
 		// Get Rect transform ref
 		RectTransform rt = GetComponent<RectTransform>();
+
+		// Debug only: backup original values
+#if UNITY_EDITOR
+		rt.offsetMin = m_originalOffsetMin;
+		rt.offsetMax = m_originalOffsetMax;
+		rt.anchoredPosition = m_originalAnchoredPos;
+		HorizontalOrVerticalLayoutGroup lay = GetComponent<HorizontalOrVerticalLayoutGroup>();
+		if(lay != null) {
+			lay.padding = m_originalLayoutPadding;
+		}
+#endif
 
 		// Get safe area
 		UISafeArea safeArea = UIConstants.safeArea;
