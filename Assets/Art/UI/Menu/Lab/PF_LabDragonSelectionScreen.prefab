@@ -9885,6 +9885,7 @@ GameObject:
   - component: {fileID: 114392729522242010}
   - component: {fileID: 114726999323041606}
   - component: {fileID: 114419386633994638}
+  - component: {fileID: 223172058181808438}
   m_Layer: 5
   m_Name: DragonBar
   m_TagString: Untagged
@@ -18975,15 +18976,23 @@ MonoBehaviour:
   - mode: 2
     scale:
       bottom: 0
-      left: 0.5
+      left: 0.75
       right: 0
       top: 0
   - mode: 1
     scale:
       bottom: 0
-      left: 0.5
+      left: 0.75
       right: 0
       top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114017978703695844
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -21141,6 +21150,14 @@ MonoBehaviour:
       left: 0
       right: 0
       top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114145006590888650
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -22932,6 +22949,14 @@ MonoBehaviour:
       left: 1
       right: 1
       top: 1
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114230022371693788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24450,14 +24475,22 @@ MonoBehaviour:
     scale:
       bottom: 0
       left: 0
-      right: 0.5
+      right: 1
       top: 0
   - mode: 1
     scale:
       bottom: 0
       left: 0
-      right: 0.5
+      right: 1
       top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114332084236990244
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -30243,6 +30276,14 @@ MonoBehaviour:
       left: 0.5
       right: 0
       top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114635425438280456
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -31435,6 +31476,14 @@ MonoBehaviour:
       left: 0
       right: 0
       top: 1
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114711176271870100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -94238,6 +94287,26 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1799597834767524}
+--- !u!223 &223172058181808438
+Canvas:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1770801142423480}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 1
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!224 &224000566069027648
 RectTransform:
   m_ObjectHideFlags: 1
@@ -96717,10 +96786,10 @@ RectTransform:
   m_Father: {fileID: 224996718532647952}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 524.22925, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1162.976, y: 0}
+  m_SizeDelta: {x: 0, y: 100.88}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224266381038466012
 RectTransform:
@@ -98176,9 +98245,9 @@ RectTransform:
   m_Father: {fileID: 224485690299291766}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 30, y: -50}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -670, y: -50}
   m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224396880809819280
