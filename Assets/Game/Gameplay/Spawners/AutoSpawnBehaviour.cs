@@ -96,7 +96,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	/// <summary>
@@ -105,13 +105,14 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
         {
+            case BroadcastEventType.GAME_AREA_ENTER:
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                 OnLevelLoaded();

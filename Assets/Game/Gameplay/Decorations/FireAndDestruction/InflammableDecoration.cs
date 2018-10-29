@@ -107,7 +107,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	/// <summary>
@@ -120,7 +120,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
     
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -128,6 +128,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
         switch( eventType )
         {
             case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:            
             {
                 OnLevelLoaded();
             }break;

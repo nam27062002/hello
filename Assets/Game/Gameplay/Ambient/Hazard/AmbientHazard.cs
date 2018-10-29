@@ -176,7 +176,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -187,7 +187,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
 		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
 	}
@@ -199,6 +199,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     {
         switch( eventType )
         {
+            case BroadcastEventType.GAME_AREA_ENTER:
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                 OnLevelLoaded();

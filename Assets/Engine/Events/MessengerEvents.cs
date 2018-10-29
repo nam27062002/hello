@@ -81,7 +81,7 @@ public enum MessengerEvents {
 	GAME_STARTED,				// no params
 	GAME_COUNTDOWN_STARTED,		// no params
 	GAME_COUNTDOWN_ENDED,		// no params
-	GAME_AREA_ENTER,			// no params 
+	// GAME_AREA_ENTER,			// no params 
 	GAME_AREA_EXIT,				// no params
 	GAME_UPDATED,				// no params
 	GAME_PAUSED,				// params: bool _paused

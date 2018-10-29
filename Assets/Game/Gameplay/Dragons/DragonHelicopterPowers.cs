@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonHelicopterPowers : MonoBehaviour 
+public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener 
 {
 	DragonBoostBehaviour m_playerBoost;
 	DragonMotion m_playerMotion;
@@ -88,7 +88,7 @@ public class DragonHelicopterPowers : MonoBehaviour
         m_animator = GetComponent<Animator>();
         
         CreatePool();
-        Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
         // Resize
         float scale = InstanceManager.player.data.scale;
@@ -108,10 +108,21 @@ public class DragonHelicopterPowers : MonoBehaviour
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
         Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
 	}
 	
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+        }
+    }
+    
 	// Update is called once per frame
 	void Update () {
 
