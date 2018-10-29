@@ -402,7 +402,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Create the tween sequence according to current setup.
 	/// If a sequence already exists, it will be killed.
 	/// </summary>
-	protected void RecreateTween() {
+	public void RecreateTween() {
 		// If the sequence is already created, kill it
 		if(m_sequence != null) {
 			m_sequence.Complete();	// Make sure sequence is at its end-state to restore object's default values so the new sequence can take them

@@ -16,11 +16,12 @@ using TMPro;
 /// <summary>
 /// Specialization of the generic UI Tooltip for the Lab Dragon Bar.
 /// </summary>
-public class LabDragonBarTooltip : UITooltip {
+public class LabDragonBarTooltip : UITooltipMultidirectional {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Separator("LabDragonBarTooltip")]
 	[SerializeField] private TextMeshProUGUI m_unlockLevelText = null;
 	[SerializeField] private TextMeshProUGUI m_requiredTierText = null;
 	
