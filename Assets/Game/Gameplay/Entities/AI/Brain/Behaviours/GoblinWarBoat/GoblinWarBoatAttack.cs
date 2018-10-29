@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
 		[System.Serializable]
 		public class GoblinWarBoatAttackData : StateComponentData {
 			public float damage = 25f;
@@ -19,9 +19,9 @@ namespace AI {
 
 		[CreateAssetMenu(menuName = "Behaviour/GoblinWarBoat/Attack")]
 		public class GoblinWarBoatAttack : StateComponent, IBroadcastListener {
-			private enum AttackState {				
+			private enum AttackState {
 				Aim = 0,
-				Shoot	
+				Shoot
 			}
 
 			[StateTransitionTrigger]
@@ -82,7 +82,7 @@ namespace AI {
                 base.OnRemove();
                 Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
             }
-            
+
             public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
             {
                 switch( eventType )
@@ -92,8 +92,9 @@ namespace AI {
                         CreatePool();
                     }break;
                 }
+
             }
-            
+
 
 			void CreatePool() {
 				m_poolHandler = PoolManager.CreatePool(m_data.projectileName, "Game/Projectiles/", 2, true);
@@ -219,7 +220,7 @@ namespace AI {
 					m_pilot.ReleaseAction(Pilot.Action.Attack);
 
 					if (m_attacksLeft > 0) {
-						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
+						if (!m_machine.GetSignal(Signals.Type.Danger)) {
 							Transition(OnOutOfRange);
 						}
 					} else {

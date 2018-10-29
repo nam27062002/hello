@@ -433,8 +433,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_suction = m_eatBehaviour.suction;
 
         RegionManager.Init();
-        m_regionManager = RegionManager.Instance;        
-        
+        m_regionManager = RegionManager.Instance;
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -470,9 +470,9 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
-    
-    
-    
+
+
+
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
@@ -483,7 +483,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
             }break;
         }
     }
-    
+
 
 	private void PnPDied()
 	{
