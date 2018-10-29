@@ -468,7 +468,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
 	}
 
 	private void PnPDied()
