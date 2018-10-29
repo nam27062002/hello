@@ -220,6 +220,9 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// </summary>
 	/// <param name="_data">The newly selected dragon.</param>
 	private void OnDragonAcquired(IDragonData _data) {
+		// Ignore if not in special dragon mode
+		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) return;
+
 		// Update camera
 		SelectCameraSnapPoint();
 		RefreshCamera();
