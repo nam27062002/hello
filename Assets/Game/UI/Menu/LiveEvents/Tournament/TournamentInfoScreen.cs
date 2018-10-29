@@ -199,6 +199,7 @@ public class TournamentInfoScreen : MonoBehaviour {
     /// </summary>
     public void OnBackButton() {
         SceneController.SetMode(SceneController.Mode.DEFAULT);
+        HDLiveEventsManager.instance.SwitchToQuest();
     }
 
 	/// <summary>
