@@ -206,7 +206,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
-				m_callToActionButton.SetActive(true);
+                m_callToActionButton.SetActive(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS || DragonManager.maxSpecialDragonTierUnlocked > DragonTier.TIER_0);
 			}
 
 			// Don't show back button if we've completed a golden egg!

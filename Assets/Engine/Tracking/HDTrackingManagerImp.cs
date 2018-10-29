@@ -1439,7 +1439,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if ( moneyCurrency.Equals("HardCurrency") )
         {
             // Send event
-            GameServerManager.SharedInstance.PCSpent( (int)moneyPrice, economyGroup, PCFluctuationResponse);
+            GameServerManager.SharedInstance.PCSpent( amountBalance, (int)moneyPrice, economyGroup, PCFluctuationResponse);
         }
     }
 
@@ -1466,7 +1466,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (moneyCurrency.Equals("HardCurrency"))
         {
             // Send event
-            GameServerManager.SharedInstance.PCEarned(amountDelta, economyGroup, paid, PCFluctuationResponse);
+            GameServerManager.SharedInstance.PCEarned( amountBalance,  amountDelta, economyGroup, paid, PCFluctuationResponse);
         }
     }
 

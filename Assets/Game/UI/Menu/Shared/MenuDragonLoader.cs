@@ -205,10 +205,10 @@ public class MenuDragonLoader : MonoBehaviour {
 			{
 				if ( m_asyncRequest == null && !m_configured )
 				{
-					ConfigureInstance( m_dragonInstance.gameObject );
-					if (onDragonLoaded != null)
-						onDragonLoaded(this);
+					ConfigureInstance( m_dragonInstance.gameObject );					
 				}
+                if (onDragonLoaded != null)
+                    onDragonLoaded(this);
 				return;
 			}
 		}
