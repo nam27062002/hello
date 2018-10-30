@@ -260,8 +260,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Add some delay to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 
-				// Toggle flag
+                // Toggle flag
 				isAnimating = false;
+
+                PopupLabUnlocked.CheckAndOpen();
 			})
 			.SetAutoKill(true)
 			.Play();

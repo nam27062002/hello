@@ -83,16 +83,18 @@ public class UISafeAreaPropertyDrawer : PropertyDrawer {
 			bgRect.width -= lineThickness * 2f;
 			EditorGUI.DrawRect(bgRect, Color.black);
 
-			// Top
-			cursor.x = contentRect.center.x - cursor.width/2f;
-			EditorGUI.PropertyField(cursor, topProp, GUIContent.none);
-
 			// Left
 			cursor.y += cursor.height;
 			cursor.x = contentRect.x;
 			EditorGUI.PropertyField(cursor, leftProp, GUIContent.none);
 
+			// Top
+			cursor.y -= cursor.height;
+			cursor.x = contentRect.center.x - cursor.width/2f;
+			EditorGUI.PropertyField(cursor, topProp, GUIContent.none);
+			
 			// Right
+			cursor.y += cursor.height;
 			cursor.x = contentRect.xMax - cursor.width;
 			EditorGUI.PropertyField(cursor, rightProp, GUIContent.none);
 

@@ -110,6 +110,7 @@ public class DragonElectricPowers : MonoBehaviour {
 		if ( m_boost.IsBoostActive() || m_breath.IsFuryOn())
 		{
             m_boostDelta = Mathf.Lerp(m_boostDelta, 0.37f, Time.deltaTime * 10);
+            m_timer -= Time.deltaTime;
             if (m_timer <= 0)
             {
                 m_timer = m_minTimerBetweenKills;
@@ -222,7 +223,7 @@ public class DragonElectricPowers : MonoBehaviour {
             m_circleAreas[i].radius = m_originalRadius[i] * m_extraRadius * m_superSizeMultiplier;
         }
 
-        m_timer -= Time.deltaTime;
+        
         
 	}
     

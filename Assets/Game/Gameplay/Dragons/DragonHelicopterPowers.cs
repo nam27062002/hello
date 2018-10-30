@@ -40,6 +40,14 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     private PoolHandler m_bombsPoolHandler;
     private float m_bombTimer = 0;
     public float m_bombFireRate;
+    
+    public int m_burstCount = 3;    // number of bombs per burst
+    protected int m_burstCounter = 0;   // current burst bombs remaining
+    
+    public float m_burstFireRate = 0.25f;
+    protected float m_burstTimer = 0;
+    
+    
     public string m_bombProjectileName;
     public Transform m_bombFirePosition;
     protected bool m_hatchOpen = false;
@@ -202,14 +210,33 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                     m_hatchOpen = true;
                     m_animator.SetBool(GameConstants.Animator.BOMB, true);
                     m_bombTimer = m_bombFireRate;
+                    m_burstCounter = 0;
                 }
                 
-                m_bombTimer -= Time.deltaTime;
-                if ( m_bombTimer <= 0 )
+                if ( m_burstCounter > 0 )
                 {
-                    OnLaunchBomb();
-                    m_bombTimer += m_bombFireRate;
+                    m_burstTimer -= Time.deltaTime;
+                    if ( m_burstTimer <= 0 )
+                    {
+                        OnLaunchBomb();
+                        m_burstTimer += m_burstFireRate;
+                        m_burstCounter--;
+                        if ( m_burstCounter <= 0 )
+                        {
+                            m_bombTimer = m_bombFireRate;
+                        }
+                    }
                 }
+                else
+                {
+                    m_bombTimer -= Time.deltaTime;
+                    if ( m_bombTimer <= 0 )
+                    {
+                        m_burstCounter = m_burstCount;
+                        m_burstTimer = 0;
+                    }    
+                }
+                
             }
 
             if ( destroys )
@@ -288,18 +315,18 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         PetProjectile projectile = go.GetComponent<PetProjectile>();
         projectile.tier = m_tier;
         projectile.transform.position = originTransform.position;
-        projectile.transform.rotation = originTransform.rotation;
+        projectile.transform.rotation = originTransform.rotation;   
 		if ( target != null )
 		{
-            projectile.motionType = Projectile.MotionType.Homing;
+            projectile.explodeIfHomingtargetNull = true;
 			projectile.Shoot(target, originTransform.forward, 9999, originTransform);
 		}
         else 
         {
-            projectile.motionType = Projectile.MotionType.Linear;
-            projectile.ShootTowards(originTransform.forward, projectile.speed, 9999, originTransform);
+            projectile.explodeIfHomingtargetNull = false;
+            projectile.ShootAtPosition( originTransform.position + transform.forward * 1000, originTransform.forward, 9999, originTransform);
         }
-			
+		
 	}
 
 	void CreatePool() {
@@ -307,7 +334,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         if ( m_powerLevel >= 1 && !string.IsNullOrEmpty(m_missilesProjectileName))
 		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, "Game/Projectiles/", 2, true);
         if ( m_powerLevel >= 2 && !string.IsNullOrEmpty(m_bombProjectileName))
-            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, "Game/Projectiles/", 1, true);
+            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, "Game/Projectiles/", m_burstCount, true);
 	}
     
     public void OnLaunchMissile1()
@@ -322,6 +349,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     
     public void OnLaunchBomb()
     {
+    
         // Fire!!
         Transform originTransform = m_bombFirePosition;
 
