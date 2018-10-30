@@ -91,8 +91,6 @@ public class UISafeAreaSetter : MonoBehaviour {
 	/// Apply safe area based on current device.
 	/// </summary>
 	public void Apply() {
-		if(this.name == "Left") Debug.Log(Colors.orange.Tag("Apply"));
-
 		// Get Rect transform ref
 		RectTransform rt = GetComponent<RectTransform>();
 
@@ -209,8 +207,6 @@ public class UISafeAreaSetter : MonoBehaviour {
 	/// Restores the values stored as original (if any).
 	/// </summary>
 	public void RestoreOriginalValues() {
-		if(this.name == "Left") Debug.Log(Colors.orange.Tag("Restore Original Values"));
-
 		// Aux vars
 		RectTransform rt = GetComponent<RectTransform>();
 
@@ -234,8 +230,6 @@ public class UISafeAreaSetter : MonoBehaviour {
 	/// Backups current values as the original ones.
 	/// </summary>
 	public void BackupOriginalValues() {
-		if(this.name == "Left") Debug.Log(Colors.orange.Tag("Backup Original Values"));
-
 		RectTransform rt = GetComponent<RectTransform>();
 		m_originalOffsetMin = rt.offsetMin;
 		m_originalOffsetMax = rt.offsetMax;
