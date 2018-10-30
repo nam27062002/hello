@@ -304,18 +304,18 @@ public class DragonHelicopterPowers : MonoBehaviour
         PetProjectile projectile = go.GetComponent<PetProjectile>();
         projectile.tier = m_tier;
         projectile.transform.position = originTransform.position;
-        projectile.transform.rotation = originTransform.rotation;
+        projectile.transform.rotation = originTransform.rotation;   
 		if ( target != null )
 		{
-            projectile.motionType = Projectile.MotionType.Homing;
+            projectile.explodeIfHomingtargetNull = true;
 			projectile.Shoot(target, originTransform.forward, 9999, originTransform);
 		}
         else 
         {
-            projectile.motionType = Projectile.MotionType.Linear;
-            projectile.ShootTowards(originTransform.forward, projectile.speed, 9999, originTransform);
+            projectile.explodeIfHomingtargetNull = false;
+            projectile.ShootAtPosition( originTransform.position + transform.forward * 1000, originTransform.forward, 9999, originTransform);
         }
-			
+		
 	}
 
 	void CreatePool() {

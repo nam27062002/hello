@@ -343,6 +343,10 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	private void FixedUpdate () {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
+                // Update target position
+                if ( m_target != null )
+                    m_targetPosition = m_target.position;
+                                    
 				// motion
 				float dt = Time.fixedDeltaTime * m_scaleTime;
 				m_elapsedTime += dt;
@@ -358,10 +362,9 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 							m_position += m_velocity * dt;
 
 							m_homingTimer -= Time.deltaTime;
-							if (m_homingTimer <= 0f) {
+							if (m_homingTimer <= 0f ) {
 								m_homingTimer = 0f;
-
-								Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
+								Vector3 impulse = (m_targetPosition - m_position).normalized * m_speed;
 								impulse = (impulse - m_velocity) / 15f; //mass
 								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 							}
