@@ -105,13 +105,18 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	/// Will unload previously loaded dragon preview.
 	/// </summary>
 	/// <param name="_sku">Dragon's sku.</param>
-	private void LoadDragonPreview(string _sku) {
+	private void LoadDragonPreview(string _sku, bool _force) {
 		// Toggle loading UI on (will be disabled once the dragon preview is loaded)
 		if(m_loadingUI != null) m_loadingUI.gameObject.SetActive(true);
         if (m_loadingDragonParticle != null) m_loadingDragonParticle.Play();
 
 		// Load the new dragon with its current skin!
 		IDragonData dragonData = DragonManager.GetDragonData(_sku);
+
+        if (_force) {
+            m_dragonLoader.UnloadDragon(); 
+        }
+
 		m_dragonLoader.LoadDragon(_sku, dragonData.persistentDisguise);
 	}
 
@@ -188,7 +193,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Entering lab mode?
 		if(_newMode == SceneController.Mode.SPECIAL_DRAGONS) {
 			// Load current special dragon
-			LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon);
+			LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon, true);
 		}
 
 		// Leaving lab mode?
@@ -208,7 +213,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) return;
 
 		// Load newly selected special dragon
-		LoadDragonPreview(_sku);
+		LoadDragonPreview(_sku, false);
 
 		// Update camera
 		SelectCameraSnapPoint();
@@ -260,7 +265,7 @@ public class LabDragonSelectionScene : MenuScreenScene {
         if ( _from == MenuScreen.NONE && _to == MenuScreen.LAB_DRAGON_SELECTION )
         {
             // Load current special dragon
-            LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon);
+            LoadDragonPreview(InstanceManager.menuSceneController.selectedDragon, true);
         }
     
 		// Check params

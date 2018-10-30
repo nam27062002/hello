@@ -189,16 +189,20 @@ public class Catapult : SimpleDevice {
 			if (m_ammo[i] == null) {
 				m_ammo[i] = m_ammoPoolHandlers[ammoIndex].GetInstance();
 
-				Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
-				catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
+                if (m_ammo[i] != null) {
+                    Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
+                    catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_extraProjectiles[i].initialPositionOffset);
+                }
 			}
 		}
 
 		if (m_ammo[i] == null) {
 			m_ammo[i] = m_ammoPoolHandlers[ammoIndex].GetInstance();
 
-			Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
-			catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
+            if (m_ammo[i] != null) {
+                Projectile catapultAmmo = m_ammo[i].GetComponent<Projectile>();
+                catapultAmmo.AttachTo(m_ammoTransform, m_ammoTransform.rotation * m_initialPosition);
+            }
 		}
 
 		m_timer = m_tossDelay;
