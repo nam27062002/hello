@@ -47,6 +47,20 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	private void Awake() {
 		// Subscribe to events
 		OnSelectionChanged.AddListener(OnSelectedDragonChanged);
+
+        // Initialize items list
+        enableEvents = false;
+        Init(DragonManager.GetDragonsByOrder(m_dragonType));
+
+        // Figure out initial index
+        string selectedSku = InstanceManager.menuSceneController.selectedDragon;
+        for (int i = 0; i < m_items.Count; i++) {
+            if (selectedSku == m_items[i].def.sku) {
+                SelectItem(i);
+                break;
+            }
+        }
+        enableEvents = true;
 	}
 
 	/// <summary>
@@ -61,19 +75,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 	/// First update.
 	/// </summary>
 	private void Start() {
-		// Initialize items list
-		enableEvents = false;
-		Init(DragonManager.GetDragonsByOrder(m_dragonType));
-
-		// Figure out initial index
-		string selectedSku = InstanceManager.menuSceneController.selectedDragon;
-		for(int i = 0; i < m_items.Count; i++) {
-			if(selectedSku == m_items[i].def.sku) {
-				SelectItem(i);
-				break;
-			}
-		}
-		enableEvents = true;
+		
 	}
 
 	//------------------------------------------------------------------//
