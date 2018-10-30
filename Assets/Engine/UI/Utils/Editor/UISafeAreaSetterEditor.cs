@@ -56,12 +56,22 @@ public class UISafeAreaSetterEditor : Editor {
 		DrawDefaultInspector();
 
 		// Add debug buttons
+#if DEBUG
 		// Only in play mode!
 		EditorGUI.BeginDisabledGroup(!Application.isPlaying); {
 			if(GUILayout.Button("Apply (Play mode only)")) {
 				m_targetUISafeAreaSetter.Apply();
 			}
+
+			if(GUILayout.Button("Backup Original Values (Play mode only)")) {
+				m_targetUISafeAreaSetter.BackupOriginalValues();
+			}
+
+			if(GUILayout.Button("Restore Original Values (Play mode only)")) {
+				m_targetUISafeAreaSetter.RestoreOriginalValues();
+			}
 		}
+#endif
 	}
 
 	/// <summary>
