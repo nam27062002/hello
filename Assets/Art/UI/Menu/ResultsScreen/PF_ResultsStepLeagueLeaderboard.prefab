@@ -477,6 +477,7 @@ GameObject:
   - component: {fileID: 114784043246975016}
   - component: {fileID: 114085141974306852}
   - component: {fileID: 225496182880123162}
+  - component: {fileID: 114290876069707350}
   m_Layer: 5
   m_Name: TapToContinue
   m_TagString: Untagged
@@ -1022,6 +1023,32 @@ MonoBehaviour:
   optionalRotationMode: 1
   optionalScrambleMode: 0
   optionalString: 
+--- !u!114 &114290876069707350
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1949491901187704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_actions:
+  - mode: 2
+    scale:
+      bottom: 1
+      left: 0
+      right: 0
+      top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114299574381857928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1451,8 +1478,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114387254113773804}
   m_HandleRect: {fileID: 224878943248996456}
   m_Direction: 2
-  m_Value: 0.9999961
-  m_Size: 0.34399992
+  m_Value: 0.99999404
+  m_Size: 0.34399974
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
