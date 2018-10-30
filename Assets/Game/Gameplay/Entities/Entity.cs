@@ -228,10 +228,7 @@ public class Entity : IEntity {
 			newReward.coins = 0;
 		}
 
-		if (_reason == DyingReason.BURNED) {
-			newReward.alcohol = 0;
-			newReward.fury = 0;
-		}else if ( _reason == DyingReason.DESTROYED ){
+		if (_reason == DyingReason.BURNED || _reason == DyingReason.DESTROYED) {
 			newReward.alcohol = 0;
 		}
 
