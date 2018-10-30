@@ -178,7 +178,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -189,7 +189,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	private void OnLevelLoaded() { m_levelLoaded = true;  }
@@ -204,6 +204,11 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
             {
                 OnLevelLoaded();
             }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            
         }
     }
 

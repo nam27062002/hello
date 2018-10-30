@@ -31,7 +31,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -42,7 +42,7 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -53,6 +53,10 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
             case BroadcastEventType.GAME_AREA_ENTER:
             {
                 OnLevelLoaded();
+            }break;
+             case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
             }break;
         }
     }

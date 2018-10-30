@@ -458,6 +458,11 @@ public class GameSceneController : GameSceneControllerBase {
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
+    public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        base.OnBroadcastSignal(eventType, broadcastEventInfo);
+    }
+        
 	//------------------------------------------------------------------//
 	// FLOW CONTROL														//
 	//------------------------------------------------------------------//
@@ -510,7 +515,7 @@ public class GameSceneController : GameSceneControllerBase {
 		ChangeState(EStates.FINISHED);
 
 		// Dispatch game event
-		Messenger.Broadcast(MessengerEvents.GAME_ENDED);
+		Broadcaster.Broadcast(BroadcastEventType.GAME_ENDED);
 
 		// Open summary screen - override timer after calling this method if you want some delay
 		m_timer = 0.0125f;

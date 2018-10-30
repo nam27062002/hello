@@ -119,12 +119,18 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnDisable() {
 			// Simulate end game
-			Messenger.Broadcast(MessengerEvents.GAME_ENDED);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_ENDED);
 
 			// Unsubscribe from external events
 			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
+
+        public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+        {
+            base.OnBroadcastSignal(eventType, broadcastEventInfo);
+        }
+    
 
 		/// <summary>
 		/// Called every frame.

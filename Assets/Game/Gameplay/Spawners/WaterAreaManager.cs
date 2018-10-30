@@ -27,7 +27,7 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>,
 	private void OnEnable() {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -36,7 +36,7 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>,
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 
@@ -51,6 +51,10 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>,
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                 OnLevelLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
             }break;
         }
     }

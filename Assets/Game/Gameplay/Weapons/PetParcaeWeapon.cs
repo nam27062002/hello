@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class PetParcaeWeapon : PetMeleeWeapon {
+public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
     //--------------------------------------------------------------------------
     [Serializable]
     public class ModData {
@@ -36,12 +36,23 @@ public class PetParcaeWeapon : PetMeleeWeapon {
         m_modsTimer = 0f;
 
         Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, RemoveMods);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     private void OnDestroy() {
         Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
-        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, RemoveMods);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                RemoveMods();
+            }break;
+        }
     }
 
     protected override void Update() {

@@ -42,7 +42,7 @@ public class ComplexDevice : Initializable, IBroadcastListener {
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -52,7 +52,7 @@ public class ComplexDevice : Initializable, IBroadcastListener {
 		// Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -63,6 +63,10 @@ public class ComplexDevice : Initializable, IBroadcastListener {
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                 OnAreaLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnAreaExit();
             }break;
         }
     }

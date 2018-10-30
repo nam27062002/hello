@@ -11,14 +11,14 @@ public class QuitPlayBackButtonHandler : BackButtonHandler, IBroadcastListener {
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, Unregister);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	private void OnDisable() {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnAreaEnter);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnAreaLeave);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Unregister);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
     
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -28,6 +28,10 @@ public class QuitPlayBackButtonHandler : BackButtonHandler, IBroadcastListener {
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                 Register();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                Unregister();
             }break;
         }
     }

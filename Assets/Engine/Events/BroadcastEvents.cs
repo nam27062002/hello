@@ -6,6 +6,7 @@ public enum BroadcastEventType
 {
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
+    GAME_ENDED,
     COUNT,
 }
 

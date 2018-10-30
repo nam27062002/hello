@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Contains references to its most used components as well as some common stats
 /// such as health, energy, etc.
 /// </summary>
-public class DragonPlayer : MonoBehaviour {
+public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 
 	//------------------------------------------------------------------//
 	//------------------------------------------------------------------//
@@ -312,7 +312,7 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
@@ -334,9 +334,20 @@ public class DragonPlayer : MonoBehaviour {
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+             case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>

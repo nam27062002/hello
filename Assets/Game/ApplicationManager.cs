@@ -68,7 +68,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
         Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
 
         Device_Init();
@@ -98,7 +98,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-            Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
         }
 
 		CancelLocalNotifications();
@@ -126,13 +125,12 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
         Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-            Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
         }
 
         m_isAlive = false;
@@ -147,7 +145,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         {
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
+                if (FeatureSettingsManager.IsDebugEnabled)
                     Debug_OnLevelReset();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                    Game_OnEnded();
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Debug_OnLevelReset();
             }break;
         }
     }

@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Serialization;
 
-public class Pet : IEntity {
+public class Pet : IEntity, IBroadcastListener {
 	// Constants
 	public const string GAME_PREFAB_PATH = "Game/Equipable/Pets/";
 	public const string MENU_PREFAB_PATH = "UI/Menu/Pets/";
@@ -54,14 +54,24 @@ public class Pet : IEntity {
 
 	void OnEnable()
 	{
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnEnded();  
+            }break;
+        }
+    }
 
 
 	void OnEnded()
