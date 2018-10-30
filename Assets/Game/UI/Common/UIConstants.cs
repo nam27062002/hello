@@ -307,8 +307,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static SpecialDevice specialDevice {
 		get {
 			// Has the special device been initialized?
-			if(!instance.m_specialDeviceInitialized) {
+			if(!instance.m_specialDeviceInitialized || Application.isEditor) {
 				// No! Do it now
+				instance.m_specialDevice = SpecialDevice.NONE;
+
 				// Override if debugging
 				if(DebugSettings.simulatedSpecialDevice != SpecialDevice.NONE) {
 					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
