@@ -35,12 +35,12 @@ public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
         m_currentMod = null;
         m_modsTimer = 0f;
 
-        Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     private void OnDestroy() {
-        Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
     
@@ -48,6 +48,7 @@ public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
     {
         switch(eventType)
         {
+            case BroadcastEventType.GAME_AREA_EXIT:
             case BroadcastEventType.GAME_ENDED:
             {
                 RemoveMods();

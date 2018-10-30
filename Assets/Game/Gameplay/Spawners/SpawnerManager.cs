@@ -94,7 +94,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
@@ -106,7 +106,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, DisableManager);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}        
 
@@ -125,6 +125,10 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.GAME_AREA_EXIT:
+            {
+                OnAreaExit();
             }break;
         }
     }

@@ -38,7 +38,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
@@ -47,7 +47,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
     
@@ -55,7 +55,8 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
     {
         switch( eventType )
         {
-             case BroadcastEventType.GAME_ENDED:
+            case BroadcastEventType.GAME_AREA_EXIT:
+            case BroadcastEventType.GAME_ENDED:
             {
                 ClearQueues();
             }break;

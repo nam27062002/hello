@@ -855,7 +855,7 @@ public class GameSceneController : GameSceneControllerBase {
     	{
             // ParticleManager.Clear();
             HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
-			Messenger.Broadcast(MessengerEvents.GAME_AREA_EXIT);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
 			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;
