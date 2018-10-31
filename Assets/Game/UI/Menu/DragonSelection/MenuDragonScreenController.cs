@@ -569,30 +569,33 @@ public class MenuDragonScreenController : MonoBehaviour {
     /// Play button has been pressed.
     /// </summary>
     public void OnPlayButton() {
-		// Select target screen
-		MenuScreen nextScreen = MenuScreen.MISSIONS;
-
-		// If there is an active quest, go to the quest screen
-		// Do it as well if the event is pending reward collection
-		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
-		{
-			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
-			if ( quest.EventExists() )	
-			{
-				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
-				{
-					nextScreen = MenuScreen.GLOBAL_EVENTS;	
-				}
-			}
-		}
-
-		// Go to target screen
-		InstanceManager.menuSceneController.GoToScreen(nextScreen);
-
-		// Tutorial tracking
-		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
-			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
-		}
+        if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+        {
+    		// Select target screen
+    		MenuScreen nextScreen = MenuScreen.MISSIONS;
+    
+    		// If there is an active quest, go to the quest screen
+    		// Do it as well if the event is pending reward collection
+    		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
+    		{
+    			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+    			if ( quest.EventExists() )	
+    			{
+    				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
+    				{
+    					nextScreen = MenuScreen.GLOBAL_EVENTS;	
+    				}
+    			}
+    		}
+    
+    		// Go to target screen
+    		InstanceManager.menuSceneController.GoToScreen(nextScreen);
+    
+    		// Tutorial tracking
+    		if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.MISSIONS_INFO)) {
+    			HDTrackingManager.Instance.Notify_Funnel_FirstUX(FunnelData_FirstUX.Steps._08_continue_clicked);
+    		}
+        }
 	}
 
 	/// <summary>
