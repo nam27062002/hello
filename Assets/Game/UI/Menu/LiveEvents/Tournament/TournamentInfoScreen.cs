@@ -187,11 +187,13 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// The next screen button has been pressed.
 	/// </summary>
 	public void OnNextButton() {
-		// Send Tracking event
-		HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
+        if (!m_tournament.isWaitingForNewDefinition) {
+            // Send Tracking event
+            HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
 
-		// [AOC] TODO!! Select fixed or flexible build screen!
-        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+            // [AOC] TODO!! Select fixed or flexible build screen!
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+        }
 	}
     
     /// <summary>
