@@ -507,7 +507,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         for (int i = 0; i < m_mummyModifiers.Count; ++i) {
             m_mummyModifiers[i].Apply();
         }
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 
         // If health modifier changed, notify game
         if (m_currentHealthModifier != oldHealthModifier) {
@@ -547,7 +547,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
             m_mummyModifiers[i].Remove();
         }
         m_mummyModifiers.Clear();
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 
         m_form = Form.NORMAL;
     }

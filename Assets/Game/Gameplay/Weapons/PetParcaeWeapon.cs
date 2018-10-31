@@ -90,7 +90,7 @@ public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
 
         m_currentMod = _data;
 
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
     }
 
     private void RemoveMods() {
@@ -104,7 +104,7 @@ public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
 
             m_view.SetIdleColor();
 
-            Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+            Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
         }
     }
 }

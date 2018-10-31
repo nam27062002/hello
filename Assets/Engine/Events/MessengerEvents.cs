@@ -202,8 +202,6 @@ public enum MessengerEvents {
 	CAMERA_INTRO_DONE,			// no params
 	CAMERA_SHAKE,				// params: float _duration, float _intensity
 
-	// power up events
-	APPLY_ENTITY_POWERUPS,		// no params
 
     // Device events
     DEVICE_RESOLUTION_CHANGED, 	// params: Vector2 _newResolution

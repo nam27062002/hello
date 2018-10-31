@@ -4,6 +4,10 @@ using UnityEngine;
 
 public enum BroadcastEventType
 {
+
+    // power up events
+    APPLY_ENTITY_POWERUPS,      // no params
+    
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,
