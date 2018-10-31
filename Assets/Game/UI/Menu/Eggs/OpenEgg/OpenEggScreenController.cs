@@ -211,7 +211,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 			// Don't show back button if we've completed a golden egg!
 			// Don't show either if rewarding a pet and tutorial not yet completed (force going to collection)
-			bool hideBackButton = (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
+            bool hideBackButton = (SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) && (!finalReward.WillBeReplaced() && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.EGG_REWARD));
 			m_backButton.SetActive(!hideBackButton);
 
 			// Same with egg buy button
