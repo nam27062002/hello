@@ -80,14 +80,16 @@ public class LabButton : MonoBehaviour {
 	/// Go to the lab main screen.
 	/// </summary>
 	public static void GoToLab() {
-		// Tracking
-		HDTrackingManager.Instance.Notify_LabEnter();
+        if (InstanceManager.menuSceneController.transitionManager.transitionAllowed) {
+            // Tracking
+            HDTrackingManager.Instance.Notify_LabEnter();
 
-		// Change mode
-		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+            // Change mode
+            SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
 
-		// Go to lab main screen!
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+            // Go to lab main screen!
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+        }
 	}
 
 	//------------------------------------------------------------------------//
