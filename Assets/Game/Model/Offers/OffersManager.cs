@@ -89,7 +89,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public static void InitFromDefinitions() {
+	public static void InitFromDefinitions(bool _updateFromCustomizer) {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
@@ -112,7 +112,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create new pack
 			OfferPack newPack = new OfferPack();
-			newPack.InitFromDefinition(offerDefs[i]);
+            newPack.InitFromDefinition(offerDefs[i], _updateFromCustomizer);
 
             // Store new pack
             instance.m_allOffers.Add(newPack);

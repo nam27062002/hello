@@ -577,7 +577,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private void Game_OnRulesUpdated()
     {
         // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions();
+        OffersManager.InitFromDefinitions(true);
     }
     #endregion
 
