@@ -112,6 +112,9 @@ public class MenuDragonPreview : MonoBehaviour {
 	private int m_altAnimationsMaxLevel = 10;
 	public int altAnimationsMaxLevel{ get{ return m_altAnimationsMaxLevel; }set{ m_altAnimationsMaxLevel = value; } }
 
+    public ParticleControl[] m_extraParticles;
+    
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -327,5 +330,21 @@ public class MenuDragonPreview : MonoBehaviour {
 	{
 		m_bloodParticle.Stop();
 	}
+    
+    public void PlayExtraParticle(int index)
+    {
+        if (index < m_extraParticles.Length)
+        {
+            m_extraParticles[index].Play();
+        }
+    }
+    
+    public void StopExtraParticle( int index )
+    {
+        if (index < m_extraParticles.Length)
+        {
+            m_extraParticles[index].Stop();
+        }
+    }
 }
 
