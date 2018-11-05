@@ -263,7 +263,10 @@ public class MenuDragonScreenController : MonoBehaviour {
                 // Toggle flag
 				isAnimating = false;
 
-                PopupLabUnlocked.CheckAndOpen();
+				// Particular case when the first M dragon has been acquired in the Results Screen!
+				if(!_gotoDragonUnlockScreen) {
+					PopupLabUnlocked.CheckAndOpen();
+				}
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -530,7 +533,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 							PopupLabUnlocked.CheckAndOpen();
 						}
 					}
-					PopupLabUnlocked.CheckAndOpen();
 				}, 0.25f);
 			}
 		}
