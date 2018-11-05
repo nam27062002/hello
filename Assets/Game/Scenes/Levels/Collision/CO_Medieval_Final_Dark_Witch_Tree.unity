@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 1.67958e-40, b: 2.5578847, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 2.1418e-40, b: 2.5578847, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -4901,6 +4901,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkTree_0
   m_zoneTid: TID_LEVEL_AREA_0_NAME
+  m_isStartingArea: 0
 --- !u!65 &255006296
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4911,7 +4912,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 400, y: 250, z: 1}
+  m_Size: {x: 400, y: 250, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &260639239
 Mesh:
@@ -12037,7 +12038,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -20.306137, y: -38.437836, z: 0}
-      m_Extent: {x: 200.0077, y: 107.007034, z: 5}
+      m_Extent: {x: 200.0077, y: 107.007034, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -12090,7 +12091,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: d0af2e43743b88420000a040a6bbe23d236d7e3f00000000d0af2e43743b88420000a0c033d1cb3e7cd76a3f000000009ab33343b24d9cc10000a04070357e3f4ad9f1bd000000009ab33343b24d9cc10000a0c05b0a783ff65b7dbe00000000ccd90543e37111c30000a0403125223f721a46bf00000000ccd90543e37111c30000a0c090a4783ead5678bf00000000181699c288e40cc30000a0401cef5bbe8f067abf00000000181699c288e40cc30000a0c06982f4bef6eb60bf00000000e4b124c3324d18c20000a0402c854dbf91a218bf00000000e4b124c3324d18c20000a0c0448658bf9a9308bf0000000058505cc36e2389420000a040449b19bf8fcb4c3f0000000058505cc36e2389420000a0c0f9ee11be11637d3f00000000
+    _typelessdata: d0af2e43743b884200004842a5bbe23d236d7e3f00000000d0af2e43743b8842000048c235d1cb3e7dd76a3f000000009ab33343b24d9cc1000048426f357e3f49d9f1bd000000009ab33343b24d9cc1000048c25b0a783ff75b7dbe00000000ccd90543e37111c3000048422f25223f711a46bf00000000ccd90543e37111c3000048c290a4783eac5678bf00000000181699c288e40cc3000048421aef5bbe8f067abf00000000181699c288e40cc3000048c26982f4bef7eb60bf00000000e4b124c3324d18c2000048422c854dbf90a218bf00000000e4b124c3324d18c2000048c2438658bf9a9308bf0000000058505cc36e23894200004842439b19bf8fcb4c3f0000000058505cc36e238942000048c2f8ee11be12637d3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -12145,7 +12146,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -20.306137, y: -38.437836, z: 0}
-    m_Extent: {x: 200.0077, y: 107.007034, z: 5}
+    m_Extent: {x: 200.0077, y: 107.007034, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -23135,6 +23136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkTree_1
   m_zoneTid: TID_LEVEL_AREA_1_NAME
+  m_isStartingArea: 0
 --- !u!33 &1899513625
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -23169,7 +23171,7 @@ MonoBehaviour:
   - {x: -22.813538, y: 68.34266, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}

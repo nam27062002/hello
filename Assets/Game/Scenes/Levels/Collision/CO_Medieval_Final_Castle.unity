@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 1.67958e-40, b: 2.5578847, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 2.1418e-40, b: 2.5578847, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -1311,7 +1311,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 300, y: 34, z: 1}
+  m_Size: {x: 300, y: 34, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &22193364
 MonoBehaviour:
@@ -1326,6 +1326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_11
   m_zoneTid: TID_LEVEL_AREA_11_NAME
+  m_isStartingArea: 0
 --- !u!33 &22193365
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -6871,7 +6872,7 @@ MonoBehaviour:
   - {x: 47.32316, y: 34.069077, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -6911,6 +6912,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_12
   m_zoneTid: TID_LEVEL_AREA_12_NAME
+  m_isStartingArea: 0
 --- !u!33 &165879074
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -8074,7 +8076,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -24.334667, y: -9.47916, z: 0}
-      m_Extent: {x: 97.39632, y: 71.102066, z: 5}
+      m_Extent: {x: 97.39632, y: 71.102066, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -8127,7 +8129,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: ec76e3c27c9847420000a04079f614bf7f32503f00000000ec76e3c27c9847420000a0c0f42171be0fcd783f000000006cfe5a42da7d76420000a040ea369a3df0457f3f000000006cfe5a42da7d76420000a0c0017acb3e62ea6a3f00000000911f92427c8b35410000a040d7b77d3fe46a083e00000000911f92427c8b35410000a0c0e7f97f3f60785fbc00000000943b79429629a1c20000a0402a3c3e3f024f2bbf00000000943b79429629a1c20000a0c0fdd5923e163f75bf00000000ac77a0c236cc9dc20000a040c78b5cbef0fd79bf00000000ac77a0c236cc9dc20000a0c0635206bf2dee59bf000000004476f3c208c323c10000a0400d526fbfa3c9b5be000000004476f3c208c323c10000a0c01eb37dbf3bf708be00000000
+    _typelessdata: ec76e3c27c9847420000484278f614bf7d32503f00000000ec76e3c27c984742000048c2f52171be0fcd783f000000006cfe5a42da7d764200004842e8369a3df0457f3f000000006cfe5a42da7d7642000048c2ff79cb3e63ea6a3f00000000911f92427c8b354100004842d8b77d3fe46a083e00000000911f92427c8b3541000048c2e8f97f3f61785fbc00000000943b79429629a1c2000048422a3c3e3f014f2bbf00000000943b79429629a1c2000048c2fdd5923e143f75bf00000000ac77a0c236cc9dc200004842c78b5cbeeffd79bf00000000ac77a0c236cc9dc2000048c2635206bf2cee59bf000000004476f3c208c323c1000048420e526fbfa5c9b5be000000004476f3c208c323c1000048c21eb37dbf3cf708be00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -8182,7 +8184,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -24.334667, y: -9.47916, z: 0}
-    m_Extent: {x: 97.39632, y: 71.102066, z: 5}
+    m_Extent: {x: 97.39632, y: 71.102066, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -16098,7 +16100,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -15.055756, y: -18.365559, z: 0}
-      m_Extent: {x: 127.41916, y: 61.73028, z: 5}
+      m_Extent: {x: 127.41916, y: 61.73028, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -16151,7 +16153,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: 10bae042fc2fc6410000a04065f7003f4a245d3f0000000010bae042fc2fc6410000a0c06ba66b3fe30cc83e000000007690bf421231a0c20000a04028e5463f4a2c21bf000000007690bf421231a0c20000a0c0ec3aab3e644271bf00000000dcbf1fc20b889dc20000a040f7b39ebdee3a7fbf00000000dcbf1fc20b889dc20000a0c0ddac20be35d47cbf0000000094790ec3186f51c20000a04051fd0cbf5fad55bf0000000094790ec3186f51c20000a0c0b0c261bfc665f1be00000000d6500ec31049f0410000a040ef9751bfe3fd123f00000000d6500ec31049f0410000a0c07727cdbeee8c6a3f0000000098bc8dc17a752d420000a040ec31aebc2ef17f3f0000000098bc8dc17a752d420000a0c0e4727d3d6c827f3f00000000
+    _typelessdata: 10bae042fc2fc6410000484265f7003f49245d3f0000000010bae042fc2fc641000048c26da66b3fe60cc83e000000007690bf421231a0c20000484226e5463f4a2c21bf000000007690bf421231a0c2000048c2eb3aab3e624271bf00000000dcbf1fc20b889dc200004842f7b39ebdef3a7fbf00000000dcbf1fc20b889dc2000048c2dcac20be34d47cbf0000000094790ec3186f51c20000484250fd0cbf60ad55bf0000000094790ec3186f51c2000048c2b1c261bfc665f1be00000000d6500ec31049f04100004842ee9751bfe4fd123f00000000d6500ec31049f041000048c27527cdbeef8c6a3f0000000098bc8dc17a752d4200004842eb31aebc2ff17f3f0000000098bc8dc17a752d42000048c2e5727d3d6c827f3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -16206,7 +16208,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -15.055756, y: -18.365559, z: 0}
-    m_Extent: {x: 127.41916, y: 61.73028, z: 5}
+    m_Extent: {x: 127.41916, y: 61.73028, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -17214,7 +17216,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 310, y: 60, z: 1}
+  m_Size: {x: 310, y: 60, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &557545665
 MonoBehaviour:
@@ -17229,6 +17231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_14
   m_zoneTid: TID_LEVEL_AREA_14_NAME
+  m_isStartingArea: 0
 --- !u!33 &557545666
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -17679,7 +17682,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -17.963104, y: -5.8055096, z: 0}
-      m_Extent: {x: 143.48302, y: 62.700073, z: 5}
+      m_Extent: {x: 143.48302, y: 62.700073, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -17732,7 +17735,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: 00207742099463420000a040b14fc5bcfdec7f3f0000000000207742099463420000a0c0b00f223db0cc7f3f00000000320afb4255282e420000a04069b30b3fa185563f00000000320afb4255282e420000a0c07073673f5ac8da3e00000000c6f7f4420c9f2cc10000a040e520473f72e220bf00000000c6f7f4420c9f2cc10000a0c02e0f0c3fc24956bf00000000c0a7bbc0dc0289c20000a040a2628c3e5f3076bf00000000c0a7bbc0dc0289c20000a0c02854013e36f37dbf000000008b790ec3ca6b82c20000a0404dbdbcbeaaf86dbf000000008b790ec3ca6b82c20000a0c0833149bf724b1ebf00000000357221c3ad4830420000a04018d447bfa903203f00000000357221c3ad4830420000a0c0531c9abec520743f00000000
+    _typelessdata: 002077420994634200004842b44fc5bcfeec7f3f000000000020774209946342000048c2ae0f223daecc7f3f00000000320afb4255282e420000484268b30b3fa185563f00000000320afb4255282e42000048c27173673f5bc8da3e00000000c6f7f4420c9f2cc100004842e420473f72e220bf00000000c6f7f4420c9f2cc1000048c22d0f0c3fc34956bf00000000c0a7bbc0dc0289c200004842a1628c3e5e3076bf00000000c0a7bbc0dc0289c2000048c22854013e36f37dbf000000008b790ec3ca6b82c2000048424dbdbcbeaaf86dbf000000008b790ec3ca6b82c2000048c2813149bf734b1ebf00000000357221c3ad4830420000484219d447bfa803203f00000000357221c3ad483042000048c2531c9abec320743f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -17787,7 +17790,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -17.963104, y: -5.8055096, z: 0}
-    m_Extent: {x: 143.48302, y: 62.700073, z: 5}
+    m_Extent: {x: 143.48302, y: 62.700073, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -28489,7 +28492,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 300, y: 60, z: 1}
+  m_Size: {x: 300, y: 60, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &900426847
 MonoBehaviour:
@@ -28504,6 +28507,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_13
   m_zoneTid: TID_LEVEL_AREA_13_NAME
+  m_isStartingArea: 0
 --- !u!33 &900426848
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -33844,7 +33848,7 @@ MonoBehaviour:
   - {x: 37.78325, y: 26.58128, z: 0}
   isCurve: 00000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -33884,6 +33888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_Secret
   m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
 --- !u!33 &1044776613
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -37856,7 +37861,7 @@ MonoBehaviour:
   - {x: 22.369186, y: 31.35886, z: 0}
   isCurve: 0000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -37896,6 +37901,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_11
   m_zoneTid: TID_LEVEL_AREA_11_NAME
+  m_isStartingArea: 0
 --- !u!33 &1156754871
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -38733,7 +38739,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -125.97943, y: 4.8702793, z: 0}
-      m_Extent: {x: 64.22667, y: 44.72828, z: 5}
+      m_Extent: {x: 64.22667, y: 44.72828, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -38786,7 +38792,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: 32ab04c312b01cc20000a0408bd3f0bd51397ebf0000000032ab04c312b01cc20000a0c001616fbe26e878bf00000000c3343ec3d00f8bc10000a0400f4232bf39bd37bf00000000c3343ec3d00f8bc10000a0c0886673bf89a59ebe00000000fec339c3b07d39420000a040645870bf044cb03e00000000fec339c3b07d39420000a0c077d225bf3509433f00000000aab212c3ec6446420000a0407b5e4d3d92ad7f3f00000000aab212c3ec6446420000a0c0605efd3d89087e3f00000000d20277c2fcd60b420000a04040d5063f4f9d593f00000000d20277c2fcd60b420000a0c04582653f99d1e23e00000000668d7ec2976e1fc20000a0406cff653f47d4e0be00000000668d7ec2976e1fc20000a0c0b6eded3ee5ad62bf00000000
+    _typelessdata: 32ab04c312b01cc2000048428cd3f0bd52397ebf0000000032ab04c312b01cc2000048c200616fbe26e878bf00000000c3343ec3d00f8bc1000048420e4232bf38bd37bf00000000c3343ec3d00f8bc1000048c2896673bf88a59ebe00000000fec339c3b07d394200004842645870bf054cb03e00000000fec339c3b07d3942000048c277d225bf3409433f00000000aab212c3ec644642000048427c5e4d3d92ad7f3f00000000aab212c3ec644642000048c25f5efd3d89087e3f00000000d20277c2fcd60b420000484240d5063f4e9d593f00000000d20277c2fcd60b42000048c24482653f96d1e23e00000000668d7ec2976e1fc2000048426cff653f46d4e0be00000000668d7ec2976e1fc2000048c2b7eded3ee6ad62bf00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -38841,7 +38847,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -125.97943, y: 4.8702793, z: 0}
-    m_Extent: {x: 64.22667, y: 44.72828, z: 5}
+    m_Extent: {x: 64.22667, y: 44.72828, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -39862,7 +39868,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 50, y: 50, z: 1}
+  m_Size: {x: 50, y: 50, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1222043240
 MonoBehaviour:
@@ -39877,6 +39883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_Secret
   m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
 --- !u!33 &1222043241
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -42021,7 +42028,7 @@ Mesh:
     vertexCount: 8
     localAABB:
       m_Center: {x: -0.09991455, y: -2.2769547, z: 0}
-      m_Extent: {x: 23.757477, y: 15.858147, z: 5}
+      m_Extent: {x: 23.757477, y: 15.858147, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -42074,7 +42081,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: b042bd41a08021400000a040bd72273f46a4413f00000000b042bd41a08021400000a0c0b9b27f3f06da46bd00000000601baf40b01491c10000a040db00e43e1a3765bf00000000601baf40b01491c10000a0c0aad8333dccc07fbf00000000f0dbbec160e917c10000a04010fc2abfba863ebf00000000f0dbbec160e917c10000a0c088d67fbf05b011bd00000000e0ae22c1904c59410000a04044adfebe4b155e3f00000000e0ae22c1904c59410000a0c00d6741bc6ffb7f3f00000000
+    _typelessdata: b042bd41a080214000004842bd72273f46a4413f00000000b042bd41a0802140000048c2b8b27f3f0dda46bd00000000601baf40b01491c100004842da00e43e193765bf00000000601baf40b01491c1000048c2a8d8333dcbc07fbf00000000f0dbbec160e917c1000048420ffc2abfb9863ebf00000000f0dbbec160e917c1000048c288d67fbf02b011bd00000000e0ae22c1904c59410000484244adfebe49155e3f00000000e0ae22c1904c5941000048c21f6741bc70fb7f3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -42129,7 +42136,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -0.09991455, y: -2.2769547, z: 0}
-    m_Extent: {x: 23.757477, y: 15.858147, z: 5}
+    m_Extent: {x: 23.757477, y: 15.858147, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -43666,7 +43673,7 @@ MonoBehaviour:
   - {x: -37.776237, y: 48.906364, z: 0}
   isCurve: 0000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -43706,6 +43713,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_13
   m_zoneTid: TID_LEVEL_AREA_13_NAME
+  m_isStartingArea: 0
 --- !u!33 &1328485268
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -44097,7 +44105,7 @@ Mesh:
     vertexCount: 10
     localAABB:
       m_Center: {x: -24.95485, y: -8.354433, z: 0}
-      m_Extent: {x: 145.68666, y: 60.146217, z: 5}
+      m_Extent: {x: 145.68666, y: 60.146217, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -44150,7 +44158,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 240
-    _typelessdata: 962dbe42731538420000a04085c0ac3d6f167f3f00000000962dbe42731538420000a0c0d9b7713ef6c3783f00000000b076f1426d6e26410000a040b8d9743fa774953e00000000b076f1426d6e26410000a0c020437f3fec5f9b3d00000000a689e642550089c20000a0404125f83e8aec5fbf00000000a689e642550089c20000a0c0524ff13d7d377ebf0000000091610fc3b54070c20000a040ba926bbe372279bf0000000091610fc3b54070c20000a0c02f7318bf54a84dbf000000003aa42ac3c92a4f420000a040d3d537bfaf28323f000000003aa42ac3c92a4f420000a0c054d047be38147b3f00000000
+    _typelessdata: 962dbe42731538420000484284c0ac3d6f167f3f00000000962dbe4273153842000048c2d9b7713ef7c3783f00000000b076f1426d6e264100004842b9d9743fa774953e00000000b076f1426d6e2641000048c21f437f3fec5f9b3d00000000a689e642550089c2000048423f25f83e89ec5fbf00000000a689e642550089c2000048c2534ff13d7d377ebf0000000091610fc3b54070c200004842ba926bbe382279bf0000000091610fc3b54070c2000048c22f7318bf53a84dbf000000003aa42ac3c92a4f4200004842d2d537bfaf28323f000000003aa42ac3c92a4f42000048c253d047be38147b3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -44205,7 +44213,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -24.95485, y: -8.354433, z: 0}
-    m_Extent: {x: 145.68666, y: 60.146217, z: 5}
+    m_Extent: {x: 145.68666, y: 60.146217, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -44511,7 +44519,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 300, y: 190, z: 1}
+  m_Size: {x: 300, y: 190, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1348221267
 MonoBehaviour:
@@ -44526,6 +44534,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_14
   m_zoneTid: TID_LEVEL_AREA_14_NAME
+  m_isStartingArea: 0
 --- !u!33 &1348221268
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -44852,7 +44861,7 @@ MonoBehaviour:
   - {x: -133.49307, y: 102.628136, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -44892,6 +44901,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_13
   m_zoneTid: TID_LEVEL_AREA_13_NAME
+  m_isStartingArea: 0
 --- !u!33 &1354794718
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -46241,7 +46251,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 340, y: 250, z: 1}
+  m_Size: {x: 340, y: 250, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1432898503
 MonoBehaviour:
@@ -46256,6 +46266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_0
   m_zoneTid: TID_LEVEL_AREA_0_NAME
+  m_isStartingArea: 0
 --- !u!33 &1432898504
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -46322,7 +46333,7 @@ MonoBehaviour:
   - {x: -98.15341, y: -39.51497, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -46362,6 +46373,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_12
   m_zoneTid: TID_LEVEL_AREA_12_NAME
+  m_isStartingArea: 0
 --- !u!33 &1433405165
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -47167,7 +47179,7 @@ Mesh:
     vertexCount: 8
     localAABB:
       m_Center: {x: 3.0125122, y: 2.0133896, z: 0}
-      m_Extent: {x: 49.41629, y: 47.202263, z: 5}
+      m_Extent: {x: 49.41629, y: 47.202263, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -47220,7 +47232,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 192
-    _typelessdata: 18b75142209a7c400000a0406a807d3f79b60ebe0000000018b75142209a7c400000a0c0719a3f3fe1c629bf00000000687dcec168c134c20000a0404679b23e7cf16fbf00000000687dcec168c134c20000a0c0a77305be12d17dbf00000000789d39c2605a4cc10000a040c6d479bf31715f3e00000000789d39c2605a4cc10000a0c0640c4cbfd7981a3f00000000001ab941d4dc44420000a040f5d0d8bec1e9673f00000000001ab941d4dc44420000a0c024b75e3e28df793f00000000
+    _typelessdata: 18b75142209a7c40000048426a807d3f75b60ebe0000000018b75142209a7c40000048c2719a3f3fe1c629bf00000000687dcec168c134c2000048424879b23e7cf16fbf00000000687dcec168c134c2000048c2a67305be12d17dbf00000000789d39c2605a4cc100004842c6d479bf33715f3e00000000789d39c2605a4cc1000048c2640c4cbfd8981a3f00000000001ab941d4dc444200004842f2d0d8bec1e9673f00000000001ab941d4dc4442000048c227b75e3e28df793f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -47275,7 +47287,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: 3.0125122, y: 2.0133896, z: 0}
-    m_Extent: {x: 49.41629, y: 47.202263, z: 5}
+    m_Extent: {x: 49.41629, y: 47.202263, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -47427,7 +47439,7 @@ Mesh:
     vertexCount: 10
     localAABB:
       m_Center: {x: 22.369186, y: -33.973698, z: 0}
-      m_Extent: {x: 174.82716, y: 65.392395, z: 5}
+      m_Extent: {x: 174.82716, y: 65.392395, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -47480,7 +47492,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 240
-    _typelessdata: 443245436864fa410000a0401e204c3eb4dc7a3f00000000443245436864fa410000a0c0e34a3d3f77592c3f00000000b0640d4370bbc6c20000a040d8770e3fb9b154bf00000000b0640d4370bbc6c20000a0c04390543e7a6c7abf00000000567b08c34cd7c5c20000a040ba69e0bd5d757ebf00000000567b08c34cd7c5c20000a0c09f04cbbec5036bbf000000007e4e0ac39a6019c20000a040f8e47ebfb521bebd000000007e4e0ac39a6019c20000a0c097257dbfbe7418be000000003e7518c37c59fb410000a040bac3cbbe69da6a3f000000003e7518c37c59fb410000a0c052c0cebd31b17e3f00000000
+    _typelessdata: 443245436864fa41000048421c204c3eb2dc7a3f00000000443245436864fa41000048c2e34a3d3f78592c3f00000000b0640d4370bbc6c200004842d8770e3fb9b154bf00000000b0640d4370bbc6c2000048c24390543e7a6c7abf00000000567b08c34cd7c5c200004842b869e0bd5e757ebf00000000567b08c34cd7c5c2000048c29d04cbbec4036bbf000000007e4e0ac39a6019c200004842f8e47ebfb521bebd000000007e4e0ac39a6019c2000048c297257dbfbe7418be000000003e7518c37c59fb4100004842b9c3cbbe67da6a3f000000003e7518c37c59fb41000048c250c0cebd31b17e3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -47535,7 +47547,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: 22.369186, y: -33.973698, z: 0}
-    m_Extent: {x: 174.82716, y: 65.392395, z: 5}
+    m_Extent: {x: 174.82716, y: 65.392395, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -49371,7 +49383,7 @@ MonoBehaviour:
   - {x: 6.744934, y: 8.052334, z: 0}
   isCurve: 00000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -49411,6 +49423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_Secret
   m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
 --- !u!33 &1527286941
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -50515,7 +50528,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 50, y: 58, z: 1}
+  m_Size: {x: 50, y: 58, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1579239221
 MonoBehaviour:
@@ -50530,6 +50543,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_14
   m_zoneTid: TID_LEVEL_AREA_14_NAME
+  m_isStartingArea: 0
 --- !u!33 &1579239222
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -52278,7 +52292,7 @@ MonoBehaviour:
   - {x: -117.73163, y: 19.831898, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -52318,6 +52332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_13
   m_zoneTid: TID_LEVEL_AREA_13_NAME
+  m_isStartingArea: 0
 --- !u!33 &1642571025
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -55417,7 +55432,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 300, y: 70, z: 1}
+  m_Size: {x: 300, y: 70, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1732527144
 MonoBehaviour:
@@ -55432,6 +55447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_Castle_12
   m_zoneTid: TID_LEVEL_AREA_12_NAME
+  m_isStartingArea: 0
 --- !u!33 &1732527145
 MeshFilter:
   m_ObjectHideFlags: 0
