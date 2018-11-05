@@ -286,6 +286,19 @@ public class ContentManager
 		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
 
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    public static void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
+        
+        // Update all managers 
+    }
+     
+
+
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[ContentManager] ";    

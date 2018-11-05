@@ -168,13 +168,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 
 			// Start loading the scene asynchronously. Run here any process you need to run before loading. 1-Frame state.
 			case ESceneState.PRELOAD: {
-                bool rulesReloaded = HDCustomizerManager.instance.Apply();
-
-                // If rules have been reloaded then cached data have to be updated
-                if (rulesReloaded)
-                {
-                    OnRulesUpdated();
-                }
+                    HDCustomizerManager.instance.CheckAndApply();
 			} break;
 
 			// Loading the intermediate loading screen
@@ -320,14 +314,5 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			} break;
 		}
 	}
-
-    /// <summary>
-    /// This method is called when rules have changed
-    /// </summary>
-    private void OnRulesUpdated()
-    {
-        // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions();
-    }
 }
 

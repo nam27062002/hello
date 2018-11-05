@@ -257,7 +257,6 @@ public class LoadingSceneController : SceneController {
         WAITING_FOR_RULES,        
         LOADING_RULES,
         CREATING_SINGLETONS,
-        WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
@@ -508,24 +507,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                if (FeatureSettingsManager.instance.IsCustomizerBlocker)
-                {
-                    SetState(State.WAITING_FOR_CUSTOMIZER);
-                }
-                else
-                {                        
-                    SetState(State.WAITING_SAVE_FACADE);
-                }                    
-            }
-            break;
-            case State.WAITING_FOR_CUSTOMIZER:
-            {
-                if (HDCustomizerManager.instance.IsReady())
-                {
-                    // Applies the customizer
-                    ApplicationManager.instance.Game_ApplyCustomizer();
-                    SetState(State.WAITING_SAVE_FACADE);
-                }
+                SetState(State.WAITING_SAVE_FACADE);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -653,8 +635,6 @@ public class LoadingSceneController : SceneController {
                     // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
                     MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
                 }
-					                
-                HDCustomizerManager.instance.Initialise();
 
                 UsersManager.CreateInstance();
 
@@ -715,6 +695,9 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();
+
+                // Check si necesita aplicar customizer
+                HDCustomizerManager.instance.CheckAndApply();
             } break;
 
            case State.WAITING_SAVE_FACADE:

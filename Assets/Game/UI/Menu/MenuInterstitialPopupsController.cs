@@ -59,7 +59,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void Update() {
 		if (m_waitForCustomPopup) {
 			if (!m_popupDisplayed) {
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				} else {
@@ -106,7 +106,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				if(langDef != null) {
 					langServerCode = langDef.GetAsString("serverCode", langServerCode);
 				}
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}
@@ -152,7 +152,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     }
 
 
-	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
+	private void OpenCustomizerPopup(Calety.Customiser.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
 		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
