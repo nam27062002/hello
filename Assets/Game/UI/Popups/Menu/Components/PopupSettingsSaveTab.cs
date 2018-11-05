@@ -202,6 +202,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 			config.OnCancel = null;
             config.ButtonMode = IPopupMessage.Config.EButtonsMode.ConfirmAndCancel;
 			config.IsButtonCloseVisible = false;
+			config.BackButtonStrategy = IPopupMessage.Config.EBackButtonStratety.PerformCancel;
 			PopupManager.PopupMessage_Open(config);
 		}
 	}
