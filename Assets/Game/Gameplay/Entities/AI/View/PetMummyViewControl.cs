@@ -68,7 +68,13 @@ public class PetMummyViewControl : ViewControl {
         base.CustomUpdate();
 
         if (m_state == State.POWER_ACTIVE) {
-            m_powerStatus = (m_dragon.health / m_dragon.mummyHealthMax);
+            float pStatus = (m_dragon.health / m_dragon.mummyHealthMax);
+
+            if (pStatus > m_powerStatus) {
+                m_powerStatus = 0f;
+            } else {
+                m_powerStatus = pStatus;
+            }
 
             m_effectTransform.localPosition = Vector3.Lerp(m_basePosition, m_topPosition, 1f - m_powerStatus);
 
