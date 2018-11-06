@@ -42,12 +42,13 @@ public class AchievementsTracker {
 		}
 	}
 
-	void UpdateAchievementsProgress()
+	public void UpdateAchievementsProgress()
 	{	
 		foreach(KeyValuePair<string, AchievementObjective> kEntry in m_objectives)
 		{
 			if ( !kEntry.Value.reported || kEntry.Value.reportProgress )
 			{
+                kEntry.Value.RefreshCurrentValue();
 				kEntry.Value.OnValueChanged();
 			}
 		}
