@@ -33,13 +33,22 @@ public class MenuNavigationButton : MonoBehaviour {
 	// Internal References
 	protected MenuTransitionManager m_transitionManager = null;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	protected void Start() {
+    // Multitouch avoidment
+    public static bool m_buttonMultitouchProtector;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+
+    private void OnEnable()
+    {
+        m_buttonMultitouchProtector = false;
+    }
+
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    protected void Start() {
 		// Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
 		m_transitionManager = InstanceManager.menuSceneController.transitionManager;
 		Debug.Assert(m_transitionManager != null, "Required component missing!");
@@ -52,28 +61,34 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the target screen.
 	/// </summary>
 	public void OnNavigationButton() {
+        if (m_buttonMultitouchProtector) return;
 		// Just go to target screen
 		m_transitionManager.GoToScreen(m_targetScreen, true);
+        m_buttonMultitouchProtector = true;
 	}
 
 	/// <summary>
 	/// Go to the previous screen, if any.
 	/// </summary>
 	public void OnBackButton() {
-		// If history is empty, go to default screen
-		if(m_transitionManager.screenHistory.Count == 0) {
+        if (m_buttonMultitouchProtector) return;
+        // If history is empty, go to default screen
+        if (m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
 		} else {
 			m_transitionManager.Back(true);
 		}
-	}
+        m_buttonMultitouchProtector = true;
+    }
 
-	/// <summary>
-	/// Special callback for the final play button.
-	/// </summary>
-	public void OnStartGameButton() {
-		// To be used only on the menu
-		// Let the scene controller manage it
-		InstanceManager.menuSceneController.OnPlayButton();
-	}
+    /// <summary>
+    /// Special callback for the final play button.
+    /// </summary>
+    public void OnStartGameButton() {
+        if (m_buttonMultitouchProtector) return;
+        // To be used only on the menu
+        // Let the scene controller manage it
+        InstanceManager.menuSceneController.OnPlayButton();
+        m_buttonMultitouchProtector = true;
+    }
 }
