@@ -88,7 +88,7 @@ public class PhotoScreenController : MonoBehaviour {
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
 	}
-		
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -132,7 +132,7 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Hide QR code container
 		m_qrContainer.gameObject.SetActive(false);
-	}
+    }
 
 	/// <summary>
 	/// Component has been disabled.
@@ -397,30 +397,36 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Take the picture!
 	/// </summary>
 	public void OnTakePictureButton() {
+        if (!MenuNavigationButton.checkMultitouchAvailability()) return;
+
 		// Do it in a coroutine to wait until the end of the frame
 		StartCoroutine(TakePicture());
-	}
+    }
 
-	/// <summary>
-	/// The back button has been pressed.
-	/// </summary>
-	public void OnBackButton() {
-		// Ignore if we are in AR
-		if(!m_arFlow.isActiveAndEnabled) {
+    /// <summary>
+    /// The back button has been pressed.
+    /// </summary>
+    public void OnBackButton() {
+        if (!MenuNavigationButton.checkMultitouchAvailability()) return;
+
+        // Ignore if we are in AR
+        if (!m_arFlow.isActiveAndEnabled) {
 			// Go back to previous menu screen
 			InstanceManager.menuSceneController.transitionManager.Back(true);
 		}
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// AR CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The AR button has been pressed.
-	/// </summary>
-	public void OnARButton() {
-		// Start AR flow
-		if(!m_arFlow.isActiveAndEnabled) {
+    //------------------------------------------------------------------------//
+    // AR CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The AR button has been pressed.
+    /// </summary>
+    public void OnARButton() {
+        if (!MenuNavigationButton.checkMultitouchAvailability()) return;
+
+        // Start AR flow
+        if (!m_arFlow.isActiveAndEnabled) {
 			// Hide bottom bar
 			m_bottomBar.gameObject.SetActive(false);
 
@@ -431,30 +437,32 @@ public class PhotoScreenController : MonoBehaviour {
 			// Do it!
 			m_arFlow.StartFlow();
 		}
-	}
+    }
 
-	/// <summary>
-	/// AR flow wants to finish.
-	/// </summary>
-	private void OnARExit() {
-		// Terminate AR flow
-		m_arFlow.EndFlow();
-	}
+    /// <summary>
+    /// AR flow wants to finish.
+    /// </summary>
+    private void OnARExit() {
+        if (!MenuNavigationButton.checkMultitouchAvailability()) return;
+        // Terminate AR flow
+        m_arFlow.EndFlow();
+    }
 
-	/// <summary>
-	/// AR flow wants to take a picture.
-	/// </summary>
-	private void OnARTakePicture() {
-		// Use the same picture functionality as in normal mode
-		OnTakePictureButton();
-	}
+    /// <summary>
+    /// AR flow wants to take a picture.
+    /// </summary>
+    private void OnARTakePicture() {
+        if (!MenuNavigationButton.checkMultitouchAvailability()) return;
+        // Use the same picture functionality as in normal mode
+        OnTakePictureButton();
+    }
 
-	/// <summary>
-	/// AR flow has changed its state.
-	/// </summary>
-	/// <param name="_oldState">Old state.</param>
-	/// <param name="_newState">New state.</param>
-	private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
+    /// <summary>
+    /// AR flow has changed its state.
+    /// </summary>
+    /// <param name="_oldState">Old state.</param>
+    /// <param name="_newState">New state.</param>
+    private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
 		// Don't show dragon info while detecting the surface
 		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
 
