@@ -53,11 +53,19 @@ public class TrackerBuySkins : TrackerBase {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// A chest has been collected.
-	/// </summary>
-	/// <param name="_chest">The collected chest.</param>
+    /// On skin acquired.
+    /// </summary>
+    /// <param name="_skinSku">Skin sku.</param>
 	private void OnSkinAcquired(string _skinSku) {
 		// Just increase counter
 		currentValue++;
 	}
+    
+    
+    public override void RefreshCurrentValue(){
+        if ( UsersManager.currentUser != null ) {
+            currentValue = UsersManager.currentUser.wardrobe.GetNumAdquiredSkins();
+        }
+    }
+    
 }

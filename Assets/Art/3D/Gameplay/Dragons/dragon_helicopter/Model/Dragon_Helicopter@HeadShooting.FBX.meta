@@ -1,13 +1,26 @@
 fileFormatVersion: 2
-guid: eeda1898cc0557442b6a0a40fe9e29a2
+guid: 3d79bb499996b4178961d637ea0bf7c1
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: coin_LOW_geo
+    100000: Dragon_Body
+    100002: Dragon_Chest
+    100004: Dragon_Down_Snout
+    100006: Dragon_Head
+    100008: Dragon_HeadMachineGun
+    100010: //RootNode
+    100012: Dragon_Jaw
+    100014: Dragon_Spine
+    400000: Dragon_Body
+    400002: Dragon_Chest
+    400004: Dragon_Down_Snout
+    400006: Dragon_Head
+    400008: Dragon_HeadMachineGun
+    400010: //RootNode
+    400012: Dragon_Jaw
+    400014: Dragon_Spine
+    7400000: HeadShooting
+    9500000: //RootNode
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -34,23 +47,51 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
-    isReadable: 1
+    clipAnimations:
+    - serializedVersion: 16
+      name: HeadShooting
+      takeName: Dragon_Helicopter_Firerush_MIGUEL
+      firstFrame: 26
+      lastFrame: 52
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
-    importVisibility: 0
+    importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
-    weldVertices: 0
+    weldVertices: 1
     preserveHierarchy: 0
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -63,7 +104,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 0
+  importAnimation: 1
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2
@@ -82,7 +123,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

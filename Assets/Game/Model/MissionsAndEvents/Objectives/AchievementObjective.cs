@@ -84,7 +84,8 @@ public class AchievementObjective : TrackingObjectiveBase, IBroadcastListener {
 			"",
 			""
 		);
-
+        m_tracker.enabled = true;
+        
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
@@ -170,4 +171,9 @@ public class AchievementObjective : TrackingObjectiveBase, IBroadcastListener {
 			}
 		}
 	}
+    
+    public void RefreshCurrentValue(){
+        m_tracker.RefreshCurrentValue();
+    }
+    
 }
