@@ -70,7 +70,9 @@ public class TouchControlsDPad : TouchControls {
 
 	// Use this for initialization
 	override public void Start () 
-	{
+    {
+        Input.multiTouchEnabled = true;
+
 		// [AOC] Init references
 		m_dPadRectTransform = m_dpadObj.transform as RectTransform;
 		m_dPadDotRectTransform = m_dpadDotObj.transform as RectTransform;
