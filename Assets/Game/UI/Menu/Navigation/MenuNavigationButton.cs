@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -34,16 +35,25 @@ public class MenuNavigationButton : MonoBehaviour {
 	protected MenuTransitionManager m_transitionManager = null;
 
     // Multitouch avoidment
-    public static bool m_buttonMultitouchProtector;
+    private static bool m_buttonMultitouchProtector = false;
 
+    public static bool checkMultitouchAvailability()
+    {
+        if (m_buttonMultitouchProtector) return false;
+        m_buttonMultitouchProtector = true;
+        CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.75f));
+        return true;
+    }
+
+    static IEnumerator WaitAMoment(float time)
+    {
+        // suspend execution for 5 seconds
+        yield return new WaitForSeconds(time);
+        m_buttonMultitouchProtector = false;
+    }
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
-
-    private void OnEnable()
-    {
-        m_buttonMultitouchProtector = false;
-    }
 
     /// <summary>
     /// First update call.
@@ -61,34 +71,31 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the target screen.
 	/// </summary>
 	public void OnNavigationButton() {
-        if (m_buttonMultitouchProtector) return;
+        if (!checkMultitouchAvailability()) return;
 		// Just go to target screen
 		m_transitionManager.GoToScreen(m_targetScreen, true);
-        m_buttonMultitouchProtector = true;
 	}
 
 	/// <summary>
 	/// Go to the previous screen, if any.
 	/// </summary>
 	public void OnBackButton() {
-        if (m_buttonMultitouchProtector) return;
+        if (!checkMultitouchAvailability()) return;
         // If history is empty, go to default screen
         if (m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
 		} else {
 			m_transitionManager.Back(true);
 		}
-        m_buttonMultitouchProtector = true;
     }
 
     /// <summary>
     /// Special callback for the final play button.
     /// </summary>
     public void OnStartGameButton() {
-        if (m_buttonMultitouchProtector) return;
+        if (!checkMultitouchAvailability()) return;
         // To be used only on the menu
         // Let the scene controller manage it
         InstanceManager.menuSceneController.OnPlayButton();
-        m_buttonMultitouchProtector = true;
     }
 }
