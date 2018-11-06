@@ -142,6 +142,7 @@ public class DragonHelicopterPowers : MonoBehaviour
             if ( !m_machinegunFiring )
             {
                 m_machinegunFiring = true;
+                m_animator.SetBool( GameConstants.Animator.SHOOTING, true);
                 if ( m_machinegunParticle != null)
                     m_machinegunParticle.Play();
             }
@@ -255,6 +256,7 @@ public class DragonHelicopterPowers : MonoBehaviour
             if ( m_machinegunFiring )
             {
                 m_machinegunFiring = false;
+                m_animator.SetBool( GameConstants.Animator.SHOOTING, false);
                 if ( m_machinegunParticle != null )
                     m_machinegunParticle.Stop();
             }

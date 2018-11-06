@@ -414,15 +414,15 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
         m_mutedWindSounds = false;
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
-			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.volumeItem;
+			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.audioItem.Volume;
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
-			m_wingsIdleSoundAO.volume = m_wingsIdleSoundAO.volumeItem;
+			m_wingsIdleSoundAO.volume = m_wingsIdleSoundAO.audioItem.Volume;
 		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
-			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.volumeItem;
+			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.audioItem.Volume;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
-			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.volumeItem;
+			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.audioItem.Volume;
 		if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying())
-			m_starvingSoundAO.volume = m_starvingSoundAO.volumeItem;
+			m_starvingSoundAO.volume = m_starvingSoundAO.audioItem.Volume;
 	}
 
 	public void OnInsideWater( bool withSplash )
