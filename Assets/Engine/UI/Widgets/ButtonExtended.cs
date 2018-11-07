@@ -57,7 +57,7 @@ public class ButtonExtended : Button {
     /// </summary>
     private void Start()
     {
-        m_eventBackup = onClick;
+        m_eventBackup = onClick.Clone<ButtonClickedEvent>();
         onClick.RemoveAllListeners();
         onClick.AddListener(safeOnclick);
     }
