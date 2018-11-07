@@ -118,6 +118,52 @@ public class Wardrobe
 			}
 		}
 	}
+    
+    /// <summary>
+    /// Gets the number owned skins.
+    /// </summary>
+    /// <returns>The number owned skins.</returns>
+    public int GetNumOwnedSkins()
+    {
+        int ret = 0;
+        if ( m_disguises != null )
+        {
+            foreach (KeyValuePair<string,SkinState> item in m_disguises)
+            {
+                if (item.Value == SkinState.OWNED)
+                {
+                    ret++;
+                }
+            }
+        }
+        return ret;
+    }
+    
+    
+    /// <summary>
+    /// Gets the number of adquired skins.
+    /// </summary>
+    /// <returns>The number owned skins.</returns>
+    public int GetNumAdquiredSkins()
+    {
+        int ret = 0;
+        if ( m_disguises != null )
+        {
+            foreach (KeyValuePair<string,SkinState> item in m_disguises)
+            {
+                if (item.Value == SkinState.OWNED)
+                {
+                    // Check if it's not the default
+                    DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.Key);
+                    if ( def != null && def.GetAsInt("unlockLevel") > 0 )
+                    {
+                        ret++;
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
 	//------------------------------------------------------------------//
 	// PERSISTENCE														//

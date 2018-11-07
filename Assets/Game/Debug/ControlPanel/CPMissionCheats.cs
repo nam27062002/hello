@@ -239,4 +239,9 @@ public class CPMissionCheats : MonoBehaviour {
 		// Done!
 		TextFeedback("SUCCESS!", Color.green);
 	}
+
+    public void OnCompleteAndSkip() {
+        OnCompleteMission();
+        OnSkipCooldown();
+    }
 }

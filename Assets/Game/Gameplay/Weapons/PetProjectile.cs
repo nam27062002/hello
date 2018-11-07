@@ -15,6 +15,11 @@ public class PetProjectile : Projectile
     [SerializeField] IEntity.Type m_firingEntityType = IEntity.Type.PET;
     private Rect m_rect;
     [SerializeField] bool m_explodeIfHomingtargetNull = false;
+    public bool explodeIfHomingtargetNull
+    {
+        get{ return m_explodeIfHomingtargetNull; }
+        set{ m_explodeIfHomingtargetNull = value; }
+    }
 
     protected override void Update()
     {

@@ -327,7 +327,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
     private void OnRulesUpdated()
     {
         // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions();
+        OffersManager.InitFromDefinitions(true);
     }
 }
 

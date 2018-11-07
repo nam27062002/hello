@@ -435,6 +435,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+        Input.multiTouchEnabled = true;
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -530,6 +531,8 @@ public class GameSceneController : GameSceneControllerBase {
 					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);
                     //Start Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
+
+                    Input.multiTouchEnabled = true;
                 }
             }
 

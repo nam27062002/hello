@@ -237,4 +237,11 @@ public class TrackerBase {
 		// Unrecoginzed mission type, aborting
 		return null;
 	}
+    
+    /// <summary>
+    /// Refreshs the current value. This function will be called on the achievements that need to check a specific value on the profile
+    /// Used for example in checking unlocking dragons and number of skins because we cannot unlock a dragon again
+    /// </summary>
+    public virtual void RefreshCurrentValue(){
+    }
 }

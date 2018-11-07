@@ -32,16 +32,15 @@ public class UITooltip : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private RectTransform m_arrow = null;
-	[SerializeField] private ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
+	[SerializeField] protected RectTransform m_arrow = null;
+	[SerializeField] protected ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
 	[Separator("Optional")]
-	[SerializeField] private TMPro.TextMeshProUGUI m_titleText = null;
-	[SerializeField] private TMPro.TextMeshProUGUI m_messageText = null;
-    [SerializeField] private Image m_icon = null;
-    
+	[SerializeField] protected TMPro.TextMeshProUGUI m_titleText = null;
+	[SerializeField] protected TMPro.TextMeshProUGUI m_messageText = null;
+    [SerializeField] protected Image m_icon = null;
 
 	// Other references
-	private ShowHideAnimator m_animator = null;
+	protected ShowHideAnimator m_animator = null;
 	public ShowHideAnimator animator {
 		get {
 			if(m_animator == null) m_animator = GetComponent<ShowHideAnimator>();
@@ -55,7 +54,7 @@ public class UITooltip : MonoBehaviour {
 	/// <summary>
 	/// Initialization.
 	/// </summary>
-	private void Awake() {
+	protected void Awake() {
 		// Get animator ref
 		m_animator = GetComponent<ShowHideAnimator>();
 

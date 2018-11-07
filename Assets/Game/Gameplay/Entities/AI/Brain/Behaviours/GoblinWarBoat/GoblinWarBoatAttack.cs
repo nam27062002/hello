@@ -77,6 +77,13 @@ namespace AI {
 
 				m_attacksLeft = m_data.consecutiveAttacks;
 			}
+            
+            protected override void OnRemove()
+            {
+                base.OnRemove();
+                Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+            }
+            
 
 			void CreatePool() {
 				m_poolHandler = PoolManager.CreatePool(m_data.projectileName, "Game/Projectiles/", 2, true);

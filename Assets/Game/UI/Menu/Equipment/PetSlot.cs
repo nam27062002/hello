@@ -52,6 +52,8 @@ public class PetSlot : MonoBehaviour {
 	}
 
 	private IDragonData m_dragonData = null;
+
+    private Coroutine m_unloadPetCoroutine = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,6 +66,8 @@ public class PetSlot : MonoBehaviour {
 		if(m_slotInfo == null) m_slotInfo = this.GetComponentInChildren<PetSlotInfo>();
 		if(m_powerIcon == null) m_powerIcon = this.GetComponentInChildren<PowerIcon>();
 		if(m_petLoader == null) m_petLoader = this.GetComponentInChildren<MenuPetLoader>();
+
+        m_unloadPetCoroutine = null;
 
 		// To make sure pet particles are properly scaled, but keeping in mind performance,
 		// have a ParticleScaler constantly checking particle scales during the pet slot
@@ -97,6 +101,8 @@ public class PetSlot : MonoBehaviour {
 	public void Init(int _slotIdx) {
 		// Store slot index
 		m_slotIdx = _slotIdx;
+
+        m_unloadPetCoroutine = null;
 
 		// Initialize slot info and power icon
 		m_slotInfo.Init(_slotIdx);
@@ -157,6 +163,11 @@ public class PetSlot : MonoBehaviour {
 		if(equipped) {
 			// Don't reload if pet is already loaded
 			if(petLoader.petSku != _def.sku || petLoader.petInstance == null) {
+                if (m_unloadPetCoroutine != null) {
+                    StopCoroutine(m_unloadPetCoroutine);
+                    m_unloadPetCoroutine = null;
+                }
+
 				// The loader will do everything!
 				petLoader.Load(_def.sku);
 
@@ -170,13 +181,18 @@ public class PetSlot : MonoBehaviour {
 			}
 		} else {
 			if(petLoader.petInstance != null) {
+                if (m_unloadPetCoroutine != null) {
+                    StopCoroutine(m_unloadPetCoroutine);
+                    m_unloadPetCoroutine = null;
+                }
+
 				// Animate?
 				if(_animate) {
 					// Toggle the OUT anim
 					MenuPetPreview pet = petLoader.petInstance.GetComponent<MenuPetPreview>();
 					pet.SetAnim(MenuPetPreview.Anim.OUT);
 					// Program a delayed destruction of the pet preview (to give some time to see the anim)
-					UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
+                    m_unloadPetCoroutine = UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
 				} else {
 					petLoader.Unload();
 				}			

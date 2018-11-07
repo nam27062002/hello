@@ -25,6 +25,10 @@ public class LabButton : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[SerializeField] private Selectable m_target = null;
+
+	// Internal
+	private bool m_toggle = true;
+	private AnimationTriggers m_defaultTriggers = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -61,16 +65,37 @@ public class LabButton : MonoBehaviour {
 		}
 
 		// Check required number of runs
-		bool toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LAB_AT_RUN);
+		m_toggle = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_LAB_AT_RUN);
 
 		// If a dragon of the required tier is acquired before completing the minimum amount of runs (via HC), toggle anyways
 		if(DragonManager.biggestOwnedDragon.tier >= DragonDataSpecial.MIN_TIER_TO_UNLOCK) {
-			toggle = true;
+			m_toggle = true;
 		}
 
 		// Requires a Selectable component
 		if(m_target != null) {
-			m_target.interactable = toggle;
+			//m_target.interactable = toggle;
+
+			// Backup original triggers
+			if(m_defaultTriggers == null) {
+				m_defaultTriggers = new AnimationTriggers();
+				m_defaultTriggers.normalTrigger = m_target.animationTriggers.normalTrigger;
+				m_defaultTriggers.disabledTrigger = m_target.animationTriggers.disabledTrigger;
+				m_defaultTriggers.highlightedTrigger = m_target.animationTriggers.highlightedTrigger;
+				m_defaultTriggers.pressedTrigger = m_target.animationTriggers.pressedTrigger;
+			}
+
+			// Don't actually disable the button, allow tapping to it to give feedabck on when the button will be unlocked
+			// To do the trick, we'll switch the button's state animation triggers
+			if(m_toggle) {
+				m_target.animationTriggers.normalTrigger = m_defaultTriggers.normalTrigger;
+				m_target.animationTriggers.highlightedTrigger = m_defaultTriggers.highlightedTrigger;
+				m_target.animationTriggers.pressedTrigger = m_defaultTriggers.pressedTrigger;
+			} else {
+				m_target.animationTriggers.normalTrigger = m_defaultTriggers.disabledTrigger;
+				m_target.animationTriggers.highlightedTrigger = m_defaultTriggers.disabledTrigger;
+				m_target.animationTriggers.pressedTrigger = m_defaultTriggers.disabledTrigger;
+			}
 		} else {
 			Debug.LogError("<color=red>SELECTABLE NOT FOUND</color>");
 		}
@@ -80,14 +105,17 @@ public class LabButton : MonoBehaviour {
 	/// Go to the lab main screen.
 	/// </summary>
 	public static void GoToLab() {
-		// Tracking
-		HDTrackingManager.Instance.Notify_LabEnter();
-
-		// Change mode
-		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
-
-		// Go to lab main screen!
-		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+		if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+        {
+    		// Tracking
+    		HDTrackingManager.Instance.Notify_LabEnter();
+    
+    		// Change mode
+    		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+    
+    		// Go to lab main screen!
+    		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -97,6 +125,19 @@ public class LabButton : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnLabButton() {
+		// If not allowed, show feedback and return
+		if(!m_toggle) {
+			// Show error message
+			int remainingRuns = GameSettings.ENABLE_LAB_AT_RUN - UsersManager.currentUser.gamesPlayed;
+			string tid = remainingRuns == 1 ? "TID_MORE_RUNS_REQUIRED" : "TID_MORE_RUNS_REQUIRED_PLURAL";
+			UIFeedbackText.CreateAndLaunch(
+				LocalizationManager.SharedInstance.Localize(tid, remainingRuns.ToString()),
+				new Vector2(0.5f, 0.5f),
+				this.GetComponentInParent<Canvas>().transform as RectTransform
+			);
+			return;
+		}
+
 		// Go to the lab!
 		GoToLab();
 	}

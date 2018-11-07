@@ -544,6 +544,7 @@ GameObject:
   - component: {fileID: 114808713553097926}
   - component: {fileID: 114278866044181766}
   - component: {fileID: 114695098740469882}
+  - component: {fileID: 114426776634923882}
   m_Layer: 5
   m_Name: TapToContinue
   m_TagString: Untagged
@@ -2146,6 +2147,32 @@ MonoBehaviour:
   m_color1: {r: 0.866, g: 1, b: 0.5731874, a: 1}
   m_color2: {r: 0, g: 0.64705884, b: 0.4328601, a: 1}
   m_direction: 1
+--- !u!114 &114426776634923882
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1595826978954386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da14b37a76d84394a09063b8ae53142, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_actions:
+  - mode: 2
+    scale:
+      bottom: 1
+      left: 0
+      right: 0
+      top: 0
+  m_originalOffsetMin: {x: 0, y: 0}
+  m_originalOffsetMax: {x: 0, y: 0}
+  m_originalAnchoredPos: {x: 0, y: 0}
+  m_originalLayoutPadding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
 --- !u!114 &114489046685428866
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2514,7 +2541,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 50
+  m_fontSize: 36
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -38568,7 +38595,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 40}
-  m_SizeDelta: {x: 1500, y: 70}
+  m_SizeDelta: {x: 516.54, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224324306121281986
 RectTransform:
@@ -38764,7 +38791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.0014648438}
+  m_AnchoredPosition: {x: 0, y: 0.001953125}
   m_SizeDelta: {x: 459.78, y: 230}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224528259788382582

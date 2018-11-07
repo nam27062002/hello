@@ -319,7 +319,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
-		AddFury( _reward.fury );
+        if ( _reward.fury > 0 )
+            AddFury(m_furyMax * _reward.fury);
 	}
 
 	protected virtual void OnGamePaused( bool _paused )
@@ -423,11 +424,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			m_currentFury = Mathf.Clamp(m_currentFury + _offset, 0, m_furyMax);
 		}
 	}
-
-	public void AddFuryPercentage(float _value) {
-		AddFury(m_furyMax * _value);
-	}
-
+    
 	public float GetFuryProgression()
 	{
 		if ( m_state == State.BREATHING && m_type == Type.Standard )

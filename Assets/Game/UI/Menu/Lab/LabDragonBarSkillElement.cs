@@ -11,6 +11,7 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 
     private DefinitionNode m_def;
 	private LabDragonBarTooltip m_tooltip;
+	private UITooltipTrigger m_trigger;
 
 	protected override void OnEnable() {
 		// Call parent
@@ -35,12 +36,33 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
     }
 
 	public void SetTooltip(LabDragonBarTooltip _tooltip) {
-        UITooltipTrigger trigger = GetComponent<UITooltipTrigger>();
-        trigger.tooltip = _tooltip;
+		m_trigger = GetComponent<UITooltipTrigger>();
+        m_trigger.tooltip = _tooltip;
         m_tooltip = _tooltip;
     }
 
     public void OnTooltipOpen() {
+		// Show the tooltip to the left or to the right based on its position on 
+		// screen, trying to avoid the player's fingers covering it.
+
+		// Find out best direction (Multidirectional tooltip makes it easy for us)
+		UITooltipMultidirectional.ShowDirection bestDir = m_tooltip.CalculateBestDirection(
+			m_trigger.anchor.position,
+			UITooltipMultidirectional.BestDirectionOptions.HORIZONTAL_ONLY
+		);
+
+		// Adjust offset based on best direction
+		Vector2 offset = m_trigger.offset;
+		if(bestDir == UITooltipMultidirectional.ShowDirection.LEFT) {
+			offset.x = -Mathf.Abs(offset.x);
+		} else if(bestDir == UITooltipMultidirectional.ShowDirection.RIGHT) {
+			offset.x = Mathf.Abs(offset.x);
+		}
+
+		// Apply new offset and direction
+		m_trigger.offset = offset;
+		m_tooltip.SetupDirection(bestDir);
+
 		m_tooltip.Init(
 			m_def.GetLocalized("tidName"), 
 			m_def.GetLocalized("tidDesc"), 

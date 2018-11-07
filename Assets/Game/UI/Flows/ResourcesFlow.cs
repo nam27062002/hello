@@ -415,7 +415,7 @@ public class ResourcesFlow {
 	private void ClosePopups() {
 		// Reverse order for better visual effect
 		for(int i = m_popups.Count - 1; i >= 0; i--) {
-			m_popups[i].Close(false);	// Don't destroy, let's reuse popups from flow to flow! (popup manager will take care of that)
+			m_popups[i].Close(true);
 		}
 		m_popups.Clear();
 	}
