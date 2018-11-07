@@ -26,9 +26,12 @@ public class ButtonExtended : Button {
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
+    // Multitouch avoidance
+    [SerializeField]
+    [Tooltip("Disables the posibility of several buttons can be pushed at same time.")]
+    public bool m_MultiTouchDisable = true;
 
     private ButtonClickedEvent m_eventBackup;
-    // Multitouch avoidment
     private static bool m_buttonMultitouchProtector = false;
 
     public static bool checkMultitouchAvailability()
@@ -61,11 +64,8 @@ public class ButtonExtended : Button {
 
     void safeOnclick()
     {
-        Debug.Log(">>>>>>>>>>>>>> SafeOnClick()");
-        if (checkMultitouchAvailability())
-        {
-            m_eventBackup.Invoke();
-        }
+        if (m_MultiTouchDisable && !checkMultitouchAvailability()) return;
+        m_eventBackup.Invoke();
     }
 
     //------------------------------------------------------------------------//
