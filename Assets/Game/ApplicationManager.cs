@@ -1143,7 +1143,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
+        FuryRushToggled furyRushToggled = new FuryRushToggled();
+        furyRushToggled.activated = Debug_IsFrameColorOn;
+        furyRushToggled.type = DragonBreathBehaviour.Type.Mega;
+        Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, furyRushToggled);
     }
 
     private bool Debug_IsBakedLightsDisabled { get; set; }

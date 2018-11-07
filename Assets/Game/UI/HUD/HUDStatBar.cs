@@ -20,7 +20,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a health bar in the debug hud.
 /// </summary>
-public class HUDStatBar : MonoBehaviour {
+public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -155,7 +155,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_timerDuration = 10;
 		if ( m_type == Type.SuperFury )
 		{
-			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		}
 
 		if (m_type == Type.Energy)
@@ -183,10 +183,23 @@ public class HUDStatBar : MonoBehaviour {
 		}
 		else if ( m_type == Type.SuperFury )
 		{
-			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		}
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Keep values updated

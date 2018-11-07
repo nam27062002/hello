@@ -35,5 +35,15 @@ public class Broadcaster
             listeners[i].OnBroadcastSignal(type, m_defaultInfo);
         }
     }
+    
+    public static void Broadcast( BroadcastEventType type, BroadcastEventInfo info )
+    {
+        List<IBroadcastListener> listeners = m_listeners[(int)type];
+        int start = listeners.Count - 1 ;
+        for (int i = start; i >= 0; --i)
+        {
+            listeners[i].OnBroadcastSignal(type, info);
+        }
+    }
 
 }

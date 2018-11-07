@@ -111,13 +111,13 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
             equip.EquipPet(m_petSku, 4);
         }
         
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 
 	void OnDestroy()
 	{
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 	
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -127,6 +127,11 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
             case BroadcastEventType.GAME_AREA_ENTER:
             {
                 CreatePool();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled(furyRushToggled.activated, furyRushToggled.type);
             }break;
         }
     }

@@ -305,7 +305,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 
 		// Subscribe to external events
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
@@ -329,7 +329,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
@@ -344,6 +344,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
              case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled(furyRushToggled.activated, furyRushToggled.type);
             }break;
         }
     }

@@ -13,7 +13,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 
         Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type> (MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
         Reset();        
 
@@ -24,7 +24,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     {
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         InstanceManager.musicController = null;
     }	        	
 
@@ -35,6 +35,11 @@ public class MusicController : MonoBehaviour, IBroadcastListener
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                     OnGameLevelLoaded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRushToggled(furyRushToggled.activated, furyRushToggled.type);
             }break;
         }
     }

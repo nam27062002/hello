@@ -8,6 +8,8 @@ public enum BroadcastEventType
     // power up events
     APPLY_ENTITY_POWERUPS,      // no params
     
+    FURY_RUSH_TOGGLED,          // params: FuryRushToggled
+    
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,
@@ -19,3 +21,8 @@ public class BroadcastEventInfo
 {       
 }
 
+public class FuryRushToggled : BroadcastEventInfo
+{
+    public bool activated = false;
+    public DragonBreathBehaviour.Type type = DragonBreathBehaviour.Type.None;
+}

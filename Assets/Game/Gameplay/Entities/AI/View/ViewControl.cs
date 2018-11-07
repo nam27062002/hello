@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
+public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
 	
 
 	private static Material sm_goldenMaterial = null;
@@ -320,7 +320,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         if (m_stunParticle == null) {
         	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
         }
@@ -489,9 +489,22 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 		#endif
 
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		RemoveAudios();
     }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+
 
     public virtual void PreDisable() {
 		for (int i = 0; i < m_fireParticles.Length; ++i) {

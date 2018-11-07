@@ -280,7 +280,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 
@@ -304,7 +304,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
@@ -324,6 +324,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRush( furyRushToggled.activated, furyRushToggled.type );
             }break;
         }
     }

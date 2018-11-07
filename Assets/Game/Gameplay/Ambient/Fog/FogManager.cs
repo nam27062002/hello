@@ -162,7 +162,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 
 	void OnDestroy()
@@ -173,7 +173,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 			Messenger.RemoveListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, Debug_OnChanged);
 			Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, Debug_OnChangedString);
 			Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
-			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
+			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		}
 	}
     
@@ -184,6 +184,11 @@ public class FogManager : MonoBehaviour, IBroadcastListener
             case BroadcastEventType.GAME_AREA_EXIT:
             {
                 OnAreaExit();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFury( furyRushToggled.activated, furyRushToggled.type );
             }break;
         }
     }
