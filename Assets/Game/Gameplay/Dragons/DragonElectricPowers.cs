@@ -236,7 +236,8 @@ public class DragonElectricPowers : MonoBehaviour {
             Entity prey = m_checkEntities[i];
             if (prey.circleArea != null && prey.IsBurnable() && (prey.IsBurnable(m_tier) || (m_breath.IsFuryOn() && m_breath.type == DragonBreathBehaviour.Type.Mega)))
             {
-                ret = prey;
+                if ( !prey.machine.IsDead() && !prey.machine.IsDying())
+                    ret = prey;
             }
         }
         return ret;
