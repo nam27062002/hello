@@ -30,6 +30,8 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	// Exposed members
 	[SerializeField] private Localizer m_messageText = null;
 	[SerializeField] private Localizer m_buttonText = null;
+	[Space]
+	[SerializeField] private GameObject m_dontShowAgainGroup = null;
 	[SerializeField] private Toggle m_dontShowAgainToggle = null;
 
 	// Events
@@ -47,7 +49,8 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 	/// Initialize the popup with the given data.
 	/// </summary>
 	/// <param name="_pcAmount">Amount of PC to spend.</param>
-	public void Init(long _pcAmount) {
+	/// <param name="_showDontShowAgainToggle">Whether to display the "Don't show again" toggle.</param>
+	public void Init(long _pcAmount, bool _showDontShowAgainToggle) {
 		// Format price
 		string priceTag = StringUtils.FormatNumber(_pcAmount);
 
@@ -58,6 +61,7 @@ public class ResourcesFlowBigAmountConfirmationPopup : MonoBehaviour {
 		m_buttonText.Localize(m_buttonText.tid, priceTag);
 
 		// Initialize toggle
+		m_dontShowAgainGroup.SetActive(_showDontShowAgainToggle);
 		m_dontShowAgainToggle.isOn = !GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP);	// Inverse
 	}
 
