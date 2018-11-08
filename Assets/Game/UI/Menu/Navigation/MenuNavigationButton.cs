@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -34,23 +33,6 @@ public class MenuNavigationButton : MonoBehaviour {
 	// Internal References
 	protected MenuTransitionManager m_transitionManager = null;
 
-    // Multitouch avoidment
-    private static bool m_buttonMultitouchProtector = false;
-
-    public static bool checkMultitouchAvailability()
-    {
-        if (m_buttonMultitouchProtector) return false;
-        m_buttonMultitouchProtector = true;
-        CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.75f));
-        return true;
-    }
-
-    static IEnumerator WaitAMoment(float time)
-    {
-        // suspend execution for 5 seconds
-        yield return new WaitForSeconds(time);
-        m_buttonMultitouchProtector = false;
-    }
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -71,7 +53,6 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the target screen.
 	/// </summary>
 	public void OnNavigationButton() {
-        if (!checkMultitouchAvailability()) return;
 		// Just go to target screen
 		m_transitionManager.GoToScreen(m_targetScreen, true);
 	}
@@ -80,7 +61,6 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the previous screen, if any.
 	/// </summary>
 	public void OnBackButton() {
-        if (!checkMultitouchAvailability()) return;
         // If history is empty, go to default screen
         if (m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
@@ -93,7 +73,6 @@ public class MenuNavigationButton : MonoBehaviour {
     /// Special callback for the final play button.
     /// </summary>
     public void OnStartGameButton() {
-        if (!checkMultitouchAvailability()) return;
         // To be used only on the menu
         // Let the scene controller manage it
         InstanceManager.menuSceneController.OnPlayButton();

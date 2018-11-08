@@ -44,6 +44,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
 	private bool m_waitingRewardsData = false;
+    private bool m_waitingDefinition = false;
 
 
 	//----------------------------------------------------------------//
@@ -67,7 +68,12 @@ public class TournamentInfoScreen : MonoBehaviour {
 
     private void OnNewDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _error) {
         if (m_tournament != null && m_tournament.data.m_eventId == _eventID) {
-            Refresh();
+            if (_error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+                m_waitingDefinition = false;
+                Refresh();
+            } else {
+                m_waitingDefinition = true;
+            }
         }
     }
 
@@ -77,15 +83,17 @@ public class TournamentInfoScreen : MonoBehaviour {
 	void Refresh() {
 		m_tournament = HDLiveEventsManager.instance.m_tournament;
 
-        if (m_tournament.isWaitingForNewDefinition) {
+        if (m_waitingDefinition) {
             m_infoGroup.SetActive(false);
             m_infoGroupLoading.SetActive(true);
+            m_timerText.gameObject.SetActive(false);
             m_playButton.interactable = false;
         } else {
             m_definition = m_tournament.data.definition as HDTournamentDefinition;
 
             m_infoGroup.SetActive(true);
             m_infoGroupLoading.SetActive(false);
+            m_timerText.gameObject.SetActive(true);
             m_playButton.interactable = true;
 
             if (m_definition != null) {
@@ -187,7 +195,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// The next screen button has been pressed.
 	/// </summary>
 	public void OnNextButton() {
-        if (!m_tournament.isWaitingForNewDefinition) {
+        if (!m_waitingDefinition) {
             // Send Tracking event
             HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
 
@@ -208,6 +216,9 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
+        m_tournament = HDLiveEventsManager.instance.m_tournament;
+        m_waitingDefinition = m_tournament.isWaitingForNewDefinition;
+
 		Refresh();
 
 		m_waitingRewardsData = false;
