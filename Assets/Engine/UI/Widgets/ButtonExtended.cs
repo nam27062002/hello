@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,28 +19,64 @@ using UnityEngine.UI;
 /// </summary>
 [AddComponentMenu("UI/Button Extended", 30)]
 public class ButtonExtended : Button {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Multitouch avoidance
+    [SerializeField]
+    [Tooltip("Disables the posibility of several buttons can be pushed at same time.")]
+    public bool m_MultiTouchDisable = true;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
+    private ButtonClickedEvent m_eventBackup;
+    private static bool m_buttonMultitouchProtector = false;
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Perform a state transition on the button.
-	/// </summary>
-	/// <param name="_state">The target state.</param>
-	/// <param name="_instant">Whether to animate or not.</param>
-	protected override void DoStateTransition(SelectionState _state, bool _instant) {
+    public static bool checkMultitouchAvailability()
+    {
+        if (m_buttonMultitouchProtector) return false;
+        m_buttonMultitouchProtector = true;
+        CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.75f));
+        return true;
+    }
+
+    static IEnumerator WaitAMoment(float time)
+    {
+        // suspend execution for 5 seconds
+        yield return new WaitForSeconds(time);
+        m_buttonMultitouchProtector = false;
+    }
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    private void Start()
+    {
+        m_eventBackup = onClick.Clone<ButtonClickedEvent>();
+        onClick.RemoveAllListeners();
+        onClick.AddListener(safeOnclick);
+    }
+
+    void safeOnclick()
+    {
+        if (m_MultiTouchDisable && !checkMultitouchAvailability()) return;
+        m_eventBackup.Invoke();
+    }
+
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDES														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Perform a state transition on the button.
+    /// </summary>
+    /// <param name="_state">The target state.</param>
+    /// <param name="_instant">Whether to animate or not.</param>
+    protected override void DoStateTransition(SelectionState _state, bool _instant) {
 		// Based on http://answers.unity3d.com/questions/820311/ugui-multi-image-button-transition.html
 		// If transition type is different from ColorTint, let parent manage it
 		if(this.transition != Selectable.Transition.ColorTint) {
