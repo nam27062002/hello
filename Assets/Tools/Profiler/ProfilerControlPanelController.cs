@@ -332,6 +332,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         Castle_Bridge,
         Castle_Goblin_Mines,
         Castle_Goblin_Mines_Test,
+		Castle_Indoors,
 
         //---------------------- Dark area ----------------------
         Village_TunnelToDark,
@@ -370,6 +371,7 @@ public class ProfilerControlPanelController : MonoBehaviour
         new Vector3(460, -11, 0f),
         new Vector3(422, -239, 0f),
         new Vector3(554, -227, 0f),
+		new Vector3(775, 55, 0f),
 
         //---------------------- Dark area ----------------------
         new Vector3(-625, 100, 0f),
