@@ -51,7 +51,6 @@ public class SpawnerStar : AbstractSpawner {
 
 			UpdateBounds();
 			RegisterInSpawnerManager();
-			SpawnerAreaManager.instance.Register(this);
 
 			gameObject.SetActive(false);
 			return;
