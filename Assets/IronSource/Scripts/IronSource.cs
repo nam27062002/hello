@@ -8,7 +8,7 @@ public class IronSource : IronSourceIAgent
 	private IronSourceIAgent _platformAgent ;
 	private static IronSource _instance;
 	
-	private const string UNITY_PLUGIN_VERSION = "6.7.9.3";
+	private const string UNITY_PLUGIN_VERSION = "6.7.12";
 	public const string GENDER_MALE = "male";
 	public const string GENDER_FEMALE = "female";
 	public const string GENDER_UNKNOWN = "unknown";
@@ -43,11 +43,6 @@ public class IronSource : IronSourceIAgent
 	public static string unityVersion ()
 	{
 		return Application.unityVersion;
-	}
-
-	public void reportAppStarted ()
-	{
-		_platformAgent.reportAppStarted ();	
 	}
 
 	//******************* Base API *******************//
