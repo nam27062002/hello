@@ -138,6 +138,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 				// Make sure we have enough and adjust new balance
 				// Resources flow makes it easy for us!
 				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
+				purchaseFlow.forceConfirmation = true;	// [AOC] For currency packs always request confirmation (UMR compliance)
 				purchaseFlow.OnSuccess.AddListener(OnResourcesFlowSuccess);
 				purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
 				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
