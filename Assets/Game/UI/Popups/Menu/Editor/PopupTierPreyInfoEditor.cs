@@ -1,4 +1,4 @@
-﻿// PopupDragonInfoEditor.cs
+﻿// PopupTierPreyInfoEditor.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 10/03/2017.
@@ -14,11 +14,11 @@ using UnityEditor;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Custom editor for the PopupDragonInfo class.
+/// Custom editor for the PopupTierPreyInfo class.
 /// </summary>
-[CustomEditor(typeof(PopupDragonInfo), true)]	// True to be used by heir classes as well
+[CustomEditor(typeof(PopupTierPreyInfo), true)]	// True to be used by heir classes as well
 [CanEditMultipleObjects]
-public class PopupDragonInfoEditor : Editor {
+public class PopupTierPreyInfoEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -27,7 +27,7 @@ public class PopupDragonInfoEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	PopupDragonInfo m_targetPopupDragonInfo = null;
+	PopupDragonInfo m_targetPoppup = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -37,7 +37,7 @@ public class PopupDragonInfoEditor : Editor {
 	/// </summary>
 	private void OnEnable() {
 		// Get target object
-		m_targetPopupDragonInfo = target as PopupDragonInfo;
+		m_targetPoppup = target as PopupDragonInfo;
 	}
 
 	/// <summary>
@@ -45,7 +45,7 @@ public class PopupDragonInfoEditor : Editor {
 	/// </summary>
 	private void OnDisable() {
 		// Clear target object
-		m_targetPopupDragonInfo = null;
+		m_targetPoppup = null;
 	}
 
 	/// <summary>
