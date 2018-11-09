@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+
 
 public class DoorGearOpenDevice : MonoBehaviour {
     private enum State {
@@ -41,11 +40,23 @@ public class DoorGearOpenDevice : MonoBehaviour {
             if (m_door.isOpen()) {
                 m_state = State.DISABLED;
             } else {
-                for (int i = 0; i < m_gears.Length; ++i) {
-                    m_rotations[i] += m_gearsRotationSpeed[i] * Time.deltaTime;
-                    m_gears[i].localRotation = Quaternion.AngleAxis(m_rotations[i], (1 - (2 * (i % 2))) * m_rotationAxis);
-                }
+                Rotate(Time.deltaTime);
             }
         }
+    }
+
+    private void Rotate(float _dt) {
+        for (int i = 0; i < m_gears.Length; ++i) {
+            m_rotations[i] += m_gearsRotationSpeed[i] * _dt;
+            m_gears[i].localRotation = Quaternion.AngleAxis(m_rotations[i], (1 - (2 * (i % 2))) * m_rotationAxis);
+        }
+    }
+
+    public void DebugAnimation(float _dt) {
+        if (m_rotations == null || m_rotations.Length < m_gears.Length) {
+            m_rotations = new float[m_gears.Length];
+        }
+
+        Rotate(_dt);
     }
 }
