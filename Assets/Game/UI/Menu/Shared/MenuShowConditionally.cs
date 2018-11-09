@@ -253,7 +253,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& isActiveAndEnabled 
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
 			// Debug
-			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 1"));
 
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
@@ -274,7 +274,7 @@ public class MenuShowConditionally : MonoBehaviour {
 			if(_show) {
 				ShowHideAnimator.DebugLog(this, Colors.green.Tag("FORCE_SHOW"));
 			} else {
-				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 2"));
 			}
 			m_animatorCheckOverride = true;
 			m_targetAnimator.ForceSet(_show, _useAnims);

@@ -700,7 +700,6 @@ public class LoadingSceneController : SceneController {
                 ParticleManager.CreateInstance(true);
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
-                SpawnerAreaManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);

@@ -9,6 +9,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
+using System.Reflection;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -36,7 +38,9 @@ public class ButtonExtended : Button {
 
     public static bool checkMultitouchAvailability()
     {
+        Debug.Log(">>>>> checkMultitouchAvailability()");
         if (m_buttonMultitouchProtector) return false;
+        Debug.Log(">>>>> enter");
         m_buttonMultitouchProtector = true;
         CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.75f));
         return true;
@@ -47,19 +51,33 @@ public class ButtonExtended : Button {
         // suspend execution for 5 seconds
         yield return new WaitForSeconds(time);
         m_buttonMultitouchProtector = false;
+        Debug.Log(">>>>> exit");
     }
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
+
     /// <summary>
     /// First update call.
     /// </summary>
     private void Start()
     {
-        m_eventBackup = onClick.Clone<ButtonClickedEvent>();
-        onClick.RemoveAllListeners();
-        onClick.AddListener(safeOnclick);
+        //        FieldInfo eventsField = typeof(ButtonExtended).GetField("onClick", BindingFlags.NonPublic | BindingFlags.Instance);        
+        //        object eventHandlerList = eventsField.GetValue(onClick);
+        //        eventsField.SetValue(m_eventBackup, eventHandlerList);
+        //        MemberInfo[] minfo = typeof(ButtonExtended).GetMember("onClick");
+        //        FieldInfo fi = typeof(ButtonExtended).GetField("onClick");
+        //        foreach (MemberInfo mi in minfo)
+        //        {
+        //            Debug.Log("Member: " + mi.Name);
+        //        }
+
+        //        m_eventBackup = DeepClone<ButtonClickedEvent>(onClick);
+//        Debug.Log("ButtonExtended.Start()");
+//        m_eventBackup = onClick.Clone<ButtonClickedEvent>();
+//        onClick.RemoveAllListeners();
+//        onClick.AddListener(safeOnclick);
     }
 
     void safeOnclick()
