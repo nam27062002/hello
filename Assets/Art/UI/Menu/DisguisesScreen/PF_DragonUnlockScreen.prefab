@@ -34,6 +34,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_name: DragonUnlock
   m_allowBackToThisScreen: 1
+  m_allowMultiTouch: 0
   OnShow:
     m_PersistentCalls:
       m_Calls: []
@@ -226,7 +227,7 @@ GameObject:
   - component: {fileID: 114726250388928712}
   - component: {fileID: 114977068642183474}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonUnlockWithCoins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -412,7 +413,7 @@ GameObject:
   - component: {fileID: 224833388053559928}
   - component: {fileID: 114009644765242308}
   m_Layer: 5
-  m_Name: ButtonUnlockWithCoins
+  m_Name: ButtonShowConditionally
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1121,7 +1122,7 @@ MonoBehaviour:
   m_checkScreens: 0
   m_mode: 0
   m_targetScreens: 
-  m_restartShowAnimation: 1
+  m_restartShowAnimation: 0
 --- !u!114 &114042658141977480
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1279,7 +1280,7 @@ MonoBehaviour:
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -5
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -1577,7 +1578,7 @@ MonoBehaviour:
   m_showTweens: []
   m_hideTweens: []
   m_animator: {fileID: 0}
-  m_triggerChildren: 1
+  m_triggerChildren: 0
   m_canBeTriggeredByParents: 1
   OnShowPreAnimation:
     m_PersistentCalls:
@@ -3478,10 +3479,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tweenType: 1
-  m_tweenDuration: 0.1
-  m_tweenValue: 1
-  m_tweenEase: 27
+  m_tweenType: 2
+  m_tweenDuration: 0.25
+  m_tweenValue: 0
+  m_tweenEase: 1
   m_tweenDelay: 0
   m_ignoreTimeScale: 1
   m_showTweens: []
