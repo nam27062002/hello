@@ -333,8 +333,8 @@ public class UserProfile : UserPersistenceSystem
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
     
-    public List<string> m_visitedZones = new List<string>();
-
+    // public List<string> m_visitedZones = new List<string>();
+    public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
 
     public enum ESocialState
@@ -479,7 +479,7 @@ public class UserProfile : UserPersistenceSystem
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 
-        m_visitedZones = new List<string>();
+        m_visitedZones = new HashSet<string>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -1229,9 +1229,9 @@ public class UserProfile : UserPersistenceSystem
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
-        for (int i = 0; i < max; i++)
+        foreach( string str in m_visitedZones)
         {
-            zonesArray.Add(m_visitedZones[i]);
+            zonesArray.Add( str );
         }
         data.Add("visitedZones", zonesArray);
 

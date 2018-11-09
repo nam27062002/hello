@@ -41,6 +41,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();
     private List<OfferPack> m_allOffers = new List<OfferPack>();
 
+    private float m_timer = 0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -63,8 +64,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// First update loop.
 	/// </summary>
 	private void Start() {
-		// Update the offers periodically
-		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+        m_timer = 0;
 	}
 
 	/// <summary>
@@ -89,7 +89,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public static void InitFromDefinitions() {
+	public static void InitFromDefinitions(bool _updateFromCustomizer) {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
@@ -112,7 +112,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create new pack
 			OfferPack newPack = new OfferPack();
-			newPack.InitFromDefinition(offerDefs[i]);
+            newPack.InitFromDefinition(offerDefs[i], _updateFromCustomizer);
 
             // Store new pack
             instance.m_allOffers.Add(newPack);
@@ -268,16 +268,19 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         return null;
     }
 
+    private void Update() {
+        if ( m_timer <= 0 )
+        {
+            m_timer = REFRESH_FREQUENCY;
+            // Update offers
+            Refresh(false);
+        }
+        m_timer -= Time.deltaTime;
+    }
+    
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Called periodically - to avoid doing stuff every frame.
-	/// </summary>
-	private void PeriodicRefresh() {
-		// Update offers
-		Refresh(false);
-	}
 
 	/// <summary>
 	/// Something generic has changed in the game that requires the offers segmentation

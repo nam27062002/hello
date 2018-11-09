@@ -1,4 +1,5 @@
-#if UNITY_IPHONE 
+#if UNITY_IOS 
+
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -13,7 +14,7 @@ namespace IronSource.Editor
 {
 	public class IronSourceBuildPostprocessor
 	{
-//		[PostProcessBuild]
+		[PostProcessBuild]
 		public static void OnPostprocessBuild (BuildTarget buildTarget, string buildPath)
 		{
 			if (buildTarget == BuildTarget.iOS) {
@@ -78,5 +79,5 @@ namespace IronSource.Editor
 		}
 	}
 }
-
 #endif
+

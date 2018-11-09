@@ -307,8 +307,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static SpecialDevice specialDevice {
 		get {
 			// Has the special device been initialized?
-			if(!instance.m_specialDeviceInitialized) {
+			if(!instance.m_specialDeviceInitialized || Application.isEditor) {
 				// No! Do it now
+				instance.m_specialDevice = SpecialDevice.NONE;
+
 				// Override if debugging
 				if(DebugSettings.simulatedSpecialDevice != SpecialDevice.NONE) {
 					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
@@ -316,8 +318,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 #if UNITY_IOS
 				// Is it an iPhone X?
-				else if(Device.generation == DeviceGeneration.iPhoneX ||
-				        Device.generation > DeviceGeneration.iPhoneX) {		// [AOC] HACK!! Small trick to support newest iPhone Xs. Should be replaced by the proper enum values as soon as they are available
+				else if(Device.generation >= DeviceGeneration.iPhoneX && 
+				        Device.generation < DeviceGeneration.iPhoneUnknown &&	// [AOC] HACK!! Small trick to support newest iPhones starting at iPhoneX
+				        ASPECT_RATIO > 1.5f) {		// [AOC] Make sure it's not an iPad / Tablet, where the UI resizing would create a lot of issues
 					instance.m_specialDevice = SpecialDevice.IPHONE_X;
 				}
 #elif UNITY_ANDROID

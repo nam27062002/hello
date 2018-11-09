@@ -323,9 +323,24 @@ public class GameServerManager
 
     public virtual void SetLanguage(string serverCode, ServerCallback onDone) {}
     
-    public virtual void PCSpent(int amount, string group, ServerCallback onDone){}
+    /// <summary>
+    /// PC Spent.
+    /// </summary>
+    /// <param name="balance">Balance. Amount of pc after the spent</param>
+    /// <param name="amount">Amount spent.</param>
+    /// <param name="group">Group.</param>
+    /// <param name="onDone">On done.</param>
+    public virtual void PCSpent(int balance, int amount, string group, ServerCallback onDone){}
 
-    public virtual void PCEarned(int amount, string group, bool paid, ServerCallback onDone){}
+    /// <summary>
+    /// PC earned
+    /// </summary>
+    /// <param name="balence">Balance. Amount of pc after earning</param>
+    /// <param name="amount">Amount of earned</param>
+    /// <param name="group">Group.</param>
+    /// <param name="paid">If set to <c>true</c> paid.</param>
+    /// <param name="onDone">On done.</param>
+    public virtual void PCEarned(int balance, int amount, string group, bool paid, ServerCallback onDone){}
 
     //------------------------------------------------------------------------//
     // GLOBAL EVENTS														  //

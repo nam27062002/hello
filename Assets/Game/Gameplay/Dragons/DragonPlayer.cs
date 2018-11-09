@@ -692,7 +692,6 @@ public class DragonPlayer : MonoBehaviour {
 			AddLife(_reward.health, DamageType.NONE, _entity);
 		}
 		AddEnergy(_reward.energy);
-		m_breathBehaviour.AddFury(_reward.fury);
 	}
 
 	/// <summary>

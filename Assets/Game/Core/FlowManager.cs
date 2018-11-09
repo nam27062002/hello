@@ -66,6 +66,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		LevelManager.SetCurrentLevel(null);
 
         HDTrackingManager.Instance.GoToMenu();
+        OffersManager.instance.enabled = true;
 
         // Change scene
         GameSceneManager.SwitchScene(nextScene);
@@ -76,7 +77,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// </summary>
 	public static void GoToGame() {
         HDTrackingManager.Instance.GoToGame();
-
+        OffersManager.instance.enabled = false;
         instance.SwitchScene(GameSceneController.NAME);
 	}
 
@@ -84,6 +85,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// Navigate to the results scene.
 	/// </summary>
 	public static void GoToResults() {
+        OffersManager.instance.enabled = false;
 		instance.SwitchScene(ResultsScreenController.NAME);
     }
 

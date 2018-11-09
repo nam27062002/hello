@@ -20,7 +20,7 @@ public class PopupSpecialDragonInfo : PopupDragonInfo {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonInfo";
+	new public const string PATH = "UI/Popups/Menu/PF_PopupSpecialDragonInfo";
 
 	public class UpgradeData {
 		public int unlockLevel = -1;

@@ -67,6 +67,18 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 
 			// SFX
 			AudioController.Play("hd_lab_tier_upgraded");
+
+			// Open info popup (after some delay)
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					PopupController popup = PopupManager.LoadPopup(PopupLabTierUnlocked.PATH);
+					if(popup != null) {
+						PopupLabTierUnlocked tierUnlockedPopup = popup.GetComponent<PopupLabTierUnlocked>();
+						tierUnlockedPopup.Init(_dragonData.tierDef, _dragonData.specialTierDef);
+						popup.Open();
+					}
+				}, 0.5f
+			);
 		}
 	}
 }

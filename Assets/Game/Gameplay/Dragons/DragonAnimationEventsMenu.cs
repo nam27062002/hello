@@ -70,5 +70,15 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
         }
         
     }
+    
+    public void PlayExtraParticle(int index)
+    {
+        transform.parent.GetComponent<MenuDragonPreview>().PlayExtraParticle( index );
+    }
+
+    public void StopExtraParticle( int index )
+    {
+        transform.parent.GetComponent<MenuDragonPreview>().StopExtraParticle( index );
+    }
 
 }

@@ -36,7 +36,8 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	[Comment("Won't be activated until all target steps are completed")]
 	[SerializeField] private TutorialStep[] m_targetSteps;
 	[SerializeField] private int m_targetRuns = 0;
-	
+    [Comment("If the players has pets we always activate this")]
+    [SerializeField] private bool m_ignoreByPet = false;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -71,6 +72,9 @@ public class ShowOnTutorialStep : MonoBehaviour {
 		if(UsersManager.currentUser == null) {
 			return true;
 		}
+
+        if (m_ignoreByPet && UsersManager.currentUser.petCollection.unlockedPetsCount > 0)
+            return true;
 
 		// Check whether all target states are completed
 		bool toggle = true;

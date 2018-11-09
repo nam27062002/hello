@@ -327,7 +327,7 @@ public class OfferPack {
 	/// Initialize this offer pack with the given definition.
 	/// </summary>
 	/// <param name="_def">Definition to be parsed.</param>
-	public void InitFromDefinition(DefinitionNode _def) {
+    public void InitFromDefinition(DefinitionNode _def, bool _updateFromCustomizer) {
 		// Reset to default values
 		Reset();
 
@@ -406,8 +406,12 @@ public class OfferPack {
 		// Purchase limit
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 
-		// Persisted data
-		UsersManager.currentUser.LoadOfferPack(this);
+        // Persisted data
+        if (_updateFromCustomizer) {
+            UsersManager.currentUser.SaveOfferPack(this);
+        } else {
+            UsersManager.currentUser.LoadOfferPack(this);
+        }
 	}
 
 	/// <summary>

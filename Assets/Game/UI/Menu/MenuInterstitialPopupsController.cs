@@ -383,6 +383,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 
+        // if we come from playing whetever is Classic, Lab or Tournament
+        if ( _from == MenuScreen.NONE && _to != MenuScreen.PLAY ) {
+            CheckInterstitialAds();
+        }
+
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
@@ -401,7 +406,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-            			CheckInterstitialAds();
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);

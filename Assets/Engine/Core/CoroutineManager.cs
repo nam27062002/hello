@@ -81,9 +81,9 @@ namespace UbiBCN {
 		/// <param name="_action">Action to be triggered.</param>
 		/// <param name="_delay">Delay.</param>
 		/// <param name="_ignoreTimescale">Whether to take timescale in account when delaying the action.</param>
-		public static void DelayedCall(Action _action, float _delay = 0f, bool _ignoreTimescale = true) {
+        public static Coroutine DelayedCall(Action _action, float _delay = 0f, bool _ignoreTimescale = true) {
 			// Launch the coroutine
-			instance.StartCoroutine(instance.DelayedCoroutine(_action, _delay, _ignoreTimescale));
+            return instance.StartCoroutine(instance.DelayedCoroutine(_action, _delay, _ignoreTimescale));
 		}
 
 		/// <summary>
@@ -91,9 +91,9 @@ namespace UbiBCN {
 		/// </summary>
 		/// <param name="_action">Action to be triggered.</param>
 		/// <param name="_delay">Frames to wait before triggereing the action.</param>
-		public static void DelayedCallByFrames(Action _action, int _delayFrames) {
+        public static Coroutine DelayedCallByFrames(Action _action, int _delayFrames) {
 			// Launch the coroutine
-			instance.StartCoroutine(instance.DelayedCoroutineByFrames(_action, _delayFrames));
+            return instance.StartCoroutine(instance.DelayedCoroutineByFrames(_action, _delayFrames));
 		}
 
 		/// <summary>

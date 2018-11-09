@@ -34,23 +34,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         /// <summary>
         /// Method to do some stuff when we're sure the event has been sent
         /// </summary>
-        public void OnSent() {
-            switch (name) {
-                case TRACK_EVENT_CUSTOM_PLAYER_INFO:
-                    // We need to store the latest marketing id notified in prefs so we can realise it has changed in order to notify that change
-                    string marketingId = null;
-                    string key = TRACK_PARAM_ACQ_MARKETING_ID;
-                    if (data != null && data.ContainsKey(key))
-                    {
-                        marketingId = data[key] as string;
-                    }
-
-                    if (marketingId != null)
-                    {
-                        PersistencePrefs.SetLatestMarketingIdNotified(marketingId);
-                    }
-                    break;
-            }
+        public void OnSent() {            
         }
     }
     private Queue<HDTrackingEvent> m_eventQueue = new Queue<HDTrackingEvent>();
@@ -601,23 +585,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
-        // Marketing id has to be notified always when the user changes the consent terms
-        bool needsToNotify = from == EMarketingIdFrom.Settings;
-
-        // From first loading marketing id has to be notified only when no marketing id has been notified yet or when a valid marketing id is retrieved
+        // Specification has changed and now marketing id has to be sent only from first loading and in this case it has to be notified only 
+        // when no marketing id has been notified yet or first time a valid marketing id is retrieved
         if (from == EMarketingIdFrom.FirstLoading) {
             string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
-            needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
+            bool needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
                      (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);
-        }
-
-        if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());
-        }
-
-        if (needsToNotify) {
             Track_MarketingID(marketingId);
-        }
+
+            if (FeatureSettingsManager.IsDebugEnabled) {
+                Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());
+            }
+        }                       
     }
 
     /// <summary>
@@ -1439,7 +1418,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if ( moneyCurrency.Equals("HardCurrency") )
         {
             // Send event
-            GameServerManager.SharedInstance.PCSpent( (int)moneyPrice, economyGroup, PCFluctuationResponse);
+            GameServerManager.SharedInstance.PCSpent( amountBalance, (int)moneyPrice, economyGroup, PCFluctuationResponse);
         }
     }
 
@@ -1466,7 +1445,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (moneyCurrency.Equals("HardCurrency"))
         {
             // Send event
-            GameServerManager.SharedInstance.PCEarned(amountDelta, economyGroup, paid, PCFluctuationResponse);
+            GameServerManager.SharedInstance.PCEarned( amountBalance,  amountDelta, economyGroup, paid, PCFluctuationResponse);
         }
     }
 
@@ -2266,14 +2245,49 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private void Track_SendEvent(HDTrackingEvent _e) {
         TrackingEvent tEvent = TrackingManager.SharedInstance.GetNewTrackingEvent(_e.name);
         if (tEvent != null) {
-            foreach (KeyValuePair<string, object> pair in _e.data) {
-                tEvent.SetParameterValue(pair.Key, pair.Value);
+            foreach (KeyValuePair<string, object> pair in _e.data) {                
+                tEvent.SetParameterValue(pair.Key, Track_ProcessParam(pair.Key, pair.Value));
             }
 #if !EDITOR_MODE
             TrackingManager.SharedInstance.SendEvent(tEvent);
 #endif
         }
     }
+
+    private object Track_ProcessParam(string key, object value)
+    {
+        switch (key)
+        {
+            case TRACK_PARAM_ACQ_MARKETING_ID:
+                // We need to recalculate the value of marketing id because it takes Calety a while to retrieve it so recalculating it
+                // right before the event is sent maximizes our chances the value is ready                              
+                string marketingId = PersistencePrefs.GetMarketingId();
+                if (string.IsNullOrEmpty(marketingId))
+                {
+                    marketingId = GameSessionManager.SharedInstance.GetDeviceMarketingID();
+                    if (string.IsNullOrEmpty(marketingId))
+                    {
+                        marketingId = MARKETING_ID_NOT_AVAILABLE;
+                    }
+                    else
+                    {
+                        // Marketing id is stored in prefs once retrieved successfully from device in order to be able to use it immediately next time it's required
+                        // since retrieving it from device may take a while
+                        PersistencePrefs.SetMarketingId(marketingId);
+                    }
+
+                    value = marketingId;                
+                }
+
+                if (marketingId != null)
+                {
+                    PersistencePrefs.SetLatestMarketingIdNotified(marketingId);
+                }
+                break;
+        }
+
+        return value;
+    }      
     //------------------------------------------------------------------------//
 
 

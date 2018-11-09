@@ -241,6 +241,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
+        
 			if ( m_tournamentManager.RequiresUpdate() )
 			{
 					// Show update popup!
@@ -251,16 +252,19 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			}
 			else
 			{
-        		// Change game mode
-	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-    	    	HDLiveEventsManager.instance.SwitchToTournament();
-	
-    	    	// Send Tracking event
-        		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
-
-        		// Go to tournament info screen
-        		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
-			}
+                if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+                {
+            		// Change game mode
+    	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        	    	HDLiveEventsManager.instance.SwitchToTournament();
+    	
+        	    	// Send Tracking event
+            		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+    
+            		// Go to tournament info screen
+            		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+    			}
+            }
 	}
 
 	/// <summary>

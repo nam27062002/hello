@@ -46,10 +46,17 @@ public class ResourcesFlow {
 
 	// Custom events
 	public class ResourcesFlowEvent : UnityEvent<ResourcesFlow> { };
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Flow setup - to be defined between the flow creation and the Begin() call
+	private bool m_forceConfirmation = false;	// Force a confirmation popup to appear, regardles of the amount of PC to be spent
+	public bool forceConfirmation {
+		get { return m_forceConfirmation; }
+		set { m_forceConfirmation = value; }
+	}
+
 	// Flow data
 	private string m_name = "";	// Identifier, mostly for debug purposes
 	public string name {
@@ -175,7 +182,7 @@ public class ResourcesFlow {
 		m_finishTransaction = _finishTransaction;
 
         // Try it now!
-        TryTransaction(true);
+		TryTransaction(true, m_forceConfirmation);
 	}
 
 	//------------------------------------------------------------------------//
@@ -223,7 +230,8 @@ public class ResourcesFlow {
 	/// If everything is ok, transaction will be executed.
 	/// </summary>
 	/// <param name="_askConfirmationForBigPCAmounts">If set to true, a confirmation popup will be triggered for big PC amounts and the transaction wont happen until the popup is confirmed.</param>
-	private void TryTransaction(bool _askConfirmationForBigPCAmounts) {
+	/// <param name="_forceConfirmation">If set to true, previous parameter will be overruled and the confirmation popup will always appear (regardless of the amount).</param>
+	private void TryTransaction(bool _askConfirmationForBigPCAmounts, bool _forceConfirmation) {
 		// Close any popup opened by this resources flow instance
 		ClosePopups();
 
@@ -259,10 +267,11 @@ public class ResourcesFlow {
 
 				case UserProfile.Currency.HARD: {
 					// Show confirmation popup?
-					if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP) && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
+					if(_forceConfirmation ||
+					_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP) && (m_originalAmount > PC_CONFIRMATION_POPUP_THRESHOLD)) {
 						// Final PC amount over threshold!
 						// Show confirmation popup
-						OpenBigAmountConfirmationPopup(m_originalAmount, () => { OpenMissingPCPopup(m_missingAmount); });	// If confirmed, open missing PC popup
+						OpenBigAmountConfirmationPopup(m_originalAmount, OnBigAmountConfirmedMissingPC);	// If confirmed, open missing PC popup
 					} else {
 						// Directly show missing PC popup
 						OpenMissingPCPopup(m_missingAmount);
@@ -280,7 +289,8 @@ public class ResourcesFlow {
 		else {
 			// Confirmation required?
 			// Only if confirmation popup is enabled
-			if(_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
+			if(_forceConfirmation ||
+			_askConfirmationForBigPCAmounts && GameSettings.Get(GameSettings.SHOW_BIG_AMOUNT_CONFIRMATION_POPUP)) {
 				// Final PC cost?
 				long finalPCAmount = 0;
 
@@ -295,9 +305,9 @@ public class ResourcesFlow {
 				}
 
 				// Final PC amount over threshold?
-				if(finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
+				if(m_forceConfirmation || finalPCAmount > PC_CONFIRMATION_POPUP_THRESHOLD) {
 					// Show confirmation popup
-					OpenBigAmountConfirmationPopup(finalPCAmount, () => { TryTransaction(false); });    // Do the transaction on success
+					OpenBigAmountConfirmationPopup(finalPCAmount, OnBigAmountConfirmedTryTransaction);    // Do the transaction on success
 					return; // Don't do anything else until confirmed by user
 				}
 			}
@@ -415,7 +425,7 @@ public class ResourcesFlow {
 	private void ClosePopups() {
 		// Reverse order for better visual effect
 		for(int i = m_popups.Count - 1; i >= 0; i--) {
-			m_popups[i].Close(false);	// Don't destroy, let's reuse popups from flow to flow! (popup manager will take care of that)
+			m_popups[i].Close(true);
 		}
 		m_popups.Clear();
 	}
@@ -519,13 +529,13 @@ public class ResourcesFlow {
 		// Open and initialize the popup
 		PopupController popup = PopupManager.LoadPopup(ResourcesFlowBigAmountConfirmationPopup.PATH);
 		ResourcesFlowBigAmountConfirmationPopup confirmationPopup = popup.GetComponent<ResourcesFlowBigAmountConfirmationPopup>();
-		confirmationPopup.Init(_amount);
+		confirmationPopup.Init(_amount, !m_forceConfirmation);	// Don't show the "Never show again" toggle if forcing the popup
 
 		confirmationPopup.OnAccept.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		confirmationPopup.OnAccept.AddListener(_onSuccess);
 
 		confirmationPopup.OnCancel.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
-		confirmationPopup.OnCancel.AddListener(() => { Cancel(); });	// Cancel flow
+		confirmationPopup.OnCancel.AddListener(OnBigAmountCanceled);	// Cancel flow
 
 		popup.Open();
 		m_popups.Add(popup);
@@ -585,7 +595,7 @@ public class ResourcesFlow {
 			UsersManager.currentUser.SpendCurrency(UserProfile.Currency.HARD, (ulong)m_extraPCCost);
 
 			// Transaction will do everything! ^_^
-			TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
+			TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
 		}
 	}
 
@@ -594,7 +604,7 @@ public class ResourcesFlow {
 	/// </summary>
 	private void OnPCPackPurchased() {
 		// We should have enough PC to complete the transaction now, do it!
-		TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the pack
+		TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the pack
 	}
 
 	/// <summary>
@@ -625,12 +635,12 @@ public class ResourcesFlow {
 			// Was PC the main currency or were we buying extra PC?
 			if(m_currency == UserProfile.Currency.HARD) {
 				// Try transaction again
-				TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
+				TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
 			} else {
 				// Have we bought enough extra PC?
 				if(m_extraPCCost <= UsersManager.currentUser.pc) {
 					// Yes! Complete transaction
-					TryTransaction(false);	// Ask confirmation? No, looks weird after having purchased the gems
+					TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the gems
 				} else {
 					// No! Refresh the MISSING_EXTRA_PC popup
 					ResourcesFlowMissingPCPopup pcPopup = GetPopup<ResourcesFlowMissingPCPopup>();
@@ -652,5 +662,26 @@ public class ResourcesFlow {
 			// Let's stay in current state for now, feels weird to cancel the whole flow
 			ChangeState(m_previousState);
 		}
+	}
+
+	/// <summary>
+	/// Big amount confirmation popup has been confirmed and transaction is already validated.
+	/// </summary>
+	private void OnBigAmountConfirmedTryTransaction() {
+		TryTransaction(false, false);
+	}
+
+	/// <summary>
+	/// Big amount confirmation popup has been confirmed but we're missing PC.
+	/// </summary>
+	private void OnBigAmountConfirmedMissingPC() {
+		OpenMissingPCPopup(m_missingAmount);
+	}
+
+	/// <summary>
+	/// Big amount confirmation popup has been canceled.
+	/// </summary>
+	private void OnBigAmountCanceled() {
+		Cancel();	// Cancel flow
 	}
 }
