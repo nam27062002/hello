@@ -14,6 +14,7 @@ public class DoorGearOpenDevice : MonoBehaviour {
     [SerializeField] private float[] m_gearsRotationSpeed = null;
     [SerializeField] private Vector3 m_rotationAxis = GameConstants.Vector3.forward;
     [SerializeField] private BreakableBehaviour m_breakableTrigger = null;
+    [SerializeField] private InflammableDecoration m_inflammableTrigger = null;
        
 
     private State m_state;
@@ -26,15 +27,18 @@ public class DoorGearOpenDevice : MonoBehaviour {
         m_rotations = new float[m_gears.Length];
         m_initialRotations = new Vector3[m_gears.Length];
         m_breakableTrigger.onBreak += OnTriggerBreak;
+        m_inflammableTrigger.onBurn += OnTriggerBreak;
     }
 
     private void OnTriggerBreak() {
-        for (int i = 0; i < m_gears.Length; ++i) {
-            m_rotations[i] = 0f;
-            m_initialRotations[i] = m_gears[i].localRotation.eulerAngles;
+        if (m_state == State.IDLE) {
+            for (int i = 0; i < m_gears.Length; ++i) {
+                m_rotations[i] = 0f;
+                m_initialRotations[i] = m_gears[i].localRotation.eulerAngles;
+            }
+            m_door.Open();
+            m_state = State.ACTIVE;
         }
-        m_door.Open();
-        m_state = State.ACTIVE;
     }
 
     private void Update() {

@@ -179,7 +179,8 @@ public class BreakableBehaviour : MonoBehaviour
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
 
-        onBreak();
+        if (onBreak != null)
+            onBreak();
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));
