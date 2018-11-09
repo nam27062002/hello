@@ -292,7 +292,7 @@ public class ContentManager
     public static void OnRulesUpdated()
     {
         // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions();
+        OffersManager.InitFromDefinitions(true);
         
         // Update all managers 
     }
