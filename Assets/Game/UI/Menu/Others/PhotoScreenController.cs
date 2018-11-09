@@ -370,6 +370,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Initialize zoom controller with main camera
 		currentMode.zoomControl.gameObject.SetActive(true);
+		currentMode.zoomControl.camera = null;	// [AOC] Force refresh of camera initial values
 		currentMode.zoomControl.camera = menuController.mainCamera;
 	}
 
