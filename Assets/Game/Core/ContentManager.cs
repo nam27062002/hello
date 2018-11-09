@@ -293,8 +293,21 @@ public class ContentManager
     {
         // Cached data need to be reloaded
         OffersManager.InitFromDefinitions(true);
-        
+
         // Update all managers 
+        // dragonDefinitions.xml
+        if (UsersManager.currentUser != null)
+        {
+            // UserProfile
+                // Reload Dragons by Sku?
+                
+            // DragonManager
+            DragonManager.SetupUser(UsersManager.currentUser);
+        }
+        
+        
+            // seasonsDefinitions
+        SeasonManager.instance.RefreshActiveSeason();       
     }
      
 

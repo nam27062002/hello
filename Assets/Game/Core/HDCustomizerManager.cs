@@ -27,6 +27,7 @@ public class HDCustomizerManager
             {
                 LogWarning("onCustomizationStored");
             }
+            HDCustomizerManager.instance.ForceApplyOnNextCheck();
         }
 
 
@@ -123,10 +124,17 @@ public class HDCustomizerManager
     /// <summary>
     /// Whether or not the changes defined by the current customizer have been applied by the client
     /// </summary>
-    private bool m_hasBeenApplied;
+    private bool m_hasBeenApplied = false;
+    
+    /// <summary>
+    /// The m current experiment appleid code
+    /// </summary>
+    private long m_currentExperimentCode = -1;
 
-
-    private long m_currentExperiment;
+    /// <summary>
+    /// To force an apply the api stores a new customizer
+    /// </summary>
+    private bool m_forceApply = false;
 
     public void Initialise()
     {
@@ -206,10 +214,6 @@ public class HDCustomizerManager
                ContentManager.ready;                            // We need the content to be loaded because CustomizerManager may reload some rules
     }
 
-
-
-    long m_experimentApplied = -1;
-    long m_customizationApplied = -1;
     
     public void CheckAndApply()
     {
@@ -220,17 +224,20 @@ public class HDCustomizerManager
             {
                 if ( customiser.IsValid())
                 {
-                    if(!m_hasBeenApplied  || ( m_hasBeenApplied && !IsExperimentValid( -1) ))
+                    if(!m_hasBeenApplied  || ( m_hasBeenApplied && ! customiser.IsExperimentCodeValid( m_currentExperimentCode ) ) || m_forceApply)
                     {
+                        m_forceApply = false;
                         UnApplyCustomizer();
                         if (CustomizerManager.SharedInstance.ApplyCustomiser())
                         {
                             m_hasBeenApplied = true;
-                            Experiment experiment = CustomizerManager.SharedInstance.GetExperiment();
+                            ApiExperiment experiment = customiser.GetFirstValidExperiment();
                             if (experiment != null)
                             {
-                                Log("New experiment applied: name = " + experiment.m_strName + " groupName = " + experiment.m_strGroupName, true);
-                                HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.m_strName, experiment.m_strGroupName);            
+                                
+                                Log("New experiment applied: name = " + experiment.GetName() + " groupName = " + experiment.GetGroupName(), true);
+                                HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.GetName(), experiment.GetGroupName());
+                                m_currentExperimentCode = experiment.GetCode();
                             }
                         }
                         ContentManager.OnRulesUpdated();
@@ -260,23 +267,14 @@ public class HDCustomizerManager
         }
     }
     
-    /// <summary>
-    ///  if the experiment I applied is not valid anymore
-    /// </summary>
-    /// <returns><c>true</c>, if experiment valid was ised, <c>false</c> otherwise.</returns>
-    /// <param name="l">L.</param>
-    private bool IsExperimentValid( long l )
-    {
-        return true;
-    }
-    
     private void UnApplyCustomizer()
     {
         CustomizerManager.SharedInstance.ResetContentToOriginalValues();
         m_hasBeenApplied = false;
+        m_currentExperimentCode = -1;
         // if ( trackRemove ) Tell tracking there is no experiment
         // Remove Experiment Code m_experimentCode = "";
-        m_experimentApplied = -1;
+        
     }
 
 	public bool IsCustomiserPopupAvailable()
@@ -314,7 +312,11 @@ public class HDCustomizerManager
 		m_lastPreparedPopupConfig = _config;
 	}
      
-
+    private void ForceApplyOnNextCheck()
+    {
+        m_forceApply = true;
+    }
+    
 
     public void NotifyServerDown()
     {        
