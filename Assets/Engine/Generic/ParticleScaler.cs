@@ -34,7 +34,8 @@ public class ParticleScaler : MonoBehaviour
 	public WhenScale m_whenScale;
 
 	// Internal
-	ParticleSystem.Particle[] m_particlesBuffer;	// [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations
+	static ParticleSystem.Particle[] m_particlesBuffer;	// [AOC] Prevent constant memory allocation by having a buffer to perform particle by particle operations. 
+                                                        // [MALH] And if we share it between all particleScalers we avoid multiple news and memory trashing :p
 
 
 	protected class PSDataRegistry
@@ -596,7 +597,7 @@ public class ParticleScaler : MonoBehaviour
             forceOverLifetime.zMultiplier *= scale;
 
 			// Apply to already spawned particles as well!
-			if(m_particlesBuffer == null || m_particlesBuffer.Length < ps.main.maxParticles) {
+			if(m_particlesBuffer == null || m_particlesBuffer.Length < ps.particleCount) {
 				m_particlesBuffer = new ParticleSystem.Particle[ps.main.maxParticles];
 			}
 			int particleCount = ps.GetParticles(m_particlesBuffer);

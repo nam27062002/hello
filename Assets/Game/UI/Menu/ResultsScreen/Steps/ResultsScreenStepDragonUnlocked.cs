@@ -144,7 +144,9 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 				// [AOC] Unless testing!
 				if(!CPResultsScreenTest.testEnabled) {
 					m_dragonData.Acquire();
-				}
+
+                    HDTrackingManager.Instance.Notify_DragonUnlocked(m_dragonData.def.sku, m_dragonData.GetOrder());
+                }
 
 				// Save!
 				PersistenceFacade.instance.Save_Request(true);
