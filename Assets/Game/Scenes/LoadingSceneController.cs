@@ -600,7 +600,7 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_COUNTRY_CODE:
                 {
                     GDPRManager.SharedInstance.Initialise(false);
-                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.AddListener( m_gdprListener );
                     GDPRManager.SharedInstance.RequestCountryAndAge();
                 }break;
             case State.WAITING_TERMS:
