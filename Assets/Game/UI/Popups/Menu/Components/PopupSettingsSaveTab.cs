@@ -466,6 +466,9 @@ public class PopupSettingsSaveTab : MonoBehaviour
     [SerializeField]
     private Image m_userAvatarImage;
 
+	[SerializeField]
+	private Image m_userAvatarPlaceholderImage;
+
     [SerializeField]
 	private Text m_userNameText;
     
@@ -532,6 +535,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
                     if (needsSocialIdToBeUpdated)
                     {
                         m_userAvatarImage.gameObject.SetActive(false);
+						m_userAvatarPlaceholderImage.gameObject.SetActive(true);
                     }
                     //m_profileSpinner.SetActive(true);                    
                     break;
@@ -584,12 +588,14 @@ public class PopupSettingsSaveTab : MonoBehaviour
                 m_userAvatarImage.sprite = sprite;
 				m_userAvatarImage.color = Color.white;
                 m_userAvatarImage.gameObject.SetActive(true);
+				m_userAvatarPlaceholderImage.gameObject.SetActive(false);
                 // m_profileSpinner.SetActive(false);
             }
             else if (!User_IsAvatarLoaded)
             {
-                //m_profileSpinner.SetActive(false);
-                m_userAvatarImage.gameObject.SetActive(true);
+				//m_profileSpinner.SetActive(false);
+                m_userAvatarImage.gameObject.SetActive(false);
+				m_userAvatarPlaceholderImage.gameObject.SetActive(true);
             }                            
         };
 

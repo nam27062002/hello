@@ -19,7 +19,7 @@ public class AdProviderIronSource : AdProvider
         return "Id: " + mAppId + " (" + ((mUseAgeProtection) ? "<" : ">=") + "13" + ")";
     }
 
-    protected override void ExtendedInit(bool useAgeProtection)
+    protected override void ExtendedInit(bool useAgeProtection, bool consentRestriction)
     {
         string appId = null;        
 
@@ -74,7 +74,7 @@ public class AdProviderIronSource : AdProvider
             }
 
             mIronSourceEngine = go.AddComponent<HSEIronSourceEngine>();
-            mIronSourceEngine.Init(appId, this);
+            mIronSourceEngine.Init(appId, this, consentRestriction);
         }
     }
 
@@ -197,22 +197,23 @@ public class AdProviderIronSource : AdProvider
         // --------------------------------------------------------------- //
 
 
-        public void Init(string appId, AdProvider adProvider)
+        public void Init(string appId, AdProvider adProvider, bool consentRestriction)
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
                 Log("IronSource::: Init...");
             }
 
-            mAdProvider = adProvider;
-
-            IronSource.Agent.reportAppStarted();
+            mAdProvider = adProvider;            
 
 			if (FeatureSettingsManager.IsDebugEnabled) 
 			{
 				IronSource.Agent.validateIntegration();
 				IronSource.Agent.setAdaptersDebug(true);
 			}
+
+            // 
+            IronSource.Agent.setConsent(!consentRestriction);
 
             //			IronSource.Agent.setUserId ("uniqueUserId");
             IronSource.Agent.init(appId, IronSourceAdUnits.REWARDED_VIDEO, IronSourceAdUnits.INTERSTITIAL);

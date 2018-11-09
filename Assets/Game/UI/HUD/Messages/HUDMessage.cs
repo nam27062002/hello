@@ -720,7 +720,8 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
     
     private void RegisterZone( HUDMessage message )
     {
-        UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
+        if ( !UsersManager.currentUser.m_visitedZones.Contains(m_zoneId))
+            UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
         OnHide.RemoveListener( RegisterZone );
     }
 

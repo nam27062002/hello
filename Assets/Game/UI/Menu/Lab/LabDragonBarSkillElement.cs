@@ -91,6 +91,18 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 
 			// SFX
 			AudioController.Play("hd_lab_power_upgraded");
+
+			// Open info popup (after some delay)
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					PopupController popup = PopupManager.LoadPopup(PopupLabSkillUnlocked.PATH);
+					if(popup != null) {
+						PopupLabSkillUnlocked skillUnlockedPopup = popup.GetComponent<PopupLabSkillUnlocked>();
+						skillUnlockedPopup.Init(m_def);
+						popup.Open();
+					}
+				}, 0.5f
+			);
 		}
 	}
 }

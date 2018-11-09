@@ -9,9 +9,6 @@ using System;
 public class iOSAgent : IronSourceIAgent
 {
 	[DllImport("__Internal")]
-	private static extern void CFReportAppStarted ();
-
-	[DllImport("__Internal")]
 	private static extern void CFSetPluginData (string pluginType, string pluginVersion, string pluginFrameworkVersion);
 
 	[DllImport("__Internal")]
@@ -133,12 +130,9 @@ public class iOSAgent : IronSourceIAgent
 	private static extern bool CFIsOfferwallAvailable ();
 
 	//******************* Banner API *******************//
-
-	[DllImport("__Internal")]
-	private static extern void CFLoadBanner (int size, int position);
 	
 	[DllImport("__Internal")]
-	private static extern void CFLoadBannerWithPlacementName (int size, int position, string placementName);
+	private static extern void CFLoadBanner (string description, int width, int height, int position, string placementName);
 	
 	[DllImport("__Internal")]
 	private static extern void CFDestroyBanner ();
@@ -164,10 +158,6 @@ public class iOSAgent : IronSourceIAgent
 	}
 
 	#region IronSourceIAgent implementation
-	public void reportAppStarted ()
-	{
-		CFReportAppStarted ();
-	}
 
 	//******************* Base API *******************//
 
@@ -380,12 +370,12 @@ public class iOSAgent : IronSourceIAgent
 
 	public void loadBanner (IronSourceBannerSize size, IronSourceBannerPosition position)
 	{
-		CFLoadBanner ((int)size, (int)position);
+		loadBanner(size, position, "");
 	}
 	
 	public void loadBanner (IronSourceBannerSize size, IronSourceBannerPosition position, string placementName)
 	{
-		CFLoadBannerWithPlacementName ((int)size, (int)position, placementName);
+		CFLoadBanner (size.Description, (int)size.Width, (int)size.Height, (int)position, placementName);
 	}
 	
 	public void destroyBanner ()

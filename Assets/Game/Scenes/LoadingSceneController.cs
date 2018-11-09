@@ -182,12 +182,18 @@ public class LoadingSceneController : SceneController {
           {"ES", 16},
           {"SE", 16},
           {"GB", 16},
-          
+
           {"LI", 16},
           {"CH", 16},
           {"GI", 16},
           {"NO", 16},
-          {"IS", 16}
+          {"IS", 16},
+
+          {"AL", 16},
+          {"BA", 16},
+          {"MK", 16},
+          {"MD", 16},
+          {"ME", 16}
     };
 
     Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
@@ -220,14 +226,20 @@ public class LoadingSceneController : SceneController {
         {"ES", true},
         {"SE", true},
         {"GB", true},
-        
+
         {"LI", true},
         {"CH", true},
         {"GI", true},
         {"NO", true},
-        {"IS", true}
+        {"IS", true},
+
+		{"AL", true},
+		{"BA", true},
+		{"MK", true},
+		{"MD", true},
+		{"ME", true}
     };
-    
+
 
     //------------------------------------------------------------------//
     // MEMBERS															//
