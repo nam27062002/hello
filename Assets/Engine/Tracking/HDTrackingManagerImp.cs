@@ -585,23 +585,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
-        // Marketing id has to be notified always when the user changes the consent terms
-        bool needsToNotify = from == EMarketingIdFrom.Settings;
-
-        // From first loading marketing id has to be notified only when no marketing id has been notified yet or when a valid marketing id is retrieved
+        // Specification has changed and now marketing id has to be sent only from first loading and in this case it has to be notified only 
+        // when no marketing id has been notified yet or first time a valid marketing id is retrieved
         if (from == EMarketingIdFrom.FirstLoading) {
             string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
-            needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
+            bool needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
                      (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);
-        }
-
-        if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());
-        }
-
-        if (needsToNotify) {
             Track_MarketingID(marketingId);
-        }
+
+            if (FeatureSettingsManager.IsDebugEnabled) {
+                Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());
+            }
+        }                       
     }
 
     /// <summary>
