@@ -30,7 +30,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Use to debug specific objects
 	public const bool DEBUG_ENABLED = false;
-	public const string DEBUG_TARGET = "HUDCurrencyCounters";
+	public const string DEBUG_TARGET = "ButtonUnlockWithCoins_TEST";
 
 	public enum TweenType {
 		NONE,
@@ -541,7 +541,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalShow(bool _animate, bool _propagateToChildren, bool _restartAnim) {
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.green.Tag("INTERNAL_SHOW"));
+		ShowHideAnimator.DebugLog(this, Colors.green.Tag("INTERNAL_SHOW (" + _animate + ", " + _propagateToChildren + ", " + _restartAnim + ")"));
 
 		// First things first: execute any external checks that might interrupt the action
 		m_checkPassed = true;
@@ -610,7 +610,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalHide(bool _animate, bool _disableAfterAnimation, bool _propagateToChildren, bool _restartAnim) {
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.red.Tag("INTERNAL_HIDE"));
+		ShowHideAnimator.DebugLog(this, Colors.red.Tag("INTERNAL_HIDE (" + _animate + ", " + _disableAfterAnimation + ", " + _propagateToChildren + ", " + _restartAnim + ")"));
 
 		// If restarting the animation, instantly force hide state without animation
 		if(_restartAnim) {

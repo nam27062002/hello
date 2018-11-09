@@ -25,7 +25,7 @@ namespace IronSource.Editor
 			project.AddFrameworkToProject (targetId, "MessageUI.framework", false);
 			project.AddFrameworkToProject (targetId, "JavaScriptCore.framework", false);
 
-			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.1.2.5.dylib", "Frameworks/libz.1.2.5.dylib", PBXSourceTree.Sdk));
+			project.AddFileToBuild (targetId, project.AddFile ("usr/lib/libz.1.2.5.tbd", "Frameworks/libz.1.2.5.tbd", PBXSourceTree.Sdk));
 
 			// Optional Frameworks
 			project.AddFrameworkToProject (targetId, "Social.framework", true);

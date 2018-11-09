@@ -14,7 +14,7 @@ public class AdProviderMopub : AdProvider
         #endif            
     }
     
-    protected override void ExtendedInit(bool useAgeProtection)
+    protected override void ExtendedInit(bool useAgeProtection, bool consentRestriction)
     {
         if (useAgeProtection)
         {

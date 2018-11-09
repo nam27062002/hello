@@ -77,14 +77,14 @@ public abstract class AdProvider
         return "";
     }
 
-    public void Init(bool useAgeProtection)
+    public void Init(bool useAgeProtection, bool consentRestriction)
     {        
         m_ad = new Ad();
 
-        ExtendedInit(useAgeProtection);
+        ExtendedInit(useAgeProtection, consentRestriction);
     }
 
-    protected virtual void ExtendedInit(bool useAgeProtection) {}
+    protected virtual void ExtendedInit(bool useAgeProtection, bool consentRestriction) {}
 
     public void ShowInterstitial(OnPlayVideoCallback callback)
     {
