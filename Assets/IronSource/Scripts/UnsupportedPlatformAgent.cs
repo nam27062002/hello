@@ -17,11 +17,6 @@ public class UnsupportedPlatformAgent : IronSourceIAgent
 		Debug.Log ("Unsupported Platform");
 	}
 
-	public void reportAppStarted ()
-	{
-		Debug.Log ("Unsupported Platform");
-	}
-
 	//******************* Base API *******************//
 
 	public void onApplicationPause (bool pause)

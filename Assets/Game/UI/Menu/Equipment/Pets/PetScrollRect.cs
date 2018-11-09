@@ -57,6 +57,15 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 		}
 	}
 
+	protected override void OnEnable() {
+		base.OnEnable();
+
+		if(!Application.isPlaying) return;
+
+		// Force a refresh
+		m_dirty = true;
+	}
+
 	/// <summary>
 	/// Destructor.
 	/// </summary>

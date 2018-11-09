@@ -306,7 +306,6 @@ public class Spawner : AbstractSpawner {
 						}
 
 						RegisterInSpawnerManager();
-						SpawnerAreaManager.instance.Register(this);
 
 						gameObject.SetActive(false);
 
