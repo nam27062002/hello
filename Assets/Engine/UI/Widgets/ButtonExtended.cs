@@ -65,6 +65,7 @@ public class ButtonExtended : Button {
     /// <summary>
     /// First update call.
     /// </summary>
+    /*
     private void Start()
     {
         for (int i = 0; i < onClick.GetPersistentEventCount(); i++)
@@ -75,7 +76,7 @@ public class ButtonExtended : Button {
         onClick.RemoveAllListeners();
         onClick.AddListener(safeOnclick);
     }
-
+    */
     void safeOnclick()
     {
         if (m_MultiTouchDisable && !checkMultitouchAvailability()) return;
