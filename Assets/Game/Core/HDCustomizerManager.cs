@@ -224,7 +224,26 @@ public class HDCustomizerManager
             {
                 if ( customiser.IsValid())
                 {
-                    if(!m_hasBeenApplied  || ( m_hasBeenApplied && ! customiser.IsExperimentCodeValid( m_currentExperimentCode ) ) || m_forceApply)
+                    bool applyByExperiment = false;
+                    if ( m_hasBeenApplied )
+                    {
+                        // if there was no experiment, check if there is now
+                        if ( m_currentExperimentCode == -1 )
+                        {
+                            ApiExperiment apiExperiment = customiser.GetFirstValidExperiment();
+                            if ( apiExperiment != null )
+                            {
+                                applyByExperiment = true;   
+                            }
+                        }
+                        // if experiment was applies but is not valid anymore
+                        else
+                        {
+                            applyByExperiment = !customiser.IsExperimentCodeValid( m_currentExperimentCode );
+                        }
+                    }
+                    
+                    if(!m_hasBeenApplied  || ( m_hasBeenApplied && applyByExperiment) || m_forceApply)
                     {
                         m_forceApply = false;
                         UnApplyCustomizer();
@@ -234,7 +253,6 @@ public class HDCustomizerManager
                             ApiExperiment experiment = customiser.GetFirstValidExperiment();
                             if (experiment != null)
                             {
-                                
                                 Log("New experiment applied: name = " + experiment.GetName() + " groupName = " + experiment.GetGroupName(), true);
                                 HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.GetName(), experiment.GetGroupName());
                                 m_currentExperimentCode = experiment.GetCode();
