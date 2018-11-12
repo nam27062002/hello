@@ -30,8 +30,12 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		get { return m_dragonLoader; }
 	}
 
-	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the special dragon.")]
+	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to special dragons.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+	public CameraSnapPoint photoCameraSnapPoint {
+		get { return m_photoCameraSnapPoint; }
+	}
+
 	[SerializeField] private CameraSnapPoint m_notOwnedCameraSnapPoint = null;
 	[Space] 
     [SerializeField] private ParticleSystem m_loadingDragonParticle = null;
@@ -50,7 +54,6 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	}
 
 	// Camera snap points backups
-	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 	private CameraSnapPoint m_defaultCameraSnapPoint = null;
 	
 	//------------------------------------------------------------------------//
@@ -63,9 +66,6 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Gather references
 		m_labScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION);
 		m_defaultCameraSnapPoint = m_labScreenData.cameraSetup;
-
-		// Store original camera snap point for the photo screen
-		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
 
 		// Subscribe to external events
 		Messenger.AddListener<SceneController.Mode, SceneController.Mode>(MessengerEvents.GAME_MODE_CHANGED, OnGameModeChanged);
@@ -279,18 +279,6 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		if(toScene != null && toScene.gameObject == this.gameObject) {
 			// Select the right camera snap point for this screen
 			SelectCameraSnapPoint();
-
-			// Override camera snap point for the photo screen
-			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
-		}
-
-		// Leaving a screen using this scene
-		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
-			// Do some stuff if not going to take a picture of the reward
-			if(_to != MenuScreen.PHOTO) {
-				// Restore default camera snap point for the photo screen
-				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
-			}
 		}
 	}
 
