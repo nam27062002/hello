@@ -63,7 +63,7 @@ public class DragonParticleController : MonoBehaviour
 	public GameObject m_waterAirLimitParticle;
 	private ParticleSystem m_waterAirLimitInstance = null;
 
-	[Space]
+    [Space]
 	public string m_corpseAsset = "";
 	private ParticleHandler m_corpseHandler;
 
@@ -93,6 +93,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		public bool m_stopInsideWater = false;
 		public bool m_stopWhenDead = false;
+        public bool m_stopOutsideWater = false;
 		public ParticleSystem m_particleReference;
 	}
 
@@ -192,7 +193,7 @@ public class DragonParticleController : MonoBehaviour
 
 	void OnEnable() {
 		// Register events
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -203,7 +204,7 @@ public class DragonParticleController : MonoBehaviour
 
 	void OnDisable()
 	{
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPreRevive);
 		Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
@@ -341,7 +342,7 @@ public class DragonParticleController : MonoBehaviour
 
 	}
 
-	void OnLevelUp( DragonData data )
+	void OnLevelUp( IDragonData data )
 	{
 		m_levelUpInstance.gameObject.SetActive(true);
 		m_levelUpInstance.Play();
@@ -353,7 +354,7 @@ public class DragonParticleController : MonoBehaviour
 	{
 		m_alive = false;	
 		CheckBodyParts();
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			SpawnCorpse();
 		}
@@ -566,6 +567,7 @@ public class DragonParticleController : MonoBehaviour
 		{
 			if ( (m_insideWater && m_bodyParticles[i].m_stopInsideWater)
 				|| (!m_alive && m_bodyParticles[i].m_stopWhenDead)
+                || (!m_insideWater && m_bodyParticles[i].m_stopOutsideWater)
 			)
 			{
 				if (m_bodyParticles[i].m_particleReference.isPlaying)

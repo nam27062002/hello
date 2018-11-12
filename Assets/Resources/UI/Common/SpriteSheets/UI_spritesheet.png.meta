@@ -1,19 +1,18 @@
 fileFormatVersion: 2
-guid: 0df91652ec5406843947b087064197eb
+guid: a716268809776b0469d7c63f4d9e3cfc
 TextureImporter:
   fileIDToRecycleName:
-    21300000: icon_health
-    21300002: icon_l
-    21300004: icon_m
-    21300006: icon_s
-    21300008: icon_speed
-    21300010: icon_xl
-    21300012: icon_xs
-    21300014: icon_pc
+    21300000: UI_spritesheet
+    21300002: icon_dragon_scale
+    21300004: icon_key
+    21300006: icon_l
+    21300008: icon_m
+    21300010: icon_offers
+    21300012: icon_pc
+    21300014: icon_s
     21300016: icon_sc
-    21300018: icon_dragon_scale
-    21300020: icon_key
-    21300022: icon_ticket
+    21300018: icon_xl
+    21300020: icon_xs
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -37,12 +36,12 @@ TextureImporter:
   generateCubemap: 6
   cubemapConvolution: 0
   seamlessCubemap: 0
-  textureFormat: -1
+  textureFormat: 1
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
     filterMode: -1
-    aniso: 16
+    aniso: -1
     mipBias: -1
     wrapU: 1
     wrapV: 1
@@ -68,7 +67,7 @@ TextureImporter:
   textureFormatSet: 0
   platformSettings:
   - buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -78,7 +77,7 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: Standalone
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -88,17 +87,17 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
   - buildTarget: iPhone
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 4
+    textureFormat: 13
     textureCompression: 0
-    compressionQuality: 50
+    compressionQuality: 100
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 1
     androidETC2FallbackOverride: 0
   - buildTarget: Android
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: 13
     textureCompression: 0
@@ -114,12 +113,12 @@ TextureImporter:
       name: icon_dragon_scale
       rect:
         serializedVersion: 2
-        x: 154
-        y: 210
-        width: 139
-        height: 148
-      alignment: 9
-      pivot: {x: 0.5071942, y: 0.5}
+        x: 306
+        y: 382
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -128,8 +127,8 @@ TextureImporter:
       name: icon_key
       rect:
         serializedVersion: 2
-        x: 295
-        y: 249
+        x: 306
+        y: 11
         width: 125
         height: 109
       alignment: 0
@@ -167,15 +166,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
     - serializedVersion: 2
-      name: icon_pc
+      name: icon_offers
       rect:
         serializedVersion: 2
         x: 154
-        y: 96
-        width: 115
-        height: 112
-      alignment: 9
-      pivot: {x: 0.5, y: 0.4955357}
+        y: 61
+        width: 150
+        height: 145
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: icon_pc
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 252
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -198,10 +211,10 @@ TextureImporter:
       name: icon_sc
       rect:
         serializedVersion: 2
-        x: 271
-        y: 103
-        width: 104
-        height: 105
+        x: 306
+        y: 122
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -226,8 +239,8 @@ TextureImporter:
       name: icon_xs
       rect:
         serializedVersion: 2
-        x: 306
-        y: 360
+        x: 154
+        y: 208
         width: 150
         height: 150
       alignment: 0

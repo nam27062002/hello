@@ -47,6 +47,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
 
+	private bool m_transactionInProgress = false;
+
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
 	//------------------------------------------------------------------------//
@@ -124,13 +126,21 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Ignore if not properly initialized
 		if(def == null) return;
 
+		// Ignore if a transaction is already in progress (prevent spamming)
+		// Resolves issue HDK-2589 and others
+		if(m_transactionInProgress) return;
+
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
+				m_transactionInProgress = true;
+
 				// Make sure we have enough and adjust new balance
 				// Resources flow makes it easy for us!
 				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
+				purchaseFlow.forceConfirmation = true;	// [AOC] For currency packs always request confirmation (UMR compliance)
 				purchaseFlow.OnSuccess.AddListener(OnResourcesFlowSuccess);
+				purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
 				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
 			} break;
 
@@ -142,7 +152,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
                         OnPurchaseError.Invoke(this);
                         UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
                     } else {
-                        // Start real money transaction flow
+						// Start real money transaction flow
+						m_transactionInProgress = true;
                         m_loadingPopupController = PopupManager.PopupLoading_Open();
 						m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
 						GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
@@ -167,6 +178,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 				TrackPurchaseResult(true);
 				GameStoreManager.SharedInstance.Buy(GetIAPSku());
 			} else {
+				m_transactionInProgress = false;
 				OnPurchaseError.Invoke(this);
 
 #if UNITY_ANDROID
@@ -180,6 +192,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
             }
         } else {
+			m_transactionInProgress = false;
 			OnPurchaseError.Invoke(this);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
@@ -192,6 +205,9 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	private void OnIAPSuccess(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
+			// Update control vars
+			m_transactionInProgress = false;
+
 			// Apply rewards
 			ApplyShopPack();
 
@@ -213,6 +229,9 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	private void OnIAPFailed(string _sku) {
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
+			// Update control vars
+			m_transactionInProgress = false;
+
 			// Stop tracking
 			TrackPurchaseResult(false);
 
@@ -236,6 +255,18 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 			// Show feedback!
 			ShowPurchaseSuccessFeedback();
+		}
+	}
+
+	/// <summary>
+	/// Transaction has finished (for good or bad).
+	/// </summary>
+	/// <param name="_flow">Flow.</param>
+	private void OnResourcesFlowFinished(ResourcesFlow _flow) {
+		// Is it this one?
+		if(_flow.itemDef.sku == def.sku) {
+			// Update control vars
+			m_transactionInProgress = false;
 		}
 	}
 }

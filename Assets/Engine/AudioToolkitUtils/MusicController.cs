@@ -51,7 +51,7 @@ public class MusicController : MonoBehaviour
     }
     #endregion
 
-    private bool IsEnabled { get; set; }
+    public bool IsEnabled { get; set; }
 
     private void OnScenePreunload(string scene)
     {

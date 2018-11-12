@@ -88,7 +88,7 @@ public class PhotoScreenController : MonoBehaviour {
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
 	}
-		
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -117,6 +117,9 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Load qr code
 		m_qrContainer.sprite = Resources.Load<Sprite>(GameSettings.shareData.qrCodePath);
+
+		// Subscribe to external events
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -132,7 +135,7 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Hide QR code container
 		m_qrContainer.gameObject.SetActive(false);
-	}
+    }
 
 	/// <summary>
 	/// Component has been disabled.
@@ -152,6 +155,10 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
+		// Unsubscribe to external events
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+
+		// Clear refs
 		m_picture = null;
 	}
 
@@ -280,7 +287,7 @@ public class PhotoScreenController : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.DRAGON: {
 				// Initialize dragon info
-				DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+				IDragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 				m_targetName = dragonData.def.GetLocalized("tidName");
 				if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
 				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
@@ -370,6 +377,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Initialize zoom controller with main camera
 		currentMode.zoomControl.gameObject.SetActive(true);
+		currentMode.zoomControl.camera = null;	// [AOC] Force refresh of camera initial values
 		currentMode.zoomControl.camera = menuController.mainCamera;
 	}
 
@@ -399,28 +407,28 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnTakePictureButton() {
 		// Do it in a coroutine to wait until the end of the frame
 		StartCoroutine(TakePicture());
-	}
+    }
 
-	/// <summary>
-	/// The back button has been pressed.
-	/// </summary>
-	public void OnBackButton() {
-		// Ignore if we are in AR
-		if(!m_arFlow.isActiveAndEnabled) {
+    /// <summary>
+    /// The back button has been pressed.
+    /// </summary>
+    public void OnBackButton() {
+        // Ignore if we are in AR
+        if (!m_arFlow.isActiveAndEnabled) {
 			// Go back to previous menu screen
 			InstanceManager.menuSceneController.transitionManager.Back(true);
 		}
-	}
+    }
 
-	//------------------------------------------------------------------------//
-	// AR CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The AR button has been pressed.
-	/// </summary>
-	public void OnARButton() {
-		// Start AR flow
-		if(!m_arFlow.isActiveAndEnabled) {
+    //------------------------------------------------------------------------//
+    // AR CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The AR button has been pressed.
+    /// </summary>
+    public void OnARButton() {
+        // Start AR flow
+        if (!m_arFlow.isActiveAndEnabled) {
 			// Hide bottom bar
 			m_bottomBar.gameObject.SetActive(false);
 
@@ -431,30 +439,30 @@ public class PhotoScreenController : MonoBehaviour {
 			// Do it!
 			m_arFlow.StartFlow();
 		}
-	}
+    }
 
-	/// <summary>
-	/// AR flow wants to finish.
-	/// </summary>
-	private void OnARExit() {
-		// Terminate AR flow
-		m_arFlow.EndFlow();
-	}
+    /// <summary>
+    /// AR flow wants to finish.
+    /// </summary>
+    private void OnARExit() {
+        // Terminate AR flow
+        m_arFlow.EndFlow();
+    }
 
-	/// <summary>
-	/// AR flow wants to take a picture.
-	/// </summary>
-	private void OnARTakePicture() {
-		// Use the same picture functionality as in normal mode
-		OnTakePictureButton();
-	}
+    /// <summary>
+    /// AR flow wants to take a picture.
+    /// </summary>
+    private void OnARTakePicture() {
+        // Use the same picture functionality as in normal mode
+        OnTakePictureButton();
+    }
 
-	/// <summary>
-	/// AR flow has changed its state.
-	/// </summary>
-	/// <param name="_oldState">Old state.</param>
-	/// <param name="_newState">New state.</param>
-	private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
+    /// <summary>
+    /// AR flow has changed its state.
+    /// </summary>
+    /// <param name="_oldState">Old state.</param>
+    /// <param name="_newState">New state.</param>
+    private void OnARStateChanged(PhotoScreenARFlow.State _oldState, PhotoScreenARFlow.State _newState) {
 		// Don't show dragon info while detecting the surface
 		currentMode.uiContainer.SetActive(_newState != PhotoScreenARFlow.State.DETECTING_SURFACE);
 
@@ -463,5 +471,98 @@ public class PhotoScreenController : MonoBehaviour {
 		m_bottomBar.gameObject.SetActive(arOff);
 		currentMode.dragControl.gameObject.SetActive(arOff);
 		currentMode.zoomControl.gameObject.SetActive(arOff);
+	}
+
+	/// <summary>
+	/// The menu screen change animation is about to start.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+		// Check params
+		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+
+		// Aux vars
+		MenuSceneController menuSceneController = InstanceManager.menuSceneController;
+		MenuScreenScene fromScene = menuSceneController.GetScreenData(_from).scene3d;
+		MenuScreenScene toScene = menuSceneController.GetScreenData(_to).scene3d;
+
+		// If the scene we are entering has a photo snap point to override, do it now
+		if(toScene != null) {
+			// Aux vars
+			CameraSnapPoint newSnapPoint = null;
+
+			// a) Reward Scene
+			if(toScene is RewardSceneController) {
+				newSnapPoint = (toScene as RewardSceneController).photoCameraSnapPoint;
+			}
+
+			// b) Lab Scene
+			else if(toScene is LabDragonSelectionScene) {
+				newSnapPoint = (toScene as LabDragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// c) Dragon Selection Scene
+			else if(toScene is DragonSelectionScene) {
+				newSnapPoint = (toScene as DragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// Apply
+			if(newSnapPoint != null) {
+				Debug.Log(Colors.paleGreen.Tag(
+					"Setting snap point from " +
+					menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + newSnapPoint.name
+				));
+				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
+			}
+		}
+
+		// Leaving a screen that has override the photo snap point
+		/*else if(fromScene != null) {
+			// Aux vars
+			CameraSnapPoint newSnapPoint = null;
+
+			// a) Reward Scene
+			if(fromScene is RewardSceneController) {
+				newSnapPoint = (fromScene as RewardSceneController).photoCameraSnapPoint;
+			}
+
+			// b) Lab Scene
+			else if(fromScene is LabDragonSelectionScene) {
+				newSnapPoint = (fromScene as LabDragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// c) Dragon Selection Scene
+			else if(fromScene is DragonSelectionScene) {
+				newSnapPoint = (fromScene as DragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// Apply
+			if(newSnapPoint != null) {
+				Debug.Log(Colors.paleGreen.Tag(
+					"Setting snap point from " +
+					menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + newSnapPoint.name
+				));
+				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
+			}
+		}
+		*/
+		/*
+		// Leaving a screen using this scene
+		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
+			// Do some stuff if not going to take a picture of the reward
+			if(_to != MenuScreen.PHOTO) {
+				// Restore default camera snap point for the photo screen
+				Debug.Log(Colors.paleGreen.Tag(
+					"Restoring snap point from " +
+					InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + m_originalPhotoCameraSnapPoint.name
+				));
+				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
+			}
+		}
+		*/
 	}
 }

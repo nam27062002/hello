@@ -154,7 +154,7 @@ public class DragonCorpse : MonoBehaviour {
 	/// </summary>
 	/// <param name="_disguiseSku">The disguise to be equipped.</param>
 	public void EquipDisguise(string dragonSku, string disguiseSku) {
-		if (m_lastDisguiseSku.CompareTo (disguiseSku) != 0)
+		if (!m_lastDisguiseSku.Equals(disguiseSku))
 		{
 			m_lastDisguiseSku = disguiseSku;
 			string dragonDisguiseSku = disguiseSku;
@@ -250,16 +250,26 @@ public class DragonCorpse : MonoBehaviour {
 		Material originalWing = Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_wings");
 		if ( originalWing )
 			wingsMaterial = new Material( originalWing );
-		Material bodyMaterial = new Material (Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body"));
+        Material bodyMaterial = null;
+        Material bodyResource = Resources.Load<Material>(DragonEquip.SKIN_PATH + dragonSku + "/" + _name + "_body");
+        if ( bodyResource )
+		    bodyMaterial = new Material ( bodyResource );
+            
+        if (bodyMaterial == null)
+        {
+            bodyMaterial = m_renderers[0].material;
+            int max = m_renderers.Length;
+            for (int i = 0; i < max; i++)
+            {
+                m_renderers[0].material = bodyMaterial;
+            }
+        }
 		if ( Application.isPlaying )
 		{
             if (wingsMaterial)
-            {
-//				wingsMaterial.shader = m_deathShader;
                 setDeathMode(wingsMaterial);
-            }
-//			bodyMaterial.shader = m_deathShader;
-            setDeathMode(bodyMaterial);
+            if ( bodyMaterial )
+                setDeathMode(bodyMaterial);
 
 		}		
 		if ( wingsMaterial )

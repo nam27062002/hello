@@ -77,14 +77,7 @@ public class CircleAreaBounds : AreaBounds {
 
 	public bool Overlaps( Vector2 _center, float _radius)
 	{
-		float sqrMagnitude = ((Vector2)this.center - _center).sqrMagnitude;
-		float test = (_radius + m_radius);
-		test = test * test;
-		if ( sqrMagnitude <= test )
-		{
-			return true;
-		}
-		return false;
+        return MathTest.TestCircleVsCircle(_center, _radius, this.center, m_radius);
 	}
 
 	public bool OverlapsSegment(Vector2 _a, Vector2 _b) {
@@ -99,15 +92,15 @@ public class CircleAreaBounds : AreaBounds {
 		if (k < 0) {
 			closestPoint = _a;
 		} else {
-			float magnitude = aToB.magnitude;
-			k = k / magnitude;
-			if ( k < magnitude )
+			float denom = Vector2.Dot( aToB, aToB );
+			if ( k >= denom )
 			{
-				closestPoint = _a + aToB.normalized * k;
+				closestPoint = _b;
 			}
 			else
 			{
-				closestPoint = _b;
+				k = k / denom;
+				closestPoint = _a + aToB * k;
 			}
 		}
 

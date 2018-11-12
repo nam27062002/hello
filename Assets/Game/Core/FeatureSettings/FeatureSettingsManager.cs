@@ -1433,7 +1433,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
                 return true;
 #else
-	            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+	            Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
 	            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);               
 #endif
             }
@@ -1602,6 +1602,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_LIGHTMAP);
+        }
+    }
+    
+    public bool IsHelicopterDestroying
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_HELICOPTER_DESTROYS);
         }
     }
 

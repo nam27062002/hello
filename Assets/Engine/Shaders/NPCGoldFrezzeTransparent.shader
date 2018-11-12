@@ -14,9 +14,9 @@ Shader "Hungry Dragon/NPC/NPC Gold Freeze Transparent"
 	
 	Subshader
 	{
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		Pass
 		{
-			Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			Cull back

@@ -142,6 +142,12 @@ public class MenuScreensControllerToolbar {
 					s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS].screens.Add(scr);
 				} break;
 
+				case MenuScreen.LAB_PETS:
+				case MenuScreen.LAB_GOALS:
+				case MenuScreen.LAB_DRAGON_SELECTION: {
+					s_screenGroups[(int)EScreensGroup.LAB_SCREENS].screens.Add(scr);
+				} break;
+
 				default: {
 					s_screenGroups[(int)EScreensGroup.MAIN_SCREENS].screens.Add(scr);
 				} break;

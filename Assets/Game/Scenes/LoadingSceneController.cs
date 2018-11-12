@@ -181,7 +181,19 @@ public class LoadingSceneController : SceneController {
           {"SI", 16},
           {"ES", 16},
           {"SE", 16},
-          {"GB", 16}
+          {"GB", 16},
+
+          {"LI", 16},
+          {"CH", 16},
+          {"GI", 16},
+          {"NO", 16},
+          {"IS", 16},
+
+          {"AL", 16},
+          {"BA", 16},
+          {"MK", 16},
+          {"MD", 16},
+          {"ME", 16}
     };
 
     Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
@@ -213,9 +225,21 @@ public class LoadingSceneController : SceneController {
         {"SI", true},
         {"ES", true},
         {"SE", true},
-        {"GB", true}
+        {"GB", true},
+
+        {"LI", true},
+        {"CH", true},
+        {"GI", true},
+        {"NO", true},
+        {"IS", true},
+
+		{"AL", true},
+		{"BA", true},
+		{"MK", true},
+		{"MD", true},
+		{"ME", true}
     };
-    
+
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -676,7 +700,6 @@ public class LoadingSceneController : SceneController {
                 ParticleManager.CreateInstance(true);
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
-                SpawnerAreaManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
@@ -741,7 +764,7 @@ public class LoadingSceneController : SceneController {
 				              
                 // Initialize managers needing data from the loaded profile
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
-				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
+				OffersManager.InitFromDefinitions(false);	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);

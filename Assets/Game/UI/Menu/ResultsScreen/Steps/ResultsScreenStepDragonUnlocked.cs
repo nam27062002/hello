@@ -40,7 +40,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
 
 	// Internal
-	private DragonData m_dragonData = null;
+	private IDragonData m_dragonData = null;
 	private bool m_dragonUnlocked = false;
 	
 	//------------------------------------------------------------------------//
@@ -144,7 +144,9 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 				// [AOC] Unless testing!
 				if(!CPResultsScreenTest.testEnabled) {
 					m_dragonData.Acquire();
-				}
+
+                    HDTrackingManager.Instance.Notify_DragonUnlocked(m_dragonData.def.sku, m_dragonData.GetOrder());
+                }
 
 				// Save!
 				PersistenceFacade.instance.Save_Request(true);

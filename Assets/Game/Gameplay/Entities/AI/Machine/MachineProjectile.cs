@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace AI {
@@ -10,9 +10,7 @@ namespace AI {
 		private Entity m_entity;
 		private Projectile m_projectile;
 
-		private bool m_beingEaten;
-		private bool m_beingBurned;
-
+		IEntity.DyingReason m_dyingReason = IEntity.DyingReason.OTHER;
 
 		//---------------------------------------------------------------------------------
 		public virtual Quaternion orientation 	{ get { return transform.rotation; } set { transform.rotation = value; } }
@@ -48,10 +46,8 @@ namespace AI {
 		}
 
 		public void Spawn(ISpawner _spawner) {
-			m_beingEaten = false;
+			m_dyingReason = IEntity.DyingReason.OTHER;
 			m_edible.Init();
-
-			m_beingBurned = false;
 			m_inflammable.Init();
 		}
 
@@ -63,10 +59,22 @@ namespace AI {
 		// Update is called once per frame
 		public void SetSignal(Signals.Type _signal, bool _activated) {
 			if (_signal == Signals.Type.Destroyed) {
-				if (m_beingBurned) {
-					m_projectile.OnBurned();	
-				} else {
-					m_projectile.OnEaten();
+				switch( m_dyingReason )
+				{
+					case IEntity.DyingReason.BURNED:
+					{
+						m_projectile.OnBurned();
+					}break;
+					case IEntity.DyingReason.DESTROYED:
+					{
+						m_projectile.OnDestoyed();
+					}break;
+					default:
+					case IEntity.DyingReason.EATEN:
+					{
+						m_projectile.OnEaten();
+					}break;
+
 				}
 				m_entity.Disable(true);
 			}
@@ -96,7 +104,7 @@ namespace AI {
 		public void LeaveDevice(bool _isCage) 	{}
 
 		// 
-		public bool IsDying() { return m_beingEaten || m_beingBurned; }
+		public bool IsDying() { return m_dyingReason != IEntity.DyingReason.OTHER; }
 		public bool IsDead() { return IsDying(); }
 		public bool IsFreezing() { return false; }
 
@@ -114,7 +122,6 @@ namespace AI {
 
 		public void Bite() {
 			if (!IsDying()) {
-				m_beingEaten = true;
                 m_projectile.OnBite();
 				m_edible.Bite();
 			}
@@ -141,12 +148,28 @@ namespace AI {
 		// Being burned
 		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
 			if (!IsDying()) {
-				m_beingBurned = true;
+				m_dyingReason = IEntity.DyingReason.BURNED;
 				SetSignal(Signals.Type.Destroyed, true);
 				//m_inflammable.Burn(_transform, _source, instant);
 			}
 			return false;
 		}
+
+		public bool Smash( IEntity.Type _source ) {
+			if ( !IsDead() && !IsDying() )
+			{
+				m_dyingReason = IEntity.DyingReason.DESTROYED;
+				m_entity.onDieStatus.source = _source;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
+				SetSignal(Signals.Type.Destroyed, true);
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, reward);
+				return true;
+			}
+			return false;
+		}
+
+
 
 		public void SetVelocity(Vector3 _v) {}
 		public void AddExternalForce(Vector3 _f) {}

@@ -56,7 +56,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Depends on game mode
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Store event reference
 				m_event = HDLiveEventsManager.instance.m_tournament;
@@ -88,7 +88,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Check game mode
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			// Tournament mode: check tournament
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Never during FTUX
@@ -124,7 +124,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Apply rewards to user profile (only tournament mode)
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) {
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) {
 			RewardManager.ApplyEndOfGameRewards();
 			PersistenceFacade.instance.Save_Request(true);
 		}
@@ -147,7 +147,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		m_busyPanel.Show();
 
 		// Tell the event to register a score
-		switch(GameSceneController.s_mode) {
+		switch(GameSceneController.mode) {
 			// Tournament
 			case GameSceneController.Mode.TOURNAMENT: {
 				HDTournamentManager tournament = m_event as HDTournamentManager;

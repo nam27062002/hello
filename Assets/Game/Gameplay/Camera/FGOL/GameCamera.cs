@@ -386,7 +386,7 @@ public class GameCamera : MonoBehaviour
 
 	private void MoveToSpawnPos( bool _levelEditor = false )
 	{
-		DragonData data = InstanceManager.player.data;
+		IDragonData data = InstanceManager.player.data;
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
@@ -400,7 +400,10 @@ public class GameCamera : MonoBehaviour
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
 
-		Vector3 pos = spawnPointObj.transform.position;
+		Vector3 pos = GameConstants.Vector3.zero;
+		if(spawnPointObj != null) {
+			pos = spawnPointObj.transform.position;
+		}
 		m_position = pos;
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
@@ -491,8 +494,8 @@ public class GameCamera : MonoBehaviour
 		DragonPlayer pi = obj.GetComponent<DragonPlayer>();
 		if(pi != null)
 		{
-			float size = pi.data.def.GetAsFloat("defaultSize");
-			float cameraFrameWidthModifier = pi.data.def.GetAsFloat("cameraFrameWidthModifier");
+            float size = pi.data.defaultSize;
+			float cameraFrameWidthModifier = pi.data.cameraFrameWidthModifier;
 			SetFrameWidthIncrement( size, cameraFrameWidthModifier );
 		}
 		else

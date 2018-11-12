@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -82,23 +82,26 @@ public class DragonTint : MonoBehaviour
         Dictionary<string, List<Renderer>> disguiseRenderers = new Dictionary<string, List<Renderer>>();
 
 
-		if ( m_renderers != null )
+		if ( m_renderers != null)
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Renderer renderer = m_renderers[i];
-			Material mat = renderer.material;
+            
+			Renderer r = m_renderers[i];
+            Material mat = r.material;
 			string shaderName = mat.shader.name;
 			if ( shaderName.Contains("Dragon standard") )
 			{
-				if ( renderer.tag.Equals("DragonBody") )
+				if ( r.tag.Equals("DragonBody") )
 				{
-					bodyMaterial = mat;
-					bodyRenderers.Add( renderer );
+                    if ( bodyMaterial == null )
+					    bodyMaterial = mat;
+					bodyRenderers.Add( r );
 				}
-				else if ( renderer.tag.Equals("DragonWings") )
+				else if ( r.tag.Equals("DragonWings") )
 				{
-					wingsMaterial = mat;
-					wingsRenderers.Add( renderer );
+                    if ( wingsMaterial == null )
+					    wingsMaterial = mat;
+					wingsRenderers.Add( r );
 				}
 				else
 				{
@@ -108,13 +111,13 @@ public class DragonTint : MonoBehaviour
                     }
                     if ( disguiseRenderers.ContainsKey( mat.name ) ) 
                     {
-                            disguiseRenderers[mat.name].Add( renderer );
+                            disguiseRenderers[mat.name].Add( r );
                     }
                     else
                     {
                             // List<Renderer> rends = new List<Renderer>();
-                            // rends.Add( renderer );
-                            disguiseRenderers.Add(mat.name, new List<Renderer> { renderer });
+                            // rends.Add( r );
+                            disguiseRenderers.Add(mat.name, new List<Renderer> { r });
                     }
 					
 				}
@@ -344,7 +347,7 @@ public class DragonTint : MonoBehaviour
             DragonCorpse.setDeathMode(m_materials[i]);
 //            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
-     	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE)
+     	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse)
      	{
      		// Shows corpse
      		m_deathAlpha = 0;

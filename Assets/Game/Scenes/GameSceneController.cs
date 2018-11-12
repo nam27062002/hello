@@ -143,46 +143,67 @@ public class GameSceneController : GameSceneControllerBase {
     TrackerBoostTime m_boostTimeTracker;
     TrackerMapUsage m_mapUsageTracker;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	override protected void Awake() {
-		// Call parent
-		base.Awake();
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    override protected void Awake()
+    {
+        // Call parent
+        base.Awake();
 
-		m_boostTimeTracker = new TrackerBoostTime();
-		m_mapUsageTracker = new TrackerMapUsage();
+        m_boostTimeTracker = new TrackerBoostTime();
+        m_mapUsageTracker = new TrackerMapUsage();
 
-		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-		// Make sure loading screen is visible
-		LoadingScreen.Toggle(true, false);
+        // Make sure loading screen is visible
+        LoadingScreen.Toggle(true, false);
 
-		// Check whether the tutorial popup must be displayed
-		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
-			|| DebugSettings.isPlayTest) {
-			// Tracking
-			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
-			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
+        // Check whether the tutorial popup must be displayed
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
+            || DebugSettings.isPlayTest)
+        {
+            // Tracking
+            string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupTutorialControls.PATH);
+            HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 
-			// Open popup
-			PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);			
-		}
+            // Open popup
+            PopupManager.OpenPopupInstant(PopupTutorialControls.PATH);
+        }
 
-		// Load the dragon
-		if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
-		{
-			string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
-			DragonManager.LoadDragon(dragon);
-		}
-		else
-		{
-			DragonManager.LoadDragon(UsersManager.currentUser.currentDragon);
-		}
+        // Load the dragon
+		// DEBUG: Special dragon testing
+        if ( /*FeatureSettingsManager.IsDebugEnabled &&*/ Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        {
+            // Hola soy special SPECIAAAAAAL
+			// [AOC] xDDDDDDDD
+            string dragon = Prefs.GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
+            DragonTier dragonTier = ( DragonTier )Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_TIER, 0);
+            int powerLevel = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL, 0);
+            int hpBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_HP_BOOST_LEVEL, 0);
+            int speedBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_SPEED_BOOST_LEVEL, 0);
+            int energyBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL, 0);
+            DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
+            
+        }
+        else
+        {
+            if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+            {
+                string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+                DragonManager.LoadDragon(dragon);
+            }
+            else
+            {
+				DragonManager.LoadDragon(DragonManager.currentDragon.sku);	// currentDragon Will automatically select between classic and special dragons depending on active mode
+            }
 
+        }
+        
+		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
@@ -414,6 +435,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+        Input.multiTouchEnabled = true;
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -509,6 +531,8 @@ public class GameSceneController : GameSceneControllerBase {
 					Messenger.Broadcast<bool>(MessengerEvents.GAME_PAUSED, false);
                     //Start Performance tracking 
                     HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
+
+                    Input.multiTouchEnabled = true;
                 }
             }
 
@@ -805,17 +829,29 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int dragonProgress = 0;
         string dragonSkin = null;
+        bool isSpecial = false;
 		List<string> pets = null;
         if (InstanceManager.player != null) {
-            DragonData dragonData = InstanceManager.player.data;
-            if (dragonData != null) {
-                if (dragonData.progression != null) {
-                    dragonXp = (int)dragonData.progression.xp;
+            IDragonData dragonData = InstanceManager.player.data;
+			if (dragonData != null) {
+                if (dragonData.type == IDragonData.Type.CLASSIC)
+                {
+    				DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                    if (progression != null) {
+                        dragonXp = (int)progression.xp;
+                    }
+    
+                    dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
                 }
-
-                dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+                else if ( dragonData.type == IDragonData.Type.SPECIAL )
+                {
+                    isSpecial = true;
+                    // TODO
+                    DragonDataSpecial specialData = dragonData as DragonDataSpecial;
+                    dragonProgress = specialData.GetLevel();
+                }
                 dragonSkin = dragonData.diguise;
-				pets = dragonData.pets;
+                pets = dragonData.pets;
             }
         }
 
@@ -823,6 +859,24 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.InitValue(0);
 
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+
+        
+        if (isSpecial)
+        {
+            DragonDataSpecial specialData = InstanceManager.player.data as DragonDataSpecial;
+            string powerLevel = "P" + specialData.powerLevel;
+            int specialOwned = UsersManager.currentUser.GetNumOwnedSpecialDragons();
+            HDTrackingManager.Instance.Notify_LabGameStart(specialData.sku,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.SPEED).level,
+                                                            specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level,
+                                                            powerLevel,
+                                                            specialOwned,
+                                                            ""
+                                                            );
+        }
+            
+        
 
         // Automatic connection system is disabled during the round in order to ease performance
         GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);
@@ -834,10 +888,11 @@ public class GameSceneController : GameSceneControllerBase {
         int score = (int)RewardManager.score;
         int dragonProgress = 0;
         if (InstanceManager.player != null) {
-            DragonData dragonData = InstanceManager.player.data;
-            if (dragonData != null) {
-                if (dragonData.progression != null) {
-                    dragonXp = (int)dragonData.progression.xp;
+            IDragonData dragonData = InstanceManager.player.data;
+			if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
+				DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                if (progression != null) {
+                    dragonXp = (int)progression.xp;
                 }
 
                 dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
@@ -864,7 +919,7 @@ public class GameSceneController : GameSceneControllerBase {
 
     private void Track_RunEnd(bool _quitGame) {
         DragonPlayer dragonPlayer = InstanceManager.player;
-        DragonData dragonData = null;
+        IDragonData dragonData = null;
         Vector3 deathCoordinates = Vector3.zero;
         if (dragonPlayer != null) {
             dragonData = dragonPlayer.data;
@@ -874,8 +929,11 @@ public class GameSceneController : GameSceneControllerBase {
         int dragonXp = 0;
         int timePlayed = (int)elapsedSeconds;
         int score = (int)RewardManager.score;
-        if (dragonData != null && dragonData.progression != null) {
-            dragonXp = (int)dragonData.progression.xp;
+		if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
+			DragonProgression progression = (dragonData as DragonDataClassic).progression;
+			if(progression != null) {
+				dragonXp = (int)progression.xp;
+			}
         }
 
         string deathType = null;

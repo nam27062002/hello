@@ -72,10 +72,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 	private bool m_flagsFolded = true;	// By default flags are folded when animation has finished
 	private bool m_nextDragonLocked = true;	// Is the next dragon locked or has it been already unlocked using PC?
-	private DragonData m_nextDragonData = null;
+	private IDragonData m_nextDragonData = null;
 
 	// Some public properties
-	public DragonData nextDragonData {
+	public IDragonData nextDragonData {
 		get { return m_nextDragonData; }
 	}
 
@@ -117,8 +117,11 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// [AOC] As usual, animating the XP bar is not obvious (dragon may have 
 		//		 leveled up several times during a single game, disguises unlocked, etc.)
 
+		// Only for CLASSIC dragons!
+		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+
 		// Initialize bar with current dragon's data
-		Refresh(DragonManager.currentDragon);
+		Refresh(DragonManager.currentDragon as DragonDataClassic);
 		m_deltaPerLevel = 1f/(m_dragonData.progression.maxLevel);
 
 		// Change separators to work with the aux bar rather than the main bar
@@ -210,7 +213,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		if(CPResultsScreenTest.testEnabled) {
 			m_nextDragonLocked = m_nextDragonData != null ? CPResultsScreenTest.nextDragonLocked : false;
 		} else {
-			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the DragonData will be marked as already available!
+			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the IDragonData will be marked as already available!
 		}
 		m_dragonUnlockFX.SetActive(false);
 		m_lockIcon.SetActive(false);

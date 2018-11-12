@@ -47,11 +47,10 @@ namespace Metagame {
 		/// </summary>
 		public RewardMulti(List<Reward.Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN) {
 			// Internal initializer
-			base.Init(TYPE_CODE);
+            base.Init(TYPE_CODE, _datas.Count);
 
 			// Common stuff
 			m_source = _source;
-			m_amount = _datas.Count;
 
 			// Create individual reward for each given data
 			for(int i = 0; i < _datas.Count; ++i) {

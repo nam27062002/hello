@@ -41,6 +41,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();
     private List<OfferPack> m_allOffers = new List<OfferPack>();
 
+    private float m_timer = 0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -51,7 +52,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Subscribe to game events that might change offers list (segmentation)
 		Messenger.AddListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
 		Messenger.AddListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
 		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
@@ -63,8 +64,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// First update loop.
 	/// </summary>
 	private void Start() {
-		// Update the offers periodically
-		InvokeRepeating("PeriodicRefresh", 0f, REFRESH_FREQUENCY);
+        m_timer = 0;
 	}
 
 	/// <summary>
@@ -74,7 +74,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
 		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
 		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
@@ -89,7 +89,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public static void InitFromDefinitions() {
+	public static void InitFromDefinitions(bool _updateFromCustomizer) {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
@@ -112,7 +112,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create new pack
 			OfferPack newPack = new OfferPack();
-			newPack.InitFromDefinition(offerDefs[i]);
+            newPack.InitFromDefinition(offerDefs[i], _updateFromCustomizer);
 
             // Store new pack
             instance.m_allOffers.Add(newPack);
@@ -268,16 +268,19 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         return null;
     }
 
+    private void Update() {
+        if ( m_timer <= 0 )
+        {
+            m_timer = REFRESH_FREQUENCY;
+            // Update offers
+            Refresh(false);
+        }
+        m_timer -= Time.deltaTime;
+    }
+    
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Called periodically - to avoid doing stuff every frame.
-	/// </summary>
-	private void PeriodicRefresh() {
-		// Update offers
-		Refresh(false);
-	}
 
 	/// <summary>
 	/// Something generic has changed in the game that requires the offers segmentation
@@ -294,7 +297,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void OnGameStateChanged2(string _p1) { 
 		OnGameStateChanged(); 
 	}
-	private void OnGameStateChanged3(DragonData _p1) { 
+	private void OnGameStateChanged3(IDragonData _p1) { 
 		OnGameStateChanged(); 
 	}
 	private void OnGameStateChanged4(Egg _p1) { 

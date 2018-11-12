@@ -7,6 +7,7 @@ public class PetMeleeWeapon : IMeleeWeapon {
     [SerializeField] private DragonTier m_tier = DragonTier.TIER_0;
     [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
+    [SerializeField] private bool m_killEverything = false;
 
     protected override void OnAwake() {}
     protected override void OnDealDamage() {}
@@ -18,7 +19,7 @@ public class PetMeleeWeapon : IMeleeWeapon {
         if ((layer & m_hitMask.value) > 0) {
             Entity e = _other.GetComponent<Entity>();
             if (e != null) {
-                if (m_entity.machine.enemy == e.transform) {
+                if (m_entity.machine.enemy == e.transform || m_killEverything) {
                     bool tagMatch = true;
 
                     if (m_entityTags > 0) {

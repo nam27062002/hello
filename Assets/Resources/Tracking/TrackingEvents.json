@@ -436,6 +436,43 @@
                 "etl"
             ]
         },
+		"custom.lab.entry": {
+            "Parameters": [
+				{"playerProgress": {"Status": "OK"}},
+				{"goldenFragments": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.lab.gamestart": {
+            "Parameters": [
+				{"dragon": {"Status": "OK"}},
+				{"labHp": {"Status": "OK"}},
+				{"labSpeed": {"Status": "OK"}},
+				{"labBoost": {"Status": "OK"}},
+				{"labPower": {"Status": "OK"}},
+				{"totalSpecialDragonsUnlocked": {"Status": "OK"}},
+				{"currentLeague": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },		
+		"custom.lab.result": {
+            "Parameters": [
+				{"ranking": {"Status": "OK"}},				
+				{"currentLeague": {"Status": "OK"}},
+				{"upcomingLeague": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },		
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -1164,6 +1201,10 @@
             "Type": "STRING:45",
             "Values": []
         },
+		"ranking": {
+			"Type": "INT:4",
+			"Values": []
+		},
 		"isSuccess": {
             "Type": "INT:4",
             "Values": []
@@ -1299,6 +1340,42 @@
       "recordings": {
         "Type": "INT:4",
         "Values": []
-      }
+      },
+	  "goldenFragments": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "hardCurrency": {
+        "Type": "INT:4",
+        "Values": []
+      },	  
+	  "labHp": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labSpeed": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labBoost": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labPower": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+	  "totalSpecialDragonsUnlocked": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "currentLeague": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+	  "upcomingLeague": {
+		"Type": "STRING:45",
+		"Values": []
+      }	  
     }
 }

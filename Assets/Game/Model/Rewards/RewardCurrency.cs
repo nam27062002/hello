@@ -19,14 +19,13 @@ namespace Metagame {
 		}
 
 		protected void Init(string _type, long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup) {
-			base.Init(_type);
-			m_amount = _amount;
+			base.Init(_type, _amount);			
 			m_rarity = _rarity;
             EconomyGroup = _economyGroup;
 		}
 
 		override protected void DoCollect() {
-			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)m_amount, false, EconomyGroup);
+			UsersManager.currentUser.EarnCurrency(m_currency, (ulong)amount, false, EconomyGroup);
 		}
 
 		override public SimpleJSON.JSONNode ToJson() {
@@ -89,15 +88,6 @@ namespace Metagame {
 		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
 			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
-		}
-
-		override protected void DoCollect() {
-			base.DoCollect();
-
-			if (EggManager.goldenEggCompleted) {
-				Reward reward = Reward.CreateTypeEgg(Egg.SKU_GOLDEN_EGG, EconomyGroup.ToString());
-				UsersManager.currentUser.PushReward(reward);
-			}
 		}
 
 		public override string GetTID(bool _plural) {

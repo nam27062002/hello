@@ -75,7 +75,13 @@ public class HDTrackingManager
 		TOURNAMENT_ENTRY,			    // Tournament Support
 
         CUSTOMER_SUPPORT,               // Reward received via customer support tool
-        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
+        SHOP_PURCHASE_RESUMED,           // Reward given when resuming a purchase that was interrupted
+
+		SPECIAL_DRAGON_UNLOCK,
+		SPECIAL_DRAGON_UPGRADE,
+        SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
+        LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
+		LAB_UNLOCKED_GIFT				 // When player unlocks the lab for the first time, a gift is given
     };
 
 	public enum EFunnels
@@ -508,6 +514,33 @@ public class HDTrackingManager
     /// Called when user exits animoji menu section
     /// </summary>
     public virtual void Notify_AnimojiExit() { }
+    #endregion
+
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public virtual void Notify_LabEnter() { }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="dragonName">Name of the current Lab Dragon</param>
+    /// <param name="labHp">HP level of the current Lab Dragon </param>
+    /// <param name="labSpeed">Speed level of the current Lab Dragon</param>
+    /// <param name="labBoost">Boost level of the current Lab Dragon.</param> 
+    /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
+    /// <param name="totalSpecialDragonsUnlocked"></param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
     #endregion
 
     #region log

@@ -30,16 +30,16 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_root = null;
-
-	[Separator("Shared")]
-	[SerializeField] private Localizer m_timerText = null;
+    	
 
 	[Separator("Teasing")]
 	[SerializeField] private GameObject m_teasingGroup = null;
+    [SerializeField] private Localizer m_teasingTimerText = null;
 
 	[Separator("Active")]
 	[SerializeField] private GameObject m_activeGroup = null;
 	[SerializeField] private GameObject m_newBanner = null;
+	[SerializeField] private TextMeshProUGUI m_activeTimerText = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardsGroup = null;
@@ -172,32 +172,28 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
-		if(m_timerText != null) {
-			// Show only in specific states
-			m_timerText.gameObject.SetActive(
-				state == HDLiveEventData.State.TEASING
-				|| state == HDLiveEventData.State.NOT_JOINED
-				|| state == HDLiveEventData.State.JOINED
-                || state == HDLiveEventData.State.REQUIRES_UPDATE
-			);
-
-			// Set text
-			if(m_timerText.gameObject.activeSelf) {
-				// Different TID based on tournament state
-				string tid = "TID_TOURNAMENT_ICON_ENDS_IN";
-				if(state == HDLiveEventData.State.TEASING) {
-					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
-				}
-
-				m_timerText.Localize(tid,
-					TimeUtils.FormatTime(
+		string timeString = TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
-						4
-					)
-				);
+						3
+					);
+
+        if (state == HDLiveEventData.State.TEASING) {
+			if(m_teasingTimerText != null) {
+				if(m_teasingTimerText.gameObject.activeSelf) {
+					m_teasingTimerText.Localize(
+						"TID_TOURNAMENT_ICON_STARTS_IN",
+						timeString
+					);
+				}
 			}
-		}
+        } else {
+			if(m_activeTimerText != null) {
+				if(m_activeTimerText.gameObject.activeSelf) {
+					m_activeTimerText.text = timeString;	// [AOC] Not enough space for "Ends In" with the new layout
+				}
+			}
+        }
 
 		// Manage timer expiration when the icon is visible
 		if(_checkExpiration && remainingSeconds <= 0) {
@@ -245,6 +241,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
+        
 			if ( m_tournamentManager.RequiresUpdate() )
 			{
 					// Show update popup!
@@ -255,16 +252,19 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			}
 			else
 			{
-        	// Change game mode
-        	SceneController.s_mode = SceneController.Mode.TOURNAMENT;
-        	HDLiveEventsManager.instance.SwitchToTournament();
-
-        	// Send Tracking event
-        	HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
-
-        	// Go to tournament info screen
-        	InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
-			}
+                if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+                {
+            		// Change game mode
+    	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        	    	HDLiveEventsManager.instance.SwitchToTournament();
+    	
+        	    	// Send Tracking event
+            		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+    
+            		// Go to tournament info screen
+            		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+    			}
+            }
 	}
 
 	/// <summary>

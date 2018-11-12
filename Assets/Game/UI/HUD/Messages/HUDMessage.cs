@@ -153,6 +153,7 @@ public class HUDMessage : MonoBehaviour {
 	private bool m_isBoosting = false;
 	private float m_boostingTimer = 0f;
 	private float m_boostSpawnTimer = 0f;
+    private string m_defaultText = "";
 
 	private bool m_gameStarted = false;
 	private bool m_hasEverPerformedAction = false;
@@ -182,6 +183,7 @@ public class HUDMessage : MonoBehaviour {
 
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
+            
 				// Select target setup
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
 					m_currentBoostSetup = m_boostMessageSetup;
@@ -204,6 +206,10 @@ public class HUDMessage : MonoBehaviour {
 	{
 		  // Deactivate all childs
         SetOthersVisible( false );
+        if ( m_type == Type.BOOST_REMINDER )
+        {
+            m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
+        }
 	}
 
 	/// <summary>
@@ -212,7 +218,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnEnable() {
 		// Subscribe to external events, based on type
 		switch(m_type) {
-			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.AddListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -266,7 +272,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnDisable() {
 		switch(m_type) {
 			// Unsubscribe from external events, based on type
-			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -353,6 +359,13 @@ public class HUDMessage : MonoBehaviour {
 					// Do we need to show ther reminder? Not while we're boosting!
 					if(m_boostSpawnTimer <= 0f) {
 						// Show feedback!
+                        if ( !m_visible )
+                        {
+                            // Check boost tid
+                            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                            text.text = m_defaultText;
+                        }
+                        
 						// Don't reset timers if it couldn't be shown! Will be displayed asap
 						if(Show()) {
 							m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
@@ -525,7 +538,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A dragon has leveled up.
 	/// </summary>
 	/// <param name="_dragon">The dragon that has leveled up.</param>
-	private void OnLevelUp(DragonData _dragon) {
+	private void OnLevelUp(IDragonData _dragon) {
 		Show();
 	}
 
@@ -694,7 +707,8 @@ public class HUDMessage : MonoBehaviour {
     
     private void RegisterZone( HUDMessage message )
     {
-        UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
+        if ( !UsersManager.currentUser.m_visitedZones.Contains(m_zoneId))
+            UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
         OnHide.RemoveListener( RegisterZone );
     }
 

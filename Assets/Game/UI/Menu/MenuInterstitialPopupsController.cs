@@ -212,8 +212,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
-			DragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-			if(data.GetLockState() > DragonData.LockState.LOCKED) {
+			IDragonData data = DragonManager.GetDragonData(RATING_DRAGON);
+			if(data.GetLockState() > IDragonData.LockState.LOCKED) {
 				// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
 				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
 				if(_checked) {
@@ -297,7 +297,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Checks whether the Featured Offer popup must be opened or not and does it.
+	/// Checks whether the Featured 	 popup must be opened or not and does it.
 	/// </summary>
 	/// <param name="_whereToShow">Where are we attempting to show the popup?</param>
 	private void CheckFeaturedOffer(OfferPack.WhereToShow _whereToShow) {
@@ -362,6 +362,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		m_popupDisplayed = true;
 	}
 
+	/// <summary>
+	/// Checks the lab unlock popup.
+	/// </summary>
+	private void CheckLabUnlock() {
+		// Because the lab popup is triggered by the Menu Dragon Screen Controller, we won't be opening it, just checking whether we can open another popup or not.
+		if(PopupLabUnlocked.Check() || PopupManager.GetOpenPopup(PopupLabUnlocked.PATH) != null) {
+			m_popupDisplayed = true;	// This will prevent other popups to trigger
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -373,6 +383,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 
+        // if we come from playing whetever is Classic, Lab or Tournament
+        if ( _from == MenuScreen.NONE && _to != MenuScreen.PLAY ) {
+            CheckInterstitialAds();
+        }
+
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
@@ -382,6 +397,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		    case MenuScreen.DRAGON_SELECTION: {
 				// Coming from any screen (high priority)
+				CheckLabUnlock();
 				CheckPreRegRewards();
 				CheckShark();
 				CheckAnimojiTutorial();
@@ -390,7 +406,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
-            			CheckInterstitialAds();
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);

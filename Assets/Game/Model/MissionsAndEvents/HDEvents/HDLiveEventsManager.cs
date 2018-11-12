@@ -83,7 +83,9 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
     public bool m_cacheInfo = false;
 #if UNITY_EDITOR
-    public static readonly bool TEST_CALLS = false;
+	public static bool TEST_CALLS {
+		get { return DebugSettings.useLiveEventsDebugCalls; }
+	}
 #else
     // Do not touch!
     public static readonly bool TEST_CALLS = false;

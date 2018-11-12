@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Projectile : TriggerCallbackReceiver, IProjectile {
 
-	private enum MotionType {
+	public enum MotionType {
 		Linear = 0,
 		Homing,
 		Parabolic,
@@ -28,9 +28,19 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	//---------------------------------------------------------------------------------------
 
 	[SeparatorAttribute("Motion")]
-	[SerializeField] private MotionType m_motionType = MotionType.Linear;
+	[SerializeField] protected MotionType m_motionType = MotionType.Linear;
+    public MotionType motionType 
+    { 
+        get { return m_motionType; }
+        set { m_motionType = value; } 
+    }
 	[SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
+    public float speed 
+    { 
+        get { return m_speed; }
+        set { m_speed = value; } 
+    }
 	[SerializeField] private float m_rotationSpeed = 0f;
 	[SerializeField] private RotationAxis m_rotationAxis = RotationAxis.Up;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
@@ -42,7 +52,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SeparatorAttribute("Weapon")]
 	[SerializeField] private float m_defaultDamage = 0f;
 	[SerializeField] private DamageType m_damageType = DamageType.NORMAL;
-	[SerializeField] private float m_radius = 0f;
+	[SerializeField] protected float m_radius = 0f;
 	[SerializeField] private float m_knockback = 0f;
 	[SerializeField] private DragonTier m_knockbackTier = DragonTier.TIER_4;
 
@@ -50,10 +60,10 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SerializeField] private List<GameObject> m_activateOnShoot = new List<GameObject>();
 	[SerializeField] private ParticleData m_onAttachParticle = null;
     [SerializeField] private ParticleData m_onChargeParticle = null;
-    [SerializeField] private ParticleData m_onHitParticle = null;
+    [SerializeField] protected ParticleData m_onHitParticle = null;
     [SerializeField] private ParticleData m_onEatParticle = null;
     [SerializeField] private ParticleData m_onBurnParticle = null;
-	[SerializeField] private bool m_missHitSpawnsParticle = true;
+	[SerializeField] protected bool m_missHitSpawnsParticle = true;
 	[SerializeField] private float m_stickOnDragonTime = 0f;
 	[SerializeField] private float m_dieTime = 0f;
 
@@ -68,18 +78,18 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 
 	private Vector3 m_startPosition;
 	private Vector3 m_lastPosition;
-	private Vector3 m_position;
+	protected Vector3 m_position;
 	public Vector3 position { get { return m_position; } }
 
-	private Transform m_target;
+	protected Transform m_target;
 	private Vector3 m_targetPosition;
 	public Vector3 target { get { return m_targetPosition; } }
 
 	private Vector3 m_direction;
 	public Vector3 direction { get { return m_direction; } }
 
-	private Vector3 m_velocity;
-	public Vector3 velocity { get { return m_velocity; } }
+	protected Vector3 m_velocity;
+	public Vector3 velocity { get { return m_velocity; } set { m_velocity = value; } }
 
 	protected Transform m_transform;
 	public Vector3 upVector { get { return m_transform.up; } }
@@ -264,7 +274,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	}
 
 	// Update is called once per frame
-	private void Update () {
+	protected virtual void Update () {
 		if (m_state == State.Charging) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {
@@ -333,6 +343,10 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	private void FixedUpdate () {
 		if (m_state == State.Shot) {
 			if (m_machine == null || !m_machine.IsDying()) {
+                // Update target position
+                if ( m_target != null )
+                    m_targetPosition = m_target.position;
+                                    
 				// motion
 				float dt = Time.fixedDeltaTime * m_scaleTime;
 				m_elapsedTime += dt;
@@ -348,10 +362,9 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 							m_position += m_velocity * dt;
 
 							m_homingTimer -= Time.deltaTime;
-							if (m_homingTimer <= 0f) {
+							if (m_homingTimer <= 0f ) {
 								m_homingTimer = 0f;
-
-								Vector3 impulse = (m_target.position - m_position).normalized * m_speed;
+								Vector3 impulse = (m_targetPosition - m_position).normalized * m_speed;
 								impulse = (impulse - m_velocity) / 15f; //mass
 								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 							}
@@ -436,15 +449,29 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		m_poolHandler.ReturnInstance(gameObject);
 	}
 
-	public void Explode(bool _triggeredByPlayer) {
+	public void OnDestoyed(){
+		m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
+
+		if (m_entity != null) {
+			if (EntityManager.instance != null)	{
+				EntityManager.instance.UnregisterEntity(m_entity);
+			}
+		}
+
+		m_state = State.Idle;
+		gameObject.SetActive(false);
+		m_poolHandler.ReturnInstance(gameObject);
+	}
+
+	public void Explode(bool _dealDamage) {
 		if (m_damageType == DamageType.EXPLOSION || m_damageType == DamageType.MINE) {
-            DealExplosiveDamage(_triggeredByPlayer);
+            DealExplosiveDamage(_dealDamage);
 		} else {
-			if (_triggeredByPlayer) {
+			if (_dealDamage) {
                 DealDamage();
 			}
 
-			if (m_missHitSpawnsParticle || _triggeredByPlayer) {				
+			if (m_missHitSpawnsParticle || _dealDamage) {				
 				m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, m_transform.rotation);
 			}
 		}
@@ -452,14 +479,14 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		if (!string.IsNullOrEmpty(m_onHitAudio))
 			AudioController.Play(m_onHitAudio, m_transform.position);
 
-        if (m_dieOnHit || !_triggeredByPlayer) {
+        if (m_dieOnHit || !_dealDamage) {
             if (m_entity != null) {
                 if (EntityManager.instance != null) {
                     EntityManager.instance.UnregisterEntity(m_entity);
                 }
             }
 
-            if (m_stickOnDragonTime > 0f && _triggeredByPlayer) {
+            if (m_stickOnDragonTime > 0f && _dealDamage) {
                 StickOnCollider();
             } else {
                 Die();

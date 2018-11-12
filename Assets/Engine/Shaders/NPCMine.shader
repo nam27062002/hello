@@ -17,10 +17,9 @@ Shader "Hungry Dragon/NPC/NPC Mine (Spawners)"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 		Pass
 		{
-
-			Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
 			Cull Back
 
 			ZWrite on

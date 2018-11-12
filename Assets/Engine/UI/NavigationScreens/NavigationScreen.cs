@@ -44,6 +44,10 @@ public class NavigationScreen : MonoBehaviour {
 		set { m_allowBackToThisScreen = value; }
 	}
 
+    [Space]
+    [SerializeField] private bool m_allowMultiTouch = false;
+    private bool m_previousMultiTouch = false;
+
 	// Events
 	public UnityEvent OnShow = new UnityEvent();
 	public UnityEvent OnHide = new UnityEvent();
@@ -71,7 +75,11 @@ public class NavigationScreen : MonoBehaviour {
 	/// Show this screen, using animation if any.
 	/// </summary>
 	/// <param name="_animType">Direction of the animation.</param>
-	public void Show(AnimType _animType) {
+    public void Show(AnimType _animType) {
+        // we are disabling multi touch to aviod players messing around with the menus.
+        m_previousMultiTouch = Input.multiTouchEnabled;
+        Input.multiTouchEnabled = m_allowMultiTouch;
+
 		// Aux vars
 		bool useAnim = (_animType != AnimType.NONE);
 
@@ -113,6 +121,8 @@ public class NavigationScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_animType">Direction of the animation.</param>
 	public void Hide(AnimType _animType) {
+        Input.multiTouchEnabled = m_previousMultiTouch;
+
 		// Aux vars
 		bool useAnim = (_animType != AnimType.NONE);
 		bool applied = false;

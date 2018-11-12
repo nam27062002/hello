@@ -27,11 +27,6 @@ public class AndroidAgent : IronSourceIAgent
 		return _androidBridge;
 	}
 
-	public void reportAppStarted ()
-	{
-		getBridge ().Call ("reportAppStarted");
-	}
-
 	//******************* Base API *******************//
 
 	public void onApplicationPause (bool pause)
@@ -248,13 +243,13 @@ public class AndroidAgent : IronSourceIAgent
 
 	public void loadBanner (IronSourceBannerSize size, IronSourceBannerPosition position)
 	{
-		getBridge ().Call ("loadBanner", (int)size, (int)position);
-	}
+        loadBanner(size, position, "");
+    }
 	
 	public void loadBanner (IronSourceBannerSize size, IronSourceBannerPosition position, string placementName)
 	{
-		getBridge ().Call ("loadBanner", (int)size, (int)position, placementName);
-	}
+        getBridge().Call("loadBanner", size.Description, (int)size.Width, (int)size.Height, (int)position, placementName);
+    }
 	
 	public void destroyBanner()
 	{

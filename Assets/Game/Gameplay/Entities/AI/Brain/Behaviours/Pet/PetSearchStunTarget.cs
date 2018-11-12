@@ -62,7 +62,7 @@ namespace AI {
 
 				m_owner = InstanceManager.player;
 				m_data = m_pilot.GetComponentData<PetSearchStunTargetData>();
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
+				m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
 				m_sensor = (m_machine as Machine).sensor;
 

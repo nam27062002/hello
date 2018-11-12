@@ -33,9 +33,14 @@ public enum MessengerEvents {
 	FONT_CHANGE_STARTED,	// no params
 	FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
+
+	// Tech
 	GOOGLE_PLAY_STATE_UPDATE,// no params
 	GOOGLE_PLAY_AUTH_FAILED,// no params
 	GOOGLE_PLAY_AUTH_CANCELLED,// no params
+	CONNECTION_RECOVERED,
+	PERSISTENCE_SYNC_CHANGED,   // paramas: bool (whether or not local and cloud persistences are synced)
+	APPLICATION_QUIT,
 
 	// Store Transactions
 	PURCHASE_SUCCESSFUL,	// string _productSku (TODO: _transactionData? _purchaseId?)
@@ -60,6 +65,9 @@ public enum MessengerEvents {
 	CP_FLOAT_CHANGED,			// params: string _prefID, float _newValue
 	CP_ENUM_CHANGED,			// params: string _prefID, int _newValue (should be casted to target enum)
     CP_QUALITY_CHANGED,         // no params
+
+	// Game Core events
+	GAME_MODE_CHANGED,			// params: SceneController.Mode _oldMode, SceneController.Mode _newMode
 
 	// Profile events
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
@@ -96,6 +104,7 @@ public enum MessengerEvents {
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
 	BREAK_OBJECT_WITH_FIRE,		// no params
     DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
+	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
     // Entity events
     ENTITY_EATEN,				// params: Transform _entity, Reward _reward
@@ -153,6 +162,7 @@ public enum MessengerEvents {
 	MENU_SCREEN_TRANSITION_REQUESTED,	// params: MenuScreen _from, MenuScreen _to
 	MENU_SCREEN_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to
 	MENU_SCREEN_TRANSITION_END,			// params: MenuScreen _from, MenuScreen _to
+	MENU_CAMERA_TRANSITION_START,		// params: MenuScreen _from, MenuScreen _to, bool _usingPath
 
 	// Mission events
 	MISSION_COMPLETED,			// params: Mission _mission
@@ -181,8 +191,6 @@ public enum MessengerEvents {
 
     // Social Platform Manager Events
     SOCIAL_LOGGED,				// params: bool	
-	
-    PERSISTENCE_SYNC_CHANGED,   // paramas: bool (whether or not local and cloud persistences are synced)
 
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
@@ -196,8 +204,6 @@ public enum MessengerEvents {
 
 	// power up events
 	APPLY_ENTITY_POWERUPS,		// no params
-
-	APPLICATION_QUIT,
 
     // Device events
     DEVICE_RESOLUTION_CHANGED, 	// params: Vector2 _newResolution
@@ -218,16 +224,12 @@ public enum MessengerEvents {
 	GLOBAL_EVENT_LEADERBOARD_UPDATED,
 	GLOBAL_EVENT_SCORE_REGISTERED,	// params: bool _sucess, the manager notifies whether a contribution has been successfully registered to the server or not
 
-    CONNECTION_RECOVERED,
-
-	MISSION_ZONE,	// params: bool _inside, ZoneTrigger _zone
-
 	// Shop/Offers events
 	OFFERS_RELOADED,	// no params
 	OFFERS_CHANGED,		// no params
 	OFFER_APPLIED,		// OfferPack _pack
 
-
+	// Live Events
 	LIVE_EVENT_STATES_UPDATED,
 	LIVE_EVENT_NEW_DEFINITION,
 	LIVE_EVENT_REWARDS_RECEIVED,
@@ -239,6 +241,11 @@ public enum MessengerEvents {
 	QUEST_SCORE_SENT,
 	TIMES_UP,
 	TARGET_REACHED,
+
+	// Lab/Special Dragons
+	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
+	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
+	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
 
 	COUNT
 }

@@ -526,12 +526,20 @@ namespace AI {
 			SetSignal(Signals.Type.Destroyed, true);
 		}
 
-		public bool CanBeSmashed() {
-			return CanBeBitten() && m_entity.CanBeSmashed();
-		}
+		public bool Smash( IEntity.Type _source ) {
+			if ( !IsDead() && !IsDying() )
+			{
+				SetSignal(Signals.Type.Destroyed, true);
+				if ( !m_viewControl.HasCorpseAsset() )
+					m_viewControl.SpawnEatenParticlesAt( m_transform );
 
-		public void Smashed() {
-			SetSignal(Signals.Type.Destroyed, true);
+				m_entity.onDieStatus.source = _source;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				return true;
+			}
+			return false;
 		}
 
 		public float biteResistance { get { return m_edible.biteResistance; } }

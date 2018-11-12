@@ -148,7 +148,7 @@ public class PopupPause : PopupPauseBase {
 		base.OnOpenPreAnimation();
 
 		// Hide the mission tab during FTUX
-		if((UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN || SceneController.s_mode == SceneController.Mode.TOURNAMENT) && SceneManager.GetActiveScene().name != "SC_Popups") {
+		if((UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT) && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component
 			if(tabs != null) {
 				// Set options tab as initial screen

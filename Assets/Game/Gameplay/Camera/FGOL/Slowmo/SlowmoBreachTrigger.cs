@@ -79,7 +79,7 @@ public class SlowmoBreachTrigger : SlowmoTrigger
 		ShowDebugMessage("<color=yellow><b>breach trigger</b></color> -> <color=green><b>start</b></color> -> evaluating conditions...");
 
 
-		bool isGoldRushActive = player.IsFuryOn() || player.IsMegaFuryOn();
+		bool isGoldRushActive = player.IsFuryOn();
 
 		// check if we can trigger the slowmo...
 		// check if to trigger while in GR or MGR.

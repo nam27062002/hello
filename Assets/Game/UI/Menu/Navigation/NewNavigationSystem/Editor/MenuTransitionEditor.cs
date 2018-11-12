@@ -204,6 +204,15 @@ public class TransitionEditor : ExtendedPropertyDrawer {
 
 				// Path: remark that it's optional
 				else if(_property.name == "path") {
+					// Add comment
+					// [AOC] Compute required height to draw the text using our custom box style with the current inspector window width
+					GUIContent content = new GUIContent("If path is not defined, camera position will be linearly interpolated between snap points\n" +
+					                                    "Override duration to <= 0 to move instantly to target snap point.");
+					m_pos.height = CustomEditorStyles.commentLabelLeft.CalcHeight(content, Screen.width - 35f);   // Screen.width gives us the size of the current inspector window. Unfortunately it doesn't compute the internal margins of the window, so try to compensate with a hardcoded value :P
+					EditorGUI.LabelField(m_pos, content, CustomEditorStyles.commentLabelLeft);
+					AdvancePos();
+
+					// Draw path property
 					DrawAndAdvance(_property, _property.displayName + " (optional)");
 				}
 

@@ -54,7 +54,7 @@ public class HUDTime : MonoBehaviour {
 		m_lastSecondsPrinted = -1;
 		m_anim = GetComponent<Animator>();
 
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
 			HDTournamentData data = HDLiveEventsManager.instance.m_tournament.data as HDTournamentData;
 			HDTournamentDefinition def = data.definition as HDTournamentDefinition;

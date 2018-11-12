@@ -29,9 +29,10 @@ extern "C" {
 #endif
 
 @interface iOSBridge ()
-
-@property (nonatomic, strong)   ISBannerView    *ironSourceView;
-@property                       NSInteger       position;
+{
+    ISBannerView* _bannerView;
+    NSInteger _position;
+}
 
 @end
 
@@ -50,10 +51,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     return instance;
 }
 
-- (void)reportAppStarted {
-    [ISEventsReporting reportAppStarted];
-}
-
 - (instancetype)init {
     if(self = [super init]){
         [IronSource setRewardedVideoDelegate:self];
@@ -64,7 +61,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         [IronSource setOfferwallDelegate:self];
         [IronSource setBannerDelegate:self];
         
-        _ironSourceView = nil;
+        _bannerView = nil;
         _position = BANNER_POSITION_BOTTOM;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
@@ -479,31 +476,52 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 #pragma mark Banner API
 
-- (void)loadBannerWithSize:(NSInteger)size position:(NSInteger)position {
-    self.position = position;
-    [IronSource loadBannerWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController size:[self getBannerSizeForUnitySize:size]];
-}
-
-- (void)loadBannerWithSize:(NSInteger)size position:(NSInteger)position placement:(NSString *)placementName {
-    self.position = position;
-    [IronSource loadBannerWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController size:[self getBannerSizeForUnitySize:size] placement:placementName];
+- (void)loadBanner:(NSString *)description width:(NSInteger)width height:(NSInteger)height position:(NSInteger)position placement:(NSString *)placement {
+    @synchronized(self) {
+        _position = position;
+        
+        ISBannerSize* size = nil;
+        if ([description isEqualToString:@"CUSTOM"]) {
+            size = [[ISBannerSize alloc] initWithWidth:width andHeight:height];
+        }
+        else {
+            size = [[ISBannerSize alloc] initWithDescription:description];
+        }
+        
+        UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
+        [IronSource loadBannerWithViewController:vc size:size placement:placement];
+    }
 }
 
 - (void)destroyBanner {
-    if(self.ironSourceView)
-        [IronSource destroyBanner:self.ironSourceView];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @synchronized(self) {
+            if (_bannerView != nil) {
+                [IronSource destroyBanner:_bannerView];
+                _bannerView = nil;
+            }
+        }
+    });
 }
 
 - (void)displayBanner {
-    if(self.ironSourceView) {
-        [self.ironSourceView setHidden:NO];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @synchronized(self) {
+            if (_bannerView != nil) {
+                [_bannerView setHidden:NO];
+            }
+        }
+    });
 }
 
 - (void)hideBanner {
-    if(self.ironSourceView) {
-        [self.ironSourceView setHidden:YES];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @synchronized(self) {
+            if (_bannerView != nil) {
+                [_bannerView setHidden:YES];
+            }
+        }
+    });
 }
 
 - (BOOL)isBannerPlacementCapped:(NSString *)placementName {
@@ -512,57 +530,35 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 
 #pragma mark Banner Delegate
 
-
-- (void)updateBannerFrame:(UIViewController *)vc position:(NSInteger)position {
-    CGRect frame = self.ironSourceView.frame;
-    if(position == BANNER_POSITION_TOP) {
+- (CGPoint)getBannerCenter:(NSInteger)position rootView:(UIView *)rootView {
+    CGFloat y;
+    if (position == BANNER_POSITION_TOP) {
+        y = (_bannerView.frame.size.height / 2);
         if (@available(ios 11.0, *)) {
-            frame.origin.x = vc.view.safeAreaInsets.left;
-            frame.origin.y = vc.view.safeAreaInsets.top;
-        }
-        else {
-            frame.origin.x = 0;
-            frame.origin.y = 0;
+            y += rootView.safeAreaInsets.top;
         }
     }
     else {
+        y = rootView.frame.size.height - (_bannerView.frame.size.height / 2);
         if (@available(ios 11.0, *)) {
-            frame.origin.x = vc.view.safeAreaInsets.left;
-            frame.origin.y = vc.view.frame.size.height - self.ironSourceView.frame.size.height - vc.view.safeAreaInsets.bottom;
-        }
-        else {
-            frame.origin.x = 0;
-            frame.origin.y = vc.view.frame.size.height - self.ironSourceView.frame.size.height;
+            y -= rootView.safeAreaInsets.bottom;
         }
     }
     
-    self.ironSourceView.frame = frame;
-}
-
-- (void)orientationChanged:(NSNotification *)note {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        @synchronized(self) {
-            if (self.ironSourceView == nil) {
-                return;
-            }
-            UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-            [self updateBannerFrame:vc position:self.position];
-        }
-    });
+    return CGPointMake(rootView.frame.size.width / 2, y);
 }
 
 - (void)bannerDidLoad:(ISBannerView *)bannerView {
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
-            if(self.ironSourceView) {
-                [self.ironSourceView removeFromSuperview];
-            }
+            _bannerView = bannerView;
+            _bannerView.translatesAutoresizingMaskIntoConstraints = NO;
+            [_bannerView setAccessibilityLabel:@"bannerContainer"];
             
-            self.ironSourceView = bannerView;
-            self.ironSourceView.translatesAutoresizingMaskIntoConstraints = NO;
-            UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-            [self updateBannerFrame:vc position:self.position];
-            [vc.view addSubview:self.ironSourceView];
+            UIView* rootView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
+            _bannerView.center = [self getBannerCenter:_position rootView:rootView];
+            [rootView addSubview:_bannerView];
+            
             UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLoaded", "");
         }
     });
@@ -591,28 +587,18 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLeftApplication", "");
 }
 
-#pragma mark Helper methods
-
-- (ISBannerSize)getBannerSizeForUnitySize:(NSInteger)size {
-    switch(size) {
-        case 1:
-            return IS_AD_SIZE_BANNER;
-            
-        case 2:
-            return IS_AD_SIZE_LARGE_BANNER;
-            
-        case 3:
-            return IS_AD_SIZE_RECTANGLE_BANNER;
-            
-        case 4:
-            return IS_AD_SIZE_TABLET_BANNER;
-            
-        case 5:
-            return IS_AD_SIZE_SMART;
-    }
-    
-    return IS_AD_SIZE_BANNER;
+- (void)orientationChanged:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @synchronized(self) {
+            if (_bannerView) {
+                UIView* rootView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
+                _bannerView.center = [self getBannerCenter:_position rootView:rootView];
+            }
+        }
+    });
 }
+
+#pragma mark Helper methods
 
 - (void) setSegment:(NSString*) segmentJSON {
     [IronSource setSegmentDelegate:self];
@@ -706,10 +692,6 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-    void CFReportAppStarted(){
-        [[iOSBridge start] reportAppStarted];
-    }
     
     void CFSetPluginData(const char *pluginType, const char *pluginVersion, const char *pluginFrameworkVersion){
         [[iOSBridge start] setPluginDataWithType:GetStringParam(pluginType) pluginVersion:GetStringParam(pluginVersion) pluginFrameworkVersion:GetStringParam(pluginFrameworkVersion)];
@@ -902,12 +884,8 @@ extern "C" {
     
 #pragma mark Banner API
     
-    void CFLoadBanner (int size, int position){
-        [[iOSBridge start] loadBannerWithSize:size position:position];
-    }
-    
-    void CFLoadBannerWithPlacementName (int size, int position, char *placementName){
-        [[iOSBridge start] loadBannerWithSize:size position:position placement:GetStringParam(placementName)];
+    void CFLoadBanner(char* description, int width, int height, int position, char* placementName){
+        [[iOSBridge start] loadBanner:GetStringParam(description) width:width height:height position:position placement:GetStringParam(placementName)];
     }
     
     void CFDestroyBanner (){

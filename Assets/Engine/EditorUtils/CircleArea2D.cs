@@ -80,14 +80,7 @@ public class CircleArea2D : MonoBehaviour, Area {
 
 	public bool Overlaps(Vector2 _center, float _radius)
 	{
-		float sqrMagnitude = ((Vector2)this.center - _center).sqrMagnitude;
-		float test = (_radius + this.radius);
-		test = test * test;
-		if ( sqrMagnitude <= test )
-		{
-			return true;
-		}
-		return false;
+        return MathTest.TestCircleVsCircle(_center, _radius, this.center, this.radius);
 	}
 
 	public bool Overlaps( CircleArea2D _circle )
@@ -110,6 +103,18 @@ public class CircleArea2D : MonoBehaviour, Area {
 
 	public bool OverlapsSegment( Vector2 a, Vector2 b)
 	{
+		Vector2 closestPoint = ClosestPointInSegment( a, b );
+		return IsInside( closestPoint );
+	}
+
+	public float SqrDistanceToSegment( Vector2 a, Vector2 b )
+	{
+		Vector2 closestPoint = ClosestPointInSegment( a, b );
+		return  ((Vector2) center - closestPoint).sqrMagnitude;;		
+	}
+
+	public Vector2 ClosestPointInSegment(Vector2 a, Vector2 b)
+	{
 		Vector2 aToCenter;
 		aToCenter.x = center.x - a.x;
 		aToCenter.y = center.y - a.y;
@@ -118,26 +123,25 @@ public class CircleArea2D : MonoBehaviour, Area {
 
 		Vector2 closestPoint = Vector2.zero;
 
-		float k = Vector2.Dot( aToCenter, aToB);
-		if ( k < 0 )
+		float k = Vector2.Dot(aToCenter, aToB);
+		if ( k <= 0.0f )
 		{
 			closestPoint = a;
 		}
 		else
 		{
-			float magnitude = aToB.magnitude;
-			k = k / magnitude;
-			if ( k < magnitude )
-			{
-				closestPoint = a + aToB.normalized * k;
-			}
-			else
+			float denom = Vector2.Dot( aToB, aToB );
+			if ( k >= denom )
 			{
 				closestPoint = b;
 			}
+			else
+			{
+				k = k/denom;
+				closestPoint = a + k * aToB;	
+			}
+
 		}
-
-		return IsInside( closestPoint );
-
+		return closestPoint;
 	}
 }

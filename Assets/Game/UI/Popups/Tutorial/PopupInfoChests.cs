@@ -52,11 +52,20 @@ public class PopupInfoChests : MonoBehaviour {
 				if(rewardData == null) {
 					m_rewardInfos[i].rewardText.text = string.Empty;
 				} else {
-					if(rewardData.type == Chest.RewardType.PC) {
-						m_rewardInfos[i].rewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
-					} else {
-						m_rewardInfos[i].rewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+					// Select icon
+					UIConstants.IconType icon = UIConstants.IconType.NONE;
+					switch(rewardData.type) {
+						case Chest.RewardType.PC: icon = UIConstants.IconType.PC;	break;
+						case Chest.RewardType.SC: icon = UIConstants.IconType.COINS; break;
+						case Chest.RewardType.GF: icon = UIConstants.IconType.GOLDEN_FRAGMENTS; break;
 					}
+
+					// Set text
+					m_rewardInfos[i].rewardText.text = UIConstants.GetIconString(
+						rewardData.amount, 
+						icon, 
+						UIConstants.IconAlignment.LEFT
+					);
 				}
 			}
 

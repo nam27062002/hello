@@ -103,9 +103,7 @@ public class BreakableBehaviour : MonoBehaviour
 					if (tier >= m_tierNoTurboBreak) {
 						m_remainingHits--;
 					} else if (tier >= m_tierWithTurboBreak) {
-						DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
-
-						if (boost.IsBoostActive())	{
+						if (player.IsBreakingMovement())	{
 							m_remainingHits--;
 							pushVector = -collision.contacts[0].normal * value;
 						} else {

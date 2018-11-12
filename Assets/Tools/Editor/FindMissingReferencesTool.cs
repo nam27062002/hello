@@ -40,7 +40,8 @@ public class FindMissingReferencesTool {
 	/// <param name="_includeNull">Optionally look for null values as well.</param>
 	/// <param name="_typeFilter">Filter only some specific object types (the type of the missing ref object). <c>null</c> to include all types.</param>
 	/// <param name="_componentFilter">Filter only some specific component types (the component containing the missing ref). <c>null</c> to include all types.</param>
-	private static void FindMissingReferences(string _context, GameObject[] _objs, bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null) {
+	/// <param name="_reverseFilter">Use filters as a exclude list instead?</param>
+	private static void FindMissingReferences(string _context, GameObject[] _objs, bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null, bool _reverseFilter = false) {
 		// Looking for types by name is quite expensive, so better cache it :)
 		Dictionary<string, Type> typesCache = new Dictionary<string, Type>();	// Dictionary of <SerializedProperty.type, Type>
 
@@ -68,7 +69,16 @@ public class FindMissingReferencesTool {
 
 				// Check component type!
 				// Ignore if filter list is null
-				if(_componentFilter!= null && !_componentFilter.Contains(comp.GetType())) {
+				bool compFilterPassed = true;
+				if(_componentFilter != null) {
+					// Filter passed if the component's type is in it
+					compFilterPassed = _componentFilter.Contains(comp.GetType());
+
+					// Reverse filter usage?
+					if(_reverseFilter) compFilterPassed = !compFilterPassed;
+				}
+
+				if(!compFilterPassed) {
 					// Component type not in the filter list, skip to next component
 					continue;
 				}
@@ -112,18 +122,27 @@ public class FindMissingReferencesTool {
 								// No valid type was found
 								if(targetType == null) continue;
 
-								// Is it one of the target types?
-								// Ignore check if filter list is null
-								if(_typeFilter == null || _typeFilter.Contains(targetType)) {
+								// Check property type!
+								// Ignore if filter list is null
+								bool typeFilterPassed = true;
+								if(_typeFilter != null) {
+									// Filter passed if the property's type is in it
+									typeFilterPassed = _typeFilter.Contains(targetType);
+
+									// Reverse filter usage?
+									if(_reverseFilter) typeFilterPassed = !typeFilterPassed;
+								}
+
+								if(typeFilterPassed) {
 									// [AOC] Missing ref! Print error
 									matches++;
 									string errorMessage = string.Format(
-										"MISSING REF! {0}" +
+										"<color=#ff0000>MISSING REF!</color> {0}" +
 										"\n{1}.{2} ({3})" +
 										"\n[{4}]",
 										FullPath(obj),
-										comp, 
-										ObjectNames.NicifyVariableName(sp.name), 
+										comp,
+										ObjectNames.NicifyVariableName(sp.name),
 										targetType,
 										_context
 									);
@@ -147,7 +166,8 @@ public class FindMissingReferencesTool {
 	/// <param name="_includeNull">Optionally look for null values as well.</param>
 	/// <param name="_typeFilter">Filter only some specific object types (the type of the missing ref object). <c>null</c> to include all types.</param>
 	/// <param name="_componentFilter">Filter only some specific component types (the component containing the missing ref). <c>null</c> to include all types.</param>
-	public static void FindMissingReferences(bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null) {
+	/// <param name="_reverseFilter">Use filters as a exclude list instead?</param>
+	public static void FindMissingReferences(bool _includeNull, Type[] _typeFilter = null, Type[] _componentFilter = null, bool _reverseFilter = false) {
 		// [AOC] Super-hardcore call that returns all loaded objects, no matter the state
 		//		 Use HideFlags to filter Unity's system objects
 		GameObject[] objs = Resources.FindObjectsOfTypeAll<GameObject>()
@@ -157,7 +177,7 @@ public class FindMissingReferencesTool {
 			}).ToArray();
 
 		// Find missing refs!
-		FindMissingReferences(EditorApplication.currentScene, objs, _includeNull, _typeFilter, _componentFilter);
+		FindMissingReferences(EditorApplication.currentScene, objs, _includeNull, _typeFilter, _componentFilter, _reverseFilter);
 	}
 
 	/// <summary>

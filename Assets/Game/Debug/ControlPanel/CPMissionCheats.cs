@@ -202,7 +202,8 @@ public class CPMissionCheats : MonoBehaviour {
 			return;
 		}
 
-		// Mark objective as completed
+        // Mark objective as completed
+        m.EnableTracker(true);
 		m.objective.currentValue = m.objective.targetValue;
 
 		// Process missions so a new mission is generated and rewards are given
@@ -238,4 +239,9 @@ public class CPMissionCheats : MonoBehaviour {
 		// Done!
 		TextFeedback("SUCCESS!", Color.green);
 	}
+
+    public void OnCompleteAndSkip() {
+        OnCompleteMission();
+        OnSkipCooldown();
+    }
 }

@@ -20,7 +20,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	public enum Mode {
-		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (UserProfile.currentDragon)
+		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (DragonManager.currentDragon)
 		SELECTED_DRAGON,	// Automatically loads and updates SELECTED dragon (MenuSceneController.selectedDragon)
 		MANUAL				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
 	}
@@ -205,10 +205,10 @@ public class MenuDragonLoader : MonoBehaviour {
 			{
 				if ( m_asyncRequest == null && !m_configured )
 				{
-					ConfigureInstance( m_dragonInstance.gameObject );
-					if (onDragonLoaded != null)
-						onDragonLoaded(this);
+					ConfigureInstance( m_dragonInstance.gameObject );					
 				}
+                if (onDragonLoaded != null)
+                    onDragonLoaded(this);
 				return;
 			}
 		}
@@ -228,11 +228,23 @@ public class MenuDragonLoader : MonoBehaviour {
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
 
+            string pathToPrefab = "";
+            if ( def.Get("type") == "special" )
+            {
+                // TODO: Change this and use a proper tier
+                DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(_sku, DragonTier.TIER_1);
+                pathToPrefab = IDragonData.MENU_PREFAB_PATH + specialTierDef.GetAsString(prefabColumn);
+            }
+            else
+            {
+                pathToPrefab = IDragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn);
+            }
+
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-				m_asyncRequest = Resources.LoadAsync<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				m_asyncRequest = Resources.LoadAsync<GameObject>(pathToPrefab);
 			}else{
 				// Instantiate the prefab and add it as child of this object
-				GameObject dragonPrefab = Resources.Load<GameObject>(DragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn));
+				GameObject dragonPrefab = Resources.Load<GameObject>(pathToPrefab);
 				if(dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 					ConfigureInstance( newInstance );
@@ -349,7 +361,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
+					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}

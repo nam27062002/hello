@@ -160,15 +160,21 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Get current selected dragon data
 		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
-		DragonData data = DragonManager.GetDragonData(selectedDragonSku);
+		IDragonData data = DragonManager.GetDragonData(selectedDragonSku);
 		if(!data.isOwned) {
 			UIFeedbackText.CreateAndLaunch("Only for owned dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 			return;
 		}
 
+		if(data.type != IDragonData.Type.CLASSIC) {
+			UIFeedbackText.CreateAndLaunch("Only for classic dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
+			return;
+		}
+
 		// Add xp
-		float amount = data.progression.GetXpRangeForLevel(data.progression.level).distance * 0.3f;
-		data.progression.AddXp(amount, true);
+		DragonDataClassic dataClassic = data as DragonDataClassic;
+		float amount = dataClassic.progression.GetXpRangeForLevel(dataClassic.progression.level).distance * 0.3f;
+		dataClassic.progression.AddXp(amount, true);
 		UIFeedbackText.CreateAndLaunch("+" + amount, new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 
 		// Refresh skin state for this dragon
@@ -176,8 +182,8 @@ public class CPProgressionCheats : MonoBehaviour {
 		List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", data.def.sku);
 		for(int i = 0; i < skinDefs.Count; i++) {
 			// Should the skin be unlocked?
-			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
-			bool unlocked = (data.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
+			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(dataClassic);
+			bool unlocked = (dataClassic.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
 
 			// Apply new state based on lock status
 			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
@@ -214,10 +220,10 @@ public class CPProgressionCheats : MonoBehaviour {
 		if(slider == null) Debug.Log("Requires a nested Slider!");
 
 		// If in the menu and selected dragon is not owned, disable slider
-		DragonData targetDragon = null;
+		IDragonData targetDragon = null;
 		if(InstanceManager.menuSceneController != null) {
 			// Get current selected dragon data
-			DragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+			IDragonData data = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 			if(data.isOwned) targetDragon = data;
 		} else {
 			// Not in the menu, use current dragon's data
@@ -225,17 +231,19 @@ public class CPProgressionCheats : MonoBehaviour {
 		}
 
 		// Disable slider if dragon cannot be changed
-		slider.interactable = (targetDragon != null);
+		bool validDragon = (targetDragon != null && targetDragon.type == IDragonData.Type.CLASSIC);
+		slider.interactable = validDragon;
 
 		// Initialize slider
-		if(targetDragon == null) {
+		if(!validDragon) {
 			slider.minValue = 0f;
 			slider.maxValue = 1f;
 			slider.value = 0f;
 		} else {
+			DragonDataClassic dataClassic = targetDragon as DragonDataClassic;
 			slider.minValue = 0f;
-			slider.maxValue = targetDragon.progression.GetXpRangeForLevel(targetDragon.progression.maxLevel).max;
-			slider.value = targetDragon.progression.xp;
+			slider.maxValue = dataClassic.progression.GetXpRangeForLevel(dataClassic.progression.maxLevel).max;
+			slider.value = dataClassic.progression.xp;
 		}
 	}
 
@@ -248,14 +256,20 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Get current selected dragon data
 		string selectedDragonSku = InstanceManager.menuSceneController.selectedDragon;
-		DragonData data = DragonManager.GetDragonData(selectedDragonSku);
+		IDragonData data = DragonManager.GetDragonData(selectedDragonSku);
 		if(!data.isOwned) {
 			UIFeedbackText.CreateAndLaunch("Only for owned dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
 			return;
 		}
 
+		if(data.type != IDragonData.Type.CLASSIC) {
+			UIFeedbackText.CreateAndLaunch("Only for classic dragons!", new Vector2(0.5f, 0.5f), ControlPanel.panel.parent as RectTransform, "CPFeedbackText");
+			return;
+		}
+
 		// Set xp
-		data.progression.SetXp_DEBUG(_xp);
+		DragonDataClassic dataClassic = data as DragonDataClassic;
+		dataClassic.progression.SetXp_DEBUG(_xp);
 
 		// Refresh skin state for this dragon
 		Wardrobe wardrobe = UsersManager.currentUser.wardrobe;
@@ -263,7 +277,7 @@ public class CPProgressionCheats : MonoBehaviour {
 		for(int i = 0; i < skinDefs.Count; i++) {
 			// Should the skin be unlocked?
 			UsersManager.currentUser.wardrobe.ProcessUnlockedSkins(data);
-			bool unlocked = (data.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
+			bool unlocked = (dataClassic.progression.level >= skinDefs[i].GetAsInt("unlockLevel"));
 
 			// Apply new state based on lock status
 			Wardrobe.SkinState oldState = wardrobe.GetSkinState(skinDefs[i].sku);
@@ -309,7 +323,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Unlock and buy all dragons.
 	/// </summary>
     public void OnAcquireAllDragons() {
-        List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
+		List<IDragonData> dragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.ANY);
         if (dragons != null) {
             int i;
             int count = dragons.Count;
@@ -333,7 +347,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// Reset all the dragons.
 	/// </summary>
 	public void OnResetAllDragons() {
-		List<DragonData> dragons = DragonManager.GetDragonsByLockState(DragonData.LockState.ANY);
+		List<IDragonData> dragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.ANY);
 		if (dragons != null) {
 			int i;
 			int count = dragons.Count;
@@ -371,9 +385,6 @@ public class CPProgressionCheats : MonoBehaviour {
 			UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
 		}
 
-		// Mark all golden eggs as collected
-		UsersManager.currentUser.goldenEggsCollected = 100; // Dirty, but should do the trick xD
-
         // Save persistence
         PersistenceFacade.instance.Save_Request(false);
     }
@@ -384,9 +395,9 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetAllPets() {
 		// Clear equipped pets
-		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
-			for(int i = 0; i < dragon.pets.Count; i++) {
-				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
+		foreach(KeyValuePair<string, IDragonData> kvp in DragonManager.dragonsBySku) {
+			for(int i = 0; i < kvp.Value.pets.Count; i++) {
+				UsersManager.currentUser.UnequipPet(kvp.Key, i);
 			}
 		}
 
@@ -395,8 +406,6 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Clear collected eggs and fragments
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
         // Save!
         PersistenceFacade.instance.Save_Request(false);
@@ -408,17 +417,15 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	public void OnResetPetsRandomly() {
 		// Clear equipped pets
-		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
-			for(int i = 0; i < dragon.pets.Count; i++) {
-				UsersManager.currentUser.UnequipPet(dragon.def.sku, i);
+		foreach(KeyValuePair<string, IDragonData> kvp in DragonManager.dragonsBySku) {
+			for(int i = 0; i < kvp.Value.pets.Count; i++) {
+				UsersManager.currentUser.UnequipPet(kvp.Key, i);
 			}
 		}
 
 		// Clear pet collection and eggs and fragments
 		UsersManager.currentUser.petCollection.Reset();
 		UsersManager.currentUser.eggsCollected = 0;
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
 
 		// Iterate all the pets list and randomly unlock some of them
 		float unlockChance = 0.5f;
@@ -432,81 +439,11 @@ public class CPProgressionCheats : MonoBehaviour {
 
 			// Increase collected eggs (pets come from eggs!)
 			UsersManager.currentUser.eggsCollected++;
-
-			// If special, increase collected golden eggs
-			if(petDef.Get("rarity") == Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)) {
-				UsersManager.currentUser.goldenEggsCollected++;
-			}
 		}
-
-		// Initialize current amount of golden fragments to a random value within the limit
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (long)Random.Range(0, EggManager.goldenEggRequiredFragments), 0);
 
         // Save!
         PersistenceFacade.instance.Save_Request(false);
     }
-
-	/// <summary>
-	/// Reset only the special pets to lock state.
-	/// Resets golden egg fragments and collected golden eggs count as well.
-	/// </summary>
-	public void OnResetSpecialPets() {
-		// Get all special pets
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.PETS, "rarity", Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL));
-
-		// Clear equipped pets
-		foreach(DragonData dragon in DragonManager.dragonsByOrder) {
-			for(int i = 0; i < petDefs.Count; i++) {
-				UsersManager.currentUser.UnequipPet(dragon.def.sku, petDefs[i].sku);
-			}
-		}
-
-		// Remove from collection
-		for(int i = 0; i < petDefs.Count; i++) {
-			UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
-		}
-
-		// Clear collected data
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, 0, 0);
-		UsersManager.currentUser.goldenEggsCollected = 0;
-
-        // Save!
-        PersistenceFacade.instance.Save_Request(false);
-    }
-
-	/// <summary>
-	/// Reset the state of pets and golden fragments to force a golden egg after opening the next egg.
-	/// </summary>
-	public void OnForceGoldenEgg() {
-		// Unlock all pets except the special ones
-		// This will force the next egg to give a duplicate and therefore golden fragments
-		string specialRaritySku = Metagame.RewardEgg.RarityToSku(Metagame.Reward.Rarity.SPECIAL);
-		List<DefinitionNode> petDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.PETS);
-		for(int i = 0; i < petDefs.Count; i++) {
-			// Is it a special pet?
-			if(petDefs[i].Get("rarity") == specialRaritySku) {
-				// Unequip from all dragons
-				foreach(DragonData dragon in DragonManager.dragonsByOrder) {
-					UsersManager.currentUser.UnequipPet(dragon.def.sku, petDefs[i].sku);
-				}
-
-				// Remove from collection
-				UsersManager.currentUser.petCollection.RemovePet(petDefs[i].sku);
-			} else {
-				// Make sure pet is unlocked
-				UsersManager.currentUser.petCollection.UnlockPet(petDefs[i].sku);
-			}
-		}
-
-		// Give almost all the golden fragments required to complete the first golden egg
-		// so when the next egg gives us some gf we will complete the golden egg
-		// Clear collected data
-		UsersManager.currentUser.goldenEggsCollected = 0;
-		UsersManager.currentUser.SetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, EggManager.goldenEggRequiredFragments - 1, 0);
-
-		// Save!
-		PersistenceFacade.instance.Save_Request(false);
-	}
 
    	/// <summary>
 	/// Reset all map upgrades

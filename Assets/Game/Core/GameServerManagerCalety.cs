@@ -2,6 +2,7 @@
 /// This class is responsible for implementing the <c>GameServerManager</c>interface by using Calety.
 /// </summary>
 
+using Calety.Server;
 using FGOL.Server;
 using SimpleJSON;
 using System;
@@ -246,7 +247,7 @@ public class GameServerManagerCalety : GameServerManager {
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 
 		// Init server game details
-		ServerManager.ServerConfig kServerConfig = new ServerManager.ServerConfig();
+		ServerConfig kServerConfig = new ServerConfig();
 
 		if(settingsInstance != null) {
 			kServerConfig.m_strServerURL = settingsInstance.m_strLocalServerURL[settingsInstance.m_iBuildEnvironmentSelected];
@@ -558,23 +559,24 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);
     }
     
-    public override void PCSpent(int amount, string group, ServerCallback onDone)
+    public override void PCSpent(int balance, int amount, string group, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", -amount, false, group, onDone );
+        SendCurencyFluctuation( "hc", balance, -amount, false, group, onDone );
     }
 
-    public override void PCEarned(int amount, string group, bool paid, ServerCallback onDone)
+    public override void PCEarned(int balance, int amount, string group, bool paid, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", amount, paid , group, onDone );
+        SendCurencyFluctuation( "hc", balance, amount, paid , group, onDone );
     }
     
-    private void SendCurencyFluctuation(string currency, int amount, bool paid, string action, ServerCallback onDone)
+    private void SendCurencyFluctuation(string currency, int balance, int amount, bool paid, string action, ServerCallback onDone)
     {
         JSONNode json = new JSONClass();
         json["currency"] = currency;
         json["amount"] = amount;
         json["type"] = paid ? "paid" : "free";
         json["action"] = action;
+        json["balance"] = balance;
 
         Dictionary<string, string> parameters = new Dictionary<string, string>
         {
@@ -1778,7 +1780,7 @@ public class GameServerManagerCalety : GameServerManager {
         InternalCheckConnection((Error checkError) => {
             if (checkError == null) {
                 // Logs in server
-                InternalAuth((Error error, GameServerManager.ServerResponse response) => {
+                InternalAuth((Error error, ServerResponse response) => {
                     bool isLoggedInServer = IsLoggedIn();
 
                     // If it's logged in server then tries to sync

@@ -68,7 +68,7 @@ public class MenuDragonScroller : MonoBehaviour {
 		for(int i = 0; i < dragonSlots.Length; i++) {
 			if (!FeatureSettingsManager.MenuDragonsAsyncLoading)
 				dragonSlots[i].dragonLoader.Reload(true);
-			DragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonLoader.dragonSku);
+			IDragonData data = DragonManager.GetDragonData(dragonSlots[i].dragonLoader.dragonSku);
 			int dragonIndex = data.GetOrder();
 			// Add it into the list
 			m_dragonSlots.Insert(dragonIndex, dragonSlots[i]);
@@ -219,7 +219,7 @@ public class MenuDragonScroller : MonoBehaviour {
 					if(slot.dragonPreview.equip.showPets != true) {
 						slot.dragonPreview.equip.TogglePets(true, false);
 					}
-					slot.dragonPreview.allowAltAnimations = slot.currentState >= DragonData.LockState.LOCKED;
+					slot.dragonPreview.allowAltAnimations = slot.currentState >= IDragonData.LockState.LOCKED;
 				}
 			}
 		}
@@ -323,6 +323,11 @@ public class MenuDragonScroller : MonoBehaviour {
 		if(m_menuTransitionManager == null) return;
 		if(m_menuTransitionManager.currentScreenData == null) return;
 
+		// Only classic dragons
+		IDragonData dragonData = DragonManager.GetDragonData(_sku);
+		if(dragonData == null) return;
+		if(dragonData.type != IDragonData.Type.CLASSIC) return;
+
 		// Move camera to the newly selected dragon
 		// If the current menu screen is not using the dragon selection 3D scene, skip animation
 		ScreenData dragonSelectionScreenData = m_menuTransitionManager.GetScreenData(MenuScreen.DRAGON_SELECTION);
@@ -354,8 +359,8 @@ public class MenuDragonScroller : MonoBehaviour {
 			if ( slot.dragonPreview != null )
 			{
 				// Show always if it's the selected dragon!
-				DragonData data = DragonManager.GetDragonData(slot.dragonPreview.sku);
-				bool show = (showAll && data.lockState != DragonData.LockState.HIDDEN) 
+				IDragonData data = DragonManager.GetDragonData(slot.dragonPreview.sku);
+				bool show = (showAll && data.lockState != IDragonData.LockState.HIDDEN) 
 						 || slot.dragonPreview.sku == InstanceManager.menuSceneController.selectedDragon;
 				slot.dragonPreview.gameObject.SetActive(show);
 			}

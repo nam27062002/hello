@@ -60,7 +60,7 @@ public class MenuDragonOtherStats : MonoBehaviour {
 	/// <param name="_sku">The sku of the selected dragon</param>
 	public void Refresh(string _sku) {
 		// Get new dragon's data from the dragon manager
-		DragonData data = DragonManager.GetDragonData(_sku);
+		IDragonData data = DragonManager.GetDragonData(_sku);
 
 		// Health
 		m_healthText.text = String.Format("{0}", StringUtils.FormatNumber(data.maxHealth, 0));

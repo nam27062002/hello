@@ -156,16 +156,7 @@ public class MissionObjective : TrackingObjectiveBase {
 		// If we're a single-run objective, reset counter
 		if(m_singleRun) {
 			m_tracker.InitValue(0);
-
 		}
-
-		// Disable during FTUX
-		this.enabled = (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_MISSIONS_AT_RUN && SceneController.s_mode != SceneController.Mode.TOURNAMENT);
-
-		// Disable too if mission is not active
-		this.enabled &= m_parentMission.state == Mission.State.ACTIVE;
-
-		Debug.Log(Color.yellow.Tag("MISSION OBJECTIVE STARTED:\n" + this.parentMission.def.sku + " | " + this.parentMission.state + " | " + this.enabled));
 	}
 
 	/// <summary>
@@ -176,7 +167,6 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Unless objective was completed
 		if(m_singleRun && !isCompleted) {
 			m_tracker.InitValue(0);
-
 		}
 	}
 

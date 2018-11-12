@@ -16,9 +16,9 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 	}
 	SubShader
 	{
+		Tags{ "Queue" = "Transparent+10" "RenderType" = "Transparent" "LightMode" = "ForwardBase" }
 		Pass
 		{
-			Tags{ "Queue" = "Transparent+10" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 			ZWrite off
 			Cull back
 			Blend SrcAlpha OneMinusSrcAlpha

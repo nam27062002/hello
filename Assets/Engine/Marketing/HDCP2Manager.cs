@@ -114,10 +114,10 @@ public class HDCP2Manager
 
     private bool CanUserPlayInterstitial()
     {
-        // We don't want to interrupt any tutorial
+        // Don't show during the FTUXP
         // Checks that the minimum time since a cp2 interstitial was last played has passed               
-        UserProfile profile = UsersManager.currentUser;
-        return profile != null && profile.IsTutorialStepCompleted(TutorialStep.ALL) && GetUserRestrictionTimeToWait() <= 0f;        
+        TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
+        return trackingSystem != null && trackingSystem.GameRoundCount >= 3 && GetUserRestrictionTimeToWait() <= 0f;        
     }   
 
     private float GetUserRestrictionTimeToWait()

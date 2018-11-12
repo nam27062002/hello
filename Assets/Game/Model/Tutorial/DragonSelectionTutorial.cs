@@ -144,7 +144,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 					StopTutorial();
 
 					// Make sure we have the initial dragon selected
-					m_scroller.FocusDragon(UsersManager.currentUser.currentDragon, true);
+					m_scroller.FocusDragon(UsersManager.currentUser.currentClassicDragon, true);
 
 					// Show tier info popup
 					UbiBCN.CoroutineManager.DelayedCall(() => {
@@ -207,9 +207,9 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// 1) Initial delta is always the first dragon
 		m_initialDelta = 0f;
 			
-		int dragonsToView = 9;
 		// 2) Last delta is the last visible dragon (teased included)
-		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+		int dragonsToView = 9;
+		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
 			// First non-hidden dragon (including teased dragons)
 			if(dragonsByOrder[i].isRevealed || dragonsByOrder[i].isTeased) {
@@ -223,7 +223,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 
 
 		// 3) Final delta is the current selected dragon (most of the times will be the first one)
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentDragon);
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, UsersManager.currentUser.currentClassicDragon);
 		int menuOrder = (def == null) ? 0 : def.GetAsInt("order");
 		m_finalDelta = m_scroller.cameraAnimator.cameraPath.path.GetDelta(menuOrder);	// Taking advantadge that we have exactly one control point per dragon
 

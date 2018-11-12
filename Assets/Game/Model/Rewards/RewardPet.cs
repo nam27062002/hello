@@ -84,14 +84,8 @@ namespace Metagame {
 				string petRewardSku = "pet_" + m_def.GetAsString("rarity");
 				DefinitionNode petRewardDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGG_REWARDS, petRewardSku);
 
-				// Have all golden eggs been collected?
-				if (EggManager.allGoldenEggsCollected) {
-					// Yes! Give coins rather than golden egg fragments (based on rarity)
-					m_replacement = Metagame.Reward.CreateTypeSoftCurrency(petRewardDef.GetAsLong("duplicateCoinsGiven"), HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
-				} else {
-					// No! Give golden egg fragments based on rarity
-					m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);
-				}
+				// No! Give golden egg fragments based on rarity
+				m_replacement = Metagame.Reward.CreateTypeGoldenFragments(petRewardDef.GetAsInt("duplicateFragmentsGiven"), rarity, HDTrackingManager.EEconomyGroup.PET_DUPLICATED, m_source);				
 			} 
 		}
 

@@ -11,7 +11,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Fresnel + Transparent (Spawners)"
 	}
 	SubShader
 	{
-		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "LightMode" = "ForwardBase" "RenderType"="Transparent"}
+		Tags {"Queue"="Transparent" "LightMode" = "ForwardBase" "RenderType"="Transparent"}
 		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha 
 		Cull back

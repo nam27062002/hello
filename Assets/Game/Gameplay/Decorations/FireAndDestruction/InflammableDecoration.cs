@@ -214,6 +214,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				// Initialize some death info
 				m_entity.onDieStatus.source = m_burnSource;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
@@ -244,6 +245,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				// Initialize some death info
 				m_entity.onDieStatus.source = m_burnSource;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 

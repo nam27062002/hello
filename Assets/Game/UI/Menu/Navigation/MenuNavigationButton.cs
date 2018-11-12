@@ -33,13 +33,14 @@ public class MenuNavigationButton : MonoBehaviour {
 	// Internal References
 	protected MenuTransitionManager m_transitionManager = null;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	protected void Start() {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+
+    /// <summary>
+    /// First update call.
+    /// </summary>
+    protected void Start() {
 		// Get a reference to the navigation system, which in this particular case should be a component in the menu scene controller
 		m_transitionManager = InstanceManager.menuSceneController.transitionManager;
 		Debug.Assert(m_transitionManager != null, "Required component missing!");
@@ -60,20 +61,20 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the previous screen, if any.
 	/// </summary>
 	public void OnBackButton() {
-		// If history is empty, go to default screen
-		if(m_transitionManager.screenHistory.Count == 0) {
+        // If history is empty, go to default screen
+        if (m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
 		} else {
 			m_transitionManager.Back(true);
 		}
-	}
+    }
 
-	/// <summary>
-	/// Special callback for the final play button.
-	/// </summary>
-	public void OnStartGameButton() {
-		// To be used only on the menu
-		// Let the scene controller manage it
-		InstanceManager.menuSceneController.OnPlayButton();
-	}
+    /// <summary>
+    /// Special callback for the final play button.
+    /// </summary>
+    public void OnStartGameButton() {
+        // To be used only on the menu
+        // Let the scene controller manage it
+        InstanceManager.menuSceneController.OnPlayButton();
+    }
 }

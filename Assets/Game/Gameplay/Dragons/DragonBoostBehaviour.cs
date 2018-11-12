@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Xft;
 
 public class DragonBoostBehaviour : MonoBehaviour {
-	
-	
+
+
 	//-----------------------------------------------
 	// Attributes
 	//-----------------------------------------------
@@ -27,6 +27,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	private float m_energyRefillBase = 1f;	// energy per second
 	private float m_energyRefillBonus = 0;	// energy per second
 	private float m_energyRequiredToBoost = 0.2f;	// Percent of total energy
+	public float energyRequiredToBoost
+	{
+		get { return m_energyRequiredToBoost; }
+		set { m_energyRequiredToBoost = value; }
+	}
+    private float m_energyRestartThreshold = 1.0f;   // Percent of total energy required to restart
+    
 	private float m_boostMultiplier;
 	public float boostMultiplier
 	{
@@ -53,6 +60,13 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		get { return m_modInfiniteBoost; }
 		set { m_modInfiniteBoost = value; }
 	}
+	
+	protected bool m_alwaysDrain = false;
+	public bool alwaysDrain
+	{
+		get { return m_alwaysDrain; }
+		set { m_alwaysDrain = value; }
+	}
 
 	// Control Panel settings
 	private bool m_CPAutoRestart = true;
@@ -62,7 +76,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	//-----------------------------------------------
 	// Use this for initialization
 	void Awake () {
-		m_dragon = GetComponent<DragonPlayer>();	
+		m_dragon = GetComponent<DragonPlayer>();
 		m_motion = GetComponent<DragonMotion>();
 		m_controls = GetComponent<DragonControlPlayer>();
 		m_animator = transform.Find("view").GetComponent<Animator>();
@@ -71,12 +85,16 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		m_ready = true;
 
 		// Cache content data
-		m_energyDrain = m_dragon.data.def.GetAsFloat("energyDrain");
-		m_energyRefillBase = m_dragon.data.def.GetAsFloat("energyRefillRate");
+		m_energyDrain = m_dragon.data.energyDrain;
+		m_energyRefillBase = m_dragon.data.energyRefillRate;
 		SetRefillBonus( m_energyRefillBonus );
-		m_boostMultiplier = m_dragon.data.def.GetAsFloat("boostMultiplier");
-		m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+        m_boostMultiplier = m_dragon.data.boostMultiplier;
+        // m_energyRequiredToBoost = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
+        m_energyRequiredToBoost = m_dragon.data.energyRequiredToBoost;// DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "dragonSettings").GetAsFloat("energyRequiredToBoost");
 		m_energyRequiredToBoost *= m_dragon.energyMax;
+
+        m_energyRestartThreshold = m_dragon.data.energyRestartThreshold;
+        m_energyRestartThreshold *= m_dragon.energyMax;
 	}
 
 	void Start() {
@@ -100,17 +118,18 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		bool activate = m_controls.action || m_dragon.changingArea;
+        bool activate = m_controls.action;
+        if ( m_dragon.changingArea )
+        {
+            activate = m_motion.m_useBoostOnIntro;
+        }
 
 #if UNITY_EDITOR
         activate = activate || Input.GetKey(KeyCode.X);
 #endif
-
-        //if (m_insideWater)
-        //	activate = false;
 
         if (activate) {
 			if (m_ready) {
@@ -134,7 +153,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
                     m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain * 5);
                 else
                     m_dragon.AddEnergy(-Time.deltaTime * m_energyDrain);
-            
+
 				if (m_dragon.energy <= 0f) {
 					StopBoost();
 				}
@@ -142,13 +161,20 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		} else if(m_dragon.energy < m_dragon.energyMax) {
 			//DebugUtils.Log("<color=yellow>refilling " + m_dragon.energy + "</color>");
 			m_dragon.AddEnergy(Time.deltaTime * m_energyRefill);
-		} else {
-			// [AOC] Max energy reached, mark as ready
-			if(m_CPAutoRestart) m_ready = true;
 		}
+        
+        if(m_CPAutoRestart)
+        {
+            // Energy required to restart
+            if (!m_active && m_dragon.energy >= m_energyRestartThreshold)
+            {
+                 m_ready = true;
+            }
+        }
+            
 	}
 
-	private void StartBoost() 
+	private void StartBoost()
 	{
 		//DebugUtils.Log("<color=green>START " + m_dragon.energy + "/" + m_energyRequiredToBoost + "</color>");
 		m_active = true;
@@ -161,7 +187,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		Messenger.Broadcast<bool>(MessengerEvents.BOOST_TOGGLED, true);
 	}
 
-	public void StopBoost() 
+	public void StopBoost()
 	{
 		//DebugUtils.Log("<color=red>STOP</color>");
 		m_active = false;
@@ -176,6 +202,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	}
 
 	public bool IsDraining() {
+		if (m_alwaysDrain)
+			return true;
 		// Don't drain energy if cheat is enabled or dragon fury is on, or super size, or pet infinite boost
 		return !(DebugSettings.infiniteBoost || m_dragon.IsFuryOn() || m_superSizeInfiniteBoost || m_petInfiniteBoost || m_modInfiniteBoost || m_dragon.changingArea);
 	}

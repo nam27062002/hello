@@ -68,6 +68,8 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_COLORS].Add(p, "Power Colors");
 			} else if(p.name.Contains("m_petCategoryColor")) {
 				m_categories[CAT_COLORS].Add(p, "Pet Category Colors");
+			} else if(p.name.Contains("m_dragonStatColor")) {
+				m_categories[CAT_COLORS].Add(p, "Dragon Stats Colors");
 			} else if(p.name.Contains("m_rarity")) {
 				m_categories[CAT_RARITIES].Add(p);
 			} else if(p.name.Contains("Path")) {

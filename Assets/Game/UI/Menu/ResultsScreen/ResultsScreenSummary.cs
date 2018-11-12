@@ -30,6 +30,7 @@ public class ResultsScreenSummary : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_timeText = null;
 	[SerializeField] private TextMeshProUGUI m_scoreText = null;
 	[SerializeField] private TextMeshProUGUI m_coinsText = null;
+	[SerializeField] private TextMeshProUGUI m_goldenFragmentsText = null;
 	[SerializeField] private TextMeshProUGUI m_chestsText = null;
 	[SerializeField] private TextMeshProUGUI m_eggsText = null;
 	[SerializeField] private TextMeshProUGUI m_missionsText = null;
@@ -38,9 +39,10 @@ public class ResultsScreenSummary : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_timeAnim = null;
 	[SerializeField] private ShowHideAnimator m_scoreAnim = null;
 	[SerializeField] private ShowHideAnimator m_coinsAnim = null;
+	[SerializeField] private ShowHideAnimator m_goldenFragmentsAnim = null;
 	[SerializeField] private ShowHideAnimator m_collectiblesAnim = null;
 	[SerializeField] private ShowHideAnimator m_missionsAnim = null;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -56,6 +58,7 @@ public class ResultsScreenSummary : MonoBehaviour {
 		m_timeAnim.transform.parent.gameObject.SetActive(false);
 		m_scoreAnim.transform.parent.gameObject.SetActive(false);
 		m_coinsAnim.transform.parent.gameObject.SetActive(false);
+		m_goldenFragmentsAnim.transform.parent.gameObject.SetActive(false);
 		m_collectiblesAnim.transform.parent.gameObject.SetActive(false);
 		m_missionsAnim.transform.parent.gameObject.SetActive(false);
 
@@ -63,6 +66,7 @@ public class ResultsScreenSummary : MonoBehaviour {
 		m_timeAnim.ForceHide(false);
 		m_scoreAnim.ForceHide(false);
 		m_coinsAnim.ForceHide(false);
+		m_goldenFragmentsAnim.ForceHide(false);
 		m_collectiblesAnim.ForceHide(false);
 		m_missionsAnim.ForceHide(false);
 
@@ -118,6 +122,21 @@ public class ResultsScreenSummary : MonoBehaviour {
 
 		// Trigger animation!
 		m_coinsAnim.ForceShow(true);
+	}
+
+	/// <summary>
+	/// Show the golden fragments slot.
+	/// </summary>
+	/// <param name="_goldenFragments">Number of collected golden fragments.</param>
+	public void ShowGoldenFragments(long _goldenFragments) {
+		// Set text
+		m_goldenFragmentsText.text = StringUtils.FormatNumber(_goldenFragments);
+
+		// Activate root object
+		m_goldenFragmentsAnim.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		m_goldenFragmentsAnim.ForceShow(true);
 	}
 
 	/// <summary>

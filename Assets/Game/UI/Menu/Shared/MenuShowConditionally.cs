@@ -103,7 +103,7 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
 		// The animator must ask for permission before showing itself!
@@ -132,7 +132,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
 		m_targetAnimator.OnShowCheck.RemoveListener(OnAnimatorCheck);
@@ -174,16 +174,16 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Check whether the object should be visible or not
 		bool show = false;
-		DragonData dragon = DragonManager.GetDragonData(_dragonSku);
+		IDragonData dragon = DragonManager.GetDragonData(_dragonSku);
 		if(dragon == null) return true;
 
 		// Ownership status
 		switch(dragon.lockState) {
-			case DragonData.LockState.TEASE:		show = m_showIfShadow;		break;
-			case DragonData.LockState.SHADOW:		show = m_showIfShadow;		break;
-			case DragonData.LockState.LOCKED:		show = m_showIfLocked;		break;
-			case DragonData.LockState.AVAILABLE:	show = m_showIfAvailable;	break;
-			case DragonData.LockState.OWNED:		show = m_showIfOwned;		break;
+			case IDragonData.LockState.TEASE:		show = m_showIfShadow;		break;
+			case IDragonData.LockState.SHADOW:		show = m_showIfShadow;		break;
+			case IDragonData.LockState.LOCKED:		show = m_showIfLocked;		break;
+			case IDragonData.LockState.AVAILABLE:	show = m_showIfAvailable;	break;
+			case IDragonData.LockState.OWNED:		show = m_showIfOwned;		break;
 		}
 
 		// Dragon ID (overrides ownership status)
@@ -253,7 +253,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		&& isActiveAndEnabled 
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
 			// Debug
-			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+			ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 1"));
 
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
@@ -274,7 +274,7 @@ public class MenuShowConditionally : MonoBehaviour {
 			if(_show) {
 				ShowHideAnimator.DebugLog(this, Colors.green.Tag("FORCE_SHOW"));
 			} else {
-				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE"));
+				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 2"));
 			}
 			m_animatorCheckOverride = true;
 			m_targetAnimator.ForceSet(_show, _useAnims);
@@ -320,7 +320,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// A dragon has been acquired
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
-	public void OnDragonAcquired(DragonData _data) {
+	public void OnDragonAcquired(IDragonData _data) {
 		// Ignore if component not enabled
 		if(!this.enabled) {
 			return;

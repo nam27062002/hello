@@ -33,8 +33,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	[Space]
 	[SerializeField] private Localizer m_nameText = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_coinsRewardText = null;
-	[SerializeField] private TextMeshProUGUI m_pcRewardText = null;
+	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[Space]
 	[SerializeField] private GameObject m_checkMark = null;
 
@@ -51,7 +50,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
 		Messenger.AddListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -108,7 +107,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.CHESTS_RESET, RefreshCollected);
 		Messenger.RemoveListener(MessengerEvents.CHESTS_PROCESSED, RefreshCollected);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------------//
@@ -131,16 +130,12 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	private void RefreshReward() {
 		// Initialize reward info
 		Chest.RewardData rewardData = ChestManager.GetRewardData(m_chestIdx + 1);
-		bool isPC = rewardData.type == Chest.RewardType.PC;
-
-		m_coinsRewardText.gameObject.SetActive(!isPC);
-		m_pcRewardText.gameObject.SetActive(isPC);
-
-		if(isPC) {
-			m_pcRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);
-		} else {
-			m_coinsRewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
-		}
+		
+        switch(rewardData.type) {
+            case Chest.RewardType.SC: m_rewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);             break;
+            case Chest.RewardType.PC: m_rewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.PC, UIConstants.IconAlignment.LEFT);                break;
+            case Chest.RewardType.GF: m_rewardText.text = UIConstants.GetIconString(rewardData.amount, UIConstants.IconType.GOLDEN_FRAGMENTS, UIConstants.IconAlignment.LEFT);  break;
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -150,7 +145,7 @@ public class ChestsScreenTooltip : MonoBehaviour {
 	/// A dragon has been acquired.
 	/// </summary>
 	/// <param name="_data">Data of the dragon that has just been acquired.</param>
-	private void OnDragonAcquired(DragonData _data) {
+	private void OnDragonAcquired(IDragonData _data) {
 		// Reward scales with the biggest owned dragon. Update it.
 		RefreshReward();
 	}

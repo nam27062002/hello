@@ -84,14 +84,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_gameController = InstanceManager.gameSceneControllerBase;
 
 		// Shark related values
-		m_healthDrainPerSecond = m_dragon.data.def.GetAsFloat("healthDrain");
-		m_healthDrainAmpPerSecond = m_dragon.data.def.GetAsFloat("healthDrainAmpPerSecond"); // 0.005
-		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
-		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
-        m_healthDrainPerSecondInSpace = m_dragon.data.def.GetAsFloat("healthDrainSpacePlus");
+		m_healthDrainPerSecond = m_dragon.data.healthDrain;
+		m_healthDrainAmpPerSecond = m_dragon.data.healthDrainAmpPerSecond; // 0.005
+		m_sessionStartHealthDrainTime = m_dragon.data.sessionStartHealthDrainTime; // 45
+		m_sessionStartHealthDrainModifier = m_dragon.data.sessionStartHealthDrainModifier;// 0.5
+        m_healthDrainPerSecondInSpace = m_dragon.data.healthDrainSpacePlus;
 
-		m_damageAnimationThreshold = m_dragon.data.def.GetAsFloat("damageAnimationThreshold", 0);
-		m_dotAnimationThreshold = m_dragon.data.def.GetAsFloat("dotAnimationThreshold", 0);
+		m_damageAnimationThreshold = m_dragon.data.damageAnimationThreshold;
+		m_dotAnimationThreshold = m_dragon.data.dotAnimationThreshold;
 
         m_damageMultiplier = 0;
 		//TONI START

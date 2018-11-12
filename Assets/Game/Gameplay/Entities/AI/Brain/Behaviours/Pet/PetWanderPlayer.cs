@@ -20,7 +20,6 @@ namespace AI {
 			private Vector3 m_targetOffset;
 			private float m_speed;
 
-			private float m_targetDelta = 0;
 			private float m_maxFarDistance;
 			private float m_startRandom;
 			private float m_minorRandom;
@@ -42,7 +41,7 @@ namespace AI {
 				DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PET_MOVEMENT, data.petWanderSku);
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("wanderSpeedMultiplier");
 
-				m_maxFarDistance = InstanceManager.player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * def.GetAsFloat("wanderDistanceMultiplier");
+				m_maxFarDistance = InstanceManager.player.data.maxScale * def.GetAsFloat("wanderDistanceMultiplier");
 				m_startRandom = Random.Range(0, 2 * Mathf.PI);
 				m_minorRandom = Random.Range( 2, 7);
 			}
@@ -58,11 +57,14 @@ namespace AI {
 				Vector3 targetPos = InstanceManager.player.transform.position;
 				Vector2 circleMove;
 
+                float angle = Mathf.Atan2(InstanceManager.player.dragonMotion.direction.y, InstanceManager.player.dragonMotion.direction.x);
+
 				m_circleTimer += Time.deltaTime;
-				circleMove.x = Mathf.Sin(m_circleTimer + m_startRandom) * m_maxFarDistance;
-				circleMove.y = Mathf.Cos(m_circleTimer + m_startRandom) * m_maxFarDistance;
-				// circleMove *= (0.75f + (Mathf.Sin( Time.time + m_startRandom)/2.0f + 1) * 0.25f);
-				circleMove *= 0.7f + ((Mathf.Sin( (Time.time + m_startRandom) * m_minorRandom) / 2.0f) + 1) * 0.3f;
+				// circleMove.x = Mathf.Cos(m_circleTimer + m_startRandom) * m_maxFarDistance * 2 - InstanceManager.player.data.maxScale * 0.5f; // Trying an ellipsis
+                circleMove.x = Mathf.Cos(m_circleTimer + m_startRandom) * m_maxFarDistance * 1.5f - m_maxFarDistance * 0.5f; // Trying an ellipsis
+				circleMove.y = Mathf.Sin(m_circleTimer + m_startRandom) * m_maxFarDistance;
+                circleMove = circleMove.RotateRadians(angle);
+
 				targetPos.x += circleMove.x;
 				targetPos.y += circleMove.y;
 				m_pilot.GoTo(targetPos);

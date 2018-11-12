@@ -105,7 +105,7 @@ namespace AI {
 				if (sense) {
 					float fireRadius = 0f;
 					if (m_senseFire) {
-						if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
+						if (InstanceManager.player.IsFuryOn() ) {
 							fireRadius = InstanceManager.player.breathBehaviour.actualLength;
 						}
 					}
@@ -185,23 +185,13 @@ namespace AI {
 		// Debug
 		public override void OnDrawGizmosSelected(Transform _go) {
 			float fireRadius = 0f;
-            if (Application.isPlaying) {
-                if (m_senseFire && InstanceManager.player != null) {
-                    if (InstanceManager.player.IsFuryOn() || InstanceManager.player.IsMegaFuryOn()) {
-                        fireRadius = InstanceManager.player.breathBehaviour.actualLength;
-                    }
-                }
-            } else {
-                float radiusOffsetFactor = m_radiusOffset.max;
-
-                m_sightRadiusIn = m_sightRadius * radiusOffsetFactor;
-                m_maxRadiusIn = (m_maxRadius * radiusOffsetFactor);
-                m_minRadiusIn = (m_minRadius * radiusOffsetFactor);
-
-                m_sightRadiusOut = m_sightRadiusIn + m_hysteresisOffset;
-                m_maxRadiusOut = m_maxRadiusIn + m_hysteresisOffset;
-                m_minRadiusOut = m_minRadiusIn + m_hysteresisOffset;
-            }
+			if (Application.isPlaying) {
+				if (m_senseFire && InstanceManager.player != null) {					
+					if (InstanceManager.player.IsFuryOn()) {
+						fireRadius = InstanceManager.player.breathBehaviour.actualLength;
+					}
+				}
+			}
 
 			Vector3 pos = _go.position + (_go.rotation * m_sensorOffset);
 			Gizmos.color = Colors.paleYellow;

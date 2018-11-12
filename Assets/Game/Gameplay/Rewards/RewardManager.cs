@@ -399,12 +399,25 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Current dragon progress
 		if(DragonManager.currentDragon != null) {
-			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
-			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+			// Depends on dragon type
+			switch(DragonManager.currentDragon.type) {
+				case IDragonData.Type.CLASSIC: {
+					DragonDataClassic data = DragonManager.currentDragon as DragonDataClassic;
+					instance.m_dragonInitialLevel = data.progression.level;
+					instance.m_dragonInitialLevelProgress = data.progression.progressCurrentLevel;
+				} break;
+
+				case IDragonData.Type.SPECIAL: {
+					// [AOC] TODO!!
+					instance.m_dragonInitialLevel = 1;
+					instance.m_dragonInitialLevelProgress = 0f;
+				} break;
+			}
 
 			// Next dragon locked?
-			DragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
-			if(nextDragonData != null) {
+			// [AOC] Only makes sense for CLASSIC dragons
+			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+			if(nextDragonData != null && DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
 				instance.m_nextDragonLocked = nextDragonData.isLocked;
 			} else {
 				instance.m_nextDragonLocked = false;
@@ -442,7 +455,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Survival bonus
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode != SceneController.Mode.TOURNAMENT) {
+		if(GameSceneController.mode != SceneController.Mode.TOURNAMENT) {
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 	}
@@ -493,15 +506,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT )
-        {
-	        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+        bool skipXP = false;
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+            skipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.9f;
+        } else {
+            skipXP = SceneController.mode == SceneController.Mode.TOURNAMENT || InstanceManager.player.data.type != IDragonData.Type.CLASSIC;// [AOC] Only CLASSIC dragons!
+        }
+            
+        if ( skipXP ) {
+            _reward.xp = 0;
+        } else {
+			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
 			instance.m_xp += _reward.xp;
 		}
-		else
-		{
-			_reward.xp = 0;
-		}
+		
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
@@ -564,7 +582,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	private void CheckSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return;
 
 		// Show feedback to the user every minute
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
@@ -606,7 +624,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return 0;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return 0;
 
 		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();

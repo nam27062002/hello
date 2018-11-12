@@ -96,17 +96,17 @@ public class PopupCustomizer : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class TitleField : Field<TextMeshProUGUI> {
+	public class TitleField : Field<Text> {
 		public TitleField() : base(FieldType.TEXT, CaletyKey.TITLE) {}
 	}
 
 	[System.Serializable]
-	public class MessageField : Field<TextMeshProUGUI> {
+	public class MessageField : Field<Text> {
 		public MessageField() : base(FieldType.TEXTAREA, CaletyKey.TEXT) {}
 	}
 
 	[System.Serializable]
-	public class TextField : Field<TextMeshProUGUI> {
+	public class TextField : Field<Text> {
 		public TextField() : base(FieldType.TEXT, CaletyKey.TEXT) {}
 	}
 
@@ -217,7 +217,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 			// Iterate through all textfields in the popup and try to find a text for them in the json
 			for (int i = 0; i < m_textFields.Count; ++i) {
-				TextMeshProUGUI textField = m_textFields[i].element;
+				Text textField = m_textFields[i].element;
 
 				if (textField != null) {
 					// Set the text from the json, or empty string if the json doesn't have a text for this textfield
@@ -249,7 +249,7 @@ public class PopupCustomizer : MonoBehaviour {
 				m_buttonFields[i].element.gameObject.SetActive(true);
 
 				// Set text
-				TextMeshProUGUI txt = m_buttonFields[i].element.GetComponentInChildren<TextMeshProUGUI>();
+				Text txt = m_buttonFields[i].element.GetComponentInChildren<Text>();
 				if (txt != null) {
 					txt.text = m_localizedConfig.m_kPopupButtons[i].m_strText;
 				}
@@ -378,11 +378,12 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+						MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Different pet screen if the current dragon is a special one
+						PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
@@ -390,7 +391,7 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(MenuScreen.PETS, true);
+						screensController.GoToScreen(targetPetScreen, true);
 					} break;
 
 					case "global_event": {
@@ -405,7 +406,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the skins screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
