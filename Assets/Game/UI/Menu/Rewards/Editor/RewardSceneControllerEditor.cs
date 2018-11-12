@@ -97,7 +97,7 @@ public class RewardSceneControllerEditor : Editor {
 
 			else if(p.name == "m_goldenFragmentsRewardsSetup") {
 				// Fixed length array, rarity as element label
-				int size = (int)Metagame.Reward.Rarity.COUNT - 1;	// Special rewards don't give golden fragments!
+				int size = (int)Metagame.Reward.Rarity.COUNT;	// Special rewards don't give golden fragments!
 				p.arraySize = size;
 
 				// Group in a foldout

@@ -117,6 +117,9 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Load qr code
 		m_qrContainer.sprite = Resources.Load<Sprite>(GameSettings.shareData.qrCodePath);
+
+		// Subscribe to external events
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
 
 	/// <summary>
@@ -152,6 +155,10 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
+		// Unsubscribe to external events
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
+
+		// Clear refs
 		m_picture = null;
 	}
 
@@ -370,6 +377,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Initialize zoom controller with main camera
 		currentMode.zoomControl.gameObject.SetActive(true);
+		currentMode.zoomControl.camera = null;	// [AOC] Force refresh of camera initial values
 		currentMode.zoomControl.camera = menuController.mainCamera;
 	}
 
@@ -463,5 +471,98 @@ public class PhotoScreenController : MonoBehaviour {
 		m_bottomBar.gameObject.SetActive(arOff);
 		currentMode.dragControl.gameObject.SetActive(arOff);
 		currentMode.zoomControl.gameObject.SetActive(arOff);
+	}
+
+	/// <summary>
+	/// The menu screen change animation is about to start.
+	/// </summary>
+	/// <param name="_from">Screen we come from.</param>
+	/// <param name="_to">Screen we're going to.</param>
+	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
+		// Check params
+		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+
+		// Aux vars
+		MenuSceneController menuSceneController = InstanceManager.menuSceneController;
+		MenuScreenScene fromScene = menuSceneController.GetScreenData(_from).scene3d;
+		MenuScreenScene toScene = menuSceneController.GetScreenData(_to).scene3d;
+
+		// If the scene we are entering has a photo snap point to override, do it now
+		if(toScene != null) {
+			// Aux vars
+			CameraSnapPoint newSnapPoint = null;
+
+			// a) Reward Scene
+			if(toScene is RewardSceneController) {
+				newSnapPoint = (toScene as RewardSceneController).photoCameraSnapPoint;
+			}
+
+			// b) Lab Scene
+			else if(toScene is LabDragonSelectionScene) {
+				newSnapPoint = (toScene as LabDragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// c) Dragon Selection Scene
+			else if(toScene is DragonSelectionScene) {
+				newSnapPoint = (toScene as DragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// Apply
+			if(newSnapPoint != null) {
+				Debug.Log(Colors.paleGreen.Tag(
+					"Setting snap point from " +
+					menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + newSnapPoint.name
+				));
+				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
+			}
+		}
+
+		// Leaving a screen that has override the photo snap point
+		/*else if(fromScene != null) {
+			// Aux vars
+			CameraSnapPoint newSnapPoint = null;
+
+			// a) Reward Scene
+			if(fromScene is RewardSceneController) {
+				newSnapPoint = (fromScene as RewardSceneController).photoCameraSnapPoint;
+			}
+
+			// b) Lab Scene
+			else if(fromScene is LabDragonSelectionScene) {
+				newSnapPoint = (fromScene as LabDragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// c) Dragon Selection Scene
+			else if(fromScene is DragonSelectionScene) {
+				newSnapPoint = (fromScene as DragonSelectionScene).photoCameraSnapPoint;
+			}
+
+			// Apply
+			if(newSnapPoint != null) {
+				Debug.Log(Colors.paleGreen.Tag(
+					"Setting snap point from " +
+					menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + newSnapPoint.name
+				));
+				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
+			}
+		}
+		*/
+		/*
+		// Leaving a screen using this scene
+		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
+			// Do some stuff if not going to take a picture of the reward
+			if(_to != MenuScreen.PHOTO) {
+				// Restore default camera snap point for the photo screen
+				Debug.Log(Colors.paleGreen.Tag(
+					"Restoring snap point from " +
+					InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
+					" to " + m_originalPhotoCameraSnapPoint.name
+				));
+				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
+			}
+		}
+		*/
 	}
 }
