@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: MT_house_castel_01_01
+  m_Name: ground_castle_4
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: EMISSIVE_COLOR FOG OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION _NORMALMAP
+  m_ShaderKeywords: FOG OPAQUEALPHA VERTEXCOLOR_NONE _EMISSION _NORMALMAP
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 411229ec1cb640e49bc852fc530fd623, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6280882d72333684d838d49d0e7d96f4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 91998f782473a384f929e2a1fea882b3, type: 3}
+        m_Texture: {fileID: 2800000, guid: e884c34ca1564de4ca0e3efd2b775140, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,15 +64,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecondTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: fcdd292df0f871540a326695ba732c81, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive: 4
+    - Emissive: 0
     - MainColor: 0
     - VertexColor: 0
     - _BlendMode: 0
-    - _BlinkTimeMultiplier: 0
+    - _BlinkTimeMultiplier: 2
     - _BumpScale: 1
     - _Cull: 2
     - _CutOff: 0.5
@@ -82,7 +82,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DoubleSided: 0
     - _DstBlend: 0
-    - _EmissivePower: 0.5
+    - _EmissivePower: 1
     - _EnableAdditiveBlend: 0
     - _EnableAutomaticBlend: 0
     - _EnableBlendTexture: 0
@@ -109,9 +109,10 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 1
+    - _Shininess: 0.866
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpecularPower: 100
+    - _SpecularPower: 3
     - _SrcBlend: 1
     - _UVSec: 0
     - _WaveEmission: 0.1
@@ -119,7 +120,7 @@ Material:
     m_Colors:
     - _Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissiveColor: {r: 0.1362457, g: 0.13988404, b: 0.1544118, a: 1}
+    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecularDir: {r: 0.063245565, g: 0.44271886, b: -0.8944272, a: 0}
+    - _SpecularDir: {r: 0.037890747, g: 0.39406377, b: -0.9183017, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
