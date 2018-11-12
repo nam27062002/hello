@@ -143,7 +143,7 @@ public class HDCustomizerManager
 
     public void Reset()
     {        
-        if ( m_hasBeenApplied )
+        if ( m_hasBeenApplied && Application.isPlaying)
             UnApplyCustomizer();
         SetTimeToRequest(0f);
         SetState(EState.WaitingToRequestServer);
