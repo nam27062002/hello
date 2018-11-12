@@ -263,12 +263,17 @@ public class ResultsScreenStepCollectibles : ResultsScreenSequenceStep {
 	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
 	public void DoSummary() {
-		// Not in special dragon mode
+		// Aux vars
+		int numChests = m_collectedChests;
+		int numEggs = m_controller.eggFound ? 1 : 0;
+
+		// Don't show chests in special dragon mode
 		if(SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-			return;
+			numChests = -1;
 		}
 
-		m_controller.summary.ShowCollectibles(m_collectedChests, m_controller.eggFound ? 1 : 0);
+		// Do summary!
+		m_controller.summary.ShowCollectibles(numChests, numEggs);
 	}
 
 	/// <summary>
