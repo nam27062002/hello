@@ -80,7 +80,7 @@ public abstract class IUserMissions {
 	public Mission GetMission(Mission.Difficulty _difficulty) {
 		// If there is no mission at the given difficulty, create one
 		if(m_missions[(int)_difficulty] == null) {
-			GenerateNewMission(_difficulty);
+			m_missions[(int)_difficulty] = GenerateNewMission(_difficulty);
 		}
 
 		// Done!
@@ -107,6 +107,7 @@ public abstract class IUserMissions {
 
 				// Generate new mission
 				m = GenerateNewMission((Mission.Difficulty)i);
+				m_missions[i] = m;
 
 				// Put it on cooldown
 				m.ChangeState(Mission.State.COOLDOWN);
@@ -129,7 +130,7 @@ public abstract class IUserMissions {
 	/// <param name="_difficulty">The difficulty of the mission to be removed.</param>
 	public void RemoveMission(Mission.Difficulty _difficulty) {
 		// Generate new mission does exactly this :D
-		GenerateNewMission(_difficulty);
+		m_missions[(int)_difficulty] = GenerateNewMission(_difficulty);
 	}
 
 	/// <summary>
@@ -163,14 +164,17 @@ public abstract class IUserMissions {
 	/// <returns>The newly created mission.</returns>
 	/// <param name="_difficulty">The difficulty slot where to create the new mission.</param>
 	/// <param name="_forceSku">Optional, force a specific mission sku rather than using the procedural engine.</param>
-	protected Mission GenerateNewMission(Mission.Difficulty _difficulty, string _forceSku = "") {
+	/// <param name="_preventRepetition">Whether to prevent generating a mission of the latest mission types. Set to true except for debugging.</param>
+	protected Mission GenerateNewMission(Mission.Difficulty _difficulty, string _forceSku = "", bool _preventRepetition = true) {
 		Debug.Log("<color=green>GENERATING NEW MISSION " + _difficulty + "</color>");
 
 		// Filter types to prevent repetition
 		// Do it before terminating previous mission so we don't repeat the same mission type we just completed/skipped
 		List<string> typesToIgnore = new List<string>();
-		for(int i = 0; i < m_missions.Length; i++) {
-			if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
+		if(_preventRepetition) {
+			for(int i = 0; i < m_missions.Length; i++) {
+				if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
+			}
 		}
 
 		// Aux vars
@@ -351,7 +355,6 @@ public abstract class IUserMissions {
 		newMission.difficulty = _difficulty;
         newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRemovePCCostModifier());
         newMission.reward = BuildReward(_difficulty);
-		m_missions[(int)_difficulty] = newMission;
 
 		// Check whether the new mission should be locked or not (deprecated)
         if(IsMissionLocked(_difficulty)) {
@@ -361,7 +364,7 @@ public abstract class IUserMissions {
 		}
 
 		// Return new mission
-		return m_missions[(int)_difficulty];
+		return newMission;
 	}
 
 
@@ -419,9 +422,23 @@ public abstract class IUserMissions {
     /// <param name="_forceModifierSku">The dragon to be used as modifier (biggest owned dragon).</param>
     public Mission DEBUG_GenerateNewMission(Mission.Difficulty _difficulty, DefinitionNode _missionDef, DefinitionNode _typeDef, bool _singleRun, string _forceModifierSku) {
 		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG) " + _difficulty + "</color>");
-        return GenerateNewMission(_difficulty, _missionDef, _typeDef, _singleRun, _forceModifierSku);
+		Mission m = GenerateNewMission(_difficulty, _missionDef, _typeDef, _singleRun, _forceModifierSku);
+		m_missions[(int)_difficulty] = m;
+		return m;
 	}
 
+	/// <summary>
+	/// DEBUG ONLY!
+	/// Create a new mission for the results screen.
+	/// Won't replace any of the current active missions.
+	/// </summary>
+	/// <returns>The generate new mission for results screen.</returns>
+	public Mission DEBUG_GenerateNewMissionForResultsScreen() {
+		// Random difficulty
+		Mission.Difficulty difficulty = (Mission.Difficulty)UnityEngine.Random.Range((int)Mission.Difficulty.EASY, (int)Mission.Difficulty.COUNT);
+		Debug.Log("<color=green>GENERATING NEW MISSION (DEBUG FOR RESULTS SCREEN) " + difficulty + "</color>");
+		return GenerateNewMission(difficulty, "", false);
+	}
 
 	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
@@ -436,7 +453,7 @@ public abstract class IUserMissions {
 		for(int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
 			// If there is no data for this mission, generate a new one
 			if(i >= activeMissions.Count || activeMissions[i] == null || activeMissions[i]["sku"] == "") {
-				GenerateNewMission((Mission.Difficulty)i);
+				m_missions[i] = GenerateNewMission((Mission.Difficulty)i);
 			} else {
 				// If the mission object was not created, create an empty one now and load its data from persistence
 				if(m_missions[i] == null) {
@@ -453,7 +470,7 @@ public abstract class IUserMissions {
                 if (success) {
                     m_missions[i].reward = BuildReward((Mission.Difficulty)i);
                 } else {
-					GenerateNewMission((Mission.Difficulty)i);
+					m_missions[i] = GenerateNewMission((Mission.Difficulty)i);
 				}
 			}
 		}
