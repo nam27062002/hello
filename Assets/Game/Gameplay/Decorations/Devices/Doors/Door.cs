@@ -12,6 +12,7 @@ public class Door : MonoBehaviour {
     [SerializeField] private Transform m_view = null;
     [SerializeField] private float m_time = 2f;
     [SerializeField] private float m_openDistance = 0f;
+    [SerializeField] private float m_scaleYatTop = 1f;
 	
 
     private State m_state;
@@ -32,6 +33,7 @@ public class Door : MonoBehaviour {
 
             if (m_timer >= m_time) {
                 m_state = State.OPEN;
+                m_view.localScale = new Vector3(1f, m_scaleYatTop, 1f);
             }
         }
     }
