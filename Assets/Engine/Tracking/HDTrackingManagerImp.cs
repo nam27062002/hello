@@ -593,7 +593,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
             string latestIdNotified = PersistencePrefs.GetLatestMarketingIdNotified();
             bool needsToNotify = string.IsNullOrEmpty(latestIdNotified) ||
                      (latestIdNotified == MARKETING_ID_NOT_AVAILABLE && latestIdNotified != marketingId);
-            Track_MarketingID(marketingId);
+             if ( needsToNotify )
+             {
+                Track_MarketingID(marketingId);         
+             }
+            
 
             if (FeatureSettingsManager.IsDebugEnabled) {
                 Log("Notify_MarketingID id = " + marketingId + " needsToNotify = " + needsToNotify + " from = " + from + " latestIdNotified = " + PersistencePrefs.GetLatestMarketingIdNotified());

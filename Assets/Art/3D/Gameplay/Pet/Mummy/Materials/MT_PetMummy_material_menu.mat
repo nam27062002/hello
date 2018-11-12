@@ -8,14 +8,15 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_PetMummy_material_menu
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF FXLAYER_NONE NORMALMAP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
+  m_ShaderKeywords: FXLAYER_NONE NORMALMAP OPAQUEALPHA SELFILLUMINATE_NORMAL SPECULAR
+    _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2010
   stringTagMap:
-    QUEUE: AlphaTest
-    RenderType: TransparentCutout
+    QUEUE: Geometry
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -71,7 +72,7 @@ Material:
     m_Floats:
     - FXLayer: 0
     - SelfIlluminate: 0
-    - _BlendMode: 1
+    - _BlendMode: 0
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
@@ -84,9 +85,9 @@ Material:
     - _DissolveMargin: 0.1
     - _DissolveScale: 1
     - _DissolveUpperLimit: 1.5
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EnableBlendFresnel: 0
-    - _EnableCutoff: 1
+    - _EnableCutoff: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 0
     - _EnableNormalMap: 1
@@ -95,6 +96,9 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0.005
     - _FireSpeed: 10
     - _Fresnel: 3.34
@@ -113,9 +117,11 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 3.91
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

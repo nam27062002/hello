@@ -18,7 +18,7 @@ using System;
 /// <summary>
 /// Controller for the 3D scene of the Open Egg screen.
 /// </summary>
-public class RewardSceneController : MonoBehaviour {
+public class RewardSceneController : MenuScreenScene {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -77,7 +77,7 @@ public class RewardSceneController : MonoBehaviour {
 	[SerializeField] private RewardSetup m_skinRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
-	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT - 1];
+	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT];
 
 	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
@@ -92,6 +92,9 @@ public class RewardSceneController : MonoBehaviour {
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+	public CameraSnapPoint photoCameraSnapPoint {
+		get { return m_photoCameraSnapPoint; }
+	}
 
 	[Separator("Animation Setup")]
 	[SerializeField] private float m_goldenEggDelay = 1f;
@@ -123,7 +126,6 @@ public class RewardSceneController : MonoBehaviour {
 	// Other references that must be set from script
 	private DragControlRotation m_dragController = null;
 	private RewardInfoUI m_rewardInfoUI = null;
-	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 
 	//------------------------------------------------------------------------------------------------------------//
 
@@ -135,9 +137,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Store original camera snap point for the photo screen
-		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
-
 		// Don't show anything
 		Clear();
 
@@ -756,14 +755,8 @@ public class RewardSceneController : MonoBehaviour {
 		MenuScreenScene fromScene = InstanceManager.menuSceneController.GetScreenData(_from).scene3d;
 		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenData(_to).scene3d;
 
-		// Entering a screen using this scene
-		if(toScene != null && toScene.gameObject == this.gameObject) {
-			// Override camera snap point for the photo screen so it looks to our reward
-			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
-		}
-
 		// Leaving a screen using this scene
-		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
+		if(fromScene != null && fromScene.gameObject == this.gameObject) {
 			// Do some stuff if not going to take a picture of the reward
 			if(_to != MenuScreen.PHOTO) {
 				// Clear the scene
@@ -771,9 +764,6 @@ public class RewardSceneController : MonoBehaviour {
 
 				// Nullify reward reference
 				m_currentReward = null;
-
-				// Restore default camera snap point for the photo screen
-				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
 			}
 		}
 	}
