@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 23404437865928940}
   - component: {fileID: 65350503206641644}
   - component: {fileID: 136490537667838924}
+  - component: {fileID: 114998317838742720}
   m_Layer: 11
   m_Name: L1_castle_door
   m_TagString: Untagged
@@ -95,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1822645297189492}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 141.28593, y: 35.23531, z: 0}
+  m_LocalPosition: {x: 134.03891, y: 35.456646, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4228909904127292}
@@ -170,6 +171,21 @@ MonoBehaviour:
   m_time: 4
   m_openDistance: 12
   m_scaleYatTop: 0.75
+--- !u!114 &114998317838742720
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1670222907985468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b92ec849fbac04106a680c7ad3932657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_receiver: {fileID: 114198849777073330}
+  m_onCollisionEnter: 1
+  m_onCollisionStay: 0
+  m_onCollisionExit: 0
 --- !u!136 &136490537667838924
 CapsuleCollider:
   m_ObjectHideFlags: 1
