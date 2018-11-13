@@ -71,7 +71,7 @@ public enum MessengerEvents {
 
 	// Profile events
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
-	PROFILE_MAP_UNLOCKED,		// no params
+	// PROFILE_MAP_UNLOCKED,		// no params
 	PROFILE_REWARD_PUSHED,		// params Metagame.Reward _reward
 	PROFILE_REWARD_POPPED,		// params Metagame.Reward _reward
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed

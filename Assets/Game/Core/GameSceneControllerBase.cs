@@ -62,7 +62,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
 
 	/// <summary>
@@ -75,7 +75,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
     
     
@@ -86,6 +86,10 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
+            }break;
+            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
+            {
+                OnMapUnlocked();
             }break;
         }
     }

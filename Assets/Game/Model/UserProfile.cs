@@ -740,7 +740,7 @@ public class UserProfile : UserPersistenceSystem
 		} else {
 			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
-		Messenger.Broadcast(MessengerEvents.PROFILE_MAP_UNLOCKED);
+		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
 
     //------------------------------------------------------------------------//

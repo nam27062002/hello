@@ -17,7 +17,7 @@ using UnityEngine.UI;
 /// Generic behaviour for all map markers - sprites in the game scene that should 
 /// be rendered in the map.
 /// </summary>
-public class MapMarker : MonoBehaviour {
+public class MapMarker : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ public class MapMarker : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 		Messenger.AddListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
 
@@ -80,9 +80,20 @@ public class MapMarker : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
+            {
+                OnMapUnlocked();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

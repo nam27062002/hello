@@ -9,6 +9,9 @@ public enum BroadcastEventType
     FONT_CHANGE_STARTED,    // no params
     FONT_CHANGE_FINISHED,   // no params
 
+    // Profile events
+    PROFILE_MAP_UNLOCKED,       // no params
+
     // power up events
     APPLY_ENTITY_POWERUPS,      // no params
     
