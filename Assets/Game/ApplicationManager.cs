@@ -826,6 +826,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 ControlPanel.Log("onUnauthenticated", ControlPanel.ELogChannel.GameCenter);
             }
 
+#if UNITY_ANDROID
+            // On android if player logs out we will not ask again
+            CacheServerManager.SharedInstance.SetVariable(GC_ON_START_KEY, "false", false);
+#endif
+
 			Messenger.Broadcast(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE);
         }
 
