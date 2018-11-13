@@ -6,7 +6,8 @@ public enum BroadcastEventType
 {
     // Rules and localization
     LANGUAGE_CHANGED,       // no params
-
+    FONT_CHANGE_STARTED,    // no params
+    FONT_CHANGE_FINISHED,   // no params
 
     // power up events
     APPLY_ENTITY_POWERUPS,      // no params

@@ -218,7 +218,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcas
 		switch(_newState) {
 			case State.LOOSING_REFERENCES: {
 				// Notify game
-				Messenger.Broadcast(MessengerEvents.FONT_CHANGE_STARTED);
+				Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_STARTED);
 
 				// Clear old font reference
 				ClearFontAssets(m_currentFontGroup);
@@ -255,7 +255,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcas
 
 			case State.FINISH: {
 				// Notify game
-				Messenger.Broadcast(MessengerEvents.FONT_CHANGE_FINISHED);
+				Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_FINISHED);
 			} break;
 		}
 

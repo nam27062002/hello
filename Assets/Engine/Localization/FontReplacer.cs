@@ -23,7 +23,7 @@ using System.Globalization;
 /// - Newly instantiated TextFields wont get the replacement!
 /// </summary>
 //[RequireComponent(typeof(TextMeshProUGUI))]
-public class FontReplacer : MonoBehaviour {
+public class FontReplacer : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -62,8 +62,8 @@ public class FontReplacer : MonoBehaviour {
 		FontManager.instance.RegisterDummyMaterial(m_originalFontName, m_originalMaterialID, m_text.fontSharedMaterial);
 
 		// We want to listen to these events even when disabled!!
-		Messenger.AddListener(MessengerEvents.FONT_CHANGE_STARTED, OnFontChangeStarted);
-		Messenger.AddListener(MessengerEvents.FONT_CHANGE_FINISHED, OnFontChangeFinished);
+		Broadcaster.AddListener(BroadcastEventType.FONT_CHANGE_STARTED, this);
+		Broadcaster.AddListener(BroadcastEventType.FONT_CHANGE_FINISHED, this);
 
 		// Make sure we start with the right font!
 		// [AOC] Unfortunately, wrong font is already loaded into memory :(
@@ -88,13 +88,29 @@ public class FontReplacer : MonoBehaviour {
 	/// </summary>
 	public void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.FONT_CHANGE_STARTED, OnFontChangeStarted);
-		Messenger.RemoveListener(MessengerEvents.FONT_CHANGE_FINISHED, OnFontChangeFinished);
+		Broadcaster.RemoveListener(BroadcastEventType.FONT_CHANGE_STARTED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.FONT_CHANGE_FINISHED, this);
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FONT_CHANGE_STARTED:
+            {
+                OnFontChangeStarted();
+            }break;
+            case BroadcastEventType.FONT_CHANGE_FINISHED:
+            {
+                OnFontChangeFinished();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// 
 	/// </summary>
