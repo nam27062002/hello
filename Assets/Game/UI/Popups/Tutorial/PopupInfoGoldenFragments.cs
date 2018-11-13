@@ -48,16 +48,25 @@ public class PopupInfoGoldenFragments : MonoBehaviour {
 	/// Show the popup.
 	/// </summary>
 	/// <param name="_trackingAction">Tracking action.</param>
-	public static void Show(PopupLauncher.TrackingAction _trackingAction) {
-		// Tracking
-		string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
-		HDTrackingManager.Instance.Notify_InfoPopup(popupName, PopupLauncher.TrackingActionToString(_trackingAction));
+	/// <param name="_delay">Delay before opening the popup. Used to sync with other UI animations.</param>
+	public static void Show(PopupLauncher.TrackingAction _trackingAction, float _delay) {
+		// Show popup after some extra delay
+		UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				// Tracking
+				string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
+				HDTrackingManager.Instance.Notify_InfoPopup(popupName, PopupLauncher.TrackingActionToString(_trackingAction));
 
-		// Open
-		PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
+				// Open
+				PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
 
-		// Mark tutorial as completed
-		UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
+				// Mark tutorial as completed
+				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
+			},
+			_delay,
+			false
+		);
+
 	}
 
 	/// <summary>
@@ -68,14 +77,7 @@ public class PopupInfoGoldenFragments : MonoBehaviour {
 	/// <param name="_trackingAction">Tracking action.</param>
 	public static void CheckAndShow(Metagame.Reward _reward, float _delay, PopupLauncher.TrackingAction _trackingAction) {
 		if(Check(_reward)) {
-			// Show popup after some extra delay
-			UbiBCN.CoroutineManager.DelayedCall(
-				() => {
-					Show(_trackingAction);
-				},
-				_delay,
-				false
-			);
+			Show(_trackingAction, _delay);
 		}
 	}
 }

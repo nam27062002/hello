@@ -237,7 +237,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 		// Show popup after some extra delay
 		if(m_goldenFragmentsTutorial) {
-			PopupInfoGoldenFragments.Show(PopupLauncher.TrackingAction.INFO_POPUP_AUTO);
+			PopupInfoGoldenFragments.Show(PopupLauncher.TrackingAction.INFO_POPUP_AUTO, 0.25f);
 			m_goldenFragmentsTutorial = false;
 		}
 
