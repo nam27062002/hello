@@ -192,17 +192,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         int moneyUSD = 0;
         bool isSpecialOffer = false;
+        string promotionType = null;
         if (!string.IsNullOrEmpty(_sku)) {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
             if (def != null) {
                 moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
                 isSpecialOffer = def.GetAsString("type", "").Equals("offer");
+                promotionType = def.GetAsString("promotionType");
             }
         }
 
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
-        string houstonTransactionID = _storeTransactionID;
-        string promotionType = null; // Not implemented yet
+        string houstonTransactionID = _storeTransactionID;        
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
 
         Session_IsNotifyOnPauseEnabled = true;
