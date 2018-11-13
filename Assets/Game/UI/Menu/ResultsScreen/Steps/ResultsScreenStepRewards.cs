@@ -107,6 +107,39 @@ public class ResultsScreenStepRewards : ResultsScreenSequenceStep {
 	/// Do the summary line for this step. Connect in the sequence.
 	/// </summary>
 	public void DoSummary() {
+		// Show coins
 		m_controller.summary.ShowCoins(m_controller.coins + m_controller.survivalBonus);
+	}
+
+	/// <summary>
+	/// Do an extra summary line for this step when in special dragons mode.
+	/// </summary>
+	public void DoSpecialDragonsSummary() {
+		// Ignore if not in special dragons mode
+		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) {
+			return;
+		}
+
+		// Show collectibles summary :)
+		ResultsScreenStepCollectibles collectiblesStep = m_controller.GetStep(ResultsScreenController.Step.COLLECTIBLES) as ResultsScreenStepCollectibles;
+		if(collectiblesStep != null) {
+			collectiblesStep.DoSummary();
+		}
+	}
+
+	/// <summary>
+	/// Show the run duration in the summary
+	/// </summary>
+	override public void ShowSummary() {
+		// Only in Special Dragons mode
+		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) {
+			return;
+		}
+
+		// Show time group
+		m_controller.summary.ShowTime(m_controller.time, false);
+
+		// Call parent
+		base.ShowSummary();
 	}
 }

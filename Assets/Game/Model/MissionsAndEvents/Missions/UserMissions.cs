@@ -53,7 +53,7 @@ public class UserMissions : IUserMissions {
     private void GenerateTutorialMissions() {
         // One for every difficulty!
         for (int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-            GenerateNewMission((Mission.Difficulty)i, "ftux" + (i + 1).ToString()); // Force sku!
+            m_missions[i] = GenerateNewMission((Mission.Difficulty)i, "ftux" + (i + 1).ToString()); // Force sku!
         }
 
         // Mark tutorial as completed!

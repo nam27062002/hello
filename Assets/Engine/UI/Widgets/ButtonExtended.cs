@@ -8,9 +8,13 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using System.Collections;
 using System;
 using System.Reflection;
+//using System.Runtime.InteropServices;
+//using System.Runtime.Serialization.Formatters.Binary;
+//using System.IO;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -33,7 +37,7 @@ public class ButtonExtended : Button {
     [Tooltip("Disables the posibility of several buttons can be pushed at same time.")]
     public bool m_MultiTouchDisable = true;
 
-    private ButtonClickedEvent m_eventBackup;
+    private ButtonClickedEvent m_eventBackup = new ButtonClickedEvent();
     private static bool m_buttonMultitouchProtector = false;
 
     public static bool checkMultitouchAvailability()
@@ -61,25 +65,18 @@ public class ButtonExtended : Button {
     /// <summary>
     /// First update call.
     /// </summary>
+    /*
     private void Start()
     {
-        //        FieldInfo eventsField = typeof(ButtonExtended).GetField("onClick", BindingFlags.NonPublic | BindingFlags.Instance);        
-        //        object eventHandlerList = eventsField.GetValue(onClick);
-        //        eventsField.SetValue(m_eventBackup, eventHandlerList);
-        //        MemberInfo[] minfo = typeof(ButtonExtended).GetMember("onClick");
-        //        FieldInfo fi = typeof(ButtonExtended).GetField("onClick");
-        //        foreach (MemberInfo mi in minfo)
-        //        {
-        //            Debug.Log("Member: " + mi.Name);
-        //        }
-
-        //        m_eventBackup = DeepClone<ButtonClickedEvent>(onClick);
-//        Debug.Log("ButtonExtended.Start()");
-//        m_eventBackup = onClick.Clone<ButtonClickedEvent>();
-//        onClick.RemoveAllListeners();
-//        onClick.AddListener(safeOnclick);
+        for (int i = 0; i < onClick.GetPersistentEventCount(); i++)
+        {
+            object ev = onClick.GetPersistentTarget(i);
+            m_eventBackup.AddListener(ev as UnityAction);
+        }
+        onClick.RemoveAllListeners();
+        onClick.AddListener(safeOnclick);
     }
-
+    */
     void safeOnclick()
     {
         if (m_MultiTouchDisable && !checkMultitouchAvailability()) return;

@@ -634,7 +634,10 @@ public class HDCustomizerManager
             case EState.Done:
 #if !APPLY_ON_DEMAND
                 bool needsToNotifyRulesChanged = InternalApply();
-                SetNeedsToNotifyRulesChanged(needsToNotifyRulesChanged);
+                // SetNeedsToNotifyRulesChanged(needsToNotifyRulesChanged);
+                
+                if ( needsToNotifyRulesChanged )
+                    OnRulesUpdated();
 #endif
                 // If there's no customizer then we need to schedule the next request
                 if (!GetTimeToExpireModified())
@@ -646,9 +649,19 @@ public class HDCustomizerManager
 
                     SetState(EState.WaitingToRequestServer);
                 }    
+                
+                
+                
                 break;     
         }
     }  
+    
+    private void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions(true);
+    }
+    
 
     private void AddFilesChangedByCustomizerToFilesToRevert()
     {        

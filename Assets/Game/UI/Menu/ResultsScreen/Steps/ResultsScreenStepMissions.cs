@@ -75,17 +75,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 				int numCheatMissions = CPResultsScreenTest.missionsMode - CPResultsScreenTest.MissionsTestMode.FIXED_0;
 				if(numCheatMissions > missionIdx) {
 					// Yes! Create a fake temp mission
-					List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
-					DefinitionNode missionDef = missionDefs.GetRandomValue();
-					targetMission = new Mission();
-					targetMission.InitWithParams(
-						missionDef,
-						DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
-						RandomExt.Range(missionDef.GetAsLong("objectiveBaseQuantityMin"), missionDef.GetAsLong("objectiveBaseQuantityMax")),
-						Random.value < 0.5f,	// 50% chace
-                        DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count
-					);
-					targetMission.difficulty = Mission.Difficulty.MEDIUM;
+					targetMission = UsersManager.currentUser.userMissions.DEBUG_GenerateNewMissionForResultsScreen();
 
 					// Mark mission as completed
 					targetMission.objective.enabled = true;
