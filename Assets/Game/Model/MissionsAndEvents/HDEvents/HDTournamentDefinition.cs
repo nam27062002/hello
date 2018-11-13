@@ -124,33 +124,37 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		public override SimpleJSON.JSONClass ToJson ()
 		{
 			SimpleJSON.JSONClass ret = base.ToJson();
+
+            SimpleJSON.JSONClass gameMode = new SimpleJSON.JSONClass();
+
 			switch(m_mode)
 			{
 				case TournamentMode.TIME_ATTACK:
 				{
-					ret.Add("gameMode", "time_attack");
-					ret.Add("amount", m_targetAmount);
+                    gameMode.Add("type", "time_attack");
+                    gameMode.Add("amount", m_targetAmount);
 
 				}break;
 				case TournamentMode.TIME_LIMIT:
 				{
-					ret.Add("gameMode", "time_limit");
-					ret.Add("seconds", m_seconds);
+                    gameMode.Add("type", "time_limit");
+                    gameMode.Add("seconds", m_seconds);
 				}break;
 				case TournamentMode.RACE:
 				{
-					ret.Add("gameMode", "race");
-					ret.Add("loops", m_loops);
+                    gameMode.Add("type", "race");
+                    gameMode.Add("loops", m_loops);
 				}break;
 				case TournamentMode.BOSS:
 				{
-					ret.Add("gameMode", "boss");
+                    gameMode.Add("type", "boss");
 				}break;
 				default:
 				{
-					ret.Add("gameMode", "normal");
+                    gameMode.Add("type", "normal");
 				}break;
 			}
+            ret.Add("gameMode", gameMode);
 			ret.Add("area", m_area);
 			return ret;
 		}
@@ -201,7 +205,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 
-	public TournamentGoal m_goal = new TournamentGoal();
+    public TournamentGoal m_goal = new TournamentGoal();
 
 	public List<TournamentReward> m_rewards = new List<TournamentReward>();
 
