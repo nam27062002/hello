@@ -49,6 +49,7 @@ public class OpenEggScreenController : MonoBehaviour {
 
 	// Internal
 	private State m_state = State.IDLE;
+	private bool m_goldenFragmentsTutorial = false;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -173,6 +174,8 @@ public class OpenEggScreenController : MonoBehaviour {
 	/// An animation for a reward has started in the 3d scene!
 	/// </summary>
 	private void OnSceneAnimStarted() {
+		m_goldenFragmentsTutorial = false;
+
         // What type of reward are we opening?
 		// Egg
 		if(m_scene.currentReward is Metagame.RewardEgg) {
@@ -197,6 +200,9 @@ public class OpenEggScreenController : MonoBehaviour {
 			if(finalReward.WillBeReplaced()) {
 				// Photo button only enabled if reward is not a duplicate!
 				photoAnimator.ForceHide(false);
+
+				// Show golden fragments tutorial popup?
+				m_goldenFragmentsTutorial = PopupInfoGoldenFragments.Check(finalReward);
 
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionButton.SetActive(false);				
@@ -228,6 +234,12 @@ public class OpenEggScreenController : MonoBehaviour {
 	private void OnSceneAnimFinished() {
 		// Change logic state
 		m_state = State.IDLE;
+
+		// Show popup after some extra delay
+		if(m_goldenFragmentsTutorial) {
+			PopupInfoGoldenFragments.Show(PopupLauncher.TrackingAction.INFO_POPUP_AUTO);
+			m_goldenFragmentsTutorial = false;
+		}
 
 		// Show final panel
 		m_finalPanel.Show();
