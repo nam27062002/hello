@@ -69,7 +69,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
         Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-        Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+        Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         Device_Init();
 
@@ -126,7 +126,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-        Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+        Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
@@ -153,6 +153,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     Game_OnEnded();
                     if (FeatureSettingsManager.IsDebugEnabled)
                         Debug_OnLevelReset();
+            }break;
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                    Language_OnChanged();
             }break;
         }
     }

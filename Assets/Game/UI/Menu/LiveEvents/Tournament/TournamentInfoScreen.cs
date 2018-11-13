@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class TournamentInfoScreen : MonoBehaviour {
+public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	//----------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
@@ -53,7 +53,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
         Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 
@@ -62,9 +62,22 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
         Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
+    
 
     private void OnNewDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _error) {
         if (m_tournament != null && m_tournament.data.m_eventId == _eventID) {

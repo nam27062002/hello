@@ -4,6 +4,9 @@ using UnityEngine;
 
 public enum BroadcastEventType
 {
+    // Rules and localization
+    LANGUAGE_CHANGED,       // no params
+
 
     // power up events
     APPLY_ENTITY_POWERUPS,      // no params

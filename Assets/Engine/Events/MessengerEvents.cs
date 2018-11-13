@@ -29,7 +29,7 @@ public enum MessengerEvents {
 	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreenSystem.ScreenChangedEvent _eventData
 
 	// Rules and localization
-	LANGUAGE_CHANGED,		// no params
+	// LANGUAGE_CHANGED,		// no params
 	FONT_CHANGE_STARTED,	// no params
 	FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
