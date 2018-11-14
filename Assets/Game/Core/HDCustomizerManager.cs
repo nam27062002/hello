@@ -90,12 +90,17 @@ public class HDCustomizerManager
             {
                 sm_instance = new HDCustomizerManager();
 
-                CustomizerManager.SharedInstance.Initialise();
+                CustomizerManager.SharedInstance.SetTimestampGetter( sm_instance.GetTimeMillis );
                 CustomizerManager.SharedInstance.SetListener(new HDCustomizerListener());
             }
 
             return sm_instance;
         }
+    }
+    
+    public long GetTimeMillis()
+    {
+        return GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
     }
     
     private enum EState
@@ -222,7 +227,7 @@ public class HDCustomizerManager
             Customiser customiser = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild();
             if ( customiser != null )
             {
-                if ( customiser.IsValid())
+                if ( CustomizerManager.SharedInstance.IsCustomizerValid( customiser ) )
                 {
                     bool applyByExperiment = false;
                     if ( m_hasBeenApplied )
@@ -230,7 +235,7 @@ public class HDCustomizerManager
                         // if there was no experiment, check if there is now
                         if ( m_currentExperimentCode == -1 )
                         {
-                            ApiExperiment apiExperiment = customiser.GetFirstValidExperiment();
+                            ApiExperiment apiExperiment = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
                             if ( apiExperiment != null )
                             {
                                 applyByExperiment = true;   
@@ -239,7 +244,7 @@ public class HDCustomizerManager
                         // if experiment was applies but is not valid anymore
                         else
                         {
-                            applyByExperiment = !customiser.IsExperimentCodeValid( m_currentExperimentCode );
+                            applyByExperiment = CustomizerManager.SharedInstance.IsExperimentCodeValid(customiser, m_currentExperimentCode);
                         }
                     }
                     
@@ -250,7 +255,7 @@ public class HDCustomizerManager
                         if (CustomizerManager.SharedInstance.ApplyCustomiser())
                         {
                             m_hasBeenApplied = true;
-                            ApiExperiment experiment = customiser.GetFirstValidExperiment();
+                            ApiExperiment experiment = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
                             if (experiment != null)
                             {
                                 Log("New experiment applied: name = " + experiment.GetName() + " groupName = " + experiment.GetGroupName(), true);
