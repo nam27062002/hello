@@ -84,6 +84,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
@@ -115,6 +116,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
         Reset();
     }

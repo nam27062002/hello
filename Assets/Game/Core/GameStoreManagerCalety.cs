@@ -99,7 +99,7 @@ public class GameStoreManagerCalety : GameStoreManager
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("onPurchaseCancelled sku completed " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered);
 
-			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, sku);
+			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_CANCELLED, purchaseSkuTriggered);
 
             m_manager.OnPurchaseDone();
 		}
@@ -111,7 +111,7 @@ public class GameStoreManagerCalety : GameStoreManager
             if (FeatureSettingsManager.IsDebugEnabled)
 				Log("onPurchaseFailed sku completed = " + sku + " purchaseSkuTriggeredByUser = " + purchaseSkuTriggered + " transactionID = " + strTransactionID);
 
-			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, sku);
+			Messenger.Broadcast<string>(MessengerEvents.PURCHASE_FAILED, purchaseSkuTriggered);
 
             m_manager.OnPurchaseDone();
         }
@@ -285,6 +285,10 @@ public class GameStoreManagerCalety : GameStoreManager
 
     public override bool CanMakePayment()
 	{
+        if (!string.IsNullOrEmpty(m_purchaseSkuTriggeredByUser) )   // if purchase in process we dont let make more payments
+        {
+            return false;
+        }
 #if UNITY_EDITOR
 		return true;
 #else
@@ -315,7 +319,8 @@ public class GameStoreManagerCalety : GameStoreManager
     {
 		yield return new WaitForSecondsRealtime( 0.25f );
 		// string item = GameSkuToPlatformSku( _sku );
-		m_storeListener.onPurchaseCompleted( _sku, "", null, "");
+		// m_storeListener.onPurchaseCompleted( _sku, "", null, "");
+        m_storeListener.onPurchaseFailed("UNKOWN", ""); // Simulate current store behaviour
     }
 
     void OnPurchaseDone()

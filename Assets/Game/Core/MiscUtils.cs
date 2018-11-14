@@ -45,5 +45,33 @@ public class MiscUtils {
 		{
 			Application.OpenURL(url);
 		}
-    }    
+    }
+    /// <summary>
+    /// Translates from standard iso name into Calety iso name
+    /// </summary>
+    /// <param name="iso"> Standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+    /// <returns>Calety iso name: "en", "en", "es", "pt", "zh_cn", etc</returns>
+    public static string StandardISOToCaletyISO(string iso)
+    {
+        switch (iso)
+        {
+            case "zh-CN":
+                iso = "zh_cn";
+                break;
+
+            case "zh-TW":
+                iso = "zh_tw";
+                break;
+
+            default:
+                string[] tokens = iso.Split('-');
+                if (tokens.Length >= 1)
+                {
+                    iso = tokens[0];
+                }
+                break;
+        }
+
+        return iso;
+    }
 }
