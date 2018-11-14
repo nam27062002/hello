@@ -65,10 +65,20 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		set { m_checkScreenBounds = value; }
 	}
 
+	[SerializeField] private bool m_renderOnTop = true;
+	public bool renderOnTop {
+		get { return m_renderOnTop; }
+		set { m_renderOnTop = value; }
+	}
+
 	// Events, subscribe as needed via inspector or code
 	[Serializable] public class TooltipEvent : UnityEvent<UITooltip, UITooltipTrigger> { }
 	[Space]
 	public TooltipEvent OnTooltipOpen = new TooltipEvent();
+
+	// Internal references
+	private Canvas m_parentCanvas = null;
+	private Transform m_originalTooltipParent = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -84,7 +94,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		
+		if(m_tooltip != null) m_tooltip.animator.OnHidePostAnimation.RemoveListener(OnTooltipClosed);
 	}
 
 	/// <summary>
@@ -141,6 +151,17 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
 		// Invoke event (before animation, in case anything needs to be initialized)
 		OnTooltipOpen.Invoke(m_tooltip, this);
+
+		// If the render on top flag is set, move the tooltip to the top of the parent canvas
+		if(m_renderOnTop) {
+			if(m_parentCanvas == null) {
+				m_parentCanvas = m_tooltip.GetComponentInParent<Canvas>();
+				m_originalTooltipParent = m_tooltip.transform.parent;
+				m_tooltip.animator.OnHidePostAnimation.AddListener(OnTooltipClosed);
+			}
+			m_tooltip.transform.SetParent(m_parentCanvas.transform);
+			m_tooltip.transform.SetAsLastSibling();
+		}
 
 		// Unless explicitely denied, put tooltip on anchor's position
 		if(!m_keepOriginalPosition) {
@@ -231,5 +252,10 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	public void OnPointerExit(PointerEventData _eventData) {
 		// Just hide the tooltip, if created
 		if(m_tooltip != null) m_tooltip.animator.Hide();
+	}
+
+	public void OnTooltipClosed(ShowHideAnimator _anim) {
+		// Return tooltip to its original parent
+		m_tooltip.transform.SetParent(m_originalTooltipParent);
 	}
 }
