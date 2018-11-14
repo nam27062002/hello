@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
-public class MapScroller : MonoBehaviour {
+public class MapScroller : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -530,8 +530,8 @@ public class MapScroller : MonoBehaviour {
 		}
 
 		// Subscribe to other popups opening
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
@@ -542,10 +542,27 @@ public class MapScroller : MonoBehaviour {
 		EnableCamera(false);
 
 		// Subscribe to other popups opening
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(info.popupController);
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A popup has been opened.
 	/// </summary>

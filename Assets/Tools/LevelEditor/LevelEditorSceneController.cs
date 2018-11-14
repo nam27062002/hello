@@ -110,7 +110,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnEnable() {
 			// Subscribe to external events
-			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
 		
@@ -122,13 +122,21 @@ namespace LevelEditor {
 			Broadcaster.Broadcast(BroadcastEventType.GAME_ENDED);
 
 			// Unsubscribe from external events
-			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
 
         public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
         {
             base.OnBroadcastSignal(eventType, broadcastEventInfo);
+            switch(eventType)
+            {
+                case BroadcastEventType.POPUP_CLOSED:
+                {
+                    PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                    OnPopupClosed(info.popupController);
+                }break;
+            }
         }
     
 

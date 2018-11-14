@@ -48,6 +48,8 @@ public class PopupController : MonoBehaviour {
 	public UnityEvent OnClosePreAnimation = new UnityEvent();
 	public UnityEvent OnClosePostAnimation = new UnityEvent();
 
+    protected PopupManagementInfo m_popupManagementInfo = new PopupManagementInfo();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -59,11 +61,13 @@ public class PopupController : MonoBehaviour {
 		m_anim = GetComponent<Animator>();
 		DebugUtils.Assert(m_anim != null, "Required Component!!");
 
+        m_popupManagementInfo.popupController = this;
+
 		// By default popups are closed
 		m_isOpen = false;
 
 		// Dispatch message
-		Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CREATED, this);
+		Broadcaster.Broadcast(BroadcastEventType.POPUP_CREATED, m_popupManagementInfo);
 	}
 
 	/// <summary>
@@ -72,7 +76,7 @@ public class PopupController : MonoBehaviour {
 	protected virtual void OnDestroy() {
         if (ApplicationManager.IsAlive) {
             // Dispatch message - it could be problematic using "this" at this point
-            Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_DESTROYED, this);
+            Broadcaster.Broadcast(BroadcastEventType.POPUP_DESTROYED, m_popupManagementInfo);
 
             // Clear all events
             OnOpenPreAnimation.RemoveAllListeners();
@@ -98,7 +102,7 @@ public class PopupController : MonoBehaviour {
 			m_reopening = false;
 		} else {
 			// Send message
-			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_OPENED, this);
+			Broadcaster.Broadcast(BroadcastEventType.POPUP_OPENED, m_popupManagementInfo);
 		}
 
 		// Invoke event
@@ -171,7 +175,7 @@ public class PopupController : MonoBehaviour {
 			Open();
 		} else {
 			// Dispatch message
-			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CLOSED, this);
+			Broadcaster.Broadcast(BroadcastEventType.POPUP_CLOSED, m_popupManagementInfo);
 
 			// Delete ourselves if required
 			if(m_destroyAfterClose) {

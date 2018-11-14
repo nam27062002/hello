@@ -19,10 +19,10 @@ public enum MessengerEvents {
 	SCENE_LOADED,			// params: string _sceneName
 
 	// Popups Management
-	POPUP_CREATED,			// params: PopupController _popup
-	POPUP_OPENED,			// params: PopupController _popup
-	POPUP_CLOSED,			// params: PopupController _popup
-	POPUP_DESTROYED,		// params: PopupController _popup
+	// POPUP_CREATED,			// params: PopupController _popup
+	// POPUP_OPENED,			// params: PopupController _popup
+	// POPUP_CLOSED,			// params: PopupController _popup
+	// POPUP_DESTROYED,		// params: PopupController _popup
 
 	// Screen Navigation System
 	// [AOC] Triggered at the start of the animation, parameters englobed in a custom class:

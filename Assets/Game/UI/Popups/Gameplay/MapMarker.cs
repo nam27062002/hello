@@ -67,8 +67,8 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		m_originalScale = GetMarkerTransform().localScale;
 
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 		Broadcaster.AddListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
@@ -78,8 +78,8 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
@@ -88,6 +88,16 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
     {
         switch( eventType )
         {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(popupManagementInfo.popupController);   
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(popupManagementInfo.popupController);   
+            }break;
             case BroadcastEventType.PROFILE_MAP_UNLOCKED:
             {
                 OnMapUnlocked();

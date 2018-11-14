@@ -4,6 +4,12 @@ using UnityEngine;
 
 public enum BroadcastEventType
 {
+    // Popups Management
+    POPUP_CREATED,          // param: PopupManagementInfo
+    POPUP_OPENED,           // param: PopupManagementInfo
+    POPUP_CLOSED,           // param: PopupManagementInfo
+    POPUP_DESTROYED,        // param: PopupManagementInfo
+    
     // Rules and localization
     LANGUAGE_CHANGED,       // no params
     FONT_CHANGE_STARTED,    // no params
@@ -15,10 +21,10 @@ public enum BroadcastEventType
     // power up events
     APPLY_ENTITY_POWERUPS,      // no params
     
-    FURY_RUSH_TOGGLED,          // params: FuryRushToggled
+    FURY_RUSH_TOGGLED,          // param: FuryRushToggled
     
     // UI events
-    UI_MAP_ZOOM_CHANGED,         // params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+    UI_MAP_ZOOM_CHANGED,         // param: UIMapZoomChanged
     
     
     GAME_LEVEL_LOADED,
@@ -41,4 +47,9 @@ public class FuryRushToggled : BroadcastEventInfo
 public class UIMapZoomChanged : BroadcastEventInfo
 {
     public float zoomFactor = 1;
+}
+
+public class PopupManagementInfo : BroadcastEventInfo
+{
+    public PopupController popupController = null;
 }
