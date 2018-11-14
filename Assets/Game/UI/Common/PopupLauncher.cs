@@ -23,7 +23,7 @@ public class PopupLauncher : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	[System.Serializable] public class PopupEvent : UnityEvent<PopupController> { };
 
-	protected enum TrackingAction {
+	public enum TrackingAction {
 		NONE,
 		INFO_POPUP_AUTO,
 		INFO_POPUP_IBUTTON,
@@ -150,20 +150,25 @@ public class PopupLauncher : MonoBehaviour {
 		// Aux vars
 		string popupName = Path.GetFileNameWithoutExtension(m_popupPath);
 
-		// Which event to send?
-		switch(m_trackingAction) {
-			case TrackingAction.INFO_POPUP_AUTO: {
-				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
-			} break;
+		// Do it!
+		HDTrackingManager.Instance.Notify_InfoPopup(popupName, TrackingActionToString(m_trackingAction));
+	}
 
-			case TrackingAction.INFO_POPUP_IBUTTON: {
-				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "info_button");
-			} break;
-
-			case TrackingAction.INFO_POPUP_SETTINGS: {
-				HDTrackingManager.Instance.Notify_InfoPopup(popupName, "settings");
-			} break;
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Convert tracking action enum to string to be sent.
+	/// </summary>
+	/// <returns>String parameter value.</returns>
+	/// <param name="_action">Action to be converted.</param>
+	public static string TrackingActionToString(TrackingAction _action) {
+		switch(_action) {
+			case TrackingAction.INFO_POPUP_AUTO: return "automatic";
+			case TrackingAction.INFO_POPUP_IBUTTON: return "info_button";
+			case TrackingAction.INFO_POPUP_SETTINGS: return "settings";
 		}
+		return string.Empty;
 	}
 
 	//------------------------------------------------------------------------//
