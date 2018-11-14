@@ -70,7 +70,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
-		Messenger.AddListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Broadcaster.AddListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
 
 	/// <summary>
@@ -81,7 +81,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
 		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
 		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
-		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -91,6 +91,11 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.PROFILE_MAP_UNLOCKED:
             {
                 OnMapUnlocked();
+            }break;
+            case BroadcastEventType.UI_MAP_ZOOM_CHANGED:
+            {
+                UIMapZoomChanged zoomChanged = (UIMapZoomChanged)broadcastEventInfo;
+                OnMapZoomChanged(zoomChanged.zoomFactor);
             }break;
         }
     }

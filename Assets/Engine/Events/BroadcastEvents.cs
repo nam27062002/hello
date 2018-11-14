@@ -17,6 +17,10 @@ public enum BroadcastEventType
     
     FURY_RUSH_TOGGLED,          // params: FuryRushToggled
     
+    // UI events
+    UI_MAP_ZOOM_CHANGED,         // params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+    
+    
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,
@@ -32,4 +36,9 @@ public class FuryRushToggled : BroadcastEventInfo
 {
     public bool activated = false;
     public DragonBreathBehaviour.Type type = DragonBreathBehaviour.Type.None;
+}
+
+public class UIMapZoomChanged : BroadcastEventInfo
+{
+    public float zoomFactor = 1;
 }

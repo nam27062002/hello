@@ -72,6 +72,8 @@ public class MapScroller : MonoBehaviour {
 		set { SetZoom(1f/value * m_initialZoom); }
 	}
 	
+    UIMapZoomChanged m_zoonChangedEvent = new UIMapZoomChanged();
+    
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -391,7 +393,8 @@ public class MapScroller : MonoBehaviour {
 						() => {
 							RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 							ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-							Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+                            m_zoonChangedEvent.zoomFactor = zoomFactor;
+							Broadcaster.Broadcast(BroadcastEventType.UI_MAP_ZOOM_CHANGED, m_zoonChangedEvent);	// Notify game! (map markers)
 						}
 					);
 			} else {
@@ -405,7 +408,8 @@ public class MapScroller : MonoBehaviour {
 			m_camera.orthographicSize = newOrthoSize;		// Apply new zoom level
 			RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 			ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-			Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+            m_zoonChangedEvent.zoomFactor = zoomFactor;
+            Broadcaster.Broadcast(BroadcastEventType.UI_MAP_ZOOM_CHANGED, m_zoonChangedEvent); // Notify game! (map markers)
 		}
 	}
 
