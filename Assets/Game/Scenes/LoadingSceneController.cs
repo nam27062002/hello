@@ -276,6 +276,8 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+		// Initialize server cache
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if ( settingsInstance )
 		{
@@ -286,6 +288,8 @@ public class LoadingSceneController : SceneController {
 			m_buildVersion = Application.version;
 		}
 		CacheServerManager.SharedInstance.Init(m_buildVersion);
+
+		// Initialize content
 		ContentManager.InitContent();
 
 		// Used for android permissions
@@ -293,6 +297,9 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
+
+		// Always start in DEFAULT mode
+		SceneController.SetMode(Mode.DEFAULT);
     }    
 
 	/// <summary>
