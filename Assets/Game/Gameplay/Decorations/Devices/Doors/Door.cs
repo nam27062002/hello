@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : MonoBehaviour {
+public class Door : CollisionCallbackReceiver {
     private enum State {
         IDLE = 0,
         OPENING,
@@ -13,7 +13,7 @@ public class Door : MonoBehaviour {
     [SerializeField] private float m_time = 2f;
     [SerializeField] private float m_openDistance = 0f;
     [SerializeField] private float m_scaleYatTop = 1f;
-	
+
 
     private State m_state;
     private float m_timer;
@@ -49,4 +49,13 @@ public class Door : MonoBehaviour {
         return m_state == State.OPEN;
     }
 
+    public override void OnCollisionEnter(Collision _other) {
+        if (m_state == State.IDLE) {
+            if (_other.transform.CompareTag("Player")) {
+                Messenger.Broadcast(MessengerEvents.BREAK_OBJECT_TO_OPEN);
+            }
+        }
+    }
+    public override void OnCollisionStay(Collision _other){}
+    public override void OnCollisionExit(Collision _other){}
 }

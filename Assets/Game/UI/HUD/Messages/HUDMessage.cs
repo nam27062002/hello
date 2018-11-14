@@ -77,7 +77,8 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_WITH_FIRE,
 		BOOST_SPACE,
 		TIMES_UP,
-		TARGET_REACHED
+		TARGET_REACHED,
+        BREAK_OBJECT_TO_OPEN
 	}
 
 	// How to react with consecutive triggers
@@ -237,6 +238,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.AddListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -291,6 +293,7 @@ public class HUDMessage : MonoBehaviour {
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -759,6 +762,10 @@ public class HUDMessage : MonoBehaviour {
 	void OnBreakObjectWithFire() {
 		Show();
 	}
+
+    void OnBreakObjectToOpen() {
+        Show();
+    }
 
 	/// <summary>
 	/// Drunk state has changed.
