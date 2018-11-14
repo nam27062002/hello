@@ -82,7 +82,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
     private void OnNewDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _error) {
         if (m_tournament != null && m_tournament.data.m_eventId == _eventID) {
             if (_error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
-                m_waitingDefinition = false;
+                m_waitingDefinition = !m_tournament.data.definition.initialized;
                 Refresh();
             } else {
                 m_waitingDefinition = true;
@@ -230,7 +230,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	public void OnShowPreAnimation() {
         m_tournament = HDLiveEventsManager.instance.m_tournament;
-        m_waitingDefinition = m_tournament.isWaitingForNewDefinition;
+        m_waitingDefinition = m_tournament.isWaitingForNewDefinition || !m_tournament.data.definition.initialized;
 
 		Refresh();
 

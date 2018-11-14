@@ -50,13 +50,13 @@ android {
 	buildTypes {
 		debug {
 			minifyEnabled false
-			multiDexKeepProguard file('/Users/dragon/Projects/dragon/client/dragon_android_unity_2017/Assets/Editor/Calety/gradle-multidex-config.txt')
+			multiDexKeepProguard file('D:/Dragon_clean/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 		release {
 			minifyEnabled false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '/Users/dragon/Projects/dragon/client/dragon_android_unity_2017/Assets/Editor/Calety/gradle-proguard.txt'
-			multiDexKeepProguard file('/Users/dragon/Projects/dragon/client/dragon_android_unity_2017/Assets/Editor/Calety/gradle-multidex-config.txt')
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', 'D:/Dragon_clean/Assets/Editor/Calety/gradle-proguard.txt'
+			multiDexKeepProguard file('D:/Dragon_clean/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 	}

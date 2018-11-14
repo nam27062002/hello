@@ -61,6 +61,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private void Awake() {
 		// Get tournament manager
 		m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+        Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
+        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -69,10 +72,6 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private void Start() {
 		// Get latest data from the manager
 		RefreshData();
-
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
