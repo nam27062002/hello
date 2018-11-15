@@ -1,4 +1,4 @@
-﻿// When enabled the customizer is applied when Apply() is called by the game
+﻿    // When enabled the customizer is applied when Apply() is called by the game
 // When disabled the customizer is applied as soon as the response is received by server. This is Calety's original implementation.
 //#define APPLY_ON_DEMAND
 
@@ -167,7 +167,7 @@ public class HDCustomizerManager
             timeToRequest -= Time.deltaTime;
             SetTimeToRequest(timeToRequest);
         }
-
+                
         switch (m_state)
         {
             case EState.WaitingToRequestServer:
@@ -179,8 +179,12 @@ public class HDCustomizerManager
                     RequestCustomizer();                    
                 }
                 break;
-
-            case EState.Done:            
+            case EState.Done:    
+                if ( !m_hasBeenApplied && GetTimeToRequest() < 0)
+                {
+                    SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
+                    SetState(EState.WaitingToRequestServer);
+                }
                 break;
         }
 
@@ -250,7 +254,7 @@ public class HDCustomizerManager
                     
                     if(!m_hasBeenApplied  || ( m_hasBeenApplied && applyByExperiment) || m_forceApply)
                     {
-                        m_forceApply = false;
+                        
                         UnApplyCustomizer();
                         if (CustomizerManager.SharedInstance.ApplyCustomiser())
                         {
@@ -273,8 +277,11 @@ public class HDCustomizerManager
                         UnApplyCustomizer();
                         ContentManager.OnRulesUpdated();
 
-                        // request customizer
-                        SetState(EState.WaitingToRequestServer);
+                        if ( m_state == EState.Done )
+                        {
+                            SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
+                            SetState(EState.WaitingToRequestServer);
+                        }
                     }
                 }
             }
@@ -284,8 +291,14 @@ public class HDCustomizerManager
                 {
                     UnApplyCustomizer();
                     ContentManager.OnRulesUpdated();
+                    if ( m_state == EState.Done )
+                    {
+                        SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
+                        SetState(EState.WaitingToRequestServer);
+                    }
                 }
             }
+            m_forceApply = false;
             
         }
     }
@@ -302,7 +315,7 @@ public class HDCustomizerManager
 
 	public bool IsCustomiserPopupAvailable()
 	{
-		if (m_state == EState.Done)
+		if ( m_hasBeenApplied )
 		{
 			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
 		}
@@ -337,6 +350,7 @@ public class HDCustomizerManager
      
     private void ForceApplyOnNextCheck()
     {
+        SetState( EState.Done );
         m_forceApply = true;
     }
     
@@ -392,6 +406,13 @@ public class HDCustomizerManager
 
        
         m_state = value;
+        switch(m_state)
+        {
+            case EState.Done:
+            {
+                SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
+            }break;
+        }
     }  
 
 #region log    
