@@ -87,7 +87,7 @@ public class TrackerEatGolden : TrackerBase {
 		// Is it one of the target types?
 		IEntity prey = _entity.GetComponent<IEntity>();
 
-		if (prey.isGolden) {
+        if (prey.isGolden && !(prey is CollectibleEntity)) {
 			// Count automatically if we don't have any type filter
 			if(m_targetSkus.Count == 0) {
 				currentValue++;
