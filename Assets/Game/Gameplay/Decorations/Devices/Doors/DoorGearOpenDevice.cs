@@ -15,7 +15,8 @@ public class DoorGearOpenDevice : MonoBehaviour {
     [SerializeField] private Vector3 m_rotationAxis = GameConstants.Vector3.forward;
     [SerializeField] private BreakableBehaviour m_breakableTrigger = null;
     [SerializeField] private InflammableDecoration m_inflammableTrigger = null;
-       
+    [SerializeField] private string m_onActiveAudio = null;
+    private AudioObject m_onActiveAudioAO;
 
     private State m_state;
     private float[] m_rotations;
@@ -30,6 +31,23 @@ public class DoorGearOpenDevice : MonoBehaviour {
         m_inflammableTrigger.onBurn += OnTriggerBreak;
     }
 
+    private void OnDestroy() {
+        if (m_onActiveAudioAO != null && m_onActiveAudioAO.IsPlaying()) {
+            m_onActiveAudioAO.Stop();
+        }
+        RemoveAudioParent(ref m_onActiveAudioAO);
+    }
+
+    private void RemoveAudioParent(ref AudioObject ao) {
+        if (ao != null && ao.transform.parent == transform) {
+            ao.transform.parent = null;
+            ao.completelyPlayedDelegate = null;
+            if (ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
+                ao.Stop();
+        }
+        ao = null;
+    }
+
     private void OnTriggerBreak() {
         if (m_state == State.IDLE) {
             for (int i = 0; i < m_gears.Length; ++i) {
@@ -37,6 +55,11 @@ public class DoorGearOpenDevice : MonoBehaviour {
                 m_initialRotations[i] = m_gears[i].localRotation.eulerAngles;
             }
             m_door.Open();
+
+            if (!string.IsNullOrEmpty(m_onActiveAudio)) {
+                m_onActiveAudioAO = AudioController.Play(m_onActiveAudio, transform);
+            }
+
             m_state = State.ACTIVE;
         }
     }
@@ -44,6 +67,7 @@ public class DoorGearOpenDevice : MonoBehaviour {
     private void Update() {
         if (m_state == State.ACTIVE) {
             if (m_door.isOpen()) {
+                RemoveAudioParent(ref m_onActiveAudioAO);
                 m_state = State.DISABLED;
             } else {
                 Rotate(Time.deltaTime);
