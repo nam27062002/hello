@@ -175,7 +175,7 @@ public enum MessengerEvents {
 	SURVIVAL_BONUS_ACHIEVED,	// no params
 
 	// Egg management events
-	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
+	// EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
 	EGG_TAP,					// params: EggController _egg, int _tapCount	// [AOC] Triggered when opening an egg
