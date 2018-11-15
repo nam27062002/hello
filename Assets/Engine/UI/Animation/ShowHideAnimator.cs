@@ -462,8 +462,30 @@ public class ShowHideAnimator : MonoBehaviour {
 			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
 
 		// Shared parameters
-		TweenParams sharedParams = new TweenParams()
+		TweenParams tweenParams = new TweenParams()
 			.SetEase(m_tweenEase);
+
+		// [AOC] Elastic and back easing functions don't work well with a Fade animation, so tweak the fade duration for those easing functions
+		float fadeDuration = 0f;
+		TweenParams fadeParams = new TweenParams()
+			.SetEase(m_tweenEase);
+
+		//float fadeDelay = 0f;
+		switch(m_tweenEase) {
+			case Ease.InElastic:
+			case Ease.OutElastic:
+			case Ease.InOutElastic:
+				fadeDuration = m_tweenDuration * 0.5f;
+				fadeParams.SetEase(Ease.Linear);
+			break;
+
+			case Ease.InBack:
+			case Ease.OutBack:
+			case Ease.InOutBack:
+				fadeDuration = m_tweenDuration * 0.9f;
+				fadeParams.SetEase(Ease.Linear);
+			break;
+		}
 
 		// Initialize based on current parameters
 		switch(m_tweenType) {
@@ -473,52 +495,52 @@ public class ShowHideAnimator : MonoBehaviour {
 
 			case TweenType.FADE: {
 				m_tweenValue = Mathf.Clamp01(m_tweenValue);
-				m_sequence.Join(m_canvasGroup.DOFade(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.UP: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.DOWN: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.LEFT: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.RIGHT: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.DELTA_SIZE: {
 				RectTransform rt = transform as RectTransform;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE_X: {
 				Vector3 scale = transform.localScale;
 				scale.x = m_tweenValue;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE_Y: {
 				Vector3 scale = transform.localScale;
 				scale.y = m_tweenValue;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 		}
 
