@@ -130,15 +130,22 @@ public class LoadingSceneController : SceneController {
 
     private class GDPRListener : GDPRManager.GDPRListenerBase
     {
-        public bool m_infoRecievedFromServer = false;
+        public bool m_gdprAnswered = false;
         public string m_userCountry = "";
         public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
         {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
-            m_infoRecievedFromServer = true;
+            m_gdprAnswered = true;
             Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
+        
+        public override void onGDPRInfoResponseError (int iErrorCode ) 
+        {
+            m_userCountry = GDPRManager.SharedInstance.GetCachedUserCountryByIP ();
+            m_gdprAnswered = true;
+        }
+        
 
         public static bool IsValidCountry(string countryStr)
         {
@@ -482,7 +489,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
             {
-                if (m_gdprListener.m_infoRecievedFromServer)
+                if (m_gdprListener.m_gdprAnswered)
                 {
                     string country = m_gdprListener.m_userCountry;
                     // Recieved values are not good
