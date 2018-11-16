@@ -475,14 +475,14 @@ public class ShowHideAnimator : MonoBehaviour {
 			case Ease.InElastic:
 			case Ease.OutElastic:
 			case Ease.InOutElastic:
-				fadeDuration = m_tweenDuration * 0.5f;
+				fadeDuration = m_tweenDuration * 0.33f;
 				fadeParams.SetEase(Ease.Linear);
 			break;
 
 			case Ease.InBack:
 			case Ease.OutBack:
 			case Ease.InOutBack:
-				fadeDuration = m_tweenDuration * 0.9f;
+				fadeDuration = m_tweenDuration * 0.5f;
 				fadeParams.SetEase(Ease.Linear);
 			break;
 		}
