@@ -93,7 +93,7 @@ public enum MessengerEvents {
 	// FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
-	BOOST_TOGGLED,				// params: bool _activated
+	// BOOST_TOGGLED,				// params: bool _activated
 	BOOST_SPACE,					// no params
 	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku

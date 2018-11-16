@@ -229,7 +229,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.BOOST_REMINDER:		Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
 			case Type.FIRE_RUSH:			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.MEGA_FIRE_RUSH:		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);			break;
@@ -283,7 +283,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
+			case Type.BOOST_REMINDER:		 Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
 			case Type.FIRE_RUSH:			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.MEGA_FIRE_RUSH:		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);				break;
@@ -315,6 +315,11 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
             {
                 FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
                 OnFireRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
             }break;
         }
     }

@@ -163,7 +163,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
             TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
             string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
             text.text = t;
-			Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+			Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
 		}
 
 		m_ready = true;
@@ -179,7 +179,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		}
 		else if (m_type == Type.Energy)
 		{
-			Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+			Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
 		}
 		else if ( m_type == Type.SuperFury )
 		{
@@ -196,6 +196,11 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
             {
                 FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
                 OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
             }break;
         }
     }

@@ -39,6 +39,9 @@ public enum BroadcastEventType
     GAME_AREA_ENTER,
     GAME_AREA_EXIT,
     GAME_ENDED,
+    
+    BOOST_TOGGLED,              // params: ToggleParam
+    
     COUNT,
 }
 
@@ -67,4 +70,9 @@ public class EggStateChanged : BroadcastEventInfo
     public Egg egg = null;
     public Egg.State from = Egg.State.COLLECTED;
     public Egg.State to = Egg.State.COLLECTED;
+}
+
+public class ToggleParam : BroadcastEventInfo
+{
+    public bool value = false;
 }

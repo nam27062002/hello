@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-abstract public class TouchControls : MonoBehaviour {
+abstract public class TouchControls : MonoBehaviour, IBroadcastListener {
 
     // INSPECTOR VARIABLES
     public bool m_boostWithRadiusCheck = false;
@@ -76,6 +76,12 @@ abstract public class TouchControls : MonoBehaviour {
         Messenger.RemoveListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);        
 		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnPause);
     }
+    
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        
+    }
+    
 
 	private void ResetTouchValues()
 	{
