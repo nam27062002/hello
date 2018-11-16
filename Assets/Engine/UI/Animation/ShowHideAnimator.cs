@@ -466,7 +466,7 @@ public class ShowHideAnimator : MonoBehaviour {
 			.SetEase(m_tweenEase);
 
 		// [AOC] Elastic and back easing functions don't work well with a Fade animation, so tweak the fade duration for those easing functions
-		float fadeDuration = 0f;
+		float fadeDuration = m_tweenDuration;
 		TweenParams fadeParams = new TweenParams()
 			.SetEase(m_tweenEase);
 
