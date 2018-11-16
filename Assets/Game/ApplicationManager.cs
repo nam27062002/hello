@@ -609,7 +609,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Current resolution
     /// </summary>
-    public Vector2 Device_Resolution { get; private set; }
+    public Vector2Int Device_Resolution = new Vector2Int(0,0);
 
     /// <summary>
     /// Current device orientation
@@ -657,12 +657,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private IEnumerator Device_Update()
     {
 #if UNITY_EDITOR
-        Device_Resolution = new Vector2(Screen.width, Screen.height);
+        Device_Resolution = new Vector2Int(Screen.width, Screen.height);
 #else
-        Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+        Device_Resolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
 #endif
 
         Device_Orientation = Input.deviceOrientation;
+
+        WaitForSeconds wait = new WaitForSeconds(DEVICE_NEXT_UPDATE);
 
         while (IsAlive)
         {
@@ -671,12 +673,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Check for a Resolution Change
             if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
             {
-                Device_Resolution = new Vector2(Screen.width, Screen.height);
+                Device_Resolution.x = Screen.width;
+                Device_Resolution.y = Screen.width;
 #else
             // Check for a Resolution Change
             if (Device_Resolution.x != Screen.currentResolution.width || Device_Resolution.y != Screen.currentResolution.height)
             {
-                Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+                Device_Resolution.x = Screen.currentResolution.width;
+                Device_Resolution.y = Screen.currentResolution.height;
 #endif
                 Messenger.Broadcast<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
@@ -697,7 +701,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     break;
             }
 
-            yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
+            yield return wait;
         }
     }
     #endregion
