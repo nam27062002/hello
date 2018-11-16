@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 114787865053240964}
   - component: {fileID: 114595298902139108}
   - component: {fileID: 22570220}
-  - component: {fileID: 114934094575977846}
   - component: {fileID: 114201921238008424}
   - component: {fileID: 114710897969941462}
   - component: {fileID: 114478721195316182}
@@ -33096,7 +33095,7 @@ MonoBehaviour:
   OnShowPreAnimation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114595298902139108}
         m_MethodName: OnShowPreAnimation
         m_Mode: 1
         m_Arguments:
@@ -36002,36 +36001,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114934094575977846
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets:
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-  - sku: halloween
-    targets: []
-  - sku: spring
-    targets: []
-  - sku: midAutumnFestival
-    targets: []
 --- !u!114 &114934552643274502
 MonoBehaviour:
   m_ObjectHideFlags: 1

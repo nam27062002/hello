@@ -148,7 +148,6 @@ GameObject:
   - component: {fileID: 114007822702557110}
   - component: {fileID: 114653502903752666}
   - component: {fileID: 114104705504500072}
-  - component: {fileID: 114366675870313782}
   m_Layer: 0
   m_Name: PF_GoalsBottomBar
   m_TagString: Untagged
@@ -1686,36 +1685,6 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
---- !u!114 &114366675870313782
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1147838604165032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets:
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-  - sku: halloween
-    targets: []
-  - sku: spring
-    targets: []
-  - sku: midAutumnFestival
-    targets: []
 --- !u!114 &114375371216599942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7323,7 +7292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 230, y: -0}
+  m_AnchoredPosition: {x: 230, y: -100}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224278124527508598
@@ -7640,7 +7609,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 670, y: -0}
+  m_AnchoredPosition: {x: 670, y: -100}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224511037724054442
@@ -7908,8 +7877,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 450, y: -0}
-  m_SizeDelta: {x: 260, y: 200}
+  m_AnchoredPosition: {x: 450, y: -100}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224755969147172016
 RectTransform:
