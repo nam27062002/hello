@@ -537,6 +537,8 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+                if ( _source == IEntity.Type.PLAYER )
+                    InstanceManager.timeScaleController.HitStop();
 				return true;
 			}
 			return false;

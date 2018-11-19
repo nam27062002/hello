@@ -242,7 +242,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                         DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
                         if ( decoration != null && decoration.CanBreakByShooting())
                         {
-                            decoration.Break();
+                            decoration.Break(false);
                         }
                     }
                 }

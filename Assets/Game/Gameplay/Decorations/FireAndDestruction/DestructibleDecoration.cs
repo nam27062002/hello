@@ -243,7 +243,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
         return m_effect != ZoneManager.ZoneEffect.S && enabled && m_spawned;
     }
 
-	public void Break() {
+	public void Break( bool _player = true ) {
 		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
@@ -287,6 +287,11 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		if (m_cameraShake > 0) {
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
 		}
+        
+        if ( _player )
+        {
+            InstanceManager.timeScaleController.HitStop();
+        }
 	}
 
 	void FaceDragon(GameObject _ps) {

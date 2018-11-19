@@ -184,7 +184,7 @@ public class GameCamera : MonoBehaviour
 	private float 				m_bossLerpRate = 0.5f;
 
 	private List<BossCameraAffector> m_bossCamAffectors = new List<BossCameraAffector>();
-
+/*
 	private SlowmoBreachTrigger m_slowmoBreachTrigger = null;
 	private SlowmoDeathTrigger m_slowmoDeathTrigger = null;
 	// private PostProcessEffectsManager m_postProcessEffectsManager = null;
@@ -192,7 +192,7 @@ public class GameCamera : MonoBehaviour
 	public SlowmoBreachTrigger slowmoBreachTrigger { get { return m_slowmoBreachTrigger; } }
 	public SlowmoDeathTrigger slowmoDeathTrigger { get { return m_slowmoDeathTrigger; } }
 	// public PostProcessEffectsManager postProcessEffectsManager { get { return m_postProcessEffectsManager; } }
-
+*/
 
 	// Camera setup values used on control panel
 	private float m_lastSize = 0;
@@ -286,13 +286,13 @@ public class GameCamera : MonoBehaviour
 		UpdateFrustumPlanes();
 
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
-
+/*
 		m_slowmoBreachTrigger = GetComponentInChildren<SlowmoBreachTrigger>();
 		DebugUtils.Assert(m_slowmoBreachTrigger != null, "No SlowmoBreachTrigger");
 
 		m_slowmoDeathTrigger = GetComponentInChildren<SlowmoDeathTrigger>();
 		DebugUtils.Assert(m_slowmoDeathTrigger != null, "No SlowmoDeathTrigger" );
-
+*/
 		// m_postProcessEffectsManager = GetComponentInChildren<PostProcessEffectsManager>();
 		// Assert.Fatal(m_postProcessEffectsManager != null);
 
@@ -452,6 +452,7 @@ public class GameCamera : MonoBehaviour
 	private void OnFuryPrewarm(DragonBreathBehaviour.Type _type, float _duration)
 	{
 		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration * 2;
+        InstanceManager.timeScaleController.StartSlowMotion(m_megaFirePrewarmTimer, m_megaFireTimescaleMultiplier);
 	}
 
     private void CountDownEnded()
@@ -810,12 +811,14 @@ public class GameCamera : MonoBehaviour
             {
             	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
 				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * m_frameWidthFury;
-				Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
+				// Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
             	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
+                /*
 				if (m_megaFirePrewarmTimer <= 0 )
 				{
 					Time.timeScale = 1;
 				}
+                */
             }
             else
             {
