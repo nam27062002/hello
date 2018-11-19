@@ -31,6 +31,8 @@ namespace AI {
 		private Vector3 m_gravity;
 
 		private RaycastHit[] m_raycastHits;
+        private RaycastHit[] m_hitResults;
+        private bool[] m_hasHit;
 
 		private bool m_onGround;
 		private float m_heightFromGround;
@@ -64,6 +66,8 @@ namespace AI {
 		//--------------------------------------------------
 		protected override void ExtendedAttach() {
 			m_raycastHits = new RaycastHit[255];
+            m_hitResults = new RaycastHit[4];
+            m_hasHit = new bool[4];
 		}
 		
 		protected override void ExtendedInit() {
@@ -197,37 +201,39 @@ namespace AI {
 			return hitPos;
 		}
 
-		private void FindUpVector() {
-			bool[] hasHit = {false, false, false, false};
-			RaycastHit[] hit = new RaycastHit[4];
+		private void FindUpVector() {			
 			Ray ray = new Ray();
 			ray.origin = position;
 
+            for (int i = 0; i < 4; i++) {
+                m_hasHit[i] = false;
+            }
+
 			//down
 			ray.direction = GameConstants.Vector3.down;
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[0] = m_raycastHits[0]; hasHit[0] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
 
 			//up
 			ray.direction = GameConstants.Vector3.up;
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[1] = m_raycastHits[0]; hasHit[1] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
 
 			//right
 			ray.direction = GameConstants.Vector3.right;
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[2] = m_raycastHits[0]; hasHit[2] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
 
 			//left
 			ray.direction = GameConstants.Vector3.left;
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { hit[3] = m_raycastHits[0]; hasHit[3] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
-				if (hasHit[i]) {
-					if (hit[i].distance < d) {
-						d = hit[i].distance;
+                if (m_hasHit[i]) {
+                    if (m_hitResults[i].distance < d) {
+                        d = m_hitResults[i].distance;
 
-						m_upVector = hit[i].normal;
-						m_groundNormal = hit[i].normal;
-						position = hit[i].point;
+                        m_upVector = m_hitResults[i].normal;
+                        m_groundNormal = m_hitResults[i].normal;
+                        position = m_hitResults[i].point;
 
 						m_heightFromGround = 0f;
 						m_onGround = true;

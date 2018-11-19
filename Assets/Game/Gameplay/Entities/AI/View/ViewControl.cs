@@ -117,7 +117,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	protected float m_disableAnimatorTimer;
 
 	private Renderer[] m_renderers;
-	private Dictionary<int, List<Material>> m_materials;
+    private List<Material[]> m_rendererMaterials;
+
+    private Dictionary<int, List<Material>> m_materials;
 	private Dictionary<int, List<Material>> m_materialsFrozen;
 	protected List<Material> m_materialList;
 
@@ -238,6 +240,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_materialsFrozen = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
+        m_rendererMaterials = new List<Material[]>();
         
 		m_vertexCount = 0;
 		m_rendererCount = 0;
@@ -283,6 +286,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
 				renderer.sharedMaterials = materials;
+                m_rendererMaterials.Add(materials);
             }
         }
 
@@ -568,7 +572,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		if(m_renderers != null) {
 			for(int i = 0; i < m_renderers.Length; i++) {
 				int id = m_renderers[i].GetInstanceID();
-				Material[] materials = m_renderers[i].sharedMaterials;
+                Material[] materials = m_rendererMaterials[i];
 				for(int m = 0; m < materials.Length; m++) {
 					switch(_type) {
 						case MaterialType.GOLD: materials[m] = sm_goldenMaterial; break;
@@ -589,7 +593,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 						} break;
 					}
 				}
-				m_renderers[i].sharedMaterials = materials;
+                m_renderers[i].materials = materials;
 			}
 		}
     }
