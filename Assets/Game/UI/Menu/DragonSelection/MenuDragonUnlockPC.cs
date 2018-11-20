@@ -22,7 +22,10 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	public Localizer m_priceText;
-	private MenuShowConditionally m_showConditions;
+	[SerializeField] private ShowHideAnimator m_animator = null;
+
+	private MenuShowConditionally m_showConditions = null;
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -32,7 +35,11 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	private void Awake() {
 		// Required fields
 		DebugUtils.Assert(m_priceText != null, "Required reference missing!");
+
 		m_showConditions = transform.parent.GetComponent<MenuShowConditionally>();
+		if(m_showConditions != null) {
+			m_showConditions.externalChecks.Add(OnShowCheck);
+		}
 	}
 
 	/// <summary>
@@ -52,6 +59,9 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, Refresh);
+		if(m_showConditions != null) {
+			m_showConditions.externalChecks.Remove(OnShowCheck);
+		}
 	}
 
 	/// <summary>
@@ -65,6 +75,29 @@ public class MenuDragonUnlockPC : MonoBehaviour {
 
 		// Update price
 		m_priceText.Localize(m_priceText.tid, StringUtils.FormatNumber(data.def.GetAsLong("unlockPricePC")));
+	}
+
+	//------------------------------------------------------------------//
+	// CALLBACKS														//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Selected dragon has changed.
+	/// </summary>
+	/// <param name="_dragonSku">Selected dragon sku.</param>
+	public void OnDragonSelected(string _dragonSku) {
+		Refresh(_dragonSku);
+	}
+
+	/// <summary>
+	/// Check whether this object can be displayed or not.
+	/// </summary>
+	/// <returns><c>true</c> if all the conditions to display this object are met, <c>false</c> otherwise.</returns>
+	/// <param name="_dragonSku">Target dragon sku.</param>
+	/// <param name="_screen">Target screen.</param>
+	public bool OnShowCheck(string _dragonSku, MenuScreen _screen) {
+		// Show only if the target dragon is locked
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
+		return dragonData.lockState == IDragonData.LockState.LOCKED;
 	}
 
 	/// <summary>
