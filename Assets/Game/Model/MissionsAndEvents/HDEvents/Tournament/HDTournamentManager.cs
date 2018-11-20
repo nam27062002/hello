@@ -55,6 +55,7 @@ public class HDTournamentManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
+        m_type = "tournament";
         m_data = new HDTournamentData();
         m_tournamentData = m_data as HDTournamentData;
         m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;

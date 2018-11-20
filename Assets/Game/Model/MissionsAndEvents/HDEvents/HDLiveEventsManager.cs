@@ -71,6 +71,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
+    public HDLeagueManager m_league = new HDLeagueManager();
 
         // Avoid using dictionaries when possible
     private List<string> m_types;
@@ -97,10 +98,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         m_tournament.m_type = "tournament";
         m_quest.m_type = "quest";
         m_passive.m_type = "passive";
+        m_league.m_type = "league";
         //
 
-        m_types = new List<string>(3);
-        m_managers = new List<HDLiveEventManager>(3);
+        m_types = new List<string>(4);
+        m_managers = new List<HDLiveEventManager>(4);
 
         m_types.Add( "tournament" );
         m_managers.Add(m_tournament);
@@ -110,6 +112,9 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
         m_types.Add("passive");
         m_managers.Add(m_passive);
+
+        m_types.Add("league");
+        m_managers.Add(m_league);
 
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
