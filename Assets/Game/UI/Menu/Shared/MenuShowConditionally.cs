@@ -195,6 +195,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		switch(dragon.lockState) {
 			case IDragonData.LockState.TEASE:		show = m_showIfShadow;		break;
 			case IDragonData.LockState.SHADOW:		show = m_showIfShadow;		break;
+			case IDragonData.LockState.LOCKED_UNAVAILABLE: show = m_showIfLocked; break;
 			case IDragonData.LockState.LOCKED:		show = m_showIfLocked;		break;
 			case IDragonData.LockState.AVAILABLE:	show = m_showIfAvailable;	break;
 			case IDragonData.LockState.OWNED:		show = m_showIfOwned;		break;
