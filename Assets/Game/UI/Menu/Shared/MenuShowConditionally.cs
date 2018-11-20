@@ -71,6 +71,10 @@ public class MenuShowConditionally : MonoBehaviour {
 	// Animation options
 	[SerializeField] private bool m_restartShowAnimation = false;
 
+	// Events
+	public delegate bool CheckDelegate(string _dragonSku, MenuScreen _screen);
+	public HashSet<CheckDelegate> externalChecks = new HashSet<CheckDelegate>();
+
 	// Extra Properties
 	public string targetDragonSku {
 		get {
@@ -156,8 +160,18 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_dragonSku">Dragon sku to be considered.</param>
 	/// <param name="_screen">Menu screen to be considered.</param>
 	public bool Check(string _dragonSku, MenuScreen _screen) {
-		// Both conditions must be satisfied
-		return CheckDragon(_dragonSku) && CheckScreen(_screen);
+		// All conditions must be satisfied
+		// No need to check the rest if one condition already fails
+		if(!CheckDragon(_dragonSku)) return false;
+		if(!CheckScreen(_screen)) return false;
+
+		// External checks
+		foreach(CheckDelegate externalCheck in externalChecks) {
+			if(!externalCheck(_dragonSku, _screen)) return false;
+		}
+
+		// All checks passed!
+		return true;
 	}
 
 	/// <summary>
