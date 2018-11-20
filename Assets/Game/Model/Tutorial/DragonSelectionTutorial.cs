@@ -30,6 +30,8 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		BACK_DELAY,
 		BACK
 	};
+
+	private const string SCROLL_TO_DRAGON_SKU = "dragon_classic";
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -206,8 +208,11 @@ public class DragonSelectionTutorial : MonoBehaviour {
 		// Compute deltas
 		// 1) Initial delta is always the first dragon
 		m_initialDelta = 0f;
-			
+
 		// 2) Last delta is the last visible dragon (teased included)
+		// [AOC] As of 1.18, remove shadowed dragons, so we're gonna scroll to a fixed dragon
+		int dragonsToView = DragonManager.GetDragonData(SCROLL_TO_DRAGON_SKU).GetOrder();
+		/*
 		int dragonsToView = 9;
 		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 		for(int i = dragonsByOrder.Count - 1; i >= 0; --i) {
@@ -218,7 +223,7 @@ public class DragonSelectionTutorial : MonoBehaviour {
 				dragonsToView = i;
 				break;
 			}
-		}
+		}*/
 		m_scroller.LoadTutorialDragonsScroll(dragonsToView + 1);	// One more to let it view 
 
 
