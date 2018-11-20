@@ -236,12 +236,29 @@ public class DragonDataClassic : IDragonData {
 		}
 
 		// c) Is dragon locked?
-		// Dragon is considered locked if THE previous dragon is not maxed out
+		// Dragon is considered locked if THE previous dragon is NOT maxed out
 		int order = GetOrder();
 		if(order > 0) {     // First dragon should always be owned
-							// Check previous dragon's progression
+			// Check previous dragon's progression
 			List<IDragonData> dragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
 			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
+				// Can the dragon be acquired?
+				if(!m_unlockAvailable) {
+					bool canBeUnlocked = true;
+
+					// Check all required dragons are owned
+					for(int i = 0; i < m_unlockFromDragons.Count; ++i) {
+						canBeUnlocked = canBeUnlocked && DragonManager.IsDragonOwned(m_unlockFromDragons[i]);
+					}
+
+					if(canBeUnlocked) {
+						m_unlockAvailable = true;	// No need to check again in this run
+						return LockState.LOCKED;
+					} else {
+						// [AOC] Include discounted dragon condition here?
+						return LockState.LOCKED_UNAVAILABLE;
+					}
+				}
 				return LockState.LOCKED;
 			}
 		}
