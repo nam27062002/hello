@@ -155,19 +155,16 @@ MonoBehaviour:
   m_dieOutsideFrustum: 1
   m_probability:
     m_elements:
-    - m_probability: 0.2
+    - m_probability: 0.25
       m_label: pc
       m_locked: 0
-    - m_probability: 0.2
+    - m_probability: 0.25
       m_label: coins
       m_locked: 0
-    - m_probability: 0.2
-      m_label: score
-      m_locked: 0
-    - m_probability: 0.2
+    - m_probability: 0.25
       m_label: xp
       m_locked: 0
-    - m_probability: 0.2
+    - m_probability: 0.25
       m_label: health
       m_locked: 0
     m_randomState:
@@ -175,6 +172,8 @@ MonoBehaviour:
       s1: 0
       s2: 0
       s3: 0
+  m_always:
+  - score
 --- !u!114 &114656842475284144
 MonoBehaviour:
   m_ObjectHideFlags: 1

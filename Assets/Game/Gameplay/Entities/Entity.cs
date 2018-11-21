@@ -125,8 +125,11 @@ public class Entity : IEntity {
 		m_reward.origin = m_def.Get("sku");
 		m_reward.category = m_def.Get("category");
 
-		// Simple data
-		m_goldenChance = m_def.GetAsFloat("goldenChance");
+        OnRewardCreated();
+
+
+        // Simple data
+        m_goldenChance = m_def.GetAsFloat("goldenChance");
 		if (sm_goldenModifier && m_goldenChance > 0)
 			m_goldenChance = 1f;
 
@@ -373,7 +376,11 @@ public class Entity : IEntity {
 
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
-	}
+
+        OnRewardCreated();
+    }
+
+    protected virtual void OnRewardCreated() {}
 
 
 	public static void AddSCMultiplier( float value )
