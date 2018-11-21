@@ -65,10 +65,20 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		set { m_checkScreenBounds = value; }
 	}
 
+	[SerializeField] private bool m_renderOnTop = true;
+	public bool renderOnTop {
+		get { return m_renderOnTop; }
+		set { m_renderOnTop = value; }
+	}
+
 	// Events, subscribe as needed via inspector or code
 	[Serializable] public class TooltipEvent : UnityEvent<UITooltip, UITooltipTrigger> { }
 	[Space]
 	public TooltipEvent OnTooltipOpen = new TooltipEvent();
+
+	// Internal references
+	private Canvas m_parentCanvas = null;
+	private Transform m_originalTooltipParent = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -84,7 +94,7 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		
+		if(m_tooltip != null) m_tooltip.animator.OnHidePostAnimation.RemoveListener(OnTooltipClosed);
 	}
 
 	/// <summary>
@@ -142,52 +152,88 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 		// Invoke event (before animation, in case anything needs to be initialized)
 		OnTooltipOpen.Invoke(m_tooltip, this);
 
+		// If the render on top flag is set, move the tooltip to the top of the parent canvas
+		if(m_renderOnTop) {
+			if(m_parentCanvas == null) {
+				m_parentCanvas = m_tooltip.GetComponentInParent<Canvas>();
+				m_originalTooltipParent = m_tooltip.transform.parent;
+				m_tooltip.animator.OnHidePostAnimation.AddListener(OnTooltipClosed);
+			}
+			m_tooltip.transform.SetParent(m_parentCanvas.transform);
+			m_tooltip.transform.SetAsLastSibling();
+		}
+
 		// Unless explicitely denied, put tooltip on anchor's position
 		if(!m_keepOriginalPosition) {
-			// Instantly unfold it for a moment to get the right measurements
-			float deltaBackup = m_tooltip.animator.delta;
-			m_tooltip.animator.ForceShow(false);
+			// Activate the tooltip to make sure all the layouts, textfields and dynamic sizes are updated
+			m_tooltip.gameObject.SetActive(true);
 
-			// Put it at the anchor's position
-			m_tooltip.transform.localPosition = spawnTransform.parent.TransformPoint(spawnTransform.localPosition, m_tooltip.transform.parent);
+			// Wait a frame so all the measurements are right and updated
+			UbiBCN.CoroutineManager.DelayedCallByFrames(
+				() => {
+					// Instantly unfold it for a moment to get the right measurements
+					float deltaBackup = m_tooltip.animator.delta;
+					m_tooltip.animator.ForceShow(false);
 
-			// Apply manual offset
-			m_tooltip.transform.localPosition = m_tooltip.transform.localPosition + new Vector3(m_offset.x, m_offset.y, 0f);
+					// Put it at the anchor's position
+					m_tooltip.transform.localPosition = spawnTransform.parent.TransformPoint(spawnTransform.localPosition, m_tooltip.transform.parent);
 
-			// Get some aux vars
-			Canvas canvas = GetComponentInParent<Canvas>();
-			Rect tooltipRect = (m_tooltip.transform as RectTransform).rect;	// Tooltip in local coords
-			Rect canvasRect = (canvas.transform as RectTransform).rect;	// Canvas in local coords
-			tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
-			Vector3 finalOffset = Vector3.zero;
+					// Apply manual offset
+					m_tooltip.transform.localPosition = m_tooltip.transform.localPosition + new Vector3(m_offset.x, m_offset.y, 0f);
 
-			// If required, make sure tooltip is not out of screen
-			if(m_checkScreenBounds) {
-				// Check horizontal edges
-				if(tooltipRect.xMin < canvasRect.xMin) {
-					finalOffset.x = canvasRect.xMin - tooltipRect.xMin;
-				} else if(tooltipRect.xMax > canvasRect.xMax) {
-					finalOffset.x = canvasRect.xMax - tooltipRect.xMax;
-				}
+					// Get some aux vars
+					Canvas canvas = GetComponentInParent<Canvas>();
+					Rect tooltipRect = (m_tooltip.transform as RectTransform).rect;	// Tooltip in local coords
+					Rect canvasRect = (canvas.transform as RectTransform).rect;	// Canvas in local coords
+					tooltipRect = m_tooltip.transform.TransformRect(tooltipRect, canvas.transform);
+					Vector3 finalOffset = Vector3.zero;
 
-				// Check vertical edges
-				if(tooltipRect.yMin < canvasRect.yMin) {
-					finalOffset.y = canvasRect.yMin - tooltipRect.yMin;
-				} else if(tooltipRect.yMax > canvasRect.yMax) {
-					finalOffset.y = canvasRect.yMax - tooltipRect.yMax;
-				}
-			}
+					// If required, make sure tooltip is not out of screen
+					if(m_checkScreenBounds) {
+						// Check horizontal edges
+						if(tooltipRect.xMin < canvasRect.xMin) {
+							finalOffset.x = canvasRect.xMin - tooltipRect.xMin;
+						} else if(tooltipRect.xMax > canvasRect.xMax) {
+							finalOffset.x = canvasRect.xMax - tooltipRect.xMax;
+						}
 
-			// Compute final position in tooltip's local coords and apply
-			Vector3 finalCanvasPos = tooltip.transform.parent.TransformPoint(tooltip.transform.localPosition, canvas.transform) + finalOffset;
-			m_tooltip.transform.localPosition = canvas.transform.TransformPoint(finalCanvasPos, tooltip.transform.parent);
+						// Check vertical edges
+						if(tooltipRect.yMin < canvasRect.yMin) {
+							finalOffset.y = canvasRect.yMin - tooltipRect.yMin;
+						} else if(tooltipRect.yMax > canvasRect.yMax) {
+							finalOffset.y = canvasRect.yMax - tooltipRect.yMax;
+						}
+					}
 
-			// Restore previous animation delta and trigger show animation
-			m_tooltip.animator.delta = deltaBackup;
+					// Compute final position in tooltip's local coords and apply
+					Vector3 finalCanvasPos = tooltip.transform.parent.TransformPoint(tooltip.transform.localPosition, canvas.transform) + finalOffset;
+					m_tooltip.transform.localPosition = canvas.transform.TransformPoint(finalCanvasPos, tooltip.transform.parent);
+
+					// Apply reverse offset to arrow so it keeps pointing to the original position
+					switch(m_tooltip.arrowDir) {
+						case UITooltip.ArrowDirection.HORIZONTAL: {
+							m_tooltip.CorrectArrowOffset(-finalOffset.x);
+						} break;
+
+						case UITooltip.ArrowDirection.VERTICAL: {
+							m_tooltip.CorrectArrowOffset(-finalOffset.y);
+						} break;
+					}
+
+					// Restore previous animation delta
+					m_tooltip.animator.delta = deltaBackup;
+
+					// Just launch the animation!
+					m_tooltip.animator.ForceShow();
+				}, 1
+			);
 		}
-		
-		// Launch the animation!
-		m_tooltip.animator.ForceShow();
+
+		// Keeping original position
+		else {
+			// Just launch the animation!
+			m_tooltip.animator.ForceShow();
+		}
 	}
 
 	/// <summary>
@@ -206,5 +252,10 @@ public class UITooltipTrigger : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 	public void OnPointerExit(PointerEventData _eventData) {
 		// Just hide the tooltip, if created
 		if(m_tooltip != null) m_tooltip.animator.Hide();
+	}
+
+	public void OnTooltipClosed(ShowHideAnimator _anim) {
+		// Return tooltip to its original parent
+		m_tooltip.transform.SetParent(m_originalTooltipParent);
 	}
 }

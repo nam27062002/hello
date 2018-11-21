@@ -34,6 +34,10 @@ public class UITooltip : MonoBehaviour {
 	// Exposed References
 	[SerializeField] protected RectTransform m_arrow = null;
 	[SerializeField] protected ArrowDirection m_arrowDir = ArrowDirection.HORIZONTAL;
+	public ArrowDirection arrowDir {
+		get { return m_arrowDir; }
+	}
+
 	[Separator("Optional")]
 	[SerializeField] protected TMPro.TextMeshProUGUI m_titleText = null;
 	[SerializeField] protected TMPro.TextMeshProUGUI m_messageText = null;
@@ -80,6 +84,34 @@ public class UITooltip : MonoBehaviour {
 			case ArrowDirection.VERTICAL: {
 				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, _offset);
 				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, _offset);
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Correct the arrow offset.
+	/// </summary>
+	/// <param name="_offset">Amount of units to be corrected.</param>
+	public void CorrectArrowOffset(float _offset) {
+		// Skip if there is no arrow
+		if(m_arrow == null) return;
+
+		// Apply offset
+		switch(m_arrowDir) {
+			case ArrowDirection.HORIZONTAL: {
+				RectTransform parentRT = m_arrow.parent as RectTransform;
+				float size = parentRT.rect.height;
+				float relativeOffset = _offset / size;
+				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x + relativeOffset, m_arrow.anchorMin.y);
+				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x + relativeOffset, m_arrow.anchorMax.y);
+			} break;
+
+			case ArrowDirection.VERTICAL: {
+				RectTransform parentRT = m_arrow.parent as RectTransform;
+				float size = parentRT.rect.width;
+				float relativeOffset = _offset / size;
+				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, m_arrow.anchorMin.y + relativeOffset);
+				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, m_arrow.anchorMax.y + relativeOffset);
 			} break;
 		}
 	}
