@@ -36,7 +36,8 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDPassiveEventManager() {
-		m_data = new HDPassiveEventData();
+        m_type = "passive";
+        m_data = new HDPassiveEventData();
         m_passiveEventData = m_data as HDPassiveEventData;
         m_passiveEventDefinition = m_passiveEventData.definition as HDPassiveEventDefinition;
 	}

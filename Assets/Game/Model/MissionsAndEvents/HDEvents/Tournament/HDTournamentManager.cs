@@ -84,10 +84,10 @@ public class HDTournamentManager : HDLiveEventManager {
     	base.ParseDefinition( _data );
     	if ( m_tracker != null )
 			m_tracker.Clear();
-		HDTournamentDefinition def = m_data.definition as HDTournamentDefinition;
-		if ( def.m_goal.m_typeDef != null )
+		
+		if (m_tournamentDefinition.m_goal.m_typeDef != null )
 		{
-			m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
+			m_tracker = TrackerBase.CreateTracker(m_tournamentDefinition.m_goal.m_typeDef.sku, m_tournamentDefinition.m_goal.m_params);
 		}
 		else
 		{

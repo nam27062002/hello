@@ -46,6 +46,7 @@ public class HDQuestManager : HDLiveEventManager{
 	/// Default constructor.
 	/// </summary>
 	public HDQuestManager() {
+        m_type = "quest";
         m_data = new HDQuestData();
         m_questData = m_data as HDQuestData;
         m_questDefinition = m_questData.definition as HDQuestDefinition;

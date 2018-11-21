@@ -95,33 +95,27 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public HDLiveEventsManager()
 	{
         // For testing purposes
-        m_tournament.m_type = "tournament";
-        m_quest.m_type = "quest";
-        m_passive.m_type = "passive";
-        m_league.m_type = "league";
         //
+        m_types = new List<string>();
+        m_managers = new List<HDLiveEventManager>();
 
-        m_types = new List<string>(4);
-        m_managers = new List<HDLiveEventManager>(4);
+        RegisterManager(m_tournament);
+        RegisterManager(m_quest);
+        RegisterManager(m_passive);
+        RegisterManager(m_league);
 
-        m_types.Add( "tournament" );
-        m_managers.Add(m_tournament);
-
-        m_types.Add("quest");
-        m_managers.Add(m_quest);
-
-        m_types.Add("passive");
-        m_managers.Add(m_passive);
-
-        m_types.Add("league");
-        m_managers.Add(m_league);
-
+        //
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
 
 	}
+
+    private void RegisterManager(HDLiveEventManager _manager) {
+        m_types.Add(_manager.m_type);
+        m_managers.Add(_manager);
+    }
 
     ~HDLiveEventsManager()
     {
