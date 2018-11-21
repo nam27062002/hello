@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-public class PersistenceFacade
+public class PersistenceFacade : IBroadcastListener
 {	
 	public static readonly CultureInfo JSON_FORMATTING_CULTURE = CultureInfo.InvariantCulture;
 	
@@ -362,20 +362,32 @@ public class PersistenceFacade
     // This region is responsible for opening the related to persistence popups    
     private static bool Popups_IsInited { get; set; }
 
-    private static void Popups_Init()
+    private void Popups_Init()
     {
         if (!Popups_IsInited)
         {			
-			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
             Popups_IsInited = true;
         }
     }
 
-    private static void Popups_Destroy()
+    private void Popups_Destroy()
     {		
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
     }
 	
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                Popups_OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
+    
     private static PopupController Popups_LoadingPopup { get; set; }
 
     private static bool Popups_IsLoadingPopupOpen()

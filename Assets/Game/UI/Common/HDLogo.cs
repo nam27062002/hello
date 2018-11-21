@@ -16,7 +16,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Simple class to add logic to the Hungry Dragon logo.
 /// </summary>
-public class HDLogo : MonoBehaviour {
+public class HDLogo : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -48,7 +48,7 @@ public class HDLogo : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Make sure we have the right logo loaded
 		Refresh();
@@ -59,8 +59,24 @@ public class HDLogo : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
+    
+    /// <summary>
+    /// Ons the broadcast signal.
+    /// </summary>
+    /// <param name="eventType">Event type.</param>
+    /// <param name="broadcastEventInfo">Broadcast event info.</param>
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

@@ -114,18 +114,18 @@ public class DragonBreath2 : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, -transform.up, out hit, m_distance, m_groundLayerMask))
-        {
-            if (Time.time > m_lastTime + m_collisionFireDelay)
+        if (Time.time > m_lastTime + m_collisionFireDelay) {
+            if (Physics.Raycast(transform.position, -transform.up, out hit, m_distance, m_groundLayerMask))
             {
+                
 				GameObject colFire = m_collisionFireHandler.Spawn(null, hit.point);
                 if (colFire != null)
                 {
                     colFire.transform.rotation = Quaternion.LookRotation(-Vector3.forward, hit.normal);
                 }
-
-                m_lastTime = Time.time;
             }
+
+            m_lastTime = Time.time;
         }
 
     }

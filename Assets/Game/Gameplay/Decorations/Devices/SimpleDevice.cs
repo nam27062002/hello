@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleDevice : Initializable {
+public class SimpleDevice : Initializable, IBroadcastListener {
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private InflammableDecoration m_inflammable;
@@ -31,9 +31,9 @@ public class SimpleDevice : Initializable {
 	/// </summary>
 	protected virtual void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -41,11 +41,27 @@ public class SimpleDevice : Initializable {
 	/// </summary>
 	protected virtual void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnAreaLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnAreaExit();
+            }break;
+        }
+    }
+    
 	// Update is called once per frame
 	void Update () {
 		if (m_enabled) {

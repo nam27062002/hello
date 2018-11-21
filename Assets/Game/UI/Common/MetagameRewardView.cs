@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of a metagame reward.
 /// </summary>
-public class MetagameRewardView : MonoBehaviour {
+public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -56,7 +56,7 @@ public class MetagameRewardView : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -64,8 +64,20 @@ public class MetagameRewardView : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

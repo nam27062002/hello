@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of an offer pack reward.
 /// </summary>
-public class OfferItemSlot : MonoBehaviour {
+public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -53,26 +53,13 @@ public class OfferItemSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Update associated separator
 		if(m_separator != null) m_separator.SetActive(true);
@@ -83,25 +70,22 @@ public class OfferItemSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Update associated separator
 		if(m_separator != null) m_separator.SetActive(false);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

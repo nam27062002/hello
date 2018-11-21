@@ -12,7 +12,7 @@ using UnityEngine;
 /// This class is responsible for handling stuff related to the whole application in a high level. For example if an analytics event has to be sent when the application is paused or resumed
 /// you should send that event from here. It also offers a place where to initialize stuff only once regardless the amount of times the flow leads the user to the Loading scene.
 /// </summary>
-public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManager>
+public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManager>, IBroadcastListener
 {
     /// <summary>
     /// Time in seconds that will force a cloud save resync if the application has been in background longer than this amount of time
@@ -68,8 +68,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // This class needs to know whether or not the user is in the middle of a game
         Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
-        Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+        Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         Device_Init();
 
@@ -97,8 +97,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Subscribe to external events
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
-            Messenger.AddListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+            Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         }
 
 		CancelLocalNotifications();
@@ -126,19 +125,40 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_STARTED, Game_OnCountdownStarted);
         Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, Game_OnPaused);
-        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Game_OnEnded);
-        Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, Language_OnChanged);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         if (FeatureSettingsManager.IsDebugEnabled)
         {
-            Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, Debug_OnLevelReset);
-            Messenger.RemoveListener(MessengerEvents.GAME_ENDED, Debug_OnLevelReset);
+            Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         }
 
         m_isAlive = false;
 
         GameServerManager.SharedInstance.Destroy();
         HDCustomizerManager.instance.Destroy();
+    }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Debug_OnLevelReset();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                    Game_OnEnded();
+                    if (FeatureSettingsManager.IsDebugEnabled)
+                        Debug_OnLevelReset();
+            }break;
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                    Language_OnChanged();
+            }break;
+        }
     }
 
     protected override void OnApplicationQuit()
@@ -589,7 +609,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     /// <summary>
     /// Current resolution
     /// </summary>
-    public Vector2 Device_Resolution { get; private set; }
+    public Vector2Int Device_Resolution = new Vector2Int(0,0);
 
     /// <summary>
     /// Current device orientation
@@ -637,12 +657,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     private IEnumerator Device_Update()
     {
 #if UNITY_EDITOR
-        Device_Resolution = new Vector2(Screen.width, Screen.height);
+        Device_Resolution = new Vector2Int(Screen.width, Screen.height);
 #else
-        Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+        Device_Resolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
 #endif
 
         Device_Orientation = Input.deviceOrientation;
+
+        WaitForSeconds wait = new WaitForSeconds(DEVICE_NEXT_UPDATE);
 
         while (IsAlive)
         {
@@ -651,12 +673,14 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
             // Check for a Resolution Change
             if (Device_Resolution.x != Screen.width || Device_Resolution.y != Screen.height)
             {
-                Device_Resolution = new Vector2(Screen.width, Screen.height);
+                Device_Resolution.x = Screen.width;
+                Device_Resolution.y = Screen.width;
 #else
             // Check for a Resolution Change
             if (Device_Resolution.x != Screen.currentResolution.width || Device_Resolution.y != Screen.currentResolution.height)
             {
-                Device_Resolution = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
+                Device_Resolution.x = Screen.currentResolution.width;
+                Device_Resolution.y = Screen.currentResolution.height;
 #endif
                 Messenger.Broadcast<Vector2>(MessengerEvents.DEVICE_RESOLUTION_CHANGED, Device_Resolution);
             }
@@ -677,7 +701,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                     break;
             }
 
-            yield return new WaitForSeconds(DEVICE_NEXT_UPDATE);
+            yield return wait;
         }
     }
     #endregion
@@ -1132,7 +1156,10 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     public void Debug_TestToggleFrameColor()
     {
         Debug_IsFrameColorOn = !Debug_IsFrameColorOn;
-        Messenger.Broadcast<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, Debug_IsFrameColorOn, DragonBreathBehaviour.Type.Mega);
+        FuryRushToggled furyRushToggled = new FuryRushToggled();
+        furyRushToggled.activated = Debug_IsFrameColorOn;
+        furyRushToggled.type = DragonBreathBehaviour.Type.Mega;
+        Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, furyRushToggled);
     }
 
     private bool Debug_IsBakedLightsDisabled { get; set; }

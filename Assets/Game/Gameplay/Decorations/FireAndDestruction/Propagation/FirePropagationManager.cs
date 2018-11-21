@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 // This is a Quadtree! a Quadtree full of fires
-public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager> {
+public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager>, IBroadcastListener {
 	
 	private QuadTree<FireNode> m_fireNodesTree;
 	private List<FireNode> m_fireNodes;
@@ -28,10 +28,10 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -39,12 +39,29 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnLevelLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            case BroadcastEventType.GAME_AREA_EXIT:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>

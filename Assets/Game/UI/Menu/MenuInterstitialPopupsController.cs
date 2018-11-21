@@ -17,7 +17,7 @@ using System.Collections;
 /// Centralized control to check which interstitial popups should be opened upon
 /// entering the menu.
 /// </summary>
-public class MenuInterstitialPopupsController : MonoBehaviour {
+public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void Awake() {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 		m_checkingConnection = false;
 	}
 
@@ -53,8 +53,21 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
+    
 
 	private void Update() {
 		if (m_waitForCustomPopup) {

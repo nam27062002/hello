@@ -273,8 +273,8 @@ namespace AI {
 			OnTriggerStay(_other);
 
 			SetSignal(Signals.Type.Trigger, false);
-			object[] _params = new object[1]{_other.gameObject};
-			OnTrigger(SignalTriggers.OnTriggerExit, _params);
+            m_triggerParams[0] = _other.gameObject;
+			OnTrigger(SignalTriggers.OnTriggerExit, m_triggerParams);
 
 			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, false);
