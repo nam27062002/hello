@@ -52,7 +52,7 @@ public class GameSceneController : GameSceneControllerBase {
 	SwitchingAreaSate m_switchState;
 	private List<AsyncOperation> m_switchingAreaTasks;
 
-    private const bool m_useSyncLoading = true;
+    private const bool m_useSyncLoading = false;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
