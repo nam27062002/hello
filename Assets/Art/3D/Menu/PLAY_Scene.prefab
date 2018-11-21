@@ -1245,6 +1245,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4215768407685834}
   - component: {fileID: 114638301824354624}
+  - component: {fileID: 114542320143702554}
   m_Layer: 0
   m_Name: SantaClaus
   m_TagString: Untagged
@@ -1921,6 +1922,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4052269240249714}
+  - component: {fileID: 114537143831173066}
   m_Layer: 0
   m_Name: PLAY_Scene
   m_TagString: Untagged
@@ -6294,6 +6296,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_dragonPreview: {fileID: 114196973927974078}
+--- !u!114 &114537143831173066
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1857471293287222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_seasonsData:
+  - sku: none
+    targets:
+    - obj: {fileID: 1574835572817730}
+      action: 1
+  - sku: xmas
+    targets:
+    - obj: {fileID: 1574835572817730}
+      action: 0
+  - sku: halloween
+    targets: []
+  - sku: spring
+    targets: []
+  - sku: midAutumnFestival
+    targets: []
 --- !u!114 &114539103850398292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6309,6 +6337,19 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4846125232137544}
   m_worldPositionStays: 0
   m_resetScale: 0
+--- !u!114 &114542320143702554
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1574835572817730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_lifeTime: 60
+  m_replacementPrefab: 
 --- !u!114 &114552240994107814
 MonoBehaviour:
   m_ObjectHideFlags: 1
