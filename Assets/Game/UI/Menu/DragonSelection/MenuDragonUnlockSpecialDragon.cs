@@ -181,9 +181,6 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 		m_gfFlow.DoTransaction();
 
 		// Unlock the dragon!
-		bool wasntLocked = m_transactionDragonData.GetLockState() <= IDragonData.LockState.LOCKED;
-
-		// Just acquire target dragon!
 		m_transactionDragonData.Acquire();
 
 		// [AOC] TODO!! Special tracking event for special dragons?

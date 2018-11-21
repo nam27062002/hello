@@ -307,7 +307,6 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	private static void OnUnlockSuccess(ResourcesFlow _flow) {
 		// Aux vars
 		IDragonData dragonData = DragonManager.GetDragonData(_flow.itemDef.sku);
-		bool wasntLocked = dragonData.GetLockState() <= IDragonData.LockState.LOCKED;
 
 		// Just acquire target dragon!
 		dragonData.Acquire();
