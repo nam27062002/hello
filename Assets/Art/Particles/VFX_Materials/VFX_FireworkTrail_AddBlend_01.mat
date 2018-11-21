@@ -6,13 +6,14 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_StretchedSparks_AddBlend_01
+  m_Name: VFX_RainbowTrail_AddBlend_01_NOZ 1
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX AUTOMATICPANNING BLENDMODE_PREMULTIPLY
+    EXTENDED_PARTICLES NOISEUV NOISE_TEXTURE NOISE_TEXTURE_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3070
+  m_CustomRenderQueue: 3060
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -23,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorRamp:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 072f7e6a996bab74e896556f4337a8d7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -38,16 +39,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DissolveTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ccd92e08c5a9e8e428e47fc81162e3ea, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5e27b39a6eb8b494b997290a77632905, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -55,8 +52,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 5bba23ad82071774aae899ebf28d815b, type: 3}
+        m_Scale: {x: 0.5, y: 0.5}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -68,10 +65,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - BlendMode: 5
-    - Dissolve: 0
     - _ABOffset: 0
     - _BumpScale: 1
-    - _ColorMultiplier: 1
+    - _ColorMultiplier: 0.5
     - _Cull: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -79,18 +75,17 @@ Material:
     - _EmissionSaturation: 3
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 0
-    - _EnableAutomaticPanning: 0
+    - _EnableAutomaticPanning: 1
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
     - _EnableColorVertex: 1
-    - _EnableDissolve: 0
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
-    - _EnableNoiseTexture: 0
-    - _EnableNoiseTextureAlpha: 0
+    - _EnableNoiseTexture: 1
+    - _EnableNoiseTextureAlpha: 1
     - _EnableNoiseTextureDissolve: 0
     - _EnableNoiseTextureEmission: 0
-    - _EnableNoiseUV: 0
+    - _EnableNoiseUV: 1
     - _GlobalAlpha: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -98,7 +93,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OpacitySaturation: 0.6
+    - _OpacitySaturation: 0.5
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -107,11 +102,11 @@ Material:
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
-    - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _BasicColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
+    - _NoisePanning: {r: -0.2, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.9670386, g: 0.8161765, b: 1, a: 0.5}
+    - _SaturatedColor: {r: 1, g: 1, b: 1, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
