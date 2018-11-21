@@ -312,11 +312,6 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 		// Just acquire target dragon!
 		dragonData.Acquire();
 
-		// If unlocking the required dragon for the rating popup, mark the popup as it can be displayed
-		if(wasntLocked && (dragonData.def.sku == MenuInterstitialPopupsController.RATING_DRAGON)) {
-			Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
-		}
-
 		// Track
 		HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
 
