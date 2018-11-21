@@ -255,7 +255,6 @@ public class DragonDataClassic : IDragonData {
 						m_unlockAvailable = true;	// No need to check again in this run
 						return LockState.LOCKED;
 					} else {
-						// [AOC] Include discounted dragon condition here?
 						return LockState.LOCKED_UNAVAILABLE;
 					}
 				}
