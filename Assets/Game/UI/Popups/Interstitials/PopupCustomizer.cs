@@ -321,8 +321,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// The popup is about to close.
 	/// </summary>
 	public void OnClosePreAnimation() {
-		// Notify customizer manager
-		CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(m_config, true);
+        HDCustomizerManager.instance.NotifyPopupViewed(m_config);
 
 		// Fade canvas in!
 		if(m_menuCanvasGroup != null) {

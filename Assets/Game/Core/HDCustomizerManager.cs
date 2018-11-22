@@ -27,7 +27,7 @@ public class HDCustomizerManager
             {
                 LogWarning("onCustomizationStored");
             }
-            HDCustomizerManager.instance.ForceApplyOnNextCheck();
+            HDCustomizerManager.instance.OnCustomizerStored();
         }
 
 
@@ -130,6 +130,11 @@ public class HDCustomizerManager
     /// Whether or not the changes defined by the current customizer have been applied by the client
     /// </summary>
     private bool m_hasBeenApplied = false;
+
+    /// <summary>
+    /// To not recreate the object Customiser every time, losing temp data, we store it
+    /// </summary>
+    protected Customiser m_lastCustomizer = null;
     
     /// <summary>
     /// The m current experiment appleid code
@@ -141,9 +146,15 @@ public class HDCustomizerManager
     /// </summary>
     private bool m_forceApply = false;
 
+    /// <summary>
+    /// Indicated the customization id used on the last popup viewed
+    /// </summary>
+    private long m_lastSeenPopup = -1;
+
     public void Initialise()
     {
         Reset();
+        m_lastCustomizer = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild(); // Get Strored Customizer if any
     }
 
     public void Reset()
@@ -152,6 +163,7 @@ public class HDCustomizerManager
             UnApplyCustomizer();
         SetTimeToRequest(0f);
         SetState(EState.WaitingToRequestServer);
+        m_lastSeenPopup = -1;
     }
 
     public void Destroy()
@@ -228,7 +240,7 @@ public class HDCustomizerManager
     {
         if ( CustomizerManager.SharedInstance.CheckIfInitialised() )
         {
-            Customiser customiser = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild();
+            Customiser customiser = m_lastCustomizer;
             if ( customiser != null )
             {
                 if ( CustomizerManager.SharedInstance.IsCustomizerValid( customiser ) )
@@ -266,6 +278,7 @@ public class HDCustomizerManager
                                 HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.GetName(), experiment.GetGroupName());
                                 m_currentExperimentCode = experiment.GetCode();
                             }
+                            
                         }
                         ContentManager.OnRulesUpdated();
                     }
@@ -315,12 +328,18 @@ public class HDCustomizerManager
 
 	public bool IsCustomiserPopupAvailable()
 	{
+        bool ret = false;
 		if ( m_hasBeenApplied )
 		{
-			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+			long code = CustomizerManager.SharedInstance.GetCustomizerCodeForAvailablePopup(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+            if ( code > -1 )
+            {
+                // Check that we haven't seen it already, as we only allow one popup per session
+                ret = code != m_lastSeenPopup;
+            }
 		}
 
-		return false;
+		return ret;
 	}
 
 	public CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
@@ -328,9 +347,10 @@ public class HDCustomizerManager
         CustomiserPopupConfig returnValue = null;
 
         // Makes sure that there's a customizer and that is has already been applied
-        if (m_state == EState.Done)
+        if (m_hasBeenApplied )
         {
 			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
+            
         }
 
         return returnValue;
@@ -348,8 +368,21 @@ public class HDCustomizerManager
 		m_lastPreparedPopupConfig = _config;
 	}
      
-    private void ForceApplyOnNextCheck()
+     /// <summary>
+     /// Function called when the game dismisses de popup
+     /// </summary>
+     /// <param name="_config">Config.</param>
+     public void NotifyPopupViewed(CustomiserPopupConfig _config)
+     {
+        m_lastSeenPopup = _config.m_iCustomizerCode;
+        // Notify customizer manager
+        CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(_config, true);
+        
+     }
+     
+    private void OnCustomizerStored()
     {
+        m_lastCustomizer = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild(); // Load just stored customizer
         SetState( EState.Done );
         m_forceApply = true;
     }
@@ -384,17 +417,7 @@ public class HDCustomizerManager
     private void SetTimeToRequest(float value)
     {       
         m_timeToRequest = value;
-    }
-
-    private bool GetHasBeenApplied()
-    {
-        return m_hasBeenApplied;
-    }
-
-    private void SetHasBeenApplied(bool value)
-    {
-        m_hasBeenApplied = value;
-    }    
+    }  
 
 
     private void SetState(EState value)
