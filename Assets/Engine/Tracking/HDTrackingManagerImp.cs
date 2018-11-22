@@ -1710,9 +1710,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
-            // If the user is minor then analytics and marketing have to be reported as disabled
-            // BI asked us to send false for these parameters when it's not GDPR
-            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || LegalManager.instance.GetPolicy() != LegalManager.EPolicy.GDPR)
+            // BI only wants these two parameters when terms policy is GDPR and the user is not minor, otherwise false must be sent            
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
             {
                 _enableAnalytics = false;
                 _enableMarketing = false;
