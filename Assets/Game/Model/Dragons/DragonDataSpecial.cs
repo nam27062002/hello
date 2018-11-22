@@ -228,6 +228,29 @@ public class DragonDataSpecial : IDragonData {
         get{ return m_specialTierDef.GetAsFloat("petScale"); } 
     }
     
+     // Super Size
+    public override float superSizeUpMultiplier{ 
+        get{ return m_specialTierDef.GetAsFloat("sizeUpMultiplier", 2); }
+    }    
+    public override float superSpeedUpMultiplier{
+        get{ return m_specialTierDef.GetAsFloat("speedUpMultiplier", 2); }
+    }    
+    public override float superBiteUpMultiplier{ 
+        get{ return m_specialTierDef.GetAsFloat("biteUpMultiplier", 2); }
+    }    
+    public override bool superInvincible{ 
+        get{ return m_specialTierDef.GetAsBool("invincible", true); }
+    }    
+    public override bool superInfiniteBoost{
+        get{ return m_specialTierDef.GetAsBool("infiniteBoost", true); }
+    }    
+    public override bool superEatEverything{ 
+        get{ return m_specialTierDef.GetAsBool("eatEverything", true); }
+    }    
+    public override float superModeDuration{ 
+        get{ return m_specialTierDef.GetAsFloat("modeDuration", 10); }
+    }
+    
     public override string gamePrefab {
         get{
             return m_specialTierDef.GetAsString("gamePrefab");
