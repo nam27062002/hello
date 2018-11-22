@@ -736,7 +736,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             }
         }
 
-        Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, Track_UserCurrencyToString(moneyCurrency), moneyPrice, amountBalance);
+        Track_PurchaseWithResourcesCompleted(EconomyGroupToString(economyGroup), itemID, 1, promotionType, moneyCurrency, moneyPrice, amountBalance);
     }
 
     /// <summary>
@@ -752,7 +752,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (economyGroup == EEconomyGroup.REWARD_RUN && Session_IsARoundRunning) {
             Session_AccumRewardInRun(moneyCurrencyCode, amountDelta, paid);
         } else {
-            Track_EarnResources(EconomyGroupToString(economyGroup), Track_UserCurrencyToString(moneyCurrencyCode), amountDelta, amountBalance, paid);
+            Track_EarnResources(EconomyGroupToString(economyGroup), moneyCurrencyCode, amountDelta, amountBalance, paid);
         }
     }
 
@@ -1385,12 +1385,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
 
     private void Track_PurchaseWithResourcesCompleted(string economyGroup, string itemID, int itemQuantity, string promotionType,
-        string moneyCurrency, float moneyPrice, int amountBalance) {
+        UserProfile.Currency currency, float moneyPrice, int amountBalance) {
+        string moneyCurrency = Track_UserCurrencyToString( currency );
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_PurchaseWithResourcesCompleted economyGroup = " + economyGroup + " itemID = " + itemID + " promotionType = " + promotionType +
                 " moneyCurrency = " + moneyCurrency + " moneyPrice = " + moneyPrice + " amountBalance = " + amountBalance);
         }
 
+        
         // HQ event
         HDTrackingEvent e = new HDTrackingEvent("custom.player.iap.secondaryStore");
         {
@@ -1421,19 +1423,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        // Send pc spent event
-        if ( moneyCurrency.Equals("HardCurrency") )
+        switch( currency )
         {
-            // Send event
-            GameServerManager.SharedInstance.PCSpent( amountBalance, (int)moneyPrice, economyGroup, PCFluctuationResponse);
+            case UserProfile.Currency.HARD:
+            {
+                // Send event
+                GameServerManager.SharedInstance.CurrencySpent( "hc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+            }break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS:
+            {
+                GameServerManager.SharedInstance.CurrencySpent( "gf", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+            }break;
         }
     }
 
-    private void Track_EarnResources(string economyGroup, string moneyCurrency, int amountDelta, int amountBalance, bool paid) {
+    private void Track_EarnResources(string economyGroup, UserProfile.Currency currency, int amountDelta, int amountBalance, bool paid) {
+        string moneyCurrency = Track_UserCurrencyToString( currency );
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_EarnResources economyGroup = " + economyGroup + " moneyCurrency = " + moneyCurrency + " moneyPrice = " + amountDelta + " amountBalance = " + amountBalance);
         }
-
         // Game event
         HDTrackingEvent e = new HDTrackingEvent("custom.eco.source");
         {
@@ -1448,15 +1456,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        // Send pc earn event
-        if (moneyCurrency.Equals("HardCurrency"))
+        switch( currency )
         {
-            // Send event
-            GameServerManager.SharedInstance.PCEarned( amountBalance,  amountDelta, economyGroup, paid, PCFluctuationResponse);
+            case UserProfile.Currency.HARD:
+            {
+                // Send event
+                GameServerManager.SharedInstance.CurrencyEarned( "hc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+            }break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS:
+            {
+                // Send event
+                GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+            }break;
         }
     }
 
-    private void PCFluctuationResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
+    private void CurrencyFluctuationResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
     {
         if (error != null){
             Debug.LogError(error.ToString());
@@ -2680,7 +2695,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             // TrackingManager is notified with all currencies earned during the run
             foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRound) {
                 if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
+                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), false);
                 }
             }
         }
@@ -2689,7 +2704,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             // TrackingManager is notified with all currencies earned during the run
             foreach (KeyValuePair<UserProfile.Currency, int> pair in Session_RewardsInRoundPaid) {
                 if (pair.Value > 0) {
-                    Track_EarnResources(economyGroupString, Track_UserCurrencyToString(pair.Key), pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
+                    Track_EarnResources(economyGroupString, pair.Key, pair.Value, (int)userProfile.GetCurrency(pair.Key), true);
                 }
             }
         }
