@@ -169,7 +169,17 @@ public abstract class IDragonData : IUISelectorItem {
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
     public abstract float petScale{ get; }
-        
+    
+        // supersize
+    public abstract float superSizeUpMultiplier{ get; }    
+    public abstract float superSpeedUpMultiplier{ get; }    
+    public abstract float superBiteUpMultiplier{ get; }    
+    public abstract bool superInvincible{ get; }    
+    public abstract bool superInfiniteBoost{ get; }    
+    public abstract bool superEatEverything{ get; }    
+    public abstract float superModeDuration{ get; }
+    
+    
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }
 	//------------------------------------------------------------------------//
