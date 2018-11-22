@@ -31,14 +31,16 @@ public class DragonSuperSize : MonoBehaviour {
 		m_eat = GetComponent<DragonEatBehaviour>();
 
 		DefinitionNode def = m_dragon.data.def;
+        IDragonData data = m_dragon.data;
 
-		m_sizeUpMultiplier = def.GetAsFloat("sizeUpMultiplier", 2);
-		m_speedUpMultiplier = def.GetAsFloat("speedUpMultiplier", 2);
-		m_biteUpMultiplier = def.GetAsFloat("biteUpMultiplier", 2);
-		m_invincible = def.GetAsBool("invincible", true);
-		m_infiniteBoost = def.GetAsBool("infiniteBoost", true);
-		m_eatEverything = def.GetAsBool("eatEverything", true);
-		m_modeDuration = def.GetAsFloat("modeDuration", 10);
+        m_sizeUpMultiplier = data.superSizeUpMultiplier;
+        m_speedUpMultiplier = data.superSpeedUpMultiplier;
+        m_biteUpMultiplier = data.superBiteUpMultiplier;
+        m_invincible = data.superInvincible;
+        m_infiniteBoost = data.superInfiniteBoost;
+        m_eatEverything = data.superEatEverything;
+        m_modeDuration = data.superModeDuration;
+        
 		m_timer = 0;
 
 		Messenger.AddListener(MessengerEvents.EARLY_ALL_HUNGRY_LETTERS_COLLECTED, OnEarlyLetters);
