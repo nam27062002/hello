@@ -23,8 +23,6 @@ public class FastLineRenderer : MonoBehaviour {
             float s = d.magnitude;
             d.Normalize();
 
-            Debug.DrawRay(m_points[i], d, Color.blue);
-
             m_3dSegments[i].position = m_points[i];
             m_3dSegments[i].localScale = new Vector3(m_size, m_size, s);
             m_3dSegments[i].rotation = Quaternion.LookRotation(d);
