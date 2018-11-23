@@ -664,6 +664,8 @@ public class LoadingSceneController : SceneController {
                 // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
                 ApplicationManager.CreateInstance();
 
+                LegalManager.CreateInstance();
+
                 AntiCheatsManager.CreateInstance();
 				                
                 if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)

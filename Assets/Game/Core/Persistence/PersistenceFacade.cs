@@ -639,12 +639,24 @@ public class PersistenceFacade : IBroadcastListener
         PopupManager.PopupMessage_Open(config);
     }   
 
-    private static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
+    public static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_SYNC_FAILED_NAME";
-        config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
-        config.MessageParams = new string[] { "" + errorCode };
+
+        // A different message is shown for this error code to address HDK-2489
+        if (errorCode == SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING)
+        {
+            config.MessageTid = "TID_SOCIAL_LOGIN_ERROR";
+            string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+            config.MessageParams = new string[] { platformName };            
+        }
+        else
+        {
+            config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
+            config.MessageParams = new string[] { "" + errorCode };
+        }
+
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
