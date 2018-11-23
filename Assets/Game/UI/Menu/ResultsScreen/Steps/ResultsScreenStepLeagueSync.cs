@@ -101,7 +101,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// [AOC] TODO!!
 		//HDTournamentManager tournament = m_event as HDTournamentManager;
 		//tournament.SendScore((int)tournament.GetRunScore());
-		UbiBCN.CoroutineManager.DelayedCall(() => { OnLeagueScoreSent(HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR); }, 1f);	// [AOC] TODO!! Simulate server response for now
+		UbiBCN.CoroutineManager.DelayedCall(() => { OnLeagueScoreSent(HDLiveDataManager.ComunicationErrorCodes.NO_ERROR); }, 1f);	// [AOC] TODO!! Simulate server response for now
 	}
 
 	//------------------------------------------------------------------------//
@@ -130,7 +130,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// The score request has been answered.
 	/// </summary>
 	/// <param name="_errorCode">Error code.</param>
-	private void OnLeagueScoreSent(HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnLeagueScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
 		m_busyPanel.Hide();
 

@@ -37,7 +37,7 @@ public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Only if run was not valid
-		return !HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
+		return !HDLiveDataManager.instance.m_tournament.WasLastRunValid();
 	}
 
 	/// <summary>

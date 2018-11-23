@@ -110,7 +110,7 @@ public class EventRewardScreen : MonoBehaviour {
 		m_sceneController.Clear();
 
 		// Store current event for faster access
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.instance.m_quest;
 
 		// Set initial state
 		m_step = Step.INIT;
@@ -351,8 +351,8 @@ public class EventRewardScreen : MonoBehaviour {
 				m_questManager.ClearEvent();
 
 				// Request new event data
-				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
-					HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveDataManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveDataManager.instance.RequestMyEvents(true);
 				}
 
 				// Save!

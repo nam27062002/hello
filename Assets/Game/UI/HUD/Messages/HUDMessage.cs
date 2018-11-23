@@ -621,7 +621,7 @@ public class HUDMessage : MonoBehaviour {
 			Image goalIcon = tr.GetComponent<Image>();
 			if ( goalIcon != null )
 			{
-				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				HDTournamentDefinition def = HDLiveDataManager.instance.m_tournament.data.definition as HDTournamentDefinition;
 				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 			}
 		}

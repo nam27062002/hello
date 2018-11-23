@@ -212,7 +212,7 @@ public abstract class HDLiveEventManager
     	{
             m_waitingForNewDefinition = true;
 	        m_shouldRequestDefinition = false;
-	        if ( HDLiveEventsManager.TEST_CALLS )
+	        if ( HDLiveDataManager.TEST_CALLS )
 	        {
 				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_definition.json", RequestEventDefinitionResponse));
 	        }
@@ -229,17 +229,17 @@ public abstract class HDLiveEventManager
     protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse)
 	{
 		yield return new WaitForSeconds(0.5f);
-		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
+		GameServerManager.ServerResponse response = HDLiveDataManager.CreateTestResponse( _fileName );
 		_testResponse(null, response);
 	}
 
     protected virtual void RequestEventDefinitionResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ResponseLog("Definition", _error, _response);
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		HDLiveDataManager.ResponseLog("Definition", _error, _response);
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			int eventId = responseJson["code"].AsInt;
             if (data != null && data.m_eventId == eventId)
@@ -260,7 +260,7 @@ public abstract class HDLiveEventManager
             }
 		}
         m_waitingForNewDefinition = false;
-		Messenger.Broadcast<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
+		Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }
 
 	public virtual List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
@@ -273,7 +273,7 @@ public abstract class HDLiveEventManager
 		if (!m_requestingRewards)
 		{
 			m_requestingRewards = true;
-			if ( HDLiveEventsManager.TEST_CALLS )
+			if ( HDLiveDataManager.TEST_CALLS )
 	        {
 				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
 	        }
@@ -286,10 +286,10 @@ public abstract class HDLiveEventManager
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("Rewards", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("Rewards", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			if (data != null)
             {
@@ -302,14 +302,14 @@ public abstract class HDLiveEventManager
 		}
 		m_requestingRewards = false;
 
-		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, outErr);
+		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, data.m_eventId, outErr);
     }
 
 
 	public virtual void FinishEvent()
 	{
 		// Tell server
-		if ( HDLiveEventsManager.TEST_CALLS )
+		if ( HDLiveDataManager.TEST_CALLS )
         {
 			ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_finish.json", FinishEventResponse));
         }
@@ -322,10 +322,10 @@ public abstract class HDLiveEventManager
 
 	protected virtual void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ResponseLog("Finish", _error, _response);
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ResponseLog("Finish", _error, _response);
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			if ( responseJson.ContainsKey("code") )
 			{
@@ -333,12 +333,12 @@ public abstract class HDLiveEventManager
 					data.m_state = HDLiveEventData.State.FINALIZED;		
 			}
 		}
-		Messenger.Broadcast<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
+		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
     }
 
 	public void GetRefund()
 	{
-		if ( HDLiveEventsManager.TEST_CALLS )
+		if ( HDLiveDataManager.TEST_CALLS )
 		{
 			
 		}
@@ -350,27 +350,27 @@ public abstract class HDLiveEventManager
 
 	private void GetRefundResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
 	{
-		HDLiveEventsManager.ResponseLog("Refund", _error, _response);
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		HDLiveDataManager.ResponseLog("Refund", _error, _response);
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
         switch (outErr) {
-            case HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR:
+            case HDLiveDataManager.ComunicationErrorCodes.NO_ERROR:
             Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
             UsersManager.currentUser.PushReward(r);
             FinishEvent();
             ClearEvent();
             break;
 
-            case HDLiveEventsManager.ComunicationErrorCodes.NOTHING_PENDING:            
+            case HDLiveDataManager.ComunicationErrorCodes.NOTHING_PENDING:            
             FinishEvent();
             ClearEvent();
             break;
         }
         // Get My Events
         // Request new event data
-        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
-            HDLiveEventsManager.instance.RequestMyEvents(true);
+        if(!HDLiveDataManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveDataManager.instance.RequestMyEvents(true);
         }
 	}
 
@@ -381,8 +381,8 @@ public abstract class HDLiveEventManager
         ClearEvent();
         // Get My Events
         // Request new event data
-        if(!HDLiveEventsManager.TEST_CALLS) {       // Would read the event again from the json xD
-            HDLiveEventsManager.instance.RequestMyEvents(true);
+        if(!HDLiveDataManager.TEST_CALLS) {       // Would read the event again from the json xD
+            HDLiveDataManager.instance.RequestMyEvents(true);
         }   
     }
     

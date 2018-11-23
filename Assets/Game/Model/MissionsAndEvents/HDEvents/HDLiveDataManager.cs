@@ -20,7 +20,7 @@ using System.IO;
 /// <summary>
 /// Global singleton manager for global events.
 /// </summary>
-public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
+public class HDLiveDataManager : Singleton<HDLiveDataManager>
 {
 
 
@@ -75,7 +75,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
         // Avoid using dictionaries when possible
     private List<string> m_types;
-    private List<HDLiveEventManager> m_managers;
+    private List<HDLiveDataController> m_managers;
 	protected long m_lastMyEventsRequestTimestamp = 0;
 
     public const long CACHE_TIMEOUT_MS = 1000 * 60 * 60 * 24 * 7;	// 7 days timeout
@@ -92,36 +92,36 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public static readonly bool TEST_CALLS = false;
 #endif
 
-    public HDLiveEventsManager()
+    public HDLiveDataManager()
 	{
         // For testing purposes
         //
         m_types = new List<string>();
-        m_managers = new List<HDLiveEventManager>();
+        m_managers = new List<HDLiveDataController>();
 
-        RegisterManager(m_tournament);
-        RegisterManager(m_quest);
-        RegisterManager(m_passive);
-        RegisterManager(m_league);
+        RegisterController(m_tournament);
+        RegisterController(m_quest);
+        RegisterController(m_passive);
+        RegisterController(m_league);
 
         //
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
 
 	}
 
-    private void RegisterManager(HDLiveEventManager _manager) {
-        m_types.Add(_manager.m_type);
+    private void RegisterController(HDLiveDataController _manager) {
+        m_types.Add(_manager.type);
         m_managers.Add(_manager);
     }
 
-    ~HDLiveEventsManager()
+    ~HDLiveDataManager()
     {
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 		Messenger.RemoveListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
     }
 
@@ -172,7 +172,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         }
 	}
 
-	public void SaveEventsToCacheWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err )
+	public void SaveEventsToCacheWithParams(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err )
 	{
 		SaveEventsToCache();
 	}
@@ -219,18 +219,18 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	protected IEnumerator DelayedCall( string _fileName, TestResponse _testResponse )
 	{
 		yield return new WaitForSeconds(0.1f);
-		GameServerManager.ServerResponse response = HDLiveEventsManager.CreateTestResponse( _fileName );
+		GameServerManager.ServerResponse response = HDLiveDataManager.CreateTestResponse( _fileName );
 		_testResponse(null, response);
 	}
 
 
-	public static SimpleJSON.JSONNode ResponseErrorCheck(FGOL.Server.Error _error, GameServerManager.ServerResponse _response, out HDLiveEventsManager.ComunicationErrorCodes outErr)
+	public static SimpleJSON.JSONNode ResponseErrorCheck(FGOL.Server.Error _error, GameServerManager.ServerResponse _response, out HDLiveDataManager.ComunicationErrorCodes outErr)
 	{
 		SimpleJSON.JSONNode ret = null;
 
 		if (_error == null)
         {
-			outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
+			outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
 			if (_response != null && _response["response"] != null)
         	{
 				ret = SimpleJSON.JSONNode.Parse(_response["response"] as string);
@@ -239,48 +239,48 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 					if ( ret.ContainsKey("errorCode") )
             		{
             			// Translate error code
-						outErr = HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR;
+						outErr = HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR;
 						int errorInt = ret["errorCode"];
 						switch( errorInt )
 						{
-							case 601: outErr = HDLiveEventsManager.ComunicationErrorCodes.LDATA_NOT_FOUND;break;
-							case 602: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID;break;
-							case 603: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID;break;
-							case 604: outErr = HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID;break;
-							case 605: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_VALID_TOURNAMENT;break;
-							case 606: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_TOURNAMENT;break;
-							case 607: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND;break;
-							case 608: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID;break;
-							case 609: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_DISABLED;break;
-							case 610: outErr = HDLiveEventsManager.ComunicationErrorCodes.UNEXPECTED_ERROR;break;
-							case 611: outErr = HDLiveEventsManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
-							case 612: outErr = HDLiveEventsManager.ComunicationErrorCodes.ELO_NOT_FOUND;break;
-							case 613: outErr = HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
-							case 614: outErr = HDLiveEventsManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS;break;
-							case 615: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
+							case 601: outErr = HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND;break;
+							case 602: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID;break;
+							case 603: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID;break;
+							case 604: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID;break;
+							case 605: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_VALID_TOURNAMENT;break;
+							case 606: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_TOURNAMENT;break;
+							case 607: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND;break;
+							case 608: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID;break;
+							case 609: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_DISABLED;break;
+							case 610: outErr = HDLiveDataManager.ComunicationErrorCodes.UNEXPECTED_ERROR;break;
+							case 611: outErr = HDLiveDataManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA;break;
+							case 612: outErr = HDLiveDataManager.ComunicationErrorCodes.ELO_NOT_FOUND;break;
+							case 613: outErr = HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
+							case 614: outErr = HDLiveDataManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS;break;
+							case 615: outErr = HDLiveDataManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
 							// case 616: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
-							case 617: outErr = HDLiveEventsManager.ComunicationErrorCodes.MATCHMAKING_ERROR;break;
-							case 618: outErr = HDLiveEventsManager.ComunicationErrorCodes.QUEST_IS_OVER;break;
-							case 619: outErr = HDLiveEventsManager.ComunicationErrorCodes.IS_NOT_A_QUEST;break;
-                            case 620: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_STILL_ACTIVE;break;
-                            case 621: outErr = HDLiveEventsManager.ComunicationErrorCodes.NOTHING_PENDING; break;
-                            case 622: outErr = HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED; break;
+							case 617: outErr = HDLiveDataManager.ComunicationErrorCodes.MATCHMAKING_ERROR;break;
+							case 618: outErr = HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER;break;
+							case 619: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_QUEST;break;
+                            case 620: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_STILL_ACTIVE;break;
+                            case 621: outErr = HDLiveDataManager.ComunicationErrorCodes.NOTHING_PENDING; break;
+                            case 622: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED; break;
                         }
             		}
             	}
             	else
             	{
-					outErr = HDLiveEventsManager.ComunicationErrorCodes.RESPONSE_NOT_VALID;
+					outErr = HDLiveDataManager.ComunicationErrorCodes.RESPONSE_NOT_VALID;
             	}
         	}
         	else
         	{
-				outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE;
+				outErr = HDLiveDataManager.ComunicationErrorCodes.NO_RESPONSE;
         	}
         }
         else
         {
-			outErr = HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR;
+			outErr = HDLiveDataManager.ComunicationErrorCodes.NET_ERROR;
         }
         return ret;
 	}
@@ -317,18 +317,18 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 			m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 	        if ( TEST_CALLS )
 	        {
-				ApplicationManager.instance.StartCoroutine( DelayedCall("hd_live_events.json", MyEventsResponse));
+				ApplicationManager.instance.StartCoroutine( DelayedCall("hd_live_events.json", MyLideDataResponse));
 	        }
 	        else
 	        {
-	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyEventsResponse);    
+	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyLideDataResponse);    
 	        }
 	        ret = true;
         }
         return ret;
     }
 
-	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
+    private void MyLideDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
 		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;

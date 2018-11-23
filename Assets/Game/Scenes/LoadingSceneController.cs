@@ -700,7 +700,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveEventsManager.CreateInstance(true);
+                HDLiveDataManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
@@ -777,7 +777,7 @@ public class LoadingSceneController : SceneController {
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
 
 				// Live events cache
-				HDLiveEventsManager.instance.LoadEventsFromCache();
+				HDLiveDataManager.instance.LoadEventsFromCache();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 

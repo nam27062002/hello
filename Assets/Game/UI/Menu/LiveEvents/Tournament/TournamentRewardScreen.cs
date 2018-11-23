@@ -112,7 +112,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 			m_sceneController.Clear();
 
 			// Store current event for faster access
-			m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+			m_tournamentManager = HDLiveDataManager.instance.m_tournament;
 			m_tournamentData = m_tournamentManager.data as HDTournamentData;
 			m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 
@@ -301,8 +301,8 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_tournamentManager.ClearEvent();
 
 				// Request new event data
-				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
-					HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveDataManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveDataManager.instance.RequestMyEvents(true);
 				}
 
 				// Save!

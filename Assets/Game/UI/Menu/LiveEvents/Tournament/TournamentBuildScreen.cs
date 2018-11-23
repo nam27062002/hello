@@ -66,11 +66,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	private void OnEnable() {
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 
 	private void OnDisable() {
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 		
 
@@ -83,7 +83,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	public void Refresh() {
 		m_mode = Mode.Build;
 
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.instance.m_tournament;
 		m_data = m_tournament.data as HDTournamentData;
 		m_definition = m_data.definition as HDTournamentDefinition;
 
@@ -193,7 +193,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		if (!m_definition.m_refund) {
 			if (m_definition.timeToEnd.TotalSeconds <= 0f) {
 				if (!m_waitingRewardsData) {
-					Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+					Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 
 					// Request rewards data and wait for it to be loaded
 					m_tournament.RequestRewards();
@@ -245,7 +245,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnHidePreAnimation() {
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	public void OnEditPetsToogle() {
@@ -291,7 +291,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				BusyScreen.Show(this);
 
 				// Prepare to wait for the callback
-				Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
 				// Send Entrance
 				m_tournament.SendEntrance("free", 0);
@@ -311,17 +311,17 @@ public class TournamentBuildScreen : MonoBehaviour {
 		BusyScreen.Show(this);
 
 		// Prepare to wait for the callback
-		Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+		Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 
 		// Send Entrance
 		m_tournament.SendEntrance( m_definition.m_entrance.m_type, m_definition.m_entrance.m_amount );
 	}
 
-	void OnTournamentEntrance(HDLiveEventsManager.ComunicationErrorCodes err, string type, long amount) {
+	void OnTournamentEntrance(HDLiveDataManager.ComunicationErrorCodes err, string type, long amount) {
 		BusyScreen.Hide(this);
 
 		switch (err)  {
-			case HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR: {
+			case HDLiveDataManager.ComunicationErrorCodes.NO_ERROR: {
 				// Pay and go to play
 				if ( type != "free" )
 				{
@@ -338,31 +338,31 @@ public class TournamentBuildScreen : MonoBehaviour {
 					InstanceManager.menuSceneController.OnPlayButton();
 				}
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR: {
+			case HDLiveDataManager.ComunicationErrorCodes.NET_ERROR: {
 				SendFeedback("TID_NET_ERROR");
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.RESPONSE_NOT_VALID:
-			case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE: 
+			case HDLiveDataManager.ComunicationErrorCodes.RESPONSE_NOT_VALID:
+			case HDLiveDataManager.ComunicationErrorCodes.NO_RESPONSE: 
 			{
 				SendFeedback("TID_NO_RESPONSE");
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID: 
-			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID:
+			case HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID: 
+			case HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID:
 			{
 				SendFeedback("TID_FAIL_TO_PAY_ENTRANCE");
 				// Ask for the definition?
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
+			case HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID:
 			{
 				SendFeedback("TID_TOURNAMENT_FAIL_TO_PAY_ENTRANCE");
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
+			case HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER:
 			{
 				SendFeedback("TID_TOURNAMENT_OVER");
 				m_tournament.RequestDefinition(true);
 
 			}break;
-			case HDLiveEventsManager.ComunicationErrorCodes.OTHER_ERROR: 
+			case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR: 
 			default:
 			{
 				// How to know if free was not valid??
@@ -370,7 +370,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			}break;
 		}
 
-		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
+		Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes, string, long>(MessengerEvents.TOURNAMENT_ENTRANCE, OnTournamentEntrance);
 	}
 
 	private void SendFeedback(string tid) {
@@ -390,7 +390,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		InstanceManager.menuSceneController.OnPlayButton();
 	}
 
-	private void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err) {
+	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
             InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
 		}
@@ -400,7 +400,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	/// <summary>
 	/// We got a response on the rewards request.
 	/// </summary>
-	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnRewardsResponse(int _eventId, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Ignore if we weren't waiting for rewards!
 		if(!m_waitingRewardsData) return;
 		m_waitingRewardsData = false;
@@ -409,7 +409,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		BusyScreen.Hide(this);
 
 		// Success?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
@@ -425,9 +425,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
 
              // Finish tournament if 607 / 608 / 622
-            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+            if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
                 m_tournament.data.m_eventId == _eventId
                 )
                 {

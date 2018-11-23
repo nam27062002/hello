@@ -60,9 +60,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
+		if ( !HDLiveDataManager.instance.m_quest.EventExists() ) return;
 
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.instance.m_quest;
 		HDQuestDefinition questDef = questManager.m_questDefinition;
 
 		// Update timer

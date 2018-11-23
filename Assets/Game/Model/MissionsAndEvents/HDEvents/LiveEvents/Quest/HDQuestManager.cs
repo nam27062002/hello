@@ -129,7 +129,7 @@ public class HDQuestManager : HDLiveEventManager{
     	if ( _force || ShouldRequestProgress() )	
     	{
 			m_lastProgressTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-	        if ( HDLiveEventsManager.TEST_CALLS )
+	        if ( HDLiveDataManager.TEST_CALLS )
 	        {
 				ApplicationManager.instance.StartCoroutine( DelayedCall("quest_get_progress.json", RequestProgressResponse));
 	        }
@@ -144,10 +144,10 @@ public class HDQuestManager : HDLiveEventManager{
 
     protected virtual void RequestProgressResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("RequestProgress", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("RequestProgress", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
             HDQuestData questData = data as HDQuestData;
             if (questData != null )
@@ -172,7 +172,7 @@ public class HDQuestManager : HDLiveEventManager{
 		m_lastContributionViewAd = _viewAD;
 
 		Debug.Log("<color=magenta>REGISTER SCORE</color>");
-		if ( HDLiveEventsManager.TEST_CALLS )
+		if ( HDLiveDataManager.TEST_CALLS )
         {
 			ApplicationManager.instance.StartCoroutine( DelayedCall("quest_add_progress.json", OnContributeResponse));
 		}
@@ -184,10 +184,10 @@ public class HDQuestManager : HDLiveEventManager{
 
 	protected virtual void OnContributeResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("Contribute", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("Contribute", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
             HDQuestData questData = data as HDQuestData;
             if (questData != null )
@@ -214,7 +214,7 @@ public class HDQuestManager : HDLiveEventManager{
             }	
 		}
 
-		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, outErr);
+		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, outErr);
 		Messenger.Broadcast(MessengerEvents.QUEST_SCORE_UPDATED);
 
     }

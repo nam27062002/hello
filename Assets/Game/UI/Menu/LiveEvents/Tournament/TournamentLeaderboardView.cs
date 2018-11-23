@@ -62,7 +62,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		ToggleLoading(true);
 
 		// Request leaderboard!
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.instance.m_tournament;
 		if ( m_tournament.EventExists() )
 		{
 			m_tournament.RequestLeaderboard();
@@ -89,7 +89,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get current tournament and init some aux vars
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.instance.m_tournament;
 		HDTournamentData tournamentData = (HDTournamentData)m_tournament.data;
 		HDTournamentDefinition tournamentDef = tournamentData.definition as HDTournamentDefinition;
 		int playerRank = (int)tournamentData.m_rank;

@@ -241,7 +241,7 @@ public class DragonPlayer : MonoBehaviour {
     		// Get data from dragon manager
     		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
-    			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
+    			if ( HDLiveDataManager.instance.m_tournament.UsingProgressionDragon() )
     			{
     				m_data = DragonManager.GetDragonData(m_sku);
     			}

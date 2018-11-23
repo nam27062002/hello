@@ -81,7 +81,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 		List<string> pets = null;
 
 		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+			HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
 			currentDragon = DragonManager.GetDragonData(tournament.GetToUseDragon());
 			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
 			pets = tournament.GetToUsePets();

@@ -43,7 +43,7 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 		if(syncStep != null && syncStep.hasBeenDismissed) return false;
 
 		// Only if run was valid
-		return HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
+		return HDLiveDataManager.instance.m_tournament.WasLastRunValid();
 	}
 
 	/// <summary>
@@ -51,7 +51,7 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	/// </summary>
 	override protected void DoInit() {
 		// Run score text
-		HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+		HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
 		m_runScoreText.text = tournament.FormatScore(tournament.GetRunScore());
 
 		// Each tournament has a different score item

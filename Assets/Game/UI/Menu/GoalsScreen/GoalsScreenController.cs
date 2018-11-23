@@ -52,7 +52,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_quest = HDLiveEventsManager.instance.m_quest;
+		m_quest = HDLiveDataManager.instance.m_quest;
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 

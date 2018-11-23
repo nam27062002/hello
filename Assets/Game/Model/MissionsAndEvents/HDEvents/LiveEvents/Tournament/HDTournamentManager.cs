@@ -112,7 +112,7 @@ public class HDTournamentManager : HDLiveEventManager {
 			m_isLeaderboardReady = false;
 			//m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();	// [AOC] If the leaderboard fails, we won't be requesting it again until the caching period has expired!
 
-	        if ( HDLiveEventsManager.TEST_CALLS )
+	        if ( HDLiveDataManager.TEST_CALLS )
 	        {
 				ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_leaderboard.json", LeaderboardResponse));
 	        }
@@ -137,10 +137,10 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void LeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("Leaderboard", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("Leaderboard", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			HDTournamentData tournamentData = m_data as HDTournamentData;
             if (tournamentData != null )
@@ -164,7 +164,7 @@ public class HDTournamentManager : HDLiveEventManager {
     {
 		m_entranceSent = _type;
 		m_entranceAmountSent = _amount;
-		if ( HDLiveEventsManager.TEST_CALLS )
+		if ( HDLiveDataManager.TEST_CALLS )
         {
 			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_entrance.json", EntranceResponse));
         }
@@ -177,21 +177,21 @@ public class HDTournamentManager : HDLiveEventManager {
 
 	protected virtual void EntranceResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("Entrance", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("Entrance", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( responseJson != null && responseJson.ContainsKey("lastFreeTournamentRun") )
 		{
 			m_tournamentData.lastFreeEntranceTimestamp = responseJson["lastFreeTournamentRun"].AsLong;
 			// Save cache?
 		}
-		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
+		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes, string, long> (MessengerEvents.TOURNAMENT_ENTRANCE, outErr, m_entranceSent, m_entranceAmountSent);
     }
 
 
     public void SendScore(int _score)
     {
-        if (HDLiveEventsManager.TEST_CALLS)
+        if (HDLiveDataManager.TEST_CALLS)
         {
 			ApplicationManager.instance.StartCoroutine( DelayedCall("tournament_set_score.json", SetScoreResponse));
         }
@@ -215,10 +215,10 @@ public class HDTournamentManager : HDLiveEventManager {
 
     protected virtual void SetScoreResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
-		HDLiveEventsManager.ComunicationErrorCodes outErr = HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR;
-		HDLiveEventsManager.ResponseLog("SetScore", _error, _response);
-		SimpleJSON.JSONNode responseJson = HDLiveEventsManager.ResponseErrorCheck(_error, _response, out outErr);
-		if ( outErr == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+		HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+		HDLiveDataManager.ResponseLog("SetScore", _error, _response);
+		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
 			if (m_tournamentData.m_state == HDLiveEventData.State.NOT_JOINED)
 			{
@@ -231,7 +231,7 @@ public class HDTournamentManager : HDLiveEventManager {
 			m_lastLeaderboardTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 		}
 
-		Messenger.Broadcast<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
+		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
     }
 
 #endregion
@@ -283,7 +283,7 @@ public class HDTournamentManager : HDLiveEventManager {
 		{
 			m_runWasValid = false;
 			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-			HDTournamentData tournamentData = HDLiveEventsManager.instance.m_tournament.data as HDTournamentData;
+			HDTournamentData tournamentData = HDLiveDataManager.instance.m_tournament.data as HDTournamentData;
 			HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
 			m_runningGoal = def.m_goal;
 

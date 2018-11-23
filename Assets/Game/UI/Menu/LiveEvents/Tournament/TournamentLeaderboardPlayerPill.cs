@@ -80,7 +80,7 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 
 
         // Set score
-        HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+        HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
         m_scoreText.text = tournament.FormatScore(data.leaderboardLine.m_score);
 
         if (tournament.IsTimeBasedScore()) {

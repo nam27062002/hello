@@ -55,7 +55,7 @@ public class PassiveEventIcon : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get tournament manager
-		m_passiveEventManager = HDLiveEventsManager.instance.m_passive;
+		m_passiveEventManager = HDLiveDataManager.instance.m_passive;
 	}
 
 	/// <summary>
@@ -66,8 +66,8 @@ public class PassiveEventIcon : MonoBehaviour {
 		RefreshData();
 
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -76,8 +76,8 @@ public class PassiveEventIcon : MonoBehaviour {
 	/// </summary>
 	void OnDestroy() {
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -312,7 +312,7 @@ public class PassiveEventIcon : MonoBehaviour {
 	/// <summary>
 	/// We got an update on the tournament state.
 	/// </summary>
-	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnStateUpdatedWithParams(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		RefreshData();
 	}
 

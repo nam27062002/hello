@@ -77,7 +77,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			return false;
 		}
 
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.instance.m_quest;
 
 		if (	questManager.EventExists() &&
 				questManager.IsRunning() && 
@@ -97,7 +97,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Get event data!
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.instance.m_quest;
 
 		// Make sure the number animator respect the event's formatting
 		m_runScoreText.CustomTextSetter = OnSetScoreText;
@@ -111,7 +111,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Make sure we have the latest event data
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.instance.m_quest;
 
 		// Subscribe to external events
 		// Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);

@@ -54,7 +54,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
-        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 
 	/// <summary>
@@ -63,12 +63,12 @@ public class TournamentInfoScreen : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
-        Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+        Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 	}
 
-    private void OnNewDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _error) {
+    private void OnNewDefinition(int _eventID, HDLiveDataManager.ComunicationErrorCodes _error) {
         if (m_tournament != null && m_tournament.data.m_eventId == _eventID) {
-            if (_error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+            if (_error == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
                 m_waitingDefinition = !m_tournament.data.definition.initialized;
                 Refresh();
             } else {
@@ -81,7 +81,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 	/// Refresh all the info in the screen.
 	/// </summary>
 	void Refresh() {
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.instance.m_tournament;
 
         if (m_waitingDefinition) {
             m_infoGroup.SetActive(false);
@@ -163,7 +163,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 				seconds = 0f;
 
 				if (!m_waitingRewardsData) {
-					Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+					Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 
 					// Request rewards data and wait for it to be loaded
 					m_tournament.RequestRewards();
@@ -209,14 +209,14 @@ public class TournamentInfoScreen : MonoBehaviour {
     /// </summary>
     public void OnBackButton() {
         SceneController.SetMode(SceneController.Mode.DEFAULT);
-        HDLiveEventsManager.instance.SwitchToQuest();
+        HDLiveDataManager.instance.SwitchToQuest();
     }
 
 	/// <summary>
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
-        m_tournament = HDLiveEventsManager.instance.m_tournament;
+        m_tournament = HDLiveDataManager.instance.m_tournament;
         m_waitingDefinition = m_tournament.isWaitingForNewDefinition || !m_tournament.data.definition.initialized;
 
 		Refresh();
@@ -228,13 +228,13 @@ public class TournamentInfoScreen : MonoBehaviour {
 	}
 
 	public void OnHidePreAnimation() {
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
 	/// We got a response on the rewards request.
 	/// </summary>
-	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnRewardsResponse(int _eventId, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Ignore if we weren't waiting for rewards!
 		if(!m_waitingRewardsData) return;
 		m_waitingRewardsData = false;
@@ -243,7 +243,7 @@ public class TournamentInfoScreen : MonoBehaviour {
 		BusyScreen.Hide(this);
 
 		// Success?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
@@ -259,9 +259,9 @@ public class TournamentInfoScreen : MonoBehaviour {
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
 
              // Finish tournament if 607 / 608 / 622
-            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+            if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
                 m_tournament.data.m_eventId == _eventId
                 )
                 {

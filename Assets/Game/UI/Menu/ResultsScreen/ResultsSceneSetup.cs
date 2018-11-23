@@ -159,7 +159,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
 		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+			HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
 			m_dragonSlot.LoadDragon(tournament.GetToUseDragon(), tournament.GetToUseSkin());
 		} else {
 			m_dragonSlot.LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);

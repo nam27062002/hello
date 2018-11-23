@@ -60,10 +60,10 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get tournament manager
-		m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+		m_tournamentManager = HDLiveDataManager.instance.m_tournament;
         Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -80,8 +80,8 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -255,7 +255,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
                 {
             		// Change game mode
     	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
-        	    	HDLiveEventsManager.instance.SwitchToTournament();
+        	    	HDLiveDataManager.instance.SwitchToTournament();
     	
         	    	// Send Tracking event
             		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
@@ -274,7 +274,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
         if (m_waitingRewardsData) return;
 
         // if info is from cache wait to recieve definitions!
-        if ( HDLiveEventsManager.instance.m_cacheInfo )
+        if ( HDLiveDataManager.instance.m_cacheInfo )
         {
             m_waitingDefinition = true;
             m_tournamentManager.RequestDefinition(true);
@@ -296,7 +296,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// We got a response on the rewards request.
 	/// </summary>
-	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnRewardsResponse(int _eventId, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Ignore if we weren't waiting for rewards!
 		if(!m_waitingRewardsData) return;
 		m_waitingRewardsData = false;
@@ -305,7 +305,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		BusyScreen.Hide(this);
 
 		// Success?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
@@ -320,9 +320,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
 
              // Finish tournament if 607 / 608 / 622
-            if ( (_errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
-                _errorCode == HDLiveEventsManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+            if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
                 m_tournamentManager.data.m_eventId == _eventId
                 )
                 {
@@ -335,12 +335,12 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// <summary>
 	/// We got an update on the tournament state.
 	/// </summary>
-	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnStateUpdatedWithParams(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		RefreshData();
         if ( m_waitingDefinition && m_waitingRewardsData )
         {
             m_waitingDefinition = false;
-            if ( _error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+            if ( _error == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
             {
                 // Request rewards data and wait for it to be loaded
                 m_tournamentManager.RequestRewards();

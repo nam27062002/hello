@@ -54,9 +54,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 
 	void Start(){
-		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		if ( HDLiveDataManager.instance.ShouldRequestMyEvents() )
 		{
-			HDLiveEventsManager.instance.RequestMyEvents();
+			HDLiveDataManager.instance.RequestMyEvents();
 		}
 	}
 
@@ -580,7 +580,7 @@ public class MenuDragonScreenController : MonoBehaviour {
     		// Do it as well if the event is pending reward collection
     		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
     		{
-    			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+    			HDQuestManager quest = HDLiveDataManager.instance.m_quest;
     			if ( quest.EventExists() )	
     			{
     				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())

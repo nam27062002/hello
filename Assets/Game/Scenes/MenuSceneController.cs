@@ -170,9 +170,9 @@ public class MenuSceneController : SceneController {
 
 		// Request latest global event data
 		// GlobalEventManager.RequestCurrentEventData();
-		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		if ( HDLiveDataManager.instance.ShouldRequestMyEvents() )
 		{
-			HDLiveEventsManager.instance.RequestMyEvents();
+			HDLiveDataManager.instance.RequestMyEvents();
 		}
 
 		// wait one tick
