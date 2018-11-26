@@ -109,10 +109,12 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
+			Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
 		} else {
 			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
+			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
 		}
 	}
 

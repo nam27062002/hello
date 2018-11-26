@@ -155,6 +155,11 @@ namespace Metagame {
 					return CreateTypeSkin(_data.sku, _source);
 				}
 
+				// Dragon reward - ignoring amount (dragons can only be rewarded once)
+				case RewardDragon.TYPE_CODE: {
+					return CreateTypeDragon(_data.sku, _source);
+				}
+
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
 					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
@@ -179,6 +184,9 @@ namespace Metagame {
 
 		public static RewardSkin CreateTypeSkin(string _sku, string _source)			{ return new RewardSkin(_sku, _source); }
 		public static RewardSkin CreateTypeSkin(DefinitionNode _def, string _source)	{ return new RewardSkin(_def, _source); }
+
+		public static RewardDragon CreateTypeDragon(string _sku, string _source) 			{ return new RewardDragon(_sku, _source); }
+		public static RewardDragon CreateTypeDragon(DefinitionNode _def, string _source) 	{ return new RewardDragon(_def, _source); }
 
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
 		#endregion

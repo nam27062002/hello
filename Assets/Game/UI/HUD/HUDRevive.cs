@@ -45,6 +45,7 @@ public class HUDRevive : MonoBehaviour {
 
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
+	private bool m_revived = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -106,6 +107,9 @@ public class HUDRevive : MonoBehaviour {
 	/// Performs the revive logic
 	/// </summary>
 	private void DoRevive( DragonPlayer.ReviveReason reason ) {
+		// Control flag
+		m_revived = true;
+
 		// Revive!
 		InstanceManager.player.ResetStats(true, reason);
 	}
@@ -119,6 +123,9 @@ public class HUDRevive : MonoBehaviour {
 	public void OnRevive() {
 		// Make sure timer hasn't finished!
 		if(m_timer.IsFinished()) return;
+
+		// Prevent button spamming!
+		if(m_revived) return;
 
 		// Perform transaction
 		// Start purchase flow
@@ -215,6 +222,9 @@ public class HUDRevive : MonoBehaviour {
 
 		// Reset timer
 		m_timer.Start(duration * 1000);
+
+		// Reset revive flag
+		m_revived = false;
 
 		// Slow motion
 		Time.timeScale = 0.25f;

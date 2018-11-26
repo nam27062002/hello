@@ -18,7 +18,7 @@ using Assets.Code.Game.Currents;
 /// <summary>
 /// Main control of the dragon movement.
 /// </summary>
-public class DragonMotion : MonoBehaviour, IMotion {
+public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -433,8 +433,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_suction = m_eatBehaviour.suction;
 
         RegionManager.Init();
-        m_regionManager = RegionManager.Instance;        
-        
+        m_regionManager = RegionManager.Instance;
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -461,15 +461,29 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
+
+
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnGameAreaEnter();
+            }break;
+        }
+    }
+
 
 	private void PnPDied()
 	{

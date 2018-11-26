@@ -17,7 +17,7 @@ using System.Linq;
 /// <summary>
 /// Tracker for score.
 /// </summary>
-public class TrackerFireRush : TrackerBase {
+public class TrackerFireRush : TrackerBase, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -26,7 +26,7 @@ public class TrackerFireRush : TrackerBase {
 	/// </summary>
 	public TrackerFireRush() {
 		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 
 	/// <summary>
@@ -44,12 +44,24 @@ public class TrackerFireRush : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
 		// Call parent
 		base.Clear();
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFireRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// Localizes and formats the description according to this tracker's type
 	/// (i.e. "Eat 52 birds", "Dive 500m", "Survive 10 minutes").

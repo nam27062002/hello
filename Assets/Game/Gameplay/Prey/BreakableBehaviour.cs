@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BreakableBehaviour : MonoBehaviour 
+public class BreakableBehaviour : MonoBehaviour, IBroadcastListener 
 {	
 	[SerializeField] private bool m_isBlocker = false;
 	[SerializeField] private bool m_unbreakableBlocker = false;
@@ -42,12 +42,24 @@ public class BreakableBehaviour : MonoBehaviour
 		if (m_view == null)
 			m_view = transform.Find("view");
 
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+        }
+    }
+    
 
 	void CreatePool() {
 		m_onBreakParticle.CreatePool();

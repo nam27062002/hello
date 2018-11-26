@@ -19,19 +19,19 @@ public enum MessengerEvents {
 	SCENE_LOADED,			// params: string _sceneName
 
 	// Popups Management
-	POPUP_CREATED,			// params: PopupController _popup
-	POPUP_OPENED,			// params: PopupController _popup
-	POPUP_CLOSED,			// params: PopupController _popup
-	POPUP_DESTROYED,		// params: PopupController _popup
+	// POPUP_CREATED,			// params: PopupController _popup
+	// POPUP_OPENED,			// params: PopupController _popup
+	// POPUP_CLOSED,			// params: PopupController _popup
+	// POPUP_DESTROYED,		// params: PopupController _popup
 
 	// Screen Navigation System
 	// [AOC] Triggered at the start of the animation, parameters englobed in a custom class:
 	NAVIGATION_SCREEN_CHANGED,		// params: NavigationScreenSystem.ScreenChangedEvent _eventData
 
 	// Rules and localization
-	LANGUAGE_CHANGED,		// no params
-	FONT_CHANGE_STARTED,	// no params
-	FONT_CHANGE_FINISHED,	// no params
+	// LANGUAGE_CHANGED,		// no params
+	// FONT_CHANGE_STARTED,	// no params
+	// FONT_CHANGE_FINISHED,	// no params
 	DEFINITIONS_LOADED,		// no params
 
 	// Tech
@@ -71,29 +71,29 @@ public enum MessengerEvents {
 
 	// Profile events
 	PROFILE_CURRENCY_CHANGED,	// params: UserProfile.Currency _currency, long _oldAmount, long _newAmount
-	PROFILE_MAP_UNLOCKED,		// no params
+	// PROFILE_MAP_UNLOCKED,		// no params
 	PROFILE_REWARD_PUSHED,		// params Metagame.Reward _reward
 	PROFILE_REWARD_POPPED,		// params Metagame.Reward _reward
 	TUTORIAL_STEP_TOGGLED,		// params: TutorialStep _step, bool _completed
 	
 	// Game logic events
-	GAME_LEVEL_LOADED,			// no params
+	// GAME_LEVEL_LOADED,			// no params
 	GAME_STARTED,				// no params
 	GAME_COUNTDOWN_STARTED,		// no params
 	GAME_COUNTDOWN_ENDED,		// no params
-	GAME_AREA_ENTER,			// no params 
-	GAME_AREA_EXIT,				// no params
+	// GAME_AREA_ENTER,			// no params 
+	// GAME_AREA_EXIT,				// no params
 	GAME_UPDATED,				// no params
 	GAME_PAUSED,				// params: bool _paused
-	GAME_ENDED,					// no params
+	// GAME_ENDED,					// no params
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
 	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _newMultiplier, int goldScoreMultiplier
 	SCORE_MULTIPLIER_LOST,		// no params
 	PREWARM_FURY_RUSH,			// params: DragonBreathBehaviour.Type _type, float duration
-	FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
+	// FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
-	BOOST_TOGGLED,				// params: bool _activated
+	// BOOST_TOGGLED,				// params: bool _activated
 	BOOST_SPACE,					// no params
 	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
@@ -176,7 +176,7 @@ public enum MessengerEvents {
 	SURVIVAL_BONUS_ACHIEVED,	// no params
 
 	// Egg management events
-	EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
+	// EGG_STATE_CHANGED,			// params: Egg _egg, Egg.State _from, Egg.State _to
 	EGG_INCUBATION_STARTED,		// params: Egg _egg
 	EGG_INCUBATION_ENDED,		// params: Egg _egg
 	EGG_TAP,					// params: EggController _egg, int _tapCount	// [AOC] Triggered when opening an egg
@@ -196,15 +196,13 @@ public enum MessengerEvents {
 	// UI events
 	UI_INGAME_PC_FEEDBACK_END,		// no params
 	UI_TOGGLE_CURRENCY_COUNTERS,	// params: bool _show
-	UI_MAP_ZOOM_CHANGED,			// params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
+	// UI_MAP_ZOOM_CHANGED,			// params: float _zoomFactor (percentage relative to initial zoom level (0.5x, 1x, 2x, etc, the smaller the closer)
 	UI_MAP_CENTER_TO_DRAGON,		// Request centering the map to the dragon! params: float _scrollSpeed (use <= 0 for instant)
 
 	// Camera events
 	CAMERA_INTRO_DONE,			// no params
 	CAMERA_SHAKE,				// params: float _duration, float _intensity
 
-	// power up events
-	APPLY_ENTITY_POWERUPS,		// no params
 
     // Device events
     DEVICE_RESOLUTION_CHANGED, 	// params: Vector2 _newResolution

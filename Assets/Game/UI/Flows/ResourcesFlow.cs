@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// invokes the corresponding Callback to notify its result so item transaction can
 /// be completed.
 /// </summary>
-public class ResourcesFlow {
+public class ResourcesFlow : IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -150,7 +150,7 @@ public class ResourcesFlow {
 		m_name = _name;
 
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
@@ -158,8 +158,20 @@ public class ResourcesFlow {
 	/// </summary>
 	~ResourcesFlow() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
 
     /// <summary>
     /// Start the flow.

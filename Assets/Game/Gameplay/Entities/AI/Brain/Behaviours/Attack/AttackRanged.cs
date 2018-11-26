@@ -13,7 +13,7 @@ namespace AI {
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Ranged")]
-		public class AttackRanged: Attack {
+		public class AttackRanged: Attack, IBroadcastListener {
 			
 			private GameObject m_projectile;
 			private Transform m_projectileSpawnPoint;
@@ -37,7 +37,7 @@ namespace AI {
 				CreatePool();
 
 				// create a projectile from resources (by name) and save it into pool
-				Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+				Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
 
@@ -49,9 +49,21 @@ namespace AI {
 			}
 
 			protected override void OnRemove() {
-				Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+                base.OnRemove();
+				Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 			}
 
+            public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+            {
+                switch( eventType )
+                {
+                    case BroadcastEventType.GAME_AREA_ENTER:
+                    {
+                        CreatePool();
+                    }break;
+                }
+            }
+    
 			protected override void StartAttack() 
 			{
 				base.StartAttack();

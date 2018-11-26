@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class PrisonerSpawner : AbstractSpawner {
+public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 
 	[Serializable]
 	public class Group {
@@ -45,13 +45,25 @@ public class PrisonerSpawner : AbstractSpawner {
 
 		Initialize();
 
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	protected override void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePools);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		base.OnDestroy();
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePools();
+            }break;
+        }
+    }
+    
 
     protected override uint GetMaxEntities() {
         return m_maxEntities;

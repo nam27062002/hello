@@ -519,6 +519,31 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		// Save Data ?
 	}
 
+    public static string GetLevelPath(string levelName)
+    {
+        string path = ASSETS_DIR;        
+        string lower = levelName.ToLower();
+        if (lower.StartsWith("so_"))
+        {
+            path += "/Sound/" + levelName;
+        }
+        else if (lower.StartsWith("sp_"))
+        {
+            path += "/Spawners/" + levelName;
+        }
+        else if (lower.StartsWith("co_"))
+        {
+            path += "/Collision/" + levelName;
+        }
+        else if (lower.StartsWith("art_"))
+        {
+            path += "/Art/" + levelName;
+        }
+        path += ".unity";
+
+        return path;
+    }
+
     [PostProcessBuild(1090)]
     public static void OnPostProcessBuild(BuildTarget target, string path)
     {

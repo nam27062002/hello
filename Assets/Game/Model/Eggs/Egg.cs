@@ -82,6 +82,9 @@ public class Egg {
 	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
 	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
 
+    //
+    protected EggStateChanged m_eggStateChanged = new EggStateChanged();
+
 	public TimeSpan incubationDuration { 
 		get {
 			// Cheat support!
@@ -159,7 +162,7 @@ public class Egg {
 	/// Private, use factory methods to create new eggs.
 	/// </summary>
 	private Egg() {
-		
+        m_eggStateChanged.egg = this;
 	}
 
 	/// <summary>
@@ -225,8 +228,10 @@ public class Egg {
 			}break;
 		}
 
-		// Broadcast game event
-		Messenger.Broadcast<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+        // Broadcast game event
+        m_eggStateChanged.from = oldState;
+        m_eggStateChanged.to = _newState;
+        Broadcaster.Broadcast(BroadcastEventType.EGG_STATE_CHANGED, m_eggStateChanged);
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future

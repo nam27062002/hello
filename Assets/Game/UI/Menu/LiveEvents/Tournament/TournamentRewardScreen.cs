@@ -353,26 +353,11 @@ public class TournamentRewardScreen : MonoBehaviour {
 		// [AOC] TODO!! Show currency counters, photo button, etc. based on reward type
 
 		// If it's the first time we're getting golden fragments, show info popup
-		Metagame.Reward currentReward = m_sceneController.currentReward;
-		if( currentReward != null && currentReward.WillBeReplaced()) {
-			if(currentReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
-					// Show popup after some extra delay
-					UbiBCN.CoroutineManager.DelayedCall(
-						() => { 
-							// Tracking
-							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
-							HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
-
-							PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
-							UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-						},
-						1.5f, 	// Enough time for the replacement animation!
-						false
-					);
-				}
-			}
-		}
+		PopupInfoGoldenFragments.CheckAndShow(
+			m_sceneController.currentReward,
+			1.5f,   // Enough time for the replacement animation
+			PopupLauncher.TrackingAction.INFO_POPUP_AUTO
+		);
 	}
 
 	/// <summary>

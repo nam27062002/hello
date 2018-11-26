@@ -23,7 +23,7 @@ public class TimeUtils {
 	// STATIC															//
 	//------------------------------------------------------------------//
 	static StringWriter m_writer = new StringWriter();
-
+    static ulong[] precisionValues = new ulong[(int)EPrecision.COUNT];
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -137,7 +137,7 @@ public class TimeUtils {
 		ulong seconds = (ulong)(_seconds + 0.5f);
 		
 		// 3. Compute the amount of each precision field, starting with the defined precision
-		ulong[] precisionValues = new ulong[(int)EPrecision.COUNT];
+		
 		for(int i = (int)_precision; i < (int)EPrecision.COUNT; i++) {
 			precisionValues[i] = seconds/SECONDS_IN_PRECISION[i];
 			seconds -= precisionValues[i] * SECONDS_IN_PRECISION[i];

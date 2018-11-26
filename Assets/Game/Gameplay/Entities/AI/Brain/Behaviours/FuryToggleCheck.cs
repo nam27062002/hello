@@ -4,7 +4,7 @@ using System.Collections;
 namespace AI {
 	namespace Behaviour {		
 		[CreateAssetMenu(menuName = "Behaviour/Fury Toggle Check")]
-		public class FuryToggleCheck : StateComponent {
+		public class FuryToggleCheck : StateComponent, IBroadcastListener {
 			
 			[StateTransitionTrigger]
 			protected static string OnFuryOn = "onFuryOn";
@@ -13,12 +13,24 @@ namespace AI {
 
 
 			protected override void OnEnter(State oldState, object[] param) {
-				Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+                Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 			}
 
 			protected override void OnExit(State newState) {
-				Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+				Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 			}
+            
+            public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+            {
+                switch( eventType )
+                {
+                    case BroadcastEventType.FURY_RUSH_TOGGLED:
+                    {
+                        FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                        OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+                    }break;
+                }
+            }
 
 			private void OnFuryToggled(bool toggle, DragonBreathBehaviour.Type type) {
 				if (toggle) Transition(OnFuryOn);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using SimpleJSON;
 
-public class ProfilerToolController : MonoBehaviour
+public class ProfilerToolController : MonoBehaviour, IBroadcastListener
 {    
     public GameObject m_spawnersRoot;
     private Spawner[] m_spawners;
@@ -65,7 +65,7 @@ public class ProfilerToolController : MonoBehaviour
     private void OnEnable()
     {
         // Subscribe to external events
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
     }
 
     /// <summary>
@@ -74,7 +74,18 @@ public class ProfilerToolController : MonoBehaviour
     private void OnDisable()
     {
         // Unsubscribe from external events
-        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
     }
 
     void Update()

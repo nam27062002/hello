@@ -480,11 +480,12 @@ public class PhotoScreenController : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
 		// Check params
-		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+//		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
+        if (_to == MenuScreen.NONE) return;
 
-		// Aux vars
-		MenuSceneController menuSceneController = InstanceManager.menuSceneController;
-		MenuScreenScene fromScene = menuSceneController.GetScreenData(_from).scene3d;
+        // Aux vars
+        MenuSceneController menuSceneController = InstanceManager.menuSceneController;
+//		MenuScreenScene fromScene = menuSceneController.GetScreenData(_from).scene3d;
 		MenuScreenScene toScene = menuSceneController.GetScreenData(_to).scene3d;
 
 		// If the scene we are entering has a photo snap point to override, do it now

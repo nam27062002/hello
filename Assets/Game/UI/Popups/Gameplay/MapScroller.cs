@@ -17,7 +17,7 @@ using DG.Tweening;
 /// <summary>
 /// 
 /// </summary>
-public class MapScroller : MonoBehaviour {
+public class MapScroller : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -72,6 +72,8 @@ public class MapScroller : MonoBehaviour {
 		set { SetZoom(1f/value * m_initialZoom); }
 	}
 	
+    UIMapZoomChanged m_zoonChangedEvent = new UIMapZoomChanged();
+    
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -391,7 +393,8 @@ public class MapScroller : MonoBehaviour {
 						() => {
 							RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 							ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-							Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+                            m_zoonChangedEvent.zoomFactor = zoomFactor;
+							Broadcaster.Broadcast(BroadcastEventType.UI_MAP_ZOOM_CHANGED, m_zoonChangedEvent);	// Notify game! (map markers)
 						}
 					);
 			} else {
@@ -405,7 +408,8 @@ public class MapScroller : MonoBehaviour {
 			m_camera.orthographicSize = newOrthoSize;		// Apply new zoom level
 			RefreshScrollSize();							// Refresh scroll rect's sizes to match new camera viewport
 			ScrollToWorldPos(m_camera.transform.position);	// Update camera position so it doesn't go out of bounds
-			Messenger.Broadcast<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, zoomFactor);	// Notify game! (map markers)
+            m_zoonChangedEvent.zoomFactor = zoomFactor;
+            Broadcaster.Broadcast(BroadcastEventType.UI_MAP_ZOOM_CHANGED, m_zoonChangedEvent); // Notify game! (map markers)
 		}
 	}
 
@@ -526,8 +530,8 @@ public class MapScroller : MonoBehaviour {
 		}
 
 		// Subscribe to other popups opening
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
@@ -538,10 +542,27 @@ public class MapScroller : MonoBehaviour {
 		EnableCamera(false);
 
 		// Subscribe to other popups opening
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(info.popupController);
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A popup has been opened.
 	/// </summary>
