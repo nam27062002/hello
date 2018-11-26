@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
+public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroadcastListener
 {
 
     private List<Entity> m_entities;
@@ -62,8 +62,26 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
+
+    override protected void OnDestroy()
+    {
+        base.OnDestroy();
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 
     public void RegisterEntity(Entity _entity)
     {

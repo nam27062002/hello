@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Tracker for map usage.
 /// </summary>
-public class TrackerMapUsage : TrackerBase {
+public class TrackerMapUsage : TrackerBase, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
@@ -28,7 +28,7 @@ public class TrackerMapUsage : TrackerBase {
 	/// Default constructor.
 	/// </summary>
 	public TrackerMapUsage() {
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
 	}
 
 	/// <summary>
@@ -43,11 +43,24 @@ public class TrackerMapUsage : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
 
 		// Call parent
 		base.Clear();
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(info.popupController);
+            }break;
+        }
+    }
+    
 
 	private void OnPopupOpened(PopupController _popup) {
 		if ( _popup.GetComponent<PopupInGameMap>() != null ){

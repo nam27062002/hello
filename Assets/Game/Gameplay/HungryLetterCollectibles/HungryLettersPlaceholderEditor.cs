@@ -7,7 +7,6 @@ public class HungryLettersPlaceholderEditor : MonoBehaviour
 	//------------------------------------------------------------
 	// Inspector Variables:
 	//------------------------------------------------------------
-
 	[SerializeField]
 	private HungryLettersManager.Difficulties m_gizmo = HungryLettersManager.Difficulties.Easy;
 	public HungryLettersManager.Difficulties difficulty{ get{ return m_gizmo; } }
@@ -15,38 +14,31 @@ public class HungryLettersPlaceholderEditor : MonoBehaviour
 	[SerializeField]
 	private bool m_showGizmo = true;
 
-	//------------------------------------------------------------
-	// Private Variables:
-	//------------------------------------------------------------
+
+    //------------------------------------------------------------
+    // Private Variables:
+    //------------------------------------------------------------
+    private static readonly string Path_Easy_Letter = "HungryLetters/H_Easy.png";
+    private static readonly string Path_Normal_Letter = "HungryLetters/H_Normal.png";
+    private static readonly string Path_Hard_Letter = "HungryLetters/H_Hard.png";
 
 	private Transform m_transform;
-	private Vector3 m_position;
-	private string m_currentIcon = "";
+	
 
 	//------------------------------------------------------------
 	// Untiy Lifecycle:
 	//------------------------------------------------------------
-
-	protected void Awake()
-	{
-		m_transform = transform;
-		m_currentIcon = m_gizmo.ToString();
+	protected void Awake() {
+		m_transform = transform;	
 	}
 
-	protected void LateUpdate()
-	{
-		m_position = m_transform.position;
-		if(!m_currentIcon.Equals(m_gizmo.ToString()))
-		{
-			m_currentIcon = m_gizmo.ToString();
-		}
-	}
-
-	void OnDrawGizmos()
-	{
-		if(m_showGizmo)
-		{
-			Gizmos.DrawIcon(m_position, "HungryLetters/H_" + m_currentIcon + ".png", false);
+    void OnDrawGizmos() {
+        if (m_showGizmo) {
+            switch (m_gizmo) {
+                case HungryLettersManager.Difficulties.Easy:    Gizmos.DrawIcon(m_transform.position, Path_Easy_Letter, false);   break;
+                case HungryLettersManager.Difficulties.Normal:  Gizmos.DrawIcon(m_transform.position, Path_Normal_Letter, false); break;
+                case HungryLettersManager.Difficulties.Hard:    Gizmos.DrawIcon(m_transform.position, Path_Hard_Letter, false);   break;
+            }
 		}
 	}
 #endif

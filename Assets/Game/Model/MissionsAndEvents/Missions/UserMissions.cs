@@ -53,7 +53,7 @@ public class UserMissions : IUserMissions {
     private void GenerateTutorialMissions() {
         // One for every difficulty!
         for (int i = 0; i < (int)Mission.Difficulty.COUNT; i++) {
-            GenerateNewMission((Mission.Difficulty)i, "ftux" + (i + 1).ToString()); // Force sku!
+            m_missions[i] = GenerateNewMission((Mission.Difficulty)i, "ftux" + (i + 1).ToString()); // Force sku!
         }
 
         // Mark tutorial as completed!
@@ -80,8 +80,11 @@ public class UserMissions : IUserMissions {
         return DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count;
     }
 
-    protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty) {
-        long amount = (long)(MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.DEFAULT, _difficulty) * DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count);
+	protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty, DefinitionNode _dragonModifierDef) {
+		// Scale the reward based on max owned dragon
+		float rewardScaleFactor = _dragonModifierDef != null ? _dragonModifierDef.GetAsFloat("missionSCRewardMultiplier") : 1f;
+
+		long amount = (long)(MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.DEFAULT, _difficulty) * rewardScaleFactor);
         Metagame.Reward reward = new Metagame.RewardSoftCurrency(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
         reward.bonusPercentage = MissionManager.powerUpSCMultiplier;
 

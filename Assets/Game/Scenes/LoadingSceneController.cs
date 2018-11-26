@@ -288,6 +288,8 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+		// Initialize server cache
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if ( settingsInstance )
 		{
@@ -298,6 +300,8 @@ public class LoadingSceneController : SceneController {
 			m_buildVersion = Application.version;
 		}
 		CacheServerManager.SharedInstance.Init(m_buildVersion);
+
+		// Initialize content
 		ContentManager.InitContent();
 
 		// Used for android permissions
@@ -305,6 +309,9 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
+
+		// Always start in DEFAULT mode
+		SceneController.SetMode(Mode.DEFAULT);
     }    
 
 	/// <summary>
@@ -656,6 +663,8 @@ public class LoadingSceneController : SceneController {
                 // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
                 // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
                 ApplicationManager.CreateInstance();
+
+                LegalManager.CreateInstance();
 
                 AntiCheatsManager.CreateInstance();
 				                

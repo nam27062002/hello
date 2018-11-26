@@ -103,6 +103,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected float m_lengthPowerUpMultiplier = 0;
 
+    protected FuryRushToggled m_furyRushToggled = new FuryRushToggled();
+
 	public enum State
 	{
 		NONE,
@@ -526,8 +528,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_healthBehaviour) m_healthBehaviour.enabled = true;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = true;
 
-                    m_state = _newState;    // This is done so if in the event FURY_RUSH_TOGGLED someone checks if is fury on it says false. Check DragonPlayer CanIResumeEating
-				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, false, m_type);
+                m_state = _newState;    // This is done so if in the event FURY_RUSH_TOGGLED someone checks if is fury on it says false. Check DragonPlayer CanIResumeEating
+                m_furyRushToggled.activated = false;
+                m_furyRushToggled.type = m_type;
+                Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
 		        m_type = Type.None;
     		}break;
     	}
@@ -591,7 +595,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 
-				Messenger.Broadcast<bool, Type>(MessengerEvents.FURY_RUSH_TOGGLED, true, m_type);
+                m_furyRushToggled.activated = true;
+                m_furyRushToggled.type = m_type;
+                Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
     		}break;
     	}
     }

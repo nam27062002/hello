@@ -576,4 +576,159 @@ public class HungryDragonEditorMenu
         MemoryProfilerEditorWindow.Init();
     }
     #endregion
+
+    #region build_reporter
+    [MenuItem("Hungry Dragon/BuildReporter/Extract Audio", false, 51)]
+    public static void BuildReporter_ExtractAudio()
+    {
+        string path = "Assets/BuildReport/report.txt";
+        string pathOutput = "Assets/BuildReport/audio_report.txt";
+
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+
+        float size = 0f;
+        int count = 0;
+        string line;
+        string[] tokens;
+        List<string> content = new List<string>();
+        while ((line = reader.ReadLine()) != null)
+        {
+            if (line.EndsWith(".wav"))
+            {
+                tokens = line.Trim().Split(' ');
+                if (tokens.Length >= 3)
+                {
+                    float fileSize = float.Parse(tokens[0]);
+                    switch (tokens[1].Trim())
+                    {
+                        case "kb":
+                            size += fileSize;
+                            break;
+
+                        case "mb":
+                            size += fileSize * 1024f;
+                            break;
+                    }
+
+                    content.Add(tokens[0] + " " + tokens[1].Trim() + " " + tokens[3]);                    
+                }
+
+                count++;
+                //Debug.Log(line);
+            }
+        }
+                    
+        reader.Close();
+
+        content.Add("");
+        string summary = "Total size: " + (size / 1024f) + " mb" + " files amount: " + count;
+        content.Add(summary);                
+        BuildReporter_WriteFile(pathOutput, content);
+
+        Debug.Log(summary);
+
+        /*int counter = 0;
+        string line;
+
+        // Read the file and display it line by line.  
+        StreamReader file = new StreamReader(@"c:\test.txt");
+        while ((line = file.ReadLine()) != null)
+        {
+            System.Console.WriteLine(line);
+            counter++;
+        }
+
+        file.Close();
+        System.Console.WriteLine("There were {0} lines.", counter);
+        // Suspend the screen.  
+        System.Console.ReadLine();
+        */
+    }
+
+    private static void BuildReporter_WriteFile(string path, List<string> content)
+    {        
+        //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(path, false);
+        int count = content.Count;
+        for (int i = 0; i < count; i++)
+        {
+            writer.WriteLine(content[i]);
+        }
+
+        writer.Close();        
+    }
+    #endregion
+
+    #region minimal_build
+    [MenuItem("Hungry Dragon/MinimalBuild/Extract Spawners", false, 51)]
+    private static void MinimalBuild_ExtractSpawners()
+    {
+        List<string> scenes = MinimalBuild_GetScenes("SP_");
+        
+        string pathOutput = "Assets/BuildReport/sp_report.txt";
+        List<string> content = new List<string>();
+
+        string path;
+        int count = scenes.Count;
+        StreamReader reader;
+        string line;
+        string[] tokens;
+        string prefix = "PF_";
+        for (int i = 0; i < count; i++)
+        {
+            path = Builder.GetLevelPath(scenes[i]);            
+            reader = new StreamReader(path);
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (line.Contains(prefix))
+                {
+                    tokens = line.Split(' ');
+                    for (int j = 0; j < tokens.Length; j++)
+                    {
+                        if (tokens[j].Contains(prefix))
+                        {
+                            if (!content.Contains(tokens[j]))
+                            {
+                                content.Add(tokens[j]);
+                                Debug.Log(tokens[j]);
+                            }
+
+                            break;
+                        }
+                    }                    
+                }
+            }
+
+            reader.Close();
+        }
+
+        BuildReporter_WriteFile(pathOutput, content);
+
+        Debug.Log("Done!");
+    }
+
+    private static List<string> MinimalBuild_GetScenes(string prefix)
+    {
+        List<string> returnValue = new List<string>();
+
+        // Load proper scenes        
+        ContentManager.InitContent(true, false);
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, "level_0");
+        List<string> levels = def.GetAsList<string>("common");                
+        List<string> areaList = def.GetAsList<string>("area1");
+        levels.AddRange(areaList);
+
+        int count = levels.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (levels[i].StartsWith(prefix))
+            {
+                returnValue.Add(levels[i]);
+            }
+        }
+
+        return returnValue;
+    }    
+    #endregion
 }

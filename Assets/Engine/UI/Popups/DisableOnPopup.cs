@@ -20,7 +20,7 @@ using UnityEngine.Events;
 /// If a show/hide animator is defined, it will be used instead of directly 
 /// activating/deactivating the object.
 /// </summary>
-public class DisableOnPopup : MonoBehaviour {
+public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -57,9 +57,9 @@ public class DisableOnPopup : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+        Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+        Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
 	/// <summary>
@@ -85,11 +85,30 @@ public class DisableOnPopup : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(popupManagementInfo.popupController);   
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            case BroadcastEventType.POPUP_DESTROYED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(popupManagementInfo.popupController);   
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Check opened popups count and check whether this object should be displayed or not.

@@ -20,7 +20,7 @@ using TMPro;
 /// Used both in the pause menu and in the level selection menu, be careful when
 /// doing changes in any of them!
 /// </summary>
-public class MissionPill : MonoBehaviour {
+public class MissionPill : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -118,15 +118,27 @@ public class MissionPill : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Detect hot language changes
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Make sure we're up to date
 		Refresh();
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
+    
 
 	private void OnDisable() {
 		// Only detect hot language changes while active
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
 	/// <summary>

@@ -334,6 +334,7 @@ public class OfferPack {
 		// Store def
 		m_def = _def;
 
+
 		// Items - limited to 3 for now
 		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
 			// Create and initialize new item
@@ -345,8 +346,15 @@ public class OfferPack {
 			m_items.Add(item);
 		}
 
-		// Unique ID
-		m_uniqueId = m_def.GetAsString("uniqueId");
+
+        // Unique ID
+        m_uniqueId = m_def.GetAsString("uniqueId");
+        if (String.IsNullOrEmpty(m_uniqueId)) { // 
+            //[MSF] at this point, the ID is always empty.
+            //So we have to use the sku and the experiment
+            //number as an ID.
+            m_uniqueId = m_def.customizationCode.ToString() + "_" + m_def.sku;
+        }
 
 		// Params
 		// We have just done a Reset(), so variables have the desired default values
@@ -407,11 +415,7 @@ public class OfferPack {
 		m_purchaseLimit = _def.GetAsInt("purchaseLimit", m_purchaseLimit);
 
         // Persisted data
-        if (_updateFromCustomizer) {
-            UsersManager.currentUser.SaveOfferPack(this);
-        } else {
-            UsersManager.currentUser.LoadOfferPack(this);
-        }
+        UsersManager.currentUser.LoadOfferPack(this);
 	}
 
 	/// <summary>

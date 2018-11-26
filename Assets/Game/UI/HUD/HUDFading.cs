@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
 
-public class HUDFading : MonoBehaviour {
+public class HUDFading : MonoBehaviour, IBroadcastListener {
 
 	private Image m_blackImage;
 	enum State
@@ -47,16 +47,27 @@ public class HUDFading : MonoBehaviour {
         m_oldMaterial = m_originalCurtain = m_blackImage.material;
 
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 	
 	// Update is called once per frame
 	void OnDestroy () 
 	{
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, PlayerLeavingArea);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaStart);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnAreaStart();
+            }break;
+        }
+    }
+    
 	void Update()
 	{
 		if ( m_skipFrame )

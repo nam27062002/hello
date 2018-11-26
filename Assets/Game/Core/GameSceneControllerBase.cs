@@ -17,7 +17,7 @@ using UnityEngine;
 /// Each scene should have an object containing one of these, usually a custom
 /// implementation of this class.
 /// </summary>
-public class GameSceneControllerBase : SceneController {
+public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -62,8 +62,8 @@ public class GameSceneControllerBase : SceneController {
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
 
 	/// <summary>
@@ -75,9 +75,26 @@ public class GameSceneControllerBase : SceneController {
 
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
+    
+    
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
+            {
+                OnMapUnlocked();
+            }break;
+        }
+    }
+    
 
 	public virtual bool IsLevelLoaded()
 	{

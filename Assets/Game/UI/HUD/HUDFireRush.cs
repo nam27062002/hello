@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Simple controller for the fire rush feedback in the game HUD.
 /// </summary>
-public class HUDFireRush : MonoBehaviour {
+public class HUDFireRush : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
@@ -38,7 +38,7 @@ public class HUDFireRush : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 	
 	/// <summary>
@@ -46,9 +46,21 @@ public class HUDFireRush : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//

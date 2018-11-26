@@ -22,7 +22,7 @@ using UnityEngine;
 /// - Text Feedback
 /// - SFX
 /// </summary>
-public class AmbientHazard : MonoBehaviour {
+public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -175,10 +175,10 @@ public class AmbientHazard : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -186,14 +186,33 @@ public class AmbientHazard : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	private void OnLevelLoaded() { m_levelLoaded = true;  }
 	private void OnGameEnded() 	 { m_levelLoaded = false; }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+            case BroadcastEventType.GAME_AREA_EXIT:
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            
+        }
+    }
+
 
 	/// <summary>
 	/// Called every frame
