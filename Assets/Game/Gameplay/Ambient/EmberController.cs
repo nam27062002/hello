@@ -1,21 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EmberController : MonoBehaviour {
+public class EmberController : MonoBehaviour, IBroadcastListener
+{
 
-	ParticleSystem m_emberParticle;
+    ParticleSystem m_emberParticle;
 
-	// Use this for initialization
-	void Start () {
-		m_emberParticle = GetComponent<ParticleSystem>();
-		m_emberParticle.Stop();
+    // Use this for initialization
+    void Start()
+    {
+        m_emberParticle = GetComponent<ParticleSystem>();
+        m_emberParticle.Stop();
 
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-	}
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+    }
 
-	void OnDisable() {
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
-	}
+    void OnDisable()
+    {
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+    }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled(furyRushToggled.activated, furyRushToggled.type); 
+            }break;
+        }
+    }
 
 	private void OnFuryToggled(bool _value, DragonBreathBehaviour.Type _type) {
 		if (_value) {

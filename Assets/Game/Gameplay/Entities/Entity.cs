@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Serialization;
 
-public class Entity : IEntity {
+public class Entity : IEntity, IBroadcastListener {
 	private static readonly string RESOURCES_DIR = "Game/Entities";
 
 	//-----------------------------------------------
@@ -94,7 +94,7 @@ public class Entity : IEntity {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
-		Messenger.AddListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+		Broadcaster.AddListener(BroadcastEventType.APPLY_ENTITY_POWERUPS, this);
 	}
 
 	void OnDestroy() {
@@ -102,9 +102,21 @@ public class Entity : IEntity {
 			if (EntityManager.instance != null) {
 				EntityManager.instance.UnregisterEntity (this);
 			}
-			Messenger.RemoveListener (MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+			Broadcaster.RemoveListener (BroadcastEventType.APPLY_ENTITY_POWERUPS, this);
 		}
 	}
+    
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.APPLY_ENTITY_POWERUPS:
+            {
+                ApplyPowerUpMultipliers();
+            }break;
+        }
+    }
+    
 
 	private void InitFromDef() {
 		// Get the definition

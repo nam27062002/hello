@@ -16,7 +16,7 @@ using System;
 /// <summary>
 /// Single Chest object.
 /// </summary>
-public class CollectibleChest : Collectible {
+public class CollectibleChest : Collectible, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -48,7 +48,7 @@ public class CollectibleChest : Collectible {
 		m_chestView = this.gameObject.GetComponentInChildren<ChestViewController>();
 
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
 	/// <summary>
@@ -56,8 +56,19 @@ public class CollectibleChest : Collectible {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------//
 	// OTHER METHODS													//

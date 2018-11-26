@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CircleArea2D))]
-public class DragonSonicDestroyArea : MonoBehaviour {
+public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
@@ -30,14 +30,26 @@ public class DragonSonicDestroyArea : MonoBehaviour {
 		m_tier = m_player.data.tier;
 		m_transform = transform;
 
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type> (MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {

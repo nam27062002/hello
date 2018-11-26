@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineInflammableManager> { 
+public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineInflammableManager>, IBroadcastListener { 
 	private const float DISINTEGRATE_TIME = 1.25f;
 
 	private Material m_ashes_wait;	 // starting queue, all renderers will be back until next queue is available
@@ -38,8 +38,8 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, ClearQueues);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -47,9 +47,21 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, ClearQueues);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, ClearQueues);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_EXIT:
+            case BroadcastEventType.GAME_ENDED:
+            {
+                ClearQueues();
+            }break;
+        }
+    }
 
 	private void ClearQueues() {
 		m_list_wait.Clear();

@@ -30,6 +30,17 @@ public class OfferItemPreviewSkin3d : IOfferItemPreview {
 	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
 
 	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Make sure dragon loader doesn't have any sku assigned
+		m_dragonLoader.dragonSku = "";
+	}
+
+	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
 	/// <summary>

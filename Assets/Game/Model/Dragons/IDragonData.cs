@@ -41,6 +41,7 @@ public abstract class IDragonData : IUISelectorItem {
 		TEASE,      // Requirements to see the shadow of this dragon have been completed
 		SHADOW,     // Player must purchase the target Dragons to reveal this dragon
 		REVEAL,     // Requirements to reveal this dragon have been completed
+		LOCKED_UNAVAILABLE,	// Dragon is revealed but can only be acquired via special offers
 		LOCKED,     // Previous tier hasn't been completed
 		AVAILABLE,  // Previous tier has been completed but the dragon hasn't been purchased
 		OWNED       // Dragon has been purchased and can be used
@@ -69,16 +70,29 @@ public abstract class IDragonData : IUISelectorItem {
 	[SerializeField] protected bool m_owned = false;
 	[SerializeField] protected bool m_teased = false;
 	[SerializeField] protected bool m_revealed = false;
+	[SerializeField] protected bool m_unlockAvailable = false;
 
 	public LockState lockState { get { return GetLockState(); } }
 	public bool isLocked { get { return lockState == LockState.LOCKED; } }
 	public bool isOwned { get { return m_owned; } }
 	public bool isTeased { get { return m_teased; } }
 	public bool isRevealed { get { return m_revealed; } }
+	public bool isUnlockAvailable { get { return m_unlockAvailable; } }
 
 	protected List<string> m_shadowFromDragons = new List<string>();
+	public List<string> shadowFromDragons {
+		get { return m_shadowFromDragons; }
+	}
+
 	protected List<string> m_revealFromDragons = new List<string>();
-	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
+	public List<string> revealFromDragons {
+		get { return m_revealFromDragons; } 
+	}
+
+	protected List<string> m_unlockFromDragons = new List<string>();
+	public List<string> unlockFromDragons {
+		get { return m_unlockFromDragons; }
+	}
 
 	// Pets
 	// One entry per pet slot, will be empty if no pet is equipped in that slot
@@ -169,7 +183,17 @@ public abstract class IDragonData : IUISelectorItem {
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
     public abstract float petScale{ get; }
-        
+    
+        // supersize
+    public abstract float superSizeUpMultiplier{ get; }    
+    public abstract float superSpeedUpMultiplier{ get; }    
+    public abstract float superBiteUpMultiplier{ get; }    
+    public abstract bool superInvincible{ get; }    
+    public abstract bool superInfiniteBoost{ get; }    
+    public abstract bool superEatEverything{ get; }    
+    public abstract float superModeDuration{ get; }
+    
+    
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }
 	//------------------------------------------------------------------------//
@@ -203,9 +227,9 @@ public abstract class IDragonData : IUISelectorItem {
 		m_def = _def;
 		m_sku = m_def.sku;
 
-		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
-		if(!string.IsNullOrEmpty(shadowFromDragons)) {
-			m_shadowFromDragons.AddRange(shadowFromDragons.Split(';'));
+		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
+		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
+			m_shadowFromDragons.AddRange(shadowFromDragonsData.Split(';'));
 		}
 		m_teased = m_shadowFromDragons.Count == 0;
 
@@ -214,6 +238,12 @@ public abstract class IDragonData : IUISelectorItem {
 			m_revealFromDragons.AddRange(revealFromDragonsData.Split(';'));
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
+
+		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
+		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
+			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
+		}
+		m_unlockAvailable = m_unlockFromDragons.Count == 0;
 
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
@@ -260,7 +290,7 @@ public abstract class IDragonData : IUISelectorItem {
 	}
 
 	//------------------------------------------------------------------------//
-	// SIMPLE SETTER/GETTER METHODS												  //
+	// SIMPLE SETTER/GETTER METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// The order of this dragon.
@@ -286,6 +316,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_owned = false;
 		m_teased = m_shadowFromDragons.Count == 0;
 		m_revealed = m_revealFromDragons.Count == 0;
+		m_unlockAvailable = m_unlockFromDragons.Count == 0;
 
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_persistentDisguise = m_disguise;

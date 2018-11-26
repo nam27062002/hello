@@ -84,6 +84,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
@@ -115,6 +116,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnPurchaseSuccessful);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnPurchaseFailed);
         Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnPurchaseFailed);
+        Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnPurchaseFailed);
         Messenger.RemoveListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
         Reset();
     }
@@ -192,17 +194,18 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         int moneyUSD = 0;
         bool isSpecialOffer = false;
+        string promotionType = null;
         if (!string.IsNullOrEmpty(_sku)) {
             DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHOP_PACKS, _sku);
             if (def != null) {
                 moneyUSD = Convert.ToInt32(def.GetAsFloat("price") * 100f);
                 isSpecialOffer = def.GetAsString("type", "").Equals("offer");
+                promotionType = def.GetAsString("promotionType");
             }
         }
 
         // store transaction ID is also used for houston transaction ID, which is what Migh&Magic game also does
-        string houstonTransactionID = _storeTransactionID;
-        string promotionType = null; // Not implemented yet
+        string houstonTransactionID = _storeTransactionID;        
         Notify_IAPCompleted(_storeTransactionID, houstonTransactionID, _sku, promotionType, moneyCurrencyCode, moneyPrice, moneyUSD, isSpecialOffer);
 
         Session_IsNotifyOnPauseEnabled = true;
@@ -1707,8 +1710,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
-            // If the user is minor then analytics and marketing have to be reported as disabled
-            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled())
+            // BI only wants these two parameters when terms policy is GDPR and the user is not minor, otherwise false must be sent            
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
             {
                 _enableAnalytics = false;
                 _enableMarketing = false;

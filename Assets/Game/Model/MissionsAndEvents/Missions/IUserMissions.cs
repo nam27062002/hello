@@ -354,7 +354,7 @@ public abstract class IUserMissions {
 		Mission newMission = new Mission();
 		newMission.difficulty = _difficulty;
         newMission.InitWithParams(_missionDef, _typeDef, targetValue, _singleRun, ComputeRemovePCCostModifier());
-        newMission.reward = BuildReward(_difficulty);
+		newMission.reward = BuildReward(_difficulty, dragonModifierDef);
 
 		// Check whether the new mission should be locked or not (deprecated)
         if(IsMissionLocked(_difficulty)) {
@@ -373,7 +373,7 @@ public abstract class IUserMissions {
     protected abstract DefinitionNode GetDragonModifierDef();
     protected abstract DefinitionNode GetForcedDragonModifierDef(string _sku);
     protected abstract float ComputeRemovePCCostModifier();
-    protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty);
+	protected abstract Metagame.Reward BuildReward(Mission.Difficulty _difficulty, DefinitionNode _dragonModifierDef);
 
 
 	/// <summary>
@@ -462,13 +462,13 @@ public abstract class IUserMissions {
 
 				// Make sure mission has the right difficulty assigned
 				m_missions[i].difficulty = (Mission.Difficulty)i;
-				
-				// Load data into the target mission
-                bool success = m_missions[i].Load(activeMissions[i], ComputeRemovePCCostModifier());
 
-                // If an error ocurred while loading the mission, generate a new one
-                if (success) {
-                    m_missions[i].reward = BuildReward((Mission.Difficulty)i);
+				// Load data into the target mission
+				bool success = m_missions[i].Load(activeMissions[i], ComputeRemovePCCostModifier());
+
+				// If an error ocurred while loading the mission, generate a new one
+				if(success) {
+					m_missions[i].reward = BuildReward((Mission.Difficulty)i, GetDragonModifierDef());
                 } else {
 					m_missions[i] = GenerateNewMission((Mission.Difficulty)i);
 				}

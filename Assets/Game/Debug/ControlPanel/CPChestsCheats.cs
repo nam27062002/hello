@@ -16,7 +16,7 @@ using TMPro;
 /// <summary>
 /// Control Panel Daily Chests section.
 /// </summary>
-public class CPChestsCheats : MonoBehaviour {
+public class CPChestsCheats : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -39,7 +39,7 @@ public class CPChestsCheats : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 
 		// Initialize text
 		if(m_chestNavigationText != null) {
@@ -55,8 +55,21 @@ public class CPChestsCheats : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

@@ -151,96 +151,6 @@ public class LoadingSceneController : SceneController {
 
     GDPRListener m_gdprListener = new GDPRListener();
 
-    Dictionary<string, int> m_ageRestrictions = new Dictionary<string, int>()
-    {
-          {"US", 13},
-          {"AT", 16},
-          {"BE", 16},
-          {"BG", 16},
-          {"HR", 16},
-          {"CY", 16},
-          {"CZ", 16},
-          {"DK", 16},
-          {"EE", 16},
-          {"FI", 16},
-          {"FR", 16},
-          {"DE", 16},
-          {"GR", 16},
-          {"HU", 16},
-          {"IE", 16},
-          {"IT", 16},
-          {"LV", 16},
-          {"LT", 16},
-          {"LU", 16},
-          {"MT", 16},
-          {"NL", 16},
-          {"PL", 16},
-          {"PT", 16},
-          {"RO", 16},
-          {"SK", 16},
-          {"SI", 16},
-          {"ES", 16},
-          {"SE", 16},
-          {"GB", 16},
-
-          {"LI", 16},
-          {"CH", 16},
-          {"GI", 16},
-          {"NO", 16},
-          {"IS", 16},
-
-          {"AL", 16},
-          {"BA", 16},
-          {"MK", 16},
-          {"MD", 16},
-          {"ME", 16}
-    };
-
-    Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
-    {
-        {"AT", true},
-        {"BE", true},
-        {"BG", true},
-        {"HR", true},
-        {"CY", true},
-        {"CZ", true},
-        {"DK", true},
-        {"EE", true},
-        {"FI", true},
-        {"FR", true},
-        {"DE", true},
-        {"GR", true},
-        {"HU", true},
-        {"IE", true},
-        {"IT", true},
-        {"LV", true},
-        {"LT", true},
-        {"LU", true},
-        {"MT", true},
-        {"NL", true},
-        {"PL", true},
-        {"PT", true},
-        {"RO", true},
-        {"SK", true},
-        {"SI", true},
-        {"ES", true},
-        {"SE", true},
-        {"GB", true},
-
-        {"LI", true},
-        {"CH", true},
-        {"GI", true},
-        {"NO", true},
-        {"IS", true},
-
-		{"AL", true},
-		{"BA", true},
-		{"MK", true},
-		{"MD", true},
-		{"ME", true}
-    };
-
-
     //------------------------------------------------------------------//
     // MEMBERS															//
     //------------------------------------------------------------------//
@@ -288,6 +198,8 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+		// Initialize server cache
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if ( settingsInstance )
 		{
@@ -298,6 +210,8 @@ public class LoadingSceneController : SceneController {
 			m_buildVersion = Application.version;
 		}
 		CacheServerManager.SharedInstance.Init(m_buildVersion);
+
+		// Initialize content
 		ContentManager.InitContent();
 
 		// Used for android permissions
@@ -305,6 +219,9 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
+
+		// Always start in DEFAULT mode
+		SceneController.SetMode(Mode.DEFAULT);
     }    
 
 	/// <summary>
@@ -491,18 +408,9 @@ public class LoadingSceneController : SceneController {
                     {
 
                         string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
-                        int localeAge = -1;
-                        bool localeRequiresConsent = false;
-                        if (m_ageRestrictions.ContainsKey(localeCountryCode))
-                        {
-                            localeAge = m_ageRestrictions[localeCountryCode];
-                        }
-                        if (m_requiresConsent.ContainsKey(localeCountryCode))
-                        {
-                            localeRequiresConsent = m_requiresConsent[localeCountryCode];
-                        }
-                        Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeAge + " Consent: " + localeRequiresConsent +" </color>");
-                        GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeAge, localeRequiresConsent, false);
+						GDPRSettings.CountrySetup localeSetup = GDPRSettings.GetSetup(localeCountryCode);
+						Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeSetup.ageRestriction + " Consent: " + localeSetup.requiresConsent +" </color>");
+						GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeSetup.ageRestriction, localeSetup.requiresConsent, false);
                     }
                     else
                     {
@@ -656,6 +564,8 @@ public class LoadingSceneController : SceneController {
                 // [DGR] A single point to handle applications events (init, pause, resume, etc) in a high level.
                 // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
                 ApplicationManager.CreateInstance();
+
+                LegalManager.CreateInstance();
 
                 AntiCheatsManager.CreateInstance();
 				                

@@ -19,7 +19,7 @@ using TMPro;
 /// Animate a textfield by interpolating between two numbers.
 /// </summary>
 [RequireComponent(typeof(TextMeshProUGUI))]
-public class NumberTextAnimator : MonoBehaviour {
+public class NumberTextAnimator : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -92,7 +92,7 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Make sure text is properly set (in case language changed while disabled)
 		ApplyValue(m_currentValue);
@@ -103,9 +103,20 @@ public class NumberTextAnimator : MonoBehaviour {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 	
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// Called every frame
 	/// </summary>

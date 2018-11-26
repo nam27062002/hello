@@ -181,15 +181,7 @@ public class MenuDragonUnlockSpecialDragon : MonoBehaviour {
 		m_gfFlow.DoTransaction();
 
 		// Unlock the dragon!
-		bool wasntLocked = m_transactionDragonData.GetLockState() <= IDragonData.LockState.LOCKED;
-
-		// Just acquire target dragon!
 		m_transactionDragonData.Acquire();
-
-		// If unlocking the required dragon for the rating popup, mark the popup as it can be displayed
-		if(wasntLocked && m_transactionDragonData.def.sku == MenuInterstitialPopupsController.RATING_DRAGON) {
-			Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
-		}
 
 		// [AOC] TODO!! Special tracking event for special dragons?
 		HDTrackingManager.Instance.Notify_DragonUnlocked(m_transactionDragonData.def.sku, m_transactionDragonData.GetOrder());

@@ -200,8 +200,7 @@ namespace AI {
 
 				if (m_perpendicularAvoid) {
 					m_impulse.x = -m_impulse.y;
-					m_impulse.y = m_impulse.x;
-					m_impulse.z = m_impulse.z;
+					m_impulse.y = m_impulse.x;					
 				} else {
 					m_impulse /= m_collisionAvoidFactor;
 					m_impulse += (m_collisionNormal * m_collisionAvoidFactor);

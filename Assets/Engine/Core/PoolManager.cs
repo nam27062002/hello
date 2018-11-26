@@ -173,7 +173,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		List<string> keys = new List<string>(m_pools.Keys);
 
 		for (int i = 0; i < keys.Count; i++) {
-			__CreatePool(m_pools[keys[i]], keys[i], true, true);
+            __CreatePool(m_pools[keys[i]], keys[i], false, true);
 		}
 	}
 
@@ -225,7 +225,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 				}
 			} else {
 				// Create pool
-				__CreatePool(container, keys[i], true, true);
+				__CreatePool(container, keys[i], false, true);
 			}
 		}
 	}
