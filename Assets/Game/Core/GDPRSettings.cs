@@ -37,6 +37,7 @@ public class GDPRSettings : SingletonScriptableObject<GDPRSettings> {
 
 	[Serializable]
 	public class CountrySetup {
+		public bool hasAgeRestriction = false;
 		public int ageRestriction = -1;
 		public bool requiresConsent = false;
 		public CountryGroup group = CountryGroup.NONE;
