@@ -128,7 +128,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 				go = handler.GetInstance(!UseProgressiveRespawn);
 
 				if (go == null) {
-					break;
+                    EntitiesToSpawn--;
+                    break;
 				} else {
 					go.transform.position = transform.position;
 					OnCreateInstance(EntitiesAlive, go);

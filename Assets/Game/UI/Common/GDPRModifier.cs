@@ -39,14 +39,6 @@ public class GDPRModifier : MonoBehaviour {
 		UNKNOWN
 	}
 
-	private static readonly string[][] COUNTRY_GROUPS = new string[][] {
-		new string[] { },
-		new string[] { "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "GB" },
-		new string[] { "US" },
-		new string[] { "DE" },
-		new string[] { "Unknown", "--" }
-	};
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -54,7 +46,7 @@ public class GDPRModifier : MonoBehaviour {
 
 	[SerializeField] private Action m_action = Action.DISABLE;
 
-	[SerializeField] private CountryGroup m_countryGroup = CountryGroup.ALL_COUNTRIES;
+	[SerializeField] private GDPRSettings.CountryGroup m_countries = GDPRSettings.CountryGroup.ALL;
 
 	[Separator("Optional")]
 	[SerializeField] private string m_replacementTID = "";
@@ -93,9 +85,9 @@ public class GDPRModifier : MonoBehaviour {
 		}
 
 		// Check country - return if current country is not in the list
-		if(m_countryGroup != CountryGroup.ALL_COUNTRIES) {
+		if(m_countries != GDPRSettings.CountryGroup.ALL) {
 			string country = GDPRManager.SharedInstance.GetCachedUserCountryByIP();
-			if(COUNTRY_GROUPS[(int)m_countryGroup].IndexOf(country) == -1) return;
+			if(!GDPRSettings.CheckCountryGroup(country, m_countries)) return;
 		}
 
 		// Perform action

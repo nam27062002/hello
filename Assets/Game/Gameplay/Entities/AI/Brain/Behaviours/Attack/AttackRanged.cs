@@ -45,7 +45,7 @@ namespace AI {
 			}
 
 			void CreatePool() {
-				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 2, true);
+				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 4, true);
 			}
 
 			protected override void OnRemove() {
