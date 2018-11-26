@@ -46,7 +46,7 @@ public class ButtonExtended : Button {
         if (m_buttonMultitouchProtector) return false;
         Debug.Log(">>>>> enter");
         m_buttonMultitouchProtector = true;
-        CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.75f));
+        CoroutineManager.Instance.StartCoroutine(WaitAMoment(0.5f));
         return true;
     }
 
@@ -65,7 +65,6 @@ public class ButtonExtended : Button {
     /// <summary>
     /// First update call.
     /// </summary>
-    /*
     private void Start()
     {
         for (int i = 0; i < onClick.GetPersistentEventCount(); i++)
@@ -76,7 +75,7 @@ public class ButtonExtended : Button {
         onClick.RemoveAllListeners();
         onClick.AddListener(safeOnclick);
     }
-    */
+    
     void safeOnclick()
     {
         if (m_MultiTouchDisable && !checkMultitouchAvailability()) return;
