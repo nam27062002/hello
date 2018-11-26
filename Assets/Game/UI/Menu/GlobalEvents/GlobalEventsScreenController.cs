@@ -301,7 +301,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		{
 			// Show loading and ask for my evetns
 			SetActivePanel(Panel.LOADING);
-			if (!HDLiveDataManager.instance.RequestMyEvents())
+			if (!HDLiveDataManager.instance.RequestMyLiveData())
 			{
 				StartCoroutine( RemoveLoading());
 			}

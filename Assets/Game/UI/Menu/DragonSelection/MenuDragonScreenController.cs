@@ -54,9 +54,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 
 	void Start(){
-		if ( HDLiveDataManager.instance.ShouldRequestMyEvents() )
+		if ( HDLiveDataManager.instance.ShouldRequestMyLiveData() )
 		{
-			HDLiveDataManager.instance.RequestMyEvents();
+			HDLiveDataManager.instance.RequestMyLiveData();
 		}
 	}
 

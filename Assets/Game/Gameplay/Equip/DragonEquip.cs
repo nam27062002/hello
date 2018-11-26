@@ -82,7 +82,7 @@ public class DragonEquip : MonoBehaviour {
 			else
 			{
 				// Check if tournament/build active
-				if ( HDLiveDataManager.instance.m_tournament.m_isActive )
+                if ( HDLiveDataManager.instance.m_tournament.isActive )
 				{
 					string skin = HDLiveDataManager.instance.m_tournament.GetToUseSkin();
 					EquipDisguise(skin);
@@ -169,7 +169,7 @@ public class DragonEquip : MonoBehaviour {
 			if ( !m_menuMode )
 			{
 				// Check if tournament
-				if ( HDLiveDataManager.instance.m_tournament.m_isActive )
+				if ( HDLiveDataManager.instance.m_tournament.isActive)
 				{
 					pets = HDLiveDataManager.instance.m_tournament.GetToUsePets();
 				}

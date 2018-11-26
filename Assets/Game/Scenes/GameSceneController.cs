@@ -191,7 +191,7 @@ public class GameSceneController : GameSceneControllerBase {
         }
         else
         {
-            if ( HDLiveDataManager.instance.m_tournament.m_isActive )
+            if ( HDLiveDataManager.instance.m_tournament.isActive)
             {
                 string dragon = HDLiveDataManager.instance.m_tournament.GetToUseDragon();
                 DragonManager.LoadDragon(dragon);

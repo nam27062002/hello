@@ -286,7 +286,7 @@ public class PassiveEventIcon : MonoBehaviour {
 		}
         
         if ( show ) {
-            show = m_passiveEventManager.m_isActive;
+            show = m_passiveEventManager.isActive;
         }
 
 		if(m_root != null) m_root.Set(show);

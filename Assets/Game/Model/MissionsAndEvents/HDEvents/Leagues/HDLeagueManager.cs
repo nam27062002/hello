@@ -2,20 +2,11 @@
 using SimpleJSON;
 using UnityEngine;
 
-public class HDLeagueManager : HDLiveEventManager {
+public class HDLeagueManager : HDLiveDataController {
     public class League {
         public string sku;
     }
 
-
-    //------------------------------------------------------------------------//
-    // MEMBERS AND PROPERTIES                                                 //
-    //------------------------------------------------------------------------//
-    protected HDLeagueData m_leagueData;
-    protected HDLeagueDefinition m_leagueDefinition;
-
-    private List<League> m_leagues;
-    private League m_currentLeague;
 
 
     //------------------------------------------------------------------------//
@@ -27,21 +18,49 @@ public class HDLeagueManager : HDLiveEventManager {
     public HDLeagueManager() {
         m_type = "league";
 
-        m_leagueData = new HDLeagueData();
-        m_leagueDefinition = m_leagueData.definition as HDLeagueDefinition;
-
-        m_data = m_leagueData;
+       
     }
 
     ~HDLeagueManager() {
-        m_data = null;
-        m_leagueData = null;
-        m_leagueDefinition = null;
+       
     }
 
-    public override void ParseDefinition(JSONNode _data) {
-        base.ParseDefinition(_data);
 
-        Debug.LogWarning("[HDLeagueManager] ParseDefinition");
+    public override void Activate() {
+     //  throw new System.NotImplementedException();
+    }
+
+    public override void Deactivate() {
+      //  throw new System.NotImplementedException();
+    }
+
+    public override void ApplyDragonMods() {
+     //   throw new System.NotImplementedException();
+    }
+
+    public override void CleanData() {
+      //  throw new System.NotImplementedException();
+    }
+
+    public override bool ShouldSaveData() {
+        //  throw new System.NotImplementedException();
+        return false;
+    }
+
+    public override JSONNode SaveData() {
+        //  throw new System.NotImplementedException();
+        return null;
+    }
+
+    public override void LoadDataFromCache() {
+     //   throw new System.NotImplementedException();
+    }
+
+    public override void LoadData(JSONNode _data) {
+     //   throw new System.NotImplementedException();
+    }
+
+    public override void OnLiveDataResponse() {
+      //  throw new System.NotImplementedException();
     }
 }

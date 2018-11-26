@@ -51,14 +51,16 @@ public class HDPassiveEventManager : HDLiveEventManager {
         m_passiveEventDefinition = null;
 	}
 
-	//------------------------------------------------------------------------//
-	// PARENT OVERRIDES														  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // PARENT OVERRIDES														  //
+    //------------------------------------------------------------------------//
 
-	/// <summary>
-	/// Check for state changes based on timestamps.
-	/// </summary>
-	override public void UpdateStateFromTimers() {
+    public override void OnLiveDataResponse() {}
+
+    /// <summary>
+    /// Check for state changes based on timestamps.
+    /// </summary>
+    override public void UpdateStateFromTimers() {
 		// Call parent
 		base.UpdateStateFromTimers();
 

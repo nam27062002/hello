@@ -76,8 +76,12 @@ public class HDQuestManager : HDLiveEventManager{
 		m_tracker = TrackerBase.CreateTracker( def.m_goal.m_typeDef.sku, def.m_goal.m_params);
     }
 
+    public override void OnLiveDataResponse() {
+        if (EventExists() && ShouldRequestProgress())
+            RequestProgress();
+    }
 
-	override protected void OnEventIdChanged()
+    override protected void OnEventIdChanged()
 	{
 		base.OnEventIdChanged();
 		m_lastProgressTimestamp = 0;
@@ -86,7 +90,7 @@ public class HDQuestManager : HDLiveEventManager{
     public void OnGameStarted(){
     	if ( m_tracker != null)
     	{
-			m_tracker.enabled = m_isActive;
+            m_tracker.enabled = m_active;
 			m_tracker.InitValue(0);
     	}
     }

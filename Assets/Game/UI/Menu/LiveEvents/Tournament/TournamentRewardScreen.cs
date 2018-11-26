@@ -302,7 +302,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 				// Request new event data
 				if(!HDLiveDataManager.TEST_CALLS) {		// Would read the event again from the json xD
-					HDLiveDataManager.instance.RequestMyEvents(true);
+					HDLiveDataManager.instance.RequestMyLiveData(true);
 				}
 
 				// Save!

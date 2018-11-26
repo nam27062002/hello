@@ -106,8 +106,8 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 				HDQuestManager questManager = m_event as HDQuestManager;
 				if(questManager.EventExists()
 					&& questManager.IsRunning()
-					&& questManager.m_isActive
-					&& questManager.m_questData.remainingTime.TotalSeconds > 0
+					&& questManager.isActive
+                    && questManager.m_questData.remainingTime.TotalSeconds > 0
 					&& questManager.GetRunScore() > 0		// Only if we actually got a score!
 				)
 				{

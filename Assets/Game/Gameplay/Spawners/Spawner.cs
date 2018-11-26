@@ -189,7 +189,7 @@ public class Spawner : AbstractSpawner {
 		if (m_eventOnly) {
 			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 				// Maybe only check if joined?
-			enabledByEvents = HDLiveDataManager.instance.m_quest.IsRunning() && HDLiveDataManager.instance.m_quest.m_isActive;
+			enabledByEvents = HDLiveDataManager.instance.m_quest.IsRunning() && HDLiveDataManager.instance.m_quest.isActive;
 		}
 
 		if (enabledByEvents) {

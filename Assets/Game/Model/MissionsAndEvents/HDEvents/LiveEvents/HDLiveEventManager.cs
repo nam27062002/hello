@@ -20,8 +20,7 @@ using System.IO;
 /// 
 /// </summary>
 [Serializable]
-public abstract class HDLiveEventManager
-{
+public abstract class HDLiveEventManager : HDLiveDataController {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
@@ -30,9 +29,7 @@ public abstract class HDLiveEventManager
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
-    public string m_type = "";
     public bool m_shouldRequestDefinition = false;
-    public bool m_isActive = false;
     private bool m_requestingRewards = false;
 
 	protected HDLiveEventData m_data;
@@ -123,12 +120,51 @@ public abstract class HDLiveEventManager
         return ret;
     }
 
-    public virtual void CleanData()
+
+    //------------------------------------------------------------------------//
+    // FROM LIVE DATA CONTROLLER                                              //
+    //------------------------------------------------------------------------//
+
+    public override void CleanData()
     {
         if (data != null){
             data.Clean();
       	}
+
+        m_dataLoadedFromCache = false;
     }
+
+    public override bool ShouldSaveData() {
+        return EventExists() && data.m_state != HDLiveEventData.State.FINALIZED && data.m_state != HDLiveEventData.State.REQUIRES_UPDATE;
+    }
+
+    public override SimpleJSON.JSONNode SaveData() {
+        return ToJson();
+    }
+
+    public override void LoadDataFromCache() {
+        CleanData();
+        if (CacheServerManager.SharedInstance.HasKey(m_type)) {
+            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
+            OnNewStateInfo(json);
+            UpdateStateFromTimers();
+        }
+        m_dataLoadedFromCache = true;
+    }
+
+    public override void LoadData(SimpleJSON.JSONNode _data) {
+        bool dataWasLoadedFromCache = m_dataLoadedFromCache;
+
+        CleanData();
+        OnNewStateInfo(_data);
+        if (data.m_eventId > 0 && (!HasValidDefinition() || dataWasLoadedFromCache)) {
+            RequestDefinition();
+        }
+
+        m_dataLoadedFromCache = false;
+    }
+
+    //------------------------------------------------------------------------//
 
     public virtual SimpleJSON.JSONClass ToJson()
     {
@@ -244,8 +280,8 @@ public abstract class HDLiveEventManager
 			int eventId = responseJson["code"].AsInt;
             if (data != null && data.m_eventId == eventId)
             {
-            	bool wasActive = m_isActive;
-            	if ( m_isActive ){
+                bool wasActive = m_active;
+            	if (m_active) {
             		Deactivate();
             	}
                 ParseDefinition(responseJson);
@@ -370,7 +406,7 @@ public abstract class HDLiveEventManager
         // Get My Events
         // Request new event data
         if(!HDLiveDataManager.TEST_CALLS) {       // Would read the event again from the json xD
-            HDLiveDataManager.instance.RequestMyEvents(true);
+            HDLiveDataManager.instance.RequestMyLiveData(true);
         }
 	}
 
@@ -382,7 +418,7 @@ public abstract class HDLiveEventManager
         // Get My Events
         // Request new event data
         if(!HDLiveDataManager.TEST_CALLS) {       // Would read the event again from the json xD
-            HDLiveDataManager.instance.RequestMyEvents(true);
+            HDLiveDataManager.instance.RequestMyLiveData(true);
         }   
     }
     
@@ -390,12 +426,12 @@ public abstract class HDLiveEventManager
 
 #region mods_activation
 
-    public void Activate()
+    public override void Activate()
     {
-    	if (!m_isActive)
+        if (!m_active)
     	{    		
 			if (data.m_state < HDLiveEventData.State.FINALIZED) {
-				m_isActive = true;
+                m_active = true;
 				if (data != null && data.definition != null)
 	    		{
 		    		List<Modifier> mods = data.definition.m_otherMods;
@@ -407,11 +443,11 @@ public abstract class HDLiveEventManager
     	}
     }
 
-    public void Deactivate()
+    public override  void Deactivate()
     {
-		if (m_isActive)
+		if (m_active)
     	{
-    		m_isActive = false;
+            m_active = false;
     		List<Modifier> mods = data.definition.m_otherMods;
 			for (int i = 0; i < mods.Count; i++) {
     			mods[i].Remove();
@@ -419,7 +455,7 @@ public abstract class HDLiveEventManager
     	}
     }
 
-    public void ApplyDragonMods()
+    public override void ApplyDragonMods()
     {
 		List<Modifier> mods = data.definition.m_dragonMods;
 		for (int i = 0; i < mods.Count; i++) {

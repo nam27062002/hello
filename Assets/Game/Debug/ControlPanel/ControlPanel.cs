@@ -383,7 +383,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Customizer,
         GameCenter,
 		ResultsScreen,
-		LiveEvents,
+		LiveData,
         Store,
         CP2,
         Persistence
@@ -396,7 +396,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.General, "", Color.white);
 		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
 		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
-		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
+		Log_SetupChannel(ELogChannel.LiveData, "LiveEvents", Colors.aqua);
         Log_SetupChannel(ELogChannel.Store, "Store", Colors.coral);
         Log_SetupChannel(ELogChannel.CP2, "CP2", Colors.blue);
         Log_SetupChannel(ELogChannel.Persistence, "Persistence", Colors.fuchsia);

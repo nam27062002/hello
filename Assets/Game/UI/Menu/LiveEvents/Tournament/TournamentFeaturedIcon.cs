@@ -274,7 +274,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
         if (m_waitingRewardsData) return;
 
         // if info is from cache wait to recieve definitions!
-        if ( HDLiveDataManager.instance.m_cacheInfo )
+        if ( m_tournamentManager.isDataFromCache )
         {
             m_waitingDefinition = true;
             m_tournamentManager.RequestDefinition(true);

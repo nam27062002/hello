@@ -22,7 +22,7 @@ using System.IO;
 /// </summary>
 public class HDLiveDataManager : Singleton<HDLiveDataManager>
 {
-
+   
 
     public enum ErrorCode
     {
@@ -73,8 +73,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
     public HDLeagueManager m_league = new HDLeagueManager();
 
-        // Avoid using dictionaries when possible
-    private List<string> m_types;
+    // Avoid using dictionaries when possible
     private List<HDLiveDataController> m_managers;
 	protected long m_lastMyEventsRequestTimestamp = 0;
 
@@ -82,7 +81,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 
 	private long m_myEventsRequestMinTim = 1000 * 60 * 5;	// 5 min
 
-    public bool m_cacheInfo = false;
+
 #if UNITY_EDITOR
 	public static bool TEST_CALLS {
 		get { return DebugSettings.useLiveEventsDebugCalls; }
@@ -96,26 +95,18 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 	{
         // For testing purposes
         //
-        m_types = new List<string>();
         m_managers = new List<HDLiveDataController>();
-
-        RegisterController(m_tournament);
-        RegisterController(m_quest);
-        RegisterController(m_passive);
-        RegisterController(m_league);
+        m_managers.Add(m_tournament);
+        m_managers.Add(m_quest);
+        m_managers.Add(m_passive);
+        m_managers.Add(m_league);
 
         //
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
 		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED,  SaveEventsToCache);
-
 	}
-
-    private void RegisterController(HDLiveDataController _manager) {
-        m_types.Add(_manager.type);
-        m_managers.Add(_manager);
-    }
 
     ~HDLiveDataManager()
     {
@@ -129,7 +120,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
     {
         if (_isLogged)
         {
-            RequestMyEvents();
+            RequestMyLiveData();
         }
     }
 
@@ -142,32 +133,20 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 		}
 
 		if ( GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS)
-		{
-			m_cacheInfo = true;
-	        int max = m_types.Count;
+		{			
+	        int max = m_managers.Count;
 	        for (int i = 0; i < max; ++i)
 	        {
-	            m_managers[i].CleanData();
-	            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
-	            {
-	                SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable( m_types[i] ));
-	                m_managers[i].OnNewStateInfo(json);
-	                m_managers[i].UpdateStateFromTimers();
-	            }
-	        }
+                m_managers[i].LoadDataFromCache();
+            }
         }
         else
         {
         	// Delete cache!
-			m_cacheInfo = false;
-	        int max = m_types.Count;
+	        int max = m_managers.Count;
 	        for (int i = 0; i < max; ++i)
 	        {
-	            m_managers[i].CleanData();
-	            if (CacheServerManager.SharedInstance.HasKey( m_types[i] ))
-	            {
-					CacheServerManager.SharedInstance.DeleteKey( m_types[i] );
-	            }
+                m_managers[i].DeleteCache();	            
 	        }
         }
 	}
@@ -179,19 +158,16 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 
 	public void SaveEventsToCache()
 	{
-        int max = m_types.Count;
+        int max = m_managers.Count;
         for (int i = 0; i < max; i++)
         {
-            if (    m_managers[i].EventExists() && 
-                    m_managers[i].data.m_state != HDLiveEventData.State.FINALIZED &&
-                    m_managers[i].data.m_state != HDLiveEventData.State.REQUIRES_UPDATE
-                    )
+            if (m_managers[i].ShouldSaveData())
             {
-                CacheServerManager.SharedInstance.SetVariable( m_types[i] , m_managers[i].ToJson().ToString());
+                CacheServerManager.SharedInstance.SetVariable(m_managers[i].type , m_managers[i].SaveData().ToString());
             }
             else
             {
-                CacheServerManager.SharedInstance.DeleteKey( m_types[i] );
+                CacheServerManager.SharedInstance.DeleteKey(m_managers[i].type);
             }
         }
 
@@ -291,80 +267,69 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 		{
 			if ( _error != null )
 			{
-				ControlPanel.LogError( "[" + call + "]" + _error.message , ControlPanel.ELogChannel.LiveEvents);
+				ControlPanel.LogError( "[" + call + "]" + _error.message , ControlPanel.ELogChannel.LiveData);
 			}
 
 			if ( _response != null )
 			{
-				ControlPanel.Log( "[" + call + "]" + _response.ToString() , ControlPanel.ELogChannel.LiveEvents);
+				ControlPanel.Log( "[" + call + "]" + _response.ToString() , ControlPanel.ELogChannel.LiveData);
 			}
 		}
 	}
 
 
 
-	public bool ShouldRequestMyEvents()
+	public bool ShouldRequestMyLiveData()
 	{
 		long diff = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastMyEventsRequestTimestamp;
 		return diff > m_myEventsRequestMinTim;
 	}
 
-    public bool RequestMyEvents( bool _force = false )
+    public bool RequestMyLiveData( bool _force = false )
     {
     	bool ret = false;
-    	if ( _force || ShouldRequestMyEvents() )
+    	if ( _force || ShouldRequestMyLiveData() )
     	{
 			m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 	        if ( TEST_CALLS )
 	        {
-				ApplicationManager.instance.StartCoroutine( DelayedCall("hd_live_events.json", MyLideDataResponse));
+				ApplicationManager.instance.StartCoroutine( DelayedCall("hd_live_events.json", MyLiveDataResponse));
 	        }
 	        else
 	        {
-	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyLideDataResponse);    
+	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyLiveDataResponse);    
 	        }
 	        ret = true;
         }
         return ret;
     }
 
-    private void MyLideDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
-	{
-		
+    private void MyLiveDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
+	{		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
 		ResponseLog("GetMyEvents", _error, _response);
 		SimpleJSON.JSONNode responseJson = ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == ComunicationErrorCodes.NO_ERROR )
 		{
-			int max = m_types.Count;
+            int max = m_managers.Count;
             for (int i = 0; i < max; i++)
             {
-                m_managers[i].CleanData();
-                if (responseJson.ContainsKey( m_types[i] ))
+                if (responseJson.ContainsKey(m_managers[i].type ))
                 {
-                    m_managers[i].OnNewStateInfo(responseJson[ m_types[i] ]);
-					if (m_managers[i].data.m_eventId > 0 && (!m_managers[i].HasValidDefinition() || m_cacheInfo))
-                    {
-                        m_managers[i].RequestDefinition();
-                    }
+                    m_managers[i].LoadData(responseJson[m_managers[i].type]);
                 }
-            }
-			if ( m_quest.EventExists() && m_quest.ShouldRequestProgress() )
-				m_quest.RequestProgress();
-			if ( m_tournament.EventExists() && m_tournament.ShouldRequestLeaderboard() )
-				m_tournament.RequestLeaderboard();
 
+                m_managers[i].OnLiveDataResponse();
+            }
 		}
 		else
 		{
-			int max = m_types.Count;
+			int max = m_managers.Count;
 			for (int i = 0; i < max; i++)
             {
                 m_managers[i].CleanData();
             }
 		}
-
-		m_cacheInfo = false;
 
 		Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 
@@ -391,27 +356,34 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 	}
 
 
-	public void ApplyDragonMods()
-	{
+    //--------------------------------------------------------------------------
+
+	public void ApplyDragonMods() {
 		for (int i = 0; i < m_managers.Count; i++) {
-			if ( m_managers[i].m_isActive )
-			{
+            if (m_managers[i].isActive) {
 				m_managers[i].ApplyDragonMods();
 			}
 		}
 	}
 
-	public void SwitchToTournament()
-	{
-		m_tournament.Activate();
-		m_passive.Deactivate();
-		m_quest.Deactivate();
-	}
+    public void SwitchToTournament() {
+        m_tournament.Activate();
+        m_passive.Deactivate();
+        m_quest.Deactivate();
+        m_league.Deactivate();
+    }
 
-	public void SwitchToQuest()
-	{
-		m_tournament.Deactivate();
-		m_passive.Activate();
-		m_quest.Activate();	
-	}
+	public void SwitchToQuest() {
+        m_tournament.Deactivate();
+        m_passive.Activate();
+        m_quest.Activate();
+        m_league.Deactivate();
+    }
+
+    public void SwitchToLeague() {
+        m_tournament.Deactivate();
+        m_passive.Deactivate();
+        m_quest.Deactivate();
+        m_league.Activate();
+    }
 }

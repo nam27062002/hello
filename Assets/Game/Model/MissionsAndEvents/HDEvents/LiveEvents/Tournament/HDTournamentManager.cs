@@ -102,7 +102,12 @@ public class HDTournamentManager : HDLiveEventManager {
 		m_isLeaderboardReady = false;
 	}
 
-#region server_comunication
+    #region server_comunication
+
+    public override void OnLiveDataResponse() { 
+        if (EventExists() && ShouldRequestLeaderboard())
+            RequestLeaderboard();
+    }
 
     public bool RequestLeaderboard( bool _force = false )
     {
@@ -274,12 +279,12 @@ public class HDTournamentManager : HDLiveEventManager {
 		if ( m_tracker != null)
     	{
 			// Check if we are in tournament mode
-			m_tracker.enabled = m_isActive;
+			m_tracker.enabled = isActive;
 			m_tracker.InitValue(0);
 			Debug.Log(Color.green.Tag("RESET TRACKER (ON GAME STARTED"));
     	}
 
-		if ( m_isActive )
+		if (isActive)
 		{
 			m_runWasValid = false;
 			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
