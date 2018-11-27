@@ -22,6 +22,7 @@
 			#pragma fragment frag
 //			#pragma glsl_no_auto_normalization
 //			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile LOW_DETAIL_ON MEDIUM_DETAIL_ON HI_DETAIL_ON
 			
 			#include "UnityCG.cginc"
 
@@ -55,43 +56,9 @@
 			// iq's hash function from https://www.shadertoy.com/view/MslGD8
 			float2 hash(float2 p) {
 				float2 p2 = float2(dot(p, float2(76.413, -41.7445)), dot(p, float2(-29.532, 63.324)));
-//				float2 p2 = float2(dot(p, float2(0.0413, -0.0712)), dot(p, float2(-0.0251, 0.0343)));
-
 				return frac(p2);
-//				return frac(sin(p2) * 210.107);
-//				return frac(float2(sin(p.x) * 110.10, cos(p.y) * 210.510));
-
 			}
 
-	        float noise(float2 v, float of) {
-//	            float T = _Time.x * 10.0;
-	            float2 fl = floor(v), fr = frac(v);
-
-	            float2 pos = .5 + .5 * cos(1.342 * PI * hash(fl + of));
-	            float2 d = pos + of - fr;
-	            return length(d);
-	        }
-
-	        float simplegridnoise9(float2 v, float t)
-	        {
-	            float3 of = float3(1.0, 0.0, -1.0);
-
-	            float mindist = 1.0;	//noise(v, of.yy);
-
-	            mindist = min(mindist, noise(v, of.zz));
-	            mindist = min(mindist, noise(v, of.yz));
-	            mindist = min(mindist, noise(v, of.xz));
-
-	            mindist = min(mindist, noise(v, of.zy));
-	            mindist = min(mindist, noise(v, of.yy));
-	            mindist = min(mindist, noise(v, of.xy));
-
-	            mindist = min(mindist, noise(v, of.zx));
-	            mindist = min(mindist, noise(v, of.yx));
-	            mindist = min(mindist, noise(v, of.xx));
-
-	           	return mindist;
-	        }
 
 			float simplegridnoise(float2 v, float t)
 			{
@@ -118,30 +85,27 @@
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				o.time.x = frac(_Time.x * 5.0);
-				o.time.y = fmod(_Time.x * 20.0, 40.0);
+				o.time.y = fmod(_Time.x * SNOWSPEED, SNOWSPEED * 2.0);
 				return o;
 			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-			// sample the texture
-//				fixed4 col = tex2D(_MainTex, i.uv);
 				float2 uv = i.uv;
 				uv *= float2(1.0, _Aspect);
 				float2 of = /*(_WorldPosition.xy * 0.3) + */float2(0.0, i.time.y);
-
-				float bl = simplegridnoise((uv * 10.0) + of, i.time.x);
-//				float bl2 = simplegridnoise((uv * 15.0) + of, i.time.x);
-//				float bl3 = simplegridnoise((uv * 20.0) + of, i.time.x);
-
-				fixed4 col = fixed4(1.0, 1.0, 1.0, 1.0);
 				float w = 0.0;
-
-				w += 1.0 - step(SNOWRADIUS, bl);
-//				w += (1.0 - step(SNOWRADIUS, bl2)) * 0.75;
-//				w += (1.0 - step(SNOWRADIUS, bl3)) * 0.5;
-
-				col.w *= w;
+#if defined (LOW_DETAIL_ON)
+				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
+#elif defined (MEDIUM_DETAIL_ON)
+				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+#elif defined (HI_DETAIL_ON)
+				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 20.0) + of, i.time.x))) * 0.5;
+#endif
+				fixed4 col = fixed4(1.0, 1.0, 1.0, w);
 				return col;
 			}
 			ENDCG
