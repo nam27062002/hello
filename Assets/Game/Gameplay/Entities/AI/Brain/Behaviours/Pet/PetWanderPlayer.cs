@@ -13,8 +13,6 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Wander Player")]
 		public class PetWanderPlayer : StateComponent {
 
-			private static int m_groundMask;
-
 			private SphereCollider m_collider;
 			private Transform m_target;
 			private Vector3 m_targetOffset;
@@ -33,8 +31,7 @@ namespace AI {
 				return typeof(WanderPlayerData);
 			}
 
-			protected override void OnInitialise() {
-				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
+			protected override void OnInitialise() {				
 				WanderPlayerData data = m_pilot.GetComponentData<WanderPlayerData>();
 				m_collider = m_pilot.GetComponent<SphereCollider>();
 				m_target = m_machine.transform;

@@ -15,10 +15,6 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 namespace AI {
 	public abstract class AIPilot : Pilot, ISerializationCallbackReceiver {
-		protected static int m_waterMask;
-		protected static int m_groundMask;
-		protected static int m_groundWaterMask;
-
 		//--------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											  //
 		//--------------------------------------------------------------------//
@@ -57,10 +53,6 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public override void Spawn(ISpawner _spawner) {
-			m_waterMask = LayerMask.GetMask("Water");
-			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");            
-
 			Vector3 pos = m_transform.position;
 			pos.z += zOffset;
             m_transform.position = pos;

@@ -7,7 +7,6 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	[SerializeField] private ParticleData m_explosionParticle;
 	[SerializeField] private float m_stunDuration;
 	private Transform m_oldParent = null;
-	private LayerMask m_colliderMask;
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
 	private PoolHandler m_poolHandler;
@@ -19,7 +18,6 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	// Use this for initialization
 	void Start () 
 	{
-		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
 		m_hasBeenShot = false;
@@ -90,7 +88,7 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	void OnCollisionEnter( Collision _collision )
 	{
 		// if the collision is ground -> Explode!!
-		if(((1 << _collision.gameObject.layer) & m_colliderMask) > 0){
+		if(((1 << _collision.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0){
 			AI.Machine machine = _collision.collider.GetComponent<AI.Machine>();
 
 			OnCommonEnter( machine );
@@ -98,7 +96,7 @@ public class PetStunProjectile :  MonoBehaviour, IProjectile {
 	}
 
 	void OnTriggerEnter( Collider _collider ){
-		if(((1 << _collider.gameObject.layer) & m_colliderMask) > 0){
+		if(((1 << _collider.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0){
 			AI.Machine machine = _collider.GetComponent<AI.Machine>();
 
 			OnCommonEnter( machine );
