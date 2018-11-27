@@ -58,8 +58,8 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		public override void Spawn(ISpawner _spawner) {
 			m_waterMask = LayerMask.GetMask("Water");
-			//m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-			//m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");            
+			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
+			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");            
 
 			Vector3 pos = m_transform.position;
 			pos.z += zOffset;
