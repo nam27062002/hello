@@ -241,6 +241,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 	{
 		return m_shouldRequestDefinition;
 	}
+
     public bool RequestDefinition(bool _force = false)
     {
     	bool ret = false;

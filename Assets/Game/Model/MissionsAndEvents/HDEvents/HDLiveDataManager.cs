@@ -297,7 +297,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 	        }
 	        else
 	        {
-	            GameServerManager.SharedInstance.HDEvents_GetMyEvents(instance.MyLiveDataResponse);    
+	            GameServerManager.SharedInstance.HDEvents_GetMyLiveData(instance.MyLiveDataResponse);    
 	        }
 	        ret = true;
         }

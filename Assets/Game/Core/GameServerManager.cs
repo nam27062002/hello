@@ -385,21 +385,27 @@ public class GameServerManager
 
 
 	//------------------------------------------------------------------------//
-    // HD Live EVENTS														  //
+    // HD Live Data														  //
     //------------------------------------------------------------------------//
 
     /// <summary>
-    /// HDs the events get my events. Gets the list of events assigned to this user
+    /// HDs the events get my live data. Gets the list of events assigned to this user
     /// </summary>
     /// <param name="_callback">Callback.</param>
-	public virtual void HDEvents_GetMyEvents(ServerCallback _callback) {}
+	public virtual void HDEvents_GetMyLiveData(ServerCallback _callback) {}
 
-	/// <summary>
-	/// HDs the events get event. Get the definition of the event
-	/// </summary>
-	/// <param name="_eventID">Event I.</param>
-	/// <param name="_callback">Callback.</param>
-	public virtual void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {}
+
+
+    //-----------------
+    // HD Live Events 
+    //-----------------
+
+    /// <summary>
+    /// HDs the events get event. Get the definition of the event
+    /// </summary>
+    /// <param name="_eventID">Event I.</param>
+    /// <param name="_callback">Callback.</param>
+    public virtual void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {}
 
 	/// <summary>
 	/// HDs the events get my event progess. Gets the progress in the event for the player
@@ -420,13 +426,22 @@ public class GameServerManager
 
 	public virtual void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {}
 
-	//------------------------------------------------------------------------//
-	// DEBUG ONLY															  //
-	//------------------------------------------------------------------------//	
-	/// <summary>
-	/// Update frame.
-	/// </summary>
-	public virtual void Update() {
+
+
+    //-----------------
+    // HD Leagues 
+    //-----------------
+
+
+
+
+    //------------------------------------------------------------------------//
+    // DEBUG ONLY															  //
+    //------------------------------------------------------------------------//	
+    /// <summary>
+    /// Update frame.
+    /// </summary>
+    public virtual void Update() {
 		;	// Put a breakpoint in here to peek what the GameServerManager is doing
 	}	
 }

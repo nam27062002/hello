@@ -8,6 +8,8 @@ public class HDLeagueManager : HDLiveDataController {
     }
 
 
+    private int m_liveDataCode;
+
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS                                                        //
@@ -17,8 +19,7 @@ public class HDLeagueManager : HDLiveDataController {
     /// </summary>
     public HDLeagueManager() {
         m_type = "league";
-
-       
+        m_liveDataCode = -1;
     }
 
     ~HDLeagueManager() {
@@ -26,41 +27,36 @@ public class HDLeagueManager : HDLiveDataController {
     }
 
 
-    public override void Activate() {
-     //  throw new System.NotImplementedException();
-    }
-
-    public override void Deactivate() {
-      //  throw new System.NotImplementedException();
-    }
-
-    public override void ApplyDragonMods() {
-     //   throw new System.NotImplementedException();
-    }
+    public override void Activate() {}
+    public override void Deactivate() {}
+    public override void ApplyDragonMods() {}
 
     public override void CleanData() {
-      //  throw new System.NotImplementedException();
+        m_liveDataCode = -1;
+
+        m_dataLoadedFromCache = false;
     }
 
     public override bool ShouldSaveData() {
-        //  throw new System.NotImplementedException();
         return false;
     }
 
     public override JSONNode SaveData() {
-        //  throw new System.NotImplementedException();
         return null;
     }
 
+
     public override void LoadDataFromCache() {
-     //   throw new System.NotImplementedException();
+        CleanData();
+        if (CacheServerManager.SharedInstance.HasKey(m_type)) {
+            SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
+
+
+        }
+        m_dataLoadedFromCache = true;
     }
 
-    public override void LoadData(JSONNode _data) {
-     //   throw new System.NotImplementedException();
-    }
+    public override void LoadData(JSONNode _data) {}
 
-    public override void OnLiveDataResponse() {
-      //  throw new System.NotImplementedException();
-    }
+    public override void OnLiveDataResponse() {}
 }

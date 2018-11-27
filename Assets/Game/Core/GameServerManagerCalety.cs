@@ -654,7 +654,7 @@ public class GameServerManagerCalety : GameServerManager {
 
 #region HD_LiveEvents
 		
-	public override void HDEvents_GetMyEvents(ServerCallback _callback) {
+	public override void HDEvents_GetMyLiveData(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
 	}
 
