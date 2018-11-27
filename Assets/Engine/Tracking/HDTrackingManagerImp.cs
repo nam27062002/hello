@@ -1434,6 +1434,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             {
                 GameServerManager.SharedInstance.CurrencySpent( "gf", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
             }break;
+            case UserProfile.Currency.SOFT:
+            {
+                GameServerManager.SharedInstance.CurrencySpent( "sc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+            }break;
         }
     }
 
@@ -1467,6 +1471,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             {
                 // Send event
                 GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+            }break;
+             case UserProfile.Currency.SOFT:
+            {
+                GameServerManager.SharedInstance.CurrencyEarned( "sc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
             }break;
         }
     }
