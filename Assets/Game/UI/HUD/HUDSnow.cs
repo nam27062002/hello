@@ -19,6 +19,12 @@ public class HUDSnow : MonoBehaviour {
     // Use this for initialization
     void Awake () 
 	{
+        if (FeatureSettingsManager.instance.Device_CurrentProfile == "very_low")
+        {
+            Destroy(gameObject);
+            return;
+        }
+
 
 		m_image = gameObject.GetComponent<Image>();
 			
@@ -44,6 +50,8 @@ public class HUDSnow : MonoBehaviour {
             m_snowMaterial.SetFloat(m_aspectId, aspect);
 
         }
+
+        Debug.Log("Device_CurrentProfile: " + FeatureSettingsManager.instance.Device_CurrentProfile);
 			
 	}
 
