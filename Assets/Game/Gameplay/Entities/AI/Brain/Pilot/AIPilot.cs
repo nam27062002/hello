@@ -58,12 +58,12 @@ namespace AI {
 		//--------------------------------------------------------------------//
 		public override void Spawn(ISpawner _spawner) {
 			m_waterMask = LayerMask.GetMask("Water");
-			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
+			//m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
+			//m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");            
 
-			Vector3 pos = transform.position;
+			Vector3 pos = m_transform.position;
 			pos.z += zOffset;
-			transform.position = pos;
+            m_transform.position = pos;
 
 			SetArea(_spawner);
 
@@ -85,7 +85,7 @@ namespace AI {
 
 			Stop();
 
-			m_target = transform.position;
+			m_target = m_transform.position;
 			m_slowDown = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
@@ -101,12 +101,12 @@ namespace AI {
 
 		public void SetArea(ISpawner _spawner) {
             if (_spawner == null) {
-                m_area = new RectAreaBounds(transform.position, Vector3.one * 2f);
-                m_homePosition = transform.position;
+                m_area = new RectAreaBounds(m_transform.position, Vector3.one * 2f);
+                m_homePosition = m_transform.position;
                 m_guideFunction = null;                
             } else {
                 m_area = _spawner.area;
-				m_homePosition = transform.position;
+				m_homePosition = m_transform.position;
 				m_guideFunction = _spawner.guideFunction;
 			}
 
