@@ -31,7 +31,7 @@
 			// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 			#define PI 3.1415926
-			#define SNOWSPEED 20.0
+			#define SNOWSPEED 30.0
 			#define SNOWRADIUS 0.05
 
 			#define fragmentoption 
@@ -55,7 +55,7 @@
 
 			// iq's hash function from https://www.shadertoy.com/view/MslGD8
 			float2 hash(float2 p) {
-				float2 p2 = float2(dot(p, float2(76.413, -41.7445)), dot(p, float2(-29.532, 63.324)));
+				float2 p2 = float2(dot(p, float2(76.413, -41.7445)), dot(p, float2(-19.532, 63.324)));
 				return frac(p2);
 			}
 
@@ -85,7 +85,11 @@
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				o.time.x = frac(_Time.x * 5.0);
+#if defined (LOW_DETAIL_ON)
 				o.time.y = fmod(_Time.x * SNOWSPEED, SNOWSPEED * 2.0);
+#else
+				o.time.y = _Time.x * SNOWSPEED;
+#endif
 				return o;
 			}
 			
