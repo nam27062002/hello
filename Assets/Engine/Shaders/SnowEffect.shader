@@ -118,7 +118,7 @@
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = v.uv;
 				o.time.x = frac(_Time.x * 5.0);
-				o.time.y = fmod(_Time.x * 40.0, 40.0);
+				o.time.y = fmod(_Time.x * 20.0, 40.0);
 				return o;
 			}
 			
@@ -131,15 +131,15 @@
 				float2 of = /*(_WorldPosition.xy * 0.3) + */float2(0.0, i.time.y);
 
 				float bl = simplegridnoise((uv * 10.0) + of, i.time.x);
-				float bl2 = simplegridnoise((uv * 15.0) + of, i.time.x);
-				float bl3 = simplegridnoise((uv * 20.0) + of, i.time.x);
+//				float bl2 = simplegridnoise((uv * 15.0) + of, i.time.x);
+//				float bl3 = simplegridnoise((uv * 20.0) + of, i.time.x);
 
 				fixed4 col = fixed4(1.0, 1.0, 1.0, 1.0);
 				float w = 0.0;
 
 				w += 1.0 - step(SNOWRADIUS, bl);
-				w += (1.0 - step(SNOWRADIUS, bl2)) * 0.75;
-				w += (1.0 - step(SNOWRADIUS, bl3)) * 0.5;
+//				w += (1.0 - step(SNOWRADIUS, bl2)) * 0.75;
+//				w += (1.0 - step(SNOWRADIUS, bl3)) * 0.5;
 
 				col.w *= w;
 				return col;
