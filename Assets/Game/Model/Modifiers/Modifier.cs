@@ -10,14 +10,27 @@ public abstract class Modifier : IModifierDefinition {
 		string type = _def.Get("type");
 
 		switch (type) {
-		case ModifierDragon.TYPE_CODE: 		return ModifierDragon.CreateFromDefinition(_def);
-		case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
-		case ModifierGamePlay.TYPE_CODE: 	return ModifierGamePlay.CreateFromDefinition(_def);
-		case ModifierGatcha.TYPE_CODE:		return ModifierGatcha.CreateFromDefinition(_def);
+    		case ModifierDragon.TYPE_CODE: 		return ModifierDragon.CreateFromDefinition(_def);
+    		case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
+    		case ModifierGamePlay.TYPE_CODE: 	return ModifierGamePlay.CreateFromDefinition(_def);
+    		case ModifierGatcha.TYPE_CODE:		return ModifierGatcha.CreateFromDefinition(_def);
 		}
 
 		return null;
 	}
+
+    public static Modifier CreateFromJson(SimpleJSON.JSONNode _data) {
+        string type = _data["type"];
+
+        switch (type) {
+            case ModifierDragon.TYPE_CODE:      return ModifierDragon.CreateFromJson(_data);
+            case ModifierEntity.TYPE_CODE:      return ModifierEntity.CreateFromJson(_data);
+            case ModifierGamePlay.TYPE_CODE:    return ModifierGamePlay.CreateFromJson(_data);
+            case ModifierGatcha.TYPE_CODE:      return ModifierGatcha.CreateFromJson(_data);
+        }
+
+        return null;
+    }
 
 	#endregion
 
