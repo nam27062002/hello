@@ -26,7 +26,8 @@ public class ItemPrefabSetup {
 		Metagame.RewardGoldenFragments.TYPE_CODE,
 		Metagame.RewardEgg.TYPE_CODE,
 		Metagame.RewardPet.TYPE_CODE,
-		Metagame.RewardSkin.TYPE_CODE
+		Metagame.RewardSkin.TYPE_CODE,
+		Metagame.RewardDragon.TYPE_CODE
 	)]
 	public string type = Metagame.RewardSoftCurrency.TYPE_CODE;
 

@@ -34,7 +34,7 @@ public class HDLiveEventDefinition {
 	//------------------------------------------------------------------------//
 	private bool m_initialized = false;
 	public bool initialized {
-		get { return m_initialized; }
+        get { return m_initialized; }
 	}
 
 	public int m_eventId;

@@ -16,7 +16,7 @@ using UnityEngine;
 /// Base class for all in-game popups pausing the game.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public abstract class PopupPauseBase : MonoBehaviour {
+public abstract class PopupPauseBase : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -41,7 +41,7 @@ public abstract class PopupPauseBase : MonoBehaviour {
 		m_popup.OnClosePostAnimation.AddListener(OnClosePostAnimation);
 
 		// This popup won't be destroyed during the whole game, but we want to destroy it upon game ending
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnd);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -53,8 +53,19 @@ public abstract class PopupPauseBase : MonoBehaviour {
 		m_popup.OnClosePostAnimation.RemoveListener(OnClosePostAnimation);
 
 		// Unsubscribe to external events
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnd);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnd();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

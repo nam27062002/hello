@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FireBreathDynamic : MonoBehaviour 
+public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
 {
     [System.Serializable]
     public struct CollisionPrefab
@@ -101,11 +101,23 @@ public class FireBreathDynamic : MonoBehaviour
 
     void OnEnable()
     {
-        Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+        Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
     }
     void OnDisable()
     {
-        Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
+    }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
+            }break;
+        }
     }
 
     void OnBoostToggled(bool value)

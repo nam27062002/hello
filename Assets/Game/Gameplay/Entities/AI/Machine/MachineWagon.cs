@@ -41,7 +41,7 @@ namespace AI {
 
 		// Collision events
 		protected override void OnCollisionEnter(Collision _collision) {
-			if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+			if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 				if (m_canExplode) {
 					m_explosive.Explode(m_transform, 2f, false);
 				}

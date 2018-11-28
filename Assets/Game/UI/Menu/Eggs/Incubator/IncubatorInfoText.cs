@@ -18,7 +18,7 @@ using System;
 /// Controls the info text in the incubator menu.
 /// </summary>
 [RequireComponent(typeof(ShowHideAnimator))]
-public class IncubatorInfoText : MonoBehaviour {
+public class IncubatorInfoText : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -44,7 +44,7 @@ public class IncubatorInfoText : MonoBehaviour {
 		m_anim = GetComponent<ShowHideAnimator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.AddListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -63,8 +63,21 @@ public class IncubatorInfoText : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.EGG_STATE_CHANGED:
+            {
+                EggStateChanged info = (EggStateChanged)broadcastEventInfo;
+                OnEggStateChanged(info.egg, info.from, info.to);
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Refresh this slot with the latest data from the manager.

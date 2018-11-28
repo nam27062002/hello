@@ -16,13 +16,12 @@ namespace AI {
 			protected const float m_reallyFarRecoverDistance = 30.0f;	// TODO: confirm this is off-screen
 
 			private float m_approxSize;
-			private int m_solidMask;
+			
 
 			protected override void OnInitialise() {
 				base.OnInitialise();
 				m_owner = InstanceManager.player;
-				m_approxSize =  m_owner.transform.lossyScale.x;
-				m_solidMask = LayerMask.GetMask("Ground");
+				m_approxSize =  m_owner.transform.lossyScale.x;				
 			}
 
 			protected override void OnUpdate() {
@@ -43,7 +42,7 @@ namespace AI {
 		            bool makePetAppearFront = false;
 
 		            //Launch a ray from where the shark is, in the opposite direction of the pet ( normal scenario, as pet would normally be behind him )
-					if (Physics.Raycast(ownerPos, delta.normalized, out rh, Mathf.Infinity, m_solidMask))
+                    if (Physics.Raycast(ownerPos, delta.normalized, out rh, Mathf.Infinity, GameConstants.Layers.GROUND))
 		            {
 		                minDistLeft = rh.distance;
 		                if (minDistLeft > m_minDistanceToAppearInFrontInThisShark)
@@ -59,7 +58,7 @@ namespace AI {
 		            //If we cannot spawn the pet behind, look for other options.
 		            if (makePetAppearBehind == false)
 		            {
-						if (Physics.Raycast(ownerPos, -delta.normalized, out rh, Mathf.Infinity, m_solidMask))
+                        if (Physics.Raycast(ownerPos, -delta.normalized, out rh, Mathf.Infinity, GameConstants.Layers.GROUND))
 		                {
 		                    minDistRight = rh.distance;
 		                    if (minDistRight > m_minDistanceToAppearInFrontInThisShark)

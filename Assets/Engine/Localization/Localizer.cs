@@ -20,7 +20,7 @@ using System.Globalization;
 /// Use this when possible rather than directly setting the text's value.
 /// </summary>
 //[RequireComponent(typeof(TextMeshProUGUI))]
-public class Localizer : MonoBehaviour {
+public class Localizer : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -86,7 +86,7 @@ public class Localizer : MonoBehaviour {
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Make sure text is properly localized (in case language changed while disabled)
 		Localize();
@@ -97,9 +97,21 @@ public class Localizer : MonoBehaviour {
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
+    
+    
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//

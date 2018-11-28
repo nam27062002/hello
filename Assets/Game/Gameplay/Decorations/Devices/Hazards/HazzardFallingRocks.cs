@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class HazzardFallingRocks : MonoBehaviour {
+public class HazzardFallingRocks : MonoBehaviour, IBroadcastListener {
 
 	[Serializable]
 	private class SpawnData {
@@ -38,7 +38,7 @@ public class HazzardFallingRocks : MonoBehaviour {
 	//-----------------------------------------------------------
 	// Use this for initialization
 	private void Awake() {
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	private void Start() {
@@ -50,9 +50,20 @@ public class HazzardFallingRocks : MonoBehaviour {
 	}
 
 	private void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+        }
+    }
+    
 	void CreatePool() {
 		m_poolHandler = PoolManager.RequestPool(m_projectileName, "Game/Projectiles/", m_spawnData.Length);
 	}

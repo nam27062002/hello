@@ -24,7 +24,7 @@ public class TrackerBoostTime : TrackerBaseTime {
 	/// </summary>
 	public TrackerBoostTime() {
 		// Subscribe to external events
-		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+		Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
 	}
 
 	/// <summary>
@@ -42,7 +42,7 @@ public class TrackerBoostTime : TrackerBaseTime {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
 
 		// Call parent
 		base.Clear();
@@ -52,6 +52,19 @@ public class TrackerBoostTime : TrackerBaseTime {
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+    
+    override public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// The dragon has entered/exit water.
 	/// </summary>

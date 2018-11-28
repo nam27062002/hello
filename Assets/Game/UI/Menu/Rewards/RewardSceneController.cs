@@ -28,7 +28,7 @@ public class RewardSceneController : MenuScreenScene {
 		public ShinyGodraysFX godrays = null;
 		public string sfx = "";
 
-		public void Clear() {
+		public virtual void Clear() {
 			if(view != null) {
 				view.SetActive(false);
 			}
@@ -78,10 +78,13 @@ public class RewardSceneController : MenuScreenScene {
 	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT];
+	[SerializeField] private RewardSetup m_dragonRewardSetup = new RewardSetup();
 
 	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
+	[SerializeField] private Transform m_confettiAnchor = null;
+	[SerializeField] private GameObject m_confettiPrefab = null;
 
 	[Separator("Other SFX")]
 	[SerializeField] private string m_eggTapSFX = "";
@@ -226,6 +229,9 @@ public class RewardSceneController : MenuScreenScene {
 		for(int i = 0; i < m_goldenFragmentsRewardsSetup.Length; ++i) {
 			m_goldenFragmentsRewardsSetup[i].Clear();
 		}
+
+		m_dragonRewardSetup.Clear();
+		m_dragonRewardSetup.view.GetComponent<MenuDragonLoader>().UnloadDragon();
 	}
 
 	/// <summary>
@@ -249,8 +255,7 @@ public class RewardSceneController : MenuScreenScene {
 	public void OpenReward() {
 		// Get most recent reward in the stack
 		// Don't pop immediately, the Reward.Collect() will do it
-		if ( UsersManager.currentUser.rewardStack.Count > 0 )
-		{
+		if(UsersManager.currentUser.rewardStack.Count > 0) {
 			m_currentReward = UsersManager.currentUser.rewardStack.Peek();
 
 			// Hide UI reward elements
@@ -270,9 +275,14 @@ public class RewardSceneController : MenuScreenScene {
 
 			// Skin
 			else if(m_currentReward is Metagame.RewardSkin) {
-				// TODO!!
 				m_currentReward.Collect();
 				OpenSkinReward(m_currentReward as Metagame.RewardSkin);
+			}
+
+			// Skin
+			else if(m_currentReward is Metagame.RewardDragon) {
+				m_currentReward.Collect();
+				OpenDragonReward(m_currentReward as Metagame.RewardDragon);
 			}
 
 			// Multi
@@ -290,9 +300,7 @@ public class RewardSceneController : MenuScreenScene {
 
 			// Notify listeners
 			OnAnimStarted.Invoke();
-		}
-		else
-		{
+		} else {
 			// NO REWARD. This shouldnt happen. But just in case
 			// Notify listeners
 			OnAnimStarted.Invoke();
@@ -301,7 +309,6 @@ public class RewardSceneController : MenuScreenScene {
 			seq.AppendInterval(0.1f);
 			seq.OnComplete(OnAnimationFinish);
 		}
-
 	}
 
 	//------------------------------------------------------------------------//
@@ -467,6 +474,9 @@ public class RewardSceneController : MenuScreenScene {
 		// Initialize skin view
 		InitSkinView(_skinReward);
 
+		// Trigger confetti anim
+		LaunchConfettiFX(true);
+
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(0.05f);	// Initial delay
@@ -478,17 +488,50 @@ public class RewardSceneController : MenuScreenScene {
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
-
-
 		// Show reward godrays
-		// Except if duplicate! (for now)
 		if(m_currentRewardSetup.godrays != null) {
 			// Custom color based on reward's rarity
-			m_petRewardSetup.godrays.gameObject.SetActive(true);
-			//m_petRewardSetup.godrays.Tint(UIConstants.GetRarityColor(m_currentReward.rarity));
+			m_currentRewardSetup.godrays.gameObject.SetActive(true);
 
 			// Show with some delay to sync with reward's animation
-			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		seq.OnComplete(OnAnimationFinish);
+	}
+
+	/// <summary>
+	/// Start the dragon reward flow.
+	/// </summary>
+	/// <param name="_dragonReward">Dragon reward.</param>
+	private void OpenDragonReward(Metagame.RewardDragon _dragonReward) {
+		// Select this dragon!
+		InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+
+		// Initialize skin view
+		InitDragonView(_dragonReward);
+
+		// Trigger confetti anim
+		LaunchConfettiFX(true);
+
+		// Animate it!
+		Sequence seq = DOTween.Sequence();
+		seq.AppendInterval(0.05f);  // Initial delay
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+
+		// Trigger UI animation
+		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_dragonReward); });
+
+		// Make it target of the drag controller
+		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
+
+		// Show reward godrays
+		if(m_currentRewardSetup.godrays != null) {
+			// Custom color based on reward's rarity
+			m_currentRewardSetup.godrays.gameObject.SetActive(true);
+
+			// Show with some delay to sync with reward's animation
+			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -589,6 +632,22 @@ public class RewardSceneController : MenuScreenScene {
 	}
 
 	/// <summary>
+	/// Initialize the dragon reward view with the given reward data.
+	/// </summary>
+	/// <param name="_dragonReward">Skin reward data.</param>
+	private void InitDragonView(Metagame.RewardDragon _dragonReward) {
+		HideAllRewards();
+
+		m_currentRewardSetup = m_dragonRewardSetup;
+		m_currentRewardSetup.view.SetActive(true);
+
+		// Use a DragonLoader to simplify things
+		MenuDragonLoader loader = m_currentRewardSetup.view.GetComponent<MenuDragonLoader>();
+		loader.Setup(MenuDragonLoader.Mode.MANUAL, MenuDragonPreview.Anim.IDLE, true);
+		loader.LoadDragon(_dragonReward.sku, IDragonData.GetDefaultDisguise(_dragonReward.sku).sku);
+	}
+
+	/// <summary>
 	/// Initialize the currency reward view with the given reward data.
 	/// </summary>
 	/// <param name="_reward">The currency reward data.</param>
@@ -680,6 +739,30 @@ public class RewardSceneController : MenuScreenScene {
 			anim.SetInteger( GameConstants.Animator.RARITY , (int)m_currentReward.rarity);
 			anim.SetTrigger( GameConstants.Animator.START );
 		}
+	}
+
+	/// <summary>
+	/// Instantiate and launch the confetti VFX.
+	/// </summary>
+	/// <param name="_triggerSound">Whether to also trigger confetti SFX.</param>
+	private void LaunchConfettiFX(bool _triggerSound) {
+		// Check required stuff
+		if(m_confettiAnchor == null) return;
+		if(m_confettiPrefab == null) return;
+
+		// Create a new instance of the FX and put it on the dragon loader
+		GameObject newObj = Instantiate<GameObject>(
+			m_confettiPrefab,
+			m_confettiAnchor,
+			false
+		);
+
+		// Auto-destroy after the FX has finished
+		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
+		destructor.lifeTime = 9f;   // Sync with FX duration!
+
+		// Trigger SFX
+		if(_triggerSound) AudioController.Play("hd_unlock_dragon");
 	}
 
 	//------------------------------------------------------------------------//

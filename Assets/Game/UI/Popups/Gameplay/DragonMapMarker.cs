@@ -107,7 +107,7 @@ public class DragonMapMarker : MapMarker {
 		if(checkTouch) {
 			Ray ray = m_mapCamera.camera.ScreenPointToRay(new Vector3(touchPos.x, touchPos.y, 0f));	// The ray to the touched object in the world
 			RaycastHit hitInfo;
-			if(Physics.Raycast(ray.origin, ray.direction, out hitInfo, float.MaxValue, LayerMask.GetMask("Map"))) {
+            if(Physics.Raycast(ray.origin, ray.direction, out hitInfo, float.MaxValue, GameConstants.Layers.MAP)) {
 				// Did we touch the icon's collider (is on the root)
 				if(hitInfo.collider.transform == m_iconRoot) {
 					// Center view on dragon!

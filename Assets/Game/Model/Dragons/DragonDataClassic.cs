@@ -159,6 +159,29 @@ public class DragonDataClassic : IDragonData {
     }
     
     
+    // Super Size
+    public override float superSizeUpMultiplier{ 
+        get{ return m_def.GetAsFloat("sizeUpMultiplier", 2); }
+    }    
+    public override float superSpeedUpMultiplier{
+        get{ return m_def.GetAsFloat("speedUpMultiplier", 2); }
+    }    
+    public override float superBiteUpMultiplier{ 
+        get{ return m_def.GetAsFloat("biteUpMultiplier", 2); }
+    }    
+    public override bool superInvincible{ 
+        get{ return m_def.GetAsBool("invincible", true); }
+    }    
+    public override bool superInfiniteBoost{
+        get{ return m_def.GetAsBool("infiniteBoost", true); }
+    }    
+    public override bool superEatEverything{ 
+        get{ return m_def.GetAsBool("eatEverything", true); }
+    }    
+    public override float superModeDuration{ 
+        get{ return m_def.GetAsFloat("modeDuration", 10); }
+    }
+    
     public override string gamePrefab {
         get{
             return m_def.GetAsString("gamePrefab");
@@ -236,12 +259,28 @@ public class DragonDataClassic : IDragonData {
 		}
 
 		// c) Is dragon locked?
-		// Dragon is considered locked if THE previous dragon is not maxed out
+		// Dragon is considered locked if THE previous dragon is NOT maxed out
 		int order = GetOrder();
 		if(order > 0) {     // First dragon should always be owned
-							// Check previous dragon's progression
+			// Check previous dragon's progression
 			List<IDragonData> dragons = DragonManager.GetDragonsByOrder(Type.CLASSIC);
 			if(!(dragons[order - 1] as DragonDataClassic).progression.isMaxLevel) {
+				// Can the dragon be acquired?
+				if(!m_unlockAvailable) {
+					bool canBeUnlocked = true;
+
+					// Check all required dragons are owned
+					for(int i = 0; i < m_unlockFromDragons.Count; ++i) {
+						canBeUnlocked = canBeUnlocked && DragonManager.IsDragonOwned(m_unlockFromDragons[i]);
+					}
+
+					if(canBeUnlocked) {
+						m_unlockAvailable = true;	// No need to check again in this run
+						return LockState.LOCKED;
+					} else {
+						return LockState.LOCKED_UNAVAILABLE;
+					}
+				}
 				return LockState.LOCKED;
 			}
 		}

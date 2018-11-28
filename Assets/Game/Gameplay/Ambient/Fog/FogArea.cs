@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FogArea : MonoBehaviour
+public class FogArea : MonoBehaviour, IBroadcastListener
 {
 	
 	public float m_insideScale = 1.5f;
@@ -26,13 +26,24 @@ public class FogArea : MonoBehaviour
 		{
 			InstanceManager.fogManager.CheckTextureAvailability(m_attributes);
 		}
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_EXIT:
+            {
+                OnAreaExit();
+            }break;
+        }
+    }
 
     private void OnDisable()
     {

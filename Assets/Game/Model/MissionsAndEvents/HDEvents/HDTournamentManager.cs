@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HDTournamentManager : HDLiveEventManager {
+public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS   															  //
 	//------------------------------------------------------------------------//
@@ -61,7 +61,7 @@ public class HDTournamentManager : HDLiveEventManager {
         
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
         
 		m_isLeaderboardReady = false;
 	}
@@ -75,8 +75,20 @@ public class HDTournamentManager : HDLiveEventManager {
         m_tournamentDefinition = null;
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
