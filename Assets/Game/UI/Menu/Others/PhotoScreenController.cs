@@ -405,8 +405,10 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Take the picture!
 	/// </summary>
 	public void OnTakePictureButton() {
-		// Do it in a coroutine to wait until the end of the frame
-		StartCoroutine(TakePicture());
+        if (!ButtonExtended.checkMultitouchAvailability())
+            return;
+        // Do it in a coroutine to wait until the end of the frame
+        StartCoroutine(TakePicture());
     }
 
     /// <summary>
