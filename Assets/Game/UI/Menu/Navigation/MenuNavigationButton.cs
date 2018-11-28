@@ -53,6 +53,8 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the target screen.
 	/// </summary>
 	public void OnNavigationButton() {
+		if (!ButtonExtended.checkMultitouchAvailability ())
+			return;
 		// Just go to target screen
 		m_transitionManager.GoToScreen(m_targetScreen, true);
 	}
@@ -61,6 +63,8 @@ public class MenuNavigationButton : MonoBehaviour {
 	/// Go to the previous screen, if any.
 	/// </summary>
 	public void OnBackButton() {
+		if (!ButtonExtended.checkMultitouchAvailability ())
+			return;
         // If history is empty, go to default screen
         if (m_transitionManager.screenHistory.Count == 0) {
 			OnNavigationButton();
@@ -73,6 +77,8 @@ public class MenuNavigationButton : MonoBehaviour {
     /// Special callback for the final play button.
     /// </summary>
     public void OnStartGameButton() {
+		if (!ButtonExtended.checkMultitouchAvailability ())
+			return;
         // To be used only on the menu
         // Let the scene controller manage it
         InstanceManager.menuSceneController.OnPlayButton();

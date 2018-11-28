@@ -221,23 +221,21 @@ namespace AI {
                 m_hasHit[i] = false;
             }
 
-			int groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-
             //down
             ray.direction = GameConstants.Vector3.down;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
 
             //up
             ray.direction = GameConstants.Vector3.up;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
 
             //right
             ray.direction = GameConstants.Vector3.right;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
 
             //left
             ray.direction = GameConstants.Vector3.left;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {

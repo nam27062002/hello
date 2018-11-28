@@ -114,10 +114,12 @@ public class HDCP2Manager
 
     private bool CanUserPlayInterstitial()
     {
-        // Don't show during the FTUXP
-        // Checks that the minimum time since a cp2 interstitial was last played has passed               
+        // We want to make sure the user has already passed first time user xp so interstitial doesn't interfere with ftux
+        // The user has to have been playing for a while (3 runs) in the current session so she won't get annoyed by interstitial
+        // We make sure that the minimum time since a cp2 interstitial was last played has passed so the user doesn't get too spammed                     
         TrackingPersistenceSystem trackingSystem = HDTrackingManager.Instance.TrackingPersistenceSystem;
-        return trackingSystem != null && trackingSystem.GameRoundCount >= 3 && GetUserRestrictionTimeToWait() <= 0f;        
+        bool ftuxPassed = trackingSystem != null && trackingSystem.GameRoundCount >= 3;
+        return ftuxPassed && HDTrackingManager.Instance.Session_GameRoundCount >= FeatureSettingsManager.instance.GetCP2InterstitialMinRounds() && GetUserRestrictionTimeToWait() <= 0f;        
     }   
 
     private float GetUserRestrictionTimeToWait()

@@ -65,9 +65,9 @@ public class PassiveEventIcon : MonoBehaviour {
 		// Get latest data from the manager
 		RefreshData();
 
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventStateUpdated);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -75,9 +75,9 @@ public class PassiveEventIcon : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnStateUpdatedWithParams);
+		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventStateUpdated);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -312,15 +312,19 @@ public class PassiveEventIcon : MonoBehaviour {
 	/// <summary>
 	/// We got an update on the tournament state.
 	/// </summary>
-	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+    private void OnNewEventDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
 		RefreshData();
 	}
 
-	private void OnStateUpdated() {
-		RefreshData();
-	}
+    private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+        RefreshVisibility();
+    }
 
-	private void OnMenuScreenTransition(MenuScreen _from, MenuScreen _to) {
+    private void OnEventStateUpdated() {
+        RefreshData();
+    }
+
+    private void OnMenuScreenTransition(MenuScreen _from, MenuScreen _to) {
 		RefreshVisibility();
 	}
 }
