@@ -19,7 +19,12 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		public PoolData		buildData;
 	}
 
-	public static bool sm_printPools = false;
+    public enum PoolLimits {
+        Limited = 0,
+        Unlimited
+    }
+
+    public static bool sm_printPools = false;
 
 	// Entity Pools requests (delayed pool manager)
 	private SortedDictionary<string, PoolContaier> m_pools = new SortedDictionary<string, PoolContaier>();
@@ -30,18 +35,23 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private float m_printTimer = 10f;
 
+    private PoolLimits m_poolLimits = PoolLimits.Limited;
+    public PoolLimits poolLimits {
+        get { return m_poolLimits; }
+        set { m_poolLimits = value; }
+    }
 
-	//---------------------------------------------------------------//
-	//-- Static Methods ---------------------------------------------//
-	//---------------------------------------------------------------//
+    //---------------------------------------------------------------//
+    //-- Static Methods ---------------------------------------------//
+    //---------------------------------------------------------------//
 
-	/// <summary>
-	/// Request a pool. Stores a pool request, it'll be created later loading the level.
-	/// </summary>
-	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
-	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
-	/// <param name="_size">Final pool size.</param>
-	public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
+    /// <summary>
+    /// Request a pool. Stores a pool request, it'll be created later loading the level.
+    /// </summary>
+    /// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
+    /// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
+    /// <param name="_size">Final pool size.</param>
+    public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
 		return instance.__RequestPool(_prefabName, _prefabPath, _size);
 	}
 
@@ -173,7 +183,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		List<string> keys = new List<string>(m_pools.Keys);
 
 		for (int i = 0; i < keys.Count; i++) {
-            __CreatePool(m_pools[keys[i]], keys[i], false, true);
+            __CreatePool(m_pools[keys[i]], keys[i], m_poolLimits == PoolLimits.Unlimited, true);
 		}
 	}
 
@@ -225,7 +235,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 				}
 			} else {
 				// Create pool
-				__CreatePool(container, keys[i], false, true);
+                __CreatePool(container, keys[i], m_poolLimits == PoolLimits.Unlimited, true);
 			}
 		}
 	}
