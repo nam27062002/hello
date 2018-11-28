@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -90,4 +92,53 @@ public class SeasonManager : Singleton<SeasonManager> {
 			} break;
 		}
 	}
+    
+    public static bool IsNewYear()
+    {
+        bool ret = false;
+        System.DateTime dateTime = System.DateTime.Now;
+        
+        // New Year
+        if ( (dateTime.Day >= 31 && dateTime.Month >= 12) || (dateTime.Day <= 1 && dateTime.Month <= 1 ))
+        {
+            ret = true;
+        }
+        return ret;
+    }
+    
+    public static bool IsChineseNewYear()
+    {
+        bool ret = false;
+        
+        /*
+        // Do not delete this. With the new .Net version at some point should work
+        ChineseLunisolarCalendar chinese   = new ChineseLunisolarCalendar();
+        GregorianCalendar        gregorian = new GregorianCalendar();
+
+        DateTime utcNow = DateTime.Now;
+        // Get Chinese New Year of current UTC date/time
+        DateTime chineseNewYear = chinese.ToDateTime( utcNow.Year, 1, 1, 0, 0, 0, 0 );
+        // Convert back to Gregorian (you could just query properties of `chineseNewYear` directly, but I prefer to use `GregorianCalendar` for consistency:
+        // Int32 year  = gregorian.GetYear( chineseNewYear );
+        // Int32 month = gregorian.GetMonth( chineseNewYear );
+        // Int32 day   = gregorian.GetDayOfMonth( chineseNewYear );
+        
+        int chineseDay = gregorian.GetDayOfYear( chineseNewYear );
+
+        ret = (utcNow.DayOfYear > (chineseDay - 4)) && (utcNow.DayOfYear <= chineseDay);
+        */
+        
+        System.DateTime dateTime = System.DateTime.Now;
+        ret = dateTime.Month == 2 && dateTime.Day >= 4 && dateTime.Day <= 10;
+        return ret;
+        
+    }
+    
+    public static bool IsFireworksDay()
+    {
+        bool ret = false;
+        ret = Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false);
+        ret = ret || IsNewYear() || IsChineseNewYear();
+        return ret;
+    }
 }

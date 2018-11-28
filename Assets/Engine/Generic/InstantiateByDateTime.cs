@@ -7,33 +7,12 @@ public class InstantiateByDateTime : MonoBehaviour {
 
     public string m_resourcePath = "";
     public bool m_useLeveledParticle = false;
-    
-    [Serializable]
-    public struct DayOfTheYear
-    {
-        [Range (1,31)]
-        public int day;
-        
-        [Range (1,12)]
-        public int month;
-    };
-    
-    public List<DayOfTheYear> m_validDays = new List<DayOfTheYear>();
+    public bool m_isFirewordsDay = false;
 
 	// Use this for initialization
 	void Awake () 
-    {
-        System.DateTime dateTime = System.DateTime.Now;
-        
-        bool instantiate = false;
-        
-        instantiate = Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false);
-        
-        int max = m_validDays.Count;
-        for (int i = 0; i < max && !instantiate; i++)
-        {
-            instantiate = m_validDays[i].day == dateTime.Day && m_validDays[i].month == dateTime.Month;
-        }
+    {   
+        bool instantiate = SeasonManager.IsFireworksDay();
         
         if ( instantiate )
         {
