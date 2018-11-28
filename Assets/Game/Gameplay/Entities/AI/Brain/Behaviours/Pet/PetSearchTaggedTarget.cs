@@ -38,8 +38,6 @@ namespace AI {
 			private Entity[] m_checkEntities = new Entity[50];
 			private int m_numCheckEntities = 0;
 
-			private int m_collidersMask;
-
 			DragonPlayer m_owner;
 			float m_range;
 			MachineSensor m_sensor;
@@ -62,7 +60,6 @@ namespace AI {
 
 				m_transitionParam = new object[1];
 
-                m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PlayerOnlyCollisions");
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				base.OnInitialise();
@@ -125,7 +122,7 @@ namespace AI {
                                     // Check if physics reachable
                                     RaycastHit hit;
                                     Vector3 dir = entity.circleArea.center - m_machine.position;
-                                    bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+                                    bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE);
                                     if (!hasHit) {
                                         if (m_data.priority == TargetPriority.Any) {
                                             target = entity;

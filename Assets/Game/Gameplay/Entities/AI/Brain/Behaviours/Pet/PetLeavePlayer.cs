@@ -9,14 +9,11 @@ namespace AI {
 			[StateTransitionTrigger]
 			public const string onOutOfScreen = "onOutOfScreen";
 
-
-			private static int m_groundMask;
 			private SphereCollider m_collider;
 			private float m_speed;
 			private Vector3 m_direction;
 
 			protected override void OnInitialise() {
-				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 				m_collider = m_pilot.GetComponent<SphereCollider>();
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed;
 			}

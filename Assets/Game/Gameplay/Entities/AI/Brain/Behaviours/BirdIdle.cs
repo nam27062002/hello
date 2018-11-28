@@ -16,9 +16,6 @@ namespace AI {
 			[StateTransitionTrigger]
 			protected static string OnMove = "onMove";
 
-
-			protected static int m_groundMask;
-
 			private enum IdleState {
 				GoToRestPoint = 0,
 				Rest
@@ -42,8 +39,7 @@ namespace AI {
 				return typeof(BirdIdleData);
 			}
 
-			protected override void OnInitialise() {
-				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
+			protected override void OnInitialise() {				
 				m_data = m_pilot.GetComponentData<BirdIdleData>();
 
 				m_avoidCollisionsRestoreValue = m_pilot.avoidCollisions;
@@ -65,7 +61,7 @@ namespace AI {
 				m_pilot.avoidCollisions = false;
 				m_pilot.avoidWater = false;
 
-				if (Physics.Linecast(start, end, out hit, m_groundMask)) {
+                if (Physics.Linecast(start, end, out hit, GameConstants.Layers.GROUND)) {
 					m_restPoint = hit.point;
 				
 					m_direction = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-0.5f, -1f));
