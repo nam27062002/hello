@@ -51,7 +51,7 @@ public class HUDSnow : MonoBehaviour {
 
         }
 
-        Debug.Log("Device_CurrentProfile: " + FeatureSettingsManager.instance.Device_CurrentProfile);
+        //Debug.Log("Device_CurrentProfile: " + FeatureSettingsManager.instance.Device_CurrentProfile);
 			
 	}
 
