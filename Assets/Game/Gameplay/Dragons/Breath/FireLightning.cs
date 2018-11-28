@@ -55,8 +55,6 @@ public class FireLightning : DragonBreathBehaviour {
     Transform m_mouthTransform;
 	Transform m_headTransform;
 
-	int m_groundMask;
-	int m_waterMask;
 	bool m_insideWater;
 
     Lightning[] m_rays = null;// new Lightning[3];
@@ -179,9 +177,6 @@ public class FireLightning : DragonBreathBehaviour {
 
         m_mouthTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
-
-		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
-		m_waterMask = LayerMask.GetMask("Water");
 
         /*
                 m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
@@ -325,7 +320,7 @@ public class FireLightning : DragonBreathBehaviour {
 		}
 		else
 		{
-			if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*length, out ground, m_waterMask))
+            if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*length, out ground, GameConstants.Layers.WATER))
 			{
 				float addition = (length - ground.distance); // distance enering water
 				// length += addition;	// We double it
@@ -338,7 +333,8 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 		}
 
-		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, m_groundMask)){
+        if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, GameConstants.Layers.GROUND))
+        {
 			p2 = ground.point;
 			m_actualLength = ground.distance;
             isGround = true;
