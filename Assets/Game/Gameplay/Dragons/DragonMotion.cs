@@ -144,7 +144,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	private float m_stunnedTimer;
 
-	private int m_groundMask;
+	
 	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
 	private float m_height;
 	public float height
@@ -328,7 +328,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_transform = transform;
 
 		// Get references
@@ -1582,7 +1581,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		bool hit_L = false;
 
 		Vector3 leftSensor  = m_sensor.bottom.position;
-		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+        hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, GameConstants.Layers.GROUND);
 
 		bool ret = false;
 		if (hit_L) {
@@ -1604,7 +1603,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		bool hit_L = false;
 
 		Vector3 leftSensor 	= m_sensor.top.position;
-		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+        hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, GameConstants.Layers.GROUND);
 
 		if (hit_L) {
 			return (_leftHit.distance <= 1f);

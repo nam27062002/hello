@@ -34,6 +34,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	private PopupController m_currentPopup = null;
 	private bool m_checkingConnection = false;
 
+	// Cache some data
+	private IDragonData m_ratingDragonData = null;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -43,8 +46,12 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	private void Awake() {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+
+		// Initialize internal vars
 		m_checkingConnection = false;
+		m_ratingDragonData = DragonManager.GetDragonData(RATING_DRAGON);;
 	}
 
 	/// <summary>
@@ -53,22 +60,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
     
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch(eventType)
-        {
-            case BroadcastEventType.POPUP_CLOSED:
-            {
-                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
-                OnPopupClosed(info.popupController);
-            }break;
-        }
-    }
-    
-
+    /// <summary>
+	/// Update loop.
+	/// </summary>
 	private void Update() {
 		if (m_waitForCustomPopup) {
 			if (!m_popupDisplayed) {
@@ -225,9 +223,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
-			IDragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-			if(data.GetLockState() > IDragonData.LockState.LOCKED) {
-				// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
+			if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
+				// If the dragon has been unlocked outside the menu (leveling up previous dragon),
+				// don't show the popup the very first time to prevent conflict with the dragon 
+				// unlock animation
 				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
 				if(_checked) {
 					// Check if we need to make the player rate the game
@@ -444,6 +443,17 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	}
 
 	/// <summary>
+	/// A dragon has been acquired.
+	/// </summary>
+	/// <param name="_dragonData">The dragon that has been acquired.</param>
+	private void OnDragonAcquired(IDragonData _dragonData) {
+		// If unlocking the required dragon for the rating popup, mark the popup as it can be displayed
+		if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
+			Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
+		}
+	}
+
+	/// <summary>
 	/// A popup has been closed.
 	/// </summary>
 	/// <param name="_popup">Popup.</param>
@@ -452,6 +462,20 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		if(_popup == m_currentPopup) {
 			// Yes! Nullify current popup reference
 			m_currentPopup = null;
+		}
+	}
+
+	/// <summary>
+	/// A global event has been sent.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			case BroadcastEventType.POPUP_CLOSED: {
+				PopupManagementInfo info = (PopupManagementInfo)_broadcastEventInfo;
+				OnPopupClosed(info.popupController);
+			} break;
 		}
 	}
 }

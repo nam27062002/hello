@@ -74,6 +74,9 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 			float availableWidth = m_pos.width - REMOVE_BUTTON_WIDTH;
 			SerializedProperty prop = null;
 
+			// Optionally draw a header
+			DrawHeader();
+
 			// Draw each entry
 			for(int i = 0; i < keysProp.arraySize; ++i) {	// Assuming keys and values have the same length
 				// Reset some vars
@@ -84,7 +87,7 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				prop = keysProp.GetArrayElementAtIndex(i);
 
 				// Update positioning vars
-				pos.width = availableWidth * 0.3f;	// Usually key is a basic type and short
+				pos.width = GetKeyFieldWidth(availableWidth);
 				pos.height = EditorGUI.GetPropertyHeight(prop, GUIContent.none, true);
 				maxHeight = Mathf.Max(maxHeight, pos.height);
 
@@ -155,6 +158,7 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 				// Insert a new value
 				valuesProp.InsertArrayElementAtIndex(idx);
 				prop = valuesProp.GetArrayElementAtIndex(idx);
+				ResetElementValues(prop);
 				prop.isExpanded = true;	// Expanded by default to hint the user he has to fill in the data!
 			}
 			GUI.color = Color.white;
@@ -179,5 +183,35 @@ public class SerializableDictionaryEditor : ExtendedPropertyDrawer {
 	/// <param name="_defaultLabel">The default label for this property.</param>
 	override protected GUIContent GetLabel(SerializedProperty _property, GUIContent _defaultLabel) {
 		return _defaultLabel;
+	}
+
+	//------------------------------------------------------------------//
+	// OVERRIDE CANDIDATES												//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Optionally draw a header line giving extra info on the dictionary's content.
+	/// Will only be displayed when expanded.
+	/// </summary>
+	protected virtual void DrawHeader() {
+		// To be implemented by heirs if needed.
+	}
+
+	/// <summary>
+	/// Get the width for the key field.
+	/// </summary>
+	/// <returns>The width for the key field.</returns>
+	/// <param name="_availableWidth">Total available width for the property content.</param>
+	protected virtual float GetKeyFieldWidth(float _availableWidth) {
+		return _availableWidth * 0.3f;  // Usually key is a basic type and short
+	}
+
+	/// <summary>
+	/// Reset the values of a given dictionary element.
+	/// Called when adding a new entry to the dictionary for example.
+	/// </summary>
+	/// <param name="_p">Property to be reset.</param>
+	protected virtual void ResetElementValues(SerializedProperty _p) {
+		// Reset to default values
+		_p.ResetValue();
 	}
 }

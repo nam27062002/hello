@@ -68,7 +68,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual int score { get { return 0; } }
 
-	protected ISpawnable[] m_otherSpawnables;
+	public ISpawnable[] m_otherSpawnables;
 	protected int m_otherSpawnablesCount;
 	protected AI.AIPilot m_pilot;
 	public AI.AIPilot pilot { get { return m_pilot; } }
