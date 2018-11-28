@@ -1423,21 +1423,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        switch( currency )
+        if (SendRtTracking())
         {
-            case UserProfile.Currency.HARD:
+            switch (currency)
             {
-                // Send event
-                GameServerManager.SharedInstance.CurrencySpent( "hc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
-            }break;
-            case UserProfile.Currency.GOLDEN_FRAGMENTS:
-            {
-                GameServerManager.SharedInstance.CurrencySpent( "gf", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
-            }break;
-            case UserProfile.Currency.SOFT:
-            {
-                GameServerManager.SharedInstance.CurrencySpent( "sc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
-            }break;
+                case UserProfile.Currency.HARD:
+                    {
+                        // Send event
+                        GameServerManager.SharedInstance.CurrencySpent("hc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+                    }
+                    break;
+                case UserProfile.Currency.GOLDEN_FRAGMENTS:
+                    {
+                        GameServerManager.SharedInstance.CurrencySpent("gf", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+                    }
+                    break;
+                case UserProfile.Currency.SOFT:
+                    {
+                        GameServerManager.SharedInstance.CurrencySpent("sc", amountBalance, (int)moneyPrice, economyGroup, CurrencyFluctuationResponse);
+                    }
+                    break;
+            }
         }
     }
 
@@ -1460,23 +1466,33 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
 
-        switch( currency )
+        if (SendRtTracking())
         {
-            case UserProfile.Currency.HARD:
+            switch( currency )
             {
-                // Send event
-                GameServerManager.SharedInstance.CurrencyEarned( "hc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-            }break;
-            case UserProfile.Currency.GOLDEN_FRAGMENTS:
-            {
-                // Send event
-                GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-            }break;
-             case UserProfile.Currency.SOFT:
-            {
-                GameServerManager.SharedInstance.CurrencyEarned( "sc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
-            }break;
+                case UserProfile.Currency.HARD:
+                {
+                    // Send event
+                    GameServerManager.SharedInstance.CurrencyEarned( "hc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+                }break;
+                case UserProfile.Currency.GOLDEN_FRAGMENTS:
+                {
+                    // Send event
+                    GameServerManager.SharedInstance.CurrencyEarned( "gf", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+                }break;
+                 case UserProfile.Currency.SOFT:
+                {
+                    GameServerManager.SharedInstance.CurrencyEarned( "sc", amountBalance,  amountDelta, economyGroup, paid, CurrencyFluctuationResponse);    
+                }break;
+            }
         }
+    }
+    
+    private bool SendRtTracking()
+    {
+        bool ret = true;
+        ret = !(GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentRestrictionEnabled());
+        return ret;
     }
 
     private void CurrencyFluctuationResponse(FGOL.Server.Error error, GameServerManager.ServerResponse response)
