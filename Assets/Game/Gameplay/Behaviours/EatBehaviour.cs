@@ -1016,7 +1016,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
                                     target = machine.position;
                                 }
                                 // Check if collision between us!
-                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUNDS))
+                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUND))
                                 {
     								preyToHold = machine;
     								entityToHold = entity;

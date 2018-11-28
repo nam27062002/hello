@@ -30,17 +30,26 @@ public class HDTrackingManager
         }
     }
 
-    public virtual void Init() {}
-    public virtual void Destroy() {}
+    public virtual void Init()
+    {
+        Reset();
+    }
+
+    protected virtual void Reset()
+    {
+        Session_Reset();
+    }
+
+    public virtual void Destroy() { }
 
     public virtual string GetTrackingID() { return null; }
-    public virtual string GetDNAProfileID() { return null;  }
+    public virtual string GetDNAProfileID() { return null; }
 
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
     {
-		UNKNOWN = -1,
+        UNKNOWN = -1,
 
         REMOVE_MISSION,
         SKIP_MISSION,
@@ -564,6 +573,19 @@ public class HDTrackingManager
     {
         Debug.LogError(LOG_CHANNEL + msg);
     }
-	#endregion
+    #endregion
+
+    #region session
+
+    /// <summary>
+    /// Returns the ammount of runs since the user started the current session
+    /// </summary>
+    public int Session_GameRoundCount { get; set; }
+
+    protected virtual void Session_Reset()
+    {
+        Session_GameRoundCount = 0;
+    }
+    #endregion
 }
 

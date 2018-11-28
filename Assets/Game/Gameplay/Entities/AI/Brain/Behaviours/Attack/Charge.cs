@@ -18,8 +18,6 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnChargeEnd = "onChargeEnd";
 
-			private static int m_groundMask;
-
 
 			protected ChargeData m_data;
 
@@ -41,8 +39,6 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-
 				m_entity = m_pilot.GetComponent<Entity>(); 
 				m_data = m_pilot.GetComponentData<ChargeData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
@@ -75,7 +71,7 @@ namespace AI {
 
 				//lets check if there is any collision in our way
 				RaycastHit groundHit;
-				if (Physics.Linecast(m_machine.position, m_target, out groundHit, m_groundMask)) {
+                if (Physics.Linecast(m_machine.position, m_target, out groundHit, GameConstants.Layers.GROUND_PREYCOL)) {
 					m_target = groundHit.point;
 					m_target -= (m_target - m_machine.position).normalized * 2f;
 				}

@@ -165,13 +165,13 @@ namespace AI {
 
 				bool isInsideWater = false;
 				float distanceCheck = 5f;
-				int layerMask = m_groundMask;
+                int layerMask = GameConstants.Layers.GROUND_PREYCOL;
 
 				if (m_avoidWater) {
 					if (m_avoidCollisions) {
-						layerMask = m_groundWaterMask;
+                        layerMask = GameConstants.Layers.GROUND_PREYCOL_WATER;
 					} else {
-						layerMask = m_waterMask;
+                        layerMask = GameConstants.Layers.WATER;
 					}
 					isInsideWater = m_machine.GetSignal(Signals.Type.InWater);
 				}

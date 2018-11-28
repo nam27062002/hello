@@ -413,6 +413,8 @@ public class PhotoScreenController : MonoBehaviour {
     /// The back button has been pressed.
     /// </summary>
     public void OnBackButton() {
+		if (!ButtonExtended.checkMultitouchAvailability ())
+			return;				
         // Ignore if we are in AR
         if (!m_arFlow.isActiveAndEnabled) {
 			// Go back to previous menu screen
@@ -427,6 +429,8 @@ public class PhotoScreenController : MonoBehaviour {
     /// The AR button has been pressed.
     /// </summary>
     public void OnARButton() {
+		if (!ButtonExtended.checkMultitouchAvailability ())
+			return;		
         // Start AR flow
         if (!m_arFlow.isActiveAndEnabled) {
 			// Hide bottom bar
