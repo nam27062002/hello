@@ -266,15 +266,27 @@ public class HDLiveEventDefinition {
 		ret.Add("code", m_eventId);	
 		ret.Add("name", m_name);
 
-		// Type?
-
+		// Type?    
 		SimpleJSON.JSONArray arr = new JSONArray();
 		for (int i = 0; i < m_dragonMods.Count; i++) {
-			arr.Add( m_dragonMods[i].def.sku );
+            string sku = m_dragonMods[i].GetSku();
+
+            if (string.IsNullOrEmpty(sku)) {
+                arr.Add(m_dragonMods[i].ToJson());
+            } else{
+                arr.Add(sku);
+            }
 		}
+
 		for (int i = 0; i < m_otherMods.Count; i++) {
-			arr.Add( m_otherMods[i].def.sku );
-		}
+            string sku = m_otherMods[i].GetSku();
+
+            if (string.IsNullOrEmpty(sku)) {
+                arr.Add(m_otherMods[i].ToJson());
+            } else {
+                arr.Add(sku);
+            }
+        }
 		ret.Add("mods", arr);
 
 		// timestamps

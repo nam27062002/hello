@@ -1,7 +1,11 @@
 ﻿
 public interface IModifierDefinition {
-	DefinitionNode def { get; }
-	string GetIconRelativePath();
-	string GetDescription();
-	string GetDescriptionShort();
+    string GetSku();
+    string GetUICategory();
+    string GetIconRelativePath();
+    string GetName();
+    string GetDescription();
+    string GetDescriptionShort();
+
+    SimpleJSON.JSONClass ToJson();
 }

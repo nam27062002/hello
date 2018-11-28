@@ -209,7 +209,7 @@ public class PassiveEventIcon : MonoBehaviour {
 				if(mod != null) {
 					// Where can this mod be displayed?
 					DisplayLocation location = DisplayLocation.NONE;
-					switch(mod.def.Get("uiCategory")) {
+                    switch(mod.GetUICategory()) {
 						case "stats": {
 							location = DisplayLocation.PLAY_SCREEN 
 								| DisplayLocation.NORMAL_MODE
