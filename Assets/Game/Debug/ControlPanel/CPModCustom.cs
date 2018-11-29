@@ -8,6 +8,7 @@ public class CPModCustom : MonoBehaviour {
 	[SerializeField] private Toggle m_toggle = null;
     [SerializeField] private TMP_InputField m_param1 = null;
     [SerializeField] private TMP_InputField m_param2 = null;
+    [SerializeField] private TMP_InputField m_param3 = null;
 
     [Separator("Mod Data")]
     [SerializeField] private string m_type = "";
@@ -68,6 +69,7 @@ public class CPModCustom : MonoBehaviour {
         data.Add("sku", m_sku);
         data.Add("param1", m_param1.text);
         data.Add("param2", m_param2.text);
+        data.Add("param3", m_param3.text);
         data.Add("uiCategory", m_uiCategory);
         data.Add("icon", m_iconPath);
         data.Add("tidName", m_tidName);

@@ -69,17 +69,20 @@ public abstract class IDragonData : IUISelectorItem {
 
     //-- Economy --------------
     private long m_priceSC = 0;
-    private long m_pricePC = 0;
-    private float m_priceModifier = 0f;
-
-    public void AddPriceModifer(float _value) { m_priceModifier += _value; }
+    private float m_priceSCModifier = 0f;
+    public void AddPriceSCModifer(float _value) { m_priceSCModifier += _value; }
 
     public long priceSC { get { return m_priceSC; } }
-    public long pricePC { get { return m_pricePC; } }
-    public float priceModifier { get { return m_priceModifier; } }
+    public long priceSCModified { get { return m_priceSC + Mathf.FloorToInt(m_priceSC * m_priceSCModifier / 100.0f); } }
+    public float priceSCModifier { get { return m_priceSCModifier; } }
 
-    public long priceSCModified { get { return m_priceSC + Mathf.FloorToInt(m_priceSC * m_priceModifier / 100.0f); } }
-    public long pricePCModified { get { return m_pricePC + Mathf.FloorToInt(m_pricePC * m_priceModifier / 100.0f); } }
+    private long m_pricePC = 0;
+    private float m_pricePCModifier = 0f;
+    public void AddPricePCModifer(float _value) { m_pricePCModifier += _value; }
+
+    public long pricePC { get { return m_pricePC; } }
+    public long pricePCModified { get { return m_pricePC + Mathf.FloorToInt(m_pricePC * m_pricePCModifier / 100.0f); } }
+    public float pricePCModifier { get { return m_pricePCModifier; } }
     //--------------------------
 
 
