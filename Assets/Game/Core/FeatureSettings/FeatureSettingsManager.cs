@@ -1727,6 +1727,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_FREQUENCY);
     }
 
+    public int GetCP2InterstitialMinRounds()
+    {
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_MIN_ROUNDS);
+    }    
+
     public static bool MenuDragonsAsyncLoading
     {
         get

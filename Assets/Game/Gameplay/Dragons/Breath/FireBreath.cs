@@ -83,10 +83,11 @@ public class FireBreath : DragonBreathBehaviour {
 		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, "Particles/Master/", m_maxParticles);
 		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, "Particles/Master/", 1);
 
-		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
-		m_noPlayerMask = ~LayerMask.GetMask("Player");
+        m_groundMask = GameConstants.Layers.GROUND_WATER_FIREBLOCK;
+        m_noPlayerMask = ~GameConstants.Layers.PLAYER;
 
-		m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
+
+        m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_length = m_dragon.data.def.GetAsFloat("furyBaseLength");

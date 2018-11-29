@@ -173,7 +173,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		List<string> keys = new List<string>(m_pools.Keys);
 
 		for (int i = 0; i < keys.Count; i++) {
-			__CreatePool(m_pools[keys[i]], keys[i], false, true);
+            __CreatePool(m_pools[keys[i]], keys[i], false, true);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		}
 	}
 
-	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporary) {
+	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
 		if (_container.pool == null) {
 			PoolData data = _container.buildData;
 			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
@@ -239,7 +239,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 				if (sm_printPools) size = 1;				
 
-                Pool pool = new Pool(go, transform, size, _canGrow, true, _temporary);
+				Pool pool = new Pool(go, transform, size, _canGrow, true, _temporay);
 				_container.pool = pool;
 				m_iterator.Add(pool);
 			} else {
