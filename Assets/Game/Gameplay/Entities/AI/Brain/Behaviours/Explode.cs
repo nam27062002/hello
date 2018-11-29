@@ -74,6 +74,11 @@ namespace AI {
 				Reward r = m_entity.reward;
 				r.SetNoReward();
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_machine.transform, r);
+                
+                if ( playerTriggeredExplosion && !m_machine.IsDying())
+                {
+                    InstanceManager.timeScaleController.HitStop();
+                }
 
 			}
 		}

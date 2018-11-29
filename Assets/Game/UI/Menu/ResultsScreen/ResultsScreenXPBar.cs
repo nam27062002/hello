@@ -369,6 +369,9 @@ public class ResultsScreenXPBar : DragonXPBar {
 			// Lock break animation
 			.AppendCallback(() => {
 				m_lockIcon.GetComponentInChildren<LockViewController>().LaunchUnlockAnim();
+
+				// Trigger SFX
+				AudioController.Play("hd_results_padlock_open");
 			})
 
 			// Let animation finish
