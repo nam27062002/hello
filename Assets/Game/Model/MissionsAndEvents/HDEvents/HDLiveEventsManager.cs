@@ -412,12 +412,14 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		m_tournament.Activate();
 		m_passive.Deactivate();
 		m_quest.Deactivate();
+        m_dragonDiscounts.Deactivate();
 	}
 
 	public void SwitchToQuest()
 	{
 		m_tournament.Deactivate();
 		m_passive.Activate();
-		m_quest.Activate();	
+		m_quest.Activate();
+        m_dragonDiscounts.Activate();
 	}
 }
