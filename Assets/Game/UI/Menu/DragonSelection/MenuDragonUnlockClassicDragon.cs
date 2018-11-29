@@ -312,7 +312,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
     /// <param name="_data">Dragon Data.</param>
     public void OnModifierChanged(IDragonData _data) {
         if (InstanceManager.menuSceneController.selectedDragonData == _data) {
-            Refresh(_data, false, false);
+            Refresh(_data, false);
         }
     }
 
