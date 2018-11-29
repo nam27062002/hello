@@ -64,6 +64,8 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 
 	private TextMeshProUGUI m_valueTxt;
 	private GameObject m_icon;
+    private Image m_iconImage;
+    private UIColorFX m_iconColorFX;
 	private GameObject m_iconAnimated = null;
 	private List<GameObject> m_extraIcons = null;
 	private CanvasGroup m_canvasGroup;
@@ -126,6 +128,8 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
+            m_iconImage = m_icon.GetComponent<Image>();
+            m_iconColorFX = m_iconImage.GetComponent<UIColorFX>();
 		}
 
 		m_instantSet = true;
@@ -342,6 +346,14 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 						StringUtils.FormatNumber(m_extraBarLastValue, 0),
 						StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
 				}
+                
+                // 
+                if ( m_type == Type.Energy && m_iconImage != null)
+                {
+                    bool bright = InstanceManager.player.dragonBoostBehaviour.HasEnoughEnergyToBoost() || InstanceManager.player.dragonBoostBehaviour.IsBoostActive();
+                    float d = bright ? 0 : -1;
+                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, Time.deltaTime * 10);
+                }
 
 				// Invulnerability FX
 				if(m_invulnerabilityGlow != null) {

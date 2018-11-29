@@ -559,14 +559,14 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);
     }
     
-    public override void PCSpent(int balance, int amount, string group, ServerCallback onDone)
+    public override void CurrencySpent( string currency, int balance, int amount, string group, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", balance, -amount, false, group, onDone );
+        SendCurencyFluctuation( currency, balance, -amount, false, group, onDone );
     }
 
-    public override void PCEarned(int balance, int amount, string group, bool paid, ServerCallback onDone)
+    public override void CurrencyEarned(string currency, int balance, int amount, string group, bool paid, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", balance, amount, paid , group, onDone );
+        SendCurencyFluctuation( currency, balance, amount, paid , group, onDone );
     }
     
     private void SendCurencyFluctuation(string currency, int balance, int amount, bool paid, string action, ServerCallback onDone)

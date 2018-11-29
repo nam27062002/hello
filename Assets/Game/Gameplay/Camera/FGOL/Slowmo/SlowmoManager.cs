@@ -150,7 +150,8 @@ public class SlowmoManager : MonoBehaviour
 			if (m_game != null && m_game.paused)
 			{
 				// reset the chached timescale in the App script so to not resume the game with the slowmo timescale.
-				m_game.ResetCachedTimeScale();
+                // TODO (MALH)
+				// m_game.ResetCachedTimeScale();
 			}
 			else
 			{

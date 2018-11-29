@@ -62,7 +62,7 @@ public class HDPassiveEventManager : HDLiveEventManager {
 		base.UpdateStateFromTimers();
 
 		// Passive events don't have rewards, skip the REWARD_AVAILABLE state
-		if(m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE) {
+        if(m_data.m_state == HDLiveEventData.State.REWARD_AVAILABLE || m_data.m_state == HDLiveEventData.State.FINALIZED) {
 			FinishEvent();
 		}
 	}

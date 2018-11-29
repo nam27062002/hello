@@ -188,6 +188,7 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
+        InstanceManager.timeScaleController.HitStop();
 
         if (onBreak != null)
             onBreak();
