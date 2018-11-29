@@ -99,15 +99,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		m_state = m_nextState = State.Idle;
 
 		m_initialized = false;
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        
 	}
 
 	/// <summary>
@@ -117,12 +113,15 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Disable();
 		}
-
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
-    
+
+    protected void OnDestroy()
+    {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
