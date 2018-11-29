@@ -11,8 +11,6 @@ namespace AI {
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Follow Player")]
 		public class PetFollowPlayer : StateComponent {
 
-			private static int m_groundMask;
-
             private Transform dragonTransform;
 
 			private SphereCollider m_collider;
@@ -31,8 +29,6 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-                m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-
                 Equipable equipable = m_pilot.GetComponent<Equipable>();
 
                 DragonPlayer dragon = InstanceManager.player;

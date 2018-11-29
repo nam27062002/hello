@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrackerBaseTime : TrackerBase {
+public class TrackerBaseTime : TrackerBase, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// MEMBERS																  //
 	//------------------------------------------------------------------------//
@@ -30,6 +30,11 @@ public class TrackerBaseTime : TrackerBase {
 
 	}
 
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        
+    }
+    
 
 
 	//------------------------------------------------------------------------//

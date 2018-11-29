@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
+public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
 	
 
 	private static Material sm_goldenMaterial = null;
@@ -117,7 +117,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected float m_disableAnimatorTimer;
 
 	private Renderer[] m_renderers;
-	private Dictionary<int, List<Material>> m_materials;
+    private List<Material[]> m_rendererMaterials;
+
+    private Dictionary<int, List<Material>> m_materials;
 	private Dictionary<int, List<Material>> m_materialsFrozen;
 	protected List<Material> m_materialList;
 
@@ -238,6 +240,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_materialsFrozen = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
+        m_rendererMaterials = new List<Material[]>();
         
 		m_vertexCount = 0;
 		m_rendererCount = 0;
@@ -283,6 +286,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
 				renderer.sharedMaterials = materials;
+                m_rendererMaterials.Add(materials);
             }
         }
 
@@ -320,7 +324,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         if (m_stunParticle == null) {
         	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
         }
@@ -489,9 +493,22 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 		#endif
 
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		RemoveAudios();
     }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+
 
     public virtual void PreDisable() {
 		for (int i = 0; i < m_fireParticles.Length; ++i) {
@@ -555,7 +572,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if(m_renderers != null) {
 			for(int i = 0; i < m_renderers.Length; i++) {
 				int id = m_renderers[i].GetInstanceID();
-				Material[] materials = m_renderers[i].sharedMaterials;
+                Material[] materials = m_rendererMaterials[i];
 				for(int m = 0; m < materials.Length; m++) {
 					switch(_type) {
 						case MaterialType.GOLD: materials[m] = sm_goldenMaterial; break;
@@ -576,7 +593,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						} break;
 					}
 				}
-				m_renderers[i].sharedMaterials = materials;
+                m_renderers[i].materials = materials;
 			}
 		}
     }

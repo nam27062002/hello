@@ -20,7 +20,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a health bar in the debug hud.
 /// </summary>
-public class HUDMegaFireRushBar : MonoBehaviour {
+public class HUDMegaFireRushBar : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -76,15 +76,28 @@ public class HUDMegaFireRushBar : MonoBehaviour {
 			}
 		}
 
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnMegafuryPrewardm);
 		m_state = State.Filling_Up;
 	}
 
 	void OnDestroy() {		
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnMegafuryPrewardm);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Keep values updated

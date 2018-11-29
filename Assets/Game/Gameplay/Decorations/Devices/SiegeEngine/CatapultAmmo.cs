@@ -92,7 +92,7 @@ public class CatapultAmmo : MonoBehaviour {
 		if (m_hasBeenTossed) {
 			if (_other.CompareTag("Player"))  {
 				Explode(true);
-			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
+            } else if ((((1 << _other.gameObject.layer) & GameConstants.Layers.GROUND) > 0)) {
 				Explode(false);
 			}
 		}

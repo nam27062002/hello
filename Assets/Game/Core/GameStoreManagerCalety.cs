@@ -319,8 +319,8 @@ public class GameStoreManagerCalety : GameStoreManager
     {
 		yield return new WaitForSecondsRealtime( 0.25f );
 		// string item = GameSkuToPlatformSku( _sku );
-		// m_storeListener.onPurchaseCompleted( _sku, "", null, "");
-        m_storeListener.onPurchaseFailed("UNKOWN", ""); // Simulate current store behaviour
+		 m_storeListener.onPurchaseCompleted( _sku, "", null, "");
+        //m_storeListener.onPurchaseFailed("UNKOWN", ""); // Simulate current store behaviour
     }
 
     void OnPurchaseDone()

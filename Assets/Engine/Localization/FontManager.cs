@@ -23,7 +23,7 @@ using TMPro;
 /// Requires LocalizationManager to be initialized.
 /// Subscribe to FONT_CHANGE_STARTED and FONT_CHANGE_FINISHED events.
 /// </summary>
-public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
+public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -133,7 +133,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 		}
 
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Initial state
 		ChangeState(State.IDLE);
@@ -154,8 +154,21 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 	/// </summary>
 	public void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// 
@@ -205,7 +218,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 		switch(_newState) {
 			case State.LOOSING_REFERENCES: {
 				// Notify game
-				Messenger.Broadcast(MessengerEvents.FONT_CHANGE_STARTED);
+				Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_STARTED);
 
 				// Clear old font reference
 				ClearFontAssets(m_currentFontGroup);
@@ -242,7 +255,7 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager> {
 
 			case State.FINISH: {
 				// Notify game
-				Messenger.Broadcast(MessengerEvents.FONT_CHANGE_FINISHED);
+				Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_FINISHED);
 			} break;
 		}
 

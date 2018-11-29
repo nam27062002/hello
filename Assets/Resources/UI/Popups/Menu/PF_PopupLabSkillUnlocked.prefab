@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 225000013469517432}
   - component: {fileID: 114561554520341830}
   - component: {fileID: 114616326611522424}
-  - component: {fileID: 114443442593000664}
   - component: {fileID: 114978209832559930}
   m_Layer: 5
   m_Name: PF_PopupLabSkillUnlocked
@@ -701,7 +700,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1939658388825336}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -1028,32 +1027,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114443442593000664
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000010013748420}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets:
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-  - sku: halloween
-    targets: []
-  - sku: spring
-    targets: []
-  - sku: midAutumnFestival
-    targets: []
 --- !u!114 &114470276289324890
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12647,7 +12620,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 230}
+  m_SizeDelta: {x: 808.81, y: 230}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224863336374282584
 RectTransform:
@@ -12662,10 +12635,10 @@ RectTransform:
   m_Father: {fileID: 224808481288198224}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 404.405, y: -180}
+  m_SizeDelta: {x: 308.81, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!224 &224930389098230934
 RectTransform:

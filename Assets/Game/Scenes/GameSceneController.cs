@@ -52,6 +52,8 @@ public class GameSceneController : GameSceneControllerBase {
 	SwitchingAreaSate m_switchState;
 	private List<AsyncOperation> m_switchingAreaTasks;
 
+    private const bool m_useSyncLoading = false;
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -260,19 +262,29 @@ public class GameSceneController : GameSceneControllerBase {
 					m_timer -= Time.deltaTime;
 				}
 
-				if(levelLoadingProgress >= 1) {
-					ChangeState(EStates.ACTIVATING_LEVEL);
-				}
+                if ( m_useSyncLoading )
+                {
+                    ChangeState(EStates.ACTIVATING_LEVEL);
+                }
+                else
+                {
+                    if(levelLoadingProgress >= 1) {
+                        ChangeState(EStates.ACTIVATING_LEVEL);
+                    }
+                }
+				
 			} break;
 
 			// During activation, wait until all scenes have been activated
 			case EStates.ACTIVATING_LEVEL: {
 				// All loading tasks must be in the Done state
 				bool allDone = true;
-				for(int i = 0; i < m_levelLoadingTasks.Length && allDone; i++) {
-					allDone &= m_levelLoadingTasks[i].isDone;
-				}
-
+                if (!m_useSyncLoading)
+                {
+    				for(int i = 0; i < m_levelLoadingTasks.Length && allDone; i++) {
+    					allDone &= m_levelLoadingTasks[i].isDone;
+    				}
+                }
 				if(allDone) {
 					// Change state only if allowed, otherwise it will be manually done
 					if(m_startWhenLoaded) ChangeState(EStates.COUNTDOWN);
@@ -318,20 +330,35 @@ public class GameSceneController : GameSceneControllerBase {
 							{
                                 Resources.UnloadUnusedAssets();
                                 System.GC.Collect();
-                                                                  
-                                m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+
+                                if ( m_useSyncLoading )
+                                {
+                                    LevelManager.LoadAreaSync( m_nextArea );
+                                }
+                                else
+                                {
+                                    m_switchingAreaTasks = LevelManager.LoadArea(m_nextArea);
+                                }
 
 								PoolManager.PreBuild();
 								ParticleManager.PreBuild();
 								ParticleManager.Rebuild();
 
-								if ( m_switchingAreaTasks != null )
-								{
-									for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
-										m_switchingAreaTasks[i].allowSceneActivation = false;
-									}
-								}
-								m_switchState = SwitchingAreaSate.LOADING_SCENES;
+                                if ( m_useSyncLoading )
+                                {
+                                    m_switchState = SwitchingAreaSate.ACTIVATING_SCENES;
+                                }
+                                else
+                                {
+                                    if ( m_switchingAreaTasks != null )
+                                    {
+                                        for(int i = 0; i < m_switchingAreaTasks.Count; i++) {
+                                            m_switchingAreaTasks[i].allowSceneActivation = false;
+                                        }
+                                    }
+                                    m_switchState = SwitchingAreaSate.LOADING_SCENES;            
+                                }
+								
 							}
 						}break;
 						case SwitchingAreaSate.LOADING_SCENES:
@@ -362,18 +389,21 @@ public class GameSceneController : GameSceneControllerBase {
 						case SwitchingAreaSate.ACTIVATING_SCENES:
 						{
 							bool done = true;
-							if ( m_switchingAreaTasks != null )
-							{
-								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
-								{
-									done = m_switchingAreaTasks[i].isDone;
-								}
-							}
+                            if (!m_useSyncLoading)
+                            {
+    							if ( m_switchingAreaTasks != null )
+    							{
+    								for( int i = 0; i<m_switchingAreaTasks.Count && done; i++ )	
+    								{
+    									done = m_switchingAreaTasks[i].isDone;
+    								}
+    							}
+                            }
 
 							if ( done )
 							{	
 								PoolManager.Rebuild();
-								Messenger.Broadcast(MessengerEvents.GAME_AREA_ENTER);
+								Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_ENTER);
                                 HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 								m_switchingArea = false;
 							}
@@ -427,6 +457,11 @@ public class GameSceneController : GameSceneControllerBase {
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 	}
 
+    public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        base.OnBroadcastSignal(eventType, broadcastEventInfo);
+    }
+        
 	//------------------------------------------------------------------//
 	// FLOW CONTROL														//
 	//------------------------------------------------------------------//
@@ -480,7 +515,7 @@ public class GameSceneController : GameSceneControllerBase {
 		ChangeState(EStates.FINISHED);
 
 		// Dispatch game event
-		Messenger.Broadcast(MessengerEvents.GAME_ENDED);
+		Broadcaster.Broadcast(BroadcastEventType.GAME_ENDED);
 
 		// Open summary screen - override timer after calling this method if you want some delay
 		m_timer = 0.0125f;
@@ -566,8 +601,8 @@ public class GameSceneController : GameSceneControllerBase {
 				// Init game camera
 				InstanceManager.gameCamera.Init();
 
-				// Dispatch game event
-				Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
+                // Dispatch game event
+                Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 				// Enable dragon back and put it in the spawn point
 				// Don't make it playable until the countdown ends
@@ -617,7 +652,14 @@ public class GameSceneController : GameSceneControllerBase {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 				
-				m_levelLoadingTasks = LevelManager.LoadLevel();
+                if ( m_useSyncLoading )
+                {
+                    LevelManager.LoadLevelSync();
+                }
+                else
+                {
+                    m_levelLoadingTasks = LevelManager.LoadLevel();
+                }
 
 				PoolManager.PreBuild();
 				ParticleManager.PreBuild();
@@ -628,9 +670,12 @@ public class GameSceneController : GameSceneControllerBase {
 
 			case EStates.ACTIVATING_LEVEL: {
 				// Activate all the scenes
-				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
-					m_levelLoadingTasks[i].allowSceneActivation = true;
-				}
+                if (!m_useSyncLoading)
+                {
+    				for(int i = 0; i < m_levelLoadingTasks.Length; i++) {
+    					m_levelLoadingTasks[i].allowSceneActivation = true;
+    				}
+                }
 
 			} break;
 
@@ -802,7 +847,7 @@ public class GameSceneController : GameSceneControllerBase {
     	{
             // ParticleManager.Clear();
             HDTrackingManagerImp.Instance.Notify_StopPerformanceTracker();
-			Messenger.Broadcast(MessengerEvents.GAME_AREA_EXIT);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_EXIT);
 			m_switchingArea = true;
 			m_nextArea = _nextArea;
 			m_switchState = SwitchingAreaSate.UNLOADING_SCENES;

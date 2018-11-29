@@ -69,7 +69,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 			} else {
 				// Fill empty entries and notify game
 				LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
-				Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
+				Broadcaster.Broadcast(BroadcastEventType.LANGUAGE_CHANGED);
 			}
 		}
 	}
@@ -86,7 +86,7 @@ public class CPLocalizationSettings : MonoBehaviour {
 			LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)_newValue;
 
 			// Reload active texts by simulating a language change
-			Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
+			Broadcaster.Broadcast(BroadcastEventType.LANGUAGE_CHANGED);
 		}
 	}
 }

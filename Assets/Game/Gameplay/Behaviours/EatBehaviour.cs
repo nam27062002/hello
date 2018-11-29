@@ -385,7 +385,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	{
 		// Rotation
 		Quaternion rot = m_holdingPrey.transform.localRotation;
-		m_holdingPrey.transform.localRotation = Quaternion.identity;
+        m_holdingPrey.transform.localRotation = GameConstants.Quaternion.identity;
 		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
 		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
 		m_holdingPrey.transform.localRotation = Quaternion.Lerp( rot, Quaternion.LookRotation( -holdDirection, holdUpDirection ), Time.deltaTime * 20);
@@ -397,7 +397,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 
 		// Position
 		Vector3 pos = m_holdingPrey.transform.localPosition;
-		m_holdingPrey.transform.localPosition = Vector3.zero;
+        m_holdingPrey.transform.localPosition = GameConstants.Vector3.zero;
 		Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
 		// m_holdPrey.transform.localPosition = -holdPoint;
 		m_holdingPrey.transform.localPosition = Vector3.Lerp( pos, -holdPoint, Time.deltaTime * 20);
@@ -407,14 +407,14 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	{
 		// Rotation
 		Quaternion rot = m_holdingPrey.transform.localRotation;
-		m_holdingPrey.transform.localRotation = Quaternion.identity;
+        m_holdingPrey.transform.localRotation = GameConstants.Quaternion.identity;
 		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
 		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
 		m_holdingPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
 
 		// Position
 		Vector3 pos = m_holdingPrey.transform.localPosition;
-		m_holdingPrey.transform.localPosition = Vector3.zero;
+        m_holdingPrey.transform.localPosition = GameConstants.Vector3.zero;
 		Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
 		m_holdingPrey.transform.localPosition = -holdPoint;
 	}
@@ -1016,7 +1016,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
                                     target = machine.position;
                                 }
                                 // Check if collision between us!
-                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUNDS))
+                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUND))
                                 {
     								preyToHold = machine;
     								entityToHold = entity;

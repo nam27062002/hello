@@ -66,6 +66,17 @@ public class RewardInfoUI : MonoBehaviour {
 	[SerializeField] private Localizer m_skinTitle = null;
 	[SerializeField] private PowerIcon m_skinPower = null;
 
+	[Separator("Dragon Reward")]
+	[SerializeField] private Localizer m_dragonName = null;
+	[SerializeField] private Localizer m_dragonDesc = null;
+	[Space]
+	[SerializeField] private Image m_dragonTierIcon = null;
+	[SerializeField] private ShowHideAnimator m_newPreysAnimator = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_healthText = null;
+	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private TextMeshProUGUI m_speedText = null;
+
 	// Events
 	[Separator("Events")]
 	public UnityEvent OnAnimFinished = new UnityEvent();
@@ -176,6 +187,32 @@ public class RewardInfoUI : MonoBehaviour {
 					// Initialize with powers data
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
 					m_skinPower.InitFromDefinition(powerDef, false);
+				}
+			} break;
+
+			// Dragon
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// Aux vars
+				IDragonData dragonData = DragonManager.GetDragonData(_rewardData.sku);
+
+				// Initialize dragon info
+				if(m_dragonName != null) m_dragonName.Localize("TID_DRAGON_UNLOCK", dragonData.def.GetLocalized("tidName"));
+				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
+				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
+				if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
+				if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
+				if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(dragonData.maxSpeed * 10f, 0);  // x10 to show nicer numbers
+
+				// If the unlocked dragon is of different tier as the dragon used to unlocked it, show 'new preys' banner
+				if(m_newPreysAnimator != null) {
+					DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonData.def.GetAsString("previousDragonSku"));
+					if(previousDragonDef != null && previousDragonDef.Get("tier") != dragonData.tierDef.sku) {
+						// Show!
+						m_newPreysAnimator.RestartShow();   // Should have the proper delay
+					} else {
+						// Hide! (no animation)
+						m_newPreysAnimator.ForceHide(false);
+					}
 				}
 			} break;
 

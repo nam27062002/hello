@@ -33,8 +33,7 @@ namespace AI {
 		[SerializeField] private float m_orientationSpeed = 120f;
 
 
-		//--------------------------------------------------
-		protected static int GROUND_MASK;
+		//--------------------------------------------------		
 		protected const float GRAVITY = 9.8f;
 		private const float AIR_DENSITY = 1.293f;
 		private const float DRAG = 1.3f;//human //0.47f;//sphere
@@ -102,7 +101,6 @@ namespace AI {
 
 		public sealed override void Attach (IMachine _machine, IEntity _entity, Pilot _pilot) {
 			base.Attach (_machine, _entity, _pilot);
-			GROUND_MASK = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
 
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			if (m_rbody != null) { // entities should not interpolate
