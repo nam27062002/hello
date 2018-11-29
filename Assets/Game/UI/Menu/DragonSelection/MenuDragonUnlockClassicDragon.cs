@@ -17,15 +17,14 @@ using System.Text;
 /// Control unlock/acquire/unavailable UI for classic dragons in the menu.
 /// Depending on the selected dragon lockState, a different object will be displayed.
 /// TODO:
-/// - Anim delays and sync to match dragon change animation
 /// - Check active dragon discounts
 /// </summary>
 public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_HC";	// Unlock and acquire a locked dragon using HC
-	private const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";	// Acquire an already unlocked dragon using SC
+	public const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_HC";	// Unlock and acquire a locked dragon using HC
+	public const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";	// Acquire an already unlocked dragon using SC
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
