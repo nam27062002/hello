@@ -258,7 +258,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                         DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
                         if ( decoration != null && decoration.CanBreakByShooting())
                         {
-                            decoration.Break();
+                            decoration.Break(false);
                         }
                     }
                 }

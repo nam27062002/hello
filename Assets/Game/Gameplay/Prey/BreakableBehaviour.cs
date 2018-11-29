@@ -183,6 +183,7 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
+        InstanceManager.timeScaleController.HitStop();
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));

@@ -191,7 +191,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				}
 
 				// Throw out some fireworks!
-				m_controller.scene.LaunchConfettiFX();
+				m_controller.scene.LaunchConfettiFX(true);
 
 				// Hide the button to prevent spamming
 				m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();
