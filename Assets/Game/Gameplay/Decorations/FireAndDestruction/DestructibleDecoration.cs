@@ -53,25 +53,21 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 
 	//-------------------------------------------------------------------------------------------//
+    
+    void Awake()
+    {
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+    
 	// Use this for initialization
 	void Start() {		
 		m_feedbackParticle.CreatePool();
 		m_destroyParticle.CreatePool();
 	}
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
+	private void OnDestroy() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -84,6 +80,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
             case BroadcastEventType.GAME_LEVEL_LOADED:
             case BroadcastEventType.GAME_AREA_ENTER:
             {
+                if ( gameObject.name.Contains("PF_Catapult") )
+                {
+                        Debug.Log("Hola!");
+                }
                 OnLevelLoaded();
             }break;
         }
