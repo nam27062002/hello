@@ -208,6 +208,7 @@ public class GameSceneController : GameSceneControllerBase {
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
+        PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
 	}
 
 

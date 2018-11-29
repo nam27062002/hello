@@ -47,7 +47,7 @@ namespace AI {
 		}
 
 		protected override void ExtendedFixedUpdate() {
-			if (m_mass != 1f) {
+			if (Math.Abs(m_mass - 1f) > Mathf.Epsilon) {
 				float impulseMagnitude = m_pilot.impulse.magnitude;
 				Vector3 impulse = (m_pilot.impulse - m_velocity);
 				impulse /= m_mass;

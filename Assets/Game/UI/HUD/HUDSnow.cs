@@ -27,6 +27,14 @@ public class HUDSnow : MonoBehaviour {
             Destroy(gameObject);
             return;
         }
+
+            // Remove if we shouw fireworks
+        bool fireworks = SeasonManager.IsFireworksDay();
+        if ( fireworks )
+        {
+            Destroy( gameObject );
+            return;
+        }
         m_instance = this;
 
 		m_image = gameObject.GetComponent<Image>();
