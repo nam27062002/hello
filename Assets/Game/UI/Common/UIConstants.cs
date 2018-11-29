@@ -351,9 +351,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
                 if (DeviceUtilsManager.SharedInstance.DeviceHasCutout())
                 {
                     short[] safe = DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea();
-                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]); 
+                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]);
+                    int maxx = Mathf.Max(safe[0], safe[1]);
                     m_safeArea = new UISafeArea(
-                        (float)safe[0], (float)safe[2], (float)safe[1], (float)safe[3]);
+                        (float)maxx, (float)safe[2], (float)maxx, (float)safe[3]);
 
                 }
                 else
