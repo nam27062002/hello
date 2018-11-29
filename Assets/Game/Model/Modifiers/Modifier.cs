@@ -1,6 +1,8 @@
 ﻿
 
 public abstract class Modifier : IModifierDefinition {
+    public static string SKU_CUSTOM = "custom";
+
 	//------------------------------------------------------------------------//
 	// FACTORY METHODS														  //
 	//------------------------------------------------------------------------//
@@ -20,13 +22,10 @@ public abstract class Modifier : IModifierDefinition {
 	}
 
     public static Modifier CreateFromJson(SimpleJSON.JSONNode _data) {
-        string type = _data["custom"]["type"];
+        string type = _data["type"];
 
         switch (type) {
-            case ModifierDragon.TYPE_CODE:      return ModifierDragon.CreateFromJson(_data["custom"]);
-           /* case ModifierEntity.TYPE_CODE:      return ModifierEntity.CreateFromJson(_data);
-            case ModifierGamePlay.TYPE_CODE:    return ModifierGamePlay.CreateFromJson(_data);
-            case ModifierGatcha.TYPE_CODE:      return ModifierGatcha.CreateFromJson(_data);*/
+            case ModifierEconomy.TYPE_CODE:      return ModifierEconomy.CreateFromJson(_data);
         }
 
         return null;
@@ -79,7 +78,7 @@ public abstract class Modifier : IModifierDefinition {
     protected Modifier(string _type, SimpleJSON.JSONNode _data) {
         m_type = _type;
 
-        m_sku           = "custom";
+        m_sku           = SKU_CUSTOM;
         m_iconPath      = _data["icon"];
         m_tidDesc       = _data["tidDesc"];
         m_tidDescShort  = _data["tidDescShort"];
@@ -120,8 +119,6 @@ public abstract class Modifier : IModifierDefinition {
     public string GetDescriptionShort() { return m_descShort;	}
 
     public SimpleJSON.JSONClass ToJson() {
-        SimpleJSON.JSONClass container = new SimpleJSON.JSONClass();
-
         SimpleJSON.JSONClass data = __ToJson();
         {
             data.Add("uiCategory", m_uiCategory);
@@ -130,8 +127,6 @@ public abstract class Modifier : IModifierDefinition {
             data.Add("tidDesc", m_tidDesc);
             data.Add("tidDescShort", m_tidDescShort);
         }
-        container.Add(m_sku, data);
-
-        return container;
+        return data;
     }
 }

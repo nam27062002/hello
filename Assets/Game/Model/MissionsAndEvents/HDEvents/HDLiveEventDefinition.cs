@@ -247,6 +247,19 @@ public class HDLiveEventDefinition {
 			}
 		}
 
+        if (_data.ContainsKey("customMods")) {
+            JSONArray _mods = _data["customMods"].AsArray;
+            for (int i = 0; i < _mods.Count; ++i) {
+                Modifier m = Modifier.CreateFromJson(_mods[i]);
+                if (m is ModifierDragon) {
+                    m_dragonMods.Add(m);
+                } else {
+                    m_otherMods.Add(m);
+                }
+            }
+        }
+        //
+
 		// timestamps
 		if ( _data.ContainsKey("teaserTimestamp") )
 			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
@@ -267,30 +280,33 @@ public class HDLiveEventDefinition {
 		ret.Add("name", m_name);
 
 		// Type?    
-		SimpleJSON.JSONArray arr = new JSONArray();
-		for (int i = 0; i < m_dragonMods.Count; i++) {
+		SimpleJSON.JSONArray mods = new JSONArray();
+        SimpleJSON.JSONArray customMods = new JSONArray();
+
+        for (int i = 0; i < m_dragonMods.Count; i++) {
             string sku = m_dragonMods[i].GetSku();
 
-            if (string.IsNullOrEmpty(sku)) {
-                arr.Add(m_dragonMods[i].ToJson());
+            if (sku.Equals(Modifier.SKU_CUSTOM)) {
+                customMods.Add(m_dragonMods[i].ToJson());
             } else{
-                arr.Add(sku);
+                mods.Add(sku);
             }
 		}
 
 		for (int i = 0; i < m_otherMods.Count; i++) {
             string sku = m_otherMods[i].GetSku();
 
-            if (string.IsNullOrEmpty(sku)) {
-                arr.Add(m_otherMods[i].ToJson());
+            if (sku.Equals(Modifier.SKU_CUSTOM)) {
+                customMods.Add(m_otherMods[i].ToJson());
             } else {
-                arr.Add(sku);
+                mods.Add(sku);
             }
         }
-		ret.Add("mods", arr);
+		ret.Add("mods", mods);
+        ret.Add("customMods", customMods);
 
-		// timestamps
-		ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+        // timestamps
+        ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
 		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
 		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
 

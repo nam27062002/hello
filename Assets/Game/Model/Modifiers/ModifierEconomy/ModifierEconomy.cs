@@ -2,7 +2,7 @@
     //------------------------------------------------------------------------//
     // CONSTANTS                                                              //
     //------------------------------------------------------------------------//
-    public const string TYPE_CODE = "gatcha";
+    public const string TYPE_CODE = "economy";
 
 
     //------------------------------------------------------------------------//
@@ -10,12 +10,21 @@
     //------------------------------------------------------------------------//
     #region Factory
 
-    public new static ModifierGatcha CreateFromDefinition(DefinitionNode _def) {
+    public new static ModifierEconomy CreateFromDefinition(DefinitionNode _def) {
         string target = _def.Get("target");
 
         switch (target) {
-            case ModGatchaRarity.TARGET_CODE: return new ModGatchaRarity(_def);
-            case ModGatchaPet.TARGET_CODE: return new ModGatchaPet(_def);
+            case ModEconomyDragonDiscount.TARGET_CODE: return new ModEconomyDragonDiscount(_def);
+        }
+
+        return null;
+    }
+
+    public new static ModifierEconomy CreateFromJson(SimpleJSON.JSONNode _data) {
+        string target = _data["target"];
+
+        switch (target) {
+            case ModEconomyDragonDiscount.TARGET_CODE: return new ModEconomyDragonDiscount(_data);
         }
 
         return null;
@@ -33,6 +42,8 @@
     //------------------------------------------------------------------------//
     // METHODS                                                                //
     //------------------------------------------------------------------------//
+    protected ModifierEconomy() : base(TYPE_CODE) { }
     protected ModifierEconomy(DefinitionNode _def) : base(TYPE_CODE, _def) { }
+    protected ModifierEconomy(SimpleJSON.JSONNode _data) : base(TYPE_CODE, _data) { }
 
 }

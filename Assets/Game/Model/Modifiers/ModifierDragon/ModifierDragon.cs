@@ -19,8 +19,7 @@ public abstract class ModifierDragon : Modifier {
             case ModDragonArmor.TARGET_CODE:            return new ModDragonArmor(_def);
             case ModDragonBoostRegen.TARGET_CODE:       return new ModDragonBoostRegen(_def);
             case ModDragonBoostUnlimited.TARGET_CODE:   return new ModDragonBoostUnlimited(_def);
-            case ModDragonDiscount.TARGET_CODE:         return new ModDragonDiscount(_def);
-    		case ModDragonFuryDuration.TARGET_CODE:		return new ModDragonFuryDuration(_def);
+            case ModDragonFuryDuration.TARGET_CODE:		return new ModDragonFuryDuration(_def);
     		case ModDragonFuryUnlimited.TARGET_CODE: 	return new ModDragonFuryUnlimited(_def);
     		case ModDragonInvulnerable.TARGET_CODE:		return new ModDragonInvulnerable(_def);
     		case ModDragonLifeDrain.TARGET_CODE:		return new ModDragonLifeDrain(_def);
@@ -31,16 +30,6 @@ public abstract class ModifierDragon : Modifier {
 
 		return null;
 	}
-
-    public new static ModifierDragon CreateFromJson(SimpleJSON.JSONNode _data) {
-        string target = _data["target"];
-
-        switch (target) {
-            case ModDragonDiscount.TARGET_CODE:         return new ModDragonDiscount(_data);
-        }
-
-        return null;
-    }
 
     #endregion
 
