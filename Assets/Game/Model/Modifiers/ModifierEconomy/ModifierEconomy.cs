@@ -14,7 +14,7 @@
         string target = _def.Get("target");
 
         switch (target) {
-            case ModEconomyDragonDiscount.TARGET_CODE: return new ModEconomyDragonDiscount(_def);
+            case ModEconomyDragonPrice.TARGET_CODE: return new ModEconomyDragonPrice(_def);
         }
 
         return null;
@@ -24,7 +24,7 @@
         string target = _data["target"];
 
         switch (target) {
-            case ModEconomyDragonDiscount.TARGET_CODE: return new ModEconomyDragonDiscount(_data);
+            case ModEconomyDragonPrice.TARGET_CODE: return new ModEconomyDragonPrice(_data);
         }
 
         return null;

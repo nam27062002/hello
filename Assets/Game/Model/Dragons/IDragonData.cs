@@ -66,8 +66,25 @@ public abstract class IDragonData : IUISelectorItem {
 	protected DragonTier m_tier;  // Cached value
 	public DragonTier tier { get { return m_tier; } }
 
-	// Progression
-	[SerializeField] protected bool m_owned = false;
+
+    //-- Economy --------------
+    private long m_priceSC = 0;
+    private long m_pricePC = 0;
+    private float m_priceModifier = 0f;
+
+    public void AddPriceModifer(float _value) { m_priceModifier += _value; }
+
+    public long priceSC { get { return m_priceSC; } }
+    public long pricePC { get { return m_pricePC; } }
+    public float priceModifier { get { return m_priceModifier; } }
+
+    public long priceSCModified { get { return m_priceSC + Mathf.FloorToInt(m_priceSC * m_priceModifier / 100.0f); } }
+    public long pricePCModified { get { return m_pricePC + Mathf.FloorToInt(m_pricePC * m_priceModifier / 100.0f); } }
+    //--------------------------
+
+
+    // Progression
+    [SerializeField] protected bool m_owned = false;
 	[SerializeField] protected bool m_teased = false;
 	[SerializeField] protected bool m_revealed = false;
 	[SerializeField] protected bool m_unlockAvailable = false;
@@ -226,6 +243,9 @@ public abstract class IDragonData : IUISelectorItem {
 		// Store definition
 		m_def = _def;
 		m_sku = m_def.sku;
+
+        m_priceSC = def.GetAsLong("unlockPriceCoins");
+        m_pricePC = def.GetAsLong("unlockPricePC");
 
 		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {

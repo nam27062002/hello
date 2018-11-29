@@ -13,7 +13,8 @@ public abstract class Modifier : IModifierDefinition {
 
 		switch (type) {
     		case ModifierDragon.TYPE_CODE: 		return ModifierDragon.CreateFromDefinition(_def);
-    		case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
+            case ModifierEconomy.TYPE_CODE:     return ModifierEconomy.CreateFromDefinition(_def);
+            case ModifierEntity.TYPE_CODE: 		return ModifierEntity.CreateFromDefinition(_def);
     		case ModifierGamePlay.TYPE_CODE: 	return ModifierGamePlay.CreateFromDefinition(_def);
     		case ModifierGatcha.TYPE_CODE:		return ModifierGatcha.CreateFromDefinition(_def);
 		}
@@ -49,10 +50,11 @@ public abstract class Modifier : IModifierDefinition {
     private readonly string m_sku = "";
     private readonly string m_uiCategory = "";
     private readonly string m_iconPath = "";
-    private readonly string m_name = "";
+    private string m_name = "";
     private string m_desc = "";
     private string m_descShort = "";
 
+    private readonly string m_tidName = "";
     private readonly string m_tidDesc = "";
     private readonly string m_tidDescShort = "";
 
@@ -70,7 +72,7 @@ public abstract class Modifier : IModifierDefinition {
         m_sku           = _def.sku;
         m_uiCategory    = _def.Get("uiCategory");
         m_iconPath      = _def.Get("icon");
-        m_name          = _def.GetLocalized("tidName");
+        m_tidName       = _def.Get("tidName");
         m_tidDesc       = _def.Get("tidDesc");
         m_tidDescShort  = _def.Get("tidDescShort");
     }
@@ -79,7 +81,9 @@ public abstract class Modifier : IModifierDefinition {
         m_type = _type;
 
         m_sku           = SKU_CUSTOM;
+        m_uiCategory    = _data["uiCategory"];
         m_iconPath      = _data["icon"];
+        m_tidName       = _data["tidName"];
         m_tidDesc       = _data["tidDesc"];
         m_tidDescShort  = _data["tidDescShort"];
     }
@@ -94,6 +98,7 @@ public abstract class Modifier : IModifierDefinition {
 	protected void BuildTextParams(params string[] _params) {
 		m_textParams = _params;
 
+        m_name = LocalizationManager.SharedInstance.Localize(m_tidName);
         m_desc = LocalizationManager.SharedInstance.Localize(m_tidDesc, m_textParams);
         m_descShort = LocalizationManager.SharedInstance.Localize(m_tidDescShort, m_textParams);
 	}
@@ -123,7 +128,7 @@ public abstract class Modifier : IModifierDefinition {
         {
             data.Add("uiCategory", m_uiCategory);
             data.Add("icon", m_iconPath);
-            data.Add("tidName", m_name);
+            data.Add("tidName", m_tidName);
             data.Add("tidDesc", m_tidDesc);
             data.Add("tidDescShort", m_tidDescShort);
         }

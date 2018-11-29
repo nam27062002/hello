@@ -1,30 +1,40 @@
 ﻿
-public class ModEconomyDragonDiscount : ModifierEconomy {
-    public const string TARGET_CODE = "dragon_discount";
+public class ModEconomyDragonPrice : ModifierEconomy {
+    public const string TARGET_CODE = "dragon_price";
+
 
     //------------------------------------------------------------------------//
     private string m_sku;
     private float m_percentage;
 
+
     //------------------------------------------------------------------------//
-    public ModEconomyDragonDiscount(DefinitionNode _def) : base(_def) {
+    public ModEconomyDragonPrice(DefinitionNode _def) : base(_def) {
         m_sku = _def.Get("param1");
         m_percentage = _def.GetAsFloat("param2");
         BuildTextParams(m_sku, m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }
 
-    public ModEconomyDragonDiscount(SimpleJSON.JSONNode _data) : base(_data) {
+    public ModEconomyDragonPrice(SimpleJSON.JSONNode _data) : base(_data) {
         m_sku = _data["param1"];
         m_percentage = _data["param2"].AsFloat;
         BuildTextParams(m_sku, m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }
 
     public override void Apply() {
-        //TODO
+        IDragonData dragonData = DragonManager.GetDragonData(m_sku);
+        if (dragonData != null) {
+            dragonData.AddPriceModifer(m_percentage);
+            Messenger.Broadcast<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, dragonData);
+        }
     }
 
     public override void Remove() {
-        //TODO
+        IDragonData dragonData = DragonManager.GetDragonData(m_sku);
+        if (dragonData != null) {
+            dragonData.AddPriceModifer(-m_percentage);
+            Messenger.Broadcast<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, dragonData);
+        }
     }
 
     protected override SimpleJSON.JSONClass __ToJson() {
