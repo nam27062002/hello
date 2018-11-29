@@ -129,7 +129,8 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
             m_iconImage = m_icon.GetComponent<Image>();
-            m_iconColorFX = m_iconImage.GetComponent<UIColorFX>();
+            if ( m_iconImage != null )
+                m_iconColorFX = m_iconImage.GetComponent<UIColorFX>();
 		}
 
 		m_instantSet = true;
@@ -348,7 +349,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 				}
                 
                 // 
-                if ( m_type == Type.Energy && m_iconImage != null)
+                if ( m_type == Type.Energy && m_iconColorFX != null)
                 {
                     bool bright = InstanceManager.player.dragonBoostBehaviour.HasEnoughEnergyToBoost() || InstanceManager.player.dragonBoostBehaviour.IsBoostActive();
                     float d = bright ? 0 : -1;
