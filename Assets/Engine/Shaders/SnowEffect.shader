@@ -4,6 +4,7 @@
 	{
 		_WorldPosition ("Position", Vector) = (0.0, 0.0, 0.0, 0.0)
 		_Aspect("Aspect", float) = 1.0
+		_Scale("Scale", Range(1.0, 30.0)) = 15.0
 	}
 	SubShader
 	{
@@ -32,7 +33,8 @@
 
 			#define PI 3.1415926
 			#define SNOWSPEED 30.0
-			#define SNOWRADIUS 0.05
+			#define SNOWRADIUS 0.1
+//			#define MANUALSCALE 
 
 			#define fragmentoption 
 
@@ -40,23 +42,29 @@
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
+				float4 color : COLOR;
 			};
 
 			struct v2f
 			{
-				float2 time : TEXCOORD1;
-				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
+				float2 uv : TEXCOORD0;
+				float2 time : TEXCOORD1;
+				float4 color : COLOR;
 			};
 
 
-			float4 _WorldPosition;
+			float4	_WorldPosition;
 			float	_Aspect;
+			float	_Scale;
+
 
 			// iq's hash function from https://www.shadertoy.com/view/MslGD8
 			float2 hash(float2 p) {
-				float2 p2 = float2(dot(p, float2(76.413, -41.7445)), dot(p, float2(-19.532, 63.324)));
-				return frac(p2);
+				p = float2(dot(p, float2(6.413, -1.7445)), dot(p, float2(-9.532, 3.324)));
+//				p = float2(dot(p, float2(-2.2134, 7.74333)), dot(p, float2(4.6347, -8.723)));
+				return frac(p);
+//				return cos(p2);
 			}
 
 
@@ -90,6 +98,7 @@
 #else
 				o.time.y = _Time.x * SNOWSPEED;
 #endif
+				o.color = v.color;
 				return o;
 			}
 			
@@ -97,18 +106,48 @@
 			{
 				float2 uv = i.uv;
 				uv *= float2(1.0, _Aspect);
-				float2 of = /*(_WorldPosition.xy * 0.3) + */float2(0.0, i.time.y);
+				float2 of = /*(_WorldPosition.xy * 0.3) + */float2(i.time.y * 0.2, i.time.y);
 				float w = 0.0;
+
+
+#ifdef MANUALSCALE
+				float sc = _Scale;
+#else
+
 #if defined (LOW_DETAIL_ON)
-				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
+				float sc = 15.0;
 #elif defined (MEDIUM_DETAIL_ON)
-				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
-				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+				float sc = 10.0;
 #elif defined (HI_DETAIL_ON)
-				w += 1.0 - step(SNOWRADIUS, simplegridnoise((uv * 10.0) + of, i.time.x));
-				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
-				w += (1.0 - step(SNOWRADIUS, simplegridnoise((uv * 20.0) + of, i.time.x))) * 0.5;
+				float sc = 10.0;
 #endif
+
+#endif
+				float sr = (sc / 30.0) * SNOWRADIUS; 
+/*
+#if defined (LOW_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
+#elif defined (MEDIUM_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += (1.0 - step(sr, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+#elif defined (HI_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * 10.0) + of, i.time.x));
+				w += (1.0 - step(sr, simplegridnoise((uv * 15.0) + of, i.time.x))) * 0.75;
+				w += (1.0 - step(sr, simplegridnoise((uv * 20.0) + of, i.time.x))) * 0.5;
+#endif
+*/
+
+#if defined (LOW_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
+#elif defined (MEDIUM_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
+				w += (1.0 - step(sr, simplegridnoise((uv * sc) + of, i.time.x))) * 0.75;
+#elif defined (HI_DETAIL_ON)
+				w += 1.0 - step(sr, simplegridnoise((uv * sc * 0.7) + of, i.time.x));
+				w += (1.0 - step(sr, simplegridnoise((uv * sc) + of, i.time.x))) * 0.75;
+				w += (1.0 - step(sr, simplegridnoise((uv * sc * 1.3) + of, i.time.x))) * 0.5;
+#endif
+
 				fixed4 col = fixed4(1.0, 1.0, 1.0, w);
 				return col;
 			}
