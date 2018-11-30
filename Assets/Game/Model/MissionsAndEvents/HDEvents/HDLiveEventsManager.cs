@@ -71,7 +71,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
-    public HDPassiveEventManager m_dragonDiscounts = new HDPassiveEventManager();
+    public HDDiscountEventManager m_dragonDiscounts = new HDDiscountEventManager();
 
         // Avoid using dictionaries when possible
     private List<string> m_types;
@@ -412,7 +412,6 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		m_tournament.Activate();
 		m_passive.Deactivate();
 		m_quest.Deactivate();
-        m_dragonDiscounts.Deactivate();
 	}
 
 	public void SwitchToQuest()
@@ -420,6 +419,5 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 		m_tournament.Deactivate();
 		m_passive.Activate();
 		m_quest.Activate();
-        m_dragonDiscounts.Activate();
 	}
 }
