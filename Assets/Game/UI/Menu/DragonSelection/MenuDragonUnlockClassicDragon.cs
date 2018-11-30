@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Text;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -30,8 +31,9 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Localizer m_hcPriceText = null;
-	[SerializeField] private Localizer m_scPriceText = null;
+	[SerializeField] private UIDragonPriceSetup m_hcPriceSetup = null;
+	[SerializeField] private UIDragonPriceSetup m_scPriceSetup = null;
+	[Space]
 	[SerializeField] private Localizer m_unavailableInfoText = null;
 	[Space]
 	[SerializeField] private ShowHideAnimator m_changeAnim = null;
@@ -136,27 +138,25 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 		bool show = true;
 
 		// Update hc unlock button
-		if(m_hcPriceText != null) {
-			// Display?
-			show = CheckUnlockWithPC(_data);
-			Toggle(m_hcRoot, show);
+		// Display?
+		show = CheckUnlockWithPC(_data);
+		Toggle(m_hcRoot, show);
 
-			// Refresh info
-			if(show) { // Set text
-        m_hcPriceText.Localize(m_hcPriceText.tid, StringUtils.FormatNumber(_data.pricePCModified));
-			}
+		// Refresh info
+		if(show && m_hcPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_hcPriceSetup.InitFromData(_data, UserProfile.Currency.HARD);
 		}
 
-		// Update sc unlock button
-		if(m_scPriceText != null) {
-			// Display?
-			show = CheckUnlockWithSC(_data);
-			Toggle(m_scRoot, show);
+		// Update hc unlock button
+		// Display?
+		show = CheckUnlockWithSC(_data);
+		Toggle(m_scRoot, show);
 
-			// Refresh info
-			if(show) { // Set text
-	      m_scPriceText.Localize(m_scPriceText.tid, StringUtils.FormatNumber(_data.priceSCModified));
-			}
+		// Refresh info
+		if(show && m_scPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_scPriceSetup.InitFromData(_data, UserProfile.Currency.SOFT);
 		}
 
 		// Update unavailable info
@@ -208,8 +208,20 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
 	/// <param name="_data">Dragon to evaluate.</param>
 	public static bool CheckUnlockWithPC(IDragonData _data) {
-		// [AOC] TODO!! Check dragon discounts?
-		return _data.lockState == IDragonData.LockState.LOCKED || _data.lockState == IDragonData.LockState.AVAILABLE;
+		// Check lock state
+		bool show = false;
+		switch(_data.lockState) {
+			case IDragonData.LockState.LOCKED:
+			case IDragonData.LockState.AVAILABLE: {
+				show = true;
+			} break;
+
+			case IDragonData.LockState.LOCKED_UNAVAILABLE: {
+				show = _data.HasPriceModifier(UserProfile.Currency.HARD);	// If there is a discount for this dragon, show even when unavailable
+			} break;
+		}
+
+		return show;
 	}
 
     /// <summary>
@@ -218,6 +230,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
     /// <returns>Whether the given dragon can be unlocRefreshCooldownTimersked with SC.</returns>
     /// <param name="_data">Dragon to evaluate.</param>
     public static bool CheckUnlockWithSC(IDragonData _data) {
+		// [AOC] Discounts affect visibility?
 		return _data.lockState == IDragonData.LockState.AVAILABLE;
 	}
 
@@ -227,7 +240,15 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <returns>Whether the given dragon is unavailable.</returns>
 	/// <param name="_data">Dragon to evaluate.</param>
 	public static bool CheckUnavailable(IDragonData _data) {
-		return _data.lockState == IDragonData.LockState.LOCKED_UNAVAILABLE;
+		// Check lock state
+		bool show = false;
+		switch(_data.lockState) {
+			case IDragonData.LockState.LOCKED_UNAVAILABLE: {
+				show = !_data.HasPriceModifier(UserProfile.Currency.HARD);	// If there is a discount for this dragon, don't show the unavailable message
+			} break;
+		}
+
+		return show;
 	}
 
 	/// <summary>
@@ -243,7 +264,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 			ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_HC_RESOURCES_FLOW_NAME);
 			purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
 			purchaseFlow.Begin(
-                _data.pricePCModified,
+				_data.GetPriceModified(UserProfile.Currency.HARD),
 				UserProfile.Currency.HARD,
 				HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
 				_data.def
@@ -263,7 +284,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 			// [AOC] From 1.18 on, don't trigger the missing SC flow for dragon
 			//		 purchases (we are displaying the HC button next to it)
 			// Check whether we have enough SC
-			long priceSC = _data.priceSCModified;
+			long priceSC = _data.GetPriceModified(UserProfile.Currency.SOFT);
 			if(priceSC > UsersManager.currentUser.coins) {
 				// Not enough SC! Show a message
 				UIFeedbackText.CreateAndLaunch(

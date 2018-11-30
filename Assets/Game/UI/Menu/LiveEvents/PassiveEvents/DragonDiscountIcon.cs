@@ -139,7 +139,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 				show = true;
 				m_discountText.text = LocalizationManager.SharedInstance.Localize(
 					"TID_OFFER_DISCOUNT_PERCENTAGE",
-					StringUtils.FormatNumber(Mathf.Abs(targetDragonData.pricePCModifier), 0)
+					StringUtils.FormatNumber(Mathf.Abs(targetDragonData.GetPriceModifier(UserProfile.Currency.HARD)), 0)
 				);
 			}
 			m_discountText.gameObject.SetActive(show);
