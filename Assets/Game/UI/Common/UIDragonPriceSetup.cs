@@ -29,6 +29,8 @@ public class UIDragonPriceSetup {
 	public Localizer actionText = null;
 	public TextMeshProUGUI priceText = null;
 	public TextMeshProUGUI previousPriceText = null;
+	[Space]
+	[SerializeField] private GameObject[] m_toActivateOnDiscount = new GameObject[0];
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -39,6 +41,9 @@ public class UIDragonPriceSetup {
 	/// <param name="_data">Dragon data.</param>
 	/// <param name="_currency">Currency. Only SC and HC supported for now.</param>
 	public void InitFromData(IDragonData _data, UserProfile.Currency _currency) {
+		// Aux vars
+		bool discountActive = _data.HasPriceModifier(_currency);
+
 		// Final price
 		if(priceText != null) {
 			priceText.text = UIConstants.GetIconString(
@@ -49,7 +54,6 @@ public class UIDragonPriceSetup {
 		}
 
 		// Previous price - only show if there is a discount
-		bool discountActive = _data.HasPriceModifier(_currency);
 		if(previousPriceText != null) {
 			previousPriceText.text = StringUtils.FormatNumber(_data.GetPrice(_currency));
 			previousPriceText.gameObject.SetActive(discountActive);
@@ -61,6 +65,13 @@ public class UIDragonPriceSetup {
 				actionText.Localize("TID_DRAGON_GET_NOW_DISCOUNT");
 			} else {
 				actionText.Localize("TID_DRAGON_GET_NOW");
+			}
+		}
+
+		// Discount decos
+		for(int i = 0; i < m_toActivateOnDiscount.Length; ++i) {
+			if(m_toActivateOnDiscount[i] != null) {
+				m_toActivateOnDiscount[i].SetActive(discountActive);
 			}
 		}
 	}
