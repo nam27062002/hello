@@ -650,12 +650,18 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetLeadeboard, parameters, _callback);
 	}
 
-	#endregion
+    #endregion
 
-#region HD_LiveEvents
-		
-	public override void HDEvents_GetMyEvents(ServerCallback _callback) {
-		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
+    #region HD_LiveEvents
+
+    public override void HDEvents_GetMyEvents(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
+    }
+
+    public override void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { 
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("typeToUpdate", _typeToUpdate.ToString());
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, parameters, _callback);
 	}
 
 	public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {

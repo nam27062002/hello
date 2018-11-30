@@ -113,7 +113,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         m_types.Add("passive");
         m_managers.Add(m_passive);
 
-        m_types.Add("discount");
+        m_types.Add("dragonDiscount");
         m_managers.Add(m_dragonDiscounts);
 
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
@@ -334,7 +334,15 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         return ret;
     }
 
-	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
+    public void ForceRequestMyEventType(int _type) {
+        if (TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyEventsResponse));
+        } else {
+            GameServerManager.SharedInstance.HDEvents_GetMyEventOfType(_type, instance.MyEventsResponse);
+        }
+    }
+
+    private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
 		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;

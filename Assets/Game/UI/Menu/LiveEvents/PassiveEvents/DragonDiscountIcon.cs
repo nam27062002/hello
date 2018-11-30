@@ -71,7 +71,8 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-	}
+        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+    }
 
 	/// <summary>
 	/// Destructor.
@@ -82,7 +83,8 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-	}
+        Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+    }
 
 	//------------------------------------------------------------------------//
 	// IPassiveEventIcon IMPLEMENTATION										  //
@@ -189,10 +191,14 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		RefreshVisibility();
 	}
 
-	/// <summary>
-	/// The scroll to target button has been pressed.
-	/// </summary>
-	public void OnScrollToTargetDragon() {
+    private void OnNewEventDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+        RefreshVisibility();
+    }
+
+    /// <summary>
+    /// The scroll to target button has been pressed.
+    /// </summary>
+    public void OnScrollToTargetDragon() {
 		// Just do it
 		IDragonData targetDragonData = _targetDragonData;
 		if(targetDragonData != null) {
