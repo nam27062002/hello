@@ -420,7 +420,7 @@ public class GameServerManager
 	public virtual void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {}
 	public virtual void HDEvents_FinishMyEvent(int _eventID, ServerCallback _callback) {}
 
-	public virtual void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {}
+    public virtual void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {}
 
 	//------------------------------------------------------------------------//
 	// DEBUG ONLY															  //
