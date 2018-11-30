@@ -175,6 +175,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
         }
             
 	}
+    
+    public bool HasEnoughEnergyToBoost()
+    {
+        return m_dragon.energy >= m_energyRequiredToBoost;
+    }
 
 	private void StartBoost()
 	{
