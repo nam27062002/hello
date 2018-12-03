@@ -245,6 +245,9 @@ public enum MessengerEvents {
 	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
 	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
 
+    // Modifiers
+    MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
+
 	COUNT
 }
 
