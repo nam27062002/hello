@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using TMPro;
 
@@ -26,11 +27,19 @@ public class UIDragonPriceSetup {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed
+	[Comment("All elements optional")]
 	public Localizer actionText = null;
 	public TextMeshProUGUI priceText = null;
 	public TextMeshProUGUI previousPriceText = null;
 	[Space]
+	[SerializeField] private Animator m_baseAnimator = null;
+	[Tooltip("If defined, it will replace the base animator when a discount is active.")]
+	[SerializeField] private AnimatorOverrideController m_animatorControllerForDiscount = null;
 	[SerializeField] private GameObject[] m_toActivateOnDiscount = new GameObject[0];
+
+	// Internal
+	private RuntimeAnimatorController m_animatorControllerBackup = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -72,6 +81,21 @@ public class UIDragonPriceSetup {
 		for(int i = 0; i < m_toActivateOnDiscount.Length; ++i) {
 			if(m_toActivateOnDiscount[i] != null) {
 				m_toActivateOnDiscount[i].SetActive(discountActive);
+			}
+		}
+
+		// Animators
+		if(m_baseAnimator != null && m_animatorControllerForDiscount != null) {
+			// Backup original animator if not done already
+			if(m_animatorControllerBackup == null) {
+				m_animatorControllerBackup = m_baseAnimator.runtimeAnimatorController;
+			}
+
+			// Set the proper runtime animator controller based on whether the dragon is discounted or not
+			if(discountActive) {
+				m_baseAnimator.runtimeAnimatorController = m_animatorControllerForDiscount;
+			} else {
+				m_baseAnimator.runtimeAnimatorController = m_animatorControllerBackup;
 			}
 		}
 	}

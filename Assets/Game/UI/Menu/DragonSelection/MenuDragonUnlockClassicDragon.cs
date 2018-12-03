@@ -148,7 +148,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 			m_hcPriceSetup.InitFromData(_data, UserProfile.Currency.HARD);
 		}
 
-		// Update hc unlock button
+		// Update sc unlock button
 		// Display?
 		show = CheckUnlockWithSC(_data);
 		Toggle(m_scRoot, show);
