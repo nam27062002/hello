@@ -110,7 +110,7 @@ public class RenderQueueSetter : MonoBehaviour {
 	public static void Apply(Graphic _target, int _queue) {
 		// Special case for TMPro Textfields
 		if(_target is TMPro.TMP_Text) {
-			(_target as TMPro.TMP_Text).SetRenderQueue(_queue);
+			(_target as TMPro.TMP_Text).SetRenderQueue(_queue);	// [AOC] TODO!! Doesn't seem to work properly :(
 		} 
 
 		else {
