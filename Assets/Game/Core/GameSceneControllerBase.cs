@@ -29,7 +29,8 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
 		get { return m_elapsedSeconds; }
-	}
+        set { m_elapsedSeconds = value; }
+    }
 
 	// Map status
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run

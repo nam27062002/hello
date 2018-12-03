@@ -126,7 +126,7 @@ public class Catapult : SimpleDevice {
 		m_vAngle = (m_vAngleMax + m_vAngleMin) * 0.5f;
 
 		m_timer = 0;
-		m_animator.StopPlayback();
+        m_animator.speed = 1;
 
 		m_state = State.Reload;
 	}
@@ -159,7 +159,7 @@ public class Catapult : SimpleDevice {
 	}
 
 	protected override void OnRespawning() {
-		m_animator.StartPlayback();
+        m_animator.speed = 1;
 		for (int i = 0; i < m_ammo.Length; i++) {
 			if (m_ammo[i] != null) {
 				m_ammo[i].GetComponent<Projectile>().Explode(false);
@@ -169,13 +169,11 @@ public class Catapult : SimpleDevice {
 	}
 
 	protected override void OnOperatorDead() {
-		if (m_state == State.Reload) {
-			m_animator.StartPlayback();
-		}
+		m_animator.speed = 0;		
 	}
 
 	protected override void OnOperatorSpawned() {
-		m_animator.StopPlayback();
+		m_animator.speed = 1;
 		if (m_state == State.Reload) { // reload time
 			OnReload();
 		}
@@ -313,7 +311,7 @@ public class Catapult : SimpleDevice {
 
 	protected override void OnAreaExit() {
 		base.OnAreaExit();
-		m_animator.StopPlayback();
+        m_animator.speed = 0;
 	}
 
 	//-------------------------------------------------------------------
