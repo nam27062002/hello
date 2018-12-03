@@ -113,7 +113,7 @@ public class ContentManager
     private static void InitContentDeltaManager()
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
-        ContentDeltaManager.SharedInstance.SetListener(m_kContentDeltaDelegate);
+        ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
         ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
     }
 
@@ -285,6 +285,32 @@ public class ContentManager
         // Warn all other managers and definition consumers
 		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    public static void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions(true);
+
+        // Update all managers 
+        // dragonDefinitions.xml
+        if (UsersManager.currentUser != null)
+        {
+            // UserProfile
+                // Reload Dragons by Sku?
+                
+            // DragonManager
+            DragonManager.SetupUser(UsersManager.currentUser);
+        }
+        
+        
+            // seasonsDefinitions
+        SeasonManager.instance.RefreshActiveSeason();       
+    }
+     
+
 
     #region log
     private const bool LOG_USE_COLOR = false;

@@ -11,6 +11,8 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Calety.Tracking;
+
 public class HDTrackingManagerImp : HDTrackingManager {
     private enum EState {
         None,

@@ -130,15 +130,22 @@ public class LoadingSceneController : SceneController {
 
     private class GDPRListener : GDPRManager.GDPRListenerBase
     {
-        public bool m_infoRecievedFromServer = false;
+        public bool m_gdprAnswered = false;
         public string m_userCountry = "";
         public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
         {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
-            m_infoRecievedFromServer = true;
+            m_gdprAnswered = true;
             Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
+        
+        public override void onGDPRInfoResponseError (int iErrorCode ) 
+        {
+            m_userCountry = GDPRManager.SharedInstance.GetCachedUserCountryByIP ();
+            m_gdprAnswered = true;
+        }
+        
 
         public static bool IsValidCountry(string countryStr)
         {
@@ -179,7 +186,6 @@ public class LoadingSceneController : SceneController {
         WAITING_FOR_RULES,        
         LOADING_RULES,
         CREATING_SINGLETONS,
-        WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
@@ -400,7 +406,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
             {
-                if (m_gdprListener.m_infoRecievedFromServer)
+                if (m_gdprListener.m_gdprAnswered)
                 {
                     string country = m_gdprListener.m_userCountry;
                     // Recieved values are not good
@@ -428,24 +434,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                if (FeatureSettingsManager.instance.IsCustomizerBlocker)
-                {
-                    SetState(State.WAITING_FOR_CUSTOMIZER);
-                }
-                else
-                {                        
-                    SetState(State.WAITING_SAVE_FACADE);
-                }                    
-            }
-            break;
-            case State.WAITING_FOR_CUSTOMIZER:
-            {
-                if (HDCustomizerManager.instance.IsReady())
-                {
-                    // Applies the customizer
-                    ApplicationManager.instance.Game_ApplyCustomizer();
-                    SetState(State.WAITING_SAVE_FACADE);
-                }
+                SetState(State.WAITING_SAVE_FACADE);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -526,7 +515,7 @@ public class LoadingSceneController : SceneController {
             case State.WAITING_COUNTRY_CODE:
                 {
                     GDPRManager.SharedInstance.Initialise(false);
-                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.AddListener( m_gdprListener );
                     GDPRManager.SharedInstance.RequestCountryAndAge();
                 }break;
             case State.WAITING_TERMS:
@@ -575,8 +564,6 @@ public class LoadingSceneController : SceneController {
                     // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
                     MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
                 }
-					                
-                HDCustomizerManager.instance.Initialise();
 
                 UsersManager.CreateInstance();
 
@@ -636,6 +623,9 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();
+
+                // Check si necesita aplicar customizer
+                HDCustomizerManager.instance.CheckAndApply();
             } break;
 
            case State.WAITING_SAVE_FACADE:
