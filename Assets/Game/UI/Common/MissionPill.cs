@@ -328,6 +328,13 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);
 
+        if (!FeatureSettingsManager.AreAdsEnabled) {
+            GameObject skipAdButton = m_cooldownObj.FindObjectRecursive("ButtonSkipAd");
+            if (skipAdButton != null) {
+                skipAdButton.SetActive(false);
+            }
+        }
+
 		// Skip with ad button
 		if(m_cooldownSkipFreeText != null) {
 			// If the remaining time is lower than skip time, don't put time at all
