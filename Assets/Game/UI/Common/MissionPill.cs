@@ -301,7 +301,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         }
 
 		bool ret = false;
-        if (checkVideoIsReady ) 
+        if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
         {
 			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
 			{
