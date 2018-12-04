@@ -108,8 +108,6 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
-		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
@@ -118,8 +116,6 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
@@ -127,16 +123,6 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
     {
         switch(eventType)
         {
-            case BroadcastEventType.POPUP_OPENED:
-            {
-                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
-                OnPopupOpened(info.popupController);
-            }break;
-            case BroadcastEventType.POPUP_CLOSED:
-            {
-                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
-                OnPopupClosed(info.popupController);
-            }break;
             case BroadcastEventType.POPUP_DESTROYED:
             {
                 PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
@@ -205,9 +191,13 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 			popupObj.transform.SetParent(instance.m_canvas.transform, false);
 			popupObj.name = _prefab.name;	// To be able to identify it later on
 			
-			// Open the popup - all popups managed by the manager must have a PopupController
+			// Get its controller - all popups managed by the manager must have a PopupController
 			controller = popupObj.GetComponent<PopupController>();
 			DebugUtils.Assert(controller != null, "Couldn't find the PopupController component in the popup " + popupObj.name + ".\nAll popups managed by the manager must have a PopupController.");
+
+			// Be aware when the popup opens/closes to update manager's lists
+			controller.OnOpen.AddListener(OnPopupOpened);
+			controller.OnClose.AddListener(OnPopupClosed);
 		}
 
 		// Make sure the popup appears on top
