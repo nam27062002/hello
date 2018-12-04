@@ -916,6 +916,14 @@ public static class Util
 		if(dic.ContainsKey(stat))
 			bool.TryParse(dic[stat], out b);
 	}
+
+	public static SimpleJSON.JSONNode GetSafe(this SimpleJSON.JSONNode _node, string _key, SimpleJSON.JSONNode _fallback) {
+		if(_node.ContainsKey(_key)) {
+			return _node[_key];
+		} else {
+			return _fallback;
+		}
+	}
 	
 	// extension method of string to remove "(Clone)" from the end if it is present, otherwise returns an unchanged string.
 	public static string RemoveCloneSuffix(this string s)
