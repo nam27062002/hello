@@ -215,7 +215,9 @@ public class HDLiveEventDefinition {
 		m_initialized = true;
 
 		// has this event bee cancelled?
-		m_refund = _data["refund"].AsBool;
+		if(_data.ContainsKey("refund")) {
+			m_refund = _data["refund"].AsBool;
+		}
 
 		if ( _data.ContainsKey("code") )
 		{
