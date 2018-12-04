@@ -26,8 +26,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	private bool m_newDragonUnlocked = false;
 	private bool m_popupDisplayed = false;
-    private bool m_adDisplayed = false;
     private bool m_waitForCustomPopup = false;
 	private float m_waitTimeOut;
 
@@ -50,8 +50,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 
 		// Initialize internal vars
+		m_newDragonUnlocked = !string.IsNullOrEmpty(GameVars.unlockedDragonSku);
 		m_checkingConnection = false;
-		m_ratingDragonData = DragonManager.GetDragonData(RATING_DRAGON);;
+		m_ratingDragonData = DragonManager.GetDragonData(RATING_DRAGON);
 	}
 
 	/// <summary>
@@ -70,7 +71,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	private void Update() {
 		if (m_waitForCustomPopup) {
 			if (!m_popupDisplayed) {
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				} else {
@@ -117,7 +118,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 				if(langDef != null) {
 					langServerCode = langDef.GetAsString("serverCode", langServerCode);
 				}
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}
@@ -163,7 +164,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
     }
 
 
-	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
+	private void OpenCustomizerPopup(Calety.Customiser.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
 		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
@@ -192,7 +193,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
     }
 
     IEnumerator LaunchInterstitial() {
-        m_adDisplayed = true;
+		m_popupDisplayed = true;
         yield return new WaitForSeconds(0.25f);
         PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
     }
@@ -206,7 +207,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
     private void CheckInterstitialCP2() {
         // CP2 interstitial has the lowest priority so if the user has already seen a popup or an ad then cp2 interstitial shouldn't be shown
-        if (m_popupDisplayed || m_adDisplayed) return;
+        if (m_popupDisplayed) return;
 
         bool checkUserRestriction = true;
         if (HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
@@ -394,6 +395,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
+
+		// Don't show anything if a dragon has been unlocked during gameplay!
+		// We never want to cover the dragon unlock animation!
+		if(m_newDragonUnlocked) {
+			m_newDragonUnlocked = false;
+			return;
+		}
 
         // if we come from playing whetever is Classic, Lab or Tournament
         if ( _from == MenuScreen.NONE && _to != MenuScreen.PLAY ) {

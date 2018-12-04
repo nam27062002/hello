@@ -113,7 +113,7 @@ public class ContentManager
     private static void InitContentDeltaManager()
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
-        ContentDeltaManager.SharedInstance.SetListener(m_kContentDeltaDelegate);
+        ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
         ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
     }
 
@@ -135,9 +135,9 @@ public class ContentManager
 
         kDefinitionFiles.Add(DefinitionsCategory.NOTIFICATIONS, new string[] { "Rules/notificationsDefinitions" });
 
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3", "Rules/PM_level_0_common" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
@@ -285,6 +285,32 @@ public class ContentManager
         // Warn all other managers and definition consumers
 		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    public static void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions(true);
+
+        // Update all managers 
+        // dragonDefinitions.xml
+        if (UsersManager.currentUser != null)
+        {
+            // UserProfile
+                // Reload Dragons by Sku?
+                
+            // DragonManager
+            DragonManager.SetupUser(UsersManager.currentUser);
+        }
+        
+        
+            // seasonsDefinitions
+        SeasonManager.instance.RefreshActiveSeason();       
+    }
+     
+
 
     #region log
     private const bool LOG_USE_COLOR = false;

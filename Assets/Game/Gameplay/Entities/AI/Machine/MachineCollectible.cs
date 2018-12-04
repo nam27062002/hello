@@ -5,7 +5,9 @@ namespace AI {
 	public class MachineCollectible : MonoBehaviour, IMachine, ISpawnable {
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
-		private CollectibleViewControl m_viewControl = null;
+        [SerializeField] private bool m_useSpawnerRotation = false;
+
+        private CollectibleViewControl m_viewControl = null;
 		private IEntity m_entity = null;
 		private Transform m_transform;
 
@@ -64,6 +66,15 @@ namespace AI {
 
 		public void Spawn(ISpawner _spawner) {
 			m_isCollected = false;
+
+            if (m_useSpawnerRotation) {
+                Quaternion rot = GameConstants.Quaternion.identity;
+                if (_spawner != null) {
+                    rot = _spawner.rotation;
+                }
+                m_transform.rotation = rot;
+            }
+
             (m_entity as CollectibleEntity).dieOutsideFrustum = m_dieOutsideFrustumRestoreValue;
 		}
 

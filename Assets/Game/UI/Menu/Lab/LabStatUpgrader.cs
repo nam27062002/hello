@@ -346,12 +346,17 @@ public class LabStatUpgrader : MonoBehaviour {
 
 			case Mode.LEVEL_PROGRESSION: {
 				// "Level up!"
-				UIFeedbackText.CreateAndLaunch(
+				UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(
 					LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_LEVEL_UP"),
 					m_feedbackAnchor,
 					GameConstants.Vector2.zero,
 					m_feedbackAnchor
 				);
+                
+                Canvas c =feedbackText.GetComponentInParent<Canvas>();
+                feedbackText.transform.SetParent(c.transform);
+                feedbackText.transform.SetAsLastSibling();    
+            
 			} break;
 		}
 

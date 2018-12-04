@@ -205,16 +205,8 @@ public class CPServerTab : MonoBehaviour {
 		// Get optional parameters
 		string paramString = GetInputText(_input);
 
-		// Do stuff!		
-		bool changesApplied = ApplicationManager.instance.Game_ApplyCustomizer();
-		string msg = "Button 3 pressed with params " + paramString;
-		if (changesApplied) {
-			msg += " CUSTOMIZER APPLIED";
-		} else {
-			msg += " NO CUSTOMIZER TO APPLY";
-		}       
-
-		Output(msg);        
+        // Do stuff!		
+        HDCustomizerManager.instance.CheckAndApply();
 	}
 
 	/// <summary>

@@ -28,6 +28,7 @@ public abstract class IDragonData : IUISelectorItem {
 	//------------------------------------------------------------------//
 	public const string GAME_PREFAB_PATH = "Game/Dragons/";
 	public const string MENU_PREFAB_PATH = "UI/Menu/Dragons/";
+	public const string DEFAULT_SKIN_ICON = "icon_disguise_0";
 
 	public enum Type {
 		CLASSIC,
@@ -66,8 +67,17 @@ public abstract class IDragonData : IUISelectorItem {
 	protected DragonTier m_tier;  // Cached value
 	public DragonTier tier { get { return m_tier; } }
 
-	// Progression
-	[SerializeField] protected bool m_owned = false;
+
+    //-- Economy --------------
+    private long m_priceSC = 0;
+    private float m_priceSCModifier = 0f;
+
+    private long m_pricePC = 0;
+    private float m_pricePCModifier = 0f;
+    //--------------------------
+
+    // Progression
+    [SerializeField] protected bool m_owned = false;
 	[SerializeField] protected bool m_teased = false;
 	[SerializeField] protected bool m_revealed = false;
 	[SerializeField] protected bool m_unlockAvailable = false;
@@ -227,6 +237,9 @@ public abstract class IDragonData : IUISelectorItem {
 		m_def = _def;
 		m_sku = m_def.sku;
 
+        m_priceSC = def.GetAsLong("unlockPriceCoins");
+        m_pricePC = def.GetAsLong("unlockPricePC");
+
 		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
 			m_shadowFromDragons.AddRange(shadowFromDragonsData.Split(';'));
@@ -304,6 +317,65 @@ public abstract class IDragonData : IUISelectorItem {
 	/// </summary>
 	public void SetOffsetScaleValue(float _scale) {
 		m_scaleOffset += _scale;
+	}
+
+	//------------------------------------------------------------------------//
+	// ECONOMY METHODS											 			  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the original price (without applying any modifier).
+	/// </summary>
+	/// <returns>The original price in the requested currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	public long GetPrice(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: return m_pricePC;
+			case UserProfile.Currency.SOFT: return m_priceSC;
+		}
+		return 0;
+	}
+
+	/// <summary>
+	/// Get the price once the modifiers have been applied.
+	/// </summary>
+	/// <returns>The modified price in the requested currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	public long GetPriceModified(UserProfile.Currency _currency) {
+		long basePrice = GetPrice(_currency);
+		return basePrice + Mathf.FloorToInt(basePrice * GetPriceModifier(_currency) / 100.0f);
+	}
+
+	/// <summary>
+	/// Price modifier.
+	/// </summary>
+	/// <returns>The price modifier, [-100..0..100] representing the bonus percentage added to the original price, 0 being none.</returns>
+	/// <param name="_currency">Currency.</param>
+	public float GetPriceModifier(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: return m_pricePCModifier;
+			case UserProfile.Currency.SOFT: return m_priceSCModifier;
+		}
+		return 0;
+	}
+
+	/// <summary>
+	/// Does this dragon have a price modifier for the given currency?
+	/// </summary>
+	/// <param name="_currency">Currency.</param>
+	public bool HasPriceModifier(UserProfile.Currency _currency) {
+		return Mathf.Abs(GetPriceModifier(_currency)) > Mathf.Epsilon;    // Different than 0
+	}
+
+	/// <summary>
+	/// Change the current price modifier by adding/subtracting.
+	/// </summary>
+	/// <param name="_value">Value to add [-100..0..100] as a percentage to be added to the original price, 0 being none.</param>
+	/// <param name="_currency">Currency.</param>
+	public void AddPriceModifer(float _value, UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: m_pricePCModifier += _value;	break;
+			case UserProfile.Currency.SOFT: m_priceSCModifier += _value;	break;
+		}
 	}
 
 	//------------------------------------------------------------------------//

@@ -46,6 +46,8 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	/// Default constructor.
 	/// </summary>
 	public HDQuestManager() {
+        m_numericType = 1;
+
         m_data = new HDQuestData();
         m_questData = m_data as HDQuestData;
         m_questDefinition = m_questData.definition as HDQuestDefinition;

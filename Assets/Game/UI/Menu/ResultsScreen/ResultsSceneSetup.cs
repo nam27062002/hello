@@ -171,20 +171,24 @@ public class ResultsSceneSetup : MonoBehaviour {
 		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
 
 		// Trigger confetti anim
-		LaunchConfettiFX();
+		// Avoid colliding with music
+		LaunchConfettiFX(!GameSettings.Get(GameSettings.MUSIC_ENABLED));
 	}
 
 	/// <summary>
 	/// Launches the disguise purchased FX on the selected dragon.
 	/// </summary>
-	public void LaunchConfettiFX() {
+	/// <param name="_playSFX">Whether to trigger sound FX or not.</param>
+	public void LaunchConfettiFX(bool _playSFX) {
 		// Restart effect
 		m_confettiFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 		m_confettiFX.Play(true);
 
 		// Restart SFX
-		/*string audioId = "hd_unlock_dragon";
-		AudioController.Stop(audioId);
-		AudioController.Play(audioId);*/
+		if(_playSFX) {
+			string audioId = "hd_unlock_dragon";
+			AudioController.Stop(audioId);
+			AudioController.Play(audioId);
+		}
 	}
 }

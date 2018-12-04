@@ -44,7 +44,7 @@ public class OfferItemPreviewDragon2d : IOfferItemPreview {
 		if(m_def == null) {
 			m_image.sprite = null;
 		} else {
-			m_image.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_def.sku + "/icon_disguise_0");
+			m_image.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_def.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
 		}
 	}
 

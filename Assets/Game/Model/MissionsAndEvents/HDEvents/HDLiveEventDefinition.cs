@@ -215,7 +215,9 @@ public class HDLiveEventDefinition {
 		m_initialized = true;
 
 		// has this event bee cancelled?
-		m_refund = _data["refund"].AsBool;
+		if(_data.ContainsKey("refund")) {
+			m_refund = _data["refund"].AsBool;
+		}
 
 		if ( _data.ContainsKey("code") )
 		{
@@ -247,6 +249,19 @@ public class HDLiveEventDefinition {
 			}
 		}
 
+        if (_data.ContainsKey("customMods")) {
+            JSONArray _mods = _data["customMods"].AsArray;
+            for (int i = 0; i < _mods.Count; ++i) {
+                Modifier m = Modifier.CreateFromJson(_mods[i]);
+                if (m is ModifierDragon) {
+                    m_dragonMods.Add(m);
+                } else {
+                    m_otherMods.Add(m);
+                }
+            }
+        }
+        //
+
 		// timestamps
 		if ( _data.ContainsKey("teaserTimestamp") )
 			m_teasingTimestamp = TimeUtils.TimestampToDate(_data["teaserTimestamp"].AsLong);
@@ -266,19 +281,34 @@ public class HDLiveEventDefinition {
 		ret.Add("code", m_eventId);	
 		ret.Add("name", m_name);
 
-		// Type?
+		// Type?    
+		SimpleJSON.JSONArray mods = new JSONArray();
+        SimpleJSON.JSONArray customMods = new JSONArray();
 
-		SimpleJSON.JSONArray arr = new JSONArray();
-		for (int i = 0; i < m_dragonMods.Count; i++) {
-			arr.Add( m_dragonMods[i].def.sku );
+        for (int i = 0; i < m_dragonMods.Count; i++) {
+            string sku = m_dragonMods[i].GetSku();
+
+            if (sku.Equals(Modifier.SKU_CUSTOM)) {
+                customMods.Add(m_dragonMods[i].ToJson());
+            } else{
+                mods.Add(sku);
+            }
 		}
+
 		for (int i = 0; i < m_otherMods.Count; i++) {
-			arr.Add( m_otherMods[i].def.sku );
-		}
-		ret.Add("mods", arr);
+            string sku = m_otherMods[i].GetSku();
 
-		// timestamps
-		ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
+            if (sku.Equals(Modifier.SKU_CUSTOM)) {
+                customMods.Add(m_otherMods[i].ToJson());
+            } else {
+                mods.Add(sku);
+            }
+        }
+		ret.Add("mods", mods);
+        ret.Add("customMods", customMods);
+
+        // timestamps
+        ret.Add("teaserTimestamp", TimeUtils.DateToTimestamp( m_teasingTimestamp ));
 		ret.Add("startTimestamp", TimeUtils.DateToTimestamp( m_startTimestamp ));
 		ret.Add("endTimestamp", TimeUtils.DateToTimestamp( m_endTimestamp ));
 

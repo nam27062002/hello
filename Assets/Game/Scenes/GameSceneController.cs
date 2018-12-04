@@ -85,7 +85,6 @@ public class GameSceneController : GameSceneControllerBase {
 	}
 
 	// Pause management
-	private float m_timeScaleBackup = 1f;	// When going to pause, store timescale to be restored later on
 	private int m_pauseStacks = 0;
 
 	// Level loading
@@ -209,6 +208,7 @@ public class GameSceneController : GameSceneControllerBase {
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
+        PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
 	}
 
 
@@ -534,10 +534,8 @@ public class GameSceneController : GameSceneControllerBase {
 			if(_pause) {
 				// If not paused, pause!
 				if(!m_paused || _force) {
-					// Store current timescale and set it to 0
-					// Not if already paused, otherwise resume wont work!
-					if(!m_paused) m_timeScaleBackup = Time.timeScale;
-					Time.timeScale = 0.0f;
+                    // Store current timescale and set it to 0
+                    InstanceManager.timeScaleController.Pause();
 					Screen.sleepTimeout = SleepTimeout.SystemSetting;
 
                     //Stop Performance tracking 
@@ -558,8 +556,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// If empty stack, restore gameplay!
 				if(m_pauseStacks == 0) {
-					// Restore previous timescale
-					Time.timeScale = m_timeScaleBackup;
+                    // Restore previous timescale
+                    InstanceManager.timeScaleController.Resume();
 					Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
 					// Notify the game
@@ -574,14 +572,6 @@ public class GameSceneController : GameSceneControllerBase {
 			// Update logic flag
 			m_paused = (m_pauseStacks > 0);
 		}
-	}
-
-	/// <summary>
-	/// Resets the cached time scale.
-	/// </summary>
-	public void ResetCachedTimeScale()
-	{
-		m_timeScaleBackup = 1.0f;
 	}
 
 	//------------------------------------------------------------------//

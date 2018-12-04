@@ -201,7 +201,7 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private string m_termsOfUseURL = "https://legal.ubi.com/termsofuse/";
 	public static string TERMS_OF_USE_URL {
 		// Attach standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		get { return instance.m_termsOfUseURL + LocalizationManager.SharedInstance.Culture.Name; }
+		get { return instance.m_termsOfUseURL;/* + LocalizationManager.SharedInstance.Culture.Name;*/ } // Link already redirects to correct localized URL
 	}
 
 	// Internal references
