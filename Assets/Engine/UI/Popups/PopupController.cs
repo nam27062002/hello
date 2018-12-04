@@ -43,10 +43,17 @@ public class PopupController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Add as many listeners as you want to this specific event by using the .AddListener() method
 	// No need to remove them, events will be cleared upon popup's destruction
+
+	// Parameter-less events to be setup from the inspector
 	public UnityEvent OnOpenPreAnimation = new UnityEvent();
 	public UnityEvent OnOpenPostAnimation = new UnityEvent();
 	public UnityEvent OnClosePreAnimation = new UnityEvent();
 	public UnityEvent OnClosePostAnimation = new UnityEvent();
+
+	// Parametrized events to be used from code
+	public class PopupEvent : UnityEvent<PopupController> { }
+	public PopupEvent OnOpen = new PopupEvent();
+	public PopupEvent OnClose = new PopupEvent();
 
     protected PopupManagementInfo m_popupManagementInfo = new PopupManagementInfo();
 
@@ -83,6 +90,8 @@ public class PopupController : MonoBehaviour {
             OnOpenPostAnimation.RemoveAllListeners();
             OnClosePreAnimation.RemoveAllListeners();
             OnClosePostAnimation.RemoveAllListeners();
+			OnOpen.RemoveAllListeners();
+			OnClose.RemoveAllListeners();
         }
 	}
 
@@ -96,6 +105,10 @@ public class PopupController : MonoBehaviour {
 		// Change status
 		m_isOpen = true;
 
+		// Invoke event
+		OnOpen.Invoke(this);
+		OnOpenPreAnimation.Invoke();
+
 		// Reopening?
 		if(m_reopening) {
 			// Reset flag
@@ -104,9 +117,6 @@ public class PopupController : MonoBehaviour {
 			// Send message
 			Broadcaster.Broadcast(BroadcastEventType.POPUP_OPENED, m_popupManagementInfo);
 		}
-
-		// Invoke event
-		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
 		m_anim.ResetTrigger( GameConstants.Animator.CLOSE );
@@ -122,6 +132,7 @@ public class PopupController : MonoBehaviour {
 		m_destroyAfterClose = _bDestroy;
 
 		// Invoke event
+		OnClose.Invoke(this);
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
