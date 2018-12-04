@@ -35,7 +35,13 @@ public class MenuDragonBirdControl : MonoBehaviour {
 		m_playingBird = false;
 	}
 
-	public void PlayBird()
+    public void OnDisable()
+    {
+        if (m_prefabInstance != null)
+            m_prefabInstance.SetActive(false);
+    }
+
+    public void PlayBird()
 	{	
 		m_playingBird = true;
 		m_waitToSync = true;
