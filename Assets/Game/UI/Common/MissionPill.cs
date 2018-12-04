@@ -328,6 +328,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);
 
+        // TODO: A more efficient way to access the button
         if (!FeatureSettingsManager.AreAdsEnabled) {
             GameObject skipAdButton = m_cooldownObj.FindObjectRecursive("ButtonSkipAd");
             if (skipAdButton != null) {
