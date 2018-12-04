@@ -24,6 +24,7 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private static readonly string COINS_REWARD_PREFAB = "UI/Metagame/Rewards/PF_ChestCoinsReward";
 	private static readonly string PC_REWARD_PREFAB = "UI/Metagame/Rewards/PF_ChestPCReward";
+	private static readonly string GF_REWARD_PREFAB = "UI/Metagame/Rewards/PF_ChestGFReward";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -132,6 +133,10 @@ public class ResultsSceneChestSlot : MonoBehaviour {
 
 				case Chest.RewardType.PC: {
 					rewardPrefabPath = PC_REWARD_PREFAB;
+				} break;
+
+				case Chest.RewardType.GF: {
+					rewardPrefabPath = GF_REWARD_PREFAB;
 				} break;
 			}
 
