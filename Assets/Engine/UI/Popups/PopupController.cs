@@ -33,6 +33,9 @@ public class PopupController : MonoBehaviour {
 	private bool m_isReady = false;
 	public bool isReady { get { return m_isReady; }}
 
+	private float m_openTimestamp = 0f;
+	public float openTimestamp { get { return m_openTimestamp; }}
+
 	// Internal
 	private Animator m_anim = null;
 	private bool m_destroyAfterClose = true;
@@ -105,7 +108,10 @@ public class PopupController : MonoBehaviour {
 		// Change status
 		m_isOpen = true;
 
-		// Invoke event
+		// Update internal vars
+		m_openTimestamp = Time.unscaledTime;
+
+		// Invoke event - order is relevant!
 		OnOpen.Invoke(this);
 		OnOpenPreAnimation.Invoke();
 
@@ -131,7 +137,7 @@ public class PopupController : MonoBehaviour {
 		// Store flag
 		m_destroyAfterClose = _bDestroy;
 
-		// Invoke event
+		// Invoke event - order is relevant!
 		OnClose.Invoke(this);
 		OnClosePreAnimation.Invoke();
 
