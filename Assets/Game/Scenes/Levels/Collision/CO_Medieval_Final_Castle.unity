@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 6.24306e-40, b: 2.5590844, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 6.30789e-40, b: 2.5590844, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -1222,9 +1222,12 @@ Transform:
   - {fileID: 1579239219}
   - {fileID: 557545663}
   - {fileID: 1735402272}
+  - {fileID: 1163967851}
   - {fileID: 1527286937}
   - {fileID: 1044776609}
   - {fileID: 1222043238}
+  - {fileID: 1079765757}
+  - {fileID: 1386870020}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20482,14 +20485,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 9
+    indexCount: 6
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 5
+    vertexCount: 4
     localAABB:
-      m_Center: {x: -31.333344, y: -19.925453, z: 0}
-      m_Extent: {x: 47.06685, y: 44.965363, z: 0}
+      m_Center: {x: -38.58725, y: -29.738304, z: 0}
+      m_Extent: {x: 37.386124, y: 34.66266, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -20503,11 +20506,11 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 030000000100010002000300030004000000
+  m_IndexBuffer: 000001000200020003000000
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 11
-    m_VertexCount: 5
+    m_VertexCount: 4
     m_Channels:
     - stream: 0
       offset: 0
@@ -20541,8 +20544,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 160
-    _typelessdata: 70bc7b41a058c341000000000000000000000000000080bf70bc7b41a058c34130526a41ba2a81c2000000000000000000000000000080bf30526a41ba2a81c2e6cc9cc219c881c2000000000000000000000000000080bfe6cc9cc219c881c2ec2703c23649aa41000000000000000000000000000080bfec2703c23649aa4100c2fd3ebc51c841000000000000000000000000000080bf00c2fd3ebc51c841
+    m_DataSize: 128
+    _typelessdata: 80be99bf4093fcbf000000000000000000000000000080bf80be99bf4093fcbf20dea7c04bcd80c2000000000000000000000000000080bf20dea7c04bcd80c25ef297c2b53f78c2000000000000000000000000000080bf5ef297c2b53f78c2bc4565c250949d40000000000000000000000000000080bfbc4565c250949d40
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -20596,8 +20599,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -31.333344, y: -19.925453, z: 0}
-    m_Extent: {x: 47.06685, y: 44.965363, z: 0}
+    m_Center: {x: -38.58725, y: -29.738304, z: 0}
+    m_Extent: {x: 37.386124, y: 34.66266, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -26478,8 +26481,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 5
     localAABB:
-      m_Center: {x: 22.369186, y: -33.973698, z: 0}
-      m_Extent: {x: 174.82716, y: 65.392395, z: 0}
+      m_Center: {x: 17.28859, y: -33.91806, z: 0}
+      m_Extent: {x: 169.74657, y: 65.44803, z: 0}
   m_Shapes:
     vertices: []
     shapes: []
@@ -26532,7 +26535,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 160
-    _typelessdata: 443245436864fa41000000000000000000000000000080bf443245436864fa41b0640d4370bbc6c2000000000000000000000000000080bfb0640d4370bbc6c2567b08c34cd7c5c2000000000000000000000000000080bf567b08c34cd7c5c27e4e0ac39a6019c2000000000000000000000000000080bf7e4e0ac39a6019c23e7518c37c59fb41000000000000000000000000ffff7fbf3e7518c37c59fb41
+    _typelessdata: 00093b43603dfc41000000000000000000000000ffff7fbf00093b43603dfc41b0640d4370bbc6c2000000000000000000000000000080bfb0640d4370bbc6c2567b08c34cd7c5c2000000000000000000000000000080bf567b08c34cd7c5c27e4e0ac39a6019c2000000000000000000000000000080bf7e4e0ac39a6019c23e7518c37c59fb41000000000000000000000000ffff7fbf3e7518c37c59fb41
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -26586,8 +26589,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 22.369186, y: -33.973698, z: 0}
-    m_Extent: {x: 174.82716, y: 65.392395, z: 0}
+    m_Center: {x: 17.28859, y: -33.91806, z: 0}
+    m_Extent: {x: 169.74657, y: 65.44803, z: 0}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -67028,7 +67031,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8011976}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1044776610
 MonoBehaviour:
@@ -69858,6 +69861,70 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1076699726}
   m_Mesh: {fileID: 2047914439}
+--- !u!1 &1079765756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1079765757}
+  - component: {fileID: 1079765760}
+  - component: {fileID: 1079765759}
+  - component: {fileID: 1079765758}
+  m_Layer: 16
+  m_Name: Trigger_Zone_Castle_Secret
+  m_TagString: Untagged
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1079765757
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1079765756}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 810.8, y: 31.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8011976}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1079765758
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1079765756}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 45.28717, y: 26.483917, z: 100}
+  m_Center: {x: 2.3564148, y: 11.758041, z: 0}
+--- !u!114 &1079765759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1079765756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zoneId: Trigger_Zone_Castle_Secret
+  m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
+--- !u!33 &1079765760
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1079765756}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!43 &1085755622
 Mesh:
   m_ObjectHideFlags: 0
@@ -73440,17 +73507,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyPoints:
-  - {x: 197.19635, y: 31.299026, z: 0}
+  - {x: 187.03516, y: 31.529968, z: 0}
   - {x: 141.39331, y: -99.36609, z: 0}
   - {x: -136.48178, y: -98.9205, z: 0}
   - {x: -138.30661, y: -38.344337, z: 0}
   - {x: -152.45798, y: 31.418694, z: 0}
   curvePoints:
-  - {x: 169.29483, y: -34.03353, z: 0}
+  - {x: 164.21423, y: -33.91806, z: 0}
   - {x: 2.4557648, y: -99.143295, z: 0}
   - {x: -137.3942, y: -68.632416, z: 0}
   - {x: -145.3823, y: -3.462822, z: 0}
-  - {x: 22.369186, y: 31.35886, z: 0}
+  - {x: 17.28859, y: 31.47433, z: 0}
   isCurve: 0000000000
   curveDetail: 0.1
   colliderDepth: 100
@@ -74169,6 +74236,70 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
+--- !u!1 &1163967850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1163967851}
+  - component: {fileID: 1163967854}
+  - component: {fileID: 1163967853}
+  - component: {fileID: 1163967852}
+  m_Layer: 16
+  m_Name: Trigger_Zone_Castle_15
+  m_TagString: Untagged
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1163967851
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163967850}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 870.2, y: 86, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8011976}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1163967852
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163967850}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 20.746887, y: 20.29808, z: 100}
+  m_Center: {x: -81.72006, y: -18.842506, z: 0}
+--- !u!114 &1163967853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163967850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zoneId: Trigger_Zone_Castle_15
+  m_zoneTid: TID_AREA_CASTLE_NAME
+  m_isStartingArea: 0
+--- !u!33 &1163967854
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1163967850}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!43 &1167796269
 Mesh:
   m_ObjectHideFlags: 0
@@ -77251,7 +77382,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8011976}
-  m_RootOrder: 16
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1222043239
 BoxCollider:
@@ -88607,6 +88738,70 @@ Transform:
   m_Father: {fileID: 2113731398}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1386870019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1386870020}
+  - component: {fileID: 1386870023}
+  - component: {fileID: 1386870022}
+  - component: {fileID: 1386870021}
+  m_Layer: 16
+  m_Name: Trigger_Zone_Castle_Secret
+  m_TagString: Untagged
+  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1386870020
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1386870019}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 788.4, y: 90.9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8011976}
+  m_RootOrder: 19
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1386870021
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1386870019}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 50, y: 20.703178, z: 100}
+  m_Center: {x: 0, y: 9.886402, z: 0}
+--- !u!114 &1386870022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1386870019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zoneId: Trigger_Zone_Castle_Secret
+  m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
+--- !u!33 &1386870023
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1386870019}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!43 &1391419820
 Mesh:
   m_ObjectHideFlags: 0
@@ -93872,8 +94067,8 @@ Mesh:
     firstVertex: 0
     vertexCount: 10
     localAABB:
-      m_Center: {x: 22.369186, y: -33.973698, z: 0}
-      m_Extent: {x: 174.82716, y: 65.392395, z: 50}
+      m_Center: {x: 17.28859, y: -33.91806, z: 0}
+      m_Extent: {x: 169.74657, y: 65.44803, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -93926,7 +94121,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 240
-    _typelessdata: 443245436864fa41000048421c204c3eb2dc7a3f00000000443245436864fa41000048c2e34a3d3f78592c3f00000000b0640d4370bbc6c200004842d8770e3fb9b154bf00000000b0640d4370bbc6c2000048c24390543e7a6c7abf00000000567b08c34cd7c5c200004842b869e0bd5e757ebf00000000567b08c34cd7c5c2000048c29d04cbbec4036bbf000000007e4e0ac39a6019c200004842f8e47ebfb521bebd000000007e4e0ac39a6019c2000048c297257dbfbe7418be000000003e7518c37c59fb4100004842b9c3cbbe67da6a3f000000003e7518c37c59fb41000048c250c0cebd31b17e3f00000000
+    _typelessdata: 00093b43603dfc41000048429fea4e3e1cb87a3f0000000000093b43603dfc41000048c2b2bc393fe02c303f00000000b0640d4370bbc6c20000484258eb133f9df050bf00000000b0640d4370bbc6c2000048c21d5d583e62387abf00000000567b08c34cd7c5c200004842b869e0bd5e757ebf00000000567b08c34cd7c5c2000048c29d04cbbec4036bbf000000007e4e0ac39a6019c200004842f8e47ebfb521bebd000000007e4e0ac39a6019c2000048c297257dbfbe7418be000000003e7518c37c59fb4100004842fe9bd1be4b90693f000000003e7518c37c59fb41000048c24767d6bde1977e3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -93980,8 +94175,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: 22.369186, y: -33.973698, z: 0}
-    m_Extent: {x: 174.82716, y: 65.392395, z: 50}
+    m_Center: {x: 17.28859, y: -33.91806, z: 0}
+    m_Extent: {x: 169.74657, y: 65.44803, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -98082,7 +98277,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8011976}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1527286938
 MonoBehaviour:
@@ -110822,15 +111017,16 @@ GameObject:
   m_Component:
   - component: {fileID: 1735402272}
   - component: {fileID: 1735402275}
+  - component: {fileID: 1735402276}
   - component: {fileID: 1735402274}
   - component: {fileID: 1735402273}
   m_Layer: 16
-  m_Name: Trigger_Zone_Castle_15_CREARNUEVO
+  m_Name: Trigger_Zone_Castle_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1735402272
 Transform:
   m_ObjectHideFlags: 0
@@ -110856,18 +111052,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   keyPoints:
-  - {x: 15.733505, y: 24.418274, z: 0}
-  - {x: 14.645065, y: -64.58345, z: 0}
-  - {x: -78.40019, y: -64.890816, z: 0}
-  - {x: -32.788986, y: 21.285748, z: 0}
-  - {x: 0.49562073, y: 25.03991, z: 0}
+  - {x: -1.2011261, y: -1.9732437, z: 0}
+  - {x: -5.245865, y: -64.40096, z: 0}
+  - {x: -75.97337, y: -62.062214, z: 0}
+  - {x: -57.3181, y: 4.9243546, z: 0}
   curvePoints:
-  - {x: 15.189285, y: -20.082588, z: 0}
-  - {x: -31.877563, y: -64.73714, z: 0}
-  - {x: -55.59459, y: -21.802534, z: 0}
-  - {x: -16.146683, y: 23.162828, z: 0}
-  - {x: 8.114563, y: 24.729092, z: 0}
-  isCurve: 0000000000
+  - {x: -3.2234955, y: -33.187103, z: 0}
+  - {x: -40.60962, y: -63.23159, z: 0}
+  - {x: -66.64574, y: -28.56893, z: 0}
+  - {x: -29.259613, y: 1.4755554, z: 0}
+  isCurve: 00000000
   curveDetail: 0.1
   colliderDepth: 100
   buildColliderEdges: 1
@@ -110889,10 +111083,10 @@ MeshCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1735402271}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 2054738673}
@@ -110903,6 +111097,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1735402271}
   m_Mesh: {fileID: 279912806}
+--- !u!114 &1735402276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1735402271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_zoneId: Trigger_Zone_Castle_15
+  m_zoneTid: TID_AREA_CASTLE_NAME
+  m_isStartingArea: 0
 --- !u!43 &1737662660
 Mesh:
   m_ObjectHideFlags: 0
@@ -129605,14 +129813,14 @@ Mesh:
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
-    indexCount: 30
+    indexCount: 24
     topology: 0
     baseVertex: 0
     firstVertex: 0
-    vertexCount: 10
+    vertexCount: 8
     localAABB:
-      m_Center: {x: -31.333344, y: -19.925453, z: 0}
-      m_Extent: {x: 47.06685, y: 44.965363, z: 50}
+      m_Center: {x: -38.58725, y: -29.738304, z: 0}
+      m_Extent: {x: 37.386124, y: 34.66266, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -129626,11 +129834,11 @@ Mesh:
   m_KeepVertices: 1
   m_KeepIndices: 1
   m_IndexFormat: 0
-  m_IndexBuffer: 000002000100020003000100020004000300040005000300040006000500060007000500060008000700080009000700080000000900000001000900
+  m_IndexBuffer: 000002000100020003000100020004000300040005000300040006000500060007000500060000000700000001000700
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 3
-    m_VertexCount: 10
+    m_VertexCount: 8
     m_Channels:
     - stream: 0
       offset: 0
@@ -129664,8 +129872,8 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
-    m_DataSize: 240
-    _typelessdata: 70bc7b41a058c341000048423f6b733f9b889e3e0000000070bc7b41a058c341000048c281517f3fae59953d0000000030526a41ba2a81c20000484250d1613f0a2ff1be0000000030526a41ba2a81c2000048c22019dd3e74e666bf00000000e6cc9cc219c881c2000048428f2a05bf6da35abf00000000e6cc9cc219c881c2000048c253fc7fbf93942dbc00000000ec2703c23649aa4100004842bb0851bf40c9133f00000000ec2703c23649aa41000048c2581824bfc07d443f0000000000c2fd3ebc51c8410000484213ccabbd04197f3f0000000000c2fd3ebc51c841000048c2102d21bd3ecd7f3f00000000
+    m_DataSize: 192
+    _typelessdata: 80be99bf4093fcbf000048424371133fd546513f0000000080be99bf4093fcbf000048c2ae84703fc459af3e0000000020dea7c04bcd80c200004842f44b573ffe800abf0000000020dea7c04bcd80c2000048c229e2bc3e59f16dbf000000005ef297c2b53f78c200004842500801bf6b1a5dbf000000005ef297c2b53f78c2000048c239a378bf94d073be00000000bc4565c250949d400000484235414ebf1aa4173f00000000bc4565c250949d40000048c288c2c0be0f2a6d3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -129719,8 +129927,8 @@ Mesh:
       m_BitSize: 0
     m_UVInfo: 0
   m_LocalAABB:
-    m_Center: {x: -31.333344, y: -19.925453, z: 0}
-    m_Extent: {x: 47.06685, y: 44.965363, z: 50}
+    m_Center: {x: -38.58725, y: -29.738304, z: 0}
+    m_Extent: {x: 37.386124, y: 34.66266, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
