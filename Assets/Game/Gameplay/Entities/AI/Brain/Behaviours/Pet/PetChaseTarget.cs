@@ -10,6 +10,7 @@ namespace AI {
 			// public Range m_cooldown;
 
 			public string petChaseSku = "common";
+            public bool checkCanBeBitten = true;
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Chase Target")]
@@ -35,6 +36,7 @@ namespace AI {
 
 			protected float m_chaseTimeout;
 			protected Range m_cooldown;
+            protected bool m_checkCanBeBitten = true;
 
 			public override StateComponentData CreateData() {
 				return new PetChaseTargetData();
@@ -51,6 +53,7 @@ namespace AI {
 				m_speed = InstanceManager.player.dragonMotion.absoluteMaxSpeed * def.GetAsFloat("chaseSpeedMultiplier");
 				m_chaseTimeout = def.GetAsFloat("chaseTimeout");
 				m_cooldown = def.GetAsRange("chaseCooldown");
+                m_checkCanBeBitten = data.checkCanBeBitten;
 				m_eatBehaviour = m_pilot.GetComponent<MachineEatBehaviour>();
 
 				m_machine.SetSignal(Signals.Type.Alert, true);
@@ -99,7 +102,7 @@ namespace AI {
 				m_targetEntity = null;	
 			}
 
-			protected override void OnUpdate() {	
+			protected override void OnUpdate() {
 
 				// if eating move forward only
 				if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
@@ -107,11 +110,16 @@ namespace AI {
 					m_pilot.SlowDown(true);
 					return;
 				}
-
-				if (m_targetMachine != null) {
-					if ( !m_targetMachine.CanBeBitten()) {
-						m_target = null;
-						m_targetMachine = null;
+                
+				if (m_checkCanBeBitten && m_targetMachine != null) {
+                    if (!m_targetMachine.CanBeBitten())
+                    {
+                        m_target = null;
+                        if (m_targetMachine != null)
+                        {
+                            m_targetMachine.isPetTarget = false;
+                            m_targetMachine = null;
+                        }
 						m_targetEntity = null;
 					}
 				}
