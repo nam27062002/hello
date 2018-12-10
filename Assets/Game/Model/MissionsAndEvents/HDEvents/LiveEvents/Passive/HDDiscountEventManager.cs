@@ -21,6 +21,7 @@ using System.Collections.Generic;
 public class HDDiscountEventManager : HDPassiveEventManager {
 
     public HDDiscountEventManager() : base() {
+        m_type = "discount";
         m_numericType = 3;
         Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, CheckEvent);
     }
@@ -43,7 +44,7 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     /// </summary>
     public override void FinishEvent() {
         // Tell server
-        if (HDLiveEventsManager.TEST_CALLS) {
+        if (HDLiveDataManager.TEST_CALLS) {
             ApplicationManager.instance.StartCoroutine(DelayedCall(m_type + "_finish.json", FinishEventResponse));
         } else {
             GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);
@@ -54,7 +55,7 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     protected override void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
         base.FinishEventResponse(_error, _response);
 
-        HDLiveEventsManager.instance.ForceRequestMyEventType(m_numericType);
+        HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
     }
 
     private void CheckEvent(IDragonData _data) {
