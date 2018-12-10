@@ -66,19 +66,7 @@ public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// If target popups was not manually defined, store current popup count as reference
-		if(m_refPopupCount < 0) {
-			m_refPopupCount = PopupManager.openPopupsCount;
-
-			// If this component belongs to a popup, increase ref amount to include parent popup (who is not still opened)
-			PopupController parentPopup = GetComponentInParent<PopupController>();
-			if(parentPopup != null) {
-				// Don't if already counted
-				if(!PopupManager.openedPopups.Contains(parentPopup)) {
-					m_refPopupCount++;
-				}
-			}
-		}
+		
 	}
 
 	/// <summary>
@@ -133,6 +121,20 @@ public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_popup">The popup that has been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
+		// If target popups was not manually defined, store current popup count as reference
+		if(m_refPopupCount < 0) {
+			m_refPopupCount = PopupManager.openPopupsCount;
+
+			// If this component belongs to a popup, increase ref amount to include parent popup if it's still not opened
+			PopupController parentPopup = GetComponentInParent<PopupController>();
+			if(parentPopup != null) {
+				// Don't if already counted
+				if(!PopupManager.openedPopups.Contains(parentPopup)) {
+					m_refPopupCount++;
+				}
+			}
+		}
+
 		// Skip if object already disabled
 		if(!gameObject.activeSelf) return;
 
