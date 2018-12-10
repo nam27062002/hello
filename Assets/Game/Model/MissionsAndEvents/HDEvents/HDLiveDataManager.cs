@@ -1,4 +1,4 @@
-// LiveEventManager.cs
+﻿// LiveEventManager.cs
 // Hungry Dragon
 // 
 // Created by Miguel Ángel Linares on 15/05/2018.
@@ -72,6 +72,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
     public HDQuestManager m_quest = new HDQuestManager();
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
     public HDLeagueManager m_league = new HDLeagueManager();
+    public HDDiscountEventManager m_dragonDiscounts = new HDDiscountEventManager();
 
     // Avoid using dictionaries when possible
     private List<HDLiveDataController> m_managers;
@@ -93,15 +94,14 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 
     public HDLiveDataManager()
 	{
-        // For testing purposes
         //
         m_managers = new List<HDLiveDataController>();
         m_managers.Add(m_tournament);
         m_managers.Add(m_quest);
         m_managers.Add(m_passive);
+        m_managers.Add(m_dragonDiscounts);
         m_managers.Add(m_league);
 
-        //
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
 		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION,  SaveEventsToCacheWithParams);
@@ -234,7 +234,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 							case 613: outErr = HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER;break;
 							case 614: outErr = HDLiveDataManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS;break;
 							case 615: outErr = HDLiveDataManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
-							// case 616: outErr = HDLiveEventsManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
+							// case 616: outErr = HDLiveDataManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
 							case 617: outErr = HDLiveDataManager.ComunicationErrorCodes.MATCHMAKING_ERROR;break;
 							case 618: outErr = HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER;break;
 							case 619: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_QUEST;break;
@@ -297,15 +297,25 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
 	        }
 	        else
 	        {
-	            GameServerManager.SharedInstance.HDEvents_GetMyLiveData(instance.MyLiveDataResponse);    
+	            GameServerManager.SharedInstance.HDEvents_GetMyLiveData(MyLiveDataResponse);    
 	        }
 	        ret = true;
         }
         return ret;
     }
 
+    	
+    public void ForceRequestMyEventType(int _type) {
+        if (TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+        } else {
+            GameServerManager.SharedInstance.HDEvents_GetMyEventOfType(_type, MyLiveDataResponse);
+        }
+    }
+
     private void MyLiveDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
-	{		
+	{	
+		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
 		ResponseLog("GetMyEvents", _error, _response);
 		SimpleJSON.JSONNode responseJson = ResponseErrorCheck(_error, _response, out outErr);

@@ -94,6 +94,6 @@ public class PopupLanguageSelector : MonoBehaviour {
         }
 
         // Notify the rest of the game!
-        Messenger.Broadcast(MessengerEvents.LANGUAGE_CHANGED);
+        Broadcaster.Broadcast(BroadcastEventType.LANGUAGE_CHANGED);
     }
 }

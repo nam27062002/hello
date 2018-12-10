@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Contains references to its most used components as well as some common stats
 /// such as health, energy, etc.
 /// </summary>
-public class DragonPlayer : MonoBehaviour {
+public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 
 	//------------------------------------------------------------------//
 	//------------------------------------------------------------------//
@@ -305,14 +305,14 @@ public class DragonPlayer : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
 			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
@@ -329,14 +329,30 @@ public class DragonPlayer : MonoBehaviour {
 	{
 		// Unsubscribe from external events
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+             case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled(furyRushToggled.activated, furyRushToggled.type);
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// The component has been enabled.
 	/// </summary>
@@ -496,7 +512,7 @@ public class DragonPlayer : MonoBehaviour {
         for (int i = 0; i < m_mummyModifiers.Count; ++i) {
             m_mummyModifiers[i].Apply();
         }
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 
         // If health modifier changed, notify game
         if (m_currentHealthModifier != oldHealthModifier) {
@@ -536,7 +552,7 @@ public class DragonPlayer : MonoBehaviour {
             m_mummyModifiers[i].Remove();
         }
         m_mummyModifiers.Clear();
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 
         m_form = Form.NORMAL;
     }

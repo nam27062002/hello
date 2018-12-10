@@ -23,7 +23,7 @@ using TMPro;
 /// </summary>
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CanvasGroup))]
-public class HUDMessage : MonoBehaviour {
+public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -77,7 +77,8 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_WITH_FIRE,
 		BOOST_SPACE,
 		TIMES_UP,
-		TARGET_REACHED
+		TARGET_REACHED,
+        BREAK_OBJECT_TO_OPEN
 	}
 
 	// How to react with consecutive triggers
@@ -229,14 +230,15 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.BOOST_REMINDER:		Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
+			case Type.FIRE_RUSH:			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
+			case Type.MEGA_FIRE_RUSH:		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);			break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.AddListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -283,14 +285,15 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.BOOST_REMINDER:		 Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
+			case Type.FIRE_RUSH:			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
+			case Type.MEGA_FIRE_RUSH:		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);				break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -306,6 +309,24 @@ public class HUDMessage : MonoBehaviour {
 			case HideMode.TIMER:			Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFireRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Called every frame
@@ -759,6 +780,10 @@ public class HUDMessage : MonoBehaviour {
 	void OnBreakObjectWithFire() {
 		Show();
 	}
+
+    void OnBreakObjectToOpen() {
+        Show();
+    }
 
 	/// <summary>
 	/// Drunk state has changed.

@@ -8,12 +8,12 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_electric_0_ingame_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_NONE NORMALMAP OPAQUEFRESNEL OPAQUESPECULAR SELFILLUMINATE_NORMAL
+  m_ShaderKeywords: BLENDFRESNEL FRESNEL FXLAYER_NONE NORMALMAP OPAQUESPECULAR SELFILLUMINATE_NORMAL
     SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3050
+  m_CustomRenderQueue: 3045
   stringTagMap:
     QUEUE: Transparent
     RenderType: Transparent
@@ -85,12 +85,12 @@ Material:
     - _DissolveMargin: 0.1
     - _DissolveUpperLimit: 1
     - _DstBlend: 10
-    - _EnableBlendFresnel: 0
+    - _EnableBlendFresnel: 1
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
     - _EnableNormalMap: 1
-    - _EnableOpaqueFresnel: 1
+    - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 1
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
@@ -100,7 +100,7 @@ Material:
     - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 0.76
+    - _Fresnel: 1.32
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -109,12 +109,12 @@ Material:
     - _InnerLightWaveSpeed: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NormalStrenght: 0.3
+    - _NormalStrenght: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 36.98
+    - _SpecExponent: 20
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _StencilMask: 10
@@ -126,8 +126,8 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.9483505, g: 0.6714965, b: 0.99264705, a: 1}
+    - _FresnelColor: {r: 0.9034481, g: 0, b: 1, a: 0.778}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.6102941, g: 0.4038711, b: 0.4038711, a: 0}
     - _SecondLightDir: {r: -0.1351132, g: 0.9908301, b: -0, a: 0}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 1, g: 1, b: 1, a: 0.728}

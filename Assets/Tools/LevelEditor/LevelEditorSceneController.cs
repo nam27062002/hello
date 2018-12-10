@@ -68,7 +68,9 @@ namespace LevelEditor {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LevelEditor;
 			}
 
-			// Load the dragon
+            PoolManager.instance.poolLimits = PoolManager.PoolLimits.Unlimited;
+
+            // Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)
             {
@@ -110,7 +112,7 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnEnable() {
 			// Subscribe to external events
-			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
 		
@@ -119,12 +121,26 @@ namespace LevelEditor {
 		/// </summary>
 		private void OnDisable() {
 			// Simulate end game
-			Messenger.Broadcast(MessengerEvents.GAME_ENDED);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_ENDED);
 
 			// Unsubscribe from external events
-			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+			Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
 		}
+
+        public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+        {
+            base.OnBroadcastSignal(eventType, broadcastEventInfo);
+            switch(eventType)
+            {
+                case BroadcastEventType.POPUP_CLOSED:
+                {
+                    PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                    OnPopupClosed(info.popupController);
+                }break;
+            }
+        }
+    
 
 		/// <summary>
 		/// Called every frame.
@@ -202,7 +218,7 @@ namespace LevelEditor {
 			InitLevelMap();
 
 			// Simulate level loaded
-			Messenger.Broadcast(MessengerEvents.GAME_LEVEL_LOADED);
+			Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
 
 			// Run spawner manager
 			SpawnerManager.instance.EnableSpawners();

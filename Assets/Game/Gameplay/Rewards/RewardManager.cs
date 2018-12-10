@@ -43,7 +43,7 @@ public class SurvivalBonusData {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
+public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -90,6 +90,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static float xp {
 		get { return instance.m_xp; }
 	}
+
+
 
 	// Score multiplier
 	[SerializeField] private int m_currentScoreMultiplierIndex = 0;
@@ -280,9 +282,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 
         // Required for tracking purposes
         Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
@@ -304,9 +306,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
         // Required for tracking purposes
         Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
@@ -315,6 +317,25 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
     }
+    
+    
+     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRush( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
+    
 
 	/// <summary>
 	/// Called every frame.
@@ -478,6 +499,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			return m_sceneController.elapsedSeconds;
 		return 0;
 	}
+
+    public void OnApplyCheatsReward(Reward _reward) {
+        ApplyReward(_reward, null);
+    }
 
 	/// <summary>
 	/// Apply the given rewards package.
@@ -815,5 +840,23 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
     public static int GetReviveCost()
     {
     	return freeReviveCount + paidReviveCount + 1;
+    }
+
+
+    // Cheats
+    public void SetCategoryKill(string _category, int amount) {
+        if (m_categoryKillCount.ContainsKey(_category)) {
+            m_categoryKillCount[_category] += amount;
+        } else {
+            m_categoryKillCount.Add(_category, amount);
+        }
+    }
+
+    public void SetNPCKill(string _sku, int amount) {
+        if (m_killCount.ContainsKey(_sku)) {
+            m_killCount[_sku] += amount;
+        } else {
+            m_killCount.Add(_sku, amount);
+        }
     }
 }

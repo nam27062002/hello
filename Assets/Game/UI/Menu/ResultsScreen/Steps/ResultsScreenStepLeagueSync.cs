@@ -1,4 +1,4 @@
-// ResultsScreenStepLeagueSync.cs
+﻿// ResultsScreenStepLeagueSync.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 02/10/2018.
@@ -42,7 +42,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// </summary>
 	private void OnDestroy() {
 		// [AOC] TODO!!
-		//Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
+		//Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
 	}
 	
 	//------------------------------------------------------------------------//
@@ -54,7 +54,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	override protected void DoInit() {
 		// Listen to score sent confirmation
 		// [AOC] TODO!!
-		//Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
+		//Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
 
 		// Hide both panels
 		m_busyPanel.Hide(false);
@@ -137,10 +137,10 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// Error?
 		// [AOC] TODO!!
 		/*
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
-		} else if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER) {
+		} else if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
 		} else {

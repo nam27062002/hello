@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-public class EggView : MonoBehaviour {
+public class EggView : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -158,7 +158,7 @@ public class EggView : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+        Broadcaster.AddListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -182,8 +182,22 @@ public class EggView : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.EGG_STATE_CHANGED:
+            {
+                EggStateChanged info = (EggStateChanged)broadcastEventInfo;
+                OnEggStateChanged(info.egg, info.from, info.to);
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Called every frame.

@@ -6,7 +6,7 @@ using System.IO;
 using SimpleJSON;
 
 [ExecuteInEditMode]
-public class MemoryEntitiesController : MonoBehaviour {   
+public class MemoryEntitiesController : MonoBehaviour, IBroadcastListener {   
 	//---------------------------------------
 	private struct AssetMemory {		
 		public float size;
@@ -67,7 +67,7 @@ public class MemoryEntitiesController : MonoBehaviour {
 
     private void OnEnable() {
         // Subscribe to external events
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);        
     }
 
     /// <summary>
@@ -75,7 +75,18 @@ public class MemoryEntitiesController : MonoBehaviour {
     /// </summary>
     private void OnDisable() {
         // Unsubscribe from external events
-        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);        
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
     }
 
     private void Update() {

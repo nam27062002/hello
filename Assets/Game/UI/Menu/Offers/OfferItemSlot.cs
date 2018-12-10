@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Widget to display the info of an offer pack reward.
 /// </summary>
-public class OfferItemSlot : MonoBehaviour {
+public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -30,7 +30,8 @@ public class OfferItemSlot : MonoBehaviour {
 	[SerializeField] private Transform m_previewContainer = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
 	[Tooltip("Optional")] [SerializeField] private GameObject m_infoButton = null;
-	[Tooltip("Optional")] [SerializeField] protected PowerIcon m_powerIcon = null;    // Will only be displayed for some types
+	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_extraInfoText = null;    // Will only be displayed for some types
+	[Tooltip("Optional")] [SerializeField] protected GameObject m_extraInfoRoot = null;    // Will only be displayed for some types
 	[Space]
 	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 	[Space]
@@ -53,26 +54,13 @@ public class OfferItemSlot : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-
-	}
-
-	/// <summary>
-	/// First update call.
-	/// </summary>
-	private void Start() {
-
-	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Update associated separator
 		if(m_separator != null) m_separator.SetActive(true);
@@ -83,25 +71,22 @@ public class OfferItemSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.LANGUAGE_CHANGED, OnLanguageChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Update associated separator
 		if(m_separator != null) m_separator.SetActive(false);
 	}
 
-	/// <summary>
-	/// Called every frame.
-	/// </summary>
-	private void Update() {
-
-	}
-
-	/// <summary>
-	/// Destructor.
-	/// </summary>
-	private void OnDestroy() {
-
-	}
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.LANGUAGE_CHANGED:
+            {
+                OnLanguageChanged();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -193,35 +178,51 @@ public class OfferItemSlot : MonoBehaviour {
 			}
 		}
 
-		// Power info - only for some types
-		if(m_powerIcon != null) {
-			DefinitionNode powerDef = null;
+		// Extra info text - only for some types
+		if(m_extraInfoText != null) {
+			string text = null;
 			switch(reward.type) {
+				// Pet
 				case Metagame.RewardPet.TYPE_CODE: {
-					// Get the pet preview
+					// Power description
 					DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, reward.sku);
 					if(petDef != null) {
-						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
+						text = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
 					}
 				} break;
 
+				// Skin
 				case Metagame.RewardSkin.TYPE_CODE: {
+					// Power description
 					DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, reward.sku);
 					if(skinDef != null) {
-						powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
+						text = DragonPowerUp.GetDescription(powerDef, true, false);   // Custom formatting depending on powerup type, already localized
 					}
+				} break;
+
+				// Dragon
+				case Metagame.RewardDragon.TYPE_CODE: {
+					// Dragon description
+					text = reward.def.GetLocalized("tidDesc");
 				} break;
 
 				default: {
-					// No power to be displayed :)
+					// No extra text to be displayed :)
 				} break;
 			}
 
 			// Show?
-			m_powerIcon.gameObject.SetActive(powerDef != null);
+			bool show = (text != null);
+			if(m_extraInfoRoot != null) {
+				m_extraInfoRoot.SetActive(show);
+			} else {
+				m_extraInfoText.gameObject.SetActive(show);
+			}
 
-			// Initialize
-			m_powerIcon.InitFromDefinition(powerDef, false);
+			// Set text
+			if(show) m_extraInfoText.text = text;
 		}
 	}
 

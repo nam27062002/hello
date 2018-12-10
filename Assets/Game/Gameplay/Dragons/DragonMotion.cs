@@ -18,7 +18,7 @@ using Assets.Code.Game.Currents;
 /// <summary>
 /// Main control of the dragon movement.
 /// </summary>
-public class DragonMotion : MonoBehaviour, IMotion {
+public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -144,7 +144,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 
 	private float m_stunnedTimer;
 
-	private int m_groundMask;
+	
 	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
 	private float m_height;
 	public float height
@@ -328,7 +328,6 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	/// Initialization.
 	/// </summary>
 	void Awake() {
-		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
 		m_transform = transform;
 
 		// Get references
@@ -433,8 +432,8 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		m_suction = m_eatBehaviour.suction;
 
         RegionManager.Init();
-        m_regionManager = RegionManager.Instance;        
-        
+        m_regionManager = RegionManager.Instance;
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -461,15 +460,29 @@ public class DragonMotion : MonoBehaviour, IMotion {
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
 		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnGameAreaEnter);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
+
+
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnGameAreaEnter();
+            }break;
+        }
+    }
+
 
 	private void PnPDied()
 	{
@@ -1568,7 +1581,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		bool hit_L = false;
 
 		Vector3 leftSensor  = m_sensor.bottom.position;
-		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+        hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, GameConstants.Layers.GROUND);
 
 		bool ret = false;
 		if (hit_L) {
@@ -1590,7 +1603,7 @@ public class DragonMotion : MonoBehaviour, IMotion {
 		bool hit_L = false;
 
 		Vector3 leftSensor 	= m_sensor.top.position;
-		hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, m_groundMask);
+        hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, GameConstants.Layers.GROUND);
 
 		if (hit_L) {
 			return (_leftHit.distance <= 1f);

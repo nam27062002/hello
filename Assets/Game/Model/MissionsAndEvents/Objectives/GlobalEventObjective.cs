@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Objective for a global event.
 /// </summary>
 [Serializable]
-public class GlobalEventObjective : TrackingObjectiveBase {
+public class GlobalEventObjective : TrackingObjectiveBase, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -79,7 +79,7 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -88,12 +88,24 @@ public class GlobalEventObjective : TrackingObjectiveBase {
 	~GlobalEventObjective() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+    
 	/// <summary>
 	/// A new game has started.
 	/// </summary>

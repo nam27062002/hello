@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Spawner in charge of showing all the feedback in the world scene
 /// </summary>
-public class WorldFeedbackSpawner : MonoBehaviour {
+public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -138,7 +138,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 
 		if ( m_particlesFeedbackEnabled )
 		{
@@ -160,7 +160,7 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener(MessengerEvents.UI_INGAME_PC_FEEDBACK_END, OnPCFeedbackEnd);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
 		if ( m_particlesFeedbackEnabled )
 		{
@@ -172,6 +172,17 @@ public class WorldFeedbackSpawner : MonoBehaviour {
 			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
 		
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
     }
 
 	/// <summary>

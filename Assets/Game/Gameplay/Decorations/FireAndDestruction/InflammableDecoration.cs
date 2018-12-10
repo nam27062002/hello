@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InflammableDecoration : MonoBehaviour, ISpawnable {
+public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	private enum State {
 		Respawn = 0,
@@ -12,15 +12,15 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		Explode
 	};
 
-	[SerializeField] private float m_burningTime;
-	[SerializeField] private ParticleData m_feedbackParticle;
+	[SerializeField] private float m_burningTime = 1f;
+    [SerializeField] private ParticleData m_feedbackParticle = new ParticleData();
 	// PF_FireHit
 	[SerializeField] private bool m_feedbackParticleMatchDirection = false;
-	[SerializeField] private ParticleData m_burnParticle;
+    [SerializeField] private ParticleData m_burnParticle = new ParticleData();
 	//PF_FireProc
-	[SerializeField] private ParticleData m_disintegrateParticle;
+    [SerializeField] private ParticleData m_disintegrateParticle = new ParticleData();
 
-	[SerializeField] private bool m_useAnimator;
+	[SerializeField] private bool m_useAnimator = false;
 
     [SeparatorAttribute("Fire Nodes auto setup")]
     [SerializeField] private MonoBehaviour[] m_viewScripts = new MonoBehaviour[0];
@@ -29,6 +29,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	[SerializeField] private int m_boxelSize = 2;
 	[SerializeField] private float m_hitRadius = 1.5f;
 
+
+    //------
+    public delegate void OnBurnDelegate();
+    public OnBurnDelegate onBurn;
+    //------
 
 	private FireNodeSetup m_fireNodeSetup;
 
@@ -99,15 +104,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		m_state = m_nextState = State.Idle;
 
 		m_initialized = false;
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+        
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        
 	}
 
 	/// <summary>
@@ -117,11 +118,26 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		for (int i = 0; i < m_fireNodes.Length; i++) {
 			m_fireNodes[i].Disable();
 		}
-
-		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
 	}
+
+    protected void OnDestroy()
+    {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:            
+            {
+                OnLevelLoaded();
+            }break;
+        }
+    }
 
 	/// <summary>
 	/// A new level was loaded.
@@ -189,6 +205,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 			case State.Extinguish:
 				BurnOperators();
+                
+                if (onBurn != null)
+                    onBurn();
 
 				m_timer.Start(m_burningTime * 1000);
 
@@ -219,6 +238,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				}
 
 				BurnOperators();
+                if (onBurn != null)
+                    onBurn();
 
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
 					if (i % 2 == 0) {

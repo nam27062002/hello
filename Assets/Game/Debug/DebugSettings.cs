@@ -83,6 +83,9 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string SPECIAL_DRAGON_HP_BOOST_LEVEL           = "SPECIAL_DRAGON_HP_BOOST_LEVEL";
     public const string SPECIAL_DRAGON_SPEED_BOOST_LEVEL        = "SPECIAL_DRAGON_SPEED_BOOST_LEVEL";
     public const string SPECIAL_DRAGON_ENERGY_BOOST_LEVEL       = "SPECIAL_DRAGON_ENERGY_BOOST_LEVEL";
+    
+    public const string SPECIAL_DATES                      = "SHOW_SPECIAL_DATES";
+    
     //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//

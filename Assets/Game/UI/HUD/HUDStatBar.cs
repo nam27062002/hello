@@ -20,7 +20,7 @@ using TMPro;
 /// <summary>
 /// Simple controller for a health bar in the debug hud.
 /// </summary>
-public class HUDStatBar : MonoBehaviour {
+public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -64,6 +64,8 @@ public class HUDStatBar : MonoBehaviour {
 
 	private TextMeshProUGUI m_valueTxt;
 	private GameObject m_icon;
+    private Image m_iconImage;
+    private UIColorFX m_iconColorFX;
 	private GameObject m_iconAnimated = null;
 	private List<GameObject> m_extraIcons = null;
 	private CanvasGroup m_canvasGroup;
@@ -126,6 +128,9 @@ public class HUDStatBar : MonoBehaviour {
 		{
 			m_icon = child.gameObject;
 			m_extraIcons = new List<GameObject>();
+            m_iconImage = m_icon.GetComponent<Image>();
+            if ( m_iconImage != null )
+                m_iconColorFX = m_iconImage.GetComponent<UIColorFX>();
 		}
 
 		m_instantSet = true;
@@ -155,7 +160,7 @@ public class HUDStatBar : MonoBehaviour {
 		m_timerDuration = 10;
 		if ( m_type == Type.SuperFury )
 		{
-			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		}
 
 		if (m_type == Type.Energy)
@@ -163,7 +168,7 @@ public class HUDStatBar : MonoBehaviour {
             TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
             string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
             text.text = t;
-			Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+			Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
 		}
 
 		m_ready = true;
@@ -179,14 +184,32 @@ public class HUDStatBar : MonoBehaviour {
 		}
 		else if (m_type == Type.Energy)
 		{
-			Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);
+			Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
 		}
 		else if ( m_type == Type.SuperFury )
 		{
-			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		}
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Keep values updated
@@ -324,6 +347,14 @@ public class HUDStatBar : MonoBehaviour {
 						StringUtils.FormatNumber(m_extraBarLastValue, 0),
 						StringUtils.FormatNumber(m_extraBarLastMaxValue, 0));                    
 				}
+                
+                // 
+                if ( m_type == Type.Energy && m_iconColorFX != null)
+                {
+                    bool bright = InstanceManager.player.dragonBoostBehaviour.HasEnoughEnergyToBoost() || InstanceManager.player.dragonBoostBehaviour.IsBoostActive();
+                    float d = bright ? 0 : -1;
+                    m_iconColorFX.saturation = Mathf.Lerp(m_iconColorFX.saturation, d, Time.deltaTime * 10);
+                }
 
 				// Invulnerability FX
 				if(m_invulnerabilityGlow != null) {

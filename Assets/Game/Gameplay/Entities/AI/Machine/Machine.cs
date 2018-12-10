@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Assets.Code.Game.Currents;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
-		public static int GROUND_MASK;
+    public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {		
 		/**************/
 		/*			  */
 		/**************/
@@ -95,8 +94,6 @@ namespace AI {
 
 		// Use this for initialization
 		protected virtual void Awake() {
-			GROUND_MASK = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-
 			m_transform = transform;
 
 			m_entity = GetComponent<IEntity>();
@@ -229,7 +226,7 @@ namespace AI {
 			SetSignal(Signals.Type.Collision, true, ref m_collisionParams);
 
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+                if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundEnter(_collision);
 				}
 			}
@@ -237,7 +234,7 @@ namespace AI {
 
 		protected virtual void OnCollisionStay(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundStay(_collision);
 				}
 			}
@@ -245,7 +242,7 @@ namespace AI {
 
 		protected virtual void OnCollisionExit(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundExit(_collision);
 				}
 			}
@@ -273,8 +270,8 @@ namespace AI {
 			OnTriggerStay(_other);
 
 			SetSignal(Signals.Type.Trigger, false);
-			object[] _params = new object[1]{_other.gameObject};
-			OnTrigger(SignalTriggers.OnTriggerExit, _params);
+            m_triggerParams[0] = _other.gameObject;
+			OnTrigger(SignalTriggers.OnTriggerExit, m_triggerParams);
 
 			if (_other.CompareTag("Water")) {
 				SetSignal(Signals.Type.InWater, false);
@@ -537,6 +534,8 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+                if ( _source == IEntity.Type.PLAYER )
+                    InstanceManager.timeScaleController.HitStop();
 				return true;
 			}
 			return false;

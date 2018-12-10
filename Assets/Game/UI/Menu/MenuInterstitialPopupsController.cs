@@ -17,7 +17,7 @@ using System.Collections;
 /// Centralized control to check which interstitial popups should be opened upon
 /// entering the menu.
 /// </summary>
-public class MenuInterstitialPopupsController : MonoBehaviour {
+public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -26,13 +26,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	private bool m_newDragonUnlocked = false;
 	private bool m_popupDisplayed = false;
-    private bool m_adDisplayed = false;
     private bool m_waitForCustomPopup = false;
 	private float m_waitTimeOut;
 
 	private PopupController m_currentPopup = null;
 	private bool m_checkingConnection = false;
+
+	// Cache some data
+	private IDragonData m_ratingDragonData = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -43,8 +46,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void Awake() {
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+
+		// Initialize internal vars
+		m_newDragonUnlocked = !string.IsNullOrEmpty(GameVars.unlockedDragonSku);
 		m_checkingConnection = false;
+		m_ratingDragonData = DragonManager.GetDragonData(RATING_DRAGON);
 	}
 
 	/// <summary>
@@ -53,13 +61,17 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
-
+    
+    /// <summary>
+	/// Update loop.
+	/// </summary>
 	private void Update() {
 		if (m_waitForCustomPopup) {
 			if (!m_popupDisplayed) {
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				} else {
@@ -106,7 +118,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 				if(langDef != null) {
 					langServerCode = langDef.GetAsString("serverCode", langServerCode);
 				}
-				CustomizerManager.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
 				if (popupConfig != null) {
 					OpenCustomizerPopup(popupConfig);
 				}
@@ -152,7 +164,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     }
 
 
-	private void OpenCustomizerPopup(CustomizerManager.CustomiserPopupConfig _config) {
+	private void OpenCustomizerPopup(Calety.Customiser.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
 		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
@@ -181,7 +193,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
     }
 
     IEnumerator LaunchInterstitial() {
-        m_adDisplayed = true;
+		m_popupDisplayed = true;
         yield return new WaitForSeconds(0.25f);
         PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
     }
@@ -195,7 +207,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
     private void CheckInterstitialCP2() {
         // CP2 interstitial has the lowest priority so if the user has already seen a popup or an ad then cp2 interstitial shouldn't be shown
-        if (m_popupDisplayed || m_adDisplayed) return;
+        if (m_popupDisplayed) return;
 
         bool checkUserRestriction = true;
         if (HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
@@ -212,9 +224,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			// Is dragon unlocked?
-			IDragonData data = DragonManager.GetDragonData(RATING_DRAGON);
-			if(data.GetLockState() > IDragonData.LockState.LOCKED) {
-				// Don't show the popup the very first time to prevent conflict with the dragon unlock animation
+			if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
+				// If the dragon has been unlocked outside the menu (leveling up previous dragon),
+				// don't show the popup the very first time to prevent conflict with the dragon 
+				// unlock animation
 				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
 				if(_checked) {
 					// Check if we need to make the player rate the game
@@ -383,6 +396,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
 
+		// Don't show anything if a dragon has been unlocked during gameplay!
+		// We never want to cover the dragon unlock animation!
+		if(m_newDragonUnlocked) {
+			m_newDragonUnlocked = false;
+			return;
+		}
+
         // if we come from playing whetever is Classic, Lab or Tournament
         if ( _from == MenuScreen.NONE && _to != MenuScreen.PLAY ) {
             CheckInterstitialAds();
@@ -431,6 +451,17 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// A dragon has been acquired.
+	/// </summary>
+	/// <param name="_dragonData">The dragon that has been acquired.</param>
+	private void OnDragonAcquired(IDragonData _dragonData) {
+		// If unlocking the required dragon for the rating popup, mark the popup as it can be displayed
+		if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
+			Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
+		}
+	}
+
+	/// <summary>
 	/// A popup has been closed.
 	/// </summary>
 	/// <param name="_popup">Popup.</param>
@@ -439,6 +470,20 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		if(_popup == m_currentPopup) {
 			// Yes! Nullify current popup reference
 			m_currentPopup = null;
+		}
+	}
+
+	/// <summary>
+	/// A global event has been sent.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			case BroadcastEventType.POPUP_CLOSED: {
+				PopupManagementInfo info = (PopupManagementInfo)_broadcastEventInfo;
+				OnPopupClosed(info.popupController);
+			} break;
 		}
 	}
 }

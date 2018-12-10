@@ -17,7 +17,7 @@ using System.IO;
 /// <summary>
 /// 
 /// </summary>
-public class PopupLauncher : MonoBehaviour {
+public class PopupLauncher : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -58,16 +58,28 @@ public class PopupLauncher : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	protected virtual void OnEnable() {
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	protected virtual void OnDisable() {
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_DESTROYED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupDestroyed(info.popupController);
+            }break;
+        }
+    }
+    
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//

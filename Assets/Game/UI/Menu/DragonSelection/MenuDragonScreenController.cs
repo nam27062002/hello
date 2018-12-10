@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Main controller of the dragon selection screen.
 /// </summary>
-public class MenuDragonScreenController : MonoBehaviour {
+public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -82,7 +82,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
 		{
 			// Check quest rewards
-			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			HDQuestManager quest = HDLiveDataManager.instance.m_quest;
 			if (quest.EventExists())
 			{
 				quest.UpdateStateFromTimers();
@@ -528,7 +528,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 					if(PopupLabUnlocked.Check()) {
 						// If some other popup is open, wait for it to be closed before opening the lab unlocked one
 						if(PopupManager.openPopupsCount > 0) {
-							Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+							Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 						} else {
 							PopupLabUnlocked.CheckAndOpen();
 						}
@@ -612,9 +612,22 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 		// We can!
 		// Unsubscribe from event
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 
 		// Open the popup
 		PopupLabUnlocked.CheckAndOpen();
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
 }

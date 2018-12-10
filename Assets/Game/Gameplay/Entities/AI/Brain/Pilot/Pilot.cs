@@ -111,12 +111,16 @@ namespace AI {
 		protected Quaternion m_targetRotation;
 		public Quaternion targetRotation{ get { return m_targetRotation; } }
 
-		public virtual Vector3 target { get { return transform.position; } }
+		public virtual Vector3 target { get { return m_transform.position; } }
+
+        protected Transform m_transform;
 
 		//----------------------------------------------------------------------------------------------------------------
 
 		protected virtual void Awake() {
-			m_moveSpeed = 0;
+            m_transform = transform;
+
+            m_moveSpeed = 0;
 			m_boostSpeed = 0;
 
 			m_currentSpeed = 0;

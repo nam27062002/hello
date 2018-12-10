@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Audio;
 
-public class MusicController : MonoBehaviour
+public class MusicController : MonoBehaviour, IBroadcastListener
 {
     #region monobehaviour
     // Use this for initialization
@@ -12,8 +12,8 @@ public class MusicController : MonoBehaviour
         InstanceManager.musicController = this;
 
         Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type> (MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
         Reset();        
 
@@ -23,10 +23,26 @@ public class MusicController : MonoBehaviour
     void OnDestroy()
     {
 		Messenger.RemoveListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
-        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnGameLevelLoaded);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRushToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
         InstanceManager.musicController = null;
     }	        	
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                    OnGameLevelLoaded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRushToggled(furyRushToggled.activated, furyRushToggled.type);
+            }break;
+        }
+    }
 
     void Update()
     {

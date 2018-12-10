@@ -1,32 +1,35 @@
-﻿// When enabled the customizer is applied when Apply() is called by the game
+﻿    // When enabled the customizer is applied when Apply() is called by the game
 // When disabled the customizer is applied as soon as the response is received by server. This is Calety's original implementation.
 //#define APPLY_ON_DEMAND
 
 using System.Collections.Generic;
 using UnityEngine;
-
+using Calety.Customiser;
+using Calety.Customiser.Api;
 /// <summary>
 /// This class is responsible is an intermediary between the game and <c>CustomizerManager</c>, which is the Calety class responsible for handling customizer related stuff.
 /// </summary>
 public class HDCustomizerManager
 {
-#if APPLY_ON_DEMAND
-    private class HDCustomizerListener : CyCustomiser.CustomizerListener
-#else
-    private class HDCustomizerListener : CustomizerManager.CustomizerListener
-#endif
+    private class HDCustomizerListener : Calety.Customiser.CustomizerListener
     {
-#if APPLY_ON_DEMAND
-        public override void onCustomizationError(CyCustomiser.eCustomizerError eError, string strSKU, string strAttrib)
-#else
-        public override void onCustomizationError(CustomizerManager.eCustomizerError eError, string strSKU, string strAttrib)
-#endif
+        public override void onCustomizationError(eCustomizerError eError, string strSKU, string strAttrib)
         {
             if (FeatureSettingsManager.IsDebugEnabled)
             {
                 LogWarning("Error " + eError.ToString() + " when processing category: " + strSKU + " attribute: " + strAttrib);
             }
         }
+
+        public override void onCustomizationStored () 
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                LogWarning("onCustomizationStored");
+            }
+            HDCustomizerManager.instance.OnCustomizerStored();
+        }
+
 
         public override void onCustomizationChangedFiles(List<string> kChangedContentFiles)
         {
@@ -40,19 +43,15 @@ public class HDCustomizerManager
 				Log(msg);
             }
 
-            HDCustomizerManager.instance.NotifyFilesChanged(kChangedContentFiles);
         }
 
         public override void onNewPopupReceived() { }
 
-#if APPLY_ON_DEMAND
-        public override void onPopupIsPrepared(CyCustomiser.CustomiserPopupConfig kPopupConfig) { }
-#else
-        public override void onPopupIsPrepared(CustomizerManager.CustomiserPopupConfig kPopupConfig)
+
+        public override void onPopupIsPrepared(CustomiserPopupConfig kPopupConfig)
 		{
 			HDCustomizerManager.instance.NotifyPopupIsPrepared(kPopupConfig);
 		}
-#endif
 
         public override void onCustomizationFinished()
         {
@@ -60,8 +59,6 @@ public class HDCustomizerManager
             {
                 Log("onCustomizationFinished");
             }
-
-            HDCustomizerManager.instance.NotifyCustomizationFinished();
         }
 
         public override void onTimeToEndReceived(long iSecondsToEnd)
@@ -70,8 +67,6 @@ public class HDCustomizerManager
             {
                 Log("onTimeToEndReceived " + iSecondsToEnd);
             }
-
-            HDCustomizerManager.instance.NotifyTimeToEndReceived(iSecondsToEnd);
         }
 
         public override void onTimeToNextReceived(long iSecondsToNext)
@@ -80,8 +75,6 @@ public class HDCustomizerManager
             {
                 Log("onTimeToNextReceived " + iSecondsToNext);
             }
-
-            HDCustomizerManager.instance.NotifyTimeToNextReceived(iSecondsToNext);
         }
     }
 
@@ -97,9 +90,7 @@ public class HDCustomizerManager
             {
                 sm_instance = new HDCustomizerManager();
 
-#if APPLY_ON_DEMAND
-                CustomizerManager.SharedInstance.Initialise(false);
-#endif
+                CustomizerManager.SharedInstance.SetTimestampGetter( sm_instance.GetTimeMillis );
                 CustomizerManager.SharedInstance.SetListener(new HDCustomizerListener());
             }
 
@@ -107,10 +98,14 @@ public class HDCustomizerManager
         }
     }
     
+    public long GetTimeMillis()
+    {
+        return GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+    }
+    
     private enum EState
     {
-        None, 
-        WaitingToRequestCache,       
+        None,       
         WaitingToRequestServer,
         WaitingForResponse,
         Done
@@ -118,32 +113,11 @@ public class HDCustomizerManager
 
     private EState m_state;
 
-    /// <summary>
-    /// List of files changed by the customizer
-    /// </summary>
-    private List<string> m_filesChangedByCustomizer;    
-
-    /// <summary>
-    /// List containing the files to revert because they were changed by previous customizers that don't have to be applied anymore, typically because those customizers have expired
-    /// </summary>
-    private List<string> m_filesToRevert;
-
 
 	/// <summary>
 	/// At this point we only support one popup. This will have a reference after the callback from CustomizerMAnager is received.
 	/// </summary>
-	private CustomizerManager.CustomiserPopupConfig m_lastPreparedPopupConfig;
-
-
-    /// <summary>
-    /// Time in seconds left to make customizer expire
-    /// </summary>
-    private double m_timeToExpire;
-
-    /// <summary>
-    /// Bool used to know whether or not m_timeToExpire was changed by customizer
-    /// </summary>
-    private bool m_timeToExpireModified;
+	private CustomiserPopupConfig m_lastPreparedPopupConfig;
 
     private const float TIME_TO_WAIT_BETWEEN_REQUESTS = (DEBUG_ENABLED) ? 20f : 10 * 60f;
 
@@ -155,40 +129,41 @@ public class HDCustomizerManager
     /// <summary>
     /// Whether or not the changes defined by the current customizer have been applied by the client
     /// </summary>
-    private bool m_hasBeenApplied;
+    private bool m_hasBeenApplied = false;
 
     /// <summary>
-    /// Whether or not the notification when a file is changed by CustomizerManager should be considered. It's used to avoid files reverted to the original content from being considered as files changed by Customizer
+    /// To not recreate the object Customiser every time, losing temp data, we store it
     /// </summary>
-    private bool m_isNotifyFilesChangedEnabled;
+    protected Customiser m_lastCustomizer = null;
+    
+    /// <summary>
+    /// The m current experiment appleid code
+    /// </summary>
+    private long m_currentExperimentCode = -1;
 
-    private bool m_needsToNotifyRulesChanged;
+    /// <summary>
+    /// To force an apply the api stores a new customizer
+    /// </summary>
+    private bool m_forceApply = false;
 
-    private CustomizerManager.Experiment m_currentExperiment;
+    /// <summary>
+    /// Indicated the customization id used on the last popup viewed
+    /// </summary>
+    private long m_lastSeenPopup = -1;
 
     public void Initialise()
     {
         Reset();
+        m_lastCustomizer = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild(); // Get Strored Customizer if any
     }
 
     public void Reset()
     {        
-        if (m_filesToRevert != null)
-        {
-            m_filesToRevert.Clear();
-        }
-
+        if ( m_hasBeenApplied && Application.isPlaying)
+            UnApplyCustomizer();
         SetTimeToRequest(0f);
-
-#if APPLY_ON_DEMAND        
-        SetState(EState.WaitingToRequestCache);
-#else
         SetState(EState.WaitingToRequestServer);
-#endif
-        SetIsNotifyFilesChangedEnabled(true);
-        SetNeedsToNotifyRulesChanged(false);
-
-        m_currentExperiment = null;
+        m_lastSeenPopup = -1;
     }
 
     public void Destroy()
@@ -204,14 +179,10 @@ public class HDCustomizerManager
             timeToRequest -= Time.deltaTime;
             SetTimeToRequest(timeToRequest);
         }
-
+                
         switch (m_state)
         {
-            case EState.WaitingToRequestCache:
-                UpdateWaitingToRequestCache();
-                break;
-
-            case EState.WaitingToRequestServer:                
+            case EState.WaitingToRequestServer:
                 // Checks if it's a good moment to request the customizer
                 if (IsRequestCustomizerAllowed() &&
                     GameSessionManager.SharedInstance.IsLogged() &&  // CustomizerManager requires the user to be logged in. This is checked here because CustomizerManager doesn't call any callback if the user is not logged in
@@ -220,20 +191,12 @@ public class HDCustomizerManager
                     RequestCustomizer();                    
                 }
                 break;
-
-            case EState.Done:
-                // Checks if customizer has to be requested again because former data have expired
-                double timeToExpire = GetTimeToExpire();
-                if (timeToExpire > 0)
+            case EState.Done:    
+                if ( !m_hasBeenApplied && GetTimeToRequest() < 0)
                 {
-                    timeToExpire -= Time.deltaTime;
-                    SetTimeToExpire(timeToExpire);
-                }
-
-                if (timeToExpire <= 0f)
-                {
+                    SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
                     SetState(EState.WaitingToRequestServer);
-                }                
+                }
                 break;
         }
 
@@ -253,30 +216,7 @@ public class HDCustomizerManager
 #endif
     }
 
-    private void UpdateWaitingToRequestCache()
-    {
-        if (IsRequestCustomizerAllowed())
-        {
-#if APPLY_ON_DEMAND            
-            bool applyOk = CustomizerManager.SharedInstance.ApplyStoredCustomiserFile();
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("Customizer applied with success: " + applyOk);
-            }
 
-            if (applyOk)
-            {
-                SetHasBeenApplied(true);
-            }
-            else
-            {
-                SetState(EState.WaitingToRequestServer);
-            }            
-#else                 
-            SetState(EState.WaitingToRequestServer);
-#endif  
-        }
-    }
 
     private void RequestCustomizer()
     {        
@@ -295,226 +235,158 @@ public class HDCustomizerManager
                ContentManager.ready;                            // We need the content to be loaded because CustomizerManager may reload some rules
     }
 
-    private bool NeedsToReloadRules()
+    
+    public void CheckAndApply()
     {
-        return NeedsToRevertAnyFiles() || NeedsToApplyCustomizerChanges();
-    }
-
-    private bool NeedsToRevertAnyFiles()
-    {
-        return m_filesToRevert != null && m_filesToRevert.Count > 0;
-    }
-
-    private bool NeedsToApplyCustomizerChanges()
-    {
-        bool returnValue = !GetHasBeenApplied();
-        if (returnValue)
+        if ( CustomizerManager.SharedInstance.CheckIfInitialised() )
         {
-#if APPLY_ON_DEMAND
-            returnValue = m_state == EState.WaitingForResponse;
-#else                 
-            returnValue = m_state == EState.Done && m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
-#endif            
-        }
-
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Returns whether or not the customizer has been received
-    /// </summary>
-    /// <returns></returns>
-    public bool IsReady()
-    {
-        return m_state == EState.Done;
-    }
-
-    /// <summary>
-    /// Applies changes to rules if current customizer requires so
-    /// </summary>
-    /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
-    private bool InternalApply()
-    {
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            Log("Applying customizer needsToRevertAnyFiles = " + NeedsToRevertAnyFiles() + " needsToApplyCustomizerChanges = " + NeedsToApplyCustomizerChanges(), false);
-        }
-
-        bool returnValue = false;
-
-        if (NeedsToRevertAnyFiles())
-        {
-            SetIsNotifyFilesChangedEnabled(false);
-            CustomizerManager.SharedInstance.ResetContentToOriginalValues();
-            SetIsNotifyFilesChangedEnabled(true);
-
-            if (m_filesToRevert != null)
+            Customiser customiser = m_lastCustomizer;
+            if ( customiser != null )
             {
-                m_filesToRevert.Clear();
-            }
+                if ( CustomizerManager.SharedInstance.IsCustomizerValid( customiser ) )
+                {
+                    bool applyByExperiment = false;
+                    if ( m_hasBeenApplied )
+                    {
+                        // if there was no experiment, check if there is now
+                        if ( m_currentExperimentCode == -1 )
+                        {
+                            ApiExperiment apiExperiment = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
+                            if ( apiExperiment != null )
+                            {
+                                applyByExperiment = true;   
+                            }
+                        }
+                        // if experiment was applies but is not valid anymore
+                        else
+                        {
+                            applyByExperiment = CustomizerManager.SharedInstance.IsExperimentCodeValid(customiser, m_currentExperimentCode);
+                        }
+                    }
+                    
+                    if(!m_hasBeenApplied  || ( m_hasBeenApplied && applyByExperiment) || m_forceApply)
+                    {
+                        
+                        UnApplyCustomizer();
+                        if (CustomizerManager.SharedInstance.ApplyCustomiser())
+                        {
+                            m_hasBeenApplied = true;
+                            ApiExperiment experiment = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
+                            if (experiment != null)
+                            {
+                                Log("New experiment applied: name = " + experiment.GetName() + " groupName = " + experiment.GetGroupName(), true);
+                                HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.GetName(), experiment.GetGroupName());
+                                m_currentExperimentCode = experiment.GetCode();
+                            }
+                            
+                        }
+                        ContentManager.OnRulesUpdated();
+                    }
+                }
+                else
+                {
+                    if ( m_hasBeenApplied )
+                    {
+                        UnApplyCustomizer();
+                        ContentManager.OnRulesUpdated();
 
-            returnValue = true;
+                        if ( m_state == EState.Done )
+                        {
+                            SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
+                            SetState(EState.WaitingToRequestServer);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if ( m_hasBeenApplied )
+                {
+                    UnApplyCustomizer();
+                    ContentManager.OnRulesUpdated();
+                    if ( m_state == EState.Done )
+                    {
+                        SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);   
+                        SetState(EState.WaitingToRequestServer);
+                    }
+                }
+            }
+            m_forceApply = false;
+            
         }
+    }
+    
+    private void UnApplyCustomizer()
+    {
+        CustomizerManager.SharedInstance.ResetContentToOriginalValues();
+        m_hasBeenApplied = false;
+        m_currentExperimentCode = -1;
+        // if ( trackRemove ) Tell tracking there is no experiment
+        // Remove Experiment Code m_experimentCode = "";
         
-        if (NeedsToApplyCustomizerChanges())
-        {
-#if APPLY_ON_DEMAND
-            bool applyOk = CustomizerManager.SharedInstance.ApplyStoredCustomiserFile();
-            if (FeatureSettingsManager.IsDebugEnabled)
-            {
-                Log("Customizer applied with success: " + applyOk);
-            }
-#endif            
-
-            SetHasBeenApplied(true);
-
-            returnValue = true;
-        }
-
-/*
-#if UNITY_EDITOR
-        if (DEBUG_ENABLED)
-        {
-            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.OFFER_PACKS, "offer_pack_1");
-            Log("offer_pack_1 enabled = " + def.GetAsBool("enabled"));
-        }
-#endif
-*/
-
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Applies changes to rules if current customizer requires so
-    /// </summary>
-    /// <returns><c>true</c> if any rules have changed as a consequence of applying the current customizer. <c>false</c> otherwise</returns>
-    public bool Apply()
-    {        
-#if APPLY_ON_DEMAND
-        return InternalApply();
-#else
-        bool returnValue = NeedsToReloadRules();
-        if (returnValue)
-        {
-            InternalApply();
-        }
-        else
-        {
-            returnValue = GetNeedsToNotifyRulesChanged();
-            SetNeedsToNotifyRulesChanged(false);
-        }
-
-        if (FeatureSettingsManager.IsDebugEnabled && returnValue)
-        {
-            Log("Applying changes...", true);
-        }
-
-        return returnValue;
-#endif
     }
 
 	public bool IsCustomiserPopupAvailable()
 	{
-		if (m_state == EState.Done)
+        bool ret = false;
+		if ( m_hasBeenApplied )
 		{
-			return CustomizerManager.SharedInstance.IsCustomiserPopupAvailable(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+			long code = CustomizerManager.SharedInstance.GetCustomizerCodeForAvailablePopup(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN);
+            if ( code > -1 )
+            {
+                // Check that we haven't seen it already, as we only allow one popup per session
+                ret = code != m_lastSeenPopup;
+            }
 		}
 
-		return false;
+		return ret;
 	}
 
-	public CustomizerManager.CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
+	public CustomiserPopupConfig GetOrRequestCustomiserPopup(string _isoLanguageName)
     {
-        CustomizerManager.CustomiserPopupConfig returnValue = null;
+        CustomiserPopupConfig returnValue = null;
 
         // Makes sure that there's a customizer and that is has already been applied
-        if (m_state == EState.Done)
+        if (m_hasBeenApplied )
         {
-			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(CustomizerManager.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
+			returnValue = CustomizerManager.SharedInstance.PrepareOrGetCustomiserPopupByType(Calety.Customiser.eCustomiserPopupType.E_CUSTOMISER_POPUP_UNKNOWN, _isoLanguageName);
+            
         }
 
         return returnValue;
     }
 
-	public CustomizerManager.CustomiserPopupConfig GetLastPreparedPopupConfig()
+	public CustomiserPopupConfig GetLastPreparedPopupConfig()
 	{		
-		CustomizerManager.CustomiserPopupConfig config = m_lastPreparedPopupConfig;
+		CustomiserPopupConfig config = m_lastPreparedPopupConfig;
 		m_lastPreparedPopupConfig = null;
 		return config;
 	}
 
-	private void NotifyPopupIsPrepared(CustomizerManager.CustomiserPopupConfig _config) 
+	private void NotifyPopupIsPrepared(CustomiserPopupConfig _config) 
 	{
 		m_lastPreparedPopupConfig = _config;
 	}
-
-    private void NotifyFilesChanged(List<string> files)
+     
+     /// <summary>
+     /// Function called when the game dismisses de popup
+     /// </summary>
+     /// <param name="_config">Config.</param>
+     public void NotifyPopupViewed(CustomiserPopupConfig _config)
+     {
+        m_lastSeenPopup = _config.m_iCustomizerCode;
+        // Notify customizer manager
+        CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(_config, true);
+        
+     }
+     
+    private void OnCustomizerStored()
     {
-        if (files != null && files.Count > 0 && m_isNotifyFilesChangedEnabled)
-        {
-            if (m_filesChangedByCustomizer == null)
-            {
-                m_filesChangedByCustomizer = new List<string>();
-            }
-
-            int count = files.Count;
-            for (int i = 0; i < count; i++)
-            {
-                // Makes sure this file is not already in the list
-                if (!m_filesChangedByCustomizer.Contains(files[i]))
-                {
-                    m_filesChangedByCustomizer.Add(files[i]);
-                }
-            }
-        }
+        m_lastCustomizer = CustomizerManager.SharedInstance.GetCustomiserForCurrentBuild(); // Load just stored customizer
+        SetState( EState.Done );
+        m_forceApply = true;
     }
-
-    private void NotifyTimeToEndReceived(long secondsToEnd)
-    {
-        if (secondsToEnd < GetTimeToExpire())
-        {
-            SetTimeToExpireModified(true);
-            SetTimeToExpire(secondsToEnd);
-        }
-    }
-
-    private void NotifyTimeToNextReceived(long secondsToNext)
-    {
-        // Time to next received is stored in Time to Expire because if it's smaller than Time to Expire then we need to request for customizer again
-        if (secondsToNext < GetTimeToExpire())
-        {
-            SetTimeToExpireModified(true);
-            SetTimeToExpire(secondsToNext);
-        }        
-    }        
-
-    private void NotifyCustomizationFinished()
-    {
-        // Gets the experiment and if it has changed then tracking is notified
-        CustomizerManager.Experiment experiment = CustomizerManager.SharedInstance.GetExperiment();
-        if (experiment != null && (m_currentExperiment == null || (m_currentExperiment.m_strName == experiment.m_strName && m_currentExperiment.m_strGroupName == experiment.m_strGroupName)))
-        {
-            Log("New experiment applied: name = " + experiment.m_strName + " groupName = " + experiment.m_strGroupName, true);
-            HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.m_strName, experiment.m_strGroupName);            
-        }
-
-        m_currentExperiment = experiment;
-
-        SetState(EState.Done);
-
-        if (FeatureSettingsManager.IsDebugEnabled)
-        {
-            bool needsToApply = m_filesChangedByCustomizer != null && m_filesChangedByCustomizer.Count > 0;
-            if (needsToApply)
-            {
-                Log("Customizer WITH changes received. These changes are PENDING to be applied", true);
-            }
-            else
-            {
-                Log("Customizer WITH NO changes received", true);
-            }
-        }
-    }
+    
 
     public void NotifyServerDown()
     {        
@@ -535,25 +407,7 @@ public class HDCustomizerManager
         }
     }
 
-    private double GetTimeToExpire()
-    {
-        return m_timeToExpire;
-    }
-
-    private void SetTimeToExpire(double value)
-    {
-        m_timeToExpire = value;
-    }
-
-    private bool GetTimeToExpireModified()
-    {
-        return m_timeToExpireModified;
-    }
-
-    private void SetTimeToExpireModified(bool value)
-    {
-        m_timeToExpireModified = value;
-    }
+    
 
     private float GetTimeToRequest()
     {
@@ -563,32 +417,8 @@ public class HDCustomizerManager
     private void SetTimeToRequest(float value)
     {       
         m_timeToRequest = value;
-    }
+    }  
 
-    private bool GetHasBeenApplied()
-    {
-        return m_hasBeenApplied;
-    }
-
-    private void SetHasBeenApplied(bool value)
-    {
-        m_hasBeenApplied = value;
-    }    
-
-    private void SetIsNotifyFilesChangedEnabled(bool value)
-    {
-        m_isNotifyFilesChangedEnabled = value;
-    }
-
-    private bool GetNeedsToNotifyRulesChanged()
-    {
-        return m_needsToNotifyRulesChanged;
-    }
-
-    private void SetNeedsToNotifyRulesChanged(bool value)
-    {
-        m_needsToNotifyRulesChanged = value;
-    }
 
     private void SetState(EState value)
     {
@@ -597,93 +427,16 @@ public class HDCustomizerManager
             Log("Change state from " + m_state + " to " + value + " at " + Time.realtimeSinceStartup, false);
         }
 
-        switch (m_state)
+       
+        m_state = value;
+        switch(m_state)
         {
             case EState.Done:
-                if (GetHasBeenApplied())
-                {
-                    // Files changed by current customizer need to be undone only if those changed had been applied
-                    AddFilesChangedByCustomizerToFilesToRevert();
-                }                                  
-                break;
-        }
-
-        m_state = value;
-
-        switch (m_state)
-        {            
-            case EState.WaitingForResponse:
-            case EState.WaitingToRequestCache:
-                if (m_filesChangedByCustomizer != null)
-                {
-                    m_filesChangedByCustomizer.Clear();
-                }
-
-                SetHasBeenApplied(false);
-                SetIsNotifyFilesChangedEnabled(true);
-                SetTimeToExpire(double.MaxValue);
-                SetTimeToExpireModified(false);
-
-                // We want to apply customizer changes as soon as possible in order to change rules before the rest of the game access to them
-                if (m_state == EState.WaitingToRequestCache)
-                {
-                    UpdateWaitingToRequestCache();
-                }
-                break;
-
-            case EState.Done:
-#if !APPLY_ON_DEMAND
-                bool needsToNotifyRulesChanged = InternalApply();
-                // SetNeedsToNotifyRulesChanged(needsToNotifyRulesChanged);
-                
-                if ( needsToNotifyRulesChanged )
-                    OnRulesUpdated();
-#endif
-                // If there's no customizer then we need to schedule the next request
-                if (!GetTimeToExpireModified())
-                {
-                    if (GetTimeToRequest() <= 0f)
-                    {
-                        SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
-                    }                    
-
-                    SetState(EState.WaitingToRequestServer);
-                }    
-                
-                
-                
-                break;     
+            {
+                SetTimeToRequest(TIME_TO_WAIT_BETWEEN_REQUESTS);
+            }break;
         }
     }  
-    
-    private void OnRulesUpdated()
-    {
-        // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
-    }
-    
-
-    private void AddFilesChangedByCustomizerToFilesToRevert()
-    {        
-        if (m_filesChangedByCustomizer != null)
-        {
-            if (m_filesToRevert == null)
-            {
-                m_filesToRevert = new List<string>();
-            }
-
-            int count = m_filesChangedByCustomizer.Count;
-            string file;
-            for (int i = 0; i < count; i++)
-            {
-                file = m_filesChangedByCustomizer[i];
-                if (!m_filesToRevert.Contains(file))
-                {
-                    m_filesToRevert.Add(file);
-                }
-            }
-        }
-    }
 
 #region log    
     public static void Log(string msg, bool logToCPConsole=false)

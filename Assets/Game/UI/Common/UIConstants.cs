@@ -207,6 +207,8 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	[SerializeField] private Color m_dragonStatColorHp = Color.red;
 	[SerializeField] private Color m_dragonStatColorSpeed = Color.cyan;
 	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
+
+	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
 	#endregion
 
 	// -----------------------------------------------------------------------//
@@ -351,9 +353,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
                 if (DeviceUtilsManager.SharedInstance.DeviceHasCutout())
                 {
                     short[] safe = DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea();
-                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]); 
+                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]);
+                    int maxx = Mathf.Max(safe[0], safe[1]);
                     m_safeArea = new UISafeArea(
-                        (float)safe[0], (float)safe[2], (float)safe[1], (float)safe[3]);
+                        (float)maxx, (float)safe[2], (float)maxx, (float)safe[3]);
 
                 }
                 else
@@ -417,16 +420,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		// Reset some runtime vars to their initial value
 		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
 		m_safeArea = null;
-	}
-
-	/// <summary>
-	/// A change has occurred in the inspector.
-	/// </summary>
-	private void OnValidate() {
-		// Make sure we have as many sound slots as tiers
-		if(m_dragonTiersSFX.Length != (int)DragonTier.COUNT) {
-			m_dragonTiersSFX.Resize((int)DragonTier.COUNT);
-		}
 	}
 
     //------------------------------------------------------------------------//
@@ -498,7 +491,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <summary>
 	/// Get the color assigned to a specific dragon stat.
 	/// </summary>
-	/// <returns>The color linked to the requested dragpm stat.</returns>
+	/// <returns>The color linked to the requested dragon stat.</returns>
 	/// <param name="_stat">Stat whose color we want.</param>
 	public static Color GetDragonStatColor(DragonDataSpecial.Stat _stat) {
 		switch(_stat) {
@@ -507,6 +500,15 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case DragonDataSpecial.Stat.ENERGY:	return instance.m_dragonStatColorEnergy;	break;
 			default: return Color.white; break;
 		}
+	}
+
+	/// <summary>
+	/// Get the color assigned to a specific dragon tier.
+	/// </summary>
+	/// <returns>The color linked to the given dragon tier.</returns>
+	/// <param name="_tier">Tier whose color we want.</param>
+	public static Color GetDragonTierColor(DragonTier _tier) {
+		return instance.m_dragonTierColors[(int)_tier];
 	}
 
 	/// <summary>

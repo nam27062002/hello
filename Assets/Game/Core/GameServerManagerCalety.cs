@@ -344,6 +344,7 @@ public class GameServerManagerCalety : GameServerManager {
             m_isProcessingConnectionLost = false;
         }
     }
+    #endregion
 
     #region login
     private enum ELoginState
@@ -559,14 +560,14 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.Language_Set, parameters, onDone);
     }
     
-    public override void PCSpent(int balance, int amount, string group, ServerCallback onDone)
+    public override void CurrencySpent( string currency, int balance, int amount, string group, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", balance, -amount, false, group, onDone );
+        SendCurencyFluctuation( currency, balance, -amount, false, group, onDone );
     }
 
-    public override void PCEarned(int balance, int amount, string group, bool paid, ServerCallback onDone)
+    public override void CurrencyEarned(string currency, int balance, int amount, string group, bool paid, ServerCallback onDone)
     {
-        SendCurencyFluctuation( "hc", balance, amount, paid , group, onDone );
+        SendCurencyFluctuation( currency, balance, amount, paid , group, onDone );
     }
     
     private void SendCurencyFluctuation(string currency, int balance, int amount, bool paid, string action, ServerCallback onDone)
@@ -650,12 +651,16 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.GlobalEvents_GetLeadeboard, parameters, _callback);
 	}
 
-	#endregion
 
 #region HD_LiveEvents
 		
 	public override void HDEvents_GetMyLiveData(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
+ 	}
+    public override void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { 
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("typeToUpdate", _typeToUpdate.ToString());
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, parameters, _callback);
 	}
 
 	public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
@@ -718,7 +723,7 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_FinishMyEvent, parameters, _callback);
 	}
 
-	public override void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {
+    public override void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetRefund, parameters, _callback);
@@ -772,7 +777,7 @@ public class GameServerManagerCalety : GameServerManager {
         HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
 		HDLiveEvents_GetMyReward,		// params: int _eventID
 		HDLiveEvents_FinishMyEvent,		// params: int _eventID
-		HDLiveEvents_GetRefund			// params: int _eventID
+        HDLiveEvents_GetRefund			// params: int _eventID
 	}    
 
 	/// <summary>
@@ -993,7 +998,7 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLiveEvents_Enter:
 			case ECommand.HDLiveEvents_GetMyReward:
 			case ECommand.HDLiveEvents_FinishMyEvent:
-			case ECommand.HDLiveEvents_GetRefund:
+            case ECommand.HDLiveEvents_GetRefund:
                 returnValue = true;
                 break;
         }
@@ -1152,8 +1157,8 @@ public class GameServerManagerCalety : GameServerManager {
 				case ECommand.HDLiveEvents_GetMyProgress:
                 case ECommand.HDLiveEvents_GetLeaderboard:
 				case ECommand.HDLiveEvents_GetMyReward:
-				case ECommand.HDLiveEvents_FinishMyEvent: 
-				case ECommand.HDLiveEvents_GetRefund: {					
+				case ECommand.HDLiveEvents_FinishMyEvent:
+                case ECommand.HDLiveEvents_GetRefund: {					
 					Dictionary<string, string> kParams = new Dictionary<string, string>();						
 					kParams["eventId"] = parameters["eventId"];
 					string global_event_command = "";
@@ -1164,7 +1169,7 @@ public class GameServerManagerCalety : GameServerManager {
                         case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
 						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
 						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
-						case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND;break;
+                        case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND;break;
 					}
 
                     Command_SendCommand( global_event_command, kParams );					
@@ -1616,7 +1621,7 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
-	private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";

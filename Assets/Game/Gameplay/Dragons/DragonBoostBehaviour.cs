@@ -71,6 +71,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	// Control Panel settings
 	private bool m_CPAutoRestart = true;
 
+    ToggleParam m_toggleParam = new ToggleParam();
+
 	//-----------------------------------------------
 	// Methods
 	//-----------------------------------------------
@@ -173,6 +175,11 @@ public class DragonBoostBehaviour : MonoBehaviour {
         }
             
 	}
+    
+    public bool HasEnoughEnergyToBoost()
+    {
+        return m_dragon.energy >= m_energyRequiredToBoost;
+    }
 
 	private void StartBoost()
 	{
@@ -184,7 +191,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		{
 			m_animator.SetBool( GameConstants.Animator.BOOST , true);
 		}
-		Messenger.Broadcast<bool>(MessengerEvents.BOOST_TOGGLED, true);
+        m_toggleParam.value = true;
+		Broadcaster.Broadcast(BroadcastEventType.BOOST_TOGGLED, m_toggleParam);
 	}
 
 	public void StopBoost()
@@ -197,8 +205,8 @@ public class DragonBoostBehaviour : MonoBehaviour {
 		{
 			m_animator.SetBool( GameConstants.Animator.BOOST, false);
 		}
-
-		Messenger.Broadcast<bool>(MessengerEvents.BOOST_TOGGLED, false);
+        m_toggleParam.value = false;
+		Broadcaster.Broadcast(BroadcastEventType.BOOST_TOGGLED, m_toggleParam);
 	}
 
 	public bool IsDraining() {

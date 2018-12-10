@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructibleDecoration : MonoBehaviour, ISpawnable {
+public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	private enum InteractionType {
 		Collision = 0,
@@ -53,30 +53,42 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 
 	//-------------------------------------------------------------------------------------------//
+    
+    void Awake()
+    {
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+    
 	// Use this for initialization
 	void Start() {		
 		m_feedbackParticle.CreatePool();
 		m_destroyParticle.CreatePool();
 	}
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
+	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                if ( gameObject.name.Contains("PF_Catapult") )
+                {
+                        Debug.Log("Hola!");
+                }
+                OnLevelLoaded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
@@ -243,7 +255,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
         return m_effect != ZoneManager.ZoneEffect.S && enabled && m_spawned;
     }
 
-	public void Break() {
+	public void Break( bool _player = true ) {
 		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
@@ -287,6 +299,11 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		if (m_cameraShake > 0) {
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
 		}
+        
+        if ( _player )
+        {
+            InstanceManager.timeScaleController.HitStop();
+        }
 	}
 
 	void FaceDragon(GameObject _ps) {

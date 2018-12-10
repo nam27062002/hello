@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// Objective for a mission.
 /// </summary>
 [Serializable]
-public class MissionObjective : TrackingObjectiveBase {
+public class MissionObjective : TrackingObjectiveBase, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -94,7 +94,7 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -110,7 +110,7 @@ public class MissionObjective : TrackingObjectiveBase {
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
 		// Forget parent mission reference
 		m_parentMission = null;
@@ -118,6 +118,18 @@ public class MissionObjective : TrackingObjectiveBase {
 		// Call parent
 		base.Clear();
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// String representation of this objective.

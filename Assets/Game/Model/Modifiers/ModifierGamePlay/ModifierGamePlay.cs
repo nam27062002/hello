@@ -38,10 +38,6 @@ public abstract class ModifierGamePlay : Modifier {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-	public ModifierGamePlay(DefinitionNode _def) {
-		base.Init(TYPE_CODE);
-
-		m_def = _def;
-	}
+    protected ModifierGamePlay(DefinitionNode _def) : base(TYPE_CODE, _def) { }
 
 }

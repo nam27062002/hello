@@ -29,6 +29,8 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
 
+    public int m_numericType = -1;
+
     public bool m_shouldRequestDefinition = false;
     private bool m_requestingRewards = false;
 

@@ -28,6 +28,7 @@ public abstract class IDragonData : IUISelectorItem {
 	//------------------------------------------------------------------//
 	public const string GAME_PREFAB_PATH = "Game/Dragons/";
 	public const string MENU_PREFAB_PATH = "UI/Menu/Dragons/";
+	public const string DEFAULT_SKIN_ICON = "icon_disguise_0";
 
 	public enum Type {
 		CLASSIC,
@@ -41,6 +42,7 @@ public abstract class IDragonData : IUISelectorItem {
 		TEASE,      // Requirements to see the shadow of this dragon have been completed
 		SHADOW,     // Player must purchase the target Dragons to reveal this dragon
 		REVEAL,     // Requirements to reveal this dragon have been completed
+		LOCKED_UNAVAILABLE,	// Dragon is revealed but can only be acquired via special offers
 		LOCKED,     // Previous tier hasn't been completed
 		AVAILABLE,  // Previous tier has been completed but the dragon hasn't been purchased
 		OWNED       // Dragon has been purchased and can be used
@@ -65,20 +67,42 @@ public abstract class IDragonData : IUISelectorItem {
 	protected DragonTier m_tier;  // Cached value
 	public DragonTier tier { get { return m_tier; } }
 
-	// Progression
-	[SerializeField] protected bool m_owned = false;
+
+    //-- Economy --------------
+    private long m_priceSC = 0;
+    private float m_priceSCModifier = 0f;
+
+    private long m_pricePC = 0;
+    private float m_pricePCModifier = 0f;
+    //--------------------------
+
+    // Progression
+    [SerializeField] protected bool m_owned = false;
 	[SerializeField] protected bool m_teased = false;
 	[SerializeField] protected bool m_revealed = false;
+	[SerializeField] protected bool m_unlockAvailable = false;
 
 	public LockState lockState { get { return GetLockState(); } }
 	public bool isLocked { get { return lockState == LockState.LOCKED; } }
 	public bool isOwned { get { return m_owned; } }
 	public bool isTeased { get { return m_teased; } }
 	public bool isRevealed { get { return m_revealed; } }
+	public bool isUnlockAvailable { get { return m_unlockAvailable; } }
 
 	protected List<string> m_shadowFromDragons = new List<string>();
+	public List<string> shadowFromDragons {
+		get { return m_shadowFromDragons; }
+	}
+
 	protected List<string> m_revealFromDragons = new List<string>();
-	public List<string> revealFromDragons { get { return m_revealFromDragons; } }
+	public List<string> revealFromDragons {
+		get { return m_revealFromDragons; } 
+	}
+
+	protected List<string> m_unlockFromDragons = new List<string>();
+	public List<string> unlockFromDragons {
+		get { return m_unlockFromDragons; }
+	}
 
 	// Pets
 	// One entry per pet slot, will be empty if no pet is equipped in that slot
@@ -169,7 +193,17 @@ public abstract class IDragonData : IUISelectorItem {
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
     public virtual string tidBoostReminder { get{ return m_def.GetAsString("tidBoostReminder", "TID_FEEDBACK_TUTO_HOLD_TO_BOOST"); } }
     public abstract float petScale{ get; }
-        
+    
+        // supersize
+    public abstract float superSizeUpMultiplier{ get; }    
+    public abstract float superSpeedUpMultiplier{ get; }    
+    public abstract float superBiteUpMultiplier{ get; }    
+    public abstract bool superInvincible{ get; }    
+    public abstract bool superInfiniteBoost{ get; }    
+    public abstract bool superEatEverything{ get; }    
+    public abstract float superModeDuration{ get; }
+    
+    
     // Other Abstract attributes
     public abstract string gamePrefab{ get; }
 	//------------------------------------------------------------------------//
@@ -203,9 +237,12 @@ public abstract class IDragonData : IUISelectorItem {
 		m_def = _def;
 		m_sku = m_def.sku;
 
-		string shadowFromDragons = m_def.GetAsString("shadowFromDragon");
-		if(!string.IsNullOrEmpty(shadowFromDragons)) {
-			m_shadowFromDragons.AddRange(shadowFromDragons.Split(';'));
+        m_priceSC = def.GetAsLong("unlockPriceCoins");
+        m_pricePC = def.GetAsLong("unlockPricePC");
+
+		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
+		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
+			m_shadowFromDragons.AddRange(shadowFromDragonsData.Split(';'));
 		}
 		m_teased = m_shadowFromDragons.Count == 0;
 
@@ -214,6 +251,12 @@ public abstract class IDragonData : IUISelectorItem {
 			m_revealFromDragons.AddRange(revealFromDragonsData.Split(';'));
 		}
 		m_revealed = m_revealFromDragons.Count == 0;
+
+		string unlockFromDragonsData = m_def.GetAsString("unlockFromDragon");
+		if(!string.IsNullOrEmpty(unlockFromDragonsData)) {
+			m_unlockFromDragons.AddRange(unlockFromDragonsData.Split(';'));
+		}
+		m_unlockAvailable = m_unlockFromDragons.Count == 0;
 
 		// Items
 		m_disguise = GetDefaultDisguise(_def.sku).sku;
@@ -260,7 +303,7 @@ public abstract class IDragonData : IUISelectorItem {
 	}
 
 	//------------------------------------------------------------------------//
-	// SIMPLE SETTER/GETTER METHODS												  //
+	// SIMPLE SETTER/GETTER METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// The order of this dragon.
@@ -277,6 +320,65 @@ public abstract class IDragonData : IUISelectorItem {
 	}
 
 	//------------------------------------------------------------------------//
+	// ECONOMY METHODS											 			  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the original price (without applying any modifier).
+	/// </summary>
+	/// <returns>The original price in the requested currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	public long GetPrice(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: return m_pricePC;
+			case UserProfile.Currency.SOFT: return m_priceSC;
+		}
+		return 0;
+	}
+
+	/// <summary>
+	/// Get the price once the modifiers have been applied.
+	/// </summary>
+	/// <returns>The modified price in the requested currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	public long GetPriceModified(UserProfile.Currency _currency) {
+		long basePrice = GetPrice(_currency);
+		return basePrice + Mathf.FloorToInt(basePrice * GetPriceModifier(_currency) / 100.0f);
+	}
+
+	/// <summary>
+	/// Price modifier.
+	/// </summary>
+	/// <returns>The price modifier, [-100..0..100] representing the bonus percentage added to the original price, 0 being none.</returns>
+	/// <param name="_currency">Currency.</param>
+	public float GetPriceModifier(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: return m_pricePCModifier;
+			case UserProfile.Currency.SOFT: return m_priceSCModifier;
+		}
+		return 0;
+	}
+
+	/// <summary>
+	/// Does this dragon have a price modifier for the given currency?
+	/// </summary>
+	/// <param name="_currency">Currency.</param>
+	public bool HasPriceModifier(UserProfile.Currency _currency) {
+		return Mathf.Abs(GetPriceModifier(_currency)) > Mathf.Epsilon;    // Different than 0
+	}
+
+	/// <summary>
+	/// Change the current price modifier by adding/subtracting.
+	/// </summary>
+	/// <param name="_value">Value to add [-100..0..100] as a percentage to be added to the original price, 0 being none.</param>
+	/// <param name="_currency">Currency.</param>
+	public void AddPriceModifer(float _value, UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.HARD: m_pricePCModifier += _value;	break;
+			case UserProfile.Currency.SOFT: m_priceSCModifier += _value;	break;
+		}
+	}
+
+	//------------------------------------------------------------------------//
 	// PERSISTENCE															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -286,6 +388,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_owned = false;
 		m_teased = m_shadowFromDragons.Count == 0;
 		m_revealed = m_revealFromDragons.Count == 0;
+		m_unlockAvailable = m_unlockFromDragons.Count == 0;
 
 		m_disguise = m_def != null ? GetDefaultDisguise(m_def.sku).sku : "";
 		m_persistentDisguise = m_disguise;

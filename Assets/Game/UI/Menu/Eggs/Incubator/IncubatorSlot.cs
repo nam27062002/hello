@@ -19,7 +19,7 @@ using TMPro;
 /// <summary>
 /// Controls a single slot on the incubator menu.
 /// </summary>
-public class IncubatorSlot : MonoBehaviour {
+public class IncubatorSlot : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -105,7 +105,7 @@ public class IncubatorSlot : MonoBehaviour {
 
 		// Subscribe to external events
 		// [AOC] Order is super-important, otherwise the initial state change on the egg will trigger another Refresh which will try to create another view for the egg
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.AddListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -113,8 +113,21 @@ public class IncubatorSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.EGG_STATE_CHANGED:
+            {
+                EggStateChanged info = (EggStateChanged)broadcastEventInfo;
+                OnEggStateChanged(info.egg, info.from, info.to);
+            }break;
+        }
+    }
 
 	/// <summary>
 	/// Update loop.

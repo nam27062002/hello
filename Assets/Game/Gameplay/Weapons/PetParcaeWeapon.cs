@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class PetParcaeWeapon : PetMeleeWeapon {
+public class PetParcaeWeapon : PetMeleeWeapon, IBroadcastListener {
     //--------------------------------------------------------------------------
     [Serializable]
     public class ModData {
@@ -35,13 +35,25 @@ public class PetParcaeWeapon : PetMeleeWeapon {
         m_currentMod = null;
         m_modsTimer = 0f;
 
-        Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
-        Messenger.AddListener(MessengerEvents.GAME_ENDED, RemoveMods);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     private void OnDestroy() {
-        Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, RemoveMods);
-        Messenger.RemoveListener(MessengerEvents.GAME_ENDED, RemoveMods);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_AREA_EXIT:
+            case BroadcastEventType.GAME_ENDED:
+            {
+                RemoveMods();
+            }break;
+        }
     }
 
     protected override void Update() {
@@ -78,7 +90,7 @@ public class PetParcaeWeapon : PetMeleeWeapon {
 
         m_currentMod = _data;
 
-        Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+        Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
     }
 
     private void RemoveMods() {
@@ -92,7 +104,7 @@ public class PetParcaeWeapon : PetMeleeWeapon {
 
             m_view.SetIdleColor();
 
-            Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+            Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
         }
     }
 }

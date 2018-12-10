@@ -3,13 +3,11 @@ using SimpleJSON;
 using UnityEngine;
 
 public class HDLeagueManager : HDLiveDataController {
-    public class League {
-        public string sku;
-    }
-
 
     private int m_liveDataCode;
 
+    private List<HDLeagueDataBasic> m_leagues;
+    private HDLeagueDataFull m_currentLeague;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS                                                        //
@@ -34,6 +32,9 @@ public class HDLeagueManager : HDLiveDataController {
     public override void CleanData() {
         m_liveDataCode = -1;
 
+        m_leagues.Clear();
+        m_currentLeague = null;
+
         m_dataLoadedFromCache = false;
     }
 
@@ -56,7 +57,18 @@ public class HDLeagueManager : HDLiveDataController {
         m_dataLoadedFromCache = true;
     }
 
-    public override void LoadData(JSONNode _data) {}
+    public override void LoadData(JSONNode _data) {
 
-    public override void OnLiveDataResponse() {}
+    }   
+
+    public override void OnLiveDataResponse() {
+        // request the full data
+
+
+    }
+
+   
+    private void CreateLeagues(string _currentLeague) {
+
+    }
 }

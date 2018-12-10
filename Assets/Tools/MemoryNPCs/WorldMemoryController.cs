@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class WorldMemoryController : MonoBehaviour { 
+public class WorldMemoryController : MonoBehaviour, IBroadcastListener { 
 
 	//---------------------------------------
 	[System.Serializable]
@@ -271,7 +271,7 @@ public class WorldMemoryController : MonoBehaviour {
 
     private void OnEnable() {
         // Subscribe to external events
-        Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this); 
     }
 
     /// <summary>
@@ -279,7 +279,18 @@ public class WorldMemoryController : MonoBehaviour {
     /// </summary>
     private void OnDisable() {
         // Unsubscribe from external events
-        Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);        
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this); 
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+        }
     }
 
     private void Update() {

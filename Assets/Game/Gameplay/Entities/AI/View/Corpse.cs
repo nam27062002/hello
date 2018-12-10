@@ -27,6 +27,7 @@ public class Corpse : MonoBehaviour {
 
 	private Rigidbody[] m_gibs;
 	private Renderer[] m_renderers;
+    private List<Material[]> m_rendererMaterials;
 	private Dictionary<int, List<Material>> m_materials;
 	private List<SimpleTransform> m_originalTransforms;
 	private List<Vector3> m_forceDirection;
@@ -62,6 +63,7 @@ public class Corpse : MonoBehaviour {
 		}
 
 		m_renderers = m_view.GetComponentsInChildren<Renderer>();
+        m_rendererMaterials = new List<Material[]>();
 		m_materials = new Dictionary<int, List<Material>>();
 
 		for (int i = 0; i < m_renderers.Length; ++i) {
@@ -80,6 +82,7 @@ public class Corpse : MonoBehaviour {
 				materials[m] = null;
 			}
 			renderer.sharedMaterials = materials;
+            m_rendererMaterials.Add(materials);
 		}
 
 		m_blood.CreatePool();
@@ -125,7 +128,7 @@ public class Corpse : MonoBehaviour {
 		m_time = m_fadeTime;
 		for (int i = 0; i < m_renderers.Length; ++i) {
 			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].sharedMaterials;
+            Material[] materials = m_rendererMaterials[i];
 			for (int m = 0; m < materials.Length; m++) {
 				if (_isGold)	materials[m] = sm_goldenMaterial; 
 				else			materials[m] = m_materials[id][m];
@@ -133,7 +136,7 @@ public class Corpse : MonoBehaviour {
 				tint.a = 1f;
 				materials[m].SetColor(GameConstants.Material.TINT, tint);
 			}
-			m_renderers[i].sharedMaterials = materials;
+            m_renderers[i].materials = materials;
 		}
 
 		m_delay = m_fadeDelay;
@@ -146,13 +149,13 @@ public class Corpse : MonoBehaviour {
 			if (m_delay <= 0) {
 				float a = m_time / m_fadeTime;
 				for (int i = 0; i < m_renderers.Length; ++i) {			
-					Material[] materials = m_renderers[i].sharedMaterials;
+                    Material[] materials = m_rendererMaterials[i];
 					for (int m = 0; m < materials.Length; m++) {
 						Color tint = materials[m].GetColor(GameConstants.Material.TINT);
 						tint.a = a;
 						materials[m].SetColor(GameConstants.Material.TINT, tint);
 					}
-					m_renderers[i].sharedMaterials = materials;
+                    m_renderers[i].materials = materials;
 				}
 
 				m_time -= Time.deltaTime;

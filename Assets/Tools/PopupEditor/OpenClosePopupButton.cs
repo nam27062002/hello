@@ -18,7 +18,7 @@ namespace PopupEditor {
 	/// 
 	/// </summary>
 	[RequireComponent(typeof(Button))]
-	public class OpenClosePopupButton : MonoBehaviour {
+	public class OpenClosePopupButton : MonoBehaviour, IBroadcastListener {
 		//------------------------------------------------------------------//
 		// CONSTANTS														//
 		//------------------------------------------------------------------//
@@ -54,30 +54,27 @@ namespace PopupEditor {
 		/// Component has been enabled.
 		/// </summary>
 		private void OnEnable() {
-			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+			Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 		}
 
 		/// <summary>
 		/// Component has been disabled.
 		/// </summary>
 		private void OnDisable() {
-			Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+			Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 		}
 
-		/// <summary>
-		/// Called every frame
-		/// </summary>
-		private void Update() {
-
-		}
-
-		/// <summary>
-		/// Destructor.
-		/// </summary>
-		private void OnDestroy() {
-
-		}
-
+        public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+        {
+            switch(eventType)
+            {
+                case BroadcastEventType.POPUP_DESTROYED:
+                {
+                    PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                    OnPopupDestroyed(info.popupController);
+                }break;
+            }
+        }
 		//------------------------------------------------------------------//
 		// OTHER METHODS													//
 		//------------------------------------------------------------------//

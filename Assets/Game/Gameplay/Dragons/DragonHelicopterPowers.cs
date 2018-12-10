@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonHelicopterPowers : MonoBehaviour 
+public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener 
 {
 	DragonBoostBehaviour m_playerBoost;
 	DragonMotion m_playerMotion;
@@ -96,7 +96,7 @@ public class DragonHelicopterPowers : MonoBehaviour
         m_animator = GetComponent<Animator>();
         
         CreatePool();
-        Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
         // Resize
         float scale = InstanceManager.player.data.scale;
@@ -111,15 +111,31 @@ public class DragonHelicopterPowers : MonoBehaviour
             equip.EquipPet(m_petSku, 4);
         }
         
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 	}
 	
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled(furyRushToggled.activated, furyRushToggled.type);
+            }break;
+        }
+    }
+    
 	// Update is called once per frame
 	void Update () {
 
@@ -242,7 +258,7 @@ public class DragonHelicopterPowers : MonoBehaviour
                         DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
                         if ( decoration != null && decoration.CanBreakByShooting())
                         {
-                            decoration.Break();
+                            decoration.Break(false);
                         }
                     }
                 }

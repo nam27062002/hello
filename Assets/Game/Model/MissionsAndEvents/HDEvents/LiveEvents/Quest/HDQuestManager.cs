@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 [Serializable]
-public class HDQuestManager : HDLiveEventManager{
+public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	//------------------------------------------------------------------------//
 	// CASSES															  //
 	//------------------------------------------------------------------------//
@@ -47,13 +47,15 @@ public class HDQuestManager : HDLiveEventManager{
 	/// </summary>
 	public HDQuestManager() {
         m_type = "quest";
+        m_numericType = 1;
+
         m_data = new HDQuestData();
         m_questData = m_data as HDQuestData;
         m_questDefinition = m_questData.definition as HDQuestDefinition;
         
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -65,8 +67,19 @@ public class HDQuestManager : HDLiveEventManager{
         m_questDefinition = null;
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
 
 	public override void ParseDefinition(SimpleJSON.JSONNode _data)
     {
