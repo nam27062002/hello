@@ -47,6 +47,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 	// Internal
 	private GraphicRaycaster m_canvasRaycaster = null;
+	private bool m_collectionsBlocked = false;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -289,6 +290,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	/// <param name="_animate">Whether to launch close animation for opened popups before actually destroying them.</param>
 	public static void Clear(bool _animate) {
+		// Prevent events to modify collections while iterating them
+		instance.m_collectionsBlocked = true;
+
 		// Closed popups first
 		foreach(PopupController c in instance.m_closedPopups) {
 			GameObject.Destroy(c.gameObject);
@@ -309,6 +313,9 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Loading popups: Unfortunately, async operations cannot be canceled in Unity, so let's just clear the queue
 		instance.m_loadingQueue.Clear();
+
+		// Allow back events to modify collections
+		instance.m_collectionsBlocked = false;
 	}
 
 	//------------------------------------------------------------------//
@@ -319,11 +326,14 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// Add it to the opened popups list
-		m_openedPopups.Add(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Add it to the opened popups list
+			m_openedPopups.Add(_popup);
 
-		// Make sure it's not on other lists
-		m_closedPopups.Remove(_popup);
+			// Make sure it's not on other lists
+			m_closedPopups.Remove(_popup);
+		}
 	}
 
 	/// <summary>
@@ -331,11 +341,14 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupClosed(PopupController _popup) {
-		// Remove it from the opened popups list
-		m_openedPopups.Remove(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Remove it from the opened popups list
+			m_openedPopups.Remove(_popup);
 
-		// Add it to the closed popups list
-		m_closedPopups.Add(_popup);
+			// Add it to the closed popups list
+			m_closedPopups.Add(_popup);
+		}
 
 		// If there are no more open popups, disable canvas camera for performance
 		RefreshCameraActive();
@@ -346,9 +359,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupDestroyed(PopupController _popup) {
-		// Remove it from all the lists
-		m_openedPopups.Remove(_popup);
-		m_closedPopups.Remove(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Remove it from all the lists
+			m_openedPopups.Remove(_popup);
+			m_closedPopups.Remove(_popup);
+		}
 
 		// If there are no more open popups, disable canvas camera for performance
 		RefreshCameraActive();
