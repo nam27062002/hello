@@ -32,8 +32,8 @@ public enum BroadcastEventType
     FURY_RUSH_TOGGLED,          // param: FuryRushToggled
     
     // UI events
-    UI_MAP_ZOOM_CHANGED,         // param: UIMapZoomChanged
-    
+    UI_MAP_ZOOM_CHANGED,        // param: UIMapZoomChanged
+    UI_MAP_EXPIRED,				// no params
     
     GAME_LEVEL_LOADED,
     GAME_AREA_ENTER,

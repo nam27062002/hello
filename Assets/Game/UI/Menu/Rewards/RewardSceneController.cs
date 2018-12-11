@@ -505,8 +505,19 @@ public class RewardSceneController : MenuScreenScene {
 	/// </summary>
 	/// <param name="_dragonReward">Dragon reward.</param>
 	private void OpenDragonReward(Metagame.RewardDragon _dragonReward) {
-		// Select this dragon!
-		InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+		// If we're in the right mode, make it the selected dragon
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonReward.sku);
+		if(dragonData != null) {
+			// Does the target game mode match the current one?
+			if(SceneController.DragonTypeToMode(dragonData.type) == SceneController.mode) {
+				// Yes! Select rewarded dragon
+				InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+			} else {
+				// No! Tell the dragon selection screen to make it the selected one next time we enter the screen
+				MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+			}
+		}
 
 		// Initialize skin view
 		InitDragonView(_dragonReward);
