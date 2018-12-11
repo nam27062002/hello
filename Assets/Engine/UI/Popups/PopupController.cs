@@ -138,7 +138,6 @@ public class PopupController : MonoBehaviour {
 		m_destroyAfterClose = _bDestroy;
 
 		// Invoke event - order is relevant!
-		OnClose.Invoke(this);
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
@@ -183,7 +182,8 @@ public class PopupController : MonoBehaviour {
 		m_isOpen = false;
 		m_isReady = false;
 
-		// Invoke event
+		// Invoke event - Order is relevant!
+		OnClose.Invoke(this);
 		OnClosePostAnimation.Invoke();
 
 		// Reopening?
