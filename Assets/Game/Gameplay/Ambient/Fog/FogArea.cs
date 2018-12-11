@@ -47,7 +47,7 @@ public class FogArea : MonoBehaviour, IBroadcastListener
 
     private void OnDisable()
     {
-        if ( m_playerInside )
+        if ( m_playerInside && ApplicationManager.IsAlive)
         {
             m_playerInside = false;
             InstanceManager.fogManager.DeactivateArea( this );
