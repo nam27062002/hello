@@ -47,15 +47,8 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
 
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-	//		 That's why we check the game scene controller if available, otherwise take it directly from the user's profile
 	private bool isUnlocked {
-		get {
-			if(InstanceManager.gameSceneControllerBase != null) {
-				return InstanceManager.gameSceneControllerBase.mapUnlocked;
-			} else {
-				return UsersManager.currentUser.mapUnlocked;
-			}
-		}
+		get { return UsersManager.currentUser.mapUnlocked; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -97,6 +90,9 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 		else if(m_wasUnlocked) {
 			m_wasUnlocked = false;
 			Refresh(true);
+
+			// Notify other UI elements
+			Broadcaster.Broadcast(BroadcastEventType.UI_MAP_EXPIRED);
 		}
 	}
 
@@ -167,7 +163,8 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 
 		// Countdown format
 		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
-		m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+		double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d);	// Never go negative!
+		m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 	}
 
 	//------------------------------------------------------------------------//
