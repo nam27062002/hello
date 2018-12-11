@@ -98,11 +98,14 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 		switch(dragon.lockState) {
 			case IDragonData.LockState.TEASE:	
 			case IDragonData.LockState.SHADOW:
-			case IDragonData.LockState.REVEAL:
-													toLock = m_lockIfShadowed;  break;
-			case IDragonData.LockState.LOCKED:		toLock = m_lockIfLocked;	break;
-			case IDragonData.LockState.AVAILABLE:	toLock = m_lockIfAvailable;	break;
-			case IDragonData.LockState.OWNED:		toLock = m_lockIfOwned;		break;
+			case IDragonData.LockState.REVEAL:				toLock = m_lockIfShadowed;  break;
+
+			case IDragonData.LockState.LOCKED:
+			case IDragonData.LockState.LOCKED_UNAVAILABLE:	toLock = m_lockIfLocked;	break;
+
+			case IDragonData.LockState.AVAILABLE:			toLock = m_lockIfAvailable;	break;
+
+			case IDragonData.LockState.OWNED:				toLock = m_lockIfOwned;		break;
 		}
 
 		// Just do it
