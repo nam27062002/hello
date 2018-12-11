@@ -195,7 +195,7 @@ public class SpawnerBg : AbstractSpawner {
     protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
             // check if player has destroyed all the flock
-            if (m_flockBonus > 0) {
+            if (m_flockBonus > 0 && _lastEntity != null) {
                 Reward reward = new Reward();
                 reward.score = (int)(m_flockBonus * EntitiesKilled);
                 Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
