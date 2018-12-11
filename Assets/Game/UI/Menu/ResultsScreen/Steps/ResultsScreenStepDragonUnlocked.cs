@@ -39,8 +39,8 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private ShowHideAnimator m_purchaseButtonsAnim = null;
-	[SerializeField] private Localizer m_hcPriceText = null;
-	[SerializeField] private Localizer m_scPriceText = null;
+	[SerializeField] private UIDragonPriceSetup m_scPriceSetup = null;
+	[SerializeField] private UIDragonPriceSetup m_hcPriceSetup = null;
 
 	// Internal
 	private IDragonData m_dragonData = null;
@@ -124,21 +124,15 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 		if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(m_dragonData.maxSpeed * 10f, 0);	// x10 to show nicer numbers
 
 		// Update sc unlock button
-		if(m_scPriceText != null) {
-			// Set text
-			m_scPriceText.Localize(
-				m_scPriceText.tid,
-				StringUtils.FormatNumber(m_dragonData.def.GetAsLong("unlockPriceCoins"))
-			);
+		if(m_scPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_scPriceSetup.InitFromData(m_dragonData, UserProfile.Currency.SOFT);
 		}
 
 		// Update hc unlock button
-		if(m_hcPriceText != null) {
-			// Set text
-			m_hcPriceText.Localize(
-				m_hcPriceText.tid,
-				StringUtils.FormatNumber(m_dragonData.def.GetAsLong("unlockPricePC"))
-			);
+		if(m_hcPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_hcPriceSetup.InitFromData(m_dragonData, UserProfile.Currency.HARD);
 		}
 
 		// Start with buttons hidden

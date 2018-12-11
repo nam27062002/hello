@@ -1,5 +1,6 @@
 #!/bin/bash
 # This script generates Android (apk) and iOS (ipa) builds with a given setup
+# Test
 
 # Bash setup
 set -e  # Exit on error - see http://www.davidpashley.com/articles/writing-robust-shell-scripts/#id2382181

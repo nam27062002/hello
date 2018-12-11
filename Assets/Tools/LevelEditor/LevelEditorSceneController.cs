@@ -68,7 +68,9 @@ namespace LevelEditor {
 				ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LevelEditor;
 			}
 
-			// Load the dragon
+            PoolManager.instance.poolLimits = PoolManager.PoolLimits.Unlimited;
+
+            // Load the dragon
             DragonManager.LoadDragon(LevelEditor.settings.testDragon);
             if (InstanceManager.player != null)
             {

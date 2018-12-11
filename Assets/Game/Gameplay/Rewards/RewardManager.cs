@@ -91,6 +91,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		get { return instance.m_xp; }
 	}
 
+
+
 	// Score multiplier
 	[SerializeField] private int m_currentScoreMultiplierIndex = 0;
 	public static ScoreMultiplier currentScoreMultiplierData {
@@ -498,6 +500,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		return 0;
 	}
 
+    public void OnApplyCheatsReward(Reward _reward) {
+        ApplyReward(_reward, null);
+    }
+
 	/// <summary>
 	/// Apply the given rewards package.
 	/// </summary>
@@ -834,5 +840,23 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     public static int GetReviveCost()
     {
     	return freeReviveCount + paidReviveCount + 1;
+    }
+
+
+    // Cheats
+    public void SetCategoryKill(string _category, int amount) {
+        if (m_categoryKillCount.ContainsKey(_category)) {
+            m_categoryKillCount[_category] += amount;
+        } else {
+            m_categoryKillCount.Add(_category, amount);
+        }
+    }
+
+    public void SetNPCKill(string _sku, int amount) {
+        if (m_killCount.ContainsKey(_sku)) {
+            m_killCount[_sku] += amount;
+        } else {
+            m_killCount.Add(_sku, amount);
+        }
     }
 }

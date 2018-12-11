@@ -122,12 +122,12 @@ MonoBehaviour:
   - 
   - 
   - 
-  m_strVersionIOS: 1.18
-  m_strVersionIOSCode: 253
-  m_strVersionAndroidGplay: 1.18
-  m_strVersionAndroidGplayCode: 253
-  m_strVersionAndroidAmazon: 1.18
-  m_strVersionAndroidAmazonCode: 253
+  m_strVersionIOS: 1.20
+  m_strVersionIOSCode: 271
+  m_strVersionAndroidGplay: 1.20
+  m_strVersionAndroidGplayCode: 271
+  m_strVersionAndroidAmazon: 1.20
+  m_strVersionAndroidAmazonCode: 271
   m_biOSBitcode: 0
   m_biOSArbitraryLoads: 1
   m_biOSPushNotifications: 1
@@ -209,7 +209,8 @@ MonoBehaviour:
     android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\" />\n<service
     android:name=\"com.vungle.publisher.VungleService\" android:exported=\"false\"/>\n\n<!--
     AdMob -->\n<activity android:name=\"com.google.android.gms.ads.AdActivity\" android:configChanges=\"keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize\"
-    android:theme=\"@android:style/Theme.Translucent\" />"
+    android:theme=\"@android:style/Theme.Translucent\" />\n\n<!-- FAN -->\n<activity
+    android:name=\"com.facebook.ads.AudienceNetworkActivity\" android:configChanges=\"keyboardHidden|orientation|screenSize\"/>"
   m_strFacebookAppID: 
   m_strFacebookDisplayName: 
   m_bDisableTrackingInUnityEditor: 0

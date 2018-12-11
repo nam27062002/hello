@@ -249,6 +249,9 @@ public class UIFeedbackText : MonoBehaviour {
 		Debug.Assert(feedbackText != null,  "Prefab " + _prefabPath + " doesn't have a UIFeedbackText component!");
 		feedbackText.text.text = _text;
 
+		// Keep prefab's Z
+		_pos.z = prefab.transform.localPosition.z;
+
 		// Attach to parent
 		RectTransform notificationRt = feedbackText.transform as RectTransform;
 		notificationRt.SetParent(_parent, false);

@@ -103,6 +103,7 @@ public enum MessengerEvents {
 	BREAK_OBJECT_NEED_TURBO,	// no params
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
 	BREAK_OBJECT_WITH_FIRE,		// no params
+    BREAK_OBJECT_TO_OPEN,       // no params
     DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
 	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
@@ -244,6 +245,9 @@ public enum MessengerEvents {
 	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
 	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
 	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+
+    // Modifiers
+    MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
 
 	COUNT
 }

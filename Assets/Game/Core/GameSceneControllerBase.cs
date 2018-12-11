@@ -29,14 +29,8 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
 		get { return m_elapsedSeconds; }
-	}
-
-	// Map status
-	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-	protected bool m_mapUnlocked = false;
-	public bool mapUnlocked {
-		get { return m_mapUnlocked; }
-	}
+        set { m_elapsedSeconds = value; }
+    }
 
 	// Handled by heirs
 	protected bool m_paused = false;
@@ -62,7 +56,6 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
 
 	/// <summary>
@@ -75,7 +68,6 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
     
     
@@ -86,10 +78,6 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
             case BroadcastEventType.GAME_ENDED:
             {
                 OnGameEnded();
-            }break;
-            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
-            {
-                OnMapUnlocked();
             }break;
         }
     }
@@ -132,10 +120,7 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	/// The game has started.
 	/// </summary>
 	protected virtual void OnGameStarted() {
-		// Store map state
-		if(UsersManager.currentUser != null) {
-			m_mapUnlocked = UsersManager.currentUser.mapUnlocked;
-		}
+		
 	}
 
 	/// <summary>
@@ -143,16 +128,6 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	/// </summary>
 	protected virtual void OnGameEnded() {
 		
-	}
-
-	/// <summary>
-	/// Minimap has been upgraded.
-	/// </summary>
-	private void OnMapUnlocked() {
-		// Store new map state
-		if(UsersManager.currentUser != null) {
-			m_mapUnlocked = UsersManager.currentUser.mapUnlocked;
-		}
 	}
 }
 

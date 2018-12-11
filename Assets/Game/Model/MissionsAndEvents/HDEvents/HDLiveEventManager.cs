@@ -31,6 +31,8 @@ public abstract class HDLiveEventManager
     //------------------------------------------------------------------------//
 
     public string m_type = "";
+    public int m_numericType = -1;
+
     public bool m_shouldRequestDefinition = false;
     public bool m_isActive = false;
     private bool m_requestingRewards = false;

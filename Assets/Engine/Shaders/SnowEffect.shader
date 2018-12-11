@@ -148,7 +148,7 @@
 				w += (1.0 - step(sr, simplegridnoise((uv * sc * 1.3) + of, i.time.x))) * 0.5;
 #endif
 
-				fixed4 col = fixed4(1.0, 1.0, 1.0, w);
+				fixed4 col = fixed4(1.0, 1.0, 1.0, w * i.color.a);
 				return col;
 			}
 			ENDCG
