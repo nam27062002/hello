@@ -112,7 +112,7 @@ public class SceneController : MonoBehaviour {
 			case Mode.DEFAULT: {
 				// Set selected dragon to the current classic dragon
 				if(InstanceManager.menuSceneController != null) {
-						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentClassicDragon.sku);
+					InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentClassicDragon.sku);
 				}
 			} break;
 
@@ -137,6 +137,43 @@ public class SceneController : MonoBehaviour {
 
 		// Notify game
 		Messenger.Broadcast<Mode, Mode>(MessengerEvents.GAME_MODE_CHANGED, oldMode, _newMode);
+	}
+
+	/// <summary>
+	/// Get the mode associated to a given dragon type.
+	/// </summary>
+	/// <returns>The game mode associated to <paramref name="_type"/>.</returns>
+	/// <param name="_type">Dragon type to be checked.</param>
+	public static Mode DragonTypeToMode(IDragonData.Type _type) {
+		switch(_type) {
+			case IDragonData.Type.CLASSIC: {
+				return Mode.DEFAULT;
+			} break;
+
+			case IDragonData.Type.SPECIAL: {
+				return Mode.SPECIAL_DRAGONS;
+			} break;
+		}
+		return Mode.DEFAULT;
+	}
+
+	/// <summary>
+	/// Get the dragon type associated to a given game mode.
+	/// </summary>
+	/// <returns>The dragon type associated to <paramref name="_mode"/>.</returns>
+	/// <param name="_mode">Mode to be checked.</param>
+	public static IDragonData.Type ModeToDragonType(Mode _mode) {
+		switch(_mode) {
+			case Mode.DEFAULT:
+			case Mode.TOURNAMENT: {
+				return IDragonData.Type.CLASSIC;
+			} break;
+
+			case Mode.SPECIAL_DRAGONS: {
+				return IDragonData.Type.SPECIAL;
+			} break;
+		}
+		return IDragonData.Type.CLASSIC;
 	}
 }
 

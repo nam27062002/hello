@@ -342,7 +342,6 @@ public class MenuShowConditionally : MonoBehaviour {
 		}
 
 		// Is it our target dragon?
-		// It should be the selected dragon, but check anyway
 		if(_data.def.sku != targetDragonSku) {
 			return;
 		}
