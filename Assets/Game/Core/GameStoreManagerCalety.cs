@@ -48,12 +48,8 @@ public class GameStoreManagerCalety : GameStoreManager
             // If the user hasn't triggered this purchase then it means that this purchase is being resumed from a purchase that was interrupted in a previous session
             if (string.IsNullOrEmpty(purchaseSkuTriggered) || purchaseSkuTriggered != sku)
             {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                {
-                    Log("Pending transactions are urged because of an interrupted IAP");
-                }
-
                 // We need to urge to request for pending transactions
+				Log("Pending transactions are urged because of an interrupted IAP");
                 TransactionManager.instance.Pending_UrgeToRequestTransactions();
             }
             else
@@ -61,7 +57,8 @@ public class GameStoreManagerCalety : GameStoreManager
                 bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
                 System.Action onDone = delegate ()
                 {
-                    // string gameSku = PlatformSkuToGameSku( sku );
+					// string gameSku = PlatformSkuToGameSku( sku );
+					Log("PURCHASE_SUCCESSFUL Broadcast " + sku);
                     Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
                 };
 
@@ -283,25 +280,29 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 
 
-    public override bool CanMakePayment()
-	{
-        if (!string.IsNullOrEmpty(m_purchaseSkuTriggeredByUser) )   // if purchase in process we dont let make more payments
-        {
-            return false;
-        }
+	public override bool CanMakePayment() {
+		Log("CanMakePayment?");
+		if(!string.IsNullOrEmpty(m_purchaseSkuTriggeredByUser))   // if purchase in process we dont let make more payments
+		{
+			Log("CanMakePayment? NO! Another purchase with sku " + m_purchaseSkuTriggeredByUser + " is running!");
+			return false;
+		}
 #if UNITY_EDITOR
 		return true;
 #else
-		return StoreManager.SharedInstance.CanMakePayments();
-#endif	
+		Log("CanMakePayment? Asking native library...");
+		bool canMakePayment = StoreManager.SharedInstance.CanMakePayments();
+		Log("CanMakePayment? Native library response is " + canMakePayment);
+		return canMakePayment;
+#endif
 	}
-    	
-	public override void Buy( string _sku )
-	{
-        m_purchaseSkuTriggeredByUser = _sku;
+
+	public override void Buy(string _sku) {
+		Log("Buy() " + _sku);
+		m_purchaseSkuTriggeredByUser = _sku;
 
 #if UNITY_EDITOR
-        StoreManager.SharedInstance.StartCoroutine( SimulatePurchase(_sku) );
+		StoreManager.SharedInstance.StartCoroutine(SimulatePurchase(_sku));
 #else
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
@@ -309,11 +310,12 @@ public class GameStoreManagerCalety : GameStoreManager
 			if ( !string.IsNullOrEmpty( _sku ) )
     		{
                 HDTrackingManager.Instance.Notify_IAPStarted();
+				Log("Requesting product " + _sku + " to the native store");
 				StoreManager.SharedInstance.RequestProduct (_sku);
     		}
     	}
 #endif
-    }		   
+	}		   
 
     IEnumerator SimulatePurchase( string _sku)
     {
@@ -382,19 +384,22 @@ public class GameStoreManagerCalety : GameStoreManager
     #region log
     private static void Log(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+        msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
     }
 
     private static void LogError(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogError(msg, ControlPanel.ELogChannel.Store);
     }
 
     private static void LogWarning(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Store);
     }
     #endregion
