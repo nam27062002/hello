@@ -6,8 +6,9 @@ public class HDLeagueManager : HDLiveDataController {
 
     private int m_liveDataCode;
 
-    private List<HDLeagueDataBasic> m_leagues;
-    private HDLeagueDataFull m_currentLeague;
+    private List<HDLeagueData> m_leagues;
+    private HDLeagueData m_currentLeague;
+    private HDLeagueData m_nextLeague;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS                                                        //
@@ -34,6 +35,7 @@ public class HDLeagueManager : HDLiveDataController {
 
         m_leagues.Clear();
         m_currentLeague = null;
+        m_nextLeague = null;
 
         m_dataLoadedFromCache = false;
     }
@@ -52,23 +54,34 @@ public class HDLeagueManager : HDLiveDataController {
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
 
-
+            CreateLeagues("");
         }
         m_dataLoadedFromCache = true;
     }
 
     public override void LoadData(JSONNode _data) {
 
+
+        CreateLeagues("");
     }   
 
     public override void OnLiveDataResponse() {
         // request the full data
 
-
     }
-
    
     private void CreateLeagues(string _currentLeague) {
+        List<DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitionsList("TODO: LEAGUES CAT");
+             
+        for (int i = 0; i < definitions.Count; ++i) {
+            DefinitionNode definition = definitions[i];
+            HDLeagueData league = new HDLeagueData(definition);
 
+            m_leagues.Add(league);
+
+            if (_currentLeague.Equals(definition.sku)) {
+                m_currentLeague = league;
+            }
+        }
     }
 }

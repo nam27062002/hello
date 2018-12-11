@@ -1,9 +1,10 @@
 ﻿
-public class HDLeagueDataFull : HDLeagueDataBasic {
+public class HDLeagueLeaderboard {
 
     // end time stamp
     // rewards
     // leaderboard
+
 
     public void RequestLeaderboard() {
 

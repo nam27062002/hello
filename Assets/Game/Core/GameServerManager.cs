@@ -406,7 +406,7 @@ public class GameServerManager {
     public virtual void HDLeagues_GetLeague(string _sku, ServerCallback _callback) { }
     public virtual void HDLeagues_GetLeaderboard(ServerCallback _callback) { }
 
-    public virtual void HDLeagues_SetScore(ServerCallback _callback) { }
+    public virtual void HDLeagues_SetScore(int _score, ServerCallback _callback) { }
 
     public virtual void HDLeagues_GetMyRewards(ServerCallback _callback) { }
 
