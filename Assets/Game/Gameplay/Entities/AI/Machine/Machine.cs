@@ -387,7 +387,8 @@ namespace AI {
 		public void CheckStun() {
 			if (m_stunned > 0) {
 				m_stunned -= Time.deltaTime;
-				m_pilot.SetStunned(m_stunned > 0);
+                if ( m_pilot != null )
+				    m_pilot.SetStunned(m_stunned > 0);
 				m_viewControl.SetStunned(m_stunned > 0);
 			}
 		}

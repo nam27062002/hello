@@ -231,11 +231,13 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Custom treatment to disguises markers in this screen
 		for(int i = 0; i < m_disguises.Count; i++) {
 			// Re-attach to use aux slider instead of main one
+			m_disguises[i].barMarker.skinSku = m_disguises[i].def.sku;
 			m_disguises[i].barMarker.AttachToSlider(m_auxBar, m_disguises[i].delta);
-			m_disguises[i].unlocked = (m_disguises[i].delta <= m_auxBar.normalizedValue);	// Use current var value to quicly determine initial state
+			m_disguises[i].unlocked = (m_disguises[i].delta <= m_auxBar.normalizedValue);   // Use current var value to quickly determine initial state
+			m_disguises[i].unlocked |= UsersManager.currentUser.wardrobe.GetSkinState(m_disguises[i].def.sku) == Wardrobe.SkinState.OWNED;	// Also unlocked if previously owned (i.e. via offer pack)
 
 			// If the disguise is going to be unlocked, crate a flag for it!
-			if(m_disguises[i].delta <= m_targetDelta) {
+			if(m_disguises[i].delta <= m_targetDelta && !m_disguises[i].unlocked) {
 				// Instantiate and initialize flag
 				GameObject flagObj = GameObject.Instantiate(m_disguiseUnlockPrefab, m_disguisesContainer.transform, false) as GameObject;
 				m_disguises[i].flag = flagObj.GetComponent<ResultsScreenDisguiseFlag>();
