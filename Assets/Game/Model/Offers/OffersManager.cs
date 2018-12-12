@@ -40,26 +40,11 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	// Internal
     private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();
     private List<OfferPack> m_allOffers = new List<OfferPack>();
-
     private float m_timer = 0;
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
-		// Subscribe to game events that might change offers list (segmentation)
-		Messenger.AddListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
-		Messenger.AddListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
-		Messenger.AddListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
-		Messenger.AddListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
-		Messenger.AddListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
-		Messenger.AddListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
-		Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
-	}
-
 	/// <summary>
 	/// First update loop.
 	/// </summary>
@@ -68,21 +53,15 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	/// <summary>
-	/// Destructor.
+	/// Update loop.
 	/// </summary>
-	override protected void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, OnGameStateChanged1);
-		Messenger.RemoveListener<string>(MessengerEvents.SCENE_UNLOADED, OnGameStateChanged2);
-		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnGameStateChanged3);
-		Messenger.RemoveListener<string>(MessengerEvents.SKIN_ACQUIRED, OnGameStateChanged2);
-		Messenger.RemoveListener<string>(MessengerEvents.PET_ACQUIRED, OnGameStateChanged2);
-		Messenger.RemoveListener<Egg>(MessengerEvents.EGG_OPENED, OnGameStateChanged4);
-		Messenger.RemoveListener<OfferPack>(MessengerEvents.OFFER_APPLIED, OnGameStateChanged5);
-		Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnGameStateChanged6);
-
-		// Parent
-		base.OnDestroy();
+	private void Update() {
+		// Refresh offers periodically for better performance
+		if(m_timer <= 0) {
+			m_timer = REFRESH_FREQUENCY;
+			Refresh(false);
+		}
+		m_timer -= Time.deltaTime;
 	}
 
 	/// <summary>
@@ -267,46 +246,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         }
         return null;
     }
-
-    private void Update() {
-        if ( m_timer <= 0 )
-        {
-            m_timer = REFRESH_FREQUENCY;
-            // Update offers
-            Refresh(false);
-        }
-        m_timer -= Time.deltaTime;
-    }
     
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
-	/// <summary>
-	/// Something generic has changed in the game that requires the offers segmentation
-	/// to be checked.
-	/// Different overloads to support different event parameters, but we don't actually care about them.
-	/// </summary>
-	private void OnGameStateChanged() {
-		// [AOC] New implementation: Don't instantly refresh, periodic update will already do it.
-		//Refresh();
-	}
-	private void OnGameStateChanged1(UserProfile.Currency _p1, long _p2, long _p3) {
-		OnGameStateChanged(); 
-	}
-	private void OnGameStateChanged2(string _p1) { 
-		OnGameStateChanged(); 
-	}
-	private void OnGameStateChanged3(IDragonData _p1) { 
-		OnGameStateChanged(); 
-	}
-	private void OnGameStateChanged4(Egg _p1) { 
-		OnGameStateChanged(); 
-	}
-	private void OnGameStateChanged5(OfferPack _p1) { 
-		OnGameStateChanged(); 
-	}
-	private void OnGameStateChanged6(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
-		OnGameStateChanged();
-	}
 }
