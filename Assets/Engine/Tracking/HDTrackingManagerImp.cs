@@ -380,6 +380,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
             TrackingManager.SharedInstance.Initialise(kTrackingConfig);
+
+            // This needs to be done here because TrackingManager.Initialise() adds a listener to GDPRManager that we need to be called so events will be tracked on 
+            // Appsflyer and Facebook Analytics. At this point of the flow we're sure that the user has already seed consent popup so this is a safe place to do this
+            GDPRManager.SharedInstance.ProceedWithGDPRDependantAPIs();
         }
     }    
 
