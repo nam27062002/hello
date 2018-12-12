@@ -35,7 +35,9 @@ public class HDLeagueData {
     public HDLeagueData(DefinitionNode _def) {
         m_sku = _def.sku;
 
+        m_startDate = new DateTime(1970, 1, 1);
         m_endDate = new DateTime(1970, 1, 1);
+
         m_rewards = new List<Metagame.Reward>();
         leaderboard = null;
     }
