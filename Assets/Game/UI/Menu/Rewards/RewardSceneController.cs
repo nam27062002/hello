@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -858,6 +859,15 @@ public class RewardSceneController : MenuScreenScene {
 
 				// Nullify reward reference
 				m_currentReward = null;
+
+				// Remove screen from screen history
+				// We want to prevent going back to this screen which has already been cleared
+				// At this point (SCREEN_TRANSITION_START) the screen has already been added to the history
+				// Resolves issue HDK-3436 among others
+				List<MenuScreen> history = InstanceManager.menuSceneController.transitionManager.screenHistory;
+				if(history.Last() == _from) {	// Make sure the screen we come from is actually in the history (i.e. screens that don't allow back to them are not added to the history)
+					history.RemoveAt(history.Count - 1);
+				}
 			}
 		}
 	}
