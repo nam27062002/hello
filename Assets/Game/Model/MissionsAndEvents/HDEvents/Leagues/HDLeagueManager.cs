@@ -63,6 +63,8 @@ public class HDLeagueManager : HDLiveDataController {
 
 
         CreateLeagues("");
+
+
     }   
 
     public override void OnLiveDataResponse() {

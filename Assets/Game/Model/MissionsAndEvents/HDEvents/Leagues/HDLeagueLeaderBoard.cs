@@ -1,7 +1,14 @@
 ﻿using System.Collections.Generic;
 
 public class HDLeagueLeaderboard {
-    //---[Leaderboard Record]---------------------------------------------------
+    //---[Classes and Enums]----------------------------------------------------
+    public enum State {
+        NONE = 0,
+        WAITING_RESPONSE,
+        SUCCESS,
+        ERROR
+    }
+
     public class Record {
         public uint position;
 
@@ -27,12 +34,24 @@ public class HDLeagueLeaderboard {
     }
     //--------------------------------------------------------------------------
 
+
+
+    //---[Attributes]-----------------------------------------------------------
+    private string m_leagueSku;
+
+
+
+    //---[Methods]--------------------------------------------------------------
+    public HDLeagueLeaderboard(string _sku) {
+        m_leagueSku = _sku;
+    }
+
     public void RequestLeaderboard() {
-
+        //Right now, we don't need the league sku, because, in server, they are using the player id to retrieve the leaderboard.
+        GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnLeaderboardResponse);
     }
 
-    private void OnLeaderboardResponse() {
+    private void OnLeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 
     }
-
 }

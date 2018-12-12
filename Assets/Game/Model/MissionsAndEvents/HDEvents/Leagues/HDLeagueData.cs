@@ -28,7 +28,8 @@ public class HDLeagueData {
     private List<Metagame.Reward> m_rewards;
     public void AddReward(Metagame.Reward _reward) { m_rewards.Add(_reward); }
 
-    public HDLeagueLeaderboard leaderboard { set; get; }
+    private HDLeagueLeaderboard m_leaderboard;
+    public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
 
     //---[Methods]--------------------------------------------------------------
@@ -39,7 +40,19 @@ public class HDLeagueData {
         m_endDate = new DateTime(1970, 1, 1);
 
         m_rewards = new List<Metagame.Reward>();
-        leaderboard = null;
+        m_leaderboard = null;
     }
 
+    public void BuildExtendData() {
+        // call server for this league definition
+        GameServerManager.SharedInstance.HDLeagues_GetLeague(m_sku, OnGetLeagueResponse);
+
+        // build the leader board
+        m_leaderboard = new HDLeagueLeaderboard(m_sku);
+        m_leaderboard.RequestLeaderboard();
+    }
+
+    private void OnGetLeagueResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+
+    }
 }
