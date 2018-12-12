@@ -574,31 +574,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Game_IsPaused = value;
     }
 
-    /// <summary>
-    /// Checks whether or not the customizer needs to reload rules and if so the cached data are reloaded.
-    /// </summary>
-    /// <returns><c>true</c> if the customizer had changes pending to be applied.</returns>
-    public bool Game_ApplyCustomizer()
-    {
-        bool rulesReloaded = HDCustomizerManager.instance.Apply();
-
-        // If rules have been reloaded then cached data have to be updated
-        if (rulesReloaded)
-        {
-            Game_OnRulesUpdated();
-        }
-
-        return rulesReloaded;
-    }
-
-    /// <summary>
-    /// This method is called when rules have changed
-    /// </summary>
-    private void Game_OnRulesUpdated()
-    {
-        // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
-    }
+    
     #endregion
 
     #region device   

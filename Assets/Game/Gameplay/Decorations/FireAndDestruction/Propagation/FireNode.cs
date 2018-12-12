@@ -313,10 +313,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			m_transform = transform;
 		}
 
-		if (m_neighbours == null || m_neighbours.Count == 0) {
-			FindNeighbours();
-		}
-
+		FindNeighbours();
+		
 		for (int i = 0; i < m_neighbours.Count; i++) {
 			Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.15f);
 			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.5f);

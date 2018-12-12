@@ -1,6 +1,6 @@
 // MenuDragonUnlockClassicDragon.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 20/11/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using System.Text;
+using TMPro;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -17,30 +18,33 @@ using System.Text;
 /// Control unlock/acquire/unavailable UI for classic dragons in the menu.
 /// Depending on the selected dragon lockState, a different object will be displayed.
 /// TODO:
-/// - Anim delays and sync to match dragon change animation
 /// - Check active dragon discounts
 /// </summary>
 public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
-	private const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_HC";	// Unlock and acquire a locked dragon using HC
-	private const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";	// Acquire an already unlocked dragon using SC
+	public const string UNLOCK_WITH_HC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_HC";	// Unlock and acquire a locked dragon using HC
+	public const string UNLOCK_WITH_SC_RESOURCES_FLOW_NAME = "UNLOCK_DRAGON_SC";	// Acquire an already unlocked dragon using SC
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
 	//------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Localizer m_hcPriceText = null;
-	[SerializeField] private Localizer m_scPriceText = null;
+	[SerializeField] private UIDragonPriceSetup m_hcPriceSetup = null;
+	[SerializeField] private UIDragonPriceSetup m_scPriceSetup = null;
+	[Space]
 	[SerializeField] private Localizer m_unavailableInfoText = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_hcButtonAnim = null;
-	[SerializeField] private ShowHideAnimator m_scButtonAnim = null;
-	[SerializeField] private ShowHideAnimator m_unavailableInfoAnim = null;
+	[SerializeField] private ShowHideAnimator m_changeAnim = null;
+	[Space]
+	[SerializeField] private GameObject m_hcRoot = null;
+	[SerializeField] private GameObject m_scRoot = null;
+	[SerializeField] private GameObject m_unavailableRoot = null;
 
 	// Internal
 	private bool m_firstEnablePassed = false;
+	private Coroutine m_delayedShowCoroutine = null;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -49,11 +53,11 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Force a hide and then apply for the first time with current values and without animation
-		TriggerAnimator(m_hcButtonAnim, false, false, false);
-		TriggerAnimator(m_scButtonAnim, false, false, false);
-		TriggerAnimator(m_unavailableInfoAnim, false, false, false);
-		Refresh(InstanceManager.menuSceneController.selectedDragonData, false, false);
+		// Hide all elements and then apply for the first time with current values and without animation
+		Toggle(m_hcRoot, false);
+		Toggle(m_scRoot, false);
+		Toggle(m_unavailableRoot, false);
+		Refresh(InstanceManager.menuSceneController.selectedDragonData, false);
 	}
 
 	/// <summary>
@@ -63,17 +67,18 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-	}
+        Messenger.AddListener<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, OnModifierChanged);
+    }
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
 		// Refresh! Don't animate if it's the first time
-		Refresh(InstanceManager.menuSceneController.selectedDragonData, m_firstEnablePassed, false);
+		Refresh(InstanceManager.menuSceneController.selectedDragonData, m_firstEnablePassed);
 		m_firstEnablePassed = true;
 	}
-	
+
 	/// <summary>
 	/// Destructor
 	/// </summary>
@@ -81,55 +86,84 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-	}
+        Messenger.AddListener<IDragonData>(MessengerEvents.MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED, OnModifierChanged);
+    }
 
 	/// <summary>
-	/// Refresh with data from currently selected dragon.
+	/// Refresh with data from given dragon and trigger animations.
 	/// </summary>
 	/// <param name="_data">The data of the selected dragon.</param>
 	/// <param name="_animate">Whether to trigger animations or not.</param>
-	/// <param name="_resetAnim">Whether to reset animations or not.</param>
-	public void Refresh(IDragonData _data, bool _animate, bool _resetAnim) {
+	public void Refresh(IDragonData _data, bool _animate) {
+		// Stop any pending coroutines
+		if(m_delayedShowCoroutine != null) {
+			StopCoroutine(m_delayedShowCoroutine);
+			m_delayedShowCoroutine = null;
+		}
+
+		// Trigger animation?
+		if(_animate && m_changeAnim != null) {
+			// If object is visible, hide first and Refresh the info when the object is hidden
+			if(m_changeAnim.visible) {
+				// Trigger hide animation
+				m_changeAnim.Hide();
+
+				// Refresh info once the object is hidden
+				m_delayedShowCoroutine = UbiBCN.CoroutineManager.DelayedCall(() => {
+					// Refresh info
+					RefreshInfo(_data);
+
+					// Trigger show animation
+					m_changeAnim.Show();
+				}, m_changeAnim.tweenDuration);	// Use hide animation duration as delay for the coroutine
+			} else {
+				//  Object already hidden, refresh info and trigger show animation
+				RefreshInfo(_data);
+				m_changeAnim.Show();
+			}
+		} else {
+			// Just refresh info immediately
+			RefreshInfo(_data);
+			if(m_changeAnim != null) m_changeAnim.Show(false);
+		}
+	}
+
+	/// <summary>
+	/// Refresh texts and visibility to match given dragon.
+	/// Doesn't trigger any animation.
+	/// </summary>
+	/// <param name="_data">Data.</param>
+	private void RefreshInfo(IDragonData _data) {
 		// Aux vars
 		bool show = true;
 
 		// Update hc unlock button
-		if(m_hcPriceText != null) {
-			// Display?
-			show = CheckUnlockWithPC(_data);
-			TriggerAnimator(m_hcButtonAnim, show, _animate, _resetAnim);
+		// Display?
+		show = CheckUnlockWithPC(_data);
+		Toggle(m_hcRoot, show);
 
-			// Refresh info
-			if(show) {
-				// Set text
-				m_hcPriceText.Localize(
-					m_hcPriceText.tid, 
-					StringUtils.FormatNumber(_data.def.GetAsLong("unlockPricePC"))
-				);
-			}
+		// Refresh info
+		if(show && m_hcPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_hcPriceSetup.InitFromData(_data, UserProfile.Currency.HARD);
 		}
 
 		// Update sc unlock button
-		if(m_scPriceText != null) {
-			// Display?
-			show = CheckUnlockWithSC(_data);
-			TriggerAnimator(m_scButtonAnim, show, _animate, _resetAnim);
+		// Display?
+		show = CheckUnlockWithSC(_data);
+		Toggle(m_scRoot, show);
 
-			// Refresh info
-			if(show) {
-				// Set text
-				m_scPriceText.Localize(
-					m_scPriceText.tid,
-					StringUtils.FormatNumber(_data.def.GetAsLong("unlockPriceCoins"))
-				);
-			}
+		// Refresh info
+		if(show && m_scPriceSetup != null) {
+			// [AOC] UIDragonPriceSetup makes it easy for us!
+			m_scPriceSetup.InitFromData(_data, UserProfile.Currency.SOFT);
 		}
 
 		// Update unavailable info
 		if(m_unavailableInfoText != null) {
 			// Display?
 			show = CheckUnavailable(_data);
-			TriggerAnimator(m_unavailableInfoAnim, show, _animate, _resetAnim);
+			Toggle(m_unavailableRoot, show);
 
 			// Refresh info
 			if(show) {
@@ -154,28 +188,13 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	// INTERNAL UTILS													//
 	//------------------------------------------------------------------//
 	/// <summary>
-	/// Launch animation according to this class needs.
+	/// Activate/deactivate a GameObject, checking its validity first.
 	/// </summary>
-	/// <param name="_anim">Animation to be triggered.</param>
-	/// <param name="_show">Whether to show or hide.</param>
-	/// <param name="_animate">Whether to animate or not.</param>
-	/// <param name="_resetAnim">Whether to reset animation or not.</param>
-	private void TriggerAnimator(ShowHideAnimator _anim, bool _show, bool _animate, bool _resetAnim) {
-		// Nothing if animator is not valid
-		if(_anim == null) return;
-
-		// Let animator do its magic
-		// a) Restart animation when:
-		if(_show && _anim.visible		// Showing and already visible
-	   	&& _animate && _resetAnim		// Use Animations and Reset Animations parameters are true
-	    && this.isActiveAndEnabled) {   // The parent object is active
-			_anim.RestartShow();
-		}
-
-		// b) Don't restart animation for the rest of cases
-		else {
-			_anim.ForceSet(_show, _animate && this.isActiveAndEnabled);	// Don't animate if the parent object is not active
-		}
+	/// <param name="_target">Target GameObject.</param>
+	/// <param name="_activate">Toggle on or off?</param>
+	private void Toggle(GameObject _target, bool _activate) {
+		if(_target == null) return;
+		_target.SetActive(_activate);
 	}
 
 	//------------------------------------------------------------------//
@@ -189,16 +208,29 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <returns>Whether the given dragon can be unlocked with PC.</returns>
 	/// <param name="_data">Dragon to evaluate.</param>
 	public static bool CheckUnlockWithPC(IDragonData _data) {
-		// [AOC] TODO!! Check dragon discounts?
-		return _data.lockState == IDragonData.LockState.LOCKED;
+		// Check lock state
+		bool show = false;
+		switch(_data.lockState) {
+			case IDragonData.LockState.LOCKED:
+			case IDragonData.LockState.AVAILABLE: {
+				show = true;
+			} break;
+
+			case IDragonData.LockState.LOCKED_UNAVAILABLE: {
+				show = _data.HasPriceModifier(UserProfile.Currency.HARD);	// If there is a discount for this dragon, show even when unavailable
+			} break;
+		}
+
+		return show;
 	}
 
-	/// <summary>
-	/// Checks whether the given dragon can be unlocked with SC.
-	/// </summary>
-	/// <returns>Whether the given dragon can be unlocked with SC.</returns>
-	/// <param name="_data">Dragon to evaluate.</param>
-	public static bool CheckUnlockWithSC(IDragonData _data) {
+    /// <summary>
+    /// Checks whether the given dragon can be unlocked with SC.
+    /// </summary>
+    /// <returns>Whether the given dragon can be unlocRefreshCooldownTimersked with SC.</returns>
+    /// <param name="_data">Dragon to evaluate.</param>
+    public static bool CheckUnlockWithSC(IDragonData _data) {
+		// [AOC] Discounts affect visibility?
 		return _data.lockState == IDragonData.LockState.AVAILABLE;
 	}
 
@@ -208,7 +240,15 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <returns>Whether the given dragon is unavailable.</returns>
 	/// <param name="_data">Dragon to evaluate.</param>
 	public static bool CheckUnavailable(IDragonData _data) {
-		return _data.lockState == IDragonData.LockState.LOCKED_UNAVAILABLE;
+		// Check lock state
+		bool show = false;
+		switch(_data.lockState) {
+			case IDragonData.LockState.LOCKED_UNAVAILABLE: {
+				show = !_data.HasPriceModifier(UserProfile.Currency.HARD);	// If there is a discount for this dragon, don't show the unavailable message
+			} break;
+		}
+
+		return show;
 	}
 
 	/// <summary>
@@ -224,7 +264,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 			ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_HC_RESOURCES_FLOW_NAME);
 			purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
 			purchaseFlow.Begin(
-				_data.def.GetAsLong("unlockPricePC"),
+				_data.GetPriceModified(UserProfile.Currency.HARD),
 				UserProfile.Currency.HARD,
 				HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
 				_data.def
@@ -241,15 +281,30 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	public static void UnlockWithSC(IDragonData _data) {
 		// Make sure the dragon we unlock is the currently selected one and that we can actually do it
 		if(CheckUnlockWithSC(_data)) {
-			// Get price and start purchase flow
-			ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_SC_RESOURCES_FLOW_NAME);
-			purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
-			purchaseFlow.Begin(
-				_data.def.GetAsLong("unlockPriceCoins"),
-				UserProfile.Currency.SOFT,
-				HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
-				_data.def
-			);
+			// [AOC] From 1.18 on, don't trigger the missing SC flow for dragon
+			//		 purchases (we are displaying the HC button next to it)
+			// Check whether we have enough SC
+			long priceSC = _data.GetPriceModified(UserProfile.Currency.SOFT);
+			if(priceSC > UsersManager.currentUser.coins) {
+				// Not enough SC! Show a message
+				UIFeedbackText.CreateAndLaunch(
+					LocalizationManager.SharedInstance.Localize("TID_SC_NOT_ENOUGH"),	// [AOC] TODO!! Improve text?
+					GameConstants.Vector2.center,
+					InstanceManager.menuSceneController.hud.transform as RectTransform,
+					"NotEnoughSCError"
+				);
+			} else {
+				// There shouldn't be any problem to perform the transaction, do
+				// it via a ResourcesFlow to avoid duplicating code / missing steps
+				ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_SC_RESOURCES_FLOW_NAME);
+				purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
+				purchaseFlow.Begin(
+					priceSC,
+					UserProfile.Currency.SOFT,
+					HDTrackingManager.EEconomyGroup.UNLOCK_DRAGON,
+					_data.def
+				);
+			}
 		}
 	}
 
@@ -261,7 +316,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_dragonSku">Selected dragon sku.</param>
 	public void OnDragonSelected(string _dragonSku) {
-		Refresh(DragonManager.GetDragonData(_dragonSku), true, true);
+		Refresh(DragonManager.GetDragonData(_dragonSku), true);
 	}
 
 	/// <summary>
@@ -269,16 +324,26 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
 	public void OnDragonAcquired(IDragonData _data) {
-		Refresh(_data, true, false);
+		Refresh(_data, true);
 	}
 
-	/// <summary>
-	/// Check whether this object can be displayed or not.
-	/// </summary>
-	/// <returns><c>true</c> if all the conditions to display this object are met, <c>false</c> otherwise.</returns>
-	/// <param name="_dragonSku">Target dragon sku.</param>
-	/// <param name="_screen">Target screen.</param>
-	public bool OnShowCheck(string _dragonSku, MenuScreen _screen) {
+    /// <summary>
+    /// A modifider that changes the unlock/price of a dragon has changed.
+    /// </summary>
+    /// <param name="_data">Dragon Data.</param>
+    public void OnModifierChanged(IDragonData _data) {
+        if (InstanceManager.menuSceneController.selectedDragonData == _data) {
+            Refresh(_data, false);
+        }
+    }
+
+    /// <summary>
+    /// Check whether this object can be displayed or not.
+    /// </summary>
+    /// <returns><c>true</c> if all the conditions to display this object are met, <c>false</c> otherwise.</returns>
+    /// <param name="_dragonSku">Target dragon sku.</param>
+    /// <param name="_screen">Target screen.</param>
+    public bool OnShowCheck(string _dragonSku, MenuScreen _screen) {
 		// Show only if the target dragon is locked
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
 		return dragonData.lockState == IDragonData.LockState.LOCKED;

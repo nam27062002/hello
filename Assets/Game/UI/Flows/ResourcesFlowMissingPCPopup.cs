@@ -41,6 +41,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		Log("Subscribing to OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.AddListener(OnPillPurchaseSuccess);
 	}
 
@@ -48,6 +49,7 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		Log("Unsubscribing from OnPurchaseSuccess event " + m_recommendedPackPill.GetIAPSku());
 		m_recommendedPackPill.OnPurchaseSuccess.RemoveListener(OnPillPurchaseSuccess);
 	}
 
@@ -89,6 +91,20 @@ public class ResourcesFlowMissingPCPopup : MonoBehaviour {
 	/// <param name="_pill">The pill that triggered the event</param>
 	private void OnPillPurchaseSuccess(IPopupShopPill _pill) {
 		// Notify listeners
+		Log("OnPillPurchaseSuccess! " + _pill.GetIAPSku());
 		OnRecommendedPackPurchased.Invoke();
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+	private void Log(string _message) {
+		// Debug enabled?
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log("[MissingPCPopup]" + _message, ControlPanel.ELogChannel.Store);
 	}
 }

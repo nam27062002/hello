@@ -11,7 +11,7 @@ public class ModDragonLifeGain : ModifierDragon {
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
-    public ModDragonLifeGain(float _percentage) : base(null) {
+    public ModDragonLifeGain(float _percentage) : base() {
         m_percentage = _percentage;
         BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }

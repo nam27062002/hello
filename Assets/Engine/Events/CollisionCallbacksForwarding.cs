@@ -8,7 +8,7 @@ public abstract class CollisionCallbackReceiver : MonoBehaviour {
 
 public class CollisionCallbacksForwarding : MonoBehaviour {
 
-    [SerializeField] private CollisionCallbackReceiver m_receiver;
+    [SerializeField] private CollisionCallbackReceiver m_receiver = null;
 
     [SeparatorAttribute]
 	[SerializeField] private bool m_onCollisionEnter = false;

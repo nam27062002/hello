@@ -71,6 +71,7 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
+    public HDDiscountEventManager m_dragonDiscounts = new HDDiscountEventManager();
 
         // Avoid using dictionaries when possible
     private List<string> m_types;
@@ -97,10 +98,11 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         m_tournament.m_type = "tournament";
         m_quest.m_type = "quest";
         m_passive.m_type = "passive";
+        m_dragonDiscounts.m_type = "discount";
         //
 
-        m_types = new List<string>(3);
-        m_managers = new List<HDLiveEventManager>(3);
+        m_types = new List<string>(4);
+        m_managers = new List<HDLiveEventManager>(4);
 
         m_types.Add( "tournament" );
         m_managers.Add(m_tournament);
@@ -110,6 +112,9 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 
         m_types.Add("passive");
         m_managers.Add(m_passive);
+
+        m_types.Add("dragonDiscount");
+        m_managers.Add(m_dragonDiscounts);
 
 		Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, SaveEventsToCache);
@@ -329,7 +334,15 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
         return ret;
     }
 
-	private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
+    public void ForceRequestMyEventType(int _type) {
+        if (TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyEventsResponse));
+        } else {
+            GameServerManager.SharedInstance.HDEvents_GetMyEventOfType(_type, instance.MyEventsResponse);
+        }
+    }
+
+    private void MyEventsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) 
 	{
 		
 		ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
@@ -413,6 +426,6 @@ public class HDLiveEventsManager : Singleton<HDLiveEventsManager>
 	{
 		m_tournament.Deactivate();
 		m_passive.Activate();
-		m_quest.Activate();	
+		m_quest.Activate();
 	}
 }

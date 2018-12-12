@@ -208,6 +208,7 @@ public class GameSceneController : GameSceneControllerBase {
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
+        PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
 	}
 
 
@@ -469,6 +470,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+		// Make sure multitouch is enabled for boost functionality!
         Input.multiTouchEnabled = true;
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -504,10 +506,13 @@ public class GameSceneController : GameSceneControllerBase {
             Track_RunEnd(_quitGame);
         }
 
-        Track_RoundEnd();
+		Track_RoundEnd();
 
         // Make sure game is not paused
         PauseGame(false, true);
+
+		// Multitouch no longer needed
+		Input.multiTouchEnabled = false;
 
 		Screen.sleepTimeout = SleepTimeout.SystemSetting;
 

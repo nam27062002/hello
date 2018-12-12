@@ -8,10 +8,6 @@ namespace AI {
 
 		[System.Serializable]
 		public class PetSearchStunTargetData : StateComponentData {
-			[Tooltip("Max tier this pet will consider target.")]
-			public DragonTier maxValidTier = DragonTier.TIER_4;
-			[Tooltip("Min tier this pet will consider target.")]
-			public DragonTier minValidTier = DragonTier.TIER_0;
 			public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
 			[Tooltip("Coma separated list of entity skus to ignore")]
@@ -98,7 +94,7 @@ namespace AI {
 						Machine machine = entity.GetComponent<Machine>();
 						if (machine != null && !machine.isPetTarget )
 						{
-							if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
+							// if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
 							{
 								// Test if in front of player!
 								Vector3 entityDir = machine.position - m_owner.dragonMotion.position;

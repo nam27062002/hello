@@ -4,6 +4,11 @@
 /// which one to use. 
 /// </summary>
 
+//----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+#define LOG_ENABLED
+
 using FGOL.Server;
 using System;
 using System.Text;
@@ -138,17 +143,21 @@ public class GameServerManager
 
     protected void InternalCheckConnection(Action<Error> callback, bool highPriority = false)
     {
+		Log("Check Connection");
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
-            Debug.Log("GameServerManager (CheckConnection) :: InternetReachability NotReachable");
+			Log("CheckConnection : InternetReachability NotReachable");
             callback(new ClientConnectionError("InternetReachability NotReachable", ErrorCodes.ClientConnectionError));
         }
         else
         {
+			Log("Internal Ping");
             InternalPing((Error _error, GameServerManager.ServerResponse _response) =>
-            {
+			{
+				Log("Internal Ping Response");
                 if (callback != null)
                 {
+					Log("Internal Chcek Connection Invoking Callback");
                     callback(_error);
                 }
             }, highPriority);
@@ -395,13 +404,14 @@ public class GameServerManager
     /// </summary>
     /// <param name="_callback">Callback.</param>
 	public virtual void HDEvents_GetMyEvents(ServerCallback _callback) {}
+    public virtual void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { }
 
-	/// <summary>
-	/// HDs the events get event. Get the definition of the event
-	/// </summary>
-	/// <param name="_eventID">Event I.</param>
-	/// <param name="_callback">Callback.</param>
-	public virtual void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {}
+    /// <summary>
+    /// HDs the events get event. Get the definition of the event
+    /// </summary>
+    /// <param name="_eventID">Event I.</param>
+    /// <param name="_callback">Callback.</param>
+    public virtual void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {}
 
 	/// <summary>
 	/// HDs the events get my event progess. Gets the progress in the event for the player
@@ -420,7 +430,7 @@ public class GameServerManager
 	public virtual void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {}
 	public virtual void HDEvents_FinishMyEvent(int _eventID, ServerCallback _callback) {}
 
-	public virtual void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {}
+    public virtual void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {}
 
 	//------------------------------------------------------------------------//
 	// DEBUG ONLY															  //
@@ -430,5 +440,17 @@ public class GameServerManager
 	/// </summary>
 	public virtual void Update() {
 		;	// Put a breakpoint in here to peek what the GameServerManager is doing
-	}	
+	}
+
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+	private void Log(string _message) {
+#if LOG_ENABLED
+		// Debug enabled?
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log("[GameServerManager]" + _message, ControlPanel.ELogChannel.Server);
+#endif
+	}
 }

@@ -55,6 +55,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
+        m_numericType = 2;
+
         m_data = new HDTournamentData();
         m_tournamentData = m_data as HDTournamentData;
         m_tournamentDefinition = m_tournamentData.definition as HDTournamentDefinition;
