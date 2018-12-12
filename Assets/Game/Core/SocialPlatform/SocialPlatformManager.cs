@@ -112,11 +112,18 @@ public class SocialPlatformManager : MonoBehaviour
                         socialPlatform = SocialUtils.EPlatform.Facebook;
                     }
                 }
-#endif
+#endif                
                 switch (socialPlatform)
                 {
                     case SocialUtils.EPlatform.Facebook:
-                        m_socialUtils = new SocialUtilsFb();
+                        if (FacebookManager.SharedInstance.CanUseFBFeatures())
+                        {
+                            m_socialUtils = new SocialUtilsFb();
+                        }
+                        else
+                        {
+                            m_socialUtils = new SocialUtilsDummy(false, false);
+                        }
                         break;
 
                     case SocialUtils.EPlatform.Weibo:
