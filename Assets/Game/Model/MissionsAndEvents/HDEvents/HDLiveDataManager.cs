@@ -71,7 +71,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager>
     public HDTournamentManager m_tournament = new HDTournamentManager();
     public HDQuestManager m_quest = new HDQuestManager();
 	public HDPassiveEventManager m_passive = new HDPassiveEventManager();
-    public HDLeagueManager m_league = new HDLeagueManager();
+    public HDLeagueController m_league = new HDLeagueController();
     public HDDiscountEventManager m_dragonDiscounts = new HDDiscountEventManager();
 
     // Avoid using dictionaries when possible

@@ -2,7 +2,7 @@
 using SimpleJSON;
 using UnityEngine;
 
-public class HDLeagueManager : HDLiveDataController {
+public class HDLeagueController : HDLiveDataController {
 
     private int m_liveDataCode;
 
@@ -16,12 +16,12 @@ public class HDLeagueManager : HDLiveDataController {
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public HDLeagueManager() {
+    public HDLeagueController() {
         m_type = "league";
         m_liveDataCode = -1;
     }
 
-    ~HDLeagueManager() {
+    ~HDLeagueController() {
        
     }
 
@@ -63,13 +63,13 @@ public class HDLeagueManager : HDLiveDataController {
 
 
         CreateLeagues("");
-
-
     }   
 
     public override void OnLiveDataResponse() {
-        // request the full data
-
+        if (m_currentLeague != null) {
+            // request the full data
+            m_currentLeague.BuildExtendData();
+        }
     }
    
     private void CreateLeagues(string _currentLeague) {
