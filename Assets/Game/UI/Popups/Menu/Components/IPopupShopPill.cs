@@ -5,6 +5,11 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+#define LOG_ENABLED
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -98,18 +103,23 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// <param name="_track">Track purchases?</param>
 	private void TrackPurchaseResult(bool _track) {
 		// Skip if same state
-		if(_track == m_awaitingPurchaseConfirmation) return;
+		if(_track == m_awaitingPurchaseConfirmation) {
+			Log("Already watiting (or not)(" + m_awaitingPurchaseConfirmation + ") for purchase confirmation, skip subscribing to IAP events");
+			return;
+		}
 
 		// Store new state
 		m_awaitingPurchaseConfirmation = _track;
 
 		// Update listeners
 		if(_track) {
+			Log("Subscribing to IAP events");
 			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
 		} else {
+			Log("Unsubscribing from IAP events");
 			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
@@ -122,8 +132,11 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_success">Has the IAP been successful?</param>
 	private void FinalizeIAP(bool _success) {
+		Log("Finalize IAP: Success? " + _success);
+
 		// Close loading popup
 		if(m_loadingPopupController != null) {
+			Log("Closing loading popup!!");
 			m_loadingPopupController.Close(true);
 		}
 
@@ -132,8 +145,10 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 		// Notify external listeners
 		if(_success) {
+			Log("OnPurchaseSuccess.Invoke");
 			OnPurchaseSuccess.Invoke(this);
 		} else {
+			Log("OnPurchaseError.Invoke");
 			OnPurchaseError.Invoke(this);
 		}
 	}
@@ -168,16 +183,21 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 			case UserProfile.Currency.REAL: {
 				// Do a first quick check on Internet connectivity
+				Log("Quick connectivity check");
                 if(Application.internetReachability == NetworkReachability.NotReachable) {
 					// We have no internet connectivity, finalize the IAP
+					Log("No internet connectivity, finalize the IAP");
                     FinalizeIAP(false);
                     UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
                 } else {
 					// Start real money transaction flow!
+					Log("Internet connectivity OK, start real money transaction flow!");
+
 					// Init internal flag to prevent spamming
 					m_transactionInProgress = true;
 
 					// Open loading popup to block all the UI while the transaction is in progress
+					Log("Opening Loading Popup!");
                     m_loadingPopupController = PopupManager.PopupLoading_Open();
 
 					// Check connection to the store
@@ -191,6 +211,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// Connection to the store has been checked.
 	/// </summary>
 	void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
+		Log("OnConnectionCheckFinished: Error " + (_connectionError == null ? "NULL" : _connectionError.ToString()));
+
 		// [AOC] Editor override
 	#if UNITY_EDITOR
 		_connectionError = null;
@@ -198,12 +220,15 @@ public abstract class IPopupShopPill : MonoBehaviour {
 
 		if(_connectionError == null) {
 			// No error! Proceed with the IAP flow
+			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
 			if(GameStoreManager.SharedInstance.CanMakePayment()) {
 				// Player can perform the payment, continue with the IAP flow
+				Log("Player can perform the payment, continue with the IAP flow");
 				TrackPurchaseResult(true);	// Start listening to GameStoreManager events
 				GameStoreManager.SharedInstance.Buy(GetIAPSku());
 			} else {
 				// Player can't make payment, finalize the IAP
+				Log("Player can't make payment, finalize the IAP");
 				FinalizeIAP(false);
 
 #if UNITY_ANDROID
@@ -218,6 +243,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
             }
         } else {
 			// There was a connection error with the store, finalize the IAP
+			Log("There was a connection error with the store, finalize the IAP");
 			FinalizeIAP(false);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
@@ -228,8 +254,11 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">Sku of the purchased item.</param>
 	private void OnIAPSuccess(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
+		Log("OnIAPSuccess! " + _sku);
+
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
+			Log("Applying shop pack and finalizing IAP flow");
 			// Apply rewards
 			ApplyShopPack();
 
@@ -249,6 +278,8 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">Sku of the item to be purchased.</param>
 	private void OnIAPFailed(string _sku) {
+		Log("OnIAPFailed! " + _sku);
+
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
 			// Stop tracking
@@ -264,9 +295,12 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_flow">Flow.</param>
 	private void OnResourcesFlowSuccess(ResourcesFlow _flow) {
+		Log("OnResourcesFlowSuccess! " + _flow.name + ", " + _flow.itemDef.sku);
+
 		// Is it this one?
 		if(_flow.itemDef.sku == def.sku) {
 			// Apply rewards
+			Log("Applying Shop Pack " + _flow.name);
 			ApplyShopPack();
 
 			// Notify external listeners
@@ -282,10 +316,28 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_flow">Flow.</param>
 	private void OnResourcesFlowFinished(ResourcesFlow _flow) {
+		Log("OnResourcesFlowFinished! " + _flow.name);
+
 		// Is it this one?
 		if(_flow.itemDef.sku == def.sku) {
 			// Update control vars
+			Log("Cancelling resources flow transaction " + _flow.name);
 			m_transactionInProgress = false;
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+	private void Log(string _message) {
+#if LOG_ENABLED
+		// Debug enabled?
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log("[ShopPill]" + _message, ControlPanel.ELogChannel.Store);
+#endif
 	}
 }
