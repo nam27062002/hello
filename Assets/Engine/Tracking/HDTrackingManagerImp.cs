@@ -1751,18 +1751,30 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
-            // BI only wants these two parameters when terms policy is GDPR and the user is not minor, otherwise false must be sent            
-            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+            // BI wants these two parameters to be false for minors
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled())
             {
                 _enableAnalytics = false;
                 _enableMarketing = false;
             }
-
-            e.data.Add(TRACK_PARAM_AGE, _age);
-            e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
-            e.data.Add(TRACK_PARAM_DURATION, _duration);
-            e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+            
+            e.data.Add(TRACK_PARAM_DURATION, _duration);            
             e.data.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
+
+            // BI only wants these two parameters when terms policy is GDPR
+            if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+            {
+                e.data.Add(TRACK_PARAM_AGE, null);
+                e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
+                e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
+            }
+            else
+            {
+                e.data.Add(TRACK_PARAM_AGE, _age);
+                e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
+                e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+            }
+
         }
         m_eventQueue.Enqueue(e);
     }
