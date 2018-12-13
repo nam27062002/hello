@@ -54,7 +54,7 @@ public class HDLeagueController : HDLiveDataController {
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
 
-            CreateLeagues("");
+            LoadData(json);
         }
         m_dataLoadedFromCache = true;
     }
@@ -62,7 +62,7 @@ public class HDLeagueController : HDLiveDataController {
     public override void LoadData(JSONNode _data) {
 
 
-        CreateLeagues("");
+        CreateLeagues("", "");
     }   
 
     public override void OnLiveDataResponse() {
@@ -72,7 +72,7 @@ public class HDLeagueController : HDLiveDataController {
         }
     }
    
-    private void CreateLeagues(string _currentLeague) {
+    private void CreateLeagues(string _currentLeague, string _nextLeague) {
         List<DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitionsList("TODO: LEAGUES CAT");
              
         for (int i = 0; i < definitions.Count; ++i) {
