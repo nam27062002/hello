@@ -380,6 +380,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             kTrackingConfig.m_iMaxCachedLoggedDays = 3;
 
             TrackingManager.SharedInstance.Initialise(kTrackingConfig);
+
+            // This needs to be done here because TrackingManager.Initialise() adds a listener to GDPRManager that we need to be called so events will be tracked on 
+            // Appsflyer and Facebook Analytics. At this point of the flow we're sure that the user has already seed consent popup so this is a safe place to do this
+            GDPRManager.SharedInstance.ProceedWithGDPRDependantAPIs();
         }
     }    
 
@@ -1751,18 +1755,30 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.consentpopup");
         {
-            // BI only wants these two parameters when terms policy is GDPR and the user is not minor, otherwise false must be sent            
-            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+            // BI wants these two parameters to be false for minors
+            if (GDPRManager.SharedInstance.IsAgeRestrictionEnabled())
             {
                 _enableAnalytics = false;
                 _enableMarketing = false;
             }
-
-            e.data.Add(TRACK_PARAM_AGE, _age);
-            e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
-            e.data.Add(TRACK_PARAM_DURATION, _duration);
-            e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+            
+            e.data.Add(TRACK_PARAM_DURATION, _duration);            
             e.data.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
+
+            // BI only wants these two parameters when terms policy is GDPR
+            if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+            {
+                e.data.Add(TRACK_PARAM_AGE, null);
+                e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
+                e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
+            }
+            else
+            {
+                e.data.Add(TRACK_PARAM_AGE, _age);
+                e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
+                e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
+            }
+
         }
         m_eventQueue.Enqueue(e);
     }

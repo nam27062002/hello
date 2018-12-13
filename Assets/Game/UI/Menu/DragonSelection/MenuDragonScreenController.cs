@@ -37,12 +37,21 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
     [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
 
+	// Public properties
 	private bool m_isAnimating = false;
 	private bool isAnimating {
 		get { return m_isAnimating; }
 		set { m_isAnimating = value; }
 	}
 
+	// Use it to automatically select a specific dragon upon entering this screen
+	// If the screen is already the active one, the selection will be applied the next time the screen is entered from a different screen
+	private string m_pendingToSelectDragon = string.Empty;
+	public string pendingToSelectDragon {
+		set { m_pendingToSelectDragon = value; }
+	}
+
+	// Internal vars
 	private MenuScreen m_goToScreen = MenuScreen.NONE;
 	private IDragonData m_dragonToTease = null;
 	private IDragonData m_dragonToReveal = null;
@@ -52,6 +61,12 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+
+	private void Awake() {
+		// Subscribe to external events.
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
+	}
 
 	void Start(){
 		if ( HDLiveDataManager.instance.ShouldRequestMyLiveData() )
@@ -65,9 +80,6 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	private void OnEnable() {
         m_showPendingTransactions = false;
-
-        // Subscribe to external events.
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
         // Check whether we need to move to another screen
         // Check order is relevant!
@@ -100,9 +112,17 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// Raises the disable event.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe to external events.
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);    
+		    
     }
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+		// Unsubscribe to external events.
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
+	}
 
 	/// <summary>
 	/// Called every frame
@@ -545,11 +565,13 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// <param name="_to">Target screen.</param>
 	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// Hide all dragons that are not meant to be displayed
-		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
-		foreach (IDragonData data in dragonsByOrder) {
-			if (data.lockState == IDragonData.LockState.HIDDEN || data.lockState == IDragonData.LockState.TEASE) {
-				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
-				slot.animator.Hide(true, false);	// Do not desactivate to allow async loading
+		if(this.enabled) {	// [AOC] To replicate previous logic where the event was subscribed on the Enable/Disable scope
+			List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
+			foreach(IDragonData data in dragonsByOrder) {
+				if(data.lockState == IDragonData.LockState.HIDDEN || data.lockState == IDragonData.LockState.TEASE) {
+					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
+					slot.animator.Hide(true, false);    // Do not desactivate to allow async loading
+				}
 			}
 		}
 
@@ -564,6 +586,22 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
+		}
+	}
+
+	/// <summary>
+	/// The current menu screen has changed (animation ends now).
+	/// </summary>
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnTransitionEnd(MenuScreen _from, MenuScreen _to) {
+		// If entering this screen
+		if(_to == MenuScreen.DRAGON_SELECTION) {
+			// If we have a dragon selection pending, do it now!
+			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
+				m_pendingToSelectDragon = string.Empty;
+			}
 		}
 	}    
 

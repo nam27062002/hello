@@ -470,6 +470,7 @@ public class GameSceneController : GameSceneControllerBase {
 	/// Start a new game. All temp game stats will be reset.
 	/// </summary>
 	public void StartGame() {
+		// Make sure multitouch is enabled for boost functionality!
         Input.multiTouchEnabled = true;
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -505,10 +506,13 @@ public class GameSceneController : GameSceneControllerBase {
             Track_RunEnd(_quitGame);
         }
 
-        Track_RoundEnd();
+		Track_RoundEnd();
 
         // Make sure game is not paused
         PauseGame(false, true);
+
+		// Multitouch no longer needed
+		Input.multiTouchEnabled = false;
 
 		Screen.sleepTimeout = SleepTimeout.SystemSetting;
 

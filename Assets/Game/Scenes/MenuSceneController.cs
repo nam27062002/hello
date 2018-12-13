@@ -333,8 +333,11 @@ public class MenuSceneController : SceneController {
 	/// </summary>
 	/// <param name="_data">The dragon that has been unlocked.</param>
 	public void OnDragonAcquired(IDragonData _data) {
-		// Just make it the current dragon
-		OnDragonSelected(_data.def.sku);
+		// If we're on the right mode, make it the current dragon
+		if(SceneController.mode == SceneController.DragonTypeToMode(_data.type)) {
+			// Just make it the current dragon
+			OnDragonSelected(_data.def.sku);
+		}
 	}
 
     private GameObject m_uiCanvasGO;

@@ -54,8 +54,9 @@ public class HDDiscountEventManager : HDPassiveEventManager {
 
     protected override void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
         base.FinishEventResponse(_error, _response);
-
-        HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
+		if (!HDLiveDataManager.TEST_CALLS) {
+			HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
+		}
     }
 
     private void CheckEvent(IDragonData _data) {

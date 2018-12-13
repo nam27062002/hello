@@ -104,12 +104,13 @@ public class PassiveEventIcon : IPassiveEventIcon {
 			// Loading Screen
 			if(LoadingScreen.isVisible) {
 				// Check tournament mode
-				switch(GameSceneController.mode) {
-					case GameSceneController.Mode.DEFAULT: {
+				switch(SceneController.mode) {
+					case SceneController.Mode.DEFAULT:
+					case SceneController.Mode.SPECIAL_DRAGONS: {
 						show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.NORMAL_MODE);
 					} break;
 
-					case GameSceneController.Mode.TOURNAMENT: {
+					case SceneController.Mode.TOURNAMENT: {
 						show &= CheckLocation(location, DisplayLocation.INGAME | DisplayLocation.TOURNAMENT_MODE);
 					} break;
 				}
