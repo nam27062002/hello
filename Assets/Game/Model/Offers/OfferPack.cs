@@ -45,25 +45,38 @@ public class OfferPack {
 		EXPIRED
 	}
 
-	public const int MAX_ITEMS = 3;	// For now
+	public enum Type {
+		PROGRESSION,
+		PUSHED,
+		ROTATIONAL
+	}
+
+	public const int MAX_ITEMS = 3; // For now
+	public const Type DEFAULT_TYPE = Type.PROGRESSION;
+
 	#endregion
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	#region MEMBERS AND PROPERTIES
 	// Pack setup
-	private DefinitionNode m_def = null;
+	protected DefinitionNode m_def = null;
 	public DefinitionNode def {
 		get { return m_def; }
 	}
 
-	private List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
+	protected Type m_type = DEFAULT_TYPE;
+	public Type type {
+		get { return m_type; }
+	}
+
+	protected List<OfferPackItem> m_items = new List<OfferPackItem>(MAX_ITEMS);
 	public List<OfferPackItem> items {
 		get { return m_items; }
 	}
 
-	private string m_uniqueId = "";
+	protected string m_uniqueId = "";
 	public string uniqueId {
 		get {
 			if(!string.IsNullOrEmpty(m_uniqueId)) {
@@ -76,7 +89,7 @@ public class OfferPack {
 		}
 	}
 
-	private State m_state = State.PENDING_ACTIVATION;
+	protected State m_state = State.PENDING_ACTIVATION;
 	public State state {
 		get { return m_state; }
 	}
@@ -89,81 +102,81 @@ public class OfferPack {
 	// See https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+Offers+1.0#id-[HD]Offers1.0-Segmentationdetails
 
 	// Mandatory segmentation params
-	private Version m_minAppVersion = new Version();
+	protected Version m_minAppVersion = new Version();
 	public Version minAppVersion {
 		get { return m_minAppVersion; }
 	}
 
-	private int m_order = 0;
+	protected int m_order = 0;
 	public int order {
 		get { return m_order; }
 	}
 
 	// Only required for Featured packs
-	private bool m_featured = false;
+	protected bool m_featured = false;
 	public bool featured {
 		get { return m_featured; }
 	}
 
-	private int m_frequency = 0;
-	private int m_maxViews = 0;
-	private WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
+	protected int m_frequency = 0;
+	protected int m_maxViews = 0;
+	protected WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
 
 	// Timing
-	private float m_duration = 0f;
-	private DateTime m_startDate = DateTime.MinValue;
-	private DateTime m_endDate = DateTime.MinValue;
+	protected float m_duration = 0f;
+	protected DateTime m_startDate = DateTime.MinValue;
+	protected DateTime m_endDate = DateTime.MinValue;
 
-	private bool m_isTimed = false;
+	protected bool m_isTimed = false;
 	public bool isTimed {
 		get { return m_isTimed; }
 	}
 
 	// Optional params
-	private string[] m_countriesAllowed = new string[0];
-	private string[] m_countriesExcluded = new string[0];
-	private int m_gamesPlayed = 0;
-	private PayerType m_payerType = PayerType.ANYONE;
-	private float m_minSpent = 0f;
-	private int m_minNumberOfPurchases = 0;
-	private long m_secondsSinceLastPurchase = 0;
+	protected string[] m_countriesAllowed = new string[0];
+	protected string[] m_countriesExcluded = new string[0];
+	protected int m_gamesPlayed = 0;
+	protected PayerType m_payerType = PayerType.ANYONE;
+	protected float m_minSpent = 0f;
+	protected int m_minNumberOfPurchases = 0;
+	protected long m_secondsSinceLastPurchase = 0;
 
-	private string[] m_dragonUnlocked = new string[0];
-	private string[] m_dragonOwned = new string[0];
-	private string[] m_dragonNotOwned = new string[0];
+	protected string[] m_dragonUnlocked = new string[0];
+	protected string[] m_dragonOwned = new string[0];
+	protected string[] m_dragonNotOwned = new string[0];
 
-	private Range m_scBalanceRange = new Range(0, float.MaxValue);
-	private Range m_hcBalanceRange = new Range(0, float.MaxValue);
-	private int m_openedEggs = 0;
+	protected Range m_scBalanceRange = new Range(0, float.MaxValue);
+	protected Range m_hcBalanceRange = new Range(0, float.MaxValue);
+	protected int m_openedEggs = 0;
 
-	private int m_petsOwnedCount = 0;
-	private string[] m_petsOwned = new string[0];
-	private string[] m_petsNotOwned = new string[0];
+	protected int m_petsOwnedCount = 0;
+	protected string[] m_petsOwned = new string[0];
+	protected string[] m_petsNotOwned = new string[0];
 
-	private RangeInt m_progressionRange = new RangeInt();
+	protected RangeInt m_progressionRange = new RangeInt();
 
-	private string[] m_skinsUnlocked = new string[0];
-	private string[] m_skinsOwned = new string[0];
-	private string[] m_skinsNotOwned = new string[0];
+	protected string[] m_skinsUnlocked = new string[0];
+	protected string[] m_skinsOwned = new string[0];
+	protected string[] m_skinsNotOwned = new string[0];
 
 	// Purchase limit
-	private int m_purchaseLimit = 1;
-	private int m_purchaseCount = 0;
+	protected int m_purchaseLimit = 1;
+	protected int m_purchaseCount = 0;
 	public int purchaseCount {
 		get { return m_purchaseCount; }
 	}
 
 	// Internal vars
-	private int m_viewsCount = 0;	// Only auto-triggered views
-	private DateTime m_lastViewTimestamp = new DateTime();
+	protected int m_viewsCount = 0;	// Only auto-triggered views
+	protected DateTime m_lastViewTimestamp = new DateTime();
 
 	// Activation control
-	private DateTime m_activationTimestamp = DateTime.MinValue;
+	protected DateTime m_activationTimestamp = DateTime.MinValue;
 	public DateTime activationTimestmap {
 		get { return m_activationTimestamp; }
 	}
 
-	private DateTime m_endTimestamp = DateTime.MaxValue;
+	protected DateTime m_endTimestamp = DateTime.MaxValue;
 	public DateTime endTimestamp {
 		get { return m_endTimestamp; }
 	}
@@ -202,7 +215,7 @@ public class OfferPack {
 	/// Will look for pack's state changes.
 	/// </summary>
 	/// <returns>Whether the pack has change its state.</returns>
-	public bool UpdateState() {
+	public virtual bool UpdateState() {
 		// Based on pack's state
 		State oldState = m_state;
 		switch(m_state) {
@@ -212,24 +225,25 @@ public class OfferPack {
 					ChangeState(State.ACTIVE);
 
 					// Just in case, check for expiration immediately after
-					if(CheckExpiration()) {
+					if(CheckExpiration(true)) {
 						ChangeState(State.EXPIRED);
 					}
 				}
 
 				// Packs expiring before ever being activated (i.e. dragon not owned, excluded countries, etc.)
-				else if(CheckExpiration()) {
+				else if(CheckExpiration(true)) {
 					ChangeState(State.EXPIRED);
 				}
 			} break;
 
 			case State.ACTIVE: {
 				// Check for expiration
-				if(CheckExpiration()) {
+				if(CheckExpiration(true)) {
 					ChangeState(State.EXPIRED);
 				}
 
 				// The pack might have gone out of segmentation range (i.e. currency balance). Check it!
+				// [AOC] TODO!! We might wanna keep some packs until they expire even if initial segmentation is no longer valid
 				else if(!CheckSegmentation()) {
 					ChangeState(State.PENDING_ACTIVATION);
 				}
@@ -251,6 +265,14 @@ public class OfferPack {
 	public void ForceExpiration() {
 		ChangeState(State.EXPIRED);
 	}
+
+	/// <summary>
+	/// Immediately mark this pack as active.
+	/// No checks will be performed!
+	/// </summary>
+	public void Activate() {
+		ChangeState(State.ACTIVE);
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -260,10 +282,11 @@ public class OfferPack {
 	/// <summary>
 	/// Reset to default values.
 	/// </summary>
-	public void Reset() {
+	public virtual void Reset() {
 		// Items and def
 		m_items.Clear();
 		m_def = null;
+		m_type = DEFAULT_TYPE;
 		m_uniqueId = string.Empty;
 		m_state = State.PENDING_ACTIVATION;
 
@@ -327,13 +350,15 @@ public class OfferPack {
 	/// Initialize this offer pack with the given definition.
 	/// </summary>
 	/// <param name="_def">Definition to be parsed.</param>
-    public void InitFromDefinition(DefinitionNode _def, bool _updateFromCustomizer) {
+    public virtual void InitFromDefinition(DefinitionNode _def) {
 		// Reset to default values
 		Reset();
 
 		// Store def
 		m_def = _def;
 
+		// Offer Type
+		m_type = StringToType(m_def.GetAsString("type"));
 
 		// Items - limited to 3 for now
 		for(int i = 1; i <= MAX_ITEMS; ++i) {	// [1..N]
@@ -426,7 +451,7 @@ public class OfferPack {
 	/// The pack should have the default values (as applied in the Reset() method).
 	/// </summary>
 	/// <param name="_def">Definition to be filled.</param>
-	public void ValidateDefinition(DefinitionNode _def) {
+	public virtual void ValidateDefinition(DefinitionNode _def) {
 		// Items
 		// Create a dummy item with default values and use it to validate the definitions
 		OfferPackItem item = new OfferPackItem();
@@ -436,6 +461,7 @@ public class OfferPack {
 
 		// General
 		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
 		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
@@ -501,7 +527,7 @@ public class OfferPack {
 	/// Start date, unlocked content, progression, etc.
 	/// </summary>
 	/// <returns>Whether this pack should be activated or not.</returns>
-	private bool CheckActivation() {
+	public virtual bool CheckActivation() {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
@@ -561,7 +587,8 @@ public class OfferPack {
 	/// End date / duration, locked content, progression, purchase limit, etc.
 	/// </summary>
 	/// <returns>Whether this pack has expired.</returns>
-	private bool CheckExpiration() {
+	/// <param name="_checkTime">Include expiration by time? Can be manually checked via the CheckExpirationByTime() method.</param>
+	public virtual bool CheckExpiration(bool _checkTime) {
 		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
@@ -581,15 +608,9 @@ public class OfferPack {
 			}
 		}
 
-		// Timers
-		if(m_isTimed) {
-			DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-
-			// End date
-			if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return true;
-
-			// If active, check end timestamp (duration)
-			if(isActive && serverTime > m_endTimestamp) return true;
+		// Timers - only if requested
+		if(_checkTime) {
+			if(CheckExpirationByTime()) return true;
 		}
 
 		// Purchase limit (ignore if 0 or negative, unlimited pack)
@@ -634,12 +655,33 @@ public class OfferPack {
 	}
 
 	/// <summary>
+	/// Checks the expiration by time exclusively.
+	/// </summary>
+	/// <returns>Whether this pack has expired by time or not.</returns>
+	public virtual bool CheckExpirationByTime() {
+		// Never if the offer is not timed
+		if(!m_isTimed) return false;
+
+		// Get server time
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+
+		// Global end date
+		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return true;
+
+		// If active, check end timestamp (duration)
+		if(isActive && serverTime > m_endTimestamp) return true;
+
+		// All checks passed!
+		return false;
+	}
+
+	/// <summary>
 	/// Checks parameters that could cause a state change multiple times.
 	/// These are parameters that can be triggered multiple times and activate/deactivate the pack:
 	/// Currency range, etc.
 	/// </summary>
 	/// <returns>Whether this pack passes defined segmentation with current user progression.</returns>
-	private bool CheckSegmentation() {
+	public virtual bool CheckSegmentation() {
 		// Progression
 		UserProfile profile = UsersManager.currentUser;
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
@@ -665,7 +707,7 @@ public class OfferPack {
 	/// No validation is done.
 	/// </summary>
 	/// <param name="_newState">New state for the pack.</param>
-	private void ChangeState(State _newState) {
+	protected virtual void ChangeState(State _newState) {
 		// Actions to be performed when leaving a state
 		switch(m_state) {
 			case State.PENDING_ACTIVATION: break;
@@ -727,7 +769,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
-	public PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
+	public virtual PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
 		// Just in case
 		if(m_def == null) return null;
 
@@ -772,7 +814,7 @@ public class OfferPack {
 	/// <summary>
 	/// Apply this pack to current user.
 	/// </summary>
-	public void Apply() {
+	public virtual void Apply() {
 		// Validate purchase limit
 		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return;
 
@@ -803,6 +845,37 @@ public class OfferPack {
 	// STATIC UTILS															  //
 	//------------------------------------------------------------------------//
 	#region STATIC UTILS
+	/// <summary>
+	/// Factory method.
+	/// Creates and initializes a new offer pack from the given definition node.
+	/// </summary>
+	/// <returns>The new pack. Never <c>null</c>, can be of any OfferPack subtype.</returns>
+	/// <param name="_def">The definition whom we want to create a new offer pack.</param>
+	public static OfferPack CreateFromDefinition(DefinitionNode _def) {
+		// Check params
+		Debug.Assert(_def != null, "Invalid definition!");
+
+		// Create new pack - depends on type
+		OfferPack newPack = null;
+		Type type = StringToType(_def.GetAsString("type"));
+		switch(type) {
+			case Type.ROTATIONAL: {
+				newPack = new OfferPackRotational();
+			} break;
+
+			default: {
+				newPack = new OfferPack();
+			} break;
+		}
+
+		// Initialize
+		newPack.InitFromDefinition(_def);
+
+
+		// Done!
+		return newPack;
+	}
+
 	/// <summary>
 	/// Custom range parser. Do it here to avoid changing Calety -_-
 	/// </summary>
@@ -878,6 +951,34 @@ public class OfferPack {
 			_def.SetValue(_key, _value);
 		}
 	}
+
+	/// <summary>
+	/// Convert from enum Type to string representation.
+	/// </summary>
+	/// <returns>The string representation of the given type.</returns>
+	/// <param name="_type">Type to be converted.</param>
+	public static string TypeToString(Type _type) {
+		switch(_type) {
+			case Type.PROGRESSION: 	return "progression";
+			case Type.PUSHED: 		return "pushed";
+			case Type.ROTATIONAL: 	return "rotational";
+		}
+		return TypeToString(DEFAULT_TYPE);
+	}
+
+	/// <summary>
+	/// Parse a string into a Type.
+	/// </summary>
+	/// <returns>The type corresponding to the given string.</returns>
+	/// <param name="_typeStr">String representation of a type to be parsed.</param>
+	public static Type StringToType(string _typeStr) {
+		switch(_typeStr) {
+			case "progression": return Type.PROGRESSION;
+			case "pushed":		return Type.PUSHED;
+			case "rotational":	return Type.ROTATIONAL;
+		}
+		return DEFAULT_TYPE;
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -888,7 +989,7 @@ public class OfferPack {
 	/// In the particular case of the offers, we only need to persist them in specific cases.
 	/// </summary>
 	/// <returns>Whether the offer should be persisted or not.</returns>
-	public bool ShouldBePersisted() {
+	public virtual bool ShouldBePersisted() {
 		// Never if definition is not valid
 		if(m_def == null) return false;
 
@@ -923,7 +1024,7 @@ public class OfferPack {
 	/// </summary>
 	/// <param name="_data">The data object loaded from persistence.</param>
 	/// <returns>Whether the mission was successfully loaded</returns>
-	public void Load(SimpleJSON.JSONClass _data) {
+	public virtual void Load(SimpleJSON.JSONClass _data) {
 		string key = "";
 
 		// State
@@ -965,7 +1066,7 @@ public class OfferPack {
 	/// Create and return a persistence save data json initialized with the data.
 	/// </summary>
 	/// <returns>A new data json to be stored to persistence by the PersistenceManager.</returns>
-	public SimpleJSON.JSONClass Save() {
+	public virtual SimpleJSON.JSONClass Save() {
 		// We can potentially have a lot of offer packs, so try to minimize stored data
 		// To do so, we will only store relevant data whose value is different than the default one
 		// Create new object

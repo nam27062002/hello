@@ -21,25 +21,30 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float REFRESH_FREQUENCY = 1f;	// Seconds
+	private const float REFRESH_FREQUENCY = 1f; // Seconds
+	private const int MAX_ACTIVE_ROTATIONAL_OFFERS = 1;
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Public
-	private List<OfferPack> m_activeOffers = new List<OfferPack>();
+	private List<OfferPack> m_activeOffers = new List<OfferPack>();		// All currently active offers (state ACTIVE), regardless of type
 	public static List<OfferPack> activeOffers {
 		get { return instance.m_activeOffers; }
 	}
 
-	private OfferPack m_featuredOffer = new OfferPack();
+	private OfferPack m_featuredOffer = null;
 	public static OfferPack featuredOffer {
 		get { return instance.m_featuredOffer; }
 	}
 
 	// Internal
-    private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();
-    private List<OfferPack> m_allOffers = new List<OfferPack>();
+	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled offer packs, regardless of type
+	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
+	private List<OfferPack> m_allRotationalOffers = new List<OfferPack>();  // All rotational offers, regardless of state
+	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();	// Currently active rotational offers
+	private Queue<string> m_rotationalHistory = new Queue<string>();	// Historic of rotational offers
+	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
 
 	//------------------------------------------------------------------------//
@@ -68,7 +73,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// Initialize manager from definitions.
 	/// Requires definitions to be loaded into the DefinitionsManager.
 	/// </summary>
-	public static void InitFromDefinitions(bool _updateFromCustomizer) {
+	public static void InitFromDefinitions() {
 		// Check requirements
 		Debug.Assert(ContentManager.ready, "Definitions Manager must be ready before invoking this method.");
 
@@ -79,6 +84,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         instance.m_allOffers.Clear();
 		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
+		instance.m_offersToRemove.Clear();
+		instance.m_allRotationalOffers.Clear();
+		instance.m_activeRotationalOffers.Clear();
 		instance.m_featuredOffer = null;
 
 		// Get all known offer packs
@@ -89,16 +97,21 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
-			// Create new pack
-			OfferPack newPack = new OfferPack();
-            newPack.InitFromDefinition(offerDefs[i], _updateFromCustomizer);
+			// Create and initialize new pack
+			OfferPack newPack = OfferPack.CreateFromDefinition(offerDefs[i]);
 
             // Store new pack
             instance.m_allOffers.Add(newPack);
 
-            // Skip if offer is not enabled
-            if (offerDefs[i].GetAsBool("enabled", false))
-			    instance.m_allEnabledOffers.Add(newPack);
+			// If enabled, store to the enabled collection
+			if(offerDefs[i].GetAsBool("enabled", false)) {
+				instance.m_allEnabledOffers.Add(newPack);
+			}
+
+			// If rotational, store to the rotational collection
+			if(newPack.type == OfferPack.Type.ROTATIONAL) {
+				instance.m_allRotationalOffers.Add(newPack);
+			}
 		}
 
 		// Refresh active and featured offers
@@ -117,42 +130,60 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// <param name="_forceActiveRefresh">Force a refresh of the active offers list.</param>
 	private void Refresh(bool _forceActiveRefresh) {
 		// Aux vars
+		OfferPack pack = null;
 		bool dirty = false;
-		List<OfferPack> toRemove = new List<OfferPack>();
+		m_offersToRemove.Clear();
+
+		// Iterate active rotational packs to check for expiration
+		bool newRotationalNeeded = false;
+		for(int i = 0; i < m_activeRotationalOffers.Count; ++i) {
+			// 
+		}
 
 		// Iterate all offer packs looking for state changes
 		for(int i = 0; i < m_allEnabledOffers.Count; ++i) {
-			// Has offer changed state?
-			if(m_allEnabledOffers[i].UpdateState() || _forceActiveRefresh) {
-				// Yes!
-				dirty = true;
+			// Aux vars
+			pack = m_allEnabledOffers[i];
 
-				// Which state? Refresh lists
-				switch(m_allEnabledOffers[i].state) {
-					case OfferPack.State.ACTIVE: {
-						m_activeOffers.Add(m_allEnabledOffers[i]);
-					} break;
+			// Process pack depending on its type
+			switch(pack.type) {
+				// Classic packs
+				case OfferPack.Type.PROGRESSION:
+				case OfferPack.Type.PUSHED: {
+					// Has offer changed state?
+					if(pack.UpdateState() || _forceActiveRefresh) {
+						// Yes!
+						dirty = true;
 
-					case OfferPack.State.EXPIRED: {
-						toRemove.Add(m_allEnabledOffers[i]);
-						m_activeOffers.Remove(m_allEnabledOffers[i]);
-					} break;
+						// Update lists
+						UpdateCollections(pack);
 
-					case OfferPack.State.PENDING_ACTIVATION: {
-						m_activeOffers.Remove(m_allEnabledOffers[i]);
-					} break;
-				}
+						// Update persistence with this pack's new state
+						// [AOC] Packs Save() is smart, only stores packs when required
+						UsersManager.currentUser.SaveOfferPack(pack);
+					}
+				} break;
 
-				// Update persistence with this pack's new state
-				// [AOC] Packs Save() is smart, only stores packs when required
-				UsersManager.currentUser.SaveOfferPack(m_allEnabledOffers[i]);
+				// Rotational packs
+				case OfferPack.Type.ROTATIONAL: {
+					//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+					//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+					//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+					//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+					//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+					//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+					//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+					//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+					//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+				} break;
 			}
 		}
 
 		// Remove expired offers (they won't be active anymore, no need to update them)
-		for(int i = 0; i < toRemove.Count; ++i) {
-			m_allEnabledOffers.Remove(toRemove[i]);
+		for(int i = 0; i < m_offersToRemove.Count; ++i) {
+			m_allEnabledOffers.Remove(m_offersToRemove[i]);
 		}
+		m_offersToRemove.Clear();
 
 		// Has any offer changed its state?
 		if(dirty) {
@@ -173,6 +204,29 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 			// Notify game
 			Messenger.Broadcast(MessengerEvents.OFFERS_CHANGED);
+		}
+	}
+
+	/// <summary>
+	/// Refresh the offer collections adding/removing the given offer based
+	/// on its type and state.
+	/// </summary>
+	/// <param name="_offer">Offer to be processed.</param>
+	private void UpdateCollections(OfferPack _offer) {
+		// Which state? Refresh lists
+		switch(_offer.state) {
+			case OfferPack.State.ACTIVE: {
+				m_activeOffers.Add(_offer);
+			} break;
+
+			case OfferPack.State.EXPIRED: {
+				m_offersToRemove.Add(_offer);
+				m_activeOffers.Remove(_offer);
+			} break;
+
+			case OfferPack.State.PENDING_ACTIVATION: {
+				m_activeOffers.Remove(_offer);
+			} break;
 		}
 	}
 
