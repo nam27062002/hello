@@ -183,6 +183,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
+    
+    private ParticleData m_inLoveParticle;
+    private GameObject m_inLoveParticleInstance;
 
 
 	private Transform m_transform;
@@ -330,7 +333,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         }
 		m_stunParticle.CreatePool();
 
-
+        if ( m_inLoveParticle == null ) {
+            m_inLoveParticle = new ParticleData("PS_Stun","",Vector3.one);
+        }
+        m_inLoveParticle.CreatePool();
+        
 		// Backup view values
 		m_viewPosition = m_view.localPosition;
 		m_viewRotation = m_view.localRotation;
@@ -1220,5 +1227,21 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			}
 		}
 	}
+    
+    
+    public void SetInLove( bool inlove ){
+        if ( inlove ){
+            if (m_inLoveParticleInstance == null)
+            {
+                m_inLoveParticleInstance = m_inLoveParticle.Spawn(m_transform);
+            }
+        }else{
+            if ( m_inLoveParticleInstance )
+            {
+                m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+                m_inLoveParticleInstance = null;
+            }
+        }
+    }
 
 }

@@ -14,7 +14,8 @@ namespace AI {
 			Locked,
 			Panic,
 			FreeFall,
-			StandUp
+			StandUp,
+            InLove
 		};
 
 		public enum UpVector {
@@ -92,7 +93,7 @@ namespace AI {
 
 		private float m_timer;
 
-		private DragonMotion m_dragon;
+		protected DragonMotion m_dragon;
 
 		private State m_state;
 		private State m_nextState;
@@ -234,13 +235,16 @@ namespace AI {
 				case State.FreeFall:
 					ExtendedUpdateFreeFall();
 					break;
-
 				case State.StandUp:
 					m_timer -= Time.deltaTime;
 					if (m_timer <= 0f) {
 						OnStandUp();
 					}
 					break;
+                case State.InLove:
+                    FaceDragon();
+                    UpdateOrientation();
+                    break;
 			}
 
 			m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
@@ -380,9 +384,9 @@ namespace AI {
 
 		private void CheckState() {
 			if (m_state != State.StandUp) {
-				bool cantMove = m_machine.GetSignal(Signals.Type.Biting | Signals.Type.Latching | Signals.Type.LockedInCage | Signals.Type.Panic | Signals.Type.FallDown);
+				bool canMove = !m_machine.GetSignal(Signals.Type.Biting | Signals.Type.Latching | Signals.Type.LockedInCage | Signals.Type.Panic | Signals.Type.FallDown | Signals.Type.InLove);
 
-				if (!cantMove) {
+				if (canMove) {
 					if (m_state == State.FreeFall) {
 						m_nextState = State.StandUp;
 					} else {
@@ -391,6 +395,7 @@ namespace AI {
 				} else {
 					if 		(m_machine.GetSignal(Signals.Type.LockedInCage)) m_nextState = State.Locked;
 					else if	(m_machine.GetSignal(Signals.Type.FallDown)) 	 m_nextState = State.FreeFall;
+                    else if (m_machine.GetSignal(Signals.Type.InLove))       m_nextState = State.InLove;
 					else if (m_machine.GetSignal(Signals.Type.Panic)) 		 m_nextState = State.Panic;
 					else if (m_machine.GetSignal(Signals.Type.Biting)) 		 m_nextState = State.Biting;
 					else if (m_machine.GetSignal(Signals.Type.Latching)) 	 m_nextState = State.Latching;
@@ -428,6 +433,9 @@ namespace AI {
 				case State.FreeFall:			
 					m_viewControl.Falling(false);
 					break;
+                case State.InLove:
+                    m_viewControl.SetInLove(false);
+                    break;
 			}
 
 			// change state
@@ -466,6 +474,9 @@ namespace AI {
 					Stop();
 					m_timer = 2f; // fallback timer, if we don't have an event in our animations
 					break;
+                case State.InLove:
+                    m_viewControl.SetInLove(true);
+                    break;
 			}
 		}
 
@@ -486,6 +497,8 @@ namespace AI {
 
 		protected abstract void OnFreeFall();
 		protected abstract void ExtendedUpdateFreeFall();
+        
+        protected abstract void FaceDragon();
 
 		protected abstract void UpdateOrientation();
 		protected abstract void OnSetVelocity();
