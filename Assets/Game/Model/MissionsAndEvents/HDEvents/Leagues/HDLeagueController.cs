@@ -5,8 +5,12 @@ using UnityEngine;
 public class HDLeagueController : HDLiveDataController {
     //---[Classes and Enums]----------------------------------------------------
     public enum State {
-
-
+        NONE = 0,
+        NOT_JOINED,
+        JOINED,
+        CLOSED,
+        PENDING_REWARDS,
+        FINALIZED
     }
 
 
@@ -16,6 +20,8 @@ public class HDLeagueController : HDLiveDataController {
     private List<HDLeagueData> m_leagues;
     private HDLeagueData m_currentLeague;
     private HDLeagueData m_nextLeague;
+
+    private State m_state;
 
 
     //---[Generic Methods]------------------------------------------------------
@@ -27,11 +33,10 @@ public class HDLeagueController : HDLiveDataController {
         m_liveDataCode = -1;
 
         m_leagues = new List<HDLeagueData>();
+
+        m_state = State.NONE;
     }
 
-    ~HDLeagueController() {
-       
-    }
 
 
     public override void Activate() {}
@@ -75,6 +80,9 @@ public class HDLeagueController : HDLiveDataController {
             */           
 
         CreateLeagues(_data["sku"], _data.GetSafe("nextSku", ""));
+
+        int status = _data["status"];
+
     }   
 
     public override void OnLiveDataResponse() {
