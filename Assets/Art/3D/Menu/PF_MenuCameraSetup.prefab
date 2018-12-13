@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 114016093273861646}
   - component: {fileID: 114784452774620076}
   m_Layer: 0
-  m_Name: Fireworks
+  m_Name: ChineseFireworks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,6 +303,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1973018653771490
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4210171275905322}
+  - component: {fileID: 114021638697462712}
+  - component: {fileID: 114013752454881682}
+  - component: {fileID: 114038105219992030}
+  m_Layer: 0
+  m_Name: Fireworks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4034798735650162
 Transform:
   m_ObjectHideFlags: 1
@@ -364,6 +382,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4440181170566980}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4210171275905322
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1973018653771490}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 6.4, z: 51.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4440181170566980}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4259427601541552
 Transform:
@@ -455,6 +486,7 @@ Transform:
   m_Children:
   - {fileID: 4899149457982194}
   - {fileID: 4194129944314038}
+  - {fileID: 4210171275905322}
   - {fileID: 4476933005428852}
   m_Father: {fileID: 4773014895585714}
   m_RootOrder: 1
@@ -465,12 +497,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1610676732387330}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 6.4, z: 51.3}
+  m_LocalRotation: {x: -0.7071067, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.5, y: -34.100044, z: 110.00004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4440181170566980}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4498074707646650
 Transform:
@@ -663,6 +695,29 @@ MonoBehaviour:
     m_handle2: {x: 0, y: 0, z: 0}
   m_resolution: 100
   _close: 0
+--- !u!114 &114013752454881682
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1973018653771490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 114038105219992030}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 0
+  m_targetScreens: 0000000001000000
+  m_restartShowAnimation: 0
 --- !u!114 &114016093273861646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -686,6 +741,73 @@ MonoBehaviour:
   m_mode: 0
   m_targetScreens: 0000000001000000
   m_restartShowAnimation: 0
+--- !u!114 &114021638697462712
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1973018653771490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae67d35c7c09542d8a800b0f020f3032, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_resourcePath: PS_FireWorks
+  m_useLeveledParticle: 1
+  m_isNewYear: 1
+  m_isChineseNewYear: 0
+--- !u!114 &114038105219992030
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1973018653771490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9634bc65078f347cf933d4c74430cb15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_tweenType: 0
+  m_tweenDuration: 0.25
+  m_tweenValue: 1
+  m_tweenEase: 27
+  m_tweenDelay: 0
+  m_ignoreTimeScale: 1
+  m_showTweens: []
+  m_hideTweens: []
+  m_animator: {fileID: 0}
+  m_triggerChildren: 0
+  m_canBeTriggeredByParents: 0
+  OnShowPreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPreAnimationAfterDelay:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowPostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePreAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnHidePostAnimation:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnShowCheck:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114156693214879202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -983,9 +1105,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae67d35c7c09542d8a800b0f020f3032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resourcePath: PS_FireWorks
+  m_resourcePath: PS_Firecracker
   m_useLeveledParticle: 1
-  m_isFirewordsDay: 1
+  m_isNewYear: 0
+  m_isChineseNewYear: 1
 --- !u!114 &114695617360137692
 MonoBehaviour:
   m_ObjectHideFlags: 1
