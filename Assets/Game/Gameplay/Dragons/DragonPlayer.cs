@@ -505,8 +505,8 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         // TONI END
 
         // Modifiers
-        m_mummyModifiers.Add(new ModDragonInvulnerable(null));
-        m_mummyModifiers.Add(new ModDragonBoostUnlimited(null));
+        m_mummyModifiers.Add(new ModDragonInvulnerable());
+        m_mummyModifiers.Add(new ModDragonBoostUnlimited());
         m_mummyModifiers.Add(new ModEntityScore(300f));
         m_mummyModifiers.Add(new ModEntitySC(200f));
         for (int i = 0; i < m_mummyModifiers.Count; ++i) {
