@@ -2,8 +2,12 @@
 public class ModDragonBoostUnlimited : ModifierDragon {
 	public const string TARGET_CODE = "boost_unlimited";
 
-	//------------------------------------------------------------------------//
-	public ModDragonBoostUnlimited(DefinitionNode _def) : base(_def) {
+    //------------------------------------------------------------------------//
+    public ModDragonBoostUnlimited() {
+        BuildTextParams(UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
+    }
+
+    public ModDragonBoostUnlimited(DefinitionNode _def) : base(_def) {
 		BuildTextParams(UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
