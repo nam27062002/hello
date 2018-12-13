@@ -3,22 +3,30 @@ using SimpleJSON;
 using UnityEngine;
 
 public class HDLeagueController : HDLiveDataController {
+    //---[Classes and Enums]----------------------------------------------------
+    public enum State {
 
+
+    }
+
+
+    //---[Attributes]-----------------------------------------------------------
     private int m_liveDataCode;
 
     private List<HDLeagueData> m_leagues;
     private HDLeagueData m_currentLeague;
     private HDLeagueData m_nextLeague;
 
-    //------------------------------------------------------------------------//
-    // GENERIC METHODS                                                        //
-    //------------------------------------------------------------------------//
+
+    //---[Generic Methods]------------------------------------------------------
     /// <summary>
     /// Default constructor.
     /// </summary>
     public HDLeagueController() {
         m_type = "league";
         m_liveDataCode = -1;
+
+        m_leagues = new List<HDLeagueData>();
     }
 
     ~HDLeagueController() {
@@ -60,9 +68,13 @@ public class HDLeagueController : HDLiveDataController {
     }
 
     public override void LoadData(JSONNode _data) {
+        /*
+            "sku" : "iron_league",
+            "nextSku" : "silver_league",
+            "status" : "joined"
+            */           
 
-
-        CreateLeagues("", "");
+        CreateLeagues(_data["sku"], _data.GetSafe("nextSku", ""));
     }   
 
     public override void OnLiveDataResponse() {
