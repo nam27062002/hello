@@ -5,6 +5,11 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+#define LOG_ENABLED
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -213,6 +218,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// Close any popups/UI opened by this flow.
 	/// </summary>
 	private void Close() {
+		Log("Close()");
 		// Close all popups opened by this resources flow instance
 		ClosePopups();
 
@@ -348,6 +354,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// other than purchasing more PC for the extra cost.
 	/// </summary>
 	public void DoTransaction() {
+		Log("Performing transaction");
 		// Transaction confirmed!
 		// Just in case, doublecheck that the player has enough currencies
 		if(m_finalAmount > UsersManager.currentUser.GetCurrency(m_currency)
@@ -435,6 +442,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// Close all popups opened by this resources flow.
 	/// </summary>
 	private void ClosePopups() {
+		Log("Closing Popups!");
 		// Reverse order for better visual effect
 		for(int i = m_popups.Count - 1; i >= 0; i--) {
 			m_popups[i].Close(true);
@@ -472,6 +480,7 @@ public class ResourcesFlow : IBroadcastListener {
 
 		pcPopup.OnRecommendedPackPurchased.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		pcPopup.OnRecommendedPackPurchased.AddListener(OnPCPackPurchased);
+		Log("Opening Missing PC popup");
 
 		pcPopup.OnGoToShop.RemoveAllListeners();	// We're recycling popups, so we don't want events to be added twice!
 		pcPopup.OnGoToShop.AddListener(OnGoToPCShop);
@@ -538,6 +547,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// <param name="_amount">Amount of PC to be spent.</param>
 	/// <param name="_onSuccess">Action to be performed on confirmation sucess.</param>
 	private void OpenBigAmountConfirmationPopup(long _amount, UnityAction _onSuccess) {
+		Log("Opening Big Amount confirmation popup");
 		// Open and initialize the popup
 		PopupController popup = PopupManager.LoadPopup(ResourcesFlowBigAmountConfirmationPopup.PATH);
 		ResourcesFlowBigAmountConfirmationPopup confirmationPopup = popup.GetComponent<ResourcesFlowBigAmountConfirmationPopup>();
@@ -615,6 +625,7 @@ public class ResourcesFlow : IBroadcastListener {
 	/// The recommended PC pack has been purchased.
 	/// </summary>
 	private void OnPCPackPurchased() {
+		Log("OnPCPackPurchased");
 		// We should have enough PC to complete the transaction now, do it!
 		TryTransaction(false, false);	// Ask confirmation? No, looks weird after having purchased the pack
 	}
@@ -695,5 +706,20 @@ public class ResourcesFlow : IBroadcastListener {
 	/// </summary>
 	private void OnBigAmountCanceled() {
 		Cancel();	// Cancel flow
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+	private void Log(string _message) {
+#if LOG_ENABLED
+		// Debug enabled?
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log("[ResourcesFlow]" + _message, ControlPanel.ELogChannel.Store);
+#endif
 	}
 }

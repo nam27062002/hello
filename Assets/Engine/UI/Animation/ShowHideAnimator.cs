@@ -144,7 +144,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	public ShowHideAnimatorEvent OnShowCheck = new ShowHideAnimatorEvent();
 
 	// Internal references
-	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
+	protected CanvasGroup m_canvasGroup = null; // Not required, if the object has no animator nor a canvas group, it will be automatically added
+	private ShowHideAnimatorEventsListener m_animatorEventsListener = null;	// Only for ANIMATOR type
 
 	// Internal
 	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
@@ -252,6 +253,12 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_sequence != null) {
 			m_sequence.Kill();
 			m_sequence = null;
+		}
+
+		if(m_animatorEventsListener != null) {
+			m_animatorEventsListener.OnShowCompletedEvent.RemoveListener(DoShowPostProcessing);
+			m_animatorEventsListener.OnHideCompletedEvent.RemoveListener(DoHidePostProcessing);
+			m_animatorEventsListener = null;
 		}
 	}
 
@@ -861,6 +868,13 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Animator must be valid!
 		if(m_animator == null) return;
 
+		// Make sure we're listening to target animator's events
+		if(m_animatorEventsListener == null) {
+			m_animatorEventsListener = m_animator.gameObject.ForceGetComponent<ShowHideAnimatorEventsListener>();
+			m_animatorEventsListener.OnShowCompletedEvent.AddListener(DoShowPostProcessing);
+			m_animatorEventsListener.OnHideCompletedEvent.AddListener(DoHidePostProcessing);
+		}
+
 		// Reset all known triggers
 		m_animator.ResetTrigger( GameConstants.Animator.SHOW );
 		m_animator.ResetTrigger( GameConstants.Animator.HIDE );
@@ -917,20 +931,6 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 
 		// No more active tweens! Do postprocessing
-		DoHidePostProcessing();
-	}
-
-	/// <summary>
-	/// Animation events, must be connected to the animations!
-	/// </summary>
-	public void OnShowAnimationCompleted() {
-		DoShowPostProcessing();
-	}
-
-	/// <summary>
-	/// Animation events, must be connected to the animations!
-	/// </summary>
-	public void OnHideAnimationCompleted() {
 		DoHidePostProcessing();
 	}
 
