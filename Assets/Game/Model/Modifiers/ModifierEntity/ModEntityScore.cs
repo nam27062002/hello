@@ -11,7 +11,7 @@ public class ModEntityScore : ModifierEntity {
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
-    public ModEntityScore(float _percentage) : base(null) {
+    public ModEntityScore(float _percentage) : base() {
         m_percentage = _percentage;
         BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }

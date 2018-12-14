@@ -158,7 +158,7 @@ public class HDCustomizerManager
     }
 
     public void Reset()
-    {        
+    {                
         if ( m_hasBeenApplied && Application.isPlaying)
             UnApplyCustomizer();
         SetTimeToRequest(0f);
@@ -168,7 +168,10 @@ public class HDCustomizerManager
 
     public void Destroy()
     {
-        Reset();
+        if (ApplicationManager.IsAlive)
+        {
+            Reset();
+        }
     }
 
     public void Update()

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 11457796}
   - component: {fileID: 11430428}
   - component: {fileID: 114903853939698236}
-  - component: {fileID: 114299678247415186}
   m_Layer: 5
   m_Name: PF_PlayScreen
   m_TagString: Untagged
@@ -877,7 +876,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224406822200405768}
   - component: {fileID: 114021122950761896}
-  - component: {fileID: 114608567480141164}
   - component: {fileID: 114572742390263762}
   - component: {fileID: 114387700035732818}
   m_Layer: 5
@@ -2353,32 +2351,6 @@ MonoBehaviour:
     logoPath: UI/Common/Logo/logo_jp
   - languageSku: lang_chinese
     logoPath: UI/Common/Logo/logo_zh
---- !u!114 &114299678247415186
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 132748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets:
-    - obj: {fileID: 0}
-      action: 0
-    - obj: {fileID: 0}
-      action: 0
-  - sku: halloween
-    targets: []
-  - sku: spring
-    targets: []
-  - sku: midAutumnFestival
-    targets: []
 --- !u!114 &114303333541955220
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3192,25 +3164,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114608567480141164
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1611117888207356}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb21c48eb9c024b1fa77de16702c1f32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_root: {fileID: 0}
-  m_teasingGroup: {fileID: 0}
-  m_teasingTimerText: {fileID: 0}
-  m_activeGroup: {fileID: 0}
-  m_newBanner: {fileID: 0}
-  m_activeTimerText: {fileID: 0}
-  m_rewardsGroup: {fileID: 0}
-  m_playButtonAnimation: {fileID: 114638863792760706}
 --- !u!114 &114623856183192394
 MonoBehaviour:
   m_ObjectHideFlags: 1

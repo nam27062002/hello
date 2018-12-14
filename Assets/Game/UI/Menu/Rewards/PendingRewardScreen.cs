@@ -35,8 +35,6 @@ public class PendingRewardScreen : MonoBehaviour {
 	// Internal references
 	private RewardSceneController m_sceneController = null;
 
-	private MenuScreen m_previousScreen;
-
 	// Internal logic
 	private Step m_step;
 	private State m_state;
@@ -241,8 +239,8 @@ public class PendingRewardScreen : MonoBehaviour {
 				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
 				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
-				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(m_previousScreen);
+				// Go back to previous screen
+				InstanceManager.menuSceneController.transitionManager.Back(true);
 			} break;
 		}
 
@@ -316,8 +314,6 @@ public class PendingRewardScreen : MonoBehaviour {
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
 		if(_to == MenuScreen.PENDING_REWARD) {
-			m_previousScreen = _from;
-
 			// Hide HUD!
 			InstanceManager.menuSceneController.hud.animator.Hide();
 

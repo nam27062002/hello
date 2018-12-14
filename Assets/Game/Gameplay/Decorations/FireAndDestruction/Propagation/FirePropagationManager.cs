@@ -5,13 +5,14 @@ using System.Collections.Generic;
 public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagationManager>, IBroadcastListener {
 	
 	private QuadTree<FireNode> m_fireNodesTree;
-	private List<FireNode> m_fireNodes;
+    private HashSet<FireNode> m_selectedFireNodes = new HashSet<FireNode>();
+    private List<FireNode> m_fireNodes;
 	private List<FireNode> m_burningFireNodes;
 	private AudioSource m_fireNodeAudio = null;
 
 	private BoundingSphere[] m_boundigSpheres;
 
-	private CullingGroup m_cullingGroup;
+    private CullingGroup m_cullingGroup;
 
 	void Awake() {
 		m_fireNodesTree = new QuadTree<FireNode>(-1600f, -600f, 2600f, 1400f);
@@ -173,15 +174,17 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 	public delegate bool CheckMethod( CircleAreaBounds _fireNodeBounds );
 
-	public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, DragonBreathBehaviour.Type _breathType, Vector3 _direction, IEntity.Type _source)	{
-		FireNode[] nodes = m_fireNodesTree.GetItemsInRange(_rectArea);
-		for (int i = 0; i < nodes.Length; i++) {
-			FireNode fireNode = nodes[i];
-			if (_checkMethod(fireNode.area)) {
+
+
+    public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, DragonBreathBehaviour.Type _breathType, Vector3 _direction, IEntity.Type _source)	{
+        m_fireNodesTree.GetHashSetInRange(_rectArea, ref m_selectedFireNodes);
+        foreach (FireNode fireNode in m_selectedFireNodes) {
+			if (fireNode != null && _checkMethod(fireNode.area)) {
 				fireNode.Burn(_direction, true, _tier, _breathType, _source);
 			}
 		}
-	}
+        m_selectedFireNodes.Clear();
+    }
 			
 	// :3
 	void OnDrawGizmosSelected() {
