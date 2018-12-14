@@ -81,11 +81,11 @@ public abstract class Modifier : IModifierDefinition {
         m_type = _type;
 
         m_sku           = SKU_CUSTOM;
-        m_uiCategory    = _data["uiCategory"];
-        m_iconPath      = _data["icon"];
-        m_tidName       = _data["tidName"];
-        m_tidDesc       = _data["tidDesc"];
-        m_tidDescShort  = _data["tidDescShort"];
+		m_uiCategory    = _data.GetSafe("uiCategory", m_uiCategory);
+		m_iconPath      = _data.GetSafe("icon", m_iconPath);
+		m_tidName       = _data.GetSafe("tidName", m_tidName);
+		m_tidDesc       = _data.GetSafe("tidDesc", m_tidDesc);
+		m_tidDescShort  = _data.GetSafe("tidDescShort", m_tidDescShort);
     }
 
 

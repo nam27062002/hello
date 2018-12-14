@@ -98,6 +98,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			int unlockLevel = allSkins[i].GetAsInt("unlockLevel");
 			if(unlockLevel <= 0) continue;
 
+			// Skip if already owned
+			if(UsersManager.currentUser.wardrobe.GetSkinState(allSkins[i].sku) == Wardrobe.SkinState.OWNED) continue;
+
 			// Check unlock level vs level before starting the game and level after the game
 			if(unlockLevel > initialLevel && unlockLevel <= finalLevel) {
 				// This skin has been unlocked during this run!
