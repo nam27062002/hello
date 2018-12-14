@@ -287,9 +287,12 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcas
 				m_sharedMaterialsCache[fontName] = sharedMaterialsCache;
 			}
 
-			// Register default material to the shared materials cache
-			string materialID = GetMaterialIDFromName(fontName, fnt.material.name);
-			sharedMaterialsCache[materialID] = fnt.material;
+            // TODO: Notify metrics/crashlytics fontName is null becaue it's not supposed to
+            if (fnt != null) {
+                // Register default material to the shared materials cache
+                string materialID = GetMaterialIDFromName(fontName, fnt.material.name);
+                sharedMaterialsCache[materialID] = fnt.material;
+            }
 		}
 	}
 
