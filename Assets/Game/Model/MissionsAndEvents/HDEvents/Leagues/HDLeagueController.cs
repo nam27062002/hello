@@ -3,25 +3,11 @@ using SimpleJSON;
 using UnityEngine;
 
 public class HDLeagueController : HDLiveDataController {
-    //---[Classes and Enums]----------------------------------------------------
-    public enum State {
-        NONE = 0,
-        NOT_JOINED,
-        JOINED,
-        CLOSED,
-        PENDING_REWARDS,
-        FINALIZED
-    }
-
-
     //---[Attributes]-----------------------------------------------------------
-    private int m_liveDataCode;
+    private HDSeasonData m_season;
+    public HDSeasonData season { get { return m_season; } }
 
     private List<HDLeagueData> m_leagues;
-    private HDLeagueData m_currentLeague;
-    private HDLeagueData m_nextLeague;
-
-    private State m_state;
 
 
     //---[Generic Methods]------------------------------------------------------
@@ -30,25 +16,18 @@ public class HDLeagueController : HDLiveDataController {
     /// </summary>
     public HDLeagueController() {
         m_type = "league";
-        m_liveDataCode = -1;
 
+        m_season = null;
         m_leagues = new List<HDLeagueData>();
-
-        m_state = State.NONE;
     }
-
-
 
     public override void Activate() {}
     public override void Deactivate() {}
     public override void ApplyDragonMods() {}
 
     public override void CleanData() {
-        m_liveDataCode = -1;
-
+        m_season = null;
         m_leagues.Clear();
-        m_currentLeague = null;
-        m_nextLeague = null;
 
         m_dataLoadedFromCache = false;
     }
@@ -61,7 +40,6 @@ public class HDLeagueController : HDLiveDataController {
         return null;
     }
 
-
     public override void LoadDataFromCache() {
         CleanData();
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
@@ -73,23 +51,14 @@ public class HDLeagueController : HDLiveDataController {
     }
 
     public override void LoadData(JSONNode _data) {
-        /*
-            "sku" : "iron_league",
-            "nextSku" : "silver_league",
-            "status" : "joined"
-            */           
+        m_season = new HDSeasonData();
+        m_season.LoadData(_data);
 
         CreateLeagues(_data["sku"], _data.GetSafe("nextSku", ""));
-
-        int status = _data["status"];
-
     }   
 
     public override void OnLiveDataResponse() {
-        if (m_currentLeague != null) {
-            // request the full data
-            m_currentLeague.BuildExtendData();
-        }
+        m_season.RequestFullData(true);
     }
    
     private void CreateLeagues(string _currentLeague, string _nextLeague) {
@@ -102,7 +71,11 @@ public class HDLeagueController : HDLiveDataController {
             m_leagues.Add(league);
 
             if (_currentLeague.Equals(definition.sku)) {
-                m_currentLeague = league;
+                m_season.currentLeague = league;
+            }
+
+            if (_nextLeague.Equals(definition.sku)) {
+                m_season.nextLeague = league;
             }
         }
     }

@@ -61,7 +61,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 
 	public QuestGoal m_goal = new QuestGoal();
 
-	public List<HDLiveEventReward> m_rewards = new List<HDLiveEventReward>();
+	public List<HDLiveData.Reward> m_rewards = new List<HDLiveData.Reward>();
 		
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -92,8 +92,8 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				HDLiveEventReward reward = new HDLiveEventReward();
-				reward.ParseJson(arr[i], m_name);
+                HDLiveData.Reward reward = new HDLiveData.Reward();
+				reward.ParseJson(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
 
 				m_rewards.Add( reward );
 			}

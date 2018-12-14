@@ -1,79 +1,63 @@
 ﻿using System.Collections.Generic;
 
 public class HDLeagueLeaderboard {
-    //---[Classes and Enums]----------------------------------------------------
-    public enum State {
-        NONE = 0,
-        WAITING_RESPONSE,
-        SUCCESS,
-        ERROR
-    }
-
-    public class Record {
-        public uint position;
-
-        public string name;
-        public ulong score;
-
-        public string dragonSku;
-        public uint level;
-        public List<string> pets;
-
-
-        public Record() {
-            position = 0;
-
-            name = "";
-            score = 0;
-
-            dragonSku = "";
-            level = 0;
-
-            pets = new List<string>();
-        }
-    }
-    //--------------------------------------------------------------------------
-
-
-
     //---[Attributes]-----------------------------------------------------------
     private string m_leagueSku;
 
-    private State m_state;
-    public State state { get { return m_state; } }
+    private List<HDLiveData.Leaderboard.Record> m_records;
+    public List<HDLiveData.Leaderboard.Record> records { get { return m_records; } }
+
+    private HDLiveData.State m_liveDataState;
+    public HDLiveData.State liveDataState { get { return m_liveDataState; } }
+
 
 
     //---[Methods]--------------------------------------------------------------
     public HDLeagueLeaderboard(string _sku) {
         m_leagueSku = _sku;
-        m_state = State.NONE;
+        m_records = new List<HDLiveData.Leaderboard.Record>();
+        m_liveDataState = HDLiveData.State.EMPTY;
     }
 
-    public void RequestLeaderboard() {
+    public void RequestData() {
         //Right now, we don't need the league sku, because, in server, they are using the player id to retrieve the leaderboard.
-        GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnLeaderboardResponse);
+        GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnDataResponse);
 
-        m_state = State.WAITING_RESPONSE;
+        m_liveDataState = HDLiveData.State.WAITING_RESPONSE;
     }
 
-    private void OnLeaderboardResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+    private void OnDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
         HDLiveDataManager.ResponseLog("[Leagues] Leaderboard", _error, _response);
 
         HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
         SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            // parse Json
-            LoadData(responseJson);
+            // clear Data
+            m_records.Clear();
 
-            m_state = State.SUCCESS;
+            // parse Json
+            LoadData(responseJson.AsArray);
         } else {
 
-            m_state = State.ERROR;
+            m_liveDataState = HDLiveData.State.ERROR;
         }
     }
 
-    private void LoadData(SimpleJSON.JSONNode _data) {
+    public void LoadData(SimpleJSON.JSONArray _data) {
+        if (_data != null) {
+            for (int i = 0; i < _data.Count; ++i) {
+                SimpleJSON.JSONClass d = _data[i].AsObject;
+                /*
+                HDLiveData.Leaderboard.Record record = new HDLiveData.Leaderboard.Record {
+                    name = d["name"],
+                    score = (ulong)d["score"].AsLong,
+                    position = (uint)i
+                };*/
 
+               // m_records.Add(record);
+            }
+        }
+        m_liveDataState = HDLiveData.State.VALID;
     }
 }

@@ -2,89 +2,67 @@
 using System.Collections.Generic;
 
 public class HDLeagueData {
-    //---[Classes and Enums]----------------------------------------------------
-    public enum State {
-        NONE = 0,
-        WAITING_RESPONSE,
-        SUCCESS,
-        ERROR
-    }
-
-
     //---[Basic Data]-----------------------------------------------------------
     private readonly string m_sku;
-    public string sku { get { return m_sku; } }
-
     private readonly string m_icon;
-    public string icon { get { return m_icon; } }
-
     private readonly string m_name;
-    public string name { get { return m_name; } }
-
     private readonly string m_description;
-    public string description { get { return m_description; } }
 
 
     //---[Extended Data]--------------------------------------------------------
-    private DateTime m_startDate;
-    public DateTime startDate { set { m_startDate = value; } }
-    public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    private float m_demoteScale;
+    private float m_promoteScale;
 
-    private DateTime m_endDate;
-    public DateTime endDate { set { m_endDate = value; } }
-    public TimeSpan timeToEnd { get { return m_endDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-
-    private List<Metagame.Reward> m_rewards;
-    public void AddReward(Metagame.Reward _reward) { m_rewards.Add(_reward); }
-
+    private List<HDLiveData.Reward> m_rewards;
     private HDLeagueLeaderboard m_leaderboard;
-    public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
-    private State m_state;
-    public State state { get { return m_state; } }
+    private HDLiveData.State m_liveDataState;
+    public HDLiveData.State liveDataState { get { return m_liveDataState; } }
 
 
-    //---[Methods]--------------------------------------------------------------
+    //---[Construction Methods]-------------------------------------------------
     public HDLeagueData(DefinitionNode _def) {
+        //Load basic data from definition
         m_sku = _def.sku;
+        //...
+        //
+    
+        m_demoteScale = 0f;
+        m_promoteScale = 0f;
 
-        m_startDate = new DateTime(1970, 1, 1);
-        m_endDate = new DateTime(1970, 1, 1);
-
-        m_rewards = new List<Metagame.Reward>();
+        m_rewards = new List<HDLiveData.Reward>();
         m_leaderboard = new HDLeagueLeaderboard(m_sku);
 
-        m_state = State.NONE;
+        m_liveDataState = HDLiveData.State.EMPTY;
     }
 
-    public void BuildExtendData() {
-        // call server for this league definition
-        GameServerManager.SharedInstance.HDLeagues_GetLeague(m_sku, OnGetLeagueResponse);
+    public void LoadData(SimpleJSON.JSONNode _data) {
+        if (m_sku.Equals(_data["sku"])) {
+            m_demoteScale = _data["demoteScale"].AsFloat;
+            m_promoteScale = _data["promoteScale"].AsFloat;
 
-        m_state = State.WAITING_RESPONSE;
-    }
+            SimpleJSON.JSONArray rewards = _data["rewars"].AsArray;
 
-    private void OnGetLeagueResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-        HDLiveDataManager.ResponseLog("[Leagues] Get League", _error, _response);
+            for (int r = 0; r < rewards.Count; ++r) {
+                HDLiveData.Reward reward = new HDLiveData.Reward();
+                reward.ParseJson(_data, HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
+                m_rewards.Add(reward);
+            }
 
-        HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
-        SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
-
-        if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            // parse Json
-            LoadData(responseJson);
-
-            // build the leader board
-            m_leaderboard.RequestLeaderboard();
-
-            m_state = State.SUCCESS;
+            m_liveDataState = HDLiveData.State.VALID;
         } else {
-
-            m_state = State.ERROR;
+            m_liveDataState = HDLiveData.State.ERROR;
         }
     }
 
-    private void LoadData(SimpleJSON.JSONNode _data) {
 
-    }
+    //---[Query Methods]--------------------------------------------------------
+    public string name          { get { return m_name; } }
+    public string sku           { get { return m_sku; } }
+    public string icon          { get { return m_icon; } }
+    public string description   { get { return m_description; } }
+
+    public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
+
+    public Metagame.Reward GetReward(int _i) { return m_rewards[_i].reward; }
 }

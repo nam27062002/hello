@@ -652,18 +652,21 @@ public class GameServerManagerCalety : GameServerManager {
 	}
 
 
-#region HD_LiveEvents
+#region HD_LiveData
 		
 	public override void HDEvents_GetMyLiveData(ServerCallback _callback) {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, null, _callback);
  	}
+
     public override void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { 
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("typeToUpdate", _typeToUpdate.ToString());
         Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, parameters, _callback);
 	}
 
-	public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
+    //--------------------------------------------------------------------------
+
+    public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {
 		Dictionary<string, string> parameters = new Dictionary<string, string>();
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetEventDefinition, parameters, _callback);
@@ -728,17 +731,43 @@ public class GameServerManagerCalety : GameServerManager {
 		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetRefund, parameters, _callback);
 	}
-#endregion
 
-	//------------------------------------------------------------------------//
-	// INTERNAL COMMANDS MANAGEMENT											  //
-	//------------------------------------------------------------------------//
-	#region commands
-	/// <summary>
-	/// Max amount of retries when an authorization error is got after sending a command. If this happens then Auth is tried to sent before resending the command that caused the error.
+    //--------------------------------------------------------------------------
+
+    public override void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("fetchLeaderboard", _fetchLeaderboard.ToString(JSON_FORMAT));
+        Commands_EnqueueCommand(ECommand.HDLeagues_GetSeason, parameters, _callback);
+    }
+
+    public override void HDLeagues_GetLeaderboard(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.HDLeagues_GetLeaderboard, null, _callback);
+    }
+
+    public override void HDLeagues_SetScore(int _score, ServerCallback _callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("score", _score.ToString(JSON_FORMAT));
+        Commands_EnqueueCommand(ECommand.HDLeagues_SetScore, parameters, _callback);
+    }
+
+    public override void HDLeagues_GetMyRewards(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.HDLeagues_GetMyRewards, null, _callback);
+    }
+
+    public override void HDLeagues_FinishMyLeague(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.HDLeagues_FinishMyLeague, null, _callback);
+    }
+    #endregion
+
+    //------------------------------------------------------------------------//
+    // INTERNAL COMMANDS MANAGEMENT											  //
+    //------------------------------------------------------------------------//
+    #region commands
+    /// <summary>
+    /// Max amount of retries when an authorization error is got after sending a command. If this happens then Auth is tried to sent before resending the command that caused the error.
     /// It's set to 0 because Calety already retries to send commands.
-	/// </summary>
-	private const int COMMANDS_MAX_AUTH_RETRIES = 0;
+    /// </summary>
+    private const int COMMANDS_MAX_AUTH_RETRIES = 0;
 
 	private enum ECommand {
 		Unknown = -1,
@@ -777,8 +806,14 @@ public class GameServerManagerCalety : GameServerManager {
         HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
 		HDLiveEvents_GetMyReward,		// params: int _eventID
 		HDLiveEvents_FinishMyEvent,		// params: int _eventID
-        HDLiveEvents_GetRefund			// params: int _eventID
-	}    
+        HDLiveEvents_GetRefund,			// params: int _eventID
+
+        HDLeagues_GetSeason,            // params: string _sku
+        HDLeagues_GetLeaderboard,
+        HDLeagues_SetScore,
+        HDLeagues_GetMyRewards,
+        HDLeagues_FinishMyLeague
+    }    
 
 	/// <summary>
 	/// 
@@ -999,6 +1034,12 @@ public class GameServerManagerCalety : GameServerManager {
 			case ECommand.HDLiveEvents_GetMyReward:
 			case ECommand.HDLiveEvents_FinishMyEvent:
             case ECommand.HDLiveEvents_GetRefund:
+
+            case ECommand.HDLeagues_GetSeason:
+            case ECommand.HDLeagues_GetLeaderboard:
+            case ECommand.HDLeagues_SetScore:
+            case ECommand.HDLeagues_GetMyRewards:
+            case ECommand.HDLeagues_FinishMyLeague:
                 returnValue = true;
                 break;
         }
@@ -1205,6 +1246,33 @@ public class GameServerManagerCalety : GameServerManager {
                     // progress                 
                 }
                 break;
+                
+
+                //--------------------------------------------------------------
+                case ECommand.HDLeagues_GetSeason:
+                    Command_SendCommand(COMMAND_HD_LEAGUES_GET_SEASON, null, parameters);
+                break;
+
+                case ECommand.HDLeagues_GetLeaderboard:
+                    Command_SendCommand(COMMAND_HD_LEAGUES_GET_LEADERBOARD);
+                break;
+
+                case ECommand.HDLeagues_SetScore: {
+                    JSONClass data = JSON.Parse(parameters["score"]) as JSONClass;
+                    Command_SendCommandAsGameAction(COMMAND_HD_LEAGUES_SET_SCORE, data, false);
+                }
+                break;
+                
+                case ECommand.HDLeagues_GetMyRewards:
+                    Command_SendCommand(COMMAND_HD_LEAGUES_GET_MY_REWARDS);
+                break;
+
+                case ECommand.HDLeagues_FinishMyLeague:
+                    Command_SendCommand(COMMAND_HD_LEAGUES_FINISH_MY_LEAGUE);
+                break;
+                //--------------------------------------------------------------
+
+
                 case ECommand.Language_Set: {
                     JSONClass data = null;
                     string paramsAsString = parameters["body"];
@@ -1605,14 +1673,16 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_PLAYTEST_B = "/api/playtest/b";
     private const string COMMAND_TRACK_LOADING = "/api/loading/step";
 
+    //[TODO] CLEAN THIS SHIT----------------------------------------------------------------------
     private const string COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER = "/api/gevent/customizer";
 	private const string COMMAND_GLOBAL_EVENTS_GET_EVENT = "/api/gevent/get";
 	private const string COMMAND_GLOBAL_EVENTS_GET_STATE = "/api/gevent/progress";
 	private const string COMMAND_GLOBAL_EVENTS_REGISTER_SCORE = "/api/gevent/addProgress";
 	private const string COMMAND_GLOBAL_EVENTS_GET_REWARDS = "/api/gevent/reward";
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
+    //--------------------------------------------------------------------------------
 
-	private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
     private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/levent/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/levent/getProgress";
     private const string COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS = "/api/levent/addProgress";
@@ -1622,6 +1692,12 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
     private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
+
+    private const string COMMAND_HD_LEAGUES_GET_SEASON          = "/api/labLeague/season/get";
+    private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/labLeague/getLeaderboard";
+    private const string COMMAND_HD_LEAGUES_SET_SCORE           = "/api/labLeague/setScore";
+    private const string COMMAND_HD_LEAGUES_GET_MY_REWARDS      = "/api/labLeague/getMyRewards";
+    private const string COMMAND_HD_LEAGUES_FINISH_MY_LEAGUE    = "/api/labLeague/finish";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";

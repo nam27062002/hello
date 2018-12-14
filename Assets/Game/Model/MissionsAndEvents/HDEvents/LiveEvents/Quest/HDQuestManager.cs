@@ -238,9 +238,9 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 
 #endregion
 
-	public override List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+	public override List<HDLiveData.Reward> GetMyRewards() {
 		// Create new list
-		List<HDLiveEventDefinition.HDLiveEventReward> rewards = new List<HDLiveEventDefinition.HDLiveEventReward>();
+		List<HDLiveData.Reward> rewards = new List<HDLiveData.Reward>();
 
 		// We must have a valid data and definition
 		if(data != null && data.definition != null) {

@@ -160,7 +160,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 
-	public class TournamentReward : HDLiveEventReward {
+	public class TournamentReward : HDLiveData.Reward {
 		public RangeInt ranks = new RangeInt(0, 100);
 	}
 
@@ -277,7 +277,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
 				TournamentReward r = new TournamentReward();
-				r.ParseJson(arr[i], m_name);
+				r.ParseJson(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
 
 				// Compute ranks. Min can only be computed based on previous reward.
 				// Since we can't assume rewards are received sorted, we'll do it afterwards in a separate loop.

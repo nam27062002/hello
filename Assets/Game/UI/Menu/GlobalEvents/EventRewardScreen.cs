@@ -121,7 +121,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_questManager != null) {
 			// Global rewards
 			// Rewards are sorted from smaller to bigger, push them in reverse order to collect smaller ones first
-			List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_questManager.GetMyRewards();
+			List<HDLiveData.Reward> rewards = m_questManager.GetMyRewards();
 			int[] pushedRewardsAmount = new int[rewards.Count];
 			int totalPushedRewards = UsersManager.currentUser.rewardStack.Count;
 			for(int i = rewards.Count - 1; i >= 0; --i) {

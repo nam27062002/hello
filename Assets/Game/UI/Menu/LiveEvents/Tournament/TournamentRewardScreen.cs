@@ -135,7 +135,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 			// From now on, if the flow is interrupted, the tournament will not appear anymore and rewards will appear as pending rewards
 			if(m_tournamentManager != null) {
 				// Tournament Rewards
-				List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_tournamentManager.GetMyRewards();
+				List<HDLiveData.Reward> rewards = m_tournamentManager.GetMyRewards();
 				for(int i = 0; i < rewards.Count; ++i) {
 					UsersManager.currentUser.PushReward(rewards[i].reward);
 				}

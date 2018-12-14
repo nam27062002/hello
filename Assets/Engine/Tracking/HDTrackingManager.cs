@@ -70,6 +70,7 @@ public class HDTrackingManager
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
 		REWARD_LIVE_EVENT,
+        REWARD_LEAGUE,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad

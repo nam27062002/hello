@@ -117,61 +117,7 @@ public class HDLiveEventDefinition {
 			return ret;
 		}
 	}
-	// Build?
-	// Rewards?
-
-	[Serializable]
-	public class HDLiveEventReward {		
-		//------------------------------------------------------------------------//
-		// MEMBERS																  //
-		//------------------------------------------------------------------------//
-		public Metagame.Reward reward = null;
-		public long target = 0;
-
-		//------------------------------------------------------------------------//
-		// METHODS																  //
-		//------------------------------------------------------------------------//
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public HDLiveEventReward() {
-
-		}
-
-		/// <summary>
-		/// Constructor from json data.
-		/// </summary>
-		/// <param name="_data">Data to be parsed.</param>
-		public virtual void ParseJson(SimpleJSON.JSONNode _data, string _source) {
-			// Reward data
-			reward = Metagame.Reward.CreateFromJson(_data, HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, _source);
-
-			// [AOC] Going to hell!
-			// 		 Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler
-			if(reward.type == Metagame.RewardGoldenFragments.TYPE_CODE) {
-				if(reward.amount >= 5) {
-					reward.rarity = Metagame.Reward.Rarity.EPIC;
-				} else if(reward.amount >= 3) {
-                    reward.rarity = Metagame.Reward.Rarity.RARE;
-				} else {
-					reward.rarity = Metagame.Reward.Rarity.COMMON;
-				}
-			}
-
-			// Init target amount
-			target = _data["target"].AsLong;
-		}
-
-		/// <summary>
-		/// Serialize into json.
-		/// </summary>
-		/// <returns>The json.</returns>
-		public virtual JSONClass ToJson() {
-			JSONClass data = reward.ToJson() as JSONClass;
-			data.Add("target", target);
-			return data;
-		}
-	};
+	
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

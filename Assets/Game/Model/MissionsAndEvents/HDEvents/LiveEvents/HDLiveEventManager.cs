@@ -302,9 +302,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }
 
-	public virtual List<HDLiveEventDefinition.HDLiveEventReward> GetMyRewards() {
+	public virtual List<HDLiveData.Reward> GetMyRewards() {
 		// To be implemented by heirs!
-		return new List<HDLiveEventDefinition.HDLiveEventReward>();
+		return new List<HDLiveData.Reward>();
 	}
 
 	public void RequestRewards()
