@@ -7,12 +7,20 @@ public class InstantiateByDateTime : MonoBehaviour {
 
     public string m_resourcePath = "";
     public bool m_useLeveledParticle = false;
-    public bool m_isFirewordsDay = false;
+    public bool m_isNewYear = false;
+    public bool m_isChineseNewYear = false;
 
 	// Use this for initialization
 	void Awake () 
-    {   
-        bool instantiate = SeasonManager.IsFireworksDay();
+    {
+        bool instantiate = false;
+        if ( (m_isNewYear && SeasonManager.IsNewYear()) 
+            || (m_isChineseNewYear && SeasonManager.IsChineseNewYear())
+            ||  Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false)
+        )
+        {
+            instantiate = true;
+        }
         
         if ( instantiate )
         {
