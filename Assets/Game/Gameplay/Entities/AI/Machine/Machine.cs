@@ -526,6 +526,13 @@ namespace AI {
 			return m_freezing;
 		}
 
+        public bool IsStunned() {
+            return m_stunned > 0;
+        }
+
+        public bool IsInLove() {
+            return m_inLove > 0;
+        }
 
 		public virtual bool CanBeBitten() {
 			if (!enabled)
