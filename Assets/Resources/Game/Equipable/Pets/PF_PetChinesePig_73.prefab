@@ -36,6 +36,7 @@ Transform:
   m_Children:
   - {fileID: 4763743929245082}
   - {fileID: 4247100754088492}
+  - {fileID: 4571014938398870}
   - {fileID: 4613833819952600}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -151,6 +152,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1425900785006876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4571014938398870}
+  - component: {fileID: 114478636898033260}
+  - component: {fileID: 114245788772546706}
+  m_Layer: 0
+  m_Name: particle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1568333490312086
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,6 +273,19 @@ Transform:
   m_Father: {fileID: 4763743929245082}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4571014938398870
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1425900785006876}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.421}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 424588}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: -4.5620003, y: -92.212006, z: -206.95}
 --- !u!4 &4613833819952600
 Transform:
   m_ObjectHideFlags: 1
@@ -266,7 +297,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 424588}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -31.254002, y: -359.661, z: -180.176}
 --- !u!4 &4763743929245082
 Transform:
@@ -603,6 +634,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tags: 0
   m_sku: pet_73
+--- !u!114 &114245788772546706
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1425900785006876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Hip
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114391439453419424
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -699,6 +745,19 @@ MonoBehaviour:
   m_onCorpseSound: hd_dragon_dead
   m_onReviveSound: hd_dragon_revive
   m_onPreMegaFire: 
+--- !u!114 &114478636898033260
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1425900785006876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba68a777342824eb5a9bb4b2f76909a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particle: PS_ChinesePigTrail
+  playOnStart: 1
 --- !u!114 &114879837775497350
 MonoBehaviour:
   m_ObjectHideFlags: 1
