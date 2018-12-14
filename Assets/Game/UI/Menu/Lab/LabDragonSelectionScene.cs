@@ -228,6 +228,10 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Ignore if not in special dragon mode
 		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) return;
 
+		// Ignore if acquired dragon is not special
+		// Issue HDK-3435: buying a classic dragon from an offer pack while in the lab
+		if(_data.type != IDragonData.Type.SPECIAL) return;
+
 		// Update camera
 		SelectCameraSnapPoint();
 		RefreshCamera();

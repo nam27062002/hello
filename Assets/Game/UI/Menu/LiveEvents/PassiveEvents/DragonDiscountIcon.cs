@@ -153,8 +153,10 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	/// </summary>
 	/// <returns>Whether the icon can be displayed or not.</returns>
 	protected override bool RefreshVisibilityInternal() {
-		// Only show in the some specific screens
+		// Only show in the menu
 		if(InstanceManager.menuSceneController == null) return false;
+
+		// Only show in the some specific screens
 		MenuScreen currentScreen = InstanceManager.menuSceneController.currentScreen;
 		if(currentScreen != MenuScreen.DRAGON_SELECTION) return false;
 

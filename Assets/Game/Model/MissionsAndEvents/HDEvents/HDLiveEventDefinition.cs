@@ -215,7 +215,9 @@ public class HDLiveEventDefinition {
 		m_initialized = true;
 
 		// has this event bee cancelled?
-		m_refund = _data["refund"].AsBool;
+		if(_data.ContainsKey("refund")) {
+			m_refund = _data["refund"].AsBool;
+		}
 
 		if ( _data.ContainsKey("code") )
 		{
@@ -284,6 +286,8 @@ public class HDLiveEventDefinition {
         SimpleJSON.JSONArray customMods = new JSONArray();
 
         for (int i = 0; i < m_dragonMods.Count; i++) {
+			if(m_dragonMods[i] == null) continue;
+
             string sku = m_dragonMods[i].GetSku();
 
             if (sku.Equals(Modifier.SKU_CUSTOM)) {
@@ -294,6 +298,8 @@ public class HDLiveEventDefinition {
 		}
 
 		for (int i = 0; i < m_otherMods.Count; i++) {
+			if(m_otherMods[i] == null) continue;
+
             string sku = m_otherMods[i].GetSku();
 
             if (sku.Equals(Modifier.SKU_CUSTOM)) {

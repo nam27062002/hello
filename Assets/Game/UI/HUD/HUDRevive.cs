@@ -211,7 +211,7 @@ public class HUDRevive : MonoBehaviour {
 			}
 
 			// Free revive available?
-			m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+            m_freeReviveButton.SetActive(FeatureSettingsManager.AreAdsEnabled && m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
 
 			// Show!
 			if(m_animator != null) m_animator.Show();

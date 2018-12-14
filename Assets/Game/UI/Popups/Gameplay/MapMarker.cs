@@ -70,6 +70,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
 		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
+		Broadcaster.AddListener(BroadcastEventType.UI_MAP_EXPIRED, this);
 		Broadcaster.AddListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
 
@@ -81,6 +82,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_EXPIRED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
 
@@ -102,6 +104,10 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
             {
                 OnMapUnlocked();
             }break;
+			case BroadcastEventType.UI_MAP_EXPIRED:
+			{
+				OnMapExpired();
+			}break;
             case BroadcastEventType.UI_MAP_ZOOM_CHANGED:
             {
                 UIMapZoomChanged zoomChanged = (UIMapZoomChanged)broadcastEventInfo;
@@ -123,9 +129,7 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-				//       That's why we check the GameSceneController rather than the user profile
-				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
+				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapUnlocked);
 			} break;
 
 			// Rest of marker types
@@ -272,6 +276,14 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
 		UbiBCN.CoroutineManager.DelayedCall(UpdateMarker, 0.25f, true);
+	}
+
+	/// <summary>
+	/// Minimap upgrade has been expired.
+	/// </summary>
+	private void OnMapExpired() {
+		// Update marker will do the job
+		UpdateMarker();
 	}
 
 	/// <summary>

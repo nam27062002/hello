@@ -138,7 +138,11 @@ public class PopupShopCurrencyPill : IPopupShopPill {
 		if(m_currency != UserProfile.Currency.REAL) return string.Empty;
 
 		// In the case of currency packs, sku matches the one in the IAP
-		return m_def.sku;
+		if(m_def != null) {
+			return m_def.sku;
+		} else {
+			return string.Empty;
+		}
 	}
 
 	/// <summary>

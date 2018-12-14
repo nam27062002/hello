@@ -1872,9 +1872,9 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void LogWarning(ECommand command, Error error, Exception e = null) {        
-		Debug.LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
+		LogWarning(String.Format("{0} Error when sending command {1}: {2}: {3} ({4})", LOG_CHANNEL, command, error.GetType().Name, error.message, error.code));        
 		if(e != null) {
-			Debug.LogWarning(e);
+			LogWarning(e.ToString());
 		}
 
 	}
@@ -1883,22 +1883,28 @@ public class GameServerManagerCalety : GameServerManager {
 	/// 
 	/// </summary>
 	private void Log(string message) {
-	    Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
-        //Debug.Log("<color=cyan>" + LOG_CHANNEL + " " + message + " at " + Time.realtimeSinceStartup + " </color>");
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		//Debug.Log(String.Format("{0} {1}", LOG_CHANNEL, message));
+		//Debug.Log("<color=cyan>" + LOG_CHANNEL + " " + message + " at " + Time.realtimeSinceStartup + " </color>");
+		ControlPanel.Log(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
     }
 
     /// <summary>
     /// 
     /// </summary>
     private void LogWarning(string message) {
-		Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		//Debug.LogWarning(String.Format("{0} {1}", LOG_CHANNEL, message));            
+		ControlPanel.LogWarning(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
 	}
 
 	/// <summary>
 	/// 
 	/// </summary>
 	private void LogError(string message) {
-		Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));        
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		//Debug.LogError(String.Format("{0} {1}", LOG_CHANNEL, message));        
+		ControlPanel.LogError(LOG_CHANNEL + message, ControlPanel.ELogChannel.Server);
 	}
 	#endregion
 }
