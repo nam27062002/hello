@@ -460,6 +460,11 @@ public class LoadingSceneController : SceneController {
 		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {                    
                     HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
 
+                    // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
+                    // is important because it might decide which offers the user will see
+                    HDCustomizerManager.instance.CheckAndApply();
+
+                    // Loads main menu scene
                     FlowManager.GoToMenu();
 		        }
     		}break;
@@ -622,10 +627,7 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.CreateInstance();
                 TransactionManager.instance.Initialise();
 
-                HDCustomizerManager.instance.Initialise();
-
-                // Check si necesita aplicar customizer
-                HDCustomizerManager.instance.CheckAndApply();
+                HDCustomizerManager.instance.Initialise();                                   
             } break;
 
            case State.WAITING_SAVE_FACADE:
