@@ -138,6 +138,7 @@ public class OfferPack {
 	protected int m_gamesPlayed = 0;
 	protected PayerType m_payerType = PayerType.ANYONE;
 	protected float m_minSpent = 0f;
+	protected float m_maxSpent = float.MaxValue / 100f;
 	protected int m_minNumberOfPurchases = 0;
 	protected long m_secondsSinceLastPurchase = 0;
 
@@ -312,6 +313,7 @@ public class OfferPack {
 		m_gamesPlayed = 0;
 		m_payerType = PayerType.ANYONE;
 		m_minSpent = 0f;
+		m_maxSpent = float.MaxValue / 100f;	// We're working with cents of USD
 		m_minNumberOfPurchases = 0;
 		m_secondsSinceLastPurchase = 0;
 
@@ -414,7 +416,8 @@ public class OfferPack {
 			case "nonPayer":	m_payerType = PayerType.NON_PAYER;		break;
 			default:			break;	// Already has the default value
 		}
-		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100;	// Content in USD, we work in cents of USD
+		m_minSpent = _def.GetAsFloat("minSpent", m_minSpent) * 100f; 	// Content in USD, we work in cents of USD
+		m_maxSpent = _def.GetAsFloat("maxSpent", m_maxSpent) * 100f;	// Content in USD, we work in cents of USD
 		m_minNumberOfPurchases = _def.GetAsInt("minNumberOfPurchases", m_minNumberOfPurchases);
 		m_secondsSinceLastPurchase = _def.GetAsLong("minutesSinceLastPurchase", m_secondsSinceLastPurchase / 60L) * 60L;		// Content in minutes, we work in seconds
 
@@ -482,6 +485,7 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "gamesPlayed", m_gamesPlayed.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "payerType", "");
 		SetValueIfMissing(ref _def, "minSpent", m_minSpent.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "maxSpent", m_maxSpent.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "minNumberOfPurchases", m_minNumberOfPurchases.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "minutesSinceLastPurchase", (m_secondsSinceLastPurchase / 60L).ToString(CultureInfo.InvariantCulture));
 
@@ -551,6 +555,7 @@ public class OfferPack {
 		// Min spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
 		if(m_minSpent > totalSpent) return false;
+		if(totalSpent > m_maxSpent) return false;
 
 		// Min number of purchases
 		if(m_minNumberOfPurchases > totalPurchases) return false;
@@ -620,12 +625,17 @@ public class OfferPack {
 		if(m_minAppVersion > GameSettings.internalVersion) return true;
 
 		// Payer profile
-		int totalPurchases = (HDTrackingManager.Instance.TrackingPersistenceSystem == null) ? 0 : HDTrackingManager.Instance.TrackingPersistenceSystem.TotalPurchases;
+		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
 		switch(m_payerType) {
 			case PayerType.NON_PAYER: {
 				if(totalPurchases > 0) return true;
 			} break;
 		}
+
+		// Max spent
+		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
+		if(totalSpent > m_maxSpent) return true;
 
 		// Progression
 		if(profile.GetPlayerProgress() > m_progressionRange.max) return true;
