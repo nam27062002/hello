@@ -1,5 +1,4 @@
 ﻿using System;
-using SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,7 +51,7 @@ public class HDSeasonData {
         m_liveDataState = HDLiveData.State.EMPTY;
     }
 
-    public void LoadData(JSONNode _data) {
+    public void LoadData(SimpleJSON.JSONNode _data) {
         int status = _data["status"];
         switch (status) {
             case 0: m_state = State.NOT_JOINED; break;
@@ -86,7 +85,7 @@ public class HDSeasonData {
         }
     }
 
-    private void LoadFullData(JSONNode _data) {
+    private void LoadFullData(SimpleJSON.JSONNode _data) {
         m_code = _data["id"];
 
         m_startDate = TimeUtils.TimestampToDate(_data["startDate"].AsLong);

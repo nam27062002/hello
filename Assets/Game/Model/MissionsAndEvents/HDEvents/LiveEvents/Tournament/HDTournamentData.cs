@@ -29,7 +29,7 @@ public class HDTournamentData : HDLiveEventData {
 		public string m_pic = "";
 		public int m_score = -1;
 		public int m_rank = -1;
-		public HDTournamentBuild m_build = new HDTournamentBuild();
+		public HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
 	}
 
 	//------------------------------------------------------------------------//
@@ -49,7 +49,7 @@ public class HDTournamentData : HDLiveEventData {
 		set{ m_lastFreeEntranceTimestamp = value; }
 	}
 		// Default tournament config
-	protected HDTournamentBuild m_defaultBuild = new HDTournamentBuild();
+	protected HDLiveData.DragonBuild m_defaultBuild = new HDLiveData.DragonBuild();
 
 
 	//------------------------------------------------------------------------//
@@ -137,7 +137,7 @@ public class HDTournamentData : HDLiveEventData {
 			// user info
 			m_rank = _data["u"]["rank"].AsLong;
 			m_score = _data["u"]["score"].AsLong;
-			m_defaultBuild.ParseBuild(_data["u"]["build"]);
+			m_defaultBuild.FromJson(_data["u"]["build"]);
 		}
 
 		if ( _data.ContainsKey("l") )
@@ -163,7 +163,7 @@ public class HDTournamentData : HDLiveEventData {
 				l.m_pic = arr[i]["pic"];
 				l.m_score = arr[i]["score"];
 				if (arr[i].ContainsKey("build"))
-					l.m_build.ParseBuild(arr[i]["build"]);
+					l.m_build.FromJson(arr[i]["build"]);
 				else
 					l.m_build.Clean();
 				l.m_rank = i;

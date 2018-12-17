@@ -755,7 +755,7 @@ public class GameServerManagerCalety : GameServerManager {
     }
 
     public override void HDLeagues_FinishMyLeague(ServerCallback _callback) {
-        Commands_EnqueueCommand(ECommand.HDLeagues_FinishMyLeague, null, _callback);
+        Commands_EnqueueCommand(ECommand.HDLeagues_FinishMySeason, null, _callback);
     }
     #endregion
 
@@ -812,7 +812,7 @@ public class GameServerManagerCalety : GameServerManager {
         HDLeagues_GetLeaderboard,
         HDLeagues_SetScore,
         HDLeagues_GetMyRewards,
-        HDLeagues_FinishMyLeague
+        HDLeagues_FinishMySeason
     }    
 
 	/// <summary>
@@ -1039,7 +1039,7 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLeagues_GetLeaderboard:
             case ECommand.HDLeagues_SetScore:
             case ECommand.HDLeagues_GetMyRewards:
-            case ECommand.HDLeagues_FinishMyLeague:
+            case ECommand.HDLeagues_FinishMySeason:
                 returnValue = true;
                 break;
         }
@@ -1249,8 +1249,10 @@ public class GameServerManagerCalety : GameServerManager {
                 
 
                 //--------------------------------------------------------------
-                case ECommand.HDLeagues_GetSeason:
-                    Command_SendCommand(COMMAND_HD_LEAGUES_GET_SEASON, null, parameters);
+                case ECommand.HDLeagues_GetSeason: {
+                    JSONClass data = JSON.Parse(parameters["fetchLeaderboard"]) as JSONClass;
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, false);
+                }
                 break;
 
                 case ECommand.HDLeagues_GetLeaderboard:
@@ -1259,16 +1261,16 @@ public class GameServerManagerCalety : GameServerManager {
 
                 case ECommand.HDLeagues_SetScore: {
                     JSONClass data = JSON.Parse(parameters["score"]) as JSONClass;
-                    Command_SendCommandAsGameAction(COMMAND_HD_LEAGUES_SET_SCORE, data, false);
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_SET_SCORE, data, false);
                 }
                 break;
                 
                 case ECommand.HDLeagues_GetMyRewards:
-                    Command_SendCommand(COMMAND_HD_LEAGUES_GET_MY_REWARDS);
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_MY_REWARDS, null, false);
                 break;
 
-                case ECommand.HDLeagues_FinishMyLeague:
-                    Command_SendCommand(COMMAND_HD_LEAGUES_FINISH_MY_LEAGUE);
+                case ECommand.HDLeagues_FinishMySeason:
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_FINISH_MY_SEASON, null, false);
                 break;
                 //--------------------------------------------------------------
 
@@ -1693,11 +1695,11 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
     private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
 
-    private const string COMMAND_HD_LEAGUES_GET_SEASON          = "/api/labLeague/season/get";
-    private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/labLeague/getLeaderboard";
-    private const string COMMAND_HD_LEAGUES_SET_SCORE           = "/api/labLeague/setScore";
-    private const string COMMAND_HD_LEAGUES_GET_MY_REWARDS      = "/api/labLeague/getMyRewards";
-    private const string COMMAND_HD_LEAGUES_FINISH_MY_LEAGUE    = "/api/labLeague/finish";
+    private const string ACTION_HD_LEAGUES_GET_SEASON           = "getSeasonalLeague";
+    private const string ACTION_HD_LEAGUES_SET_SCORE            = "addLeagueScore";
+    private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "getLeagueRewards";
+    private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "finishSeasonalLeague";
+    private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/seasonalLeagues/getLeaderboard";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";

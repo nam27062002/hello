@@ -45,7 +45,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public LeaderboardData m_leaderboard = new LeaderboardData();
 
-	public HDTournamentBuild m_build = new HDTournamentBuild();
+	public HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
 
 	public class TournamentGoal : GoalCommon
 	{
@@ -269,7 +269,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		// Build
 		if ( _data.ContainsKey("build") )
 		{
-			m_build.ParseBuild( _data["build"] );
+			m_build.FromJson( _data["build"] );
 		}
 
 		if ( _data.ContainsKey("rewards") )

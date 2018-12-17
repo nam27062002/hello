@@ -405,7 +405,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		HDTournamentData tournamentData = m_data as HDTournamentData;
     	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
     	bool ret = false;
-    	if (string.IsNullOrEmpty( def.m_build.m_dragon))
+    	if (string.IsNullOrEmpty(def.m_build.dragon))
     	{
     		ret = true;
     	}
@@ -418,8 +418,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		// NOTE: Here we should check datas last dragon used to return as it will be the prefered dragon
     	HDTournamentData tournamentData = m_data as HDTournamentData;
     	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-    	if ( !string.IsNullOrEmpty( def.m_build.m_dragon) ){
-			ret = def.m_build.m_dragon;
+    	if ( !string.IsNullOrEmpty( def.m_build.dragon) ){
+			ret = def.m_build.dragon;
 		}else{
 			ret = UsersManager.currentUser.currentClassicDragon;	// [AOC] TODO!! Allow special dragons?
 		}
@@ -434,8 +434,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		string ret;
     	HDTournamentData tournamentData = m_data as HDTournamentData;
     	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-    	if ( !string.IsNullOrEmpty( def.m_build.m_skin) )
-			ret = def.m_build.m_skin;
+    	if ( !string.IsNullOrEmpty( def.m_build.skin) )
+			ret = def.m_build.skin;
 		else
 			ret = UsersManager.currentUser.GetEquipedDisguise(GetToUseDragon());
 		return ret;
@@ -446,9 +446,9 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
     	List<string> ret;
 		HDTournamentData tournamentData = m_data as HDTournamentData;
     	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-    	if ( def.m_build.m_pets.Count > 0 )
+    	if ( def.m_build.pets.Count > 0 )
     	{
-			ret = def.m_build.m_pets;
+			ret = def.m_build.pets;
 		}
 		else
 		{

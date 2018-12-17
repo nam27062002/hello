@@ -62,6 +62,9 @@ public class HDLeagueData {
     public string icon          { get { return m_icon; } }
     public string description   { get { return m_description; } }
 
+    public float demoteScale    { get { return m_demoteScale; } }
+    public float promoteScale   { get { return m_promoteScale; } }
+
     public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
     public Metagame.Reward GetReward(int _i) { return m_rewards[_i].reward; }

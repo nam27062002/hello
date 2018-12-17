@@ -42,18 +42,70 @@ namespace HDLiveData {
     [Serializable]
     public class DragonBuild {
         public string dragon;
+        public string skin;
         public uint level;
         public List<string> pets;
 
         public DragonBuild() {
-            dragon = "";
-            level = 0;
-
             pets = new List<string>();
+            Clean();
+        }
+
+        public void Clean() {
+            dragon = "";
+            skin = "";
+            level = 0;
+            pets.Clear();
         }
 
         public void FromJson(SimpleJSON.JSONNode _data) {
+            Clean();
 
+            if (_data.ContainsKey("dragon")) {
+                dragon = _data["dragon"];
+            }
+
+            if (_data.ContainsKey("skin")) {
+                skin = _data["skin"];
+            }
+
+            if (_data.ContainsKey("level")) {
+                level = (uint)_data["level"].AsInt;
+            }
+
+            if (_data.ContainsKey("pets")) {
+                SimpleJSON.JSONArray petsData = _data["pets"].AsArray;
+                for (int i = 0; i < petsData.Count; i++) {
+                    pets.Add(petsData[i]);
+                }
+            }
+        }
+
+        public SimpleJSON.JSONClass ToJson() {
+            SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+            {
+                if (!string.IsNullOrEmpty(dragon)) {
+                    data.Add("dragon", dragon);
+                }
+
+                if (!string.IsNullOrEmpty(skin)) {
+                    data.Add("skin", skin);
+                }
+
+                if (level > 0) {
+                    data.Add("level", level.ToString(GameServerManager.JSON_FORMAT));
+                }
+
+                int petsCount = pets.Count;
+                if (petsCount > 0) {
+                    SimpleJSON.JSONArray petsData = new SimpleJSON.JSONArray();
+                    for (int i = 0; i < petsCount; i++) {
+                        petsData.Add(pets[i]);
+                    }
+                    data.Add("pets", petsData);
+                }
+            }
+            return data;
         }
     }
 
