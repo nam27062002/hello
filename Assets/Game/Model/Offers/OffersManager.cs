@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -22,7 +23,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const float REFRESH_FREQUENCY = 1f; // Seconds
-	private const int MAX_ACTIVE_ROTATIONAL_OFFERS = 1;
+	private const int NUM_ACTIVE_ROTATIONAL_OFFERS = 1;
+	private const int ROTATIONAL_HISTORY_SIZE = 2 + NUM_ACTIVE_ROTATIONAL_OFFERS;
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -39,11 +41,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	// Internal
-	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled offer packs, regardless of type
+	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
-	private List<OfferPack> m_allRotationalOffers = new List<OfferPack>();  // All rotational offers, regardless of state
-	private List<OfferPack> m_activeRotationalOffers = new List<OfferPack>();	// Currently active rotational offers
-	private Queue<string> m_rotationalHistory = new Queue<string>();	// Historic of rotational offers
+	private List<OfferPackRotational> m_allEnabledRotationalOffers = new List<OfferPackRotational>();  // All enabled and non-expired rotational offer packs
+	private List<OfferPackRotational> m_activeRotationalOffers = new List<OfferPackRotational>();	// Currently active rotational offers
 	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
 
@@ -85,7 +86,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		instance.m_allEnabledOffers.Clear();
 		instance.m_activeOffers.Clear();
 		instance.m_offersToRemove.Clear();
-		instance.m_allRotationalOffers.Clear();
+		instance.m_allEnabledRotationalOffers.Clear();
 		instance.m_activeRotationalOffers.Clear();
 		instance.m_featuredOffer = null;
 
@@ -110,7 +111,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 			// If rotational, store to the rotational collection
 			if(newPack.type == OfferPack.Type.ROTATIONAL) {
-				instance.m_allRotationalOffers.Add(newPack);
+				instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
 			}
 		}
 
@@ -134,56 +135,36 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		bool dirty = false;
 		m_offersToRemove.Clear();
 
-		// Iterate active rotational packs to check for expiration
-		bool newRotationalNeeded = false;
-		for(int i = 0; i < m_activeRotationalOffers.Count; ++i) {
-			// 
-		}
-
 		// Iterate all offer packs looking for state changes
 		for(int i = 0; i < m_allEnabledOffers.Count; ++i) {
 			// Aux vars
 			pack = m_allEnabledOffers[i];
 
-			// Process pack depending on its type
-			switch(pack.type) {
-				// Classic packs
-				case OfferPack.Type.PROGRESSION:
-				case OfferPack.Type.PUSHED: {
-					// Has offer changed state?
-					if(pack.UpdateState() || _forceActiveRefresh) {
-						// Yes!
-						dirty = true;
+			// Has offer changed state?
+			if(pack.UpdateState() || _forceActiveRefresh) {
+				// Yes!
+				dirty = true;
 
-						// Update lists
-						UpdateCollections(pack);
+				// Update lists
+				UpdateCollections(pack);
 
-						// Update persistence with this pack's new state
-						// [AOC] Packs Save() is smart, only stores packs when required
-						UsersManager.currentUser.SaveOfferPack(pack);
-					}
-				} break;
-
-				// Rotational packs
-				case OfferPack.Type.ROTATIONAL: {
-					//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
-					//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
-					//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
-					//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
-					//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
-					//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
-					//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
-					//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
-					//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
-				} break;
+				// Update persistence with this pack's new state
+				// [AOC] Packs Save() is smart, only stores packs when required
+				UsersManager.currentUser.SaveOfferPack(pack);
 			}
 		}
 
 		// Remove expired offers (they won't be active anymore, no need to update them)
 		for(int i = 0; i < m_offersToRemove.Count; ++i) {
 			m_allEnabledOffers.Remove(m_offersToRemove[i]);
+			if(m_offersToRemove[i].type == OfferPack.Type.ROTATIONAL) {
+				m_allEnabledRotationalOffers.Remove(m_offersToRemove[i] as OfferPackRotational);
+			}
 		}
 		m_offersToRemove.Clear();
+
+		// Do we need to activate a new rotational offer?
+		RefreshRotationals();
 
 		// Has any offer changed its state?
 		if(dirty) {
@@ -208,6 +189,76 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	}
 
 	/// <summary>
+	/// Checks wehther a new rotational pack needs to be activated and does it. 
+	/// </summary>
+	/// <returns>Wheteher a new rotational pack has been activated or not.</returns>
+	private bool RefreshRotationals() {
+		// Aux vars
+		int loopCount = 0;
+		int maxLoops = 50;  // Just in case, prevent infinite loop
+		bool dirty = false;
+		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
+
+		// Do we need to activate a new rotational pack?
+		while(m_activeRotationalOffers.Count < NUM_ACTIVE_ROTATIONAL_OFFERS && loopCount < maxLoops) {
+			// Select a new pack!
+			OfferPackRotational rotationalPack = null;
+			loopCount++;
+
+			// Create pool from non-expired rotational offers
+			List<OfferPackRotational> pool = new List<OfferPackRotational>();
+			for(int i = 0; i < m_allEnabledRotationalOffers.Count; ++i) {
+				// Aux
+				rotationalPack = m_allEnabledRotationalOffers[i];
+
+				// Skip active and expired packs
+				if(rotationalPack.state != OfferPack.State.PENDING_ACTIVATION) continue;
+
+				// Skip if pack has recently been used
+				if(history.Contains(rotationalPack.def.sku)) continue;
+
+				// Skip if segmentation conditions are not met for this pack
+				if(!rotationalPack.CheckSegmentation()) continue;
+
+				// Skip if activation conditions are not met for this pack
+				if(!rotationalPack.CheckActivation()) continue;
+
+				// Everything ok, add to the candidates pool!
+				pool.Add(rotationalPack);
+			}
+
+			// If no selectable pack was found, stop looping
+			if(pool.Count == 0) {
+				// Be more flexible with repeating recently used packs
+				if(history.Count > m_activeRotationalOffers.Count) {    // Don't dequeue active packs
+					history.Dequeue();
+					continue;   // Try again!
+				} else {
+					break;  // No chances of getting any pack :(
+				}
+			}
+
+			// Pick a random pack from the pool!
+			rotationalPack = pool.GetRandomValue();
+
+			// Activate new pack and add it to collections
+			rotationalPack.Activate();
+			UpdateCollections(rotationalPack);
+			UpdateRotationalHistory(rotationalPack);
+
+			// Update persistence with this pack's new state
+			// [AOC] Packs Save() is smart, only stores packs when required
+			UsersManager.currentUser.SaveOfferPack(rotationalPack);
+
+			// Manager is dirty
+			dirty = true;
+		}
+
+		// Done!
+		return dirty;
+	}
+
+	/// <summary>
 	/// Refresh the offer collections adding/removing the given offer based
 	/// on its type and state.
 	/// </summary>
@@ -217,16 +268,42 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		switch(_offer.state) {
 			case OfferPack.State.ACTIVE: {
 				m_activeOffers.Add(_offer);
+				if(_offer.type == OfferPack.Type.ROTATIONAL) {
+					m_activeRotationalOffers.Add(_offer as OfferPackRotational);
+				}
 			} break;
 
 			case OfferPack.State.EXPIRED: {
 				m_offersToRemove.Add(_offer);
 				m_activeOffers.Remove(_offer);
+				if(_offer.type == OfferPack.Type.ROTATIONAL) {
+					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				}
 			} break;
 
 			case OfferPack.State.PENDING_ACTIVATION: {
 				m_activeOffers.Remove(_offer);
+				if(_offer.type == OfferPack.Type.ROTATIONAL) {
+					m_activeRotationalOffers.Remove(_offer as OfferPackRotational);
+				}
 			} break;
+		}
+	}
+
+	/// <summary>
+	/// Add a pack to the top of the historic of rotational packs to prevent repetition. 
+	/// </summary>
+	/// <param name="_offer">Pack to be added.</param>
+	private void UpdateRotationalHistory(OfferPackRotational _offer) {
+		// Aux vars
+		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
+
+		// Add it to the history
+		history.Enqueue(_offer.def.sku);
+
+		// Remove last item if history size reached
+		if(history.Count > ROTATIONAL_HISTORY_SIZE) {
+			history.Dequeue();
 		}
 	}
 
