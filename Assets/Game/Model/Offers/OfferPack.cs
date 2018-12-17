@@ -266,14 +266,6 @@ public class OfferPack {
 	public void ForceExpiration() {
 		ChangeState(State.EXPIRED);
 	}
-
-	/// <summary>
-	/// Immediately mark this pack as active.
-	/// No checks will be performed!
-	/// </summary>
-	public void Activate() {
-		ChangeState(State.ACTIVE);
-	}
 	#endregion
 
 	//------------------------------------------------------------------------//

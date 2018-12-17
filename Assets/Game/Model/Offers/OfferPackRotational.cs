@@ -64,7 +64,7 @@ public class OfferPackRotational : OfferPack {
 					ChangeState(State.PENDING_ACTIVATION);
 				}
 
-				// However, if it has expired for any other reason, go to the expired state
+				// However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
 				else if(CheckExpiration(false)) {
 					ChangeState(State.EXPIRED);
 				}
@@ -77,5 +77,16 @@ public class OfferPackRotational : OfferPack {
 
 		// Has state changed?
 		return (oldState != m_state);
+	}
+
+	//------------------------------------------------------------------------//
+	// CUSTOM METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Immediately mark this pack as active.
+	/// No checks will be performed!
+	/// </summary>
+	public void Activate() {
+		ChangeState(State.ACTIVE);
 	}
 }
