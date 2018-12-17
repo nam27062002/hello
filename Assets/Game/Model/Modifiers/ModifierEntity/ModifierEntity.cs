@@ -35,6 +35,7 @@ public abstract class ModifierEntity : Modifier {
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
+    protected ModifierEntity() : base(TYPE_CODE) { }
     protected ModifierEntity(DefinitionNode _def) : base(TYPE_CODE, _def) {}
 
 }

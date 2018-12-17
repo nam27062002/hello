@@ -71,38 +71,14 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 
 	// Use this for initialization
 	void Awake() {
-		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
-
-		m_feedbackParticle.CreatePool();
-		m_burnParticle.CreatePool();
-	
+        m_feedbackParticle.CreatePool();
+		m_burnParticle.CreatePool();	
 		m_disintegrateParticle.CreatePool();
-
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
 
-		m_view = transform.Find("view").gameObject;
-		m_viewBurned = transform.Find("view_burned").gameObject;
-
-		m_renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < m_renderers.Length; i++) {
-			Material[] materials = m_renderers[i].sharedMaterials;
-
-			// Stores the materials of this renderer in a dictionary for direct access//
-			int renderID = m_renderers[i].GetInstanceID();
-			m_originalMaterials[renderID] = new List<Material>();
-			m_originalMaterials[renderID].AddRange(materials);
-
-			for (int m = 0; m < materials.Length; ++m) {				
-				//TODO
-				//materials[m] = null;
-			}
-
-			m_renderers[i].sharedMaterials = materials;
-		}
 		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 
 		m_state = m_nextState = State.Idle;
-
 		m_initialized = false;
         
         // Subscribe to external events
@@ -115,35 +91,54 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	/// Component disabled.
 	/// </summary>
 	private void OnDisable() {
-		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Disable();
-		}
+        if (m_fireNodes != null) {
+            for (int i = 0; i < m_fireNodes.Length; i++) {
+                m_fireNodes[i].Disable();
+            }
+        }
 	}
 
-    protected void OnDestroy()
-    {
+    protected void OnDestroy() {
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch( eventType )
-        {
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+        switch (eventType) {
             case BroadcastEventType.GAME_LEVEL_LOADED:
-            case BroadcastEventType.GAME_AREA_ENTER:            
-            {
+            case BroadcastEventType.GAME_AREA_ENTER:
                 OnLevelLoaded();
-            }break;
+            break;
         }
     }
 
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
-	private void OnLevelLoaded() {		
-		m_entity = GetComponent<Decoration>();
+	private void OnLevelLoaded() {
+        m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
+        m_view = transform.Find("view").gameObject;
+        m_viewBurned = transform.Find("view_burned").gameObject;
+
+        m_renderers = m_view.GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < m_renderers.Length; i++) {
+            Material[] materials = m_renderers[i].sharedMaterials;
+
+            // Stores the materials of this renderer in a dictionary for direct access//
+            int renderID = m_renderers[i].GetInstanceID();
+            m_originalMaterials[renderID] = new List<Material>();
+            m_originalMaterials[renderID].AddRange(materials);
+
+            for (int m = 0; m < materials.Length; ++m) {
+                //TODO
+                //materials[m] = null;
+            }
+
+            m_renderers[i].sharedMaterials = materials;
+        }
+
+        m_entity = GetComponent<Decoration>();
 		m_collider = GetComponent<BoxCollider>();
 		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 		m_operatorSpawner = GetComponents<DeviceOperatorSpawner>();
