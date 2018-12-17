@@ -158,7 +158,9 @@ public class HDCustomizerManager
     }
 
     public void Reset()
-    {                
+    {          
+        CustomizerManager.SharedInstance.ResetContentToOriginalValues();
+
         if ( m_hasBeenApplied && Application.isPlaying)
             UnApplyCustomizer();
         SetTimeToRequest(0f);
