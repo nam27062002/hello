@@ -107,6 +107,8 @@ namespace AI {
 		public bool IsDying() { return m_dyingReason != IEntity.DyingReason.OTHER; }
 		public bool IsDead() { return IsDying(); }
 		public bool IsFreezing() { return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 
 		public void Drown() {}
 

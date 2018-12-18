@@ -77,6 +77,8 @@ namespace AI {
 
 		protected override void OnSetVelocity() {}
 
+        protected override void FaceDragon() {}
+
 		public override void OnCollisionGroundEnter(Collision _collision) {}
 		public override void OnCollisionGroundStay(Collision _collision) {}
 		public override void OnCollisionGroundExit(Collision _collision) {}
