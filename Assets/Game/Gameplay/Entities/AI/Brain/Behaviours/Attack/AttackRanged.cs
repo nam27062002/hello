@@ -30,7 +30,8 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<AttackRangedData>();
+                if ( m_data == null )
+                    m_data = m_pilot.GetComponentData<AttackRangedData>();
 
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
@@ -108,10 +109,10 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-					if (m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) {
+					if ((m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) || (m_machine.enemy == null)) {
 						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
-					} else {
-						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
+					} else {    
+                        projectile.Shoot(m_machine.enemy , m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
 					}
 					m_projectile = null;
 				}

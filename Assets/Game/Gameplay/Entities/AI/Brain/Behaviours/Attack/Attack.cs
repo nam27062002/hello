@@ -183,7 +183,7 @@ namespace AI {
 				
 			}
 
-			private void OnAttachProjectile() {
+			protected void OnAttachProjectile() {
 				if (!m_onAttachProjectileEventDone) {
 					m_onAttachProjectileEventDone = true;
 					OnAttachProjectileExtended();

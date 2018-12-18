@@ -118,6 +118,8 @@ namespace AI {
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 		public void CustomFixedUpdate(){}
 
 		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
