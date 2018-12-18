@@ -25,7 +25,8 @@ public class PetCupidoProjectile : PetProjectile {
             if (m_checkEntities[i].machine != null)
             {
                 AI.Machine enittyMachine = m_checkEntities[i].machine as AI.Machine;
-                enittyMachine.InLove(m_inLoveDuration);
+                if ( enittyMachine != null)
+                    enittyMachine.InLove(m_inLoveDuration);
             }
         }
 
