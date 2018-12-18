@@ -86,6 +86,11 @@ public class ContentManager
         }
     }
 
+    public static void Reset()
+    {
+        ContentDeltaManager.SharedInstance.ResetDeltaContentDownloaded();
+    }
+
 	public static void InitContent(bool bAvoidDeltaContent = false, bool _configureServerManager = true)
 	{
 		if (_configureServerManager) {
