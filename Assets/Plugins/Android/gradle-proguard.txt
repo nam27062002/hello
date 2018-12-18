@@ -30,10 +30,8 @@
  }
  
 # Vungle
--dontwarn com.vungle.**
--dontnote com.vungle.**
--keep class com.vungle.** { *; }
--keep class javax.inject.*
+-keep class com.vungle.warren.** { *; }
+-dontwarn com.vungle.warren.error.VungleError$ErrorCode
 
 # GreenRobot
 -dontwarn de.greenrobot.event.util.**
