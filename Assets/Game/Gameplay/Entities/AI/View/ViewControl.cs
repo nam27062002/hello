@@ -187,6 +187,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
     
+    private ParticleData m_onEatenInloveParticle;
     private ParticleData m_inLoveParticle;
     private GameObject m_inLoveParticleInstance;
     protected bool m_inLove = false;
@@ -340,12 +341,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         
         
         if (m_stunParticle == null) {
-        	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
+        	m_stunParticle = new ParticleData("PS_Stun","", GameConstants.Vector3.zero );
         }
 		m_stunParticle.CreatePool();
 
+        m_onEatenInloveParticle = new ParticleData("PS_ValentinPetBrokenHeart", "", GameConstants.Vector3.zero);
+        m_onEatenInloveParticle.CreatePool();
+        
         if ( m_inLoveParticle == null ) {
-            m_inLoveParticle = new ParticleData("PS_ValentinPetLoop","",Vector3.one);
+            m_inLoveParticle = new ParticleData("PS_ValentinPetLoop","", GameConstants.Vector3.zero);
         }
         m_inLoveParticle.CreatePool();
         
@@ -810,6 +814,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 				}
 			}
 		}
+        else  if ( m_inLove )
+        {
+            GameObject go = m_onEatenInloveParticle.Spawn(m_transform.position + m_onEatenInloveParticle.offset);
+            if (go != null) {
+                FollowTransform ft = go.GetComponent<FollowTransform>();
+                if (ft != null) {
+                    ft.m_follow = _transform;
+                    ft.m_offset = m_onEatenInloveParticle.offset;
+                }
+            }
+        }
 		else 
 		{
 			GameObject go = m_onEatenParticle.Spawn(m_transform.position + m_onEatenParticle.offset);
