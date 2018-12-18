@@ -30,7 +30,8 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<AttackRangedData>();
+                if ( m_data == null )
+                    m_data = m_pilot.GetComponentData<AttackRangedData>();
 
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
