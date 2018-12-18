@@ -22,10 +22,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float REFRESH_FREQUENCY = 1f; // Seconds
-	private const int NUM_ACTIVE_ROTATIONAL_OFFERS = 1;
-	private const int ROTATIONAL_HISTORY_SIZE = 2 + NUM_ACTIVE_ROTATIONAL_OFFERS;
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -48,6 +45,17 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private List<OfferPack> m_offersToRemove = new List<OfferPack>();   // Temporal list of offers to be removed from active lists
     private float m_timer = 0;
 
+	// Settings
+	private OffersManagerSettings m_settings = null;
+	public static OffersManagerSettings settings {
+		get { 
+			if(instance.m_settings == null) {
+				instance.m_settings = Resources.Load<OffersManagerSettings>(OffersManagerSettings.PATH);
+			}
+			return instance.m_settings;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -64,7 +72,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	private void Update() {
 		// Refresh offers periodically for better performance
 		if(m_timer <= 0) {
-			m_timer = REFRESH_FREQUENCY;
+			m_timer = settings.refreshFrequency;
 			Refresh(false);
 		}
 		m_timer -= Time.deltaTime;
@@ -200,7 +208,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
 
 		// Do we need to activate a new rotational pack?
-		while(m_activeRotationalOffers.Count < NUM_ACTIVE_ROTATIONAL_OFFERS && loopCount < maxLoops) {
+		while(m_activeRotationalOffers.Count < settings.rotationalActiveOffers && loopCount < maxLoops) {
 			// Select a new pack!
 			OfferPackRotational rotationalPack = null;
 			loopCount++;

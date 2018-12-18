@@ -24,8 +24,6 @@ public class OfferPack {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	#region CONSTANTS
-	public const string EMPTY_VALUE = "-";
-
 	public enum WhereToShow {
 		SHOP_ONLY,
 		DRAGON_SELECTION,
@@ -949,7 +947,7 @@ public class OfferPack {
 	public static void SetValueIfMissing(ref DefinitionNode _def, string _key, string _value) {
 		// [AOC] This is disgusting because the SetValue() method also performs the Has() operation,
 		//		 but proper solution requires changing Calety and all the bureaucracy around it -_-
-		if(!_def.Has(_key) || _def.GetAsString(_key) == EMPTY_VALUE) {
+		if(!_def.Has(_key) || _def.GetAsString(_key) == OffersManager.settings.emptyValue) {
 			_def.SetValue(_key, _value);
 		}
 	}
