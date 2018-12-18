@@ -45,6 +45,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SerializeField] private RotationAxis m_rotationAxis = RotationAxis.Up;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
 	[SerializeField] private float m_scaleTime = 1f;
+    [Comment("Stop at targetPosition if target is null")]
 	[SerializeField] private bool m_stopAtTarget = false;
 	[SerializeField] private bool m_dieOutsideFrustum = true;
     [SerializeField] private bool m_dieOnHit = true;
@@ -381,7 +382,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 				m_transform.position = m_position;
 
 				// impact checks
-				if (m_stopAtTarget) {
+				if (m_stopAtTarget || ( m_target == null && m_motionType == MotionType.Homing )) {
 					float distanceToTarget = (m_targetPosition - m_position).sqrMagnitude;
 					if (distanceToTarget > m_distanceToTarget) {
 						Explode(false);

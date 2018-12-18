@@ -123,6 +123,11 @@ namespace AI {
 			}
 		}
 
+        protected override void FaceDragon() {
+            m_direction = m_dragon.position - m_machine.position;
+            m_direction.Normalize();
+        }
+        
 		//--------------------------------------------------
 		//--------------------------------------------------
 		protected override void ExtendedAttach() {}

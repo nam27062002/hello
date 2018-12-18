@@ -60,6 +60,7 @@ namespace AI {
 			InvulnerableFire	= (1 << 22),
 			Ranged				= (1 << 23),
 			Melee				= (1 << 24),
+            InLove              = (1 << 25),
 		}
 
 

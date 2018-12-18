@@ -149,6 +149,14 @@ namespace AI {
 				m_nextSubState = SubState.Idle;
 			}
 		}
+        
+        protected override void FaceDragon() {
+            m_direction = m_dragon.position - m_machine.position;
+            m_direction.Normalize();
+            m_direction = m_direction - Vector3.Dot(m_direction ,m_groundNormal) * m_groundNormal ;
+            m_direction.Normalize();
+            
+        }
 
 		protected override void UpdateOrientation() {
 			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_groundNormal);
