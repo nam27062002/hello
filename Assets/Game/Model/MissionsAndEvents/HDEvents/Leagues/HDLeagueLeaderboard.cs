@@ -2,6 +2,7 @@
 
 public class HDLeagueLeaderboard {
     //---[Attributes]-----------------------------------------------------------
+
     private string m_leagueSku;
 
     private List<HDLiveData.Leaderboard.Record> m_records;
@@ -13,6 +14,7 @@ public class HDLeagueLeaderboard {
 
 
     //---[Methods]--------------------------------------------------------------
+
     public HDLeagueLeaderboard(string _sku) {
         m_leagueSku = _sku;
         m_records = new List<HDLiveData.Leaderboard.Record>();

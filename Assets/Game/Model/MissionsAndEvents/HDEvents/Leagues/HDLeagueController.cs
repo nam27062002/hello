@@ -3,6 +3,7 @@
 
 public class HDLeagueController : HDLiveDataController {
     //---[Attributes]-----------------------------------------------------------
+
     private HDSeasonData m_season;
     public HDSeasonData season { get { return m_season; } }
 
@@ -13,6 +14,7 @@ public class HDLeagueController : HDLiveDataController {
 
 
     //---[Generic Methods]------------------------------------------------------
+
     /// <summary>
     /// Default constructor.
     /// </summary>

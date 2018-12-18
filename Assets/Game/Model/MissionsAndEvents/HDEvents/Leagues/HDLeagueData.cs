@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class HDLeagueData {
     //---[Basic Data]-----------------------------------------------------------
+
     private readonly DefinitionNode m_def;
     private readonly string m_sku;
     private readonly string m_icon;
@@ -14,6 +15,7 @@ public class HDLeagueData {
 
 
     //---[Extended Data]--------------------------------------------------------
+
     private float m_demoteScale;
     private float m_promoteScale;
 
@@ -26,6 +28,7 @@ public class HDLeagueData {
 
 
     //---[Construction Methods]-------------------------------------------------
+
     public HDLeagueData(DefinitionNode _def) {
         m_def = _def;
 
@@ -75,6 +78,7 @@ public class HDLeagueData {
 
 
     //---[Query Methods]--------------------------------------------------------
+
     public string name          { get { return m_name; } }
     public string sku           { get { return m_sku; } }
     public string icon          { get { return m_icon; } }

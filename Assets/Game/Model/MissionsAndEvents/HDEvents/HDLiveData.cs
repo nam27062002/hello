@@ -13,11 +13,14 @@ namespace HDLiveData {
     [Serializable]
     public class Reward {
         //---[Attributes]-------------------------------------------------------
+
         public Metagame.Reward reward;
         public long target;
 
 
+
         //---[Methods]----------------------------------------------------------
+
         public Reward() { reward = null; target = 0; }
 
 
@@ -100,6 +103,7 @@ namespace HDLiveData {
         [Serializable]
         public class Record {
             //---[Attributes]---------------------------------------------------
+
             public int rank;
 
             public string name;
@@ -110,6 +114,7 @@ namespace HDLiveData {
 
 
             //---[Methods]------------------------------------------------------
+
             public Record() {
                 rank = 0;
 

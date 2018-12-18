@@ -2,6 +2,7 @@
 
 public class HDSeasonData {
     //---[Classes and Enums]----------------------------------------------------
+
     public enum State {
         NONE = 0,
         TEASING,
@@ -14,7 +15,9 @@ public class HDSeasonData {
     }
 
 
+
     //---[Basic Data]-----------------------------------------------------------
+
     private int m_code;
 
     private DateTime m_startDate;
@@ -46,6 +49,7 @@ public class HDSeasonData {
 
 
     //---[Methods]--------------------------------------------------------------
+
     public HDSeasonData() {
         Clean();
     }
@@ -82,6 +86,7 @@ public class HDSeasonData {
 
 
     //---[Initialization]-------------------------------------------------------
+
     public void LoadData(SimpleJSON.JSONNode _data) {
         int status = _data["status"];
         switch (status) {
@@ -157,7 +162,8 @@ public class HDSeasonData {
 
 
 
-    //---[Rewards]--------------------------------------------------------------
+    //---[Score]----------------------------------------------------------------
+
     public void SentScore(long _score) {
         if (state >= State.NOT_JOINED && state < State.CLOSED) {
             GameServerManager.SharedInstance.HDLeagues_SetScore(_score, OnSetScore);
@@ -188,6 +194,7 @@ public class HDSeasonData {
 
 
     //---[Rewards]--------------------------------------------------------------
+
     public void RequestMyRewards() {
         if (state == State.PENDING_REWARDS) {
             GameServerManager.SharedInstance.HDLeagues_GetMyRewards(OnRequestMyRewards);
@@ -219,6 +226,7 @@ public class HDSeasonData {
 
 
     //---[Finalize my Season]---------------------------------------------------
+
     public void RequestFinalize() {
         GameServerManager.SharedInstance.HDLeagues_FinishMySeason(OnRequestFinalize);
         state = State.FINALIZING;
@@ -247,6 +255,7 @@ public class HDSeasonData {
 
 
     //---[Query Methods]--------------------------------------------------------
+
     public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToEnd   { get { return m_endDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
