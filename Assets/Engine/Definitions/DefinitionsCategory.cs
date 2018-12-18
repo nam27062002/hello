@@ -83,6 +83,7 @@ public class DefinitionsCategory
     public const string INTERSTITIALS_SETUP = "INTERSTITIALS_SETUP";
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
 	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
+    public const string LEAGUES = "LEAGUES";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

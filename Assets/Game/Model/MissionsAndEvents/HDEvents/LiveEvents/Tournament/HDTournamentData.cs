@@ -137,7 +137,7 @@ public class HDTournamentData : HDLiveEventData {
 			// user info
 			m_rank = _data["u"]["rank"].AsLong;
 			m_score = _data["u"]["score"].AsLong;
-			m_defaultBuild.FromJson(_data["u"]["build"]);
+			m_defaultBuild.LoadData(_data["u"]["build"]);
 		}
 
 		if ( _data.ContainsKey("l") )
@@ -163,7 +163,7 @@ public class HDTournamentData : HDLiveEventData {
 				l.m_pic = arr[i]["pic"];
 				l.m_score = arr[i]["score"];
 				if (arr[i].ContainsKey("build"))
-					l.m_build.FromJson(arr[i]["build"]);
+					l.m_build.LoadData(arr[i]["build"]);
 				else
 					l.m_build.Clean();
 				l.m_rank = i;

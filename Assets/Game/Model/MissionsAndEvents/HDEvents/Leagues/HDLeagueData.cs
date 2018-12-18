@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 public class HDLeagueData {
     //---[Basic Data]-----------------------------------------------------------
+    private readonly DefinitionNode m_def;
     private readonly string m_sku;
     private readonly string m_icon;
     private readonly string m_name;
     private readonly string m_description;
+
+    private readonly int    m_order;
+
 
 
     //---[Extended Data]--------------------------------------------------------
@@ -16,24 +20,36 @@ public class HDLeagueData {
     private List<HDLiveData.Reward> m_rewards;
     private HDLeagueLeaderboard m_leaderboard;
 
-    private HDLiveData.State m_liveDataState;
-    public HDLiveData.State liveDataState { get { return m_liveDataState; } }
+    public HDLiveData.State liveDataState { get; private set; }
+    public HDLiveDataManager.ComunicationErrorCodes liveDataError { get; private set; }
+
 
 
     //---[Construction Methods]-------------------------------------------------
     public HDLeagueData(DefinitionNode _def) {
+        m_def = _def;
+
         //Load basic data from definition
         m_sku = _def.sku;
-        //...
+        m_name = _def.Get("name");
+        m_icon = _def.Get("icon");
+        m_description = _def.Get("desc");
+
+        m_order = _def.GetAsInt("order");
         //
-    
-        m_demoteScale = 0f;
-        m_promoteScale = 0f;
+
+        m_leaderboard = new HDLeagueLeaderboard(m_sku);
+    }
+
+    public void Clean() {
+        m_demoteScale = m_def.GetAsFloat("demoteScale");
+        m_promoteScale = m_def.GetAsFloat("promoteScale");
 
         m_rewards = new List<HDLiveData.Reward>();
-        m_leaderboard = new HDLeagueLeaderboard(m_sku);
+        m_leaderboard.Clean();
 
-        m_liveDataState = HDLiveData.State.EMPTY;
+        liveDataState = HDLiveData.State.EMPTY;
+        liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
     public void LoadData(SimpleJSON.JSONNode _data) {
@@ -45,13 +61,15 @@ public class HDLeagueData {
 
             for (int r = 0; r < rewards.Count; ++r) {
                 HDLiveData.Reward reward = new HDLiveData.Reward();
-                reward.ParseJson(_data, HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
+                reward.LoadData(_data, HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
                 m_rewards.Add(reward);
             }
 
-            m_liveDataState = HDLiveData.State.VALID;
+            liveDataState = HDLiveData.State.VALID;
+            liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
         } else {
-            m_liveDataState = HDLiveData.State.ERROR;
+            liveDataState = HDLiveData.State.ERROR;
+            liveDataError = HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR;
         }
     }
 

@@ -269,7 +269,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		// Build
 		if ( _data.ContainsKey("build") )
 		{
-			m_build.FromJson( _data["build"] );
+			m_build.LoadData( _data["build"] );
 		}
 
 		if ( _data.ContainsKey("rewards") )
@@ -277,7 +277,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
 				TournamentReward r = new TournamentReward();
-				r.ParseJson(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
+				r.LoadData(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
 
 				// Compute ranks. Min can only be computed based on previous reward.
 				// Since we can't assume rewards are received sorted, we'll do it afterwards in a separate loop.
@@ -320,7 +320,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		ret.Add("leaderboard", m_leaderboard.ToJson());
 
 		// Build
-		ret.Add("build", m_build.ToJson());
+		ret.Add("build", m_build.SaveData());
 
 		return ret;
 	}

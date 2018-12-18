@@ -744,7 +744,7 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetLeaderboard, null, _callback);
     }
 
-    public override void HDLeagues_SetScore(int _score, ServerCallback _callback) {
+    public override void HDLeagues_SetScore(long _score, ServerCallback _callback) {
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("score", _score.ToString(JSON_FORMAT));
         Commands_EnqueueCommand(ECommand.HDLeagues_SetScore, parameters, _callback);
@@ -754,7 +754,7 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetMyRewards, null, _callback);
     }
 
-    public override void HDLeagues_FinishMyLeague(ServerCallback _callback) {
+    public override void HDLeagues_FinishMySeason(ServerCallback _callback) {
         Commands_EnqueueCommand(ECommand.HDLeagues_FinishMySeason, null, _callback);
     }
     #endregion

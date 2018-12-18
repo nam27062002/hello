@@ -93,7 +93,7 @@ public class HDQuestDefinition : HDLiveEventDefinition {
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
                 HDLiveData.Reward reward = new HDLiveData.Reward();
-				reward.ParseJson(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
+				reward.LoadData(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
 
 				m_rewards.Add( reward );
 			}

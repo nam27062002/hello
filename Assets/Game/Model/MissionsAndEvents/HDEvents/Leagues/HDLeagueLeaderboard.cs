@@ -6,9 +6,9 @@ public class HDLeagueLeaderboard {
 
     private List<HDLiveData.Leaderboard.Record> m_records;
     public List<HDLiveData.Leaderboard.Record> records { get { return m_records; } }
-
-    private HDLiveData.State m_liveDataState;
-    public HDLiveData.State liveDataState { get { return m_liveDataState; } }
+   
+    public HDLiveData.State liveDataState { get; private set; }
+    public HDLiveDataManager.ComunicationErrorCodes liveDataError { get; private set; }
 
 
 
@@ -16,14 +16,22 @@ public class HDLeagueLeaderboard {
     public HDLeagueLeaderboard(string _sku) {
         m_leagueSku = _sku;
         m_records = new List<HDLiveData.Leaderboard.Record>();
-        m_liveDataState = HDLiveData.State.EMPTY;
+        Clean();
+    }
+
+    public void Clean() {
+        m_records.Clear();
+
+        liveDataState = HDLiveData.State.EMPTY;
+        liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
     public void RequestData() {
         //Right now, we don't need the league sku, because, in server, they are using the player id to retrieve the leaderboard.
         GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnDataResponse);
 
-        m_liveDataState = HDLiveData.State.WAITING_RESPONSE;
+        liveDataState = HDLiveData.State.WAITING_RESPONSE;
+        liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
     private void OnDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
@@ -40,24 +48,24 @@ public class HDLeagueLeaderboard {
             LoadData(responseJson.AsArray);
         } else {
 
-            m_liveDataState = HDLiveData.State.ERROR;
+            liveDataState = HDLiveData.State.ERROR;
         }
+
+        liveDataError = outErr;
     }
 
     public void LoadData(SimpleJSON.JSONArray _data) {
         if (_data != null) {
             for (int i = 0; i < _data.Count; ++i) {
                 SimpleJSON.JSONClass d = _data[i].AsObject;
-                /*
-                HDLiveData.Leaderboard.Record record = new HDLiveData.Leaderboard.Record {
-                    name = d["name"],
-                    score = (ulong)d["score"].AsLong,
-                    position = (uint)i
-                };*/
 
-               // m_records.Add(record);
+                HDLiveData.Leaderboard.Record record = new HDLiveData.Leaderboard.Record();
+                record.LoadData(d);
+                record.rank = i;
+
+                m_records.Add(record);
             }
         }
-        m_liveDataState = HDLiveData.State.VALID;
+        liveDataState = HDLiveData.State.VALID;
     }
 }

@@ -406,11 +406,11 @@ public class GameServerManager {
     public virtual void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) { }
     public virtual void HDLeagues_GetLeaderboard(ServerCallback _callback) { }
 
-    public virtual void HDLeagues_SetScore(int _score, ServerCallback _callback) { }
+    public virtual void HDLeagues_SetScore(long _score, ServerCallback _callback) { }
 
     public virtual void HDLeagues_GetMyRewards(ServerCallback _callback) { }
 
-    public virtual void HDLeagues_FinishMyLeague(ServerCallback _callback) { }
+    public virtual void HDLeagues_FinishMySeason(ServerCallback _callback) { }
 
 
     //------------------------------------------------------------------------//

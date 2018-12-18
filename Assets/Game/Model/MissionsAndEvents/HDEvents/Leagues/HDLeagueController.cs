@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using SimpleJSON;
-using UnityEngine;
+
 
 public class HDLeagueController : HDLiveDataController {
     //---[Attributes]-----------------------------------------------------------
@@ -8,6 +7,9 @@ public class HDLeagueController : HDLiveDataController {
     public HDSeasonData season { get { return m_season; } }
 
     private List<HDLeagueData> m_leagues;
+    public int leaguesCount { get { return m_leagues.Count; } }
+    public HDLeagueData GetLeagueData(int _index) {  return m_leagues[_index]; }
+
 
 
     //---[Generic Methods]------------------------------------------------------
@@ -17,8 +19,19 @@ public class HDLeagueController : HDLiveDataController {
     public HDLeagueController() {
         m_type = "league";
 
-        m_season = null;
+        m_season = new HDSeasonData();
+        CreateLeagues();
+    }
+
+    private void CreateLeagues() {
         m_leagues = new List<HDLeagueData>();
+        List<DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LEAGUES);
+
+        for (int i = 0; i < definitions.Count; ++i) {
+            DefinitionNode definition = definitions[i];
+            HDLeagueData league = new HDLeagueData(definition);
+            m_leagues.Add(league);
+        }
     }
 
     public override void Activate() {}
@@ -26,8 +39,11 @@ public class HDLeagueController : HDLiveDataController {
     public override void ApplyDragonMods() {}
 
     public override void CleanData() {
-        m_season = null;
-        m_leagues.Clear();
+        m_season.Clean();
+     
+        for (int i = 0; i < m_leagues.Count; ++i) {
+            m_leagues[i].Clean();
+        }
 
         m_dataLoadedFromCache = false;
     }
@@ -36,12 +52,11 @@ public class HDLeagueController : HDLiveDataController {
         return false;
     }
 
-    public override JSONNode SaveData() {
+    public override SimpleJSON.JSONNode SaveData() {
         return null;
     }
 
     public override void LoadDataFromCache() {
-        CleanData();
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
 
@@ -50,33 +65,28 @@ public class HDLeagueController : HDLiveDataController {
         m_dataLoadedFromCache = true;
     }
 
-    public override void LoadData(JSONNode _data) {
-        m_season = new HDSeasonData();
+    public override void LoadData(SimpleJSON.JSONNode _data) {
+        CleanData();
+
         m_season.LoadData(_data);
 
-        CreateLeagues(_data["sku"], _data.GetSafe("nextSku", ""));
+        string currentLeague = _data["sku"];
+        string nextLeague = _data.GetSafe("nextSku", "");
+        
+        for (int i = 0; i < m_leagues.Count; ++i) {
+            HDLeagueData leagueData = m_leagues[i];
+
+            if (currentLeague.Equals(leagueData.sku)) {
+                m_season.currentLeague = leagueData;
+            }
+
+            if (nextLeague.Equals(leagueData.sku)) {
+                m_season.nextLeague = leagueData;
+            }
+        }
     }   
 
     public override void OnLiveDataResponse() {
         m_season.RequestFullData(true);
-    }
-   
-    private void CreateLeagues(string _currentLeague, string _nextLeague) {
-        List<DefinitionNode> definitions = DefinitionsManager.SharedInstance.GetDefinitionsList("TODO: LEAGUES CAT");
-             
-        for (int i = 0; i < definitions.Count; ++i) {
-            DefinitionNode definition = definitions[i];
-            HDLeagueData league = new HDLeagueData(definition);
-
-            m_leagues.Add(league);
-
-            if (_currentLeague.Equals(definition.sku)) {
-                m_season.currentLeague = league;
-            }
-
-            if (_nextLeague.Equals(definition.sku)) {
-                m_season.nextLeague = league;
-            }
-        }
     }
 }
