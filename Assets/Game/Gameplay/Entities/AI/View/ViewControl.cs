@@ -337,13 +337,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+        
+        
         if (m_stunParticle == null) {
         	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
         }
 		m_stunParticle.CreatePool();
 
         if ( m_inLoveParticle == null ) {
-            m_inLoveParticle = new ParticleData("PS_Stun","",Vector3.one);
+            m_inLoveParticle = new ParticleData("PS_ValentinPetLoop","",Vector3.one);
         }
         m_inLoveParticle.CreatePool();
         
@@ -542,6 +544,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
+        
+        if ( m_inLoveParticleInstance )
+        {
+            m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+            m_inLoveParticleInstance = null;
+        }
+        
+        
 		RemoveAudios();
 
 		#if DETACH_VIEW_ON_DISABLE

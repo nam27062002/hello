@@ -38,7 +38,7 @@ public class InloveMaterialManager : Singleton<InloveMaterialManager> {
 		frozenMat.EnableKeyword("FREEZE");
 		frozenMat.SetColor("_FresnelColor", new Color(225.0f / 255.0f, 34.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
 		frozenMat.SetColor("_FresnelColor2", new Color(225.0f / 255.0f, 34.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f));
-		frozenMat.SetFloat("_FresnelPower", 0.71f);
+		frozenMat.SetFloat("_FresnelPower", 1.44f);
 		frozenMat.SetColor("_GoldColor", new Color(179.0f / 255.0f, 250.0f / 255.0f, 254.0f / 255.0f, 64.0f / 255.0f));
 
 		return frozenMat;
