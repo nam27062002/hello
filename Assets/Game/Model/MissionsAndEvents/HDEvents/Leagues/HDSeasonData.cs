@@ -144,10 +144,12 @@ public class HDSeasonData {
             state = State.TEASING;
         } else {
             if (timeToEnd.TotalSeconds < 0f) {
-                state = State.FINALIZED;
+                if (state < State.FINALIZED)
+                    state = State.FINALIZED;
             } else {
                 if (timeToClose.TotalSeconds < 0f) {
-                    state = State.CLOSED;
+                    if (state < State.CLOSED)
+                        state = State.CLOSED;
                 }
             }
         }
