@@ -88,7 +88,7 @@ public class HDSeasonData {
     //---[Initialization]-------------------------------------------------------
 
     public void LoadData(SimpleJSON.JSONNode _data) {
-        int status = _data["status"];
+        int status = _data["status"].AsInt;
         switch (status) {
             case 0: state = State.NOT_JOINED; break;
             case 1: state = State.JOINED; break;
@@ -103,7 +103,11 @@ public class HDSeasonData {
     }
 
     public void RequestFullData(bool _fetchLeaderboard) {
-        GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestFullData);
+        if (HDLiveDataManager.TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_season_data.json", OnRequestFullData));
+        } else {
+            GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestFullData);
+        }
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -117,7 +121,7 @@ public class HDSeasonData {
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             // parse Json
-            LoadFullData(responseJson.AsArray);
+            LoadFullData(responseJson);
         } else {
 
             liveDataState = HDLiveData.State.ERROR;
@@ -141,9 +145,9 @@ public class HDSeasonData {
     }
 
     private void LoadDates(SimpleJSON.JSONNode _data) {
-        m_startDate = TimeUtils.TimestampToDate(_data["startDate"].AsLong);
-        m_closeDate = TimeUtils.TimestampToDate(_data["closeDate"].AsLong);
-        m_endDate = TimeUtils.TimestampToDate(_data["endDate"].AsLong);
+        m_startDate = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
+        m_closeDate = TimeUtils.TimestampToDate(_data["closeTimestamp"].AsLong);
+        m_endDate = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
         if (timeToStart.TotalSeconds > 0f) {
             state = State.TEASING;

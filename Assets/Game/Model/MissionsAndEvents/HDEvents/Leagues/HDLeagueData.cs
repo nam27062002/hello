@@ -60,11 +60,11 @@ public class HDLeagueData {
             m_demoteScale = _data["demoteScale"].AsFloat;
             m_promoteScale = _data["promoteScale"].AsFloat;
 
-            SimpleJSON.JSONArray rewards = _data["rewars"].AsArray;
+            SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
 
-            for (int r = 0; r < rewards.Count; ++r) {
+            for (int r = 0; r < rewardsData.Count; ++r) {
                 HDLiveData.Reward reward = new HDLiveData.Reward();
-                reward.LoadData(_data, HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
+                reward.LoadData(rewardsData[r], HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
                 m_rewards.Add(reward);
             }
 
