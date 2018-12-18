@@ -4,6 +4,8 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+#define LOG
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -209,6 +211,14 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 		// Do we need to activate a new rotational pack?
 		while(m_activeRotationalOffers.Count < settings.rotationalActiveOffers && loopCount < maxLoops) {
+			Log(Colors.orange.Tag("Rotational offers required: {0} active"), m_activeRotationalOffers.Count);
+			UpdateRotationalHistory(null);	// Make sure rotational history has the proper size
+			LogRotationalHistory();
+#if LOG
+			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+			Log(Colors.silver.Tag("Total Purchases {0}"), trackingPersistence.TotalPurchases);
+#endif
+
 			// Select a new pack!
 			OfferPackRotational rotationalPack = null;
 			loopCount++;
@@ -218,39 +228,59 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			for(int i = 0; i < m_allEnabledRotationalOffers.Count; ++i) {
 				// Aux
 				rotationalPack = m_allEnabledRotationalOffers[i];
+				Log("    Checking {0}", rotationalPack.def.sku);
 
 				// Skip active and expired packs
+				Log("        Checking state... {0}", rotationalPack.state);
 				if(rotationalPack.state != OfferPack.State.PENDING_ACTIVATION) continue;
 
 				// Skip if pack has recently been used
+				Log("        Checking history...");
 				if(history.Contains(rotationalPack.def.sku)) continue;
 
 				// Skip if segmentation conditions are not met for this pack
+				Log("        Checking segmentation...");
 				if(!rotationalPack.CheckSegmentation()) continue;
 
 				// Skip if activation conditions are not met for this pack
+				Log("        Checking activation...");
 				if(!rotationalPack.CheckActivation()) continue;
 
+				// Also skip if for some reason the pack has expired!
+				// [AOC] TODO!! Should it be removed?
+				Log("        Checking expiration...");
+				if(rotationalPack.CheckExpiration(false)) continue;
+
 				// Everything ok, add to the candidates pool!
+				Log(Colors.lime.Tag("    Candidate is Good! {0}"), rotationalPack.def.sku);
 				pool.Add(rotationalPack);
 			}
 
 			// If no selectable pack was found, stop looping
 			if(pool.Count == 0) {
+				Log("Random pool is empty, try loosen up the history ({0})", history.Count);
+
 				// Be more flexible with repeating recently used packs
 				if(history.Count > m_activeRotationalOffers.Count) {    // Don't dequeue active packs
 					history.Dequeue();
 					continue;   // Try again!
 				} else {
+					Log("Can't remove any pack from the history, no chances of selecting a new pack :(\nBreaking loop");
 					break;  // No chances of getting any pack :(
 				}
 			}
 
 			// Pick a random pack from the pool!
 			rotationalPack = pool.GetRandomValue();
+#if LOG
+			string poolStr = "";
+			foreach(OfferPack p in pool) poolStr += "    " + p.def.sku + "\n";
+			Log("Picking random pack from a pool of {0}...\n{1}", pool.Count, poolStr);
+#endif
 
 			// Activate new pack and add it to collections
 			rotationalPack.Activate();
+			Log("Activating pack {0}", rotationalPack.def.sku);
 			UpdateCollections(rotationalPack);
 			UpdateRotationalHistory(rotationalPack);
 
@@ -296,6 +326,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 				}
 			} break;
 		}
+
+		// Debug
+		Log("Collections updated with pack {0}", _offer.def.sku);
+		LogCollections();
 	}
 
 	/// <summary>
@@ -306,13 +340,22 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Aux vars
 		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
 
-		// Add it to the history
-		history.Enqueue(_offer.def.sku);
+		// If a pack needs to be added, do it now
+		if(_offer != null) {
+			history.Enqueue(_offer.def.sku);
+		}
 
-		// Remove last item if history size reached
-		if(history.Count > ROTATIONAL_HISTORY_SIZE) {
+		// Remove as many items as needed until the history size is right
+		int maxSize = settings.rotationalHistorySize + m_activeRotationalOffers.Count; // History contains active offers
+		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
+		while(history.Count > maxSize) {
+			Log("    History too big: Dequeing");
 			history.Dequeue();
 		}
+
+		// Debug
+		Log("Rotational history updated with pack {0}", (_offer == null ? "NULL" : _offer.def.sku));
+		LogRotationalHistory();
 	}
 
 	/// <summary>
@@ -385,9 +428,58 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         }
         return null;
     }
-    
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Log into the console (if enabled).
+	/// </summary>
+	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+	private static void Log(string _msg, params object[] _replacements) {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log(string.Format(_msg, _replacements), ControlPanel.ELogChannel.Offers);
+#endif
+	}
+
+	/// <summary>
+	/// Do a report on current collections state.
+	/// </summary>
+	private void LogCollections() {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		Log(
+			"Collections:\n" +
+			"    All: " + m_activeOffers.Count + "\n" +
+			"    All Enabled: " + m_activeOffers.Count + "\n" +
+			"    Active: " + m_activeOffers.Count + "\n" +
+			"\n" +
+			"    All Rotational Enabled: " + m_activeOffers.Count + "\n" +
+			"    Active Rotational: " + m_activeOffers.Count + "\n" +
+			"\n" +
+			"    To Remove: " + m_offersToRemove.Count
+		);
+#endif
+	}
+
+	/// <summary>
+	/// Do a report on current rotational history state.
+	/// </summary>
+	private void LogRotationalHistory() {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
+		string str = "Rotational History (" + history.Count + "):\n";
+		foreach(string s in history) {
+			str += "    " + s + "\n";
+		}
+		Log(str);
+#endif
+	}
 }
