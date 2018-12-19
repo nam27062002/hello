@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 136000011433031554}
   - component: {fileID: 54000011314891474}
   - component: {fileID: 114000011510921238}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: PF_Catapulter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4000014108887078}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: groundSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4002407052654028}
   - component: {fileID: 137736217485018182}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Archer_Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4833665190735278}
   - component: {fileID: 95833801953500570}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4032299289753242}
-  m_Layer: 0
+  m_Layer: 21
   m_Name: Human_Spine1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,6 +219,7 @@ MonoBehaviour:
   m_serializedJson: '[]'
   m_databaseKey: PF_Catapulter
   m_updateMachinePos: 1
+  m_updateMachineRot: 0
 --- !u!114 &114000011510921238
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -516,6 +517,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
 --- !u!136 &136000011433031554
 CapsuleCollider:

@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4841047437117682}
   - component: {fileID: 137574419088685614}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: ghost_goblin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114336454134011498}
   - component: {fileID: 54625767117686674}
   - component: {fileID: 136561335226086704}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_Ghost02_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,7 +58,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4263609879052390}
   - component: {fileID: 95802000238976098}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -161,6 +161,7 @@ MonoBehaviour:
   m_serializedJson: '[{"damage":11,"duration":2,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
   m_databaseKey: PF_Ghost02_Static
   m_updateMachinePos: 1
+  m_updateMachineRot: 0
 --- !u!114 &114336454134011498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -209,6 +210,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
 --- !u!114 &114696740973721862
 MonoBehaviour:
