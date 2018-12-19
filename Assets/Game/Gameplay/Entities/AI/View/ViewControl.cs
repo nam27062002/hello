@@ -816,14 +816,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		}
         else  if ( m_inLove )
         {
-            GameObject go = m_onEatenInloveParticle.Spawn(m_transform.position + m_onEatenInloveParticle.offset);
-            if (go != null) {
-                FollowTransform ft = go.GetComponent<FollowTransform>();
-                if (ft != null) {
-                    ft.m_follow = _transform;
-                    ft.m_offset = m_onEatenInloveParticle.offset;
-                }
+            Vector3 pos = m_transform.position;
+            if ( m_inLoveParticleInstance )
+            {
+                pos = m_inLoveParticleInstance.transform.position;
             }
+            GameObject go = m_onEatenInloveParticle.Spawn( pos + m_onEatenInloveParticle.offset);
         }
 		else 
 		{
@@ -1169,10 +1167,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	/// </summary>
 	public virtual void Bite( Transform _transform )
 	{
+        if ( m_inLoveParticleInstance )
+        {
+            m_inLoveParticleInstance.transform.parent = m_transform.parent;
+        }
 	}
 
 	public void BeginSwallowed( Transform _transform )
-	{
+	{        
 		OnEatenEvent( _transform );
 	}
 

@@ -154,6 +154,7 @@ public class DragonTint : MonoBehaviour
             {
                 rends[i].material = pair1.Value;
             }
+            AddMaterialInfo(pair1.Value);
         }
             
         
