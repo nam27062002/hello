@@ -469,6 +469,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_attackingTarget = false;
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
+        m_inLove = false;
 
 		m_aim = 0f;
 		m_damageFeedbackTimer = 0f;
@@ -548,7 +549,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
-        
+
         if ( m_inLoveParticleInstance )
         {
             m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
@@ -817,11 +818,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         else  if ( m_inLove )
         {
             Vector3 pos = m_transform.position;
+            Quaternion rot = GameConstants.Quaternion.identity;
             if ( m_inLoveParticleInstance )
             {
                 pos = m_inLoveParticleInstance.transform.position;
+                rot = m_inLoveParticleInstance.transform.rotation;
             }
-            GameObject go = m_onEatenInloveParticle.Spawn( pos + m_onEatenInloveParticle.offset);
+            GameObject go = m_onEatenInloveParticle.Spawn( pos + m_onEatenInloveParticle.offset, rot);
         }
 		else 
 		{

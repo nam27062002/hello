@@ -38,9 +38,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4336817967787110}
   - component: {fileID: 54582701073672564}
-  - component: {fileID: 65185112917952912}
+  - component: {fileID: 135872116926620852}
   - component: {fileID: 114628629377757450}
-  m_Layer: 19
+  m_Layer: 14
   m_Name: PF_Cupido_Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363264916768824}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -221.03511, y: 107.39668, z: -2.4215498}
+  m_LocalPosition: {x: 1.6498829, y: -999.14276, z: -2.4215498}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4151561353315876}
@@ -130,18 +130,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
---- !u!65 &65185112917952912
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1363264916768824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.6, z: 2.1}
-  m_Center: {x: 0.003638992, y: -0.00023290748, z: -0.68}
 --- !u!114 &114628629377757450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -375,7 +363,7 @@ MonoBehaviour:
     m_Bits: 65011712
   m_groundMask:
     serializedVersion: 2
-    m_Bits: 134742544
+    m_Bits: 1611137552
   m_firingEntityType: 1
   m_explodeIfHomingtargetNull: 1
   m_inLoveDuration: 5
@@ -432,3 +420,15 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 0
     orientate: 0
+--- !u!135 &135872116926620852
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363264916768824}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: -1.38}
