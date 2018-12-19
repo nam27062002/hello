@@ -21,29 +21,47 @@ public class AutoParenter : MonoBehaviour {
 	public Transform parentRoot
 	{
 		get{ return m_parentRoot; }
+        set{ m_parentRoot = value; }
 	}
 	[SerializeField] private bool m_worldPositionStays = true;
 	[SerializeField] private bool m_resetScale = false;
+    public enum When
+    {
+        AWAKE,
+        START
+    };
+    [SerializeField] private When m_when = When.AWAKE;
 
 	void Awake() {
-		if (!string.IsNullOrEmpty(m_parentName)) {
-			Transform t = transform;
-			Transform p = GetNewParent();
-			if (p == null) {
+        if (m_when == When.AWAKE)
+            Reparent();
+	}
+    
+    void Start() {
+        if (m_when == When.START)
+            Reparent();
+    }
+    
+    public void Reparent()
+    {
+        if (!string.IsNullOrEmpty(m_parentName)) {
+            Transform t = transform;
+            Transform p = GetNewParent();
+            if (p == null) {
                 if (FeatureSettingsManager.IsDebugEnabled) {
                     string parentObjName = t.name;
                     Debug.LogWarning(string.Format("Can't find transform for {0} on object {1}", m_parentName, parentObjName));
                 }
-			} else {
-				t.SetParent(p, m_worldPositionStays);
-				if (m_resetScale) {
-					t.localScale = GameConstants.Vector3.one;
-				}
-			}
-		}
+            } else {
+                t.SetParent(p, m_worldPositionStays);
+                if (m_resetScale) {
+                    t.localScale = GameConstants.Vector3.one;
+                }
+            }
+        }
 
-		Destroy(this);
-	}
+        Destroy(this);
+    }
 
 	public void CopyTargetPosAndRot()
 	{
