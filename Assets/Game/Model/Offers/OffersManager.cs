@@ -4,7 +4,7 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
-#define LOG
+//#define LOG
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -216,7 +216,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 			LogRotationalHistory();
 #if LOG
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-			Log(Colors.silver.Tag("Total Purchases {0}"), trackingPersistence.TotalPurchases);
+			int totalPurchases = trackingPersistence == null ? 0 : trackingPersistence.TotalPurchases;
+			Log(Colors.silver.Tag("Total Purchases {0}"), totalPurchases);
 #endif
 
 			// Select a new pack!
