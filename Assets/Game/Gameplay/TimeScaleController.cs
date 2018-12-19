@@ -18,6 +18,7 @@ public class TimeScaleController : MonoBehaviour {
     // public int m_hitStop = 0;
     public float m_hitStopTimer = 0;
     public float m_hitStopDuration = 0.1f;
+    public float m_hitStopDelay = 0.1f;
     
     
     // SLOW MO
@@ -60,7 +61,7 @@ public class TimeScaleController : MonoBehaviour {
                 scale = m_slowMoTimescale;
             }
         }
-        else if ( m_hitStopTimer > 0 )
+        else if ( m_hitStopTimer > 0 && m_hitStopDelay <= 0)
         {
             scale = 1.0f - (m_hitStopTimer / m_hitStopDuration);
         }
@@ -68,8 +69,16 @@ public class TimeScaleController : MonoBehaviour {
         if (m_slowMoTimer > 0)
             m_slowMoTimer -= Time.unscaledDeltaTime;
         
-        if (m_hitStopTimer > 0)
+        
+        if ( m_hitStopDelay > 0 )
+        {
+            m_hitStopDelay -= Time.unscaledDeltaTime;
+        }
+        else if(m_hitStopTimer > 0)
+        {
             m_hitStopTimer -= Time.unscaledDeltaTime;
+        }
+            
 
         Time.timeScale = scale;
     }
@@ -105,6 +114,10 @@ public class TimeScaleController : MonoBehaviour {
         // Debug.Log("HIT STOP!");
         // if (frames > m_hitStop)
         //    m_hitStop = frames;
+        if ( m_hitStopTimer <= 0)
+        {
+            m_hitStopDelay = 0.1f;
+        }
         m_hitStopTimer = m_hitStopDuration;
     }
     
