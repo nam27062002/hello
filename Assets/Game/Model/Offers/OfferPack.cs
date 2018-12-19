@@ -4,6 +4,8 @@
 // Created by Alger Ortín Castellví on 20/02/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
+//#define LOG
+
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -525,54 +527,79 @@ public class OfferPack {
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		Log("CHECK ACTIVATION {0}", Colors.lime, def.sku);
 
 		// Start date
-		if(GameServerManager.SharedInstance.GetEstimatedServerTime() < m_startDate) return false;
+		Log("    Start Date... {0} vs {1}", Colors.paleGreen, m_startDate, serverTime);
+		if(serverTime < m_startDate) return false;
 
 		// Progression
+		Log("    Games Played... {0} vs {1}", Colors.paleGreen, m_gamesPlayed, profile.gamesPlayed);
 		if(profile.gamesPlayed < m_gamesPlayed) return false;
-		if(profile.GetPlayerProgress() < m_progressionRange.min) return false;
+
+		int playerProgress = profile.GetPlayerProgress();
+		Log("    Min Player Progress... {0} vs {1}", Colors.paleGreen, m_progressionRange.min, playerProgress);
+		if(playerProgress < m_progressionRange.min) return false;
+
+		Log("    Eggs Collected... {0} vs {1}", Colors.paleGreen, m_openedEggs, profile.eggsCollected);
 		if(profile.eggsCollected < m_openedEggs) return false;
 
 		// Payer profile
 		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+		Log("    Payer Type... {0} (totalPurchases {1})", Colors.paleGreen, m_payerType, totalPurchases);
 		switch(m_payerType) {
 			case PayerType.PAYER: {
 				if(totalPurchases == 0) return false;
 			} break;
 		}
 
-		// Min spent
+		// Min/max spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
+
+		Log("    Min Spent... {0} vs {1}", Colors.paleGreen, m_minSpent, totalSpent);
 		if(m_minSpent > totalSpent) return false;
+
+		Log("    Max Spent... {0} vs {1}", Colors.paleGreen, m_maxSpent, totalSpent);
 		if(totalSpent > m_maxSpent) return false;
 
 		// Min number of purchases
+		Log("    Min Number Purchases... {0} vs {1}", Colors.paleGreen, m_minNumberOfPurchases, totalPurchases);
 		if(m_minNumberOfPurchases > totalPurchases) return false;
 
 		// Dragons
+		Log("    Unlocked Dragons...", Colors.paleGreen);
 		for(int i = 0; i < m_dragonUnlocked.Length; ++i) {
 			if(DragonManager.GetDragonData(m_dragonUnlocked[i]).lockState <= IDragonData.LockState.LOCKED) return false;
 		}
+
+		Log("    Owned Dragons...", Colors.paleGreen);
 		for(int i = 0; i < m_dragonOwned.Length; ++i) {
 			if(!DragonManager.IsDragonOwned(m_dragonOwned[i])) return false;
 		}
 
 		// Pets
+		Log("    Unlocked Pets... {0} vs {1}", Colors.paleGreen, m_petsOwnedCount, profile.petCollection.unlockedPetsCount);
 		if(profile.petCollection.unlockedPetsCount < m_petsOwnedCount) return false;
+
+		Log("    Owned Pets...", Colors.paleGreen);
 		for(int i = 0; i < m_petsOwned.Length; ++i) {
 			if(!profile.petCollection.IsPetUnlocked(m_petsOwned[i])) return false;
 		}
 
 		// Skins
+		Log("    Unlocked Skins...", Colors.paleGreen);
 		for(int i = 0; i < m_skinsUnlocked.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsUnlocked[i]) == Wardrobe.SkinState.LOCKED) return false;
 		}
+
+		Log("    Owned Skins...", Colors.paleGreen);
 		for(int i = 0; i < m_skinsOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsOwned[i]) != Wardrobe.SkinState.OWNED) return false;
 		}
 
 		// All checks passed!
+		Log("ACTIVATION CHECKS PASSED! {0}", Colors.lime, def.sku);
 		return true;
 	}
 
@@ -587,11 +614,13 @@ public class OfferPack {
 		// Order is relevant!
 		// Aux vars
 		UserProfile profile = UsersManager.currentUser;
+		Log("CHECK EXPIRATION ({0}) {1}", Colors.red, _checkTime, def.sku);
 
 		// Multiple packs may have the same unique ID, with the intention to make 
 		// them mutually exclusive.
 		// If another pack with the same unique ID is active, mark this one as expired!
 		// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
+		Log("    Duplicated IDs...", Colors.coral);
 		for(int i = 0; i < OffersManager.activeOffers.Count; ++i) {
 			// Skip if it's ourselves
 			if(OffersManager.activeOffers[i] == this) continue;
@@ -609,14 +638,19 @@ public class OfferPack {
 		}
 
 		// Purchase limit (ignore if 0 or negative, unlimited pack)
-		if(m_purchaseLimit > 0 && m_purchaseCount >= m_purchaseLimit) return true;
+		if(m_purchaseLimit > 0) {
+			Log("    Purchase Limit... {0} vs {1}", Colors.coral, m_purchaseLimit, m_purchaseCount);
+			if(m_purchaseCount >= m_purchaseLimit) return true;
+		}
 
 		// Main conditions
+		Log("    Min App Version... {0} vs {1}", Colors.coral, m_minAppVersion, GameSettings.internalVersion);
 		if(m_minAppVersion > GameSettings.internalVersion) return true;
 
 		// Payer profile
 		TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
 		int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+		Log("    Payer Type... {0} (totalPurchases {1})", Colors.coral, m_payerType, totalPurchases);
 		switch(m_payerType) {
 			case PayerType.NON_PAYER: {
 				if(totalPurchases > 0) return true;
@@ -625,32 +659,43 @@ public class OfferPack {
 
 		// Max spent
 		float totalSpent = (trackingPersistence == null) ? 0f : trackingPersistence.TotalSpent;
+		Log("    Max Spent... {0} vs {1}", Colors.coral, m_maxSpent, totalSpent);
 		if(totalSpent > m_maxSpent) return true;
 
 		// Progression
-		if(profile.GetPlayerProgress() > m_progressionRange.max) return true;
+		int playerProgress = profile.GetPlayerProgress();
+		Log("     Max Player Progress... {0} vs {1}", Colors.coral, m_progressionRange.max, playerProgress);
+		if(playerProgress > m_progressionRange.max) return true;
 
 		// Dragons
+		Log("    Dragons Not Owned...", Colors.coral);
 		for(int i = 0; i < m_dragonNotOwned.Length; ++i) {
 			if(DragonManager.IsDragonOwned(m_dragonNotOwned[i])) return true;
 		}
 
 		// Pets
+		Log("    Pets Not Owned...", Colors.coral);
 		for(int i = 0; i < m_petsNotOwned.Length; ++i) {
 			if(profile.petCollection.IsPetUnlocked(m_petsNotOwned[i])) return true;
 		}
 
 		// Skins
+		Log("    Skins Not Owned...", Colors.coral);
 		for(int i = 0; i < m_skinsNotOwned.Length; ++i) {
 			if(profile.wardrobe.GetSkinState(m_skinsNotOwned[i]) == Wardrobe.SkinState.OWNED) return true;
 		}
 
 		// Countries
 		string countryCode = DeviceUtilsManager.SharedInstance.GetDeviceCountryCode();
+
+		Log("    Countries Allowed... {0}", Colors.coral, countryCode);
 		if(m_countriesAllowed.Length > 0 && m_countriesAllowed.IndexOf(countryCode) < 0) return true;
+
+		Log("    Countries Excluded... {0}", Colors.coral, countryCode);
 		if(m_countriesExcluded.IndexOf(countryCode) >= 0) return true;
 
 		// All checks passed!
+		Log("EXPIRATION CHECKS PASSED! {0}", Colors.red, def.sku);
 		return false;
 	}
 
@@ -660,18 +705,22 @@ public class OfferPack {
 	/// <returns>Whether this pack has expired by time or not.</returns>
 	public virtual bool CheckExpirationByTime() {
 		// Never if the offer is not timed
+		Log("    Is Timed?...", Colors.coral);
 		if(!m_isTimed) return false;
 
 		// Get server time
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
 
 		// Global end date
+		Log("    End Date... {0} vs {1}", Colors.coral, m_endDate, serverTime);
 		if(m_endDate > DateTime.MinValue && serverTime > m_endDate) return true;
 
 		// If active, check end timestamp (duration)
+		Log("    End Timestamp... {2} && {0} vs {1}", Colors.coral, m_endTimestamp, serverTime, isActive);
 		if(isActive && serverTime > m_endTimestamp) return true;
 
 		// All checks passed!
+		Log("    Expiration By Time Checks Passed!", Colors.coral);
 		return false;
 	}
 
@@ -682,23 +731,34 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>Whether this pack passes defined segmentation with current user progression.</returns>
 	public virtual bool CheckSegmentation() {
+		Log("CHECK SEGMENTATION {0}", Colors.yellow, def.sku);
+
 		// Progression
 		UserProfile profile = UsersManager.currentUser;
+
+		Log("    SC Balance... {0} vs {1}", Colors.paleYellow, m_scBalanceRange, profile.coins);
 		if(!m_scBalanceRange.Contains((float)profile.coins)) return false;
+
+		Log("    PC Balance... {0} vs {1}", Colors.paleYellow, m_hcBalanceRange, profile.pc);
 		if(!m_hcBalanceRange.Contains((float)profile.pc)) return false;
 
 		// Time since last purchase
 		if(m_secondsSinceLastPurchase > 0) {	// Nothing to check if default
 			TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-			if(trackingPersistence == null) return false;
-			if(trackingPersistence.TotalPurchases > 0) {	// Ignore if player hasn't yet purchased
+			int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+			if(totalPurchases > 0) {	// Ignore if player hasn't yet purchased
 				long serverTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() / 1000L;
 				long timeSinceLastPurchase = serverTime - trackingPersistence.LastPurchaseTimestamp;
+				Log("    Time Since Last Purchase... {0} vs {1}", Colors.paleYellow, m_secondsSinceLastPurchase, timeSinceLastPurchase);
 				if(m_secondsSinceLastPurchase > timeSinceLastPurchase) return false;	// Not enough time has passed
+			} else {
+				Log("    Time Since Last Purchase... {0} vs [No Purchases]", Colors.paleYellow, m_secondsSinceLastPurchase);
+				return false;
 			}
 		}
 
 		// All checks passed!
+		Log("SEGMENTATION CHECKS PASSED! {0}", Colors.yellow, def.sku);
 		return true;
 	}
 
@@ -1105,4 +1165,32 @@ public class OfferPack {
 		return data;
 	}
 	#endregion
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Log into the console (if enabled).
+	/// </summary>
+	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+	private static void Log(string _msg, params object[] _replacements) {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log(string.Format(_msg, _replacements), ControlPanel.ELogChannel.Offers);
+#endif
+	}
+
+	/// <summary>
+	/// Log into the console (if enabled).
+	/// </summary>
+	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+	/// <param name="_color">Message color.</param>
+	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+	private static void Log(string _msg, Color _color, params object[] _replacements) {
+#if LOG
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log(string.Format(_color.Tag(_msg), _replacements), ControlPanel.ELogChannel.Offers);
+#endif
+	}
 }
