@@ -103,11 +103,7 @@ public class HDSeasonData {
     }
 
     public void RequestFullData(bool _fetchLeaderboard) {
-        if (HDLiveDataManager.TEST_CALLS) {
-            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_season_data.json", OnRequestFullData));
-        } else {
-            GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestFullData);
-        }
+        __RequestFullData(_fetchLeaderboard);
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -170,7 +166,7 @@ public class HDSeasonData {
 
     public void SentScore(long _score) {
         if (state >= State.NOT_JOINED && state < State.CLOSED) {
-            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, OnSetScore);
+            __SentScore(_score);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
             scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -201,8 +197,8 @@ public class HDSeasonData {
 
     public void RequestMyRewards() {
         if (state == State.PENDING_REWARDS) {
-            GameServerManager.SharedInstance.HDLeagues_GetMyRewards(OnRequestMyRewards);
-           
+            __RequestMyRewards();
+
             rewardDataState = HDLiveData.State.WAITING_RESPONSE;
             rewardDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
         }
@@ -232,7 +228,7 @@ public class HDSeasonData {
     //---[Finalize my Season]---------------------------------------------------
 
     public void RequestFinalize() {
-        GameServerManager.SharedInstance.HDLeagues_FinishMySeason(OnRequestFinalize);
+        __RequestFinalize();
         state = State.FINALIZING;
 
         finalizeDataState = HDLiveData.State.WAITING_RESPONSE;
@@ -262,7 +258,7 @@ public class HDSeasonData {
 
     public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToEnd   { get { return m_endDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToEnd { get { return m_endDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
 
     public Metagame.Reward reward {
         get {
@@ -273,6 +269,41 @@ public class HDSeasonData {
             }
 
             return r;
+        }
+    }
+
+
+    //---[Server Calls]---------------------------------------------------------
+
+    private void __RequestFullData(bool _fetchLeaderboard) {
+        if (HDLiveDataManager.TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_season_data.json", OnRequestFullData));
+        } else {
+            GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestFullData);
+        }
+    }
+
+    private void __SentScore(long _score) {
+        if (HDLiveDataManager.TEST_CALLS) {
+            OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
+        } else {
+            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, OnSetScore);
+        }
+    }
+
+    private void __RequestMyRewards() {
+        if (HDLiveDataManager.TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_get_reward_data.json", OnRequestMyRewards));
+        } else {
+            GameServerManager.SharedInstance.HDLeagues_GetMyRewards(OnRequestMyRewards);
+        }
+    }
+
+    private void __RequestFinalize() {
+        if (HDLiveDataManager.TEST_CALLS) {
+            OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
+        } else {
+            GameServerManager.SharedInstance.HDLeagues_FinishMySeason(OnRequestFinalize);
         }
     }
 }

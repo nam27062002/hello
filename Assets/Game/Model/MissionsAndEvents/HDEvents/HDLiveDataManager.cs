@@ -170,6 +170,12 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     }
 #endif
 
+    public static GameServerManager.ServerResponse CreateEmptyResponse() {
+        GameServerManager.ServerResponse response = new GameServerManager.ServerResponse();
+        response.Add("response", "{}");
+        return response;
+    }
+
     public delegate void TestResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response);
     public static IEnumerator DelayedCall(string _fileName, TestResponse _testResponse) {
         yield return new WaitForSeconds(0.1f);
