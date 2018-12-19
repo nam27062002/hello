@@ -38,8 +38,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4336817967787110}
   - component: {fileID: 54582701073672564}
-  - component: {fileID: 135872116926620852}
   - component: {fileID: 114628629377757450}
+  - component: {fileID: 65879319995915830}
   m_Layer: 14
   m_Name: PF_Cupido_Arrow
   m_TagString: Untagged
@@ -67,7 +67,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363264916768824}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: 1.6498829, y: -999.14276, z: -2.4215498}
+  m_LocalPosition: {x: -125.35837, y: -22.984417, z: -2.4215498}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4151561353315876}
@@ -130,6 +130,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!65 &65879319995915830
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363264916768824}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.8, y: 0.4, z: 2.07}
+  m_Center: {x: 0, y: 0, z: -0.65}
 --- !u!114 &114628629377757450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -142,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_motionType: 1
+  m_mass: 3
   m_chargeTime: 0
   m_speed: 35
   m_rotationSpeed: 120
@@ -420,15 +433,3 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 0
     orientate: 0
---- !u!135 &135872116926620852
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1363264916768824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: -1.38}

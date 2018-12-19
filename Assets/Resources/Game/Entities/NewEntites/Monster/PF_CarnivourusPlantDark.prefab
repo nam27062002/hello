@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 114381076780638902}
   - component: {fileID: 65914370060154042}
   - component: {fileID: 114273362969824278}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -501,6 +501,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -516,6 +517,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -575,6 +577,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4222154512438098}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114196753415617748
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -604,6 +607,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4222154512438098}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114321448773090644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -627,6 +631,7 @@ MonoBehaviour:
   m_serializedJson: '[{"damage":70,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":3,"stop":false,"faceEnemy":false,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false}]'
   m_databaseKey: PF_CarnivourusPlantDark
   m_updateMachinePos: 0
+  m_updateMachineRot: 0
 --- !u!114 &114370623119511688
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -642,6 +647,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4222154512438098}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114381076780638902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -701,6 +707,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_edible:
     m_rotateToMouth: 0
 --- !u!114 &114717885134412074
@@ -714,6 +721,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: CarnivorousPlantDark
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -771,6 +779,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4222154512438098}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!137 &137353752362129882
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -780,6 +789,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -795,6 +805,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
