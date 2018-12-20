@@ -346,11 +346,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_stunParticle.CreatePool();
 
         m_onEatenInloveParticle = new ParticleData("PS_ValentinPetBrokenHeart", "", GameConstants.Vector3.zero);
+        m_onEatenInloveParticle.orientate = true;
         m_onEatenInloveParticle.CreatePool();
         
         if ( m_inLoveParticle == null ) {
             m_inLoveParticle = new ParticleData("PS_ValentinPetLoop","", GameConstants.Vector3.zero);
         }
+        m_inLoveParticle.orientate = true;
         m_inLoveParticle.CreatePool();
         
 		// Backup view values
@@ -1279,7 +1281,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
             if ( inlove ){
                 if (m_inLoveParticleInstance == null)
                 {
-                    m_inLoveParticleInstance = m_inLoveParticle.Spawn(m_transform);
+                    Vector3 pos = m_transform.position;
+                    Quaternion rot = m_transform.rotation;
+                    m_inLoveParticleInstance = m_inLoveParticle.Spawn(pos + m_inLoveParticle.offset, rot);
                 }
             }else{
                 if ( m_inLoveParticleInstance )
