@@ -433,9 +433,6 @@ namespace AI {
 				case State.FreeFall:			
 					m_viewControl.Falling(false);
 					break;
-                case State.InLove:
-                    m_viewControl.SetInLove(false);
-                    break;
 			}
 
 			// change state
@@ -474,9 +471,6 @@ namespace AI {
 					Stop();
 					m_timer = 2f; // fallback timer, if we don't have an event in our animations
 					break;
-                case State.InLove:
-                    m_viewControl.SetInLove(true);
-                    break;
 			}
 		}
 

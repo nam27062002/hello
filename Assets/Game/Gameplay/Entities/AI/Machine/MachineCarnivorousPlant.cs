@@ -296,7 +296,8 @@ namespace AI {
 		public bool IsFreezing(){ return false; }
         public bool IsStunned() { return false; }        
         public bool IsInLove() { return false; }
-		public void CustomFixedUpdate(){}
+
+        public void CustomFixedUpdate(){}
 
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
