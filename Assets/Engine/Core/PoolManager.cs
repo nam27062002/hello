@@ -241,7 +241,11 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
-		if (_container.pool == null) {
+        if (_prefabName.Contains("PF_Cupido_Arrow")) {
+            Debug.LogWarning("CREATING PF_Cupido_Arrow");
+        }
+
+        if (_container.pool == null) {
 			PoolData data = _container.buildData;
 			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
 			if (go != null) {
@@ -263,19 +267,22 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private void __Clear(bool _all) {
 		if (instance != null) {
-			if (_all) {
-				foreach(KeyValuePair<string, PoolContaier> pair in m_pools) {
-					PoolContaier pc = pair.Value;
-					if (pc.pool != null) {
-						pc.pool.Clear();
-						pc.pool = null;
-						pc.handler.Invalidate();
+            List<string> keys = new List<string>(m_pools.Keys);
+            if (_all) {
+                for (int i = 0; i < keys.Count; i++) {
+                    PoolContaier container = m_pools[keys[i]];
+                    if (container.pool != null) {
+                        if (container.pool.isTemporary) {
+                            m_pools.Remove(keys[i]);
+                        }
+                        container.pool.Clear();
+                        container.pool = null;
+                        container.handler.Invalidate();
 					}
 				}
 				m_iterator.Clear();
 			} else {
-				// we'll clear only temporary pools (those that don't have to exist between levels)
-				List<string> keys = new List<string>(m_pools.Keys);
+				// we'll clear only temporary pools (those that don't have to exist between levels)				
 				for (int i = 0; i < keys.Count; i++) {
 					PoolContaier container = m_pools[keys[i]];
 					Pool p = container.pool;
@@ -285,7 +292,8 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 						m_iterator.Remove(p);
 						container.pool = null;
 						container.handler.Invalidate();
-					}
+                        m_pools.Remove(keys[i]);
+                    }
 				}
 			}
 		}

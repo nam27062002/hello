@@ -37,7 +37,8 @@ namespace AI {
 			
 				CreatePool();
 
-				// create a projectile from resources (by name) and save it into pool
+                // create a projectile from resources (by name) and save it into pool
+                Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 				Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
@@ -51,13 +52,15 @@ namespace AI {
 
 			protected override void OnRemove() {
                 base.OnRemove();
-				Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 			}
 
             public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
             {
                 switch( eventType )
                 {
+                    case BroadcastEventType.GAME_LEVEL_LOADED:
                     case BroadcastEventType.GAME_AREA_ENTER:
                     {
                         CreatePool();
