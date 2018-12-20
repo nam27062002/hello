@@ -14,7 +14,7 @@ SCRIPT_PATH="$(pwd)"
 echo
 echo "BUILDER: Running script from path ${SCRIPT_PATH}"
 
-BRANCH="release/1.19"
+BRANCH="dev/1.20"
 
 # Production
 ./generate_build.command -code "hd" -b "${BRANCH}" -reset_git -commit -tag -android -obb -upload -env "production" -smbOutput "BCNStudio/QA/HungryDragon/builds" #-increase_version

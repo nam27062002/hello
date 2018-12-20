@@ -297,7 +297,7 @@ public class ContentManager
     public static void OnRulesUpdated()
     {
         // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
+        OffersManager.InitFromDefinitions();
 
         // Update all managers 
         // dragonDefinitions.xml

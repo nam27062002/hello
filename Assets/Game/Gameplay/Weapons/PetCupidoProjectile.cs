@@ -32,7 +32,14 @@ public class PetCupidoProjectile : PetProjectile {
 
         if (m_missHitSpawnsParticle || _dealDamage) 
         {               
-            m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, Quaternion.Inverse(m_transform.rotation) );
+            if ( _dealDamage && m_target != null )
+            {
+                m_onHitParticle.Spawn(m_target.position, Quaternion.Inverse( m_target.rotation ) );
+            }
+            else
+            {
+                m_onHitParticle.Spawn(m_position + m_onHitParticle.offset, Quaternion.Inverse(m_transform.rotation) );
+            }
         }
             
     }

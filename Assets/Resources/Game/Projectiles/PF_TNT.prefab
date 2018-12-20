@@ -199,6 +199,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -214,6 +215,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -241,6 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_motionType: 0
+  m_mass: 15
   m_chargeTime: 0
   m_speed: 20
   m_rotationSpeed: 50
@@ -249,6 +252,7 @@ MonoBehaviour:
   m_scaleTime: 1
   m_stopAtTarget: 1
   m_dieOutsideFrustum: 1
+  m_dieOnHit: 1
   m_defaultDamage: 15
   m_damageType: 4
   m_radius: 4
@@ -293,6 +297,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onChargeParticle:
     name: 
     path: 
@@ -331,6 +336,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onHitParticle:
     name: PF_Mine_Explosion
     path: 
@@ -369,6 +375,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatParticle:
     name: 
     path: 
@@ -407,6 +414,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnParticle:
     name: 
     path: 
@@ -445,6 +453,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_missHitSpawnsParticle: 1
   m_stickOnDragonTime: 0
   m_dieTime: 0
@@ -501,6 +510,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: -0.332, z: 0.01600003}
     scale: 1
+    orientate: 0
 --- !u!135 &135025081421770090
 SphereCollider:
   m_ObjectHideFlags: 1

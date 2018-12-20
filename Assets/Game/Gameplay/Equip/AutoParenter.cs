@@ -28,9 +28,11 @@ public class AutoParenter : MonoBehaviour {
     public enum When
     {
         AWAKE,
-        START
+        START,
+		MANUAL
     };
     [SerializeField] private When m_when = When.AWAKE;
+	public When when { get { return m_when; }}
 
 	void Awake() {
         if (m_when == When.AWAKE)
