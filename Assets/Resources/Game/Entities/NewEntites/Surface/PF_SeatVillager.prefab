@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 11459890}
   - component: {fileID: 11449904}
   - component: {fileID: 54000010887478324}
+  - component: {fileID: 135639237526649396}
   m_Layer: 21
   m_Name: PF_SeatVillager
   m_TagString: Untagged
@@ -58,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -204.98343, y: 96.034515, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4071626489474182}
@@ -602,9 +603,21 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[]'
-  m_databaseKey: PF_SeatVillager
+  m_databaseKey: PF_SeatVillager (1)
   m_updateMachinePos: 0
   m_updateMachineRot: 0
+--- !u!135 &135639237526649396
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131698}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.63, z: 0}
 --- !u!137 &137328027620066410
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
