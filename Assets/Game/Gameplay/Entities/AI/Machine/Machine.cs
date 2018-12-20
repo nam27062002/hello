@@ -415,6 +415,11 @@ namespace AI {
             if (m_inLove > 0) {
                 if (m_pilot != null) m_pilot.Stop();
                 SetSignal(Signals.Type.InLove, true);
+
+                SetSignal(Signals.Type.Invulnerable, false);
+                SetSignal(Signals.Type.InvulnerableBite, false);
+                SetSignal(Signals.Type.InvulnerableFire, false);
+
                 m_viewControl.SetInLove(true);
             }
         }

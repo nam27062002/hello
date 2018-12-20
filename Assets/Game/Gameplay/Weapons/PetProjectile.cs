@@ -10,6 +10,7 @@ public class PetProjectile : Projectile
         set { m_tier = value; } 
     }
     [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
+    [SerializeField] [EnumMask] private IEntity.Tag m_ignoreEntityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
     [SerializeField] private LayerMask m_groundMask = 0;
     [SerializeField] IEntity.Type m_firingEntityType = IEntity.Type.PET;
@@ -41,9 +42,9 @@ public class PetProjectile : Projectile
                 if ((layer & m_hitMask.value) > 0) {
                     bool tagMatch = true;
 
-                    if (m_entityTags > 0) {
+                    if (m_entityTags > 0 || m_ignoreEntityTags > 0) {
                         Entity e = m_hitCollider.GetComponent<Entity>();
-                        tagMatch = (e != null) && e.HasTag(m_entityTags);
+                        tagMatch = (e != null) && e.HasTag(m_entityTags) && !e.HasTag(m_ignoreEntityTags);
                     }
 
                     if (tagMatch) {
@@ -73,8 +74,8 @@ public class PetProjectile : Projectile
         for (int i = 0; i < preys.Length; i++) {
             if (preys[i].IsBurnable(m_tier)) {
                 bool burn = true;
-                if (m_entityTags > 0) {
-                    burn = preys[i].HasTag(m_entityTags);
+                if (m_entityTags > 0 || m_ignoreEntityTags > 0) {
+                    burn = preys[i].HasTag(m_entityTags) && !preys[i].HasTag(m_ignoreEntityTags);
                 }
                 
                 AI.IMachine machine =  preys[i].machine;
