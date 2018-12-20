@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 54000013900218966}
   - component: {fileID: 136617037725372644}
   - component: {fileID: 135090624159108870}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_LionBird
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,6 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: LionBird
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -87,7 +88,7 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"damage":5,"type":0,"delay":1.5,"dataType":"AI.Behaviour.AttackPassiveData","editorFolded":false}]'
-  m_databaseKey: PF_LionBird (1)
+  m_databaseKey: PF_LionBird
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3.5
   m_avoidCollisions: 1
@@ -347,7 +348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4188827436941556}
   - component: {fileID: 114814969195438744}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: LightningSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -363,7 +364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4693560065801622}
   - component: {fileID: 137932971197983090}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: worm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +380,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4354625165897010}
   - component: {fileID: 95309343808173750}
-  m_Layer: 0
+  m_Layer: 25
   m_Name: view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -492,6 +493,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 1
@@ -594,6 +596,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -609,6 +612,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

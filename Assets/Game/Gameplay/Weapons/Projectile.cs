@@ -34,7 +34,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
         get { return m_motionType; }
         set { m_motionType = value; } 
     }
-	[SerializeField] private float m_chargeTime = 0f;
+    [SerializeField] private float m_mass = 15f;
+    [SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
     public float speed 
     { 
@@ -366,7 +367,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 							if (m_homingTimer <= 0f ) {
 								m_homingTimer = 0f;
 								Vector3 impulse = (m_targetPosition - m_position).normalized * m_speed;
-								impulse = (impulse - m_velocity) / 15f; //mass
+								impulse = (impulse - m_velocity) / m_mass; //mass
 								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 							}
 						} break;

@@ -469,6 +469,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_attackingTarget = false;
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
+        m_inLove = false;
 
 		m_aim = 0f;
 		m_damageFeedbackTimer = 0f;
@@ -548,7 +549,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
-        
+
         if ( m_inLoveParticleInstance )
         {
             m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
@@ -816,14 +817,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		}
         else  if ( m_inLove )
         {
-            GameObject go = m_onEatenInloveParticle.Spawn(m_transform.position + m_onEatenInloveParticle.offset);
-            if (go != null) {
-                FollowTransform ft = go.GetComponent<FollowTransform>();
-                if (ft != null) {
-                    ft.m_follow = _transform;
-                    ft.m_offset = m_onEatenInloveParticle.offset;
-                }
+            Vector3 pos = m_transform.position;
+            Quaternion rot = GameConstants.Quaternion.identity;
+            if ( m_inLoveParticleInstance )
+            {
+                pos = m_inLoveParticleInstance.transform.position;
+                rot = m_inLoveParticleInstance.transform.rotation;
             }
+            GameObject go = m_onEatenInloveParticle.Spawn( pos + m_onEatenInloveParticle.offset, rot);
         }
 		else 
 		{
@@ -1169,10 +1170,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	/// </summary>
 	public virtual void Bite( Transform _transform )
 	{
+        if ( m_inLoveParticleInstance )
+        {
+            m_inLoveParticleInstance.transform.parent = m_transform.parent;
+        }
 	}
 
 	public void BeginSwallowed( Transform _transform )
-	{
+	{        
 		OnEatenEvent( _transform );
 	}
 

@@ -14,7 +14,10 @@ public class EggSeasonalDeco : MonoBehaviour {
             int l = autoParenters.Length;
             for (int k = 0; k < l; k++)
             {
-                autoParenters[k].parentRoot = m_reparentRoot;
+				autoParenters[k].parentRoot = m_reparentRoot;
+				if(autoParenters[k].when == AutoParenter.When.MANUAL) {
+					autoParenters[k].Reparent();
+				}
             }
         }
     }

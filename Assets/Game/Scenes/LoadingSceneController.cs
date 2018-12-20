@@ -666,7 +666,7 @@ public class LoadingSceneController : SceneController {
 				              
                 // Initialize managers needing data from the loaded profile
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
-				OffersManager.InitFromDefinitions(false);	// Reload offers - need persistence to properly initialize offer packs rewards
+				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
 
                 // Automatic connection check is enabled once the loading is over
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
