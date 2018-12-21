@@ -10,7 +10,16 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         Goblin      = (1 << 4),
         Human       = (1 << 5),
         Machine     = (1 << 6),
-        Witch       = (1 << 7)
+        Witch       = (1 << 7),
+        Mine        = (1 << 8),
+        Dragon      = (1 << 9),
+        Collectible = (1 << 10),
+        Magical     = (1 << 11),
+        Troll       = (1 << 12),
+        Monster     = (1 << 13),
+        Fish        = (1 << 14),
+        CarnivourusPlant = (1 << 15),
+        Spider      = (1 << 16)
     }
 
 

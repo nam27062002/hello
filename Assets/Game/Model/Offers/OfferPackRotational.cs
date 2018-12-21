@@ -16,21 +16,22 @@ using System;
 /// Extension of the offer pack for Rotational packs.
 /// </summary>
 public class OfferPackRotational : OfferPack {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    private bool m_readyToExpire = false;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
-	public OfferPackRotational() {
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    public OfferPackRotational() {
 		
 	}
 
@@ -64,9 +65,9 @@ public class OfferPackRotational : OfferPack {
 					ChangeState(State.PENDING_ACTIVATION);
 				}
 
-				// However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state
-				else if(CheckExpiration(false)) {
-					ChangeState(State.EXPIRED);
+                // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state or it's markes as ready to expire (typically because the user has just purchased it)
+                else if (CheckExpiration(false) || m_readyToExpire) { 
+                        ChangeState(State.EXPIRED);
 				}
 			} break;
 
@@ -89,4 +90,11 @@ public class OfferPackRotational : OfferPack {
 	public void Activate() {
 		ChangeState(State.ACTIVE);
 	}
+
+    public override void Apply() {
+        // A rotational offer has to disappear right after the user purchases it. (FIX for https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-3612)
+        // It's marked as ready to expire so it will be removed next time OffersManager updates this offer
+        m_readyToExpire = true;
+        base.Apply();
+    }
 }

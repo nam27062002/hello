@@ -80,9 +80,9 @@ namespace AI {
 		}
 		private float m_freezingMultiplier = 1;
 
-		float m_stunned = 0;
+		protected float m_stunned = 0;
 
-        float m_inLove = 0;
+        protected float m_inLove = 0;
 
 		private object[] m_collisionParams;
 		private object[] m_triggerParams;
@@ -400,21 +400,27 @@ namespace AI {
             if ( m_stunned > 0 && m_pilot != null) m_pilot.Stop();
 		}
         
-        public void CheckInLove() {
-            if ( m_inLove > 0 ) {
+        public virtual void CheckInLove() {
+            if (m_inLove > 0) {
                 m_inLove -= Time.deltaTime;
-                if ( m_inLove <= 0 )
-                {
+                if (m_inLove <= 0) {
                     SetSignal(Signals.Type.InLove, false);
+                    m_viewControl.SetInLove(false);
                 }
             }
         }
         
-        public void InLove( float _inLoveDuration ) {
+        public virtual void InLove( float _inLoveDuration ) {
             m_inLove = Mathf.Max( _inLoveDuration, m_inLove);
-            if ( m_inLove > 0 ){
+            if (m_inLove > 0) {
                 if (m_pilot != null) m_pilot.Stop();
                 SetSignal(Signals.Type.InLove, true);
+
+                SetSignal(Signals.Type.Invulnerable, false);
+                SetSignal(Signals.Type.InvulnerableBite, false);
+                SetSignal(Signals.Type.InvulnerableFire, false);
+
+                m_viewControl.SetInLove(true);
             }
         }
 

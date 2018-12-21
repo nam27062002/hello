@@ -86,7 +86,10 @@ namespace AI {
 			return false;
 		}
 
-		public override bool CanBeBitten() {
+        public override void CheckInLove() {}
+        public override void InLove(float _inLoveDuration) {}
+
+        public override bool CanBeBitten() {
 			return false;
 		}
 
