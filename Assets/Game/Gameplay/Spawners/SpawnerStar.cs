@@ -148,7 +148,7 @@ public class SpawnerStar : AbstractSpawner {
 			}
 
 			// check if player has destroyed all the flock
-			if (m_coinsRewardFlock > 0) {
+			if (m_coinsRewardFlock > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.coins = m_coinsRewardFlock;
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.STAR_COMBO, _lastEntity.transform, reward);

@@ -86,6 +86,11 @@ public class ContentManager
         }
     }
 
+    public static void Reset()
+    {
+        ContentDeltaManager.SharedInstance.ResetDeltaContentDownloaded();
+    }
+
 	public static void InitContent(bool bAvoidDeltaContent = false, bool _configureServerManager = true)
 	{
 		if (_configureServerManager) {
@@ -293,7 +298,7 @@ public class ContentManager
     public static void OnRulesUpdated()
     {
         // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
+        OffersManager.InitFromDefinitions();
 
         // Update all managers 
         // dragonDefinitions.xml

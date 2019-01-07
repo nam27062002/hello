@@ -294,7 +294,10 @@ namespace AI {
 		public virtual bool IsFacingDirection() { return false; }
 		public virtual bool IsInFreeFall() { return false; }
 		public bool IsFreezing(){ return false; }
-		public void CustomFixedUpdate(){}
+        public bool IsStunned() { return false; }        
+        public bool IsInLove() { return false; }
+
+        public void CustomFixedUpdate(){}
 
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

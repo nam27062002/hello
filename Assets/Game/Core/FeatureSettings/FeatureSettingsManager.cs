@@ -1463,7 +1463,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
         return true;
 #elif UNITY_IOS
-        return false;
+        return true;
 #else
         return true;
 #endif

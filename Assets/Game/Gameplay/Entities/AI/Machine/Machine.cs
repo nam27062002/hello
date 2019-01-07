@@ -80,8 +80,9 @@ namespace AI {
 		}
 		private float m_freezingMultiplier = 1;
 
-		float m_stunned = 0;
+		protected float m_stunned = 0;
 
+        protected float m_inLove = 0;
 
 		private object[] m_collisionParams;
 		private object[] m_triggerParams;
@@ -311,10 +312,11 @@ namespace AI {
 		public virtual void CustomUpdate() {			
 			if (!IsDead()) {
                 CheckStun();
+                CheckInLove();
+                CheckFreeze();
 
-                if (m_stunned <= 0) {
-                    CheckFreeze();
-
+                if (m_stunned <= 0 ) {
+                    
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
                             PlaySound(m_onSpawnSound);
@@ -394,9 +396,33 @@ namespace AI {
 		}
 
 		public void Stun(float _stunTime) {
-            if (m_motion != null) m_motion.Stop();
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
+            if ( m_stunned > 0 && m_pilot != null) m_pilot.Stop();
 		}
+        
+        public virtual void CheckInLove() {
+            if (m_inLove > 0) {
+                m_inLove -= Time.deltaTime;
+                if (m_inLove <= 0) {
+                    SetSignal(Signals.Type.InLove, false);
+                    m_viewControl.SetInLove(false);
+                }
+            }
+        }
+        
+        public virtual void InLove( float _inLoveDuration ) {
+            m_inLove = Mathf.Max( _inLoveDuration, m_inLove);
+            if (m_inLove > 0) {
+                if (m_pilot != null) m_pilot.Stop();
+                SetSignal(Signals.Type.InLove, true);
+
+                SetSignal(Signals.Type.Invulnerable, false);
+                SetSignal(Signals.Type.InvulnerableBite, false);
+                SetSignal(Signals.Type.InvulnerableFire, false);
+
+                m_viewControl.SetInLove(true);
+            }
+        }
 
 		public void SetSignal(Signals.Type _signal, bool _activated) {
 			m_signals.SetValue(_signal, _activated);
@@ -506,6 +532,13 @@ namespace AI {
 			return m_freezing;
 		}
 
+        public bool IsStunned() {
+            return m_stunned > 0;
+        }
+
+        public bool IsInLove() {
+            return m_inLove > 0;
+        }
 
 		public virtual bool CanBeBitten() {
 			if (!enabled)

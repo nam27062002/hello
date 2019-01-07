@@ -332,6 +332,10 @@ public class UserProfile : UserPersistenceSystem
 
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+	private Queue<string> m_offerPacksRotationalHistory = new Queue<string>();    // Historic of rotational offers 
+	public Queue<string> offerPacksRotationalHistory {
+		get { return m_offerPacksRotationalHistory; }
+	}
     
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
@@ -478,6 +482,7 @@ public class UserProfile : UserPersistenceSystem
         m_rewards = new Stack<Metagame.Reward>();
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+		m_offerPacksRotationalHistory = new Queue<string>();
 
         m_visitedZones = new HashSet<string>();
 
@@ -1035,6 +1040,16 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
+		key = "offerPacksRotationalHistory";
+		m_offerPacksRotationalHistory.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json array into the queue
+			JSONArray historyData = _data[key].AsArray;
+			for(int i = 0; i < historyData.Count; ++i) {
+				m_offerPacksRotationalHistory.Enqueue(historyData[i]);
+			}
+		}
+
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1225,6 +1240,12 @@ public class UserProfile : UserPersistenceSystem
 			offersData.Add(kvp.Key, kvp.Value);
 		}
 		data.Add("offerPacks", offersData);
+
+		JSONArray offersHistoryData = new JSONArray();
+		foreach(string s in m_offerPacksRotationalHistory) {
+			offersHistoryData.Add(s);
+		}
+		data.Add("offerPacksRotationalHistory", offersHistoryData);
 
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
