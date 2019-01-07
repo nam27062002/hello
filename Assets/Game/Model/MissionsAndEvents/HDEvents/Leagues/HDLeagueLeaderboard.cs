@@ -7,7 +7,7 @@ public class HDLeagueLeaderboard {
 
     private List<HDLiveData.Leaderboard.Record> m_records;
     public List<HDLiveData.Leaderboard.Record> records { get { return m_records; } }
-   
+
     public HDLiveData.State liveDataState { get; private set; }
     public HDLiveDataManager.ComunicationErrorCodes liveDataError { get; private set; }
 
@@ -29,8 +29,7 @@ public class HDLeagueLeaderboard {
     }
 
     public void RequestData() {
-        //Right now, we don't need the league sku, because, in server, they are using the player id to retrieve the leaderboard.
-        GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnDataResponse);
+        __RequestData();
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -69,5 +68,18 @@ public class HDLeagueLeaderboard {
             }
         }
         liveDataState = HDLiveData.State.VALID;
+    }
+
+
+
+    //---[Server Calls]---------------------------------------------------------
+
+    private void __RequestData() {
+        if (HDLiveDataManager.TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_leaderboard_data.json", OnDataResponse));
+        } else {
+            //Right now, we don't need the league sku, because, in server, they are using the player id to retrieve the leaderboard.
+            GameServerManager.SharedInstance.HDLeagues_GetLeaderboard(OnDataResponse);
+        }
     }
 }

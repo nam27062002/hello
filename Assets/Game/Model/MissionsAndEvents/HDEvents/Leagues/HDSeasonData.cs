@@ -8,8 +8,8 @@ public class HDSeasonData {
         TEASING,
         NOT_JOINED,
         JOINED,
-        CLOSED,
         PENDING_REWARDS,
+        CLOSED,
         FINALIZING,
         FINALIZED
     }
@@ -61,11 +61,10 @@ public class HDSeasonData {
         m_closeDate = new DateTime(1970, 1, 1);
         m_endDate = new DateTime(1970, 1, 1);
 
-        m_score = 0;
-
         currentLeague = null;
         nextLeague = null;
 
+        m_score = 0;
         m_rewardIndex = -1;
 
         state = State.NONE;
@@ -76,8 +75,8 @@ public class HDSeasonData {
         scoreDataState = HDLiveData.State.EMPTY;
         scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
 
-        rewardDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
         rewardDataState = HDLiveData.State.EMPTY;
+        rewardDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
 
         finalizeDataState = HDLiveData.State.EMPTY;
         finalizeDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -107,6 +106,24 @@ public class HDSeasonData {
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+    }
+
+    public void UpdateState() {
+        if (timeToStart.TotalSeconds > 0f) {
+            state = State.TEASING;
+        } else {
+            if (timeToEnd.TotalSeconds < 0f) {
+                if (state >= State.CLOSED)
+                    state = State.FINALIZED;
+            } else {
+                if (timeToClose.TotalSeconds < 0f) {
+                    if (state < State.CLOSED)
+                        state = State.PENDING_REWARDS;
+                    else
+                        state = State.CLOSED;
+                }
+            }
+        }
     }
 
     private void OnRequestFullData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
@@ -145,19 +162,7 @@ public class HDSeasonData {
         m_closeDate = TimeUtils.TimestampToDate(_data["closeTimestamp"].AsLong);
         m_endDate = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
-        if (timeToStart.TotalSeconds > 0f) {
-            state = State.TEASING;
-        } else {
-            if (timeToEnd.TotalSeconds < 0f) {
-                if (state < State.FINALIZED)
-                    state = State.FINALIZED;
-            } else {
-                if (timeToClose.TotalSeconds < 0f) {
-                    if (state < State.CLOSED)
-                        state = State.CLOSED;
-                }
-            }
-        }
+        UpdateState();
     }
 
 
@@ -266,11 +271,14 @@ public class HDSeasonData {
 
             if (state == State.PENDING_REWARDS && rewardDataState == HDLiveData.State.VALID) {
                 r = currentLeague.GetReward(m_rewardIndex);
+
+                state = State.CLOSED;
             }
 
             return r;
         }
     }
+
 
 
     //---[Server Calls]---------------------------------------------------------
