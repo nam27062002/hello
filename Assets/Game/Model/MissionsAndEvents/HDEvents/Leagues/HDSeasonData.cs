@@ -101,6 +101,10 @@ public class HDSeasonData {
                         state = State.WAITING_NEW_SEASON;
                     else if (state < State.PENDING_REWARDS)
                         state = State.PENDING_REWARDS;
+                } else {
+                    if (state == State.TEASING) {
+                        state = State.NOT_JOINED;
+                    }
                 }
             }
         }
