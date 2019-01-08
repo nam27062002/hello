@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonMotionSonic : DragonMotion {
+public class DragonMotionHedgehog : DragonMotion {
 
 	// Extra_1 - Charging
 	// Extra_2 - Ricocheting?
@@ -134,7 +134,7 @@ public class DragonMotionSonic : DragonMotion {
 			case State.Extra_1:
 			{
 				m_dragon.TryResumeEating();
-				m_animator.SetBool( GameConstants.Animator.SONIC_FORM , false);
+				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
 			}break;
 			case State.Extra_2:
 			{
@@ -149,7 +149,7 @@ public class DragonMotionSonic : DragonMotion {
 			case State.Extra_1:
 			{
 				m_dragon.PauseEating();
-				m_animator.SetBool( GameConstants.Animator.SONIC_FORM , true);
+				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 			}break;
 			case State.Extra_2:
 			{
