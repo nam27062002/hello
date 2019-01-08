@@ -6,19 +6,16 @@ public class HDSeasonData {
     public enum State {
         NONE = 0,
         TEASING,
-        NOT_JOINED,
-        JOINED,
-        PENDING_REWARDS,
-        CLOSED,
-        FINALIZING,
-        FINALIZED
+        NOT_JOINED,         //(0)
+        JOINED,             //(1)
+        PENDING_REWARDS,    //(2)
+        REWARDS_COLLECTED,
+        WAITING_NEW_SEASON  //(11)
     }
 
 
 
     //---[Basic Data]-----------------------------------------------------------
-
-    private int m_code;
 
     private DateTime m_startDate;
     private DateTime m_closeDate;
@@ -55,11 +52,9 @@ public class HDSeasonData {
     }
 
     public void Clean() {
-        m_code = -1;
-
         m_startDate = new DateTime(1970, 1, 1);
         m_closeDate = new DateTime(1970, 1, 1);
-        m_endDate = new DateTime(1970, 1, 1);
+        m_endDate   = new DateTime(1970, 1, 1);
 
         currentLeague = null;
         nextLeague = null;
@@ -86,22 +81,7 @@ public class HDSeasonData {
 
     //---[Initialization]-------------------------------------------------------
 
-    public void LoadData(SimpleJSON.JSONNode _data) {
-        int status = _data["status"].AsInt;
-        switch (status) {
-            case 0: state = State.NOT_JOINED; break;
-            case 1: state = State.JOINED; break;
-            case 2: state = State.PENDING_REWARDS; break;
-            case 6: state = State.CLOSED; break;
-            //....
-        }
-
-        LoadDates(_data);
-
-        liveDataState = HDLiveData.State.PARTIAL;
-    }
-
-    public void RequestFullData(bool _fetchLeaderboard) {
+    public void RequestData(bool _fetchLeaderboard) {
         __RequestFullData(_fetchLeaderboard);
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
@@ -113,28 +93,28 @@ public class HDSeasonData {
             state = State.TEASING;
         } else {
             if (timeToEnd.TotalSeconds < 0f) {
-                if (state >= State.CLOSED)
-                    state = State.FINALIZED;
+                if (state == State.REWARDS_COLLECTED)
+                    state = State.WAITING_NEW_SEASON;
             } else {
                 if (timeToClose.TotalSeconds < 0f) {
-                    if (state < State.CLOSED)
+                    if (state < State.JOINED)
+                        state = State.WAITING_NEW_SEASON;
+                    else if (state < State.PENDING_REWARDS)
                         state = State.PENDING_REWARDS;
-                    else
-                        state = State.CLOSED;
                 }
             }
         }
     }
 
-    private void OnRequestFullData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-        HDLiveDataManager.ResponseLog("[Leagues] Season Full Data", _error, _response);
+    private void OnRequestData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+        HDLiveDataManager.ResponseLog("[Leagues] Season Data", _error, _response);
 
         HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
         SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             // parse Json
-            LoadFullData(responseJson);
+            LoadData(responseJson);
         } else {
 
             liveDataState = HDLiveData.State.ERROR;
@@ -143,8 +123,14 @@ public class HDSeasonData {
         liveDataError = outErr;
     }
 
-    private void LoadFullData(SimpleJSON.JSONNode _data) {
-        m_code = _data["id"];
+    private void LoadData(SimpleJSON.JSONNode _data) {
+        int status = _data["status"].AsInt;
+        switch (status) {
+            case 0: state = State.NOT_JOINED; break;
+            case 1: state = State.JOINED; break;
+            case 2: state = State.PENDING_REWARDS; break;
+            case 11: state = State.WAITING_NEW_SEASON; break;
+        }
 
         LoadDates(_data);
 
@@ -170,7 +156,7 @@ public class HDSeasonData {
     //---[Score]----------------------------------------------------------------
 
     public void SentScore(long _score) {
-        if (state >= State.NOT_JOINED && state < State.CLOSED) {
+        if (state >= State.NOT_JOINED && state < State.PENDING_REWARDS) {
             __SentScore(_score);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
@@ -185,7 +171,7 @@ public class HDSeasonData {
         SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            if (state < State.CLOSED) {
+            if (state < State.JOINED) {
                 state = State.JOINED;
             }
             scoreDataState = HDLiveData.State.VALID;
@@ -234,7 +220,6 @@ public class HDSeasonData {
 
     public void RequestFinalize() {
         __RequestFinalize();
-        state = State.FINALIZING;
 
         finalizeDataState = HDLiveData.State.WAITING_RESPONSE;
         finalizeDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -247,10 +232,9 @@ public class HDSeasonData {
         SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            state = State.FINALIZED;
+            state = State.WAITING_NEW_SEASON;
             finalizeDataState = HDLiveData.State.VALID;
         } else {
-
             finalizeDataState = HDLiveData.State.ERROR;
         }
 
@@ -263,7 +247,7 @@ public class HDSeasonData {
 
     public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToEnd { get { return m_endDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToEnd   { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
 
     public Metagame.Reward reward {
         get {
@@ -272,7 +256,7 @@ public class HDSeasonData {
             if (state == State.PENDING_REWARDS && rewardDataState == HDLiveData.State.VALID) {
                 r = currentLeague.GetReward(m_rewardIndex);
 
-                state = State.CLOSED;
+                state = State.REWARDS_COLLECTED;
             }
 
             return r;
@@ -285,9 +269,9 @@ public class HDSeasonData {
 
     private void __RequestFullData(bool _fetchLeaderboard) {
         if (HDLiveDataManager.TEST_CALLS) {
-            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_season_data.json", OnRequestFullData));
+            ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_season_data.json", OnRequestData));
         } else {
-            GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestFullData);
+            GameServerManager.SharedInstance.HDLeagues_GetSeason(_fetchLeaderboard, OnRequestData);
         }
     }
 
