@@ -92,7 +92,7 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && !machine.isPetTarget )
+						if (machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget )
 						{
 							// if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
 							{

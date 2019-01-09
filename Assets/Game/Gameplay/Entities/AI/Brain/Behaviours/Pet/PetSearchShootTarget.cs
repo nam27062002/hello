@@ -89,7 +89,7 @@ namespace AI {
                     for (int e = 0; e < m_numCheckEntities; e++) {
                         Entity entity = m_checkEntities[e];
                         Machine machine = entity.GetComponent<Machine>();
-                        if (machine != null && machine.CanBeBitten() && !machine.isPetTarget) {
+                        if (machine != null && !machine.IsDying() && !machine.IsDead() && machine.CanBeBitten() && !machine.isPetTarget) {
                             bool isViable = false;
 
                             switch (m_data.checkType) {
