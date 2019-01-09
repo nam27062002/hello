@@ -330,6 +330,8 @@ namespace AI {
 
                     //forward special actions
                     if (m_pilot != null) {
+                        m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
+
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));

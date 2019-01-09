@@ -29,8 +29,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 	[SeparatorAttribute]
 	[SerializeField] private float m_cameraShake = 0;
 
+    //------
+    public delegate void OnDestroyDelegate();
+    public OnDestroyDelegate onDestroy;
+    //------
 
-	private ZoneManager.ZoneEffect m_effect;
+
+    private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
 
 	private GameObject m_view;
@@ -280,7 +285,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 		if (!string.IsNullOrEmpty(m_onDestroyAudio))
 			AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
 
-		m_view.SetActive(false);
+        if (onDestroy != null)
+            onDestroy();
+
+        m_view.SetActive(false);
 		m_viewDestroyed.SetActive(true);
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
 		if (m_inflammableBehaviour != null) m_inflammableBehaviour.enabled = false;

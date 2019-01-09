@@ -262,7 +262,6 @@ namespace AI {
 			m_viewControl.RotationLayer(ref m_rotation, ref m_targetRotation);
 
 			m_viewControl.Boost(m_pilot.IsActionPressed(Pilot.Action.Boost));
-			m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
 
 
 			//----------------------------------------------------------------------------------
