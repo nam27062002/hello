@@ -140,13 +140,16 @@ public class FireBreathNew : DragonBreathBehaviour {
 	IEnumerator StartFlame( float delay, Type _type )
     {
     	yield return new WaitForSeconds(delay);
-		if (_type == Type.Standard)
+        if ( !isFuryPaused )
         {
-            dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
-        }
-        else
-        {
-            dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
+    		if (_type == Type.Standard)
+            {
+                dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
+            }
+            else
+            {
+                dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
+            }
         }
     }
 

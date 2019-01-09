@@ -230,10 +230,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			else if (Input.GetKeyDown(KeyCode.G)) {
 				SetMegaFireValue((int)m_superFuryMax);
 			}
-			#endif
+        #endif
 
-		// Cheat for infinite fire
-		bool infiniteFury = ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+        // Cheat for infinite fire
+        bool infiniteFury = IsInfiniteFury();
 
 		if (m_dragon.changingArea) return;
 
@@ -273,7 +273,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				if ( !m_isFuryPaused )
 				{
                     if (!infiniteFury)
-                        AdvanceRemainingFire();					
+                        AdvanceRemainingFire();
 
 					switch( m_type )
 					{
@@ -308,6 +308,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 
 	}
+    
+    public bool IsInfiniteFury()
+    {
+        return ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));   
+    }
     
     public void AdvanceRemainingFire()
     {

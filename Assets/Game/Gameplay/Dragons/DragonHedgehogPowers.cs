@@ -27,7 +27,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
-	float m_extraRadius;
 	DragonMotion m_motion;
 	private float m_originalRadius;
 	private bool m_active = false;
@@ -45,7 +44,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		m_originalRadius = m_circle.radius;
 		m_player = InstanceManager.player;
 		m_motion = m_player.dragonMotion;
-		m_extraRadius = 1;
 		m_tier = m_player.data.tier;
 		m_transform = transform;
 
@@ -63,8 +61,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         {
             // Create pool of spikes!
         }
-        
-        
 
 	}
 
@@ -102,11 +98,14 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 if (!m_breathBehaviour.isFuryPaused)
                     m_breathBehaviour.PauseFury();
                 // Advance fire timer to make it end even if not breathing because we are in ricochet form
-                m_breathBehaviour.AdvanceRemainingFire();
-                if ( m_breathBehaviour.remainingFuryDuration <= 0 )
+                if ( !m_breathBehaviour.IsInfiniteFury() )
                 {
-                    // Let it end
-                    m_breathBehaviour.ResumeFury();
+                    m_breathBehaviour.AdvanceRemainingFire();
+                    if ( m_breathBehaviour.remainingFuryDuration <= 0 )
+                    {
+                        // Let it end
+                        m_breathBehaviour.ResumeFury();
+                    }
                 }
             }
             
