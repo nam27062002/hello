@@ -8,7 +8,8 @@ public class DragonMotionHedgehog : DragonMotion {
 	// Extra_2 - Ricocheting?
 	protected Vector3 m_ricochetDir = Vector3.zero;
 	public float m_sonicSpeed = 5;
-    public float m_rotationSpeed = 720;
+    public float m_maxRotationSpeed = 720;
+    protected float m_currentRotationSpeed = 0;
 	bool m_cheskStateForResume = true;
     public Transform m_rotationPivot;
     protected Quaternion m_idleQuaternion;
@@ -102,11 +103,14 @@ public class DragonMotionHedgehog : DragonMotion {
         base.LateUpdate();
         if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
         {
+            if ( m_state == State.Extra_1 )
+                m_currentRotationSpeed = Mathf.Lerp(m_currentRotationSpeed, m_maxRotationSpeed, Time.deltaTime * 2);
             // Rotate view
-            m_currentQuaternion *= Quaternion.Euler(GameConstants.Vector3.back * m_rotationSpeed * Time.deltaTime);
+            m_currentQuaternion *= Quaternion.Euler(GameConstants.Vector3.back * m_currentRotationSpeed * Time.deltaTime);
         }
         else
         {
+            m_currentRotationSpeed = 0;
             // Move rotation to idle
             m_currentQuaternion = Quaternion.Lerp(m_currentQuaternion, m_idleQuaternion, Time.deltaTime * 10);    
         }
@@ -125,8 +129,7 @@ public class DragonMotionHedgehog : DragonMotion {
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
                 m_spinning = false;
-                RotateToDirection( m_impulse );
-				m_rbody.angularVelocity = m_angularVelocity;
+                RotateToDirection( m_direction );
                 
 			}break;
 			case State.Extra_2:
@@ -135,8 +138,7 @@ public class DragonMotionHedgehog : DragonMotion {
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
                 m_spinning = false;
-				RotateToDirection( m_impulse );
-				m_rbody.angularVelocity = m_angularVelocity;
+				RotateToDirection( m_direction );
 			}break;
 		}
 		base.FixedUpdate();
