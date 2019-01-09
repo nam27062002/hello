@@ -1,4 +1,4 @@
-// TournamentFeaturedIcon.cs
+﻿// TournamentFeaturedIcon.cs
 // Hungry Dragon
 //
 // Created by Alger Ortín Castellví on 31/05/2018.
@@ -60,7 +60,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get tournament manager
-		m_tournamentManager = HDLiveDataManager.instance.m_tournament;
+		m_tournamentManager = HDLiveDataManager.tournament;
         Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
         Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
         Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);

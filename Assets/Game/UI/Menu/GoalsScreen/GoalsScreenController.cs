@@ -1,4 +1,4 @@
-// GoalsScreenController.cs
+﻿// GoalsScreenController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/07/2017.
@@ -52,7 +52,7 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_quest = HDLiveDataManager.instance.m_quest;
+		m_quest = HDLiveDataManager.quest;
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 

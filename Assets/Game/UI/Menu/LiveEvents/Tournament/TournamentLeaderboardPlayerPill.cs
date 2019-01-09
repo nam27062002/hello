@@ -1,4 +1,4 @@
-// GlobalEventsLeaderboardPill.cs
+﻿// GlobalEventsLeaderboardPill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 12/07/2017.
@@ -80,7 +80,7 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 
 
         // Set score
-        HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
+        HDTournamentManager tournament = HDLiveDataManager.tournament;
         m_scoreText.text = tournament.FormatScore(data.leaderboardLine.m_score);
 
         if (tournament.IsTimeBasedScore()) {

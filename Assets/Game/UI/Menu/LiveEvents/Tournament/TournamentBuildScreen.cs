@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -83,7 +83,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 	public void Refresh() {
 		m_mode = Mode.Build;
 
-		m_tournament = HDLiveDataManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 		m_data = m_tournament.data as HDTournamentData;
 		m_definition = m_data.definition as HDTournamentDefinition;
 

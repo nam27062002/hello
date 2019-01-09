@@ -110,7 +110,7 @@ public class EventRewardScreen : MonoBehaviour {
 		m_sceneController.Clear();
 
 		// Store current event for faster access
-		m_questManager = HDLiveDataManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Set initial state
 		m_step = Step.INIT;

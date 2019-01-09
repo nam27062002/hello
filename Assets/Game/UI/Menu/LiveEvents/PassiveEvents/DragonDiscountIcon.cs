@@ -94,7 +94,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	/// </summary>
 	/// <returns>The event manager corresponding to this event type.</returns>
 	protected override HDPassiveEventManager GetEventManager() {
-		return HDLiveDataManager.instance.m_dragonDiscounts;
+		return HDLiveDataManager.dragonDiscounts;
 	}
 
 	/// <summary>

@@ -1,4 +1,4 @@
-// ResultsScreenStepTournamentSync.cs
+﻿// ResultsScreenStepTournamentSync.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/05/2018.
@@ -59,7 +59,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Store event reference
-				m_event = HDLiveDataManager.instance.m_tournament;
+				m_event = HDLiveDataManager.tournament;
 
 				// Listen to score sent confirmation
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
@@ -67,7 +67,7 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 
 			case GameSceneController.Mode.DEFAULT: {
 				// Store event reference
-				m_event = HDLiveDataManager.instance.m_quest;
+				m_event = HDLiveDataManager.quest;
 
 				// Listen to score sent confirmation 
 				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);

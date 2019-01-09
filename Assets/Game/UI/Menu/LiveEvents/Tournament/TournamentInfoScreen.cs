@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -94,7 +94,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// Refresh all the info in the screen.
 	/// </summary>
 	void Refresh() {
-		m_tournament = HDLiveDataManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 
         if (m_waitingDefinition) {
             m_infoGroup.SetActive(false);
@@ -229,7 +229,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
-        m_tournament = HDLiveDataManager.instance.m_tournament;
+        m_tournament = HDLiveDataManager.tournament;
         m_waitingDefinition = m_tournament.isWaitingForNewDefinition || !m_tournament.data.definition.initialized;
 
 		Refresh();

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -112,7 +112,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 			m_sceneController.Clear();
 
 			// Store current event for faster access
-			m_tournamentManager = HDLiveDataManager.instance.m_tournament;
+			m_tournamentManager = HDLiveDataManager.tournament;
 			m_tournamentData = m_tournamentManager.data as HDTournamentData;
 			m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 

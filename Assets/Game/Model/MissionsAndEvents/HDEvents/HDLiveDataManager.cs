@@ -65,11 +65,20 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         NO_ERROR
     };
 
-    public HDTournamentManager m_tournament = new HDTournamentManager();
-    public HDQuestManager m_quest = new HDQuestManager();
-    public HDPassiveEventManager m_passive = new HDPassiveEventManager();
-    public HDLeagueController m_league = new HDLeagueController();
-    public HDDiscountEventManager m_dragonDiscounts = new HDDiscountEventManager();
+    //
+    private HDTournamentManager     m_tournament        = new HDTournamentManager();
+    private HDQuestManager          m_quest             = new HDQuestManager();
+    private HDPassiveEventManager   m_passive           = new HDPassiveEventManager();
+    private HDLeagueController      m_league            = new HDLeagueController();
+    private HDDiscountEventManager  m_dragonDiscounts   = new HDDiscountEventManager();
+
+    public static HDTournamentManager      tournament      { get { return instance.m_tournament; } }
+    public static HDQuestManager           quest           { get { return instance.m_quest; } }
+    public static HDPassiveEventManager    passive         { get { return instance.m_passive; } }
+    public static HDLeagueController       league          { get { return instance.m_league; } }
+    public static HDDiscountEventManager   dragonDiscounts { get { return instance.m_dragonDiscounts; } }
+    //
+
 
     // Avoid using dictionaries when possible
     private List<HDLiveDataController> m_managers;

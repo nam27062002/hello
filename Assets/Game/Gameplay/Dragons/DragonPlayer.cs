@@ -1,4 +1,4 @@
-// DragonPlayer.cs
+﻿// DragonPlayer.cs
 // Hungry Dragon
 //
 // Created by Marc Saña Forrellach on 05/08/2015.
@@ -241,7 +241,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     		// Get data from dragon manager
     		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
-    			if ( HDLiveDataManager.instance.m_tournament.UsingProgressionDragon() )
+    			if ( HDLiveDataManager.tournament.UsingProgressionDragon() )
     			{
     				m_data = DragonManager.GetDragonData(m_sku);
     			}

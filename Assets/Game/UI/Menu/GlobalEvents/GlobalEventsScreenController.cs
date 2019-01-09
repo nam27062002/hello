@@ -1,4 +1,4 @@
-// GoalsScreenGlobalEventsTab.cs
+﻿// GoalsScreenGlobalEventsTab.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/06/2017.
@@ -57,7 +57,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
 
-		m_questManager = HDLiveDataManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -181,7 +181,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	private void SelectPanel() {
 
 		Panel targetPanel = Panel.NO_EVENT;
-		HDQuestManager quest = HDLiveDataManager.instance.m_quest;
+		HDQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
 		{
 			if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())

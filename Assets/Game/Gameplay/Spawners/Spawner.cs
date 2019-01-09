@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using AI;
@@ -189,7 +189,7 @@ public class Spawner : AbstractSpawner {
 		if (m_eventOnly) {
 			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 				// Maybe only check if joined?
-			enabledByEvents = HDLiveDataManager.instance.m_quest.IsRunning() && HDLiveDataManager.instance.m_quest.isActive;
+			enabledByEvents = HDLiveDataManager.quest.IsRunning() && HDLiveDataManager.quest.isActive;
 		}
 
 		if (enabledByEvents) {

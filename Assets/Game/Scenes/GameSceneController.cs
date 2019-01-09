@@ -1,4 +1,4 @@
-// GameSceneController.cs
+﻿// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -192,9 +192,9 @@ public class GameSceneController : GameSceneControllerBase {
         }
         else
         {
-            if ( HDLiveDataManager.instance.m_tournament.isActive)
+            if ( HDLiveDataManager.tournament.isActive)
             {
-                string dragon = HDLiveDataManager.instance.m_tournament.GetToUseDragon();
+                string dragon = HDLiveDataManager.tournament.GetToUseDragon();
                 DragonManager.LoadDragon(dragon);
             }
             else

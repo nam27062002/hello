@@ -1,4 +1,4 @@
-// GlobalEventsScreenActivePanel.cs
+﻿// GlobalEventsScreenActivePanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 28/06/2017.
@@ -60,9 +60,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveDataManager.instance.m_quest.EventExists() ) return;
+		if ( !HDLiveDataManager.quest.EventExists() ) return;
 
-		HDQuestManager questManager = HDLiveDataManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.quest;
 		HDQuestDefinition questDef = questManager.m_questDefinition;
 
 		// Update timer

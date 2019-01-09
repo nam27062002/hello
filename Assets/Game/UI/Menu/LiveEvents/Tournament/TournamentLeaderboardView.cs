@@ -1,4 +1,4 @@
-// GlobalEventsLeaderboardView.cs
+﻿// GlobalEventsLeaderboardView.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 12/07/2017.
@@ -62,7 +62,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		ToggleLoading(true);
 
 		// Request leaderboard!
-		m_tournament = HDLiveDataManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 		if ( m_tournament.EventExists() )
 		{
 			m_tournament.RequestLeaderboard();
@@ -89,7 +89,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get current tournament and init some aux vars
-		m_tournament = HDLiveDataManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 		HDTournamentData tournamentData = (HDTournamentData)m_tournament.data;
 		HDTournamentDefinition tournamentDef = tournamentData.definition as HDTournamentDefinition;
 		int playerRank = (int)tournamentData.m_rank;

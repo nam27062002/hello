@@ -1,4 +1,4 @@
-// HDTournamentManager.cs
+﻿// HDTournamentManager.cs
 // Hungry Dragon
 // 
 // Created by Miguel Ángel Linares on 17/05/2018.
@@ -302,7 +302,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		{
 			m_runWasValid = false;
 			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-			HDTournamentData tournamentData = HDLiveDataManager.instance.m_tournament.data as HDTournamentData;
+			HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
 			HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
 			m_runningGoal = def.m_goal;
 

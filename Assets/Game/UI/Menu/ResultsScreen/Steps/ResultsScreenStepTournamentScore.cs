@@ -1,4 +1,4 @@
-// ResultsScreenStepTournamentScore.cs
+﻿// ResultsScreenStepTournamentScore.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/05/2018.
@@ -42,7 +42,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Only if run was valid
-		return HDLiveDataManager.instance.m_tournament.WasLastRunValid();
+		return HDLiveDataManager.tournament.WasLastRunValid();
 	}
 
 	/// <summary>
@@ -59,7 +59,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Aux vars
-		HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
+		HDTournamentManager tournament = HDLiveDataManager.tournament;
 
 		// Start score number animation
 		m_scoreText.SetValue(0, tournament.GetRunScore());
@@ -99,7 +99,7 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// </summary>
 	public void OnShowNewHighScore() {
 		// Check whether we did a new high score and show the corresponding feedback
-		if(HDLiveDataManager.instance.m_tournament.IsNewBestScore()) {
+		if(HDLiveDataManager.tournament.IsNewBestScore()) {
 			// Show widget and launch animation!
 			m_newHighScoreAnim.gameObject.SetActive(true);
 			m_newHighScoreAnim.Launch();
@@ -112,6 +112,6 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	/// <param name="_animator">The number animator requesting the formatting.</param>
 	public void OnSetScoreText(NumberTextAnimator _animator) {
 		// Depends on tournament type
-		_animator.text.text = HDLiveDataManager.instance.m_tournament.FormatScore(_animator.currentValue);
+		_animator.text.text = HDLiveDataManager.tournament.FormatScore(_animator.currentValue);
 	}
 }

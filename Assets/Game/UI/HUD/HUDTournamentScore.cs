@@ -37,7 +37,7 @@ public class HUDTournamentScore : HudWidget {
 		base.Awake();
 		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
-			HDTournamentData _data = HDLiveDataManager.instance.m_tournament.data as HDTournamentData;
+			HDTournamentData _data = HDLiveDataManager.tournament.data as HDTournamentData;
 			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;
 
 			m_mode = _def.m_goal.m_mode;
@@ -49,7 +49,7 @@ public class HUDTournamentScore : HudWidget {
 			{
 				m_lastScorePrinted = 0;	
 				m_targetScore = _def.m_goal.m_targetAmount;
-				m_tracker = HDLiveDataManager.instance.m_tournament.m_tracker;
+				m_tracker = HDLiveDataManager.tournament.m_tracker;
 				UpdateIcon();
 			}
 		}
@@ -67,7 +67,7 @@ public class HUDTournamentScore : HudWidget {
 			Image img = tr.GetComponent<Image>();
 			if ( img != null )
 			{
-				HDTournamentManager tournament = HDLiveDataManager.instance.m_tournament;
+				HDTournamentManager tournament = HDLiveDataManager.tournament;
 				HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
 				img.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 			}
