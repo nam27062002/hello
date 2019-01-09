@@ -118,7 +118,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		get {return m_boostSpeedMultiplier;}
 		set { m_boostSpeedMultiplier = value; }
 	}
-    DragonBoostBehaviour m_boost;
+    protected DragonBoostBehaviour m_boost;
 
 	private float m_holdSpeedMultiplier;
 	public float holdSpeedMultiplier
@@ -248,7 +248,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
-    private bool m_spinning = true;
+    protected bool m_spinning = true;
     private bool m_rotateOnIdle = false;
 
     private bool m_waterMovement = false;
@@ -873,7 +873,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 
 
-	void LateUpdate()
+	protected virtual void LateUpdate()
 	{
 		if ( m_holdPrey != null )
 		{
@@ -1919,7 +1919,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	/// </summary>
 	/// <param name="_other">Other.</param>
 	// This is done on Dragon Head Trigger now
-	void OnTriggerEnter(Collider _other)
+	protected virtual void OnTriggerEnter(Collider _other)
 	{
 		if ( _other.CompareTag("Water") )
 		{

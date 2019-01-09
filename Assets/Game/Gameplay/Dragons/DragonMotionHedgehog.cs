@@ -6,15 +6,19 @@ public class DragonMotionHedgehog : DragonMotion {
 
 	// Extra_1 - Charging
 	// Extra_2 - Ricocheting?
-	protected DragonBoostBehaviour m_boost;
 	protected Vector3 m_ricochetDir = Vector3.zero;
 	public float m_sonicSpeed = 5;
+    public float m_rotationSpeed = 720;
 	bool m_cheskStateForResume = true;
+    public Transform m_rotationPivot;
+    protected Quaternion m_idleQuaternion;
+    protected Quaternion m_currentQuaternion;
 
 	override protected void Start() {
 		base.Start();
-		m_boost = GetComponent<DragonBoostBehaviour>();
 		m_boost.alwaysDrain = true;
+        m_idleQuaternion = m_rotationPivot.localRotation;
+        m_currentQuaternion = m_idleQuaternion;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());
 
@@ -30,7 +34,8 @@ public class DragonMotionHedgehog : DragonMotion {
 	{
 		switch( m_state )
 		{
-			case State.Extra_1:
+            // Charging Ricochet
+			case State.Extra_1: 
 			{
 				if ( !m_boost.IsBoostActive() )
 				{
@@ -44,6 +49,7 @@ public class DragonMotionHedgehog : DragonMotion {
 						m_direction = impulse;
 				}
 			}break;
+            // Bouncing!
 			case State.Extra_2:
 			{
 				if (m_dragon.energy >= m_dragon.energyMax)
@@ -72,8 +78,7 @@ public class DragonMotionHedgehog : DragonMotion {
 					}
 				}
 			}break;
-		}
-
+		}        
 
 		if (   m_state == State.Idle 
 			|| m_state == State.Fly
@@ -92,6 +97,23 @@ public class DragonMotionHedgehog : DragonMotion {
 		base.Update();
 	}
 
+    protected override void LateUpdate()
+    {
+        base.LateUpdate();
+        if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
+        {
+            // Rotate view
+            m_currentQuaternion *= Quaternion.Euler(GameConstants.Vector3.back * m_rotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Move rotation to idle
+            m_currentQuaternion = Quaternion.Lerp(m_currentQuaternion, m_idleQuaternion, Time.deltaTime * 10);    
+        }
+        m_rotationPivot.localRotation = m_currentQuaternion;
+        
+    }
+
 
 	override protected void FixedUpdate() {
 		float _deltaTime = Time.fixedDeltaTime;
@@ -102,15 +124,18 @@ public class DragonMotionHedgehog : DragonMotion {
 				ComputeImpulseToZero(_deltaTime);
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-				m_angularVelocity = GameConstants.Vector3.zero;
+                m_spinning = false;
+                RotateToDirection( m_impulse );
 				m_rbody.angularVelocity = m_angularVelocity;
+                
 			}break;
 			case State.Extra_2:
 			{
 				m_impulse = m_direction * m_sonicSpeed;
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-				m_angularVelocity = GameConstants.Vector3.zero;
+                m_spinning = false;
+				RotateToDirection( m_impulse );
 				m_rbody.angularVelocity = m_angularVelocity;
 			}break;
 		}
@@ -141,6 +166,8 @@ public class DragonMotionHedgehog : DragonMotion {
 				m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
 				m_cheskStateForResume = true;
+                m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
+                // if power level >= 2 then shoot spikes!!
 			}break;
 		}
 		base.ChangeState( _nextState );
@@ -153,11 +180,23 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
+                m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 				m_dragon.PauseEating();
 			}break;
 		}
 	}
 
+    protected virtual void OnTriggerEnter(Collider _other)
+    {
+        if ( m_state == State.Extra_2 && _other.gameObject.layer == GameConstants.Layers.MINES )    // Check power level > 1
+        {
+            // Bounce? how? we dont have a normal to reflect?
+        }
+        else
+        {
+            base.OnTriggerEnter( _other );
+        }
+    }
 
 	override protected void OnCollisionEnter(Collision collision)
 	{

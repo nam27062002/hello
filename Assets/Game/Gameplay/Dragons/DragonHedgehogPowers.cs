@@ -3,14 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CircleArea2D))]
-public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
+public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
+
+
+    [Header("Damage Area Settings")]
+    public DragonTier m_tier = DragonTier.TIER_4;
+    public IEntity.Type m_type = IEntity.Type.PLAYER;
+    public float m_fireBoostMultiplier = 2;
+
+    [Header("Level 2 Spikes")]
+    public int m_spikesNumber = 4;
+    protected bool m_shootLevel2Spikes = false;
+
+    [Header("Level 3 Spikes")]
+    public float m_shootingRatio = 0.1f;
+    protected float m_shootingTimer = 0;
+    
+    
+    [Header("Visual Settings")]
+    public GameObject m_spikesLvl1;
+    public GameObject m_spikesLvl2;
+    public GameObject m_spikeProjectile;
+    
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
-	public DragonTier m_tier = DragonTier.TIER_4;
-	public IEntity.Type m_type = IEntity.Type.PLAYER;
-	public float m_fireBoostMultiplier = 2;
 	float m_extraRadius;
 	DragonMotion m_motion;
 	private float m_originalRadius;
@@ -19,6 +37,8 @@ public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 	protected DragonPlayer m_player;
 	protected bool m_fire = false;
 	protected DragonBreathBehaviour.Type m_fireType;
+    
+    private int m_powerLevel = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -31,6 +51,19 @@ public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 		m_transform = transform;
 
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+        
+        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
+        m_powerLevel = dataSpecial.powerLevel;
+        
+        m_spikesLvl1.SetActive( m_powerLevel > 0 );
+        m_spikesLvl2.SetActive( m_powerLevel > 1 );
+        
+        if ( m_powerLevel >= 2 )
+        {
+            // Create pool of spikes!
+        }
+        
+        
 
 	}
 
@@ -56,6 +89,20 @@ public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 
 		if ( m_motion.state == DragonMotion.State.Extra_2 || (m_fire && m_motion.state == DragonMotion.State.Extra_1))
 		{
+            if ( m_motion.state == DragonMotion.State.Extra_2 ) 
+            {
+                m_shootLevel2Spikes = true;
+                if (m_powerLevel >= 3)
+                {
+                    m_shootingTimer -= Time.deltaTime;
+                    if ( m_shootingTimer <= 0 )
+                    {
+                        m_shootingTimer = m_shootingRatio;
+                        // Shoot spikes!
+                    }
+                }
+            }
+        
 			if (!m_active)
 			{
 				m_active = true;
@@ -63,6 +110,7 @@ public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
 			for (int i = 0; i < m_numCheckEntities; i++) 
 			{
+                // if power up level >= 1 check if mine, and do not destroy it, we need to bounce off of it
 				Entity prey = m_checkEntities[i];
 				if ( m_fire )
 				{
@@ -93,6 +141,11 @@ public class DragonSonicDestroyArea : MonoBehaviour, IBroadcastListener {
 			if (m_active)
 			{
 				m_active = false;
+                if (m_shootLevel2Spikes)
+                {
+                    m_shootLevel2Spikes = false;
+                    // Shoot end movement spikes!
+                }
 			}
 		}
 	}

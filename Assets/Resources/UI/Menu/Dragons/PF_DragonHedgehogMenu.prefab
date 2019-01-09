@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5409850}
   - component: {fileID: 11473094}
   - component: {fileID: 11405470}
+  - component: {fileID: 114487850663179960}
   m_Layer: 0
   m_Name: PF_DragonHedgehogMenu
   m_TagString: Untagged
@@ -74,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7df435df7e20c490390430baa726a0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: dragon_hedgedog
+  m_sku: dragon_hedgehog
   m_altAnimConfigs: []
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
@@ -2354,6 +2355,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 3
+--- !u!114 &114487850663179960
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79deb15a7ab99481aa85ca7f0e8e9790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_elementsPerPowerLevel:
+  - element: []
+  - element:
+    - type: 0
+      name: HedgehogDragon_spikes_v1_HI
+  - element:
+    - type: 0
+      name: HedgehogDragon_spikes_v2_HI
 --- !u!114 &114658284405973050
 MonoBehaviour:
   m_ObjectHideFlags: 1

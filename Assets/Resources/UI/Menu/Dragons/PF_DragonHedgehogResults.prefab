@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5409850}
   - component: {fileID: 11473094}
   - component: {fileID: 11405470}
+  - component: {fileID: 114011967005565760}
   m_Layer: 0
   m_Name: PF_DragonHedgehogResults
   m_TagString: Untagged
@@ -74,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7df435df7e20c490390430baa726a0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sku: dragon_hedgedog
+  m_sku: dragon_hedgehog
   m_altAnimConfigs: []
   m_hasFire: 0
   m_dragonFlameStandard: {fileID: 0}
@@ -2226,7 +2227,7 @@ Animator:
   m_GameObject: {fileID: 1096151338627382}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: eb050f36ee05c478195fe95346ca2a08, type: 3}
-  m_Controller: {fileID: 22100000, guid: 34a4435040f6b4701b77dcbc709d6fc6, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8cfeab41feff04262bcc4fd9646d34b2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2234,6 +2235,25 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114011967005565760
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79deb15a7ab99481aa85ca7f0e8e9790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_elementsPerPowerLevel:
+  - element: []
+  - element:
+    - type: 0
+      name: HedgehogDragon_spikes_v1_HI
+  - element:
+    - type: 0
+      name: HedgehogDragon_spikes_v2_HI
 --- !u!114 &114024885117888558
 MonoBehaviour:
   m_ObjectHideFlags: 1
