@@ -160,11 +160,13 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_animationEventController.allowHitAnimation = true;
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
 			}break;
 			case State.Extra_2:
 			{
+                m_animationEventController.allowHitAnimation = true;
 				m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
 				m_cheskStateForResume = true;
@@ -177,18 +179,20 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_animationEventController.allowHitAnimation = false;
 				m_dragon.PauseEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 			}break;
 			case State.Extra_2:
 			{
+                m_animationEventController.allowHitAnimation = false;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 				m_dragon.PauseEating();
 			}break;
 		}
 	}
 
-    protected virtual void OnTriggerEnter(Collider _other)
+    protected override void OnTriggerEnter(Collider _other)
     {
         if ( m_state == State.Extra_2 && _other.gameObject.layer == GameConstants.Layers.MINES )    // Check power level > 1
         {
@@ -232,6 +236,18 @@ public class DragonMotionHedgehog : DragonMotion {
 			base.CheckOutterSpace();
 		}
 	}
+    
+    public override void AddForce(Vector3 _force, bool isDamage = true) {
+        if ( m_dragon.IsInvulnerable() )
+            return;
+        if ( isDamage && m_state != State.Extra_1 && m_state != State.Extra_2 )
+        {
+            m_animator.SetTrigger(GameConstants.Animator.DAMAGE);
+        }
+        m_impulse = _force;
+        if ( IsAliveState() )
+            ChangeState(State.Stunned);
+    }
 
 
 }

@@ -5,8 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(CircleArea2D))]
 public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
-
-
     [Header("Damage Area Settings")]
     public DragonTier m_tier = DragonTier.TIER_4;
     public IEntity.Type m_type = IEntity.Type.PLAYER;
@@ -39,6 +37,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 	protected DragonBreathBehaviour.Type m_fireType;
     
     private int m_powerLevel = 0;
+    DragonBreathBehaviour m_breathBehaviour;
 
 	// Use this for initialization
 	void Start () {
@@ -51,6 +50,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		m_transform = transform;
 
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+
+        m_breathBehaviour = GetComponentInParent<DragonBreathBehaviour>();
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
@@ -83,12 +84,33 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             }break;
         }
     }
-	
+    
+    
 	// Update is called once per frame
 	void Update () {
 
-		if ( m_motion.state == DragonMotion.State.Extra_2 || (m_fire && m_motion.state == DragonMotion.State.Extra_1))
+		if ( m_motion.state == DragonMotion.State.Extra_2 || m_motion.state == DragonMotion.State.Extra_1)
 		{
+            if (!m_active)
+            {
+                m_active = true;
+                // Play start particle
+            }
+            
+            if ( m_fire )
+            {
+                if (!m_breathBehaviour.isFuryPaused)
+                    m_breathBehaviour.PauseFury();
+                // Advance fire timer to make it end even if not breathing because we are in ricochet form
+                m_breathBehaviour.AdvanceRemainingFire();
+                if ( m_breathBehaviour.remainingFuryDuration <= 0 )
+                {
+                    // Let it end
+                    m_breathBehaviour.ResumeFury();
+                }
+            }
+            
+            
             if ( m_motion.state == DragonMotion.State.Extra_2 ) 
             {
                 m_shootLevel2Spikes = true;
@@ -102,11 +124,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     }
                 }
             }
-        
-			if (!m_active)
-			{
-				m_active = true;
-			}
+			
 			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
 			for (int i = 0; i < m_numCheckEntities; i++) 
 			{
@@ -141,11 +159,20 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			if (m_active)
 			{
 				m_active = false;
+                // if fire still active resume breathing
+                if ( m_fire )
+                {
+                    if ( m_breathBehaviour.isFuryPaused )
+                        m_breathBehaviour.ResumeFury();
+                }
+                
                 if (m_shootLevel2Spikes)
                 {
                     m_shootLevel2Spikes = false;
                     // Shoot end movement spikes!
                 }
+                
+                // Stop Particles
 			}
 		}
 	}
@@ -159,8 +186,13 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			m_circle.radius = m_originalRadius * m_fireBoostMultiplier;	
 		}
 		else
-		{
+		{   
 			m_circle.radius = m_originalRadius;
+            // if in ricochet form stop fire
+            if (m_motion.state == DragonMotion.State.Extra_2 || m_motion.state == DragonMotion.State.Extra_1)
+            {
+                // Stop fire particles if playing
+            }
 		}
 	}
 }

@@ -87,7 +87,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		get{ return m_controls; }
 	}
-	DragonAnimationEvents 	m_animationEventController;
+	protected DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
 	SphereCollider 			m_mainGroundCollider;
 	Collider[] 				m_groundColliders;
@@ -1623,7 +1623,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_direction = m_impulse.normalized;
 	}
 
-	public void AddForce(Vector3 _force, bool isDamage = true) {
+	public virtual void AddForce(Vector3 _force, bool isDamage = true) {
 		if ( m_dragon.IsInvulnerable() )
 			return;
 		if ( isDamage )
@@ -2117,7 +2117,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
     }
 
-    private bool IsAliveState()
+    protected bool IsAliveState()
 	{
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;

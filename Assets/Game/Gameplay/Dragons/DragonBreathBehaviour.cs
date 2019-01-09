@@ -53,7 +53,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected float m_currentFuryDuration;		// If fury Active, total time it lasts
 	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time
-
+    public float remainingFuryDuration{
+        get{ return m_currentRemainingFuryDuration; }
+    }
 
 	public enum Type
     {
@@ -65,6 +67,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
     public float m_prewarmDuration = 0.5f;
 	protected float m_prewarmFuryTimer;
 	protected bool m_isFuryPaused;
+    public bool isFuryPaused { get { return m_isFuryPaused; } }
     protected Type m_type = Type.None;
     public Type type
     {
@@ -269,11 +272,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			{
 				if ( !m_isFuryPaused )
 				{
-					// Don't decrease fury if cheating
-					if(!infiniteFury && !m_dragon.changingArea)
-					{
-						m_currentRemainingFuryDuration -= Time.deltaTime;
-					}
+                    if (!infiniteFury)
+                        AdvanceRemainingFire();					
 
 					switch( m_type )
 					{
@@ -308,6 +308,15 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 
 	}
+    
+    public void AdvanceRemainingFire()
+    {
+        // Don't decrease fury if cheating
+        if(!m_dragon.changingArea)
+        {
+            m_currentRemainingFuryDuration -= Time.deltaTime;
+        }
+    }
 
 
 	protected virtual void OnEntityBurned(Transform t, Reward reward)
