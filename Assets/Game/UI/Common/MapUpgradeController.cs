@@ -212,16 +212,7 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
     private void Track_UnlockMap(HDTrackingManager.EUnlockType unlockType) {
         HDTrackingManager.ELocation location = (FlowManager.IsInGameScene()) ? HDTrackingManager.ELocation.game_play : HDTrackingManager.ELocation.main_menu;
         HDTrackingManager.Instance.Notify_UnlockMap(location, unlockType);
-    }
-
-	/// <summary>
-	/// Ad has finished, free revive!
-	/// </summary>
-	private void OnAdClosed() {
-		// Do it!
-		UsersManager.currentUser.UnlockMap();
-        PersistenceFacade.instance.Save_Request();
-    }
+    }	
 
 	/// <summary>
 	/// The map has been upgraded.
