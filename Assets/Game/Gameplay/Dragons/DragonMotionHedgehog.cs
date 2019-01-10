@@ -8,6 +8,7 @@ public class DragonMotionHedgehog : DragonMotion {
 	// Extra_2 - Ricocheting?
 	protected Vector3 m_ricochetDir = Vector3.zero;
 	public float m_sonicSpeed = 5;
+    protected Vector3 m_sonicImpulse;
     public float m_maxRotationSpeed = 720;
     protected float m_currentRotationSpeed = 0;
 	bool m_cheskStateForResume = true;
@@ -68,16 +69,15 @@ public class DragonMotionHedgehog : DragonMotion {
 						ChangeState(State.Idle);
 					}
 				}
-				else if ( m_outterSpace )
-				{
-					if (m_transform.position.y > FlightCeiling)
-					{
-						if ( m_impulse.y > 0 )
-						{
-							m_direction = Vector3.Reflect( m_direction,  GameConstants.Vector3.down);
-						}
-					}
-				}
+                else if (m_transform.position.y > FlightCeiling)
+    			{
+    				if ( m_impulse.y > 0 )
+    				{
+    					m_direction = Vector3.Reflect( m_direction,  GameConstants.Vector3.down);
+                        m_sonicImpulse = Vector3.Reflect( m_sonicImpulse, GameConstants.Vector3.down);
+    				}
+    			}
+				
 			}break;
 		}        
 
@@ -125,7 +125,9 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
-				ComputeImpulseToZero(_deltaTime);
+				float impulseMag = m_impulse.magnitude;
+                m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.1f);
+                
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
                 m_spinning = false;
@@ -134,7 +136,12 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
-				m_impulse = m_direction * m_sonicSpeed;
+                if ( m_transform.position.y > SpaceStart )
+                {
+                    // Add Gravity
+                    m_sonicImpulse += GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier * _deltaTime;
+                }
+                m_impulse = m_sonicImpulse;
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
                 m_spinning = false;
@@ -185,6 +192,7 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
+                m_sonicImpulse = m_direction * m_sonicSpeed;
                 m_animationEventController.allowHitAnimation = false;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 				m_dragon.PauseEating();
@@ -210,6 +218,7 @@ public class DragonMotionHedgehog : DragonMotion {
 		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
 		{
 			m_direction = Vector3.Reflect( m_direction,  collision.contacts[0].normal);
+            m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  collision.contacts[0].normal);
 		}
 	}
 
