@@ -316,7 +316,6 @@ namespace AI {
                 CheckFreeze();
 
                 if (m_stunned <= 0 ) {
-                    
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
                             PlaySound(m_onSpawnSound);
@@ -399,7 +398,10 @@ namespace AI {
 
 		public void Stun(float _stunTime) {
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
-            if ( m_stunned > 0 && m_pilot != null) m_pilot.Stop();
+            if (m_stunned > 0) {
+                if (m_pilot != null)  m_pilot.Stop();
+                if (m_motion != null) m_motion.Stop();
+            }
 		}
         
         public virtual void CheckInLove() {
