@@ -585,7 +585,17 @@
           "dna",
           "etl"
         ]
-      },	  
+      },	
+	  "custom.game.unlockmap": {
+        "Parameters": [
+          { "location": { "Status": "OK" } },
+		  { "unlockType": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },		  
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1379,6 +1389,14 @@
 	  "upcomingLeague": {
 		"Type": "STRING:45",
 		"Values": []
-      }	  
+      },
+	  "location": {
+		"Type": "STRING:15",
+		"Values": []
+      },
+	  "unlockType": {
+		"Type": "STRING:15",
+		"Values": []
+      }
     }
 }

@@ -552,6 +552,46 @@ public class HDTrackingManager
     public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
     #endregion
 
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public enum ELocation
+    {
+        main_menu,
+        game_play
+    };
+
+    private string[] ELocationKeys = System.Enum.GetNames(typeof(ELocation));
+
+    private string UNDEFINED = "UNDEFINED";
+
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public string ELocationToKey(ELocation value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < ELocationKeys.Length) ? ELocationKeys[index] : UNDEFINED;
+    }
+
+    public enum EUnlockType
+    {
+        SC,
+        HC,
+        video_ads
+    };
+
+    private string[] EUnlockTypeKeys = System.Enum.GetNames(typeof(EUnlockType));
+
+    public string EUnlockTypeToKey(EUnlockType value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < EUnlockTypeKeys.Length) ? EUnlockTypeKeys[index] : UNDEFINED;
+    }
+
+    /// <summary>
+    /// Sent when the user unlocks the map.
+    /// </summary>
+    /// <param name="location">Where the map has been unlocked from.</param>
+    /// <param name="unlockType">How the map has been unlocked.</param>
+    public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
+
     #region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[HDTrackingManager] ";
