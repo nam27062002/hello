@@ -256,6 +256,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     }
 
     private bool m_switchingArea = false;
+    private bool m_canLoseMultiplier = true;
+    public bool canLoseMultiplier
+    {
+        get{ return m_canLoseMultiplier; }
+        set{ m_canLoseMultiplier = value; }
+    }
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -349,7 +355,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
 			// If timer has ended, end multiplier streak
-			if(m_scoreMultiplierTimer <= 0) 
+			if(m_scoreMultiplierTimer <= 0 && canLoseMultiplier) 
 			{
 				if (m_currentScoreMultiplierIndex != 0)
 				{

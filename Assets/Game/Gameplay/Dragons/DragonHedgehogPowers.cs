@@ -90,6 +90,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             if (!m_active)
             {
                 m_active = true;
+                RewardManager.instance.canLoseMultiplier = false;
                 // Play start particle
             }
             
@@ -157,7 +158,9 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		{
 			if (m_active)
 			{
-				m_active = false;
+                m_active = false;
+                RewardManager.instance.canLoseMultiplier = true;
+				
                 // if fire still active resume breathing
                 if ( m_fire )
                 {
