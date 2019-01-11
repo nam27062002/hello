@@ -24,7 +24,9 @@ public class DragonControlPlayer : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[HideInInspector] public bool moving = false;
+    [HideInInspector] public bool movingTap = false;
 	[HideInInspector] public bool action = false;
+    [HideInInspector] public bool actionTap = false;
 
 	TouchControlsDPad	touchControls = null;
 
@@ -40,6 +42,9 @@ public class DragonControlPlayer : MonoBehaviour {
 	private int m_testDirecton = 1;
 
 	public static float BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD = 0.85f;
+
+    private float m_lastActionTime = -1;
+    
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -99,8 +104,11 @@ public class DragonControlPlayer : MonoBehaviour {
 			return;
 		}
 
+        bool wasAction = action;
+
 		moving = false;
 		action = false;
+        actionTap = false;
 
 		// [AOC] Nothing to do if paused
 		// if(InstanceManager.gameSceneControllerBase.paused) return;
@@ -127,6 +135,19 @@ public class DragonControlPlayer : MonoBehaviour {
 			moving = moving || joystickMoving;
 			action = action || joystickControls.getAction();
 		}
+        
+        // On action just pressed
+        if (action && !wasAction)
+        {
+            m_lastActionTime = Time.time;    
+        }
+        // Action released
+        else if ( !action &&  Time.time - m_lastActionTime < 0.25f )
+        {
+            actionTap = true;
+            m_lastActionTime = 0;
+        }
+        
 		#endif
 	}
 
