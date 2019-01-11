@@ -235,9 +235,13 @@ public class DragonMotionHedgehog : DragonMotion {
     {
         if ( m_state == State.Extra_2 && m_powerLevel >= 1 && ((1<<_other.gameObject.layer) & GameConstants.Layers.MINES) > 0)
         {
-            // Bounce
-            Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
-            CustomBounce( normal );
+            // Bounce if mine
+            Entity entity = _other.attachedRigidbody.GetComponent<Entity>();
+            if ( entity.HasTag(IEntity.Tag.Mine) )
+            {
+                Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
+                CustomBounce( normal );
+            }
             base.OnTriggerEnter( _other );
         }
         else
