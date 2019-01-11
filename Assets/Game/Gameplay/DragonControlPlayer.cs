@@ -44,6 +44,7 @@ public class DragonControlPlayer : MonoBehaviour {
 	public static float BOOST_WITH_HARD_PUSH_DEFAULT_THRESHOLD = 0.85f;
 
     private float m_lastActionTime = -1;
+    private float m_lastMovingTime = -1;
     
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -105,10 +106,13 @@ public class DragonControlPlayer : MonoBehaviour {
 		}
 
         bool wasAction = action;
+        bool wasMoving = moving;
 
 		moving = false;
 		action = false;
+        movingTap = false;
         actionTap = false;
+        
 
 		// [AOC] Nothing to do if paused
 		// if(InstanceManager.gameSceneControllerBase.paused) return;
@@ -136,6 +140,7 @@ public class DragonControlPlayer : MonoBehaviour {
 			action = action || joystickControls.getAction();
 		}
         
+        // Check action tap
         // On action just pressed
         if (action && !wasAction)
         {
@@ -146,6 +151,21 @@ public class DragonControlPlayer : MonoBehaviour {
         {
             actionTap = true;
             m_lastActionTime = 0;
+        }
+        
+        // Check Moving Tap. We cannot tao if using tilt control
+        if (!m_useTiltControl)
+        {
+            // Move tap
+            if ( moving && !wasMoving )
+            {
+                m_lastMovingTime = Time.time;
+            }
+            else if ( !moving && Time.time - m_lastMovingTime < 0.25f )
+            {
+                movingTap = true;
+                m_lastMovingTime = 0;
+            }
         }
         
 		#endif

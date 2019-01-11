@@ -69,7 +69,7 @@ public class DragonMotionHedgehog : DragonMotion {
             // Bouncing!
 			case State.Extra_2:
 			{
-				if (m_dragon.energy >= m_dragon.energyMax || m_controls.actionTap)
+				if (m_dragon.energy >= m_dragon.energyMax || m_controls.actionTap || m_controls.movingTap)
 				{
 					// End Ricocheting!
 					if ( m_insideWater )
