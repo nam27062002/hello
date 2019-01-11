@@ -155,34 +155,37 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 }
             }
 			
-			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
-			for (int i = 0; i < m_numCheckEntities; i++) 
-			{
-                // if power up level >= 1 check if mine, and do not destroy it, we need to bounce off of it
-				Entity prey = m_checkEntities[i];
-				if ( m_fire )
-				{
-					if (prey.IsBurnable(m_tier) || m_fireType == FireBreath.Type.Mega) {
-						AI.IMachine machine =  m_checkEntities[i].machine;
-						if (machine != null) {
-							machine.Burn(transform, IEntity.Type.PLAYER);
-						}
-					}
-
-				}else{
-					if ( prey.CanBeSmashed( m_tier ) )
-					{
-						AI.IMachine machine =  prey.machine;
-						if (machine != null) 
-						{
-							machine.Smash( m_type );
-							// User this if you want it to count as eaten
-							// machine.BeginSwallowed(m_transform, true, m_type);
-							// machine.EndSwallowed(m_transform);
-						}
-					}
-				}
-			}
+            if ( m_motion.state == DragonMotion.State.Extra_2 || m_fire )
+            {
+    			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
+    			for (int i = 0; i < m_numCheckEntities; i++) 
+    			{
+                    // if power up level >= 1 check if mine, and do not destroy it, we need to bounce off of it
+    				Entity prey = m_checkEntities[i];
+    				if ( m_fire )
+    				{
+    					if (prey.IsBurnable(m_tier) || m_fireType == FireBreath.Type.Mega) {
+    						AI.IMachine machine =  m_checkEntities[i].machine;
+    						if (machine != null) {
+    							machine.Burn(transform, IEntity.Type.PLAYER);
+    						}
+    					}
+    
+    				}else{
+    					if ( prey.CanBeSmashed( m_tier ) )
+    					{
+    						AI.IMachine machine =  prey.machine;
+    						if (machine != null) 
+    						{
+    							machine.Smash( m_type );
+    							// User this if you want it to count as eaten
+    							// machine.BeginSwallowed(m_transform, true, m_type);
+    							// machine.EndSwallowed(m_transform);
+    						}
+    					}
+    				}
+    			}
+            }
 		}
 		else
 		{
