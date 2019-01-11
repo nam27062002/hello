@@ -13,6 +13,9 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     [Header("Level 2 Spikes")]
     public int m_spikesNumber = 4;
     protected bool m_shootLevel2Spikes = false;
+    public bool shootLevel2Spikes{
+        set{ m_shootLevel2Spikes = value; }
+    }
 
     [Header("Level 3 Spikes")]
     public float m_shootingRatio = 0.1f;
@@ -139,20 +142,15 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             }
             
             
-            if ( m_motion.state == DragonMotion.State.Extra_2 ) 
+            if ( m_powerLevel >= 3 && m_motion.state == DragonMotion.State.Extra_2 ) 
             {
-                m_shootLevel2Spikes = true;
-                if (m_powerLevel >= 3)
+                m_shootingTimer -= Time.deltaTime;
+                if ( m_shootingTimer <= 0 )
                 {
-                    m_shootingTimer -= Time.deltaTime;
-                    if ( m_shootingTimer <= 0 )
-                    {
-                        m_shootingTimer = m_shootingRatio;
-                        
-                        // Shoot spikes!
-                        Vector3 dir = m_motion.direction.RotateXYDegrees(Random.Range(-20, 20));
-                        ShootHorn( dir );
-                    }
+                    m_shootingTimer = m_shootingRatio;
+                    // Shoot spikes!
+                    Vector3 dir = m_motion.direction.RotateXYDegrees(Random.Range(-20, 20));
+                    ShootHorn( dir );
                 }
             }
 			

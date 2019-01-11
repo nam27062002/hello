@@ -26,11 +26,15 @@ public class DragonMotionHedgehog : DragonMotion {
     public string m_shootSound;
     public string m_bounceSound;
 
+    DragonHedgehogPowers m_powers;
+
 	override protected void Start() {
 		base.Start();
 		m_boost.alwaysDrain = true;
         m_idleQuaternion = m_rotationPivot.localRotation;
         m_currentQuaternion = m_idleQuaternion;
+
+        m_powers = GetComponentInChildren<DragonHedgehogPowers>();
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
@@ -119,8 +123,8 @@ public class DragonMotionHedgehog : DragonMotion {
         {
             if ( m_state == State.Extra_1 )
             {
-                float speed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
-                m_currentRotationSpeed = Mathf.Lerp(m_minRotationSpeed, m_maxRotationSpeed, speed);
+                float rotationSpeed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
+                m_currentRotationSpeed = Mathf.Lerp(m_minRotationSpeed, m_maxRotationSpeed, rotationSpeed);
             }
                 
             // Rotate view
@@ -217,9 +221,14 @@ public class DragonMotionHedgehog : DragonMotion {
 			case State.Extra_2:
 			{
                 // m_sonicImpulse = m_direction * m_sonicSpeed;
-                float speed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
-                speed = Mathf.Lerp(m_sonicMinSpeed, m_sonicMaxSpeed, speed);
-                m_sonicImpulse = m_direction * speed;
+                float impulseSpeed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
+                if ( impulseSpeed > 0.1f && m_powerLevel >= 2)
+                {
+                    // Tell powers to throw spikes at the end
+                    m_powers.shootLevel2Spikes = true;
+                }
+                impulseSpeed = Mathf.Lerp(m_sonicMinSpeed, m_sonicMaxSpeed, impulseSpeed);
+                m_sonicImpulse = m_direction * impulseSpeed;
                 m_animationEventController.allowHitAnimation = false;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 				m_dragon.PauseEating();
