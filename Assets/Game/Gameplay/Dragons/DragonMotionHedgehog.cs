@@ -46,6 +46,7 @@ public class DragonMotionHedgehog : DragonMotion {
 			{
 				if ( !m_boost.IsBoostActive() )
 				{
+                    m_direction.Normalize();
 					ChangeState(State.Extra_2);
 				}
 				else
@@ -181,8 +182,8 @@ public class DragonMotionHedgehog : DragonMotion {
 				m_dragon.TryResumeEating();
 				m_cheskStateForResume = true;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
-                m_impulse = GameConstants.Vector3.zero;
-                // if power level >= 2 then shoot spikes!!
+                if ( m_powerLevel >= 3 )
+                    m_impulse = GameConstants.Vector3.zero;
 			}break;
 		}
 		base.ChangeState( _nextState );

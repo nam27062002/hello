@@ -27,7 +27,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
-	DragonMotion m_motion;
+	DragonMotionHedgehog m_motion;
 	private float m_originalRadius;
 	private bool m_active = false;
 	protected Transform m_transform;
@@ -46,7 +46,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		m_circle = GetComponent<CircleArea2D>();
 		m_originalRadius = m_circle.radius;
 		m_player = InstanceManager.player;
-		m_motion = m_player.dragonMotion;
+		m_motion = m_player.dragonMotion as DragonMotionHedgehog;
 		m_tier = m_player.data.tier;
 		m_transform = transform;
 
@@ -62,6 +62,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         
         m_spikesLvl1.SetActive( m_powerLevel > 0 );
         m_spikesLvl2.SetActive( m_powerLevel > 1 );
+        
         
         if ( m_powerLevel >= 2 )
         {
@@ -246,7 +247,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     protected void ShootHorn(Vector3 _direction)
     {
         GameObject go = m_poolHandler.GetInstance();
-        go.transform.position = m_transform.position;
+        go.transform.position = m_motion.m_rotationPivot.position + m_motion.direction;
         Projectile projectile = go.GetComponent<Projectile>();
         projectile.ShootTowards(_direction, projectile.speed, 1000, transform );
     }
