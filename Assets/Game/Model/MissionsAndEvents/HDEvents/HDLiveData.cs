@@ -107,7 +107,7 @@ namespace HDLiveData {
             public int rank;
 
             public string name;
-            public ulong score;
+            public long score;
 
             public DragonBuild build;
 
@@ -128,7 +128,7 @@ namespace HDLiveData {
                 build.Clean();
 
                 name = _data["name"];
-                score = (ulong)_data["score"];
+                score = _data["score"].AsLong;
                 if (_data.ContainsKey("build"))
                     build.LoadData(_data["build"]);
             }
