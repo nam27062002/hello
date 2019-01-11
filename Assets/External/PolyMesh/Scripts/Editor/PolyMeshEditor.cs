@@ -92,18 +92,9 @@ public class PolyMeshEditor : Editor {
 			HideWireframe(hideWireframe);
 		}
 
-		// Subscribe to the Undo event
-		#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-			Undo.undoRedoPerformed += OnUndoRedo;
-		#else
-			//Crazy hack to register undo
-			if(m_undoCallback == null) {
-				m_undoCallback = typeof(EditorApplication).GetField("undoRedoPerformed", BindingFlags.NonPublic | BindingFlags.Static);
-				if(m_undoCallback != null) {
-					m_undoCallback.SetValue(null, new EditorApplication.CallbackFunction(OnUndoRedo));
-				}
-			}
-		#endif
+		// Subscribe to the Undo event		
+		Undo.undoRedoPerformed += OnUndoRedo;
+		
 
 		// Initialize prefix
 		m_prefsPrefixPerScene = m_prefsPrefixGlobal + polyMesh.gameObject.scene.name + ".";
@@ -113,28 +104,28 @@ public class PolyMeshEditor : Editor {
 		string serializedList = EditorPrefs.GetString(m_prefsPrefixPerScene + "concavity.list", CaletyMiniJSON.Json.Serialize(new List<Vector3>()));
 		List<object> objList = CaletyMiniJSON.Json.Deserialize(serializedList) as List<object>;
 		m_concavityList = objList.Select((_obj) => { return VectorExt.ParseVector3(_obj as string); }).ToList();	// [AOC] Linq conversion function. Since we can't directly convert from object to Vector3, we must parse the json string
+
+        polyMesh.BuildMesh();
 	}
 
 	/// <summary>
 	/// Inspector closed.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe from the Undo event
-		#if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
-			Undo.undoRedoPerformed -= OnUndoRedo;
-		#else
-			// Crazy hack to register undo
-			if(m_undoCallback != null) m_undoCallback = null;
-		#endif
+		Undo.undoRedoPerformed -= OnUndoRedo;		
 	}
 
-	//------------------------------------------------------------------------//
-	// INSPECTOR GUI														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Raises the inspector GU event.
-	/// </summary>
-	public override void OnInspectorGUI() {
+    private void OnDestroy() {
+        Undo.undoRedoPerformed -= OnUndoRedo;
+    }
+
+    //------------------------------------------------------------------------//
+    // INSPECTOR GUI														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Raises the inspector GU event.
+    /// </summary>
+    public override void OnInspectorGUI() {
 		// Special subset of features when multi-editing
 		if(targets.Length > 1) {
 			OnInspectorGUIMulti();
@@ -1007,11 +998,13 @@ public class PolyMeshEditor : Editor {
 	/// Raises the undo redo event.
 	/// </summary>
 	private void OnUndoRedo() {
-		// Update the mesh on undo/redo
-		m_keyPoints = new List<Vector3>(polyMesh.keyPoints);
-		m_curvePoints = new List<Vector3>(polyMesh.curvePoints);
-		m_isCurve = new List<bool>(polyMesh.isCurve);
-		polyMesh.BuildMesh();
+        // Update the mesh on undo/redo
+        if (polyMesh != null) {
+            m_keyPoints = new List<Vector3>(polyMesh.keyPoints);
+            m_curvePoints = new List<Vector3>(polyMesh.curvePoints);
+            m_isCurve = new List<bool>(polyMesh.isCurve);
+            polyMesh.BuildMesh();
+        }
 	}
 
 	/// <summary>
