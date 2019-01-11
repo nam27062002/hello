@@ -40,8 +40,9 @@ public enum MenuScreen {
 	ANIMOJI,
 
 	LAB_DRAGON_SELECTION,
-	LAB_GOALS,
+	LAB_MISSIONS,
 	LAB_PETS,
+	LAB_LEAGUES,
 
 	COUNT
 }

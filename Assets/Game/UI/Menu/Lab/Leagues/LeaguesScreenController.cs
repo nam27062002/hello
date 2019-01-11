@@ -1,8 +1,8 @@
-﻿// GoalsScreenGlobalEventsTab.cs
+// LeaguesScreenController.cs
 // Hungry Dragon
 // 
-// Created by Alger Ortín Castellví on 26/06/2017.
-// Copyright (c) 2017 Ubisoft. All rights reserved.
+// Created by Alger Ortín Castellví on 11/01/2019.
+// Copyright (c) 2019 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -11,25 +11,23 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// General controller for the Global Events tab in the Goals Screen.
+/// General controller for the Leagues screen.
 /// </summary>
-public class GlobalEventsScreenController : MonoBehaviour {
+public class LeaguesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public enum Panel {
 		OFFLINE,
-		LOG_IN,
-		NO_EVENT,
-		EVENT_TEASER,
-		EVENT_ACTIVE,
+		WAITING_NEW_SEASON,
+		ACTIVE_SEASON,
 		LOADING,
-		RETRY_REWARDS,
-        REQUIRES_UPDATE,
+		RETRY_REWARDS,		// [AOC] Check if needed!
 
 		COUNT
 	};
@@ -38,11 +36,12 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
+	[SerializeField] private LeaguesScreenPanel[] m_panels = new LeaguesScreenPanel[(int)Panel.COUNT];
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
-	private HDQuestManager m_questManager;
+	private HDLeagueController m_league = null;
+	private HDSeasonData m_season = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,7 +54,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
 
-		m_questManager = HDLiveDataManager.quest;
+		// Init internal references
+		m_league = HDLiveDataManager.league;
+		m_season = m_league.season;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -70,10 +71,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
-		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
-		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
-
 		Messenger.AddListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
 		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
@@ -84,10 +81,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<GlobalEventManager.RequestType>(MessengerEvents.GLOBAL_EVENT_UPDATED, OnEventDataUpdated);
-		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
-		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
-
 		Messenger.RemoveListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
 		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
@@ -98,11 +91,13 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Select active panel based on current global event state.
+	/// Select active panel based on current league/season state.
 	/// </summary>
 	public void Refresh() {
 		// Do we need to go to the rewards screen?
-		if ( m_questManager.EventExists() )
+		// [AOC] TODO!!
+		/*
+		if(m_questManager.EventExists())
 		{
 			m_questManager.UpdateStateFromTimers();
 			// If the current global event has a reward pending, go to the event reward screen
@@ -113,45 +108,13 @@ public class GlobalEventsScreenController : MonoBehaviour {
 				
 			}
 		}
+		*/
 
 		// Select active panel
 		SelectPanel();
 
 		// Refresh its content
 		m_panels[(int)m_activePanel].Refresh();
-	}
-
-	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
-	{
-		if ( _eventId == m_questManager.data.m_eventId )	
-		{
-			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
-			{
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);	
-			}
-			else
-			{
-				// Show error message and retry button
-				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
-				SetActivePanel(Panel.RETRY_REWARDS);
-			}
-		}
-	}
-
-	public void OnRetryRewardsButton()
-	{
-		// Show requesting!
-		if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
-		{
-			SetActivePanel(Panel.OFFLINE);	
-		}
-		else
-		{
-			m_questManager.RequestRewards();
-			SetActivePanel(Panel.LOADING);	
-		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -161,34 +124,28 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Based on current event state, select which panel should be active.
 	/// </summary>
 	private void SelectPanel() {
+		// Select active panel based on season/league state
+		Panel targetPanel = Panel.WAITING_NEW_SEASON;
 
-		Panel targetPanel = Panel.NO_EVENT;
-		HDQuestManager quest = HDLiveDataManager.quest;
-		if ( quest.EventExists() )
-		{
-			if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
-			{
-				targetPanel = Panel.OFFLINE;
-			}
-			else
-			{
-				switch(quest.data.m_state) {
-					case HDLiveEventData.State.TEASING: {
-						targetPanel = Panel.EVENT_TEASER;
-					} break;
+		// Check internet connectivity first
+		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
+			targetPanel = Panel.OFFLINE;
+		} else {
+			// Depends on season state
+			switch(m_season.state) {
+				case HDSeasonData.State.JOINED:
+				case HDSeasonData.State.NOT_JOINED: {
+					targetPanel = Panel.ACTIVE_SEASON;
+				} break;
 
-					case HDLiveEventData.State.NOT_JOINED:
-					case HDLiveEventData.State.JOINED: {
-						targetPanel = Panel.EVENT_ACTIVE;
-					} break;
-                    case HDLiveEventData.State.REQUIRES_UPDATE:
-                    {
-                        targetPanel = Panel.REQUIRES_UPDATE;
-                    }break;
-					default: {
-						targetPanel = Panel.NO_EVENT;
-					} break;
-				}
+				case HDSeasonData.State.REWARDS_COLLECTED:
+				case HDSeasonData.State.WAITING_NEW_SEASON: {
+					targetPanel = Panel.WAITING_NEW_SEASON;
+				} break;
+
+				case HDSeasonData.State.PENDING_REWARDS: {
+					targetPanel = Panel.LOADING;
+				} break;
 			}
 		}
 
@@ -217,6 +174,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		}
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
+		// [AOC] TODO!!
+		/*
 		if(m_activePanel == Panel.EVENT_ACTIVE && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) {
 			// Open popup!
 			string popupName = "PF_PopupInfoGlobalEvents";
@@ -228,6 +187,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			// Tracking!
 			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 		}
+		*/
 	}
 
 	//------------------------------------------------------------------------//
@@ -237,40 +197,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Force a refresh every time we enter the tab!
 	/// </summary>
 	public void OnShowPreAnimation() {
-		// Show loading panel
+		// Show loading panel and force a first refresh, both from data and visuals
 		SetActivePanel(Panel.LOADING, false);
-		m_questManager.UpdateStateFromTimers();
-		OnQuestDataUpdated();
-	}
-
-	private void OnQuestDataUpdated()
-	{
-		Refresh();
-	}
-
-	/// <summary>
-	/// The global event manager has received new data from the server.
-	/// </summary>
-	private void OnEventDataUpdated(GlobalEventManager.RequestType _requestType) {
-		// Different stuff depending on request type
-		switch(_requestType) {
-			case GlobalEventManager.RequestType.EVENT_DATA: {
-				// If there is no event, instantly refresh the screen. Otherwise wait for the EVENT_STATE response
-				if(GlobalEventManager.currentEvent == null) {
-					Refresh();
-				} else {
-					//SelectPanel();
-				}
-			} break;
-
-			case GlobalEventManager.RequestType.EVENT_REWARDS:
-			case GlobalEventManager.RequestType.EVENT_STATE: {
-				Refresh();
-			} break;
-		}
-	}
-
-	private void OnNoEvent(){
+		m_season.UpdateState();
 		Refresh();
 	}
 
@@ -278,47 +207,75 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// The retry button on the offline panel has been pressed.
 	/// </summary>
 	public void OnOfflineRetryButton() {
-
-		if (Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged ())
-		{
-			// Show loading and ask for my evetns
+		if(Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged()) {
+			// Show loading and ask for my live data
 			SetActivePanel(Panel.LOADING);
-			if (!HDLiveDataManager.instance.RequestMyLiveData())
-			{
-				StartCoroutine( RemoveLoading());
+			if(!HDLiveDataManager.instance.RequestMyLiveData()) {
+				UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
 			}
-		}
-		else
-		{
+		} else {
 			// Message no connection
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
 
-    /// <summary>
-    /// Send the player to the update button
-    /// </summary>
-    public void OnUpdateButton()
-    {
-        ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);
-    }
-
-	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
-	{
+	/// <summary>
+	/// We got new event data.
+	/// </summary>
+	/// <param name="_eventId">Event identifier.</param>
+	/// <param name="_err">Error code.</param>
+	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
+		// [AOC] TODO!! Needed?
+		/*
 		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
 		{
 			Refresh();
 		}
+		*/
 	}
 
-	void OnEventsUpdated()
-	{
+	/// <summary>
+	/// New data has been received.
+	/// </summary>
+	void OnEventsUpdated() {
 		Refresh();
 	}
 
-	IEnumerator RemoveLoading()
-	{
-		yield return new WaitForSeconds(0.5f);
-		Refresh();
+	/// <summary>
+	/// Rewards data has been received from the server.
+	/// </summary>
+	/// <param name="_eventId">Event identifier.</param>
+	/// <param name="_err">Error code.</param>
+	protected void OnRewards(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
+		// [AOC] TODO!!
+		/*
+		if(_eventId == m_questManager.data.m_eventId) {
+			if(_err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
+				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
+				scr.StartFlow();
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);
+			} else {
+				// Show error message and retry button
+				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
+				SetActivePanel(Panel.RETRY_REWARDS);
+			}
+		}
+		*/
+	}
+
+	/// <summary>
+	/// Retry rewards button has been pressed.
+	/// </summary>
+	public void OnRetryRewardsButton() {
+		// [AOC] TODO!!
+		/*
+		// Show requesting!
+		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
+			SetActivePanel(Panel.OFFLINE);
+		} else {
+			m_questManager.RequestRewards();
+			SetActivePanel(Panel.LOADING);
+		}
+		*/
 	}
 }
