@@ -182,6 +182,7 @@ public class DragonMotionHedgehog : DragonMotion {
 				m_dragon.TryResumeEating();
 				m_cheskStateForResume = true;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
+                m_impulse = GameConstants.Vector3.zero;
                 // if power level >= 2 then shoot spikes!!
 			}break;
 		}

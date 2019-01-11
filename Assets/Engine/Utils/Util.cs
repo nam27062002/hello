@@ -585,6 +585,16 @@ public static class Util
 		float y = v.y;
 		return new Vector3(x*cos - y*sin, x*sin + y*cos);
 	}
+    
+    public static void RotateXYRadians(ref Vector3 v, float ang)
+    {
+        float sin = Mathf.Sin(ang);
+        float cos = Mathf.Cos(ang);
+        float x = v.x;
+        float y = v.y;
+        v.x = x * cos - y * sin;
+        v.y = x * sin + y * cos;
+    }
 	
 	public static Vector3 RotateXYDegrees(this Vector3 v, float ang)
 	{
@@ -595,6 +605,17 @@ public static class Util
 		float y = v.y;
 		return new Vector3(x*cos - y*sin, x*sin + y*cos);
 	}
+    
+    public static void RotateXYDegrees( ref Vector3 v, float ang )
+    {
+        ang *= Mathf.Deg2Rad;
+        float sin = Mathf.Sin(ang);
+        float cos = Mathf.Cos(ang);
+        float x = v.x;
+        float y = v.y;
+        v.x = x * cos - y * sin;
+        v.y = x * sin + y * cos;
+    }
 	
 	
 	//----------------------------------------------------------------------------

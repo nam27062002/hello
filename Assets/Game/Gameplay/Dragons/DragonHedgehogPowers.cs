@@ -38,6 +38,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     private int m_powerLevel = 0;
     DragonBreathBehaviour m_breathBehaviour;
     DragonHealthBehaviour m_healthBehaviour;
+    private PoolHandler m_poolHandler;
+    Vector3 m_tmpVector = GameConstants.Vector3.right;
 
 	// Use this for initialization
 	void Start () {
@@ -49,6 +51,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		m_transform = transform;
 
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
         m_breathBehaviour = GetComponentInParent<DragonBreathBehaviour>();
         m_healthBehaviour = GetComponentInParent<DragonHealthBehaviour>();
@@ -62,6 +66,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         if ( m_powerLevel >= 2 )
         {
             // Create pool of spikes!
+            CreatePool();
         }
 
 	}
@@ -69,6 +74,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 	void OnDestroy()
 	{
 		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
     
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -80,9 +87,21 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
                 OnFuryRushToggled( furyRushToggled.activated, furyRushToggled.type );
             }break;
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                if (m_powerLevel >= 2)
+                {
+                    CreatePool();
+                }
+            }break;
         }
     }
     
+    void CreatePool() {
+        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
+    }
+            
     
 	// Update is called once per frame
 	void Update () {
@@ -128,7 +147,10 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     if ( m_shootingTimer <= 0 )
                     {
                         m_shootingTimer = m_shootingRatio;
+                        
                         // Shoot spikes!
+                        Vector3 dir = m_motion.direction.RotateXYDegrees(Random.Range(-20, 20));
+                        ShootHorn( dir );
                     }
                 }
             }
@@ -185,6 +207,13 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 {
                     m_shootLevel2Spikes = false;
                     // Shoot end movement spikes!
+                    float angle = ( 2.0f*Mathf.PI ) / m_spikesNumber;
+                    Vector3 dir = GameConstants.Vector3.right;
+                    for (float currentAngle = 0; currentAngle < 2.0f*Mathf.PI; currentAngle += angle )
+                    {
+                        Util.RotateXYRadians(ref dir, angle);
+                        ShootHorn( dir );
+                    }
                 }
                 
                 // Stop Particles
@@ -210,4 +239,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             }
 		}
 	}
+    
+    protected void ShootHorn(Vector3 _direction)
+    {
+        GameObject go = m_poolHandler.GetInstance();
+        go.transform.position = m_transform.position;
+        Projectile projectile = go.GetComponent<Projectile>();
+        projectile.ShootTowards(_direction, projectile.speed, 1000, transform );
+    }
 }
