@@ -25,6 +25,7 @@ public class DragonMotionHedgehog : DragonMotion {
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
+        m_canSpin = false;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());
 
@@ -134,7 +135,6 @@ public class DragonMotionHedgehog : DragonMotion {
                 
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-                m_spinning = false;
                 RotateToDirection( m_direction );
                 
 			}break;
@@ -148,7 +148,6 @@ public class DragonMotionHedgehog : DragonMotion {
                 m_impulse = m_sonicImpulse;
 				ApplyExternalForce();
 				m_rbody.velocity = m_impulse;
-                m_spinning = false;
 				RotateToDirection( m_direction );
 			}break;
 		}

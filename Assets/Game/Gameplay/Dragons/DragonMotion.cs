@@ -249,6 +249,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
     protected bool m_spinning = true;
+    protected bool m_canSpin = true;
     private bool m_rotateOnIdle = false;
 
     private bool m_waterMovement = false;
@@ -1124,9 +1125,9 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 		if ( m_state != State.Intro)
 		{
-			Vector3 position = m_transform.position;
-			position.z = 0f;
-			m_transform.position = position;
+			Vector3 pos = m_transform.position;
+			pos.z = 0f;
+			m_transform.position = pos;
 		}
 
 		/*
@@ -1378,7 +1379,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		//if ((boostSpeedMultiplier > 1) && (m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 25 && (m_impulse.y > 0)) {
 		//if ((m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 425 && (m_impulse.y < -10)) {
 		if (m_lastSpeed > (absoluteMaxSpeed * m_dragonAirFreeFallMultiplier) && m_direction.y < 0f) {
-			RotateToDirection (m_direction, false, true);
+			RotateToDirection (m_direction, false, m_canSpin);
 		} else
 		{
 			RotateToDirection (m_direction);
@@ -1570,7 +1571,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 		if ( m_spinning != spin )
 			m_animator.SetBool(GameConstants.Animator.SPIN, spin);
-
 		m_spinning = spin;
 
 	}
