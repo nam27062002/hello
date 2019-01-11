@@ -15,12 +15,16 @@ public class DragonMotionHedgehog : DragonMotion {
     public Transform m_rotationPivot;
     protected Quaternion m_idleQuaternion;
     protected Quaternion m_currentQuaternion;
+    private int m_powerLevel = 0;
 
 	override protected void Start() {
 		base.Start();
 		m_boost.alwaysDrain = true;
         m_idleQuaternion = m_rotationPivot.localRotation;
         m_currentQuaternion = m_idleQuaternion;
+        
+        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
+        m_powerLevel = dataSpecial.powerLevel;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());
 
@@ -202,9 +206,13 @@ public class DragonMotionHedgehog : DragonMotion {
 
     protected override void OnTriggerEnter(Collider _other)
     {
-        if ( m_state == State.Extra_2 && _other.gameObject.layer == GameConstants.Layers.MINES )    // Check power level > 1
+        if ( m_state == State.Extra_2 && m_powerLevel >= 1 && ((1<<_other.gameObject.layer) & GameConstants.Layers.MINES) > 0)
         {
-            // Bounce? how? we dont have a normal to reflect?
+            // Bounce
+            Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
+            m_direction = Vector3.Reflect( m_direction,  normal);
+            m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+            base.OnTriggerEnter( _other );
         }
         else
         {

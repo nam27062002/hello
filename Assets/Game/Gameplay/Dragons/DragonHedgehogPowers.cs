@@ -37,6 +37,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     
     private int m_powerLevel = 0;
     DragonBreathBehaviour m_breathBehaviour;
+    DragonHealthBehaviour m_healthBehaviour;
 
 	// Use this for initialization
 	void Start () {
@@ -50,6 +51,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 
         m_breathBehaviour = GetComponentInParent<DragonBreathBehaviour>();
+        m_healthBehaviour = GetComponentInParent<DragonHealthBehaviour>();
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
@@ -91,6 +93,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             {
                 m_active = true;
                 RewardManager.instance.canLoseMultiplier = false;
+                m_healthBehaviour.AddDamageIgnore( DamageType.ARROW );
+                m_healthBehaviour.AddDamageIgnore( DamageType.NORMAL );
+                m_healthBehaviour.AddDamageIgnore( DamageType.EXPLOSION );
+                if ( m_powerLevel >= 1 )
+                    m_healthBehaviour.AddDamageIgnore( DamageType.MINE );
+                
                 // Play start particle
             }
             
@@ -160,7 +168,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			{
                 m_active = false;
                 RewardManager.instance.canLoseMultiplier = true;
-				
+				m_healthBehaviour.RemoveDamageIgnore( DamageType.ARROW );
+                m_healthBehaviour.RemoveDamageIgnore( DamageType.NORMAL );
+                m_healthBehaviour.RemoveDamageIgnore( DamageType.EXPLOSION );
+                if ( m_powerLevel >= 1 )
+                    m_healthBehaviour.RemoveDamageIgnore( DamageType.MINE );
+                
                 // if fire still active resume breathing
                 if ( m_fire )
                 {
