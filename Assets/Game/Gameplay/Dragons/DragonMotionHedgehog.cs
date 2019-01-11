@@ -7,15 +7,19 @@ public class DragonMotionHedgehog : DragonMotion {
 	// Extra_1 - Charging
 	// Extra_2 - Ricocheting?
 	protected Vector3 m_ricochetDir = Vector3.zero;
-	public float m_sonicSpeed = 5;
+    public float m_sonicMaxSpeed = 5;
+	public float m_sonicMinSpeed = 5;
     protected Vector3 m_sonicImpulse;
     public float m_maxRotationSpeed = 720;
+    public float m_minRotationSpeed = 720;
     protected float m_currentRotationSpeed = 0;
 	bool m_cheskStateForResume = true;
     public Transform m_rotationPivot;
     protected Quaternion m_idleQuaternion;
     protected Quaternion m_currentQuaternion;
     private int m_powerLevel = 0;
+
+    protected float m_boostLevelStart = 0;
 
     [ Header("Custom Sounds") ]
     public string m_rollUpSound;
@@ -114,7 +118,11 @@ public class DragonMotionHedgehog : DragonMotion {
         if ( m_state == State.Extra_1 || m_state == State.Extra_2 )
         {
             if ( m_state == State.Extra_1 )
-                m_currentRotationSpeed = Mathf.Lerp(m_currentRotationSpeed, m_maxRotationSpeed, Time.deltaTime * 2);
+            {
+                float speed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
+                m_currentRotationSpeed = Mathf.Lerp(m_minRotationSpeed, m_maxRotationSpeed, speed);
+            }
+                
             // Rotate view
             m_currentQuaternion *= Quaternion.Euler(GameConstants.Vector3.back * m_currentRotationSpeed * Time.deltaTime);
         }
@@ -195,6 +203,7 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_boostLevelStart = m_dragon.energy;
                 m_animationEventController.allowHitAnimation = false;
 				m_dragon.PauseEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
@@ -207,7 +216,10 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
-                m_sonicImpulse = m_direction * m_sonicSpeed;
+                // m_sonicImpulse = m_direction * m_sonicSpeed;
+                float speed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
+                speed = Mathf.Lerp(m_sonicMinSpeed, m_sonicMaxSpeed, speed);
+                m_sonicImpulse = m_direction * speed;
                 m_animationEventController.allowHitAnimation = false;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , true);
 				m_dragon.PauseEating();
