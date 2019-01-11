@@ -888,7 +888,7 @@ public class PolyMeshEditor : Editor {
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
 		Undo.RecordObject(_target, "PolyMesh Changed");
 #else
-		Undo.RegisterUndo(_target, "PolyMesh Changed");
+		Undo.RegisterCompleteObjectUndo(_target, "PolyMesh Changed");
 #endif
 	}
 
@@ -902,9 +902,9 @@ public class PolyMeshEditor : Editor {
 #if UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5
 		Undo.RegisterFullObjectHierarchyUndo(_target, "PolyMesh Changed");
 #else
-		Undo.RegisterSceneUndo("PolyMesh Changed");
+        Undo.RegisterFullObjectHierarchyUndo(_target, "Full object and hierarchy change");
 #endif
-	}
+    }
 
 	//------------------------------------------------------------------------//
 	// STATE CONTROL METHODS												  //
@@ -1043,10 +1043,10 @@ public class PolyMeshEditor : Editor {
 	/// <param name="recordUndo">If set to <c>true</c> record undo.</param>
 	private void UpdatePoly(bool sizeChanged, bool recordUndo) {
 		if(recordUndo) {
-			RecordUndo();
+			RecordDeepUndo();
 		}
 
-		if(sizeChanged) {
+        if (sizeChanged) {
 			polyMesh.keyPoints = new List<Vector3>(m_keyPoints);
 			polyMesh.curvePoints = new List<Vector3>(m_curvePoints);
 			polyMesh.isCurve = new List<bool>(m_isCurve);
@@ -1727,8 +1727,7 @@ public class PolyMeshEditor : Editor {
 		selected.Sort();
 
 		// Pick the first set of points and update mesh (the new polymesh)
-		RecordUndo(newPolyMesh);
-		newPolyMesh.keyPoints = new List<Vector3>(m_keyPoints.GetRange(selected[0], selected[1] - selected[0] + 1));	// Include both selected points!
+        newPolyMesh.keyPoints = new List<Vector3>(m_keyPoints.GetRange(selected[0], selected[1] - selected[0] + 1));	// Include both selected points!
 		newPolyMesh.isCurve = new List<bool>(m_isCurve.GetRange(selected[0], selected[1] - selected[0] + 1));
 		for(int i = 0; i < newPolyMesh.keyPoints.Count; i++) {
 			// [AOC] Is this right?? From UpdatePoly()
