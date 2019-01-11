@@ -24,8 +24,8 @@ public class HDSeasonData {
     private long m_score;
     public long score { get { return m_score; } }
 
-    public HDLeagueData currentLeague { get; set; }
-    public HDLeagueData nextLeague { get; set; }
+    public HDLeagueData currentLeague { get; set; }		// Can be null
+    public HDLeagueData nextLeague { get; set; }		// Can be null
 
     private int m_rewardIndex;
 
@@ -252,6 +252,7 @@ public class HDSeasonData {
     public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToEnd   { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+	public TimeSpan duration { get { return m_closeDate - m_startDate; }}
 
     public Metagame.Reward reward {
         get {

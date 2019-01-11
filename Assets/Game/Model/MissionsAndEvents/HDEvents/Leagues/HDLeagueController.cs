@@ -4,10 +4,10 @@
 public class HDLeagueController : HDLiveDataController {
     //---[Attributes]-----------------------------------------------------------
 
-    private HDSeasonData m_season;
+    private HDSeasonData m_season;	// Never null
     public HDSeasonData season { get { return m_season; } }
 
-    private List<HDLeagueData> m_leagues;
+    private List<HDLeagueData> m_leagues;	// Never null
     public int leaguesCount { get { return m_leagues.Count; } }
     public HDLeagueData GetLeagueData(int _index) {  return m_leagues[_index]; }
 
