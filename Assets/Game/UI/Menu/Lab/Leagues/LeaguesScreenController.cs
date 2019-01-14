@@ -37,6 +37,7 @@ public class LeaguesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private LeaguesScreenPanel[] m_panels = new LeaguesScreenPanel[(int)Panel.COUNT];
+	[SerializeField] private ShowHideAnimator m_darkScreen = null;
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
@@ -64,7 +65,6 @@ public class LeaguesScreenController : MonoBehaviour {
 			m_panels[i].anim = m_panels[i].GetComponent<ShowHideAnimator>();
 		}
 	}
-
 
 	/// <summary>
 	/// Component has been enabled.
@@ -146,6 +146,10 @@ public class LeaguesScreenController : MonoBehaviour {
 				case HDSeasonData.State.PENDING_REWARDS: {
 					targetPanel = Panel.LOADING;
 				} break;
+
+				case HDSeasonData.State.NONE: {
+					targetPanel = Panel.OFFLINE;	// Shouldn't happen
+				} break;
 			}
 		}
 
@@ -172,6 +176,9 @@ public class LeaguesScreenController : MonoBehaviour {
 				m_panels[i].gameObject.SetActive(show);
 			}
 		}
+
+		// Toggle dark background
+		m_darkScreen.Set(m_panels[(int)_panel].darkBackground, _animate);
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
 		// [AOC] TODO!!

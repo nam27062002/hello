@@ -1,4 +1,4 @@
-// LeaguesScreenPanel.cs
+// MenuTrophyPreview.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/01/2019.
@@ -8,45 +8,41 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Panel corresponding to a specific event state.
+/// Preview of a league trophy in the main menu.
 /// </summary>
-public class LeaguesScreenPanel : MonoBehaviour {
+public class MenuTrophyPreview : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	// Public Properties
-	public LeaguesScreenController.Panel panelId {
-		get; set;
-	}
-
-	public ShowHideAnimator anim {
-		get; set;
-	}
-
-	// Exposed setup
-	[SerializeField] private bool m_darkBackground = false;
-	public bool darkBackground {
-		get { return m_darkBackground; }
-	}
-
+   	
 	//------------------------------------------------------------------------//
-	// OVERRIDE CANDIDATES													  //
+	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Refresh displayed data.
+	/// Initialization.
 	/// </summary>
-	public virtual void Refresh() {
-		// To be implemented by heirs, if needed
+	private void Awake() {
+		
 	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
+
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
 }
+
