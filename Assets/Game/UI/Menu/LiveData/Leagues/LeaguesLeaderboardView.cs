@@ -95,12 +95,24 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 		LeaguesLeaderboardPillData currentPlayerData = null;
 		List<HDLiveData.Leaderboard.Record> records = m_league.leaderboard.records;
 		List<ScrollRectItemData<LeaguesLeaderboardPillData>> items = new List<ScrollRectItemData<LeaguesLeaderboardPillData>>();
-		for (int i = 0; i < records.Count; ++i) {
+
+        float promotionArea = Mathf.Max(1f, records.Count * m_league.promoteScale);
+        float demotionArea = records.Count - Mathf.Max(1f, records.Count * m_league.promoteScale);
+
+        for (int i = 0; i < records.Count; ++i) {
             LeaguesLeaderboardPillData playerPillData = new LeaguesLeaderboardPillData();
 			playerPillData.record = records[i];
             playerPillData.reward = m_league.GetRewardByRank(i + 1);
 
-			ScrollRectItemData<LeaguesLeaderboardPillData> itemData = new ScrollRectItemData<LeaguesLeaderboardPillData>();
+            if (i < promotionArea) {
+                playerPillData.area = LeagueLeaderboardAreas.Promotion;
+            } else if (i >= demotionArea) {
+                playerPillData.area = LeagueLeaderboardAreas.Demotion;
+            } else {
+                playerPillData.area = LeagueLeaderboardAreas.Default;
+            }
+
+            ScrollRectItemData<LeaguesLeaderboardPillData> itemData = new ScrollRectItemData<LeaguesLeaderboardPillData>();
 			itemData.data = playerPillData;
 
 			// Is it current player? use different pill type and store data for further use
