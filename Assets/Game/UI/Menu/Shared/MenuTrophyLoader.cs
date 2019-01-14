@@ -69,9 +69,12 @@ public class MenuTrophyLoader : MonoBehaviour {
 	/// If another trophy was loaded, it will be unloaded.
 	/// </summary>
 	/// <param name="_leagueSku">The sku of the league whose trophy we want to display. <c>null</c> to unload any active preview.</param>
-	public void Load(string _leagueSku) {
+	/// <param name="_force">Load even if there is already an instance with the same sku.</param>
+	public void Load(string _leagueSku, bool _force = false) {
 		// Skip if already loaded
-		if(m_trophyInstance != null && _leagueSku == m_leagueSku) return;
+		if(!_force) {
+			if(m_trophyInstance != null && _leagueSku == m_leagueSku) return;
+		}
 
 		// Unload previous trophy
 		Unload();

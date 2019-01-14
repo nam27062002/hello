@@ -31,7 +31,7 @@ public class MenuTrophyLoaderEditor : Editor {
 		// Force loading the pet
 		if(GUILayout.Button("Load Trophy")) {
 			MenuTrophyLoader targetLoader = target as MenuTrophyLoader;
-			targetLoader.Load(targetLoader.leagueSku);
+			targetLoader.Load(targetLoader.leagueSku, true);
 		}
 	}
 }
