@@ -21,12 +21,6 @@ public class HDSeasonData {
     private DateTime m_closeDate;
     private DateTime m_endDate;
 
-    private long m_score;
-    public long score { get { return m_score; } }
-
-    private int m_rank;
-    public int rank { get { return m_rank; } }
-
     public HDLeagueData currentLeague { get; set; }		// Can be null
     public HDLeagueData nextLeague { get; set; }		// Can be null
 
@@ -62,8 +56,6 @@ public class HDSeasonData {
         currentLeague = null;
         nextLeague = null;
 
-        m_score = 0;
-        m_rank = 0;
         m_rewardIndex = -1;
 
         state = State.NONE;
@@ -145,7 +137,7 @@ public class HDSeasonData {
         currentLeague.LoadData(_data["league"]);
 
         if (_data.ContainsKey("leaderboard")) {
-            currentLeague.leaderboard.LoadData(_data["leaderboard"].AsArray);
+            currentLeague.leaderboard.LoadData(_data["leaderboard"]);
         }
 
         liveDataState = HDLiveData.State.VALID;
@@ -165,6 +157,7 @@ public class HDSeasonData {
 
     public void SentScore(long _score) {
         if (state >= State.NOT_JOINED && state < State.PENDING_REWARDS) {
+            currentLeague.leaderboard.playerScore = _score;
             __SentScore(_score);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;

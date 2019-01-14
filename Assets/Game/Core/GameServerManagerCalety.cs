@@ -1695,10 +1695,10 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
     private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
 
-    private const string ACTION_HD_LEAGUES_GET_SEASON           = "getseason";
-    private const string ACTION_HD_LEAGUES_SET_SCORE            = "addLeagueScore";
-    private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "getLeagueRewards";
-    private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "finishSeasonalLeague";
+    private const string ACTION_HD_LEAGUES_GET_SEASON           = "leagues/season/get";
+    private const string ACTION_HD_LEAGUES_SET_SCORE            = "leagues/score/set";
+    private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "leagues/rewards/get";
+    private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "leagues/finish";
     private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/seasonalLeagues/getLeaderboard";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";

@@ -89,22 +89,22 @@ public class LeaguesLeaderboardView : MonoBehaviour {
         m_season = HDLiveDataManager.league.season;
         m_league = m_season.currentLeague;
 
-		int playerRank = m_season.rank;
+		int playerRank = m_league.leaderboard.playerRank;
 
 		// Setup player pills
 		LeaguesLeaderboardPillData currentPlayerData = null;
-		List<HDLiveData.Leaderboard.Record> lbData = m_league.leaderboard.records;
+		List<HDLiveData.Leaderboard.Record> records = m_league.leaderboard.records;
 		List<ScrollRectItemData<LeaguesLeaderboardPillData>> items = new List<ScrollRectItemData<LeaguesLeaderboardPillData>>();
-		for (int i = 0; i < lbData.Count; ++i) {
+		for (int i = 0; i < records.Count; ++i) {
             LeaguesLeaderboardPillData playerPillData = new LeaguesLeaderboardPillData();
-			playerPillData.record = lbData[i];
-            playerPillData.reward = m_league.GetReward(0);
+			playerPillData.record = records[i];
+            playerPillData.reward = m_league.GetRewardByRank(i + 1);
 
 			ScrollRectItemData<LeaguesLeaderboardPillData> itemData = new ScrollRectItemData<LeaguesLeaderboardPillData>();
 			itemData.data = playerPillData;
 
 			// Is it current player? use different pill type and store data for further use
-			if(i == playerRank) {
+			if((i + 1) == playerRank) {
 				itemData.pillType = 1;
 				currentPlayerData = playerPillData;
 			} else {
@@ -115,7 +115,7 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 		}
 
 		// Keep track of player pill index
-		int playerPillIdx = playerRank;
+		int playerPillIdx = playerRank - 1;
 
 
 		// Initialize the scroll list

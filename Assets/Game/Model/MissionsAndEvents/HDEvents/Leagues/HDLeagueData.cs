@@ -90,4 +90,14 @@ public class HDLeagueData {
     public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
     public Metagame.Reward GetReward(int _i) { return m_rewards[_i].reward; }
+    public Metagame.Reward GetRewardByRank(int _rank) {
+        for (int i = 0; i < m_rewards.Count; ++i) {
+            if (_rank <= m_rewards[i].target) {
+                return m_rewards[i].reward;
+            }
+        }
+
+        return m_rewards.Last().reward;
+    }
+
 }
