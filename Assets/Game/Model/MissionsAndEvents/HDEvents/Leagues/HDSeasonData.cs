@@ -24,6 +24,9 @@ public class HDSeasonData {
     private long m_score;
     public long score { get { return m_score; } }
 
+    private int m_rank;
+    public int rank { get { return m_rank; } }
+
     public HDLeagueData currentLeague { get; set; }		// Can be null
     public HDLeagueData nextLeague { get; set; }		// Can be null
 
@@ -60,6 +63,7 @@ public class HDSeasonData {
         nextLeague = null;
 
         m_score = 0;
+        m_rank = 0;
         m_rewardIndex = -1;
 
         state = State.NONE;

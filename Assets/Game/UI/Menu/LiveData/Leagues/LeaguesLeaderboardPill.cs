@@ -91,13 +91,19 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
 
 
         // Reward
-        m_rewardIcon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(_data.reward.currency));
-        m_rewardText.text = StringUtils.FormatNumber(_data.reward.amount);
+        if (_data.reward != null) {
+            m_rewardIcon.sprite = UIConstants.GetIconSprite(UIConstants.GetCurrencyIcon(_data.reward.currency));
+            m_rewardText.text = StringUtils.FormatNumber(_data.reward.amount);
+        }
 
 
         // Build
         DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _data.record.build.skin);
-        m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _data.record.build.dragon + "/" + skinDef.Get("icon"));
+        string icon = "icon_disguise_0";
+        if (skinDef != null) {
+            icon = skinDef.Get("icon");
+        }
+        m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _data.record.build.dragon + "/" + icon);
 
         m_levelText.text = StringUtils.FormatNumber(_data.record.build.level);
     }
