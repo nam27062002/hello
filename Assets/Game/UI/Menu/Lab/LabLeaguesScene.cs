@@ -25,8 +25,8 @@ public class LabLeaguesScene : MenuScreenScene {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private MenuDragonLoader m_trophyLoader = null;
-	public MenuDragonLoader trophyLoader {
+	[SerializeField] private MenuTrophyLoader m_trophyLoader = null;
+	public MenuTrophyLoader trophyLoader {
 		get { return m_trophyLoader; }
 	}
 	
@@ -63,7 +63,7 @@ public class LabLeaguesScene : MenuScreenScene {
         }
 
 		// Load new trophy
-		m_trophyLoader.LoadDragon(_leagueSku);
+		m_trophyLoader.Load(_leagueSku, _force);
 
 		// [AOC] TODO!! Show some FX?
 		// [AOC] TODO!! Trigger some SFX?
@@ -74,7 +74,7 @@ public class LabLeaguesScene : MenuScreenScene {
 	/// </summary>
 	public void UnloadTrophy() {
 		// Just do it
-		m_trophyLoader.UnloadDragon();
+		m_trophyLoader.Unload();
 	}
 
 	//------------------------------------------------------------------------//
