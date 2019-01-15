@@ -1212,6 +1212,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     #endregion
 
+    /// <summary>
+    /// Sent when the user unlocks the map.
+    /// </summary>
+    /// <param name="location">Where the map has been unlocked from.</param>
+    /// <param name="unlockType">How the map has been unlocked.</param>
+    public override void Notify_UnlockMap(ELocation location, EUnlockType unlockType)
+    {
+        Track_UnlockMap(ELocationToKey(location), EUnlockTypeToKey(unlockType));
+    }
+
     #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
     private const string TRACK_EVENT_FIRST_10_RUNS_COMPLETED = "first_10_runs_completed";
@@ -2136,6 +2146,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
         }
         m_eventQueue.Enqueue(e);
+    }    
+
+    private void Track_UnlockMap(string location, string unlockType)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_UnlockMap location = " + location + " unlockType = " + unlockType);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.unlockmap");
+        {            
+            Track_AddParamString(e, TRACK_PARAM_LOCATION, location);
+            Track_AddParamString(e, TRACK_PARAM_UNLOCK_TYPE, unlockType);
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     // -------------------------------------------------------------
@@ -2224,6 +2247,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_LAB_SPEED = "labSpeed";    
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
+    private const string TRACK_PARAM_LOCATION = "location";    
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
     private const string TRACK_PARAM_MARKETING_OPTION = "marketing_optin";
     private const string TRACK_PARAM_MAX_REACHED = "maxReached";
@@ -2296,6 +2320,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
+    private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";

@@ -182,11 +182,11 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	}
 
 	void OnVideoRewardCallback(bool done){
-		if ( done ){
-			UsersManager.currentUser.UnlockMap();
+		if ( done ){            
+            UsersManager.currentUser.UnlockMap();
             PersistenceFacade.instance.Save_Request();
+            Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
         }
-
 	}
 
 	/// <summary>
@@ -199,23 +199,20 @@ public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
         // Start purchase flow        
         ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_MAP");
         purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
+			(ResourcesFlow _flow) => {                
 				// Just do it
 				UsersManager.currentUser.UnlockMap();
                 PersistenceFacade.instance.Save_Request();
+                Track_UnlockMap(HDTrackingManager.EUnlockType.HC);
             }
 		);
 		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_MAP, null);
 	}
 
-	/// <summary>
-	/// Ad has finished, free revive!
-	/// </summary>
-	private void OnAdClosed() {
-		// Do it!
-		UsersManager.currentUser.UnlockMap();
-        PersistenceFacade.instance.Save_Request();
-    }
+    private void Track_UnlockMap(HDTrackingManager.EUnlockType unlockType) {
+        HDTrackingManager.ELocation location = (FlowManager.IsInGameScene()) ? HDTrackingManager.ELocation.game_play : HDTrackingManager.ELocation.main_menu;
+        HDTrackingManager.Instance.Notify_UnlockMap(location, unlockType);
+    }	
 
 	/// <summary>
 	/// The map has been upgraded.

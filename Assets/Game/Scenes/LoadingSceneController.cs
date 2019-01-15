@@ -21,10 +21,18 @@ using System.Collections.Generic;
 /// Main controller for the loading scene.
 /// </summary>
 public class LoadingSceneController : SceneController {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Loading";    
+
+    // Stuff to test a particular terms policy in editor regardless server response
+#if UNITY_EDITOR
+    // Set to true to test the terms policy specified by m_policyToTest
+    private bool m_policyTestEnabled = false;
+    private LegalManager.ETermsPolicy m_policyToTest = LegalManager.ETermsPolicy.GDPR;
+#endif
+
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
+    public static readonly string NAME = "SC_Loading";    
 
 	//------------------------------------------------------------------//
 	// CLASS															//
@@ -409,12 +417,35 @@ public class LoadingSceneController : SceneController {
                 if (m_gdprListener.m_gdprAnswered)
                 {
                     string country = m_gdprListener.m_userCountry;
-                    // Recieved values are not good
-                    if ( !GDPRListener.IsValidCountry(country))
+                        // Recieved values are not good
+                    bool isValid = GDPRListener.IsValidCountry(country);                    
+#if UNITY_EDITOR
+                    if (m_policyTestEnabled)
                     {
-
+                        isValid = false;
+                    }
+#endif
+                    if ( !isValid)
+                    {
                         string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
-						GDPRSettings.CountrySetup localeSetup = GDPRSettings.GetSetup(localeCountryCode);
+#if UNITY_EDITOR
+                        switch (m_policyToTest)
+                        {
+                            case LegalManager.ETermsPolicy.Basic:
+                                localeCountryCode = "CN";
+                                break;
+
+                            case LegalManager.ETermsPolicy.Coppa:
+                                localeCountryCode = "US";
+                                break;
+
+                            case LegalManager.ETermsPolicy.GDPR:
+                                localeCountryCode = "FR";
+                                break;
+                        }
+#endif                        
+
+                        GDPRSettings.CountrySetup localeSetup = GDPRSettings.GetSetup(localeCountryCode);
 						Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeSetup.ageRestriction + " Consent: " + localeSetup.requiresConsent +" </color>");
 						GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeSetup.ageRestriction, localeSetup.requiresConsent, false);
                     }
@@ -519,7 +550,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
                 {
-                    GDPRManager.SharedInstance.Initialise(false);
+                    GDPRManager.SharedInstance.Initialise(true);
                     GDPRManager.SharedInstance.AddListener( m_gdprListener );
                     GDPRManager.SharedInstance.RequestCountryAndAge();
                 }break;

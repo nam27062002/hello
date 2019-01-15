@@ -459,7 +459,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011021108524}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 330.77237, y: 231.18393, z: -259.68457}
+  m_LocalPosition: {x: 24.295776, y: 68.6465, z: -259.68457}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4620811608935718}
@@ -676,8 +676,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.18, z: 1.56}
-  m_Center: {x: 0, y: 0.53, z: 0}
+  m_Size: {x: 4, y: 6, z: 4}
+  m_Center: {x: 0, y: 2.65, z: 1.83}
 --- !u!95 &95346376464055940
 Animator:
   serializedVersion: 3
@@ -710,6 +710,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4620811608935718}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010154447894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -860,6 +861,7 @@ MonoBehaviour:
     scale: 1
     orientate: 0
   m_useAnimator: 0
+  m_viewScripts: []
   m_boxelSize: 2
   m_hitRadius: 1.5
 --- !u!114 &114000011749396012
@@ -895,6 +897,7 @@ MonoBehaviour:
     chance: 100
   m_ammoSpawnTransformName: ammo
   m_onTossAudio: Catapult_Shoot
+  m_destructibleTrigger: {fileID: 114000014094244090}
   m_forcePreview: 1
   m_previewStep: 1
   m_previewMaxTime: 59.49
@@ -967,6 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8120059800728421a9caa1901cb4b847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: always_disintegrate
   m_tier: 0
   m_disintegrable: 1
@@ -1112,6 +1116,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1127,6 +1132,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
