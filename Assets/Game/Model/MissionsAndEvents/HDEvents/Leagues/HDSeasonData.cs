@@ -288,15 +288,17 @@ public class HDSeasonData {
                 build.Add("dragon", dragonData.sku);
                 build.Add("skin", UsersManager.currentUser.GetEquipedDisguise(dragonData.sku));
 
-                SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
-                {
-                    List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(dragonData.sku);
-                    int max = equipedPets.Count;
-                    for (int i = 0; i < max; i++) {
-                        pets.Add(equipedPets[i]);
+                List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(dragonData.sku);
+                if (equipedPets.Count > 0) {
+                    SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
+                    {
+                        int max = equipedPets.Count;
+                        for (int i = 0; i < max; i++) {
+                            pets.Add(equipedPets[i]);
+                        }
                     }
+                    build.Add("pets", pets);
                 }
-                build.Add("pets", pets);
 
                 if (dragonData is DragonDataClassic) {
                     DragonDataClassic classicData = dragonData as DragonDataClassic;

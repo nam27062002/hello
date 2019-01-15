@@ -6,7 +6,7 @@ public class HDLeagueLeaderboard {
     private string m_leagueSku;
 
     private long m_playerScore;
-    public long playerScore { get { return m_playerScore; } set { if (m_playerScore < value) m_playerScore = value;  } }
+    public long playerScore { get { return m_playerScore; } set { if (m_playerScore < value) m_playerScore = value; } }
 
     private int m_playerRank;
     public int playerRank { get { return m_playerRank; } }
