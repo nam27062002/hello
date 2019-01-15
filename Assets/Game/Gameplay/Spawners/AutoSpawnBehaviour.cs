@@ -32,7 +32,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
 
-	private Bounds m_bounds; // view bounds
+    private ISpawnable[] m_components;
+
+
+    private Bounds m_bounds; // view bounds
 
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
@@ -52,8 +55,9 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
 	void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
+        m_components = GetComponents<ISpawnable>();
 
-		if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
+        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
 			SpawnerManager.instance.Register(this, true);
 
 			m_decoration = GetComponent<Decoration>();
@@ -228,9 +232,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 			}
 			gameObject.SetActive(true);
 		}
-
-		ISpawnable[] components = GetComponents<ISpawnable>();
-		foreach (ISpawnable component in components) {
+		
+		foreach (ISpawnable component in m_components) {
 			component.Spawn(this);
 		}
 

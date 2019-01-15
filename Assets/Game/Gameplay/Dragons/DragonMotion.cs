@@ -1743,7 +1743,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		// Trigger animation
     		m_animationEventController.OnInsideWater(createsSplash);
 
-    		if ( m_state != State.Latching )
+    		if ( CanChangeStateToInsideWater() )
     		{
     			if ( m_impulse.y < 0 )
     			{
@@ -1758,6 +1758,11 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
         }
 	}
+    
+    protected virtual bool CanChangeStateToInsideWater()
+    {
+        return m_state != State.Latching;
+    }
 
 	public void EndWaterMovement( Collider _other )
 	{
@@ -1776,7 +1781,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		// Trigger animation
     		m_animationEventController.OnExitWater(createsSplash);
 
-    		if ( m_state != State.Latching )
+    		if (CanChangeStateToExitWater())
     		{
     			// Wait a second
     			ChangeState( State.ExitingWater );
@@ -1786,6 +1791,12 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
         }
 	}
+    
+    protected virtual bool CanChangeStateToExitWater()
+    {
+        return m_state != State.Latching;
+    }
+    
 
 	public void StartSpaceMovement()
 	{

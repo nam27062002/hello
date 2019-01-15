@@ -12,6 +12,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
     [Header("Level 2 Spikes")]
     public int m_spikesNumber = 4;
+    public float m_spikesOperture = 75.0f;
     protected bool m_shootLevel2Spikes = false;
     public bool shootLevel2Spikes{
         set{ m_shootLevel2Spikes = value; }
@@ -103,7 +104,19 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     }
     
     void CreatePool() {
-        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
+        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber + 2, true);
+        
+            // It would be nice to have a callback when the pool grows
+        Transform containerTransform = m_poolHandler.pool.containerObj.transform;
+        int childCount = containerTransform.childCount;
+        for (int i = 0; i < childCount; i++)
+        {
+            Collider c = containerTransform.GetChild(i).GetComponent<Collider>();
+            for (int j = 0; j < childCount; j++)
+            {
+                Physics.IgnoreCollision(containerTransform.GetChild(j).GetComponent<Collider>(), c);
+            }
+        }
     }
             
     
@@ -209,11 +222,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 {
                     m_shootLevel2Spikes = false;
                     // Shoot end movement spikes!
-                    float angle = ( 2.0f*Mathf.PI ) / m_spikesNumber;
-                    Vector3 dir = GameConstants.Vector3.right;
-                    for (float currentAngle = 0; currentAngle < 2.0f*Mathf.PI; currentAngle += angle )
+                    Vector3 dir = m_motion.direction;
+                    Util.RotateXYDegrees(ref dir, -m_spikesOperture );
+                    float angle = (m_spikesOperture  * 2.0f) / m_spikesNumber;
+                    for (float i = -m_spikesOperture ; i <= m_spikesOperture ; i += angle)
                     {
-                        Util.RotateXYRadians(ref dir, angle);
+                        Util.RotateXYDegrees(ref dir, angle);
                         ShootHorn( dir );
                     }
                 }

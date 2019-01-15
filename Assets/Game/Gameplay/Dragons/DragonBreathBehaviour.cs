@@ -482,8 +482,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_isFuryPaused = false;
 		switch( m_type )
 		{
-			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
-			case Type.Mega: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
+			case Type.Standard: if ( m_breathSoundAO != null && !m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
+			case Type.Mega: if ( m_superBreathSoundAO != null && !m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
 		}
 	}
 

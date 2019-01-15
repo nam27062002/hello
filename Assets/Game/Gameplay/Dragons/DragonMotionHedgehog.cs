@@ -48,6 +48,7 @@ public class DragonMotionHedgehog : DragonMotion {
 	{
 		yield return new WaitForSeconds(1.0f);
 		m_boost.energyRequiredToBoost = m_dragon.energyMax;
+        m_boost.energyRequiredToBoost = 0;
 	}
 
 	override protected void Update()
@@ -187,18 +188,20 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax * m_dragon.data.energyRequiredToBoost;
                 m_animationEventController.allowHitAnimation = true;
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
 			}break;
 			case State.Extra_2:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax * m_dragon.data.energyRequiredToBoost;
                 m_animationEventController.allowHitAnimation = true;
 				m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
 				m_cheskStateForResume = true;
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
-                if ( m_powerLevel >= 3 )
+                if ( m_powerLevel >= 2 )
                     m_impulse = GameConstants.Vector3.zero;
 			}break;
 		}
@@ -207,6 +210,8 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax;
+        
                 m_boostLevelStart = m_dragon.energy;
                 m_animationEventController.allowHitAnimation = false;
 				m_dragon.PauseEating();
@@ -220,6 +225,8 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax;
+            
                 // m_sonicImpulse = m_direction * m_sonicSpeed;
                 float impulseSpeed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
                 if ( impulseSpeed > 0.1f && m_powerLevel >= 2)
@@ -245,11 +252,14 @@ public class DragonMotionHedgehog : DragonMotion {
         if ( m_state == State.Extra_2 && m_powerLevel >= 1 && ((1<<_other.gameObject.layer) & GameConstants.Layers.MINES) > 0)
         {
             // Bounce if mine
-            Entity entity = _other.attachedRigidbody.GetComponent<Entity>();
-            if ( entity.HasTag(IEntity.Tag.Mine) )
+            if ( _other.attachedRigidbody != null )
             {
-                Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
-                CustomBounce( normal );
+                Entity entity = _other.attachedRigidbody.GetComponent<Entity>();
+                if ( entity.HasTag(IEntity.Tag.Mine) )
+                {
+                    Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
+                    CustomBounce( normal );
+                }
             }
             base.OnTriggerEnter( _other );
         }
@@ -292,6 +302,23 @@ public class DragonMotionHedgehog : DragonMotion {
 			base.CheckOutterSpace();
 		}
 	}
+    
+    override protected bool CanChangeStateToInsideWater()
+    {
+        bool ret = false;
+        if (m_state != State.Extra_1 && m_state != State.Extra_2)
+            ret = base.CanChangeStateToInsideWater();
+        return ret;
+    }
+    
+    override protected bool CanChangeStateToExitWater()
+    {
+        bool ret = false;
+        if (m_state != State.Extra_1 && m_state != State.Extra_2)
+            ret = base.CanChangeStateToExitWater();
+        return ret;
+    }
+    
     
     public override void AddForce(Vector3 _force, bool isDamage = true) {
         if ( m_dragon.IsInvulnerable() )
