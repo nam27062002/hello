@@ -266,7 +266,9 @@ public class HDSeasonData {
         }
     }
 
-
+	public bool IsRunning() {
+		return state == State.JOINED || state == State.NOT_JOINED;
+	}
 
     //---[Server Calls]---------------------------------------------------------
 

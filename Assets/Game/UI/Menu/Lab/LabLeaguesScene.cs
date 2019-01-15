@@ -55,15 +55,10 @@ public class LabLeaguesScene : MenuScreenScene {
 	/// Load preview of the trophy for a given league.
 	/// Will unload previously loaded trophy.
 	/// </summary>
-	/// <param name="_sku">Sku of the league whose trophy we want to load.</param>
-	public void LoadTrophy(string _leagueSku, bool _force) {
-		// If required, unload previously loaded trophy
-		if(_force) {
-			UnloadTrophy();
-        }
-
+	/// <param name="_leagueData">Data of the league whose trophy we want to load.</param>
+	public void LoadTrophy(HDLeagueData _leagueData, bool _force = false) {
 		// Load new trophy
-		m_trophyLoader.Load(_leagueSku, _force);
+		m_trophyLoader.Load(_leagueData, _force);
 
 		// [AOC] TODO!! Show some FX?
 		// [AOC] TODO!! Trigger some SFX?

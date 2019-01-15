@@ -18,7 +18,7 @@ using TMPro;
 /// Data class.
 /// </summary>
 public class TournamentLeaderboardRewardPillData : TournamentLeaderboardPillBaseData {
-	public HDTournamentDefinition.TournamentReward reward = null;
+	public HDLiveData.RankedReward reward = null;
 }
 
 /// <summary>
@@ -33,8 +33,7 @@ public class TournamentLeaderboardRewardPill : TournamentLeaderboardPillBase {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
-	[SerializeField] private TournamentRewardView m_rewardView = null;
-
+	[SerializeField] private RankedRewardView m_rewardView = null;
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //

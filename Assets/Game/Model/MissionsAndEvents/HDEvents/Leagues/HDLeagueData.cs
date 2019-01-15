@@ -1,13 +1,15 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class HDLeagueData {
-    //---[Basic Data]-----------------------------------------------------------
+	//---[Basic Data]-----------------------------------------------------------
 
     private readonly DefinitionNode m_def;
     private readonly string m_sku;
     private readonly string m_icon;
-    private readonly string m_name;
+	private readonly string m_trophyPrefab;
+    private readonly string m_tidName;
     private readonly string m_description;
 
     private readonly int    m_order;
@@ -19,7 +21,7 @@ public class HDLeagueData {
     private float m_demoteScale;
     private float m_promoteScale;
 
-    private List<HDLiveData.Reward> m_rewards;
+	private List<HDLiveData.RankedReward> m_rewards;
     private HDLeagueLeaderboard m_leaderboard;
 
     public HDLiveData.State liveDataState { get; private set; }
@@ -34,9 +36,10 @@ public class HDLeagueData {
 
         //Load basic data from definition
         m_sku = _def.sku;
-        m_name = _def.Get("name");
+        m_tidName = _def.Get("tidName");
         m_icon = _def.Get("icon");
-        m_description = _def.Get("desc");
+		m_trophyPrefab = _def.Get("trophyPrefab");
+        m_description = _def.Get("tidDesc");
 
         m_order = _def.GetAsInt("order");
         //
@@ -48,7 +51,7 @@ public class HDLeagueData {
         m_demoteScale = m_def.GetAsFloat("demoteScale");
         m_promoteScale = m_def.GetAsFloat("promoteScale");
 
-        m_rewards = new List<HDLiveData.Reward>();
+		m_rewards = new List<HDLiveData.RankedReward>();
         m_leaderboard.Clean();
 
         liveDataState = HDLiveData.State.EMPTY;
@@ -60,13 +63,22 @@ public class HDLeagueData {
             m_demoteScale = _data["demoteScale"].AsFloat;
             m_promoteScale = _data["promoteScale"].AsFloat;
 
-            SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
+			if(_data.ContainsKey("rewards")) {
+				SimpleJSON.JSONArray arr = _data["rewards"].AsArray;
+				for(int i = 0; i < arr.Count; i++) {
+					HDLiveData.RankedReward r = new HDLiveData.RankedReward();
+					r.LoadData(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_tidName);
+					m_rewards.Add(r);
+				}
 
-            for (int r = 0; r < rewardsData.Count; ++r) {
-                HDLiveData.Reward reward = new HDLiveData.Reward();
-                reward.LoadData(rewardsData[r], HDTrackingManager.EEconomyGroup.REWARD_LEAGUE, m_sku);
-                m_rewards.Add(reward);
-            }
+				// Since we can't assume rewards are received sorted, do it now
+				m_rewards.Sort();   // Will be sorted by target percentage
+
+				// Compute min rank based on previous reward
+				for(int i = 1; i < m_rewards.Count; ++i) {  // Skip first reward (min is always 0)
+					m_rewards[i].InitMinRankFromPreviousReward(m_rewards[i - 1]);
+				}
+			}
 
             liveDataState = HDLiveData.State.VALID;
             liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -79,10 +91,10 @@ public class HDLeagueData {
 
     //---[Query Methods]--------------------------------------------------------
 
-    public string name          { get { return m_name; } }
+	public string tidName       { get { return m_tidName; } }
     public string sku           { get { return m_sku; } }
     public string icon          { get { return m_icon; } }
-    public string description   { get { return m_description; } }
+	public string trophyPrefab  { get { return m_trophyPrefab; } }
 
     public float demoteScale    { get { return m_demoteScale; } }
     public float promoteScale   { get { return m_promoteScale; } }
@@ -90,6 +102,7 @@ public class HDLeagueData {
     public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
     public Metagame.Reward GetReward(int _i) { return m_rewards[_i].reward; }
+	public List<HDLiveData.RankedReward> rewards { get { return m_rewards; } }
     public Metagame.Reward GetRewardByRank(int _rank) {
         for (int i = 0; i < m_rewards.Count; ++i) {
             if (_rank <= m_rewards[i].target) {

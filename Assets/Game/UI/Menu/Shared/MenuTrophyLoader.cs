@@ -72,41 +72,37 @@ public class MenuTrophyLoader : MonoBehaviour {
 	/// <param name="_force">Load even if there is already an instance with the same sku.</param>
 	public void Load(string _leagueSku, bool _force = false) {
 		// Skip if already loaded
-		if(!_force) {
-			if(m_trophyInstance != null && _leagueSku == m_leagueSku) return;
-		}
+		if(!_force && !IsLoadingNeeded(_leagueSku)) return;
 
-		// Unload previous trophy
-		Unload();
+		// Find out trophy prefab path and load it
+		DefinitionNode leagueDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEAGUES, _leagueSku);
+		if(leagueDef != null) {
+			LoadInternal(UIConstants.LEAGUE_ICONS_PATH + leagueDef.GetAsString("trophyPrefab"));
+		}
 
 		// Store new sku
 		m_leagueSku = _leagueSku;
-
-		// Load target trophy
-		DefinitionNode leagueDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEAGUES, _leagueSku);
-		if(leagueDef != null) {
-			// Compose prefab path
-			string pathToPrefab = UIConstants.LEAGUE_ICONS_PATH + leagueDef.GetAsString("prefabName");
-
-			// Instantiate the prefab and add it as child of this object
-			GameObject trophyPrefab = Resources.Load<GameObject>(pathToPrefab);
-			if(trophyPrefab != null) {
-				GameObject newInstance = Instantiate<GameObject>(trophyPrefab);
-				newInstance.transform.SetParent(this.transform, false);
-				newInstance.transform.localPosition = Vector3.zero;
-				newInstance.transform.localRotation = Quaternion.identity;
-				newInstance.SetLayerRecursively(this.gameObject.layer);
-
-				// Get trophy controller
-				m_trophyInstance = newInstance.GetComponentInChildren<MenuTrophyPreview>();
-
-				// [AOC] CHECK!! Rescale particles?
-			}
-		}
 	}
 
 	/// <summary>
-	/// Destroy current loaded egg, if any.
+	/// Load the given league's trophy preview.
+	/// If another trophy was loaded, it will be unloaded.
+	/// </summary>
+	/// <param name="_leagueData">Data of the league whose trophy we want to display. <c>null</c> to unload any active preview.</param>
+	/// <param name="_force">Load even if there is already an instance with the same sku.</param>
+	public void Load(HDLeagueData _leagueData, bool _force = false) {
+		// Skip if already loaded
+		if(!_force && !IsLoadingNeeded(_leagueData.sku)) return;
+
+		// Find out trophy prefab path and load it
+		LoadInternal(UIConstants.LEAGUE_ICONS_PATH + _leagueData.trophyPrefab);
+
+		// Store new sku
+		m_leagueSku = _leagueData.sku;
+	}
+
+	/// <summary>
+	/// Destroy current loaded trophy, if any.
 	/// </summary>
 	public void Unload() {
 		// Destroy all childs of the loader and clear references
@@ -114,6 +110,41 @@ public class MenuTrophyLoader : MonoBehaviour {
 			DestroyImmediate(transform.GetChild(0).gameObject);  // Immediate so it can be called from the editor
 		}
 		m_trophyInstance = null;
+	}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Check whether loading a new trophy is needed or not.
+	/// </summary>
+	/// <param name="_leagueSku">League sku to be checked.</param>
+	private bool IsLoadingNeeded(string _leagueSku) {
+		return m_trophyInstance == null || _leagueSku != m_leagueSku;
+	}
+
+	/// <summary>
+	/// Creates a new instance of the trophy prefab and initializes it.
+	/// </summary>
+	/// <param name="_prefabPath">Path of the trophy prefab to be instantiated.</param>
+	private void LoadInternal(string _prefabPath) {
+		// Unload previous trophy
+		Unload();
+
+		// Instantiate the prefab and add it as child of this object
+		GameObject trophyPrefab = Resources.Load<GameObject>(_prefabPath);
+		if(trophyPrefab != null) {
+			GameObject newInstance = Instantiate<GameObject>(trophyPrefab);
+			newInstance.transform.SetParent(this.transform, false);
+			newInstance.transform.localPosition = Vector3.zero;
+			newInstance.transform.localRotation = Quaternion.identity;
+			newInstance.SetLayerRecursively(this.gameObject.layer);
+
+			// Get trophy controller
+			m_trophyInstance = newInstance.GetComponentInChildren<MenuTrophyPreview>();
+
+			// [AOC] CHECK!! Rescale particles?
+		}
 	}
 
 	//------------------------------------------------------------------------//

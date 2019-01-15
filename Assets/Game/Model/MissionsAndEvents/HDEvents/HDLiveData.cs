@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 namespace HDLiveData {
@@ -11,18 +12,13 @@ namespace HDLiveData {
     }
 
     [Serializable]
-    public class Reward {
+	public class Reward : IComparable {
         //---[Attributes]-------------------------------------------------------
-
         public Metagame.Reward reward;
         public long target;
 
-
-
         //---[Methods]----------------------------------------------------------
-
         public Reward() { reward = null; target = 0; }
-
 
         /// <summary>
         /// Constructor from json data.
@@ -42,7 +38,47 @@ namespace HDLiveData {
             data.Add("target", target);
             return data;
         }
+
+		/// <summary>
+		/// IComparable interface implementation.
+		/// </summary>
+		public int CompareTo(object _other) {
+			if(_other == null) return 1;	// If other is not a valid object reference, this instance is greater.
+			return this.target.CompareTo(((Reward)_other).target);
+		}
     }
+
+	[Serializable]
+	public class RankedReward : Reward {
+		//---[Attributes]-------------------------------------------------------
+		public RangeLong ranks;
+
+		//---[Methods]----------------------------------------------------------
+		public RankedReward() { ranks = new RangeLong(0L, 0L); }
+
+		/// <summary>
+		/// Constructor from json data.
+		/// </summary>
+		/// <param name="_data">Data to be parsed.</param>
+		public override void LoadData(SimpleJSON.JSONNode _data, HDTrackingManager.EEconomyGroup _economyGroup, string _source) {
+			base.LoadData(_data, _economyGroup, _source);
+
+			// Compute ranks. Min can only be computed based on previous reward, 
+			// so it must be done from outside class having an overall view of all the rewards.
+			ranks.min = 0;
+			ranks.max = Math.Max(0L, target - 1L);    // 0-99
+		}
+
+		/// <summary>
+		/// Initialize min rank from previous ranked reward in the list.
+		// Starts where previous rank ends, but never bigger than this reward's rank end.
+		/// </summary>
+		/// <param name="_previousReward">Previous reward.</param>
+		public void InitMinRankFromPreviousReward(RankedReward _previousReward) {
+			if(_previousReward == null) ranks.min = 0;
+			ranks.min = Math.Min(_previousReward.ranks.max + 1, ranks.max); // Starts where previous rank ends, but never bigger than our rank end
+		}
+	}
 
     [Serializable]
     public class DragonBuild {

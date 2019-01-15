@@ -23,47 +23,83 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
+	private const float PERIODIC_UPDATE_INTERVAL = 1f;	// Seconds
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private bool m_updateEventState = false;
+	[SerializeField] private bool m_updateLeagueState = false;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
-	[SerializeField] private Image m_objectiveIcon = null;
+	[SerializeField] private Image m_leagueIcon = null;
 	[Space]
-	[SerializeField] private TextMeshProUGUI m_timerText = null;
+	[SerializeField] private LeagueSelector m_leagueSelector = null;
+	[SerializeField] private Localizer m_leagueNameText = null;
+	[SerializeField] private ShowHideAnimator m_currentLeagueMarker = null;
 	[Space]
-	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
-	[SerializeField] private ParticleSystem m_receiveContributionFX = null;
+	[SerializeField] private GameObject m_rewardsRoot = null;
+	[SerializeField] private Transform m_rewardsContainer = null;
+	[SerializeField] private GameObject m_rewardPrefab = null;
+
+	// Internal references
+	private HDSeasonData m_season = null;
+	private List<AnimatedRankedRewardView> m_rewardViews = new List<AnimatedRankedRewardView>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Init internal references
+		m_season = HDLiveDataManager.league.season;
+	}
+
+	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
+		// Initialize league selector
+		if(m_leagueSelector != null) {
+			// Init list of leagues to scroll around
+			HDLeagueController leaguesManager = HDLiveDataManager.league;
+			List<LeagueSelectorItem> scrollItems = new List<LeagueSelectorItem>(leaguesManager.leaguesCount);
+			for(int i = 0; i < leaguesManager.leaguesCount; ++i) {
+				// Create a new selectable item
+				LeagueSelectorItem item = new LeagueSelectorItem(leaguesManager.GetLeagueData(i));
+				scrollItems.Add(item);
+			}
+
+			// Reverse order so we go from worst to best league
+			scrollItems.Reverse();
+			m_leagueSelector.Init(scrollItems);
+
+			// Setup Refresh callback
+			m_leagueSelector.OnSelectionChanged.AddListener(OnSelectedLeagueChanged);
+			m_leagueSelector.enableEvents = true;
+
+			// Select current player's league
+			m_leagueSelector.SelectItem(m_season.currentLeague);
+		}
+
 		// Program periodic update call
-		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
-
-		//Refresh();
-
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
+		InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Leave current league as the selected one
+		m_leagueSelector.SelectItem(m_season.currentLeague);
+
+		// Clear selector's Refresh setup
+		m_leagueSelector.enableEvents = false;
+		m_leagueSelector.OnSelectionChanged.RemoveListener(OnSelectedLeagueChanged);
+
 		// Clear periodic update call
 		CancelInvoke();
-
-		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.QUEST_SCORE_UPDATED, OnEventDataUpdated);
 	}
 
 	/// <summary>
@@ -71,28 +107,18 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveDataManager.quest.EventExists() ) return;
+		if(!m_season.IsRunning()) return;
 
-		double remainingTime = System.Math.Max(0, HDLiveDataManager.quest.m_questData.remainingTime.TotalSeconds);
-
-		// Update countdown text
-		if(m_timerText != null) {
-			m_timerText.text = TimeUtils.FormatTime(
-				System.Math.Max(0, remainingTime), // Just in case, never go negative
-				TimeUtils.EFormat.ABBREVIATIONS,
-				4
-			);
-		}
-
-		// If enabled, update quest state
-		if(m_updateEventState) {
-			if ( remainingTime <= 0 )
-			{
-				HDLiveDataManager.quest.UpdateStateFromTimers();
+		// If enabled, update league state
+		if(m_updateLeagueState) {
+			// Update season state if time is up
+			double remainingTime = System.Math.Max(0, HDLiveDataManager.league.season.timeToClose.TotalSeconds);
+			if(remainingTime <= 0) {
+				m_season.UpdateState();
 			}
 
-			if ( !HDLiveDataManager.quest.IsRunning() )
-			{
+			// If season is over, notify state change
+			if(!m_season.IsRunning()) {
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
 		}
@@ -105,33 +131,79 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// Refresh displayed data.
 	/// </summary>
 	override public void Refresh() {
-		// Get current event
-		HDQuestManager questManager = HDLiveDataManager.quest;
-		if(!questManager.EventExists()) return;
-
-		HDQuestData data = questManager.data as HDQuestData;
-		HDQuestDefinition def = data.definition as HDQuestDefinition;
+		// Nothing to do if we don't have a valid season
+		if(!m_season.IsRunning()) return;
 
 		// Initialize visuals
-		// Event description
-		if(m_objectiveText != null) m_objectiveText.text = questManager.GetGoalDescription();
-
-		// Target icon
-		if(m_objectiveIcon != null) m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
-
-		// Progress
-		if (m_progressBar != null) {
-			m_progressBar.RefreshRewards( def, questManager.m_questData.m_globalScore );
-			m_progressBar.RefreshProgress( questManager.m_questData.m_globalScore );
+		// Player's league icon
+		if(m_leagueIcon != null) {
+			m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
 		}
 
-		// Force a first update on the timer
-		UpdatePeriodic();
+		// Currently selected league info
+		RefreshSelectedLeagueInfo();
 	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Refresh the info of the selected league.
+	/// </summary>
+	private void RefreshSelectedLeagueInfo() {
+		// [AOC] TODO!! Some nice animations / FX
+
+		// Aux vars
+		HDLeagueData leagueData = m_leagueSelector.selectedItem.leagueData;
+		Debug.Assert(leagueData != null, "LEAGUE DATA IS NOT VALID!!");
+
+		// 3D Trophy Preview
+		LabLeaguesScene sceneController = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_LEAGUES).scene3d as LabLeaguesScene;
+		if(sceneController != null) {
+			sceneController.LoadTrophy(leagueData);
+		}
+
+		// League Name
+		if(m_leagueNameText != null) {
+			m_leagueNameText.Localize(leagueData.tidName);
+		}
+
+		// Rewards
+		if(m_rewardsContainer != null) {
+			// Reuse existing reward views when possible
+			AnimatedRankedRewardView rewardView = null;
+			for(int i = 0; i < leagueData.rewards.Count; ++i) {
+				// Reuse a view if possible, otherwise instantiate a new one
+				if(i < m_rewardViews.Count) {
+					rewardView = m_rewardViews[i];
+				} else {
+					GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
+					rewardView = newInstance.GetComponent<AnimatedRankedRewardView>();
+					m_rewardViews.Add(rewardView);
+				}
+
+				// Initialize with reward data
+				rewardView.InitFromReward(leagueData.rewards[i]);
+
+				// Make sure it's active
+				rewardView.gameObject.SetActive(true);
+
+				// Add a short delay to the animation (so rewards appear sequentially) and restart it
+				rewardView.animator.tweenDelay = 0.1f * i;
+				rewardView.animator.RestartShow();
+			}
+
+			// Hide non-used views
+			for(int i = leagueData.rewards.Count; i < m_rewardViews.Count; ++i) {
+				m_rewardViews[i].gameObject.SetActive(false);
+			}
+		}
+
+		// Current league marker
+		if(m_currentLeagueMarker != null) {
+			m_currentLeagueMarker.Set(leagueData == m_season.currentLeague);
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -145,86 +217,14 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		if(!isActiveAndEnabled) return;
 
 		Refresh();
-
 	}
 
-	public void MoveScoreTo(long _to, float _duration) {
-		long currentValue = 0;
-		if(m_progressBar != null) {
-			HDQuestManager questManager = HDLiveDataManager.quest;
-			if(questManager.EventExists()) {
-				HDQuestData data = questManager.data as HDQuestData;
-				HDQuestDefinition def = data.definition as HDQuestDefinition;
-				currentValue = (long)m_progressBar.progressBar.value;
-			}
-		}
-
-		MoveScoreTo(currentValue, _to, _duration);
-	}
-
-	public void MoveScoreTo( long _from, long _to, float _duration )
-	{
-		// If not animating, just set the final value directly
-		if(_duration <= 0f) {
-			// Set initial value
-			HDQuestManager questManager = HDLiveDataManager.quest;
-			if(questManager.EventExists()) {
-				HDQuestData data = questManager.data as HDQuestData;
-				HDQuestDefinition def = data.definition as HDQuestDefinition;
-				if(m_progressBar != null) {
-					m_progressBar.RefreshRewards( def, _to );
-					m_progressBar.RefreshProgress( _to );
-				}
-			}
-		} else {
-			StartCoroutine( GoingUp( _from, _to, _duration ) );
-		}
-	}
-
-	IEnumerator GoingUp( long _from, long _to, float _duration )
-	{
-		HDQuestManager questManager = HDLiveDataManager.quest;
-		if(questManager.EventExists())
-		{
-			HDQuestData data = questManager.data as HDQuestData;
-			HDQuestDefinition def = data.definition as HDQuestDefinition;
-
-			// Start
-			if (m_progressBar != null) 
-			{
-				m_progressBar.RefreshRewards( def, _from );
-				m_progressBar.RefreshProgress( _from );
-			}
-
-			if(m_receiveContributionFX != null) {
-				m_receiveContributionFX.Play(true);
-			}
-			yield return null;
-
-			// Running
-			float t = 0;
-			while( t < _duration)
-			{
-				t += Time.deltaTime;
-				long v = _from + (long)((_to - _from) * (t / _duration));
-				if (m_progressBar != null) 
-				{
-					m_progressBar.RefreshProgress( v , -1f, false );
-					m_progressBar.RefreshAchieved( true );
-				}
-				yield return null;
-			}
-
-			// Finished!
-			if (m_progressBar != null) 
-			{
-				//m_progressBar.RefreshAchieved( def, _to );
-				m_progressBar.RefreshProgress( _to );
-			}
-
-			if(m_receiveContributionFX != null) {
-				m_receiveContributionFX.Stop();
-			}
-		}
+	/// <summary>
+	/// Selected league in the selector has changed.
+	/// </summary>
+	/// <param name="_oldItem"></param>
+	private void OnSelectedLeagueChanged(LeagueSelectorItem _oldItem, LeagueSelectorItem _newItem) {
+		// Refresh info
+		RefreshSelectedLeagueInfo();
 	}
 }
