@@ -153,7 +153,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
                     // Instantiate and initialize rewards views
                     for (int i = 0; i < m_definition.m_rewards.Count; ++i) {
                         GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
-                        TournamentRewardView view = newInstance.GetComponent<TournamentRewardView>();
+						RankedRewardView view = newInstance.GetComponent<RankedRewardView>();
                         view.InitFromReward(m_definition.m_rewards[i]);
                     }
                 } else {

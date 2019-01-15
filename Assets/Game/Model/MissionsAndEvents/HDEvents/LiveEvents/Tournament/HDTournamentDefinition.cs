@@ -160,10 +160,6 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		}
 	}
 
-	public class TournamentReward : HDLiveData.Reward {
-		public RangeInt ranks = new RangeInt(0, 100);
-	}
-
 	public class LeaderboardData {
 		public int type = -1;
 		public int segmentation = -1;
@@ -207,7 +203,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
     public TournamentGoal m_goal = new TournamentGoal();
 
-	public List<TournamentReward> m_rewards = new List<TournamentReward>();
+	public List<HDLiveData.RankedReward> m_rewards = new List<HDLiveData.RankedReward>();
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -276,31 +272,20 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		{
 			JSONArray arr = _data["rewards"].AsArray;
 			for (int i = 0; i < arr.Count; i++) {
-				TournamentReward r = new TournamentReward();
+				HDLiveData.RankedReward r = new HDLiveData.RankedReward();
 				r.LoadData(arr[i], HDTrackingManager.EEconomyGroup.REWARD_LIVE_EVENT, m_name);
-
-				// Compute ranks. Min can only be computed based on previous reward.
-				// Since we can't assume rewards are received sorted, we'll do it afterwards in a separate loop.
-				r.ranks.min = 0;
-				r.ranks.max = Mathf.Max(0, (int)(r.target) - 1);	// 0-99
-
 				m_rewards.Add(r);
 			}
 
-			// Sort by target percentage
-			m_rewards.Sort(
-				(TournamentReward _reward1, TournamentReward _reward2) => {
-					return _reward1.target.CompareTo(_reward2.target);
-				}
-			);
+			// Since we can't assume rewards are received sorted, do it now
+			m_rewards.Sort();   // Will be sorted by target percentage
 
 			// Compute min rank based on previous reward
-			for(int i = 1; i < m_rewards.Count; ++i) {	// Skip first reward (min is always 0)
-				m_rewards[i].ranks.min = Mathf.Min(m_rewards[i - 1].ranks.max + 1, m_rewards[i].ranks.max);	// Starts where previous rank ends, but never bigger than our rank end
+			for(int i = 1; i < m_rewards.Count; ++i) {  // Skip first reward (min is always 0)
+				m_rewards[i].InitMinRankFromPreviousReward(m_rewards[i - 1]);
 			}
 		}
 	}
-
 
 	public override SimpleJSON.JSONClass ToJson ()
 	{

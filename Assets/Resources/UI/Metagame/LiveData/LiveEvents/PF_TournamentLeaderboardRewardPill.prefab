@@ -227,7 +227,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224622276354122102}
   - component: {fileID: 114504718282488806}
-  - component: {fileID: 114597815687911890}
+  - component: {fileID: 114747115014837832}
   m_Layer: 5
   m_Name: PF_TournamentLeaderboardRewardPill
   m_TagString: Untagged
@@ -631,7 +631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 0, y: 0}
   pillType: 0
-  m_rewardView: {fileID: 114597815687911890}
+  m_rewardView: {fileID: 114747115014837832}
 --- !u!114 &114583598670991876
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -645,23 +645,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &114597815687911890
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1897286652463016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d32bdeae46534e6b84798ccc67b5965, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_icon: {fileID: 114869347750781100}
-  m_rewardText: {fileID: 114270725375219744}
-  m_showNameForEggsAndPets: 1
-  m_nameContainer: {fileID: 0}
-  m_powerIcon: {fileID: 114830039763716270}
-  m_rankText: {fileID: 114989637537839528}
 --- !u!114 &114692567351635108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -796,6 +779,24 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &114747115014837832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1897286652463016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8031a7963e2a84c8381b144daf7d8cbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_icon: {fileID: 114869347750781100}
+  m_rewardText: {fileID: 114270725375219744}
+  m_showNameForEggsAndPets: 1
+  m_showNameForCurrencies: 0
+  m_nameContainer: {fileID: 0}
+  m_powerIcon: {fileID: 114830039763716270}
+  m_rankText: {fileID: 114989637537839528}
 --- !u!114 &114789257145910968
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1217,10 +1218,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -38.11}
-  m_SizeDelta: {x: 0, y: 280}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224650999966702690
 RectTransform:

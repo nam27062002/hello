@@ -1,4 +1,4 @@
-// GlobalEventsScreenRewardInfo.cs
+// RankedRewardView.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 28/06/2017.
@@ -16,9 +16,9 @@ using TMPro;
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 /// <summary>
-/// Widget to display the info of a global event reward.
+/// Widget to display the info of a live event ranked reward.
 /// </summary>
-public class TournamentRewardView : MetagameRewardView {
+public class RankedRewardView : MetagameRewardView {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
