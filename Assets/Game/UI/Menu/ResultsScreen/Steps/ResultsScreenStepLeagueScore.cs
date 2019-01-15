@@ -72,13 +72,6 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
-
-        //TEMP DONOT COMMIT
-        HDSeasonData season = HDLiveDataManager.league.season;
-        season.SetScore(m_controller.score);
-        season.currentLeague.leaderboard.RequestData();
-        ///////////////////
-
 	}
 
     /// <summary>
