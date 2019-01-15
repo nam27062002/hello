@@ -49,7 +49,11 @@ namespace HDLiveData {
         public string dragon;
         public string skin;
         public uint level;
+        public uint health;
+        public uint speed;
+        public uint energy;
         public List<string> pets;
+
 
         public DragonBuild() {
             pets = new List<string>();

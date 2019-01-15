@@ -41,7 +41,7 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// [AOC] Disabled for 1.16 until 1.18
-		return false;
+		return true;
 
 		// Always show for now
 		return true;
@@ -72,12 +72,19 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
+
+        //TEMP DONOT COMMIT
+        HDSeasonData season = HDLiveDataManager.league.season;
+        season.SetScore(m_controller.score);
+        season.currentLeague.leaderboard.RequestData();
+        ///////////////////
+
 	}
 
-	/// <summary>
-	/// Called when skip is triggered.
-	/// </summary>
-	override protected void OnSkip() {
+    /// <summary>
+    /// Called when skip is triggered.
+    /// </summary>
+    override protected void OnSkip() {
 		// Nothing to do for now
 	}
 

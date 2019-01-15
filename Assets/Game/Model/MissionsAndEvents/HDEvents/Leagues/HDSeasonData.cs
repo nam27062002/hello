@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class HDSeasonData {
     //---[Classes and Enums]----------------------------------------------------
@@ -155,10 +156,10 @@ public class HDSeasonData {
 
     //---[Score]----------------------------------------------------------------
 
-    public void SentScore(long _score) {
+    public void SetScore(long _score) {
         if (state >= State.NOT_JOINED && state < State.PENDING_REWARDS) {
             currentLeague.leaderboard.playerScore = _score;
-            __SentScore(_score);
+            __SetScore(_score);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
             scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -277,11 +278,44 @@ public class HDSeasonData {
         }
     }
 
-    private void __SentScore(long _score) {
+    private void __SetScore(long _score) {
         if (HDLiveDataManager.TEST_CALLS) {
             OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
         } else {
-            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, OnSetScore);
+            IDragonData dragonData = DragonManager.currentDragon;
+            SimpleJSON.JSONClass build = new SimpleJSON.JSONClass();
+            {
+                build.Add("dragon", dragonData.sku);
+                build.Add("skin", UsersManager.currentUser.GetEquipedDisguise(dragonData.sku));
+
+                SimpleJSON.JSONArray pets = new SimpleJSON.JSONArray();
+                {
+                    List<string> equipedPets = UsersManager.currentUser.GetEquipedPets(dragonData.sku);
+                    int max = equipedPets.Count;
+                    for (int i = 0; i < max; i++) {
+                        pets.Add(equipedPets[i]);
+                    }
+                }
+                build.Add("pets", pets);
+
+                if (dragonData is DragonDataClassic) {
+                    DragonDataClassic classicData = dragonData as DragonDataClassic;
+                    build.Add("level", classicData.progression.level);
+                } else {
+                    DragonDataSpecial specialData = dragonData as DragonDataSpecial;
+                    build.Add("level", specialData.GetLevel());
+
+                    SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
+                    {
+                        stats.Add("health", specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level);
+                        stats.Add("speed", specialData.GetStat(DragonDataSpecial.Stat.SPEED).level);
+                        stats.Add("energy", specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level);
+                    }
+                    build.Add("stats", stats);
+                }
+            }
+
+            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, build, OnSetScore);
         }
     }
 

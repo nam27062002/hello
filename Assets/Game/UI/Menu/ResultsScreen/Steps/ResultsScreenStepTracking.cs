@@ -40,15 +40,6 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 	/// Initialize and launch this step.
 	/// </summary>
 	override protected void DoLaunch() {
-
-
-        //TEMP DONOT COMMIT
-        HDLiveDataManager.league.season.SentScore(RewardManager.score);
-        ///////////////////
-
-
-
-
 		// Update global stats
 		UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 		DragonManager.currentDragon.gamesPlayed = DragonManager.currentDragon.gamesPlayed + 1;
