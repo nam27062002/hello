@@ -48,6 +48,7 @@ public class DragonMotionHedgehog : DragonMotion {
 	{
 		yield return new WaitForSeconds(1.0f);
 		m_boost.energyRequiredToBoost = m_dragon.energyMax;
+        m_boost.energyRequiredToBoost = 0;
 	}
 
 	override protected void Update()
@@ -187,12 +188,14 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax * m_dragon.data.energyRequiredToBoost;
                 m_animationEventController.allowHitAnimation = true;
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
 			}break;
 			case State.Extra_2:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax * m_dragon.data.energyRequiredToBoost;
                 m_animationEventController.allowHitAnimation = true;
 				m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
@@ -207,6 +210,8 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
 			case State.Extra_1:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax;
+        
                 m_boostLevelStart = m_dragon.energy;
                 m_animationEventController.allowHitAnimation = false;
 				m_dragon.PauseEating();
@@ -220,6 +225,8 @@ public class DragonMotionHedgehog : DragonMotion {
 			}break;
 			case State.Extra_2:
 			{
+                m_boost.energyRequiredToBoost = m_dragon.energyMax;
+            
                 // m_sonicImpulse = m_direction * m_sonicSpeed;
                 float impulseSpeed = (m_boostLevelStart - m_dragon.energy) / m_dragon.energyMax;
                 if ( impulseSpeed > 0.1f && m_powerLevel >= 2)
