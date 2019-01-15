@@ -28,8 +28,10 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_busyPanel = null;
 	[SerializeField] private ShowHideAnimator m_errorPanel = null;
 
-	// Public
-	private bool m_hasBeenDismissed = false;
+    private HDSeasonData m_season;
+
+    // Public
+    private bool m_hasBeenDismissed = false;
 	public bool hasBeenDismissed {
 		get { return m_hasBeenDismissed; }
 	}
@@ -52,12 +54,10 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Initialize this step.
 	/// </summary>
 	override protected void DoInit() {
-		// Listen to score sent confirmation
-		// [AOC] TODO!!
-		//Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
+        m_season = HDLiveDataManager.league.season;
 
-		// Hide both panels
-		m_busyPanel.Hide(false);
+        // Hide both panels
+        m_busyPanel.Hide(false);
 		m_errorPanel.Hide(false);
 
 		// Reset flags
@@ -68,11 +68,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	override public bool MustBeDisplayed() {
-		// [AOC] Disabled for 1.16 until 1.18
-		return false;
-
-		// Always show for now
+	override public bool MustBeDisplayed() {		
 		return true;
 	}
 
@@ -97,20 +93,27 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// Show busy screen
 		m_busyPanel.Show();
 
-		// Tell the league to register a score
-		// [AOC] TODO!!
-		//HDTournamentManager tournament = m_event as HDTournamentManager;
-		//tournament.SendScore((int)tournament.GetRunScore());
-		UbiBCN.CoroutineManager.DelayedCall(() => { OnLeagueScoreSent(HDLiveDataManager.ComunicationErrorCodes.NO_ERROR); }, 1f);	// [AOC] TODO!! Simulate server response for now
-	}
+        m_season.SetScore(m_controller.score);
+        m_season.currentLeague.leaderboard.RequestData();
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Retry button has been pressed.
-	/// </summary>
-	public void OnRetryButton() {
+        InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
+    }
+
+    void UpdatePeriodic() { 
+        if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
+            OnLeagueScoreSent(m_season.scoreDataError);
+            CancelInvoke();
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Retry button has been pressed.
+    /// </summary>
+    public void OnRetryButton() {
 		// Just do it!
 		SendScore();
 	}

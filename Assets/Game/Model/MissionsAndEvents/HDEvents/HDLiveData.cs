@@ -85,7 +85,11 @@ namespace HDLiveData {
         public string dragon;
         public string skin;
         public uint level;
+        public uint health;
+        public uint speed;
+        public uint energy;
         public List<string> pets;
+
 
         public DragonBuild() {
             pets = new List<string>();
@@ -96,6 +100,9 @@ namespace HDLiveData {
             dragon = "";
             skin = "";
             level = 0;
+            health = 0;
+            speed = 0;
+            energy = 0;
             pets.Clear();
         }
 
@@ -105,6 +112,13 @@ namespace HDLiveData {
             if (_data.ContainsKey("dragon")) dragon = _data["dragon"];
             if (_data.ContainsKey("skin")) skin = _data["skin"];
             if (_data.ContainsKey("level")) level = (uint)_data["level"].AsInt;
+
+            if (_data.ContainsKey("stats")) {
+                SimpleJSON.JSONNode stats = _data["stats"];
+                health = (uint)stats["health"].AsInt;
+                speed  = (uint)stats["speed"].AsInt;
+                energy = (uint)stats["energy"].AsInt;
+            }
 
             if (_data.ContainsKey("pets")) {
                 SimpleJSON.JSONArray petsData = _data["pets"].AsArray;
@@ -121,6 +135,16 @@ namespace HDLiveData {
                 if (!string.IsNullOrEmpty(skin)) data.Add("skin", skin);
                 if (level > 0)
                     data.Add("level", level.ToString(GameServerManager.JSON_FORMAT));
+
+                if (health > 0 || speed > 0 || energy > 0) {
+                    SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
+                    {
+                        stats.Add("health", health);
+                        stats.Add("speed",  speed);
+                        stats.Add("energy", energy);
+                    }
+                    data.Add("stats", stats);
+                }
 
                 int petsCount = pets.Count;
                 if (petsCount > 0) {

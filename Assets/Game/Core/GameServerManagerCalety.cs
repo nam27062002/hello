@@ -735,8 +735,12 @@ public class GameServerManagerCalety : GameServerManager {
     //--------------------------------------------------------------------------
 
     public override void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) {
+        JSONNode json = new JSONClass();
+        json["fetchLeaderboard"] = _fetchLeaderboard.ToString(JSON_FORMAT);
+
         Dictionary<string, string> parameters = new Dictionary<string, string>();
-        parameters.Add("fetchLeaderboard", _fetchLeaderboard.ToString(JSON_FORMAT));
+        parameters.Add("body", json.ToString());
+
         Commands_EnqueueCommand(ECommand.HDLeagues_GetSeason, parameters, _callback);
     }
 
@@ -744,9 +748,15 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetLeaderboard, null, _callback);
     }
 
-    public override void HDLeagues_SetScore(long _score, ServerCallback _callback) {
+    public override void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, ServerCallback _callback) {
+        JSONNode json = new JSONClass();
+        json.Add("score", _score.ToString(JSON_FORMAT));
+        json.Add("build", _build.ToString());
+
+
         Dictionary<string, string> parameters = new Dictionary<string, string>();
-        parameters.Add("score", _score.ToString(JSON_FORMAT));
+        parameters.Add("body", json.ToString());
+
         Commands_EnqueueCommand(ECommand.HDLeagues_SetScore, parameters, _callback);
     }
 
@@ -1250,7 +1260,7 @@ public class GameServerManagerCalety : GameServerManager {
 
                 //--------------------------------------------------------------
                 case ECommand.HDLeagues_GetSeason: {
-                    JSONClass data = JSON.Parse(parameters["fetchLeaderboard"]) as JSONClass;
+                    JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
                     Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, false);
                 }
                 break;
@@ -1260,7 +1270,7 @@ public class GameServerManagerCalety : GameServerManager {
                 break;
 
                 case ECommand.HDLeagues_SetScore: {
-                    JSONClass data = JSON.Parse(parameters["score"]) as JSONClass;
+                    JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
                     Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_SET_SCORE, data, false);
                 }
                 break;
@@ -1695,11 +1705,11 @@ public class GameServerManagerCalety : GameServerManager {
     private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
     private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
 
-    private const string ACTION_HD_LEAGUES_GET_SEASON           = "getseason";
-    private const string ACTION_HD_LEAGUES_SET_SCORE            = "addLeagueScore";
-    private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "getLeagueRewards";
-    private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "finishSeasonalLeague";
-    private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/seasonalLeagues/getLeaderboard";
+    private const string ACTION_HD_LEAGUES_GET_SEASON           = "leagues/season/get";
+    private const string ACTION_HD_LEAGUES_SET_SCORE            = "leagues/score/set";
+    private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "leagues/rewards/get";
+    private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "leagues/finish";
+    private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/leagues/getLeaderboard";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
     private const string COMMAND_PENDING_TRANSACTIONS_CONFIRM = "transaction";
@@ -1750,7 +1760,9 @@ public class GameServerManagerCalety : GameServerManager {
         nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_ENTER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
-		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
+		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
+
+        nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 
     /// <summary>

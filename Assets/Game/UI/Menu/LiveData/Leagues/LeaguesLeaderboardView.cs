@@ -70,10 +70,17 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 
 	private void Update() {
 		if (m_waitingForLeaderboard) {
-			if (m_league.leaderboard.liveDataState == HDLiveData.State.VALID) {
-				Refresh();
-                m_waitingForLeaderboard = false;
-			}
+            switch(m_league.leaderboard.liveDataState) {
+                case HDLiveData.State.EMPTY:
+                    m_league.leaderboard.RequestData();
+                break;
+
+                case HDLiveData.State.VALID:
+                case HDLiveData.State.ERROR:
+                    Refresh();
+                    m_waitingForLeaderboard = false;
+                break;
+            }
 		}
 	}
 
@@ -89,45 +96,60 @@ public class LeaguesLeaderboardView : MonoBehaviour {
         m_season = HDLiveDataManager.league.season;
         m_league = m_season.currentLeague;
 
-		int playerRank = m_season.rank;
+		int playerRank = m_league.leaderboard.playerRank;
 
 		// Setup player pills
 		LeaguesLeaderboardPillData currentPlayerData = null;
-		List<HDLiveData.Leaderboard.Record> lbData = m_league.leaderboard.records;
-		List<ScrollRectItemData<LeaguesLeaderboardPillData>> items = new List<ScrollRectItemData<LeaguesLeaderboardPillData>>();
-		for (int i = 0; i < lbData.Count; ++i) {
-            LeaguesLeaderboardPillData playerPillData = new LeaguesLeaderboardPillData();
-			playerPillData.record = lbData[i];
-            playerPillData.reward = m_league.GetReward(0);
+		List<HDLiveData.Leaderboard.Record> records = m_league.leaderboard.records;
 
-			ScrollRectItemData<LeaguesLeaderboardPillData> itemData = new ScrollRectItemData<LeaguesLeaderboardPillData>();
-			itemData.data = playerPillData;
+        if (records.Count > 0) {
+            List<ScrollRectItemData<LeaguesLeaderboardPillData>> items = new List<ScrollRectItemData<LeaguesLeaderboardPillData>>();
 
-			// Is it current player? use different pill type and store data for further use
-			if(i == playerRank) {
-				itemData.pillType = 1;
-				currentPlayerData = playerPillData;
-			} else {
-				itemData.pillType = 0;
-			}
+            float promotionArea = Mathf.Max(1f, records.Count * m_league.promoteScale);
+            float demotionArea = records.Count - Mathf.Max(1f, records.Count * m_league.promoteScale);
 
-			items.Add(itemData);
-		}
+            for (int i = 0; i < records.Count; ++i) {
+                LeaguesLeaderboardPillData playerPillData = new LeaguesLeaderboardPillData();
+                playerPillData.record = records[i];
+                playerPillData.reward = m_league.GetRewardByRank(i + 1);
 
-		// Keep track of player pill index
-		int playerPillIdx = playerRank;
+                if (i < promotionArea) {
+                    playerPillData.area = LeagueLeaderboardAreas.Promotion;
+                } else if (i >= demotionArea) {
+                    playerPillData.area = LeagueLeaderboardAreas.Demotion;
+                } else {
+                    playerPillData.area = LeagueLeaderboardAreas.Default;
+                }
+
+                ScrollRectItemData<LeaguesLeaderboardPillData> itemData = new ScrollRectItemData<LeaguesLeaderboardPillData>();
+                itemData.data = playerPillData;
+
+                // Is it current player? use different pill type and store data for further use
+                if ((i + 1) == playerRank) {
+                    itemData.pillType = 1;
+                    currentPlayerData = playerPillData;
+                } else {
+                    itemData.pillType = 0;
+                }
+
+                items.Add(itemData);
+            }
+
+            // Keep track of player pill index
+            int playerPillIdx = playerRank - 1;
 
 
-		// Initialize the scroll list
-		m_scrollList.Setup(m_pillPrefabs, items);
+            // Initialize the scroll list
+            m_scrollList.Setup(m_pillPrefabs, items);
 
-		// Initialize current player pill
-		if(playerRank < 0) {
-			m_scrollList.SetupPlayerPill(null, -1, null);
-		} else {
-			m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
-			m_scrollList.FocusPlayerPill(false);
-		}
+            // Initialize current player pill
+            if (playerRank < 0) {
+                m_scrollList.SetupPlayerPill(null, -1, null);
+            } else {
+                m_scrollList.SetupPlayerPill(m_pillPrefabs[1], playerPillIdx, currentPlayerData);
+                m_scrollList.FocusPlayerPill(false);
+            }
+        }
 
 		// Done!
 		ToggleLoading(false);

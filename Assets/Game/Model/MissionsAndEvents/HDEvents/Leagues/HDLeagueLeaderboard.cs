@@ -5,6 +5,12 @@ public class HDLeagueLeaderboard {
 
     private string m_leagueSku;
 
+    private long m_playerScore;
+    public long playerScore { get { return m_playerScore; } set { if (m_playerScore < value) m_playerScore = value; } }
+
+    private int m_playerRank;
+    public int playerRank { get { return m_playerRank; } }
+
     private List<HDLiveData.Leaderboard.Record> m_records;
     public List<HDLiveData.Leaderboard.Record> records { get { return m_records; } }
 
@@ -23,6 +29,8 @@ public class HDLeagueLeaderboard {
 
     public void Clean() {
         m_records.Clear();
+        m_playerScore = 0;
+        m_playerRank = 0;
 
         liveDataState = HDLiveData.State.EMPTY;
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -44,9 +52,10 @@ public class HDLeagueLeaderboard {
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             // clear Data
             m_records.Clear();
+            m_playerRank = 0;
 
             // parse Json
-            LoadData(responseJson.AsArray);
+            LoadData(responseJson);
         } else {
 
             liveDataState = HDLiveData.State.ERROR;
@@ -55,10 +64,15 @@ public class HDLeagueLeaderboard {
         liveDataError = outErr;
     }
 
-    public void LoadData(SimpleJSON.JSONArray _data) {
+    public void LoadData(SimpleJSON.JSONNode _data) {
         if (_data != null) {
-            for (int i = 0; i < _data.Count; ++i) {
-                SimpleJSON.JSONClass d = _data[i].AsObject;
+            SimpleJSON.JSONClass player = _data["u"].AsObject;
+            m_playerScore = player["score"].AsLong;
+            m_playerRank = player["rank"].AsInt;
+
+            SimpleJSON.JSONArray array = _data["l"].AsArray;
+            for (int i = 0; i < array.Count; ++i) {
+                SimpleJSON.JSONClass d = array[i].AsObject;
 
                 HDLiveData.Leaderboard.Record record = new HDLiveData.Leaderboard.Record();
                 record.LoadData(d);

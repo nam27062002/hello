@@ -421,7 +421,7 @@ public class GameServerManager {
     public virtual void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) { }
     public virtual void HDLeagues_GetLeaderboard(ServerCallback _callback) { }
 
-    public virtual void HDLeagues_SetScore(long _score, ServerCallback _callback) { }
+    public virtual void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, ServerCallback _callback) { }
 
     public virtual void HDLeagues_GetMyRewards(ServerCallback _callback) { }
 
