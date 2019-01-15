@@ -310,7 +310,7 @@ public class HDSeasonData {
                     SimpleJSON.JSONClass stats = new SimpleJSON.JSONClass();
                     {
                         stats.Add("health", specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level);
-                        stats.Add("speed", specialData.GetStat(DragonDataSpecial.Stat.SPEED).level);
+                        stats.Add("speed",  specialData.GetStat(DragonDataSpecial.Stat.SPEED).level);
                         stats.Add("energy", specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level);
                     }
                     build.Add("stats", stats);

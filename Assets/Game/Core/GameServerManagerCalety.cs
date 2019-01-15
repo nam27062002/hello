@@ -751,7 +751,7 @@ public class GameServerManagerCalety : GameServerManager {
     public override void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, ServerCallback _callback) {
         JSONNode json = new JSONClass();
         json.Add("score", _score.ToString(JSON_FORMAT));
-        json.Add("build", _build.ToString());
+        json.Add("build", _build);
 
 
         Dictionary<string, string> parameters = new Dictionary<string, string>();
