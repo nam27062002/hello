@@ -218,12 +218,12 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         bool ret = false;
         if (FeatureSettingsManager.AreAdsEnabled)
         {
-            DefinitionNode adFrequency = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "adFrequency");
-            int minRuns = adFrequency.GetAsInt("runsToStart");
+            DefinitionNode interstitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
+            int minRuns = interstitialsSetup.GetAsInt("runsToStart");
             if (UsersManager.currentUser.gamesPlayed >= minRuns)
             {
                 bool cleanCounter = true;
-                bool checkHacker = adFrequency.GetAsBool("checkHacker");
+                bool checkHacker = interstitialsSetup.GetAsBool("checkHacker");
                 if ( checkHacker &&  UsersManager.currentUser.isHacker)
                 {
                     ret = true;
@@ -234,7 +234,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                     int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
                     long lastPurchaseTimestamp = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchaseTimestamp;
                     long timestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
-                    long timeNoPaying = adFrequency.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
+                    long timeNoPaying = interstitialsSetup.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
                     if ( totalPurchases <= 0 || timestamp - lastPurchaseTimestamp > timeNoPaying )
                     {
                         cleanCounter = false;
@@ -255,8 +255,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 
     public void ResetIntersitialCounter()
     {
-        DefinitionNode adFrequency = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "adFrequency");
-        int intersitialRuns = adFrequency.GetAsInt("interstitialRuns");
+        DefinitionNode intertitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
+        int intersitialRuns = intertitialsSetup.GetAsInt("interstitialRuns");
         PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, intersitialRuns);
         PlayerPrefs.Save();
     }
