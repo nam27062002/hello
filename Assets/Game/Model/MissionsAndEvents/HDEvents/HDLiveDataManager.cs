@@ -284,6 +284,14 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         }
     }
 
+    public void ForceRequestLeagues() {
+        if (TEST_CALLS) {
+            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+        } else {
+            GameServerManager.SharedInstance.HDLiveData_GetMyLeagues(MyLiveDataResponse);
+        }
+    }
+
     private void MyLiveDataResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
 
         ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;

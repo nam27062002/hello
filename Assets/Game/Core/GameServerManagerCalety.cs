@@ -664,6 +664,12 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, parameters, _callback);
 	}
 
+    public override void HDLiveData_GetMyLeagues(ServerCallback _callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("updateLeagues", true.ToString());
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyEvents, parameters, _callback);
+    }
+
     //--------------------------------------------------------------------------
 
     public override void HDEvents_GetDefinition(int _eventID, ServerCallback _callback) {

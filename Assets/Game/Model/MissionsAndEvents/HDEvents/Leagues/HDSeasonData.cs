@@ -99,11 +99,11 @@ public class HDSeasonData {
         if (timeToStart.TotalSeconds > 0f) {
             state = State.TEASING;
         } else {
-            if (timeToEnd.TotalSeconds < 0f) {
+            if (timeToEnd.TotalSeconds <= 0f) {
                 if (state == State.REWARDS_COLLECTED)
                     state = State.WAITING_NEW_SEASON;
             } else {
-                if (timeToClose.TotalSeconds < 0f) {
+                if (timeToClose.TotalSeconds <= 0f) {
                     if (state < State.JOINED)
                         state = State.WAITING_NEW_SEASON;
                     else if (state < State.PENDING_REWARDS)

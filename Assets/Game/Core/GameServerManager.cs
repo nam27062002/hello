@@ -380,7 +380,7 @@ public class GameServerManager {
     /// <param name="_callback">Callback.</param>
     public virtual void HDEvents_GetMyLiveData(ServerCallback _callback) { }
     public virtual void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { }
-
+    public virtual void HDLiveData_GetMyLeagues(ServerCallback _callback) { }
 
 
     //-----------------
