@@ -139,6 +139,7 @@ public class DragonControlPlayer : MonoBehaviour {
 			moving = moving || joystickMoving;
 			action = action || joystickControls.getAction();
 		}
+        #endif
         
         // Check action tap
         // On action just pressed
@@ -167,8 +168,6 @@ public class DragonControlPlayer : MonoBehaviour {
                 m_lastMovingTime = 0;
             }
         }
-        
-		#endif
 	}
 
 	//------------------------------------------------------------------------//
