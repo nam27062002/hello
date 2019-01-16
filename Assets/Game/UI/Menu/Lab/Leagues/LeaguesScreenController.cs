@@ -27,9 +27,10 @@ public class LeaguesScreenController : MonoBehaviour {
 		WAITING_NEW_SEASON,
 		ACTIVE_SEASON,
 		LOADING,
-		RETRY_REWARDS,		// [AOC] Check if needed!
+		REWARDS_RETRY,		// [AOC] Check if needed!
+        REWARDS_READY,
 
-		COUNT
+        COUNT
 	};
 	
 	//------------------------------------------------------------------------//
@@ -70,21 +71,33 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
-		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
-	}
+        InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
+    }
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
-		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
-		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
-	}
+        CancelInvoke();
+    }
+
+    void UpdatePeriodic() { 
+        if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
+            switch(m_activePanel) {
+                case Panel.LOADING:
+                if (m_season.rewardDataState == HDLiveData.State.VALID || m_season.rewardDataState == HDLiveData.State.ERROR) {
+                    Refresh();
+                }
+                break;
+
+                case Panel.REWARDS_RETRY:
+                if (m_season.rewardDataState == HDLiveData.State.WAITING_RESPONSE) {
+                    Refresh();
+                }
+                break;
+            }
+        }
+    }
 
 
 	//------------------------------------------------------------------------//
@@ -94,28 +107,13 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// Select active panel based on current league/season state.
 	/// </summary>
 	public void Refresh() {
-		// Do we need to go to the rewards screen?
-		// [AOC] TODO!!
-		/*
-		if(m_questManager.EventExists())
-		{
-			m_questManager.UpdateStateFromTimers();
-			// If the current global event has a reward pending, go to the event reward screen
-			if(m_questManager.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE ) {
-				// Show requesting!
-				OnRetryRewardsButton();
-				return;
-				
-			}
-		}
-		*/
-
 		// Select active panel
 		SelectPanel();
 
 		// Refresh its content
 		m_panels[(int)m_activePanel].Refresh();
 	}
+
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -144,11 +142,26 @@ public class LeaguesScreenController : MonoBehaviour {
 				} break;
 
 				case HDSeasonData.State.PENDING_REWARDS: {
-					targetPanel = Panel.LOADING;
-				} break;
+                    switch (m_season.rewardDataState) {
+                        case HDLiveData.State.EMPTY:
+                            m_season.RequestMyRewards();
+                            targetPanel = Panel.LOADING;
+                        break;
+                        case HDLiveData.State.WAITING_RESPONSE:
+                            targetPanel = Panel.LOADING;
+                        break;
+                        case HDLiveData.State.VALID:
+                            targetPanel = Panel.REWARDS_READY;
+                        break;
+                        case HDLiveData.State.ERROR:
+                            targetPanel = Panel.REWARDS_RETRY;
+                        break;
+                    }
+                }
+                break;
 
 				case HDSeasonData.State.NONE: {
-					targetPanel = Panel.OFFLINE;	// Shouldn't happen
+					targetPanel = Panel.OFFLINE; // Shouldn't happen
 				} break;
 			}
 		}
@@ -197,6 +210,7 @@ public class LeaguesScreenController : MonoBehaviour {
 		*/
 	}
 
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -227,21 +241,6 @@ public class LeaguesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// We got new event data.
-	/// </summary>
-	/// <param name="_eventId">Event identifier.</param>
-	/// <param name="_err">Error code.</param>
-	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
-		// [AOC] TODO!! Needed?
-		/*
-		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
-		{
-			Refresh();
-		}
-		*/
-	}
-
-	/// <summary>
 	/// New data has been received.
 	/// </summary>
 	void OnEventsUpdated() {
@@ -249,40 +248,16 @@ public class LeaguesScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Rewards data has been received from the server.
-	/// </summary>
-	/// <param name="_eventId">Event identifier.</param>
-	/// <param name="_err">Error code.</param>
-	protected void OnRewards(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
-		// [AOC] TODO!!
-		/*
-		if(_eventId == m_questManager.data.m_eventId) {
-			if(_err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
-				scr.StartFlow();
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD, true);
-			} else {
-				// Show error message and retry button
-				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
-				SetActivePanel(Panel.RETRY_REWARDS);
-			}
-		}
-		*/
-	}
-
-	/// <summary>
 	/// Retry rewards button has been pressed.
 	/// </summary>
 	public void OnRetryRewardsButton() {
-		// [AOC] TODO!!
-		/*
-		// Show requesting!
-		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
-			SetActivePanel(Panel.OFFLINE);
-		} else {
-			m_questManager.RequestRewards();
-			SetActivePanel(Panel.LOADING);
-		}
-		*/
+        m_season.RequestMyRewards();
 	}
+
+    public void OnCollectRewardsButton() {
+        //Go to leagues Reward Screen
+        UsersManager.currentUser.PushReward(m_season.reward);
+        m_season.RequestFinalize();
+        Refresh();
+    }
 }

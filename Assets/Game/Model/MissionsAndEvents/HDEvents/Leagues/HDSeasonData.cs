@@ -85,6 +85,16 @@ public class HDSeasonData {
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
+    public void LoadStatus(SimpleJSON.JSONNode _data) {
+        int status = _data["status"].AsInt;
+        switch (status) {
+            case 0: state = State.NOT_JOINED; break;
+            case 1: state = State.JOINED; break;
+            case 2: state = State.PENDING_REWARDS; break;
+            case 11: state = State.WAITING_NEW_SEASON; break;
+        }
+    }
+
     public void UpdateState() {
         if (timeToStart.TotalSeconds > 0f) {
             state = State.TEASING;
@@ -125,14 +135,6 @@ public class HDSeasonData {
     }
 
     private void LoadData(SimpleJSON.JSONNode _data) {
-        int status = _data["status"].AsInt;
-        switch (status) {
-            case 0: state = State.NOT_JOINED; break;
-            case 1: state = State.JOINED; break;
-            case 2: state = State.PENDING_REWARDS; break;
-            case 11: state = State.WAITING_NEW_SEASON; break;
-        }
-
         LoadDates(_data);
 
         currentLeague.LoadData(_data["league"]);
@@ -333,7 +335,7 @@ public class HDSeasonData {
 
     private void __RequestFinalize() {
         if (HDLiveDataManager.TEST_CALLS) {
-            OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
+            OnRequestFinalize(null, HDLiveDataManager.CreateEmptyResponse());
         } else {
             GameServerManager.SharedInstance.HDLeagues_FinishMySeason(OnRequestFinalize);
         }

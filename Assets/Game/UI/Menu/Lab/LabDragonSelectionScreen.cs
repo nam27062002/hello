@@ -197,9 +197,16 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		}
 	} 
 
-	/// <summary>
-	/// Back button has been pressed.
-	/// </summary>
+    public void OnShowPostAnimation() {
+        HDSeasonData m_season = HDLiveDataManager.league.season;
+        if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+        }
+    }
+
+    /// <summary>
+    /// Back button has been pressed.
+    /// </summary>
     public void OnBackButton() {
         // AudioController.PlayMusic("hd_menu_music");
         InstanceManager.musicController.Ambience_Stop("hd_lab_music", gameObject);

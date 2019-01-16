@@ -70,6 +70,8 @@ public class HDLeagueController : HDLiveDataController {
     public override void LoadData(SimpleJSON.JSONNode _data) {
         CleanData();
 
+        m_season.LoadStatus(_data);
+
         string currentLeague = _data["sku"];
         string nextLeague = _data.GetSafe("nextSku", "");
         
