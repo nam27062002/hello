@@ -105,9 +105,15 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     
     void CreatePool() {
         m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
+        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", "Game/Projectiles/", 3, true);
+    }
+    
+    private void IgnoreLevel2Spikes()
+    {
             // It would be nice to have a callback when the pool grows
         Transform containerTransform = m_poolHandler.pool.containerObj.transform;
         int childCount = containerTransform.childCount;
+        
         for (int i = 0; i < childCount; i++)
         {
             Collider c = containerTransform.GetChild(i).GetComponent<Collider>();
@@ -115,9 +121,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             {
                 Physics.IgnoreCollision(containerTransform.GetChild(j).GetComponent<Collider>(), c);
             }
+            
         }
-        
-        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", "Game/Projectiles/", m_spikesNumber, true);
     }
             
     
@@ -231,6 +236,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                         Util.RotateXYDegrees(ref dir, angle);
                         ShootHorn( dir, m_poolHandler );
                     }
+                    IgnoreLevel2Spikes();
                 }
                 
                 // Stop Particles
