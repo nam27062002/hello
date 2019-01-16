@@ -45,6 +45,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     private PoolHandler m_level3PoolHandler;
     Vector3 m_tmpVector = GameConstants.Vector3.right;
 
+    public bool m_isUsingCircleFire = true;
+
 	// Use this for initialization
 	void Start () {
 		m_circle = GetComponent<CircleArea2D>();
@@ -144,7 +146,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 // Play start particle
             }
             
-            if ( m_fire )
+            if ( m_fire && !m_isUsingCircleFire )   // if we are using circle fury we dont need to pause mouth fire
             {
                 if (!m_breathBehaviour.isFuryPaused)
                     m_breathBehaviour.PauseFury();
@@ -172,8 +174,18 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     ShootHorn( dir, m_level3PoolHandler, true, m_motion.speed * 1.5f );
                 }
             }
-			
-            if ( m_motion.state == DragonMotion.State.Extra_2 || m_fire )
+
+            bool checkSmah = false;
+            if ( m_isUsingCircleFire )
+            {
+                checkSmah = m_motion.state == DragonMotion.State.Extra_2 && !m_fire;    // Only smash if we cannot burn
+            }
+            else
+            {
+                checkSmah = m_motion.state == DragonMotion.State.Extra_2 || m_fire;
+            }
+            
+            if ( m_motion.state == DragonMotion.State.Extra_2 || (m_fire && !m_isUsingCircleFire) )
             {
     			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
     			for (int i = 0; i < m_numCheckEntities; i++) 
@@ -218,7 +230,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_healthBehaviour.RemoveDamageIgnore( DamageType.MINE );
                 
                 // if fire still active resume breathing
-                if ( m_fire )
+                if ( m_fire && !m_isUsingCircleFire)
                 {
                     if ( m_breathBehaviour.isFuryPaused )
                         m_breathBehaviour.ResumeFury();
@@ -246,21 +258,21 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
 	void OnFuryRushToggled( bool fire, DragonBreathBehaviour.Type fireType)
 	{
-		m_fire = fire;
-		m_fireType = fireType;
-		if ( m_fire )
-		{
-			m_circle.radius = m_originalRadius * m_fireBoostMultiplier;	
-		}
-		else
-		{   
-			m_circle.radius = m_originalRadius;
+    	m_fire = fire;
+    	m_fireType = fireType;
+    	if ( m_fire )
+    	{
+    		m_circle.radius = m_originalRadius * m_fireBoostMultiplier;	
+    	}
+    	else
+    	{   
+    		m_circle.radius = m_originalRadius;
             // if in ricochet form stop fire
             if (m_motion.state == DragonMotion.State.Extra_2 || m_motion.state == DragonMotion.State.Extra_1)
             {
                 // Stop fire particles if playing
             }
-		}
+    	}
 	}
     
     protected void ShootHorn(Vector3 _direction, PoolHandler _pool, bool overrideSpeed = false, float speed = 10)
