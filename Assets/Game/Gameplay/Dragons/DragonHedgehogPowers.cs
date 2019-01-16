@@ -26,7 +26,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     [Header("Visual Settings")]
     public GameObject m_spikesLvl1;
     public GameObject m_spikesLvl2;
-    public GameObject m_spikeProjectile;
     
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
@@ -43,6 +42,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     DragonBreathBehaviour m_breathBehaviour;
     DragonHealthBehaviour m_healthBehaviour;
     private PoolHandler m_poolHandler;
+    private PoolHandler m_level3PoolHandler;
     Vector3 m_tmpVector = GameConstants.Vector3.right;
 
 	// Use this for initialization
@@ -104,8 +104,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     }
     
     void CreatePool() {
-        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber + 2, true);
-        
+        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
             // It would be nice to have a callback when the pool grows
         Transform containerTransform = m_poolHandler.pool.containerObj.transform;
         int childCount = containerTransform.childCount;
@@ -117,6 +116,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 Physics.IgnoreCollision(containerTransform.GetChild(j).GetComponent<Collider>(), c);
             }
         }
+        
+        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", "Game/Projectiles/", m_spikesNumber, true);
     }
             
     
@@ -163,7 +164,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_shootingTimer = m_shootingRatio;
                     // Shoot spikes!
                     Vector3 dir = m_motion.direction.RotateXYDegrees(Random.Range(-20, 20));
-                    ShootHorn( dir );
+                    ShootHorn( dir, m_level3PoolHandler, true, m_motion.speed * 1.5f );
                 }
             }
 			
@@ -228,7 +229,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     for (float i = -m_spikesOperture ; i <= m_spikesOperture ; i += angle)
                     {
                         Util.RotateXYDegrees(ref dir, angle);
-                        ShootHorn( dir );
+                        ShootHorn( dir, m_poolHandler );
                     }
                 }
                 
@@ -256,11 +257,17 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 		}
 	}
     
-    protected void ShootHorn(Vector3 _direction)
+    protected void ShootHorn(Vector3 _direction, PoolHandler _pool, bool overrideSpeed = false, float speed = 10)
     {
-        GameObject go = m_poolHandler.GetInstance();
+        GameObject go = _pool.GetInstance();
         go.transform.position = m_motion.m_rotationPivot.position + m_motion.direction;
         Projectile projectile = go.GetComponent<Projectile>();
-        projectile.ShootTowards(_direction, projectile.speed, 1000, transform );
+        if ( overrideSpeed )
+        {
+            projectile.ShootTowards(_direction, speed, 1000, transform );
+        }else{
+            projectile.ShootTowards(_direction, projectile.speed, 1000, transform );
+        }
+        
     }
 }
