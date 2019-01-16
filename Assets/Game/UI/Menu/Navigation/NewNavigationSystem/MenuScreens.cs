@@ -43,6 +43,7 @@ public enum MenuScreen {
 	LAB_MISSIONS,
 	LAB_PETS,
 	LAB_LEAGUES,
+	LEAGUES_REWARD,
 
 	COUNT
 }

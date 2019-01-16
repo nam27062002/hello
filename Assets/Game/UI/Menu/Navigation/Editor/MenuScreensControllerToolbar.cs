@@ -131,7 +131,8 @@ public class MenuScreensControllerToolbar {
 
 				case MenuScreen.OPEN_EGG:
 				case MenuScreen.EVENT_REWARD:
-				case MenuScreen.PENDING_REWARD: {
+				case MenuScreen.PENDING_REWARD:
+				case MenuScreen.LEAGUES_REWARD: {
 					s_screenGroups[(int)EScreensGroup.REWARD_SCREENS].screens.Add(scr);
 				} break;
 
