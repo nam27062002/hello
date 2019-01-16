@@ -298,6 +298,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
 
 	/// <summary>
@@ -322,6 +323,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
     
     
@@ -841,6 +843,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     private void OnLeavingArea(float t)
     {
         m_switchingArea = true;
+    }
+    
+    private void OnForceUp()
+    {
+        // Check if we've reached next threshold
+        if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 ) 
+        {
+            // Change current multiplier
+            SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
+        }
     }
 
     public static int GetReviveCost()

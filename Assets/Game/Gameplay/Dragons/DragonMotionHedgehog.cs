@@ -340,6 +340,9 @@ public class DragonMotionHedgehog : DragonMotion {
         }
         m_direction = Vector3.Reflect( m_direction,  normal);
         m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+
+        // Increase multiplier
+        Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP);
     }
 
 }
