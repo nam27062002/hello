@@ -232,7 +232,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                 {
                     TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
                     int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-                    long lastPurchaseTimestamp = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchaseTimestamp;
+                    long lastPurchaseTimestamp = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchaseTimestamp * 1000;  // to milliseconds
                     long timestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
                     long timeNoPaying = interstitialsSetup.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
                     if ( totalPurchases <= 0 || timestamp - lastPurchaseTimestamp > timeNoPaying )
