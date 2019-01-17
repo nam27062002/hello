@@ -67,7 +67,8 @@ public class HDLeagueData {
             m_demoteScale = _data["demoteScale"].AsFloat;
             m_promoteScale = _data["promoteScale"].AsFloat;
 
-			if(_data.ContainsKey("rewards")) {
+            m_rewards.Clear();
+            if (_data.ContainsKey("rewards")) {
 				SimpleJSON.JSONArray arr = _data["rewards"].AsArray;
 				for(int i = 0; i < arr.Count; i++) {
 					HDLiveData.RankedReward r = new HDLiveData.RankedReward();

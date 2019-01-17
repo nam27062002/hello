@@ -125,7 +125,7 @@ public class LeaguesLeaderboardView : MonoBehaviour {
                 itemData.data = playerPillData;
 
                 // Is it current player? use different pill type and store data for further use
-                if ((i + 1) == playerRank) {
+                if (i == playerRank) {
                     itemData.pillType = 1;
                     currentPlayerData = playerPillData;
                 } else {
@@ -136,7 +136,7 @@ public class LeaguesLeaderboardView : MonoBehaviour {
             }
 
             // Keep track of player pill index
-            int playerPillIdx = playerRank - 1;
+            int playerPillIdx = playerRank;
 
 
             // Initialize the scroll list
