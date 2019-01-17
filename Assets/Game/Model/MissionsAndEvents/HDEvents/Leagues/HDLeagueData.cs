@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class HDLeagueData {
+public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 	//---[Basic Data]-----------------------------------------------------------
 
     private readonly DefinitionNode m_def;
@@ -88,6 +88,23 @@ public class HDLeagueData {
         }
     }
 
+	//---[IComparable Implementation]--------------------------------------------------------
+	/// <summary>
+	/// Compare this instance with another one.
+	/// </summary>
+	/// <returns>The result of the comparison (-1, 0, 1).</returns>
+	/// <param name="_other">Instance to be compared to.</param>
+	protected override int CompareToImpl(HDLeagueData _other) {
+		return this.m_order.CompareTo(_other);
+	}
+
+	/// <summary>
+	/// Get the hash code corresponding to this object. Used in hashable classes such as Dictionary.
+	/// </summary>
+	/// <returns>The hash code corresponding to this object.</returns>
+	protected override int GetHashCodeImpl() {
+		return this.m_order.GetHashCode();
+	}
 
     //---[Query Methods]--------------------------------------------------------
 
@@ -112,5 +129,4 @@ public class HDLeagueData {
 
         return m_rewards.Last().reward;
     }
-
 }
