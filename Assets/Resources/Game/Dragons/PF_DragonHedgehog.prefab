@@ -27,7 +27,6 @@ GameObject:
   - component: {fileID: 11408926}
   - component: {fileID: 114209896492825704}
   - component: {fileID: 114732582710944462}
-  - component: {fileID: 114000012705948140}
   - component: {fileID: 11444004}
   - component: {fileID: 11459072}
   - component: {fileID: 11419346}
@@ -140,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -246.67558, y: 22.337715, z: -6.961914}
+  m_LocalPosition: {x: -181.19165, y: 104.022736, z: -6.961914}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -2105,7 +2104,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.0040441616, y: 0.72557116, z: -0.0042642527, w: 0.68812215}
+  m_LocalRotation: {x: 0.0011029788, y: 0.7120916, z: -0.0011186996, w: 0.70208484}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5580,25 +5579,6 @@ MonoBehaviour:
   m_randomSpeedRange:
     min: 1
     max: 1.5
---- !u!114 &114000012705948140
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prewarmDuration: 0.5
-  m_breathSound: Dragon_Burst Mode
-  m_superBreathSound: Dragon_Burst Mode
-  m_length: 6
-  m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
-    type: 2}
-  m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
-    type: 2}
 --- !u!114 &114007209109512066
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6081,6 +6061,10 @@ MonoBehaviour:
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
   m_fireCenter: Dragon_Chest
+  m_fireParticle: FireCircle/PS_SonicFireRush
+  m_fireParticleStart: FireCircle/PS_SonicFireRushBoost
+  m_megaFireParticle: FireCircle/PS_SonicMegaFireRush
+  m_megaFireParticleStart: FireCircle/PS_SonicMegaFireRushBoost
 --- !u!114 &114777803639561814
 MonoBehaviour:
   m_ObjectHideFlags: 1

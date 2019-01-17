@@ -21,6 +21,17 @@ public class FireBreathCircle : DragonBreathBehaviour {
     public string m_fireCenter = "Dragon_Hip";
 
     [Header("Particle")]
+    public string m_particleCenter = "Dragon_MasterGiro";
+    public string m_fireParticle = "FireCircle/PS_SonicFireRush";
+    private ParticleSystem m_fireParticleInstance;
+    public string m_fireParticleStart = "FireCircle/PS_SonicFireRushBoost";
+    private ParticleSystem m_fireParticleStartInstance;
+    
+    public string m_megaFireParticle = "FireCircle/PS_SonicMegaFireRush";
+    private ParticleSystem m_megaFireParticleInstance;
+    public string m_megaFireParticleStart = "FireCircle/PS_SonicMegaFireRushBoost";
+    private ParticleSystem m_megaFireParticleStartInstance;
+    
 	private int m_groundMask;
 	private int m_noPlayerMask;
 
@@ -48,6 +59,12 @@ public class FireBreathCircle : DragonBreathBehaviour {
         m_actualLength = m_length;
 		m_direction = Vector2.zero;
 		m_frame = 0;
+        
+        Transform particleCenter = transform.FindTransformRecursive(m_particleCenter);
+        m_fireParticleInstance = ParticleManager.InitLeveledParticle( m_fireParticle, particleCenter);
+        m_fireParticleStartInstance = ParticleManager.InitLeveledParticle( m_fireParticleStart, particleCenter);
+        m_megaFireParticleInstance = ParticleManager.InitLeveledParticle( m_megaFireParticle, particleCenter);
+        m_megaFireParticleStartInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleStart, particleCenter);
     }
 
     override public void RecalculateSize()
@@ -57,9 +74,9 @@ public class FireBreathCircle : DragonBreathBehaviour {
             float furyBaseLength = m_dragon.data.furyBaseLength;
 			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
 
-			//  Scale particle
-
 			m_length *= transform.localScale.x;
+            
+            //  Scale particle
 		}
     }
 
@@ -93,6 +110,19 @@ public class FireBreathCircle : DragonBreathBehaviour {
 	override protected void BeginFury(Type _type) 
 	{
 		base.BeginFury( _type);
+        switch( _type )
+        {
+            case Type.Standard:
+            {
+                m_fireParticleStartInstance.gameObject.SetActive(true);
+                m_fireParticleStartInstance.Play();
+            }break;
+            case Type.Mega:
+            {
+                m_megaFireParticleStartInstance.gameObject.SetActive(true);
+                m_megaFireParticleStartInstance.Play();
+            }break;
+        }
 		StartCoroutine( StartFlame(0.25f, _type));
         
     }
@@ -105,10 +135,12 @@ public class FireBreathCircle : DragonBreathBehaviour {
     		if (_type == Type.Standard)
             {
                 // Enable particle
+                m_fireParticleInstance.gameObject.SetActive(true);
             }
             else
             {
                 // Enable super particle
+                m_megaFireParticleInstance.gameObject.SetActive(true);
             }
         }
     }
@@ -119,10 +151,14 @@ public class FireBreathCircle : DragonBreathBehaviour {
         if (m_type == Type.Standard)
         {
             // Disable Particle
+            m_fireParticleInstance.gameObject.SetActive(false);
+            m_fireParticleStartInstance.gameObject.SetActive(false);
         }
         else
         {
             // Disable Super Particle
+            m_megaFireParticleInstance.gameObject.SetActive(false);
+            m_megaFireParticleStartInstance.gameObject.SetActive(false);
         }
 		base.EndFury(increase_mega_fury);
 
@@ -208,11 +244,30 @@ public class FireBreathCircle : DragonBreathBehaviour {
 				}
 			}
 		}
-
 		base.Breath();
 	}
 
-	void OnDrawGizmos() {
+    private void LateUpdate()
+    {
+        if ( m_state == State.BREATHING )
+        {
+            switch(m_type)
+        {
+            case Type.Standard:
+            {
+                m_fireParticleInstance.transform.rotation = Quaternion.identity;
+                m_fireParticleStartInstance.transform.rotation = Quaternion.identity;
+            }break;
+            case Type.Mega:
+            {
+                m_megaFireParticleInstance.transform.rotation = Quaternion.identity;
+                m_megaFireParticleStartInstance.transform.rotation = Quaternion.identity;
+            }break;
+        }
+        }
+    }
+
+    void OnDrawGizmos() {
 		if (IsFuryOn()) {
 			Gizmos.color = Color.magenta;
 
@@ -301,10 +356,12 @@ public class FireBreathCircle : DragonBreathBehaviour {
         if (m_type == Type.Standard)
         {
             // Disable Particle
+            m_fireParticleInstance.gameObject.SetActive(false);
         }
         else
         {
             // Disable Super Particle
+            m_megaFireParticleInstance.gameObject.SetActive(false);
         }
     }
 
@@ -313,11 +370,13 @@ public class FireBreathCircle : DragonBreathBehaviour {
         base.ResumeFury();
         if (m_type == Type.Standard)
         {
-			// Enable Particle
+            // Enable Particle
+            m_fireParticleInstance.gameObject.SetActive(true);
         }
         else
         {
 			// Enable Super Particle
+            m_megaFireParticleInstance.gameObject.SetActive(true);
         }
     }
 
