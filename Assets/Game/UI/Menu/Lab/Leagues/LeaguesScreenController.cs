@@ -85,7 +85,7 @@ public class LeaguesScreenController : MonoBehaviour {
     void UpdatePeriodic() {
         switch (m_season.state) {
             case HDSeasonData.State.TEASING: {
-                if (m_season.timeToStart.Seconds <= 0) {
+                if (m_season.timeToStart.TotalSeconds <= 0) {
                     m_season.UpdateState();
                     Refresh();
                 }
@@ -94,7 +94,7 @@ public class LeaguesScreenController : MonoBehaviour {
 
             case HDSeasonData.State.NOT_JOINED:
             case HDSeasonData.State.JOINED: {
-                if (m_season.timeToClose.Seconds <= 0) {
+                if (m_season.timeToClose.TotalSeconds <= 0) {
                     m_season.UpdateState();
                     Refresh();
                 }
@@ -114,12 +114,16 @@ public class LeaguesScreenController : MonoBehaviour {
                         Refresh();
                     }
                     break;
+
+                    default:
+                        Refresh();
+                        break;
                 }
             }
             break;
 
             case HDSeasonData.State.WAITING_NEW_SEASON:
-                if (m_season.timeToEnd.Seconds <= 0) {
+                if (m_season.timeToEnd.TotalSeconds <= 0) {
                     HDLiveDataManager.instance.ForceRequestLeagues();
                     CancelInvoke();
                 }

@@ -249,10 +249,11 @@ public class HDSeasonData {
 
     //---[Query Methods]--------------------------------------------------------
 
-    public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToEnd   { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-	public TimeSpan duration { get { return m_closeDate - m_startDate; }}
+    public TimeSpan timeToStart             { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToClose             { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+	public TimeSpan duration                { get { return m_closeDate - m_startDate; } }
+    public TimeSpan durationWaitNewSeason   { get { return m_endDate - m_closeDate; } }
 
     public Metagame.Reward reward {
         get {

@@ -750,6 +750,17 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetSeason, parameters, _callback);
     }
 
+    public override void HDLeagues_GetLeague(string _sku, ServerCallback _callback) {
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("sku", _sku);
+
+        Commands_EnqueueCommand(ECommand.HDLeagues_GetLeague, parameters, _callback);
+    }
+
+    public override void HDLeagues_GetAllLeagues(ServerCallback _callback) {
+        Commands_EnqueueCommand(ECommand.HDLeagues_GetAllLeagues, null, _callback);
+    }
+
     public override void HDLeagues_GetLeaderboard(ServerCallback _callback) {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetLeaderboard, null, _callback);
     }
@@ -825,6 +836,8 @@ public class GameServerManagerCalety : GameServerManager {
         HDLiveEvents_GetRefund,			// params: int _eventID
 
         HDLeagues_GetSeason,            // params: string _sku
+        HDLeagues_GetLeague,
+        HDLeagues_GetAllLeagues,
         HDLeagues_GetLeaderboard,
         HDLeagues_SetScore,
         HDLeagues_GetMyRewards,
@@ -1052,6 +1065,8 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLiveEvents_GetRefund:
 
             case ECommand.HDLeagues_GetSeason:
+            case ECommand.HDLeagues_GetLeague:
+            case ECommand.HDLeagues_GetAllLeagues:
             case ECommand.HDLeagues_GetLeaderboard:
             case ECommand.HDLeagues_SetScore:
             case ECommand.HDLeagues_GetMyRewards:
@@ -1094,182 +1109,187 @@ public class GameServerManagerCalety : GameServerManager {
             }
 
             Dictionary<string, string> parameters = command.Parameters;
-       
-			switch(command.Cmd) {
-				case ECommand.Ping: {
-                    Command_SendCommand(COMMAND_PING);                    
-				} break;
 
-				case ECommand.GetTime: {
-                    Command_SendCommand(COMMAND_TIME);                    
-				} break;
+            switch (command.Cmd) {
+                case ECommand.Ping: {
+                        Command_SendCommand(COMMAND_PING);
+                    } break;
+
+                case ECommand.GetTime: {
+                        Command_SendCommand(COMMAND_TIME);
+                    } break;
 
                 case ECommand.Auth: {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("Command Auth");
+                        if (FeatureSettingsManager.IsDebugEnabled)
+                            Log("Command Auth");
 
-                    //GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
-                    GameSessionManager.SharedInstance.LogInToServer();                    
-                }
-                break;
+                        //GameSessionManager.SharedInstance.ResetAnonymousPlatformUserID();
+                        GameSessionManager.SharedInstance.LogInToServer();
+                    }
+                    break;
 
                 case ECommand.Login: {
-                    if (FeatureSettingsManager.IsDebugEnabled)
-                        Log("Command Login");
+                        if (FeatureSettingsManager.IsDebugEnabled)
+                            Log("Command Login");
 
-					ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
-				} break;                
+                        ServerManager.SharedInstance.Server_SendAuth(parameters["platformId"], parameters["platformToken"]);
+                    } break;
 
-				case ECommand.GetPersistence: {					
-                    Command_SendCommand(COMMAND_GET_PERSISTENCE);                        					
-				} break;
+                case ECommand.GetPersistence: {
+                        Command_SendCommand(COMMAND_GET_PERSISTENCE);
+                    } break;
 
-				case ECommand.SetPersistence: {											
-                    Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);                    
-				} break;
+                case ECommand.SetPersistence: {
+                        Command_SendCommand(COMMAND_SET_PERSISTENCE, null, null, parameters["persistence"]);
+                    } break;
 
-				case ECommand.UpdateSaveVersion: {
-					// [DGR] SERVER: To change for an actual request to the server
-					Commands_OnResponse(null, 200);
-				} break;
+                case ECommand.UpdateSaveVersion: {
+                        // [DGR] SERVER: To change for an actual request to the server
+                        Commands_OnResponse(null, 200);
+                    } break;
 
-				case ECommand.GetQualitySettings: {
-                    // The user is not required to be logged to request the quality settings for her device     
-                    Command_SendCommand(COMMAND_GET_QUALITY_SETTINGS);                    
-				} break;
+                case ECommand.GetQualitySettings: {
+                        // The user is not required to be logged to request the quality settings for her device     
+                        Command_SendCommand(COMMAND_GET_QUALITY_SETTINGS);
+                    } break;
 
-				case ECommand.SetQualitySettings: {										
-                   Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);                                           
-				} break;
+                case ECommand.SetQualitySettings: {
+                        Command_SendCommand(COMMAND_SET_QUALITY_SETTINGS, null, null, parameters["qualitySettings"]);
+                    } break;
 
-                case ECommand.GetGameSettings: {                    
-                    Command_SendCommand(COMMAND_GET_GAME_SETTINGS);
-                }
-                break;
+                case ECommand.GetGameSettings: {
+                        Command_SendCommand(COMMAND_GET_GAME_SETTINGS);
+                    }
+                    break;
 
                 case ECommand.PlayTest: {
-					bool silent = (parameters["silent"].ToLower() == "true");
-					string cmd = (silent) ? COMMAND_PLAYTEST_A : COMMAND_PLAYTEST_B;
+                        bool silent = (parameters["silent"].ToLower() == "true");
+                        string cmd = (silent) ? COMMAND_PLAYTEST_A : COMMAND_PLAYTEST_B;
 
-					// This endpoint is anonymous but we need to send the playtest user id for tracking purposes
-					Dictionary<string, string> kParams = new Dictionary<string, string>();
-					kParams["uid"] = parameters["playTestUserId"];                        
-                    Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
-				} break;
+                        // This endpoint is anonymous but we need to send the playtest user id for tracking purposes
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["uid"] = parameters["playTestUserId"];
+                        Command_SendCommand(cmd, kParams, null, parameters["trackingData"]);
+                    } break;
 
-                case ECommand.TrackLoading: {                    
-                    Command_SendCommand(COMMAND_TRACK_LOADING, null, null, parameters["body"]);                    
-                } break;
+                case ECommand.TrackLoading: {
+                        Command_SendCommand(COMMAND_TRACK_LOADING, null, null, parameters["body"]);
+                    } break;
 
                 case ECommand.PendingTransactions_Get: {
-                    Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET);
-                } break;
+                        Command_SendCommand(COMMAND_PENDING_TRANSACTIONS_GET);
+                    } break;
 
-                case ECommand.PendingTransactions_Confirm: {                    
-                    JSONClass data = null;
-                    string paramsAsString = parameters["body"];
-                    if (!string.IsNullOrEmpty(paramsAsString))
-                    {
-                        data = JSON.Parse(paramsAsString) as JSONClass;
-                    }
-                        
-                    Command_SendCommandAsGameAction(COMMAND_PENDING_TRANSACTIONS_CONFIRM, data, false);
-                } break;
+                case ECommand.PendingTransactions_Confirm: {
+                        JSONClass data = null;
+                        string paramsAsString = parameters["body"];
+                        if (!string.IsNullOrEmpty(paramsAsString)) {
+                            data = JSON.Parse(paramsAsString) as JSONClass;
+                        }
 
-                case ECommand.GlobalEvents_TMPCustomizer:{
-                    Command_SendCommand( COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "" );
-				}break;
-				case ECommand.GlobalEvents_GetState:
-				case ECommand.GlobalEvents_GetEvent:
-				case ECommand.GlobalEvents_GetRewards:
-				case ECommand.GlobalEvents_GetLeadeboard: {					
-					Dictionary<string, string> kParams = new Dictionary<string, string>();						
-					kParams["eventId"] = parameters["eventId"];
-					string global_event_command = "";
-					switch( command.Cmd )
-					{
-						case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE;break;
-						case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT;break;
-						case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS;break;
-						case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD;break;
-					}
+                        Command_SendCommandAsGameAction(COMMAND_PENDING_TRANSACTIONS_CONFIRM, data, false);
+                    } break;
 
-                    Command_SendCommand( global_event_command, kParams );					
-				}break;
+                case ECommand.GlobalEvents_TMPCustomizer: {
+                        Command_SendCommand(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "");
+                    } break;
+                case ECommand.GlobalEvents_GetState:
+                case ECommand.GlobalEvents_GetEvent:
+                case ECommand.GlobalEvents_GetRewards:
+                case ECommand.GlobalEvents_GetLeadeboard: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        string global_event_command = "";
+                        switch (command.Cmd) {
+                            case ECommand.GlobalEvents_GetState: global_event_command = COMMAND_GLOBAL_EVENTS_GET_STATE; break;
+                            case ECommand.GlobalEvents_GetEvent: global_event_command = COMMAND_GLOBAL_EVENTS_GET_EVENT; break;
+                            case ECommand.GlobalEvents_GetRewards: global_event_command = COMMAND_GLOBAL_EVENTS_GET_REWARDS; break;
+                            case ECommand.GlobalEvents_GetLeadeboard: global_event_command = COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD; break;
+                        }
 
-				case ECommand.GlobalEvents_RegisterScore: {					
-					Dictionary<string, string> kParams = new Dictionary<string, string>();							
-					kParams["eventId"] = parameters["eventId"];
-					kParams["progress"] = parameters["progress"];
-                    Command_SendCommand( COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
-					// progress					
-				}break;
+                        Command_SendCommand(global_event_command, kParams);
+                    } break;
 
-				case ECommand.HDLiveEvents_GetMyEvents:{
-                    Dictionary<string, string> kParams = new Dictionary<string, string>();
-                    kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
-                    Command_SendCommand( COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
-				}break;
-				case ECommand.HDLiveEvents_GetEventDefinition:
-				case ECommand.HDLiveEvents_GetMyProgress:
+                case ECommand.GlobalEvents_RegisterScore: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        kParams["progress"] = parameters["progress"];
+                        Command_SendCommand(COMMAND_GLOBAL_EVENTS_REGISTER_SCORE, kParams, parameters, "");
+                        // progress					
+                    } break;
+
+                case ECommand.HDLiveEvents_GetMyEvents: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
+                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
+                    } break;
+                case ECommand.HDLiveEvents_GetEventDefinition:
+                case ECommand.HDLiveEvents_GetMyProgress:
                 case ECommand.HDLiveEvents_GetLeaderboard:
-				case ECommand.HDLiveEvents_GetMyReward:
-				case ECommand.HDLiveEvents_FinishMyEvent:
-                case ECommand.HDLiveEvents_GetRefund: {					
-					Dictionary<string, string> kParams = new Dictionary<string, string>();						
-					kParams["eventId"] = parameters["eventId"];
-					string global_event_command = "";
-					switch( command.Cmd )
-					{
-						case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF;break;
-						case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS;break;
-                        case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
-						case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD;break;
-						case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT;break;
-                        case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND;break;
-					}
+                case ECommand.HDLiveEvents_GetMyReward:
+                case ECommand.HDLiveEvents_FinishMyEvent:
+                case ECommand.HDLiveEvents_GetRefund: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        string global_event_command = "";
+                        switch (command.Cmd) {
+                            case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF; break;
+                            case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS; break;
+                            case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
+                            case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD; break;
+                            case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT; break;
+                            case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND; break;
+                        }
 
-                    Command_SendCommand( global_event_command, kParams );					
-				}break;
-				case ECommand.HDLiveEvents_Enter:
-				{
-					Dictionary<string, string> kParams = new Dictionary<string, string>();							
-					kParams["eventId"] = parameters["eventId"];
-					kParams["type"] = parameters["type"];
-					kParams["amount"] = parameters["amount"];
-					kParams["elo"] = parameters["elo"];
-					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
-				}break;
-				case ECommand.HDLiveEvents_AddProgress: {
-					Dictionary<string, string> kParams = new Dictionary<string, string>();							
-					kParams["eventId"] = parameters["eventId"];
-					kParams["progress"] = parameters["progress"];
-					Command_SendCommand( COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, kParams, parameters, "");
-					// progress					
-				}break;
-                case ECommand.HDLiveEvents_SetScore:{
-                    Dictionary<string, string> kParams = new Dictionary<string, string>();
-                    kParams["eventId"] = parameters["eventId"];
-                    kParams["score"] = parameters["score"];
-					kParams["returnData"] = parameters["returnData"];
-                    string body = "";
-                    if ( parameters.ContainsKey("build") )
-                    {
-                    	body = parameters["build"];
-                    	parameters.Remove("build");
+                        Command_SendCommand(global_event_command, kParams);
+                    } break;
+                case ECommand.HDLiveEvents_Enter: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        kParams["type"] = parameters["type"];
+                        kParams["amount"] = parameters["amount"];
+                        kParams["elo"] = parameters["elo"];
+                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
+                    } break;
+                case ECommand.HDLiveEvents_AddProgress: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        kParams["progress"] = parameters["progress"];
+                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, kParams, parameters, "");
+                        // progress					
+                    } break;
+                case ECommand.HDLiveEvents_SetScore: {
+                        Dictionary<string, string> kParams = new Dictionary<string, string>();
+                        kParams["eventId"] = parameters["eventId"];
+                        kParams["score"] = parameters["score"];
+                        kParams["returnData"] = parameters["returnData"];
+                        string body = "";
+                        if (parameters.ContainsKey("build")) {
+                            body = parameters["build"];
+                            parameters.Remove("build");
+                        }
+                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, body);
+                        // progress                 
                     }
-                    Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, body);
-                    // progress                 
-                }
-                break;
-                
+                    break;
+
 
                 //--------------------------------------------------------------
                 case ECommand.HDLeagues_GetSeason: {
-                    JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
-                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, false);
-                }
-                break;
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, false);
+                    }
+                    break;
+                
+                case ECommand.HDLeagues_GetLeague: {
+                        Command_SendCommand(COMMAND_HD_LEAGUES_GET_LEAGUE, parameters);
+                    }
+                    break;
+
+                case ECommand.HDLeagues_GetAllLeagues: {
+                        Command_SendCommand(COMMAND_HD_LEAGUES_GET_ALL_LEAGUES);
+                    }
+                    break;
 
                 case ECommand.HDLeagues_GetLeaderboard:
                     Command_SendCommand(COMMAND_HD_LEAGUES_GET_LEADERBOARD);
@@ -1715,6 +1735,8 @@ public class GameServerManagerCalety : GameServerManager {
     private const string ACTION_HD_LEAGUES_SET_SCORE            = "leagues/score/set";
     private const string ACTION_HD_LEAGUES_GET_MY_REWARDS       = "leagues/rewards/get";
     private const string ACTION_HD_LEAGUES_FINISH_MY_SEASON     = "leagues/finish";
+    private const string COMMAND_HD_LEAGUES_GET_LEAGUE          = "/api/leagues/get";
+    private const string COMMAND_HD_LEAGUES_GET_ALL_LEAGUES     = "/api/leagues/getAll";
     private const string COMMAND_HD_LEAGUES_GET_LEADERBOARD     = "/api/leagues/getLeaderboard";
 
     private const string COMMAND_PENDING_TRANSACTIONS_GET = "/api/ptransaction/getAll";
@@ -1768,6 +1790,7 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
+        nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_ALL_LEAGUES, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
     }    
 
