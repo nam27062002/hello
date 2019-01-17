@@ -4,5 +4,5 @@
 // Project-level suppressions either have no target or are given 
 // a specific target and scoped to a namespace, type, member, etc.
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "XS0001:Find APIs marked as TODO in Mono", Justification = "<Pending>", Scope = "type", Target = "~T:UIUtils")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "XS0001:Find APIs marked as TODO in Mono", Justification = "Harmless warning. See https://stackoverflow.com/questions/47113537/unity-stringbuilder-mono-limitation")]
 
