@@ -182,13 +182,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
     /// Checks the interstitial ads.
     /// </summary>
     private void CheckInterstitialAds() {
-        if ( FeatureSettingsManager.AreAdsEnabled && GameAds.instance.IsValidUserForInterstitials() ) {
-            if ( GameAds.instance.GetRunsToInterstitial() <= 0 ) {
-                // Lets be loading friendly
-                StartCoroutine( LaunchInterstitial() );
-            } else {
-                GameAds.instance.ReduceRunsToInterstitial();
-            }
+        if ( GameAds.instance.IsValidUserForInterstitials() ) {
+            StartCoroutine( LaunchInterstitial() );
         }
     }
 
@@ -200,8 +195,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
     private void InterstitialCallback( bool rewardGiven )
     {
-        if ( rewardGiven ) {
-            GameAds.instance.ResetRunsToInterstitial();
+        if ( rewardGiven )
+        {
+            GameAds.instance.ResetIntersitialCounter();
         }
     }
 

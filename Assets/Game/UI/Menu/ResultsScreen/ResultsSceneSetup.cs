@@ -164,7 +164,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 		} else {
 			m_dragonSlot.LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
 		}
-		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS);
 		m_dragonSlot.dragonInstance.DisableMovesOnResults();
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
