@@ -176,8 +176,27 @@ public class LeaguesRewardScreen : IRewardScreen {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Intro anim finished.
+    /// To be connected in the UI.
+    /// </summary>
+    public override void OnIntroAnimFinished() {
+        // Change logic state
+        m_state = State.IDLE;
+    }
 
+    public void OnCollectRewardsButton() {
+        // Ignore if we're still animating some step (prevent spamming)
+        if (m_state == State.ANIMATING) return;
+
+        // Go to leagues Reward Screen
+        UsersManager.currentUser.PushReward(m_season.reward);
+        m_season.RequestFinalize();
+
+        // Next step!
+        AdvanceStep();
+    }
 }

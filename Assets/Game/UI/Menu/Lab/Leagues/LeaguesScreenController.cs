@@ -27,8 +27,7 @@ public class LeaguesScreenController : MonoBehaviour {
 		WAITING_NEW_SEASON,
 		ACTIVE_SEASON,
 		LOADING,
-		REWARDS_RETRY,		// [AOC] Check if needed!
-        REWARDS_READY,
+		REWARDS_RETRY,
 
         COUNT
 	};
@@ -191,7 +190,8 @@ public class LeaguesScreenController : MonoBehaviour {
                             targetPanel = Panel.LOADING;
                         break;
                         case HDLiveData.State.VALID:
-                            targetPanel = Panel.REWARDS_READY;
+                            InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
+                            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
                         break;
                         case HDLiveData.State.ERROR:
                             targetPanel = Panel.REWARDS_RETRY;
@@ -293,11 +293,4 @@ public class LeaguesScreenController : MonoBehaviour {
 	public void OnRetryRewardsButton() {
         m_season.RequestMyRewards();
 	}
-
-    public void OnCollectRewardsButton() {
-        //Go to leagues Reward Screen
-        UsersManager.currentUser.PushReward(m_season.reward);
-        m_season.RequestFinalize();
-        Refresh();
-    }
 }
