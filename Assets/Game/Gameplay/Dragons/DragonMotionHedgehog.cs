@@ -67,6 +67,11 @@ public class DragonMotionHedgehog : DragonMotion {
 				{
 					Vector3 impulse = GameConstants.Vector3.zero;
 					m_controls.GetImpulse(1, ref impulse);
+                    if ( m_dragon.IsDrunk() )
+                    {
+                        impulse.x = -impulse.x;
+                    }
+        
 					if ( impulse != GameConstants.Vector3.zero )
 						m_direction = impulse;
 				}
