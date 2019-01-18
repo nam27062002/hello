@@ -209,6 +209,12 @@ public class HDSeasonData {
             // parse Json
             m_rewardIndex = responseJson["index"].AsInt;
 
+            if (responseJson.ContainsKey("nextLeague")) {
+                SetNextLeague(responseJson["nextLeague"]["sku"]);
+            } else {
+                FindNextLeague();
+            }
+
             rewardDataState = HDLiveData.State.VALID;
         } else {
             m_rewardIndex = -1;
@@ -218,6 +224,23 @@ public class HDSeasonData {
         rewardDataError = outErr;
     }
 
+    private void SetNextLeague(string _sku) {
+        HDLeagueController leagues = HDLiveDataManager.league;
+        int leaguesCount = leagues.leaguesCount;
+
+        for (int i = 0; i < leaguesCount; ++i) {
+            HDLeagueData league = leagues.GetLeagueData(i);
+
+            if (league.sku.Equals(_sku)) {
+                nextLeague = league;
+                break;
+            }
+        }
+    }
+
+    private void FindNextLeague() {
+
+    }
 
 
     //---[Finalize my Season]---------------------------------------------------
