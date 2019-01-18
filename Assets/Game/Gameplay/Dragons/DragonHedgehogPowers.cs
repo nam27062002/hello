@@ -21,9 +21,10 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     [Header("Level 3 Spikes")]
     public float m_shootingRatio = 0.1f;
     protected float m_shootingTimer = 0;
-    
-    
+
+
     [Header("Visual Settings")]
+    public string m_disguiseOnLevelUp = "dragon_hedgehog_1";
     public GameObject m_spikesLvl1;
     public GameObject m_spikesLvl2;
     
@@ -49,6 +50,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
 	// Use this for initialization
 	void Start () {
+    
 		m_circle = GetComponent<CircleArea2D>();
 		m_originalRadius = m_circle.radius;
 		m_player = InstanceManager.player;
@@ -66,14 +68,17 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
         
-        m_spikesLvl1.SetActive( m_powerLevel > 0 );
-        m_spikesLvl2.SetActive( m_powerLevel > 1 );
+        m_spikesLvl1.SetActive( m_powerLevel > 1 );
+        m_spikesLvl2.SetActive( m_powerLevel > 2 );
         
-        
-        if ( m_powerLevel >= 2 )
+        if ( m_powerLevel >= 1 )
         {
-            // Create pool of spikes!
-            CreatePool();
+            GetComponentInParent<DragonEquip>().EquipDisguise( m_disguiseOnLevelUp );
+            if ( m_powerLevel >= 2 )
+            {
+                // Create pool of spikes!
+                CreatePool();
+            }
         }
 
 	}
@@ -142,7 +147,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 m_healthBehaviour.AddDamageIgnore( DamageType.EXPLOSION );
                 if ( m_powerLevel >= 1 )
                     m_healthBehaviour.AddDamageIgnore( DamageType.MINE );
-                
+
+                m_shootingTimer = 0.1f;
                 // Play start particle
             }
             
