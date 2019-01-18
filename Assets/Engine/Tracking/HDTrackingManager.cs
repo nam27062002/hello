@@ -468,7 +468,9 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
-    public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+    /// <param name="offerName">Unique offer name.</param>
+    /// <param name="offerType">Offer type: progression, pushed, rotational.</param>
+    public virtual void Notify_OfferShown(bool onDemand, string itemID, string offerName, string offerType) {}
 
     public virtual void Notify_EggOpened() {}
 

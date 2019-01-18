@@ -516,7 +516,12 @@
 		"custom.player.specialoffer": {
             "Parameters": [
 				{"specialOfferAction": {"Status": "OK"}},
-				{"itemID": {"Status": "OK"}}
+				{"itemID": {"Status": "OK"}},
+				{"offerName": {"Status": "OK"}},
+				{"offerType": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},
+				{"softCurrency": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -1358,6 +1363,10 @@
         "Type": "INT:4",
         "Values": []
       },
+	  "softCurrency": {
+        "Type": "INT:4",
+        "Values": []
+      },	  	  
 	  "hardCurrency": {
         "Type": "INT:4",
         "Values": []
@@ -1397,6 +1406,14 @@
 	  "unlockType": {
 		"Type": "STRING:15",
 		"Values": []
-      }
+      },
+	  "offerName": {
+		"Type": "STRING:30",
+		"Values": []
+      },
+	  "offerType": {
+		"Type": "STRING:15",
+		"Values": []
+      }	  
     }
 }

@@ -141,6 +141,8 @@ public class HDCustomizerManager
     /// </summary>
     private long m_currentExperimentCode = -1;
 
+    private ApiExperiment m_currentExperiment = null;
+
     /// <summary>
     /// To force an apply the api stores a new customizer
     /// </summary>
@@ -276,12 +278,12 @@ public class HDCustomizerManager
                         if (CustomizerManager.SharedInstance.ApplyCustomiser())
                         {
                             m_hasBeenApplied = true;
-                            ApiExperiment experiment = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
-                            if (experiment != null)
+                            m_currentExperiment  = CustomizerManager.SharedInstance.GetFirstValidExperiment(customiser);
+                            if (m_currentExperiment != null)
                             {
-                                Log("New experiment applied: name = " + experiment.GetName() + " groupName = " + experiment.GetGroupName(), true);
-                                HDTrackingManager.Instance.Notify_ExperimentApplied(experiment.GetName(), experiment.GetGroupName());
-                                m_currentExperimentCode = experiment.GetCode();
+                                Log("New experiment applied: name = " + m_currentExperiment.GetName() + " groupName = " + m_currentExperiment.GetGroupName(), true);
+                                HDTrackingManager.Instance.Notify_ExperimentApplied(m_currentExperiment.GetName(), m_currentExperiment.GetGroupName());
+                                m_currentExperimentCode = m_currentExperiment.GetCode();
                             }
                             
                         }
@@ -326,9 +328,31 @@ public class HDCustomizerManager
         CustomizerManager.SharedInstance.ResetContentToOriginalValues();
         m_hasBeenApplied = false;
         m_currentExperimentCode = -1;
+        m_currentExperiment = null;
         // if ( trackRemove ) Tell tracking there is no experiment
         // Remove Experiment Code m_experimentCode = "";
-        
+
+    }
+
+    public string GetExperimentNameForDef(DefinitionNode def)
+    {
+        string returnValue = null;
+        if (def != null)
+        {
+            ApiExperiment experiment = GetExperimentByCode(def.customizationCode);
+            if (experiment != null)
+            {
+                returnValue = experiment.GetName();
+            }
+        }
+
+        return returnValue;
+    }
+
+    public ApiExperiment GetExperimentByCode(long code)
+    {
+        // So far only the current experiment can be returned
+        return (code == m_currentExperimentCode) ? m_currentExperiment : null;
     }
 
 	public bool IsCustomiserPopupAvailable()
