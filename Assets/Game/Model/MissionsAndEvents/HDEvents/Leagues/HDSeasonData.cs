@@ -104,11 +104,11 @@ public class HDSeasonData {
         if (timeToStart.TotalSeconds > 0f) {
             state = State.TEASING;
         } else {
-            if (timeToEnd.TotalSeconds < 0f) {
+            if (timeToEnd.TotalSeconds <= 0f) {
                 if (state == State.REWARDS_COLLECTED)
                     state = State.WAITING_NEW_SEASON;
             } else {
-                if (timeToClose.TotalSeconds < 0f) {
+                if (timeToClose.TotalSeconds <= 0f) {
                     if (state < State.JOINED)
                         state = State.WAITING_NEW_SEASON;
                     else if (state < State.PENDING_REWARDS)
@@ -254,10 +254,11 @@ public class HDSeasonData {
 
     //---[Query Methods]--------------------------------------------------------
 
-    public TimeSpan timeToStart { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToClose { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-    public TimeSpan timeToEnd   { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
-	public TimeSpan duration { get { return m_closeDate - m_startDate; }}
+    public TimeSpan timeToStart             { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToClose             { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+	public TimeSpan duration                { get { return m_closeDate - m_startDate; } }
+    public TimeSpan durationWaitNewSeason   { get { return m_endDate - m_closeDate; } }
 
     public Metagame.Reward reward {
         get {

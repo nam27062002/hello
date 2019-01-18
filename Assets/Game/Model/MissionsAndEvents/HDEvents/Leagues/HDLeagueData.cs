@@ -58,12 +58,17 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
         liveDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
+    public void WaitForData() {
+        liveDataState = HDLiveData.State.WAITING_RESPONSE;
+    }
+
     public void LoadData(SimpleJSON.JSONNode _data) {
-        if (m_sku.Equals(_data["sku"])) {
+        if (_data != null && m_sku.Equals(_data["sku"])) {
             m_demoteScale = _data["demoteScale"].AsFloat;
             m_promoteScale = _data["promoteScale"].AsFloat;
 
-			if(_data.ContainsKey("rewards")) {
+            m_rewards.Clear();
+            if (_data.ContainsKey("rewards")) {
 				SimpleJSON.JSONArray arr = _data["rewards"].AsArray;
 				for(int i = 0; i < arr.Count; i++) {
 					HDLiveData.RankedReward r = new HDLiveData.RankedReward();

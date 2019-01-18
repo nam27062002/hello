@@ -86,9 +86,36 @@ public class HDLeagueController : HDLiveDataController {
                 m_season.nextLeague = leagueData;
             }
         }
-    }   
+    }
 
     public override void OnLiveDataResponse() {
         m_season.RequestData(true);
+
+        //Request all leagues
+        for (int i = 0; i < m_leagues.Count; ++i) {
+
+            m_leagues[i].WaitForData();
+        }
+
+        GameServerManager.SharedInstance.HDLeagues_GetAllLeagues(OnRequestAllLeaguesData);
+    }
+
+    private void OnRequestAllLeaguesData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
+        HDLiveDataManager.ResponseLog("[Leagues] All leagues Data", _error, _response);
+
+        HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+        SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+
+        if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
+            SimpleJSON.JSONArray data = responseJson["leagues"].AsArray;
+            for (int i = 0; i < data.Count; ++i) {
+                int order = data[i]["order"].AsInt;
+                m_leagues[order].LoadData(data[i]);
+            }
+        } else {
+            for (int i = 0; i < m_leagues.Count; ++i) {
+                m_leagues[i].LoadData(null);
+            }
+        }
     }
 }

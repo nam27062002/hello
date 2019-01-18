@@ -380,7 +380,7 @@ public class GameServerManager {
     /// <param name="_callback">Callback.</param>
     public virtual void HDEvents_GetMyLiveData(ServerCallback _callback) { }
     public virtual void HDEvents_GetMyEventOfType(int _typeToUpdate, ServerCallback _callback) { }
-
+    public virtual void HDLiveData_GetMyLeagues(ServerCallback _callback) { }
 
 
     //-----------------
@@ -419,6 +419,8 @@ public class GameServerManager {
     // HD Leagues 
     //-----------------
     public virtual void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) { }
+    public virtual void HDLeagues_GetLeague(string _sku, ServerCallback _callback) { }
+    public virtual void HDLeagues_GetAllLeagues(ServerCallback _callback) { }
     public virtual void HDLeagues_GetLeaderboard(ServerCallback _callback) { }
 
     public virtual void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, ServerCallback _callback) { }

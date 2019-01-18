@@ -44,6 +44,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	// Internal references
 	private HDSeasonData m_season = null;
 	private List<AnimatedRankedRewardView> m_rewardViews = new List<AnimatedRankedRewardView>();
+    private bool m_refreshRewardView = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -71,8 +72,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 				scrollItems.Add(item);
 			}
 
-			// Reverse order so we go from worst to best league
-			scrollItems.Reverse();
+			// Reverse order so we go from worst to best league			
 			m_leagueSelector.Init(scrollItems);
 
 			// Setup Refresh callback
@@ -122,7 +122,14 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
 		}
-	}
+
+        if (m_refreshRewardView) {
+            HDLeagueData leagueData = m_leagueSelector.selectedItem.leagueData;
+            if (leagueData.liveDataState == HDLiveData.State.VALID) {
+                RefreshRewardsInfo(leagueData);
+            }
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDES														  //
@@ -168,51 +175,68 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 			m_leagueNameText.Localize(leagueData.tidName);
 		}
 
-		// Rewards
-		if(m_rewardsContainer != null) {
-			// Reuse existing reward views when possible
-			AnimatedRankedRewardView rewardView = null;
-			for(int i = 0; i < leagueData.rewards.Count; ++i) {
-				// Reuse a view if possible, otherwise instantiate a new one
-				if(i < m_rewardViews.Count) {
-					rewardView = m_rewardViews[i];
-				} else {
-					GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
-					rewardView = newInstance.GetComponent<AnimatedRankedRewardView>();
-					m_rewardViews.Add(rewardView);
-				}
+        // Current league marker
+        if (m_currentLeagueMarker != null) {
+            m_currentLeagueMarker.Set(leagueData == m_season.currentLeague);
+        }
 
-				// Initialize with reward data
-				rewardView.InitFromReward(leagueData.rewards[i]);
+        if (leagueData.liveDataState == HDLiveData.State.VALID) {
+            RefreshRewardsInfo(leagueData);
+        } else {
+            for (int i = 0; i < m_rewardViews.Count; ++i) {
+                m_rewardViews[i].gameObject.SetActive(false);
+            }
+            m_refreshRewardView = true;
+        }
+    }
 
-				// Make sure it's active
-				rewardView.gameObject.SetActive(true);
+    private void RefreshRewardsInfo(HDLeagueData _leagueData) {
+        // Rewards
+        if (m_rewardsContainer != null) {
+            // Reuse existing reward views when possible
+            AnimatedRankedRewardView rewardView = null;
+            for (int i = 0; i < _leagueData.rewards.Count; ++i) {
+                // Reuse a view if possible, otherwise instantiate a new one
+                if (i < m_rewardViews.Count) {
+                    rewardView = m_rewardViews[i];
+                } else {
+                    GameObject newInstance = Instantiate<GameObject>(m_rewardPrefab, m_rewardsContainer, false);
+                    rewardView = newInstance.GetComponent<AnimatedRankedRewardView>();
+                    m_rewardViews.Add(rewardView);
+                }
 
-				// Add a short delay to the animation (so rewards appear sequentially) and restart it
-				rewardView.animator.tweenDelay = 0.1f * i;
-				rewardView.animator.RestartShow();
-			}
+                if (_leagueData.liveDataState == HDLiveData.State.VALID) {
+                    // Initialize with reward data
+                    rewardView.InitFromReward(_leagueData.rewards[i]);
 
-			// Hide non-used views
-			for(int i = leagueData.rewards.Count; i < m_rewardViews.Count; ++i) {
-				m_rewardViews[i].gameObject.SetActive(false);
-			}
-		}
+                    // Make sure it's active
+                    rewardView.gameObject.SetActive(true);
 
-		// Current league marker
-		if(m_currentLeagueMarker != null) {
-			m_currentLeagueMarker.Set(leagueData == m_season.currentLeague);
-		}
-	}
+                    // Add a short delay to the animation (so rewards appear sequentially) and restart it
+                    rewardView.animator.tweenDelay = 0.1f * i;
+                    rewardView.animator.RestartShow();
+                } else {
+                    rewardView.gameObject.SetActive(false);
+                }
+            }
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// We have new data concerning the event.
-	/// </summary>
-	/// <param name="_requestType">Request type.</param>
-	private void OnEventDataUpdated() {
+            // Hide non-used views
+            for (int i = _leagueData.rewards.Count; i < m_rewardViews.Count; ++i) {
+                m_rewardViews[i].gameObject.SetActive(false);
+            }
+        }
+
+        m_refreshRewardView = false;
+    }
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// We have new data concerning the event.
+    /// </summary>
+    /// <param name="_requestType">Request type.</param>
+    private void OnEventDataUpdated() {
 		// Nothing to do if disabled
 		if(!isActiveAndEnabled) return;
 
