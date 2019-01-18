@@ -12,7 +12,7 @@ namespace HDLiveData {
     }
 
     [Serializable]
-	public class Reward : IComparable {
+	public class Reward : IComparableWithOperators<Reward> {
         //---[Attributes]-------------------------------------------------------
         public Metagame.Reward reward;
         public long target;
@@ -42,11 +42,18 @@ namespace HDLiveData {
 		/// <summary>
 		/// IComparable interface implementation.
 		/// </summary>
-		public int CompareTo(object _other) {
+		protected override int CompareToImpl(Reward _other) {
 			if(_other == null) return 1;	// If other is not a valid object reference, this instance is greater.
-			return this.target.CompareTo(((Reward)_other).target);
+			return this.target.CompareTo(_other.target);
 		}
-    }
+
+		/// <summary>
+		/// IComparable interface implementation.
+		/// </summary>
+		protected override int GetHashCodeImpl() {
+			return this.target.GetHashCode();
+		}
+	}
 
 	[Serializable]
 	public class RankedReward : Reward {

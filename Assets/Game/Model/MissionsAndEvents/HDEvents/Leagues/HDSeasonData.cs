@@ -14,7 +14,12 @@ public class HDSeasonData {
         WAITING_NEW_SEASON  //(11)
     }
 
-
+	public enum Result {
+		UNKNOWN,
+		PROMOTION,
+		DEMOTION,
+		NO_CHANGE
+	}
 
     //---[Basic Data]-----------------------------------------------------------
 
@@ -291,6 +296,22 @@ public class HDSeasonData {
             return r;
         }
     }
+
+	public Result result {
+		get {
+			if(nextLeague == null) {
+				return Result.UNKNOWN;
+			} else {
+				if(nextLeague > currentLeague) {
+					return Result.PROMOTION;
+				} else if(nextLeague < currentLeague) {
+					return Result.DEMOTION;
+				} else {
+					return Result.NO_CHANGE;
+				}
+			}
+		}
+	}
 
 	public bool IsRunning() {
 		return state == State.JOINED || state == State.NOT_JOINED;
