@@ -191,7 +191,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 checkSmah = m_motion.state == DragonMotion.State.Extra_2 || m_fire;
             }
             
-            if ( m_motion.state == DragonMotion.State.Extra_2 || (m_fire && !m_isUsingCircleFire) )
+            if ( checkSmah )
             {
     			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
     			for (int i = 0; i < m_numCheckEntities; i++) 
