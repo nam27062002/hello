@@ -15,7 +15,7 @@ public class HDSeasonData {
     }
 
 	public enum Result {
-		UNKNOWN,
+		UNKNOWN = 0,
 		PROMOTION,
 		DEMOTION,
 		NO_CHANGE

@@ -128,11 +128,11 @@ public class LeaguesRewardScreen : IRewardScreen {
 		switch(m_step) {
 			case (int)Step.INTRO: {
 				return (int)CustomStep.SEASON_RESULT;
-			} break;
+			} 
 
 			case (int)CustomStep.SEASON_RESULT: {
 				return (int)Step.REWARD;
-			} break;
+			} 
 		}
 
 		// For the rest of steps, let parent decide

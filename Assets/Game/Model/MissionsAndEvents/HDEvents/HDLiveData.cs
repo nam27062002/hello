@@ -76,16 +76,16 @@ namespace HDLiveData {
 			ranks.max = Math.Max(0L, target - 1L);    // 0-99
 		}
 
-		/// <summary>
-		/// Initialize min rank from previous ranked reward in the list.
-		// Starts where previous rank ends, but never bigger than this reward's rank end.
-		/// </summary>
-		/// <param name="_previousReward">Previous reward.</param>
-		public void InitMinRankFromPreviousReward(RankedReward _previousReward) {
-			if(_previousReward == null) ranks.min = 0;
-			ranks.min = Math.Min(_previousReward.ranks.max + 1, ranks.max); // Starts where previous rank ends, but never bigger than our rank end
-		}
-	}
+        /// <summary>
+        /// Initialize min rank from previous ranked reward in the list.
+        // Starts where previous rank ends, but never bigger than this reward's rank end.
+        /// </summary>
+        /// <param name="_previousReward">Previous reward.</param>
+        public void InitMinRankFromPreviousReward(RankedReward _previousReward) {
+            if (_previousReward == null) ranks.min = 0;
+            ranks.min = Math.Min(_previousReward.ranks.max + 1, ranks.max); // Starts where previous rank ends, but never bigger than our rank end
+        }
+    }
 
     [Serializable]
     public class DragonBuild {

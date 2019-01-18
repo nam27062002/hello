@@ -76,9 +76,6 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 					m_rewards.Add(r);
 				}
 
-				// Since we can't assume rewards are received sorted, do it now
-				m_rewards.Sort();   // Will be sorted by target percentage
-
 				// Compute min rank based on previous reward
 				for(int i = 1; i < m_rewards.Count; ++i) {  // Skip first reward (min is always 0)
 					m_rewards[i].InitMinRankFromPreviousReward(m_rewards[i - 1]);
@@ -93,14 +90,14 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
         }
     }
 
-	//---[IComparable Implementation]--------------------------------------------------------
+	//---[IComparable Implementation]-------------------------------------------
 	/// <summary>
 	/// Compare this instance with another one.
 	/// </summary>
 	/// <returns>The result of the comparison (-1, 0, 1).</returns>
 	/// <param name="_other">Instance to be compared to.</param>
 	protected override int CompareToImpl(HDLeagueData _other) {
-		return this.m_order.CompareTo(_other);
+		return this.m_order.CompareTo(_other.m_order);
 	}
 
 	/// <summary>
