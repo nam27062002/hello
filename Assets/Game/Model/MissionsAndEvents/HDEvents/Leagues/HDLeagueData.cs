@@ -18,9 +18,6 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 
     //---[Extended Data]--------------------------------------------------------
 
-    private float m_demoteScale;
-    private float m_promoteScale;
-
 	private List<HDLiveData.RankedReward> m_rewards;
     private HDLeagueLeaderboard m_leaderboard;
 
@@ -48,9 +45,6 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
     }
 
     public void Clean() {
-        m_demoteScale = m_def.GetAsFloat("demoteScale");
-        m_promoteScale = m_def.GetAsFloat("promoteScale");
-
 		m_rewards = new List<HDLiveData.RankedReward>();
         m_leaderboard.Clean();
 
@@ -64,9 +58,6 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 
     public void LoadData(SimpleJSON.JSONNode _data) {
         if (_data != null && m_sku.Equals(_data["sku"])) {
-            m_demoteScale = _data["demoteScale"].AsFloat;
-            m_promoteScale = _data["promoteScale"].AsFloat;
-
             m_rewards.Clear();
             if (_data.ContainsKey("rewards")) {
 				SimpleJSON.JSONArray arr = _data["rewards"].AsArray;
@@ -90,6 +81,7 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
         }
     }
 
+
 	//---[IComparable Implementation]-------------------------------------------
 	/// <summary>
 	/// Compare this instance with another one.
@@ -108,15 +100,13 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 		return this.m_order.GetHashCode();
 	}
 
+
     //---[Query Methods]--------------------------------------------------------
 
 	public string tidName       { get { return m_tidName; } }
     public string sku           { get { return m_sku; } }
     public string icon          { get { return m_icon; } }
 	public string trophyPrefab  { get { return m_trophyPrefab; } }
-
-    public float demoteScale    { get { return m_demoteScale; } }
-    public float promoteScale   { get { return m_promoteScale; } }
 
     public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 

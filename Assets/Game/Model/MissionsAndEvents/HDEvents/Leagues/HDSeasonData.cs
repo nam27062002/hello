@@ -42,6 +42,9 @@ public class HDSeasonData {
     public HDLeagueData currentLeague { get; set; }		// Can be null
     public HDLeagueData nextLeague { get; set; }		// Can be null
 
+    public RangeInt promoteRange { get; set; }
+    public RangeInt demoteRange { get; set; }
+
     private int m_rewardIndex;
 
     public State state { get; private set; }
@@ -155,6 +158,18 @@ public class HDSeasonData {
 
     private void LoadData(SimpleJSON.JSONNode _data) {
         LoadDates(_data);
+
+        promoteRange = new RangeInt();
+        if (_data.ContainsKey("promoteRange")) {
+            promoteRange.min = _data["promoteRange"]["lower"].AsInt;
+            promoteRange.max = _data["promoteRange"]["upper"].AsInt;
+        }
+
+        demoteRange = new RangeInt();
+        if (_data.ContainsKey("demoteRange")) {
+            demoteRange.min = _data["demoteRange"]["lower"].AsInt;
+            demoteRange.max = _data["demoteRange"]["upper"].AsInt;
+        }
 
         currentLeague.LoadData(_data["league"]);
 

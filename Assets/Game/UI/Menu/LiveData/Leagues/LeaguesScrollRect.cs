@@ -25,9 +25,10 @@ public class LeaguesScrollRect : OptimizedScrollRect<LeaguesLeaderboardPill, Lea
 
 		m_playerPill = GameObject.Instantiate<GameObject>(_pillPrefab, content, false).GetComponent<LeaguesLeaderboardPill>();
 		m_playerPill.InitWithData(_data);
-		m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
+        m_playerPill.GetComponent<Button>().onClick.AddListener(OnPlayerPillClick);
+        if (m_tooltip != null) m_playerPill.SetupTooltip(m_tooltip);
 
-		m_playerIndex = _pillIndex;
+        m_playerIndex = _pillIndex;
 
 		RectTransform rt = m_playerPill.gameObject.GetComponent<RectTransform>();
 		m_playerPillSize = rt.sizeDelta;
