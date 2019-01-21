@@ -34,6 +34,7 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 
 	[SerializeField] private GameObject m_loadingIcon = null;
 	[SerializeField] private GameObject m_scrollGroup = null;
+	[SerializeField] private LeaguesPlayerInfoTooltip m_tooltip = null;
 	[Space]
 	[Comment(
 		"0: Normal Player Pill\n" +
@@ -48,12 +49,22 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 
 	// Snap player pill to scrollList viewport
 	private RectTransform m_playerPillSlot = null;
-	private Bounds m_playerPillDesiredBounds;	// Original rect where the player pill should be (scrollList's content local coords)
+	private Bounds m_playerPillDesiredBounds;   // Original rect where the player pill should be (scrollList's content local coords)
 
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialization.
+	/// </summary>
+	private void Awake() {
+		// Setup the tooltip in the scroll list
+		if(m_scrollList != null && m_tooltip != null) {
+			m_scrollList.SetupTooltip(m_tooltip);
+		}
+	}
+
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
@@ -137,7 +148,6 @@ public class LeaguesLeaderboardView : MonoBehaviour {
 
             // Keep track of player pill index
             int playerPillIdx = playerRank;
-
 
             // Initialize the scroll list
             m_scrollList.Setup(m_pillPrefabs, items);

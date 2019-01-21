@@ -231,7 +231,7 @@ public class LeaguesScreenController : MonoBehaviour {
 		}
 
 		// Toggle dark background
-		m_darkScreen.Set(m_panels[(int)_panel].darkBackground, _animate);
+		m_darkScreen.ForceSet(m_panels[(int)_panel].darkBackground, false);
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
 		// [AOC] TODO!!

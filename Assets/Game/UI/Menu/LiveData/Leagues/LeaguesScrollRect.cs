@@ -2,10 +2,17 @@
 using UnityEngine.UI;
 
 public class LeaguesScrollRect : OptimizedScrollRect<LeaguesLeaderboardPill, LeaguesLeaderboardPillData> {
+	// Internal References
+	private LeaguesPlayerInfoTooltip m_tooltip = null;
 
+	// Internal Logic
 	private int m_playerIndex;
 	private LeaguesLeaderboardPill m_playerPill;
 	private Vector2 m_playerPillSize;
+
+	public void SetupTooltip(LeaguesPlayerInfoTooltip _tooltip) {
+		m_tooltip = _tooltip;
+	}
 
 	public void SetupPlayerPill(GameObject _pillPrefab, int _pillIndex, LeaguesLeaderboardPillData _data) {
 		if (m_playerPill != null) {
@@ -50,8 +57,12 @@ public class LeaguesScrollRect : OptimizedScrollRect<LeaguesLeaderboardPill, Lea
 	}
 
 	protected override void OnPillCreated(LeaguesLeaderboardPill _pill) {
+		Debug.Log(Colors.red.Tag("OnPillCreated " + _pill.pillType));
 		// Player pill should be the last one in the hierarchy (so it is drawed on top)
 		if(m_playerPill != null) m_playerPill.transform.SetAsLastSibling();
+
+		// Setup tooltip trigger
+		if(m_tooltip != null) _pill.SetupTooltip(m_tooltip);
 	}
 
 	private void OnPlayerPillClick() {

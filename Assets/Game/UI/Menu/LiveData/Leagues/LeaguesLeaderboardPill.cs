@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -43,7 +44,7 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
     // Exposed members
     [Space]
     [SerializeField] private TextMeshProUGUI m_rankText = null;
-    [SerializeField] private TextMeshProUGUI m_nameText = null;
+	[SerializeField] private Text m_nameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
     [SerializeField] private TextMeshProUGUI m_scoreText = null;
 
     [Space]
@@ -61,10 +62,14 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
     [SerializeField] private Image m_dragonIcon = null;
     [SerializeField] private TextMeshProUGUI m_levelText = null;
 
+	[Space]
+	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
 
+	// Internal
+	private LeaguesLeaderboardPillData m_lastUsedData = null;
 
     //------------------------------------------------------------------------//
-    // OTHER METHODS														  //
+	// ScrollRectItem IMPLEMENTATION										  //
     //------------------------------------------------------------------------//
     /// <summary>
     /// Initialize the pill with the given user data.
@@ -79,16 +84,21 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
             m_rankText.text = "?";
 		}
 
-        m_nameText.text = _data.record.name;   // [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
-        m_scoreText.text = StringUtils.FormatNumber(_data.record.score);
+		if(m_nameText != null) {
+			m_nameText.text = _data.record.name;
+		}
 
-        switch (_data.area) {
-            case LeagueLeaderboardAreas.Promotion:  m_pillBGImage.color = m_promotedColor; break;
-            case LeagueLeaderboardAreas.Default:    m_pillBGImage.color = m_defaultColor; break;
-            case LeagueLeaderboardAreas.Demotion:   m_pillBGImage.color = m_demotedColor; break;
-        }
+		if(m_scoreText != null) {
+			m_scoreText.text = StringUtils.FormatNumber(_data.record.score);
+		}
 
-
+		if(m_pillBGImage != null) {
+			switch(_data.area) {
+				case LeagueLeaderboardAreas.Promotion: m_pillBGImage.color = m_promotedColor; break;
+				case LeagueLeaderboardAreas.Default: m_pillBGImage.color = m_defaultColor; break;
+				case LeagueLeaderboardAreas.Demotion: m_pillBGImage.color = m_demotedColor; break;
+			}
+		}
 
         // Reward
         if (_data.reward != null) {
@@ -96,21 +106,62 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
             m_rewardText.text = StringUtils.FormatNumber(_data.reward.amount);
         }
 
-
         // Build
         DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _data.record.build.skin);
-        string icon = "icon_disguise_0";
+		string icon = IDragonData.DEFAULT_SKIN_ICON;
         if (skinDef != null) {
             icon = skinDef.Get("icon");
         }
         m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _data.record.build.dragon + "/" + icon);
 
         m_levelText.text = StringUtils.FormatNumber(_data.record.build.level);
+
+		// Store last used data
+		m_lastUsedData = _data;
     }
 
-	public override void Animate(int _index) {}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_index"></param>
+	public override void Animate(int _index) {
+		
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Setup a tooltip to be triggered by this pill's tooltip trigger.
+	/// </summary>
+	/// <param name="_tooltip">Tooltip to be setup.</param>
+	public void SetupTooltip(LeaguesPlayerInfoTooltip _tooltip) {
+		// Ignore if tooltip trigger not defined
+		if(m_tooltipTrigger == null) return;
+		
+		// Link the given tooltip to the trigger
+		m_tooltipTrigger.tooltip = _tooltip;
+
+		// Listen to tooltip's open event
+		m_tooltipTrigger.OnTooltipOpen.AddListener(OnTooltipOpen);
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A tooltip is about to be opened.
+	/// </summary>
+	/// <param name="_tooltip">Tooltip that will be opened.</param>
+	/// <param name="_trigger">The one who triggered the tooltip.</param>
+	private void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+		// Ignore if it comes from another trigger
+		if(_trigger != m_tooltipTrigger) return;
+
+		// Ignore if we have no data to display
+		if(m_lastUsedData == null) return;
+
+		// Initialize tooltip with this pill's player data
+		(_tooltip as LeaguesPlayerInfoTooltip).Init(m_lastUsedData.record);
+	}
 }

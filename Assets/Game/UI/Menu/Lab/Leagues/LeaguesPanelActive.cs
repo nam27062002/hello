@@ -71,8 +71,6 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 				LeagueSelectorItem item = new LeagueSelectorItem(leaguesManager.GetLeagueData(i));
 				scrollItems.Add(item);
 			}
-
-			// Reverse order so we go from worst to best league			
 			m_leagueSelector.Init(scrollItems);
 
 			// Setup Refresh callback
