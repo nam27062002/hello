@@ -22,9 +22,10 @@ public class LeaguesScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float PERIODIC_UPDATE_INTERVAL = 0.25f;  // Seconds
+
 	public enum Panel {
 		OFFLINE,
-		WAITING_NEW_SEASON,
 		ACTIVE_SEASON,
 		LOADING,
 		REWARDS_RETRY,
@@ -71,6 +72,7 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
         Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
+        
     }
 
 	/// <summary>
@@ -84,54 +86,52 @@ public class LeaguesScreenController : MonoBehaviour {
     void UpdatePeriodic() {
         switch (m_season.state) {
             case HDSeasonData.State.TEASING: {
-                    if (m_season.timeToStart.TotalSeconds <= 0) {
-                        m_season.UpdateState();
-                        Refresh();
-                    }
+                if (m_season.timeToStart.TotalSeconds <= 0) {
+                    m_season.UpdateState();
+                    Refresh();
                 }
-                break;
+            } break;
 
             case HDSeasonData.State.NOT_JOINED:
             case HDSeasonData.State.JOINED: {
-                    if (m_season.timeToClose.TotalSeconds <= 0) {
-                        m_season.UpdateState();
-                        Refresh();
-                    } else if (m_activePanel != Panel.ACTIVE_SEASON) {
-                        Refresh();
-                    }
+                if (m_season.timeToClose.TotalSeconds <= 0) {
+                    m_season.UpdateState();
+                    Refresh();
+                } else if (m_activePanel != Panel.ACTIVE_SEASON) {
+                    Refresh();
                 }
-                break;
+            } break;
 
             case HDSeasonData.State.PENDING_REWARDS: {
-                    switch (m_activePanel) {
-                        case Panel.LOADING:
-                        if (m_season.rewardDataState == HDLiveData.State.VALID || m_season.rewardDataState == HDLiveData.State.ERROR) {
-                            Refresh();
-                        }
-                        break;
-
-                        case Panel.REWARDS_RETRY:
-                        if (m_season.rewardDataState == HDLiveData.State.WAITING_RESPONSE) {
-                            Refresh();
-                        }
-                        break;
-
-                        default:
+                switch (m_activePanel) {
+                    case Panel.LOADING:
+                    if (m_season.rewardDataState == HDLiveData.State.VALID || m_season.rewardDataState == HDLiveData.State.ERROR) {
                         Refresh();
-                        break;
-                    }
+                    } break;
+
+                    case Panel.REWARDS_RETRY:
+                    if (m_season.rewardDataState == HDLiveData.State.WAITING_RESPONSE) {
+                        Refresh();
+                    } break;
+
+					default: {
+                    	Refresh();
+					} break;
                 }
-                break;
+            } break;
 
             case HDSeasonData.State.WAITING_NEW_SEASON: {
-                    if (m_season.timeToEnd.TotalSeconds <= 0) {
-                        HDLiveDataManager.instance.ForceRequestLeagues();
-                        CancelInvoke();
-                    } else if (m_activePanel != Panel.WAITING_NEW_SEASON) {
-                        Refresh();
-                    }
+                if (m_season.timeToEnd.TotalSeconds <= 0) {
+                    HDLiveDataManager.instance.ForceRequestLeagues();
+                    CancelInvoke();
+                } else if (m_activePanel != Panel.ACTIVE_SEASON) {
+                    Refresh();
                 }
-                break;
+            } break;
+
+			case HDSeasonData.State.NONE: {
+				Refresh();	// Keep refreshing until season state is valid
+			} break;
         }
     }
 
@@ -143,8 +143,9 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// Select active panel based on current league/season state.
 	/// </summary>
 	public void Refresh() {
+		// Doing this for the cases where the periodic update has been canceled (i.e. WAITING_NEW_SEASON timer ended).
         CancelInvoke();
-        InvokeRepeating("UpdatePeriodic", 0f, 0.25f);
+		InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
 
         // Select active panel
         SelectPanel();
@@ -162,7 +163,7 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// </summary>
 	private void SelectPanel() {
 		// Select active panel based on season/league state
-		Panel targetPanel = Panel.WAITING_NEW_SEASON;
+		Panel targetPanel = Panel.LOADING;
 
 		// Check internet connectivity first
 		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
@@ -171,13 +172,11 @@ public class LeaguesScreenController : MonoBehaviour {
 			// Depends on season state
 			switch(m_season.state) {
 				case HDSeasonData.State.JOINED:
-				case HDSeasonData.State.NOT_JOINED: {
-					targetPanel = Panel.ACTIVE_SEASON;
-				} break;
-
+				case HDSeasonData.State.NOT_JOINED:
+				case HDSeasonData.State.TEASING:
 				case HDSeasonData.State.REWARDS_COLLECTED:
 				case HDSeasonData.State.WAITING_NEW_SEASON: {
-					targetPanel = Panel.WAITING_NEW_SEASON;
+					targetPanel = Panel.ACTIVE_SEASON;
 				} break;
 
 				case HDSeasonData.State.PENDING_REWARDS: {

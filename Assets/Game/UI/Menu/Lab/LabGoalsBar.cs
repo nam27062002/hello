@@ -99,7 +99,7 @@ public class LabGoalsBar : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh visible season button based on season state
-		bool seasonAvailable = m_season.state == HDSeasonData.State.JOINED || m_season.state == HDSeasonData.State.NOT_JOINED;
+		bool seasonAvailable = m_season.IsRunning();	// Joined or Not Joined
 
 		// Does it actually change?
 		bool dirty = false;
