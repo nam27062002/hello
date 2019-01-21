@@ -116,17 +116,14 @@ public class LeaguesLeaderboardView : MonoBehaviour {
         if (records.Count > 0) {
             List<ScrollRectItemData<LeaguesLeaderboardPillData>> items = new List<ScrollRectItemData<LeaguesLeaderboardPillData>>();
 
-            float promotionArea = Mathf.Max(1f, records.Count * m_league.promoteScale);
-            float demotionArea = records.Count - Mathf.Max(1f, records.Count * m_league.promoteScale);
-
             for (int i = 0; i < records.Count; ++i) {
                 LeaguesLeaderboardPillData playerPillData = new LeaguesLeaderboardPillData();
                 playerPillData.record = records[i];
                 playerPillData.reward = m_league.GetRewardByRank(i + 1);
 
-                if (i < promotionArea) {
+                if (i < m_season.promoteRange.max) {
                     playerPillData.area = LeagueLeaderboardAreas.Promotion;
-                } else if (i >= demotionArea) {
+                } else if (i >= m_season.demoteRange.min) {
                     playerPillData.area = LeagueLeaderboardAreas.Demotion;
                 } else {
                     playerPillData.area = LeagueLeaderboardAreas.Default;
