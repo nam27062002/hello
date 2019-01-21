@@ -1,8 +1,17 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class HDSeasonData {
-    //---[Classes and Enums]----------------------------------------------------
+	//---[Constants]------------------------------------------------------------
+	// Workaround to be able to define a timespan of the Teasing state. We will store
+	// in the local device the first date where we receive the data of a season together with 
+	// that season's End timestamp.
+	// Whenever we receive a season whose Start timestamp is bigger than the stored End timestamp,
+	// we will assume it's a different season than the one stored and will overwrite the
+	// SEASON_DATA_RECEIVED_TIMESTAMP var.
+	private const string DATA_RECEIVED_TIMESTAMP_KEY = "HDSeasonData.DATA_RECEIVED_TIMESTAMP";
+	private const string CACHED_END_TIMESTAMP_KEY = "HDSeasonData.CACHED_END_TIMESTAMP";
 
     public enum State {
         NONE = 0,
@@ -26,6 +35,9 @@ public class HDSeasonData {
     private DateTime m_startDate;
     private DateTime m_closeDate;
     private DateTime m_endDate;
+
+	private DateTime m_dataReceivedDate;
+	private DateTime m_cachedEndDate;
 
     public HDLeagueData currentLeague { get; set; }		// Can be null
     public HDLeagueData nextLeague { get; set; }		// Can be null
@@ -58,6 +70,8 @@ public class HDSeasonData {
         m_startDate = new DateTime(1970, 1, 1);
         m_closeDate = new DateTime(1970, 1, 1);
         m_endDate   = new DateTime(1970, 1, 1);
+		m_dataReceivedDate = new DateTime(1970, 1, 1);
+		m_cachedEndDate = new DateTime(1970, 1, 1);
 
         currentLeague = null;
         nextLeague = null;
@@ -155,6 +169,18 @@ public class HDSeasonData {
         m_startDate = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
         m_closeDate = TimeUtils.TimestampToDate(_data["closeTimestamp"].AsLong);
         m_endDate = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
+
+		// Update cached dates
+		m_dataReceivedDate = Prefs.GetDateTimePlayer(DATA_RECEIVED_TIMESTAMP_KEY, m_dataReceivedDate);
+		m_cachedEndDate = Prefs.GetDateTimePlayer(CACHED_END_TIMESTAMP_KEY, m_cachedEndDate);
+
+		// Is it a different season from the cached one?
+		if(m_cachedEndDate < m_startDate) {		// Season that occurred in the past
+			// It's a new season! Update cached vars
+			m_dataReceivedDate = GameServerManager.SharedInstance.GetEstimatedServerTime();
+			Prefs.SetDateTimePlayer(DATA_RECEIVED_TIMESTAMP_KEY, m_dataReceivedDate);
+			Prefs.SetDateTimePlayer(CACHED_END_TIMESTAMP_KEY, m_endDate);
+		}
 
         UpdateState();
     }
@@ -282,6 +308,7 @@ public class HDSeasonData {
     public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
 	public TimeSpan duration                { get { return m_closeDate - m_startDate; } }
     public TimeSpan durationWaitNewSeason   { get { return m_endDate - m_closeDate; } }
+	public TimeSpan durationTeasing			{ get { return m_startDate - m_dataReceivedDate; } }
 
     public Metagame.Reward reward {
         get {
