@@ -10,7 +10,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -18,33 +18,77 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 /// <summary>
 /// Panel for the leagues screen.
+/// Will be displayed when the season is in the following states:
+/// - Joined
+/// - Not Joined
 /// </summary>
 public class LeaguesPanelActive : LeaguesScreenPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const float PERIODIC_UPDATE_INTERVAL = 1f;	// Seconds
+
+	[Flags]
+	public enum Mode {
+		JOINED = 1 << 1,
+		NOT_JOINED = 1 << 2,
+		TEASING = 1 << 3
+	}
+
+	[Serializable]
+	public class ModeObject {
+		public GameObject target = null;
+		[EnumMask] public Mode showModes = (Mode)0;
+	}
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
-	[SerializeField] private bool m_updateLeagueState = false;
-	[Space]
-	[SerializeField] private Image m_leagueIcon = null;
-	[Space]
+	[SerializeField] private ModeObject[] m_modeObjects = null;
+
+	[Separator("JOINED")]
+	[SerializeField] private Image m_joinedLeagueIcon = null;
+	[SerializeField] private Localizer m_joinedLeagueNameText = null;
+
+	[Separator("NOT JOINED")]
+	[SerializeField] private Image m_notJoinedLeagueIcon = null;
+	[SerializeField] private Localizer m_notJoinedLeagueNameText = null;
+
+	[Separator("TEASING / WAITING")]
+	[SerializeField] private Localizer m_teasingLeagueNameText = null;
+	[SerializeField] private TextMeshProUGUI m_teasingTimerText = null;
+	[SerializeField] private Image m_teasingTimerBar = null;
+	[SerializeField] private Range m_teasingTimeBarAngleRange = new Range(0f, 360f);
+
+	[Separator("League Selector")]
 	[SerializeField] private LeagueSelector m_leagueSelector = null;
-	[SerializeField] private Localizer m_leagueNameText = null;
+	[SerializeField] private Localizer m_leagueSelectorNameText = null;
 	[SerializeField] private ShowHideAnimator m_currentLeagueMarker = null;
-	[Space]
-	[SerializeField] private GameObject m_rewardsRoot = null;
+
+	[Separator("Rewards")]
 	[SerializeField] private Transform m_rewardsContainer = null;
 	[SerializeField] private GameObject m_rewardPrefab = null;
 
 	// Internal references
 	private HDSeasonData m_season = null;
 	private List<AnimatedRankedRewardView> m_rewardViews = new List<AnimatedRankedRewardView>();
-    private bool m_refreshRewardView = false;
+
+	// Internal logic
+	private Mode m_mode = Mode.JOINED;
+	private bool m_refreshRewardView = false;
+
+	// Internal properties
+	private HDLeagueData defaultLeague {
+		get {
+			if(m_season == null) return null;
+
+			switch(m_season.state) {
+				case HDSeasonData.State.WAITING_NEW_SEASON: return m_season.nextLeague;
+				default: return m_season.currentLeague;
+			}
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -90,7 +134,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// </summary>
 	private void OnDisable() {
 		// Leave current league as the selected one
-		m_leagueSelector.SelectItem(m_season.currentLeague);
+		m_leagueSelector.SelectItem(defaultLeague);
 
 		// Clear selector's Refresh setup
 		m_leagueSelector.enableEvents = false;
@@ -104,29 +148,41 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// Called periodically.
 	/// </summary>
 	private void UpdatePeriodic() {
-		// Just in case
-		if(!m_season.IsRunning()) return;
-
-		// If enabled, update league state
-		if(m_updateLeagueState) {
-			// Update season state if time is up
-			double remainingTime = System.Math.Max(0, HDLiveDataManager.league.season.timeToClose.TotalSeconds);
-			if(remainingTime <= 0) {
-				m_season.UpdateState();
-			}
-
-			// If season is over, notify state change
-			if(!m_season.IsRunning()) {
-				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
-			}
-		}
-
+		// Rewads refresh pending?
         if (m_refreshRewardView) {
             HDLeagueData leagueData = m_leagueSelector.selectedItem.leagueData;
             if (leagueData.liveDataState == HDLiveData.State.VALID) {
                 RefreshRewardsInfo(leagueData);
             }
         }
+
+		// Refresh teasing countdown timer
+		if(m_mode == Mode.TEASING) {
+			double remainingSeconds = 0;
+			double durationSeconds = 1;	// To avoid division by 0
+			if(m_season.state == HDSeasonData.State.TEASING) {
+				remainingSeconds = m_season.timeToStart.TotalSeconds;
+				durationSeconds = m_season.durationTeasing.TotalSeconds;
+			} else {
+				remainingSeconds = m_season.timeToEnd.TotalSeconds;
+				durationSeconds = m_season.durationWaitNewSeason.TotalSeconds;
+			}
+
+			m_teasingTimerText.text = TimeUtils.FormatTime(
+				System.Math.Max(0, remainingSeconds),	// Don't go below 0
+				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,
+				4
+			);
+
+			// Refresh progress var value
+			if(m_teasingTimerBar != null) {
+				// Interpolate progress between min and max angles
+				float progress = (float)(remainingSeconds / durationSeconds);
+				float targetAngle = m_teasingTimeBarAngleRange.Lerp(progress);
+				float fillAmount = Mathf.InverseLerp(0f, 360f, targetAngle);
+				m_teasingTimerBar.fillAmount = fillAmount;
+			}
+		}
     }
 
 	//------------------------------------------------------------------------//
@@ -136,13 +192,46 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// Refresh displayed data.
 	/// </summary>
 	override public void Refresh() {
-		// Nothing to do if we don't have a valid season
-		if(!m_season.IsRunning()) return;
+		// Select mode based on season state
+		switch(m_season.state) {
+			case HDSeasonData.State.JOINED: {
+				m_mode = Mode.JOINED;
+			} break;
 
-		// Initialize visuals
-		// Player's league icon
-		if(m_leagueIcon != null) {
-			m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
+			case HDSeasonData.State.NOT_JOINED: {
+				m_mode = Mode.NOT_JOINED;
+			} break;
+
+			case HDSeasonData.State.WAITING_NEW_SEASON:
+			case HDSeasonData.State.TEASING: {
+				m_mode = Mode.TEASING;
+			} break;
+		}
+
+		// Select info to display based on mode
+		for(int i = 0; i < m_modeObjects.Length; ++i) {
+			// Using Flags enum to quickly check whether this object should be displayed or not for the current mode
+			m_modeObjects[i].target.SetActive(
+				(m_modeObjects[i].showModes & m_mode) != 0
+			);
+		}
+
+		// Refresh visuals based on active mode
+		switch(m_mode) {
+			case Mode.JOINED: {
+				m_joinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
+				m_joinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+			} break;
+
+			case Mode.NOT_JOINED: {
+				m_notJoinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
+				m_notJoinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+			} break;
+
+			case Mode.TEASING: {
+				m_teasingLeagueNameText.Localize(defaultLeague.tidName);
+				m_leagueSelector.SelectItem(defaultLeague); // This should update 3D trophy
+			} break;
 		}
 
 		// Currently selected league info
@@ -169,8 +258,8 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		}
 
 		// League Name
-		if(m_leagueNameText != null) {
-			m_leagueNameText.Localize(leagueData.tidName);
+		if(m_leagueSelectorNameText != null) {
+			m_leagueSelectorNameText.Localize(leagueData.tidName);
 		}
 
         // Current league marker
@@ -188,6 +277,10 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
         }
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_leagueData">League data.</param>
     private void RefreshRewardsInfo(HDLeagueData _leagueData) {
         // Rewards
         if (m_rewardsContainer != null) {
@@ -231,17 +324,6 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
     /// <summary>
-    /// We have new data concerning the event.
-    /// </summary>
-    /// <param name="_requestType">Request type.</param>
-    private void OnEventDataUpdated() {
-		// Nothing to do if disabled
-		if(!isActiveAndEnabled) return;
-
-		Refresh();
-	}
-
-	/// <summary>
 	/// Selected league in the selector has changed.
 	/// </summary>
 	/// <param name="_oldItem"></param>

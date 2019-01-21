@@ -108,6 +108,10 @@ public static class Prefs {
 		Set(_key + ".a", _value.a, _mode);
 	}
 
+	public static void Set(string _key, DateTime _value, Mode _mode) {
+		Set(_key, _value.ToString(System.Globalization.CultureInfo.InvariantCulture), _mode);
+	}
+
 	public static void Set<T>(string _key, T _value, Mode _mode) {
 		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
 		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
@@ -151,6 +155,11 @@ public static class Prefs {
 		// Color
 		else if(t == typeof(Color)) {
 			Set(_key, (Color)(object)_value, _mode);
+		}
+
+		// Date
+		else if(t == typeof(DateTime)) {
+			Set(_key, (DateTime)(object)_value, _mode);
 		}
 
 		// Unsupported
@@ -233,6 +242,16 @@ public static class Prefs {
 		return value;
 	}
 
+	public static DateTime Get(string _key, DateTime _defaultValue, Mode _mode) {
+		DateTime dt = _defaultValue;    // It's a struct, so this creates a new copy
+		try {
+			dt = DateTime.Parse(Get(_key, string.Empty, _mode), System.Globalization.CultureInfo.InvariantCulture);
+		} catch(Exception _e) {
+			Debug.LogError(_e.ToString());
+		}
+		return dt;
+	}
+
 	public static T Get<T>(string _key, T _defaultValue, Mode _mode) {
 		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
 		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
@@ -278,6 +297,11 @@ public static class Prefs {
 			return (T)(object)Get(_key, (Color)(object)_defaultValue, _mode);
 		}
 
+		// DateTime
+		else if(t == typeof(DateTime)) {
+			return (T)(object)Get(_key, (DateTime)(object)_defaultValue, _mode);
+		}
+
 		// Unsupported
 		else {
 			Debug.Log("Unsupported type!");
@@ -321,6 +345,10 @@ public static class Prefs {
 		Set(_key, _value, Mode.PLAYER);
 	}
 
+	public static void SetDateTimePlayer(string _key, DateTime _value) {
+		Set(_key, _value, Mode.PLAYER);
+	}
+
 	/// <summary>
 	/// Sets a property to the EDITOR preferences dictionary.
 	/// </summary>
@@ -351,6 +379,10 @@ public static class Prefs {
 	}
 
 	public static void SetColorEditor(string _key, Color _value) {
+		Set(_key, _value, Mode.EDITOR);
+	}
+
+	public static void SetDateTimeEditor(string _key, DateTime _value) {
 		Set(_key, _value, Mode.EDITOR);
 	}
 
@@ -391,6 +423,10 @@ public static class Prefs {
 		return Get(_key, _defaultValue, Mode.PLAYER);
 	}
 
+	public static DateTime GetDateTimePlayer(string _key, DateTime _defaultValue = new DateTime()) {
+		return Get(_key, _defaultValue, Mode.PLAYER);
+	}
+
 	/// <summary>
 	/// Gets a property from the EDITOR preferences dictionary.
 	/// </summary>
@@ -422,6 +458,10 @@ public static class Prefs {
 	}
 
 	public static Color GetColorEditor(string _key, Color _defaultValue = new Color()) {
+		return Get(_key, _defaultValue, Mode.EDITOR);
+	}
+
+	public static DateTime GetDateTimeEditor(string _key, DateTime _defaultValue = new DateTime()) {
 		return Get(_key, _defaultValue, Mode.EDITOR);
 	}
 }
