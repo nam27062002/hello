@@ -41,7 +41,7 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				if (m_enabled) {	
+				if (m_enabled) {
 					if (m_timer > 0f) {
 						m_timer -= Time.deltaTime;
 						if (m_timer <= 0f) {
@@ -50,10 +50,13 @@ namespace AI {
 					}
 
 					if (m_timer <= 0f) {
-						if (m_machine.GetSignal(Signals.Type.Trigger)) {					
+						if (m_machine.GetSignal(Signals.Type.Trigger)) {
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
-							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
-								m_dragon.ReceiveDamage(m_data.damage, m_data.type, m_machine.transform, true, m_entity.sku, m_entity);
+                            if (param != null && param.Length > 0) {
+                                GameObject go = ((GameObject)param[0]);
+                                if (go != null && go.CompareTag("Player")) {
+                                    m_dragon.ReceiveDamage(m_data.damage, m_data.type, m_machine.transform, true, m_entity.sku, m_entity);
+                                }
 								m_timer = m_data.delay;
 							}
 						}

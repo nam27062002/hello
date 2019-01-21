@@ -137,8 +137,9 @@ public class PopupShopOffersTab : IPopupShopTab {
 		for(int i = 0; i < m_pills.Count; ++i) {
 			// Skip unused pills (expired packs)
 			if(m_pills[i].def == null) continue;
-			HDTrackingManager.Instance.Notify_OfferShown(true, m_pills[i].GetIAPSku());
-		}
+            // The experiment name is used as offer name        
+            HDTrackingManager.Instance.Notify_OfferShown(true, m_pills[i].GetIAPSku(), HDCustomizerManager.instance.GetExperimentNameForDef(m_pills[i].def), m_pills[i].def.GetAsString("type"));
+        }
 	}
 
 	/// <summary>

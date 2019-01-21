@@ -65,12 +65,15 @@ public class MenuNavigationButton : MonoBehaviour {
 	public void OnBackButton() {
 		if (!ButtonExtended.checkMultitouchAvailability ())
 			return;
-        // If history is empty, go to default screen
-        if (m_transitionManager.screenHistory.Count == 0) {
-			OnNavigationButton();
-		} else {
-			m_transitionManager.Back(true);
-		}
+
+        if (m_transitionManager != null) {
+            // If history is empty, go to default screen
+            if (m_transitionManager.screenHistory.Count == 0) {
+                OnNavigationButton();
+            } else {
+                m_transitionManager.Back(true);
+            }
+        }
     }
 
     /// <summary>

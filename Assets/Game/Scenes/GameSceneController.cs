@@ -475,7 +475,7 @@ public class GameSceneController : GameSceneControllerBase {
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        GameAds.instance.IncreaseRunsWithoutAds();
+        GameAds.instance.ReduceRunsToInterstitial();
 
         Track_RoundStart();
 
