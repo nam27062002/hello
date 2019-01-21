@@ -262,10 +262,10 @@ public class HDCustomizerManager
                                 applyByExperiment = true;   
                             }
                         }
-                        // if experiment was applies but is not valid anymore
+                        // if there was an experiment but it's not valid anymore
                         else
                         {
-                            applyByExperiment = CustomizerManager.SharedInstance.IsExperimentCodeValid(customiser, m_currentExperimentCode);
+                            applyByExperiment = !CustomizerManager.SharedInstance.IsExperimentCodeValid(customiser, m_currentExperimentCode);
                         }
                     }
                     

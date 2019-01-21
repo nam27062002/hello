@@ -1270,10 +1270,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-		if ( m_dragon.IsDrunk() )
-		{
-			impulse = -impulse;
-		}
+        if ( m_dragon.IsDrunk() )
+        {
+            //impulse = -impulse;
+            float drunkX = -0.6f;
+            float drunkY = 0.6f;
+            impulse.x = drunkX * impulse.x;
+            impulse.y = drunkY * impulse.y;
+        }
 		UpdateWaterMovementImpulse(_deltaTime, impulse);
     }
 

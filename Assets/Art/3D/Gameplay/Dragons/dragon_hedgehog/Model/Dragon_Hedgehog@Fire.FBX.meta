@@ -51,6 +51,13 @@ ModelImporter:
     100090: Dragon_Tongue_3
     100092: Dragon_Up_Snout
     100094: Fire_Dummy
+    100096: FirePoint
+    100098: Dragon_Lwing_1
+    100100: Dragon_Lwing_2
+    100102: Dragon_Lwing_3
+    100104: Dragon_Rwing_1
+    100106: Dragon_Rwing_2
+    100108: Dragon_Rwing_3
     400000: Dragon_Chest
     400002: Dragon_Down_Snout
     400004: Dragon_Head
@@ -99,8 +106,16 @@ ModelImporter:
     400090: Dragon_Tongue_3
     400092: Dragon_Up_Snout
     400094: Fire_Dummy
+    400096: FirePoint
+    400098: Dragon_Lwing_1
+    400100: Dragon_Lwing_2
+    400102: Dragon_Lwing_3
+    400104: Dragon_Rwing_1
+    400106: Dragon_Rwing_2
+    400108: Dragon_Rwing_3
     7400000: Fire_Start
-    7400002: Fire_Loop
+    7400002: Fire_Start
+    7400004: Fire_Loop
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -159,7 +174,7 @@ ModelImporter:
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Fire_Loop
-      takeName: Dragon_Hedgehog_Fire
+      takeName: Take 001
       firstFrame: 7
       lastFrame: 15
       wrapMode: 0
@@ -184,7 +199,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+      additiveReferencePoseFrame: 1
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -192,9 +207,9 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
