@@ -318,6 +318,10 @@ public class DragonDataClassic : IDragonData {
 		return m_energyBaseRange.Lerp(levelDelta);
 	}
 
+	public float GetMaxSpeedAtLevel(int _level) {
+		return (GetMaxForceAtLevel(_level) / friction) / mass;	// Copied from DragonMotion to show stats on the menu
+	}
+
 	/// <summary>
 	/// Compute the scale at a specific level.
 	/// </summary>
