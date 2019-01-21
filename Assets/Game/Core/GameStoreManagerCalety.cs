@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
@@ -10,6 +11,7 @@ public class GameStoreManagerCalety : GameStoreManager
     /// Listener /////////////////////////////////////////////////////////////
 	private class CaletyGameStoreListener : StoreManager.StoreListenerBase
     {
+        private bool m_isInitialising = false;
     	public bool m_isReady = false;
         private bool m_hasInitFailed = false;
         private GameStoreManagerCalety m_manager;
@@ -24,9 +26,35 @@ public class GameStoreManagerCalety : GameStoreManager
         {
             m_isReady = false;
             m_hasInitFailed = false;
+            m_isInitialising = false;
         }
 
-		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
+        public void Initialise()
+        {
+            m_isInitialising = false;
+        }
+
+        public bool IsInitialising()
+        {
+            return m_isInitialising;
+        }
+
+        public void InitialiseStore(ref string[] storeSKUs, bool bAvoidVerification = false)
+        {
+            Reset();
+            m_isInitialising = true;
+            StoreManager.SharedInstance.Initialise(ref storeSKUs, bAvoidVerification);
+        }
+
+#if UNITY_EDITOR
+        public void FakeInit(bool success)
+        {
+            m_isInitialising = false;
+            m_hasInitFailed = !success;
+        }
+#endif        
+
+        public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
 
@@ -118,8 +146,14 @@ public class GameStoreManagerCalety : GameStoreManager
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("onStoreIsReady");
 
-			m_isReady = true;	
-		}
+			m_isReady = true;
+            OnInitialiseStoreDone();
+        }
+
+        private void OnInitialiseStoreDone()
+        {
+            m_isInitialising = false;
+        }
 
 		/// <summary>
 		/// Ons the IAP promoted received. 
@@ -144,6 +178,7 @@ public class GameStoreManagerCalety : GameStoreManager
                 Log("onStoreIosInitFail errorCode = " + errorCode);
 
             m_hasInitFailed = true;
+            OnInitialiseStoreDone();
         }
 
         public bool HasInitFailed()
@@ -158,7 +193,7 @@ public class GameStoreManagerCalety : GameStoreManager
 	const string AMAZON_ATTRIBUTE = "amazon";
 
 	CaletyGameStoreListener m_storeListener;
-	string[] m_storeSkus;
+	string[] m_storeSkus;    
 
     private bool m_isFirstInit;
 
@@ -166,19 +201,22 @@ public class GameStoreManagerCalety : GameStoreManager
     
     private Queue<string> m_promotedIAPs;
 
+    private float m_onNotifiedWhenInitializedTimer = -1f;
+    private Action m_onNotifiedWhenInitialized;
 
     public GameStoreManagerCalety () 
 	{
         m_promotedIAPs = new Queue<string>();
 		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
-        m_purchaseSkuTriggeredByUser = null;
+        m_purchaseSkuTriggeredByUser = null;        
     }
 
     private void Reset()
-    {
+    {        
         m_isFirstInit = true;
         m_storeListener.Reset();
+        ResetNotifyWhenInitialized();
     }
 
 	public override void Initialize()
@@ -193,8 +231,9 @@ public class GameStoreManagerCalety : GameStoreManager
 			m_isFirstInit = false;
         }
 
-		m_storeListener.Reset();
-		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);		          
+        ResetNotifyWhenInitialized();
+
+        m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
@@ -212,6 +251,11 @@ public class GameStoreManagerCalety : GameStoreManager
 #endif        
 	}
 
+    public override bool IsInitializing()
+    {
+        return m_storeListener.IsInitialising();
+    }
+
     private void OnConnectionRecovered()
     {
         TryToSolveInitializeProblems();
@@ -225,10 +269,9 @@ public class GameStoreManagerCalety : GameStoreManager
         // Checks if there was an initialize problem
         if (!IsReady() && m_storeListener.HasInitFailed())
         {
-            m_storeListener.Reset();
-            StoreManager.SharedInstance.Initialise(ref m_storeSkus, false);
+            m_storeListener.InitialiseStore(ref m_storeSkus, false);
         }
-    }
+    }    
 
 	public void CacheStoreSkus()
 	{
@@ -255,9 +298,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public void RegisterPromotedIAP(string _sku) {
         m_promotedIAPs.Enqueue(_sku);
-	}
+	}    
 
-	public override bool IsReady()
+    public override bool IsReady()
 	{
 		return m_storeListener.m_isReady;
 	}
@@ -379,6 +422,46 @@ public class GameStoreManagerCalety : GameStoreManager
 			return GOOGLE_ATTRIBUTE;
 		#endif
     	return "";
+    }
+    
+    public override void NotifyWhenInitialized(Action onDone)
+    {
+        m_onNotifiedWhenInitialized = onDone;
+        m_onNotifiedWhenInitializedTimer = 20f;
+    }  
+    
+    private void ResetNotifyWhenInitialized()
+    {
+        m_onNotifiedWhenInitializedTimer = -1f;
+        m_onNotifiedWhenInitialized = null;
+    }
+
+#if UNITY_EDITOR
+    private float m_fakeInitTimer = 20f;
+#endif
+
+    public override void Update()
+    {
+#if UNITY_EDITOR
+        if (m_fakeInitTimer > 0f)
+        {
+            m_fakeInitTimer -= Time.deltaTime;
+            if (m_fakeInitTimer <= 0f)
+            {
+                m_fakeInitTimer = -1f;
+                m_storeListener.FakeInit(false);
+            }
+        }
+#endif
+        if (m_onNotifiedWhenInitialized != null)
+        {
+            m_onNotifiedWhenInitializedTimer -= Time.deltaTime;
+            if (m_onNotifiedWhenInitializedTimer <= 0f || !IsInitializing())
+            {                
+                m_onNotifiedWhenInitialized();
+                ResetNotifyWhenInitialized();
+            }            
+        }
     }
 
     #region log
