@@ -57,7 +57,6 @@ public class LeaguesScrollRect : OptimizedScrollRect<LeaguesLeaderboardPill, Lea
 	}
 
 	protected override void OnPillCreated(LeaguesLeaderboardPill _pill) {
-		Debug.Log(Colors.red.Tag("OnPillCreated " + _pill.pillType));
 		// Player pill should be the last one in the hierarchy (so it is drawed on top)
 		if(m_playerPill != null) m_playerPill.transform.SetAsLastSibling();
 
