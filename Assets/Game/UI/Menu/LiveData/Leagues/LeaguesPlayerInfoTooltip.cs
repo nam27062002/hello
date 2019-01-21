@@ -39,6 +39,7 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private PetShortInfo[] m_petSlots = new PetShortInfo[4];
+	[SerializeField] private GameObject m_noPetsMessage = null;
 	
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -148,6 +149,11 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			// Initialize pet slot
 			m_petSlots[i].InitWithPet(petDef);
 			m_petSlots[i].gameObject.SetActive(true);
+		}
+
+		// No pets error message
+		if(m_noPetsMessage != null) {
+			m_noPetsMessage.SetActive(_playerInfo.build.pets.Count == 0);
 		}
 	}
 }
