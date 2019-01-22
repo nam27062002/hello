@@ -115,11 +115,16 @@ public class DragonMotionHedgehog : DragonMotion {
 				}
                 else if (m_transform.position.y > FlightCeiling)
     			{
+                    ModifyImpulse();
     				if ( m_impulse.y > 0 )
     				{
                         CustomBounce(m_transform.position, GameConstants.Vector3.down);
-    				}
+    				}    
     			}
+                else 
+                {
+                    ModifyImpulse();
+                }
 				
 			}break;
 		}        
@@ -151,6 +156,22 @@ public class DragonMotionHedgehog : DragonMotion {
 		}
 		base.Update();
 	}
+    
+    protected void ModifyImpulse()
+    {
+        Vector3 impulse = GameConstants.Vector3.zero;
+        m_controls.GetImpulse(1, ref impulse);
+        if ( m_dragon.IsDrunk() )
+        {
+            impulse.x = -impulse.x;
+        }
+        
+        if ( impulse != GameConstants.Vector3.zero )
+        {
+            m_direction = Vector3.Slerp(m_direction, impulse, Time.deltaTime);
+            m_sonicImpulse = Vector3.Slerp(m_sonicImpulse, impulse * m_sonicImpulse.magnitude, Time.deltaTime);
+        }
+    }
 
     protected override void LateUpdate()
     {
