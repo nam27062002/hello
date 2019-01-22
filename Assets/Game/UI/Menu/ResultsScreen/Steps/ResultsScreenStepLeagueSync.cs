@@ -93,8 +93,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// Show busy screen
 		m_busyPanel.Show();
 
-        m_season.SetScore(m_controller.score);
-        m_season.currentLeague.leaderboard.RequestData();
+        m_season.SetScore(m_controller.score, true);
 
         InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
     }
@@ -141,6 +140,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
             OnFinished.Invoke();
         } else {
             switch (m_season.scoreDataError) {
+                case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
                         HDLiveDataManager.instance.RequestMyLiveData(true);

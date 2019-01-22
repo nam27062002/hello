@@ -742,7 +742,7 @@ public class GameServerManagerCalety : GameServerManager {
 
     public override void HDLeagues_GetSeason(bool _fetchLeaderboard, ServerCallback _callback) {
         JSONNode json = new JSONClass();
-        json["fetchLeaderboard"] = _fetchLeaderboard.ToString(JSON_FORMAT);
+        json.Add("fetchLeaderboard", _fetchLeaderboard.ToString(JSON_FORMAT));
 
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("body", json.ToString());
@@ -765,11 +765,11 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLeagues_GetLeaderboard, null, _callback);
     }
 
-    public override void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, ServerCallback _callback) {
+    public override void HDLeagues_SetScore(long _score, SimpleJSON.JSONClass _build, bool _fetchLeaderboard, ServerCallback _callback) {
         JSONNode json = new JSONClass();
         json.Add("score", _score.ToString(JSON_FORMAT));
         json.Add("build", _build);
-
+        json.Add("fetchLeaderboard", _fetchLeaderboard.ToString(JSON_FORMAT));
 
         Dictionary<string, string> parameters = new Dictionary<string, string>();
         parameters.Add("body", json.ToString());

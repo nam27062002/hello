@@ -92,6 +92,7 @@ public class LeaguesPanelError : LeaguesScreenPanel {
             }
         } else {
             switch (m_errorCode) {
+                case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
                         leaguesScreenController.RefreshLiveData();
