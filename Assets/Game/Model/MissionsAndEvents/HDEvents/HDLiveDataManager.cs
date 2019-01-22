@@ -61,6 +61,13 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         EVENT_STILL_ACTIVE,//(620,200),
         NOTHING_PENDING,//(621,200),
         EVENT_TTL_EXPIRED,//(622,200);
+        USER_IS_NOT_PENDING_REWARDS,//(625,200)
+
+        SEASON_IS_NOT_CLOSED,//(801,200)
+        SEASON_NOT_FOUND,// (802)
+        LEAGUEDEF_NOT_FOUND,//(803)
+        USER_LEAGUE_NOT_FOUND,//(804)
+        SEASON_IS_NOT_ACTIVE,//(805)
 
         NO_ERROR
     };
@@ -228,6 +235,16 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                             case 620: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_STILL_ACTIVE; break;
                             case 621: outErr = HDLiveDataManager.ComunicationErrorCodes.NOTHING_PENDING; break;
                             case 622: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED; break;
+                            case 625: outErr = HDLiveDataManager.ComunicationErrorCodes.USER_IS_NOT_PENDING_REWARDS; break;
+
+
+                            case 801: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_CLOSED; break;
+
+                            case 802: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND; break;
+                            case 803: outErr = HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND; break;
+                            case 804: outErr = HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND; break;
+                            case 805: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE; break;
+
                         }
                     }
                 } else {

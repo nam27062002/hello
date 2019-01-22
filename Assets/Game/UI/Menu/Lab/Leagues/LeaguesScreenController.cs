@@ -25,10 +25,9 @@ public class LeaguesScreenController : MonoBehaviour {
 	private const float PERIODIC_UPDATE_INTERVAL = 0.25f;  // Seconds
 
 	public enum Panel {
-		OFFLINE,
+		ERROR,
 		ACTIVE_SEASON,
 		LOADING,
-		REWARDS_RETRY,
 
         COUNT
 	};
@@ -41,7 +40,7 @@ public class LeaguesScreenController : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_darkScreen = null;
 
 	// Internal
-	private Panel m_activePanel = Panel.OFFLINE;
+	private Panel m_activePanel = Panel.ERROR;
 	private HDLeagueController m_league = null;
 	private HDSeasonData m_season = null;
 	
@@ -86,52 +85,52 @@ public class LeaguesScreenController : MonoBehaviour {
     void UpdatePeriodic() {
         switch (m_season.state) {
             case HDSeasonData.State.TEASING: {
-                if (m_season.timeToStart.TotalSeconds <= 0) {
-                    m_season.UpdateState();
-                    Refresh();
-                }
-            } break;
+                    if (m_season.timeToStart.TotalSeconds <= 0) {
+                        m_season.UpdateState();
+                        Refresh();
+                    }
+                } break;
 
             case HDSeasonData.State.NOT_JOINED:
             case HDSeasonData.State.JOINED: {
-                if (m_season.timeToClose.TotalSeconds <= 0) {
-                    m_season.UpdateState();
-                    Refresh();
-                } else if (m_activePanel != Panel.ACTIVE_SEASON) {
-                    Refresh();
-                }
-            } break;
+                    if (m_season.timeToClose.TotalSeconds <= 0) {
+                        m_season.UpdateState();
+                        Refresh();
+                    } else if (m_activePanel != Panel.ACTIVE_SEASON) {
+                        Refresh();
+                    }
+                } break;
 
             case HDSeasonData.State.PENDING_REWARDS: {
-                switch (m_activePanel) {
-                    case Panel.LOADING:
-                    if (m_season.rewardDataState == HDLiveData.State.VALID || m_season.rewardDataState == HDLiveData.State.ERROR) {
-                        Refresh();
-                    } break;
+                    switch (m_activePanel) {
+                        case Panel.LOADING:
+                        if (m_season.rewardDataState == HDLiveData.State.VALID || m_season.rewardDataState == HDLiveData.State.ERROR) {
+                            Refresh();
+                        } break;
 
-                    case Panel.REWARDS_RETRY:
-                    if (m_season.rewardDataState == HDLiveData.State.WAITING_RESPONSE) {
-                        Refresh();
-                    } break;
+                        case Panel.ERROR:
+                        if (m_season.rewardDataState == HDLiveData.State.WAITING_RESPONSE) {
+                            Refresh();
+                        } break;
 
-					default: {
-                    	Refresh();
-					} break;
-                }
-            } break;
+    					default: {
+                        	Refresh();
+    					} break;
+                    }
+                } break;
 
             case HDSeasonData.State.WAITING_NEW_SEASON: {
-                if (m_season.timeToEnd.TotalSeconds <= 0) {
-                    HDLiveDataManager.instance.ForceRequestLeagues();
-                    CancelInvoke();
-                } else if (m_activePanel != Panel.ACTIVE_SEASON) {
-                    Refresh();
-                }
-            } break;
+                    if (m_season.timeToEnd.TotalSeconds <= 0) {
+                        HDLiveDataManager.instance.ForceRequestLeagues();
+                        CancelInvoke();
+                    } else if (m_activePanel != Panel.ACTIVE_SEASON) {
+                        Refresh();
+                    }
+                } break;
 
 			case HDSeasonData.State.NONE: {
-				Refresh();	// Keep refreshing until season state is valid
-			} break;
+    				Refresh();	// Keep refreshing until season state is valid
+    			} break;
         }
     }
 
@@ -164,44 +163,60 @@ public class LeaguesScreenController : MonoBehaviour {
 	private void SelectPanel() {
 		// Select active panel based on season/league state
 		Panel targetPanel = Panel.LOADING;
+        LeaguesPanelError errorPanel = m_panels[(int)Panel.ERROR] as LeaguesPanelError;
 
 		// Check internet connectivity first
 		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
-			targetPanel = Panel.OFFLINE;
-		} else {
-			// Depends on season state
-			switch(m_season.state) {
+			targetPanel = Panel.ERROR;
+            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.NETWORK);
+		} else if (m_season.liveDataState == HDLiveData.State.ERROR) {
+            targetPanel = Panel.ERROR;
+            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.SEASON);
+        } else { 
+            // Depends on season state
+            switch (m_season.state) {
 				case HDSeasonData.State.JOINED:
 				case HDSeasonData.State.NOT_JOINED:
 				case HDSeasonData.State.TEASING:
-				case HDSeasonData.State.REWARDS_COLLECTED:
-				case HDSeasonData.State.WAITING_NEW_SEASON: {
-					targetPanel = Panel.ACTIVE_SEASON;
-				} break;
+				case HDSeasonData.State.REWARDS_COLLECTED: {
+                        targetPanel = Panel.ACTIVE_SEASON;
+                    }
+                    break;
+
+                case HDSeasonData.State.WAITING_NEW_SEASON: {
+                        if (m_season.liveDataState == HDLiveData.State.ERROR) {
+                            targetPanel = Panel.ERROR;
+                            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.FINALIZE);
+                        } else {
+                            targetPanel = Panel.ACTIVE_SEASON;
+                        }
+                    } break;
 
 				case HDSeasonData.State.PENDING_REWARDS: {
-                    switch (m_season.rewardDataState) {
-                        case HDLiveData.State.EMPTY:
-                            m_season.RequestMyRewards();
-                            targetPanel = Panel.LOADING;
-                        break;
-                        case HDLiveData.State.WAITING_RESPONSE:
-                            targetPanel = Panel.LOADING;
-                        break;
-                        case HDLiveData.State.VALID:
-                            InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
-                            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
-                        break;
-                        case HDLiveData.State.ERROR:
-                            targetPanel = Panel.REWARDS_RETRY;
-                        break;
+                        switch (m_season.rewardDataState) {
+                            case HDLiveData.State.EMPTY:
+                                m_season.RequestMyRewards();
+                                targetPanel = Panel.LOADING;
+                            break;
+                            case HDLiveData.State.WAITING_RESPONSE:
+                                targetPanel = Panel.LOADING;
+                            break;
+                            case HDLiveData.State.VALID:
+                                InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
+                                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
+                            break;
+                            case HDLiveData.State.ERROR:
+                            targetPanel = Panel.ERROR;
+                            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.REWARDS);
+                            break;
+                        }
                     }
-                }
-                break;
+                    break;
 
 				case HDSeasonData.State.NONE: {
-					targetPanel = Panel.OFFLINE; // Shouldn't happen
-				} break;
+    					targetPanel = Panel.ERROR; // Shouldn't happen
+                        errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.SEASON);
+                    } break;
 			}
 		}
 
@@ -263,33 +278,28 @@ public class LeaguesScreenController : MonoBehaviour {
 		Refresh();
 	}
 
-	/// <summary>
-	/// The retry button on the offline panel has been pressed.
-	/// </summary>
-	public void OnOfflineRetryButton() {
-		if(Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged()) {
-			// Show loading and ask for my live data
-			SetActivePanel(Panel.LOADING);
-			if(!HDLiveDataManager.instance.RequestMyLiveData()) {
-				UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
-			}
-		} else {
-			// Message no connection
-			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-		}
-	}
+    public void RefreshLiveData() {
+        SetActivePanel(Panel.LOADING);
+        HDLiveDataManager.instance.RequestMyLiveData(true);
+        UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
+    }
 
-	/// <summary>
-	/// New data has been received.
-	/// </summary>
-	void OnEventsUpdated() {
-		Refresh();
-	}
+    public void RefreshSeasonData() {
+        SetActivePanel(Panel.LOADING);
+        UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
+    }
 
-	/// <summary>
-	/// Retry rewards button has been pressed.
-	/// </summary>
-	public void OnRetryRewardsButton() {
+    /// <summary>
+    /// Retry rewards button has been pressed.
+    /// </summary>
+    public void RetryRewardsButton() {
         m_season.RequestMyRewards();
-	}
+    }
+
+    /// <summary>
+    /// New data has been received.
+    /// </summary>
+    void OnEventsUpdated() {
+		Refresh();
+	}	
 }

@@ -137,20 +137,30 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// Hide busy screen
 		m_busyPanel.Hide();
 
-		// Error?
-		// [AOC] TODO!!
-		/*
-		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-			// No! :) Go to next step
-			OnFinished.Invoke();
-		} else if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER) {
-			// No! :) Go to next step
-			OnFinished.Invoke();
-		} else {
-			// Yes :( Show error screen
-			m_errorPanel.Show();
-		}
-		*/
-		OnFinished.Invoke();	// Just skip to next step for now
+        if (m_season.scoreDataState == HDLiveData.State.VALID) {
+            OnFinished.Invoke();
+        } else {
+            switch (m_season.scoreDataError) {
+                case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
+                        HDLiveDataManager.instance.RequestMyLiveData(true);
+                        OnDismissButton();
+                    }
+                    break;
+
+                case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
+                        HDLiveDataManager.instance.ForceRequestLeagues();
+                        OnDismissButton();
+                    }
+                    break;
+
+                default:
+                    m_errorPanel.Show();
+                    break;
+            }
+        }
+
 	}
 }
