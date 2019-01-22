@@ -40,6 +40,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     public string m_megaFireParticleStart = "FireCircle/PS_SonicMegaFireRushBoost";
     private ParticleSystem m_megaFireParticleStartInstance;
     
+    public Transform m_trailPosition;
+    public string m_trailParticle = "FireCircle/PS_SonicDragonFireTrail";
+    private GameObject m_trailParticleInstance;
+    public string m_megaTrailParticle = "FireCircle/PS_SonicDragonMegaFireTrail";
+    private GameObject m_megaTrailParticleInstance;
+    
     
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
@@ -99,6 +105,10 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         m_megaFireParticleInstance = ParticleManager.InitLeveledParticle( m_megaFireParticle, m_particleCenter);
         m_megaFireParticleStartInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleStart,m_particleCenter);
 
+
+        m_trailParticleInstance = ParticleManager.InitLeveledParticleObject( m_trailParticle, m_trailPosition);
+        m_megaTrailParticleInstance = ParticleManager.InitLeveledParticleObject( m_megaTrailParticle, m_trailPosition);
+        
 	}
 
 	void OnDestroy()
@@ -333,12 +343,17 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 m_fireParticleInstance.gameObject.SetActive(true);
                 m_fireParticleStartInstance.gameObject.SetActive(true);
                 m_fireParticleStartInstance.Play();
+
+                m_trailParticleInstance.SetActive(true);
+                
             }break;
             case DragonBreathBehaviour.Type.Mega:
             {
                 m_megaFireParticleInstance.gameObject.SetActive(true);
                 m_megaFireParticleStartInstance.gameObject.SetActive(true);
                 m_megaFireParticleStartInstance.Play();
+                
+                m_megaTrailParticleInstance.SetActive(true);
             }break;
         }
         
@@ -353,11 +368,13 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             {
                 m_fireParticleInstance.gameObject.SetActive(false);
                 m_fireParticleStartInstance.gameObject.SetActive(false);
+                m_trailParticleInstance.SetActive(false);
             }break;
             case DragonBreathBehaviour.Type.Mega:
             {
                 m_megaFireParticleInstance.gameObject.SetActive(false);
                 m_megaFireParticleStartInstance.gameObject.SetActive(false);
+                m_megaTrailParticleInstance.SetActive(false);
             }break;
         }
     }
