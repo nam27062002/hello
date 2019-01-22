@@ -41,6 +41,8 @@ public class DragonMotionHedgehog : DragonMotion {
 
     Vector3 m_sphereLocalPosition;
 
+    public float m_sonicControlSpeed = 1f;
+
 	override protected void Start() {
 		base.Start();
         m_sphereLocalPosition = m_mainGroundCollider.transform.localPosition;
@@ -168,8 +170,8 @@ public class DragonMotionHedgehog : DragonMotion {
         
         if ( impulse != GameConstants.Vector3.zero )
         {
-            m_direction = Vector3.Slerp(m_direction, impulse, Time.deltaTime);
-            m_sonicImpulse = Vector3.Slerp(m_sonicImpulse, impulse * m_sonicImpulse.magnitude, Time.deltaTime);
+            m_direction = Vector3.Slerp(m_direction, impulse, Time.deltaTime * m_sonicControlSpeed);
+            m_sonicImpulse = Vector3.Slerp(m_sonicImpulse, impulse * m_sonicImpulse.magnitude, Time.deltaTime * m_sonicControlSpeed);
         }
     }
 
