@@ -53,6 +53,18 @@ namespace HDLiveData {
 		protected override int GetHashCodeImpl() {
 			return this.target.GetHashCode();
 		}
+
+		/// <summary>
+		/// We're having some issues using List's Sort method with this class, even if
+		/// it implements the IComparable interface.
+		/// Use this method as workaround for now.
+		/// </summary>
+		public static int SortByTarget(Reward _r1, Reward _r2) {
+			if(_r1 == null && _r2 == null) return 0;
+			if(_r2 == null) return -1;
+			if(_r1 == null) return 1;
+			return _r1.target.CompareTo(_r2.target);
+		}
 	}
 
 	[Serializable]

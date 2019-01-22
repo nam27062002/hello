@@ -67,6 +67,9 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
 					m_rewards.Add(r);
 				}
 
+				// Since we can't assume rewards are received sorted, do it now
+				m_rewards.Sort(HDLiveData.Reward.SortByTarget);   // Will be sorted by target percentage
+
 				// Compute min rank based on previous reward
 				for(int i = 1; i < m_rewards.Count; ++i) {  // Skip first reward (min is always 0)
 					m_rewards[i].InitMinRankFromPreviousReward(m_rewards[i - 1]);
