@@ -122,14 +122,17 @@ public class HDSeasonData {
             state = State.TEASING;
         } else {
             if (timeToEnd.TotalSeconds <= 0f) {
-                if (state == State.REWARDS_COLLECTED)
+                if (state == State.REWARDS_COLLECTED) { 
                     state = State.WAITING_NEW_SEASON;
+                }
             } else {
                 if (timeToClose.TotalSeconds <= 0f) {
-                    if (state < State.JOINED)
+                    if (state < State.JOINED) { 
+                        nextLeague = currentLeague;
                         state = State.WAITING_NEW_SEASON;
-                    else if (state < State.PENDING_REWARDS)
+                    } else if (state < State.PENDING_REWARDS) { 
                         state = State.PENDING_REWARDS;
+                    }
                 } else {
                     if (state == State.TEASING) {
                         state = State.NOT_JOINED;
@@ -149,7 +152,6 @@ public class HDSeasonData {
             // parse Json
             LoadData(responseJson);
         } else {
-
             liveDataState = HDLiveData.State.ERROR;
         }
 
@@ -204,10 +206,10 @@ public class HDSeasonData {
 
     //---[Score]----------------------------------------------------------------
 
-    public void SetScore(long _score) {
+    public void SetScore(long _score, bool _fetchLeaderboard) {
         if (state >= State.NOT_JOINED && state < State.PENDING_REWARDS) {
             currentLeague.leaderboard.playerScore = _score;
-            __SetScore(_score);
+            __SetScore(_score, _fetchLeaderboard);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
             scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
@@ -224,6 +226,9 @@ public class HDSeasonData {
             if (state < State.JOINED) {
                 state = State.JOINED;
             }
+            
+            currentLeague.LoadData(responseJson["league"]);
+
             scoreDataState = HDLiveData.State.VALID;
         } else {
             scoreDataState = HDLiveData.State.ERROR;
@@ -369,7 +374,7 @@ public class HDSeasonData {
         }
     }
 
-    private void __SetScore(long _score) {
+    private void __SetScore(long _score, bool _fetchLeaderboard) {
         if (HDLiveDataManager.TEST_CALLS) {
             OnSetScore(null, HDLiveDataManager.CreateEmptyResponse());
         } else {
@@ -408,7 +413,7 @@ public class HDSeasonData {
                 }
             }
 
-            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, build, OnSetScore);
+            GameServerManager.SharedInstance.HDLeagues_SetScore(_score, build, _fetchLeaderboard, OnSetScore);
         }
     }
 
