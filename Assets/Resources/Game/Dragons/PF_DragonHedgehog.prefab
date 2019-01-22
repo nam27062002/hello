@@ -26,7 +26,6 @@ GameObject:
   - component: {fileID: 5426352}
   - component: {fileID: 11408926}
   - component: {fileID: 114209896492825704}
-  - component: {fileID: 114732582710944462}
   - component: {fileID: 11444004}
   - component: {fileID: 11459072}
   - component: {fileID: 11419346}
@@ -36,6 +35,7 @@ GameObject:
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 114640129519443014}
   m_Layer: 12
   m_Name: PF_DragonHedgehog
   m_TagString: Player
@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -347.48862, y: 169.26202, z: -40.078125}
+  m_LocalPosition: {x: -189.64404, y: 117.99806, z: -40.871094}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -2119,7 +2119,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.0029623876, y: 0.7205789, z: -0.0030786814, w: 0.69335985}
+  m_LocalRotation: {x: 0.06678121, y: 0.31202623, z: -0.021992806, w: 0.9474683}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5755,6 +5755,7 @@ MonoBehaviour:
   m_maxRotationSpeed: 2048
   m_minRotationSpeed: 720
   m_rotationPivot: {fileID: 4731271094403256}
+  m_dpadDistance: 500
   m_rollUpSound: hd_hedgehog_roll
   m_shootSound: hd_hedgehog_shoot
   m_bounceSound: hd_hedgehog_bounce_2
@@ -6025,6 +6026,25 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114640129519443014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prewarmDuration: 1
+  m_breathSound: Dragon_Burst Mode
+  m_superBreathSound: Dragon_Burst Mode
+  m_length: 6
+  m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
+    type: 2}
+  m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
+    type: 2}
 --- !u!114 &114670516413665144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6073,27 +6093,6 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
---- !u!114 &114732582710944462
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3428fa86133104c6abaf0ebf1226c65c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prewarmDuration: 0.5
-  m_breathSound: Dragon_Burst Mode
-  m_superBreathSound: Dragon_Burst Mode
-  m_length: 6
-  m_fireCenter: FirePoint
-  m_particleCenter: FirePoint
-  m_fireParticle: FireCircle/PS_SonicFireRush
-  m_fireParticleStart: FireCircle/PS_SonicFireRushBoost
-  m_megaFireParticle: FireCircle/PS_SonicMegaFireRush
-  m_megaFireParticleStart: FireCircle/PS_SonicMegaFireRushBoost
 --- !u!114 &114777803639561814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6238,7 +6237,11 @@ MonoBehaviour:
   m_disguiseOnLevelUp: dragon_hedgehog_1
   m_spikesLvl1: {fileID: 1379098458773584}
   m_spikesLvl2: {fileID: 1750963521827538}
-  m_isUsingCircleFire: 1
+  m_particleCenter: {fileID: 4891536648766866}
+  m_fireParticle: FireCircle/PS_SonicFireRush
+  m_fireParticleStart: FireCircle/PS_SonicFireRushBoost
+  m_megaFireParticle: FireCircle/PS_SonicMegaFireRush
+  m_megaFireParticleStart: FireCircle/PS_SonicMegaFireRushBoost
 --- !u!114 &114998690069533076
 MonoBehaviour:
   m_ObjectHideFlags: 1

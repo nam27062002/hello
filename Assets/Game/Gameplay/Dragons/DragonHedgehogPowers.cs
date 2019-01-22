@@ -28,6 +28,19 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     public GameObject m_spikesLvl1;
     public GameObject m_spikesLvl2;
     
+    [Header("Particle")]
+    public Transform m_particleCenter;
+    public string m_fireParticle = "FireCircle/PS_SonicFireRush";
+    private ParticleSystem m_fireParticleInstance;
+    public string m_fireParticleStart = "FireCircle/PS_SonicFireRushBoost";
+    private ParticleSystem m_fireParticleStartInstance;
+    
+    public string m_megaFireParticle = "FireCircle/PS_SonicMegaFireRush";
+    private ParticleSystem m_megaFireParticleInstance;
+    public string m_megaFireParticleStart = "FireCircle/PS_SonicMegaFireRushBoost";
+    private ParticleSystem m_megaFireParticleStartInstance;
+    
+    
 	private CircleArea2D m_circle;
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
@@ -45,8 +58,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     private PoolHandler m_poolHandler;
     private PoolHandler m_level3PoolHandler;
     Vector3 m_tmpVector = GameConstants.Vector3.right;
-
-    public bool m_isUsingCircleFire = true;
 
 	// Use this for initialization
 	void Start () {
@@ -81,6 +92,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 CreatePool();
             }
         }
+        
+        
+        m_fireParticleInstance = ParticleManager.InitLeveledParticle( m_fireParticle, m_particleCenter);
+        m_fireParticleStartInstance = ParticleManager.InitLeveledParticle( m_fireParticleStart, m_particleCenter);
+        m_megaFireParticleInstance = ParticleManager.InitLeveledParticle( m_megaFireParticle, m_particleCenter);
+        m_megaFireParticleStartInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleStart,m_particleCenter);
 
 	}
 
@@ -150,13 +167,15 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_healthBehaviour.AddDamageIgnore( DamageType.MINE );
 
                 m_shootingTimer = 0.1f;
-                // Play start particle
             }
             
-            if ( m_fire && !m_isUsingCircleFire )   // if we are using circle fury we dont need to pause mouth fire
+            if ( m_fire )
             {
                 if (!m_breathBehaviour.isFuryPaused)
+                {
                     m_breathBehaviour.PauseFury();
+                    StartSonicFire( m_fireType );
+                }
                 // Advance fire timer to make it end even if not breathing because we are in ricochet form
                 if ( !m_breathBehaviour.IsInfiniteFury() )
                 {
@@ -169,7 +188,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                 }
             }
             
-            
             if ( m_powerLevel >= 3 && m_motion.state == DragonMotion.State.Extra_2 ) 
             {
                 m_shootingTimer -= Time.deltaTime;
@@ -181,18 +199,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     ShootHorn( dir, m_level3PoolHandler, true, m_motion.speed * 1.5f );
                 }
             }
-
-            bool checkSmah = false;
-            if ( m_isUsingCircleFire )
-            {
-                checkSmah = m_motion.state == DragonMotion.State.Extra_2 && !m_fire;    // Only smash if we cannot burn
-            }
-            else
-            {
-                checkSmah = m_motion.state == DragonMotion.State.Extra_2 || m_fire;
-            }
             
-            if ( checkSmah )
+            if ( m_motion.state == DragonMotion.State.Extra_2 || m_fire )
             {
     			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
     			for (int i = 0; i < m_numCheckEntities; i++) 
@@ -237,10 +245,13 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_healthBehaviour.RemoveDamageIgnore( DamageType.MINE );
                 
                 // if fire still active resume breathing
-                if ( m_fire && !m_isUsingCircleFire)
+                if ( m_fire )
                 {
                     if ( m_breathBehaviour.isFuryPaused )
+                    {
                         m_breathBehaviour.ResumeFury();
+                        StopSonicFire( m_fireType );
+                    }
                 }
                 
                 if (m_shootLevel2Spikes)
@@ -258,10 +269,29 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     IgnoreLevel2Spikes();
                 }
                 
-                // Stop Particles
 			}
 		}
 	}
+    
+    void LateUpdate()
+    {
+        if ( m_fire && ( m_motion.state == DragonMotion.State.Extra_1 || m_motion.state == DragonMotion.State.Extra_2 ))
+        {
+            switch(m_fireType)
+            {
+                case  DragonBreathBehaviour.Type.Standard:
+                {
+                    m_fireParticleInstance.transform.rotation = Quaternion.identity;
+                    m_fireParticleStartInstance.transform.rotation = Quaternion.identity;
+                }break;
+                case DragonBreathBehaviour.Type.Mega:
+                {
+                    m_megaFireParticleInstance.transform.rotation = Quaternion.identity;
+                    m_megaFireParticleStartInstance.transform.rotation = Quaternion.identity;
+                }break;
+            }
+        }
+    }
 
 	void OnFuryRushToggled( bool fire, DragonBreathBehaviour.Type fireType)
 	{
@@ -274,11 +304,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     	else
     	{   
     		m_circle.radius = m_originalRadius;
-            // if in ricochet form stop fire
-            if (m_motion.state == DragonMotion.State.Extra_2 || m_motion.state == DragonMotion.State.Extra_1)
-            {
-                // Stop fire particles if playing
-            }
+            StopSonicFire( fireType );
     	}
 	}
     
@@ -294,5 +320,45 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             projectile.ShootTowards(_direction, projectile.speed, 1000, transform );
         }
         
+    }
+    
+    
+    private void StartSonicFire( DragonBreathBehaviour.Type fireType )
+    {
+        // Play start particle
+        switch( fireType )
+        {
+            case DragonBreathBehaviour.Type.Standard:
+            {
+                m_fireParticleInstance.gameObject.SetActive(true);
+                m_fireParticleStartInstance.gameObject.SetActive(true);
+                m_fireParticleStartInstance.Play();
+            }break;
+            case DragonBreathBehaviour.Type.Mega:
+            {
+                m_megaFireParticleInstance.gameObject.SetActive(true);
+                m_megaFireParticleStartInstance.gameObject.SetActive(true);
+                m_megaFireParticleStartInstance.Play();
+            }break;
+        }
+        
+        
+    }
+    
+    private void StopSonicFire( DragonBreathBehaviour.Type fireType )
+    {
+        switch( fireType )
+        {
+            case DragonBreathBehaviour.Type.Standard:
+            {
+                m_fireParticleInstance.gameObject.SetActive(false);
+                m_fireParticleStartInstance.gameObject.SetActive(false);
+            }break;
+            case DragonBreathBehaviour.Type.Mega:
+            {
+                m_megaFireParticleInstance.gameObject.SetActive(false);
+                m_megaFireParticleStartInstance.gameObject.SetActive(false);
+            }break;
+        }
     }
 }

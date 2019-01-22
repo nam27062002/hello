@@ -21,7 +21,7 @@ public class FireBreathCircle : DragonBreathBehaviour {
     public string m_fireCenter = "Dragon_Hip";
 
     [Header("Particle")]
-    public string m_particleCenter = "Dragon_MasterGiro";
+    public string m_particleCenter = "FirePoint";
     public string m_fireParticle = "FireCircle/PS_SonicFireRush";
     private ParticleSystem m_fireParticleInstance;
     public string m_fireParticleStart = "FireCircle/PS_SonicFireRushBoost";
