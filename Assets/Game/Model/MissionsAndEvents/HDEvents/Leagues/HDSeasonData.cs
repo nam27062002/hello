@@ -73,7 +73,7 @@ public class HDSeasonData {
         m_startDate = new DateTime(1970, 1, 1);
         m_closeDate = new DateTime(1970, 1, 1);
         m_endDate   = new DateTime(1970, 1, 1);
-		m_dataReceivedDate = new DateTime(1970, 1, 1);
+		m_dataReceivedDate = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		m_cachedEndDate = new DateTime(1970, 1, 1);
 
         currentLeague = null;
