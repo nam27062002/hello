@@ -8,7 +8,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     [Header("Damage Area Settings")]
     public DragonTier m_tier = DragonTier.TIER_4;
     public IEntity.Type m_type = IEntity.Type.PLAYER;
-    public float m_fireBoostMultiplier = 2;
+    public float m_fireAreaMultiplier = 2;
 
     [Header("Level 2 Spikes")]
     public int m_spikesNumber = 4;
@@ -299,7 +299,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     	m_fireType = fireType;
     	if ( m_fire )
     	{
-    		m_circle.radius = m_originalRadius * m_fireBoostMultiplier;	
+    		m_circle.radius = m_originalRadius * m_fireAreaMultiplier;	
     	}
     	else
     	{   
