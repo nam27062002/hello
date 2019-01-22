@@ -39,8 +39,11 @@ public class DragonMotionHedgehog : DragonMotion {
     DragonBreathBehaviour m_breath;
     DragonHedgehogPowers m_powers;
 
+    Vector3 m_sphereLocalPosition;
+
 	override protected void Start() {
 		base.Start();
+        m_sphereLocalPosition = m_mainGroundCollider.transform.localPosition;
 		m_boost.alwaysDrain = true;
         m_idleQuaternion = m_rotationPivot.localRotation;
         m_currentQuaternion = m_idleQuaternion;
@@ -224,9 +227,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 m_animationEventController.allowHitAnimation = true;
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
-
-                
-                
+                m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
 			}break;
 			case State.Extra_2:
 			{
@@ -238,6 +239,8 @@ public class DragonMotionHedgehog : DragonMotion {
                 m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
                 if ( m_powerLevel >= 2 )
                     m_impulse = GameConstants.Vector3.zero;
+                    
+                m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
 			}break;
 		}
 		base.ChangeState( _nextState );
@@ -256,7 +259,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 {
                      AudioController.Play( m_rollUpSound, m_transform );
                 }
-                
+                m_mainGroundCollider.transform.position = m_rotationPivot.position;
 			}break;
 			case State.Extra_2:
 			{
@@ -278,6 +281,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 {
                      AudioController.Play( m_shootSound, m_transform );
                 }
+                m_mainGroundCollider.transform.position = m_rotationPivot.position;
 			}break;
 		}
 	}

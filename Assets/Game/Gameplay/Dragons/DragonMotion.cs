@@ -89,7 +89,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 	protected DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
-	SphereCollider 			m_mainGroundCollider;
+    protected SphereCollider 	m_mainGroundCollider;
 	Collider[] 				m_groundColliders;
 	Collider[]				m_hitColliders;
 	int m_hitCollidersSize = 0;
