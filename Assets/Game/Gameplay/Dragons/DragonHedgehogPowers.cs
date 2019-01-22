@@ -50,8 +50,9 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
 	// Use this for initialization
 	void Start () {
-    
+        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
 		m_circle = GetComponent<CircleArea2D>();
+        m_circle.radius = m_circle.radius * dataSpecial.scale;
 		m_originalRadius = m_circle.radius;
 		m_player = InstanceManager.player;
 		m_motion = m_player.dragonMotion as DragonMotionHedgehog;
@@ -65,7 +66,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         m_breathBehaviour = GetComponentInParent<DragonBreathBehaviour>();
         m_healthBehaviour = GetComponentInParent<DragonHealthBehaviour>();
         
-        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
+        
         m_powerLevel = dataSpecial.powerLevel;
         
         m_spikesLvl1.SetActive( m_powerLevel > 1 );
