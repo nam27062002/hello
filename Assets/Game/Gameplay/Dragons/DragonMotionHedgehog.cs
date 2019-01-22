@@ -27,7 +27,16 @@ public class DragonMotionHedgehog : DragonMotion {
     public string m_rollUpSound;
     public string m_shootSound;
     public string m_bounceSound;
+    
+    [ Header("Particles") ]
+    public string m_fireParticleImpact = "FireCircle/PS_SonicDragonFireImpact";
+    private ParticleSystem m_fireParticleImpactInstance;
+    
+    public string m_megaFireParticleImpact = "FireCircle/PS_SonicDragonMegaFireImpact";
+    private ParticleSystem m_megaFireParticleImpactInstance;
 
+
+    DragonBreathBehaviour m_breath;
     DragonHedgehogPowers m_powers;
 
 	override protected void Start() {
@@ -43,6 +52,10 @@ public class DragonMotionHedgehog : DragonMotion {
         m_canSpin = false;
 			// Wait for boost config to end
 		StartCoroutine( DelayedBoostSet());
+
+        m_breath = GetComponent<DragonBreathBehaviour>();
+        m_fireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_fireParticleImpact, transform.parent);
+        m_megaFireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleImpact, transform.parent);
 
 	}
 
@@ -101,7 +114,7 @@ public class DragonMotionHedgehog : DragonMotion {
     			{
     				if ( m_impulse.y > 0 )
     				{
-                        CustomBounce(GameConstants.Vector3.down);
+                        CustomBounce(m_transform.position, GameConstants.Vector3.down);
     				}
     			}
 				
@@ -279,8 +292,9 @@ public class DragonMotionHedgehog : DragonMotion {
                 Entity entity = _other.attachedRigidbody.GetComponent<Entity>();
                 if ( entity.HasTag(IEntity.Tag.Mine) )
                 {
-                    Vector3 normal = (m_transform.position - _other.attachedRigidbody.position).normalized;
-                    CustomBounce( normal );
+                    Vector3 vec = m_transform.position - _other.attachedRigidbody.position;
+                    Vector3 normal = vec.normalized;
+                    CustomBounce( m_transform.position + (vec * 0.5f) , normal );
                 }
             }
             base.OnTriggerEnter( _other );
@@ -297,7 +311,9 @@ public class DragonMotionHedgehog : DragonMotion {
 		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
 		{
             if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
-                CustomBounce(collision.contacts[0].normal);
+            {
+                CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+            }
 			
 		}
 	}
@@ -355,8 +371,27 @@ public class DragonMotionHedgehog : DragonMotion {
             ChangeState(State.Stunned);
     }
 
-    protected void CustomBounce( Vector3 normal )
+    protected void CustomBounce(  Vector3 _position,  Vector3 normal )
     {
+        if ( m_breath.IsFuryOn() )
+        {
+            switch( m_breath.type )
+            {
+                case DragonBreathBehaviour.Type.Standard:
+                {
+                    m_fireParticleImpactInstance.gameObject.SetActive(true);
+                    m_fireParticleImpactInstance.transform.position = _position;
+                    m_fireParticleImpactInstance.Play();
+                }break;
+                case DragonBreathBehaviour.Type.Mega:
+                {
+                    m_megaFireParticleImpactInstance.gameObject.SetActive(true);
+                    m_megaFireParticleImpactInstance.transform.position = _position;
+                    m_megaFireParticleImpactInstance.Play();
+                }break;
+            }
+        }
+    
         if ( !string.IsNullOrEmpty(m_bounceSound))
         {
             AudioController.Play( m_bounceSound, m_transform );
