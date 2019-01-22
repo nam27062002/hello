@@ -279,7 +279,8 @@ public class DragonMotionHedgehog : DragonMotion {
 		base.OnCollisionEnter(collision);
 		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
 		{
-            CustomBounce(collision.contacts[0].normal);
+            if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
+                CustomBounce(collision.contacts[0].normal);
 			
 		}
 	}
