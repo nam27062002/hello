@@ -311,4 +311,10 @@ public class DragonControlPlayer : MonoBehaviour {
 			tiltControls.SetSensitivity(_sensitivity);
 		}
 	}
+    
+    public void SetArrowDistance(float distance)
+    {
+        if (touchControls != null)
+            touchControls.arrowDistance = distance;
+    }
 }

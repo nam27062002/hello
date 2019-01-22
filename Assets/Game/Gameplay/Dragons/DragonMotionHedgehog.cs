@@ -18,6 +18,8 @@ public class DragonMotionHedgehog : DragonMotion {
     protected Quaternion m_idleQuaternion;
     protected Quaternion m_currentQuaternion;
     private int m_powerLevel = 0;
+    public float m_dpadDistance = 500;
+    private float m_currentDpadDistance = 0;
 
     protected float m_boostLevelStart = 0;
 
@@ -75,6 +77,7 @@ public class DragonMotionHedgehog : DragonMotion {
 					if ( impulse != GameConstants.Vector3.zero )
 						m_direction = impulse;
 				}
+                    
 			}break;
             // Bouncing!
 			case State.Extra_2:
@@ -104,6 +107,17 @@ public class DragonMotionHedgehog : DragonMotion {
 				
 			}break;
 		}        
+        
+        if ( m_state == State.Extra_1 )
+        {
+            m_currentDpadDistance += m_dpadDistance * Time.deltaTime * 2;
+        }
+        else
+        {
+            m_currentDpadDistance -= m_dpadDistance * Time.deltaTime * 10;
+        }
+        m_currentDpadDistance = Mathf.Clamp(m_currentDpadDistance, 0, m_dpadDistance);
+        m_controls.SetArrowDistance( m_currentDpadDistance );
 
 		if (   m_state == State.Idle 
 			|| m_state == State.Fly
@@ -197,6 +211,9 @@ public class DragonMotionHedgehog : DragonMotion {
                 m_animationEventController.allowHitAnimation = true;
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
+
+                
+                
 			}break;
 			case State.Extra_2:
 			{
