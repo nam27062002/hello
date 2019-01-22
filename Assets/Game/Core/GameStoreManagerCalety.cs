@@ -51,6 +51,10 @@ public class GameStoreManagerCalety : GameStoreManager
         {
             m_isInitialising = false;
             m_hasInitFailed = !success;
+            if (success)
+            {
+                onStoreIsReady();
+            }
         }
 #endif        
 
@@ -201,8 +205,8 @@ public class GameStoreManagerCalety : GameStoreManager
     
     private Queue<string> m_promotedIAPs;
 
-    private float m_onNotifiedWhenInitializedTimer = -1f;
-    private Action m_onNotifiedWhenInitialized;
+    private float m_waitForInitializationExpiresAt = -1f;
+    private Action m_onWaitForInitializationDone;
 
     public GameStoreManagerCalety () 
 	{
@@ -216,7 +220,7 @@ public class GameStoreManagerCalety : GameStoreManager
     {        
         m_isFirstInit = true;
         m_storeListener.Reset();
-        ResetNotifyWhenInitialized();
+        ResetWaitForInitialization();
     }
 
 	public override void Initialize()
@@ -231,7 +235,7 @@ public class GameStoreManagerCalety : GameStoreManager
 			m_isFirstInit = false;
         }
 
-        ResetNotifyWhenInitialized();
+        ResetWaitForInitialization();
 
         m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
@@ -331,14 +335,14 @@ public class GameStoreManagerCalety : GameStoreManager
 			return false;
 		}
 #if UNITY_EDITOR
-		return true;
+        return IsReady();
 #else
 		Log("CanMakePayment? Asking native library...");
 		bool canMakePayment = StoreManager.SharedInstance.CanMakePayments();
 		Log("CanMakePayment? Native library response is " + canMakePayment);
 		return canMakePayment;
 #endif
-	}
+    }
 
 	public override void Buy(string _sku) {
 		Log("Buy() " + _sku);
@@ -424,20 +428,22 @@ public class GameStoreManagerCalety : GameStoreManager
     	return "";
     }
     
-    public override void NotifyWhenInitialized(Action onDone)
+    public override void WaitForInitialization(Action onDone, float timeOut=20f)
     {
-        m_onNotifiedWhenInitialized = onDone;
-        m_onNotifiedWhenInitializedTimer = 20f;
+        m_onWaitForInitializationDone = onDone;
+        m_waitForInitializationExpiresAt = Time.realtimeSinceStartup + timeOut;
     }  
     
-    private void ResetNotifyWhenInitialized()
+    private void ResetWaitForInitialization()
     {
-        m_onNotifiedWhenInitializedTimer = -1f;
-        m_onNotifiedWhenInitialized = null;
+        m_waitForInitializationExpiresAt = -1f;
+        m_onWaitForInitializationDone = null;
     }
 
 #if UNITY_EDITOR
-    private float m_fakeInitTimer = 20f;
+    // Time for the shope to initialize. Increase this value if you want to test what happens when trying to purchase before the shop has been initialized
+    // 40 seconds is the time that is taking to initialize with the current amount of products (86 on January 2019) on the actual device 
+    private float m_fakeInitTimer = 5f;
 #endif
 
     public override void Update()
@@ -449,17 +455,18 @@ public class GameStoreManagerCalety : GameStoreManager
             if (m_fakeInitTimer <= 0f)
             {
                 m_fakeInitTimer = -1f;
-                m_storeListener.FakeInit(false);
+
+                // Pass true if you want the shop to be initialized successfully
+                m_storeListener.FakeInit(true);
             }
         }
 #endif
-        if (m_onNotifiedWhenInitialized != null)
-        {
-            m_onNotifiedWhenInitializedTimer -= Time.deltaTime;
-            if (m_onNotifiedWhenInitializedTimer <= 0f || !IsInitializing())
+        if (m_onWaitForInitializationDone != null)
+        {            
+            if (Time.realtimeSinceStartup >= m_waitForInitializationExpiresAt || !IsInitializing())
             {                
-                m_onNotifiedWhenInitialized();
-                ResetNotifyWhenInitialized();
+                m_onWaitForInitializationDone();
+                ResetWaitForInitialization();
             }            
         }
     }

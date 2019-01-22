@@ -223,7 +223,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
             if (GameStoreManager.SharedInstance.IsInitializing())
             {
-                GameStoreManager.SharedInstance.NotifyWhenInitialized(RequestIAP);
+                GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
             }
             else
             {
@@ -238,29 +238,45 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	}
 
     private void RequestIAP()
-    {        
+    {                
         if (GameStoreManager.SharedInstance.CanMakePayment())
         {
             // Player can perform the payment, continue with the IAP flow
             Log("Player can perform the payment, continue with the IAP flow");
             TrackPurchaseResult(true);  // Start listening to GameStoreManager events
             GameStoreManager.SharedInstance.Buy(GetIAPSku());
-        }
+        }        
         else
         {
             // Player can't make payment, finalize the IAP
             Log("Player can't make payment, finalize the IAP");
             FinalizeIAP(false);
 
-#if UNITY_ANDROID
-            string msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));
-            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-            // Longer time is given to this feedback because the text is long
-            feedbackText.duration = 4f;
-#else
-            UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
-#endif
+            string msg = null;
+            float duration = -1f;
 
+            /*            
+            if (GameStoreManager.SharedInstance.IsInitializing())
+            {
+                msg = "Store is initializing...";                
+            }
+            else
+            */
+            {               
+#if UNITY_ANDROID
+                msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));                
+                // Longer time is given to this feedback because the text is long
+                duration = 4f;
+#else
+                msg = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");                
+#endif                                
+            }
+
+            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            if (duration > 0)
+            {
+                feedbackText.duration = duration;
+            }
         }
     }
 
