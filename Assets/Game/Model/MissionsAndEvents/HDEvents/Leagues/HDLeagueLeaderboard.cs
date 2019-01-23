@@ -51,7 +51,6 @@ public class HDLeagueLeaderboard {
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             // clear Data
-            m_records.Clear();
             m_playerRank = 0;
 
             // parse Json
@@ -70,6 +69,7 @@ public class HDLeagueLeaderboard {
             m_playerScore = player["score"].AsLong;
             m_playerRank = player["rank"].AsInt;
 
+            m_records.Clear();
             SimpleJSON.JSONArray array = _data["l"].AsArray;
             for (int i = 0; i < array.Count; ++i) {
                 SimpleJSON.JSONClass d = array[i].AsObject;
