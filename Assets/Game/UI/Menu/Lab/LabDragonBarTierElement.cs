@@ -68,6 +68,9 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 			// SFX
 			AudioController.Play("hd_lab_tier_upgraded");
 
+			// Lock input (to prevent any other stat upgrade while the popup is opened)
+			Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+
 			// Open info popup (after some delay)
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
@@ -77,6 +80,9 @@ public class LabDragonBarTierElement : LabDragonBarLockedElement {
 						tierUnlockedPopup.Init(_dragonData.tierDef, _dragonData.specialTierDef);
 						popup.Open();
 					}
+
+					// Unlock input
+					Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 				}, 0.5f
 			);
 		}
