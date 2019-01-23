@@ -42,6 +42,15 @@ public class DragonMotionHedgehog : DragonMotion {
     Vector3 m_sphereLocalPosition;
 
     public float m_sonicControlSpeed = 1f;
+    
+    override public float absoluteMaxSpeed
+    {
+        get
+        {
+            return Mathf.Max(base.absoluteMaxSpeed,m_sonicMaxSpeed);
+        }
+    }
+    
 
 	override protected void Start() {
 		base.Start();

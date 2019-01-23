@@ -1705,7 +1705,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-	public float absoluteMaxSpeed
+	public virtual float absoluteMaxSpeed
 	{
 		get
 		{
