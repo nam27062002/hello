@@ -11,17 +11,16 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1363264916768824}
   m_IsPrefabParent: 1
---- !u!1 &1038133973596008
+--- !u!1 &1117600643443422
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4151561353315876}
-  - component: {fileID: 33402626745221874}
-  - component: {fileID: 23284333729852932}
-  - component: {fileID: 114761569423845632}
+  - component: {fileID: 4859771410784926}
+  - component: {fileID: 33046442641197222}
+  - component: {fileID: 23741476175902236}
   m_Layer: 0
   m_Name: view
   m_TagString: Untagged
@@ -47,19 +46,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4151561353315876
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1038133973596008}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4336817967787110}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4336817967787110
 Transform:
   m_ObjectHideFlags: 1
@@ -67,19 +53,32 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1363264916768824}
   m_LocalRotation: {x: 0.00000013155935, y: 0, z: -0.00000008193444, w: 1}
-  m_LocalPosition: {x: -172.5413, y: 88.10131, z: 44.643036}
+  m_LocalPosition: {x: -155.77382, y: 119.33462, z: -79.10538}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4151561353315876}
+  - {fileID: 4859771410784926}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23284333729852932
+--- !u!4 &4859771410784926
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1117600643443422}
+  m_LocalRotation: {x: -1, y: 0, z: 0, w: -0.00000004371139}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4336817967787110}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23741476175902236
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1038133973596008}
+  m_GameObject: {fileID: 1117600643443422}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -88,7 +87,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: eee8ace75406aa74f88f42eaf4340cab, type: 2}
+  - {fileID: 2100000, guid: 84a850613a90947e984f4354e83cc77e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,13 +107,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33402626745221874
+--- !u!33 &33046442641197222
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1038133973596008}
-  m_Mesh: {fileID: 4300000, guid: a40887c7e998d3a459bb9eb4c44ae9f3, type: 3}
+  m_GameObject: {fileID: 1117600643443422}
+  m_Mesh: {fileID: 4300000, guid: dfac91f0af13f4dc78bb52c774663bd9, type: 3}
 --- !u!54 &54582701073672564
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -157,7 +156,7 @@ MonoBehaviour:
   m_mass: 15
   m_chargeTime: 0
   m_speed: 20
-  m_rotationSpeed: 120
+  m_rotationSpeed: 0.1
   m_rotationAxis: 2
   m_maxTime: 5
   m_scaleTime: 1
@@ -249,8 +248,8 @@ MonoBehaviour:
     scale: 1
     orientate: 0
   m_onHitParticle:
-    name: PS_RainbowPetImpact
-    path: 
+    name: PS_SonicDragonSpikeImpact
+    path: FireCircle
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -380,56 +379,3 @@ MonoBehaviour:
     m_Bits: 1074266640
   m_firingEntityType: 1
   m_explodeIfHomingtargetNull: 0
---- !u!114 &114761569423845632
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1038133973596008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ed6093cd7fb4c21b212d932617ed46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_activationMode: 0
-  m_parent: {fileID: 4151561353315876}
-  m_view: {fileID: 23284333729852932}
-  m_particleDatas:
-  - name: PS_RainbowPetProjectile
-    path: 
-    changeStartColor: 0
-    startColor: {r: 0, g: 0, b: 0, a: 0}
-    startColorTwo: {r: 0, g: 0, b: 0, a: 0}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 0, g: 0, b: 0, a: 0}
-      key1: {r: 0, g: 0, b: 0, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 0
-    orientate: 0
