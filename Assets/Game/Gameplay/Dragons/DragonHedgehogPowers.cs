@@ -291,13 +291,17 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
             {
                 case  DragonBreathBehaviour.Type.Standard:
                 {
-                    m_fireParticleInstance.transform.rotation = Quaternion.identity;
-                    m_fireParticleStartInstance.transform.rotation = Quaternion.identity;
+                    if (m_fireParticleInstance)
+                        m_fireParticleInstance.transform.rotation = Quaternion.identity;
+                    if (m_fireParticleStartInstance)
+                        m_fireParticleStartInstance.transform.rotation = Quaternion.identity;
                 }break;
                 case DragonBreathBehaviour.Type.Mega:
                 {
-                    m_megaFireParticleInstance.transform.rotation = Quaternion.identity;
-                    m_megaFireParticleStartInstance.transform.rotation = Quaternion.identity;
+                    if (m_megaFireParticleInstance)
+                        m_megaFireParticleInstance.transform.rotation = Quaternion.identity;
+                    if (m_megaFireParticleStartInstance)
+                        m_megaFireParticleStartInstance.transform.rotation = Quaternion.identity;
                 }break;
             }
         }
@@ -340,19 +344,25 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         {
             case DragonBreathBehaviour.Type.Standard:
             {
-                m_fireParticleInstance.gameObject.SetActive(true);
-                m_fireParticleStartInstance.gameObject.SetActive(true);
-                m_fireParticleStartInstance.Play();
-
+                if (m_fireParticleInstance)
+                    m_fireParticleInstance.gameObject.SetActive(true);
+                if (m_fireParticleStartInstance)
+                {
+                    m_fireParticleStartInstance.gameObject.SetActive(true);
+                    m_fireParticleStartInstance.Play();
+                }
                 m_trailParticleInstance.SetActive(true);
                 
             }break;
             case DragonBreathBehaviour.Type.Mega:
             {
-                m_megaFireParticleInstance.gameObject.SetActive(true);
-                m_megaFireParticleStartInstance.gameObject.SetActive(true);
-                m_megaFireParticleStartInstance.Play();
-                
+                if (m_megaFireParticleInstance)
+                    m_megaFireParticleInstance.gameObject.SetActive(true);
+                if (m_megaFireParticleStartInstance)
+                {
+                    m_megaFireParticleStartInstance.gameObject.SetActive(true);
+                    m_megaFireParticleStartInstance.Play();
+                }
                 m_megaTrailParticleInstance.SetActive(true);
             }break;
         }
@@ -366,14 +376,18 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         {
             case DragonBreathBehaviour.Type.Standard:
             {
-                m_fireParticleInstance.gameObject.SetActive(false);
-                m_fireParticleStartInstance.gameObject.SetActive(false);
+                if (m_fireParticleInstance)
+                    m_fireParticleInstance.gameObject.SetActive(false);
+                if ( m_fireParticleStartInstance )
+                    m_fireParticleStartInstance.gameObject.SetActive(false);
                 m_trailParticleInstance.SetActive(false);
             }break;
             case DragonBreathBehaviour.Type.Mega:
             {
-                m_megaFireParticleInstance.gameObject.SetActive(false);
-                m_megaFireParticleStartInstance.gameObject.SetActive(false);
+                if (m_megaFireParticleInstance)
+                    m_megaFireParticleInstance.gameObject.SetActive(false);
+                if (m_megaFireParticleStartInstance)
+                    m_megaFireParticleStartInstance.gameObject.SetActive(false);
                 m_megaTrailParticleInstance.SetActive(false);
             }break;
         }
