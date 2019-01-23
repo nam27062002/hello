@@ -51,7 +51,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
 
-	private bool m_transactionInProgress = false;
+	private bool m_transactionInProgress = false;    
 
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
@@ -221,26 +221,14 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		if(_connectionError == null) {
 			// No error! Proceed with the IAP flow
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
-			if(GameStoreManager.SharedInstance.CanMakePayment()) {
-				// Player can perform the payment, continue with the IAP flow
-				Log("Player can perform the payment, continue with the IAP flow");
-				TrackPurchaseResult(true);	// Start listening to GameStoreManager events
-				GameStoreManager.SharedInstance.Buy(GetIAPSku());
-			} else {
-				// Player can't make payment, finalize the IAP
-				Log("Player can't make payment, finalize the IAP");
-				FinalizeIAP(false);
-
-#if UNITY_ANDROID
-                string msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));
-                UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
-                // Longer time is given to this feedback because the text is long
-                feedbackText.duration = 4f;
-#else
-                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
-#endif
-
+            if (GameStoreManager.SharedInstance.IsInitializing())
+            {
+                GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
             }
+            else
+            {
+                RequestIAP();
+            }			
         } else {
 			// There was a connection error with the store, finalize the IAP
 			Log("There was a connection error with the store, finalize the IAP");
@@ -248,6 +236,49 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
+
+    private void RequestIAP()
+    {                
+        if (GameStoreManager.SharedInstance.CanMakePayment())
+        {
+            // Player can perform the payment, continue with the IAP flow
+            Log("Player can perform the payment, continue with the IAP flow");
+            TrackPurchaseResult(true);  // Start listening to GameStoreManager events
+            GameStoreManager.SharedInstance.Buy(GetIAPSku());
+        }        
+        else
+        {
+            // Player can't make payment, finalize the IAP
+            Log("Player can't make payment, finalize the IAP");
+            FinalizeIAP(false);
+
+            string msg = null;
+            float duration = -1f;
+
+            /*            
+            if (GameStoreManager.SharedInstance.IsInitializing())
+            {
+                msg = "Store is initializing...";                
+            }
+            else
+            */
+            {               
+#if UNITY_ANDROID
+                msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));                
+                // Longer time is given to this feedback because the text is long
+                duration = 4f;
+#else
+                msg = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");                
+#endif                                
+            }
+
+            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            if (duration > 0)
+            {
+                feedbackText.duration = duration;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Real money transaction has succeeded.
@@ -324,7 +355,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			Log("Cancelling resources flow transaction " + _flow.name);
 			m_transactionInProgress = false;
 		}
-	}
+	}    
 
 	//------------------------------------------------------------------------//
 	// DEBUG METHODS														  //
