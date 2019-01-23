@@ -248,20 +248,17 @@ public class LeaguesScreenController : MonoBehaviour {
 		m_darkScreen.ForceSet(m_panels[(int)_panel].darkBackground, false);
 
 		// If showing the ACTIVE panel for the first time, trigger the tutorial
-		// [AOC] TODO!!
-		/*
-		if(m_activePanel == Panel.EVENT_ACTIVE && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.QUEST_INFO)) {
+		if(m_activePanel == Panel.ACTIVE_SEASON && !UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
 			// Open popup!
-			string popupName = "PF_PopupInfoGlobalEvents";
-			PopupManager.OpenPopupInstant("UI/Popups/Tutorial/" + popupName);
+			PopupManager.OpenPopupInstant(PopupInfoLeagues.PATH);
 
 			// Mark tutorial step as completed
-			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.QUEST_INFO, true);
+			UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.LEAGUES_INFO, true);
 
 			// Tracking!
+			string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoLeagues.PATH);
 			HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
 		}
-		*/
 	}
 
 

@@ -197,6 +197,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		}
 	} 
 
+	/// <summary>
+	/// The show animation has finished.
+	/// </summary>
     public void OnShowPostAnimation() {
         HDSeasonData m_season = HDLiveDataManager.league.season;
         if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
@@ -208,11 +211,25 @@ public class LabDragonSelectionScreen : MonoBehaviour {
     /// Back button has been pressed.
     /// </summary>
     public void OnBackButton() {
-        // AudioController.PlayMusic("hd_menu_music");
+        // Stop lab music
         InstanceManager.musicController.Ambience_Stop("hd_lab_music", gameObject);
         
+		// Go back to default mode
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
     }
+
+	/// <summary>
+	/// The play button has been pressed.
+	/// </summary>
+	public void OnPlayButton() {
+		// Go to the special missions screen
+		// If the leagues tutorial has not yet been triggered, go to the leagues screen instead
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+		} else {
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_MISSIONS);
+		}
+	}
 
 	/// <summary>
 	/// A new dragon has been selected.
