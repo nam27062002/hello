@@ -90,7 +90,7 @@ public class MenuDragonSpecialPower : MonoBehaviour {
 
     private void OnTierUpgrade(DragonDataSpecial _data) {
         if (enabled) {
-            if (_data.sku == m_dragonPreview.sku) {
+            if (_data.sku == m_dragonPreview.sku && InstanceManager.menuSceneController != null) {  // Only on the menu
                 transform.localScale = GameConstants.Vector3.one * _data.scaleMenu;
             }
         }
