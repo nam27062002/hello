@@ -177,7 +177,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 			// Refresh progress var value
 			if(m_teasingTimerBar != null) {
 				// Interpolate progress between min and max angles
-				float progress = (float)(remainingSeconds / durationSeconds);
+				float progress = 1f - (float)(remainingSeconds / durationSeconds);
 				float targetAngle = m_teasingTimeBarAngleRange.Lerp(progress);
 				float fillAmount = Mathf.InverseLerp(0f, 360f, targetAngle);
 				m_teasingTimerBar.fillAmount = fillAmount;
