@@ -321,7 +321,7 @@ namespace AssetBundleBrowser
                         }
                         catch (System.Exception e)
                         {
-                            Debug.LogException(e);
+                            UnityEngine.Debug.LogException(e);
                         }
                     }
                 }
