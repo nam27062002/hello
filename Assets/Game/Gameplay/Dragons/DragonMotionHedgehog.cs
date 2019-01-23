@@ -260,6 +260,7 @@ public class DragonMotionHedgehog : DragonMotion {
 				m_dragon.TryResumeEating();
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
                 m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
+                InstanceManager.timeScaleController.m_ignoreHitStops = false;
 			}break;
 			case State.Extra_2:
 			{
@@ -273,6 +274,7 @@ public class DragonMotionHedgehog : DragonMotion {
                     m_impulse = GameConstants.Vector3.zero;
                     
                 m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
+                InstanceManager.timeScaleController.m_ignoreHitStops = false;
 			}break;
 		}
 		base.ChangeState( _nextState );
@@ -292,6 +294,7 @@ public class DragonMotionHedgehog : DragonMotion {
                      AudioController.Play( m_rollUpSound, m_transform );
                 }
                 m_mainGroundCollider.transform.position = m_rotationPivot.position;
+                InstanceManager.timeScaleController.m_ignoreHitStops = true;
 			}break;
 			case State.Extra_2:
 			{
@@ -314,6 +317,7 @@ public class DragonMotionHedgehog : DragonMotion {
                      AudioController.Play( m_shootSound, m_transform );
                 }
                 m_mainGroundCollider.transform.position = m_rotationPivot.position;
+                InstanceManager.timeScaleController.m_ignoreHitStops = true;
 			}break;
 		}
 	}
