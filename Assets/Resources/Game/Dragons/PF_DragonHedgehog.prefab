@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -189.64404, y: 117.99806, z: -40.871094}
+  m_LocalPosition: {x: -153.60808, y: 120.83378, z: -45.972656}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -2119,7 +2119,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.06678121, y: 0.31202623, z: -0.021992806, w: 0.9474683}
+  m_LocalRotation: {x: 0.00797922, y: 0.68634915, z: -0.007531093, w: 0.7271894}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5759,6 +5759,8 @@ MonoBehaviour:
   m_rollUpSound: hd_hedgehog_roll
   m_shootSound: hd_hedgehog_shoot
   m_bounceSound: hd_hedgehog_bounce_2
+  m_fireParticleImpact: FireCircle/PS_SonicDragonFireImpact
+  m_megaFireParticleImpact: FireCircle/PS_SonicDragonMegaFireImpact
 --- !u!114 &114228706375277902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6230,7 +6232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tier: 4
   m_type: 0
-  m_fireBoostMultiplier: 3
+  m_fireAreaMultiplier: 2
   m_spikesNumber: 8
   m_spikesOperture: 75
   m_shootingRatio: 1
@@ -6242,6 +6244,9 @@ MonoBehaviour:
   m_fireParticleStart: FireCircle/PS_SonicFireRushBoost
   m_megaFireParticle: FireCircle/PS_SonicMegaFireRush
   m_megaFireParticleStart: FireCircle/PS_SonicMegaFireRushBoost
+  m_trailPosition: {fileID: 4468906690164964}
+  m_trailParticle: FireCircle/PS_SonicDragonFireTrail
+  m_megaTrailParticle: FireCircle/PS_SonicDragonMegaFireTrail
 --- !u!114 &114998690069533076
 MonoBehaviour:
   m_ObjectHideFlags: 1
