@@ -157,13 +157,16 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
         }
 
 		// Refresh teasing countdown timer
-		if(m_mode == Mode.TEASING) {
+		if (m_mode == Mode.TEASING) {
 			double remainingSeconds = 0;
 			double durationSeconds = 1;	// To avoid division by 0
-			if(m_season.state == HDSeasonData.State.TEASING) {
+			if (m_season.state == HDSeasonData.State.TEASING) {
 				remainingSeconds = m_season.timeToStart.TotalSeconds;
 				durationSeconds = m_season.durationTeasing.TotalSeconds;
-			} else {
+			} else if (m_season.state == HDSeasonData.State.WAITING_RESULTS) {
+                remainingSeconds = m_season.timeToResuts.TotalSeconds;
+                durationSeconds = m_season.durationWaitResults.TotalSeconds;
+            } else {
 				remainingSeconds = m_season.timeToEnd.TotalSeconds;
 				durationSeconds = m_season.durationWaitNewSeason.TotalSeconds;
 			}
@@ -202,6 +205,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 				m_mode = Mode.NOT_JOINED;
 			} break;
 
+            case HDSeasonData.State.WAITING_RESULTS:
 			case HDSeasonData.State.WAITING_NEW_SEASON:
 			case HDSeasonData.State.TEASING: {
 				m_mode = Mode.TEASING;

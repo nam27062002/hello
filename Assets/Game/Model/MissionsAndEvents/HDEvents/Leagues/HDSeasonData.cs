@@ -18,6 +18,7 @@ public class HDSeasonData {
         TEASING,
         NOT_JOINED,         //(0)
         JOINED,             //(1)
+        WAITING_RESULTS,
         PENDING_REWARDS,    //(2)
         REWARDS_COLLECTED,
         WAITING_NEW_SEASON  //(11)
@@ -34,6 +35,7 @@ public class HDSeasonData {
 
     private DateTime m_startDate;
     private DateTime m_closeDate;
+    private DateTime m_resultDate;
     private DateTime m_endDate;
 
 	private DateTime m_dataReceivedDate;
@@ -72,6 +74,7 @@ public class HDSeasonData {
     public void Clean() {
         m_startDate = new DateTime(1970, 1, 1);
         m_closeDate = new DateTime(1970, 1, 1);
+        m_resultDate = new DateTime(1970, 1, 1);
         m_endDate   = new DateTime(1970, 1, 1);
 		m_dataReceivedDate = GameServerManager.SharedInstance.GetEstimatedServerTime();
 		m_cachedEndDate = new DateTime(1970, 1, 1);
@@ -127,11 +130,15 @@ public class HDSeasonData {
                 }
             } else {
                 if (timeToClose.TotalSeconds <= 0f) {
-                    if (state < State.JOINED) { 
+                    if (state < State.JOINED) {
                         nextLeague = currentLeague;
                         state = State.WAITING_NEW_SEASON;
-                    } else if (state < State.PENDING_REWARDS) { 
-                        state = State.PENDING_REWARDS;
+                    } else if (timeToResuts.TotalSeconds <= 0f) {
+                        if (state < State.PENDING_REWARDS) {
+                            state = State.PENDING_REWARDS;
+                        }
+                    } else {
+                        state = State.WAITING_RESULTS;
                     }
                 } else {
                     if (state == State.TEASING) {
@@ -185,6 +192,7 @@ public class HDSeasonData {
     private void LoadDates(SimpleJSON.JSONNode _data) {
         m_startDate = TimeUtils.TimestampToDate(_data["startTimestamp"].AsLong);
         m_closeDate = TimeUtils.TimestampToDate(_data["closeTimestamp"].AsLong);
+        m_resultDate = TimeUtils.TimestampToDate(_data["extraTimeTimestamp"].AsLong); 
         m_endDate = TimeUtils.TimestampToDate(_data["endTimestamp"].AsLong);
 
 		// Update cached dates
@@ -212,8 +220,10 @@ public class HDSeasonData {
             __SetScore(_score, _fetchLeaderboard);
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
-            scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+        } else {
+            scoreDataState = HDLiveData.State.VALID;
         }
+        scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
     }
 
     private void OnSetScore(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
@@ -227,7 +237,7 @@ public class HDSeasonData {
                 state = State.JOINED;
             }
             
-            currentLeague.LoadData(responseJson["league"]);
+            currentLeague.leaderboard.LoadData(responseJson["leaderboard"]);
 
             scoreDataState = HDLiveData.State.VALID;
         } else {
@@ -325,8 +335,10 @@ public class HDSeasonData {
 
     public TimeSpan timeToStart             { get { return m_startDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToClose             { get { return m_closeDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
+    public TimeSpan timeToResuts            { get { return m_resultDate - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
     public TimeSpan timeToEnd               { get { return m_endDate   - GameServerManager.SharedInstance.GetEstimatedServerTime(); } }
 	public TimeSpan duration                { get { return m_closeDate - m_startDate; } }
+    public TimeSpan durationWaitResults     { get { return m_resultDate - m_closeDate; } }
     public TimeSpan durationWaitNewSeason   { get { return m_endDate - m_closeDate; } }
 	public TimeSpan durationTeasing			{ get { return m_startDate - m_dataReceivedDate; } }
 

@@ -82,7 +82,7 @@ public class LeaguesScreenController : MonoBehaviour {
         CancelInvoke();
     }
 
-    void UpdatePeriodic() {
+    void Update() {
         switch (m_season.state) {
             case HDSeasonData.State.TEASING: {
                     if (m_season.timeToStart.TotalSeconds <= 0) {
@@ -100,6 +100,16 @@ public class LeaguesScreenController : MonoBehaviour {
                         Refresh();
                     }
                 } break;
+
+            case HDSeasonData.State.WAITING_RESULTS: {
+                    if (m_season.timeToResuts.TotalSeconds <= 0) {
+                        m_season.UpdateState();
+                        Refresh();
+                    } else if (m_activePanel != Panel.ACTIVE_SEASON) {
+                        Refresh();
+                    }
+                }
+                break;
 
             case HDSeasonData.State.PENDING_REWARDS: {
                     switch (m_activePanel) {
@@ -122,7 +132,7 @@ public class LeaguesScreenController : MonoBehaviour {
             case HDSeasonData.State.WAITING_NEW_SEASON: {
                     if (m_season.timeToEnd.TotalSeconds <= 0) {
                         HDLiveDataManager.instance.ForceRequestLeagues();
-                        CancelInvoke();
+                       // CancelInvoke();
                     } else if (m_activePanel != Panel.ACTIVE_SEASON) {
                         Refresh();
                     }
@@ -143,8 +153,8 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Doing this for the cases where the periodic update has been canceled (i.e. WAITING_NEW_SEASON timer ended).
-        CancelInvoke();
-		InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
+     //  CancelInvoke();
+	//	InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
 
         // Select active panel
         SelectPanel();
@@ -175,22 +185,20 @@ public class LeaguesScreenController : MonoBehaviour {
         } else { 
             // Depends on season state
             switch (m_season.state) {
-				case HDSeasonData.State.JOINED:
-				case HDSeasonData.State.NOT_JOINED:
-				case HDSeasonData.State.TEASING:
+                case HDSeasonData.State.NONE: {
+                        targetPanel = Panel.ERROR; // Shouldn't happen
+                        errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.SEASON);
+                    }
+                    break;
+
+                case HDSeasonData.State.TEASING:
+                case HDSeasonData.State.NOT_JOINED:
+                case HDSeasonData.State.JOINED:				
+                case HDSeasonData.State.WAITING_RESULTS:
 				case HDSeasonData.State.REWARDS_COLLECTED: {
                         targetPanel = Panel.ACTIVE_SEASON;
                     }
                     break;
-
-                case HDSeasonData.State.WAITING_NEW_SEASON: {
-                        if (m_season.liveDataState == HDLiveData.State.ERROR) {
-                            targetPanel = Panel.ERROR;
-                            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.FINALIZE);
-                        } else {
-                            targetPanel = Panel.ACTIVE_SEASON;
-                        }
-                    } break;
 
 				case HDSeasonData.State.PENDING_REWARDS: {
                         switch (m_season.rewardDataState) {
@@ -213,11 +221,16 @@ public class LeaguesScreenController : MonoBehaviour {
                     }
                     break;
 
-				case HDSeasonData.State.NONE: {
-    					targetPanel = Panel.ERROR; // Shouldn't happen
-                        errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.SEASON);
-                    } break;
-			}
+                case HDSeasonData.State.WAITING_NEW_SEASON: {
+                        if (m_season.liveDataState == HDLiveData.State.ERROR) {
+                            targetPanel = Panel.ERROR;
+                            errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.FINALIZE);
+                        } else {
+                            targetPanel = Panel.ACTIVE_SEASON;
+                        }
+                    }
+                    break;
+            }
 		}
 
 		// Toggle active panel
