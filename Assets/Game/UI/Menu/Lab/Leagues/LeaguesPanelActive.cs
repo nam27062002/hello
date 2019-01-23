@@ -58,6 +58,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 
 	[Separator("TEASING / WAITING")]
 	[SerializeField] private Localizer m_teasingTitleText = null;
+	[SerializeField] private Image m_teasingLeagueIcon = null;
 	[SerializeField] private Localizer m_teasingLeagueNameText = null;
 	[SerializeField] private TextMeshProUGUI m_teasingTimerText = null;
 	[SerializeField] private Image m_teasingTimerBar = null;
@@ -228,23 +229,25 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		// Refresh visuals based on active mode
 		switch(m_mode) {
 			case Mode.JOINED: {
-				m_joinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
-				m_joinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+				m_joinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
+				m_joinedLeagueNameText.Localize(defaultLeague.tidName);
 			} break;
 
 			case Mode.NOT_JOINED: {
-				m_notJoinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
-				m_notJoinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+				m_notJoinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
+				m_notJoinedLeagueNameText.Localize(defaultLeague.tidName);
 			} break;
 
 			case Mode.TEASING: {
 				m_teasingTitleText.Localize("TID_LEAGUES_TEASING_TITLE");
+				m_teasingLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
 				m_teasingLeagueNameText.Localize(defaultLeague.tidName);
 				m_leagueSelector.SelectItem(defaultLeague); // This should update 3D trophy
 			} break;
 
 			case Mode.WAITING_RESULTS: {
 				m_teasingTitleText.Localize("TID_LEAGUES_REWARDS_PROCESSING");
+				m_teasingLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
 				m_leagueSelector.SelectItem(defaultLeague); // This should update 3D trophy and show the right rewards
 			} break;
 		}
