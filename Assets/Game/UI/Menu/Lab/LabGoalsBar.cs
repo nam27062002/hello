@@ -131,12 +131,7 @@ public class LabGoalsBar : MonoBehaviour {
 
 			// Timer bar
 			TimeSpan totalSpan = m_season.duration;
-			m_seasonCountdownBar.value = 1f - (float)(remainingSeconds/totalSpan.TotalSeconds);
-
-			// If time has finished, request new data
-			if(remainingSeconds <= 0) {
-				m_season.UpdateState();
-			}
+            m_seasonCountdownBar.value = 1f - (float)(remainingSeconds / totalSpan.TotalSeconds);
 		}
 	}
 

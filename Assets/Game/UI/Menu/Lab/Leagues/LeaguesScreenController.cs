@@ -82,7 +82,7 @@ public class LeaguesScreenController : MonoBehaviour {
         CancelInvoke();
     }
 
-    void Update() {
+    void UpdatePeriodic() {
         switch (m_season.state) {
             case HDSeasonData.State.TEASING: {
                     if (m_season.timeToStart.TotalSeconds <= 0) {
@@ -132,7 +132,7 @@ public class LeaguesScreenController : MonoBehaviour {
             case HDSeasonData.State.WAITING_NEW_SEASON: {
                     if (m_season.timeToEnd.TotalSeconds <= 0) {
                         HDLiveDataManager.instance.ForceRequestLeagues();
-                       // CancelInvoke();
+                        CancelInvoke();
                     } else if (m_activePanel != Panel.ACTIVE_SEASON) {
                         Refresh();
                     }
@@ -153,8 +153,8 @@ public class LeaguesScreenController : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Doing this for the cases where the periodic update has been canceled (i.e. WAITING_NEW_SEASON timer ended).
-     //  CancelInvoke();
-	//	InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
+        CancelInvoke();
+		InvokeRepeating("UpdatePeriodic", 0f, PERIODIC_UPDATE_INTERVAL);
 
         // Select active panel
         SelectPanel();
