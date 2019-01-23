@@ -374,9 +374,38 @@ public class AssetBundlesManager
     public void LoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, AssetBundlesOp.OnDoneCallback onDone = null)
     {
         LoadSceneFromAssetBundleOp op = new LoadSceneFromAssetBundleOp();
-        op.Setup(assetBundle, sceneName, loadSceneMode, onDone);
+        op.SetupLoad(assetBundle, sceneName, loadSceneMode, onDone);
         Ops_PerformOp(op);
     }
+
+    /// <summary>
+    /// Unloads asynchronously a scene called <c>sceneName</c> from an asset bundle with <c>assetBundleId</c> as id. There's no <c>UnloadScene()</c> method to unload synchronously a scene because    
+    /// that option has been deprecated by Unity.
+    /// </summary>    
+    /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
+    /// <param name="sceneName">Name of the scene to load.</param>        
+    /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
+    public void UnloadSceneAsync(string assetBundleId, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null)
+    {
+        if (!LoadSceneFromAssetBundlesFullOp.EarlyExit(assetBundleId, sceneName, onDone))
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
+            UnLoadSceneFromAssetBundleAsync(handle.AssetBundle, sceneName, onDone);            
+        }
+    }
+
+    /// <summary>
+    /// Unloads asynchronously a scene called <c>sceneName</c>.
+    /// </summary>
+    /// <param name="assetBundle">Asset bundle that contains the asset.</param>
+    /// <param name="sceneName">Name of the scene to load.</param>            
+    /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
+    public void UnLoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null)
+    {
+        LoadSceneFromAssetBundleOp op = new LoadSceneFromAssetBundleOp();
+        op.SetupUnload(assetBundle, sceneName, onDone);
+        Ops_PerformOp(op);
+    }    
 
     public Object LoadResource(string assetBundleId, string resourceName, bool isAsset, LoadSceneMode mode = LoadSceneMode.Single)
     {

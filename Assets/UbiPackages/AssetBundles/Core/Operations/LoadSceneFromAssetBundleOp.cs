@@ -2,11 +2,12 @@
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// This class loads a scene asynchronously from an asset bundle that needs to be already downloaded and loaded. Use <c>LoadResourceFromAssetBundlesFullOp</c> class instead if you don't want to have to deal
-/// with downloading and loading asset bundles. Actually this class is used as a helper for <c>LoadResourceFromAssetBundlesFullOp</c>.
+/// This class loads/unloads a scene asynchronously from an asset bundle that needs to be already downloaded and loaded. Use <c>LoadResourceFromAssetBundlesFullOp</c> class instead if you don't want to have to deal
+/// with downloading and loading asset bundles.
 /// </summary>
 public class LoadSceneFromAssetBundleOp : AssetBundlesOp
 {
+    private bool m_isLoad;
     private AssetBundle m_assetBundle;
     private string m_sceneName;
     private LoadSceneMode m_loadSceneMode;
@@ -19,8 +20,19 @@ public class LoadSceneFromAssetBundleOp : AssetBundlesOp
         m_operation = null;
     }
 
-    public void Setup(AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode, OnDoneCallback onDone)
+    public void SetupLoad(AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode, OnDoneCallback onDone)
     {
+        Setup(true, assetBundle, sceneName, loadSceneMode, onDone);
+    }
+
+    public void SetupUnload(AssetBundle assetBundle, string sceneName, OnDoneCallback onDone)
+    {
+        Setup(false, assetBundle, sceneName, LoadSceneMode.Single, onDone);
+    }
+
+    private void Setup(bool isLoad, AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode, OnDoneCallback onDone)
+    {
+        m_isLoad = isLoad;
         m_assetBundle = assetBundle;
         m_sceneName = sceneName;
         m_loadSceneMode = loadSceneMode;
@@ -37,7 +49,15 @@ public class LoadSceneFromAssetBundleOp : AssetBundlesOp
         {
             if (m_assetBundle.isStreamedSceneAssetBundle)
             {
-                m_operation = SceneManager.LoadSceneAsync(m_sceneName, m_loadSceneMode);
+                if (m_isLoad)
+                {
+                    m_operation = SceneManager.LoadSceneAsync(m_sceneName, m_loadSceneMode);
+                }
+                else
+                {
+                    m_operation = SceneManager.UnloadSceneAsync(m_sceneName);
+                }
+                
                 if (m_operation == null)
                 {
                     NotifyError(EResult.Error_Asset_Not_Found_In_AB);
