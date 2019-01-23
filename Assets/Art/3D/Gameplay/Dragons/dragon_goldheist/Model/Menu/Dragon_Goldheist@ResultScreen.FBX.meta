@@ -1,9 +1,7 @@
 fileFormatVersion: 2
 guid: 8a4f18e234f744ad29cf94bc01645736
-timeCreated: 1525276358
-licenseType: Pro
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: Dragon_Down_Snout
     100002: //RootNode
@@ -104,6 +102,17 @@ ModelImporter:
     100192: Fire_Dummy
     100194: SuctionPoint
     100196: SwallowPoint
+    100198: Dragon_13Bone001
+    100200: Dragon_LArm_1_IKTarget
+    100202: Dragon_LArm_2_IKTarget
+    100204: Dragon_LArm_3_IKTarget
+    100206: Dragon_LArm_4_IKTarget
+    100208: Dragon_LArm_5_IKTarget
+    100210: Dragon_LLeg_IKTarget
+    100212: Dragon_RArm_1_IKTarget
+    100214: Dragon_RArm_2_IKTarget
+    100216: Dragon_RArm_3_IKTarget
+    100218: Dragon_RLeg_IKTarget
     400000: Dragon_Down_Snout
     400002: //RootNode
     400004: Dragon_Head
@@ -203,13 +212,26 @@ ModelImporter:
     400192: Fire_Dummy
     400194: SuctionPoint
     400196: SwallowPoint
+    400198: Dragon_13Bone001
+    400200: Dragon_LArm_1_IKTarget
+    400202: Dragon_LArm_2_IKTarget
+    400204: Dragon_LArm_3_IKTarget
+    400206: Dragon_LArm_4_IKTarget
+    400208: Dragon_LArm_5_IKTarget
+    400210: Dragon_LLeg_IKTarget
+    400212: Dragon_RArm_1_IKTarget
+    400214: Dragon_RArm_2_IKTarget
+    400216: Dragon_RArm_3_IKTarget
+    400218: Dragon_RLeg_IKTarget
     7400000: ResultScreen_Intro
     7400002: ResultScreen_Loop
     9500000: //RootNode
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -222,247 +244,20 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
-    - serializedVersion: 16
-      name: ResultScreen_Intro
-      takeName: Take 001
-      firstFrame: 0
-      lastFrame: 107
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: Dragon_Hip
-        weight: 1
-      - path: Dragon_Hip/Dragon_LArm_2_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_LArm_2_1/Dragon_LArm_2_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_LArm_2_1/Dragon_LArm_2_2/Dragon_LArm_2_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit1_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit1_1/Dragon_LWing_Digit1_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit1_1/Dragon_LWing_Digit1_2/Dragon_LWing_Digit1_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit2_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit2_1/Dragon_LWing_Digit2_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit3_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_LWing_1/Dragon_LWing_2/Dragon_LWing_3/Dragon_LWing_Digit3_1/Dragon_LWing_Digit3_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_LArm_1_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_LArm_1_1/Dragon_LArm_1_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_LArm_1_1/Dragon_LArm_1_2/Dragon_LArm_1_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Down_Snout
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Jaw/Dragon_Tongue_01/Dragon_Tongue_02/Dragon_Tongue_03
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_R_Down_EyeLead
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_R_Pupil
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_L_Eye/Dragon_R_Up_EyeLead
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Mouth_Comisure
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Down_EyeLead
-          1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Pupil
-          1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_R_Eye/Dragon_R_Up_EyeLead
-          1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Dragon_Up_Snout
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/Fire_Dummy
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/SuctionPoint
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_Neck_2/Dragon_Neck_3/Dragon_Neck_4/Dragon_Neck_5/Dragon_Head_Ctrl/Dragon_Head/SwallowPoint
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_RArm_1_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_RArm_1_1/Dragon_RArm_1_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Neck_1/Dragon_RArm_1_1/Dragon_RArm_1_2/Dragon_RArm_1_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_RArm_2_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_RArm_2_1/Dragon_RArm_2_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_RArm_2_1/Dragon_RArm_2_2/Dragon_RArm_2_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit1_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit1_1/Dragon_RWing_Digit1_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit1_1/Dragon_RWing_Digit1_2/Dragon_RWing_Digit1_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit2_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit2_1/Dragon_RWing_Digit2_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit3_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_RWing_1/Dragon_RWing_2/Dragon_RWing_3/Dragon_RWing_Digit3_1/Dragon_RWing_Digit3_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_LArm_3_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_LArm_3_1/Dragon_LArm_3_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_LArm_3_1/Dragon_LArm_3_2/Dragon_LArm_3_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_RArm_3_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_RArm_3_1/Dragon_RArm_3_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_RArm_3_1/Dragon_RArm_3_2/Dragon_RArm_3_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_LArm_4_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_LArm_4_1/Dragon_LArm_4_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_LArm_4_1/Dragon_LArm_4_2/Dragon_LArm_4_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_RArm_4_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_RArm_4_1/Dragon_RArm_4_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_RArm_4_1/Dragon_RArm_4_2/Dragon_RArm_4_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_LArm_5_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_LArm_5_1/Dragon_LArm_5_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_LArm_5_1/Dragon_LArm_5_2/Dragon_LArm_5_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_RArm_5_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_RArm_5_1/Dragon_RArm_5_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_RArm_5_1/Dragon_RArm_5_2/Dragon_RArm_5_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_LLeg_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_LLeg_1/Dragon_LLeg_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_LLeg_1/Dragon_LLeg_2/Dragon_LLeg_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_LLeg_1/Dragon_LLeg_2/Dragon_LLeg_3/Dragon_LLeg_4
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_RLeg_1
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_RLeg_1/Dragon_RLeg_2
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_RLeg_1/Dragon_RLeg_2/Dragon_RLeg_3
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_RLeg_1/Dragon_RLeg_2/Dragon_RLeg_3/Dragon_RLeg_4
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8/Dragon_Tail9
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8/Dragon_Tail9/Dragon_Tail10
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8/Dragon_Tail9/Dragon_Tail10/Dragon_Tail11
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8/Dragon_Tail9/Dragon_Tail10/Dragon_Tail11/Dragon_Tail12
-        weight: 1
-      - path: Dragon_Hip/Dragon_Tail1/Dragon_Tail2/Dragon_Tail3/Dragon_Tail4/Dragon_Tail5/Dragon_Tail6/Dragon_Tail7/Dragon_Tail8/Dragon_Tail9/Dragon_Tail10/Dragon_Tail11/Dragon_Tail12/Dragon_Tail13
-        weight: 1
-      - path: Dragon_Master
-        weight: 1
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: ResultScreen_Loop
       takeName: Take 001
-      firstFrame: 107
-      lastFrame: 273
+      firstFrame: 0
+      lastFrame: 166
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -693,13 +488,18 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -709,6 +509,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:

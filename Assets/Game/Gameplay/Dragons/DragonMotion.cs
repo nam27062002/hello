@@ -87,9 +87,9 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		get{ return m_controls; }
 	}
-	DragonAnimationEvents 	m_animationEventController;
+	protected DragonAnimationEvents 	m_animationEventController;
 	DragonParticleController m_particleController;
-	SphereCollider 			m_mainGroundCollider;
+    protected SphereCollider 	m_mainGroundCollider;
 	Collider[] 				m_groundColliders;
 	Collider[]				m_hitColliders;
 	int m_hitCollidersSize = 0;
@@ -118,7 +118,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		get {return m_boostSpeedMultiplier;}
 		set { m_boostSpeedMultiplier = value; }
 	}
-    DragonBoostBehaviour m_boost;
+    protected DragonBoostBehaviour m_boost;
 
 	private float m_holdSpeedMultiplier;
 	public float holdSpeedMultiplier
@@ -248,7 +248,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	public bool m_startingParabolic = false;
     public float m_dragonWaterGravityModifier = 0.3f;
     private bool m_waterDeepLimit = false;
-    private bool m_spinning = true;
+    protected bool m_spinning = true;
+    protected bool m_canSpin = true;
     private bool m_rotateOnIdle = false;
 
     private bool m_waterMovement = false;
@@ -873,7 +874,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 
 
-	void LateUpdate()
+	protected virtual void LateUpdate()
 	{
 		if ( m_holdPrey != null )
 		{
@@ -1124,9 +1125,9 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 		if ( m_state != State.Intro)
 		{
-			Vector3 position = m_transform.position;
-			position.z = 0f;
-			m_transform.position = position;
+			Vector3 pos = m_transform.position;
+			pos.z = 0f;
+			m_transform.position = pos;
 		}
 
 		/*
@@ -1269,10 +1270,14 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-		if ( m_dragon.IsDrunk() )
-		{
-			impulse = -impulse;
-		}
+        if ( m_dragon.IsDrunk() )
+        {
+            //impulse = -impulse;
+            float drunkX = -0.6f;
+            float drunkY = 0.6f;
+            impulse.x = drunkX * impulse.x;
+            impulse.y = drunkY * impulse.y;
+        }
 		UpdateWaterMovementImpulse(_deltaTime, impulse);
     }
 
@@ -1378,7 +1383,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		//if ((boostSpeedMultiplier > 1) && (m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 25 && (m_impulse.y > 0)) {
 		//if ((m_transform.position.y - SpaceStart) > 0 && (m_transform.position.y - SpaceStart) < 425 && (m_impulse.y < -10)) {
 		if (m_lastSpeed > (absoluteMaxSpeed * m_dragonAirFreeFallMultiplier) && m_direction.y < 0f) {
-			RotateToDirection (m_direction, false, true);
+			RotateToDirection (m_direction, false, m_canSpin);
 		} else
 		{
 			RotateToDirection (m_direction);
@@ -1570,7 +1575,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 		if ( m_spinning != spin )
 			m_animator.SetBool(GameConstants.Animator.SPIN, spin);
-
 		m_spinning = spin;
 
 	}
@@ -1623,7 +1627,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_direction = m_impulse.normalized;
 	}
 
-	public void AddForce(Vector3 _force, bool isDamage = true) {
+	public virtual void AddForce(Vector3 _force, bool isDamage = true) {
 		if ( m_dragon.IsInvulnerable() )
 			return;
 		if ( isDamage )
@@ -1701,7 +1705,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-	public float absoluteMaxSpeed
+	public virtual float absoluteMaxSpeed
 	{
 		get
 		{
@@ -1743,7 +1747,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		// Trigger animation
     		m_animationEventController.OnInsideWater(createsSplash);
 
-    		if ( m_state != State.Latching )
+    		if ( CanChangeStateToInsideWater() )
     		{
     			if ( m_impulse.y < 0 )
     			{
@@ -1758,6 +1762,11 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, true);
         }
 	}
+    
+    protected virtual bool CanChangeStateToInsideWater()
+    {
+        return m_state != State.Latching;
+    }
 
 	public void EndWaterMovement( Collider _other )
 	{
@@ -1776,7 +1785,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		// Trigger animation
     		m_animationEventController.OnExitWater(createsSplash);
 
-    		if ( m_state != State.Latching )
+    		if (CanChangeStateToExitWater())
     		{
     			// Wait a second
     			ChangeState( State.ExitingWater );
@@ -1786,6 +1795,12 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     		Messenger.Broadcast<bool>(MessengerEvents.UNDERWATER_TOGGLED, false);
         }
 	}
+    
+    protected virtual bool CanChangeStateToExitWater()
+    {
+        return m_state != State.Latching;
+    }
+    
 
 	public void StartSpaceMovement()
 	{
@@ -1919,7 +1934,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	/// </summary>
 	/// <param name="_other">Other.</param>
 	// This is done on Dragon Head Trigger now
-	void OnTriggerEnter(Collider _other)
+	protected virtual void OnTriggerEnter(Collider _other)
 	{
 		if ( _other.CompareTag("Water") )
 		{
@@ -2117,7 +2132,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
     }
 
-    private bool IsAliveState()
+    protected bool IsAliveState()
 	{
 		if (m_state == State.Dead || m_state == State.Reviving )
 			return false;

@@ -29,8 +29,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 	[SeparatorAttribute]
 	[SerializeField] private float m_cameraShake = 0;
 
+    //------
+    public delegate void OnDestroyDelegate();
+    public OnDestroyDelegate onDestroy;
+    //------
 
-	private ZoneManager.ZoneEffect m_effect;
+
+    private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
 
 	private GameObject m_view;
@@ -166,7 +171,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -188,7 +193,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnTriggerEnter(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						GameObject ps = m_feedbackParticle.Spawn();
@@ -222,7 +227,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnTriggerExit(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						Vector3 particlePosition = transform.position + m_colliderCenter;
@@ -280,7 +285,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 		if (!string.IsNullOrEmpty(m_onDestroyAudio))
 			AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
 
-		m_view.SetActive(false);
+        if (onDestroy != null)
+            onDestroy();
+
+        m_view.SetActive(false);
 		m_viewDestroyed.SetActive(true);
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
 		if (m_inflammableBehaviour != null) m_inflammableBehaviour.enabled = false;

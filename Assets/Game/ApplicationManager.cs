@@ -327,6 +327,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDTrackingManager.Instance.Update();
         HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
+        GameStoreManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
         {

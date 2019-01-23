@@ -1103,9 +1103,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         //Track_Crash(isFatal, errorType, errorMessage);
     }
 
-    public override void Notify_OfferShown(bool onDemand, string itemID) {
+    public override void Notify_OfferShown(bool onDemand, string itemID, string offerName, string offerType) {
         string action = (onDemand) ? "Opened" : "Shown";
-        Track_OfferShown(action, itemID);
+        Track_OfferShown(action, itemID, offerName, offerType);
     }
 
     public override void Notify_EggOpened() {
@@ -1211,6 +1211,16 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_LabResult(ranking, currentLeague, upcomingLeague);
     }
     #endregion
+
+    /// <summary>
+    /// Sent when the user unlocks the map.
+    /// </summary>
+    /// <param name="location">Where the map has been unlocked from.</param>
+    /// <param name="unlockType">How the map has been unlocked.</param>
+    public override void Notify_UnlockMap(ELocation location, EUnlockType unlockType)
+    {
+        Track_UnlockMap(ELocationToKey(location), EUnlockTypeToKey(unlockType));
+    }
 
     #region track
     private const string TRACK_EVENT_TUTORIAL_COMPLETION = "tutorial_completion";
@@ -2022,15 +2032,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_OfferShown(string action, string itemID) {
+    private void Track_OfferShown(string action, string itemID, string offerName, string offerType) {
         if (FeatureSettingsManager.IsDebugEnabled) {
-            Log("Track_OfferShown action = " + action + " itemID = " + itemID);
+            Log("Track_OfferShown action = " + action + " itemID = " + itemID + " offerName = " + offerName + " offerType = " + offerType);
         }
 
         HDTrackingEvent e = new HDTrackingEvent("custom.player.specialoffer");
         {
             Track_AddParamString(e, TRACK_PARAM_SPECIAL_OFFER_ACTION, action);
             Track_AddParamString(e, TRACK_PARAM_ITEM_ID, itemID);
+            Track_AddParamString(e, TRACK_PARAM_OFFER_NAME, offerName);
+            Track_AddParamString(e, TRACK_PARAM_OFFER_TYPE, offerType);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2136,6 +2151,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
         }
         m_eventQueue.Enqueue(e);
+    }    
+
+    private void Track_UnlockMap(string location, string unlockType)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_UnlockMap location = " + location + " unlockType = " + unlockType);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.unlockmap");
+        {            
+            Track_AddParamString(e, TRACK_PARAM_LOCATION, location);
+            Track_AddParamString(e, TRACK_PARAM_UNLOCK_TYPE, unlockType);
+        }
+        m_eventQueue.Enqueue(e);
     }
 
     // -------------------------------------------------------------
@@ -2224,6 +2252,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_LAB_SPEED = "labSpeed";    
     private const string TRACK_PARAM_LANGUAGE = "language";
     private const string TRACK_PARAM_LOADING_TIME = "loadingTime";
+    private const string TRACK_PARAM_LOCATION = "location";    
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
     private const string TRACK_PARAM_MARKETING_OPTION = "marketing_optin";
     private const string TRACK_PARAM_MAX_REACHED = "maxReached";
@@ -2240,6 +2269,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_NB_ADS_SESSION = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS = "nbViews";
     private const string TRACK_PARAM_NEW_AREA = "newArea";
+    private const string TRACK_PARAM_OFFER_NAME = "offerName";
+    private const string TRACK_PARAM_OFFER_TYPE = "offerType";
     private const string TRACK_PARAM_ORIGINAL_AREA = "originalArea";
     private const string TRACK_PARAM_PAID = "paid";
     private const string TRACK_PARAM_PET1 = "pet1";
@@ -2267,6 +2298,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
+    private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";
     private const string TRACK_PARAM_EVENT_SCORE_TOTAL = "scoreTotal";
     private const string TRACK_PARAM_SESSION_PLAY_TIME = "sessionPlaytime";
@@ -2296,6 +2328,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
+    private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
@@ -2423,7 +2456,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.pc : 0;
         _e.data.Add(TRACK_PARAM_HARD_CURRENCY, value);
-    }            
+    }
+
+    private void Track_AddParamPlayerSC(HDTrackingEvent _e)
+    {
+        int value = (UsersManager.currentUser != null) ? (int)UsersManager.currentUser.coins : 0;
+        _e.data.Add(TRACK_PARAM_SOFT_CURRENCY, value);
+    }
 
     private void Track_AddParamSessionsCount(HDTrackingEvent _e) {
         int value = (TrackingPersistenceSystem != null) ? TrackingPersistenceSystem.SessionCount : 0;

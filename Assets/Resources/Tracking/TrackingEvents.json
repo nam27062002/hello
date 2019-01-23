@@ -516,7 +516,12 @@
 		"custom.player.specialoffer": {
             "Parameters": [
 				{"specialOfferAction": {"Status": "OK"}},
-				{"itemID": {"Status": "OK"}}
+				{"itemID": {"Status": "OK"}},
+				{"offerName": {"Status": "OK"}},
+				{"offerType": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},
+				{"softCurrency": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -585,7 +590,17 @@
           "dna",
           "etl"
         ]
-      },	  
+      },	
+	  "custom.game.unlockmap": {
+        "Parameters": [
+          { "location": { "Status": "OK" } },
+		  { "unlockType": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },		  
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1348,6 +1363,10 @@
         "Type": "INT:4",
         "Values": []
       },
+	  "softCurrency": {
+        "Type": "INT:4",
+        "Values": []
+      },	  	  
 	  "hardCurrency": {
         "Type": "INT:4",
         "Values": []
@@ -1378,6 +1397,22 @@
       },
 	  "upcomingLeague": {
 		"Type": "STRING:45",
+		"Values": []
+      },
+	  "location": {
+		"Type": "STRING:15",
+		"Values": []
+      },
+	  "unlockType": {
+		"Type": "STRING:15",
+		"Values": []
+      },
+	  "offerName": {
+		"Type": "STRING:30",
+		"Values": []
+      },
+	  "offerType": {
+		"Type": "STRING:15",
 		"Values": []
       }	  
     }

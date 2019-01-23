@@ -63,10 +63,10 @@ GameObject:
   - component: {fileID: 11419346}
   - component: {fileID: 11442574}
   - component: {fileID: 11455772}
-  - component: {fileID: 11487054}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 11487054}
   m_Layer: 12
   m_Name: PF_DragonGoldheist
   m_TagString: Player
@@ -477,10 +477,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_goldheist
   m_invulnerableTime: 5
+  m_health: 0
   m_energy: 0
   m_alcoholDrain: 1
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
+  m_alwaysSpawnCorpse: 0
 --- !u!114 &11419346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -749,7 +751,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_introStopAnimationDelta: 0.25
+  m_useBoostOnIntro: 1
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -765,6 +767,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4826,6 +4829,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010314816638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4852,6 +4856,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010463477452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4890,6 +4895,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010816463694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6663,6 +6669,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000012860912386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6700,6 +6707,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000013461850916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6726,6 +6734,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000014111386674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6741,6 +6750,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000014186287668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6756,6 +6766,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114016505355466522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6890,6 +6901,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114357191603067624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6905,6 +6917,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114408089454607500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6932,6 +6945,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114471626512658174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6947,6 +6961,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114524651562498104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6962,6 +6977,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114548257022530096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6977,6 +6993,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114588010182056958
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7004,6 +7021,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114629232949719882
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7019,6 +7037,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114747528804364110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7034,6 +7053,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114919503000112854
 MonoBehaviour:
   m_ObjectHideFlags: 1

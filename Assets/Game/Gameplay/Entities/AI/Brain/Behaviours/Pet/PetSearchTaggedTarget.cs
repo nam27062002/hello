@@ -96,7 +96,7 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget )
+						if (machine != null && !machine.IsDying() && !machine.IsDead() && machine.CanBeBitten() && !machine.isPetTarget )
 						{
                             if (entity.HasTag(m_data.tag) && !entity.HasTag(m_data.ignoreTag)) {
                                 bool isViable = false;

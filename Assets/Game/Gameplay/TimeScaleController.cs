@@ -19,6 +19,7 @@ public class TimeScaleController : MonoBehaviour {
     public float m_hitStopTimer = 0;
     public float m_hitStopDuration = 0.1f;
     public float m_hitStopDelay = 0.1f;
+    public bool m_ignoreHitStops = false;
     
     
     // SLOW MO
@@ -111,14 +112,14 @@ public class TimeScaleController : MonoBehaviour {
     
     public void HitStop( int frames = 1 )
     {
-        // Debug.Log("HIT STOP!");
-        // if (frames > m_hitStop)
-        //    m_hitStop = frames;
-        if ( m_hitStopTimer <= 0)
+        if (!m_ignoreHitStops)
         {
-            m_hitStopDelay = 0.1f;
+            if ( m_hitStopTimer <= 0)
+            {
+                m_hitStopDelay = 0.1f;
+            }
+            m_hitStopTimer = m_hitStopDuration;
         }
-        m_hitStopTimer = m_hitStopDuration;
     }
     
     public void StartSlowMotion( float duration ,  AnimationCurve slowMoCurve = null) 

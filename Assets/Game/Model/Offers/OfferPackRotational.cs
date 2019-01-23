@@ -23,7 +23,8 @@ public class OfferPackRotational : OfferPack {
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
-    private bool m_readyToExpire = false;
+	// Internal
+    private bool m_hasBeenApplied = false;
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -66,8 +67,14 @@ public class OfferPackRotational : OfferPack {
 				}
 
                 // However, if it has expired for any other reason (i.e. Purchase Limit), go to the expired state or it's markes as ready to expire (typically because the user has just purchased it)
-                else if (CheckExpiration(false) || m_readyToExpire) { 
-                        ChangeState(State.EXPIRED);
+                else if(CheckExpiration(false)) { 
+                    ChangeState(State.EXPIRED);
+				}
+
+				// Finally, if the pack hasn't expired by time nor conditions, but it has just been applied, put it back to pending activation state so it can be selected again
+				else if(m_hasBeenApplied) {
+					m_hasBeenApplied = false;
+					ChangeState(State.PENDING_ACTIVATION);
 				}
 			} break;
 
@@ -91,10 +98,15 @@ public class OfferPackRotational : OfferPack {
 		ChangeState(State.ACTIVE);
 	}
 
+	/// <summary>
+	/// Apply this pack to current user.
+	/// </summary>
     public override void Apply() {
         // A rotational offer has to disappear right after the user purchases it. (FIX for https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-3612)
-        // It's marked as ready to expire so it will be removed next time OffersManager updates this offer
-        m_readyToExpire = true;
+        // It's marked as applied so it will be removed next time OffersManager updates this offer
+		m_hasBeenApplied = true;
+
+		// Parent will do the rest
         base.Apply();
     }
 }
