@@ -29,7 +29,7 @@ public class UnitTestsEditor : MonoBehaviour
         ClearBuildAssets();
 
         CopyAssetBundles(STREAMING_ASSETS_ROOT_PATH);
-        CopyAssetBundles(REMOTE_ASSETS_ROOT_PATH);
+        //CopyAssetBundles(REMOTE_ASSETS_ROOT_PATH);
        
         AssetDatabase.Refresh();
 
@@ -45,8 +45,10 @@ public class UnitTestsEditor : MonoBehaviour
 
     static void ClearBuildAssets()
     {
-        DeleteFileOrDirectory(LOCAL_ASSET_BUNDLES_PATH);
-        DeleteFileOrDirectory(REMOTE_ASSET_BUNDLES_PATH);        
+        //DeleteFileOrDirectory(LOCAL_ASSET_BUNDLES_PATH);
+        //DeleteFileOrDirectory(REMOTE_ASSET_BUNDLES_PATH);        
+        DeleteFileOrDirectory(STREAMING_ASSETS_ROOT_PATH);
+        //DeleteFileOrDirectory(REMOTE_ASSETS_ROOT_PATH);        
     }
 
     private static void CopyAssetBundles(string dstPath)
@@ -54,6 +56,7 @@ public class UnitTestsEditor : MonoBehaviour
         string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
         string assetBundlesPath = PathCombine(ASSET_BUNDLES_PATH, activeBuildTarget);
         
+        /*
         if (!Directory.Exists(dstPath))
         {
             CreateDirectory(dstPath);
@@ -64,6 +67,11 @@ public class UnitTestsEditor : MonoBehaviour
         }
 
         dstPath = PathCombine(dstPath, "AssetBundles");
+
+        if (!Directory.Exists(dstPath))
+        {
+            CreateDirectory(dstPath);
+        }*/      
 
         // Copy all asset bundles to StreamingAssets
         CopyFileOrDirectory(assetBundlesPath, dstPath);
