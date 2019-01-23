@@ -99,7 +99,14 @@ public class LabGoalsBar : MonoBehaviour {
 		if(!isActiveAndEnabled) return;
 
 		// Refresh visible season button based on season state
-		bool seasonAvailable = m_season.IsRunning();	// Joined or Not Joined
+		bool seasonAvailable = m_season.IsRunning();    // Joined or Not Joined
+		double remainingSeconds = 0;
+		if(seasonAvailable) {
+			// The season might seem available event when the timer has finished because the UpdateState() hasn't been called yet
+			// Consider it as not available in that case
+			remainingSeconds = m_season.timeToClose.TotalSeconds;
+			seasonAvailable &= (remainingSeconds > 0);
+		}
 
 		// Does it actually change?
 		bool dirty = false;
@@ -122,7 +129,6 @@ public class LabGoalsBar : MonoBehaviour {
 		// Event Timer - only if active
 		if(m_seasonActiveGroup.activeSelf) {
 			// Timer text
-			double remainingSeconds = System.Math.Max(0, m_season.timeToClose.TotalSeconds);	// Never go negative!
 			m_seasonCountdownText.text = TimeUtils.FormatTime(
 				remainingSeconds,
 				TimeUtils.EFormat.ABBREVIATIONS_WITHOUT_0_VALUES,

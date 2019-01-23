@@ -32,7 +32,8 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	public enum Mode {
 		JOINED = 1 << 1,
 		NOT_JOINED = 1 << 2,
-		TEASING = 1 << 3
+		TEASING = 1 << 3,
+		WAITING_RESULTS = 1 << 4
 	}
 
 	[Serializable]
@@ -56,6 +57,8 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	[SerializeField] private Localizer m_notJoinedLeagueNameText = null;
 
 	[Separator("TEASING / WAITING")]
+	[SerializeField] private Localizer m_teasingTitleText = null;
+	[SerializeField] private Image m_teasingLeagueIcon = null;
 	[SerializeField] private Localizer m_teasingLeagueNameText = null;
 	[SerializeField] private TextMeshProUGUI m_teasingTimerText = null;
 	[SerializeField] private Image m_teasingTimerBar = null;
@@ -157,7 +160,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
         }
 
 		// Refresh teasing countdown timer
-		if (m_mode == Mode.TEASING) {
+		if (m_mode == Mode.TEASING || m_mode == Mode.WAITING_RESULTS) {
 			double remainingSeconds = 0;
 			double durationSeconds = 1;	// To avoid division by 0
 			if (m_season.state == HDSeasonData.State.TEASING) {
@@ -205,10 +208,13 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 				m_mode = Mode.NOT_JOINED;
 			} break;
 
-            case HDSeasonData.State.WAITING_RESULTS:
 			case HDSeasonData.State.WAITING_NEW_SEASON:
 			case HDSeasonData.State.TEASING: {
 				m_mode = Mode.TEASING;
+			} break;
+
+			case HDSeasonData.State.WAITING_RESULTS: {
+				m_mode = Mode.WAITING_RESULTS;
 			} break;
 		}
 
@@ -223,18 +229,26 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		// Refresh visuals based on active mode
 		switch(m_mode) {
 			case Mode.JOINED: {
-				m_joinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
-				m_joinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+				m_joinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
+				m_joinedLeagueNameText.Localize(defaultLeague.tidName);
 			} break;
 
 			case Mode.NOT_JOINED: {
-				m_notJoinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.currentLeague.icon);
-				m_notJoinedLeagueNameText.Localize(m_season.currentLeague.tidName);
+				m_notJoinedLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
+				m_notJoinedLeagueNameText.Localize(defaultLeague.tidName);
 			} break;
 
 			case Mode.TEASING: {
+				m_teasingTitleText.Localize("TID_LEAGUES_TEASING_TITLE");
+				m_teasingLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
 				m_teasingLeagueNameText.Localize(defaultLeague.tidName);
 				m_leagueSelector.SelectItem(defaultLeague); // This should update 3D trophy
+			} break;
+
+			case Mode.WAITING_RESULTS: {
+				m_teasingTitleText.Localize("TID_LEAGUES_REWARDS_PROCESSING");
+				m_teasingLeagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + defaultLeague.icon);
+				m_leagueSelector.SelectItem(defaultLeague); // This should update 3D trophy and show the right rewards
 			} break;
 		}
 
