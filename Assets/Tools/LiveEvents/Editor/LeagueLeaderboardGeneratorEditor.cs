@@ -181,7 +181,7 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 			newRecord.score = (long)score.GetRandom();
 
 			// Dragon level
-			newRecord.build.level = (uint)dragonLevel.GetRandom();
+			newRecord.build.level = dragonLevel.GetRandom();
 
 			// Dragon
 			newRecord.build.dragon = specialDragonDefs.GetRandomValue().sku;

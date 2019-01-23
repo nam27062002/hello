@@ -293,11 +293,12 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		LoadDragon(data);
 	}
 
-	/// <summary>
-	/// Load the dragon from its dragon data
-	/// </summary>
-	/// <param name="_data">Data of the dragon to be loaded.</param>
-	private static void LoadDragon(IDragonData _data) {
+
+    /// <summary>
+    /// Load the dragon from its dragon data
+    /// </summary>
+    /// <param name="_data">Data of the dragon to be loaded.</param>
+    private static void LoadDragon(IDragonData _data) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {
@@ -313,12 +314,13 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		playerObj = Instantiate<GameObject>(prefabObj);
 		playerObj.name = GameSettings.playerName;
 	}
-    
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="user">User.</param>
-	public static void SetupUser( UserProfile user)
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="user">User.</param>
+    public static void SetupUser( UserProfile user)
 	{
 		instance.m_user = user;
 		instance.m_dragonsBySku = user.dragonsBySku;

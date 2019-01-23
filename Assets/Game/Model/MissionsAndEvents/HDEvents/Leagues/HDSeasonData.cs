@@ -221,6 +221,9 @@ public class HDSeasonData {
 
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
         } else {
+            if (_fetchLeaderboard) {
+                currentLeague.leaderboard.RequestData();
+            }
             scoreDataState = HDLiveData.State.VALID;
         }
         scoreDataError = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
