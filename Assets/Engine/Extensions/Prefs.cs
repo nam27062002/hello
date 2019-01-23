@@ -112,6 +112,16 @@ public static class Prefs {
 		Set(_key, _value.ToString(System.Globalization.CultureInfo.InvariantCulture), _mode);
 	}
 
+	public static void Set(string _key, Range _value, Mode _mode) {
+		Set(_key + ".min", _value.min, _mode);
+		Set(_key + ".max", _value.max, _mode);
+	}
+
+	public static void Set(string _key, RangeInt _value, Mode _mode) {
+		Set(_key + ".min", _value.min, _mode);
+		Set(_key + ".max", _value.max, _mode);
+	}
+
 	public static void Set<T>(string _key, T _value, Mode _mode) {
 		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
 		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
@@ -160,6 +170,16 @@ public static class Prefs {
 		// Date
 		else if(t == typeof(DateTime)) {
 			Set(_key, (DateTime)(object)_value, _mode);
+		}
+
+		// Range
+		else if(t == typeof(Range)) {
+			Set(_key, (Range)(object)_value, _mode);
+		}
+
+		// RangeInt
+		else if(t == typeof(RangeInt)) {
+			Set(_key, (RangeInt)(object)_value, _mode);
 		}
 
 		// Unsupported
@@ -252,6 +272,22 @@ public static class Prefs {
 		return dt;
 	}
 
+	public static Range Get(string _key, Range _defaultValue, Mode _mode) {
+		if(_defaultValue == null) _defaultValue = new Range();
+		Range value = new Range();
+		value.min = Get(_key + ".min", _defaultValue.min, _mode);
+		value.max = Get(_key + ".max", _defaultValue.max, _mode);
+		return value;
+	}
+
+	public static RangeInt Get(string _key, RangeInt _defaultValue, Mode _mode) {
+		if(_defaultValue == null) _defaultValue = new RangeInt();
+		RangeInt value = new RangeInt();
+		value.min = Get(_key + ".min", _defaultValue.min, _mode);
+		value.max = Get(_key + ".max", _defaultValue.max, _mode);
+		return value;
+	}
+
 	public static T Get<T>(string _key, T _defaultValue, Mode _mode) {
 		// [AOC] Unfortunately we can't switch a type directly, but we can compare type via an if...else collection
 		// [AOC] Double cast trick to prevent compilation errors: http://stackoverflow.com/questions/4092393/value-of-type-t-cannot-be-converted-to
@@ -302,6 +338,16 @@ public static class Prefs {
 			return (T)(object)Get(_key, (DateTime)(object)_defaultValue, _mode);
 		}
 
+		// Range
+		else if(t == typeof(Range)) {
+			return (T)(object)Get(_key, (Range)(object)_defaultValue, _mode);
+		}
+
+		// RangeInt
+		else if(t == typeof(RangeInt)) {
+			return (T)(object)Get(_key, (RangeInt)(object)_defaultValue, _mode);
+		}
+
 		// Unsupported
 		else {
 			Debug.Log("Unsupported type!");
@@ -349,6 +395,14 @@ public static class Prefs {
 		Set(_key, _value, Mode.PLAYER);
 	}
 
+	public static void SetRangePlayer(string _key, Range _value) {
+		Set(_key, _value, Mode.PLAYER);
+	}
+
+	public static void SetRangeIntPlayer(string _key, RangeInt _value) {
+		Set(_key, _value, Mode.PLAYER);
+	}
+
 	/// <summary>
 	/// Sets a property to the EDITOR preferences dictionary.
 	/// </summary>
@@ -383,6 +437,14 @@ public static class Prefs {
 	}
 
 	public static void SetDateTimeEditor(string _key, DateTime _value) {
+		Set(_key, _value, Mode.EDITOR);
+	}
+
+	public static void SetRangeEditor(string _key, Range _value) {
+		Set(_key, _value, Mode.EDITOR);
+	}
+
+	public static void SetRangeIntEditor(string _key, RangeInt _value) {
 		Set(_key, _value, Mode.EDITOR);
 	}
 
@@ -427,6 +489,14 @@ public static class Prefs {
 		return Get(_key, _defaultValue, Mode.PLAYER);
 	}
 
+	public static Range GetRangePlayer(string _key, Range _defaultValue = null) {
+		return Get(_key, _defaultValue, Mode.PLAYER);
+	}
+
+	public static RangeInt GetRangeIntPlayer(string _key, RangeInt _defaultValue = null) {
+		return Get(_key, _defaultValue, Mode.PLAYER);
+	}
+
 	/// <summary>
 	/// Gets a property from the EDITOR preferences dictionary.
 	/// </summary>
@@ -462,6 +532,14 @@ public static class Prefs {
 	}
 
 	public static DateTime GetDateTimeEditor(string _key, DateTime _defaultValue = new DateTime()) {
+		return Get(_key, _defaultValue, Mode.EDITOR);
+	}
+
+	public static Range GetRangeEditor(string _key, Range _defaultValue = null) {
+		return Get(_key, _defaultValue, Mode.EDITOR);
+	}
+
+	public static RangeInt GetRangeIntEditor(string _key, RangeInt _defaultValue = null) {
 		return Get(_key, _defaultValue, Mode.EDITOR);
 	}
 }
