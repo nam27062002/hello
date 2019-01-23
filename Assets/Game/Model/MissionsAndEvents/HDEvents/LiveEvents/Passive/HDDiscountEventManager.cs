@@ -21,7 +21,7 @@ using System.Collections.Generic;
 public class HDDiscountEventManager : HDPassiveEventManager {
 
     public HDDiscountEventManager() : base() {
-        m_type = "discount";
+        m_type = "dragonDiscount";
         m_numericType = 3;
         Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, CheckEvent);
     }
