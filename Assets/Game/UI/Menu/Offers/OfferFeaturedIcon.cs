@@ -168,8 +168,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
 
-		// Tracking
-		HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"));
+        // Tracking
+        // The experiment name is used as offer name        
+        HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_targetOffer.def), m_targetOffer.def.GetAsString("type"));
 	}
 
 	/// <summary>
