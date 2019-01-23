@@ -247,11 +247,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     			}
     			else
     			{
-					// Use tmp data
-					m_data = IDragonData.CreateFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_sku));
-					if(m_data is DragonDataClassic) {
-						(m_data as DragonDataClassic).progression.SetToMaxLevel();
-					}
+                    // Use tmp data
+                    HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
+                    HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
+
+                    m_data = IDragonData.CreateFromBuild(def.m_build);
     			}
     		}
     		else

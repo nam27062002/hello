@@ -181,7 +181,7 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 			newRecord.score = (long)score.GetRandom();
 
 			// Dragon level
-			newRecord.build.level = (uint)dragonLevel.GetRandom();
+			newRecord.build.level = dragonLevel.GetRandom();
 
 			// Dragon
 			newRecord.build.dragon = specialDragonDefs.GetRandomValue().sku;
@@ -208,7 +208,7 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 		// Sort by score
 		records.Sort(
 			(HDLiveData.Leaderboard.Record _r1, HDLiveData.Leaderboard.Record _r2) => {
-				return _r1.score.CompareTo(_r2.score);
+				return -1 * _r1.score.CompareTo(_r2.score);	// Multiply by -1 to get the reverse order
 			}
 		);
 

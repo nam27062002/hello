@@ -507,12 +507,32 @@ public abstract class IDragonData : IUISelectorItem {
 		return newData;
 	}
 
-	/// <summary>
-	/// Gets the default disguise for the given dragon def.
-	/// </summary>
-	/// <returns>The definition of the default disguise to be used by the given dragon.</returns>
-	/// <param name="_dragonSku">The dragon whose default skin we want.</param>
-	public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
+    public static IDragonData CreateFromBuild(HDLiveData.DragonBuild _build) {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _build.dragon);
+        IDragonData newData = CreateFromDef(def);
+
+        if (newData is DragonDataClassic) {
+            (newData as DragonDataClassic).progression.SetToMaxLevel();
+        } else {
+            DragonDataSpecial dataSpecial = newData as DragonDataSpecial;
+
+            dataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
+            dataSpecial.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
+            dataSpecial.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
+
+            dataSpecial.RefreshPowerLevel();
+            dataSpecial.RefreshTier();
+        }
+
+        return newData;
+    }
+
+    /// <summary>
+    /// Gets the default disguise for the given dragon def.
+    /// </summary>
+    /// <returns>The definition of the default disguise to be used by the given dragon.</returns>
+    /// <param name="_dragonSku">The dragon whose default skin we want.</param>
+    public static DefinitionNode GetDefaultDisguise(string _dragonSku) {
         
 		// Get all the disguises for the given dragon
 		List<DefinitionNode> defList = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", _dragonSku);

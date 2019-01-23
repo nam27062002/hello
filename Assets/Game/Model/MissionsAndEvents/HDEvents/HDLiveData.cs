@@ -103,10 +103,10 @@ namespace HDLiveData {
     public class DragonBuild {
         public string dragon;
         public string skin;
-        public uint level;
-        public uint health;
-        public uint speed;
-        public uint energy;
+        public int level;
+        public int health;
+        public int speed;
+        public int energy;
         public List<string> pets;
 
 
@@ -130,13 +130,13 @@ namespace HDLiveData {
 
             if (_data.ContainsKey("dragon")) dragon = _data["dragon"];
             if (_data.ContainsKey("skin")) skin = _data["skin"];
-            if (_data.ContainsKey("level")) level = (uint)_data["level"].AsInt;
+            if (_data.ContainsKey("level")) level = _data["level"].AsInt;
 
             if (_data.ContainsKey("stats")) {
                 SimpleJSON.JSONNode stats = _data["stats"];
-                health = (uint)stats["health"].AsInt;
-                speed  = (uint)stats["speed"].AsInt;
-                energy = (uint)stats["energy"].AsInt;
+                health = stats["health"].AsInt;
+                speed  = stats["speed"].AsInt;
+                energy = stats["energy"].AsInt;
             }
 
             if (_data.ContainsKey("pets")) {
