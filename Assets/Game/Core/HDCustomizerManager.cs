@@ -140,6 +140,9 @@ public class HDCustomizerManager
     /// The m current experiment appleid code
     /// </summary>
     private long m_currentExperimentCode = -1;
+    
+    private string m_lastExperimentNameTracked = "";
+    private string m_lastExperimentGroupTracked = "";
 
     private ApiExperiment m_currentExperiment = null;
 
@@ -282,7 +285,14 @@ public class HDCustomizerManager
                             if (m_currentExperiment != null)
                             {
                                 Log("New experiment applied: name = " + m_currentExperiment.GetName() + " groupName = " + m_currentExperiment.GetGroupName(), true);
-                                HDTrackingManager.Instance.Notify_ExperimentApplied(m_currentExperiment.GetName(), m_currentExperiment.GetGroupName());
+                                string name = m_currentExperiment.GetName();
+                                string group = m_currentExperiment.GetGroupName();
+                                if (!name.Equals(m_lastExperimentNameTracked) || !group.Equals(m_lastExperimentGroupTracked))
+                                {
+                                    HDTrackingManager.Instance.Notify_ExperimentApplied( name, group);
+                                    m_lastExperimentNameTracked = name;
+                                    m_lastExperimentGroupTracked = group;
+                                }
                                 m_currentExperimentCode = m_currentExperiment.GetCode();
                             }
                             
