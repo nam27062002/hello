@@ -14,6 +14,8 @@ link_ubi_packages()
 	echo "link_ubi_packages" $1
 
 	ubiPackagesFolderName="UbiPackages"
+
+	#Path to the original directory has to be absolute 
 	pathToUbiPackagesOriginal=$PWD"/../Assets/"$ubiPackagesFolderName
 	pathToUbiPackagesLink="$1/Assets/"$ubiPackagesFolderName
 
