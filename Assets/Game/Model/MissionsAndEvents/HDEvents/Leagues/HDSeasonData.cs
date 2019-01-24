@@ -31,6 +31,8 @@ public class HDSeasonData {
 		NO_CHANGE
 	}
 
+
+
     //---[Basic Data]-----------------------------------------------------------
 
     private DateTime m_startDate;
@@ -279,6 +281,8 @@ public class HDSeasonData {
                 FindNextLeague();
             }
 
+            HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
+
             rewardDataState = HDLiveData.State.VALID;
         } else {
             m_rewardIndex = -1;
@@ -303,8 +307,27 @@ public class HDSeasonData {
     }
 
     private void FindNextLeague() {
+        HDLeagueController leagues = HDLiveDataManager.league;
+        int leaguesCount = leagues.leaguesCount;
+        int rank = currentLeague.leaderboard.playerRank;
 
+        if (promoteRange.min <= rank && rank < promoteRange.max) {
+            if (currentLeague.order < leaguesCount - 1) {
+                nextLeague = leagues.GetLeagueData(currentLeague.order + 1);
+            } else {
+                nextLeague = currentLeague;
+            }
+        } else if (demoteRange.min <= rank && rank < demoteRange.max) {
+            if (currentLeague.order > 0) {
+                nextLeague = leagues.GetLeagueData(currentLeague.order - 1);
+            } else {
+                nextLeague = currentLeague;
+            }
+        } else {
+            nextLeague = currentLeague;
+        }
     }
+
 
 
     //---[Finalize my Season]---------------------------------------------------
@@ -378,6 +401,8 @@ public class HDSeasonData {
 	public bool IsRunning() {
 		return state == State.JOINED || state == State.NOT_JOINED;
 	}
+
+
 
     //---[Server Calls]---------------------------------------------------------
 
