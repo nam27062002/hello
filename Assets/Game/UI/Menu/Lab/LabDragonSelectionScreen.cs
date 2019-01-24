@@ -230,6 +230,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Go back to default mode
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
         HDLiveDataManager.instance.SwitchToQuest();
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
     }
 
 	/// <summary>
