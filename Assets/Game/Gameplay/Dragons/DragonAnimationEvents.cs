@@ -29,6 +29,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public string m_hitSound;
 	public string m_poisonHitSound;
+    protected bool m_allowHitAnimation = true;
+    public bool allowHitAnimation { 
+        get{ return m_allowHitAnimation; }
+        set{ m_allowHitAnimation = value; }
+    }
 
 	public string m_enterWaterSound;
 	public string m_enterWaterWithSplashSound;
@@ -364,11 +369,14 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void PlayHitAnimation( DamageType _type )
 	{
-		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-		if (stateInfo.fullPathHash != m_damageAnimState) {
-			m_animator.SetTrigger( GameConstants.Animator.DAMAGE );// receive damage?
-			m_lastDamageType = _type;
-		}
+        if (m_allowHitAnimation)
+        {
+    		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+    		if (stateInfo.fullPathHash != m_damageAnimState) {
+    			m_animator.SetTrigger( GameConstants.Animator.DAMAGE );// receive damage?
+    			m_lastDamageType = _type;
+    		}
+        }
 	}
 
 	public void HitEvent()

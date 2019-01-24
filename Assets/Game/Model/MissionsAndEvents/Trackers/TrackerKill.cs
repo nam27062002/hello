@@ -37,7 +37,7 @@ public class TrackerKill : TrackerBase {
 		// Subscribe to external events
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		//Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 	}
 
 	/// <summary>
@@ -57,7 +57,7 @@ public class TrackerKill : TrackerBase {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		//Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 
 		// Call parent
 		base.Clear();

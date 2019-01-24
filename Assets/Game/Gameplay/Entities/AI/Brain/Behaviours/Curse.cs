@@ -52,7 +52,7 @@ namespace AI {
 							if (param != null && param.Length > 0) {
                                 GameObject go = ((GameObject)param[0]);
                                 if (go != null && go.CompareTag("Player")) {
-                                    m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.NORMAL, m_pilot.transform, true, m_entity.sku, m_entity);
+                                    m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE, m_pilot.transform, true, m_entity.sku, m_entity);
                                 }
                                 m_timer = 1.0f;
                             }
