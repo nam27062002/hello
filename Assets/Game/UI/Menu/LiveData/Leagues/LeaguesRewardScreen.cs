@@ -103,7 +103,7 @@ public class LeaguesRewardScreen : IRewardScreen {
 
 		if(m_rankText != null) {
 			m_rankText.text = UIUtils.FormatOrdinalNumber(
-				m_season.currentLeague.leaderboard.playerRank,
+				m_season.currentLeague.leaderboard.playerRank + 1,
 				UIUtils.OrdinalSuffixFormat.SUPERSCRIPT
 			);
 		}
