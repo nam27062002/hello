@@ -902,6 +902,7 @@ public class GameSceneController : GameSceneControllerBase {
         
         if (isSpecial)
         {
+            HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
             DragonDataSpecial specialData = InstanceManager.player.data as DragonDataSpecial;
             string powerLevel = "P" + specialData.powerLevel;
             int specialOwned = UsersManager.currentUser.GetNumOwnedSpecialDragons();
@@ -911,7 +912,7 @@ public class GameSceneController : GameSceneControllerBase {
                                                             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level,
                                                             powerLevel,
                                                             specialOwned,
-                                                            ""
+                                                            (leagueData != null)? leagueData.sku : ""
                                                             );
         }
             

@@ -111,6 +111,8 @@ public class HDLeagueData : IComparableWithOperators<HDLeagueData> {
     public string icon          { get { return m_icon; } }
 	public string trophyPrefab  { get { return m_trophyPrefab; } }
 
+    public int    order         { get { return m_order; } }
+
     public HDLeagueLeaderboard leaderboard { get { return m_leaderboard; } }
 
     public Metagame.Reward GetReward(int _i) { return m_rewards[_i].reward; }
