@@ -7,6 +7,7 @@ public class UIButton : MonoBehaviour
     {
         None,
         AddAssetCube,
+        UnloadCubeAssetBundle,
         AddSceneCubes,
         RemoveSceneCubes
     };

@@ -29,15 +29,14 @@ public class BasicTestController : MonoBehaviour
     }
 
     #region asset_cube
+    private static string ASSET_CUBE_AB_NAME = "01/asset_cubes";
+    private static string ASSET_CUBE_ASSET_NAME = "UbiCube";
+
     public void AssetCube_OnAddCube()
     {
         Ui_SetEnabled(false);
-        Ui_SetOperationResultProcessing();
-
-        string abId = "01/asset_cubes";
-        string resourceName = "ubiCube";
-        bool isAsset = true;
-        LoadResource_Start(abId, resourceName, isAsset, GetLoadResourceModeFromDropdown(m_uiCubeDropdown), AssetCube_OnAddCubeDone);
+        Ui_SetOperationResultProcessing();        
+        LoadResource_Start(ASSET_CUBE_AB_NAME, ASSET_CUBE_ASSET_NAME, true, GetLoadResourceModeFromDropdown(m_uiCubeDropdown), AssetCube_OnAddCubeDone);
     }
 
     private void AssetCube_OnAddCubeDone(AssetBundlesOp.EResult result, object data)
@@ -52,9 +51,22 @@ public class BasicTestController : MonoBehaviour
         Ui_SetEnabled(true);
         Ui_SetOperationResult(result);
     }
+
+    private void AssetCube_UnloadAssetBundle()
+    {
+        Ui_SetEnabled(false);
+        Ui_SetOperationResultProcessing();
+        AssetBundlesManager.Instance.UnloadAssetBundle(ASSET_CUBE_AB_NAME, AssetCube_OnUnloadAssetBundleDone);
+    }
+
+    private void AssetCube_OnUnloadAssetBundleDone(AssetBundlesOp.EResult result, object data)
+    {
+        Ui_SetEnabled(true);
+        Ui_SetOperationResult(result);
+    }
     #endregion
 
-    #region scene_cubes
+            #region scene_cubes
     private static string SCENE_CUBES_AB_NAME = "01/scene_cubes";
     private static string SCENE_CUBES_SCENE_NAME = "SC_Cubes";
 
@@ -190,6 +202,10 @@ public class BasicTestController : MonoBehaviour
                     {
                         case UIButton.EId.AddAssetCube:
                             m_uiButtons[i].Button.onClick.AddListener(AssetCube_OnAddCube);
+                            break;
+
+                        case UIButton.EId.UnloadCubeAssetBundle:
+                            m_uiButtons[i].Button.onClick.AddListener(AssetCube_UnloadAssetBundle);
                             break;
 
                         case UIButton.EId.AddSceneCubes:
