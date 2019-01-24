@@ -514,9 +514,14 @@ public class RewardSceneController : MenuScreenScene {
 				// Yes! Select rewarded dragon
 				InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
 			} else {
-				// No! Tell the dragon selection screen to make it the selected one next time we enter the screen
-				MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
-				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+                if (dragonData is DragonDataSpecial) {
+                    LabDragonSelectionScreen dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>();
+                    dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+                } else {
+                    // No! Tell the dragon selection screen to make it the selected one next time we enter the screen
+                    MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+                    dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+                }
 			}
 		}
 

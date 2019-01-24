@@ -42,8 +42,15 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[Tooltip("Use it to sync with animation")]
 	[SerializeField] private float m_dragonChangeInfoDelay = 0.15f;
 
-	// Cache some data
-	private DragonDataSpecial m_dragonData = null;
+    // Use it to automatically select a specific dragon upon entering this screen
+    // If the screen is already the active one, the selection will be applied the next time the screen is entered from a different screen
+    private string m_pendingToSelectDragon = string.Empty;
+    public string pendingToSelectDragon {
+        set { m_pendingToSelectDragon = value; }
+    }
+
+    // Cache some data
+    private DragonDataSpecial m_dragonData = null;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -195,7 +202,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
 			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
 		}
-	} 
+
+        // If we have a dragon selection pending, do it now!
+        if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+            InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
+            m_pendingToSelectDragon = string.Empty;
+        }
+    } 
 
 	/// <summary>
 	/// The show animation has finished.
