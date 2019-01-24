@@ -116,9 +116,9 @@ public class LeaguesLeaderboardView : MonoBehaviour {
                 playerPillData.record = records[i];
                 playerPillData.reward = m_league.GetRewardByRank(i + 1);
 
-                if (i < m_season.promoteRange.max) {
+                if (i < m_season.promoteRange.max && m_league.order < HDLiveDataManager.league.leaguesCount - 1) {
                     playerPillData.area = LeagueLeaderboardAreas.Promotion;
-                } else if (i >= m_season.demoteRange.min) {
+                } else if (i >= m_season.demoteRange.min && m_league.order > 0) {
                     playerPillData.area = LeagueLeaderboardAreas.Demotion;
                 } else {
                     playerPillData.area = LeagueLeaderboardAreas.Default;
