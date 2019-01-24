@@ -653,7 +653,7 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 
 		PlayUpdate();
 
-        if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
+        if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.IsReady())
         {
             SetupPostProcessEffects();
         }

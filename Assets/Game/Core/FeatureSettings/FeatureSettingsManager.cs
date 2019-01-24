@@ -238,9 +238,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     }
 
-    public bool IsReady()
+    public static bool IsReady()
     {
-        return m_isReady;
+        return isInstanceCreated && instance.m_isReady;
     }
 
     #region state
@@ -1719,7 +1719,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     public int GetCP2InterstitialMinRounds()
     {
         return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_MIN_ROUNDS);
-    }    
+    }
+
+    public bool IsCrashlyticsEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CRASHLYTICS);
+    }
+
 
     public static bool MenuDragonsAsyncLoading
     {
