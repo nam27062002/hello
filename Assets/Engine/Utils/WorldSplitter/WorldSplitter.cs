@@ -52,7 +52,7 @@ public class WorldSplitter : MonoBehaviour
     void Awake()
     {
         Manager_RegisterWorldSplitter(this);
-        if (FeatureSettingsManager.instance.IsReady())
+        if (FeatureSettingsManager.IsReady())
         {
             SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
         }
