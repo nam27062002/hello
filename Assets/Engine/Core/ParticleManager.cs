@@ -339,6 +339,46 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		return ret;
 	}
 
+    public static GameObject InitLeveledParticleObject( string particle, Transform _anchor)
+    {
+        GameObject ret = null;
+        for (FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles;
+                level >= FeatureSettings.ELevel5Values.very_low && ret == null;
+                level = level - 1
+                )
+        {
+            string path = "";
+            switch (level)
+            {
+                case FeatureSettings.ELevel5Values.very_low:
+                case FeatureSettings.ELevel5Values.low:
+                    path = "Particles/Low/";
+                    break;
+                case FeatureSettings.ELevel5Values.mid:
+                    path = "Particles/Master/";
+                    break;
+                case FeatureSettings.ELevel5Values.high:
+                    path = "Particles/High/";
+                    break;
+                case FeatureSettings.ELevel5Values.very_high:
+                    path = "Particles/VeryHigh/";
+                    break;
+            }
+            if (!string.IsNullOrEmpty(path))
+            {
+                GameObject go = Resources.Load<GameObject>(path + particle);
+                if (go != null)
+                {
+                    ret = Instantiate(go);
+                    ret.transform.SetParentAndReset(_anchor);
+                    ret.SetActive(false);
+                }
+            }
+        }
+        return ret;
+    }
+    
+
 	/// <summary>
 	/// Inits the particle. Instantiates _prefa, stops particle and sets _anchor as parent
 	/// </summary>

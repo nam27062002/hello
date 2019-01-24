@@ -108,11 +108,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
-			//TODO: find a better way to clean prefabs
-			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
-			//Destroy(m_autoSpawner);
-			Destroy(this);
-			//Destroy(m_entity);
+			Destroy(this);			
 		} else {
 			m_view = transform.Find("view").gameObject;
 			Transform viewDestroyed = transform.Find("view_destroyed");
@@ -171,7 +167,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -193,7 +189,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnTriggerEnter(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						GameObject ps = m_feedbackParticle.Spawn();
@@ -227,7 +223,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 	void OnTriggerExit(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						Vector3 particlePosition = transform.position + m_colliderCenter;

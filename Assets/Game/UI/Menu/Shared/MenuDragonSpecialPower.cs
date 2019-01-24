@@ -6,7 +6,8 @@ using UnityEngine;
 public class MenuDragonSpecialPower : MonoBehaviour {
     private enum EPowerElement {
         ExtraObject = 0,
-        Pet
+        Pet,
+        Disguise
     }
 
     [System.Serializable]
@@ -67,26 +68,39 @@ public class MenuDragonSpecialPower : MonoBehaviour {
     }
 
     private void EnablePowerLevel(int _level, bool _enable) {
-        for (int e = 0; e < m_elementsPerPowerLevel[_level].element.Count; ++e) {
-            switch (m_elementsPerPowerLevel[_level].element[e].type) {
-                case EPowerElement.ExtraObject:
-                this.transform.parent.FindTransformRecursive(m_elementsPerPowerLevel[_level].element[e].name).gameObject.SetActive(_enable);
-                break;
-
-                case EPowerElement.Pet:
-                if (_enable) {
-                    m_dragonPreview.equip.EquipPet(m_elementsPerPowerLevel[_level].element[e].name, 4);
-                } else {
-                    m_dragonPreview.equip.EquipPet("", 4);
+        if ( _level < m_elementsPerPowerLevel.Count )
+        {
+            for (int e = 0;  e < m_elementsPerPowerLevel[_level].element.Count; ++e) {
+                switch (m_elementsPerPowerLevel[_level].element[e].type) {
+                    case EPowerElement.ExtraObject:
+                    this.transform.parent.FindTransformRecursive(m_elementsPerPowerLevel[_level].element[e].name).gameObject.SetActive(_enable);
+                    break;
+    
+                    case EPowerElement.Pet:
+                    if (_enable) {
+                        m_dragonPreview.equip.EquipPet(m_elementsPerPowerLevel[_level].element[e].name, 4);
+                    } else {
+                        m_dragonPreview.equip.EquipPet("", 4);
+                    }
+                    break;
+                    case EPowerElement.Disguise:
+                    {
+                        if ( _enable ){
+                            // Equip disguise
+                            m_dragonPreview.equip.EquipDisguise( m_elementsPerPowerLevel[_level].element[e].name );
+                        } else {
+                            // Equip default
+                            m_dragonPreview.equip.EquipDisguise( "" );
+                        }
+                    }break;                
                 }
-                break;
             }
         }
     }
 
     private void OnTierUpgrade(DragonDataSpecial _data) {
         if (enabled) {
-            if (_data.sku == m_dragonPreview.sku) {
+            if (_data.sku == m_dragonPreview.sku && InstanceManager.menuSceneController != null) {  // Only on the menu
                 transform.localScale = GameConstants.Vector3.one * _data.scaleMenu;
             }
         }

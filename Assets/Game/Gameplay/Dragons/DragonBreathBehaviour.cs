@@ -53,7 +53,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	protected float m_currentFuryDuration;		// If fury Active, total time it lasts
 	protected float m_currentRemainingFuryDuration;	// If fury Active remaining time
-
+    public float remainingFuryDuration{
+        get{ return m_currentRemainingFuryDuration; }
+    }
 
 	public enum Type
     {
@@ -65,6 +67,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
     public float m_prewarmDuration = 0.5f;
 	protected float m_prewarmFuryTimer;
 	protected bool m_isFuryPaused;
+    public bool isFuryPaused { get { return m_isFuryPaused; } }
     protected Type m_type = Type.None;
     public Type type
     {
@@ -227,10 +230,10 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			else if (Input.GetKeyDown(KeyCode.G)) {
 				SetMegaFireValue((int)m_superFuryMax);
 			}
-			#endif
+        #endif
 
-		// Cheat for infinite fire
-		bool infiniteFury = ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));
+        // Cheat for infinite fire
+        bool infiniteFury = IsInfiniteFury();
 
 		if (m_dragon.changingArea) return;
 
@@ -269,11 +272,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 			{
 				if ( !m_isFuryPaused )
 				{
-					// Don't decrease fury if cheating
-					if(!infiniteFury && !m_dragon.changingArea)
-					{
-						m_currentRemainingFuryDuration -= Time.deltaTime;
-					}
+                    if (!infiniteFury)
+                        AdvanceRemainingFire();
 
 					switch( m_type )
 					{
@@ -308,6 +308,20 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		}
 
 	}
+    
+    public bool IsInfiniteFury()
+    {
+        return ((m_modInfiniteFury || DebugSettings.infiniteFire || DebugSettings.infiniteSuperFire));   
+    }
+    
+    public void AdvanceRemainingFire()
+    {
+        // Don't decrease fury if cheating
+        if(!m_dragon.changingArea)
+        {
+            m_currentRemainingFuryDuration -= Time.deltaTime;
+        }
+    }
 
 
 	protected virtual void OnEntityBurned(Transform t, Reward reward)
@@ -468,8 +482,8 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_isFuryPaused = false;
 		switch( m_type )
 		{
-			case Type.Standard: if ( m_breathSoundAO != null && m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
-			case Type.Mega: if ( m_superBreathSoundAO != null && m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
+			case Type.Standard: if ( m_breathSoundAO != null && !m_breathSoundAO.IsPlaying() ) m_breathSoundAO.Unpause();break;
+			case Type.Mega: if ( m_superBreathSoundAO != null && !m_superBreathSoundAO.IsPlaying() ) m_superBreathSoundAO.Unpause();break;
 		}
 	}
 
