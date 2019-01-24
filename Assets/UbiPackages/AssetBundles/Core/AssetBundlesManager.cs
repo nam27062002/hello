@@ -319,6 +319,29 @@ public class AssetBundlesManager
         Ops_PerformOp(op);
     }
 
+    public void UnloadAssetBundle(string assetBundleId, AssetBundlesOp.OnDoneCallback onDone)
+    {
+        AssetBundlesOp.EResult result = AssetBundlesOp.EResult.Success;        
+        AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
+        if (handle == null)
+        {
+            result = AssetBundlesOp.EResult.Error_AB_Handle_Not_Found;            
+        }
+        else if (handle.IsLoaded() || handle.IsLoading())
+        {                        
+            handle.Unload();                               
+        }        
+        else
+        {
+            result = AssetBundlesOp.EResult.Error_AB_Is_Not_Loaded;
+        }
+
+        if (onDone != null)
+        {
+            onDone(result, null);
+        }
+    }
+
     /// <summary>
     /// Loads synchronously a scene called <c>sceneName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle and its dependencies have already been downloaded and loaded.
     /// This method makes it easier to migrate from loading a scene from the build to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle and its dependencies before calling 

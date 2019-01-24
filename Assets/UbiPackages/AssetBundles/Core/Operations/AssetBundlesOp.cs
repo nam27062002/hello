@@ -9,7 +9,8 @@ public abstract class AssetBundlesOp
         Error_AB_Handle_Not_Found,      // No asset bundle handle found for an id
         Error_AB_Couldnt_Be_Loaded,     // There was a problem when loading an asset bundle from disk
         Error_Asset_Not_Found_In_AB,    // No asset with the name specified was found in an asset bundle
-        Error_AB_Is_Not_A_Scene_Bundle  // This error arises when trying to load a scene from a non scene asset bundle
+        Error_AB_Is_Not_A_Scene_Bundle, // This error arises when trying to load a scene from a non scene asset bundle
+        Error_AB_Is_Not_Loaded          // This error arises when trying to unload an asset bundle that hasn't been loaded
     };
 
     public delegate void OnDoneCallback(EResult result, object data);

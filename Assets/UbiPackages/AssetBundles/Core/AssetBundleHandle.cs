@@ -124,15 +124,32 @@ public class AssetBundleHandle
 
     public void OnLoaded(AssetBundle data)
     {
-        AssetBundle = data;
-        if (AssetBundle == null)
+        if (IsLoading())
         {
-            LoadState = AssetBundlesTypes.ELoadState.Error;
+            AssetBundle = data;
+            if (AssetBundle == null)
+            {
+                LoadState = AssetBundlesTypes.ELoadState.Error;
+            }
+            else
+            {
+                LoadState = AssetBundlesTypes.ELoadState.Loaded;
+            }
         }
-        else
+    }
+
+    public void Unload()
+    {
+        if (AssetBundle != null)
         {
-            LoadState = AssetBundlesTypes.ELoadState.Loaded;
-        }        
+            AssetBundle.Unload(true);
+            AssetBundle = null;
+        }
+
+        if (IsLoaded() || IsLoading())
+        {
+            LoadState = AssetBundlesTypes.ELoadState.None;         
+        }
     }
     #endregion
 }
