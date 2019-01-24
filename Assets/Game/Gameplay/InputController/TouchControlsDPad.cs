@@ -64,6 +64,8 @@ public class TouchControlsDPad : TouchControls {
 	}
 
 	private float m_lastArrowAngle = 0f;
+    private float m_arrowDistance = 0f;
+    public float arrowDistance{ get{ return m_arrowDistance; } set{ m_arrowDistance = value; } }
 
 	// [AOC] Debug
 	private TextMeshProUGUI m_debugText = null;
@@ -237,6 +239,16 @@ public class TouchControlsDPad : TouchControls {
 						m_lastArrowAngle = angle;
 					}
 					m_dPadDotRectTransform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    if ( m_arrowDistance <= 0 )
+                    {
+                        m_dPadDotRectTransform.SetLocalPosX(0);
+                        m_dPadDotRectTransform.SetLocalPosY(0);
+                    }
+                    else
+                    {
+                        m_dPadDotRectTransform.SetLocalPosX(-Mathf.Cos(Mathf.Deg2Rad * angle) * m_arrowDistance);
+                        m_dPadDotRectTransform.SetLocalPosY(-Mathf.Sin(Mathf.Deg2Rad * angle) * m_arrowDistance);
+                    }    
 				} break;
 			}
 

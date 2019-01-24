@@ -38,6 +38,12 @@ namespace GameConstants {
 
         /// <summary>Water</summary>
         public static readonly int WATER = LayerMask.GetMask("Water");
+        
+        /// <summary>Mines</summary>
+        public static readonly int MINES = LayerMask.GetMask("Mines");
+        
+        /// <summary>Obstacle Index</summary>
+        public static readonly int OBSTACLE_INDEX = LayerMask.NameToLayer("Obstacle");
 
     }
 }
