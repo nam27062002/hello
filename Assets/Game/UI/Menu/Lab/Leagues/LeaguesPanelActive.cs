@@ -270,9 +270,15 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 		Debug.Assert(leagueData != null, "LEAGUE DATA IS NOT VALID!!");
 
 		// 3D Trophy Preview
-		LabLeaguesScene sceneController = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_LEAGUES).scene3d as LabLeaguesScene;
-		if(sceneController != null) {
-			sceneController.LoadTrophy(leagueData);
+		// Make sure 3D scene is still loaded!
+		if(InstanceManager.menuSceneController != null) {
+			ScreenData leaguesScreenData = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_LEAGUES);
+			if(leaguesScreenData != null) {
+				LabLeaguesScene sceneController = leaguesScreenData.scene3d as LabLeaguesScene;
+				if(sceneController != null) {
+					sceneController.LoadTrophy(leagueData);
+				}
+			}
 		}
 
 		// League Name
