@@ -47,11 +47,6 @@ public class LeaguesLeaderboardView : MonoBehaviour {
     private HDLeagueData m_league;
     private bool m_waitingForLeaderboard;
 
-	// Snap player pill to scrollList viewport
-	private RectTransform m_playerPillSlot = null;
-	private Bounds m_playerPillDesiredBounds;   // Original rect where the player pill should be (scrollList's content local coords)
-
-
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//

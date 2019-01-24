@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 224225691173702272}
   - component: {fileID: 222625410328241618}
   - component: {fileID: 114235878986495302}
+  - component: {fileID: 114020188109804312}
   m_Layer: 5
   m_Name: Ring
   m_TagString: Untagged
@@ -413,6 +414,22 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.553}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
+--- !u!114 &114020188109804312
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1047764273173220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 0.7294118, g: 0.7294118, b: 0.7294118, a: 1}
+    bottomRight: {r: 0.7294118, g: 0.7294118, b: 0.7294118, a: 1}
 --- !u!114 &114098597700325628
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1124,13 +1141,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 0, y: 0}
   pillType: 0
-  m_rankText: {fileID: 114671536912366532}
   m_nameText: {fileID: 114829820105121688}
   m_scoreText: {fileID: 114287386987458618}
-  m_pillBGImage: {fileID: 114667212444223630}
-  m_promotedColor: {r: 0.16175054, g: 0.5147059, b: 0.09839966, a: 1}
-  m_defaultColor: {r: 0.49411765, g: 0.30588236, b: 0.105882354, a: 1}
-  m_demotedColor: {r: 0.5735294, g: 0.08855971, b: 0.098457046, a: 1}
+  m_rankText:
+    target: {fileID: 114671536912366532}
+    colors:
+    - {r: 1, g: 0.80392164, b: 0.023529414, a: 1}
+    - {r: 0.73333335, g: 0.7803922, b: 0.81568635, a: 1}
+    - {r: 1, g: 0.7490196, b: 0.47843137, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+  m_rankBGImage:
+    target: {fileID: 114235878986495302}
+    colors:
+    - {r: 1, g: 0.80392164, b: 0.023529414, a: 1}
+    - {r: 0.73333335, g: 0.7803922, b: 0.81568635, a: 1}
+    - {r: 1, g: 0.7490196, b: 0.47843137, a: 1}
+    - {r: 0.6313726, g: 0.42352942, b: 0.20784314, a: 1}
+  m_pillBGImage:
+    target: {fileID: 114667212444223630}
+    colors:
+    - {r: 0.16078432, g: 0.5137255, b: 0.098039225, a: 1}
+    - {r: 0.49411768, g: 0.30588236, b: 0.10588236, a: 1}
+    - {r: 0.57254905, g: 0.09019608, b: 0.098039225, a: 1}
   m_rewardIcon: {fileID: 114300572870397282}
   m_rewardText: {fileID: 114545236988617374}
   m_dragonIcon: {fileID: 114359834468737838}
@@ -1794,7 +1826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 187}
+  m_AnchoredPosition: {x: 0, y: 187.00003}
   m_SizeDelta: {x: 0, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224613734025589818

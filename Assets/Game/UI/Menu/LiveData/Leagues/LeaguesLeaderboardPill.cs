@@ -33,26 +33,42 @@ public class LeaguesLeaderboardPillData {
 /// <summary>
 /// Item class.
 /// </summary>
-public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
+public class 
+LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
     //------------------------------------------------------------------------//
     // CONSTANTS															  //
     //------------------------------------------------------------------------//
+	[System.Serializable]
+	public class TintableGraphic {
+		public Graphic target = null;
+		public Color[] colors = new Color[0];
+
+		public void Tint(int _colorIdx) {
+			if(colors.Length == 0) return;
+			if(_colorIdx < 0 || _colorIdx >= colors.Length) {
+				target.color = colors.Last();
+			} else {
+				target.color = colors[_colorIdx];
+			}
+		}
+	}
 
     //------------------------------------------------------------------------//
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed members
     [Space]
-    [SerializeField] private TextMeshProUGUI m_rankText = null;
-	[SerializeField] private Text m_nameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+    [SerializeField] private Text m_nameText = null;	// [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
     [SerializeField] private TextMeshProUGUI m_scoreText = null;
 
+	[Space]
+	[Comment("Colors for the first positions")]
+	[SerializeField] private TintableGraphic m_rankText = null;
+	[SerializeField] private TintableGraphic m_rankBGImage = null;
+
     [Space]
-    [SerializeField] private Image m_pillBGImage = null;
-    [Tooltip("Special colors for promotion / demotion positions!")]
-    [SerializeField] private Color m_promotedColor = Color.white;
-    [SerializeField] private Color m_defaultColor = Color.white;
-    [SerializeField] private Color m_demotedColor = Color.white;
+	[Comment("0 - Promotion, 1 - Neutral, 2 - Demotion")]
+	[SerializeField] private TintableGraphic m_pillBGImage = null;
 
     [Space]
     [SerializeField] private Image m_rewardIcon = null;
@@ -68,21 +84,24 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
 	// Internal
 	private LeaguesLeaderboardPillData m_lastUsedData = null;
 
-    //------------------------------------------------------------------------//
+	//------------------------------------------------------------------------//
 	// ScrollRectItem IMPLEMENTATION										  //
-    //------------------------------------------------------------------------//
-    /// <summary>
-    /// Initialize the pill with the given user data.
-    /// </summary>
-    /// <param name="_data">The user to be displayed in the pill.</param>
-    public override void InitWithData(LeaguesLeaderboardPillData _data) {
-        // Ranking info
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the pill with the given user data.
+	/// </summary>
+	/// <param name="_data">The user to be displayed in the pill.</param>
+	public override void InitWithData(LeaguesLeaderboardPillData _data) {
+		// Ranking info
 		// We might not get a valid position if the player hasn't yet participated in the event
 		if(_data.record.rank >= 0) {
-            m_rankText.text = StringUtils.FormatNumber(_data.record.rank + 1);
+			(m_rankText.target as TextMeshProUGUI).text = StringUtils.FormatNumber(_data.record.rank + 1);
 		} else {
-            m_rankText.text = "?";
+			(m_rankText.target as TextMeshProUGUI).text = "?";
 		}
+
+		m_rankText.Tint(_data.record.rank);
+		m_rankBGImage.Tint(_data.record.rank);
 
 		if(m_nameText != null) {
 			m_nameText.text = _data.record.name;
@@ -93,11 +112,7 @@ public class LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData>
 		}
 
 		if(m_pillBGImage != null) {
-			switch(_data.area) {
-				case LeagueLeaderboardAreas.Promotion: m_pillBGImage.color = m_promotedColor; break;
-				case LeagueLeaderboardAreas.Default: m_pillBGImage.color = m_defaultColor; break;
-				case LeagueLeaderboardAreas.Demotion: m_pillBGImage.color = m_demotedColor; break;
-			}
+			m_pillBGImage.Tint((int)_data.area);
 		}
 
         // Reward

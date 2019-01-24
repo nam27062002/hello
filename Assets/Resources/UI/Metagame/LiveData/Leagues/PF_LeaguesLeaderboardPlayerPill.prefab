@@ -593,13 +593,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 0, y: 0}
   pillType: 1
-  m_rankText: {fileID: 114626978003105144}
   m_nameText: {fileID: 0}
   m_scoreText: {fileID: 114834901411354380}
-  m_pillBGImage: {fileID: 114175036159714374}
-  m_promotedColor: {r: 0.11764706, g: 0.8156863, b: 0.05882353, a: 1}
-  m_defaultColor: {r: 1, g: 1, b: 1, a: 0}
-  m_demotedColor: {r: 0.91764706, g: 0.03529412, b: 0.03529412, a: 1}
+  m_rankText:
+    target: {fileID: 114626978003105144}
+    colors:
+    - {r: 1, g: 0.80392164, b: 0.023529414, a: 1}
+    - {r: 0.73333335, g: 0.7803922, b: 0.81568635, a: 1}
+    - {r: 1, g: 0.7490196, b: 0.4784314, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+  m_rankBGImage:
+    target: {fileID: 114618810685654856}
+    colors:
+    - {r: 1, g: 0.80392164, b: 0.023529414, a: 1}
+    - {r: 0.73333335, g: 0.7803922, b: 0.81568635, a: 1}
+    - {r: 1, g: 0.7490196, b: 0.4784314, a: 1}
+    - {r: 0.6313726, g: 0.42352945, b: 0.20784315, a: 1}
+  m_pillBGImage:
+    target: {fileID: 114175036159714374}
+    colors:
+    - {r: 0.11764707, g: 0.81568635, b: 0.058823533, a: 1}
+    - {r: 0, g: 0, b: 0, a: 0}
+    - {r: 0.9176471, g: 0.03529412, b: 0.03529412, a: 1}
   m_rewardIcon: {fileID: 114569982944200076}
   m_rewardText: {fileID: 114010053036035938}
   m_dragonIcon: {fileID: 114457482780539274}
@@ -644,10 +659,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_gradient:
-    topLeft: {r: 0.6313726, g: 0.42352945, b: 0.20784315, a: 1}
-    topRight: {r: 0.6313726, g: 0.42352945, b: 0.20784315, a: 1}
-    bottomLeft: {r: 0.36078432, g: 0.20392159, b: 0.10588236, a: 1}
-    bottomRight: {r: 0.36078432, g: 0.20392159, b: 0.10588236, a: 1}
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 0.7294118, g: 0.7294118, b: 0.7294118, a: 1}
+    bottomRight: {r: 0.7294118, g: 0.7294118, b: 0.7294118, a: 1}
 --- !u!114 &114246155654990004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1912,7 +1927,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
   m_SizeDelta: {x: 0, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224469316483640756
