@@ -1,4 +1,4 @@
-// ResultsScreenStepLeagueSync.cs
+﻿// ResultsScreenStepLeagueSync.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 02/10/2018.
@@ -28,8 +28,10 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	[SerializeField] private ShowHideAnimator m_busyPanel = null;
 	[SerializeField] private ShowHideAnimator m_errorPanel = null;
 
-	// Public
-	private bool m_hasBeenDismissed = false;
+    private HDSeasonData m_season;
+
+    // Public
+    private bool m_hasBeenDismissed = false;
 	public bool hasBeenDismissed {
 		get { return m_hasBeenDismissed; }
 	}
@@ -42,7 +44,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// </summary>
 	private void OnDestroy() {
 		// [AOC] TODO!!
-		//Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
+		//Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
 	}
 	
 	//------------------------------------------------------------------------//
@@ -52,12 +54,10 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Initialize this step.
 	/// </summary>
 	override protected void DoInit() {
-		// Listen to score sent confirmation
-		// [AOC] TODO!!
-		//Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LEAGUE_SCORE_SENT, OnLeagueScoreSent);
+        m_season = HDLiveDataManager.league.season;
 
-		// Hide both panels
-		m_busyPanel.Hide(false);
+        // Hide both panels
+        m_busyPanel.Hide(false);
 		m_errorPanel.Hide(false);
 
 		// Reset flags
@@ -68,11 +68,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	override public bool MustBeDisplayed() {
-		// [AOC] Disabled for 1.16 until 1.18
-		return false;
-
-		// Always show for now
+	override public bool MustBeDisplayed() {		
 		return true;
 	}
 
@@ -97,20 +93,26 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		// Show busy screen
 		m_busyPanel.Show();
 
-		// Tell the league to register a score
-		// [AOC] TODO!!
-		//HDTournamentManager tournament = m_event as HDTournamentManager;
-		//tournament.SendScore((int)tournament.GetRunScore());
-		UbiBCN.CoroutineManager.DelayedCall(() => { OnLeagueScoreSent(HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR); }, 1f);	// [AOC] TODO!! Simulate server response for now
-	}
+        m_season.SetScore(m_controller.score, true);
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Retry button has been pressed.
-	/// </summary>
-	public void OnRetryButton() {
+        InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
+    }
+
+    void UpdatePeriodic() { 
+        if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
+            OnLeagueScoreSent(m_season.scoreDataError);
+            CancelInvoke();
+        }
+    }
+
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Retry button has been pressed.
+    /// </summary>
+    public void OnRetryButton() {
 		// Just do it!
 		SendScore();
 	}
@@ -130,24 +132,35 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// The score request has been answered.
 	/// </summary>
 	/// <param name="_errorCode">Error code.</param>
-	private void OnLeagueScoreSent(HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnLeagueScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
 		m_busyPanel.Hide();
 
-		// Error?
-		// [AOC] TODO!!
-		/*
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
-			// No! :) Go to next step
-			OnFinished.Invoke();
-		} else if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER) {
-			// No! :) Go to next step
-			OnFinished.Invoke();
-		} else {
-			// Yes :( Show error screen
-			m_errorPanel.Show();
-		}
-		*/
-		OnFinished.Invoke();	// Just skip to next step for now
+        if (m_season.scoreDataState == HDLiveData.State.VALID) {
+            OnFinished.Invoke();
+        } else {
+            switch (m_season.scoreDataError) {
+                case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
+                case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
+                        HDLiveDataManager.instance.RequestMyLiveData(true);
+                        OnDismissButton();
+                    }
+                    break;
+
+                case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
+                case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
+                        HDLiveDataManager.instance.ForceRequestLeagues();
+                        OnDismissButton();
+                    }
+                    break;
+
+                default:
+                    m_errorPanel.Show();
+                    break;
+            }
+        }
+
 	}
 }

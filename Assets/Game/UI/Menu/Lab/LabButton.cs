@@ -109,9 +109,10 @@ public class LabButton : MonoBehaviour {
         {
     		// Tracking
     		HDTrackingManager.Instance.Notify_LabEnter();
-    
-    		// Change mode
-    		SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+
+            // Change mode
+            SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+            HDLiveDataManager.instance.SwitchToLeague();
     
     		// Go to lab main screen!
     		InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);

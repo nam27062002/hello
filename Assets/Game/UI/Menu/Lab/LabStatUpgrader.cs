@@ -169,9 +169,11 @@ public class LabStatUpgrader : MonoBehaviour {
 			for(int i = 0; i < numSeparators; ++i) {
 				// If not enough separators, instantiate a new one
 				if(i >= m_separators.Count) {
-					GameObject newSeparator = GameObject.Instantiate<GameObject>(m_separatorPrefab, m_separatorsContainer.transform, false);
-					newSeparator.SetActive(true);
-					m_separators.Add(newSeparator);
+					if(m_separatorPrefab != null) {
+						GameObject newSeparator = GameObject.Instantiate<GameObject>(m_separatorPrefab, m_separatorsContainer.transform, false);
+						newSeparator.SetActive(true);
+						m_separators.Add(newSeparator);
+					}
 				} else {
 					m_separators[i].SetActive(true);
 				}

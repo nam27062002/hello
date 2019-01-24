@@ -48,7 +48,7 @@ public class PassiveEventIcon : IPassiveEventIcon {
 	/// </summary>
 	/// <returns>The event manager corresponding to this event type.</returns>
 	protected override HDPassiveEventManager GetEventManager() {
-		return HDLiveEventsManager.instance.m_passive;
+		return HDLiveDataManager.passive;
 	}
 
 	/// <summary>

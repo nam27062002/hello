@@ -86,7 +86,12 @@ namespace Metagame {
 		public const string TYPE_CODE = "gf";
 
 		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
-			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
+            //[AOC] Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler
+            if (_amount >= 5)       _rarity = Metagame.Reward.Rarity.EPIC;
+            else if (_amount >= 3)  _rarity = Metagame.Reward.Rarity.RARE;
+            else                    _rarity = Metagame.Reward.Rarity.COMMON;
+
+            base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 

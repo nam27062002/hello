@@ -1,4 +1,4 @@
-// ResultsScreenStepTournamentSync.cs
+﻿// ResultsScreenStepTournamentSync.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/05/2018.
@@ -44,8 +44,8 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
-		Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);
+		Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
+		Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);
 	}
 	
 	//------------------------------------------------------------------------//
@@ -59,18 +59,18 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		switch(GameSceneController.mode) {
 			case GameSceneController.Mode.TOURNAMENT: {
 				// Store event reference
-				m_event = HDLiveEventsManager.instance.m_tournament;
+				m_event = HDLiveDataManager.tournament;
 
 				// Listen to score sent confirmation
-				Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
+				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, OnTournamentScoreSent);
 			} break;
 
 			case GameSceneController.Mode.DEFAULT: {
 				// Store event reference
-				m_event = HDLiveEventsManager.instance.m_quest;
+				m_event = HDLiveDataManager.quest;
 
 				// Listen to score sent confirmation 
-				Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);
+				Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnQuestScoreSent);
 			} break;
 		}
 
@@ -106,8 +106,8 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 				HDQuestManager questManager = m_event as HDQuestManager;
 				if(questManager.EventExists()
 					&& questManager.IsRunning()
-					&& questManager.m_isActive
-					&& questManager.m_questData.remainingTime.TotalSeconds > 0
+					&& questManager.isActive
+                    && questManager.m_questData.remainingTime.TotalSeconds > 0
 					&& questManager.GetRunScore() > 0		// Only if we actually got a score!
 				)
 				{
@@ -188,16 +188,16 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// The score request has been answered.
 	/// </summary>
 	/// <param name="_errorCode">Error code.</param>
-	private void OnTournamentScoreSent(HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnTournamentScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
 		m_busyPanel.Hide();
 
 		// Error?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
 		} 
-		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
+		else if ( _errorCode == HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
 		{
 			// No! :) Go to next step
 			OnFinished.Invoke();
@@ -213,16 +213,16 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 	/// The score request has been answered.
 	/// </summary>
 	/// <param name="_errorCode">Error code.</param>
-	private void OnQuestScoreSent(HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnQuestScoreSent(HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Hide busy screen
 		m_busyPanel.Hide();
 
 		// Error?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
 		}
-		else if ( _errorCode == HDLiveEventsManager.ComunicationErrorCodes.QUEST_IS_OVER )
+		else if ( _errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER )
 		{
 			// No! :) Go to next step
 			OnFinished.Invoke();

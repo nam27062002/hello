@@ -1,4 +1,4 @@
-// HUDMessage.cs
+﻿// HUDMessage.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 08/06/2016.
@@ -642,7 +642,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			Image goalIcon = tr.GetComponent<Image>();
 			if ( goalIcon != null )
 			{
-				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				HDTournamentDefinition def = HDLiveDataManager.tournament.data.definition as HDTournamentDefinition;
 				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 			}
 		}

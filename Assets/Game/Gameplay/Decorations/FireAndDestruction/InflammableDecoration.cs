@@ -117,41 +117,47 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-        m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
-        m_view = transform.Find("view").gameObject;
-        m_viewBurned = transform.Find("view_burned").gameObject;
+        ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
 
-        m_renderers = m_view.GetComponentsInChildren<Renderer>();
-        for (int i = 0; i < m_renderers.Length; i++) {
-            Material[] materials = m_renderers[i].sharedMaterials;
+        if (zone == ZoneManager.Zone.None) {
+            Destroy(this);
+        } else {
+            m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
+            m_view = transform.Find("view").gameObject;
+            m_viewBurned = transform.Find("view_burned").gameObject;
 
-            // Stores the materials of this renderer in a dictionary for direct access//
-            int renderID = m_renderers[i].GetInstanceID();
-            m_originalMaterials[renderID] = new List<Material>();
-            m_originalMaterials[renderID].AddRange(materials);
+            m_renderers = m_view.GetComponentsInChildren<Renderer>();
+            for (int i = 0; i < m_renderers.Length; i++) {
+                Material[] materials = m_renderers[i].sharedMaterials;
 
-            for (int m = 0; m < materials.Length; ++m) {
-                //TODO
-                //materials[m] = null;
+                // Stores the materials of this renderer in a dictionary for direct access//
+                int renderID = m_renderers[i].GetInstanceID();
+                m_originalMaterials[renderID] = new List<Material>();
+                m_originalMaterials[renderID].AddRange(materials);
+
+                for (int m = 0; m < materials.Length; ++m) {
+                    //TODO
+                    //materials[m] = null;
+                }
+
+                m_renderers[i].sharedMaterials = materials;
             }
 
-            m_renderers[i].sharedMaterials = materials;
+            m_entity = GetComponent<Decoration>();
+            m_collider = GetComponent<BoxCollider>();
+            m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+            m_operatorSpawner = GetComponents<DeviceOperatorSpawner>();
+            m_passengersSpawner = GetComponents<DevicePassengersSpawner>();
+            m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
+
+
+            for (int i = 0; i < m_fireNodes.Length; i++) {
+                m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
+            }
+            m_startPosition = transform.position;
+
+            m_initialized = true;
         }
-
-        m_entity = GetComponent<Decoration>();
-		m_collider = GetComponent<BoxCollider>();
-		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
-		m_operatorSpawner = GetComponents<DeviceOperatorSpawner>();
-		m_passengersSpawner = GetComponents<DevicePassengersSpawner>();
-		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
-
-
-		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
-		}
-		m_startPosition = transform.position;
-
-		m_initialized = true;
 	}
 
 	public void SetupFireNodes() {

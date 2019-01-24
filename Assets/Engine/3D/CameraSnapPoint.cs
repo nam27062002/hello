@@ -147,7 +147,7 @@ public class CameraSnapPoint : MonoBehaviour {
 			seq.Join(_cam.transform.DOMove(this.transform.position, _duration).SetAs(_params));
 		}
 		if(changeRotation) {
-			seq.Join(_cam.transform.DORotateQuaternion(this.transform.rotation, _duration).SetAs(_params));
+			seq.Join(_cam.transform.DORotate(this.transform.rotation.eulerAngles, _duration, RotateMode.Fast).SetAs(_params));
 		}
 
 		// Camera params

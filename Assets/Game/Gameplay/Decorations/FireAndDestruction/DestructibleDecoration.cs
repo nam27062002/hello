@@ -108,11 +108,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 
 		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
-			//TODO: find a better way to clean prefabs
-			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
-			//Destroy(m_autoSpawner);
-			Destroy(this);
-			//Destroy(m_entity);
+			Destroy(this);			
 		} else {
 			m_view = transform.Find("view").gameObject;
 			Transform viewDestroyed = transform.Find("view_destroyed");

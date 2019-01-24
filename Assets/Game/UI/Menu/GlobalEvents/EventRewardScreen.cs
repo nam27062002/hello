@@ -110,7 +110,7 @@ public class EventRewardScreen : MonoBehaviour {
 		m_sceneController.Clear();
 
 		// Store current event for faster access
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Set initial state
 		m_step = Step.INIT;
@@ -121,7 +121,7 @@ public class EventRewardScreen : MonoBehaviour {
 		if(m_questManager != null) {
 			// Global rewards
 			// Rewards are sorted from smaller to bigger, push them in reverse order to collect smaller ones first
-			List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_questManager.GetMyRewards();
+			List<HDLiveData.Reward> rewards = m_questManager.GetMyRewards();
 			int[] pushedRewardsAmount = new int[rewards.Count];
 			int totalPushedRewards = UsersManager.currentUser.rewardStack.Count;
 			for(int i = rewards.Count - 1; i >= 0; --i) {
@@ -351,8 +351,8 @@ public class EventRewardScreen : MonoBehaviour {
 				m_questManager.ClearEvent();
 
 				// Request new event data
-				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
-					HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveDataManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveDataManager.instance.RequestMyLiveData(true);
 				}
 
 				// Save!

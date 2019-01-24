@@ -1,4 +1,4 @@
-// DragonDiscountIcon.cs
+﻿// DragonDiscountIcon.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/11/2018.
@@ -71,7 +71,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
     }
 
 	/// <summary>
@@ -83,7 +83,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-        Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+        Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
     }
 
 	//------------------------------------------------------------------------//
@@ -94,7 +94,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	/// </summary>
 	/// <returns>The event manager corresponding to this event type.</returns>
 	protected override HDPassiveEventManager GetEventManager() {
-		return HDLiveEventsManager.instance.m_dragonDiscounts;
+		return HDLiveDataManager.dragonDiscounts;
 	}
 
 	/// <summary>
@@ -193,7 +193,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		RefreshVisibility();
 	}
 
-    private void OnNewEventDefinition(int _eventID, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+    private void OnNewEventDefinition(int _eventID, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
         RefreshVisibility();
     }
 
