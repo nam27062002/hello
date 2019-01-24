@@ -67,16 +67,25 @@ public class LeagueIcon : MonoBehaviour {
 
 		// If showing, initialize all visible items
 		if(show) {
-			// League icon
-			if(m_leagueIcon != null) {
-				// Load from resources
-				m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + _leagueDef.GetAsString("icon"));
-			}
+			Init(_leagueDef.Get("tidName"), _leagueDef.GetAsString("icon"));
+		}
+	}
 
-			// Name
-			if(m_nameText != null) {
-				m_nameText.Localize(_leagueDef.Get("tidName"));
-			}
+	/// <summary>
+	/// Initialize with custom data.
+	/// </summary>
+	/// <param name="_tidName">TID of the league name.</param>
+	/// <param name="_icon">Name of the icon of the league.</param>
+	public void Init(string _tidName, string _icon) {
+		// League icon
+		if(m_leagueIcon != null) {
+			// Load from resources
+			m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + _icon);
+		}
+
+		// Name
+		if(m_nameText != null) {
+			m_nameText.Localize(_tidName);
 		}
 	}
 
