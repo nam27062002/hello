@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class BuildPlayerExample : MonoBehaviour
 {
-	[MenuItem("Build/Build iOS")]
-	public static void MyBuild()
-	{
-		string[] sceneNames = null;
+	[MenuItem("Build/Build")]
+	public static void Build()
+	{        
+        string[] sceneNames = null;
 		EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
 		if (scenes != null) 
 		{			
@@ -19,13 +19,17 @@ public class BuildPlayerExample : MonoBehaviour
 				sceneNames [i] = scenes[i].path;
 			}
 		}
+        
+        BuildTarget buildTarget = EditorUserBuildSettings.activeBuildTarget;
+        string buildTargetAsString = buildTarget.ToString();
+        string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
-		BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
 		buildPlayerOptions.scenes = sceneNames;
-		buildPlayerOptions.locationPathName = "iOSBuild_ABManifest";
-		buildPlayerOptions.target = BuildTarget.iOS;
+		buildPlayerOptions.locationPathName = path;
+		buildPlayerOptions.target = buildTarget;
 		buildPlayerOptions.options = BuildOptions.None;
-		buildPlayerOptions.assetBundleManifestPath = "AssetBundles/iOS/iOS.manifest";
+		buildPlayerOptions.assetBundleManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
 
 		string result = BuildPipeline.BuildPlayer(buildPlayerOptions);
 		Debug.Log("Build DONE with result " + result);
