@@ -4,13 +4,14 @@
 	using System;
 	using System.Runtime.InteropServices;
 	using System.IO;
+    using System.Collections;
 	using Fabric.Internal.Runtime;
 	using Fabric.Crashlytics;
 
 	public class CrashlyticsInit : MonoBehaviour
 	{
-		// Since we do not support platforms other than Android and iOS,
-		// we'll do nothing in Play/Editor mode.
+        // Since we do not support platforms other than Android and iOS,
+        // we'll do nothing in Play/Editor mode.
 #if !UNITY_EDITOR
 		private static readonly string kitName = "Crashlytics";
 
@@ -23,17 +24,40 @@
 
 		void Awake ()
 		{
-			// This singleton pattern ensures AwakeOnce() is only called once even when the scene
-			// is reloaded (loading scenes destroy previous objects and wake up new ones)
-			if (instance == null) {
-				AwakeOnce ();
-
-				instance = this;
-				DontDestroyOnLoad(this);
-			} else if (instance != this) {
-				Destroy(this.gameObject);
-			}
+            StartCoroutine(CrashlyticsDelayedInit());
 		}
+
+        IEnumerator CrashlyticsDelayedInit()
+        {
+            if (!FeatureSettingsManager.IsReady())
+            {
+                yield return null;
+            }
+
+            if (FeatureSettingsManager.instance.IsCrashlyticsEnabled())
+            {
+                // This singleton pattern ensures AwakeOnce() is only called once even when the scene
+                // is reloaded (loading scenes destroy previous objects and wake up new ones)
+                if (instance == null)
+                {
+                    AwakeOnce();
+
+                    instance = this;
+                    DontDestroyOnLoad(this);
+                }
+                else if (instance != this)
+                {
+                    Destroy(this.gameObject);
+                }
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
+        }
+
+
+
 
 		private void AwakeOnce ()
 		{
@@ -111,5 +135,5 @@
 			}
 		}
 #endif
-	}
+    }
 }
