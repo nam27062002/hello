@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,9 +14,12 @@ public class BasicTestController : MonoBehaviour
 
     void Start()
     {
-        string localAssetBundlesPath = Application.streamingAssetsPath;
-        List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
+        //string localAssetBundlesPath = Application.streamingAssetsPath;
+        //List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        //AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
+
+        Camera.main.eventMask = 0;
+
         m_cubesLoadedCount = 0;
 
         SceneCubes_Init();
@@ -66,7 +70,7 @@ public class BasicTestController : MonoBehaviour
     }
     #endregion
 
-            #region scene_cubes
+    #region scene_cubes
     private static string SCENE_CUBES_AB_NAME = "01/scene_cubes";
     private static string SCENE_CUBES_SCENE_NAME = "SC_Cubes";
 
@@ -103,8 +107,7 @@ public class BasicTestController : MonoBehaviour
     {
         if (SceneCubes_IsLoaded)
         {
-            AssetBundlesManager.Instance.UnloadSceneAsync(SCENE_CUBES_AB_NAME, SCENE_CUBES_SCENE_NAME, SceneCubes_OnDone);
-            SceneManager.UnloadSceneAsync("SC_Cubes");
+            AssetBundlesManager.Instance.UnloadSceneAsync(SCENE_CUBES_AB_NAME, SCENE_CUBES_SCENE_NAME, SceneCubes_OnDone);            
         }
     }
     #endregion
@@ -188,6 +191,7 @@ public class BasicTestController : MonoBehaviour
     public Dropdown m_uiCubeDropdown;
     public Dropdown m_uiSceneCubeDropdown;
     public Text m_uiOperationResult;
+    public Text m_uiMemoryUsed;
 
     private void Ui_Init()
     {
@@ -215,11 +219,24 @@ public class BasicTestController : MonoBehaviour
                         case UIButton.EId.RemoveSceneCubes:
                             m_uiButtons[i].Button.onClick.AddListener(SceneCubes_OnRemove);
                             break;
+
+                        case UIButton.EId.ABInit:
+                            m_uiButtons[i].Button.onClick.AddListener(AB_Init);
+                            break;
+
+                        case UIButton.EId.ABReset:
+                            m_uiButtons[i].Button.onClick.AddListener(AB_Reset);
+                            break;
+
+                        case UIButton.EId.MemoryCollect:
+                            m_uiButtons[i].Button.onClick.AddListener(Ui_MemoryCollect);
+                            break;
                     }
                 }                
             }
         }
 
+        Ui_NeedsToUpdateMemoryUsed = true;
         Ui_SetEnabled(true);
         Ui_SetOperationResultEmpty();
         Ui_SetupDropdownWithLoadResourceModeValues(m_uiCubeDropdown);
@@ -302,10 +319,97 @@ public class BasicTestController : MonoBehaviour
             m_uiOperationResult.color = color;
         }
     }
+
+    private bool Ui_NeedsToUpdateMemoryUsed { get; set; }
+
+    private void Ui_UpdateMemoryUsed()
+    {
+        if (m_uiMemoryUsed != null)
+        {
+            string text = "Memory used=" + Memory_GetUsedSize();
+            if (!string.IsNullOrEmpty(m_memorySampleName))
+            {
+                text += " Sample diff = " + (m_memorySampleAtEnd - m_memorySampleAtBegin);
+            }
+
+            m_uiMemoryUsed.text = text;
+        }
+    }
+
+    private void Ui_MemoryCollect()
+    {
+        Memory_Collect();
+        Ui_NeedsToUpdateMemoryUsed = true; 
+    }    
+    #endregion
+
+    #region ab
+    public void AB_Init()
+    {
+        Memory_BeginSample("AB_INIT");        
+
+        string localAssetBundlesPath = Application.streamingAssetsPath;
+        List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
+
+        Memory_EndSample(true);
+    }
+
+    public void AB_Reset()
+    {
+        Memory_BeginSample("AB_RESET");
+        AssetBundlesManager.Instance.Reset();
+        Memory_EndSample(true);
+    }
+    #endregion
+
+    #region memory
+    private string m_memorySampleName;
+    private long m_memorySampleAtBegin;
+    private long m_memorySampleAtEnd;
+
+    private void Memory_Collect()
+    {
+        System.GC.Collect();        
+    }
+
+    private long Memory_GetUsedSize()
+    {
+        Memory_Collect();
+        return Profiler.GetMonoUsedSizeLong();
+    }    
+
+    private void Memory_BeginSample(string name)
+    {
+        m_memorySampleName = name;
+        m_memorySampleAtBegin = Memory_GetUsedSize();
+        m_memorySampleAtEnd = -1;
+    }
+
+    private void Memory_EndSample(bool logResults)
+    {
+        m_memorySampleAtEnd = Memory_GetUsedSize();
+        if (logResults)
+        {
+            Ui_NeedsToUpdateMemoryUsed = true;
+            //Debug.Log("Memory sample " + memory_sampleName + " diff = " + (memory_sampleAtEnd - memory_sampleAtBegin));
+        }
+    }    
     #endregion
 
     public void Update()
     {
         AssetBundlesManager.Instance.Update();
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            Debug.Log(Memory_GetUsedSize());
+        }
+
+        if (Ui_NeedsToUpdateMemoryUsed)
+        {
+            Ui_UpdateMemoryUsed();
+            Ui_NeedsToUpdateMemoryUsed = false;
+        }
     }
 }

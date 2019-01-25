@@ -9,7 +9,10 @@ public class UIButton : MonoBehaviour
         AddAssetCube,
         UnloadCubeAssetBundle,
         AddSceneCubes,
-        RemoveSceneCubes
+        RemoveSceneCubes,
+        ABInit,
+        ABReset,
+        MemoryCollect
     };
 
     public EId m_id = EId.None;
