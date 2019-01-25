@@ -20,7 +20,7 @@ public class AssetBundlesManager
 
             return sm_instance;
         }
-    }    
+    }       
 
     /// <summary>
     /// List of the local asset bundle ids.
@@ -32,11 +32,14 @@ public class AssetBundlesManager
     public static string DependenciesFileName = "dependencies";        
 
     /// <summary>
-    /// Initialize the system
+    /// Initialize the system.
     /// </summary>
     /// <param name="localAssetBundleNames">List of the local asset bundle ids.</param>
     public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, Logger logger)
     {
+        // Just in case this is not the first time Initialize is called        
+        Reset();
+
         sm_logger = logger;
 
         if (sm_logger == null)
