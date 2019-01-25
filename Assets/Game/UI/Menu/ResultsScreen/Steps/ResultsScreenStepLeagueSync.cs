@@ -27,6 +27,9 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	// Exposed
 	[SerializeField] private ShowHideAnimator m_busyPanel = null;
 	[SerializeField] private ShowHideAnimator m_errorPanel = null;
+	[Space]
+	[SerializeField] private Localizer m_titleText = null;
+	[SerializeField] private Localizer m_messageText = null;
 
     private HDSeasonData m_season;
 
@@ -105,6 +108,23 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
         }
     }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	private void InitErrorPanel(HDLiveDataManager.ComunicationErrorCodes _error) {
+		// Offline?
+		bool offline = Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged();
+		if(offline || _error == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
+			m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");  // Sorry! You are offline!
+			m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");  // You must be online to see and participate in the Legendary Leagues!
+		}
+
+		// Generic error
+		else {
+			m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+			m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(_error).ToString(), string.Empty);
+		}
+	}
 
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
@@ -143,22 +163,21 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
                 case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
-                        HDLiveDataManager.instance.RequestMyLiveData(true);
-                        OnDismissButton();
-                    }
-                    break;
+                    HDLiveDataManager.instance.RequestMyLiveData(true);
+                    OnDismissButton();
+                } break;
 
                 case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
-                        HDLiveDataManager.instance.ForceRequestLeagues();
-                        OnDismissButton();
-                    }
-                    break;
+                    HDLiveDataManager.instance.ForceRequestLeagues();
+                    OnDismissButton();
+                } break;
 
-                default:
+				default: {
+					InitErrorPanel(m_season.scoreDataError);
                     m_errorPanel.Show();
-                    break;
+				} break;
             }
         }
 
