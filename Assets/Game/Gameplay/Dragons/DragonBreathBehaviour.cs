@@ -606,7 +606,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
 				// With fury on boost is infinite
 				m_dragon.AddEnergy(m_dragon.energyMax);
 
-				if (m_healthBehaviour) m_healthBehaviour.enabled = false;
+				if (m_healthBehaviour)
+                {
+                    m_healthBehaviour.CleanDotDamage(); // Remove all DOT Damage because we are invincible
+                    m_healthBehaviour.enabled = false;
+                }
 				if (m_attackBehaviour) m_attackBehaviour.enabled = false;
 
                 m_furyRushToggled.activated = true;
