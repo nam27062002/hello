@@ -32,6 +32,8 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
 
+	private bool m_newHighScore = true;
+
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -54,17 +56,21 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 
         long leaderboardScore = HDLiveDataManager.league.season.currentLeague.leaderboard.playerScore;
 
-        // Set high score text
-        // Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+		// Set high score text
+		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+		// Can't have a high score if the season is not running either!
+		bool seasonRunning = HDLiveDataManager.league.season.IsRunning();
         bool isNewBestScore = m_controller.score > leaderboardScore;
-        long bestScore = (isNewBestScore)? m_controller.score : leaderboardScore;
-		if(isNewBestScore) {
+		m_newHighScore = seasonRunning && isNewBestScore;
+		if(isNewBestScore || !seasonRunning) {
+			// Season not running or new high score: hide the previous high score text
 			m_highScoreText.gameObject.SetActive(false);
-		} else {
+		} else if(seasonRunning) {
+			// Season running but we didn't do a high score: show the previous high score text
 			m_highScoreText.gameObject.SetActive(true);
 			m_highScoreText.Localize(
 				m_highScoreText.tid, 
-				StringUtils.FormatNumber(bestScore)
+				StringUtils.FormatNumber(leaderboardScore)
 			);
 		}
 
@@ -86,13 +92,11 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// Time to show the new high score feedback (if required).
 	/// </summary>
 	public void OnShowNewHighScore() {
-        // Check whether we did a new high score and show the corresponding feedback
-        long leaderboardScore = HDLiveDataManager.league.season.currentLeague.leaderboard.playerScore;
-        bool isNewBestScore = m_controller.score > leaderboardScore;
-		if(isNewBestScore) {
-			// Show widget and launch animation!
-			m_newHighScoreAnim.gameObject.SetActive(true);
-			m_newHighScoreAnim.Launch();
-		}
+		// Check whether we did a new high score and show the corresponding feedback
+		if(!m_newHighScore) return;
+        
+		// Show widget and launch animation!
+		m_newHighScoreAnim.gameObject.SetActive(true);
+		m_newHighScoreAnim.Launch();
 	}
 }
