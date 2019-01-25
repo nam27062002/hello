@@ -176,13 +176,17 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
 			// Skip if no slot (i.e. single item layouts)
-			if(m_itemSlots[i] == null) continue;
+			OfferItemSlot slot = m_itemSlots[i];
+			if(slot == null) continue;
 
-			// If there are not enough item, hide the slot!
-			if(i >= m_pack.items.Count) {
-				m_itemSlots[i].InitFromItem(null);
-			} else {
-				m_itemSlots[i].InitFromItem(m_pack.items[i]);
+			// Start hidden and initialize after some delay
+			// [AOC] We do this because initializing the slots at the same time that the popup is being instantiated results in weird behaviours
+			slot.InitFromItem(null);
+			if(i < m_pack.items.Count) {
+				OfferPackItem item = m_pack.items[i];
+				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+					slot.InitFromItem(item);
+				}, 1);
 			}
 		}
 

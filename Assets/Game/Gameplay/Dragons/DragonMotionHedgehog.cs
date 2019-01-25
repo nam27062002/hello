@@ -354,6 +354,18 @@ public class DragonMotionHedgehog : DragonMotion {
             {
                 CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
             }
+            else
+            {
+                BreakableBehaviour breakableBehaviour = collision.gameObject.GetComponent<BreakableBehaviour>();
+                if( breakableBehaviour != null )
+                {
+                    if ( breakableBehaviour.unbreakableBlocker || m_dragon.GetTierWhenBreaking() < breakableBehaviour.tierWithTurboBreak )
+                    {
+                        // if I cannot breake it then bounce
+                        CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);        
+                    }
+                }
+            }
 			
 		}
 	}
@@ -438,7 +450,7 @@ public class DragonMotionHedgehog : DragonMotion {
         }
         m_direction = Vector3.Reflect( m_direction,  normal);
         m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
-
+        m_impulse = m_sonicImpulse;
         // Increase multiplier
         Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP);
     }

@@ -157,7 +157,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Text color based on item rarity!
 		Gradient4 rarityGradient = null;
-		if(m_item is Metagame.RewardPet && m_item.reward != null) {
+		if(m_item.type == Metagame.RewardPet.TYPE_CODE && m_item.reward != null) {
 			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
 		} else {
 			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
