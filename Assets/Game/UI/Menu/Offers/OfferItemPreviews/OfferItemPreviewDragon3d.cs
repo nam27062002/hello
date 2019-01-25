@@ -58,18 +58,8 @@ public class OfferItemPreviewDragon3d : IOfferItemPreview {
 			m_dragonLoader.LoadDragon(m_def.sku, IDragonData.GetDefaultDisguise(m_def.sku).sku);
 		}
 
-		// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
-		if(m_dragonLoader.dragonInstance != null) {
-			ParticleSystem[] ps = m_dragonLoader.dragonInstance.GetComponentsInChildren<ParticleSystem>();
-			for(int i = 0; i < ps.Length; ++i) {
-				// [AOC] At this point the popup containing this preview hasn't yet been 
-				// registered into the PopupManager, so we need to count for it in order 
-				// for the disabler to work as expected.
-				// By doing this, we are assuming the item preview belongs ALWAYS to a popup.
-				DisableOnPopup disabler = ps[i].gameObject.AddComponent<DisableOnPopup>();
-				disabler.refPopupCount = PopupManager.openPopupsCount + 1;
-			}
-		}
+		// Particle systems require a special initialization
+		InitParticles(m_dragonLoader.dragonInstance.gameObject);
 	}
 
 	/// <summary>
