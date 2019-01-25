@@ -123,29 +123,46 @@ public class HDSeasonData {
     }
 
     public void UpdateState() {
-        if (timeToStart.TotalSeconds > 0f) {
-            state = State.TEASING;
-        } else {
-            if (timeToEnd.TotalSeconds <= 0f) {
-                if (state == State.REWARDS_COLLECTED) { 
-                    state = State.WAITING_NEW_SEASON;
-                }
+        if (liveDataState == HDLiveData.State.VALID) {
+            if (timeToStart.TotalSeconds > 0f) {
+                state = State.TEASING;
             } else {
-                if (timeToClose.TotalSeconds <= 0f) {
-                    if (state < State.JOINED) {
-                        nextLeague = currentLeague;
-                        state = State.WAITING_NEW_SEASON;
-                    } else if (timeToResuts.TotalSeconds <= 0f) {
-                        if (state < State.PENDING_REWARDS) {
-                            state = State.PENDING_REWARDS;
+                bool closed = timeToClose.TotalSeconds <= 0f;
+                bool results = timeToResuts.TotalSeconds <= 0f;
+                bool ended = timeToEnd.TotalSeconds <= 0f;
+
+                switch (state) {
+                    case State.TEASING:
+                    case State.NOT_JOINED: {
+                            if (closed) {
+                                nextLeague = currentLeague;
+                                state = State.WAITING_NEW_SEASON;
+                            }
                         }
-                    } else {
-                        state = State.WAITING_RESULTS;
-                    }
-                } else {
-                    if (state == State.TEASING) {
-                        state = State.NOT_JOINED;
-                    }
+                        break;
+
+                    case State.JOINED:
+                    case State.WAITING_RESULTS: {
+                            if (ended || results) {
+                                state = State.PENDING_REWARDS;
+                            } else if (closed) {
+                                state = State.WAITING_RESULTS;
+                            }
+                        }
+                        break;
+
+                    case State.PENDING_REWARDS: { }
+                        break;
+
+                    case State.REWARDS_COLLECTED: {
+                            if (ended || results) {
+                                state = State.WAITING_NEW_SEASON;
+                            }
+                        }
+                        break;
+
+                    case State.WAITING_NEW_SEASON: { }
+                        break;
                 }
             }
         }

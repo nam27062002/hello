@@ -63,12 +63,18 @@ public class GameServerManager {
             foreach (KeyValuePair<string, object> kvp in this) {
                 // Add entry
                 sb.Append("    \"").Append(kvp.Key).Append("\" : ");
-
-                // Special case for strings, surraund with quotation marks
-                if (kvp.Value.GetType() == typeof(string)) {
-                    sb.Append("\"").Append(kvp.Value.ToString()).Append("\"");
-                } else {
-                    sb.Append(kvp.Value.ToString());
+                if ( kvp.Value != null )
+                {
+                    // Special case for strings, surraund with quotation marks
+                    if (kvp.Value.GetType() == typeof(string)) {
+                        sb.Append("\"").Append(kvp.Value.ToString()).Append("\"");
+                    } else {
+                        sb.Append(kvp.Value.ToString());
+                    }
+                }
+                else
+                {
+                     sb.Append("\"\"");
                 }
                 remaining--;
 
