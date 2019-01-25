@@ -41,6 +41,9 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 		ResultsScreenStepLeagueSync syncStep = m_controller.GetStep(ResultsScreenController.Step.LEAGUE_SYNC) as ResultsScreenStepLeagueSync;
 		if(syncStep != null && syncStep.hasBeenDismissed) return false;
 
+		// Neither if there is no active season!
+		if(!HDLiveDataManager.league.season.IsRunning()) return false;
+
 		return true;
 	}
 
