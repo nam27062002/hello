@@ -92,6 +92,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
+        Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -124,6 +125,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 			Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 			Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
+            Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 		}
 	}
 
@@ -204,7 +206,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if ( m_particleController )
 			m_particleController.ActivateTrails();
-		if ( !string.IsNullOrEmpty( m_wingsWindSound))
+		if ( !string.IsNullOrEmpty(m_wingsWindSound))
 		{
 			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
 			if ( m_wingsWindSoundAO != null )
@@ -541,5 +543,22 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_eatHoldSoundAO = null;
 		}
 	}
+    
+    protected virtual void OnGamePaused( bool _paused )
+    {
+        if ( _paused )
+        {
+            // Pause sound
+            if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying() )
+                m_wingsWindSoundAO.Pause();
+        }
+        else
+        {
+            // Resume sound
+            if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPaused() )
+                m_wingsWindSoundAO.Unpause();
+        }
+    }
+    
 
 }
