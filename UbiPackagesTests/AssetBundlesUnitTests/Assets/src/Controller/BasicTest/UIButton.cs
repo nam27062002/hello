@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class UIButton : MonoBehaviour
 {
+    /// <summary>
+    /// New values have to be added at the end. Messing around with the order of these values would make constants assigned in the scene to be pointing to the wrong values
+    /// </summary>
     public enum EId
     {
         None,
@@ -12,7 +15,8 @@ public class UIButton : MonoBehaviour
         RemoveSceneCubes,
         ABInit,
         ABReset,
-        MemoryCollect
+        MemoryCollect,
+        UnloadSceneCubesAB
     };
 
     public EId m_id = EId.None;

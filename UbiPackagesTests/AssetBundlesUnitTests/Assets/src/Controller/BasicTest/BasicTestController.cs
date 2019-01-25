@@ -110,6 +110,11 @@ public class BasicTestController : MonoBehaviour
             AssetBundlesManager.Instance.UnloadSceneAsync(SCENE_CUBES_AB_NAME, SCENE_CUBES_SCENE_NAME, SceneCubes_OnDone);            
         }
     }
+
+    private void SceneCubes_UnloadAB()
+    {
+        AssetBundlesManager.Instance.UnloadAssetBundle(SCENE_CUBES_AB_NAME, SceneCubes_OnDone);
+    }
     #endregion
 
     #region load_resource
@@ -230,6 +235,10 @@ public class BasicTestController : MonoBehaviour
 
                         case UIButton.EId.MemoryCollect:
                             m_uiButtons[i].Button.onClick.AddListener(Ui_MemoryCollect);
+                            break;
+
+                        case UIButton.EId.UnloadSceneCubesAB:
+                            m_uiButtons[i].Button.onClick.AddListener(SceneCubes_UnloadAB);
                             break;
                     }
                 }                
