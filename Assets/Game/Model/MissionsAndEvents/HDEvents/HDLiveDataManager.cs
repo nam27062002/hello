@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -71,6 +72,38 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
         NO_ERROR
     };
+
+	private static Dictionary<int, HDLiveDataManager.ComunicationErrorCodes> s_errorCodesDict = new Dictionary<int, ComunicationErrorCodes> {
+		{ 601, ComunicationErrorCodes.LDATA_NOT_FOUND },
+		{ 602, ComunicationErrorCodes.ENTRANCE_FREE_INVALID },
+		{ 603, ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID },
+		{ 604, ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID },
+		{ 605, ComunicationErrorCodes.IS_NOT_A_VALID_TOURNAMENT },
+		{ 606, ComunicationErrorCodes.IS_NOT_A_TOURNAMENT },
+		{ 607, ComunicationErrorCodes.EVENT_NOT_FOUND },
+		{ 608, ComunicationErrorCodes.EVENT_IS_NOT_VALID },
+		{ 609, ComunicationErrorCodes.EVENT_IS_DISABLED },
+		{ 610, ComunicationErrorCodes.UNEXPECTED_ERROR },
+		{ 611, ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA },
+		{ 612, ComunicationErrorCodes.ELO_NOT_FOUND },
+		{ 613, ComunicationErrorCodes.TOURNAMENT_IS_OVER },
+		{ 614, ComunicationErrorCodes.GAMEMODE_NOT_EXISTS },
+		{ 615, ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS },
+		//{ 616, ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS },
+		{ 617, ComunicationErrorCodes.MATCHMAKING_ERROR },
+		{ 618, ComunicationErrorCodes.QUEST_IS_OVER },
+		{ 619, ComunicationErrorCodes.IS_NOT_A_QUEST },
+		{ 620, ComunicationErrorCodes.EVENT_STILL_ACTIVE },
+		{ 621, ComunicationErrorCodes.NOTHING_PENDING },
+		{ 622, ComunicationErrorCodes.EVENT_TTL_EXPIRED },
+		{ 625, ComunicationErrorCodes.USER_IS_NOT_PENDING_REWARDS },
+
+		{ 801, ComunicationErrorCodes.SEASON_IS_NOT_CLOSED },
+		{ 802, ComunicationErrorCodes.SEASON_NOT_FOUND },
+		{ 803, ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND },
+		{ 804, ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND },
+		{ 805, ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE }
+	};
 
     //
     private HDTournamentManager     m_tournament        = new HDTournamentManager();
@@ -209,43 +242,8 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                 ret = SimpleJSON.JSONNode.Parse(_response["response"] as string);
                 if (ret != null) {
                     if (ret.ContainsKey("errorCode")) {
-                        // Translate error code
-                        outErr = HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR;
-                        int errorInt = ret["errorCode"];
-                        switch (errorInt) {
-                            case 601: outErr = HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND; break;
-                            case 602: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_FREE_INVALID; break;
-                            case 603: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID; break;
-                            case 604: outErr = HDLiveDataManager.ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID; break;
-                            case 605: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_VALID_TOURNAMENT; break;
-                            case 606: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_TOURNAMENT; break;
-                            case 607: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND; break;
-                            case 608: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID; break;
-                            case 609: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_DISABLED; break;
-                            case 610: outErr = HDLiveDataManager.ComunicationErrorCodes.UNEXPECTED_ERROR; break;
-                            case 611: outErr = HDLiveDataManager.ComunicationErrorCodes.INCONSISTENT_TOURNAMENT_DATA; break;
-                            case 612: outErr = HDLiveDataManager.ComunicationErrorCodes.ELO_NOT_FOUND; break;
-                            case 613: outErr = HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER; break;
-                            case 614: outErr = HDLiveDataManager.ComunicationErrorCodes.GAMEMODE_NOT_EXISTS; break;
-                            case 615: outErr = HDLiveDataManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS; break;
-                            // case 616: outErr = HDLiveDataManager.ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS;break;
-                            case 617: outErr = HDLiveDataManager.ComunicationErrorCodes.MATCHMAKING_ERROR; break;
-                            case 618: outErr = HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER; break;
-                            case 619: outErr = HDLiveDataManager.ComunicationErrorCodes.IS_NOT_A_QUEST; break;
-                            case 620: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_STILL_ACTIVE; break;
-                            case 621: outErr = HDLiveDataManager.ComunicationErrorCodes.NOTHING_PENDING; break;
-                            case 622: outErr = HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED; break;
-                            case 625: outErr = HDLiveDataManager.ComunicationErrorCodes.USER_IS_NOT_PENDING_REWARDS; break;
-
-
-                            case 801: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_CLOSED; break;
-
-                            case 802: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND; break;
-                            case 803: outErr = HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND; break;
-                            case 804: outErr = HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND; break;
-                            case 805: outErr = HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE; break;
-
-                        }
+						// Translate error code
+						outErr = ErrorCodeIntToEnum(ret["errorCode"].AsInt);
                     }
                 } else {
                     outErr = HDLiveDataManager.ComunicationErrorCodes.RESPONSE_NOT_VALID;
@@ -353,6 +351,24 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         return ret;
     }
 
+	public static int ErrorCodeEnumToInt(ComunicationErrorCodes _error) {
+		if(s_errorCodesDict.ContainsValue(_error)) {
+			// https://stackoverflow.com/questions/2444033/get-dictionary-key-by-value
+			return s_errorCodesDict.FirstOrDefault(
+				(KeyValuePair<int, ComunicationErrorCodes> _kvp) => {
+					return _kvp.Value == _error;
+				}
+			).Key;
+		}
+		return -1;
+	}
+
+	public static ComunicationErrorCodes ErrorCodeIntToEnum(int _code) {
+		if(s_errorCodesDict.ContainsKey(_code)) {
+			return s_errorCodesDict[_code];
+		}
+		return ComunicationErrorCodes.OTHER_ERROR;
+	}
 
     //--------------------------------------------------------------------------
 
