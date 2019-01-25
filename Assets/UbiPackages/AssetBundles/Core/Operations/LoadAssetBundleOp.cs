@@ -24,7 +24,7 @@ public class LoadAssetBundleOp : AssetBundlesOp
 
     protected override void ExtendedPerform()
     {
-        m_request = AssetBundle.LoadFromFileAsync(m_handle.LocalPath);
+        m_request = AssetBundle.LoadFromFileAsync(m_handle.LocalPath);        
     }
 
     protected override void ExtendedUpdate()

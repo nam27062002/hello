@@ -20,9 +20,7 @@ public class AssetBundlesManager
 
             return sm_instance;
         }
-    }
-
-    private AssetBundleManifest m_manifest;
+    }    
 
     /// <summary>
     /// List of the local asset bundle ids.
@@ -31,7 +29,7 @@ public class AssetBundlesManager
     
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string DependenciesFileName = "dependencies";    
+    public static string DependenciesFileName = "dependencies";        
 
     /// <summary>
     /// Initialize the system
@@ -58,63 +56,87 @@ public class AssetBundlesManager
         Loader_Init();
         Ops_Init();
 
-        m_localAssetBundleIds = localAssetBundleIds;        
+        m_localAssetBundleIds = localAssetBundleIds;
 
+        AssetBundleManifest manifest = null;
         string path = Path.Combine(localAssetBundlesPath, DependenciesFileName);        
-        var manifestBundle = AssetBundle.LoadFromFile(path);
+        AssetBundle manifestBundle = AssetBundle.LoadFromFile(path);
         if (manifestBundle != null)
         {
-            m_manifest = manifestBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");            
-        }
-
-        if (m_manifest == null)
-        {
-            if (Logger.CanLog())
+            string assetName = "AssetBundleManifest";
+            manifest = manifestBundle.LoadAsset<AssetBundleManifest>(assetName);
+            if (manifest == null)
             {
-                Logger.LogError("Error when initializing AssetBundlesManager because manifest wasn't found");
+                if (Logger.CanLog())
+                {
+                    Logger.LogError("Error when initializing AssetBundlesManager because asset " + assetName + " wasn't found in manifest asset bundle");
+                }
+            }
+            else
+            {
+                m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
+
+                string id;
+                AssetBundleHandle handle;
+                string[] arr;
+                List<string> dependencies;
+                List<string> manifestAssetBundleIds = new List<string>(manifest.GetAllAssetBundles());
+                if (m_localAssetBundleIds != null)
+                {
+                    int count = m_localAssetBundleIds.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        id = m_localAssetBundleIds[i];
+
+                        // Verifies that the asset bundle is defined in the manifest
+                        if (!manifestAssetBundleIds.Contains(id))
+                        {
+                            if (Logger.CanLog())
+                            {
+                                Logger.LogError("Asset bundle with id " + m_localAssetBundleIds[i] + " can't be found in asset bundles manifest");
+                            }
+                        }
+                        else
+                        {
+                            arr = manifest.GetAllDependencies(id);
+                            dependencies = new List<string>(arr);
+
+                            // id is also included because it makes downloading logic easier
+                            dependencies.Add(id);
+
+                            handle = new AssetBundleHandle();
+                            handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
+                            m_assetBundleHandles.Add(m_localAssetBundleIds[i], handle);
+                        }
+                    }
+                }
+
+                // No needed anymore
+                manifestBundle.Unload(true);
+
+                if (Logger.CanLog())
+                {
+                    Logger.Log("AssetBundlesManager initialized successfully");
+                }
             }
         }
         else
         {
-            m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
-
-            string id;
-            AssetBundleHandle handle;
-            string[] arr;
-            List<string> dependencies;
-            List<string> manifestAssetBundleIds = new List<string>(m_manifest.GetAllAssetBundles());
-            if (m_localAssetBundleIds != null)
+            if (Logger.CanLog())
             {
-                int count = m_localAssetBundleIds.Count;                         
-                for (int i = 0; i < count; i++)
-                {
-                    id = m_localAssetBundleIds[i];
-
-                    // Verifies that the asset bundle is defined in the manifest
-                    if (!manifestAssetBundleIds.Contains(id))
-                    {
-                        if (Logger.CanLog())
-                        {
-                            Logger.LogError("Asset bundle with id " + m_localAssetBundleIds[i] + " can't be found in asset bundles manifest");
-                        }
-                    }
-                    else
-                    {
-                        arr = m_manifest.GetAllDependencies(id);
-                        dependencies = new List<string>(arr);
-
-                        // id is also included because it makes downloading logic easier
-                        dependencies.Add(id);
-
-                        handle = new AssetBundleHandle();
-                        handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
-                        m_assetBundleHandles.Add(m_localAssetBundleIds[i], handle);
-                    }
-                }
+                Logger.LogError("Error when initializing AssetBundlesManager: Path for AssetBundleManifest is not valid: " + path);
             }
+        }       
+    }
 
-            Logger.Log("AssetBundlesManager initialized successfully");            
-        }        
+    public void Reset()
+    {
+        UnloadAssetBundleList(m_localAssetBundleIds, null);
+        m_localAssetBundleIds = null;
+        m_assetBundleHandles = null;
+
+        Ops_Reset();
+        Loader_Reset();
     }
 
     private bool IsInitialized()
@@ -237,31 +259,7 @@ public class AssetBundlesManager
         }
 
         return returnValue;
-    }
-
-    /*
-    /// <summary>
-    /// Checks if all asset bundle ids in the list are loaded.
-    /// </summary>
-    /// <param name="ids">List of asset bundle ids to check.</param>
-    /// <returns>Returns <c>true</c> if all asset bundles in the list are loaded.</returns>
-    public bool HasAssetBundleListFailedToLoad(List<string> ids)
-    {
-        bool returnValue = false;
-        if (returnValue && ids != null && ids.Count > 0)
-        {
-            AssetBundleHandle handle;
-            int count = ids.Count;
-            for (int i = 0; i < count && !returnValue; i++)
-            {
-                handle = GetAssetBundleHandle(ids[i]);
-                returnValue = handle != null && handle.HasFailedToLoad();
-            }
-        }
-
-        return returnValue;
-    }
-    */
+    }    
 
     /// <summary>
     /// Loads synchronously an asset called <c>assetName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle has already been downloaded and loaded.
@@ -339,6 +337,26 @@ public class AssetBundlesManager
         if (onDone != null)
         {
             onDone(result, null);
+        }
+    }
+
+    public void UnloadAssetBundleList(List<string> assetBundleIds, AssetBundlesOp.OnDoneCallback onDone)
+    {
+        if (assetBundleIds != null)
+        {
+            int count = assetBundleIds.Count;
+            AssetBundleHandle handle;
+            for (int i = 0; i < count; i++)
+            {
+                handle = GetAssetBundleHandle(assetBundleIds[i]);
+                if (handle != null)
+                {
+                    if (handle.IsLoaded())
+                    {
+                        handle.Unload();
+                    }                    
+                }
+            }
         }
     }
 
@@ -509,6 +527,20 @@ public class AssetBundlesManager
         }
     }
 
+    private void Ops_Reset()
+    {
+        if (m_ops != null)
+        {
+            int count = m_ops.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_ops[i].Reset();
+            }
+
+            m_ops.Clear();
+        }
+    }
+
     private void Ops_PerformOp(AssetBundlesOp op)
     {
         if (op != null)
@@ -552,20 +584,27 @@ public class AssetBundlesManager
         if (m_loaderRequests == null)
         {
             m_loaderRequests = new Queue<string>();
-        }
-        else
-        {
-            m_loaderRequests.Clear();
-        }
+        }        
 
         if (m_loaderLoadAssetBundleOp == null)
         {
             m_loaderLoadAssetBundleOp = new LoadAssetBundleOp();
         }
-        else
+
+        Loader_Reset();
+    }
+
+    private void Loader_Reset()
+    {
+        if (m_loaderRequests != null)        
+        {
+            m_loaderRequests.Clear();
+        }
+
+        if (m_loaderLoadAssetBundleOp != null)
         {
             m_loaderLoadAssetBundleOp.Reset();
-        }    
+        }
     }
 
     private void Loader_RequestAssetBundleList(List<string> ids)

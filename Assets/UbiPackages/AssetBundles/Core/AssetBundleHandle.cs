@@ -52,6 +52,14 @@ public class AssetBundleHandle
         }
     }    
     
+    public void Reset()
+    {
+        Id = null;
+        LocalPath = null;
+        m_dependenciesIncludingSelf = null;
+        AssetBundle = null;
+    }
+
     public void SetupLocal(string id, string localPath, List<string> dependencies)
     {
         m_isRemote = false;
