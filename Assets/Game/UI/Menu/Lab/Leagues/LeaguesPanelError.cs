@@ -33,7 +33,9 @@ public class LeaguesPanelError : LeaguesScreenPanel {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     // Exposed References
-    [SerializeField] private TextMeshProUGUI m_errorText = null;
+	[SerializeField] private Localizer m_titleText = null;
+    [SerializeField] private Localizer m_messageText = null;
+	[Space]
     [SerializeField] private LeaguesScreenController leaguesScreenController = null;
 
 
@@ -55,30 +57,29 @@ public class LeaguesPanelError : LeaguesScreenPanel {
 
         switch (_group) {
             case ErrorGroup.NETWORK: {
-                    m_errorText.text = LocalizationManager.SharedInstance.Localize("TID_NET_ERROR");
-                }
-                break;
+				m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");	// Sorry! You are offline!
+				m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");	// You must be online to see and participate in the Legendary Leagues!
+            } break;
 
             case ErrorGroup.SEASON: {
-                    m_errorCode = m_season.liveDataError;
-                    m_errorText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
-                }
-                break;
+                m_errorCode = m_season.liveDataError;
+				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+            } break;
 
             case ErrorGroup.REWARDS: {
-                    m_errorCode = m_season.rewardDataError;
-                    m_errorText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
-                }
-                break;
+				m_errorCode = m_season.rewardDataError;
+				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+			} break;
 
             case ErrorGroup.FINALIZE: {
-                    m_errorCode = m_season.finalizeDataError;
-                    m_errorText.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
-                }
-                break;
+                m_errorCode = m_season.finalizeDataError;
+				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+            } break;
         }
 	}
-
 
     //------------------------------------------------------------------------//
     // CALLBACK METHODS                                                        //
