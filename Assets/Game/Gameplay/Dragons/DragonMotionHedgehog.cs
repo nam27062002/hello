@@ -257,7 +257,9 @@ public class DragonMotionHedgehog : DragonMotion {
 			{
                 m_boost.energyRequiredToBoost = m_dragon.energyMax * m_dragon.data.energyRequiredToBoost;
                 m_animationEventController.allowHitAnimation = true;
+                m_cheskStateForResume = false;
 				m_dragon.TryResumeEating();
+                m_cheskStateForResume = true;
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
                 m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
                 InstanceManager.timeScaleController.m_ignoreHitStops = false;
