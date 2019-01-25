@@ -14,7 +14,15 @@ public class UnitTestsEditor : MonoBehaviour
     static void BuildAssetBundles()
     {
         Debug.Log("Building UnitTests asset bundles...");
+        string assetBundleDirectory = "AssetBundles/" + EditorUserBuildSettings.activeBuildTarget.ToString();
 
+        DeleteFileOrDirectory(assetBundleDirectory);        
+        if (!Directory.Exists(assetBundleDirectory))
+        {
+            Directory.CreateDirectory(assetBundleDirectory);
+        }
+
+        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, EditorUserBuildSettings.activeBuildTarget);
     }
 
     private static bool VERBOSE = false;
