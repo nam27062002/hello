@@ -274,7 +274,7 @@ public class Catapult : SimpleDevice {
 	}
 
     private void OnDestroy() {
-        if (m_operatorAvailable) {
+        if (m_operatorAvailable && m_operatorSpawner != null) {
             m_operatorSpawner.OperatorDoScared();
         }
     }
