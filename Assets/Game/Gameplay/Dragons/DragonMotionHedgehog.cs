@@ -354,6 +354,18 @@ public class DragonMotionHedgehog : DragonMotion {
             {
                 CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
             }
+            else
+            {
+                BreakableBehaviour breakableBehaviour = collision.gameObject.GetComponent<BreakableBehaviour>();
+                if( breakableBehaviour != null )
+                {
+                    if ( breakableBehaviour.unbreakableBlocker || m_dragon.GetTierWhenBreaking() < breakableBehaviour.tierWithTurboBreak )
+                    {
+                        // if I cannot breake it then bounce
+                        CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);        
+                    }
+                }
+            }
 			
 		}
 	}
