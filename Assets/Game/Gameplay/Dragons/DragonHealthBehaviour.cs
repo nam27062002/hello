@@ -472,4 +472,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
     {
         m_ignoreDamageTypes.Remove( _type );
     }
+    
+    public void CleanDotDamage()
+    {
+        m_dots.Clear();
+    }
 }

@@ -178,9 +178,12 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     }
 
     public void OperatorDoScared() {
-        m_operatorPilot.PressAction(Pilot.Action.Scared);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+        if ( m_operatorPilot != null )
+        {
+            m_operatorPilot.PressAction(Pilot.Action.Scared);
+            m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
+            m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+        }
     }
 
     public void OperatorEnterDevice() {
