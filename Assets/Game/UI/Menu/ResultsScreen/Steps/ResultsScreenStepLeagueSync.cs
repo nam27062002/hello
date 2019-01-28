@@ -72,7 +72,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {		
-		return true;
+		return HDLiveDataManager.league.season.IsRunning();
 	}
 
 	/// <summary>

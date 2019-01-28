@@ -53,7 +53,9 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 	override protected void DoInit() {
 		// Initialize league icon with current player's league info
 		HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
-		m_leagueIcon.Init(leagueData.tidName, leagueData.icon);
+        if (leagueData != null) {
+            m_leagueIcon.Init(leagueData.tidName, leagueData.icon);
+        }
 	}
 
 	/// <summary>
