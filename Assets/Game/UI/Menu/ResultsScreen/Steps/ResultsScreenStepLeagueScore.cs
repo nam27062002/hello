@@ -54,12 +54,16 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		// [AOC] TODO!! Better sync with animation?
 		m_scoreText.SetValue(0, m_controller.score);
 
-        long leaderboardScore = HDLiveDataManager.league.season.currentLeague.leaderboard.playerScore;
+        long leaderboardScore = 0;
+        HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
+        if (leagueData != null) {
+            leaderboardScore = leagueData.leaderboard.playerScore;
+        }
 
-		// Set high score text
-		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
-		// Can't have a high score if the season is not running either!
-		bool seasonRunning = HDLiveDataManager.league.season.IsRunning();
+        // Set high score text
+        // Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+        // Can't have a high score if the season is not running either!
+        bool seasonRunning = HDLiveDataManager.league.season.IsRunning();
         bool isNewBestScore = m_controller.score > leaderboardScore;
 		m_newHighScore = seasonRunning && isNewBestScore;
 		if(isNewBestScore || !seasonRunning) {

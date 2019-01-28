@@ -241,7 +241,9 @@ public class HDSeasonData {
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
         } else {
             if (_fetchLeaderboard) {
-                currentLeague.leaderboard.RequestData();
+                if (currentLeague != null) {
+                    currentLeague.leaderboard.RequestData();
+                }
             }
             scoreDataState = HDLiveData.State.VALID;
         }
@@ -258,8 +260,10 @@ public class HDSeasonData {
             if (state < State.JOINED) {
                 state = State.JOINED;
             }
-            
-            currentLeague.leaderboard.LoadData(responseJson["leaderboard"]);
+
+            if (currentLeague != null) {
+                currentLeague.leaderboard.LoadData(responseJson["leaderboard"]);
+            }
 
             scoreDataState = HDLiveData.State.VALID;
         } else {
@@ -416,8 +420,8 @@ public class HDSeasonData {
 	}
 
 	public bool IsRunning() {
-		return state == State.JOINED || state == State.NOT_JOINED;
-	}
+        return (state >= State.NOT_JOINED && state < State.PENDING_REWARDS);
+    }
 
 
 
