@@ -237,7 +237,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
         }
           
         if (secondsToSwitchMusic <= 0)
-		if (keyToPlay != Music_CurrentKey || (Music_CurrentAudioObject != null && Music_CurrentAudioObject.IsPaused(true)))
+		if (keyToPlay != Music_CurrentKey || (Music_CurrentAudioObject != null && (Music_CurrentAudioObject.IsPaused(true) || !Music_CurrentAudioObject.IsPlaying())) )
         {
 			if (Music_CurrentAudioObject != null)
 			{
