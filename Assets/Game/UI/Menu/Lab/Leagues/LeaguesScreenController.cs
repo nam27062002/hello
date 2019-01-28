@@ -191,13 +191,15 @@ public class LeaguesScreenController : MonoBehaviour {
 		Panel targetPanel = Panel.LOADING;
         LeaguesPanelError errorPanel = m_panels[(int)Panel.ERROR] as LeaguesPanelError;
 
-		// Check internet connectivity first
-		if(Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
-			targetPanel = Panel.ERROR;
+        // Check internet connectivity first
+        if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged()) {
+            targetPanel = Panel.ERROR;
             errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.NETWORK);
-		} else if (m_season.liveDataState == HDLiveData.State.ERROR) {
+        } else if (m_season.liveDataState == HDLiveData.State.ERROR) {
             targetPanel = Panel.ERROR;
             errorPanel.SetErrorGroup(LeaguesPanelError.ErrorGroup.SEASON);
+        } else if (m_season.liveDataState == HDLiveData.State.WAITING_RESPONSE) {
+            targetPanel = Panel.LOADING;
         } else { 
             // Depends on season state
             switch (m_season.state) {
@@ -312,12 +314,13 @@ public class LeaguesScreenController : MonoBehaviour {
     public void RefreshLiveData() {
         SetActivePanel(Panel.LOADING);
         HDLiveDataManager.instance.RequestMyLiveData(true);
-        UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
+        UbiBCN.CoroutineManager.DelayedCall(Refresh, 1f);
     }
 
     public void RefreshSeasonData() {
         SetActivePanel(Panel.LOADING);
-        UbiBCN.CoroutineManager.DelayedCall(Refresh, 0.5f);
+        HDLiveDataManager.league.season.RequestData(true);
+        UbiBCN.CoroutineManager.DelayedCall(Refresh, 1f);
     }
 
     /// <summary>

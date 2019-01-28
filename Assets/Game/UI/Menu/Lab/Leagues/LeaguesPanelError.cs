@@ -100,6 +100,7 @@ public class LeaguesPanelError : LeaguesScreenPanel {
                     }
                     break;
 
+                case HDLiveDataManager.ComunicationErrorCodes.NO_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_IS_NOT_PENDING_REWARDS:
                 case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
