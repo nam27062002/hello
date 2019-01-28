@@ -35,20 +35,20 @@ public class PendingRewardScreen : MonoBehaviour {
 	// Internal references
 	private RewardSceneController m_sceneController = null;
 
-	private MenuScreen m_previousScreen;
-
 	// Internal logic
 	private Step m_step;
 	private State m_state;
 	private bool m_showIntro = true;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	private void Awake() {
+    private bool m_specialDragonUnlocked = false;
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialization.
+    /// </summary>
+    private void Awake() {
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenTransitionEnd);
@@ -88,8 +88,10 @@ public class PendingRewardScreen : MonoBehaviour {
 		// Make sure all required references are set
 		ValidateReferences();
 
-		// Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
-		m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+        m_specialDragonUnlocked = false;
+
+        // Listen to 3D scene events - remove first to avoid receiving the event twice! (shouldn't happen, just in case)
+        m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
 		m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
 		m_sceneController.OnAnimStarted.AddListener(OnSceneAnimStarted);
@@ -181,17 +183,17 @@ public class PendingRewardScreen : MonoBehaviour {
 		Step nextStep = Step.INTRO;
 		switch(m_step) {
 			case Step.INTRO: {
-				nextStep = Step.REWARD;
-			} break;
+    				nextStep = Step.REWARD;
+    			} break;
 
 			case Step.REWARD: {
-				// There are still rewards to collect?
-				if(UsersManager.currentUser.rewardStack.Count > 0) {
-					nextStep = Step.REWARD;
-				} else {
-					nextStep = Step.FINISH;
-				}
-			} break;
+    				// There are still rewards to collect?
+    				if(UsersManager.currentUser.rewardStack.Count > 0) {
+                        nextStep = Step.REWARD;
+    				} else {
+    					nextStep = Step.FINISH;
+    				}
+    			} break;
 
 			default: {
 				// Coming from INIT or FINISH steps: Show intro?
@@ -219,31 +221,46 @@ public class PendingRewardScreen : MonoBehaviour {
 		// Perform different stuff depending on new step
 		switch(nextStep) {
 			case Step.INTRO: {
-				// Clear 3D scene
-				m_sceneController.Clear();
+    				// Clear 3D scene
+    				m_sceneController.Clear();
 
-				// Change state after some delay
-				UbiBCN.CoroutineManager.DelayedCall(
-					() => { 
-						m_state = State.IDLE;
-					}, 
-					0.5f
-				);
-			} break;
+    				// Change state after some delay
+    				UbiBCN.CoroutineManager.DelayedCall(
+    					() => { 
+    						m_state = State.IDLE;
+    					}, 
+    					0.5f
+    				);
+    			} break;
 
 			case Step.REWARD: {
-				// Tell the scene to open the next reward (should be already stacked)
-				m_sceneController.OpenReward();
-			} break;
+                    if (UsersManager.currentUser.rewardStack.Count > 0) {
+                        Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
+                        Metagame.RewardDragon rewardDragon = reward as Metagame.RewardDragon;
+                        if (rewardDragon != null) {
+                            IDragonData dragonData = DragonManager.GetDragonData(rewardDragon.sku);
+                            m_specialDragonUnlocked = dragonData is DragonDataSpecial;
+                        }
+                    }
+
+                    // Tell the scene to open the next reward (should be already stacked)
+                    m_sceneController.OpenReward();
+    			} break;
 
 			case Step.FINISH: {
-				// Stop listeneing the 3D scene
-				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
-				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
+    				// Stop listeneing the 3D scene
+    				m_sceneController.OnAnimStarted.RemoveListener(OnSceneAnimStarted);
+    				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
-				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(m_previousScreen);
-			} break;
+                    // Go back to previous screen
+                    if (m_specialDragonUnlocked) {
+                        SceneController.SetMode(SceneController.Mode.SPECIAL_DRAGONS);
+                        HDLiveDataManager.instance.SwitchToLeague();
+                        InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+                    } else {
+                        InstanceManager.menuSceneController.transitionManager.Back(true);
+                    }
+			    } break;
 		}
 
 		//Debug.Log("<color=green>Step changed from " + oldStep + " to " + nextStep + " (" + m_givenGlobalRewards + ")</color>");
@@ -273,26 +290,11 @@ public class PendingRewardScreen : MonoBehaviour {
 		// [AOC] TODO!! Show currency counters, photo button, etc. based on reward type
 
 		// If it's the first time we're getting golden fragments, show info popup
-		Metagame.Reward currentReward = m_sceneController.currentReward;
-		if(currentReward.WillBeReplaced()) {
-			if(currentReward.replacement.currency == UserProfile.Currency.GOLDEN_FRAGMENTS) {
-				if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO)) {
-					// Show popup after some extra delay
-					UbiBCN.CoroutineManager.DelayedCall(
-						() => { 
-							// Tracking
-							string popupName = System.IO.Path.GetFileNameWithoutExtension(PopupInfoGoldenFragments.PATH);
-							HDTrackingManager.Instance.Notify_InfoPopup(popupName, "automatic");
-
-							PopupManager.OpenPopupInstant(PopupInfoGoldenFragments.PATH);
-							UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.GOLDEN_FRAGMENTS_INFO, true);
-						},
-						1.5f, 	// Enough time for the replacement animation!
-						false
-					);
-				}
-			}
-		}
+		PopupInfoGoldenFragments.CheckAndShow(
+			m_sceneController.currentReward,
+			1.5f,	// Enough time for the replacement animation
+			PopupLauncher.TrackingAction.INFO_POPUP_AUTO
+		);
 	}
 
 	/// <summary>
@@ -331,8 +333,6 @@ public class PendingRewardScreen : MonoBehaviour {
 
 		// If entering this screen, force some show/hide animations that conflict with automated ones
 		if(_to == MenuScreen.PENDING_REWARD) {
-			m_previousScreen = _from;
-
 			// Hide HUD!
 			InstanceManager.menuSceneController.hud.animator.Hide();
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using AI;
 
-public class PetXmasElfSpawner : MonoBehaviour, ISpawner {	
+public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {	
 
 	[SerializeField] private Transform m_spawnAtTransform;
 	public List<string> m_possibleSpawners;
@@ -26,14 +26,26 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner {
 		// SpawnerManager.instance.Register(this, true);
 		m_entityInfo = new List<EntityInfo>();
 		Initialize();
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
 	void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+        }
+    }
+    
+    
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
 		CreatePool();

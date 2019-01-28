@@ -55,8 +55,11 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	/// Init this step.
 	/// </summary>
 	override protected void DoInit() {
+		// Only for CLASSIC dragons!
+		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+
 		// Aux vars
-		DragonProgression progression = DragonManager.currentDragon.progression;
+	    DragonProgression progression = (DragonManager.currentDragon as DragonDataClassic).progression;
 
 		// Gather levels before and after the run
 		// Consider cheats!
@@ -94,6 +97,9 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			// Skip if unlockLevel is 0 (default skin)
 			int unlockLevel = allSkins[i].GetAsInt("unlockLevel");
 			if(unlockLevel <= 0) continue;
+
+			// Skip if already owned
+			if(UsersManager.currentUser.wardrobe.GetSkinState(allSkins[i].sku) == Wardrobe.SkinState.OWNED) continue;
 
 			// Check unlock level vs level before starting the game and level after the game
 			if(unlockLevel > initialLevel && unlockLevel <= finalLevel) {
@@ -188,7 +194,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 				}
 
 				// Throw out some fireworks!
-				m_controller.scene.LaunchConfettiFX();
+				m_controller.scene.LaunchConfettiFX(true);
 
 				// Hide the button to prevent spamming
 				m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();

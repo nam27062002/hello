@@ -7,11 +7,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
+public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
 	
 
 	private static Material sm_goldenMaterial = null;
 	private static Material sm_goldenFreezeMaterial = null;
+    private static Material sm_goldenInloveMaterial = null;
 	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
@@ -35,7 +36,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		NORMAL,
 		GOLD,
 		GOLD_FREEZE,
+        GOLD_INLOVE,
 		FREEZE,
+        INLOVE,
 		NONE
 	}
 
@@ -117,8 +120,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	protected float m_disableAnimatorTimer;
 
 	private Renderer[] m_renderers;
-	private Dictionary<int, List<Material>> m_materials;
+    private List<Material[]> m_rendererMaterials;
+
+    private Dictionary<int, List<Material>> m_materials;
 	private Dictionary<int, List<Material>> m_materialsFrozen;
+    private Dictionary<int, List<Material>> m_materialsInlove;
 	protected List<Material> m_materialList;
 
 
@@ -177,10 +183,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 	//
     private float m_freezingLevel = 0;
-    private bool m_wasFreezing = true;
 
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
+    
+    private ParticleData m_onEatenInloveParticle;
+    private ParticleData m_inLoveParticle;
+    private GameObject m_inLoveParticleInstance;
+    protected bool m_inLove = false;
 
 
 	private Transform m_transform;
@@ -208,6 +218,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		//----------------------------
 		if (sm_goldenMaterial == null) sm_goldenMaterial = new Material(Resources.Load("Game/Materials/NPC_Golden") as Material);
 		if (sm_goldenFreezeMaterial == null) sm_goldenFreezeMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenFreeze") as Material);
+        if (sm_goldenInloveMaterial == null) sm_goldenInloveMaterial = new Material(Resources.Load("Game/Materials/NPC_GoldenInlove") as Material);
 		//---------------------------- 
 
 		m_entity = GetComponent<Entity>();
@@ -236,8 +247,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
         // keep the original materials, sometimes it will become Gold!
         m_materials = new Dictionary<int, List<Material>>();
 		m_materialsFrozen = new Dictionary<int, List<Material>>();
+        m_materialsInlove = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
+        m_rendererMaterials = new List<Material[]>();
         
 		m_vertexCount = 0;
 		m_rendererCount = 0;
@@ -264,7 +277,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				int renderID = renderer.GetInstanceID();
 				m_materials[renderID] = new List<Material>();
 				m_materialsFrozen[renderID] = new List<Material>();
-
+                m_materialsInlove[renderID] = new List<Material>();
+                
 				for (int m = 0; m < materials.Length; ++m) {
 					Material mat = materials[m];
 					if (m_showDamageFeedback) mat = new Material(materials[m]);
@@ -276,13 +290,16 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
                     m_materials[renderID].Add(mat);
 					if ( mat != null ){
 						m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
+                        m_materialsInlove[renderID].Add(InloveMaterialManager.GetInloveMaterialFor(mat));
 					}else{
 						m_materialsFrozen[renderID].Add(null);
+                        m_materialsInlove[renderID].Add(null);
 					}
 
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
 				renderer.sharedMaterials = materials;
+                m_rendererMaterials.Add(materials);
             }
         }
 
@@ -320,13 +337,24 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_fireParticles = new Transform[Mathf.Max(1, m_firePoints.Length)];
 		m_fireParticlesParents = new Transform[m_fireParticles.Length];
 
-        Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+        
+        
         if (m_stunParticle == null) {
-        	m_stunParticle = new ParticleData("PS_Stun","",Vector3.one);
+        	m_stunParticle = new ParticleData("PS_Stun","", GameConstants.Vector3.zero );
         }
 		m_stunParticle.CreatePool();
 
-
+        m_onEatenInloveParticle = new ParticleData("PS_ValentinPetBrokenHeart", "", GameConstants.Vector3.zero);
+        m_onEatenInloveParticle.orientate = true;
+        m_onEatenInloveParticle.CreatePool();
+        
+        if ( m_inLoveParticle == null ) {
+            m_inLoveParticle = new ParticleData("PS_ValentinPetLoop","", GameConstants.Vector3.zero);
+        }
+        m_inLoveParticle.orientate = true;
+        m_inLoveParticle.CreatePool();
+        
 		// Backup view values
 		m_viewPosition = m_view.localPosition;
 		m_viewRotation = m_view.localRotation;
@@ -443,6 +471,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		m_attackingTarget = false;
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
+        m_inLove = false;
 
 		m_aim = 0f;
 		m_damageFeedbackTimer = 0f;
@@ -489,9 +518,22 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		}
 		#endif
 
-        Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryToggled);
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		RemoveAudios();
     }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+
 
     public virtual void PreDisable() {
 		for (int i = 0; i < m_fireParticles.Length; ++i) {
@@ -509,6 +551,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
+
+        if ( m_inLoveParticleInstance )
+        {
+            m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+            m_inLoveParticleInstance = null;
+        }
+        
+        
 		RemoveAudios();
 
 		#if DETACH_VIEW_ON_DISABLE
@@ -555,12 +605,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		if(m_renderers != null) {
 			for(int i = 0; i < m_renderers.Length; i++) {
 				int id = m_renderers[i].GetInstanceID();
-				Material[] materials = m_renderers[i].sharedMaterials;
+                Material[] materials = m_rendererMaterials[i];
 				for(int m = 0; m < materials.Length; m++) {
 					switch(_type) {
 						case MaterialType.GOLD: materials[m] = sm_goldenMaterial; break;
 						case MaterialType.GOLD_FREEZE: materials[m] = sm_goldenFreezeMaterial; break;
+                        case MaterialType.GOLD_INLOVE: materials[m] = sm_goldenInloveMaterial; break;
 						case MaterialType.FREEZE: materials[m] = m_materialsFrozen[id][m]; break;
+                        case MaterialType.INLOVE: materials[m] = m_materialsInlove[id][m]; break;
 						case MaterialType.NORMAL: {
 							Material mat = m_materials[id][m];
 							if(m_skins.Count > 0) {
@@ -576,7 +628,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 						} break;
 					}
 				}
-				m_renderers[i].sharedMaterials = materials;
+                m_renderers[i].materials = materials;
 			}
 		}
     }
@@ -586,7 +638,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
     void OnFuryToggled(bool _active, DragonBreathBehaviour.Type _type) {
-		CheckMaterialType(IsEntityGolden(), _active, _type);
+        RefreshMaterialType();
     }
 
     /// <summary>
@@ -618,7 +670,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 		}
 
-		// Check Freezing
+		// Check Freezing. It Has priority over inlove
 		if (m_freezingLevel > 0) {
 			if ( matType == MaterialType.GOLD ){
 				matType = MaterialType.GOLD_FREEZE;
@@ -626,7 +678,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				matType = MaterialType.FREEZE;
 			}
 		}
-		
+        else if ( m_inLove )
+        {
+            if ( matType == MaterialType.GOLD ){
+                matType = MaterialType.GOLD_INLOVE;
+            }else{
+                matType = MaterialType.INLOVE;
+            }
+        }
 		return matType;
 	}
 
@@ -676,14 +735,6 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				}
 			}
 		}
-
-        if (m_freezingLevel > 0) {
-			m_wasFreezing = true;
-			RefreshMaterialType();
-        } else if (m_wasFreezing) {
-			m_wasFreezing = false;
-			RefreshMaterialType();
-        }
 
 		if (m_damageFeedbackTimer > 0f) {
 			m_damageFeedbackTimer -= Time.deltaTime;
@@ -766,6 +817,17 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 				}
 			}
 		}
+        else  if ( m_inLove )
+        {
+            Vector3 pos = m_transform.position;
+            Quaternion rot = GameConstants.Quaternion.identity;
+            if ( m_inLoveParticleInstance )
+            {
+                pos = m_inLoveParticleInstance.transform.position;
+                rot = m_inLoveParticleInstance.transform.rotation;
+            }
+            GameObject go = m_onEatenInloveParticle.Spawn( pos + m_onEatenInloveParticle.offset, rot);
+        }
 		else 
 		{
 			GameObject go = m_onEatenParticle.Spawn(m_transform.position + m_onEatenParticle.offset);
@@ -1110,10 +1172,14 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	/// </summary>
 	public virtual void Bite( Transform _transform )
 	{
+        if ( m_inLoveParticleInstance )
+        {
+            m_inLoveParticleInstance.transform.parent = m_transform.parent;
+        }
 	}
 
 	public void BeginSwallowed( Transform _transform )
-	{
+	{        
 		OnEatenEvent( _transform );
 	}
 
@@ -1180,7 +1246,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	/// </summary>
 	/// <param name="freezeLevel">Freeze level.</param>
 	public void Freezing( float freezeLevel ){
-		m_freezingLevel = freezeLevel;
+        if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
+            m_freezingLevel = freezeLevel;
+            RefreshMaterialType();
+        }		
 	}
 
 	public void SetStunned( bool stunned ){
@@ -1203,5 +1272,28 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable {
 			}
 		}
 	}
+    
+    
+    public void SetInLove( bool inlove ){
+        if ( m_inLove != inlove )
+        {
+            m_inLove = inlove;
+            RefreshMaterialType();
+            if ( inlove ){
+                if (m_inLoveParticleInstance == null)
+                {
+                    Vector3 pos = m_transform.position;
+                    Quaternion rot = m_transform.rotation;
+                    m_inLoveParticleInstance = m_inLoveParticle.Spawn(pos + m_inLoveParticle.offset, rot);
+                }
+            }else{
+                if ( m_inLoveParticleInstance )
+                {
+                    m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+                    m_inLoveParticleInstance = null;
+                }
+            }
+        }
+    }
 
 }

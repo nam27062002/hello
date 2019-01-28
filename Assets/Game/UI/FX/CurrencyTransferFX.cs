@@ -27,6 +27,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string COINS = "UI/FX/PF_CoinsTransferFX";
+    public const string GOLDEN_FRAGMENTS = "UI/FX/PF_GoldenFragmentsTransferFX";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -340,6 +341,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 		target.position = m_from;
 		target.localScale = Vector3.zero;
 		target.localRotation = Quaternion.identity;
+		target.gameObject.SetLayerRecursively(this.gameObject.layer);
 		canvas.alpha = 0f;
 
 		// Program a new animation for this particle!

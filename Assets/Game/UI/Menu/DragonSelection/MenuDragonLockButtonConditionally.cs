@@ -54,7 +54,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	/// <summary>
@@ -78,7 +78,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
+		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 	}
 
 	//------------------------------------------------------------------//
@@ -91,18 +91,21 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	public void Apply(string _sku) {
 		// Check whether the button should be locked or not
 		bool toLock = false;
-		DragonData dragon = DragonManager.GetDragonData(_sku);
+		IDragonData dragon = DragonManager.GetDragonData(_sku);
 		if(dragon == null) return;
 
 		// Ownership status
 		switch(dragon.lockState) {
-			case DragonData.LockState.TEASE:	
-			case DragonData.LockState.SHADOW:
-			case DragonData.LockState.REVEAL:
-													toLock = m_lockIfShadowed;  break;
-			case DragonData.LockState.LOCKED:		toLock = m_lockIfLocked;	break;
-			case DragonData.LockState.AVAILABLE:	toLock = m_lockIfAvailable;	break;
-			case DragonData.LockState.OWNED:		toLock = m_lockIfOwned;		break;
+			case IDragonData.LockState.TEASE:	
+			case IDragonData.LockState.SHADOW:
+			case IDragonData.LockState.REVEAL:				toLock = m_lockIfShadowed;  break;
+
+			case IDragonData.LockState.LOCKED:
+			case IDragonData.LockState.LOCKED_UNAVAILABLE:	toLock = m_lockIfLocked;	break;
+
+			case IDragonData.LockState.AVAILABLE:			toLock = m_lockIfAvailable;	break;
+
+			case IDragonData.LockState.OWNED:				toLock = m_lockIfOwned;		break;
 		}
 
 		// Just do it
@@ -125,7 +128,7 @@ public class MenuDragonLockButtonConditionally : MonoBehaviour {
 	/// A dragon has been acquired
 	/// </summary>
 	/// <param name="_data">The data of the acquired dragon.</param>
-	public void OnDragonAcquired(DragonData _data) {
+	public void OnDragonAcquired(IDragonData _data) {
 		// It should be the selected dragon, but check anyway
 		if(_data.def.sku != InstanceManager.menuSceneController.selectedDragon) {
 			return;

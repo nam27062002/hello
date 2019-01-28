@@ -79,7 +79,7 @@ public class AIPilotEditor : Editor {
 
         // Draw the data list!
         Undo.RecordObject(m_targetAIPilot, "AIPilot Changed");
-        if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null) {
+        if (Application.isPlaying && m_targetAIPilot != null && m_targetAIPilot.brain != null && m_targetAIPilot.brain.current != null) {
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Current State: " + m_targetAIPilot.brain.current.name);
         }

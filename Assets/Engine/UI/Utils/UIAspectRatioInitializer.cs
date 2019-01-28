@@ -27,6 +27,7 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 	// Exposed References
 	[SerializeField] private AspectRatioFitter m_target = null;
 	[SerializeField] private Image m_referenceImage = null;
+    [SerializeField] private float m_minAspectRatio = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -49,12 +50,38 @@ public class UIAspectRatioInitializer : MonoBehaviour {
 		Debug.Assert(m_target != null, Colors.red.Tag("TARGET AspectRatioFitter NOT DEFINED"), this);
 		Debug.Assert(m_referenceImage != null, Colors.red.Tag("REFERENCE IMAGE NOT DEFINED"), this);
 		Debug.Assert(m_referenceImage.sprite != null, Colors.red.Tag("REFERENCE IMAGE HAS NO SPRITE ASSIGNED"), this);
+        
+		// Figure out screen's AR
+		float screenW = Screen.width;
+		float screenH = Screen.height;
+		float screenAR = screenW / screenH;
 
-		// Figure out image's original AR
-		float ar = m_referenceImage.sprite.bounds.size.x / m_referenceImage.sprite.bounds.size.y;
+		// Figure out sprite's original AR
+		float spriteAR = m_referenceImage.sprite.bounds.size.x / m_referenceImage.sprite.bounds.size.y;
 
-		// Define it as aspect ratio fitter target AR
-		m_target.aspectRatio = ar;
+		// If the screen's AR is lower than the minimum AR we want for the image, override the AR Fitter
+		if(screenAR < m_minAspectRatio) {
+			// Disable aspect ratio fitter 
+			m_target.enabled = false;
+
+			// Make sure anchors are not messing up either
+			RectTransform rt = this.transform as RectTransform;
+			rt.anchorMin = GameConstants.Vector2.center;
+			rt.anchorMax = GameConstants.Vector2.center;
+
+			// Maximum height of the image within this canvas resolution
+			CanvasScaler canvasScaler = GetComponentInParent<CanvasScaler>();
+			float canvasW = canvasScaler.referenceResolution.y * screenAR;
+			float maxH = canvasW / m_minAspectRatio;
+			rt.sizeDelta = new Vector2(
+				maxH * spriteAR,	// Keep original image AR
+				maxH
+			);
+		} else {
+			// The AR Fitter will keep the image's original AR as target and envelope the screen with it
+			m_target.enabled = true;
+			m_target.aspectRatio = spriteAR;
+		}
 	}
 
 	//------------------------------------------------------------------------//

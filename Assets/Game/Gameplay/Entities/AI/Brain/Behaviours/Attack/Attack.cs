@@ -66,11 +66,13 @@ namespace AI {
 				m_onDamageEventDone = true;
 				m_onAttackEndEventDone = true;
 
-                Entity entity = m_machine.enemy.GetComponent<Entity>();
-                if (entity != null && entity.circleArea != null) {
-                    m_targetOffset = entity.circleArea.offset;
-                } else {
-                    m_targetOffset = GameConstants.Vector3.zero;   
+                m_targetOffset = GameConstants.Vector3.zero;
+
+                if (m_machine.enemy != null) {
+                    Entity entity = m_machine.enemy.GetComponent<Entity>();
+                    if (entity != null && entity.circleArea != null) {
+                        m_targetOffset = entity.circleArea.offset;
+                    }
                 }
 			}
 
@@ -181,7 +183,7 @@ namespace AI {
 				
 			}
 
-			private void OnAttachProjectile() {
+			protected void OnAttachProjectile() {
 				if (!m_onAttachProjectileEventDone) {
 					m_onAttachProjectileEventDone = true;
 					OnAttachProjectileExtended();
@@ -190,7 +192,7 @@ namespace AI {
 			protected virtual void OnAttachProjectileExtended() {}
 
 
-			private void OnAnimDealDamage() {
+			protected void OnAnimDealDamage() {
 				if (!m_onDamageEventDone) {
 					m_onDamageEventDone = true;
 					OnAnimDealDamageExtended();
@@ -199,7 +201,7 @@ namespace AI {
 			protected virtual void OnAnimDealDamageExtended() {}
 
 
-			private void OnAnimEnd() {
+			protected void OnAnimEnd() {
 				if (!m_onAttackEndEventDone) {
 					m_onAttackEndEventDone = true;
 					OnAnimEndExtended();

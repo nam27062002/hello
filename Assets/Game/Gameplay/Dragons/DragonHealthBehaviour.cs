@@ -57,6 +57,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private Dictionary<DamageType, float> m_armorPercentageType;
 	private Dictionary<string, float> m_armorPercentageOrigin;
 
+    protected List<DamageType> m_ignoreDamageTypes = new List<DamageType>();
+    
+
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
 
@@ -84,14 +87,14 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_gameController = InstanceManager.gameSceneControllerBase;
 
 		// Shark related values
-		m_healthDrainPerSecond = m_dragon.data.def.GetAsFloat("healthDrain");
-		m_healthDrainAmpPerSecond = m_dragon.data.def.GetAsFloat("healthDrainAmpPerSecond"); // 0.005
-		m_sessionStartHealthDrainTime = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainTime"); // 45
-		m_sessionStartHealthDrainModifier = m_dragon.data.def.GetAsFloat("sessionStartHealthDrainModifier");// 0.5
-        m_healthDrainPerSecondInSpace = m_dragon.data.def.GetAsFloat("healthDrainSpacePlus");
+		m_healthDrainPerSecond = m_dragon.data.healthDrain;
+		m_healthDrainAmpPerSecond = m_dragon.data.healthDrainAmpPerSecond; // 0.005
+		m_sessionStartHealthDrainTime = m_dragon.data.sessionStartHealthDrainTime; // 45
+		m_sessionStartHealthDrainModifier = m_dragon.data.sessionStartHealthDrainModifier;// 0.5
+        m_healthDrainPerSecondInSpace = m_dragon.data.healthDrainSpacePlus;
 
-		m_damageAnimationThreshold = m_dragon.data.def.GetAsFloat("damageAnimationThreshold", 0);
-		m_dotAnimationThreshold = m_dragon.data.def.GetAsFloat("dotAnimationThreshold", 0);
+		m_damageAnimationThreshold = m_dragon.data.damageAnimationThreshold;
+		m_dotAnimationThreshold = m_dragon.data.dotAnimationThreshold;
 
         m_damageMultiplier = 0;
 		//TONI START
@@ -195,6 +198,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if(enabled) {
 			if ( m_dragon.IsInvulnerable() )
 				return;
+                
+            if (m_ignoreDamageTypes.Contains(_type))
+                return;
+                
 			if ( m_dragon.HasShield( _type ) )
 			{
 				m_dragon.LoseShield( _type, _source );
@@ -252,6 +259,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 		if ( m_dragon.IsInvulnerable() )
 			return;
+            
+        if (m_ignoreDamageTypes.Contains(_type))
+            return;
+            
 		// Check shields
 		if ( m_dragon.HasShieldActive( _type ) )
 		{
@@ -451,4 +462,19 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return rewardHealth;
 	}
 
+
+    public void AddDamageIgnore( DamageType _type )
+    {
+        m_ignoreDamageTypes.Add( _type );
+    }
+    
+    public void RemoveDamageIgnore( DamageType _type )
+    {
+        m_ignoreDamageTypes.Remove( _type );
+    }
+    
+    public void CleanDotDamage()
+    {
+        m_dots.Clear();
+    }
 }

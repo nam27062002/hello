@@ -86,6 +86,11 @@ public class ContentManager
         }
     }
 
+    public static void Reset()
+    {
+        ContentDeltaManager.SharedInstance.ResetDeltaContentDownloaded();
+    }
+
 	public static void InitContent(bool bAvoidDeltaContent = false, bool _configureServerManager = true)
 	{
 		if (_configureServerManager) {
@@ -113,7 +118,7 @@ public class ContentManager
     private static void InitContentDeltaManager()
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
-        ContentDeltaManager.SharedInstance.SetListener(m_kContentDeltaDelegate);
+        ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
         ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
     }
 
@@ -133,9 +138,11 @@ public class ContentManager
 
 		kDefinitionFiles.Add(DefinitionsCategory.SEASONS, new string[] { "Rules/seasonsDefinitions" });
 
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3" });
+        kDefinitionFiles.Add(DefinitionsCategory.NOTIFICATIONS, new string[] { "Rules/notificationsDefinitions" });
+
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3", "Rules/PM_level_0_common" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
@@ -155,11 +162,19 @@ public class ContentManager
             "Rules/missionOtherModifiersDefinitions"
         });
 
+        kDefinitionFiles.Add(DefinitionsCategory.MISSION_SPECIAL_DIFFICULTIES, new string[] { "Rules/specialMissionDifficultyDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.MISSION_SPECIAL_MODIFIERS, new string[]{
+            "Rules/missionDifficultyModifiersDefinitions",
+            "Rules/missionSpecialDragonModifiersDefinitions",
+            "Rules/missionOtherModifiersDefinitions"
+        });
+
         // Dragons
-        kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[] { "Rules/dragonDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DRAGONS, new string[] { "Rules/dragonDefinitions", "Rules/specialDragonDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_TIERS, new string[] { "Rules/dragonTierDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_PROGRESSION, new string[] { "Rules/dragonProgressionDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS, new string[] { "Rules/dragonHealthModifiersDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.DRAGON_STATS, new string[] { "Rules/dragonStatsDefinitions" });
 
         // Entites
         kDefinitionFiles.Add(DefinitionsCategory.PETS, new string[] { "Rules/petDefinitions" });
@@ -176,21 +191,21 @@ public class ContentManager
 
         // Metagame
         kDefinitionFiles.Add(DefinitionsCategory.EGGS, new string[] { "Rules/eggDefinitions" });
-        kDefinitionFiles.Add(DefinitionsCategory.GOLDEN_EGGS, new string[] { "Rules/goldenEggDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.EGG_REWARDS, new string[] { "Rules/eggRewardDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.CHEST_REWARDS, new string[] { "Rules/chestRewardDefinitions" });
 		kDefinitionFiles.Add(DefinitionsCategory.PREREG_REWARDS, new string[] { "Rules/preRegRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
             // Interstitials
-        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
+        // kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
 
 		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.LEAGUES, new string[] { "Rules/leaguesDefinitions" });
 
         // Disguises
-        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions" });
 
         kDefinitionFiles.Add(DefinitionsCategory.HOLD_PREY_TIER, new string[] { "Rules/holdPreyTierSettingsDefinitions" });
 
@@ -210,6 +225,11 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.OFFER_PACKS, new string[]{"Rules/offerPacksDefinitions"});
         kDefinitionFiles.Add(DefinitionsCategory.CURRENCY_TIERS, new string[]{"Rules/missingRessourcesTiersDefinitions"});
 
+        // Specials
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_TIERS, new string[]{"Rules/specialDragonTierDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.SPECIAL_DRAGON_POWERS, new string[]{"Rules/specialDragonPowerDefinitions"});
+        
+        
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 
@@ -271,6 +291,32 @@ public class ContentManager
         // Warn all other managers and definition consumers
 		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    public static void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
+
+        // Update all managers 
+        // dragonDefinitions.xml
+        if (UsersManager.currentUser != null)
+        {
+            // UserProfile
+                // Reload Dragons by Sku?
+                
+            // DragonManager
+            DragonManager.SetupUser(UsersManager.currentUser);
+        }
+        
+        
+            // seasonsDefinitions
+        SeasonManager.instance.RefreshActiveSeason();       
+    }
+     
+
 
     #region log
     private const bool LOG_USE_COLOR = false;

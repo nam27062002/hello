@@ -128,7 +128,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 				go = handler.GetInstance(!UseProgressiveRespawn);
 
 				if (go == null) {
-					break;
+                    EntitiesToSpawn--;
+                    break;
 				} else {
 					go.transform.position = transform.position;
 					OnCreateInstance(EntitiesAlive, go);
@@ -146,8 +147,14 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
 
             if (EntitiesAlive == EntitiesToSpawn) {
-                EntitiesSpawned = 0;
-                State = EState.Activating_Instances;
+                if (EntitiesToSpawn == 0) {
+                    // This spawner can't spawn anything this time, so we'll disable it and restart the respawn timer
+                    OnAllEntitiesRemoved(null, true);
+                    return true;
+                } else {
+                    EntitiesSpawned = 0;
+                    State = EState.Activating_Instances;
+                }
             }
 
             if (UseProgressiveRespawn) {
@@ -212,9 +219,18 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 pilot.Spawn(this);
             }
 
-            ISpawnable[] components = spawning.GetComponents<ISpawnable>();
-            foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot && component != machine && component != view) {
+            ISpawnable[] components;
+            if (entity != null) {
+                components = entity.m_otherSpawnables;
+            }
+            else {
+                components = spawning.GetComponents<ISpawnable>();
+            }
+
+            foreach (ISpawnable component in components)
+            {
+                if (component != entity && component != pilot && component != machine && component != view)
+                {
                     component.Spawn(this);
                 }
             }

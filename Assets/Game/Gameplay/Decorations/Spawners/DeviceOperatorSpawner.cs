@@ -73,7 +73,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 		
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());        
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());
     }
 
     protected override uint GetMaxEntities() {
@@ -139,7 +139,11 @@ public class DeviceOperatorSpawner : AbstractSpawner {
             m_operator = null;
             m_operatorPilot = null;
 
-			m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();
+            if (_killedByPlayer) {
+                m_respawnTime = m_gameSceneController.elapsedSeconds + m_spawnTime.GetRandom();    
+            } else {
+                m_respawnTime = 0f;
+            }			
         }
     }    
     //-------------------------------------------------------------------
@@ -155,22 +159,34 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 		return true;
 	}
 
-	public void OperatorDoReload() {
+    public void OperatorDoIdle() {
+        m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
+        m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+    }
+
+    public void OperatorDoActionA() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_A);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-	}
+        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+    }
 
-	public void OperatorDoIdle() {
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-	}
-
-	public void OperatorDoShoot() {
+	public void OperatorDoActionB() {
 		m_operatorPilot.PressAction(Pilot.Action.Button_B);
 		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-	}
+        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+    }
 
-	public void OperatorEnterDevice() {
+    public void OperatorDoScared() {
+        if ( m_operatorPilot != null )
+        {
+            m_operatorPilot.PressAction(Pilot.Action.Scared);
+            m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
+            m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
+        }
+    }
+
+    public void OperatorEnterDevice() {
 		m_operator.EnterDevice(false);
 	}
 

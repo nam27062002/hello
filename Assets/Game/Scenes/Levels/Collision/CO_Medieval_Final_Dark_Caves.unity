@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 1.93305e-40, b: 2.5578847, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 8.26428e-40, b: 2.5596883, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -3099,7 +3099,7 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_inData.m_Color2.a
-      value: 0.9
+      value: 0.84313726
       objectReference: {fileID: 0}
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
@@ -5617,7 +5617,7 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_inData.m_Color2.a
-      value: 0.9019608
+      value: 0.84313726
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e4e1f2e41c507d140853413835d515a6, type: 2}
@@ -5633,7 +5633,7 @@ GameObject:
   - component: {fileID: 314486078}
   - component: {fileID: 314486077}
   m_Layer: 16
-  m_Name: Trigger_Zone_DarkCaves_Secret
+  m_Name: Trigger_Zone_DarkCaves_Secret_02
   m_TagString: Untagged
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -5662,7 +5662,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 300, y: 40, z: 1}
+  m_Size: {x: 300, y: 40, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &314486078
 MonoBehaviour:
@@ -5675,8 +5675,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zoneId: Trigger_Zone_DarkCaves_Secret
+  m_zoneId: Trigger_Zone_DarkCaves_Secret_02
   m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
 --- !u!1 &317119573
 GameObject:
   m_ObjectHideFlags: 0
@@ -6280,7 +6281,7 @@ MonoBehaviour:
   - {x: 14.465775, y: 105.66016, z: 0}
   isCurve: 0000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -6327,6 +6328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkCaves_2
   m_zoneTid: TID_LEVEL_AREA_2_NAME
+  m_isStartingArea: 0
 --- !u!1 &345403691
 GameObject:
   m_ObjectHideFlags: 0
@@ -8406,7 +8408,7 @@ Mesh:
     vertexCount: 10
     localAABB:
       m_Center: {x: 24.009155, y: 33.78788, z: 0}
-      m_Extent: {x: 238.04437, y: 71.750435, z: 5}
+      m_Extent: {x: 238.04437, y: 71.750435, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -8459,7 +8461,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 240
-    _typelessdata: da068343cc789f420000a0402f73053f23775a3f00000000da068343cc789f420000a0c0b197643f867de63e00000000b2db8243a8d917c20000a04070bbe23ebd8765bf00000000b2db8243a8d917c20000a0c060f5fa3d1c127ebf00000000040956c3987f17c20000a040a0f018beea207dbf00000000040956c3987f17c20000a0c0869204bfc0ff5abf000000008c2355c39e13d3420000a040420a21bfb300473f000000008c2355c39e13d3420000a0c0e4fc3fbed7757b3f00000000f6890443bdcbc7420000a0406fc71c3dfacf7f3f00000000f6890443bdcbc7420000a0c006399b3d7f437f3f00000000
+    _typelessdata: da068343cc789f42000048422e73053f22775a3f00000000da068343cc789f42000048c2b297643f867de63e00000000b2db8243a8d917c2000048426dbbe23ebd8765bf00000000b2db8243a8d917c2000048c260f5fa3d1c127ebf00000000040956c3987f17c200004842a0f018beec207dbf00000000040956c3987f17c2000048c2859204bfc0ff5abf000000008c2355c39e13d34200004842430a21bfb400473f000000008c2355c39e13d342000048c2e5fc3fbed8757b3f00000000f6890443bdcbc742000048426ec71c3dfbcf7f3f00000000f6890443bdcbc742000048c205399b3d7e437f3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -8514,7 +8516,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: 24.009155, y: 33.78788, z: 0}
-    m_Extent: {x: 238.04437, y: 71.750435, z: 5}
+    m_Extent: {x: 238.04437, y: 71.750435, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -9418,7 +9420,7 @@ MonoBehaviour:
   - {x: 197.29622, y: 89.816925, z: 0}
   isCurve: 0000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -9458,6 +9460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkCaves_3
   m_zoneTid: TID_LEVEL_AREA_3_NAME
+  m_isStartingArea: 0
 --- !u!33 &469675815
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -10076,7 +10079,7 @@ GameObject:
   - component: {fileID: 552766762}
   - component: {fileID: 552766761}
   m_Layer: 16
-  m_Name: Trigger_Zone_DarkCaves_Secret
+  m_Name: Trigger_Zone_DarkCaves_Secret_01
   m_TagString: Untagged
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -10106,8 +10109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05716bf27b97941e48d8f412c465d64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zoneId: Trigger_Zone_DarkCaves_Secret
+  m_zoneId: Trigger_Zone_DarkCaves_Secret_01
   m_zoneTid: TID_LEVEL_AREA_15_NAME
+  m_isStartingArea: 0
 --- !u!65 &552766762
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10118,7 +10122,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 60, y: 50, z: 1}
+  m_Size: {x: 60, y: 50, z: 100}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &552766763
 MeshFilter:
@@ -20738,7 +20742,7 @@ MonoBehaviour:
   - {x: -46.32348, y: 53.456398, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -20785,6 +20789,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkCaves_2
   m_zoneTid: TID_LEVEL_AREA_2_NAME
+  m_isStartingArea: 0
 --- !u!43 &1235852075
 Mesh:
   m_ObjectHideFlags: 0
@@ -23143,7 +23148,7 @@ Mesh:
     vertexCount: 10
     localAABB:
       m_Center: {x: 8.177719, y: 19.361317, z: 0}
-      m_Extent: {x: 131.02065, y: 101.76253, z: 5}
+      m_Extent: {x: 131.02065, y: 101.76253, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -23196,7 +23201,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 240
-    _typelessdata: c8320b439664b4420000a0408f94d23e6058693f00000000c8320b439664b4420000a0c09026613f4caaf33e000000001a44cc42356861c20000a040c8bd5d3f8bddffbe000000001a44cc42356861c20000a0c0b6881c3ff7904abf0000000038b7fbc06ccda4c20000a0400ae40c3eb7907dbf0000000038b7fbc06ccda4c20000a0c07686333d06c17fbf0000000094aff5c2d0aa99c20000a040237831bf498038bf0000000094aff5c2d0aa99c20000a0c0e1d279bf13935fbe000000009c88dcc2693ff2420000a0405b904cbf11ea193f000000009c88dcc2693ff2420000a0c037a783be6264773f00000000
+    _typelessdata: c8320b439664b442000048428f94d23e5f58693f00000000c8320b439664b442000048c29126613f4daaf33e000000001a44cc42356861c200004842c9bd5d3f8cddffbe000000001a44cc42356861c2000048c2b7881c3ff6904abf0000000038b7fbc06ccda4c2000048420ae40c3eb9907dbf0000000038b7fbc06ccda4c2000048c27786333d06c17fbf0000000094aff5c2d0aa99c200004842227831bf488038bf0000000094aff5c2d0aa99c2000048c2e2d279bf14935fbe000000009c88dcc2693ff242000048425b904cbf10ea193f000000009c88dcc2693ff242000048c238a783be6264773f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -23251,7 +23256,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: 8.177719, y: 19.361317, z: 0}
-    m_Extent: {x: 131.02065, y: 101.76253, z: 5}
+    m_Extent: {x: 131.02065, y: 101.76253, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -24401,12 +24406,12 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_outData.m_Color2.a
-      value: 0.84313726
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_outData.m_Color.a
-      value: 0.84313726
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 64266730761131008, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
@@ -24448,7 +24453,7 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_inData.m_Color2.a
-      value: 0.9019608
+      value: 0.84313726
       objectReference: {fileID: 0}
     - target: {fileID: 114602566159038088, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
@@ -27322,12 +27327,12 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_outData.m_Color2.a
-      value: 0.84313726
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_outData.m_Color.a
-      value: 0.84313726
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 64266730761131008, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
@@ -28148,7 +28153,7 @@ MonoBehaviour:
   - {x: 27.058762, y: 65.07591, z: 0}
   isCurve: 000000000000
   curveDetail: 0.1
-  colliderDepth: 10
+  colliderDepth: 100
   buildColliderEdges: 1
   buildColliderFront: 0
   colliderParent: {fileID: 0}
@@ -28195,6 +28200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_zoneId: Trigger_Zone_DarkCaves_2
   m_zoneTid: TID_LEVEL_AREA_2_NAME
+  m_isStartingArea: 0
 --- !u!43 &1662558600
 Mesh:
   m_ObjectHideFlags: 0
@@ -28342,7 +28348,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: 59.723778, y: -25.78289, z: 0}
-      m_Extent: {x: 86.21468, y: 92.14954, z: 5}
+      m_Extent: {x: 86.21468, y: 92.14954, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -28395,7 +28401,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: 8437a142babb84420000a0403edf973e7d7a743f000000008437a142babb84420000a0c01a9a253f1139433f00000000ae21fe42a40e9ec10000a0400b2b633f6e0eec3e00000000ae21fe42a40e9ec10000a0c047e9653fce2ee13e000000003ff0114308aa7ac20000a040d1bc7c3f6ff5223e000000003ff0114308aa7ac20000a0c023547f3f8d3894bd000000005aef024368ddebc20000a0401867093f4b0058bf000000005aef024368ddebc20000a0c09cb0be3d4de37ebf0000000040a240412a3dccc20000a0403fe014bf644250bf0000000040a240412a3dccc20000a0c029025fbf036cfbbe0000000060edd3c104247f420000a0402bf97ebfe23bb73d0000000060edd3c104247f420000a0c0109a32bfad67373f00000000
+    _typelessdata: 8437a142babb8442000048423ddf973e7d7a743f000000008437a142babb8442000048c21a9a253f1339433f00000000ae21fe42a40e9ec100004842092b633f6d0eec3e00000000ae21fe42a40e9ec1000048c247e9653fcf2ee13e000000003ff0114308aa7ac200004842d2bc7c3f6ff5223e000000003ff0114308aa7ac2000048c225547f3f8d3894bd000000005aef024368ddebc2000048421867093f4b0058bf000000005aef024368ddebc2000048c29bb0be3d4ce37ebf0000000040a240412a3dccc2000048423fe014bf634250bf0000000040a240412a3dccc2000048c228025fbf036cfbbe0000000060edd3c104247f42000048422cf97ebfe23bb73d0000000060edd3c104247f42000048c2109a32bfae67373f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -28450,7 +28456,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: 59.723778, y: -25.78289, z: 0}
-    m_Extent: {x: 86.21468, y: 92.14954, z: 5}
+    m_Extent: {x: 86.21468, y: 92.14954, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -30379,7 +30385,7 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_inData.m_radius
-      value: 0.1
+      value: 0.09
       objectReference: {fileID: 0}
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
@@ -32736,7 +32742,7 @@ Mesh:
     vertexCount: 12
     localAABB:
       m_Center: {x: -71.120636, y: -33.51317, z: 0}
-      m_Extent: {x: 73.545746, y: 115.890656, z: 5}
+      m_Extent: {x: 73.545746, y: 115.890656, z: 50}
   m_Shapes:
     vertices: []
     shapes: []
@@ -32789,7 +32795,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 288
-    _typelessdata: b0bb99c14e48c4410000a040e25e573f8f630a3f00000000b0bb99c14e48c4410000a0c0fce66b3fa2dbc63e000000001a351b40f9cf78c20000a04097907c3f7a30273e000000001a351b40f9cf78c20000a0c0f8257f3fbfeaa63d0000000080041240616715c30000a04045177b3fe29247be0000000080041240616715c30000a0c0614c473f93ac20bf00000000c0d3fec1ab3b14c30000a040dd2315bffc1150bf00000000c0d3fec1ab3b14c30000a0c01ab933bf704e36bf0000000098aa10c3483aa6c10000a04025146bbfbbb8cabe0000000098aa10c3483aa6c10000a0c0c5fe7ebf6946b53d0000000052dc92c246c1a4420000a040023c1abf98524c3f0000000052dc92c246c1a4420000a0c076778e3d3e617f3f00000000
+    _typelessdata: b0bb99c14e48c44100004842e25e573f8f630a3f00000000b0bb99c14e48c441000048c2fbe66b3fa1dbc63e000000001a351b40f9cf78c20000484297907c3f7930273e000000001a351b40f9cf78c2000048c2f8257f3fbeeaa63d0000000080041240616715c30000484246177b3fe29247be0000000080041240616715c3000048c2604c473f91ac20bf00000000c0d3fec1ab3b14c300004842df2315bffd1150bf00000000c0d3fec1ab3b14c3000048c219b933bf704e36bf0000000098aa10c3483aa6c10000484225146bbfbbb8cabe0000000098aa10c3483aa6c1000048c2c5fe7ebf6746b53d0000000052dc92c246c1a44200004842033c1abf98524c3f0000000052dc92c246c1a442000048c277778e3d3d617f3f00000000
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -32844,7 +32850,7 @@ Mesh:
     m_UVInfo: 0
   m_LocalAABB:
     m_Center: {x: -71.120636, y: -33.51317, z: 0}
-    m_Extent: {x: 73.545746, y: 115.890656, z: 5}
+    m_Extent: {x: 73.545746, y: 115.890656, z: 50}
   m_MeshUsageFlags: 0
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
@@ -34818,7 +34824,7 @@ Prefab:
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}
       propertyPath: m_inData.m_fallOff
-      value: 0.35
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 114716805372205668, guid: e4e1f2e41c507d140853413835d515a6,
         type: 2}

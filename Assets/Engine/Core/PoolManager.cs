@@ -19,7 +19,12 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		public PoolData		buildData;
 	}
 
-	public static bool sm_printPools = false;
+    public enum PoolLimits {
+        Limited = 0,
+        Unlimited
+    }
+
+    public static bool sm_printPools = false;
 
 	// Entity Pools requests (delayed pool manager)
 	private SortedDictionary<string, PoolContaier> m_pools = new SortedDictionary<string, PoolContaier>();
@@ -30,18 +35,23 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private float m_printTimer = 10f;
 
+    private PoolLimits m_poolLimits = PoolLimits.Limited;
+    public PoolLimits poolLimits {
+        get { return m_poolLimits; }
+        set { m_poolLimits = value; }
+    }
 
-	//---------------------------------------------------------------//
-	//-- Static Methods ---------------------------------------------//
-	//---------------------------------------------------------------//
+    //---------------------------------------------------------------//
+    //-- Static Methods ---------------------------------------------//
+    //---------------------------------------------------------------//
 
-	/// <summary>
-	/// Request a pool. Stores a pool request, it'll be created later loading the level.
-	/// </summary>
-	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
-	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
-	/// <param name="_size">Final pool size.</param>
-	public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
+    /// <summary>
+    /// Request a pool. Stores a pool request, it'll be created later loading the level.
+    /// </summary>
+    /// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
+    /// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
+    /// <param name="_size">Final pool size.</param>
+    public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
 		return instance.__RequestPool(_prefabName, _prefabPath, _size);
 	}
 
@@ -173,7 +183,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 		List<string> keys = new List<string>(m_pools.Keys);
 
 		for (int i = 0; i < keys.Count; i++) {
-			__CreatePool(m_pools[keys[i]], keys[i], true, true);
+            __CreatePool(m_pools[keys[i]], keys[i], m_poolLimits == PoolLimits.Unlimited, true);
 		}
 	}
 
@@ -225,13 +235,17 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 				}
 			} else {
 				// Create pool
-				__CreatePool(container, keys[i], true, true);
+                __CreatePool(container, keys[i], m_poolLimits == PoolLimits.Unlimited, true);
 			}
 		}
 	}
 
 	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
-		if (_container.pool == null) {
+        if (_prefabName.Contains("PF_Cupido_Arrow")) {
+            Debug.LogWarning("CREATING PF_Cupido_Arrow");
+        }
+
+        if (_container.pool == null) {
 			PoolData data = _container.buildData;
 			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
 			if (go != null) {
@@ -253,19 +267,22 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private void __Clear(bool _all) {
 		if (instance != null) {
-			if (_all) {
-				foreach(KeyValuePair<string, PoolContaier> pair in m_pools) {
-					PoolContaier pc = pair.Value;
-					if (pc.pool != null) {
-						pc.pool.Clear();
-						pc.pool = null;
-						pc.handler.Invalidate();
+            List<string> keys = new List<string>(m_pools.Keys);
+            if (_all) {
+                for (int i = 0; i < keys.Count; i++) {
+                    PoolContaier container = m_pools[keys[i]];
+                    if (container.pool != null) {
+                        if (container.pool.isTemporary) {
+                            m_pools.Remove(keys[i]);
+                        }
+                        container.pool.Clear();
+                        container.pool = null;
+                        container.handler.Invalidate();
 					}
 				}
 				m_iterator.Clear();
 			} else {
-				// we'll clear only temporary pools (those that don't have to exist between levels)
-				List<string> keys = new List<string>(m_pools.Keys);
+				// we'll clear only temporary pools (those that don't have to exist between levels)				
 				for (int i = 0; i < keys.Count; i++) {
 					PoolContaier container = m_pools[keys[i]];
 					Pool p = container.pool;
@@ -275,7 +292,8 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 						m_iterator.Remove(p);
 						container.pool = null;
 						container.handler.Invalidate();
-					}
+                        m_pools.Remove(keys[i]);
+                    }
 				}
 			}
 		}

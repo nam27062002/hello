@@ -1,4 +1,4 @@
-// HUDMessage.cs
+﻿// HUDMessage.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 08/06/2016.
@@ -23,7 +23,7 @@ using TMPro;
 /// </summary>
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CanvasGroup))]
-public class HUDMessage : MonoBehaviour {
+public class HUDMessage : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -77,7 +77,8 @@ public class HUDMessage : MonoBehaviour {
 		BREAK_OBJECT_WITH_FIRE,
 		BOOST_SPACE,
 		TIMES_UP,
-		TARGET_REACHED
+		TARGET_REACHED,
+        BREAK_OBJECT_TO_OPEN
 	}
 
 	// How to react with consecutive triggers
@@ -153,6 +154,7 @@ public class HUDMessage : MonoBehaviour {
 	private bool m_isBoosting = false;
 	private float m_boostingTimer = 0f;
 	private float m_boostSpawnTimer = 0f;
+    private string m_defaultText = "";
 
 	private bool m_gameStarted = false;
 	private bool m_hasEverPerformedAction = false;
@@ -182,6 +184,7 @@ public class HUDMessage : MonoBehaviour {
 
 		switch(m_type) {
 			case Type.BOOST_REMINDER: {
+            
 				// Select target setup
 				if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.BOOST)) {
 					m_currentBoostSetup = m_boostMessageSetup;
@@ -204,6 +207,10 @@ public class HUDMessage : MonoBehaviour {
 	{
 		  // Deactivate all childs
         SetOthersVisible( false );
+        if ( m_type == Type.BOOST_REMINDER )
+        {
+            m_defaultText =  Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostReminder));
+        }
 	}
 
 	/// <summary>
@@ -212,7 +219,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnEnable() {
 		// Subscribe to external events, based on type
 		switch(m_type) {
-			case Type.LEVEL_UP:				Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.AddListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -223,14 +230,15 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.AddListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.AddListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.AddListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.BOOST_REMINDER:		Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
+			case Type.FIRE_RUSH:			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
+			case Type.MEGA_FIRE_RUSH:		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);			break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.AddListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.AddListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -266,7 +274,7 @@ public class HUDMessage : MonoBehaviour {
 	virtual protected void OnDisable() {
 		switch(m_type) {
 			// Unsubscribe from external events, based on type
-			case Type.LEVEL_UP:				Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
+			case Type.LEVEL_UP:				Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);					break;
 			case Type.SURVIVAL_BONUS:		Messenger.RemoveListener(MessengerEvents.SURVIVAL_BONUS_ACHIEVED, OnStandardMessage);				break;
 			case Type.HEALTH_EATMORE:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
 			case Type.HEALTH_STARVING:		Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);	break;
@@ -277,14 +285,15 @@ public class HUDMessage : MonoBehaviour {
 			case Type.NEED_BIGGER_DRAGON:	Messenger.RemoveListener<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, OnBiggerDragonNeeded);	break;
 			case Type.MISSION_COMPLETED:	Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);			break;
 			case Type.CHEST_FOUND:			Messenger.RemoveListener<CollectibleChest>(MessengerEvents.CHEST_COLLECTED, OnChestCollected);					break;
-			case Type.BOOST_REMINDER:		Messenger.RemoveListener<bool>(MessengerEvents.BOOST_TOGGLED, OnBoostToggled);						break;
-			case Type.FIRE_RUSH:			Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
-			case Type.MEGA_FIRE_RUSH:		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFireRushToggled);	break;
+			case Type.BOOST_REMINDER:		 Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);						break;
+			case Type.FIRE_RUSH:			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
+			case Type.MEGA_FIRE_RUSH:		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);	break;
 			case Type.EGG_FOUND:			Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED, OnEggCollected);				break;
 			case Type.EGG_INVENTORY_FULL:	Messenger.RemoveListener<CollectibleEgg>(MessengerEvents.EGG_COLLECTED_FAIL, OnEggCollectedFail);	break;
 			case Type.BREAK_OBJECT_BIGGER_DRAGON:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_BIGGER_DRAGON, OnBreakObjectNeedBiggerDragon);			break;
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
+            case Type.BREAK_OBJECT_TO_OPEN: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
 			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
@@ -300,6 +309,24 @@ public class HUDMessage : MonoBehaviour {
 			case HideMode.TIMER:			Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);	break;
 		}
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFireRushToggled( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+            case BroadcastEventType.BOOST_TOGGLED:
+            {
+                ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
+                OnBoostToggled(toggleParam.value); 
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Called every frame
@@ -353,6 +380,13 @@ public class HUDMessage : MonoBehaviour {
 					// Do we need to show ther reminder? Not while we're boosting!
 					if(m_boostSpawnTimer <= 0f) {
 						// Show feedback!
+                        if ( !m_visible )
+                        {
+                            // Check boost tid
+                            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                            text.text = m_defaultText;
+                        }
+                        
 						// Don't reset timers if it couldn't be shown! Will be displayed asap
 						if(Show()) {
 							m_boostSpawnTimer = m_currentBoostSetup.respawnInterval;
@@ -525,7 +559,7 @@ public class HUDMessage : MonoBehaviour {
 	/// A dragon has leveled up.
 	/// </summary>
 	/// <param name="_dragon">The dragon that has leveled up.</param>
-	private void OnLevelUp(DragonData _dragon) {
+	private void OnLevelUp(IDragonData _dragon) {
 		Show();
 	}
 
@@ -608,7 +642,7 @@ public class HUDMessage : MonoBehaviour {
 			Image goalIcon = tr.GetComponent<Image>();
 			if ( goalIcon != null )
 			{
-				HDTournamentDefinition def = HDLiveEventsManager.instance.m_tournament.data.definition as HDTournamentDefinition;
+				HDTournamentDefinition def = HDLiveDataManager.tournament.data.definition as HDTournamentDefinition;
 				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
 			}
 		}
@@ -694,7 +728,8 @@ public class HUDMessage : MonoBehaviour {
     
     private void RegisterZone( HUDMessage message )
     {
-        UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
+        if ( !UsersManager.currentUser.m_visitedZones.Contains(m_zoneId))
+            UsersManager.currentUser.m_visitedZones.Add( m_zoneId );
         OnHide.RemoveListener( RegisterZone );
     }
 
@@ -745,6 +780,10 @@ public class HUDMessage : MonoBehaviour {
 	void OnBreakObjectWithFire() {
 		Show();
 	}
+
+    void OnBreakObjectToOpen() {
+        Show();
+    }
 
 	/// <summary>
 	/// Drunk state has changed.

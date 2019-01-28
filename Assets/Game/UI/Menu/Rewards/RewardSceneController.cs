@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -18,7 +19,7 @@ using System;
 /// <summary>
 /// Controller for the 3D scene of the Open Egg screen.
 /// </summary>
-public class RewardSceneController : MonoBehaviour {
+public class RewardSceneController : MenuScreenScene {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,7 +29,7 @@ public class RewardSceneController : MonoBehaviour {
 		public ShinyGodraysFX godrays = null;
 		public string sfx = "";
 
-		public void Clear() {
+		public virtual void Clear() {
 			if(view != null) {
 				view.SetActive(false);
 			}
@@ -77,11 +78,14 @@ public class RewardSceneController : MonoBehaviour {
 	[SerializeField] private RewardSetup m_skinRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_hcRewardSetup = new RewardSetup();
 	[SerializeField] private RewardSetup m_scRewardSetup = new RewardSetup();
-	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT - 1];
+	[SerializeField] private RewardSetup[] m_goldenFragmentsRewardsSetup = new RewardSetup[(int)Metagame.Reward.Rarity.COUNT];
+	[SerializeField] private RewardSetup m_dragonRewardSetup = new RewardSetup();
 
 	[Separator("Other VFX")]
 	[SerializeField] private ParticleSystem m_goldenFragmentsSwapFX = null;
 	[SerializeField] private Transform m_tapFXPool = null;
+	[SerializeField] private Transform m_confettiAnchor = null;
+	[SerializeField] private GameObject m_confettiPrefab = null;
 
 	[Separator("Other SFX")]
 	[SerializeField] private string m_eggTapSFX = "";
@@ -92,6 +96,9 @@ public class RewardSceneController : MonoBehaviour {
 	[Separator("Others")]
 	[Tooltip("Will replace the camera snap point for the photo screen when doing photos to the egg reward.")]
 	[SerializeField] private CameraSnapPoint m_photoCameraSnapPoint = null;
+	public CameraSnapPoint photoCameraSnapPoint {
+		get { return m_photoCameraSnapPoint; }
+	}
 
 	[Separator("Animation Setup")]
 	[SerializeField] private float m_goldenEggDelay = 1f;
@@ -123,7 +130,6 @@ public class RewardSceneController : MonoBehaviour {
 	// Other references that must be set from script
 	private DragControlRotation m_dragController = null;
 	private RewardInfoUI m_rewardInfoUI = null;
-	private CameraSnapPoint m_originalPhotoCameraSnapPoint = null;
 
 	//------------------------------------------------------------------------------------------------------------//
 
@@ -135,9 +141,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Store original camera snap point for the photo screen
-		m_originalPhotoCameraSnapPoint = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup;
-
 		// Don't show anything
 		Clear();
 
@@ -227,6 +230,9 @@ public class RewardSceneController : MonoBehaviour {
 		for(int i = 0; i < m_goldenFragmentsRewardsSetup.Length; ++i) {
 			m_goldenFragmentsRewardsSetup[i].Clear();
 		}
+
+		m_dragonRewardSetup.Clear();
+		m_dragonRewardSetup.view.GetComponent<MenuDragonLoader>().UnloadDragon();
 	}
 
 	/// <summary>
@@ -250,8 +256,7 @@ public class RewardSceneController : MonoBehaviour {
 	public void OpenReward() {
 		// Get most recent reward in the stack
 		// Don't pop immediately, the Reward.Collect() will do it
-		if ( UsersManager.currentUser.rewardStack.Count > 0 )
-		{
+		if(UsersManager.currentUser.rewardStack.Count > 0) {
 			m_currentReward = UsersManager.currentUser.rewardStack.Peek();
 
 			// Hide UI reward elements
@@ -271,9 +276,14 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Skin
 			else if(m_currentReward is Metagame.RewardSkin) {
-				// TODO!!
 				m_currentReward.Collect();
 				OpenSkinReward(m_currentReward as Metagame.RewardSkin);
+			}
+
+			// Skin
+			else if(m_currentReward is Metagame.RewardDragon) {
+				m_currentReward.Collect();
+				OpenDragonReward(m_currentReward as Metagame.RewardDragon);
 			}
 
 			// Multi
@@ -291,9 +301,7 @@ public class RewardSceneController : MonoBehaviour {
 
 			// Notify listeners
 			OnAnimStarted.Invoke();
-		}
-		else
-		{
+		} else {
 			// NO REWARD. This shouldnt happen. But just in case
 			// Notify listeners
 			OnAnimStarted.Invoke();
@@ -302,7 +310,6 @@ public class RewardSceneController : MonoBehaviour {
 			seq.AppendInterval(0.1f);
 			seq.OnComplete(OnAnimationFinish);
 		}
-
 	}
 
 	//------------------------------------------------------------------------//
@@ -328,7 +335,7 @@ public class RewardSceneController : MonoBehaviour {
 		}
 
 		// Trigger UI animation
-		float duration = (_eggReward.sku == Egg.SKU_GOLDEN_EGG) ? 3.5f : 0.25f;
+		float duration = 0.25f;
 		UbiBCN.CoroutineManager.DelayedCall(() => { m_rewardInfoUI.InitAndAnimate(_eggReward); }, duration, false);
 	}
 
@@ -468,6 +475,9 @@ public class RewardSceneController : MonoBehaviour {
 		// Initialize skin view
 		InitSkinView(_skinReward);
 
+		// Trigger confetti anim
+		LaunchConfettiFX(true);
+
 		// Animate it!
 		Sequence seq = DOTween.Sequence();
 		seq.AppendInterval(0.05f);	// Initial delay
@@ -479,17 +489,66 @@ public class RewardSceneController : MonoBehaviour {
 		// Make it target of the drag controller
 		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
 
-
-
 		// Show reward godrays
-		// Except if duplicate! (for now)
 		if(m_currentRewardSetup.godrays != null) {
 			// Custom color based on reward's rarity
-			m_petRewardSetup.godrays.gameObject.SetActive(true);
-			//m_petRewardSetup.godrays.Tint(UIConstants.GetRarityColor(m_currentReward.rarity));
+			m_currentRewardSetup.godrays.gameObject.SetActive(true);
 
 			// Show with some delay to sync with reward's animation
-			seq.Insert(0.15f, m_petRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
+		}
+
+		seq.OnComplete(OnAnimationFinish);
+	}
+
+	/// <summary>
+	/// Start the dragon reward flow.
+	/// </summary>
+	/// <param name="_dragonReward">Dragon reward.</param>
+	private void OpenDragonReward(Metagame.RewardDragon _dragonReward) {
+		// If we're in the right mode, make it the selected dragon
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonReward.sku);
+		if(dragonData != null) {
+			// Does the target game mode match the current one?
+			if(SceneController.DragonTypeToMode(dragonData.type) == SceneController.mode) {
+				// Yes! Select rewarded dragon
+				InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+			} else {
+                if (dragonData is DragonDataSpecial) {
+                    LabDragonSelectionScreen dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>();
+                    dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+                } else {
+                    // No! Tell the dragon selection screen to make it the selected one next time we enter the screen
+                    MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+                    dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+                }
+			}
+		}
+
+		// Initialize skin view
+		InitDragonView(_dragonReward);
+
+		// Trigger confetti anim
+		LaunchConfettiFX(true);
+
+		// Animate it!
+		Sequence seq = DOTween.Sequence();
+		seq.AppendInterval(0.05f);  // Initial delay
+		seq.Append(m_currentRewardSetup.view.transform.DOScale(0f, 0.5f).From().SetRecyclable(true).SetEase(Ease.OutBack));
+
+		// Trigger UI animation
+		seq.InsertCallback(seq.Duration() - 0.15f, () => { m_rewardInfoUI.InitAndAnimate(_dragonReward); });
+
+		// Make it target of the drag controller
+		seq.AppendCallback(() => { SetDragTarget(m_currentRewardSetup.view.transform); });
+
+		// Show reward godrays
+		if(m_currentRewardSetup.godrays != null) {
+			// Custom color based on reward's rarity
+			m_currentRewardSetup.godrays.gameObject.SetActive(true);
+
+			// Show with some delay to sync with reward's animation
+			seq.Insert(0.15f, m_currentRewardSetup.godrays.transform.DOScale(0f, 0.05f).From().SetRecyclable(true));
 		}
 
 		seq.OnComplete(OnAnimationFinish);
@@ -590,6 +649,22 @@ public class RewardSceneController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Initialize the dragon reward view with the given reward data.
+	/// </summary>
+	/// <param name="_dragonReward">Skin reward data.</param>
+	private void InitDragonView(Metagame.RewardDragon _dragonReward) {
+		HideAllRewards();
+
+		m_currentRewardSetup = m_dragonRewardSetup;
+		m_currentRewardSetup.view.SetActive(true);
+
+		// Use a DragonLoader to simplify things
+		MenuDragonLoader loader = m_currentRewardSetup.view.GetComponent<MenuDragonLoader>();
+		loader.Setup(MenuDragonLoader.Mode.MANUAL, MenuDragonPreview.Anim.IDLE, true);
+		loader.LoadDragon(_dragonReward.sku, IDragonData.GetDefaultDisguise(_dragonReward.sku).sku);
+	}
+
+	/// <summary>
 	/// Initialize the currency reward view with the given reward data.
 	/// </summary>
 	/// <param name="_reward">The currency reward data.</param>
@@ -683,6 +758,30 @@ public class RewardSceneController : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Instantiate and launch the confetti VFX.
+	/// </summary>
+	/// <param name="_triggerSound">Whether to also trigger confetti SFX.</param>
+	private void LaunchConfettiFX(bool _triggerSound) {
+		// Check required stuff
+		if(m_confettiAnchor == null) return;
+		if(m_confettiPrefab == null) return;
+
+		// Create a new instance of the FX and put it on the dragon loader
+		GameObject newObj = Instantiate<GameObject>(
+			m_confettiPrefab,
+			m_confettiAnchor,
+			false
+		);
+
+		// Auto-destroy after the FX has finished
+		DestroyInSeconds destructor = newObj.AddComponent<DestroyInSeconds>();
+		destructor.lifeTime = 9f;   // Sync with FX duration!
+
+		// Trigger SFX
+		if(_triggerSound) AudioController.Play("hd_unlock_dragon");
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -739,25 +838,6 @@ public class RewardSceneController : MonoBehaviour {
 	/// The whole open reward animation has finished.
 	/// </summary>
 	private void OnAnimationFinish() {
-		// If next reward is a golden egg, instantly open it!
-		if(UsersManager.currentUser.rewardStack.Count > 0) {
-			Metagame.Reward nextReward = UsersManager.currentUser.rewardStack.Peek();
-			if(nextReward != null && nextReward.sku == Egg.SKU_GOLDEN_EGG) {
-				// Give it some delay!
-				UbiBCN.CoroutineManager.DelayedCall(() => { 
-					// Do it!
-					OpenReward();
-
-					// Trigger some FX to make it more beautiful
-					TriggerFX(m_goldenFragmentsSwapFX);
-
-					// SFX
-					AudioController.Play(m_goldenEggIntroSFX);
-				}, m_goldenEggDelay, false);
-				return;
-			}
-		}
-
 		// Notify external script
 		OnAnimFinished.Invoke();
 	}
@@ -775,14 +855,8 @@ public class RewardSceneController : MonoBehaviour {
 		MenuScreenScene fromScene = InstanceManager.menuSceneController.GetScreenData(_from).scene3d;
 		MenuScreenScene toScene = InstanceManager.menuSceneController.GetScreenData(_to).scene3d;
 
-		// Entering a screen using this scene
-		if(toScene != null && toScene.gameObject == this.gameObject) {
-			// Override camera snap point for the photo screen so it looks to our reward
-			InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_photoCameraSnapPoint;
-		}
-
 		// Leaving a screen using this scene
-		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
+		if(fromScene != null && fromScene.gameObject == this.gameObject) {
 			// Do some stuff if not going to take a picture of the reward
 			if(_to != MenuScreen.PHOTO) {
 				// Clear the scene
@@ -791,8 +865,14 @@ public class RewardSceneController : MonoBehaviour {
 				// Nullify reward reference
 				m_currentReward = null;
 
-				// Restore default camera snap point for the photo screen
-				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
+				// Remove screen from screen history
+				// We want to prevent going back to this screen which has already been cleared
+				// At this point (SCREEN_TRANSITION_START) the screen has already been added to the history
+				// Resolves issue HDK-3436 among others
+				List<MenuScreen> history = InstanceManager.menuSceneController.transitionManager.screenHistory;
+				if(history.Last() == _from) {	// Make sure the screen we come from is actually in the history (i.e. screens that don't allow back to them are not added to the history)
+					history.RemoveAt(history.Count - 1);
+				}
 			}
 		}
 	}

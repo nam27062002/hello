@@ -15,7 +15,11 @@ namespace AI {
 		private Transform m_transform;
 		private Transform m_eye; // for aiming purpose
 
-		private Vector3 m_upVector;
+        private RaycastHit[] m_raycastHits;
+        private RaycastHit[] m_hitResults;
+        private bool[] m_hasHit;
+
+        private Vector3 m_upVector;
 
 		private Signals m_signals;
 
@@ -56,6 +60,10 @@ namespace AI {
 			m_sensor.Attach(this, m_entity, m_pilot);
 			m_edible.Attach(this, m_entity, m_pilot);
 			m_inflammable.Attach(this, m_entity, m_pilot);
+
+            m_raycastHits = new RaycastHit[255];
+            m_hitResults = new RaycastHit[4];
+            m_hasHit = new bool[4]; 
 
 			m_signals = new Signals(this);
 			m_signals.Init();
@@ -152,6 +160,19 @@ namespace AI {
 			return false;
 		}
 
+		public bool Smash( IEntity.Type _source ) {
+			if ( !IsDead() && !IsDying() )
+			{
+				SetSignal(Signals.Type.Destroyed, true);
+				m_entity.onDieStatus.source = _source;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
+				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				return true;
+			}
+			return false;
+		}
+
 		public bool IsDead() {
 			return m_entity.health <= 0 || m_signals.GetValue(Signals.Type.Destroyed);
 		}
@@ -192,24 +213,38 @@ namespace AI {
 			}
 		}
 
-		private void FindUpVector() {
-			RaycastHit[] hit = new RaycastHit[4];
-			bool[] hasHit = new bool[4];
-			int groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
+		private void FindUpVector() {			
+            Ray ray = new Ray();
+            ray.origin = position;
 
-			hasHit[0] = Physics.Raycast(position, Vector3.down,  out hit[0], 10f, groundMask);
-			hasHit[1] = Physics.Raycast(position, Vector3.up,	 out hit[1], 10f, groundMask);
-			hasHit[2] = Physics.Raycast(position, Vector3.right, out hit[2], 10f, groundMask);
-			hasHit[3] = Physics.Raycast(position, Vector3.left,  out hit[3], 10f, groundMask);
+            for (int i = 0; i < 4; i++) {
+                m_hasHit[i] = false;
+            }
+
+            //down
+            ray.direction = GameConstants.Vector3.down;
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
+
+            //up
+            ray.direction = GameConstants.Vector3.up;
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
+
+            //right
+            ray.direction = GameConstants.Vector3.right;
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
+
+            //left
+            ray.direction = GameConstants.Vector3.left;
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
-				if (hasHit[i]) {
-					if (hit[i].distance < d) {
-						d = hit[i].distance;
+                if (m_hasHit[i]) {
+                    if (m_hitResults[i].distance < d) {
+                        d = m_hitResults[i].distance;
 
-						m_upVector = hit[i].normal;
-						position = hit[i].point;
+                        m_upVector = m_hitResults[i].normal;
+                        position = m_hitResults[i].point;
 					}
 				}
 			}
@@ -259,7 +294,10 @@ namespace AI {
 		public virtual bool IsFacingDirection() { return false; }
 		public virtual bool IsInFreeFall() { return false; }
 		public bool IsFreezing(){ return false; }
-		public void CustomFixedUpdate(){}
+        public bool IsStunned() { return false; }        
+        public bool IsInLove() { return false; }
+
+        public void CustomFixedUpdate(){}
 
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

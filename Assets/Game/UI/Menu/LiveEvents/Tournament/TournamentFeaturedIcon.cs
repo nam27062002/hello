@@ -1,6 +1,6 @@
-// TournamentFeaturedIcon.cs
+﻿// TournamentFeaturedIcon.cs
 // Hungry Dragon
-// 
+//
 // Created by Alger Ortín Castellví on 31/05/2018.
 // Copyright (c) 2018 Ubisoft. All rights reserved.
 
@@ -30,16 +30,16 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private GameObject m_root = null;
+    	
 
-	[Separator("Shared")]
-	[SerializeField] private Localizer m_timerText = null;
-	
 	[Separator("Teasing")]
 	[SerializeField] private GameObject m_teasingGroup = null;
+    [SerializeField] private Localizer m_teasingTimerText = null;
 
 	[Separator("Active")]
 	[SerializeField] private GameObject m_activeGroup = null;
 	[SerializeField] private GameObject m_newBanner = null;
+	[SerializeField] private TextMeshProUGUI m_activeTimerText = null;
 
 	[Separator("Rewards")]
 	[SerializeField] private GameObject m_rewardsGroup = null;
@@ -60,7 +60,10 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Get tournament manager
-		m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+		m_tournamentManager = HDLiveDataManager.tournament;
+        Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+        Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -69,10 +72,6 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	private void Start() {
 		// Get latest data from the manager
 		RefreshData();
-
-		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -81,8 +80,8 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	void OnDestroy()
 	{
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnStateUpdated);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnStateUpdatedWithParams);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
 	/// <summary>
@@ -143,12 +142,12 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Toggle visibility of target object based on tournament state
 		HDLiveEventData.State state = m_tournamentManager.data.m_state;
-		
+
 		// Teasing
 		if(m_teasingGroup != null) m_teasingGroup.SetActive(state == HDLiveEventData.State.TEASING);
 
 		// Active
-		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning());
+		if(m_activeGroup != null) m_activeGroup.SetActive(m_tournamentManager.IsRunning() || m_tournamentManager.RequiresUpdate());
 		if(m_newBanner != null) m_newBanner.gameObject.SetActive(state == HDLiveEventData.State.NOT_JOINED);
 
 		// Rewards
@@ -172,31 +171,28 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
 		// Update text
 		double remainingSeconds = m_tournamentManager.data.remainingTime.TotalSeconds;
-		if(m_timerText != null) {
-			// Show only in specific states
-			m_timerText.gameObject.SetActive(
-				state == HDLiveEventData.State.TEASING
-				|| state == HDLiveEventData.State.NOT_JOINED
-				|| state == HDLiveEventData.State.JOINED
-			);
-
-			// Set text
-			if(m_timerText.gameObject.activeSelf) {
-				// Different TID based on tournament state
-				string tid = "TID_TOURNAMENT_ICON_ENDS_IN";
-				if(state == HDLiveEventData.State.TEASING) {
-					tid = "TID_TOURNAMENT_ICON_STARTS_IN";
-				}
-
-				m_timerText.Localize(tid,
-					TimeUtils.FormatTime(
+		string timeString = TimeUtils.FormatTime(
 						System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 						TimeUtils.EFormat.ABBREVIATIONS,
-						4
-					)
-				);
+						3
+					);
+
+        if (state == HDLiveEventData.State.TEASING) {
+			if(m_teasingTimerText != null) {
+				if(m_teasingTimerText.gameObject.activeSelf) {
+					m_teasingTimerText.Localize(
+						"TID_TOURNAMENT_ICON_STARTS_IN",
+						timeString
+					);
+				}
 			}
-		}
+        } else {
+			if(m_activeTimerText != null) {
+				if(m_activeTimerText.gameObject.activeSelf) {
+					m_activeTimerText.text = timeString;	// [AOC] Not enough space for "Ends In" with the new layout
+				}
+			}
+        }
 
 		// Manage timer expiration when the icon is visible
 		if(_checkExpiration && remainingSeconds <= 0) {
@@ -222,7 +218,9 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				case HDLiveEventData.State.TEASING:
 				case HDLiveEventData.State.NOT_JOINED:
 				case HDLiveEventData.State.JOINED:
-				case HDLiveEventData.State.REWARD_AVAILABLE: {
+				case HDLiveEventData.State.REWARD_AVAILABLE:
+                case HDLiveEventData.State.REQUIRES_UPDATE:
+                {
 					// Must have a valid definition first
 					if(m_tournamentManager.data.definition != null && m_tournamentManager.data.definition.initialized) {
 						show = true;
@@ -242,56 +240,63 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 	/// Tournament Play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
-        if (SceneController.s_playMenuButtonLock == false) {
-            SceneController.s_playMenuButtonLock = true;
+        
+			if ( m_tournamentManager.RequiresUpdate() )
+			{
+					// Show update popup!
+					PopupManager.OpenPopupInstant( PopupUpdateEvents.PATH );
 
-            // Change game mode
-            SceneController.s_mode = SceneController.Mode.TOURNAMENT;
-            HDLiveEventsManager.instance.SwitchToTournament();
-
-            // Send Tracking event
-            HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
-
-            // Go to tournament info screen
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
-        }
+					// Go to tournament info screen
+					HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen("no_tournament");
+			}
+			else
+			{
+                if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
+                {
+            		// Change game mode
+    	        	SceneController.SetMode(SceneController.Mode.TOURNAMENT);
+        	    	HDLiveDataManager.instance.SwitchToTournament();
+    	
+        	    	// Send Tracking event
+            		HDTrackingManager.Instance.Notify_TournamentClickOnMainScreen(m_tournamentManager.data.definition.m_name);
+    
+            		// Go to tournament info screen
+            		InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_INFO);
+    			}
+            }
 	}
 
 	/// <summary>
 	/// Collect Rewards button has been pressed.
 	/// </summary>
 	public void OnCollectButton() {
-        if (SceneController.s_playMenuButtonLock == false) {
-            SceneController.s_playMenuButtonLock = true;
+        // Prevent spamming
+        if (m_waitingRewardsData) return;
 
-            // Prevent spamming
-            if (m_waitingRewardsData) return;
-
-            // if info is from cache wait to recieve definitions!
-            if ( HDLiveEventsManager.instance.m_cacheInfo )
-            {
-                m_waitingDefinition = true;
-                m_tournamentManager.RequestDefinition(true);
-            }
-            else
-            {
-                // Request rewards data and wait for it to be loaded
-                m_tournamentManager.RequestRewards();
-            }            
-
-            // Show busy screen
-            BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
-            BusyScreen.Show(this);
-
-            // Toggle flag
-            m_waitingRewardsData = true;
+        // if info is from cache wait to recieve definitions!
+        if ( m_tournamentManager.isDataFromCache )
+        {
+            m_waitingDefinition = true;
+            m_tournamentManager.RequestDefinition(true);
         }
+        else
+        {
+            // Request rewards data and wait for it to be loaded
+            m_tournamentManager.RequestRewards();
+        }
+
+        // Show busy screen
+        BusyScreen.Setup(true, LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_LOADING"));
+        BusyScreen.Show(this);
+
+        // Toggle flag
+        m_waitingRewardsData = true;
 	}
 
 	/// <summary>
 	/// We got a response on the rewards request.
 	/// </summary>
-	private void OnRewardsResponse(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _errorCode) {
+	private void OnRewardsResponse(int _eventId, HDLiveDataManager.ComunicationErrorCodes _errorCode) {
 		// Ignore if we weren't waiting for rewards!
 		if(!m_waitingRewardsData) return;
 		m_waitingRewardsData = false;
@@ -300,11 +305,11 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 		BusyScreen.Hide(this);
 
 		// Success?
-		if(_errorCode == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
 			UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
@@ -313,18 +318,29 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+
+             // Finish tournament if 607 / 608 / 622
+            if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID ||
+                _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED ) &&
+                m_tournamentManager.data.m_eventId == _eventId
+                )
+                {
+                    m_tournamentManager.ForceFinishByError();
+                }
+
 		}
 	}
 
 	/// <summary>
 	/// We got an update on the tournament state.
 	/// </summary>
-	private void OnStateUpdatedWithParams(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnStateUpdatedWithParams(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		RefreshData();
         if ( m_waitingDefinition && m_waitingRewardsData )
         {
             m_waitingDefinition = false;
-            if ( _error == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+            if ( _error == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
             {
                 // Request rewards data and wait for it to be loaded
                 m_tournamentManager.RequestRewards();
@@ -335,7 +351,7 @@ public class TournamentFeaturedIcon : MonoBehaviour {
 
                 // Hide busy screen
                 BusyScreen.Hide(this);
-        
+
                 // Show error message
                 UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
                     LocalizationManager.SharedInstance.Localize("TID_TOURNAMENT_REWARDS_ERROR"),

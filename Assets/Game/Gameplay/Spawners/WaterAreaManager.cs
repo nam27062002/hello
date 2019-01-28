@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager> {
+public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager>, IBroadcastListener {
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -26,8 +26,8 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager> 
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -35,14 +35,30 @@ public class WaterAreaManager : UbiBCN.SingletonMonoBehaviour<WaterAreaManager> 
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
 	//------------------------------------------------------------------------//
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// Add a spawner to the manager.
 	/// </summary>

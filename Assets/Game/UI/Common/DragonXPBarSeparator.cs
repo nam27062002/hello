@@ -29,21 +29,21 @@ public class DragonXPBarSeparator : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private GameObject m_activeObj = null;
-	[SerializeField] private GameObject m_inactiveObj = null;
+	[SerializeField] protected GameObject m_activeObj = null;
+	[SerializeField] protected GameObject m_inactiveObj = null;
 
 	// Public properties
 	public RectTransform rectTransform {
 		get { return (RectTransform)this.transform; }
 	}
 
-	private float m_delta = 0f;
+	protected float m_delta = 0f;
 	public float delta {
 		get { return m_delta; }
 		set { SetDelta(value); }
 	}
 
-	private Slider m_slider = null;
+	protected Slider m_slider = null;
 	public Slider slider {
 		get { return m_slider; }
 		set { AttachToSlider(value, m_delta); }
@@ -124,7 +124,7 @@ public class DragonXPBarSeparator : MonoBehaviour {
 	/// Show the proper clip based on slider's value and current delta.
 	/// Put the separator in position.
 	/// </summary>
-	public void Refresh() {
+	public virtual void Refresh() {
 		// Disable both clips if slider is not defined
 		if(m_slider == null) {
 			m_activeObj.SetActive(false);

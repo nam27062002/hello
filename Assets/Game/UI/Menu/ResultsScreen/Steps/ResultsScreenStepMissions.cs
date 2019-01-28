@@ -28,10 +28,12 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 	// Exposed
 	[Space]
 	[SerializeField] private ResultsScreenMissionPill[] m_pills = new ResultsScreenMissionPill[(int)Mission.Difficulty.COUNT];
-	[SerializeField] private string m_rewardSFX = "";
+    [SerializeField] private string m_rewardCoinsSFX = "";
+    [SerializeField] private string m_rewardGoldenFragmentsSFX = "";
 	[Space]
 	[SerializeField] private NumberTextAnimator m_coinsCounter = null;
 	[SerializeField] private NumberTextAnimator m_pcCounter = null;
+    [SerializeField] private NumberTextAnimator m_gfCounter = null;
 
 	// Internal
 	private int m_completedMissions = 0;
@@ -73,16 +75,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 				int numCheatMissions = CPResultsScreenTest.missionsMode - CPResultsScreenTest.MissionsTestMode.FIXED_0;
 				if(numCheatMissions > missionIdx) {
 					// Yes! Create a fake temp mission
-					List<DefinitionNode> missionDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.MISSIONS);
-					DefinitionNode missionDef = missionDefs.GetRandomValue();
-					targetMission = new Mission();
-					targetMission.InitWithParams(
-						missionDef,
-						DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
-						RandomExt.Range(missionDef.GetAsLong("objectiveBaseQuantityMin"), missionDef.GetAsLong("objectiveBaseQuantityMax")),
-						Random.value < 0.5f	// 50% chace
-					);
-					targetMission.difficulty = Mission.Difficulty.MEDIUM;
+					targetMission = UsersManager.currentUser.userMissions.DEBUG_GenerateNewMissionForResultsScreen();
 
 					// Mark mission as completed
 					targetMission.objective.enabled = true;
@@ -115,6 +108,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 		// Init currency counters
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+        m_gfCounter.SetValue(m_controller.totalGf, false);
 	}
 
 	/// <summary>
@@ -124,6 +118,7 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 		// Instantly finish counter texts animations
 		m_coinsCounter.SetValue(m_controller.totalCoins, false);
 		m_pcCounter.SetValue(m_controller.totalPc, false);
+        m_gfCounter.SetValue(m_controller.totalGf, false);
 
 		// Kill active transfer fx's
 		for(int i = 0; i < m_currencyFX.Count; ++i) {
@@ -143,28 +138,35 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 		m_fakeMissions.Clear();
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Show mission pill if needed.
-	/// </summary>
-	public void CheckMission(ResultsScreenMissionPill _pill) {
-		// Do nothing if pill should not be displayed
-		if(!_pill.MustBeDisplayed()) return;
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Show mission pill if needed.
+    /// </summary>
+    public void CheckMission(ResultsScreenMissionPill _pill) {
+        // Do nothing if pill should not be displayed
+        if (!_pill.MustBeDisplayed()) return;
 
-		// Trigger animation
-		_pill.animator.Show();
+        // Trigger animation
+        _pill.animator.Show();
 
+        switch(_pill.mission.reward.currency) {
+            case UserProfile.Currency.SOFT:             PlayCoinsFX(_pill); break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS: PlayGoldenFragmentsFX(_pill); break;
+        }
+    }
+
+    private void PlayCoinsFX(ResultsScreenMissionPill _pill) {
 		// Update total rewarded coins and update counter
 		// [AOC] Give it some delay!
 		UbiBCN.CoroutineManager.DelayedCall(() => {
 			// Update counter
-			m_controller.totalCoins += _pill.mission.rewardCoins;
+            m_controller.totalCoins += _pill.mission.reward.amount;
 			m_coinsCounter.SetValue(m_controller.totalCoins, true);
 
 			// Play SFX
-			AudioController.Play(m_rewardSFX);
+			AudioController.Play(m_rewardCoinsSFX);
 
 			// Show some coins flying around! (unless skipped)
 			if(!m_skipped) {
@@ -180,6 +182,32 @@ public class ResultsScreenStepMissions : ResultsScreenSequenceStep {
 			}
 		}, 0.15f);
 	}
+
+    private void PlayGoldenFragmentsFX(ResultsScreenMissionPill _pill) {
+        // Update total rewarded coins and update counter
+        // [AOC] Give it some delay!
+        UbiBCN.CoroutineManager.DelayedCall(() => {
+            // Update counter
+            m_controller.totalGf += _pill.mission.reward.amount;
+            m_gfCounter.SetValue(m_controller.totalGf, true);
+
+            // Play SFX
+            AudioController.Play(m_rewardGoldenFragmentsSFX);
+
+            // Show some coins flying around! (unless skipped)
+            if (!m_skipped) {
+                CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+                    CurrencyTransferFX.GOLDEN_FRAGMENTS,
+                    this.GetComponentInParent<Canvas>().transform,
+                    _pill.rewardText.transform.position + new Vector3(0f, 0f, -0.5f),       // Offset Z so the coins don't collide with the UI elements
+                    m_gfCounter.transform.position + new Vector3(0f, 0f, -0.5f)
+                );
+                fx.totalDuration = m_gfCounter.duration * 0.5f;  // Match the text animator duration (more or less)
+                fx.OnFinish.AddListener(() => { m_currencyFX.Remove(fx); });
+                m_currencyFX.Add(fx);
+            }
+        }, 0.15f);
+    }
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

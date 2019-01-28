@@ -72,10 +72,10 @@ public class ResultsScreenXPBar : DragonXPBar {
 
 	private bool m_flagsFolded = true;	// By default flags are folded when animation has finished
 	private bool m_nextDragonLocked = true;	// Is the next dragon locked or has it been already unlocked using PC?
-	private DragonData m_nextDragonData = null;
+	private IDragonData m_nextDragonData = null;
 
 	// Some public properties
-	public DragonData nextDragonData {
+	public IDragonData nextDragonData {
 		get { return m_nextDragonData; }
 	}
 
@@ -117,8 +117,11 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// [AOC] As usual, animating the XP bar is not obvious (dragon may have 
 		//		 leveled up several times during a single game, disguises unlocked, etc.)
 
+		// Only for CLASSIC dragons!
+		Debug.Assert(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC, "ONLY FOR CLASSIC DRAGONS!");
+
 		// Initialize bar with current dragon's data
-		Refresh(DragonManager.currentDragon);
+		Refresh(DragonManager.currentDragon as DragonDataClassic);
 		m_deltaPerLevel = 1f/(m_dragonData.progression.maxLevel);
 
 		// Change separators to work with the aux bar rather than the main bar
@@ -129,7 +132,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Load and pose next dragon's preview
 		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
 		if(m_nextDragonData != null) {
-			m_nextDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku + "/icon_disguise_0");
+			m_nextDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
 			m_nextDragonRoot.SetActive(true);
 		} else {
 			m_nextDragonRoot.SetActive(false);
@@ -210,7 +213,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		if(CPResultsScreenTest.testEnabled) {
 			m_nextDragonLocked = m_nextDragonData != null ? CPResultsScreenTest.nextDragonLocked : false;
 		} else {
-			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the DragonData will be marked as already available!
+			m_nextDragonLocked = m_nextDragonData != null ? RewardManager.nextDragonLocked : false;	// We must use the lock state BEFORE starting the game, otherwise the IDragonData will be marked as already available!
 		}
 		m_dragonUnlockFX.SetActive(false);
 		m_lockIcon.SetActive(false);
@@ -228,11 +231,13 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Custom treatment to disguises markers in this screen
 		for(int i = 0; i < m_disguises.Count; i++) {
 			// Re-attach to use aux slider instead of main one
+			m_disguises[i].barMarker.skinSku = m_disguises[i].def.sku;
 			m_disguises[i].barMarker.AttachToSlider(m_auxBar, m_disguises[i].delta);
-			m_disguises[i].unlocked = (m_disguises[i].delta <= m_auxBar.normalizedValue);	// Use current var value to quicly determine initial state
+			m_disguises[i].unlocked = (m_disguises[i].delta <= m_auxBar.normalizedValue);   // Use current var value to quickly determine initial state
+			m_disguises[i].unlocked |= UsersManager.currentUser.wardrobe.GetSkinState(m_disguises[i].def.sku) == Wardrobe.SkinState.OWNED;	// Also unlocked if previously owned (i.e. via offer pack)
 
 			// If the disguise is going to be unlocked, crate a flag for it!
-			if(m_disguises[i].delta <= m_targetDelta) {
+			if(m_disguises[i].delta <= m_targetDelta && !m_disguises[i].unlocked) {
 				// Instantiate and initialize flag
 				GameObject flagObj = GameObject.Instantiate(m_disguiseUnlockPrefab, m_disguisesContainer.transform, false) as GameObject;
 				m_disguises[i].flag = flagObj.GetComponent<ResultsScreenDisguiseFlag>();
@@ -366,6 +371,9 @@ public class ResultsScreenXPBar : DragonXPBar {
 			// Lock break animation
 			.AppendCallback(() => {
 				m_lockIcon.GetComponentInChildren<LockViewController>().LaunchUnlockAnim();
+
+				// Trigger SFX
+				AudioController.Play("hd_results_padlock_open");
 			})
 
 			// Let animation finish

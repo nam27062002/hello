@@ -59,7 +59,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 131698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -11.950289, y: 1.0537857, z: 0.041846275}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4496317341768176}
@@ -545,6 +545,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 475722}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114710334297497454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -579,6 +580,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
 --- !u!114 &114725765332829656
 MonoBehaviour:
@@ -603,6 +605,7 @@ MonoBehaviour:
   m_serializedJson: '[]'
   m_databaseKey: PF_BoatRider
   m_updateMachinePos: 0
+  m_updateMachineRot: 0
 --- !u!136 &136000011231704714
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -612,7 +615,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.17
+  m_Radius: 0.45
   m_Height: 2.1
   m_Direction: 1
   m_Center: {x: 0, y: 0.05, z: 0}

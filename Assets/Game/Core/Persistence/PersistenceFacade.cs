@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-public class PersistenceFacade
+public class PersistenceFacade : IBroadcastListener
 {	
 	public static readonly CultureInfo JSON_FORMATTING_CULTURE = CultureInfo.InvariantCulture;
 	
@@ -362,20 +362,32 @@ public class PersistenceFacade
     // This region is responsible for opening the related to persistence popups    
     private static bool Popups_IsInited { get; set; }
 
-    private static void Popups_Init()
+    private void Popups_Init()
     {
         if (!Popups_IsInited)
         {			
-			Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+			Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
             Popups_IsInited = true;
         }
     }
 
-    private static void Popups_Destroy()
+    private void Popups_Destroy()
     {		
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, Popups_OnPopupClosed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
     }
 	
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                Popups_OnPopupClosed(info.popupController);
+            }break;
+        }
+    }
+    
     private static PopupController Popups_LoadingPopup { get; set; }
 
     private static bool Popups_IsLoadingPopupOpen()
@@ -627,12 +639,24 @@ public class PersistenceFacade
         PopupManager.PopupMessage_Open(config);
     }   
 
-    private static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
+    public static void Popup_OpenSyncGenericError(int errorCode, Action onConfirm)
     {
         IPopupMessage.Config config = IPopupMessage.GetConfig();
         config.TitleTid = "TID_SAVE_ERROR_SYNC_FAILED_NAME";
-        config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
-        config.MessageParams = new string[] { "" + errorCode };
+
+        // A different message is shown for this error code to address HDK-2489
+        if (errorCode == SYNC_GENERIC_ERROR_CODE_SYNC_ALREADY_PERFORMING)
+        {
+            config.MessageTid = "TID_SOCIAL_LOGIN_ERROR";
+            string platformName = SocialPlatformManager.SharedInstance.GetPlatformName();
+            config.MessageParams = new string[] { platformName };            
+        }
+        else
+        {
+            config.MessageTid = "TID_SAVE_ERROR_SYNC_FAILED_DESC";
+            config.MessageParams = new string[] { "" + errorCode };
+        }
+
         config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
         config.OnConfirm = onConfirm;
         config.IsButtonCloseVisible = false;
@@ -801,17 +825,17 @@ public class PersistenceFacade
             msg = LOG_CHANNEL + msg;
         }
 
-        Debug.Log(msg);
+        ControlPanel.Log(msg);
     }
 
     public static void LogError(string msg)
     {
-        Debug.LogError(LOG_CHANNEL + msg);
+        ControlPanel.LogError(LOG_CHANNEL + msg);
     }
 
 	public static void LogWarning(string msg)
     {
-        Debug.LogWarning(LOG_CHANNEL + msg);
+        ControlPanel.LogWarning(LOG_CHANNEL + msg);
     }
 	#endregion
 }

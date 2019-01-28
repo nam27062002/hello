@@ -57,6 +57,15 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 		}
 	}
 
+	protected override void OnEnable() {
+		base.OnEnable();
+
+		if(!Application.isPlaying) return;
+
+		// Force a refresh
+		m_dirty = true;
+	}
+
 	/// <summary>
 	/// Destructor.
 	/// </summary>
@@ -90,7 +99,7 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	public void Setup(DragonData _dragon) {
+	public void Setup(IDragonData _dragon) {
 		if(!Application.isPlaying) return;
 
 		foreach(List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {
@@ -151,10 +160,9 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 
 		// Rarity order: rarer pets first
 		Dictionary<string, int> rarityOrder = new Dictionary<string, int>();
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.SPECIAL)] = 0;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 1;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 2;
-		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 3;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.EPIC)] = 0;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 1;
+		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 2;
 
 		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
 		foreach(List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {

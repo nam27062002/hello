@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_crocodile_1_body
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL NORMALMAP SELFILLUMINATE_BLINKLIGHTS SPECULAR
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -70,12 +70,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
-    - SelfIlluminate: 0
+    - SelfIlluminate: 2
     - _BlendMode: 0
     - _BumpScale: 1
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
@@ -93,9 +100,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _InnerLightAdd: 0
+    - _InnerLightAdd: 1
     - _InnerLightWavePhase: 1
-    - _InnerLightWaveSpeed: 1
+    - _InnerLightWaveSpeed: 2
     - _Metallic: 0
     - _Mode: 0
     - _NormalStrenght: 1
@@ -117,7 +124,7 @@ Material:
     - _ColorAdd: {r: 0.096945494, g: 0.14705884, b: 0.056228384, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 0.38, g: 1, b: 0, a: 1}
-    - _InnerLightColor: {r: 0.07450981, g: 0.12941177, b: 0.03529412, a: 0.872}
+    - _InnerLightColor: {r: 0.82079107, g: 1, b: 0.31617647, a: 0.872}
     - _OutlineColor: {r: 0.6965518, g: 1, b: 0, a: 1}
     - _SecondLightColor: {r: 0.47495824, g: 0.5514706, b: 0.25951555, a: 0}
     - _SecondLightDir: {r: -0.20009083, g: 0.52197605, b: -0.829159, a: 0}

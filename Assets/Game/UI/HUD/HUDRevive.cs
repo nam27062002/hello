@@ -45,6 +45,7 @@ public class HUDRevive : MonoBehaviour {
 
 	// Internal logic
 	private DeltaTimer m_timer = new DeltaTimer();
+	private bool m_revived = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -82,7 +83,7 @@ public class HUDRevive : MonoBehaviour {
 		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
 		// Restore timescale
-		Time.timeScale = 1f;
+		// Time.timeScale = 1f;
 	}
 
 	/// <summary>
@@ -106,6 +107,9 @@ public class HUDRevive : MonoBehaviour {
 	/// Performs the revive logic
 	/// </summary>
 	private void DoRevive( DragonPlayer.ReviveReason reason ) {
+		// Control flag
+		m_revived = true;
+
 		// Revive!
 		InstanceManager.player.ResetStats(true, reason);
 	}
@@ -119,6 +123,9 @@ public class HUDRevive : MonoBehaviour {
 	public void OnRevive() {
 		// Make sure timer hasn't finished!
 		if(m_timer.IsFinished()) return;
+
+		// Prevent button spamming!
+		if(m_revived) return;
 
 		// Perform transaction
 		// Start purchase flow
@@ -204,7 +211,7 @@ public class HUDRevive : MonoBehaviour {
 			}
 
 			// Free revive available?
-			m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+            m_freeReviveButton.SetActive(FeatureSettingsManager.AreAdsEnabled && m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
 
 			// Show!
 			if(m_animator != null) m_animator.Show();
@@ -216,12 +223,16 @@ public class HUDRevive : MonoBehaviour {
 		// Reset timer
 		m_timer.Start(duration * 1000);
 
-		// Slow motion
-		Time.timeScale = 0.25f;
+		// Reset revive flag
+		m_revived = false;
+
+        // Slow motion
+        // Time.timeScale = 0.25f;
+        InstanceManager.timeScaleController.Dead();
 	}
 
     private void OnPlayerStartRevie() {
-        Time.timeScale = 0.25f;
+        InstanceManager.timeScaleController.ReviveStart();
     }
 
     private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
@@ -232,8 +243,9 @@ public class HUDRevive : MonoBehaviour {
 		// Hide
 		m_animator.Hide();
 
-		// Restore timescale
-		Time.timeScale = 1f;
+        // Restore timescale
+        // Time.timeScale = 1f;
+        InstanceManager.timeScaleController.Revived();
 	}
 
 	private void OnPlayerPreFreeRevive()

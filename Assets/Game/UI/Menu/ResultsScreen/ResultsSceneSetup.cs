@@ -143,11 +143,11 @@ public class ResultsSceneSetup : MonoBehaviour {
 	public void Init() {
 		// Toggle chests based on game mode
 		for(int i = 0; i < m_chestSlots.Length; ++i) {
-			m_chestSlots[i].gameObject.SetActive(SceneController.s_mode == SceneController.Mode.DEFAULT);
+			m_chestSlots[i].gameObject.SetActive(SceneController.mode == SceneController.Mode.DEFAULT);
 		}
 
 		// Toggle egg based on game mode
-		m_eggSlot.gameObject.SetActive(SceneController.s_mode == SceneController.Mode.DEFAULT);
+		m_eggSlot.gameObject.SetActive(SceneController.mode == SceneController.Mode.DEFAULT);
 	}
 
 	/// <summary>
@@ -158,33 +158,37 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
-		if (SceneController.s_mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
+			HDTournamentManager tournament = HDLiveDataManager.tournament;
 			m_dragonSlot.LoadDragon(tournament.GetToUseDragon(), tournament.GetToUseSkin());
 		} else {
-			m_dragonSlot.LoadDragon(UsersManager.currentUser.currentDragon, DragonManager.currentDragon.diguise);
+			m_dragonSlot.LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
 		}
-		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS_IN);
+		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS);
 		m_dragonSlot.dragonInstance.DisableMovesOnResults();
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 		m_dragonSlot.SetViewPosition( m_dragonSlotViewPosition.position );
 		m_dragonSlot.dragonInstance.transform.rotation = m_dragonSlot.transform.rotation;
 
 		// Trigger confetti anim
-		LaunchConfettiFX();
+		// Avoid colliding with music
+		LaunchConfettiFX(!GameSettings.Get(GameSettings.MUSIC_ENABLED));
 	}
 
 	/// <summary>
 	/// Launches the disguise purchased FX on the selected dragon.
 	/// </summary>
-	public void LaunchConfettiFX() {
+	/// <param name="_playSFX">Whether to trigger sound FX or not.</param>
+	public void LaunchConfettiFX(bool _playSFX) {
 		// Restart effect
 		m_confettiFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 		m_confettiFX.Play(true);
 
 		// Restart SFX
-		/*string audioId = "hd_unlock_dragon";
-		AudioController.Stop(audioId);
-		AudioController.Play(audioId);*/
+		if(_playSFX) {
+			string audioId = "hd_unlock_dragon";
+			AudioController.Stop(audioId);
+			AudioController.Play(audioId);
+		}
 	}
 }

@@ -24,7 +24,7 @@ public class Egg {
 	//------------------------------------------------------------------------//
 	public const string SKU_STANDARD_EGG = "egg_standard";
 	public const string SKU_PREMIUM_EGG = "egg_premium";
-	public const string SKU_GOLDEN_EGG = "egg_golden";
+
 	public const string PREFAB_PATH = "UI/Metagame/Eggs/";
 
 	// Respect indices for the animation controller!!
@@ -81,6 +81,9 @@ public class Egg {
 	public TimeSpan incubationRemaining { get { return incubationEndTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime(); }}
 	public float incubationProgress { get { return isIncubating ? Mathf.InverseLerp(0f, (float)incubationDuration.TotalSeconds, (float)incubationElapsed.TotalSeconds) : 0f; }}
 	public bool isIncubating { get { return state == Egg.State.INCUBATING; }}
+
+    //
+    protected EggStateChanged m_eggStateChanged = new EggStateChanged();
 
 	public TimeSpan incubationDuration { 
 		get {
@@ -159,7 +162,7 @@ public class Egg {
 	/// Private, use factory methods to create new eggs.
 	/// </summary>
 	private Egg() {
-		
+        m_eggStateChanged.egg = this;
 	}
 
 	/// <summary>
@@ -221,12 +224,14 @@ public class Egg {
 				GenerateReward();
 			} break;
 			case State.READY:{
-				if(!m_testMode) HDNotificationsManager.instance.CancelNotification("sku.not.01");
+				if(!m_testMode) HDNotificationsManager.instance.CancelEggHatchedNotification();
 			}break;
 		}
 
-		// Broadcast game event
-		Messenger.Broadcast<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, this, oldState, _newState);
+        // Broadcast game event
+        m_eggStateChanged.from = oldState;
+        m_eggStateChanged.to = _newState;
+        Broadcaster.Broadcast(BroadcastEventType.EGG_STATE_CHANGED, m_eggStateChanged);
 
 		// Save persistence
 		// [AOC] A bit of an overkill, try to improve it on the future
@@ -237,7 +242,7 @@ public class Egg {
 	/// If the egg is incubating it schedules the egg notification.
 	/// </summary>
 	public void ScheduleEggNotification(){
-		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleNotification("sku.not.01", LocalizationManager.SharedInstance.Localize("TID_NOTIFICATION_EGG_HATCHED"), "Action", (int)(incubationRemaining.TotalSeconds));
+		if(!m_testMode && m_state == State.INCUBATING) HDNotificationsManager.instance.ScheduleEggHatchedNotification((int)(incubationRemaining.TotalSeconds));
 	}
 
 	/// <summary>
@@ -306,12 +311,6 @@ public class Egg {
 
 			// Increase collected eggs counter
 			UsersManager.currentUser.eggsCollected++;
-
-			// If golden egg, increase total and reset fragments counter
-			if(def.sku == SKU_GOLDEN_EGG) {
-				UsersManager.currentUser.SpendCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, (ulong)EggManager.goldenEggRequiredFragments);	// If we have extra fragments, they will be kept in the profile
-				UsersManager.currentUser.goldenEggsCollected++;
-			}
 
 	        // Save persistence
 	        PersistenceFacade.instance.Save_Request();

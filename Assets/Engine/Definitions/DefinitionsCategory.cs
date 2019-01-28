@@ -36,6 +36,7 @@ public class DefinitionsCategory
 	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA2 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA2";
 	public const string POOL_MANAGER_SETTINGS_LEVEL_0_AREA3 = "POOL_MANAGER_SETTINGS_LEVEL_0_AREA3";
 	public const string SEASONS = "SEASONS";
+    public const string NOTIFICATIONS = "NOTIFICATIONS";
 
 	// Progression
 	public const string LEVELS = "LEVELS";
@@ -46,11 +47,17 @@ public class DefinitionsCategory
 	public const string MISSION_DIFFICULTIES = "MISSION_DIFFICULTIES";
 	public const string MISSION_MODIFIERS = "MISSION_MODIFIERS";
 
+    public const string MISSION_SPECIAL_DIFFICULTIES = "MISSION_SPECIAL_DIFFICULTIES";
+    public const string MISSION_SPECIAL_MODIFIERS = "MISSION_SPECIAL_MODIFIERS";
+
 	// Dragons
 	public const string DRAGONS = "DRAGONS";
 	public const string DRAGON_TIERS = "DRAGON_TIERS";
 	public const string DRAGON_PROGRESSION = "DRAGON_PROGRESSION";
 	public const string DRAGON_HEALTH_MODIFIERS = "DRAGON_HEALTH_MODIFIERS";
+	public const string DRAGON_STATS = "DRAGON_STATS";
+    public const string SPECIAL_DRAGON_TIERS = "SPECIAL_DRAGON_TIERS";
+    public const string SPECIAL_DRAGON_POWERS = "SPECIAL_DRAGON_POWERS";
 
 	// Entities
 	public const string PETS 				= "PETS";
@@ -66,17 +73,17 @@ public class DefinitionsCategory
 	public const string SURVIVAL_BONUS = "SURVIVAL_BONUS";
 
 	// Metagame
-	public const string EGGS = "EGGS";
-	public const string GOLDEN_EGGS = "GOLDEN_EGGS";
+	public const string EGGS = "EGGS";	
 	public const string EGG_REWARDS = "EGG_REWARDS";
 	public const string CHEST_REWARDS = "CHEST_REWARDS";
 	public const string PREREG_REWARDS = "PREREG_REWARDS";
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
-    public const string INTERSTITIALS_PROFILES = "INTERSTITIALS_PROFILES";
+    // public const string INTERSTITIALS_PROFILES = "INTERSTITIALS_PROFILES";
     public const string INTERSTITIALS_SETUP = "INTERSTITIALS_SETUP";
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
 	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
+    public const string LEAGUES = "LEAGUES";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

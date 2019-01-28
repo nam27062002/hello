@@ -91,6 +91,11 @@ internal class DragonShaderGUI : ShaderGUI
 
         readonly public static string selfIluminationText = "Self ilumination";
         readonly public static string enableVertexOffsetText = "Enable vertex offset";
+		readonly public static string enableVertexOffsetXText = "Vertex offset X";
+		readonly public static string enableVertexOffsetYText = "Vertex offset Y";
+		readonly public static string enableVertexOffsetZText = "Vertex offset Z";
+		readonly public static string VOAmplitudeText = "Amplitude";
+		readonly public static string VOSpeedText = "Speed";
 
         readonly public static string normalSelfIluminationText = "Default Self ilumination. Based on (Main Texture.rgb) * (Detail Texture.r) * _InnerLightAdd * (_InnerLightColor.rgb)";
         readonly public static string autoInnerLightSelfIluminationText = "Devil dragon self ilumination.";
@@ -132,6 +137,9 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_colorRampID0;
     MaterialProperty mp_colorRampID1;
 
+	MaterialProperty mp_VOAmplitude;
+	MaterialProperty mp_VOSpeed;
+
     MaterialProperty mp_colorMultiply;
     MaterialProperty mp_colorAdd;
     MaterialProperty mp_innerLightAdd;
@@ -144,7 +152,6 @@ internal class DragonShaderGUI : ShaderGUI
 
     MaterialProperty mp_zWrite;
     MaterialProperty mp_cullMode;
-
 
     /// <summary>
     /// Toggle Material Properties
@@ -159,8 +166,11 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_EnableOpaqueFresnel;
     MaterialProperty mp_EnableOpaqueSpecular;
     MaterialProperty mp_EnableVertexOffset;
+	MaterialProperty mp_EnableVertexOffsetX;
+	MaterialProperty mp_EnableVertexOffsetY;
+	MaterialProperty mp_EnableVertexOffsetZ;
 
-    /// <summary>
+	/// <summary>
     /// Enum Material PProperties
     /// </summary>
 
@@ -235,6 +245,9 @@ internal class DragonShaderGUI : ShaderGUI
         mp_colorRampID0 = FindProperty("_ColorRampID0", props);
         mp_colorRampID1 = FindProperty("_ColorRampID1", props);
 
+		mp_VOAmplitude = FindProperty ("_VOAmplitude", props);
+		mp_VOSpeed = FindProperty ("_VOSpeed", props);
+
         mp_BlendMode = FindProperty("_BlendMode", props);
         mp_stencilMask = FindProperty("_StencilMask", props);
 
@@ -250,6 +263,9 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
 
         mp_EnableVertexOffset = FindProperty("_EnableVertexOffset", props);
+		mp_EnableVertexOffsetX = FindProperty("_EnableVertexOffsetX", props);
+		mp_EnableVertexOffsetY = FindProperty("_EnableVertexOffsetY", props);
+		mp_EnableVertexOffsetZ = FindProperty("_EnableVertexOffsetZ", props);
 
         mp_zWrite = FindProperty("_ZWrite", props);
 
@@ -400,7 +416,13 @@ internal class DragonShaderGUI : ShaderGUI
         materialEditor.ShaderProperty(mp_colorAdd, Styles.colorAddText);
 
 
-        featureSet(mp_EnableVertexOffset, Styles.enableVertexOffsetText);
+		if (featureSet (mp_EnableVertexOffset, Styles.enableVertexOffsetText)) {
+			materialEditor.ShaderProperty (mp_VOAmplitude, Styles.VOAmplitudeText);
+			materialEditor.ShaderProperty (mp_VOSpeed, Styles.VOSpeedText);
+			materialEditor.ShaderProperty (mp_EnableVertexOffsetX, Styles.enableVertexOffsetXText);
+			materialEditor.ShaderProperty (mp_EnableVertexOffsetY, Styles.enableVertexOffsetYText);
+			materialEditor.ShaderProperty (mp_EnableVertexOffsetZ, Styles.enableVertexOffsetZText);
+		}
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
 

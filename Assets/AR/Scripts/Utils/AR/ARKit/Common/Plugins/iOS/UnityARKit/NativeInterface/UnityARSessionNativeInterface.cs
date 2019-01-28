@@ -436,7 +436,10 @@ namespace UnityEngine.XR.iOS
         private static extern UnityARHitTestResult GetLastHitTestResult(int index);
 
         [DllImport("__Internal")]
-        private static extern ARTextureHandles GetVideoTextureHandles();
+        private static extern ARTextureHandles.ARTextureHandlesStruct GetVideoTextureHandles();
+
+        [DllImport("__Internal")]
+        public static extern void ReleaseVideoTextureHandles(ARTextureHandles.ARTextureHandlesStruct handles);
 
         [DllImport("__Internal")]
         private static extern float GetAmbientIntensity();
@@ -466,6 +469,9 @@ namespace UnityEngine.XR.iOS
         private static extern bool Native_IsARKit_1_5_Supported();
 
         [DllImport("__Internal")]
+        private static extern bool Native_IsARKit_2_0_Supported();
+
+        [DllImport("__Internal")]
         private static extern void session_GetCurrentWorldMap(IntPtr nativeSession, IntPtr callbackPtr);
 
 		[DllImport("__Internal")]
@@ -488,6 +494,15 @@ namespace UnityEngine.XR.iOS
         {
 #if !UNITY_EDITOR && UNITY_IOS
             return Native_IsARKit_1_5_Supported();
+#else
+            return true;  //since we might need to do some editor shenanigans
+#endif
+        }
+
+        public static bool IsARKit_2_0_Supported()
+        {
+#if !UNITY_EDITOR && UNITY_IOS
+            return Native_IsARKit_2_0_Supported();
 #else
             return true;  //since we might need to do some editor shenanigans
 #endif
@@ -1006,8 +1021,6 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfigAndOptions(ARKitWorldTrackingSessionConfiguration config, UnityARSessionRunOption runOptions)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitWorldTrackingSessionConfiguration config, UnityARSessionRunOption runOptions)");
-
 #if !UNITY_EDITOR && UNITY_IOS
             StartWorldTrackingSessionWithOptions (m_NativeARSession, config, runOptions);
 #elif UNITY_EDITOR
@@ -1017,7 +1030,6 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitWorldTrackingSessionConfiguration config)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitWorldTrackingSessionConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartWorldTrackingSession(m_NativeARSession, config);
 #elif UNITY_EDITOR
@@ -1028,13 +1040,11 @@ namespace UnityEngine.XR.iOS
 
         public void Run()
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.Run()");
             RunWithConfig(new ARKitWorldTrackingSessionConfiguration(UnityARAlignment.UnityARAlignmentGravity, UnityARPlaneDetection.Horizontal));
         }
 
         public void RunWithConfigAndOptions(ARKitSessionConfiguration config, UnityARSessionRunOption runOptions)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitSessionConfiguration config, UnityARSessionRunOption runOptions)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartSessionWithOptions (m_NativeARSession, config, runOptions);
 #endif
@@ -1042,7 +1052,6 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitSessionConfiguration config)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitSessionConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartSession(m_NativeARSession, config);
 #endif
@@ -1050,7 +1059,6 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfigAndOptions(ARKitFaceTrackingConfiguration config, UnityARSessionRunOption runOptions)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfigAndOptions(ARKitFaceTrackingConfiguration config, UnityARSessionRunOption runOptions)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartFaceTrackingSessionWithOptions (m_NativeARSession, config, runOptions);
 #elif UNITY_EDITOR
@@ -1060,7 +1068,6 @@ namespace UnityEngine.XR.iOS
 
         public void RunWithConfig(ARKitFaceTrackingConfiguration config)
         {
-			Debug.Log (">>>>>>>>>>>>>>>>>>> UnityARSessionNativeInterface.RunWithConfig(ARKitFaceTrackingConfiguration config)");
 #if !UNITY_EDITOR && UNITY_IOS
             StartFaceTrackingSession(m_NativeARSession, config);
 #elif UNITY_EDITOR
@@ -1104,7 +1111,11 @@ namespace UnityEngine.XR.iOS
 #if !UNITY_EDITOR && UNITY_IOS
         public ARTextureHandles GetARVideoTextureHandles()
         {
-            return GetVideoTextureHandles ();
+#if !UNITY_EDITOR && UNITY_IOS
+            return new ARTextureHandles(GetVideoTextureHandles());
+#else
+            return new ARTextureHandles(new ARTextureHandles.ARTextureHandlesStruct { textureY = IntPtr.Zero, textureCbCr = IntPtr.Zero });
+#endif
         }
 
         [Obsolete("Hook ARFrameUpdatedEvent instead and get UnityARCamera.ambientIntensity")]

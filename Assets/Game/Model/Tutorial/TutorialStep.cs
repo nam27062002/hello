@@ -65,5 +65,10 @@ public enum TutorialStep {
 
 	PRE_REG_REWARDS				= 1 << 22,
 
+	LAB_UNLOCKED				= 1 << 23,
+	LEAGUES_INFO				= 1 << 24,
+
+	// [AOC] Max 32 values (try inheriting from long if more are needed)
+	// [AOC] DON'T CHANGE THE ORDER!!
 	ALL							= ~(0)		// http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 }

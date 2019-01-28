@@ -135,12 +135,20 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Game Settings
-	private string m_currentDragon;
-	public string currentDragon {
-		get { return m_currentDragon; }
+	private string m_currentClassicDragon;
+	public string currentClassicDragon {
+		get { return m_currentClassicDragon; }
 		set {
-            m_currentDragon = value;
+            m_currentClassicDragon = value;
         }
+	}
+
+	private string m_currentSpecialDragon;
+	public string currentSpecialDragon {
+		get { return m_currentSpecialDragon; }
+		set {
+			m_currentSpecialDragon = value;
+		}
 	}
 
 	private string m_currentLevel;
@@ -186,8 +194,8 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Dragon Data
-	private Dictionary<string,DragonData> m_dragonsBySku;	// Owned Dragons by Sku
-	public Dictionary<string,DragonData> dragonsBySku
+	private Dictionary<string,IDragonData> m_dragonsBySku;	// Owned Dragons by Sku
+	public Dictionary<string,IDragonData> dragonsBySku
 	{
 		get{ return m_dragonsBySku; }
 	}
@@ -211,6 +219,12 @@ public class UserProfile : UserPersistenceSystem
 	{
 		get{ return m_userMissions; }
 	}
+
+    UserSpecialMissions m_userSpecialMissions;
+    public UserSpecialMissions userSpecialMissions
+    {
+        get { return m_userSpecialMissions; }
+    }
 
 	AchievementsTracker m_achievements;
 	public AchievementsTracker achievements
@@ -248,12 +262,6 @@ public class UserProfile : UserPersistenceSystem
 	public int eggsCollected { // Amount of eggs collected (already rewarded) by the user so far
 		get; 
 		set; 
-	}
-
-	private int m_goldenEggsCollected;
-	public int goldenEggsCollected {
-		get { return m_goldenEggsCollected; }
-		set { m_goldenEggsCollected = value; }
 	}
 
 	private int m_openEggTriesWithoutRares;
@@ -324,9 +332,13 @@ public class UserProfile : UserPersistenceSystem
 
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+	private Queue<string> m_offerPacksRotationalHistory = new Queue<string>();    // Historic of rotational offers 
+	public Queue<string> offerPacksRotationalHistory {
+		get { return m_offerPacksRotationalHistory; }
+	}
     
-    public List<string> m_visitedZones = new List<string>();
-
+    // public List<string> m_visitedZones = new List<string>();
+    public HashSet<string> m_visitedZones = new HashSet<string>();
 	//--------------------------------------------------------------------------
 
     public enum ESocialState
@@ -401,7 +413,7 @@ public class UserProfile : UserPersistenceSystem
         // Define some custom values
         m_currencies[(int)Currency.KEYS].max = 10;  // [AOC] TODO!! Get from content
         
-        m_currentDragon = "";
+        m_currentClassicDragon = "";
         m_currentLevel = "";
 
         m_tutorialStep = TutorialStep.ALL;   
@@ -411,14 +423,14 @@ public class UserProfile : UserPersistenceSystem
         m_highScore = 0;
         m_superFuryProgression = 0;
 
-        // Dragons: The Dictionay and DragonData objects that contains are created only the first time because there are references to these objects somewhere else, so we just reset them
+        // Dragons: The Dictionay and IDragonData objects that contains are created only the first time because there are references to these objects somewhere else, so we just reset them
         List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGONS);
         if (m_dragonsBySku == null)
         {
-            m_dragonsBySku = new Dictionary<string, DragonData>();
+            m_dragonsBySku = new Dictionary<string, IDragonData>();
         }
                         
-        DragonData newDragonData = null;
+        IDragonData newDragonData = null;
         string dragonSku;
         for (int i = 0; i < defs.Count; i++)
         {
@@ -429,8 +441,7 @@ public class UserProfile : UserPersistenceSystem
             }
             else
             {
-                newDragonData = new DragonData();
-                newDragonData.Init(defs[i]);
+				newDragonData = IDragonData.CreateFromDef(defs[i]);
                 m_dragonsBySku[defs[i].sku] = newDragonData;
             }
         }        
@@ -442,14 +453,18 @@ public class UserProfile : UserPersistenceSystem
 		// Missions and achievements
 		if(m_userMissions != null) m_userMissions.ClearAllMissions();
         m_userMissions = new UserMissions();
+
+        if (m_userSpecialMissions != null) m_userSpecialMissions.ClearAllMissions();
+        m_userSpecialMissions = new UserSpecialMissions();
+
         m_achievements = new AchievementsTracker();
 
+        //
         m_eggsInventory = new Egg[EggManager.INVENTORY_SIZE];
         m_incubatingEgg = null;
         m_incubationTimeReference = 0;
         m_incubationEndTimestamp = DateTime.MinValue;
         eggsCollected = 0;
-        m_goldenEggsCollected = 0;
 		m_openEggTriesWithoutRares = 0;
 
         m_dailyChests = new Chest[ChestManager.NUM_DAILY_CHESTS];   // Should always have the same length
@@ -467,8 +482,9 @@ public class UserProfile : UserPersistenceSystem
         m_rewards = new Stack<Metagame.Reward>();
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
+		m_offerPacksRotationalHistory = new Queue<string>();
 
-        m_visitedZones = new List<string>();
+        m_visitedZones = new HashSet<string>();
 
         SocialState = ESocialState.NeverLoggedIn;
     }
@@ -485,6 +501,12 @@ public class UserProfile : UserPersistenceSystem
         {
         	m_userMissions.ClearAllMissions();
         	m_userMissions = null;
+        }
+
+        if (m_userSpecialMissions != null)
+        {
+            m_userSpecialMissions.ClearAllMissions();
+            m_userSpecialMissions = null;
         }
     }
 
@@ -544,7 +566,7 @@ public class UserProfile : UserPersistenceSystem
 		Messenger.Broadcast<UserProfile.Currency, long, long>(MessengerEvents.PROFILE_CURRENCY_CHANGED, _currency, oldAmount, data.amount);
 
         if (_economyGroup != HDTrackingManager.EEconomyGroup.CHEAT && toAdd > 0) {
-            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount);
+            HDTrackingManager.Instance.Notify_EarnResources(_economyGroup, _currency, (int)toAdd, (int)data.amount, _paid);
         }
     }
 
@@ -723,22 +745,7 @@ public class UserProfile : UserPersistenceSystem
 		} else {
 			m_mapResetTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime().AddHours(24);	// Default timer just in case
 		}
-		Messenger.Broadcast(MessengerEvents.PROFILE_MAP_UNLOCKED);
-	}
-
-	/// <summary>
-	/// Gets the number OF owned dragons.
-	/// </summary>
-	/// <returns>The number owned dragons.</returns>
-	public int GetNumOwnedDragons()
-	{
-		int ret = 0;
-		foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku )
-		{
-			if ( pair.Value.isOwned )
-				ret++;
-		}
-		return ret;
+		Broadcaster.Broadcast(BroadcastEventType.PROFILE_MAP_UNLOCKED);
 	}
 
     //------------------------------------------------------------------------//
@@ -807,9 +814,15 @@ public class UserProfile : UserPersistenceSystem
 
 		// Game settings
 		if ( profile.ContainsKey("currentDragon") )
-			m_currentDragon = profile["currentDragon"];
+			m_currentClassicDragon = profile["currentDragon"];
 		else
-			m_currentDragon = "";
+			m_currentClassicDragon = "";
+
+		if(profile.ContainsKey("currentSpecialDragon"))
+			m_currentSpecialDragon = profile["currentSpecialDragon"];
+		else
+			m_currentSpecialDragon = "";
+
 		if ( profile.ContainsKey("currentLevel") )
 			m_currentLevel = profile["currentLevel"];
 		else
@@ -888,7 +901,7 @@ public class UserProfile : UserPersistenceSystem
 		else
 		{
 			// Clean Dragon Data
-			foreach( KeyValuePair<string, DragonData> pair in m_dragonsBySku)
+			foreach( KeyValuePair<string, IDragonData> pair in m_dragonsBySku)
 				pair.Value.ResetLoadedData();
 		}
 
@@ -911,6 +924,12 @@ public class UserProfile : UserPersistenceSystem
 			m_userMissions.Load(_data["missions"]);
 		}
 
+        m_userSpecialMissions.ClearAllMissions();
+        if (_data.ContainsKey("missionsSpecial")) {
+            m_userSpecialMissions.Load(_data["missionsSpecial"]);
+        }
+
+        // Achievements
 		m_achievements.Initialize();
 		if ( _data.ContainsKey("achievements") ){
 			m_achievements.Load( _data["achievements"] );
@@ -1021,6 +1040,16 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
+		key = "offerPacksRotationalHistory";
+		m_offerPacksRotationalHistory.Clear();
+		if(_data.ContainsKey(key)) {
+			// Parse json array into the queue
+			JSONArray historyData = _data[key].AsArray;
+			for(int i = 0; i < historyData.Count; ++i) {
+				m_offerPacksRotationalHistory.Enqueue(historyData[i]);
+			}
+		}
+
         // Visited Zones
         key = "visitedZones";
         m_visitedZones.Clear();
@@ -1083,9 +1112,6 @@ public class UserProfile : UserPersistenceSystem
         // Eggs collected
         eggsCollected = _data["collectedAmount"].AsInt;
 
-		// Golden egg
-		m_goldenEggsCollected = _data["goldenEggsCollected"].AsInt;
-
 		// Dynamic Probability data
 		m_openEggTriesWithoutRares = _data["openEggTriesWithoutRares"].AsInt;
     }
@@ -1142,7 +1168,8 @@ public class UserProfile : UserPersistenceSystem
 		profile.Add( "keys", m_currencies[(int)Currency.KEYS].Serialize());
 
 		// Game settings
-		profile.Add("currentDragon",m_currentDragon);
+		profile.Add("currentDragon",m_currentClassicDragon);
+		profile.Add("currentSpecialDragon", m_currentSpecialDragon);
 		profile.Add("currentLevel",m_currentLevel);
 		profile.Add("tutorialStep",((int)m_tutorialStep).ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		profile.Add("furyUsed", m_furyUsed.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -1157,9 +1184,9 @@ public class UserProfile : UserPersistenceSystem
 
 		// Dragons
 		SimpleJSON.JSONArray dragons = new SimpleJSON.JSONArray();
-		foreach( KeyValuePair<string,DragonData> pair in m_dragonsBySku)
+		foreach( KeyValuePair<string,IDragonData> pair in m_dragonsBySku)
 		{
-			DragonData dragonData = pair.Value;
+			IDragonData dragonData = pair.Value;
 			dragons.Add( dragonData.Save() );
 		}
 		data.Add( "dragons", dragons );
@@ -1167,6 +1194,8 @@ public class UserProfile : UserPersistenceSystem
 		data.Add("disguises", m_wardrobe.Save());
 		data.Add("pets", m_petCollection.Save());
 		data.Add("missions", m_userMissions.Save());
+        data.Add("missionsSpecial", m_userSpecialMissions.Save());
+
 		data.Add("achievements", m_achievements.Save());
 
 		data.Add("eggs", SaveEggData());
@@ -1212,12 +1241,18 @@ public class UserProfile : UserPersistenceSystem
 		}
 		data.Add("offerPacks", offersData);
 
+		JSONArray offersHistoryData = new JSONArray();
+		foreach(string s in m_offerPacksRotationalHistory) {
+			offersHistoryData.Add(s);
+		}
+		data.Add("offerPacksRotationalHistory", offersHistoryData);
+
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
-        for (int i = 0; i < max; i++)
+        foreach( string str in m_visitedZones)
         {
-            zonesArray.Add(m_visitedZones[i]);
+            zonesArray.Add( str );
         }
         data.Add("visitedZones", zonesArray);
 
@@ -1259,9 +1294,6 @@ public class UserProfile : UserPersistenceSystem
 
         // Eggs collected
 		data.Add("collectedAmount", eggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
-
-		// Golden eggs
-		data.Add("goldenEggsCollected", m_goldenEggsCollected.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 
 		// Dynamic Probability data
 		data.Add("openEggTriesWithoutRares", m_openEggTriesWithoutRares.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
@@ -1361,7 +1393,7 @@ public class UserProfile : UserPersistenceSystem
 	public int GetPetSlot(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Just find target pet's slot in the target dragon's loadout
 		return dragon.pets.IndexOf(_petSku);
@@ -1385,7 +1417,7 @@ public class UserProfile : UserPersistenceSystem
 	public int EquipPet(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Is pet already equipped?
 		if(dragon.pets.Contains(_petSku)) return -2;
@@ -1430,7 +1462,7 @@ public class UserProfile : UserPersistenceSystem
 	public int EquipPet(string _dragonSku, string _petSku, int _slotIdx) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Is pet already equipped?
 		if(dragon.pets.Contains(_petSku)) return -2;
@@ -1467,7 +1499,7 @@ public class UserProfile : UserPersistenceSystem
 	public int UnequipPet(string _dragonSku, string _petSku) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Check whether pet is equipped
 		int idx = dragon.pets.IndexOf(_petSku);
@@ -1492,7 +1524,7 @@ public class UserProfile : UserPersistenceSystem
 	public int UnequipPet(string _dragonSku, int _slotIdx) {
 		// Check dragon sku
 		if(!m_dragonsBySku.ContainsKey(_dragonSku)) return -1;
-		DragonData dragon = m_dragonsBySku[_dragonSku];
+		IDragonData dragon = m_dragonsBySku[_dragonSku];
 
 		// Check slot index
 		if(_slotIdx < 0 || _slotIdx >= dragon.pets.Count) return -2;
@@ -1537,16 +1569,86 @@ public class UserProfile : UserPersistenceSystem
 		return data;
 	}
 
-    public DragonData GetHighestDragon() {
-        DragonData returnValue = null;
+	//------------------------------------------------------------------------//
+	// DRAGONS MANAGEMENT													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get current dragon of a given type.
+	/// </summary>
+	/// <returns>The current dragon of that type.</returns>
+	/// <param name="_type">Dragon type.</param>
+	public string GetCurrentDragon(IDragonData.Type _type) {
+		switch(_type) {
+			case IDragonData.Type.CLASSIC: return m_currentClassicDragon;
+			case IDragonData.Type.SPECIAL: return m_currentSpecialDragon;
+		}
+		return m_currentClassicDragon;
+	}
+
+	/// <summary>
+	/// Set current dragon of a given type.
+	/// Won't validate that the given dragon sku actually belongs to the given type.
+	/// </summary>
+	/// <param name="_type">Dragon type.</param>
+	/// <param name="_sku">Dragon sku.</param>
+	public void SetCurrentDragon(IDragonData.Type _type, string _sku) {
+		switch(_type) {
+			case IDragonData.Type.CLASSIC: {
+				m_currentClassicDragon = _sku;
+			} break;
+
+			case IDragonData.Type.SPECIAL: {
+				m_currentSpecialDragon = _sku;
+			} break;
+		}
+	}
+
+	/// <summary>
+	/// Gets the number OF owned dragons.
+	/// </summary>
+	/// <returns>The number owned dragons.</returns>
+	public int GetNumOwnedDragons() {
+		int ret = 0;
+		foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+			if(pair.Value.isOwned)
+				ret++;
+		}
+		return ret;
+	}
+    
+    /// <summary>
+    /// Gets the number owned special dragons.
+    /// </summary>
+    /// <returns>The number owned special dragons.</returns>
+    public int GetNumOwnedSpecialDragons()
+    {
+        int ret = 0;
+        foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+            if (pair.Value.isOwned && (pair.Value is DragonDataSpecial))
+            {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
+	/// <summary>
+	/// Only CLASSIC dragons considered.
+	/// </summary>
+	public DragonDataClassic GetHighestDragon() {
+		DragonDataClassic returnValue = null;
 
         // Find the dragon with the highest level among all dragons acquired by the user.
         if (m_dragonsBySku != null) {            
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
+            foreach (KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+				// Skip if not classic
+				if(pair.Value.type != IDragonData.Type.CLASSIC) continue;
+
+				// Is it owned?
                 if (pair.Value.isOwned) {
                     int order = pair.Value.GetOrder();
                     if (returnValue == null || order > returnValue.GetOrder()) {
-                        returnValue = pair.Value;
+						returnValue = pair.Value as DragonDataClassic;
                     }
                 }
             }            
@@ -1561,7 +1663,7 @@ public class UserProfile : UserPersistenceSystem
     /// <returns></returns>
     public int GetPlayerProgress() {        
         // Find the dragon with the highest level among all dragons acquired by the user.
-        DragonData highestDragon = GetHighestDragon();        
+        IDragonData highestDragon = GetHighestDragon();        
         return (highestDragon == null) ? 0 : GetDragonProgress(highestDragon);        
     }
 
@@ -1573,7 +1675,7 @@ public class UserProfile : UserPersistenceSystem
     /// passed as a parameter is returned.
     /// </returns>
     public int GetDragonProgress(string _dragonSku) {
-        DragonData data = null;
+        IDragonData data = null;
         if (m_dragonsBySku != null && m_dragonsBySku.ContainsKey(_dragonSku)) {
             data = m_dragonsBySku[_dragonSku];
         }
@@ -1588,22 +1690,26 @@ public class UserProfile : UserPersistenceSystem
     /// <returns>0 is returned if <c>_dragonData</c> is null, otherwise a positive value representing the progress of the dragon data
     /// passed as a parameter is returned.
     /// </returns>
-    public int GetDragonProgress(DragonData _dragonData) {
+    public int GetDragonProgress(IDragonData _dragonData) {
         int returnValue = 0;
 
-        if (_dragonData != null) {
+		if (_dragonData != null && _dragonData is DragonDataClassic) {
             int highestOrder = _dragonData.GetOrder();
 
-            // Add up maxLevel of all dragons with a lower level.
-            foreach (KeyValuePair<string, DragonData> pair in m_dragonsBySku) {
-                if (pair.Value.GetOrder() < highestOrder) {
-                    // Since level start at 0 the amount of level is maxLevel + 1 
-                    returnValue += pair.Value.progression.maxLevel + 1;
-                }
+			// Add up maxLevel of all dragons with a lower level.
+			foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+				// [AOC] Exclude special dragons
+				if(pair.Value is DragonDataClassic) {
+					DragonDataClassic classicData = pair.Value as DragonDataClassic;
+					if(classicData.GetOrder() < highestOrder) {
+						// Since level start at 0 the amount of level is maxLevel + 1 
+						returnValue += classicData.progression.maxLevel + 1;
+					}
+				}
             }
 
             // Add up the current level of that highest dragon.
-            returnValue += _dragonData.progression.level;
+			returnValue += (_dragonData as DragonDataClassic).progression.level;
 
             // Dragon level starts at 0 but player progress starts at 1
             returnValue++;

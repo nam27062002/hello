@@ -26,7 +26,8 @@ public class PowerIcon : MonoBehaviour {
 	public enum Mode {
 		SKIN = 0,
 		PET,
-		MODFIER
+		MODFIER,
+        SPECIAL_DRAGON
 	}
 
 	//------------------------------------------------------------------------//
@@ -131,7 +132,11 @@ public class PowerIcon : MonoBehaviour {
 
 			// Short description
 			if(m_shortDescriptionText != null) {
-				m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true, m_mode == Mode.PET);	// Custom formatting depending on powerup type, already localized
+                if (m_mode == Mode.SPECIAL_DRAGON) {
+                    m_shortDescriptionText.text = _powerDef.GetLocalized("tidDescShort");
+                } else {
+                    m_shortDescriptionText.text = DragonPowerUp.GetDescription(_powerDef, true, m_mode == Mode.PET);	// Custom formatting depending on powerup type, already localized
+                }
 			}
 
 			// Lock

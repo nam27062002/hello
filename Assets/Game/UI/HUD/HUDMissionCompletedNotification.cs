@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Control a UI notification for the missions button in the in-game HUD.
 /// </summary>
-public class HUDMissionCompletedNotification : MonoBehaviour {
+public class HUDMissionCompletedNotification : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ public class HUDMissionCompletedNotification : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
 	}
 
 	/// <summary>
@@ -52,12 +52,26 @@ public class HUDMissionCompletedNotification : MonoBehaviour {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Mission>(MessengerEvents.MISSION_COMPLETED, OnMissionCompleted);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
 	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(info.popupController);
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A mission has been completed!
 	/// </summary>

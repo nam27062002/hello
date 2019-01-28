@@ -3142,6 +3142,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -3157,6 +3158,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -3174,6 +3176,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -3189,6 +3192,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -3280,9 +3284,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
 --- !u!65 &65745041657842252
@@ -3399,6 +3403,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_groundMotion:
     m_mass: 2.5
@@ -3424,6 +3429,7 @@ MonoBehaviour:
   m_knockback: 0
   m_trail: {fileID: 0}
   m_trailParticles: []
+  m_weaponParticle: {fileID: 0}
 --- !u!114 &114035614031593386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3476,6 +3482,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_groundMotion:
     m_mass: 2.5
@@ -3619,6 +3626,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -3661,6 +3669,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -3699,6 +3708,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0.5
+    orientate: 0
   m_onEatenAudio: hd_dragon_enemy_dead
   m_firePoints: []
   m_burnParticle:
@@ -3739,6 +3749,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -3778,6 +3789,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: hd_dragon_enemy_attack
@@ -3848,6 +3860,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -3890,6 +3903,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.25
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -3928,6 +3942,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: hd_horse_dead
   m_firePoints: []
   m_burnParticle:
@@ -3968,6 +3983,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1.15, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -4007,6 +4023,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -4049,6 +4066,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 20
@@ -4088,6 +4106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: Soldier
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -4110,12 +4129,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":9,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":11,"panicSpeed":16,"faceDirectionOnBoost":false,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"separation":0,"oscillationSpeed":1,"dataType":"AI.Behaviour.FlockData","editorFolded":false}]'
   m_databaseKey: PF_OwlBig
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 15
   m_avoidCollisions: 1
   m_avoidWater: 1
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114152948166602552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4127,6 +4148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: Horse
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -4206,6 +4228,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -4248,6 +4271,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.25
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -4286,6 +4310,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: Soldier_Dead
   m_firePoints: []
   m_burnParticle:
@@ -4326,6 +4351,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 1.37, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -4365,6 +4391,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: Soldier_Attack
@@ -4435,6 +4462,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
@@ -4477,6 +4505,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -4515,6 +4544,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 0.5
+    orientate: 0
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
@@ -4555,6 +4585,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -4594,6 +4625,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -4716,6 +4748,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 3
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"restTime":{"min":2,"max":4},"randomLookAt":false,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"damage":55,"consecutiveAttacks":3,"attackDelay":0,"retreatTime":4,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":false,"maxFacingAngle":90,"dataType":"AI.Behaviour.AttackMeleeData","editorFolded":false},{"standUpTime":1,"dataType":"AI.Behaviour.OnGroundData","editorFolded":false}]'
   m_databaseKey: PLACEHOLDER
 --- !u!114 &114352189702019248
@@ -4786,12 +4819,14 @@ MonoBehaviour:
   m_railSeparation:
     min: 0.5
     max: 1
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"speed":9,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":9,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":32,"arrivalRadius":0.5,"timeout":{"min":1,"max":2},"onFailShutdown":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":3,"max":6},"damage":20,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":11,"panicSpeed":11,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":1,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"seconds":4,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"seconds":2,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PursuitEntityTargetData","editorFolded":false},{"speed":20,"arrivalRadius":1,"attackPoint":"","hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
   m_databaseKey: PLACEHOLDER
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 3
   m_avoidCollisions: 1
   m_avoidWater: 0
+  m_avoidCollisionsFactor: 10
 --- !u!114 &114410601898780106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4822,6 +4857,7 @@ MonoBehaviour:
   m_railSeparation:
     min: 2
     max: 2.5
+  m_useSpawnerRotation: 0
   m_serializedJson: '[{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false},{"speed":17,"checkDragonPositionTime":0.5,"checkForActionPointTime":1,"actions":{"panic":{"id":0,"active":false,"probability":1},"jump":{"id":1,"active":false,"probability":1},"goOn":{"id":2,"active":true,"probability":1},"hide":{"id":3,"active":false,"probability":1},"home":{"id":3,"active":true,"probability":1}},"dataType":"AI.Behaviour.FleeToAPData","editorFolded":false}]'
   m_databaseKey: PF_Horse
 --- !u!114 &114440381145811196
@@ -4835,6 +4871,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_isBlocker: 0
   m_unbreakableBlocker: 0
   m_tierWithTurboBreak: 1
   m_tierNoTurboBreak: 1
@@ -4879,6 +4916,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_corpseAsset: 
   m_onBreakAudio: Rocks
   m_view: {fileID: 4101475591068068}
@@ -4994,38 +5032,38 @@ MonoBehaviour:
   onStart:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onPlay:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onStepComplete:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onComplete:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onTweenCreated:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onRewind:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   delay: 0
   duration: 15
   easeType: 1
@@ -5094,6 +5132,7 @@ MonoBehaviour:
   m_parentName: Sword_01
   m_parentRoot: {fileID: 0}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114585181563623436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5130,6 +5169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: OwlBig
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -5197,7 +5237,7 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -5295,6 +5335,7 @@ MonoBehaviour:
   m_parentName: Soldier_Spine1
   m_parentRoot: {fileID: 4876413891206886}
   m_worldPositionStays: 1
+  m_resetScale: 0
 --- !u!114 &114740322072969506
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5329,6 +5370,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 3
@@ -5442,6 +5484,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.2
+    orientate: 0
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
@@ -5480,6 +5523,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_burpSound: 
   m_canEatEntities: 1
   m_eaterTier: 0
@@ -5529,6 +5573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: EnemyTier1
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
@@ -5614,7 +5659,7 @@ MonoBehaviour:
   m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -5742,6 +5787,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5757,6 +5803,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5796,6 +5843,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5811,6 +5859,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5865,6 +5914,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5880,6 +5930,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5909,6 +5960,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5924,6 +5976,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -5953,6 +6006,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -5968,6 +6022,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -6122,8 +6177,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1924482195306170}
   m_LocalRotation: {x: 0, y: 0.9848078, z: 0, w: -0.17364807}
-  m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 90.36521, y: 90.36521, z: 90.36521}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00018310547}
+  m_LocalScale: {x: 90.36694, y: 90.36694, z: 90.36694}
   m_Children:
   - {fileID: 4876413891206886}
   m_Father: {fileID: 224016608432403982}
@@ -6131,7 +6186,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.7799072, y: -10.29174}
+  m_AnchoredPosition: {x: 0.0072021484, y: -10.299576}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224116699413527940
@@ -6160,7 +6215,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1806871403018600}
   m_LocalRotation: {x: 0.14437716, y: -0.818803, z: 0.09648298, w: -0.54718184}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.00033623137}
   m_LocalScale: {x: 25.497751, y: 25.497751, z: 25.497751}
   m_Children:
   - {fileID: 4293661558843278}
@@ -6169,7 +6224,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -25.842148, y: 50.194378}
+  m_AnchoredPosition: {x: -25.714113, y: 50.194706}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186460995482744
@@ -6198,8 +6253,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1668267457052054}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0.000030517574}
-  m_LocalScale: {x: 110.32897, y: 110.32897, z: 110.32897}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00018310544}
+  m_LocalScale: {x: 110.32899, y: 110.32899, z: 110.32899}
   m_Children:
   - {fileID: 4568282160559890}
   m_Father: {fileID: 224116699413527940}
@@ -6207,7 +6262,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000058997888, y: -48.440697}
+  m_AnchoredPosition: {x: -0.000030517574, y: -48.42904}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224290240125726306
@@ -6255,8 +6310,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1582260704575616}
   m_LocalRotation: {x: 0, y: 0.67559016, z: 0, w: 0.7372774}
-  m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 93.97093, y: 93.97093, z: 93.97093}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00018310547}
+  m_LocalScale: {x: 93.970184, y: 93.970184, z: 93.970184}
   m_Children:
   - {fileID: 4671266818051520}
   m_Father: {fileID: 224925082016888350}
@@ -6264,7 +6319,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0043029785, y: -29.886192}
+  m_AnchoredPosition: {x: -0.007675171, y: -29.888062}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224502318328564866
@@ -6293,8 +6348,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1943424348056272}
   m_LocalRotation: {x: 0, y: 0.86602545, z: 0, w: 0.49999997}
-  m_LocalPosition: {x: 0, y: 0, z: -0.000030517574}
-  m_LocalScale: {x: 129.33597, y: 129.33597, z: 129.33597}
+  m_LocalPosition: {x: 0, y: 0, z: 0.00018310544}
+  m_LocalScale: {x: 129.33598, y: 129.33598, z: 129.33598}
   m_Children:
   - {fileID: 4294327288198790}
   m_Father: {fileID: 224337326064429390}
@@ -6302,7 +6357,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000022929838, y: -125.94989}
+  m_AnchoredPosition: {x: 0.0072021475, y: -125.945206}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224778288402923544

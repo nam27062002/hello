@@ -27,12 +27,6 @@ public class MenuScreensControllerToolbar {
 	//----------------------------------------------------------------------//
 	// CONSTANTS															//
 	//----------------------------------------------------------------------//
-	private enum Layout {
-		VERTICAL,
-		HORIZONTAL
-	}
-	private const Layout LAYOUT = Layout.VERTICAL;
-
 	private class SelectionAction {
 		public UnityEngine.Object obj = null;
 		public bool focus = true;
@@ -66,16 +60,14 @@ public class MenuScreensControllerToolbar {
 		GOALS_SCREENS,
 		REWARD_SCREENS,
 		TOURNAMENT_SCREENS,
+		LAB_SCREENS,
 
 		COUNT
 	}
 
 	// Other consts
-	private const float MARGIN = 5f;
-	private const float INDENT_SIZE = 10f;
-	private static readonly Vector2 POSITION = new Vector2(5f, 5f);
-	private static readonly Vector2 ELEMENT_SIZE = new Vector2(130f, 20f);
 	private static readonly Color BACKGROUND_COLOR = new Color(0.25f, 0.25f, 0.25f, 0.75f);
+	private static readonly Vector2 FOLD_BUTTON_SIZE = new Vector2(30f, 100f);
 
 	//----------------------------------------------------------------------//
 	// MEMBERS																//
@@ -86,9 +78,21 @@ public class MenuScreensControllerToolbar {
 	private static int s_frameCount = 0;
 	private static ScreensGroup[] s_screenGroups = new ScreensGroup[(int)EScreensGroup.COUNT];
 
-	private static Rect s_rect = new Rect();
-	private static Rect s_lastTotalRect = new Rect();
+	// Layouting
 	private static float s_maxWidth = 0f;
+
+	// Persisting properties
+	private const string EXPANDED_KEY = "MenuScreensControllerToolbar.expanded";
+	private static bool expanded {
+		get { return Prefs.GetBoolEditor(EXPANDED_KEY); }
+		set { Prefs.SetBoolEditor(EXPANDED_KEY, value); }
+	}
+
+	private const string SCROLL_POS_KEY = "MenuScreensControllerToolbar.scrollPos";
+	private static Vector2 scrollPos {
+		get { return Prefs.GetVector2Editor(SCROLL_POS_KEY); }
+		set { Prefs.SetVector2Editor(SCROLL_POS_KEY, value); }
+	}
 
 	//----------------------------------------------------------------------//
 	// METHODS																//
@@ -116,6 +120,7 @@ public class MenuScreensControllerToolbar {
 		s_screenGroups[(int)EScreensGroup.GOALS_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.GoalsScreensExpanded", "Goals Screens");
 		s_screenGroups[(int)EScreensGroup.REWARD_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.RewardScreensExpanded", "Reward Screens");
 		s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.TournamentScreensExpanded", "Tournament Screens");
+		s_screenGroups[(int)EScreensGroup.LAB_SCREENS] = new ScreensGroup("MenuScreensControllerToolbar.LabScreensExpanded", "Lab Screens");
 		for(MenuScreen scr = MenuScreen.PLAY; scr < MenuScreen.COUNT; ++scr) {
 			switch(scr) {
 				case MenuScreen.MISSIONS:
@@ -126,7 +131,8 @@ public class MenuScreensControllerToolbar {
 
 				case MenuScreen.OPEN_EGG:
 				case MenuScreen.EVENT_REWARD:
-				case MenuScreen.PENDING_REWARD: {
+				case MenuScreen.PENDING_REWARD:
+				case MenuScreen.LEAGUES_REWARD: {
 					s_screenGroups[(int)EScreensGroup.REWARD_SCREENS].screens.Add(scr);
 				} break;
 
@@ -137,17 +143,21 @@ public class MenuScreensControllerToolbar {
 					s_screenGroups[(int)EScreensGroup.TOURNAMENT_SCREENS].screens.Add(scr);
 				} break;
 
+				case MenuScreen.LAB_PETS:
+				case MenuScreen.LAB_LEAGUES:
+				case MenuScreen.LAB_MISSIONS:
+				case MenuScreen.LAB_DRAGON_SELECTION: {
+					s_screenGroups[(int)EScreensGroup.LAB_SCREENS].screens.Add(scr);
+				} break;
+
 				default: {
 					s_screenGroups[(int)EScreensGroup.MAIN_SCREENS].screens.Add(scr);
 				} break;
 			}
 		}
 
-		// Initialize rects
-		s_rect = new Rect(POSITION.x + MARGIN, POSITION.y + MARGIN, ELEMENT_SIZE.x, ELEMENT_SIZE.y);
-		s_lastTotalRect = new Rect(s_rect);
-		s_lastTotalRect.x -= MARGIN;
-		s_lastTotalRect.y -= MARGIN;
+		// Init some other internal vars
+		s_maxWidth = 0f;
 	}
 
 	/// <summary>
@@ -166,12 +176,6 @@ public class MenuScreensControllerToolbar {
 	/// </summary>
 	/// <param name="_sceneview">The target scene.</param>
 	private static void OnSceneGUI(SceneView _sceneview) {
-		if(Event.current.type == EventType.Layout) {
-			s_maxWidth = 0f;
-		} else if(Event.current.type == EventType.Repaint) {
-			s_rect.width = s_maxWidth;
-		}
-
 		// Extra processing for older Unity versions: always check for the menu screens controller
 		#if !UNITY_5_6_OR_NEWER
 		if(s_transitionManager == null) {
@@ -183,58 +187,56 @@ public class MenuScreensControllerToolbar {
 		if(s_transitionManager == null) return;
 
 		// http://answers.unity3d.com/questions/19321/onscenegui-called-without-any-object-selected.html
+		// Initialize a GUI Handle in the scene view
 		MenuScreen screenToEdit = MenuScreen.NONE;
 		Handles.BeginGUI(); {
-			// Background - using last known total rect
-			s_lastTotalRect.width += 2 * MARGIN;
-			s_lastTotalRect.height += 2 * MARGIN;
-			s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, ELEMENT_SIZE.x);	// Minimum size!
-			s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, ELEMENT_SIZE.y);	// Minimum size!
-			EditorGUI.DrawRect(s_lastTotalRect, BACKGROUND_COLOR);
+			// Compute size
+			Rect viewport = SceneView.currentDrawingSceneView.camera.pixelRect;
+			viewport = EditorGUIUtility.PixelsToPoints(viewport);	// [AOC] For Retina displays, convert units
+			Rect size = new Rect(0, 0, s_maxWidth + 30, viewport.height);	// Add extra space for the scroll bar
 
-			// In this particular case it's easier to just go with old school GUI calls
-			// Reset position
-			s_rect.x = POSITION.x + MARGIN;
-			s_rect.y = POSITION.y + MARGIN;
-			s_lastTotalRect.height = LAYOUT == Layout.HORIZONTAL ? s_rect.height : 0f;
-			s_lastTotalRect.width = LAYOUT == Layout.VERTICAL ? s_rect.width : 0f;
+			// Draw folding button
+			// Setup as if it was not expanded
+			bool isExpanded = expanded; // Cache to avoid consulting Prefs
+			Rect foldButtonRect = new Rect(size.xMin, size.center.y - FOLD_BUTTON_SIZE.y * 0.5f, FOLD_BUTTON_SIZE.x, FOLD_BUTTON_SIZE.y);
+			string foldButtonText = "►";
+			if(isExpanded) {
+				// Tune some stuff when expanded
+				foldButtonRect.x = size.xMax - 5f;   // Adjust to right-most edge of the layout (overlap a bit)
+				foldButtonText = "◄";
+			}
 
-			GUI.enabled = true;
-			for(int i = 0; i < (int)EScreensGroup.COUNT; i++) {
-				DoGroup(ref s_rect, s_screenGroups[i], ref screenToEdit);
+			// Do it!
+			if(GUI.Button(foldButtonRect, foldButtonText)) {
+				// Update control var
+				isExpanded = !isExpanded;
+				expanded = isExpanded;	// Persist to Prefs
+			}
+
+			// If expanded, do buttons layout
+			if(isExpanded) {
+				// Initialize a layouting area
+				GUI.backgroundColor = BACKGROUND_COLOR;
+				GUILayout.BeginArea(size, CustomEditorStyles.simpleBox); {
+					GUI.backgroundColor = Color.white;
+
+					// Join in a full-height scroll view
+					scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true, GUIStyle.none, GUI.skin.verticalScrollbar, GUIStyle.none); {   // No horizontal scrollbar, always show vertical scrollbar
+						// Create a vertical layout to fine-tune margins
+						EditorGUILayout.BeginVertical(GUILayout.Width(size.width - 20f), GUILayout.Height(size.height - 25f)); {
+							// Do groups
+							for(int i = 0; i < (int)EScreensGroup.COUNT; i++) {
+								DoGroupLayout(s_screenGroups[i], ref screenToEdit);
+							}
+						} EditorGUILayout.EndVertical();
+					} EditorGUILayout.EndScrollView();
+				} GUILayout.EndArea();
 			}
 		} Handles.EndGUI();
 
 		// If the user has selected a screen to edit, react to it!
 		if(screenToEdit != MenuScreen.NONE) {
-			// Disable all screens except the target one and ping the target screen
-			ScreenData scr = null;
-			for(int i = 0; i < (int)MenuScreen.COUNT; i++) {
-				scr = s_transitionManager.GetScreenData((MenuScreen)i);
-				if(scr != null) {
-					if(i == (int)screenToEdit) {
-						// Select and ping 3D scene in hierarchy
-						if(scr.scene3d != null) {
-							s_pendingSelections.Enqueue(new SelectionAction(scr.scene3d.gameObject, false, true));
-						}
-
-						// Select and ping screen in hierarchy, and focus scene view on it
-						if(scr.ui != null) {
-							scr.ui.gameObject.SetActive(true);
-							s_pendingSelections.Enqueue(new SelectionAction(scr.ui.gameObject, true, true));
-						}
-					} else {
-						if(scr.ui != null) scr.ui.gameObject.SetActive(false);
-					}
-				}
-			}
-
-			// Move main camera to screen's snap point (if any)
-			CameraSnapPoint targetSnapPoint = s_transitionManager.GetScreenData((MenuScreen)screenToEdit).cameraSetup;
-			if(targetSnapPoint != null) {
-				targetSnapPoint.Apply(s_transitionManager.camera);
-				s_transitionManager.camera.transform.position = targetSnapPoint.transform.position;
-			}
+			GoToScreen(screenToEdit);
 		}
 
 		// We can only do one selection action every X frames, so store them in a queue
@@ -252,80 +254,82 @@ public class MenuScreensControllerToolbar {
 	}
 
 	/// <summary>
-	/// Advance the position pointer.
+	/// Select and focus a specific screen.
 	/// </summary>
-	/// <param name="_rect">Rect.</param>
-	/// <param name="_distance">Optionally define the distance to advance. Otherwise it will take the rect's size as reference.</param>
-	private static void AdvancePos(ref Rect _rect, float _distance = -1f) {
-		// Aux vars
-		Rect viewport = SceneView.currentDrawingSceneView.camera.pixelRect;
+	/// <param name="_screen">Screen to focus.</param>
+	private static void GoToScreen(MenuScreen _screen) {
+		// Disable all screens except the target one and ping the target screen
+		ScreenData scr = null;
+		for(int i = 0; i < (int)MenuScreen.COUNT; i++) {
+			scr = s_transitionManager.GetScreenData((MenuScreen)i);
+			if(scr != null) {
+				if(i == (int)_screen) {
+					// Select and ping 3D scene in hierarchy
+					if(scr.scene3d != null) {
+						s_pendingSelections.Enqueue(new SelectionAction(scr.scene3d.gameObject, false, true));
+					}
 
-		// Different layouts
-		switch(LAYOUT) {
-			case Layout.HORIZONTAL: {
-				// Advance pos
-				float toAdvance = _distance > 0 ? _distance : _rect.width;
-				_rect.x += toAdvance;
-				s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + toAdvance);
-
-				// New row if we go off-viewport
-				if(_rect.x + _rect.width > viewport.xMax) {
-					_rect.x = viewport.xMin + POSITION.x;
-					_rect.y += _rect.height + POSITION.y;
-					s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + _rect.height + POSITION.y);
+					// Select and ping screen in hierarchy, and focus scene view on it
+					if(scr.ui != null) {
+						scr.ui.gameObject.SetActive(true);
+						s_pendingSelections.Enqueue(new SelectionAction(scr.ui.gameObject, true, true));
+					}
+				} else {
+					if(scr.ui != null) scr.ui.gameObject.SetActive(false);
 				}
-			} break;
+			}
+		}
 
-			case Layout.VERTICAL: {
-				// Advance pos
-				float toAdvance = _distance > 0 ? _distance : _rect.height;
-				_rect.y += toAdvance;
-				s_lastTotalRect.height = Mathf.Max(s_lastTotalRect.height, s_lastTotalRect.height + toAdvance);
-
-				// New column if we go off-viewport
-				if(_rect.y + _rect.height > viewport.yMax) {
-					_rect.y = viewport.yMin + 5f;
-					_rect.x += _rect.width + 5f;
-					s_lastTotalRect.width = Mathf.Max(s_lastTotalRect.width, s_lastTotalRect.width + _rect.width + 5f);
-				}
-			} break;
+		// Move main camera to screen's snap point (if any)
+		CameraSnapPoint targetSnapPoint = s_transitionManager.GetScreenData(_screen).cameraSetup;
+		if(targetSnapPoint != null) {
+			targetSnapPoint.Apply(s_transitionManager.camera);
+			s_transitionManager.camera.transform.position = targetSnapPoint.transform.position;
 		}
 	}
 
 	/// <summary>
 	/// Displays a screen group.
 	/// </summary>
-	/// <param name="_pos">Cursor.</param>
 	/// <param name="_group">Group to be displayed.</param>
 	/// <returns>If a screen button has been pressed, target screen..</returns>
-	private static void DoGroup(ref Rect _pos, ScreensGroup _group, ref MenuScreen _screenToEdit) {
+	private static void DoGroupLayout(ScreensGroup _group, ref MenuScreen _screenToEdit) {
 		// Main Screens Foldable Group
-		bool expanded = Prefs.GetBoolEditor(_group.key, true);
-		expanded = EditorGUI.Foldout(_pos, expanded, _group.displayName);
-		Prefs.SetBoolEditor(_group.key, expanded);
-		AdvancePos(ref _pos);
-		if(expanded) {
+		bool groupExpanded = Prefs.GetBoolEditor(_group.key, true);
+		groupExpanded = EditorGUILayout.Foldout(groupExpanded, _group.displayName);
+		Prefs.SetBoolEditor(_group.key, groupExpanded);
+		if(groupExpanded) {
 			// Indent in
-			_pos.x += INDENT_SIZE;
-			_pos.width -= INDENT_SIZE;
+			EditorGUI.indentLevel++;
 
 			// Do a button for each screen in the group
 			for(int i = 0; i < _group.screens.Count; ++i) {
-				// Figure out required element width
-				GUIContent label = new GUIContent(_group.screens[i].ToString());
-				s_maxWidth = Mathf.Max(GUI.skin.button.CalcSize(label).x, s_maxWidth);
-
 				// Draw button
-				if(GUI.Button(_pos, label)) {
-					// Save it as target screen!
-					_screenToEdit = _group.screens[i];
-				}
-				AdvancePos(ref _pos);
+				// [AOC] Hardcode Hack to make buttons respect indentation
+				EditorGUILayout.BeginHorizontal(); {
+					// Figure out required width based on button's label
+					GUIContent label = new GUIContent(_group.screens[i].ToString());
+					float contentWidth = GUI.skin.button.CalcSize(label).x;
+
+					// Figure out indentation size
+					float indentationWidth = EditorGUI.IndentedRect(new Rect(0, 0, 100f, 10f)).x;
+
+					// Update absolute max width var
+					s_maxWidth = Mathf.Max(contentWidth + indentationWidth, s_maxWidth);
+
+					// Space with indent size
+					GUILayout.Space(indentationWidth);
+
+					// Button
+					if(GUILayout.Button(label)) {
+						// Save it as target screen!
+						_screenToEdit = _group.screens[i];
+					}
+				} EditorGUILayout.EndHorizontal();
 			}
 
 			// Indent out
-			_pos.x -= INDENT_SIZE;
-			_pos.width += INDENT_SIZE;
+			EditorGUI.indentLevel--;
 		}
 	}
 }

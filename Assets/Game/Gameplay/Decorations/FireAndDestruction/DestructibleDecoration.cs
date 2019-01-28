@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DestructibleDecoration : MonoBehaviour, ISpawnable {
+public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	private enum InteractionType {
 		Collision = 0,
@@ -29,8 +29,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 	[SeparatorAttribute]
 	[SerializeField] private float m_cameraShake = 0;
 
+    //------
+    public delegate void OnDestroyDelegate();
+    public OnDestroyDelegate onDestroy;
+    //------
 
-	private ZoneManager.ZoneEffect m_effect;
+
+    private ZoneManager.ZoneEffect m_effect;
 	private ZoneManager.Zone m_zone;
 
 	private GameObject m_view;
@@ -53,30 +58,42 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 
 	//-------------------------------------------------------------------------------------------//
+    
+    void Awake()
+    {
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+    
 	// Use this for initialization
 	void Start() {		
 		m_feedbackParticle.CreatePool();
 		m_destroyParticle.CreatePool();
 	}
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
+	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                if ( gameObject.name.Contains("PF_Catapult") )
+                {
+                        Debug.Log("Hola!");
+                }
+                OnLevelLoaded();
+            }break;
+        }
+    }
+    
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
@@ -91,11 +108,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 		if (m_zone == ZoneManager.Zone.None || m_effect == ZoneManager.ZoneEffect.None) {
 			if (m_collider) Destroy(m_collider);
-			//TODO: find a better way to clean prefabs
-			//if (m_viewDestroyed) Destroy(m_viewDestroyed);
-			//Destroy(m_autoSpawner);
-			Destroy(this);
-			//Destroy(m_entity);
+			Destroy(this);			
 		} else {
 			m_view = transform.Find("view").gameObject;
 			Transform viewDestroyed = transform.Find("view_destroyed");
@@ -154,7 +167,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnCollisionEnter(Collision _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (_other.contacts.Length > 0) {
 						if (m_effect == ZoneManager.ZoneEffect.S) {
@@ -176,7 +189,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerEnter(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						GameObject ps = m_feedbackParticle.Spawn();
@@ -210,7 +223,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 
 	void OnTriggerExit(Collider _other) {
 		if (enabled && m_spawned) {
-			if (!m_dragonBreath.IsFuryOn()) {
+			if (!m_dragonBreath.IsFuryOn() || m_dragonBreath.isFuryPaused) {
 				if (_other.gameObject.CompareTag("Player")) {
 					if (m_effect == ZoneManager.ZoneEffect.S) {
 						Vector3 particlePosition = transform.position + m_colliderCenter;
@@ -237,8 +250,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 			}
 		}
 	}
+    
+    public bool CanBreakByShooting()
+    {
+        return m_effect != ZoneManager.ZoneEffect.S && enabled && m_spawned;
+    }
 
-	void Break() {
+	public void Break( bool _player = true ) {
 		GameObject ps = m_destroyParticle.Spawn(transform.position + (transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
@@ -263,7 +281,10 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		if (!string.IsNullOrEmpty(m_onDestroyAudio))
 			AudioController.Play(m_onDestroyAudio, transform.position + m_collider.center);
 
-		m_view.SetActive(false);
+        if (onDestroy != null)
+            onDestroy();
+
+        m_view.SetActive(false);
 		m_viewDestroyed.SetActive(true);
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
 		if (m_inflammableBehaviour != null) m_inflammableBehaviour.enabled = false;
@@ -282,6 +303,11 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable {
 		if (m_cameraShake > 0) {
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);
 		}
+        
+        if ( _player )
+        {
+            InstanceManager.timeScaleController.HitStop();
+        }
 	}
 
 	void FaceDragon(GameObject _ps) {

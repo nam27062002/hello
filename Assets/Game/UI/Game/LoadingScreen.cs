@@ -30,7 +30,9 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	[SerializeField] private Canvas m_loadingCanvas = null;
 	[Space]
 	[SerializeField] private Image m_dragonIcon = null;
-	[SerializeField] private PowerIcon[] m_powerIcons = null;
+    [SerializeField] private Image m_tierIcon = null;
+    [Space]
+    [SerializeField] private PowerIcon[] m_powerIcons = null;
 
 	public static bool isVisible {
 		get { 
@@ -74,17 +76,17 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// </summary>
 	public static void InitWithCurrentData() {
 		// Aux vars
-		DragonData currentDragon = null;
+		IDragonData currentDragon = null;
 		DefinitionNode skinDef = null;
 		List<string> pets = null;
 
-		if (SceneController.s_mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveEventsManager.instance.m_tournament;
+		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
+			HDTournamentManager tournament = HDLiveDataManager.tournament;
 			currentDragon = DragonManager.GetDragonData(tournament.GetToUseDragon());
 			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
 			pets = tournament.GetToUsePets();
 		} else {
-			currentDragon = DragonManager.GetDragonData(UsersManager.currentUser.currentDragon);
+			currentDragon = DragonManager.currentDragon;
 			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
 			pets = currentDragon.pets;
 		}
@@ -92,16 +94,28 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 		// Dragon image
 		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
+        instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
+
 
 		// Powers: skin + pets
 		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
-
+        List<PowerIcon.Mode> powerMode = new List<PowerIcon.Mode>();
 		// Skin
 		if(skinDef == null) {
 			powerDefs.Add(null);
 		} else {
 			powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));	// Can be null
 		}
+        powerMode.Add(PowerIcon.Mode.SKIN);
+
+        // Special Dragon Powers
+        if (SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
+            DragonDataSpecial dataSpecial = (DragonDataSpecial)currentDragon;
+            for (int i = 1; i <= dataSpecial.powerLevel; ++i) {
+                powerDefs.Add(dataSpecial.specialPowerDefsByOrder[i - 1]);
+                powerMode.Add(PowerIcon.Mode.SPECIAL_DRAGON);
+            }
+        }
 
 		// Pets
 		for(int i = 0; i < pets.Count; i++) {
@@ -111,6 +125,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 			} else {
 				powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup")));
 			}
+            powerMode.Add(PowerIcon.Mode.PET);
 		}
 
 		// Initialize power icons
@@ -126,7 +141,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 			// Hide if there is no power associated
 			if(powerDefs[i] == null) {
-				if (i > 0) {
+                if (i > 0 || SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
 					powerIcon.gameObject.SetActive(false);
 				} else {
 					powerIcon.InitFromDefinition(null, false, false);
@@ -137,10 +152,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 			// Everything ok! Initialize
 			powerIcon.gameObject.SetActive(true);
 
-			PowerIcon.Mode mode = PowerIcon.Mode.SKIN;
-			if (i > 0) mode = PowerIcon.Mode.PET;
-
-			powerIcon.InitFromDefinition(powerDefs[i], false, false, mode);
+            powerIcon.InitFromDefinition(powerDefs[i], false, false, powerMode[i]);
 		}
 	}
 }

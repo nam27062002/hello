@@ -131,18 +131,24 @@ public class HDTongueDetector : MonoBehaviour
 	/// <summary>
 	/// Start recording process.
 	/// </summary>
-	public void StartRecording() {
+	/// <returns>Did the recording start properly?</returns>
+	/// <param name="_enableMicrophone">Record audio as well?</param>
+	public bool StartRecording(bool _enableMicrophone) {
 #if (UNITY_IOS)
         // Prevent spamming
-        if(ReplayKit.isRecording) return;
+        if(ReplayKit.isRecording) return false;
 
 		// Do it!
-		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
-		ReplayKit.Discard ();
+//		ControlPanel.Log(Colors.paleYellow.Tag("DISCARD RECORDING"));
+//		ReplayKit.Discard ();
 
 		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING"));
-		ReplayKit.StartRecording(true);
+		bool success = ReplayKit.StartRecording(_enableMicrophone);
+
+		ControlPanel.Log(Colors.paleYellow.Tag("START RECORDING RESULT: " + success));
 #endif
+        HDTrackingManagerImp.Instance.Notify_AnimojiRecord();
+		return false;
 	}
 
 	/// <summary>
@@ -192,9 +198,8 @@ public class HDTongueDetector : MonoBehaviour
 		m_dragonAnimojiInstance.ToggleFire(false);
 
 		// Notify listeners
-		ControlPanel.Log(Colors.paleYellow.Tag("FACE DETECTED"));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI]] FACE DETECTED"));
 		onFaceAdded.Invoke();
-		Debug.Log (">>>>>>>>>FACE ADDED");
 	}
 		
 	/// <summary>
@@ -204,6 +209,15 @@ public class HDTongueDetector : MonoBehaviour
 	void FaceUpdated (ARFaceAnchor anchorData)
 	{
 		m_currentBlendShapes = anchorData.blendShapes;
+
+		if(m_faceDetected != anchorData.isTracked) {
+			ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI]] FORCING FACE DETECTED/REMOVED"));
+			if(anchorData.isTracked) {
+				FaceAdded(anchorData);
+			} else {
+				FaceRemoved(anchorData);
+			}			
+		}
 	}
 
 	/// <summary>
@@ -217,9 +231,8 @@ public class HDTongueDetector : MonoBehaviour
 		m_dragonAnimojiInstance.gameObject.SetActive (false);
 
 		// Notify listeners
-		ControlPanel.Log(Colors.paleYellow.Tag("FACE REMOVED"));
+		ControlPanel.Log(Colors.paleYellow.Tag("[ANIMOJI] FACE REMOVED"));
 		onFaceRemoved.Invoke();
-		Debug.Log (">>>>>>>>>FACE REMOVED");
 	}
 
 	private bool m_lastFaceDetected = false;

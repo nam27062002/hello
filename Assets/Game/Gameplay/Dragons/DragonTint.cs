@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,7 +17,7 @@ public class DragonTint : MonoBehaviour
 	List<Material> m_materials = new List<Material>();
 	List<Color> m_materialsMultiplyColors = new List<Color>();
 	List<Color> m_materialsAddColors = new List<Color>();
-    List<Shader> m_originalShaders = new List<Shader>();
+    List<Material> m_originalMaterial = new List<Material>();
 	List<Color> m_fresnelColors = new List<Color>();
 	List<float> m_innerLightAddValue = new List<float>();
 	List<Color> m_innerLightColors = new List<Color>();
@@ -78,32 +78,48 @@ public class DragonTint : MonoBehaviour
 		Material wingsMaterial = null;
 		List<Renderer> wingsRenderers = new List<Renderer>();
 
-		Material diguiseMaterial = null;
-		List<Renderer> diguiseRenderers = new List<Renderer>();
+        Dictionary<string, Material> joinMaterial = new Dictionary<string, Material>();
+        Dictionary<string, List<Renderer>> disguiseRenderers = new Dictionary<string, List<Renderer>>();
 
 
-		if ( m_renderers != null )
+		if ( m_renderers != null)
 		for( int i = 0; i<m_renderers.Length; i++ )
 		{
-			Renderer renderer = m_renderers[i];
-			Material mat = renderer.material;
+            
+			Renderer r = m_renderers[i];
+            Material mat = r.material;
 			string shaderName = mat.shader.name;
 			if ( shaderName.Contains("Dragon standard") )
 			{
-				if ( renderer.tag.Equals("DragonBody") )
+				if ( r.tag.Equals("DragonBody") )
 				{
-					bodyMaterial = mat;
-					bodyRenderers.Add( renderer );
+                    if ( bodyMaterial == null )
+					    bodyMaterial = mat;
+					bodyRenderers.Add( r );
 				}
-				else if ( renderer.tag.Equals("DragonWings") )
+				else if ( r.tag.Equals("DragonWings") )
 				{
-					wingsMaterial = mat;
-					wingsRenderers.Add( renderer );
+                    if ( wingsMaterial == null )
+					    wingsMaterial = mat;
+					wingsRenderers.Add( r );
 				}
 				else
 				{
-					diguiseMaterial = mat;
-					diguiseRenderers.Add( renderer );
+                    if ( !joinMaterial.ContainsKey( mat.name ) )
+                    {
+                        joinMaterial.Add(mat.name, mat);    
+                    }
+                    if ( disguiseRenderers.ContainsKey( mat.name ) ) 
+                    {
+                            disguiseRenderers[mat.name].Add( r );
+                    }
+                    else
+                    {
+                            // List<Renderer> rends = new List<Renderer>();
+                            // rends.Add( r );
+                            disguiseRenderers.Add(mat.name, new List<Renderer> { r });
+                    }
+					
 				}
 
 				m_dragonRenderers.Add( m_renderers[i] );
@@ -130,14 +146,18 @@ public class DragonTint : MonoBehaviour
 			AddMaterialInfo( wingsMaterial );
 		}
 
-		if ( diguiseMaterial )
-		{
-			max = diguiseRenderers.Count;
-			for (int i = 0; i < max; i++) {
-				diguiseRenderers[i].material = diguiseMaterial;
-			}
-			AddMaterialInfo( diguiseMaterial );
-		}
+        foreach(KeyValuePair<string, Material> pair1 in joinMaterial)
+        {
+            List<Renderer> rends = disguiseRenderers[pair1.Key];
+            int num = rends.Count;
+            for (int i = 0; i < num; i++)
+            {
+                rends[i].material = pair1.Value;
+            }
+            AddMaterialInfo(pair1.Value);
+        }
+            
+        
 
 		m_materialsCount = m_materials.Count;
 	}
@@ -150,7 +170,9 @@ public class DragonTint : MonoBehaviour
         m_fresnelColors.Add(mat.GetColor( GameConstants.Material.FRESNEL_COLOR ));
 		m_innerLightAddValue.Add( mat.GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
 		m_innerLightColors.Add(mat.GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
-        m_originalShaders.Add(mat.shader);
+
+        Material original = new Material(mat);
+        m_originalMaterial.Add( original );
 	}
 
 	void OnEnable() 
@@ -328,7 +350,7 @@ public class DragonTint : MonoBehaviour
             DragonCorpse.setDeathMode(m_materials[i]);
 //            m_materials[i].shader = Shader.Find("Hungry Dragon/Dragon/Death");
 
-     	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE)
+     	if ( _type == DamageType.MINE || _type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse)
      	{
      		// Shows corpse
      		m_deathAlpha = 0;
@@ -341,9 +363,9 @@ public class DragonTint : MonoBehaviour
 
 	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
-		// Switch back body materials
-		for( int i = 0; i< m_materialsCount; ++i )
-            m_materials[i].shader = m_originalShaders[i];
+        // Switch back body materials
+        for (int i = 0; i < m_materialsCount; ++i)
+            m_materials[i].CopyPropertiesFromMaterial( m_originalMaterial[i] );
 
 		m_deathAlpha = 1;
 		for( int i = 0; i<m_dragonRenderers.Count; i++ )

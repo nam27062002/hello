@@ -42,6 +42,9 @@ public class PersistencePrefs
     // Marketing id. It's stored in prefs when it's retrieved successfully since it may take time to get it from device
     private static string KEY_MARKETING_ID = "marketingId";
 
+    // Timestamp of the latest time a cp2 interstial was played at
+    private static string KEY_CP2_INTERTITIAL_LATEST_AT_ID = "cp2InterstitialLatestAt";
+
     private static List<string> KEYS = new List<string>()
     {
         KEY_ACTIVE_PROFILE_NAME,
@@ -55,7 +58,8 @@ public class PersistencePrefs
         KEY_USER_PROFILE_NAME,
         KEY_SERVER_LANGUAGE,
         KEY_LATEST_MARKETING_ID_NOTIFIED,
-        KEY_MARKETING_ID
+        KEY_MARKETING_ID,
+        KEY_CP2_INTERTITIAL_LATEST_AT_ID
     };        
 
     public static bool IsDirty = false;
@@ -80,9 +84,17 @@ public class PersistencePrefs
 
     public static string ActiveProfileName
     {
-        get { return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE); }
+        get
+        {
+#if UNITY_EDITOR
+            return PlayerPrefs.GetString(KEY_ACTIVE_PROFILE_NAME, PersistenceProfile.DEFAULT_PROFILE);
+#else
+            // It always returns DEFAULT_PROFILE to make sure that the file with the progress will be found
+            return PersistenceProfile.DEFAULT_PROFILE;
+#endif
+        }
 
-		set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
+        set { SetString(KEY_ACTIVE_PROFILE_NAME, value); }
     }
 
     public static bool IsCloudSaveEnabled
@@ -161,8 +173,17 @@ public class PersistencePrefs
         SetString(KEY_MARKETING_ID, value);
     }
 
+    public static void SetCp2InterstitialLatestAt(long value)
+    {
+        SetLong(KEY_CP2_INTERTITIAL_LATEST_AT_ID, value);
+    }
 
-    #region social
+    public static long GetCp2InterstitialLatestAt()
+    {
+        return GetLong(KEY_CP2_INTERTITIAL_LATEST_AT_ID);
+    }
+
+#region social
     public static string Social_PlatformKey
     {
         get { return PlayerPrefs.GetString(KEY_SOCIAL_PLATFORM_KEY, null); }
@@ -186,7 +207,7 @@ public class PersistencePrefs
         get { return PlayerPrefs.GetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, 1) == 1; }
         set { SetInt(KEY_SOCIAL_LOGGED_IN_WHEN_QUIT, (value ? 1 : 0)); }
     }
-    #endregion
+#endregion
 
     private static void SetInt(string key, int value)
     {
@@ -198,5 +219,22 @@ public class PersistencePrefs
     {
         PlayerPrefs.SetString(key, value);
         IsDirty = true;
+    }
+
+    private static void SetLong(string key, long value)
+    {
+        PlayerPrefs.SetString(key, value + "");        
+    }
+
+    private static long GetLong(string key)
+    {
+        long returnValue = 0;
+        string value = PlayerPrefs.GetString(key);        
+        if (!string.IsNullOrEmpty(value))
+        {
+            long.TryParse(value, out returnValue);
+        }
+
+        return returnValue;
     }
 }

@@ -17,7 +17,7 @@ using UnityEngine;
 /// Each scene should have an object containing one of these, usually a custom
 /// implementation of this class.
 /// </summary>
-public class GameSceneControllerBase : SceneController {
+public class GameSceneControllerBase : SceneController, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -29,14 +29,8 @@ public class GameSceneControllerBase : SceneController {
 	protected float m_elapsedSeconds = 0;
 	public float elapsedSeconds {
 		get { return m_elapsedSeconds; }
-	}
-
-	// Map status
-	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-	protected bool m_mapUnlocked = false;
-	public bool mapUnlocked {
-		get { return m_mapUnlocked; }
-	}
+        set { m_elapsedSeconds = value; }
+    }
 
 	// Handled by heirs
 	protected bool m_paused = false;
@@ -61,8 +55,7 @@ public class GameSceneControllerBase : SceneController {
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -74,9 +67,21 @@ public class GameSceneControllerBase : SceneController {
 
 		// Unsubscribe to external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
+    
+    
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 
 	public virtual bool IsLevelLoaded()
 	{
@@ -115,10 +120,7 @@ public class GameSceneControllerBase : SceneController {
 	/// The game has started.
 	/// </summary>
 	protected virtual void OnGameStarted() {
-		// Store map state
-		if(UsersManager.currentUser != null) {
-			m_mapUnlocked = UsersManager.currentUser.mapUnlocked;
-		}
+		
 	}
 
 	/// <summary>
@@ -126,16 +128,6 @@ public class GameSceneControllerBase : SceneController {
 	/// </summary>
 	protected virtual void OnGameEnded() {
 		
-	}
-
-	/// <summary>
-	/// Minimap has been upgraded.
-	/// </summary>
-	private void OnMapUnlocked() {
-		// Store new map state
-		if(UsersManager.currentUser != null) {
-			m_mapUnlocked = UsersManager.currentUser.mapUnlocked;
-		}
 	}
 }
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Serialization;
 
-public class Entity : IEntity {
+public class Entity : IEntity, IBroadcastListener {
 	private static readonly string RESOURCES_DIR = "Game/Entities";
 
 	//-----------------------------------------------
@@ -94,7 +94,7 @@ public class Entity : IEntity {
 		// [AOC] Obtain the definition and initialize important data
 		InitFromDef();
 		m_bounds = GetComponentInChildren<CircleArea2D>();
-		Messenger.AddListener(MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+		Broadcaster.AddListener(BroadcastEventType.APPLY_ENTITY_POWERUPS, this);
 	}
 
 	void OnDestroy() {
@@ -102,9 +102,21 @@ public class Entity : IEntity {
 			if (EntityManager.instance != null) {
 				EntityManager.instance.UnregisterEntity (this);
 			}
-			Messenger.RemoveListener (MessengerEvents.APPLY_ENTITY_POWERUPS, ApplyPowerUpMultipliers);
+			Broadcaster.RemoveListener (BroadcastEventType.APPLY_ENTITY_POWERUPS, this);
 		}
 	}
+    
+    public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.APPLY_ENTITY_POWERUPS:
+            {
+                ApplyPowerUpMultipliers();
+            }break;
+        }
+    }
+    
 
 	private void InitFromDef() {
 		// Get the definition
@@ -125,8 +137,11 @@ public class Entity : IEntity {
 		m_reward.origin = m_def.Get("sku");
 		m_reward.category = m_def.Get("category");
 
-		// Simple data
-		m_goldenChance = m_def.GetAsFloat("goldenChance");
+        OnRewardCreated();
+
+
+        // Simple data
+        m_goldenChance = m_def.GetAsFloat("goldenChance");
 		if (sm_goldenModifier && m_goldenChance > 0)
 			m_goldenChance = 1f;
 
@@ -219,18 +234,17 @@ public class Entity : IEntity {
     /// </summary>
     /// <returns>The reward to be given to the player when killing this unit.</returns>
     /// <param name="_burnt">Set to <c>true</c> if the cause of the death was fire - affects the reward.</param>
-    public override Reward GetOnKillReward(bool _burnt) {
+    public override Reward GetOnKillReward(DyingReason _reason) {
 		// Create a copy of the base rewards and tune them
 		Reward newReward = reward;	// Since it's a struct, this creates a new copy rather than being a reference
 
 		// Give coins? True if the entity was golden or has been burnt
-		if(!m_isGolden && !_burnt) {
+		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
 			newReward.coins = 0;
 		}
 
-		if (_burnt) {
+		if (_reason == DyingReason.BURNED || _reason == DyingReason.DESTROYED) {
 			newReward.alcohol = 0;
-			newReward.fury = 0;
 		}
 
 		// Give PC?
@@ -273,8 +287,8 @@ public class Entity : IEntity {
 		return m_isEdible && !((m_edibleFromTier <= _tier) || (m_canBeGrabbed && m_grabFromTier <= _tier) || (m_canBeLatchedOn && m_latchFromTier <= _tier));
 	}
 
-	override public bool CanBeSmashed() {
-		return true;
+	public bool CanBeSmashed( DragonTier _tier ) {
+		return IsEdible(_tier) || CanBeHolded( _tier );
 	}
 
 	public bool IntersectsWith(Vector2 _center, float _radius) {
@@ -374,7 +388,11 @@ public class Entity : IEntity {
 
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
-	}
+
+        OnRewardCreated();
+    }
+
+    protected virtual void OnRewardCreated() {}
 
 
 	public static void AddSCMultiplier( float value )

@@ -82,8 +82,8 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void Awake()
 	{
-		Init ();
-		m_reward.origin = "letter";
+       Init();
+       m_reward.origin = "letter";
 	}
 
 	protected void Init(){
@@ -108,12 +108,14 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void Start()
 	{
-		Spawn();
+        if (SceneController.mode != SceneController.Mode.TOURNAMENT || !HDLiveDataManager.tournament.HasModOfType(typeof(ModDragonSize))) {
+            Spawn();
 
-		// [AOC] If cheating, instantiate a dummy letter for every spawner!
-		if(Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
-			SpawnDebug();
-		}
+            // [AOC] If cheating, instantiate a dummy letter for every spawner!
+            if (Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+                SpawnDebug();
+            }
+        }
 	}
 
 	protected void OnEnable()

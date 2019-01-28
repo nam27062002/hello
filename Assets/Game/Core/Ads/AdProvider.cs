@@ -77,14 +77,14 @@ public abstract class AdProvider
         return "";
     }
 
-    public void Init(bool useAgeProtection)
+    public void Init(bool useAgeProtection, bool consentRestriction)
     {        
         m_ad = new Ad();
 
-        ExtendedInit(useAgeProtection);
+        ExtendedInit(useAgeProtection, consentRestriction);
     }
 
-    protected virtual void ExtendedInit(bool useAgeProtection) {}
+    protected virtual void ExtendedInit(bool useAgeProtection, bool consentRestriction) {}
 
     public void ShowInterstitial(OnPlayVideoCallback callback)
     {
@@ -94,7 +94,8 @@ public abstract class AdProvider
             return;            
         }
 
-        m_ad.Setup(AdType.Interstitial, callback, FeatureSettingsManager.instance.GetAdTimeout());               
+        m_ad.Setup(AdType.Interstitial, callback, FeatureSettingsManager.instance.GetAdTimeout()); 
+		m_ad.Play();
         ExtendedShowInterstitial();
     }
 
@@ -122,6 +123,7 @@ public abstract class AdProvider
         }
 
         m_ad.Setup(AdType.V4VC, callback, FeatureSettingsManager.instance.GetAdTimeout());
+		m_ad.Play();
         ExtendedShowRewarded();
     }   
 

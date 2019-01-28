@@ -30,7 +30,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Use to debug specific objects
 	public const bool DEBUG_ENABLED = false;
-	public const string DEBUG_TARGET = "HUDCurrencyCounters";
+	public const string DEBUG_TARGET = "ButtonUnlockWithCoins_TEST";
 
 	public enum TweenType {
 		NONE,
@@ -144,7 +144,8 @@ public class ShowHideAnimator : MonoBehaviour {
 	public ShowHideAnimatorEvent OnShowCheck = new ShowHideAnimatorEvent();
 
 	// Internal references
-	protected CanvasGroup m_canvasGroup = null;	// Not required, if the object has no animator nor a canvas group, it will be automatically added
+	protected CanvasGroup m_canvasGroup = null; // Not required, if the object has no animator nor a canvas group, it will be automatically added
+	private ShowHideAnimatorEventsListener m_animatorEventsListener = null;	// Only for ANIMATOR type
 
 	// Internal
 	protected Sequence m_sequence = null;	// We will reuse the same tween and play it forward/backwards accordingly
@@ -252,6 +253,12 @@ public class ShowHideAnimator : MonoBehaviour {
 		if(m_sequence != null) {
 			m_sequence.Kill();
 			m_sequence = null;
+		}
+
+		if(m_animatorEventsListener != null) {
+			m_animatorEventsListener.OnShowCompletedEvent.RemoveListener(DoShowPostProcessing);
+			m_animatorEventsListener.OnHideCompletedEvent.RemoveListener(DoHidePostProcessing);
+			m_animatorEventsListener = null;
 		}
 	}
 
@@ -402,7 +409,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// Create the tween sequence according to current setup.
 	/// If a sequence already exists, it will be killed.
 	/// </summary>
-	protected void RecreateTween() {
+	public void RecreateTween() {
 		// If the sequence is already created, kill it
 		if(m_sequence != null) {
 			m_sequence.Complete();	// Make sure sequence is at its end-state to restore object's default values so the new sequence can take them
@@ -462,8 +469,30 @@ public class ShowHideAnimator : MonoBehaviour {
 			.SetUpdate(UpdateType.Normal, m_ignoreTimeScale);
 
 		// Shared parameters
-		TweenParams sharedParams = new TweenParams()
+		TweenParams tweenParams = new TweenParams()
 			.SetEase(m_tweenEase);
+
+		// [AOC] Elastic and back easing functions don't work well with a Fade animation, so tweak the fade duration for those easing functions
+		float fadeDuration = m_tweenDuration;
+		TweenParams fadeParams = new TweenParams()
+			.SetEase(m_tweenEase);
+
+		//float fadeDelay = 0f;
+		switch(m_tweenEase) {
+			case Ease.InElastic:
+			case Ease.OutElastic:
+			case Ease.InOutElastic:
+				fadeDuration = m_tweenDuration * 0.33f;
+				fadeParams.SetEase(Ease.Linear);
+			break;
+
+			case Ease.InBack:
+			case Ease.OutBack:
+			case Ease.InOutBack:
+				fadeDuration = m_tweenDuration * 0.5f;
+				fadeParams.SetEase(Ease.Linear);
+			break;
+		}
 
 		// Initialize based on current parameters
 		switch(m_tweenType) {
@@ -473,52 +502,52 @@ public class ShowHideAnimator : MonoBehaviour {
 
 			case TweenType.FADE: {
 				m_tweenValue = Mathf.Clamp01(m_tweenValue);
-				m_sequence.Join(m_canvasGroup.DOFade(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.UP: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.down * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.DOWN: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.up * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.LEFT: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.right * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.RIGHT: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOBlendableLocalMoveBy(Vector3.left * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE: {
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.DELTA_SIZE: {
 				RectTransform rt = transform as RectTransform;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(rt.DOSizeDelta(rt.sizeDelta + Vector2.one * m_tweenValue, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE_X: {
 				Vector3 scale = transform.localScale;
 				scale.x = m_tweenValue;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 
 			case TweenType.SCALE_Y: {
 				Vector3 scale = transform.localScale;
 				scale.y = m_tweenValue;
-				m_sequence.Join(m_canvasGroup.DOFade(0f, m_tweenDuration).SetAs(sharedParams).From());
-				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(sharedParams).From());
+				m_sequence.Join(m_canvasGroup.DOFade(0f, fadeDuration).SetAs(fadeParams).From());
+				m_sequence.Join(transform.DOScale(scale, m_tweenDuration).SetAs(tweenParams).From());
 			} break;
 		}
 
@@ -541,7 +570,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalShow(bool _animate, bool _propagateToChildren, bool _restartAnim) {
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.green.Tag("INTERNAL_SHOW"));
+		ShowHideAnimator.DebugLog(this, Colors.green.Tag("INTERNAL_SHOW (" + _animate + ", " + _propagateToChildren + ", " + _restartAnim + ")"));
 
 		// First things first: execute any external checks that might interrupt the action
 		m_checkPassed = true;
@@ -610,7 +639,7 @@ public class ShowHideAnimator : MonoBehaviour {
 	/// <param name="_restartAnim">Whether the animation should be restarted.</param>
 	protected virtual void InternalHide(bool _animate, bool _disableAfterAnimation, bool _propagateToChildren, bool _restartAnim) {
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.red.Tag("INTERNAL_HIDE"));
+		ShowHideAnimator.DebugLog(this, Colors.red.Tag("INTERNAL_HIDE (" + _animate + ", " + _disableAfterAnimation + ", " + _propagateToChildren + ", " + _restartAnim + ")"));
 
 		// If restarting the animation, instantly force hide state without animation
 		if(_restartAnim) {
@@ -839,6 +868,13 @@ public class ShowHideAnimator : MonoBehaviour {
 		// Animator must be valid!
 		if(m_animator == null) return;
 
+		// Make sure we're listening to target animator's events
+		if(m_animatorEventsListener == null) {
+			m_animatorEventsListener = m_animator.gameObject.ForceGetComponent<ShowHideAnimatorEventsListener>();
+			m_animatorEventsListener.OnShowCompletedEvent.AddListener(DoShowPostProcessing);
+			m_animatorEventsListener.OnHideCompletedEvent.AddListener(DoHidePostProcessing);
+		}
+
 		// Reset all known triggers
 		m_animator.ResetTrigger( GameConstants.Animator.SHOW );
 		m_animator.ResetTrigger( GameConstants.Animator.HIDE );
@@ -895,20 +931,6 @@ public class ShowHideAnimator : MonoBehaviour {
 		}
 
 		// No more active tweens! Do postprocessing
-		DoHidePostProcessing();
-	}
-
-	/// <summary>
-	/// Animation events, must be connected to the animations!
-	/// </summary>
-	public void OnShowAnimationCompleted() {
-		DoShowPostProcessing();
-	}
-
-	/// <summary>
-	/// Animation events, must be connected to the animations!
-	/// </summary>
-	public void OnHideAnimationCompleted() {
 		DoHidePostProcessing();
 	}
 

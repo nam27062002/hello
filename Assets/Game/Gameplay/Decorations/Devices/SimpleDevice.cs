@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleDevice : Initializable {
+public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	private AutoSpawnBehaviour m_autoSpawner;
 	private InflammableDecoration m_inflammable;
@@ -22,18 +22,20 @@ public class SimpleDevice : Initializable {
 		m_enabled = false;
 	}
 
-	public override void Initialize() {
-		m_operatorAvailable = false;
-	}
+    public void Spawn(ISpawner _spawner) {
+        OnRespawn();
+    }
 
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	protected virtual void OnEnable() {
+
+
+    /// <summary>
+    /// Component enabled.
+    /// </summary>
+    protected virtual void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -41,13 +43,30 @@ public class SimpleDevice : Initializable {
 	/// </summary>
 	protected virtual void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnAreaLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnAreaLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
-	// Update is called once per frame
-	void Update () {
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                OnAreaLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnAreaExit();
+            }break;
+        }
+    }
+
+    // Update is called once per frame
+    public void CustomUpdate() { } // Not used at the moment
+    void Update () {
 		if (m_enabled) {
 			if (m_inflammable.IsBurning() 
 			|| 	m_autoSpawner.state == AutoSpawnBehaviour.State.Respawning) {	// if respawning we wait
@@ -85,7 +104,8 @@ public class SimpleDevice : Initializable {
 	protected virtual void ExtendedUpdate() {}
 
 	protected virtual void OnRespawning() {}
-	protected virtual void OnOperatorDead() {}
+    protected virtual void OnRespawn() { }
+    protected virtual void OnOperatorDead() {}
 	protected virtual void OnOperatorSpawned() {}
 
 	protected virtual void OnAreaLoaded() {

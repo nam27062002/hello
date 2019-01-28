@@ -252,6 +252,8 @@ public class DeviceQualityManager
                 LogWarning("No profile available for memory " + memorySize);
         }
 
+		Debug.Log (">>>>>>>>GetMaxProfileLevel: " + returnValue);
+
         return returnValue;
     }     
 

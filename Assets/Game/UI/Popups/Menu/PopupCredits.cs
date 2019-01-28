@@ -47,16 +47,16 @@ public class PopupCredits : MonoBehaviour {
 		public string name = "";
 		public GameObject prefab = null;
 	}
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
 	[SerializeField] private ScrollRect m_scroll = null;
 	[SerializeField] private TextMeshProUGUI m_text = null;
-	[SerializeField] private float m_scrollSpeed = 150f;	// Units per second
+	[SerializeField] private float m_scrollSpeed = 150f;    // Units per second
 	[SerializeField] private float m_inertiaThreshold = 100f;
-	[SerializeField] private float m_finalPause = 3f;	// Seconds
+	[SerializeField] private float m_finalPause = 3f;   // Seconds
 	[Space]
 	[SerializeField] private GameObject m_textPrefab = null;
 	[SerializeField] private List<TextStyle> m_styles = new List<TextStyle>();
@@ -68,7 +68,7 @@ public class PopupCredits : MonoBehaviour {
 
 	private bool m_autoClosePending = false;
 	private float m_autoCloseTimer = -1f;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -96,7 +96,20 @@ public class PopupCredits : MonoBehaviour {
 				// Does line start with "//"?
 				if(!line.StartsWith("//")) {
 					// No! Valid line
-					sb.AppendLine(line);
+					int tidIndex = 0;
+					StringBuilder bline = new StringBuilder(line);
+					while(true) {
+						tidIndex = line.IndexOf("TID", tidIndex);
+						if(tidIndex < 0)
+							break;
+
+						int closeIndex = line.IndexOf('>', tidIndex);
+						string tidtoken = line.Substring(tidIndex, closeIndex - tidIndex);
+						string tidtokencl = line.Substring(tidIndex - 1, closeIndex - tidIndex + 2);
+						bline.Replace(tidtokencl, LocalizationManager.SharedInstance.Localize(tidtoken));
+						tidIndex = closeIndex;
+					}
+					sb.AppendLine(bline.ToString());
 				}
 			}
 		}
@@ -106,7 +119,7 @@ public class PopupCredits : MonoBehaviour {
 		TextStyle style;
 		string openTag;
 		string closeTag;
-		sb.Length = 0;	// Reuse string builder
+		sb.Length = 0;  // Reuse string builder
 		for(int i = 0; i < m_styles.Count; ++i) {
 			style = m_styles[i];
 
@@ -176,7 +189,18 @@ public class PopupCredits : MonoBehaviour {
 		// To work around that, just pause the scroll animation whenever we have a finger touching the screen
 		// Unless waiting to end!
 		if(!m_autoClosePending) {
+			// Simulate touches in the editor
+#if((UNITY_ANDROID || UNITY_IPHONE) && !UNITY_EDITOR)
 			int touchCount = Input.touchCount;
+#else
+			int touchCount = 0;
+			for(int i = 0; i < 3; ++i) {
+				if(Input.GetMouseButton(i)) {
+					touchCount++;
+				}
+			}
+#endif
+			// If tween exists, kill it
 			if(m_tween != null) {
 				if(touchCount > 0) {
 					m_tween.Kill();
@@ -248,7 +272,7 @@ public class PopupCredits : MonoBehaviour {
 		InstanceManager.menuSceneController.transitionManager.currentScreenData.ui.gameObject.SetActive(false);
 
 		// Popups
-		m_popupsToRestore = PopupManager.openedPopups;
+		m_popupsToRestore = new List<PopupController>(PopupManager.openedPopups);
 
 		// Skip this one!
 		m_popupsToRestore.Remove(this.GetComponent<PopupController>());

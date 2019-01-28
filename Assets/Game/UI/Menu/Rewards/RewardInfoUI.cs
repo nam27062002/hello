@@ -51,14 +51,8 @@ public class RewardInfoUI : MonoBehaviour {
 	[Separator("Golden Egg Fragments Reward")]
 	[SerializeField] private Localizer m_goldenFragmentTitle = null;
 	[Space]
-	[SerializeField] private ShowHideAnimator m_goldenFragmentCounter = null;
-	[SerializeField] private TextMeshProUGUI m_goldenFragmentCounterText = null;
-	[SerializeField] private ShowHideAnimator m_goldenEggCompletedInfo = null;
-	[SerializeField] private ShowHideAnimator m_goldenEggAllCollectedInfo = null;
-	[SerializeField] private ParticleSystem m_goldenFragmentCounterFX = null;
 	[SerializeField] private string m_goldenFragmentsSFX = "";
-	[Space]
-	[SerializeField] private float m_goldFragmentsCounterDelay = 3f;
+	
 
 	[SeparatorAttribute("SC Reward")]
 	[SerializeField] private Localizer m_scTitle = null;
@@ -71,6 +65,17 @@ public class RewardInfoUI : MonoBehaviour {
 	[Separator("Skin Reward")]
 	[SerializeField] private Localizer m_skinTitle = null;
 	[SerializeField] private PowerIcon m_skinPower = null;
+
+	[Separator("Dragon Reward")]
+	[SerializeField] private Localizer m_dragonName = null;
+	[SerializeField] private Localizer m_dragonDesc = null;
+	[Space]
+	[SerializeField] private Image m_dragonTierIcon = null;
+	[SerializeField] private ShowHideAnimator m_newPreysAnimator = null;
+	[Space]
+	[SerializeField] private TextMeshProUGUI m_healthText = null;
+	[SerializeField] private TextMeshProUGUI m_energyText = null;
+	[SerializeField] private TextMeshProUGUI m_speedText = null;
 
 	// Events
 	[Separator("Events")]
@@ -185,16 +190,37 @@ public class RewardInfoUI : MonoBehaviour {
 				}
 			} break;
 
+			// Dragon
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// Aux vars
+				IDragonData dragonData = DragonManager.GetDragonData(_rewardData.sku);
+
+				// Initialize dragon info
+				if(m_dragonName != null) m_dragonName.Localize("TID_DRAGON_UNLOCK", dragonData.def.GetLocalized("tidName"));
+				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
+				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
+				if(m_healthText != null) m_healthText.text = StringUtils.FormatNumber(dragonData.maxHealth, 0);
+				if(m_energyText != null) m_energyText.text = StringUtils.FormatNumber(dragonData.baseEnergy, 0);
+				if(m_speedText != null) m_speedText.text = StringUtils.FormatNumber(dragonData.maxSpeed * 10f, 0);  // x10 to show nicer numbers
+
+				// If the unlocked dragon is of different tier as the dragon used to unlocked it, show 'new preys' banner
+				if(m_newPreysAnimator != null) {
+					DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonData.def.GetAsString("previousDragonSku"));
+					if(previousDragonDef != null && previousDragonDef.Get("tier") != dragonData.tierDef.sku) {
+						// Show!
+						m_newPreysAnimator.RestartShow();   // Should have the proper delay
+					} else {
+						// Hide! (no animation)
+						m_newPreysAnimator.ForceHide(false);
+					}
+				}
+			} break;
+
 			// Golden Fragments
 			case Metagame.RewardGoldenFragments.TYPE_CODE: {
 				// Title - singular?
 				string tid = (_rewardData.amount == 1) ? "TID_EGG_REWARD_FRAGMENT_SING" : "TID_EGG_REWARD_FRAGMENT";
 				m_goldenFragmentTitle.Localize(tid, StringUtils.FormatNumber(_rewardData.amount));	// %U0 Golden Egg Fragments
-
-				// Fragments counter
-				m_goldenEggCompletedInfo.Set(false, false);	// Will be activated after the animation, if needed
-				RefreshGoldenFragmentCounter(EggManager.goldenEggFragments - _rewardData.amount, false);	// Reward has already been given at this point, so show the current amount minus the rewarded amount
-				UbiBCN.CoroutineManager.DelayedCall(() => { RefreshGoldenFragmentCounter(EggManager.goldenEggFragments, true); }, m_goldFragmentsCounterDelay, false);	// Sync with animation
 			} break;
 
 			// Coins
@@ -250,40 +276,7 @@ public class RewardInfoUI : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Refresh the golden fragment counter text.
-	/// </summary>
-	/// <param name="_amount">Amount to display.</param>
-	/// <param name="_animate">Whether to animate or not.</param>
-	private void RefreshGoldenFragmentCounter(long _amount, bool _animate) {
-		// Special case if we've actually completed the egg
-		// Special case if all golden eggs have already been collected
-		bool goldenEggCompleted = (_amount >= EggManager.goldenEggRequiredFragments);
-		bool allEggsCollected = EggManager.goldenEggRequiredFragments < 0;	// Will return -1 if all eggs are collected
-
-		// Compose new string
-		if(!goldenEggCompleted && !allEggsCollected) {
-			m_goldenFragmentCounterText.text = UIConstants.GetIconString(
-				LocalizationManager.SharedInstance.Localize("TID_FRACTION", StringUtils.FormatNumber(_amount), StringUtils.FormatNumber(EggManager.goldenEggRequiredFragments)),
-				UIConstants.IconType.GOLDEN_FRAGMENTS,
-				UIConstants.IconAlignment.LEFT
-			);
-		}
-
-		// Set different elements visibility
-		m_goldenFragmentCounter.Set(!goldenEggCompleted && !allEggsCollected, _animate);
-		m_goldenEggCompletedInfo.Set(goldenEggCompleted && !allEggsCollected, _animate);
-		m_goldenEggAllCollectedInfo.Set(allEggsCollected, _animate);
-
-		// Animate?
-		if(_animate) {
-			// Trigger Particle FX
-			m_goldenFragmentCounterFX.Play();
-
-			// Trigger SFX
-			AudioController.Play(m_goldenEggCompletedSFX);
-		}
-	}
+	
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //

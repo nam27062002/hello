@@ -21,10 +21,18 @@ using System.Collections.Generic;
 /// Main controller for the loading scene.
 /// </summary>
 public class LoadingSceneController : SceneController {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
-	public static readonly string NAME = "SC_Loading";    
+
+    // Stuff to test a particular terms policy in editor regardless server response
+#if UNITY_EDITOR
+    // Set to true to test the terms policy specified by m_policyToTest
+    private bool m_policyTestEnabled = false;
+    private LegalManager.ETermsPolicy m_policyToTest = LegalManager.ETermsPolicy.GDPR;
+#endif
+
+    //------------------------------------------------------------------//
+    // CONSTANTS														//
+    //------------------------------------------------------------------//
+    public static readonly string NAME = "SC_Loading";    
 
 	//------------------------------------------------------------------//
 	// CLASS															//
@@ -130,15 +138,22 @@ public class LoadingSceneController : SceneController {
 
     private class GDPRListener : GDPRManager.GDPRListenerBase
     {
-        public bool m_infoRecievedFromServer = false;
+        public bool m_gdprAnswered = false;
         public string m_userCountry = "";
         public override void onGDPRInfoReceivedFromServer(string strUserCountryByIP, int iCountryAgeRestriction, bool bCountryConsentRequired) 
         {
             base.onGDPRInfoReceivedFromServer(strUserCountryByIP, iCountryAgeRestriction, bCountryConsentRequired);
             m_userCountry = strUserCountryByIP;
-            m_infoRecievedFromServer = true;
+            m_gdprAnswered = true;
             Debug.Log("<color=BLUE> Country: " + strUserCountryByIP + " Age Restriction: " + iCountryAgeRestriction + " Consent Required: " + bCountryConsentRequired + " </color> ");
         }
+        
+        public override void onGDPRInfoResponseError (int iErrorCode ) 
+        {
+            m_userCountry = GDPRManager.SharedInstance.GetCachedUserCountryByIP ();
+            m_gdprAnswered = true;
+        }
+        
 
         public static bool IsValidCountry(string countryStr)
         {
@@ -150,72 +165,6 @@ public class LoadingSceneController : SceneController {
     }
 
     GDPRListener m_gdprListener = new GDPRListener();
-
-    Dictionary<string, int> m_ageRestrictions = new Dictionary<string, int>()
-    {
-          {"US", 13},
-          {"AT", 16},
-          {"BE", 16},
-          {"BG", 16},
-          {"HR", 16},
-          {"CY", 16},
-          {"CZ", 16},
-          {"DK", 16},
-          {"EE", 16},
-          {"FI", 16},
-          {"FR", 16},
-          {"DE", 16},
-          {"GR", 16},
-          {"HU", 16},
-          {"IE", 16},
-          {"IT", 16},
-          {"LV", 16},
-          {"LT", 16},
-          {"LU", 16},
-          {"MT", 16},
-          {"NL", 16},
-          {"PL", 16},
-          {"PT", 16},
-          {"RO", 16},
-          {"SK", 16},
-          {"SI", 16},
-          {"ES", 16},
-          {"SE", 16},
-          {"GB", 16}
-    };
-
-    Dictionary<string, bool> m_requiresConsent = new Dictionary<string, bool>()
-    {
-        {"AT", true},
-        {"BE", true},
-        {"BG", true},
-        {"HR", true},
-        {"CY", true},
-        {"CZ", true},
-        {"DK", true},
-        {"EE", true},
-        {"FI", true},
-        {"FR", true},
-        {"DE", true},
-        {"GR", true},
-        {"HU", true},
-        {"IE", true},
-        {"IT", true},
-        {"LV", true},
-        {"LT", true},
-        {"LU", true},
-        {"MT", true},
-        {"NL", true},
-        {"PL", true},
-        {"PT", true},
-        {"RO", true},
-        {"SK", true},
-        {"SI", true},
-        {"ES", true},
-        {"SE", true},
-        {"GB", true}
-    };
-    
 
     //------------------------------------------------------------------//
     // MEMBERS															//
@@ -245,7 +194,6 @@ public class LoadingSceneController : SceneController {
         WAITING_FOR_RULES,        
         LOADING_RULES,
         CREATING_SINGLETONS,
-        WAITING_FOR_CUSTOMIZER,
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
         COUNT
@@ -264,6 +212,8 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+
+		// Initialize server cache
 		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
 		if ( settingsInstance )
 		{
@@ -274,6 +224,8 @@ public class LoadingSceneController : SceneController {
 			m_buildVersion = Application.version;
 		}
 		CacheServerManager.SharedInstance.Init(m_buildVersion);
+
+		// Initialize content
 		ContentManager.InitContent();
 
 		// Used for android permissions
@@ -281,6 +233,9 @@ public class LoadingSceneController : SceneController {
         
 		// Initialize localization
         SetSavedLanguage();
+
+		// Always start in DEFAULT mode
+		SceneController.SetMode(Mode.DEFAULT);
     }    
 
 	/// <summary>
@@ -459,26 +414,40 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
             {
-                if (m_gdprListener.m_infoRecievedFromServer)
+                if (m_gdprListener.m_gdprAnswered)
                 {
                     string country = m_gdprListener.m_userCountry;
-                    // Recieved values are not good
-                    if ( !GDPRListener.IsValidCountry(country))
+                        // Recieved values are not good
+                    bool isValid = GDPRListener.IsValidCountry(country);                    
+#if UNITY_EDITOR
+                    if (m_policyTestEnabled)
                     {
-
+                        isValid = false;
+                    }
+#endif
+                    if ( !isValid)
+                    {
                         string localeCountryCode = PlatformUtils.Instance.GetCountryCode();
-                        int localeAge = -1;
-                        bool localeRequiresConsent = false;
-                        if (m_ageRestrictions.ContainsKey(localeCountryCode))
+#if UNITY_EDITOR
+                        switch (m_policyToTest)
                         {
-                            localeAge = m_ageRestrictions[localeCountryCode];
+                            case LegalManager.ETermsPolicy.Basic:
+                                localeCountryCode = "CN";
+                                break;
+
+                            case LegalManager.ETermsPolicy.Coppa:
+                                localeCountryCode = "US";
+                                break;
+
+                            case LegalManager.ETermsPolicy.GDPR:
+                                localeCountryCode = "FR";
+                                break;
                         }
-                        if (m_requiresConsent.ContainsKey(localeCountryCode))
-                        {
-                            localeRequiresConsent = m_requiresConsent[localeCountryCode];
-                        }
-                        Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeAge + " Consent: " + localeRequiresConsent +" </color>");
-                        GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeAge, localeRequiresConsent, false);
+#endif                        
+
+                        GDPRSettings.CountrySetup localeSetup = GDPRSettings.GetSetup(localeCountryCode);
+						Debug.Log("<color=YELLOW> LOCAL Country: "+localeCountryCode+" Age: " + localeSetup.ageRestriction + " Consent: " + localeSetup.requiresConsent +" </color>");
+						GDPRManager.SharedInstance.SetDataFromLocal(localeCountryCode, localeSetup.ageRestriction, localeSetup.requiresConsent, false);
                     }
                     else
                     {
@@ -496,24 +465,7 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.CREATING_SINGLETONS:
             {
-                if (FeatureSettingsManager.instance.IsCustomizerBlocker)
-                {
-                    SetState(State.WAITING_FOR_CUSTOMIZER);
-                }
-                else
-                {                        
-                    SetState(State.WAITING_SAVE_FACADE);
-                }                    
-            }
-            break;
-            case State.WAITING_FOR_CUSTOMIZER:
-            {
-                if (HDCustomizerManager.instance.IsReady())
-                {
-                    // Applies the customizer
-                    ApplicationManager.instance.Game_ApplyCustomizer();
-                    SetState(State.WAITING_SAVE_FACADE);
-                }
+                SetState(State.WAITING_SAVE_FACADE);
             }
             break;
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
@@ -539,6 +491,11 @@ public class LoadingSceneController : SceneController {
 		        if (loadProgress >= 1f && !GameSceneManager.isLoading && m_loadingDone) {                    
                     HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_03_loading_done);
 
+                    // Checks if customizer has to be applied. It has to be done here in order to maximize user's chances of getting server time, which
+                    // is important because it might decide which offers the user will see
+                    HDCustomizerManager.instance.CheckAndApply();
+
+                    // Loads main menu scene
                     FlowManager.GoToMenu();
 		        }
     		}break;
@@ -593,8 +550,8 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
                 {
-                    GDPRManager.SharedInstance.Initialise(false);
-                    GDPRManager.SharedInstance.SetListener( m_gdprListener );
+                    GDPRManager.SharedInstance.Initialise(true);
+                    GDPRManager.SharedInstance.AddListener( m_gdprListener );
                     GDPRManager.SharedInstance.RequestCountryAndAge();
                 }break;
             case State.WAITING_TERMS:
@@ -633,6 +590,8 @@ public class LoadingSceneController : SceneController {
                 // No parameter is passed because it has to be created only once in order to make sure that it's initialized only once
                 ApplicationManager.CreateInstance();
 
+                LegalManager.CreateInstance();
+
                 AntiCheatsManager.CreateInstance();
 				                
                 if (FeatureSettingsManager.instance.IsMiniTrackingEnabled)
@@ -641,8 +600,6 @@ public class LoadingSceneController : SceneController {
                     // [AOC] Generate a unique ID with the device's identifier and the number of progress resets
                     MiniTrackingEngine.InitSession(SystemInfo.deviceUniqueIdentifier + "_" + PlayerPrefs.GetInt("RESET_PROGRESS_COUNT", 0).ToString());
                 }
-					                
-                HDCustomizerManager.instance.Initialise();
 
                 UsersManager.CreateInstance();
 
@@ -669,14 +626,13 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveEventsManager.CreateInstance(true);
+                HDLiveDataManager.CreateInstance(true);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
                 ParticleManager.CreateInstance(true);
                 FirePropagationManager.CreateInstance(true);
                 SpawnerManager.CreateInstance(true);
-                SpawnerAreaManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
@@ -702,7 +658,7 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.CreateInstance();
                 TransactionManager.instance.Initialise();
 
-                HDCustomizerManager.instance.Initialise();
+                HDCustomizerManager.instance.Initialise();                                   
             } break;
 
            case State.WAITING_SAVE_FACADE:
@@ -738,7 +694,7 @@ public class LoadingSceneController : SceneController {
                 HDTrackingManager.Instance.Notify_ApplicationStart();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_persistance);
-
+				              
                 // Initialize managers needing data from the loaded profile
                 // GlobalEventManager.SetupUser(UsersManager.currentUser);
 				OffersManager.InitFromDefinitions();	// Reload offers - need persistence to properly initialize offer packs rewards
@@ -747,7 +703,7 @@ public class LoadingSceneController : SceneController {
                 GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
 
 				// Live events cache
-				HDLiveEventsManager.instance.LoadEventsFromCache();
+				HDLiveDataManager.instance.LoadEventsFromCache();
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_01_persistance_applied);
 

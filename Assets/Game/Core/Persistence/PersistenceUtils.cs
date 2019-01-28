@@ -31,20 +31,21 @@ public class PersistenceUtils
 
             if (initialSettingsDef != null)
             {
-                //string _sc = _def.Get("softCurrency");
-                // string _pc = _def.Get("hardCurrency");
+                //string _sc = initialSettingsDef.Get("softCurrency");
+                //string _pc = initialSettingsDef.Get("hardCurrency");
 				string _sc = "0";
                 string _pc = "0";
+                string _gf = initialSettingsDef.Get("goldenFragments");
                 if (_initialDragonSku == null)
                 {
                     _initialDragonSku = initialSettingsDef.Get("initialDragonSKU");
                 }
 
-
                 // User Profile: sc, pc, currentDragon
                 SimpleJSON.JSONClass _userProfile = new SimpleJSON.JSONClass();
                 _userProfile.Add("sc", _sc);
                 _userProfile.Add("pc", _pc);
+                _userProfile.Add("gf", _gf);
                 _userProfile.Add("keys", 0);	// [AOC] HARDCODED!!
                 _userProfile.Add("currentDragon", _initialDragonSku);
                 _userProfile.Add("currentLevel", "level_0");	// Only one level now

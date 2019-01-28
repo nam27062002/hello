@@ -10,7 +10,16 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         Goblin      = (1 << 4),
         Human       = (1 << 5),
         Machine     = (1 << 6),
-        Witch       = (1 << 7)
+        Witch       = (1 << 7),
+        Mine        = (1 << 8),
+        Dragon      = (1 << 9),
+        Collectible = (1 << 10),
+        Magical     = (1 << 11),
+        Troll       = (1 << 12),
+        Monster     = (1 << 13),
+        Fish        = (1 << 14),
+        CarnivourusPlant = (1 << 15),
+        Spider      = (1 << 16)
     }
 
 
@@ -18,6 +27,13 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	public enum Type {
 		PLAYER,
 		PET,
+		OTHER
+	}
+
+	public enum DyingReason{
+		EATEN,
+		BURNED,
+		DESTROYED,
 		OTHER
 	}
 
@@ -61,7 +77,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual int score { get { return 0; } }
 
-	protected ISpawnable[] m_otherSpawnables;
+	public ISpawnable[] m_otherSpawnables;
 	protected int m_otherSpawnablesCount;
 	protected AI.AIPilot m_pilot;
 	public AI.AIPilot pilot { get { return m_pilot; } }
@@ -140,7 +156,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		gameObject.SetActive(false);
 	}
 
-	public virtual Reward GetOnKillReward(bool _burnt) {
+	public virtual Reward GetOnKillReward( DyingReason reason ) {
 		return new Reward();
 	}
 
@@ -154,7 +170,6 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		if (m_machine != null) m_machine.CustomFixedUpdate();
 	}
 
-	public virtual bool CanBeSmashed()			{ return false; }
     public virtual bool CanDieOutsideFrustrum() { return true; }
 	public virtual CircleArea2D circleArea 		{ get { return null; } }
 }

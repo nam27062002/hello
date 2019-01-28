@@ -30,7 +30,7 @@ public class DragonXPBar : MonoBehaviour {
 	protected class DisguiseInfo {
 		public DefinitionNode def = null;
 		public float delta = 0f;
-		public DragonXPBarSeparator barMarker = null;
+		public DragonXPBarSkinMarker barMarker = null;
 		public bool unlocked = false;
 		public ResultsScreenDisguiseFlag flag = null;
 	};
@@ -77,7 +77,7 @@ public class DragonXPBar : MonoBehaviour {
 	[SerializeField] protected GameObject m_disguiseMarkerPrefab = null;
 
 	// Internal
-	protected DragonData m_dragonData = null;	// Last used dragon data
+	protected DragonDataClassic m_dragonData = null;	// Last used dragon data
 	protected List<DragonXPBarSeparator> m_barSeparators = new List<DragonXPBarSeparator>();
 	protected List<DisguiseInfo> m_disguises = new List<DisguiseInfo>();
 	
@@ -104,7 +104,7 @@ public class DragonXPBar : MonoBehaviour {
 			StartCoroutine(RefreshDelayed(_sku, _delay));
 		} else {
 			// Get new dragon's data from the dragon manager and do the refresh logic
-			Refresh(DragonManager.GetDragonData(_sku));
+			Refresh(DragonManager.GetDragonData(_sku) as DragonDataClassic);
 		}
 	}
 
@@ -147,7 +147,7 @@ public class DragonXPBar : MonoBehaviour {
 		}
 
 		// Get new dragon's data from the dragon manager
-		DragonData data = DragonManager.GetDragonData(_sku);
+		DragonDataClassic data = DragonManager.GetDragonData(_sku) as DragonDataClassic;
 		if(data == null) yield break;
 
 		// Call virtual method
@@ -159,7 +159,7 @@ public class DragonXPBar : MonoBehaviour {
 	/// Heirs should call the base when overriding.
 	/// </summary>
 	/// <param name="_data">Dragon data.</param>
-	virtual protected void Refresh(DragonData _data) {
+	virtual protected void Refresh(DragonDataClassic _data) {
 		// Check params
 		if(_data == null) return;
 
@@ -183,8 +183,8 @@ public class DragonXPBar : MonoBehaviour {
 			// Dragon Name
 			if(m_dragonNameText != null) {
 				switch(_data.GetLockState()) {
-					case DragonData.LockState.SHADOW:
-					case DragonData.LockState.REVEAL:
+					case DragonDataClassic.LockState.SHADOW:
+					case DragonDataClassic.LockState.REVEAL:
 						m_dragonNameText.Localize("TID_SELECT_DRAGON_UNKNOWN_NAME");
 						break;
 					default:
@@ -233,7 +233,7 @@ public class DragonXPBar : MonoBehaviour {
 	/// Initialize the separators with the progression data of the given dragon.
 	/// </summary>
 	/// <param name="_data">Dragon data to be considered.</param>
-	private void InitSeparators(DragonData _data) {
+	private void InitSeparators(DragonDataClassic _data) {
 		// Check params
 		if(_data == null) {
 			for(int i = 0; i < m_barSeparators.Count; i++) {
@@ -306,15 +306,18 @@ public class DragonXPBar : MonoBehaviour {
 
 				// Compute delta corresponding to this disguise unlock level
 				info.delta = Mathf.InverseLerp(0, _data.progression.maxLevel, unlockLevel);
-				info.unlocked = (info.delta <= m_xpBar.normalizedValue);	// Use current var value to quicly determine initial state
+				info.unlocked = (info.delta <= m_xpBar.normalizedValue);    // Use current var value to quickly determine initial state
+				info.unlocked |= UsersManager.currentUser.wardrobe.GetSkinState(info.def.sku) == Wardrobe.SkinState.OWNED;	// Also unlocked if previously owned (i.e. via offer pack)
 
 				// Create a new bar marker or reuse an existing one
 				if(info.barMarker == null) {
 					GameObject markerObj = (GameObject)GameObject.Instantiate(m_disguiseMarkerPrefab, markersParent, false);
 					markerObj.transform.SetAsLastSibling();	// Make sure it shows at the top
-					info.barMarker = markerObj.GetComponent<DragonXPBarSeparator>();
+					info.barMarker = markerObj.GetComponent<DragonXPBarSkinMarker>();
+					info.barMarker.skinSku = defList[i].sku;
 					info.barMarker.AttachToSlider(m_xpBar, info.delta);
 				} else {
+					info.barMarker.skinSku = defList[i].sku;
 					info.barMarker.SetDelta(info.delta);
 					info.barMarker.gameObject.SetActive(true);
 				}

@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114336454134011498}
   - component: {fileID: 54625767117686674}
   - component: {fileID: 136561335226086704}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_JellyfishRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,8 +75,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1885000097210690}
-  m_LocalRotation: {x: 0.041098766, y: -0.000000043674458, z: 0.0000000017964841,
-    w: 0.9991551}
+  m_LocalRotation: {x: -0.12618439, y: -0.6842736, z: 0.12199211, w: -0.7077889}
   m_LocalPosition: {x: 0, y: 1.65, z: 0.02}
   m_LocalScale: {x: 8.064522, y: 8.51012, z: 4.50371}
   m_Children: []
@@ -120,6 +119,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -135,6 +135,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -152,6 +153,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -167,6 +169,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -264,6 +267,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 30
@@ -290,7 +294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_isPlaceHolder: 1
+  m_isPlaceHolder: 0
   m_walkSpeed: 1
   m_runSpeed: 1
   m_minPlaybakSpeed: 1
@@ -341,16 +345,17 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_GhostBlood
+    name: PS_GhostDie
     path: Blood
     changeStartColor: 1
     startColor: {r: 0.39705884, g: 0, b: 0, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 0.1448276, b: 0, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -383,6 +388,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -421,6 +427,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
@@ -461,6 +468,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -500,6 +508,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -519,6 +528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 8204
   m_sku: JellyfishRed
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1

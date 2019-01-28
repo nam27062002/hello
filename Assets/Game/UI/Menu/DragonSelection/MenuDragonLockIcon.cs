@@ -59,14 +59,14 @@ public class MenuDragonLockIcon : MonoBehaviour, IPointerClickHandler {
 	/// <param name="_event">Data related to the event.</param>
 	public void OnPointerClick(PointerEventData _event) {
 		// Show feedback message
-		DragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		IDragonData selectedDragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		string textToDisplay = string.Empty;
 		switch(selectedDragonData.GetLockState()) {
-			case DragonData.LockState.SHADOW: {
+			case IDragonData.LockState.SHADOW: {
 				textToDisplay = LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_UNKNOWN_MESSAGE");
 			} break;
 
-			case DragonData.LockState.LOCKED: {
+			case IDragonData.LockState.LOCKED: {
 				DefinitionNode previousDragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, selectedDragonData.def.GetAsString("previousDragonSku"));
 				if(previousDragonDef != null) {
 					textToDisplay = LocalizationManager.SharedInstance.Localize("TID_SELECT_DRAGON_KNOWN_MESSAGE", previousDragonDef.GetLocalized("tidName"));

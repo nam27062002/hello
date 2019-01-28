@@ -68,6 +68,10 @@ public class UIConstantsEditor : CategorizedEditor {
 				m_categories[CAT_COLORS].Add(p, "Power Colors");
 			} else if(p.name.Contains("m_petCategoryColor")) {
 				m_categories[CAT_COLORS].Add(p, "Pet Category Colors");
+			} else if(p.name.Contains("m_dragonStatColor")) {
+				m_categories[CAT_COLORS].Add(p, "Dragon Stats Colors");
+			} else if(p.name.Contains("m_dragonTierColors")) {
+				m_categories[CAT_COLORS].Add(p);
 			} else if(p.name.Contains("m_rarity")) {
 				m_categories[CAT_RARITIES].Add(p);
 			} else if(p.name.Contains("Path")) {
@@ -129,6 +133,7 @@ public class UIConstantsEditor : CategorizedEditor {
 	/// <param name="_p">Property to be displayed.</param>
 	override protected void DoProperty(SerializedProperty _p) {
 		// Properties requiring special treatment
+		// Rarity Arrays
 		if(_p.name == "m_rarityColors"
 		|| _p.name == "m_rarityTextGradients"
 		|| _p.name == "m_rarityIcons") {
@@ -139,6 +144,19 @@ public class UIConstantsEditor : CategorizedEditor {
 					EditorGUILayout.PropertyField(_prop, new GUIContent(((Metagame.Reward.Rarity)_idx).ToString()), true);
 				}, 
 				(int)Metagame.Reward.Rarity.COUNT
+			);
+		}
+
+		// Dragon Tier Arrays
+		else if(_p.name == "m_dragonTiersSFX"
+        || _p.name == "m_dragonTierColors") {
+			// Fixed length arrays!
+			EditorGUILayoutExt.FixedLengthArray(
+				_p,
+				(SerializedProperty _prop, int _idx) => {
+					EditorGUILayout.PropertyField(_prop, new GUIContent(((DragonTier)_idx).ToString()), true);
+				},
+				(int)DragonTier.COUNT
 			);
 		}
 

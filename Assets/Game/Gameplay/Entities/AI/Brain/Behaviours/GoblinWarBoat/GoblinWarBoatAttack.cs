@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AI {
-	namespace Behaviour {		
+	namespace Behaviour {
 		[System.Serializable]
 		public class GoblinWarBoatAttackData : StateComponentData {
 			public float damage = 25f;
@@ -18,10 +18,10 @@ namespace AI {
 		}
 
 		[CreateAssetMenu(menuName = "Behaviour/GoblinWarBoat/Attack")]
-		public class GoblinWarBoatAttack : StateComponent {
-			private enum AttackState {				
+		public class GoblinWarBoatAttack : StateComponent, IBroadcastListener {
+			private enum AttackState {
 				Aim = 0,
-				Shoot	
+				Shoot
 			}
 
 			[StateTransitionTrigger]
@@ -70,13 +70,31 @@ namespace AI {
 				CreatePool();
 
 				// create a projectile from resources (by name) and save it into pool
-				Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+				Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
 				m_targetDummy = (m_machine as MachineGoblinWarBoat).targetDummy;
 				m_cannonEye = (m_machine as MachineGoblinWarBoat).cannonEye;
 
 				m_attacksLeft = m_data.consecutiveAttacks;
 			}
+            
+            protected override void OnRemove() {
+                base.OnRemove();
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+            }
+
+            public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+            {
+                switch( eventType )
+                {
+                    case BroadcastEventType.GAME_AREA_ENTER:
+                    {
+                        CreatePool();
+                    }break;
+                }
+
+            }
+
 
 			void CreatePool() {
 				m_poolHandler = PoolManager.CreatePool(m_data.projectileName, "Game/Projectiles/", 2, true);
@@ -202,7 +220,7 @@ namespace AI {
 					m_pilot.ReleaseAction(Pilot.Action.Attack);
 
 					if (m_attacksLeft > 0) {
-						if (!m_machine.GetSignal(Signals.Type.Danger)) {		
+						if (!m_machine.GetSignal(Signals.Type.Danger)) {
 							Transition(OnOutOfRange);
 						}
 					} else {

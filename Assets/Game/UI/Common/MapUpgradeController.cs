@@ -20,7 +20,7 @@ using System;
 /// UI controller for the map upgrading.
 /// Reused in both the goals screen and the in-game map popup.
 /// </summary>
-public class MapUpgradeController : MonoBehaviour {
+public class MapUpgradeController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -47,15 +47,8 @@ public class MapUpgradeController : MonoBehaviour {
 	private bool m_wasUnlocked = false;	// Lock state in last frame, used to track end of timer
 
 	// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-	//		 That's why we check the game scene controller if available, otherwise take it directly from the user's profile
 	private bool isUnlocked {
-		get {
-			if(InstanceManager.gameSceneControllerBase != null) {
-				return InstanceManager.gameSceneControllerBase.mapUnlocked;
-			} else {
-				return UsersManager.currentUser.mapUnlocked;
-			}
-		}
+		get { return UsersManager.currentUser.mapUnlocked; }
 	}
 	
 	//------------------------------------------------------------------------//
@@ -66,7 +59,7 @@ public class MapUpgradeController : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
 
 	/// <summary>
@@ -97,6 +90,9 @@ public class MapUpgradeController : MonoBehaviour {
 		else if(m_wasUnlocked) {
 			m_wasUnlocked = false;
 			Refresh(true);
+
+			// Notify other UI elements
+			Broadcaster.Broadcast(BroadcastEventType.UI_MAP_EXPIRED);
 		}
 	}
 
@@ -112,8 +108,19 @@ public class MapUpgradeController : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
+		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
+            {
+                OnMapUnlocked();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -139,7 +146,7 @@ public class MapUpgradeController : MonoBehaviour {
 
 			// Ad revive - turn off when offline
 			if(m_unlockWithAddBtn != null) {
-				m_unlockWithAddBtn.SetActive(Application.internetReachability != NetworkReachability.NotReachable);
+                m_unlockWithAddBtn.SetActive(Application.internetReachability != NetworkReachability.NotReachable && FeatureSettingsManager.AreAdsEnabled);
 			}
 		} else {
 			// Timer
@@ -156,7 +163,8 @@ public class MapUpgradeController : MonoBehaviour {
 
 		// Countdown format
 		TimeSpan timeToReset = UsersManager.currentUser.mapResetTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
-		m_timerText.text = TimeUtils.FormatTime(timeToReset.TotalSeconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
+		double seconds = System.Math.Max(timeToReset.TotalSeconds, 0d);	// Never go negative!
+		m_timerText.text = TimeUtils.FormatTime(seconds, TimeUtils.EFormat.DIGITS, 3, TimeUtils.EPrecision.HOURS, true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -174,11 +182,11 @@ public class MapUpgradeController : MonoBehaviour {
 	}
 
 	void OnVideoRewardCallback(bool done){
-		if ( done ){
-			UsersManager.currentUser.UnlockMap();
+		if ( done ){            
+            UsersManager.currentUser.UnlockMap();
             PersistenceFacade.instance.Save_Request();
+            Track_UnlockMap(HDTrackingManager.EUnlockType.video_ads);
         }
-
 	}
 
 	/// <summary>
@@ -191,23 +199,20 @@ public class MapUpgradeController : MonoBehaviour {
         // Start purchase flow        
         ResourcesFlow purchaseFlow = new ResourcesFlow("UNLOCK_MAP");
         purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
+			(ResourcesFlow _flow) => {                
 				// Just do it
 				UsersManager.currentUser.UnlockMap();
                 PersistenceFacade.instance.Save_Request();
+                Track_UnlockMap(HDTrackingManager.EUnlockType.HC);
             }
 		);
 		purchaseFlow.Begin(m_unlockPricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.UNLOCK_MAP, null);
 	}
 
-	/// <summary>
-	/// Ad has finished, free revive!
-	/// </summary>
-	private void OnAdClosed() {
-		// Do it!
-		UsersManager.currentUser.UnlockMap();
-        PersistenceFacade.instance.Save_Request();
-    }
+    private void Track_UnlockMap(HDTrackingManager.EUnlockType unlockType) {
+        HDTrackingManager.ELocation location = (FlowManager.IsInGameScene()) ? HDTrackingManager.ELocation.game_play : HDTrackingManager.ELocation.main_menu;
+        HDTrackingManager.Instance.Notify_UnlockMap(location, unlockType);
+    }	
 
 	/// <summary>
 	/// The map has been upgraded.

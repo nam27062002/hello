@@ -86,9 +86,9 @@ public class PopupInfoAnimoji : MonoBehaviour {
 		// If current dragon doesn't support animojis, select the biggest owned dragon supporting them
 		if(!AnimojiScreenController.IsDragonSupported(InstanceManager.menuSceneController.selectedDragon)) {
 			// Get owned dragons and sort them by order (reversed, bigger to smaller)
-			List<DragonData> ownedDragons = DragonManager.GetDragonsByLockState(DragonData.LockState.OWNED);
+			List<IDragonData> ownedDragons = DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED);
 			ownedDragons.Sort(
-				(DragonData _d1, DragonData _d2) => {
+				(IDragonData _d1, IDragonData _d2) => {
 					return _d1.GetOrder().CompareTo(_d2.GetOrder()) * -1;	// [AOC] Reverse them!
 				}
 			);

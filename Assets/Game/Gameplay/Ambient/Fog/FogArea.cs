@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FogArea : MonoBehaviour
+public class FogArea : MonoBehaviour, IBroadcastListener
 {
 	
 	public float m_insideScale = 1.5f;
-	FogManager m_fogManager;
 	public FogManager.FogAttributes m_attributes;
 	public bool m_isFireFog = false;
 
@@ -15,28 +14,53 @@ public class FogArea : MonoBehaviour
 
 	public float m_enterTransitionDuration = 1.6f;
 	public float m_exitTransitionDuration = 1.6f;
-	void Start()
+    
+    private void Awake()
+    {
+        m_startScale = transform.localScale;
+    }
+    
+    void Start()
 	{
-		m_fogManager = FindObjectOfType<FogManager>();
-		m_startScale = transform.localScale;
 		if ( !FeatureSettingsManager.instance.IsFogOnDemandEnabled )
 		{
-			m_fogManager.CheckTextureAvailability(m_attributes);
+			InstanceManager.fogManager.CheckTextureAvailability(m_attributes);
 		}
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_EXIT, OnAreaExit);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
 	}
 
-	void OnTriggerEnter( Collider other)
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_EXIT:
+            {
+                OnAreaExit();
+            }break;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if ( m_playerInside && ApplicationManager.IsAlive)
+        {
+            m_playerInside = false;
+            InstanceManager.fogManager.DeactivateArea( this );
+            transform.localScale = m_startScale;
+        }
+    }
+
+    void OnTriggerEnter( Collider other)
 	{
 		if ( other.CompareTag("Player") && !m_playerInside)	
 		{
 			m_playerInside = true;
-			m_fogManager.ActivateArea( this );
+		    InstanceManager.fogManager.ActivateArea( this );
 			transform.localScale = m_startScale * m_insideScale;
 		}
 	}
@@ -46,7 +70,7 @@ public class FogArea : MonoBehaviour
 		if ( other.CompareTag("Player") && m_playerInside)	
 		{
 			m_playerInside = false;
-			m_fogManager.DeactivateArea( this );
+			InstanceManager.fogManager.DeactivateArea( this );
 			transform.localScale = m_startScale;
 		}
 	}
@@ -63,13 +87,11 @@ public class FogArea : MonoBehaviour
 	public void EditorFogSetup() {
 		if (m_attributes.texture == null)
 		{
-			if (m_fogManager == null )
+            FogManager fogManager = FindObjectOfType<FogManager>();
+			
+			if ( fogManager != null )
 			{
-				m_fogManager = FindObjectOfType<FogManager>();
-			}
-			if ( m_fogManager != null )
-			{
-				m_fogManager.CheckTextureAvailability( m_attributes, true);
+				fogManager.CheckTextureAvailability( m_attributes, true);
 			}
 			else
 			{

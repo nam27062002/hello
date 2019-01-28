@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager> {
+public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManager>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -13,6 +13,13 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	//------------------------------------------------------------------------//
 	// Spawners collection
 	private List<ActionPoint> m_actionPoints = null;
+	private List<ActionPoint> actionPoints {
+		get { 
+			if(m_actionPoints == null) m_actionPoints = new List<ActionPoint>();
+			return m_actionPoints;
+		}
+	}
+
 	private QuadTree<ActionPoint> m_actionPointsTree = null;
 
 
@@ -30,8 +37,8 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -39,10 +46,24 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+                OnLevelLoaded();
+            }break;
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// PUBLIC METHODS														  //
@@ -52,10 +73,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	/// <param name="_actionPoint">The action point to be added.</param>
 	public void Register(ActionPoint _actionPoint) {
-		if (m_actionPoints == null) {
-			m_actionPoints = new List<ActionPoint>();
-		}
-		m_actionPoints.Add(_actionPoint);
+		actionPoints.Add(_actionPoint);
 		if (m_actionPointsTree != null) m_actionPointsTree.Insert(_actionPoint);
 	}
 
@@ -64,7 +82,7 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 	/// </summary>
 	/// <param name="_actionPoint">The action point to be removed.</param>
 	public void Unregister(ActionPoint _actionPoint) {
-		m_actionPoints.Remove(_actionPoint);
+		actionPoints.Remove(_actionPoint);
 		if (m_actionPointsTree != null) m_actionPointsTree.Remove(_actionPoint);
 	}
 
@@ -96,13 +114,14 @@ public class ActionPointManager : UbiBCN.SingletonMonoBehaviour<ActionPointManag
 		}
 
 		m_actionPointsTree = new QuadTree<ActionPoint>(bounds.x, bounds.y, bounds.width, bounds.height);
-		for(int i = 0; i < m_actionPoints.Count; i++) {
-			m_actionPointsTree.Insert(m_actionPoints[i]);
+		List<ActionPoint> points = actionPoints;	// Make sure list is initialized by calling the property
+		for(int i = 0; i < points.Count; i++) {
+			m_actionPointsTree.Insert(points[i]);
 		}
 	}
 
 	private void OnGameEnded() {
-		m_actionPoints.Clear();
+		actionPoints.Clear();
 	}
 
 	//------------------------------------------------------------------------//

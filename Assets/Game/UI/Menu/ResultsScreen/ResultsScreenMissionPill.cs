@@ -84,7 +84,12 @@ public class ResultsScreenMissionPill : MonoBehaviour {
 		m_missionText.text = m_mission.objective.GetDescription();
 
 		// Reward
-		m_rewardText.text = UIConstants.GetIconString(m_mission.rewardCoins, UIConstants.IconType.COINS, UIConstants.IconAlignment.LEFT);
+        UIConstants.IconType icon = UIConstants.IconType.NONE;
+        switch (m_mission.reward.currency) {
+            case UserProfile.Currency.SOFT: icon = UIConstants.IconType.COINS; break;
+            case UserProfile.Currency.GOLDEN_FRAGMENTS: icon = UIConstants.IconType.GOLDEN_FRAGMENTS; break;
+        }
+        m_rewardText.text = UIConstants.GetIconString(m_mission.reward.amount, icon, UIConstants.IconAlignment.LEFT);
 
 		// Change Icon
 		m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));

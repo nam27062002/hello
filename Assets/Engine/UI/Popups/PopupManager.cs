@@ -18,12 +18,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Simple manager to load and open popups.
 /// TODO:
-/// - Keep an updated list of open popups
 /// - Allow popup queues
 /// - Optional delay before opening a popup
-/// - Stacked popups (popup over popup)
 /// </summary>
-public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
+public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -44,11 +42,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 	// Queues - Expose just for debug purposes
 	[SerializeField] private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
-	[SerializeField] private List<PopupController> m_openedPopups = new List<PopupController>();
-	[SerializeField] private List<PopupController> m_closedPopups = new List<PopupController>();
+	[SerializeField] private HashSet<PopupController> m_openedPopups = new HashSet<PopupController>();
+	[SerializeField] private HashSet<PopupController> m_closedPopups = new HashSet<PopupController>();
 
 	// Internal
 	private GraphicRaycaster m_canvasRaycaster = null;
+	private bool m_collectionsBlocked = false;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -61,11 +60,8 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 		get { return instance.m_loadingQueue.Count; }
 	}
 
-	/// <summary>
-	/// Creates a new list with a reference to all opened popups.
-	/// </summary>
-	public static List<PopupController> openedPopups {
-		get { return new List<PopupController>(instance.m_openedPopups); }
+	public static HashSet<PopupController> openedPopups {
+		get { return instance.m_openedPopups; }
 	}
 
 	//------------------------------------------------------------------//
@@ -108,9 +104,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	private void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
 	/// <summary>
@@ -118,10 +112,20 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupDestroyed);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_DESTROYED:
+            {
+                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupDestroyed(info.popupController);
+            }break;
+        }
+    }
 
 	/// <summary>
 	/// Called every frame.
@@ -167,10 +171,10 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 		// If we already have an instance on the closed popups list, reuse it
 		PopupController controller = null;
-		for(int i = 0; i < m_closedPopups.Count; i++) {
+		foreach(PopupController c in m_closedPopups) {
 			// [AOC] TODO!! Find a better way to check if it's actually the same type of popup
-			if(m_closedPopups[i].name == _prefab.name) {
-				controller = m_closedPopups[i];
+			if(c.name == _prefab.name) {
+				controller = c;
 				break;
 			}
 		}
@@ -183,9 +187,13 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 			popupObj.transform.SetParent(instance.m_canvas.transform, false);
 			popupObj.name = _prefab.name;	// To be able to identify it later on
 			
-			// Open the popup - all popups managed by the manager must have a PopupController
+			// Get its controller - all popups managed by the manager must have a PopupController
 			controller = popupObj.GetComponent<PopupController>();
 			DebugUtils.Assert(controller != null, "Couldn't find the PopupController component in the popup " + popupObj.name + ".\nAll popups managed by the manager must have a PopupController.");
+
+			// Be aware when the popup opens/closes to update manager's lists
+			controller.OnOpen.AddListener(OnPopupOpened);
+			controller.OnClose.AddListener(OnPopupClosed);
 		}
 
 		// Make sure the popup appears on top
@@ -251,11 +259,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 
 		// Find the popup matching this prefab name among the opened popups
 		PopupController popup = null;
-		popup = instance.m_openedPopups.Find(
-			(PopupController _popup) => {
-				return _popup.name == prefabName;
+		foreach(PopupController c in instance.m_openedPopups) {
+			if(c.name == prefabName) {
+				popup = c;
+				break;
 			}
-		);
+		}
 		return popup;
 	}
 
@@ -281,30 +290,32 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	/// <param name="_animate">Whether to launch close animation for opened popups before actually destroying them.</param>
 	public static void Clear(bool _animate) {
-		// Create delete action
-		System.Action<PopupController> destroyAction = (PopupController _popup) => {
-			// Destroy directly rather than using PopupController's methods
-			GameObject.Destroy(_popup.gameObject);
-		};
+		// Prevent events to modify collections while iterating them
+		instance.m_collectionsBlocked = true;
+
+		// Closed popups first
+		foreach(PopupController c in instance.m_closedPopups) {
+			GameObject.Destroy(c.gameObject);
+		}
+		instance.m_closedPopups.Clear();
 
 		// Opened popups: trigger animation?
-		if(_animate) {
-			// Create close action
-			System.Action<PopupController> closeAndDestroyAction = (PopupController _popup) => {
-				_popup.Close(true);
-			};
-			instance.m_openedPopups.ForEach(closeAndDestroyAction);
-		} else {
-			instance.m_openedPopups.ForEach(destroyAction);
-			instance.m_openedPopups.Clear();
+		foreach(PopupController c in instance.m_openedPopups) {
+			if(_animate) {
+				// Trigger close animation
+				c.Close(true);
+			} else {
+				// Destroy directly rather than using PopupController's methods
+				GameObject.Destroy(c.gameObject);
+			}
 		}
-
-		// Closed popups: destroy directly
-		instance.m_closedPopups.ForEach(destroyAction);
-		instance.m_closedPopups.Clear();
+		instance.m_openedPopups.Clear();
 
 		// Loading popups: Unfortunately, async operations cannot be canceled in Unity, so let's just clear the queue
 		instance.m_loadingQueue.Clear();
+
+		// Allow back events to modify collections
+		instance.m_collectionsBlocked = false;
 	}
 
 	//------------------------------------------------------------------//
@@ -315,11 +326,14 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupOpened(PopupController _popup) {
-		// Add it to the opened popups list
-		m_openedPopups.Add(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Add it to the opened popups list
+			m_openedPopups.Add(_popup);
 
-		// Make sure it's not on other lists
-		m_closedPopups.Remove(_popup);
+			// Make sure it's not on other lists
+			m_closedPopups.Remove(_popup);
+		}
 	}
 
 	/// <summary>
@@ -327,11 +341,14 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupClosed(PopupController _popup) {
-		// Remove it from the opened popups list
-		m_openedPopups.Remove(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Remove it from the opened popups list
+			m_openedPopups.Remove(_popup);
 
-		// Add it to the closed popups list
-		m_closedPopups.Add(_popup);
+			// Add it to the closed popups list
+			m_closedPopups.Add(_popup);
+		}
 
 		// If there are no more open popups, disable canvas camera for performance
 		RefreshCameraActive();
@@ -342,9 +359,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
 	/// </summary>
 	/// <param name="_popup">The target popup.</param>
 	private void OnPopupDestroyed(PopupController _popup) {
-		// Remove it from all the lists
-		m_openedPopups.Remove(_popup);
-		m_closedPopups.Remove(_popup);
+		// Are we allowed to modify collections?
+		if(!m_collectionsBlocked) {
+			// Remove it from all the lists
+			m_openedPopups.Remove(_popup);
+			m_closedPopups.Remove(_popup);
+		}
 
 		// If there are no more open popups, disable canvas camera for performance
 		RefreshCameraActive();
@@ -387,9 +407,21 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager> {
         return _popup;
     }
 
-    // Tells if the popup is the latest opened popup
-    public static bool IsLastOpenPopup( PopupController popup ){
-    	return instance.m_openedPopups.Last() == popup;
-    }
+    /// <summary>
+	/// Check whether the given popup was the last opened popup.
+	/// </summary>
+    public static bool IsLastOpenPopup(PopupController _popup) {
+		// Find out the last opened popup
+		PopupController lastPopup = null;
+		foreach(PopupController c in instance.m_openedPopups) {
+			if(lastPopup == null) {
+				lastPopup = c;
+			} else if(lastPopup.openTimestamp < c.openTimestamp) {
+				lastPopup = c;
+			}
+		}
 
+		// Is it the target popup?
+		return lastPopup == _popup;
+    }
 }

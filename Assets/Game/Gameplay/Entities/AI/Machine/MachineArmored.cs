@@ -28,6 +28,8 @@ namespace AI {
 					ReceiveHit();
 					m_armorDurability.count--;
 					if (m_armorDurability.count <= 0) {
+						Smash(_source);
+						/*
 						SetSignal(Signals.Type.Destroyed, true);
 
 						// Get the reward to be given from the entity
@@ -37,6 +39,7 @@ namespace AI {
 						m_entity.onDieStatus.source = _source;
 						// Dispatch global event
 						Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+						*/
 					}
 
 					return true;

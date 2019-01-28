@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InflammableDecoration : MonoBehaviour, ISpawnable {
+public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	private enum State {
 		Respawn = 0,
@@ -12,15 +12,15 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 		Explode
 	};
 
-	[SerializeField] private float m_burningTime;
-	[SerializeField] private ParticleData m_feedbackParticle;
+	[SerializeField] private float m_burningTime = 1f;
+    [SerializeField] private ParticleData m_feedbackParticle = new ParticleData();
 	// PF_FireHit
 	[SerializeField] private bool m_feedbackParticleMatchDirection = false;
-	[SerializeField] private ParticleData m_burnParticle;
+    [SerializeField] private ParticleData m_burnParticle = new ParticleData();
 	//PF_FireProc
-	[SerializeField] private ParticleData m_disintegrateParticle;
+    [SerializeField] private ParticleData m_disintegrateParticle = new ParticleData();
 
-	[SerializeField] private bool m_useAnimator;
+	[SerializeField] private bool m_useAnimator = false;
 
     [SeparatorAttribute("Fire Nodes auto setup")]
     [SerializeField] private MonoBehaviour[] m_viewScripts = new MonoBehaviour[0];
@@ -29,6 +29,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 	[SerializeField] private int m_boxelSize = 2;
 	[SerializeField] private float m_hitRadius = 1.5f;
 
+
+    //------
+    public delegate void OnBurnDelegate();
+    public OnBurnDelegate onBurn;
+    //------
 
 	private FireNodeSetup m_fireNodeSetup;
 
@@ -66,81 +71,93 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 	// Use this for initialization
 	void Awake() {
-		m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
-
-		m_feedbackParticle.CreatePool();
-		m_burnParticle.CreatePool();
-	
+        m_feedbackParticle.CreatePool();
+		m_burnParticle.CreatePool();	
 		m_disintegrateParticle.CreatePool();
-
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
 
-		m_view = transform.Find("view").gameObject;
-		m_viewBurned = transform.Find("view_burned").gameObject;
-
-		m_renderers = m_view.GetComponentsInChildren<Renderer>();
-		for (int i = 0; i < m_renderers.Length; i++) {
-			Material[] materials = m_renderers[i].sharedMaterials;
-
-			// Stores the materials of this renderer in a dictionary for direct access//
-			int renderID = m_renderers[i].GetInstanceID();
-			m_originalMaterials[renderID] = new List<Material>();
-			m_originalMaterials[renderID].AddRange(materials);
-
-			for (int m = 0; m < materials.Length; ++m) {				
-				//TODO
-				//materials[m] = null;
-			}
-
-			m_renderers[i].sharedMaterials = materials;
-		}
 		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 
 		m_state = m_nextState = State.Idle;
-
 		m_initialized = false;
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+        
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        
 	}
 
 	/// <summary>
 	/// Component disabled.
 	/// </summary>
 	private void OnDisable() {
-		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Disable();
-		}
-
-		// Unsubscribe from external events
-		Messenger.RemoveListener(MessengerEvents.GAME_LEVEL_LOADED, OnLevelLoaded);
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, OnLevelLoaded);
+        if (m_fireNodes != null) {
+            for (int i = 0; i < m_fireNodes.Length; i++) {
+                m_fireNodes[i].Disable();
+            }
+        }
 	}
+
+    protected void OnDestroy() {
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+    }
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+        switch (eventType) {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            case BroadcastEventType.GAME_AREA_ENTER:
+                OnLevelLoaded();
+            break;
+        }
+    }
 
 	/// <summary>
 	/// A new level was loaded.
 	/// </summary>
-	private void OnLevelLoaded() {		
-		m_entity = GetComponent<Decoration>();
-		m_collider = GetComponent<BoxCollider>();
-		m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
-		m_operatorSpawner = GetComponents<DeviceOperatorSpawner>();
-		m_passengersSpawner = GetComponents<DevicePassengersSpawner>();
-		m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
+	private void OnLevelLoaded() {
+        ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+
+        if (zone == ZoneManager.Zone.None) {
+            Destroy(this);
+        } else {
+            m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
+            m_view = transform.Find("view").gameObject;
+            m_viewBurned = transform.Find("view_burned").gameObject;
+
+            m_renderers = m_view.GetComponentsInChildren<Renderer>();
+            for (int i = 0; i < m_renderers.Length; i++) {
+                Material[] materials = m_renderers[i].sharedMaterials;
+
+                // Stores the materials of this renderer in a dictionary for direct access//
+                int renderID = m_renderers[i].GetInstanceID();
+                m_originalMaterials[renderID] = new List<Material>();
+                m_originalMaterials[renderID].AddRange(materials);
+
+                for (int m = 0; m < materials.Length; ++m) {
+                    //TODO
+                    //materials[m] = null;
+                }
+
+                m_renderers[i].sharedMaterials = materials;
+            }
+
+            m_entity = GetComponent<Decoration>();
+            m_collider = GetComponent<BoxCollider>();
+            m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
+            m_operatorSpawner = GetComponents<DeviceOperatorSpawner>();
+            m_passengersSpawner = GetComponents<DevicePassengersSpawner>();
+            m_destructibleBehaviour = GetComponent<DestructibleDecoration>();
 
 
-		for (int i = 0; i < m_fireNodes.Length; i++) {
-			m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
-		}
-		m_startPosition = transform.position;
+            for (int i = 0; i < m_fireNodes.Length; i++) {
+                m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
+            }
+            m_startPosition = transform.position;
 
-		m_initialized = true;
+            m_initialized = true;
+        }
 	}
 
 	public void SetupFireNodes() {
@@ -189,6 +206,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 			case State.Extinguish:
 				BurnOperators();
+                
+                if (onBurn != null)
+                    onBurn();
 
 				m_timer.Start(m_burningTime * 1000);
 
@@ -206,6 +226,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				// Initialize some death info
 				m_entity.onDieStatus.source = m_burnSource;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 
@@ -218,6 +239,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 				}
 
 				BurnOperators();
+                if (onBurn != null)
+                    onBurn();
 
 				for (int i = 0; i < m_fireNodes.Length; ++i) {
 					if (i % 2 == 0) {
@@ -234,6 +257,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable {
 
 				// Initialize some death info
 				m_entity.onDieStatus.source = m_burnSource;
+				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
 

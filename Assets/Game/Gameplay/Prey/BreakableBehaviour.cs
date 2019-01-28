@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BreakableBehaviour : MonoBehaviour 
+public class BreakableBehaviour : MonoBehaviour, IBroadcastListener 
 {	
 	[SerializeField] private bool m_isBlocker = false;
 	[SerializeField] private bool m_unbreakableBlocker = false;
+    public bool unbreakableBlocker
+    {
+        get{ return m_unbreakableBlocker; }
+    }
 
 	[SerializeField] private DragonTier m_tierWithTurboBreak = 0;
+    public DragonTier tierWithTurboBreak{ get{ return m_tierWithTurboBreak; } }
 	[SerializeField] private DragonTier m_tierNoTurboBreak = 0;
 
 	[SerializeField] private int m_hitCount = 1;
@@ -21,6 +26,10 @@ public class BreakableBehaviour : MonoBehaviour
 	[SerializeField] private GameObject m_activateOnDestroy;
 
 	//----------------------------------------------------------------------
+    public delegate void OnBreakDelegate();
+    public OnBreakDelegate onBreak;
+
+    //----------------------------------------------------------------------
 
 	private int m_remainingHits;
 
@@ -38,12 +47,24 @@ public class BreakableBehaviour : MonoBehaviour
 		if (m_view == null)
 			m_view = transform.Find("view");
 
-		Messenger.AddListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDestroy() {
-		Messenger.RemoveListener(MessengerEvents.GAME_AREA_ENTER, CreatePool);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_AREA_ENTER:
+            {
+                CreatePool();
+            }break;
+        }
+    }
+    
 
 	void CreatePool() {
 		m_onBreakParticle.CreatePool();
@@ -52,17 +73,18 @@ public class BreakableBehaviour : MonoBehaviour
 		}
 	}
 
-	void Start() {		
-		CreatePool();			
-		m_initialViewPos = m_view.localPosition;
-	}
+    void Start() {
+        CreatePool();
+        m_initialViewPos = m_view.localPosition;
+    }
 
 	void OnEnable() {
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
 			m_wobbler = GetComponent<Wobbler>();		
-		m_wobbler.enabled = false;
+        if (m_wobbler != null)
+            m_wobbler.enabled = false;
 
 		if (m_collider == null)
 			m_collider = GetComponent<Collider>();
@@ -98,9 +120,7 @@ public class BreakableBehaviour : MonoBehaviour
 					if (tier >= m_tierNoTurboBreak) {
 						m_remainingHits--;
 					} else if (tier >= m_tierWithTurboBreak) {
-						DragonBoostBehaviour boost = collision.transform.gameObject.GetComponent<DragonBoostBehaviour>();	
-
-						if (boost.IsBoostActive())	{
+						if (player.IsBreakingMovement())	{
 							m_remainingHits--;
 							pushVector = -collision.contacts[0].normal * value;
 						} else {
@@ -173,6 +193,10 @@ public class BreakableBehaviour : MonoBehaviour
 
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
+        InstanceManager.timeScaleController.HitStop();
+
+        if (onBreak != null)
+            onBreak();
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));

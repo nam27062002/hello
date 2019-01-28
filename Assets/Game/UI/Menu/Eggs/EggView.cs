@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Main control of a single egg prefab in the menu.
 /// </summary>
-public class EggView : MonoBehaviour {
+public class EggView : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -158,7 +158,7 @@ public class EggView : MonoBehaviour {
 		m_animator = GetComponentInChildren<Animator>();
 
 		// Subscribe to external events
-		Messenger.AddListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+        Broadcaster.AddListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -182,8 +182,22 @@ public class EggView : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unsubscribe to external events
-		Messenger.RemoveListener<Egg, Egg.State, Egg.State>(MessengerEvents.EGG_STATE_CHANGED, OnEggStateChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.EGG_STATE_CHANGED, this);
 	}
+    
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.EGG_STATE_CHANGED:
+            {
+                EggStateChanged info = (EggStateChanged)broadcastEventInfo;
+                OnEggStateChanged(info.egg, info.from, info.to);
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Called every frame.
@@ -203,6 +217,9 @@ public class EggView : MonoBehaviour {
 	/// Refresh this object based on egg's current state.
 	/// </summary>
 	private void Refresh() {
+		// Aux vars
+		int step = 0;
+
 		// If we don't have valid data, simulate SHOWROOM state
 		Egg.State state = Egg.State.SHOWROOM;
 		if(m_eggData != null) {
@@ -210,21 +227,31 @@ public class EggView : MonoBehaviour {
 		}
 
 		// Enable/disable behaviours based on current egg's state
-		m_openBehaviour.enabled = (state == Egg.State.OPENING);
-		m_readyBehaviour.enabled = (state == Egg.State.READY);
+		if(m_openBehaviour != null) m_openBehaviour.enabled = (state == Egg.State.OPENING);
+		if(m_readyBehaviour != null) m_readyBehaviour.enabled = (state == Egg.State.READY);
 
 		// Set animator's parameters
-		m_animator.SetInteger( GameConstants.Animator.EGG_STATE , (int)state);
+		if(m_animator != null) {
+			// Egg state
+			m_animator.SetInteger(GameConstants.Animator.EGG_STATE, (int)state);
 
-		// Collect steps
-		int step = Mathf.Clamp(m_openBehaviour.tapCount, 0, OpenEggBehaviour.TAPS_TO_OPEN);
-		m_animator.SetInteger( GameConstants.Animator.COLLECT_STEP , step);
+			// Collect steps
+			if(m_openBehaviour != null) {
+				step = Mathf.Clamp(m_openBehaviour.tapCount, 0, OpenEggBehaviour.TAPS_TO_OPEN);
+				m_animator.SetInteger(GameConstants.Animator.COLLECT_STEP, step);
+			}
 
-		// Rarity
-		if(m_eggData != null && m_eggData.rewardData != null) {
-			m_animator.SetInteger( GameConstants.Animator.RARITY ,(int)m_eggData.rewardData.rarity);
-		} else {
-			m_animator.SetInteger( GameConstants.Animator.RARITY ,(int)Metagame.Reward.Rarity.COMMON);
+			// Rarity
+			if(m_eggData != null && m_eggData.rewardData != null) {
+				m_animator.SetInteger(GameConstants.Animator.RARITY, (int)m_eggData.rewardData.rarity);
+			} else {
+				m_animator.SetInteger(GameConstants.Animator.RARITY, (int)Metagame.Reward.Rarity.COMMON);
+			}
+
+			// Animation intensity - reset to default if state is different than collected
+			if(state != Egg.State.COLLECTED) {
+				m_animator.SetFloat(GameConstants.Animator.INTENSITY, 1f);
+			}
 		}
 
 		// Stuff depending on egg state
@@ -272,11 +299,6 @@ public class EggView : MonoBehaviour {
 		if(m_incubatingFX != null) {
 			m_incubatingFX.SetActive(showIncubatingFX);
 			if(showIncubatingFX) SetIncubatingVFXIntensity(incubatingFXIntensity);
-		}
-
-		// Animation intensity - reset to default if state is different than collected
-		if(state != Egg.State.COLLECTED) {
-			m_animator.SetFloat( GameConstants.Animator.INTENSITY , 1f);
 		}
 	}
 

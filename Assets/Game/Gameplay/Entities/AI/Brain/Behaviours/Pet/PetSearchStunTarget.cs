@@ -8,10 +8,6 @@ namespace AI {
 
 		[System.Serializable]
 		public class PetSearchStunTargetData : StateComponentData {
-			[Tooltip("Max tier this pet will consider target.")]
-			public DragonTier maxValidTier = DragonTier.TIER_4;
-			[Tooltip("Min tier this pet will consider target.")]
-			public DragonTier minValidTier = DragonTier.TIER_0;
 			public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
 			[Tooltip("Coma separated list of entity skus to ignore")]
@@ -62,7 +58,7 @@ namespace AI {
 
 				m_owner = InstanceManager.player;
 				m_data = m_pilot.GetComponentData<PetSearchStunTargetData>();
-				m_range = m_owner.data.GetScaleAtLevel(m_owner.data.progression.maxLevel) * m_data.dragonSizeRangeMultiplier;
+				m_range = m_owner.data.maxScale * m_data.dragonSizeRangeMultiplier;
 
 				m_sensor = (m_machine as Machine).sensor;
 
@@ -96,9 +92,9 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && !machine.isPetTarget )
+						if (machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget )
 						{
-							if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
+							// if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
 							{
 								// Test if in front of player!
 								Vector3 entityDir = machine.position - m_owner.dragonMotion.position;

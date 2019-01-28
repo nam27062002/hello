@@ -238,9 +238,9 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     }
 
-    public bool IsReady()
+    public static bool IsReady()
     {
-        return m_isReady;
+        return isInstanceCreated && instance.m_isReady;
     }
 
     #region state
@@ -1433,7 +1433,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
                 return true;
 #else
-	            ServerManager.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+	            Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
 	            return (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);               
 #endif
             }
@@ -1463,7 +1463,7 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #if UNITY_EDITOR
         return true;
 #elif UNITY_IOS
-        return false;
+        return true;
 #else
         return true;
 #endif
@@ -1562,17 +1562,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
-    /// <summary>
-    /// When <c>true</c> the first loading screen has to wait for customizer to be applied before keeping on loading so we can be sure that the latest rules are loaded when the user starts playing
-    /// </summary>
-    public bool IsCustomizerBlocker
-    {
-        get
-        {
-            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CUSTOMIZER_BLOCKER);
-        }
-    }
-
     public bool IsGlowEffectEnabled
     {
         get
@@ -1602,6 +1591,14 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         get
         {
             return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_LIGHTMAP);
+        }
+    }
+    
+    public bool IsHelicopterDestroying
+    {
+        get
+        {
+            return Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_HELICOPTER_DESTROYS);
         }
     }
 
@@ -1709,7 +1706,28 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2);
     }
 
-	public static bool MenuDragonsAsyncLoading
+    public bool IsCP2InterstitialEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CP2_INTERSTITIAL);
+    }
+
+    public int GetCP2InterstitialFrequency()
+    {
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_FREQUENCY);
+    }
+
+    public int GetCP2InterstitialMinRounds()
+    {
+        return (Device_CurrentFeatureSettings == null) ? 0 : Device_CurrentFeatureSettings.GetValueAsInt(FeatureSettings.KEY_CP2_INTERSTITIAL_MIN_ROUNDS);
+    }
+
+    public bool IsCrashlyticsEnabled()
+    {
+        return (Device_CurrentFeatureSettings == null) ? false : Device_CurrentFeatureSettings.GetValueAsBool(FeatureSettings.KEY_CRASHLYTICS);
+    }
+
+
+    public static bool MenuDragonsAsyncLoading
     {
         get
         {                  

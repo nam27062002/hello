@@ -24,9 +24,9 @@ public class HUDScore : HudWidget {
 	//------------------------------------------------------------------//		
 	private void Awake() {
 		base.Awake();
-		if ( SceneController.s_mode == SceneController.Mode.TOURNAMENT )
+		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
 		{
-			HDTournamentData _data = HDLiveEventsManager.instance.m_tournament.data as HDTournamentData;
+			HDTournamentData _data = HDLiveDataManager.tournament.data as HDTournamentData;
 			HDTournamentDefinition _def = _data.definition as HDTournamentDefinition;
 			if ( ( _def.m_goal.m_mode == HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL && _def.m_goal.m_type == "survive_time" ) || _def.m_goal.m_type == "score")
 			{

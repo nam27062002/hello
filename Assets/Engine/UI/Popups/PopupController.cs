@@ -33,6 +33,9 @@ public class PopupController : MonoBehaviour {
 	private bool m_isReady = false;
 	public bool isReady { get { return m_isReady; }}
 
+	private float m_openTimestamp = 0f;
+	public float openTimestamp { get { return m_openTimestamp; }}
+
 	// Internal
 	private Animator m_anim = null;
 	private bool m_destroyAfterClose = true;
@@ -43,10 +46,19 @@ public class PopupController : MonoBehaviour {
 	//------------------------------------------------------------------//
 	// Add as many listeners as you want to this specific event by using the .AddListener() method
 	// No need to remove them, events will be cleared upon popup's destruction
+
+	// Parameter-less events to be setup from the inspector
 	public UnityEvent OnOpenPreAnimation = new UnityEvent();
 	public UnityEvent OnOpenPostAnimation = new UnityEvent();
 	public UnityEvent OnClosePreAnimation = new UnityEvent();
 	public UnityEvent OnClosePostAnimation = new UnityEvent();
+
+	// Parametrized events to be used from code
+	public class PopupEvent : UnityEvent<PopupController> { }
+	public PopupEvent OnOpen = new PopupEvent();
+	public PopupEvent OnClose = new PopupEvent();
+
+    protected PopupManagementInfo m_popupManagementInfo = new PopupManagementInfo();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -59,11 +71,13 @@ public class PopupController : MonoBehaviour {
 		m_anim = GetComponent<Animator>();
 		DebugUtils.Assert(m_anim != null, "Required Component!!");
 
+        m_popupManagementInfo.popupController = this;
+
 		// By default popups are closed
 		m_isOpen = false;
 
 		// Dispatch message
-		Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CREATED, this);
+		Broadcaster.Broadcast(BroadcastEventType.POPUP_CREATED, m_popupManagementInfo);
 	}
 
 	/// <summary>
@@ -72,13 +86,15 @@ public class PopupController : MonoBehaviour {
 	protected virtual void OnDestroy() {
         if (ApplicationManager.IsAlive) {
             // Dispatch message - it could be problematic using "this" at this point
-            Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_DESTROYED, this);
+            Broadcaster.Broadcast(BroadcastEventType.POPUP_DESTROYED, m_popupManagementInfo);
 
             // Clear all events
             OnOpenPreAnimation.RemoveAllListeners();
             OnOpenPostAnimation.RemoveAllListeners();
             OnClosePreAnimation.RemoveAllListeners();
             OnClosePostAnimation.RemoveAllListeners();
+			OnOpen.RemoveAllListeners();
+			OnClose.RemoveAllListeners();
         }
 	}
 
@@ -92,17 +108,21 @@ public class PopupController : MonoBehaviour {
 		// Change status
 		m_isOpen = true;
 
+		// Update internal vars
+		m_openTimestamp = Time.unscaledTime;
+
+		// Invoke event - order is relevant!
+		OnOpen.Invoke(this);
+		OnOpenPreAnimation.Invoke();
+
 		// Reopening?
 		if(m_reopening) {
 			// Reset flag
 			m_reopening = false;
 		} else {
 			// Send message
-			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_OPENED, this);
+			Broadcaster.Broadcast(BroadcastEventType.POPUP_OPENED, m_popupManagementInfo);
 		}
-
-		// Invoke event
-		OnOpenPreAnimation.Invoke();
 
 		// Launch anim
 		m_anim.ResetTrigger( GameConstants.Animator.CLOSE );
@@ -117,7 +137,7 @@ public class PopupController : MonoBehaviour {
 		// Store flag
 		m_destroyAfterClose = _bDestroy;
 
-		// Invoke event
+		// Invoke event - order is relevant!
 		OnClosePreAnimation.Invoke();
 
 		// Launch anim
@@ -162,7 +182,8 @@ public class PopupController : MonoBehaviour {
 		m_isOpen = false;
 		m_isReady = false;
 
-		// Invoke event
+		// Invoke event - Order is relevant!
+		OnClose.Invoke(this);
 		OnClosePostAnimation.Invoke();
 
 		// Reopening?
@@ -171,7 +192,7 @@ public class PopupController : MonoBehaviour {
 			Open();
 		} else {
 			// Dispatch message
-			Messenger.Broadcast<PopupController>(MessengerEvents.POPUP_CLOSED, this);
+			Broadcaster.Broadcast(BroadcastEventType.POPUP_CLOSED, m_popupManagementInfo);
 
 			// Delete ourselves if required
 			if(m_destroyAfterClose) {

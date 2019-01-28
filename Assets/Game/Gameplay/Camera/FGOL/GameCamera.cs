@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
-public class GameCamera : MonoBehaviour
+public class GameCamera : MonoBehaviour, IBroadcastListener
 {
 	private const float			m_maxTrackAheadScaleX = 0.15f;
     private const float         m_maxTrackAheadScaleY = 0.2f; //JO
@@ -184,7 +184,7 @@ public class GameCamera : MonoBehaviour
 	private float 				m_bossLerpRate = 0.5f;
 
 	private List<BossCameraAffector> m_bossCamAffectors = new List<BossCameraAffector>();
-
+/*
 	private SlowmoBreachTrigger m_slowmoBreachTrigger = null;
 	private SlowmoDeathTrigger m_slowmoDeathTrigger = null;
 	// private PostProcessEffectsManager m_postProcessEffectsManager = null;
@@ -192,7 +192,7 @@ public class GameCamera : MonoBehaviour
 	public SlowmoBreachTrigger slowmoBreachTrigger { get { return m_slowmoBreachTrigger; } }
 	public SlowmoDeathTrigger slowmoDeathTrigger { get { return m_slowmoDeathTrigger; } }
 	// public PostProcessEffectsManager postProcessEffectsManager { get { return m_postProcessEffectsManager; } }
-
+*/
 
 	// Camera setup values used on control panel
 	private float m_lastSize = 0;
@@ -263,7 +263,7 @@ public class GameCamera : MonoBehaviour
 
 		// Subscribe to external events
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		// Messenger.AddListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.AddListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -286,13 +286,13 @@ public class GameCamera : MonoBehaviour
 		UpdateFrustumPlanes();
 
 		DebugUtils.Assert(m_unityCamera != null, "No Camera");
-
+/*
 		m_slowmoBreachTrigger = GetComponentInChildren<SlowmoBreachTrigger>();
 		DebugUtils.Assert(m_slowmoBreachTrigger != null, "No SlowmoBreachTrigger");
 
 		m_slowmoDeathTrigger = GetComponentInChildren<SlowmoDeathTrigger>();
 		DebugUtils.Assert(m_slowmoDeathTrigger != null, "No SlowmoDeathTrigger" );
-
+*/
 		// m_postProcessEffectsManager = GetComponentInChildren<PostProcessEffectsManager>();
 		// Assert.Fatal(m_postProcessEffectsManager != null);
 
@@ -386,7 +386,7 @@ public class GameCamera : MonoBehaviour
 
 	private void MoveToSpawnPos( bool _levelEditor = false )
 	{
-		DragonData data = InstanceManager.player.data;
+		IDragonData data = InstanceManager.player.data;
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
@@ -400,7 +400,10 @@ public class GameCamera : MonoBehaviour
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
 		}
 
-		Vector3 pos = spawnPointObj.transform.position;
+		Vector3 pos = GameConstants.Vector3.zero;
+		if(spawnPointObj != null) {
+			pos = spawnPointObj.transform.position;
+		}
 		m_position = pos;
 		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
 		m_transform.position = m_position;
@@ -408,7 +411,7 @@ public class GameCamera : MonoBehaviour
 
 	void OnDestroy() {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnFuryPrewarm);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFury);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		// Messenger.RemoveListener<bool>(GameEvents.SLOW_MOTION_TOGGLED, OnSlowMotion);
 		// Messenger.RemoveListener<bool>(GameEvents.BOOST_TOGGLED, OnBoost);
 		Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
@@ -424,6 +427,18 @@ public class GameCamera : MonoBehaviour
 
         if (FeatureSettingsManager.IsDebugEnabled)
             Debug_OnDestroy();
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFury( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
     }
 
 	public void UpdatePixelData()
@@ -449,6 +464,7 @@ public class GameCamera : MonoBehaviour
 	private void OnFuryPrewarm(DragonBreathBehaviour.Type _type, float _duration)
 	{
 		m_megaFirePrewarmTimer = m_megaFirePrewarmDuration = _duration * 2;
+        InstanceManager.timeScaleController.StartSlowMotion(m_megaFirePrewarmTimer, m_megaFireTimescaleMultiplier);
 	}
 
     private void CountDownEnded()
@@ -491,8 +507,8 @@ public class GameCamera : MonoBehaviour
 		DragonPlayer pi = obj.GetComponent<DragonPlayer>();
 		if(pi != null)
 		{
-			float size = pi.data.def.GetAsFloat("defaultSize");
-			float cameraFrameWidthModifier = pi.data.def.GetAsFloat("cameraFrameWidthModifier");
+            float size = pi.data.defaultSize;
+			float cameraFrameWidthModifier = pi.data.cameraFrameWidthModifier;
 			SetFrameWidthIncrement( size, cameraFrameWidthModifier );
 		}
 		else
@@ -637,7 +653,7 @@ public class GameCamera : MonoBehaviour
 
 		PlayUpdate();
 
-        if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.instance.IsReady())
+        if (NeedsToSetupPostProcessEffects && FeatureSettingsManager.IsReady())
         {
             SetupPostProcessEffects();
         }
@@ -807,12 +823,14 @@ public class GameCamera : MonoBehaviour
             {
             	float delta = 1.0f - m_megaFirePrewarmTimer / m_megaFirePrewarmDuration;
 				frameWidth = m_megaFireZoomMultiplier.Evaluate( delta ) * m_frameWidthFury;
-				Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
+				// Time.timeScale = m_megaFireTimescaleMultiplier.Evaluate( delta );
             	m_megaFirePrewarmTimer -= Time.unscaledDeltaTime;
+                /*
 				if (m_megaFirePrewarmTimer <= 0 )
 				{
 					Time.timeScale = 1;
 				}
+                */
             }
             else
             {

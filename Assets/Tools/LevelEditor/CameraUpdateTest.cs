@@ -64,7 +64,7 @@ public class CameraUpdateTest : MonoBehaviour {
 						bool useDefault = true;
 						Vector3 pos = editor.transform.position;
 						pos.z = 0f;
-						Collider[] colliders = Physics.OverlapSphere(pos, 5f, LayerMask.GetMask("Triggers"), QueryTriggerInteraction.Collide);
+                        Collider[] colliders = Physics.OverlapSphere(pos, 5f, GameConstants.Layers.TRIGGERS, QueryTriggerInteraction.Collide);
 						
 						for (int i = 0; i < colliders.Length; ++i) {
 							FogArea fog = colliders[i].GetComponent<FogArea>();

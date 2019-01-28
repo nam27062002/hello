@@ -22,8 +22,7 @@ namespace Metagame {
 
 			COMMON, 
 			RARE, 
-			EPIC, 
-			SPECIAL,
+			EPIC,
 
 			COUNT
 		}
@@ -46,7 +45,6 @@ namespace Metagame {
 				case "common":	return Rarity.COMMON; 
 				case "rare":	return Rarity.RARE;	
 				case "epic":	return Rarity.EPIC;	
-				case "special":	return Rarity.SPECIAL;				
 			}
 			return Rarity.UNKNOWN;
 		}
@@ -62,7 +60,6 @@ namespace Metagame {
 				case Rarity.COMMON:		return "common";
 				case Rarity.RARE:		return "rare";
 				case Rarity.EPIC:		return "epic";
-				case Rarity.SPECIAL:	return "special";
 			}
 			return string.Empty;
 		}
@@ -99,14 +96,14 @@ namespace Metagame {
 
 			rewardData.typeCode = _data["type"];
 			rewardData.typeCode = rewardData.typeCode.ToLower();
-			if ( rewardData.typeCode == "hc" )
+			if (rewardData.typeCode == "hc")
 				rewardData.typeCode = "pc";
 
-			if(_data.ContainsKey("sku")) {
+			if (_data.ContainsKey("sku")) {
 				rewardData.sku = _data["sku"];
 			}
 
-			if(_data.ContainsKey("amount")) {
+			if (_data.ContainsKey("amount")) {
 				rewardData.amount = _data["amount"].AsLong;
 			}
 
@@ -158,6 +155,11 @@ namespace Metagame {
 					return CreateTypeSkin(_data.sku, _source);
 				}
 
+				// Dragon reward - ignoring amount (dragons can only be rewarded once)
+				case RewardDragon.TYPE_CODE: {
+					return CreateTypeDragon(_data.sku, _source);
+				}
+
 				// Multi-reward: Cannot be created using this method
 				case RewardMulti.TYPE_CODE: { 
 					return CreateTypeMulti(new List<Data>(), _source, _economyGroup);	// No rewards will be created, must be added afterwards via LoadCustomjsonData() or manually
@@ -183,6 +185,9 @@ namespace Metagame {
 		public static RewardSkin CreateTypeSkin(string _sku, string _source)			{ return new RewardSkin(_sku, _source); }
 		public static RewardSkin CreateTypeSkin(DefinitionNode _def, string _source)	{ return new RewardSkin(_def, _source); }
 
+		public static RewardDragon CreateTypeDragon(string _sku, string _source) 			{ return new RewardDragon(_sku, _source); }
+		public static RewardDragon CreateTypeDragon(DefinitionNode _def, string _source) 	{ return new RewardDragon(_def, _source); }
+
 		public static RewardMulti CreateTypeMulti(List<Data> _datas, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN)	{ return new RewardMulti(_datas, _source, _economyGroup); }
 		#endregion
 
@@ -207,8 +212,11 @@ namespace Metagame {
 		public UserProfile.Currency currency { get { return m_currency; } }
 
 		// Rewarded amount
-		protected long m_amount = 1;
-		public long amount { get { return m_amount; } }
+		private long m_amount = 1;
+        public long amount { get { return m_amount + UnityEngine.Mathf.FloorToInt((m_amount * m_bonusPercentage) / 100.0f); } }
+
+        protected float m_bonusPercentage;
+        public float bonusPercentage { set { m_bonusPercentage = value; } }
 
 		// Sku of the rewarded item, if any
 		protected string m_sku = "";
@@ -241,10 +249,16 @@ namespace Metagame {
 			m_rarity = Rarity.COMMON;
 			m_currency = UserProfile.Currency.NONE;
 			m_amount = 1;
+            m_bonusPercentage = 0f;
 			m_sku = string.Empty;
 			m_def = null;
 			m_replacement = null;
 		}
+
+        protected void Init(string _type, long _amount) {
+            Init(_type);
+            m_amount = _amount;
+        }
 
 		//------------------------------------------------------------------------//
 		// PUBLIC METHODS														  //

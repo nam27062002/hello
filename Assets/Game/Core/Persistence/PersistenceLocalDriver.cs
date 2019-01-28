@@ -14,14 +14,14 @@ public class PersistenceLocalDriver
         set
         {
             mData = value;
-            if (mData == null)
+                        
+            string key = (mData == null) ? null : mData.Key;      
+            if (string.IsNullOrEmpty(key))
             {
-                SavePaths_Reset();
+                key = PersistenceProfile.DEFAULT_PROFILE;
             }
-            else
-            {
-                SavePaths_Generate(mData.Key);
-            }
+
+            SavePaths_Generate(key);            
         }
     }
 
@@ -62,16 +62,24 @@ public class PersistenceLocalDriver
 	}
 
 	protected virtual void ExtendedLoad()
-	{                
+	{
         int currentIndex = SavePaths_LatestIndex;        
         int latestIndex = currentIndex;
         string savePath;
+
+        bool anyCorrupted = false;
 
         // Tries different paths until no paths are left or one of them contains a file that exists and it's not corrupted
         for (int i = 0; i < SAVE_PATHS_COUNT; i++)
         {            
             savePath = SavePaths_GetPathAtIndex(currentIndex);
             Data.Load(savePath);
+
+            // This variable states that at least a file was found but it was corrupted so the corresponding popup can be shown if no valid file is found
+            if (Data.LoadState == PersistenceStates.ELoadState.Corrupted)
+            {
+                anyCorrupted = true;
+            }
 
             // Checks if it's a valid one, if so then it
             if (SavePaths_IsAValidLoadState(Data.LoadState))            
@@ -86,6 +94,8 @@ public class PersistenceLocalDriver
                     SavePaths_LatestIndex = currentIndex;
                 }
 
+                anyCorrupted = false;
+
                 // No more iterations are needed
                 break;
             }
@@ -97,7 +107,13 @@ public class PersistenceLocalDriver
                 // Updates the index for the next iteration
                 currentIndex = SavePaths_GetPreviousIndexToIndex(currentIndex);
             }
-        }                
+        }    
+        
+        // We need to mark Data as Corrupted because no valid file was found and we know that at least a file exists but it was corrupted so we need to let the user know
+        if (anyCorrupted)
+        {
+            Data.LoadState = PersistenceStates.ELoadState.Corrupted;
+        }            
     }
 
 	protected void OnLoadDone(Action onDone)
@@ -320,18 +336,7 @@ public class PersistenceLocalDriver
     private const bool SAVE_PATHS_MULTIPLE_ENABLED = true;
     private const int SAVE_PATHS_COUNT = (SAVE_PATHS_MULTIPLE_ENABLED) ? 2 : 1;
 
-    private string[] mSavePaths;    
-
-    private void SavePaths_Reset()
-    {
-        if (mSavePaths != null)
-        {
-            for (int i = 0; i < SAVE_PATHS_COUNT; i++)
-            {
-                mSavePaths[i] = null;
-            }
-        }
-    }
+    private string[] mSavePaths;        
 
     private void SavePaths_Generate(string key)
     {        

@@ -86,6 +86,9 @@ public class FeatureSettings
     // This key decides if lightmap will be used on this profile
     public const string KEY_LIGHTMAP = "lightmap";
 
+    // This key decides if special dragon helicopter destoys breakables
+    public const string KEY_HELICOPTER_DESTROYS = "helicopterDestroys";
+    
     // Whether or not Tracking is enabled
     public const string KEY_TRACKING = "tracking";
 
@@ -131,8 +134,20 @@ public class FeatureSettings
     // Whether or not CP2 is enabled
     public const string KEY_CP2 = "cp2";
 
+    // Whether or not CP2 interstital is enabled
+    public const string KEY_CP2_INTERSTITIAL = "cp2Interstital";
+
+    // Min time in seconds between two consecutive interstitial
+    public const string KEY_CP2_INTERSTITIAL_FREQUENCY = "cp2InterstitialFrequency";
+
+    // Min amount of rounds the user has to play in a session before she's eligible for a cp2 interstitial
+    public const string KEY_CP2_INTERSTITIAL_MIN_ROUNDS = "cp2InterstitialMinRounds";
+
+    // Whether or not Fabric Crashlytics is enabled
+    public const string KEY_CRASHLYTICS = "crashlytics";
+
     // Max time to wait for log in social platform to finish
-    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeou";
+    public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
 
     // Examples of how to use different type datas
     /*
@@ -200,6 +215,11 @@ public class FeatureSettings
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
+            // helicopter Destroys: enable/disable special dragon helicopter destroying
+            key = KEY_HELICOPTER_DESTROYS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
+            Datas.Add(key, data);
+            
             // glow: default value is false because glow has caused crashed in several devices so false is a safer value for a device until it's proved that the feature works properly
             key = KEY_GLOW_EFFECT;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
@@ -327,6 +347,22 @@ public class FeatureSettings
 
             key = KEY_CP2;
             data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.TRUE);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL_FREQUENCY;
+            data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL_MIN_ROUNDS;
+            data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            key = KEY_CRASHLYTICS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;

@@ -20,6 +20,10 @@ public class FireLightning : DragonBreathBehaviour {
     public float m_offsetRays2 = 0.5f;
     public Material m_rayMaterial2;
 
+    public float m_logicDetectionSize = 1;
+
+    private float relativeSizeMultiplier = 1;
+
     public int m_numRays2 = 1;
 
 
@@ -51,12 +55,13 @@ public class FireLightning : DragonBreathBehaviour {
     Transform m_mouthTransform;
 	Transform m_headTransform;
 
-	int m_groundMask;
-	int m_waterMask;
 	bool m_insideWater;
 
     Lightning[] m_rays = null;// new Lightning[3];
     Lightning[] m_rays2 = null;// new Lightning[3];
+
+	private Entity[] m_checkEntities = new Entity[50];
+	private int m_numCheckEntities = 0;
 
 
     public class Lightning
@@ -170,11 +175,8 @@ public class FireLightning : DragonBreathBehaviour {
 
 		}
 
-        m_mouthTransform = transform.FindTransformRecursive("Rays_Dummy");
+        m_mouthTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
-
-		m_groundMask = LayerMask.GetMask("Ground", "GroundVisible");
-		m_waterMask = LayerMask.GetMask("Water");
 
         /*
                 m_rays[0] = new Lightning(m_segmentInitialWidth, m_segmentFinalWidth, Color.white, m_rayMaterial, m_shapeCurve);
@@ -318,7 +320,7 @@ public class FireLightning : DragonBreathBehaviour {
 		}
 		else
 		{
-			if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*length, out ground, m_waterMask))
+            if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*length, out ground, GameConstants.Layers.WATER))
 			{
 				float addition = (length - ground.distance); // distance enering water
 				// length += addition;	// We double it
@@ -331,7 +333,8 @@ public class FireLightning : DragonBreathBehaviour {
 			}
 		}
 
-		if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, m_groundMask)){
+        if (Physics.Linecast( m_mouthTransform.position, m_mouthTransform.position+(Vector3)m_direction*m_currentLength, out ground, GameConstants.Layers.GROUND))
+        {
 			p2 = ground.point;
 			m_actualLength = ground.distance;
             isGround = true;
@@ -359,20 +362,20 @@ public class FireLightning : DragonBreathBehaviour {
             m_rays2[i].Draw(p1, p2);
         }
 
-        SetWidthMultiplier(m_rays, m_widthMultiplier);
-        SetWidthMultiplier(m_rays2, m_widthMultiplier2);
+		SetWidthMultiplier(m_rays, m_widthMultiplier * relativeSizeMultiplier);
+		SetWidthMultiplier(m_rays2, m_widthMultiplier2 * relativeSizeMultiplier);
 
         SetWidthCurve(m_rays, m_widthCurve);
         SetWidthCurve(m_rays2, m_widthCurve2);
 
         // Look entities to damage!
-        Entity[] preys = EntityManager.instance.GetEntitiesIn((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_maxAmplitude2, m_actualLength);
-		for (int i = 0; i < preys.Length; i++) 
+		m_numCheckEntities = EntityManager.instance.GetEntitiesInNonAlloc((Vector2)m_mouthTransform.position, (Vector2)m_direction, m_logicDetectionSize * 2 * relativeSizeMultiplier, m_actualLength, m_checkEntities);
+		for (int i = 0; i < m_numCheckEntities; i++) 
 		{
-			if (preys[i].IsBurnable(m_tier) || m_type == Type.Mega) {
-				AI.IMachine machine =  preys[i].machine;
+			if (m_checkEntities[i].IsBurnable(m_tier) || m_type == Type.Mega) {
+				AI.IMachine machine =  m_checkEntities[i].machine;
 				if (machine != null) {					
-					machine.Burn(transform, IEntity.Type.PLAYER);
+					machine.Burn(transform, IEntity.Type.PLAYER, m_type == Type.Mega);
 				}
 			}
 			/*
@@ -385,6 +388,8 @@ public class FireLightning : DragonBreathBehaviour {
         m_bounds2D.center = m_mouthTransform.position;
 		m_bounds2D.width = Mathf.Max( m_actualLength, m_maxAmplitude);
 		m_bounds2D.height = Mathf.Max( m_actualLength, m_maxAmplitude);
+
+		base.Breath();
 	}
 
 
@@ -392,6 +397,14 @@ public class FireLightning : DragonBreathBehaviour {
 	override protected void BeginFury( Type _type ) 
 	{
 		base.BeginFury( _type );
+
+		if (_type == Type.Mega){
+			relativeSizeMultiplier = 2;
+		}else{
+			relativeSizeMultiplier = 1;
+		}
+
+
 		if ( m_particleStart )
 		{
 			m_particleStart.transform.position = m_mouthTransform.position;
@@ -415,9 +428,9 @@ public class FireLightning : DragonBreathBehaviour {
     {
     	if ( m_dragon )
     	{
-//			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
-//			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
-//	        m_length *= transform.localScale.x;
+			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
+			m_length *= transform.localScale.x;
 		}
     }
 
@@ -440,6 +453,14 @@ public class FireLightning : DragonBreathBehaviour {
 		{
 			Gizmos.color = Color.magenta;
 			Gizmos.DrawLine( m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * m_actualLength );
+
+			Vector2 up = m_direction.RotateDegrees(90).normalized;
+			Vector3 upStart = m_mouthTransform.position + (Vector3)up * m_logicDetectionSize; 
+			Gizmos.DrawLine( upStart, upStart + (Vector3)m_direction * m_actualLength );
+
+			Vector2 down = m_direction.RotateDegrees(-90).normalized;
+			Vector3 downStart = m_mouthTransform.position + (Vector3)down * m_logicDetectionSize; 
+			Gizmos.DrawLine( downStart, downStart + (Vector3)m_direction * m_actualLength );
 		}
 	}
 
@@ -479,4 +500,8 @@ public class FireLightning : DragonBreathBehaviour {
 			m_insideWater = false;
 		}
 	}
+
+
+
+
 }

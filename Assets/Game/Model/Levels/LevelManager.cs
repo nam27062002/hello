@@ -152,7 +152,7 @@ public class LevelManager : Singleton<LevelManager> {
 
 
 		// Load area by dragon
-		m_currentArea = def.Get(UsersManager.currentUser.currentDragon);
+		m_currentArea = def.GetAsString(DragonManager.currentDragon.sku, "area1");	// [AOC] Adding default value in case dragon's initial area is not defined in content
 		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
 		if ( areaOperations != null )
 			loadingTasks.AddRange( areaOperations );
@@ -164,6 +164,45 @@ public class LevelManager : Singleton<LevelManager> {
 		
 		return loadingTasks.ToArray();
 	}
+
+
+    public static void LoadLevelSync()
+    {
+    // Destroy any existing level in the game scene
+        LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
+        for(int i = 0; i < activeLevels.Length; i++) {
+            GameObject.DestroyImmediate(activeLevels[i].gameObject);
+        }
+
+        // Has the current level data been loaded?
+        DebugUtils.SoftAssert(m_currentLevelData != null, "Current level has not been set!");
+        DefinitionNode def = m_currentLevelData.def;
+
+
+        // Common Scenes
+        List<string> commonScenes = def.GetAsList<string>("common");
+        for( int i = 0; i<commonScenes.Count; i++ )
+        {
+            // TODO: Check if is splitted to use different name
+            string sceneName = GetRealSceneName(commonScenes[i]);
+            SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+        }
+
+        if (FeatureSettingsManager.IsWIPScenesEnabled)
+        {
+            List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+            for( int i = 0; i<gameplayWip.Count; i++ )
+            {
+                // TODO: Check if is splitted to use different name
+                string sceneName = GetRealSceneName(gameplayWip[i]);
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+            }
+        }
+
+        // Load area by dragon
+        m_currentArea = def.GetAsString(DragonManager.currentDragon.sku, "area1");  // [AOC] Adding default value in case dragon's initial area is not defined in content
+        LoadArea( m_currentArea );
+    }
 
 
 	public static List<AsyncOperation> LoadArea( string area )
@@ -183,6 +222,18 @@ public class LevelManager : Singleton<LevelManager> {
 		}
 		return loadingTasks;
 	}   
+
+    public static void LoadAreaSync(string area)
+    {
+        DefinitionNode def = m_currentLevelData.def;
+        m_currentArea = area;
+        m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
+        for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
+        {
+            string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
+            SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+        }
+    }
 
 	public static void DisableCurrentArea()
 	{
@@ -214,6 +265,16 @@ public class LevelManager : Singleton<LevelManager> {
 		m_currentArea = "";
 		return loadingTasks;
 	}
+    
+    public static void UnloadCurrentAreaSync()
+    {
+        for( int i = 0;i< m_currentAreaScenes.Count; i++ )
+        {
+            SceneManager.UnloadScene(m_currentAreaScenes[i]);
+        }
+        m_currentAreaScenes.Clear();
+        m_currentArea = "";
+    }
 
 
 	/// <summary>
@@ -244,6 +305,19 @@ public class LevelManager : Singleton<LevelManager> {
 		}
 		return ret;
 	}
+    
+    public static void SwitchAreaSync(string nextArea)
+    {
+        if ( m_currentArea != nextArea )
+        {
+            // Unload current area scenes
+            UnloadCurrentAreaSync();
+
+            // Load new area scenes
+            LoadAreaSync(nextArea);
+
+        }
+    }
 
 
 	private static string GetRealSceneName( string sceneName )

@@ -53,6 +53,8 @@ public class MenuTransitionManager : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	// Safety time period between transitions (to avoid breaking the UI if tapping 2 buttons for example)
+	private const float TRANSITION_SAFETY_PERIOD = 0.5f;
 	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -63,6 +65,10 @@ public class MenuTransitionManager : MonoBehaviour {
 	}
 
 	[SerializeField] private BezierCurve m_dynamicPath = null;
+	public BezierCurve dynamicPath {
+		get { return m_dynamicPath; }
+	}
+
 	[Space]
 	[SerializeField] private float m_defaultTransitionDuration = 0.5f;
 	[SerializeField] private Ease m_defaultTransitionEase = Ease.InOutCubic;
@@ -99,7 +105,13 @@ public class MenuTransitionManager : MonoBehaviour {
 	public List<MenuScreen> screenHistory {
 		get { return m_screenHistory; }
 	}
-	
+
+	// Transition protection
+	private bool m_transitionAllowed = true;
+	public bool transitionAllowed {
+		get { return m_transitionAllowed; }
+	}
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -146,8 +158,16 @@ public class MenuTransitionManager : MonoBehaviour {
 	/// </summary>
 	/// <param name="_targetScreen">Target screen.</param>
 	/// <param name="_animate">Whether to animate or do it instantly.</param>
-	public void GoToScreen(MenuScreen _targetScreen, bool _animate) {
+	/// <param name="_forceTransition">Top priority, allows to interrupt an ongoing transition.</param>
+	/// <param name="_allowBack">If set to <c>false</c>, overrides the current screen's setup and doesn't store it to the navigation history.</param>
+	public void GoToScreen(MenuScreen _targetScreen, bool _animate, bool _forceTransition = false, bool _allowBack = true) {
 		Debug.Log("Changing screen from " + Colors.coral.Tag(m_currentScreen.ToString()) + " to " + Colors.aqua.Tag(_targetScreen.ToString()));
+
+		// Block if transitions are not allowed at this moment
+        if(!m_transitionAllowed && !_forceTransition) {
+			Debug.Log("BLOCKED");
+			return;
+		}
 
 		// Ignore if screen is already active
 		if(_targetScreen == m_currentScreen) return;
@@ -169,7 +189,8 @@ public class MenuTransitionManager : MonoBehaviour {
 			} else {
 				// Moving forward to a new screen!
 				// Don't add to history if going back to this screen is not allowed
-				if(fromScreenData != null && fromScreenData.ui.allowBackToThisScreen) {
+				// Don't add also if the caller had explicitely requested so
+				if(fromScreenData != null && fromScreenData.ui.allowBackToThisScreen && _allowBack) {
 					m_screenHistory.Add(m_currentScreen);
 				}
 			} 
@@ -181,6 +202,10 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Notify game a screen transition has just happen and animation is about to start
 		Messenger.Broadcast<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, m_prevScreen, m_currentScreen);
+
+		// Prevent any transition during a safety period (to avoid breaking the UI if tapping 2 buttons for example)
+		m_transitionAllowed = false;
+		UbiBCN.CoroutineManager.DelayedCall(() => { m_transitionAllowed = true; }, TRANSITION_SAFETY_PERIOD);
 
 		// Perform transition
 		// Do we have a valid transition data from current screen to target screen?
@@ -306,7 +331,8 @@ public class MenuTransitionManager : MonoBehaviour {
 		} else {
 			// Yes! Animated transition!
 			// Lerp path (if defined)
-			if(_t.path != null) {
+			bool usePath = _t.path != null;
+			if(usePath) {
 				// Dynamic path will copy the original transition path and then 
 				// lerp it with the current camera position replacing the first point
 
@@ -315,6 +341,9 @@ public class MenuTransitionManager : MonoBehaviour {
 				BezierPoint newP = null;
 				int initialPoint = _t.path.GetPointIdx(_t.initialPathPoint);
 				int finalPoint = _t.path.GetPointIdx(_t.finalPathPoint);
+
+				// Prevent snap point to change the position as well (the dynamic path will control it instead)
+				_toScreenData.cameraSetup.changePosition = false;
 
 				// If animating, kill tween
 				if(m_cameraTween != null) {
@@ -374,10 +403,17 @@ public class MenuTransitionManager : MonoBehaviour {
 					.OnComplete(OnCameraTweenCompleted);
 			}
 
+			// Path not defined, lerp position
+			else {
+				_toScreenData.cameraSetup.changePosition = true;
+			}
+
 			// Camera rotation and properties will just be lerped using the snap points
 			TweenParams tweenParams = new TweenParams().SetEase(_ease);
-			_toScreenData.cameraSetup.changePosition = false;
 			_toScreenData.cameraSetup.TweenTo(m_camera, _duration, tweenParams);
+
+			// Notify game a camera transition is about to start!
+			Messenger.Broadcast<MenuScreen, MenuScreen, bool>(MessengerEvents.MENU_CAMERA_TRANSITION_START, m_prevScreen, m_currentScreen, usePath);
 		}
 	}
 

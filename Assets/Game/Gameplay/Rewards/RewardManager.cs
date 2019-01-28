@@ -43,7 +43,7 @@ public class SurvivalBonusData {
 /// Global rewards controller. Keeps current game score, coins earned, etc.
 /// Singleton class, access it via its static methods.
 /// </summary>
-public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
+public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -90,6 +90,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	public static float xp {
 		get { return instance.m_xp; }
 	}
+
+
 
 	// Score multiplier
 	[SerializeField] private int m_currentScoreMultiplierIndex = 0;
@@ -254,6 +256,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
     }
 
     private bool m_switchingArea = false;
+    private bool m_canLoseMultiplier = true;
+    public bool canLoseMultiplier
+    {
+        get{ return m_canLoseMultiplier; }
+        set{ m_canLoseMultiplier = value; }
+    }
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -280,9 +288,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.AddListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 
         // Required for tracking purposes
         Messenger.AddListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
@@ -290,6 +298,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
 
 	/// <summary>
@@ -304,9 +313,9 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
-		Messenger.RemoveListener<bool, DragonBreathBehaviour.Type>(MessengerEvents.FURY_RUSH_TOGGLED, OnFuryRush);
+		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
 		Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 
         // Required for tracking purposes
         Messenger.RemoveListener<bool>(MessengerEvents.UNDERWATER_TOGGLED, OnUnderwaterToggled);
@@ -314,7 +323,27 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
         
         Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
+    
+    
+     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+            case BroadcastEventType.FURY_RUSH_TOGGLED:
+            {
+                FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
+                OnFuryRush( furyRushToggled.activated, furyRushToggled.type );
+            }break;
+        }
+    }
+    
+    
 
 	/// <summary>
 	/// Called every frame.
@@ -328,7 +357,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
 			// If timer has ended, end multiplier streak
-			if(m_scoreMultiplierTimer <= 0) 
+			if(m_scoreMultiplierTimer <= 0 && canLoseMultiplier) 
 			{
 				if (m_currentScoreMultiplierIndex != 0)
 				{
@@ -399,12 +428,25 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Current dragon progress
 		if(DragonManager.currentDragon != null) {
-			instance.m_dragonInitialLevel = DragonManager.currentDragon.progression.level;
-			instance.m_dragonInitialLevelProgress = DragonManager.currentDragon.progression.progressCurrentLevel;
+			// Depends on dragon type
+			switch(DragonManager.currentDragon.type) {
+				case IDragonData.Type.CLASSIC: {
+					DragonDataClassic data = DragonManager.currentDragon as DragonDataClassic;
+					instance.m_dragonInitialLevel = data.progression.level;
+					instance.m_dragonInitialLevelProgress = data.progression.progressCurrentLevel;
+				} break;
+
+				case IDragonData.Type.SPECIAL: {
+					// [AOC] TODO!!
+					instance.m_dragonInitialLevel = 1;
+					instance.m_dragonInitialLevelProgress = 0f;
+				} break;
+			}
 
 			// Next dragon locked?
-			DragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
-			if(nextDragonData != null) {
+			// [AOC] Only makes sense for CLASSIC dragons
+			IDragonData nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
+			if(nextDragonData != null && DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
 				instance.m_nextDragonLocked = nextDragonData.isLocked;
 			} else {
 				instance.m_nextDragonLocked = false;
@@ -442,7 +484,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 
 		// Survival bonus
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode != SceneController.Mode.TOURNAMENT) {
+		if(GameSceneController.mode != SceneController.Mode.TOURNAMENT) {
 			UsersManager.currentUser.EarnCurrency(UserProfile.Currency.SOFT, (ulong)instance.CalculateSurvivalBonus(), false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 		}
 	}
@@ -465,6 +507,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 			return m_sceneController.elapsedSeconds;
 		return 0;
 	}
+
+    public void OnApplyCheatsReward(Reward _reward) {
+        ApplyReward(_reward, null);
+    }
 
 	/// <summary>
 	/// Apply the given rewards package.
@@ -493,15 +539,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 		UsersManager.currentUser.EarnCurrency(UserProfile.Currency.HARD, (ulong)_reward.pc, false, HDTrackingManager.EEconomyGroup.REWARD_RUN);
 
         // XP
-        if ( SceneController.s_mode != SceneController.Mode.TOURNAMENT )
-        {
-	        InstanceManager.player.data.progression.AddXp(_reward.xp, true);
+        bool skipXP = false;
+        if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.DRAGON_SELECTION)) {
+            skipXP = (InstanceManager.player.data as DragonDataClassic).progression.progressCurrentLevel > 0.9f;
+        } else {
+            skipXP = SceneController.mode == SceneController.Mode.TOURNAMENT || InstanceManager.player.data.type != IDragonData.Type.CLASSIC;// [AOC] Only CLASSIC dragons!
+        }
+            
+        if ( skipXP ) {
+            _reward.xp = 0;
+        } else {
+			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
 			instance.m_xp += _reward.xp;
 		}
-		else
-		{
-			_reward.xp = 0;
-		}
+		
 		// Global notification (i.e. to show feedback)
 		Messenger.Broadcast<Reward, Transform>(MessengerEvents.REWARD_APPLIED, _reward, _entity);
 	}
@@ -564,7 +615,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// </summary>
 	private void CheckSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return;
 
 		// Show feedback to the user every minute
 		int elapsedMinutes = (int)Math.Floor(GameTime() / 60f);
@@ -606,7 +657,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
 	/// <returns>The total amount of coins rewarded by the survival bonus.</returns>
 	public int CalculateSurvivalBonus() {
 		// [AOC] No survival bonus in tournament mode!
-		if(GameSceneController.s_mode == SceneController.Mode.TOURNAMENT) return 0;
+		if(GameSceneController.mode == SceneController.Mode.TOURNAMENT) return 0;
 
 		// Find out the bonus percentage of coins earned per minute
 		float elapsedTime = GameTime();
@@ -793,9 +844,37 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager> {
     {
         m_switchingArea = true;
     }
+    
+    private void OnForceUp()
+    {
+        // Check if we've reached next threshold
+        if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 ) 
+        {
+            // Change current multiplier
+            SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
+        }
+    }
 
     public static int GetReviveCost()
     {
     	return freeReviveCount + paidReviveCount + 1;
+    }
+
+
+    // Cheats
+    public void SetCategoryKill(string _category, int amount) {
+        if (m_categoryKillCount.ContainsKey(_category)) {
+            m_categoryKillCount[_category] += amount;
+        } else {
+            m_categoryKillCount.Add(_category, amount);
+        }
+    }
+
+    public void SetNPCKill(string _sku, int amount) {
+        if (m_killCount.ContainsKey(_sku)) {
+            m_killCount[_sku] += amount;
+        } else {
+            m_killCount.Add(_sku, amount);
+        }
     }
 }

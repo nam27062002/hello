@@ -36,15 +36,63 @@ public class ShaderCacheTool : EditorWindow {
     private static string shaderCacheSource = "shader_cache_source.txt";
     private static string shaderCacheExcludeList = "shader_cache_exclude_list.txt";
 
+    private static string logFile = "shader_cache.log";
+
+    private static bool OpenLogFile()
+    {
+        try
+        {
+            File.Delete(logFile);
+            return true;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
+    private static void Log(object msg)
+    {
+        try
+        {
+            StreamWriter swl = File.AppendText(logFile);
+            swl.WriteLine(msg);
+            swl.Close();
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Exception :" + e);
+        }
+    }
+
+    private class ShaderContent
+    {
+        public string lightmode;
+        public string[] keywords;
+
+        public ShaderContent()
+        {
+            lightmode = null;
+            keywords = null;
+        }
+        public ShaderContent(string lm, string[] kw)
+        {
+            lightmode = lm;
+            keywords = kw;
+        }
+    }
+
+    private static Dictionary<string, ShaderContent> m_shaderValidKeywords = new Dictionary<string, ShaderContent>();
+
     private static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
     {
         if (level >= keywords.Count) return false;
 
 
+        string lightMode = "";
         if (type == (PassType)(-1))
         {
             Material m = new Material(shader);
-            string lightMode = m.GetTag("LightMode", false, "Normal");
+            lightMode = getLightMode(m);    //m.GetTag("LightMode", false, "Normal");
 
             try
             {
@@ -52,12 +100,11 @@ public class ShaderCacheTool : EditorWindow {
             }
             catch (ArgumentException)
             {
-                Debug.Log(lightMode + " is not a valid light mode.");
+                Log(lightMode + " is not a valid light mode.");
                 return false;
             }
 
         }
-
 
         string[] variantTokens = keywords[level].Split(' ');
 
@@ -75,7 +122,7 @@ public class ShaderCacheTool : EditorWindow {
             sv.keywords = currentVariant.ToArray();
             sv.passType = type;
             sv.shader = shader;
-            DebugVariant(shader, sv.keywords, svc.Add(sv));
+            DebugVariant(shader, lightMode, sv.keywords, svc.Add(sv));
 
             currentVariant.Remove(currentVariantToken);
 
@@ -92,14 +139,14 @@ public class ShaderCacheTool : EditorWindow {
         return svc.Add(sv);
     }
 
-    private static void DebugVariant(Shader shader, string[] keywords, bool succes)
+    private static void DebugVariant(Shader shader, string lightMode, string[] keywords, bool succes)
     {
         string kw = "";
         for (int c = 0; c < keywords.Length; c++)
         {
             kw += keywords[c] + " ";
         }
-        Debug.Log("Variant: " + shader.name + " with keywords: " + kw + ((succes) ? " added to collection." : "already exists."));
+        Log("Variant: " + shader.name + " LightMode: " + lightMode + " with keywords: " + kw + ((succes) ? " added to collection." : "already exists."));
     }
 
 
@@ -119,14 +166,15 @@ public class ShaderCacheTool : EditorWindow {
         return false;
     }
 
-
+    /*
     [MenuItem("Tools/Create shader caches recursive")]
     static void CreateShaderCachesRecursive()
     {
+        OpenLogFile();
         string[] csline = File.ReadAllLines(shaderCacheSource);
         if (csline == null)
         {
-            Debug.Log("Unable to find shader cache source file.");
+            Log("Unable to find shader cache source file.");
             return;
         }
 
@@ -158,7 +206,7 @@ public class ShaderCacheTool : EditorWindow {
                         shader = Shader.Find(shaderName);
                         if (shader == null)
                         {
-                            Debug.Log("Unable to find shader: " + shaderName);
+                            Log("Unable to find shader: " + shaderName);
                             return;
                         }
 
@@ -185,13 +233,137 @@ public class ShaderCacheTool : EditorWindow {
         }
 
     }
+*/
 
+
+    private static char[] splitChars = new[] { ' ', '=', '{', '}', '"' };
+    private static ShaderContent getShaderContent(Shader shader)
+    {
+        ShaderContent sc = new ShaderContent();
+        if (!m_shaderValidKeywords.ContainsKey(shader.name))
+        {
+            string shaderPath = AssetDatabase.GetAssetPath(shader);
+            Log("Shader path: " + shaderPath);
+
+            string[] shlines = null;
+
+            try
+            {
+                shlines = File.ReadAllLines(shaderPath);
+            }
+            catch (FileNotFoundException)
+            {
+                shlines = new string[] { "" };
+            }
+
+
+            List<string> vkeywords = new List<string>();
+            string lightmode = "Normal";
+
+            foreach (string line in shlines)
+            {
+                if (line.Length > 0 && line[0] == '/') continue;
+
+                int off = 0;
+                int pos = line.IndexOf("shader_feature");
+                if (pos == -1)
+                {
+                    pos = line.IndexOf("multi_compile");
+                    if (pos != -1)
+                    {
+                        off = 13;
+                    }
+                }
+                else
+                {
+                    off = 14;
+                }
+
+                if (pos >= 0)
+                {
+                    string kwpack = line.Substring(pos + off);
+                    string[] kwl = kwpack.Split(' ');
+
+                    for (int c = 0; c < kwl.Length; c++)
+                    {
+                        if (kwl[c].Length > 0 && kwl[c][0] != '_')
+                        {
+                            vkeywords.Add(kwl[c]);
+                        }
+                    }
+                    continue;
+                }
+
+                pos = line.IndexOf("LightMode");
+                if (pos >= 0)
+                {
+                    off = 10;
+                    string lightstr = line.Substring(pos + off);
+                    string[] lm = lightstr.Split(splitChars);
+                    if (lm.Length > 0)
+                    {
+                        for (int c = 0; c < lm.Length; c++)
+                        {
+                            if (lm[c].Length > 0)
+                            {
+                                lightmode = lm[c];
+                                Debug.Log("LightMode = " + lm[c]);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            sc.lightmode = lightmode;
+            sc.keywords = vkeywords.ToArray();
+//            ShaderContent sc = new ShaderContent(lightmode, vkeywords.ToArray());
+            m_shaderValidKeywords[shader.name] = sc;
+
+        }
+        else
+        {
+            sc = m_shaderValidKeywords[shader.name];
+        }
+        return sc;
+    }
+
+    private static string[] stripMaterialKeywords(Material mat, out ShaderContent sc)
+    {
+        Shader shader = mat.shader;
+
+        List<string> strippedKeywords = new List<string>();
+
+        sc = getShaderContent(mat.shader);
+        List<string> validKeywords = new List<string>(sc.keywords);
+
+        foreach (string kw in mat.shaderKeywords)
+        {
+            if (validKeywords.Contains(kw))
+            {
+                strippedKeywords.Add(kw);
+            }
+            else
+            {
+                Log("Stripped keyword: " + kw);
+            }
+        }
+        return strippedKeywords.ToArray();
+    }
+    private static string getLightMode(Material m)
+    {
+        string lightMode = m.GetTag("LightMode", false, "Normal");
+        return lightMode;
+    }
 
     [MenuItem("Tools/Create shader caches from materials")]
     static void CreateShaderCachesFromMaterials()
     {
+        OpenLogFile();
+
         Material[] materialList;
         AssetFinder.FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+        m_shaderValidKeywords.Clear();
 
         loadShaderCacheExcludeList();
 
@@ -207,30 +379,46 @@ public class ShaderCacheTool : EditorWindow {
 
                 if (excludeShader(m.shader)) continue;
 
+                ShaderContent sc;               
                 ShaderVariantCollection.ShaderVariant sv;
 
-                string lightMode = m.GetTag("LightMode", false, "Normal");
+                string[] strippedKeywords = stripMaterialKeywords(m, out sc);
+//                string lightMode = getLightMode(m);// m.GetTag("LightMode", false, "Normal");
                 try
                 {
-                    sv.passType = (PassType)Enum.Parse(typeof(PassType), lightMode, true);
+                    sv.passType = (PassType)Enum.Parse(typeof(PassType), sc.lightmode, true);
                 }
                 catch (ArgumentException)
                 {
-                    Debug.Log(lightMode + " is not a valid light mode.");
+                    Log(sc.lightmode + " is not a valid light mode.");
                     continue;
                 }
 
+
                 keywords.Clear();
-                keywords.AddRange(m.shaderKeywords);
+                keywords.AddRange(strippedKeywords);
                 keywords.Add(qualityVariants[quality]);
                 sv.keywords = keywords.ToArray();
                 sv.shader = m.shader;
 
-                DebugVariant(sv.shader, sv.keywords, svc.Add(sv));
+                DebugVariant(sv.shader, sc.lightmode, sv.keywords, svc.Add(sv));
+                EditorUtility.DisplayProgressBar("Stripping shader caches", "Processing materials", (float)(c + quality * materialList.Length) / ((float)materialList.Length * 3.0f));
+
             }
             string svcName = "SVC_" + qualityVariants[quality] + ".shadervariants";
             AssetDatabase.CreateAsset(svc, "Assets/Misc/ShaderVariantCollections/" + svcName);
         }
+
+
+        Log("************************");
+        Log("* COMPLETE SHADER LIST *");
+        Log("************************");
+        foreach (KeyValuePair<string, ShaderContent> pair in m_shaderValidKeywords)
+        {
+            Log(pair.Key);
+        }
+
+        EditorUtility.ClearProgressBar();
     }
 
 
@@ -238,10 +426,10 @@ public class ShaderCacheTool : EditorWindow {
     // CONSTANTS														//
     //------------------------------------------------------------------//
 
-        //------------------------------------------------------------------//
-        // MEMBERS AND PROPERTIES											//
-        //------------------------------------------------------------------//
-        // Window instance
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    // Window instance
     private static ShaderCacheTool m_instance = null;
 	public static ShaderCacheTool instance {
 		get {

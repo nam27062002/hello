@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
+public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroadcastListener
 {
 
     private List<Entity> m_entities;
@@ -9,11 +9,11 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 	private List<Cage> m_cages;
 	private List<Decoration> m_decorations;
     private List<Entity> m_searchList;
-    private Rect m_area;    
+    private Rect m_area;
 
 
-	public int totalVertexCount { 
-		get { 
+	public int totalVertexCount {
+		get {
 			int i = 0;
 			int vc = 0;
 
@@ -21,8 +21,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			for (i = 0; i < m_entities.Count; ++i) 	{ vc += m_entities[i].GetVertexCount(); }
 			for (i = 0; i < m_entitiesBg.Count; ++i){ vc += m_entitiesBg[i].GetVertexCount(); }
 
-			return vc; 
-		} 
+			return vc;
+		}
 	}
 
 	public int drawCalls {
@@ -61,14 +61,30 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 		m_cages = new List<Cage>();
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
-        m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");        
-
-		Messenger.AddListener(MessengerEvents.GAME_AREA_EXIT, OnGameEnded);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+        m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
+    override protected void OnDestroy()
+    {
+        base.OnDestroy();
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
+
     public void RegisterEntity(Entity _entity)
-    {        
+    {
         // If an entity is registered after entities visibility was disabled then we make sure that entity won't be visible
         if (!Debug_EntitiesVisibility && FeatureSettingsManager.IsProfilerEnabled)
         {
@@ -187,21 +203,80 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             Entity e = m_entities[i];
             if (e != null)
             {
-                Vector2 entityPos = (Vector2)e.transform.position;
-                Vector2 inversePos = entityPos - position;
-                inversePos = inversePos.RotateRadians(-angle);
-                if (inversePos.x >= 0 && inversePos.x <= length)
-                {
-                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
-                    {
-                        m_searchList.Add(e);
-                    }
-                }
+				if (e.circleArea == null)
+            	{
+	                Vector2 entityPos = (Vector2)e.transform.position;
+	                Vector2 inversePos = entityPos - position;
+	                inversePos = inversePos.RotateRadians(-angle);
+	                if (inversePos.x >= 0 && inversePos.x <= length)
+	                {
+	                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
+	                    {
+	                        m_searchList.Add(e);
+	                    }
+	                }
+	          	}else{
+					float distanceSqr = e.circleArea.SqrDistanceToSegment( position, position + dir * length);
+					if ( distanceSqr <= (amplitude + e.circleArea.radius) * (amplitude + e.circleArea.radius) )
+					{
+						m_searchList.Add(e);
+					}
+	          	}
             }
         }
 
         return m_searchList.ToArray();
     }
+
+	public int GetEntitiesInNonAlloc(Vector2 position, Vector2 dir, float amplitude, float length, Entity[] _results)
+    {
+		int numResult = 0;
+
+        float halfAmplitude = amplitude / 2.0f;
+        float angle = Mathf.Atan2(dir.y, dir.x);
+
+		int size = m_entities.Count;
+		int resultsLength = _results.Length;
+
+		for (int i = 0; i < size && numResult < resultsLength; ++i)
+        {
+            Entity e = m_entities[i];
+            if (e != null)
+            {
+            	if (e.circleArea == null)
+            	{
+	                Vector2 entityPos = (Vector2)e.transform.position;
+	                Vector2 inversePos = entityPos - position;
+	                inversePos = inversePos.RotateRadians(-angle);
+	                if (inversePos.x >= 0 && inversePos.x <= length)
+	                {
+	                    if (inversePos.y >= -halfAmplitude && inversePos.y <= halfAmplitude)
+	                    {
+							_results[numResult] = e;
+							numResult++;
+	                    }
+	                }
+                }
+                else
+                {
+					float distanceSqr = e.circleArea.SqrDistanceToSegment( position, position + dir * length);
+					if ( distanceSqr <= (amplitude + e.circleArea.radius) * (amplitude + e.circleArea.radius) )
+					{
+						_results[numResult] = e;
+						numResult++;
+					}
+                }
+            }
+        }
+
+        return numResult;
+
+
+
+        // 1 seach closest line point
+        // Check distance to center?
+    }
+
 
 	public int GetOverlapingCages(Vector3 position, float distance, Cage[] results)
     {
@@ -214,7 +289,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             if (e != null)
             {
 				float sqrMagnitude = (position - e.behaviour.centerTarget.position).sqrMagnitude;
-				if ( sqrMagnitude <= distance * distance )	
+				if ( sqrMagnitude <= distance * distance )
                 {
                     results[numResult] = e;
                     numResult++;
@@ -224,7 +299,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         return numResult;
     }
 
-    	
+
     public int GetOverlapingEntities(Vector3 position, float distance, Entity[] result)
     {
         int numEntities = 0;
@@ -277,7 +352,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 	{
 		int i;
 		int count;
-        
+
 		if (m_entities != null) {
             count = m_entities.Count - 1;
             // for (i = 0; i < count; ++i)
@@ -341,7 +416,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 
     void LateUpdate()
     {
-        GameCamera camera = InstanceManager.gameCamera;        
+        GameCamera camera = InstanceManager.gameCamera;
         if (camera != null)
         {
             int i;
@@ -351,7 +426,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             {
 				if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position))
                 {
-                    m_entities[i].Disable(false);                                                            
+                    m_entities[i].Disable(false);
                 }
             }
 
@@ -361,9 +436,9 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
             {
 				if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundDeactivationArea(m_entitiesBg[i].machine.position))
                 {
-                    m_entitiesBg[i].Disable(false);                    
+                    m_entitiesBg[i].Disable(false);
                 }
-            }            
+            }
 
 			count = m_cages.Count;
 			// Inverse loop because the current entity could be deleted from the list if it's disabled
@@ -371,10 +446,10 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
 			{
 				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
 				{
-					m_cages[i].Disable(false);                    
+					m_cages[i].Disable(false);
 				}
-			}  
-        }        
+			}
+        }
     }
 
 	void OnGameEnded(){
@@ -434,7 +509,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
                     //m_cages[i].gameObject.SetActive(m_entitiesAreEnabled);
                     Debug_SetEntityVisible(m_cages[i], m_entitiesVisibility);
                 }
-            }            
+            }
         }
     }
 
@@ -444,7 +519,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>
         {
             Transform child;
             Transform t = e.transform;
-            int count = t.childCount;            
+            int count = t.childCount;
             for (int i = 0; i < count; ++i)
             {
                 child = t.GetChild(i);

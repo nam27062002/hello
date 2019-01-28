@@ -75,8 +75,8 @@ public class FireBreathNew : DragonBreathBehaviour {
         tempFire.transform.localRotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 180.0f));
         dragonFlameSuperInstance = tempFire.GetComponent<FireBreathDynamic>();
 
-		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
-		m_noPlayerMask = ~LayerMask.GetMask("Player");
+        m_groundMask = GameConstants.Layers.GROUND_WATER_FIREBLOCK;
+        m_noPlayerMask = ~GameConstants.Layers.PLAYER;
 
         m_actualLength = m_length;
        
@@ -96,7 +96,7 @@ public class FireBreathNew : DragonBreathBehaviour {
     {
     	if ( m_dragon )
     	{
-			float furyBaseLength = m_dragon.data.def.GetAsFloat("furyBaseLength");
+            float furyBaseLength = m_dragon.data.furyBaseLength;
 			m_length = furyBaseLength + furyBaseLength * m_lengthPowerUpMultiplier / 100.0f;
 
 			dragonFlameStandardInstance.setEffectScale(m_length / 2.0f, transform.localScale.x);
@@ -140,13 +140,16 @@ public class FireBreathNew : DragonBreathBehaviour {
 	IEnumerator StartFlame( float delay, Type _type )
     {
     	yield return new WaitForSeconds(delay);
-		if (_type == Type.Standard)
+        if ( !isFuryPaused )
         {
-            dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
-        }
-        else
-        {
-            dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
+    		if (_type == Type.Standard)
+            {
+                dragonFlameStandardInstance.EnableFlame(true, m_insideWater);
+            }
+            else
+            {
+                dragonFlameSuperInstance.EnableFlame(true, m_insideWater);
+            }
         }
     }
 
@@ -170,9 +173,9 @@ public class FireBreathNew : DragonBreathBehaviour {
         m_direction = -m_mouthTransform.right;
 		m_direction.Normalize();
 
-        float length = m_length;
+        float localLength = m_length;
 		if ( m_type == Type.Mega )
-			length = m_length * m_superFuryLengthMultiplier;
+			localLength = m_length * m_superFuryLengthMultiplier;
 
 		float angularSpeed = m_motion.angularVelocity.magnitude;
 		// Debug.Log("Angular: " + angularSpeed);
@@ -182,16 +185,16 @@ public class FireBreathNew : DragonBreathBehaviour {
 		if (m_frame == 0) {
 			// Raycast to ground
 			RaycastHit ground;				
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_groundMask)) 
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * localLength, out ground, m_groundMask)) 
 			{
 				m_actualLength = ground.distance;
 			} 
 			else 
 			{				
-				m_actualLength = length;
+				m_actualLength = localLength;
 			}
 
-			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * length, out ground, m_noPlayerMask)) 
+			if (Physics.Linecast(m_mouthTransform.position, m_mouthTransform.position + (Vector3)m_direction * localLength, out ground, m_noPlayerMask)) 
 			{
 				flamesUpDir = Vector3.Reflect( m_direction, ground.normal);
 				flamesUpDir.Normalize();

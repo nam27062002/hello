@@ -18,7 +18,7 @@ namespace AI {
                 player.particleController.CastMummyPower();
                 player.dragonMotion.OnPetPreFreeRevive();
 
-				float distance = player.data.GetScaleAtLevel( InstanceManager.player.data.progression.maxLevel) * 6;
+				float distance = player.data.maxScale * 6;
 				Vector3 dir = Vector3.back;
 				m_pilot.transform.position = player.transform.position + dir * distance;
 				m_pilot.SetDirection( Vector3.right , true);

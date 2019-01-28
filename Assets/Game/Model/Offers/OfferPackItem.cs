@@ -28,6 +28,7 @@ public class OfferPackItem {
 		Metagame.RewardGoldenFragments.TYPE_CODE,
 		Metagame.RewardEgg.TYPE_CODE,
 		Metagame.RewardPet.TYPE_CODE,
+		Metagame.RewardDragon.TYPE_CODE,
 		Metagame.RewardSkin.TYPE_CODE
 	};
 	
@@ -98,8 +99,8 @@ public class OfferPackItem {
 		}
 
 		// If unknown type, clear data and return
-		m_type = _def.GetAsString(prefix + "Type", OfferPack.EMPTY_VALUE);
-		if(m_type == OfferPack.EMPTY_VALUE || string.IsNullOrEmpty(m_type)) {
+		m_type = _def.GetAsString(prefix + "Type", OffersManager.settings.emptyValue);
+		if(m_type == OffersManager.settings.emptyValue || string.IsNullOrEmpty(m_type)) {
 			Clear();
 			return;
 		}

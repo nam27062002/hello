@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using AI;
@@ -189,7 +189,7 @@ public class Spawner : AbstractSpawner {
 		if (m_eventOnly) {
 			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 				// Maybe only check if joined?
-			enabledByEvents = HDLiveEventsManager.instance.m_quest.IsRunning() && HDLiveEventsManager.instance.m_quest.m_isActive;
+			enabledByEvents = HDLiveDataManager.quest.IsRunning() && HDLiveDataManager.quest.isActive;
 		}
 
 		if (enabledByEvents) {
@@ -306,7 +306,6 @@ public class Spawner : AbstractSpawner {
 						}
 
 						RegisterInSpawnerManager();
-						SpawnerAreaManager.instance.Register(this);
 
 						gameObject.SetActive(false);
 
@@ -514,7 +513,7 @@ public class Spawner : AbstractSpawner {
 	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
-			if (m_groupBonus > 0) {
+			if (m_groupBonus > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);

@@ -36,7 +36,11 @@ public class ShowOnTutorialStep : MonoBehaviour {
 	[Comment("Won't be activated until all target steps are completed")]
 	[SerializeField] private TutorialStep[] m_targetSteps;
 	[SerializeField] private int m_targetRuns = 0;
-	
+    [Comment("If the players has pets we always activate this")]
+    [SerializeField] private bool m_ignoreByPet = false;
+    [Comment("If the players has a dragon in the main prograssion with some tier")]
+    [SerializeField] private bool m_ignoreByDragonTier = false;
+    [SerializeField] private DragonTier m_dragonTier = DragonTier.TIER_0;
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -71,6 +75,12 @@ public class ShowOnTutorialStep : MonoBehaviour {
 		if(UsersManager.currentUser == null) {
 			return true;
 		}
+
+        if (m_ignoreByPet && UsersManager.currentUser.petCollection.unlockedPetsCount > 0)
+            return true;
+
+        if (m_ignoreByDragonTier && UsersManager.currentUser.GetHighestDragon().tier >= m_dragonTier)
+            return true;
 
 		// Check whether all target states are completed
 		bool toggle = true;

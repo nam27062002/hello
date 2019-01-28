@@ -1,0 +1,62 @@
+// PetShortInfo.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 18/01/2019.
+// Copyright (c) 2019 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+/// <summary>
+/// Simple component to display a pet's basic info.
+/// </summary>
+public class PetShortInfo : MonoBehaviour {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed references
+	[SerializeField] private Image m_image = null;
+	[SerializeField] private Localizer m_nameText = null;
+	[SerializeField] private TextMeshProUGUI m_powerDescText = null;
+	
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize with a pet definition.
+	/// </summary>
+	/// <param name="_petDef">Pet definition.</param>
+	public void InitWithPet(DefinitionNode _petDef) {
+		// Make sure data is valid
+		if(_petDef == null) return;
+
+		// Icon
+		if(m_image != null) {
+			m_image.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + _petDef.Get("icon"));	
+		}
+
+		// Name
+		if(m_nameText != null) {
+			m_nameText.Localize(_petDef.GetAsString("tidName"));
+		}
+
+		// Power short description
+		if(m_powerDescText != null) {
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _petDef.Get("powerup"));
+			if(powerDef != null) {
+				m_powerDescText.text = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
+			}
+		}
+	}
+}

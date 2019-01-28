@@ -59,7 +59,7 @@ namespace AI {
 			ray.origin = position + m_upVector * 0.1f;
 			ray.direction = -m_groundNormal;
 
-			int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 5f, GROUND_MASK);
+			int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 5f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE);
 			if (hits > 0) {
 				position = m_raycastHits[0].point;
 				m_heightFromGround = 0f;
@@ -198,6 +198,13 @@ namespace AI {
 				m_nextSubState = SubState.Idle;
 			}
 		}
+        
+        protected override void FaceDragon() {
+            m_direction = m_dragon.position - m_machine.position;
+            m_direction.y = 0;
+            m_direction.Normalize();
+        }
+        
 
 		protected override void UpdateOrientation() {
 			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
@@ -223,7 +230,7 @@ namespace AI {
 			ray.origin = pos;
 			ray.direction = -m_upVector;
 
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GROUND_MASK) > 0) {
+			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) {
 				normal = m_raycastHits[0].normal;
 				hitPos = m_raycastHits[0].point;
 				m_heightFromGround = m_raycastHits[0].distance - 3f;

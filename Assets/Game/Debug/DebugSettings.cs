@@ -73,8 +73,20 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD	= "GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD";
 
 	public const string SHOW_HIDDEN_PETS						= "SHOW_HIDDEN_PETS";
+	public const string SHOW_SAFE_AREA	 					    = "SHOW_SAFE_AREA";
 
-	//------------------------------------------------------------------//
+    // Special Dragon Cheats
+    public const string USE_SPECIAL_DRAGON                      = "USE_SPECIAL_DRAGON";
+    public const string SPECIAL_DRAGON_SKU                      = "SPECIAL_DRAGON_SKU";
+    public const string SPECIAL_DRAGON_TIER                     = "SPECIAL_DRAGON_TIER";
+    public const string SPECIAL_DRAGON_POWER_LEVEL              = "SPECIAL_DRAGON_POWER_LEVEL";
+    public const string SPECIAL_DRAGON_HP_BOOST_LEVEL           = "SPECIAL_DRAGON_HP_BOOST_LEVEL";
+    public const string SPECIAL_DRAGON_SPEED_BOOST_LEVEL        = "SPECIAL_DRAGON_SPEED_BOOST_LEVEL";
+    public const string SPECIAL_DRAGON_ENERGY_BOOST_LEVEL       = "SPECIAL_DRAGON_ENERGY_BOOST_LEVEL";
+    
+    public const string SPECIAL_DATES                      = "SHOW_SPECIAL_DATES";
+    
+    //------------------------------------------------------------------//
     // PROPERTIES														//
     //------------------------------------------------------------------//
     // Mainly shortcuts, all settings can be accessed using the Prefs class
@@ -154,6 +166,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { instance.m_debugServerDelayRange = value; }
 	}
 
+	[SerializeField] private bool m_useLiveEventsDebugCalls = false;
+	public static bool useLiveEventsDebugCalls {
+		get { return instance.m_useLiveEventsDebugCalls; }
+		set { instance.m_useLiveEventsDebugCalls = value; }
+	}
+
 	// UI settings
 	[Separator("UI Debug Tools")]
 	[SerializeField] private bool m_useUnitySafeArea = false;
@@ -181,7 +199,11 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		get {
 			// Only in editor
 #if UNITY_EDITOR
-			return instance.m_simulatedSpecialDevice;
+			if(instance.m_useDebugSafeArea) {
+				return instance.m_simulatedSpecialDevice;
+			} else {
+				return UIConstants.SpecialDevice.NONE;
+			}
 #else
 			return UIConstants.SpecialDevice.NONE;
 #endif

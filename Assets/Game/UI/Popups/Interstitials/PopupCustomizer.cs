@@ -96,17 +96,17 @@ public class PopupCustomizer : MonoBehaviour {
 	}
 
 	[System.Serializable]
-	public class TitleField : Field<TextMeshProUGUI> {
+	public class TitleField : Field<Text> {
 		public TitleField() : base(FieldType.TEXT, CaletyKey.TITLE) {}
 	}
 
 	[System.Serializable]
-	public class MessageField : Field<TextMeshProUGUI> {
+	public class MessageField : Field<Text> {
 		public MessageField() : base(FieldType.TEXTAREA, CaletyKey.TEXT) {}
 	}
 
 	[System.Serializable]
-	public class TextField : Field<TextMeshProUGUI> {
+	public class TextField : Field<Text> {
 		public TextField() : base(FieldType.TEXT, CaletyKey.TEXT) {}
 	}
 
@@ -149,7 +149,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 
 	// Internal
-	private CustomizerManager.CustomiserPopupConfig m_config = null;
+	private Calety.Customiser.CustomiserPopupConfig m_config = null;
 	private CaletyConstants.PopupConfig m_localizedConfig = null;
 
 	private CanvasGroup m_menuCanvasGroup = null;
@@ -179,7 +179,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// Initialize the popup given a configuration from the customizer.
 	/// </summary>
 	/// <param name="_config">Config.</param>
-	public void InitFromConfig(CustomizerManager.CustomiserPopupConfig _config) {
+	public void InitFromConfig(Calety.Customiser.CustomiserPopupConfig _config) {
 		// Store config
 		m_config = _config;
 
@@ -217,7 +217,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 			// Iterate through all textfields in the popup and try to find a text for them in the json
 			for (int i = 0; i < m_textFields.Count; ++i) {
-				TextMeshProUGUI textField = m_textFields[i].element;
+				Text textField = m_textFields[i].element;
 
 				if (textField != null) {
 					// Set the text from the json, or empty string if the json doesn't have a text for this textfield
@@ -249,7 +249,7 @@ public class PopupCustomizer : MonoBehaviour {
 				m_buttonFields[i].element.gameObject.SetActive(true);
 
 				// Set text
-				TextMeshProUGUI txt = m_buttonFields[i].element.GetComponentInChildren<TextMeshProUGUI>();
+				Text txt = m_buttonFields[i].element.GetComponentInChildren<Text>();
 				if (txt != null) {
 					txt.text = m_localizedConfig.m_kPopupButtons[i].m_strText;
 				}
@@ -321,8 +321,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// The popup is about to close.
 	/// </summary>
 	public void OnClosePreAnimation() {
-		// Notify customizer manager
-		CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(m_config, true);
+        HDCustomizerManager.instance.NotifyPopupViewed(m_config);
 
 		// Fade canvas in!
 		if(m_menuCanvasGroup != null) {
@@ -345,14 +344,14 @@ public class PopupCustomizer : MonoBehaviour {
 
 		// Different stuff based on the action assigned to the pressed button
 		// Since we need extra parameters not available in Calety's customizer popup implementation, we'll concatenate them to the target screen
-		CustomizerManager.CustomiserPopupButton button = m_localizedConfig.m_kPopupButtons[_btnIdx] as CustomizerManager.CustomiserPopupButton;
+		Calety.Customiser.CustomiserPopupButton button = m_localizedConfig.m_kPopupButtons[_btnIdx] as Calety.Customiser.CustomiserPopupButton;
 		string[] tokens = string.IsNullOrEmpty(button.m_strParam) ? new string[0] : button.m_strParam.Split(';');
 		switch(button.m_eButtonAction) {
-			case CustomizerManager.ePopupButtonAction.CLOSE: {
+			case Calety.Customiser.ePopupButtonAction.CLOSE: {
 				// Will be done at the end of the method
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.GAME_LINK: {
+			case Calety.Customiser.ePopupButtonAction.GAME_LINK: {
 				// At least one token! (screen id)
 				if(tokens.Length == 0) break;
 
@@ -378,11 +377,12 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "pets": {
 						// Make sure selected dragon is owned (requirement for opening the pets screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the pets screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
-						PetsScreenController petScreen = screensController.GetScreenData(MenuScreen.PETS).ui.GetComponent<PetsScreenController>();
+						MenuScreen targetPetScreen = InstanceManager.menuSceneController.GetPetScreenForCurrentMode();	// [AOC] Different pet screen if the current dragon is a special one
+						PetsScreenController petScreen = screensController.GetScreenData(targetPetScreen).ui.GetComponent<PetsScreenController>();
 
 						// Navigate to a specific pet?
 						if(tokens.Length > 1) {
@@ -390,7 +390,7 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(MenuScreen.PETS, true);
+						screensController.GoToScreen(targetPetScreen, true);
 					} break;
 
 					case "global_event": {
@@ -405,7 +405,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 					case "skins": {
 						// Make sure selected dragon is owned (requirement for opening the skins screen)
-						InstanceManager.menuSceneController.dragonSelector.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
+						InstanceManager.menuSceneController.SetSelectedDragon(DragonManager.currentDragon.def.sku);	// Current dragon is the last owned selected dragon
 
 						// Initialize the skins screen
 						MenuTransitionManager screensController = InstanceManager.menuSceneController.transitionManager;
@@ -422,7 +422,7 @@ public class PopupCustomizer : MonoBehaviour {
 				}
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.OPEN_URL: {
+			case Calety.Customiser.ePopupButtonAction.OPEN_URL: {
 				// Mandatory parameter, just close popup if not defined
 				if(tokens.Length > 0) {
 					// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
@@ -434,17 +434,17 @@ public class PopupCustomizer : MonoBehaviour {
 				}
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.BUY_PRODUCT: {
+			case Calety.Customiser.ePopupButtonAction.BUY_PRODUCT: {
 				// [AOC] TODO!!
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.REWARD: {
+			case Calety.Customiser.ePopupButtonAction.REWARD: {
 				// [AOC] TODO!!
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 			
-			case CustomizerManager.ePopupButtonAction.NONE: {
+			case Calety.Customiser.ePopupButtonAction.NONE: {
 				// [AOC] Custom actions to be implemented if needed
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 				return;

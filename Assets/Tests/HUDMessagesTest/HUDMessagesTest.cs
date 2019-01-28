@@ -92,7 +92,7 @@ public class HUDMessagesTest : MonoBehaviour {
 	public void SimulateMessage(int _type) {
 		string[] randomEntitySkus = {"entity_1", "entity_2", "entity_3"};
 		switch(_type) {
-			case 0:		Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, null);		break;
+			case 0:		Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, null);		break;
 			case 1:		Messenger.Broadcast(MessengerEvents.SURVIVAL_BONUS_ACHIEVED);				break;
 			case 2:		Messenger.Broadcast<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, 10f, DamageType.POISON, null);	break;
 			case 3:		Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, (DragonTier)UnityEngine.Random.Range((int)DragonTier.TIER_1, (int)DragonTier.COUNT), randomEntitySkus.GetRandomValue());	break;
@@ -105,7 +105,8 @@ public class HUDMessagesTest : MonoBehaviour {
 					missionDef,
 					DefinitionsManager.SharedInstance.GetDefinition(missionDef.Get("type"), DefinitionsCategory.MISSION_TYPES),
 					Random.Range(missionDef.GetAsInt("objectiveBaseQuantityMin"), missionDef.GetAsInt("objectiveBaseQuantityMax")),
-					Random.value < 0.5f	// 50% chace
+					Random.value < 0.5f,	// 50% chace
+                    DragonManager.GetDragonsByLockState(IDragonData.LockState.OWNED).Count
 				);
 				m.difficulty = Mission.Difficulty.MEDIUM;
 				Messenger.Broadcast<Mission>(MessengerEvents.MISSION_COMPLETED, m);

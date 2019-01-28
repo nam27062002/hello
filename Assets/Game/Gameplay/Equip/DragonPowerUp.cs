@@ -45,7 +45,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 		CPModifiers.ApplyDragonMods();
 
-		HDLiveEventsManager.instance.ApplyDragonMods();
+		HDLiveDataManager.instance.ApplyDragonMods();
 								
 		DragonPlayer player = GetComponent<DragonPlayer>();
 		string dragonSku = "";
@@ -58,8 +58,8 @@ public class DragonPowerUp : MonoBehaviour {
 
 		// Disguise power up
 		string disguise;
-		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
-			disguise = HDLiveEventsManager.instance.m_tournament.GetToUseSkin();
+		if (HDLiveDataManager.tournament.isActive) {
+			disguise = HDLiveDataManager.tournament.GetToUseSkin();
 		} else {
 			disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		}
@@ -75,8 +75,8 @@ public class DragonPowerUp : MonoBehaviour {
 		// Pet power ups
 		List<string> pets;
 		// Check if tournament
-		if (HDLiveEventsManager.instance.m_tournament.m_isActive) {
-			pets = HDLiveEventsManager.instance.m_tournament.GetToUsePets();
+		if (HDLiveDataManager.tournament.isActive) {
+			pets = HDLiveDataManager.tournament.GetToUsePets();
 		} else {
 			pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
 		}
@@ -99,7 +99,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 		if ( m_warnEntities )
 		{
-			Messenger.Broadcast(MessengerEvents.APPLY_ENTITY_POWERUPS);
+			Broadcaster.Broadcast(BroadcastEventType.APPLY_ENTITY_POWERUPS);
 			m_warnEntities = false;
 		}
 	}

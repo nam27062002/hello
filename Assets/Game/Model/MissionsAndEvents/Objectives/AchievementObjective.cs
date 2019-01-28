@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /// Objective for a mission.
 /// </summary>
 [Serializable]
-public class AchievementObjective : TrackingObjectiveBase {
+public class AchievementObjective : TrackingObjectiveBase, IBroadcastListener {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
@@ -84,10 +84,11 @@ public class AchievementObjective : TrackingObjectiveBase {
 			"",
 			""
 		);
-
+        m_tracker.enabled = true;
+        
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.AddListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
 	/// <summary>
@@ -96,9 +97,20 @@ public class AchievementObjective : TrackingObjectiveBase {
 	~AchievementObjective() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.GAME_STARTED, OnGameStarted);
-		Messenger.RemoveListener(MessengerEvents.GAME_ENDED, OnGameEnded);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_ENDED:
+            {
+                OnGameEnded();
+            }break;
+        }
+    }
+    
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
@@ -159,4 +171,9 @@ public class AchievementObjective : TrackingObjectiveBase {
 			}
 		}
 	}
+    
+    public void RefreshCurrentValue(){
+        m_tracker.RefreshCurrentValue();
+    }
+    
 }

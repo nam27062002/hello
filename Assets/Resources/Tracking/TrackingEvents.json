@@ -425,6 +425,54 @@
                 "etl"
             ]
         },
+		"custom.game.animojis": {
+            "Parameters": [
+				{"dragon": {"Status": "OK"}},
+				{"recordings": {"Status": "OK"}},
+				{"duration": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.lab.entry": {
+            "Parameters": [
+				{"playerProgress": {"Status": "OK"}},
+				{"goldenFragments": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+		"custom.lab.gamestart": {
+            "Parameters": [
+				{"dragon": {"Status": "OK"}},
+				{"labHp": {"Status": "OK"}},
+				{"labSpeed": {"Status": "OK"}},
+				{"labBoost": {"Status": "OK"}},
+				{"labPower": {"Status": "OK"}},
+				{"totalSpecialDragonsUnlocked": {"Status": "OK"}},
+				{"currentLeague": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },		
+		"custom.lab.result": {
+            "Parameters": [
+				{"ranking": {"Status": "OK"}},				
+				{"currentLeague": {"Status": "OK"}},
+				{"upcomingLeague": {"Status": "OK"}}
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },		
 		"custom.session.started": {
             "Parameters": [
 				{"versionRevision": {"Status": "OK"}}				
@@ -468,7 +516,12 @@
 		"custom.player.specialoffer": {
             "Parameters": [
 				{"specialOfferAction": {"Status": "OK"}},
-				{"itemID": {"Status": "OK"}}
+				{"itemID": {"Status": "OK"}},
+				{"offerName": {"Status": "OK"}},
+				{"offerType": {"Status": "OK"}},
+				{"playerProgress": {"Status": "OK"}},
+				{"softCurrency": {"Status": "OK"}},
+				{"hardCurrency": {"Status": "OK"}}
             ],
             "APIs": [
                 "dna",
@@ -537,7 +590,17 @@
           "dna",
           "etl"
         ]
-      },	  
+      },	
+	  "custom.game.unlockmap": {
+        "Parameters": [
+          { "location": { "Status": "OK" } },
+		  { "unlockType": { "Status": "OK" } }
+        ],
+        "APIs": [
+          "dna",
+          "etl"
+        ]
+      },		  
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1153,6 +1216,10 @@
             "Type": "STRING:45",
             "Values": []
         },
+		"ranking": {
+			"Type": "INT:4",
+			"Values": []
+		},
 		"isSuccess": {
             "Type": "INT:4",
             "Values": []
@@ -1247,22 +1314,25 @@
         },
       "age": {
         "Type": "INT:4",
-        "Values": []
+        "Values": [],
+		"CanBeNull": true
       },
       "analytics_optin": {
         "Type": "INT:4",
-        "Values": []
+        "Values": [],
+		"CanBeNull": true
       },
       "marketing_optin": {
         "Type": "INT:4",
-        "Values": []
+        "Values": [],
+		"CanBeNull": true
       },
       "popup_modular_version": {
         "Type": "STRING:5",
         "Values": []
       },
       "source": {
-        "Type": "STRING:5",
+        "Type": "STRING:20",
         "Values": []
       },      
 	  "trackingID": {
@@ -1280,6 +1350,70 @@
 	  "experimentGroup": {
         "Type": "STRING:30",
         "Values": []
-      }
+      },
+      "dragon": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+      "recordings": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "goldenFragments": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "softCurrency": {
+        "Type": "INT:4",
+        "Values": []
+      },	  	  
+	  "hardCurrency": {
+        "Type": "INT:4",
+        "Values": []
+      },	  
+	  "labHp": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labSpeed": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labBoost": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "labPower": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+	  "totalSpecialDragonsUnlocked": {
+		"Type": "INT:4",
+		"Values": []
+      },
+	  "currentLeague": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+	  "upcomingLeague": {
+		"Type": "STRING:45",
+		"Values": []
+      },
+	  "location": {
+		"Type": "STRING:15",
+		"Values": []
+      },
+	  "unlockType": {
+		"Type": "STRING:15",
+		"Values": []
+      },
+	  "offerName": {
+		"Type": "STRING:30",
+		"Values": []
+      },
+	  "offerType": {
+		"Type": "STRING:15",
+		"Values": []
+      }	  
     }
 }

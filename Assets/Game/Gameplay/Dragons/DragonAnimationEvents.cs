@@ -29,6 +29,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public string m_hitSound;
 	public string m_poisonHitSound;
+    protected bool m_allowHitAnimation = true;
+    public bool allowHitAnimation { 
+        get{ return m_allowHitAnimation; }
+        set{ m_allowHitAnimation = value; }
+    }
 
 	public string m_enterWaterSound;
 	public string m_enterWaterWithSplashSound;
@@ -76,15 +81,18 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public string m_onReviveSound = "hd_dragon_revive";
 	public string m_onPreMegaFire = "";
 
+    protected bool m_mutedWindSounds = false;
+
 	void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
-		Messenger.AddListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 		Messenger.AddListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 		Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 		Messenger.AddListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 		Messenger.AddListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
+        Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 		m_eventsRegistered = true;
 		// m_animator.SetBool( "starving", true);
 
@@ -112,11 +120,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if (m_eventsRegistered)
 		{
-			Messenger.RemoveListener<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+			Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 			Messenger.RemoveListener<DragonHealthModifier, DragonHealthModifier>(MessengerEvents.PLAYER_HEALTH_MODIFIER_CHANGED, OnHealthModifierChanged);
 			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnKo);
 			Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
 			Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewarmFuryRush);
+            Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 		}
 	}
 
@@ -133,7 +142,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	private void OnLevelUp(DragonData _data) 
+	private void OnLevelUp(IDragonData _data) 
 	{
 		PlaySound(m_levelUpSound);
 		// m_animator.SetTrigger("LevelUp");
@@ -146,6 +155,10 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (!string.IsNullOrEmpty( m_starvingSound)){
 			if ( starving ){
 				m_starvingSoundAO = AudioController.Play(m_starvingSound, transform);
+                if ( m_mutedWindSounds )
+                {
+                    m_starvingSoundAO.volume = 0;
+                }
 			}else{
 				if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying() )
 				{
@@ -158,7 +171,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	void OnKo( DamageType type , Transform _source)
 	{
-		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE )
+		if ( type == DamageType.MINE || type == DamageType.BIG_DAMAGE || InstanceManager.player.m_alwaysSpawnCorpse )
 		{
 			PlaySound(m_onCorpseSound);
 		}
@@ -193,11 +206,15 @@ public class DragonAnimationEvents : MonoBehaviour {
 	{
 		if ( m_particleController )
 			m_particleController.ActivateTrails();
-		if ( !string.IsNullOrEmpty( m_wingsWindSound))
+		if ( !string.IsNullOrEmpty(m_wingsWindSound))
 		{
 			m_wingsWindSoundAO = AudioController.Play( m_wingsWindSound, transform);
 			if ( m_wingsWindSoundAO != null )
+            {
+                if (m_mutedWindSounds)
+                    m_wingsWindSoundAO.volume = 0;
 				m_wingsWindSoundAO.completelyPlayedDelegate = OnWindsSoundCompleted;
+            }
 		}
 	}
 
@@ -223,7 +240,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
 			if ( m_wingsIdleSoundAO != null )
+            {
+                if (m_mutedWindSounds)
+                    m_wingsIdleSoundAO.volume = 0;
 				m_wingsIdleSoundAO.completelyPlayedDelegate = OnWigsIdleCompleted;
+            }
 		}
 	}
 
@@ -232,7 +253,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
 		{
 			m_wingsIdleSoundAO.Stop();
-			m_wingsFlyingSoundAO = null;
+			m_wingsIdleSoundAO = null;
 		}
 	}
 
@@ -242,7 +263,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
 			if ( m_wingsFlyingSoundAO != null )
+            {
+                if (m_mutedWindSounds)
+                    m_wingsFlyingSoundAO.volume = 0;
 				m_wingsFlyingSoundAO.completelyPlayedDelegate = OnWingsFlyingSoundCompleted;
+            }
 		}
 	}
 
@@ -264,7 +289,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsIdleSoundAO = AudioController.Play(m_wingsIdleSound, transform);
 			if ( m_wingsIdleSoundAO != null )
+            {
+                if (m_mutedWindSounds)
+                    m_wingsIdleSoundAO.volume = 0;
 				m_wingsIdleSoundAO.completelyPlayedDelegate = OnWigsIdleCompleted;
+            }
 		}
 	}
 
@@ -282,7 +311,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsFlyingSoundAO = AudioController.Play(m_wingsFlyingSound, transform);
 			if ( m_wingsFlyingSoundAO != null )
+            {
+                if (m_mutedWindSounds)
+                    m_wingsFlyingSoundAO.volume = 0;   
 				m_wingsFlyingSoundAO.completelyPlayedDelegate = OnWingsFlyingSoundCompleted;
+            }
 		}
 	}
 
@@ -300,7 +333,12 @@ public class DragonAnimationEvents : MonoBehaviour {
 		{
 			m_wingsStrongFlapAO = AudioController.Play(m_wingsStrongFlap, transform);
 			if ( m_wingsStrongFlapAO != null )
-				m_wingsStrongFlapAO.completelyPlayedDelegate = OnWingsStrongFlapSoundCompleted;
+            {
+                if (m_mutedWindSounds)
+                    m_wingsStrongFlapAO.volume = 0;
+                m_wingsStrongFlapAO.completelyPlayedDelegate = OnWingsStrongFlapSoundCompleted;
+            }
+				
 		}
 	}
 
@@ -333,11 +371,14 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	public void PlayHitAnimation( DamageType _type )
 	{
-		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
-		if (stateInfo.fullPathHash != m_damageAnimState) {
-			m_animator.SetTrigger( GameConstants.Animator.DAMAGE );// receive damage?
-			m_lastDamageType = _type;
-		}
+        if (m_allowHitAnimation)
+        {
+    		AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+    		if (stateInfo.fullPathHash != m_damageAnimState) {
+    			m_animator.SetTrigger( GameConstants.Animator.DAMAGE );// receive damage?
+    			m_lastDamageType = _type;
+    		}
+        }
 	}
 
 	public void HitEvent()
@@ -366,6 +407,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private void MuteWindSounds()
 	{
+        m_mutedWindSounds = true;
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
 			m_wingsWindSoundAO.volume = 0;
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
@@ -380,16 +422,17 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private void UnmuteWindSounds()
 	{
+        m_mutedWindSounds = false;
 		if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying())
-			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.volumeItem;
+			m_wingsWindSoundAO.volume = m_wingsWindSoundAO.audioItem.Volume;
 		if (m_wingsIdleSoundAO != null && m_wingsIdleSoundAO.IsPlaying())
-			m_wingsIdleSoundAO.volume = m_wingsIdleSoundAO.volumeItem;
+			m_wingsIdleSoundAO.volume = m_wingsIdleSoundAO.audioItem.Volume;
 		if (m_wingsFlyingSoundAO != null && m_wingsFlyingSoundAO.IsPlaying())
-			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.volumeItem;
+			m_wingsFlyingSoundAO.volume = m_wingsFlyingSoundAO.audioItem.Volume;
 		if (m_wingsStrongFlapAO != null && m_wingsStrongFlapAO.IsPlaying())
-			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.volumeItem;
+			m_wingsStrongFlapAO.volume = m_wingsStrongFlapAO.audioItem.Volume;
 		if (m_starvingSoundAO != null && m_starvingSoundAO.IsPlaying())
-			m_starvingSoundAO.volume = m_starvingSoundAO.volumeItem;
+			m_starvingSoundAO.volume = m_starvingSoundAO.audioItem.Volume;
 	}
 
 	public void OnInsideWater( bool withSplash )
@@ -500,5 +543,22 @@ public class DragonAnimationEvents : MonoBehaviour {
 			m_eatHoldSoundAO = null;
 		}
 	}
+    
+    protected virtual void OnGamePaused( bool _paused )
+    {
+        if ( _paused )
+        {
+            // Pause sound
+            if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPlaying() )
+                m_wingsWindSoundAO.Pause();
+        }
+        else
+        {
+            // Resume sound
+            if (m_wingsWindSoundAO != null && m_wingsWindSoundAO.IsPaused() )
+                m_wingsWindSoundAO.Unpause();
+        }
+    }
+    
 
 }

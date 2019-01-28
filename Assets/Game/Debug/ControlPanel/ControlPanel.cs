@@ -1,4 +1,4 @@
-﻿// ControlPanel.cs
+// ControlPanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/11/2015.
@@ -327,7 +327,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         if ( Input.GetKeyDown(KeyCode.L )){
 			if ( InstanceManager.player != null ){
 				// Dispatch global event
-				Messenger.Broadcast<DragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
+				Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, InstanceManager.player.data);
 			}
 		}
 #endif
@@ -383,8 +383,12 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Customizer,
         GameCenter,
 		ResultsScreen,
-		LiveEvents,
-        Store
+		LiveData,
+        Store,
+        CP2,
+        Persistence,
+		Server,
+		Offers
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -393,9 +397,13 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	private static void Log_InitChannels() {
 		Log_SetupChannel(ELogChannel.General, "", Color.white);
 		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
-		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
-		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
+		Log_SetupChannel(ELogChannel.ResultsScreen, "Results", Colors.paleYellow);
+		Log_SetupChannel(ELogChannel.LiveData, "LiveEvents", Colors.aqua);
         Log_SetupChannel(ELogChannel.Store, "Store", Colors.coral);
+        Log_SetupChannel(ELogChannel.CP2, "CP2", Colors.blue);
+        Log_SetupChannel(ELogChannel.Persistence, "Persistence", Colors.fuchsia);
+		Log_SetupChannel(ELogChannel.Server, "Server", Colors.teal);
+		Log_SetupChannel(ELogChannel.Offers, "Offers", Colors.gold);
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)

@@ -17,7 +17,7 @@ using UnityEngine.UI;
 /// Generic behaviour for all map markers - sprites in the game scene that should 
 /// be rendered in the map.
 /// </summary>
-public class MapMarker : MonoBehaviour {
+public class MapMarker : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -67,10 +67,11 @@ public class MapMarker : MonoBehaviour {
 		m_originalScale = GetMarkerTransform().localScale;
 
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
-		Messenger.AddListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+		Broadcaster.AddListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
+		Broadcaster.AddListener(BroadcastEventType.UI_MAP_EXPIRED, this);
+		Broadcaster.AddListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
 
 	/// <summary>
@@ -78,11 +79,42 @@ public class MapMarker : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener(MessengerEvents.PROFILE_MAP_UNLOCKED, OnMapUnlocked);
-		Messenger.RemoveListener<float>(MessengerEvents.UI_MAP_ZOOM_CHANGED, OnMapZoomChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.PROFILE_MAP_UNLOCKED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_EXPIRED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.UI_MAP_ZOOM_CHANGED, this);
 	}
+
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(popupManagementInfo.popupController);   
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(popupManagementInfo.popupController);   
+            }break;
+            case BroadcastEventType.PROFILE_MAP_UNLOCKED:
+            {
+                OnMapUnlocked();
+            }break;
+			case BroadcastEventType.UI_MAP_EXPIRED:
+			{
+				OnMapExpired();
+			}break;
+            case BroadcastEventType.UI_MAP_ZOOM_CHANGED:
+            {
+                UIMapZoomChanged zoomChanged = (UIMapZoomChanged)broadcastEventInfo;
+                OnMapZoomChanged(zoomChanged.zoomFactor);
+            }break;
+        }
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -97,9 +129,7 @@ public class MapMarker : MonoBehaviour {
 			case Type.CHEST:
 			case Type.EGG:
 			case Type.LETTER: {
-				// [AOC] If the map timer runs out during the game, we let the player enjoy the unlocked map for the whole run
-				//       That's why we check the GameSceneController rather than the user profile
-				this.gameObject.SetActive(showMarker && InstanceManager.gameSceneControllerBase.mapUnlocked);
+				this.gameObject.SetActive(showMarker && UsersManager.currentUser.mapUnlocked);
 			} break;
 
 			// Rest of marker types
@@ -246,6 +276,14 @@ public class MapMarker : MonoBehaviour {
 		// Update marker will do the job
 		// Add some delay to give time for feedback to show off
 		UbiBCN.CoroutineManager.DelayedCall(UpdateMarker, 0.25f, true);
+	}
+
+	/// <summary>
+	/// Minimap upgrade has been expired.
+	/// </summary>
+	private void OnMapExpired() {
+		// Update marker will do the job
+		UpdateMarker();
 	}
 
 	/// <summary>

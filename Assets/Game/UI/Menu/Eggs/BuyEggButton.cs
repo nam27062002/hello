@@ -46,22 +46,25 @@ public class BuyEggButton : MonoBehaviour {
 	/// The button has been pressed.
 	/// </summary>
 	public void OnBuyEgg() {
-		// Get price and start purchase flow
-		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
-		ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				// Play sound!
-				AudioController.Play("UI_Buy");
-
-				// Create a new egg instance
-				Egg purchasedEgg = Egg.CreateFromDef(_flow.itemDef);
-				purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
-
-				// Start open egg flow
-				InstanceManager.menuSceneController.StartOpenEggFlow(purchasedEgg);
-			}
-		);
-		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.BUY_EGG, eggDef);
+        if (InstanceManager.menuSceneController.transitionManager.transitionAllowed)
+        {
+    		// Get price and start purchase flow
+    		DefinitionNode eggDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, Egg.SKU_PREMIUM_EGG);
+    		ResourcesFlow purchaseFlow = new ResourcesFlow("BUY_EGG");
+    		purchaseFlow.OnSuccess.AddListener(
+    			(ResourcesFlow _flow) => {
+    				// Play sound!
+    				AudioController.Play("UI_Buy");
+    
+    				// Create a new egg instance
+    				Egg purchasedEgg = Egg.CreateFromDef(_flow.itemDef);
+    				purchasedEgg.ChangeState(Egg.State.READY);	// Already ready for collection!
+    
+    				// Start open egg flow
+    				InstanceManager.menuSceneController.StartOpenEggFlow(purchasedEgg);
+    			}
+    		);
+    		purchaseFlow.Begin(eggDef.GetAsLong("pricePC"), UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.BUY_EGG, eggDef);
+        }
 	}
 }

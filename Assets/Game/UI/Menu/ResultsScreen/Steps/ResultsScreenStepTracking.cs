@@ -1,4 +1,4 @@
-// ResultsScreenStepTracking.cs
+﻿// ResultsScreenStepTracking.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 05/09/2017.
@@ -69,7 +69,7 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 			Mission m = MissionManager.GetMission((Mission.Difficulty)i);
 			if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
 				missionCompleted[i] = true;
-				missionReward[i] = m.rewardCoins;
+                missionReward[i] = (int)m.reward.amount;
 			} else {
 				missionCompleted[i] = false;
 				missionReward[i] = 0;
@@ -77,6 +77,12 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 		}
 
 		if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+			// Get some special data
+			int level = 0;
+			if(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
+				level = (DragonManager.currentDragon as DragonDataClassic).progression.level;
+			}
+
 			// Do it!
 			MiniTrackingEngine.TrackEvent(
 				"GAME_ENDED",
@@ -99,8 +105,8 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 				new TrackingParam("hc_revive_used", RewardManager.paidReviveCount),
 				new TrackingParam("ad_revive_used", RewardManager.freeReviveCount),
 				new TrackingParam("xp_earn", RewardManager.xp),
-				new TrackingParam("current_dragon", UsersManager.currentUser.currentDragon),
-				new TrackingParam("current_level", DragonManager.currentDragon.progression.level),
+				new TrackingParam("current_dragon", DragonManager.currentDragon.sku),
+				new TrackingParam("current_level", level),
 				new TrackingParam("mission1_completed", missionCompleted[0]),
 				new TrackingParam("mission2_completed", missionCompleted[1]),
 				new TrackingParam("mission3_completed", missionCompleted[2]),

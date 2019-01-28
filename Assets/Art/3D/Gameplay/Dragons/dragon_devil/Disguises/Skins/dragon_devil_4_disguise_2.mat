@@ -8,14 +8,14 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: dragon_devil_4_disguise_2
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: 3000
   stringTagMap:
-    QUEUE: AlphaTest
-    RenderType: TransparentCutout
+    QUEUE: Transparent
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -71,20 +71,32 @@ Material:
     m_Floats:
     - FXLayer: 0
     - SelfIlluminate: 0
-    - _BlendMode: 1
+    - _BlendMode: 2
     - _BumpScale: 1
-    - _Cull: 0
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 10
     - _EmissionScaleUI: 0
-    - _EnableCutoff: 1
-    - _EnableDoublesided: 1
+    - _EnableBlendFresnel: 0
+    - _EnableCutoff: 0
+    - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 0
+    - _EnableNormalMap: 1
+    - _EnableOpaqueFresnel: 0
+    - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
+    - _EnableVertexOffset: 0
     - _FireAmount: 0
+    - _FireSpeed: 1
     - _Fresnel: 1.79
     - _Glossiness: 0.5
     - _InnerLightAdd: 0

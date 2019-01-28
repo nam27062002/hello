@@ -1,4 +1,4 @@
-// GlobalEventsScreenActivePanel.cs
+﻿// GlobalEventsScreenActivePanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 28/06/2017.
@@ -70,9 +70,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
+		if ( !HDLiveDataManager.quest.EventExists() ) return;
 
-		double remainingTime = System.Math.Max(0, HDLiveEventsManager.instance.m_quest.m_questData.remainingTime.TotalSeconds);
+		double remainingTime = System.Math.Max(0, HDLiveDataManager.quest.m_questData.remainingTime.TotalSeconds);
 
 		// Update countdown text
 		if(m_timerText != null) {
@@ -87,10 +87,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		if(m_updateEventState) {
 			if ( remainingTime <= 0 )
 			{
-				HDLiveEventsManager.instance.m_quest.UpdateStateFromTimers();
+				HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
-			if ( !HDLiveEventsManager.instance.m_quest.IsRunning() )
+			if ( !HDLiveDataManager.quest.IsRunning() )
 			{
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
@@ -105,7 +105,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	override public void Refresh() {
 		// Get current event
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.quest;
 		if(!questManager.EventExists()) return;
 
 		HDQuestData data = questManager.data as HDQuestData;
@@ -150,7 +150,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	public void MoveScoreTo(long _to, float _duration) {
 		long currentValue = 0;
 		if(m_progressBar != null) {
-			HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+			HDQuestManager questManager = HDLiveDataManager.quest;
 			if(questManager.EventExists()) {
 				HDQuestData data = questManager.data as HDQuestData;
 				HDQuestDefinition def = data.definition as HDQuestDefinition;
@@ -166,7 +166,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// If not animating, just set the final value directly
 		if(_duration <= 0f) {
 			// Set initial value
-			HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+			HDQuestManager questManager = HDLiveDataManager.quest;
 			if(questManager.EventExists()) {
 				HDQuestData data = questManager.data as HDQuestData;
 				HDQuestDefinition def = data.definition as HDQuestDefinition;
@@ -182,7 +182,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 	IEnumerator GoingUp( long _from, long _to, float _duration )
 	{
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.quest;
 		if(questManager.EventExists())
 		{
 			HDQuestData data = questManager.data as HDQuestData;

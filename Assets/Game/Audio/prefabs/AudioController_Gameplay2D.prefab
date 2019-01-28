@@ -970,27 +970,6 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
-    - Name: event_01
-      Loop: 0
-      loopSequenceCount: 0
-      loopSequenceOverlap: 0
-      loopSequenceRandomDelay: 0
-      loopSequenceRandomPitch: 0
-      loopSequenceRandomVolume: 0
-      DestroyOnLoad: 0
-      Volume: 0.74
-      SubItemPickMode: 0
-      MinTimeBetweenPlayCalls: 90
-      MaxInstanceCount: 1
-      Delay: 0
-      RandomVolume: 0
-      RandomPitch: 0
-      RandomDelay: 0
-      overrideAudioSourceSettings: 0
-      audioSource_MinDistance: 1
-      audioSource_MaxDistance: 500
-      spatialBlend: 0
-      subItems: []
     - Name: hd_music_event_01
       Loop: 0
       loopSequenceCount: 0
@@ -1012,24 +991,6 @@ MonoBehaviour:
       audioSource_MaxDistance: 500
       spatialBlend: 0
       subItems:
-      - SubItemType: 0
-        Probability: 1
-        DisableOtherSubitems: 0
-        ItemModeAudioID: 
-        Clip: {fileID: 8300000, guid: 1650109877386264f956ab602ae4cfea, type: 3}
-        Volume: 1
-        PitchShift: 0
-        Pan2D: 0
-        Delay: 0
-        RandomPitch: 0
-        RandomVolume: 0
-        RandomDelay: 0
-        ClipStopTime: 0
-        ClipStartTime: 0
-        FadeIn: 0
-        FadeOut: 0
-        RandomStartPosition: 0
-        individualSettings: []
       - SubItemType: 0
         Probability: 1
         DisableOtherSubitems: 0
@@ -1056,9 +1017,9 @@ MonoBehaviour:
       loopSequenceRandomPitch: 0
       loopSequenceRandomVolume: 0
       DestroyOnLoad: 1
-      Volume: 0.75
+      Volume: 0.8
       SubItemPickMode: 2
-      MinTimeBetweenPlayCalls: 300
+      MinTimeBetweenPlayCalls: 120
       MaxInstanceCount: 0
       Delay: 0
       RandomVolume: 0
@@ -1127,7 +1088,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     - Name: hd_music_event_castle
-      Loop: 0
+      Loop: 1
       loopSequenceCount: 0
       loopSequenceOverlap: 0
       loopSequenceRandomDelay: 0
@@ -1165,6 +1126,45 @@ MonoBehaviour:
         FadeOut: 0
         RandomStartPosition: 0
         individualSettings: []
+    - Name: hd_music_castle_ambient
+      Loop: 1
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 0.7
+      SubItemPickMode: 0
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: f4a076b7ef4ed8140a2bc7f82c8bdb79, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
     _volume: 1
     audioMixerGroup: {fileID: 24394002, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
   musicPlaylists:
@@ -1179,8 +1179,8 @@ MonoBehaviour:
   _audioDisabled: 0
   _volume: 1
   _currentInspectorSelection:
-    currentCategoryIndex: 0
-    currentItemIndex: 13
+    currentCategoryIndex: 1
+    currentItemIndex: 8
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0

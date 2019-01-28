@@ -71,7 +71,7 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
                 // Age protection disabled by default
                 // true if the user protection should be used
                 bool ageProtection = GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentRestrictionEnabled();
-                GetAdProvider().Init(ageProtection);
+                GetAdProvider().Init(ageProtection, GDPRManager.SharedInstance.IsConsentRestrictionEnabled());
 			}
         }
 	}
@@ -104,13 +104,21 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		if (FeatureSettingsManager.IsDebugEnabled)
 			AdProvider.Log("ShowInterstitial processing...");
 
-        GetAdProvider().ShowInterstitial(onShowInterstitial);       
+        AdProvider adProvider = GetAdProvider();        
+        CurrentAdPurpose = EAdPurpose.INTERSTITIAL;
+
+        // Ad has been requested is tracked
+        HDTrackingManager.Instance.Notify_AdStarted(Track_EAdPurposeToAdType(CurrentAdPurpose), Track_EAdPurposeToRewardType(CurrentAdPurpose), true, adProvider.GetId());
+
+        adProvider.ShowInterstitial(onShowInterstitial);       
 	}	
 
     private void onShowInterstitial(bool giveReward, int duration, string msg)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
             AdProvider.Log("onShowInterstitial success = " +giveReward + " duration = " + duration + " msg = " + msg);
+
+        HDTrackingManager.Instance.Notify_AdFinished(Track_EAdPurposeToAdType(CurrentAdPurpose), giveReward, false, duration, GetAdProvider().GetId());
 
         if ( giveReward ){
             PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, 0);
@@ -189,128 +197,76 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
 		GetAdProvider().ShowDebugInfo();
 	}
 
-#region track    
+    #region track    
     private string Track_EAdPurposeToAdType(EAdPurpose adPurpose)
     {
-        return adPurpose.ToString();
+        return (adPurpose == EAdPurpose.INTERSTITIAL) ? "Display_Video" : adPurpose.ToString();        
     }
 
     private string Track_EAdPurposeToRewardType(EAdPurpose adPurpose)
     {
-        // Same string is sent for RewardType and AdType
-        return Track_EAdPurposeToAdType(adPurpose);
+        // Must be empty for interstitial videos and the same as AdType for rewarded videos.
+        return (adPurpose == EAdPurpose.INTERSTITIAL) ? "" : Track_EAdPurposeToAdType(adPurpose);
     }
-#endregion
+    #endregion
+
     #region interstitial
 
     public bool IsValidUserForInterstitials()
     {
         // this variable will say if the player is a target of the interstitial system
-        bool isValidProfile = false;
-        
+        bool ret = false;
         if (FeatureSettingsManager.AreAdsEnabled)
         {
-            DefinitionNode adFrequency = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "adFrequency");
-            int minRuns = adFrequency.GetAsInt("runsToStart");
-            // Check a min of runs before start showing interstitials
+            DefinitionNode interstitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
+            int minRuns = interstitialsSetup.GetAsInt("runsToStart");
             if (UsersManager.currentUser.gamesPlayed >= minRuns)
             {
-                // if player is payer we dont show interstitials
-                TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
-                int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
-                if (totalPurchases <= 0)
+                bool cleanCounter = true;
+                bool checkHacker = interstitialsSetup.GetAsBool("checkHacker");
+                if ( checkHacker &&  UsersManager.currentUser.isHacker)
                 {
-                    // Check profiles
-                    List<DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.INTERSTITIALS_PROFILES);
-                    int max = defs.Count;
-                    for (int i = 0; i < max && !isValidProfile; i++)
+                    ret = true;
+                }
+                else
+                {
+                    TrackingPersistenceSystem trackingPersistence = HDTrackingManager.Instance.TrackingPersistenceSystem;
+                    int totalPurchases = (trackingPersistence == null) ? 0 : trackingPersistence.TotalPurchases;
+                    long lastPurchaseTimestamp = (trackingPersistence == null) ? 0 : trackingPersistence.LastPurchaseTimestamp * 1000;  // to milliseconds
+                    long timestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+                    long timeNoPaying = interstitialsSetup.GetAsLong("daysNoPaying") * 24 * 60 * 60 * 1000; // to milliseconds
+                    if ( totalPurchases <= 0 || timestamp - lastPurchaseTimestamp > timeNoPaying )
                     {
-                        if (defs[i].GetAsBool("active"))
-                        {
-                            string sku = defs[i].Get("sku");
-                            switch (sku)
-                            {
-                                case "hacker":
-                                    isValidProfile = UsersManager.currentUser.isBadUser;
-                                    break;
-                                case "longTermNonPayer":
-                                    int progress = UsersManager.currentUser.GetPlayerProgress();
-                                    int progressCheck = defs[i].GetAsInt("param");
-                                    Debug.Log("@@@ longTermNonPayer progress: " + progress + " progressCheck: " + progressCheck);
-                                    if (progress >= progressCheck)
-                                    {
-                                        isValidProfile = true;
-                                    }
-                                    break;
-                                case "unofficial":
-    #if !UNITY_EDITOR
-                                    isValidProfile = !DeviceUtilsManager.SharedInstance.CheckIsAppFromStore();
-    #endif
-                                    break;
-                                case "nonAdUser":
-                                    {
-                                        int checkNoAdRuns = defs[i].GetAsInt("param");
-                                        int runsWithoutAds = 0;
-                                        if (PlayerPrefs.HasKey(RUNS_WITHOUT_ADS_KEY))
-                                            runsWithoutAds = PlayerPrefs.GetInt(RUNS_WITHOUT_ADS_KEY);
-                                        Debug.Log("@@@ nonAdUser runsWithoutAds: " + runsWithoutAds + " checkNoAdRuns: " + checkNoAdRuns);
-                                        isValidProfile = checkNoAdRuns <= runsWithoutAds;
-                                    }
-                                    break;
-                            }
-                        }
-    
-                        if (isValidProfile)
-                        {
-                            Debug.Log("@@@ isValidProfile " + defs[i].Get("sku"));
-                        }
+                        cleanCounter = false;
+                        int runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY, 0);
+                        ret = runs <= 0;
                     }
+                }
+                if (cleanCounter)
+                {
+                    PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, 0);
+                    PlayerPrefs.Save();
                 }
             }
         }
-        return isValidProfile;
+        
+        return ret;
     }
-    
-    public int GetRunsToInterstitial()
+
+    public void ResetIntersitialCounter()
     {
-        if (!PlayerPrefs.HasKey(INTERSTITIAL_RUNS_KEY))
-        {
-            ResetRunsToInterstitial();
-        }
-        int runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY);
-        return runs;
+        DefinitionNode intertitialsSetup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "intersitialsSetup");
+        int intersitialRuns = intertitialsSetup.GetAsInt("interstitialRuns");
+        PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, intersitialRuns);
+        PlayerPrefs.Save();
     }
 
     public void ReduceRunsToInterstitial()
     {
         int runs = 0;
-        if (!PlayerPrefs.HasKey(INTERSTITIAL_RUNS_KEY))
-        {
-            ResetRunsToInterstitial();
-        }
-        runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY);
+        runs = PlayerPrefs.GetInt(INTERSTITIAL_RUNS_KEY, 0);
         runs--;
         PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, runs);
-        PlayerPrefs.Save();
-    }
-    
-    public void ResetRunsToInterstitial()
-    {
-        DefinitionNode adFrequency = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.INTERSTITIALS_SETUP, "adFrequency");
-        int runs = Random.Range( adFrequency.GetAsInt("minRuns") ,adFrequency.GetAsInt("maxRuns"));
-        PlayerPrefs.SetInt(INTERSTITIAL_RUNS_KEY, runs);
-        PlayerPrefs.Save();
-    }
-    
-    public void IncreaseRunsWithoutAds()
-    {
-        int runs = 0;
-        if (PlayerPrefs.HasKey(RUNS_WITHOUT_ADS_KEY))
-        {
-            runs = PlayerPrefs.GetInt(RUNS_WITHOUT_ADS_KEY);
-        }
-        runs++;
-        PlayerPrefs.SetInt(RUNS_WITHOUT_ADS_KEY, runs);
         PlayerPrefs.Save();
     }
 

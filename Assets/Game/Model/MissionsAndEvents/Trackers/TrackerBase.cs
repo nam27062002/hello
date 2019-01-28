@@ -42,10 +42,12 @@ public class TrackerBase {
 		set { SetValue(value); }
 	}
 
-	private bool m_enabled = true;
+	private bool m_enabled = false;
 	public bool enabled {
 		get { return m_enabled; }
-		set { m_enabled = value; }
+		set { 
+            m_enabled = value; 
+        }
 	}
 
 	protected Mode m_mode = Mode.GENERIC;
@@ -200,6 +202,9 @@ public class TrackerBase {
 			case "zone_survive":	return new TrackerZoneSurvive(_params);
 			case "visited_zones":	return new TrackerVisitedZones();
 			case "kill":			return new TrackerKill(_params);
+            case "kill_in_love":    return new TrackerKillInLove(_params);
+            case "kill_stunned":    return new TrackerKillStunned(_params);
+            case "kill_frozen":     return new TrackerKillFrozen(_params);
 			case "burn":			return new TrackerBurn(_params);
 			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();
@@ -214,8 +219,8 @@ public class TrackerBase {
 			case "critical_time":	return new TrackerCriticalTime();
 			case "eat_dizzy":		return new TrackerEatDizzy(_params);
 			// new missions TODO
-			case "eat_gold": return new TrackerEatGolden(_params);
-			case "eat_suicidal": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
+			case "eat_gold":        return new TrackerEatGolden(_params);
+			case "eat_suicidal":    return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);
 			case "eat_spec_anim_a": return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.PilotActionA, _params);
 			//-----------------------------------
 
@@ -235,4 +240,11 @@ public class TrackerBase {
 		// Unrecoginzed mission type, aborting
 		return null;
 	}
+    
+    /// <summary>
+    /// Refreshs the current value. This function will be called on the achievements that need to check a specific value on the profile
+    /// Used for example in checking unlocking dragons and number of skins because we cannot unlock a dragon again
+    /// </summary>
+    public virtual void RefreshCurrentValue(){
+    }
 }

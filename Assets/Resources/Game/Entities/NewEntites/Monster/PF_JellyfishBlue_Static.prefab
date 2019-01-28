@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 11441542}
   - component: {fileID: 54000010377718392}
   - component: {fileID: 136926484593976340}
-  m_Layer: 16
+  m_Layer: 25
   m_Name: PF_JellyfishBlue_Static
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 138364}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -48.57, y: 0, z: -0}
+  m_LocalPosition: {x: -558.72314, y: 34.882587, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4029790738156382}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_isPlaceHolder: 1
+  m_isPlaceHolder: 0
   m_walkSpeed: 1
   m_runSpeed: 1
   m_minPlaybakSpeed: 1
@@ -99,16 +99,17 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_showDamageFeedback: 0
   m_damageColor: {r: 1, g: 0, b: 0, a: 1}
   m_damageTime: 2
   m_corpseAsset: 
   m_onEatenParticle:
-    name: PS_GhostBlood
+    name: PS_GhostDie
     path: Blood
     changeStartColor: 1
-    startColor: {r: 0.18103445, g: 0.75, b: 0, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    startColor: {r: 0, g: 0.7931032, b: 1, a: 1}
+    startColorTwo: {r: 0, g: 0.5448277, b: 1, a: 1}
     changeColorOvertime: 0
     colorOvertime:
       serializedVersion: 2
@@ -141,6 +142,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenFrozenParticle:
     name: PS_IceExplosion
     path: 
@@ -179,6 +181,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onEatenAudio: 
   m_firePoints: []
   m_burnParticle:
@@ -219,6 +222,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onBurnAudio: 
   m_explosionParticles:
     name: 
@@ -258,6 +262,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_onExplosionAudio: 
   m_explodeWhenBurned: 1
   m_onAttackAudio: 
@@ -277,6 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 8204
   m_sku: JellyfishBlue
   m_hideNeedTierMessage: 1
   m_dieOutsideFrustum: 1
@@ -359,7 +365,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1445259499500278}
-  m_LocalRotation: {x: -0.20389853, y: 0.11278933, z: 0.023655552, w: 0.9721854}
+  m_LocalRotation: {x: -0.05903547, y: -0.61371696, z: 0.04609754, w: -0.78596526}
   m_LocalPosition: {x: 0, y: 0.56, z: 0}
   m_LocalScale: {x: 5.9475865, y: 7.3399186, z: 4.5037107}
   m_Children: []
@@ -375,6 +381,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -390,6 +397,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -407,6 +415,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -422,6 +431,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -493,6 +503,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
 --- !u!114 &114487487468086076
 MonoBehaviour:
@@ -515,8 +526,9 @@ MonoBehaviour:
     max: 1
   m_useSpawnerRotation: 0
   m_serializedJson: '[{"damage":21,"duration":2.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
-  m_databaseKey: PF_JellyfishBlue_Static
+  m_databaseKey: PF_JellyfishBlue_Static (1)
   m_updateMachinePos: 1
+  m_updateMachineRot: 0
 --- !u!114 &114903141039892340
 MonoBehaviour:
   m_ObjectHideFlags: 1

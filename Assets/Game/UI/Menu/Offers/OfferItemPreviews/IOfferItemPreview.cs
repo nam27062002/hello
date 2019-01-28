@@ -32,6 +32,11 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 		get { return m_showInfoButton; }
 	}
 
+	[SerializeField] private bool m_enableMask = false;
+	public bool enableMask {
+		get { return m_enableMask; }
+	}
+
 	// Convenience properties
 	public RectTransform rectTransform {
 		get { return this.transform as RectTransform; }
@@ -78,6 +83,32 @@ public abstract class IOfferItemPreview : MonoBehaviour {
 				scaler.DoScale();
 			}
 		}, 1);
+	}
+
+	/// <summary>
+	/// Process all particle systems of the preview so they work as expected.
+	/// </summary>
+	/// <param name="_rootObject">Object whose nested particle systems we want to initialize.</param>
+	public virtual void InitParticles(GameObject _rootObject) {
+		// Check params
+		if(_rootObject == null) return;
+
+		// Process all nested particle systems
+		ParticleSystem[] nestedPS = _rootObject.GetComponentsInChildren<ParticleSystem>();
+		for(int i = 0; i < nestedPS.Length; ++i) {
+			// Aux vars
+			ParticleSystem ps = nestedPS[i];
+
+			// Disable VFX whenever a popup is opened in top of this preview (they don't render well with a popup on top)
+			DisableOnPopup disabler = ps.gameObject.AddComponent<DisableOnPopup>();
+			disabler.refPopupCount = PopupManager.openPopupsCount;
+
+			// Start particle with a couple of frames of delay to give time for the particle scalers to be applied
+			ps.gameObject.SetActive(false);
+			UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+				ps.gameObject.SetActive(true);
+			}, 5);
+		}
 	}
 
 	//------------------------------------------------------------------------//

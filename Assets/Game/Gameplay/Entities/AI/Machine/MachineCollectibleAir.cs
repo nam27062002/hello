@@ -73,7 +73,7 @@ namespace AI {
 
 		protected virtual void OnTriggerEnter(Collider _other) {
 			if (_other.CompareTag("Player")) {				
-				Reward reward = m_entity.GetOnKillReward(false);
+				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 
 				// Dispatch global event
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
@@ -156,8 +156,11 @@ namespace AI {
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 		
 		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
+		public bool Smash(IEntity.Type _source) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }
 		public void SetVelocity(Vector3 _v) {}

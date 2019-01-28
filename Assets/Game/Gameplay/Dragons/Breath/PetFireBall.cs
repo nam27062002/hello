@@ -10,19 +10,28 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	CircleArea2D m_area;
 
-	private Transform m_oldParent = null;
-	private LayerMask m_colliderMask;
+	private Transform m_oldParent = null;	
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
 	private Rect m_rect;
 
 	private PoolHandler m_poolHandler;
 	private ParticleSystem m_fireView;
+	private Transform m_target;
 
+
+	void Awake()
+	{
+		m_area = GetComponent<CircleArea2D>();
+		m_rect = new Rect();
+		m_pMotion = GetComponent<ProjectileMotion>();	
+		if (m_pMotion) m_pMotion.enabled = false;
+		m_hasBeenShot = false;
+
+	}
 	// Use this for initialization
 	void Start () 
 	{
-
 		// View particle
 		string version = "";
 		switch(FeatureSettingsManager.instance.Particles)
@@ -56,19 +65,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 			}
 		}
 		////
-
-		
-		m_area = GetComponent<CircleArea2D>();
-		m_rect = new Rect();
-
 		m_explosionParticle.CreatePool();
-
-		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
-
-		m_pMotion = GetComponent<ProjectileMotion>();	
-		if (m_pMotion) m_pMotion.enabled = false;
-		m_hasBeenShot = false;
-
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	
@@ -77,6 +74,19 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	{
 		if (m_hasBeenShot) 
 		{
+			if ( m_pMotion.m_moveType == ProjectileMotion.Type.Missile)
+			{
+				if (m_target != null)
+				{
+					// Update Target
+					m_pMotion.target = m_target.position;
+				}
+				else
+				{
+					Explode(false);
+				}
+			}
+			// Update Target?
 			if (InstanceManager.gameCamera != null)
 			{
 				bool rem = InstanceManager.gameCamera.IsInsideDeactivationArea( transform.position );
@@ -115,6 +125,7 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 
 	public void Shoot(Transform _target, Vector3 _direction, float _damage, Transform _source) {
 		ShootAtPosition(_target.position, _direction, _damage, _source);
+		m_target = _target;
 	}
 
 	public void ShootTowards(Vector3 _direction, float _speed, float _damage, Transform _source) {}
@@ -129,20 +140,24 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 			m_pMotion.enabled = true;
 			m_pMotion.Shoot(_target);
 		}
-		m_fireView.Play();
+		if ( m_fireView != null )
+			m_fireView.Play();
+		m_target = null;
 		m_hasBeenShot = true;
 	}
+
+
 
 	void OnCollisionEnter( Collision _collision )
 	{
 		// if the collision is ground -> Explode!!
-		if(((1 << _collision.gameObject.layer) & m_colliderMask) > 0)
+        if(((1 << _collision.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0)
 			Explode(false);
 	}
 
 	void OnTriggerEnter( Collider _other)
 	{
-		if(((1 << _other.gameObject.layer) & m_colliderMask) > 0)
+		if(((1 << _other.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0)
 			Explode(false);
 	}
 

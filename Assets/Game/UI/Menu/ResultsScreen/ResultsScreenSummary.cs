@@ -30,17 +30,23 @@ public class ResultsScreenSummary : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_timeText = null;
 	[SerializeField] private TextMeshProUGUI m_scoreText = null;
 	[SerializeField] private TextMeshProUGUI m_coinsText = null;
+	[SerializeField] private TextMeshProUGUI m_goldenFragmentsText = null;
 	[SerializeField] private TextMeshProUGUI m_chestsText = null;
 	[SerializeField] private TextMeshProUGUI m_eggsText = null;
 	[SerializeField] private TextMeshProUGUI m_missionsText = null;
+
+	[Separator("Other references")]
+	[SerializeField] private Image m_chestsIcon = null;
+	[SerializeField] private Image m_eggsIcon = null;
 
 	[Separator("Animators")]
 	[SerializeField] private ShowHideAnimator m_timeAnim = null;
 	[SerializeField] private ShowHideAnimator m_scoreAnim = null;
 	[SerializeField] private ShowHideAnimator m_coinsAnim = null;
+	[SerializeField] private ShowHideAnimator m_goldenFragmentsAnim = null;
 	[SerializeField] private ShowHideAnimator m_collectiblesAnim = null;
 	[SerializeField] private ShowHideAnimator m_missionsAnim = null;
-	
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -56,6 +62,7 @@ public class ResultsScreenSummary : MonoBehaviour {
 		m_timeAnim.transform.parent.gameObject.SetActive(false);
 		m_scoreAnim.transform.parent.gameObject.SetActive(false);
 		m_coinsAnim.transform.parent.gameObject.SetActive(false);
+		m_goldenFragmentsAnim.transform.parent.gameObject.SetActive(false);
 		m_collectiblesAnim.transform.parent.gameObject.SetActive(false);
 		m_missionsAnim.transform.parent.gameObject.SetActive(false);
 
@@ -63,6 +70,7 @@ public class ResultsScreenSummary : MonoBehaviour {
 		m_timeAnim.ForceHide(false);
 		m_scoreAnim.ForceHide(false);
 		m_coinsAnim.ForceHide(false);
+		m_goldenFragmentsAnim.ForceHide(false);
 		m_collectiblesAnim.ForceHide(false);
 		m_missionsAnim.ForceHide(false);
 
@@ -83,11 +91,8 @@ public class ResultsScreenSummary : MonoBehaviour {
 			TimeUtils.EPrecision.MINUTES
 		);
 		
-		// Activate root object
-		m_timeAnim.transform.parent.gameObject.SetActive(true);
-
-		// Trigger animation!
-		m_timeAnim.ForceShow(_animate);
+		// Show element
+		ShowElement(m_timeAnim, _animate);
 	}
 
 	/// <summary>
@@ -98,11 +103,8 @@ public class ResultsScreenSummary : MonoBehaviour {
 		// Set text
 		m_scoreText.text = StringUtils.FormatNumber(_score);
 
-		// Activate root object
-		m_scoreAnim.transform.parent.gameObject.SetActive(true);
-
-		// Trigger animation!
-		m_scoreAnim.ForceShow(true);
+		// Show element
+		ShowElement(m_scoreAnim, true);
 	}
 
 	/// <summary>
@@ -113,11 +115,20 @@ public class ResultsScreenSummary : MonoBehaviour {
 		// Set text
 		m_coinsText.text = StringUtils.FormatNumber(_coins);
 
-		// Activate root object
-		m_coinsAnim.transform.parent.gameObject.SetActive(true);
+		// Show element
+		ShowElement(m_coinsAnim, true);
+	}
 
-		// Trigger animation!
-		m_coinsAnim.ForceShow(true);
+	/// <summary>
+	/// Show the golden fragments slot.
+	/// </summary>
+	/// <param name="_goldenFragments">Number of collected golden fragments.</param>
+	public void ShowGoldenFragments(long _goldenFragments) {
+		// Set text
+		m_goldenFragmentsText.text = StringUtils.FormatNumber(_goldenFragments);
+
+		// Show element
+		ShowElement(m_goldenFragmentsAnim, true);
 	}
 
 	/// <summary>
@@ -127,14 +138,11 @@ public class ResultsScreenSummary : MonoBehaviour {
 	/// <param name="_eggs">Number of collected eggs.</param>
 	public void ShowCollectibles(int _chests, int _eggs) {
 		// Set texts
-		SetChests(_chests, false);
-		SetEgg(_eggs, false);
+		SetChests(_chests);
+		SetEgg(_eggs);
 
-		// Activate root object
-		m_collectiblesAnim.transform.parent.gameObject.SetActive(true);
-
-		// Trigger animation!
-		m_collectiblesAnim.ForceShow(true);
+		// Show element!
+		ShowElement(m_collectiblesAnim, true);
 	}
 
 	/// <summary>
@@ -145,44 +153,68 @@ public class ResultsScreenSummary : MonoBehaviour {
 		// Set text
 		m_missionsText.text = StringUtils.FormatNumber(_missions);
 
-		// Activate root object
-		m_missionsAnim.transform.parent.gameObject.SetActive(true);
-
-		// Trigger animation!
-		m_missionsAnim.ForceShow(true);
+		// Show element
+		ShowElement(m_missionsAnim, true);
 	}
 
 	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
+	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Set the amount of chests to the counter with some flashy FX.
 	/// </summary>
-	/// <param name="_collectedChests">Total collected chests to be displayed.</param>
-	/// <param name="_showFX">Whether to show some fx or not.</param> 
-	public void SetChests(int _collectedChests, bool _showFX = true) {
-		// [AOC] TODO!! Show some FX!
+	/// <param name="_collectedChests">Total collected chests to be displayed. Negative value to hide the chests counter.</param>
+	private void SetChests(int _collectedChests) {
+		// Don't show if negative value.
+		bool show = _collectedChests >= 0;
+		m_chestsIcon.gameObject.SetActive(show);
+		m_chestsText.gameObject.SetActive(show);
+
 		// Set text
-		m_chestsText.text = LocalizationManager.SharedInstance.Localize(
-			"TID_FRACTION",
-			StringUtils.FormatNumber(_collectedChests),
-			StringUtils.FormatNumber(ChestManager.NUM_DAILY_CHESTS)
-		);
+		if(show) {
+			m_chestsText.text = LocalizationManager.SharedInstance.Localize(
+				"TID_FRACTION",
+				StringUtils.FormatNumber(_collectedChests),
+				StringUtils.FormatNumber(ChestManager.NUM_DAILY_CHESTS)
+			);
+		}
 	}
 
 	/// <summary>
 	/// Set the amount of eggs to the counter with some flashy FX.
 	/// </summary>
-	/// <param name="_collectedChests">Total collected eggs to be displayed.</param>
-	/// <param name="_showFX">Whether to show some fx or not.</param> 
-	public void SetEgg(int _collectedEggs, bool _showFX = true) {
-		// [AOC] TODO!! Show some FX!
+	/// <param name="_collectedChests">Total collected eggs to be displayed. Negative value to hide the eggs counter.</param>
+	private void SetEgg(int _collectedEggs) {
+		// Don't show if negative value.
+		bool show = _collectedEggs >= 0;
+		m_eggsIcon.gameObject.SetActive(show);
+		m_eggsText.gameObject.SetActive(show);
+
 		// Set text
-		m_eggsText.text = LocalizationManager.SharedInstance.Localize(
-			"TID_FRACTION",
-			StringUtils.FormatNumber(_collectedEggs),
-			StringUtils.FormatNumber(1)
-		);
+		if(show) {
+			m_eggsText.text = LocalizationManager.SharedInstance.Localize(
+				"TID_FRACTION",
+				StringUtils.FormatNumber(_collectedEggs),
+				StringUtils.FormatNumber(1)
+			);
+		}
+	}
+
+	/// <summary>
+	/// Show a single element of the summary.
+	/// Will put the element at the end of the summary layout.
+	/// </summary>
+	/// <param name="_element">The element to be displayed.</param>
+	/// <param name="_animate">Trigger animation?</param>
+	private void ShowElement(ShowHideAnimator _element, bool _animate) {
+		// Put at the end of the summary layout
+		_element.transform.parent.SetAsLastSibling();
+
+		// Activate root object
+		_element.transform.parent.gameObject.SetActive(true);
+
+		// Trigger animation!
+		_element.ForceShow(_animate);
 	}
 
 	//------------------------------------------------------------------------//

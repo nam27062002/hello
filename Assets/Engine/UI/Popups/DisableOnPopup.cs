@@ -20,7 +20,7 @@ using UnityEngine.Events;
 /// If a show/hide animator is defined, it will be used instead of directly 
 /// activating/deactivating the object.
 /// </summary>
-public class DisableOnPopup : MonoBehaviour {
+public class DisableOnPopup : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -28,6 +28,10 @@ public class DisableOnPopup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Exposed setup
+	[Comment("Leave negative to use the amount of popups open at the moment this component is enabled.")]
+	[SerializeField] private int m_refPopupCount = -1;
+
 	// Optional animator to be used
 	[Comment("Optional animator to be used instead of directly activating/deactivating the GameObject.")]
 	[SerializeField] private ShowHideAnimator m_animator = null;
@@ -40,7 +44,6 @@ public class DisableOnPopup : MonoBehaviour {
 
 	// Internal
 	private bool m_pendingActivation = false;
-	private int m_refPopupCount = -1;
 	public int refPopupCount {
 		get { return m_refPopupCount; }
 		set { m_refPopupCount = value; }
@@ -54,30 +57,46 @@ public class DisableOnPopup : MonoBehaviour {
 	/// </summary>
 	private void Awake() {
 		// Subscribe to external events
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.AddListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
+		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
+        Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
+        Broadcaster.AddListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
 
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// If target popups was not manually defined, store current popup count as reference
-		if(m_refPopupCount < 0) {
-			m_refPopupCount = PopupManager.openPopupsCount;
-		}
+		
 	}
 
 	/// <summary>
 	/// Destructor.
 	/// </summary>
 	private void OnDestroy() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_OPENED, OnPopupOpened);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_CLOSED, OnPopupClosed);
-		Messenger.RemoveListener<PopupController>(MessengerEvents.POPUP_DESTROYED, OnPopupClosed);
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.POPUP_OPENED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_DESTROYED, this);
 	}
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.POPUP_OPENED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupOpened(popupManagementInfo.popupController);   
+            }break;
+            case BroadcastEventType.POPUP_CLOSED:
+            case BroadcastEventType.POPUP_DESTROYED:
+            {
+                PopupManagementInfo popupManagementInfo = (PopupManagementInfo)broadcastEventInfo;
+                OnPopupClosed(popupManagementInfo.popupController);   
+            }break;
+        }
+    }
+    
 
 	/// <summary>
 	/// Check opened popups count and check whether this object should be displayed or not.
@@ -102,6 +121,20 @@ public class DisableOnPopup : MonoBehaviour {
 	/// </summary>
 	/// <param name="_popup">The popup that has been opened.</param>
 	private void OnPopupOpened(PopupController _popup) {
+		// If target popups was not manually defined, store current popup count as reference
+		if(m_refPopupCount < 0) {
+			m_refPopupCount = PopupManager.openPopupsCount;
+
+			// If this component belongs to a popup, increase ref amount to include parent popup if it's still not opened
+			PopupController parentPopup = GetComponentInParent<PopupController>();
+			if(parentPopup != null) {
+				// Don't if already counted
+				if(!PopupManager.openedPopups.Contains(parentPopup)) {
+					m_refPopupCount++;
+				}
+			}
+		}
+
 		// Skip if object already disabled
 		if(!gameObject.activeSelf) return;
 

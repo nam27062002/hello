@@ -62,14 +62,14 @@ public class PopupAskSurvey : MonoBehaviour {
 		#endif
 
 		// Not if target min dragon is not properly defined
-		DragonData minDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
+		IDragonData minDragon = DragonManager.GetDragonData(MIN_OWNED_DRAGON);
 		if(minDragon == null) return null;	// Something went really wrong
 
 		// Not if target min dragon not yet owned (or bigger one)
 		// Check whether player owns a dragon bigger than the min required and has played at least MIN_RUNS with it
 		int minOwnedDragonOrder = minDragon.GetOrder();
-		DragonData targetDragon = null;
-		List<DragonData> dragonsByOrder = DragonManager.dragonsByOrder;
+		IDragonData targetDragon = null;
+		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
 		for(int i = minOwnedDragonOrder; i < dragonsByOrder.Count; ++i) {
 			if(dragonsByOrder[i].isOwned && dragonsByOrder[i].gamesPlayed >= MIN_RUNS) {
 				targetDragon = dragonsByOrder[i];

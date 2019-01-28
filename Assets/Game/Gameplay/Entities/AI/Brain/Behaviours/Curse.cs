@@ -29,10 +29,10 @@ namespace AI {
 
 			protected override void OnInitialise() {
 				m_data = m_pilot.GetComponentData<CurseData>();
-				m_dragon = InstanceManager.player.GetComponent<DragonHealthBehaviour>();
+                m_dragon = InstanceManager.player.dragonHealthBehaviour;
 				m_timer = 0;
 
-				DragonTier dragonTier = InstanceManager.player.GetComponent<DragonPlayer>().data.tier;
+				DragonTier dragonTier = InstanceManager.player.data.tier;
 				m_entity = m_pilot.GetComponent<Entity>();
 				m_enabled = !m_entity.IsEdible(dragonTier);
 			}
@@ -49,10 +49,13 @@ namespace AI {
 					if (m_timer <= 0f) {
 						if (m_machine.GetSignal(Signals.Type.Trigger)) {
 							object[] param = m_machine.GetSignalParams(Signals.Type.Trigger);
-							if (param != null && param.Length > 0 && ((GameObject)param[0]).CompareTag("Player")) {
-								m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.NORMAL, m_pilot.transform, true, m_entity.sku, m_entity);
-								m_timer = 1.0f;
-							}
+							if (param != null && param.Length > 0) {
+                                GameObject go = ((GameObject)param[0]);
+                                if (go != null && go.CompareTag("Player")) {
+                                    m_dragon.ReceiveDamageOverTime(m_data.damage, m_data.duration, DamageType.CURSE, m_pilot.transform, true, m_entity.sku, m_entity);
+                                }
+                                m_timer = 1.0f;
+                            }
 						}
 					}
 				}

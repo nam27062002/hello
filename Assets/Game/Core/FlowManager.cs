@@ -66,6 +66,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		LevelManager.SetCurrentLevel(null);
 
         HDTrackingManager.Instance.GoToMenu();
+        OffersManager.instance.enabled = true;
 
         // Change scene
         GameSceneManager.SwitchScene(nextScene);
@@ -76,7 +77,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// </summary>
 	public static void GoToGame() {
         HDTrackingManager.Instance.GoToGame();
-
+        OffersManager.instance.enabled = false;
         instance.SwitchScene(GameSceneController.NAME);
 	}
 
@@ -84,6 +85,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// Navigate to the results scene.
 	/// </summary>
 	public static void GoToResults() {
+        OffersManager.instance.enabled = false;
 		instance.SwitchScene(ResultsScreenController.NAME);
     }
 
@@ -109,7 +111,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
-	public static void Restart() {        
+	public static void Restart() {
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
 
@@ -122,11 +124,11 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         PersistenceFacade.instance.Reset();
 
         TransactionManager.instance.Reset();
-        HDCustomizerManager.instance.Reset();
-
-        HDCustomizerManager.instance.Reset();
+        HDCustomizerManager.instance.Reset();              
 
         SocialPlatformManager.SharedInstance.Reset();
+
+        ContentManager.Reset();
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)

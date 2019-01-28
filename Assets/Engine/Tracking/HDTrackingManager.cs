@@ -30,17 +30,26 @@ public class HDTrackingManager
         }
     }
 
-    public virtual void Init() {}
-    public virtual void Destroy() {}
+    public virtual void Init()
+    {
+        Reset();
+    }
+
+    protected virtual void Reset()
+    {
+        Session_Reset();
+    }
+
+    public virtual void Destroy() { }
 
     public virtual string GetTrackingID() { return null; }
-    public virtual string GetDNAProfileID() { return null;  }
+    public virtual string GetDNAProfileID() { return null; }
 
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
     {
-		UNKNOWN = -1,
+        UNKNOWN = -1,
 
         REMOVE_MISSION,
         SKIP_MISSION,
@@ -61,6 +70,7 @@ public class HDTrackingManager
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
 		REWARD_LIVE_EVENT,
+        REWARD_LEAGUE,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
@@ -75,7 +85,13 @@ public class HDTrackingManager
 		TOURNAMENT_ENTRY,			    // Tournament Support
 
         CUSTOMER_SUPPORT,               // Reward received via customer support tool
-        SHOP_PURCHASE_RESUMED           // Reward given when resuming a purchase that was interrupted
+        SHOP_PURCHASE_RESUMED,           // Reward given when resuming a purchase that was interrupted
+
+		SPECIAL_DRAGON_UNLOCK,
+		SPECIAL_DRAGON_UPGRADE,
+        SPECIAL_LEAGUE,                  // When user gets rewards from special league at the end of the week
+        LAB_REWARD_MISSION,              // When user gets reward from Lab Mission
+		LAB_UNLOCKED_GIFT				 // When player unlocks the lab for the first time, a gift is given
     };
 
 	public enum EFunnels
@@ -268,7 +284,7 @@ public class HDTrackingManager
     /// <param name="moneyCurrencyCode">Currency type earned</param>
     /// <param name="amountDelta">Amount of the currency earned</param>
     /// <param name="amountBalance">Amount of this currency after the transaction was performed</param>
-    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance) {}
+    public virtual void Notify_EarnResources(EEconomyGroup economyGroup, UserProfile.Currency moneyCurrencyCode, int amountDelta, int amountBalance, bool paid) {}
 
 
     /// <summary>
@@ -453,7 +469,9 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
-    public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+    /// <param name="offerName">Unique offer name.</param>
+    /// <param name="offerType">Offer type: progression, pushed, rotational.</param>
+    public virtual void Notify_OfferShown(bool onDemand, string itemID, string offerName, string offerType) {}
 
     public virtual void Notify_EggOpened() {}
 
@@ -491,7 +509,91 @@ public class HDTrackingManager
     /// <param name="experimentName">Name of the experiment applied.</param>
     /// <param name="experimentGroup">Name of the group of the experiment applied</param>
     public virtual void Notify_ExperimentApplied(string experimentName, string experimentGroup) {}
-    #endregion    
+    #endregion
+
+    #region animoji
+    /// <summary>
+    /// Called when user enters on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiStart() { }
+
+    /// <summary>
+    /// Called when user records a video on animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiRecord() { }
+
+    /// <summary>
+    /// Called when user exits animoji menu section
+    /// </summary>
+    public virtual void Notify_AnimojiExit() { }
+    #endregion
+
+    #region lab
+    /// <summary>
+    /// Called when the user clicks on the lab button
+    /// </summary>
+    public virtual void Notify_LabEnter() { }
+
+    /// <summary>
+    /// Called at the start of each game round (like <c>Notify_RoundStart()</c> for standard dragons)
+    /// </summary>
+    /// <param name="dragonName">Name of the current Lab Dragon</param>
+    /// <param name="labHp">HP level of the current Lab Dragon </param>
+    /// <param name="labSpeed">Speed level of the current Lab Dragon</param>
+    /// <param name="labBoost">Boost level of the current Lab Dragon.</param> 
+    /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
+    /// <param name="totalSpecialDragonsUnlocked"></param>
+    /// <param name="currentLeague">Name of the league that user is participating</param>
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
+
+    /// <summary>
+    /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
+    /// </summary>
+    /// <param name="ranking">Rank achieved in current league</param>
+    /// <param name="currentLeague">Name of the league that user have participated</param>
+    /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
+    public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
+    #endregion
+
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public enum ELocation
+    {
+        main_menu,
+        game_play
+    };
+
+    private string[] ELocationKeys = System.Enum.GetNames(typeof(ELocation));
+
+    private string UNDEFINED = "UNDEFINED";
+
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public string ELocationToKey(ELocation value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < ELocationKeys.Length) ? ELocationKeys[index] : UNDEFINED;
+    }
+
+    public enum EUnlockType
+    {
+        SC,
+        HC,
+        video_ads
+    };
+
+    private string[] EUnlockTypeKeys = System.Enum.GetNames(typeof(EUnlockType));
+
+    public string EUnlockTypeToKey(EUnlockType value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < EUnlockTypeKeys.Length) ? EUnlockTypeKeys[index] : UNDEFINED;
+    }
+
+    /// <summary>
+    /// Sent when the user unlocks the map.
+    /// </summary>
+    /// <param name="location">Where the map has been unlocked from.</param>
+    /// <param name="unlockType">How the map has been unlocked.</param>
+    public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
 
     #region log
     private const bool LOG_USE_COLOR = false;
@@ -514,6 +616,19 @@ public class HDTrackingManager
     {
         Debug.LogError(LOG_CHANNEL + msg);
     }
-	#endregion
+    #endregion
+
+    #region session
+
+    /// <summary>
+    /// Returns the ammount of runs since the user started the current session
+    /// </summary>
+    public int Session_GameRoundCount { get; set; }
+
+    protected virtual void Session_Reset()
+    {
+        Session_GameRoundCount = 0;
+    }
+    #endregion
 }
 

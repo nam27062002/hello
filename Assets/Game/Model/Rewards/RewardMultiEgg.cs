@@ -36,11 +36,10 @@ namespace Metagame {
 		/// </summary>
 		public RewardMultiEgg(long _amount, string _sku, string _source, HDTrackingManager.EEconomyGroup _economyGroup = HDTrackingManager.EEconomyGroup.UNKNOWN) {
 			// Internal initializer
-			base.Init(TYPE_CODE);
+            base.Init(TYPE_CODE, _amount);
 
 			// Common stuff
 			m_source = _source;
-			m_amount = _amount;
 			m_sku = _sku;
 			m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.EGGS, _sku);
 

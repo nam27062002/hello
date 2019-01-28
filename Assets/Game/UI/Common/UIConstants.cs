@@ -104,7 +104,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_uiSpritesheetPath; }
 	}
 
-	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Disguises/";
+	[SerializeField] private string m_disguiseIconsPath = "UI/Metagame/Dragons/Disguises/";
 	public static string DISGUISE_ICONS_PATH {
 		get { return instance.m_disguiseIconsPath; }
 	}
@@ -158,6 +158,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string LIVE_EVENTS_ICONS_PATH {
 		get { return instance.m_liveEventsIconsPath; }
 	}
+
+	[SerializeField] private string m_dragonStatsIconsPath = "UI/Metagame/Dragons/Stats/";
+	public static string DRAGON_STATS_ICONS_PATH {
+		get { return instance.m_dragonStatsIconsPath; }
+	}
+
+	[SerializeField] private string m_leagueIconsPath = "UI/Metagame/Leagues/";
+	public static string LEAGUE_ICONS_PATH {
+		get { return instance.m_leagueIconsPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
@@ -189,6 +199,16 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static Color PET_CATEGORY_DEFENSE { get { return instance.m_petCategoryColorDefense; } }
 	public static Color PET_CATEGORY_SPECIAL { get { return instance.m_petCategoryColorSpecial; } }
 	public static Color PET_CATEGORY_DEFAULT { get { return instance.m_petCategoryColorDefault; } }
+	#endregion
+
+	// -------------------------------------------------------------------------
+	// Misc colors
+	#region MiscColors
+	[SerializeField] private Color m_dragonStatColorHp = Color.red;
+	[SerializeField] private Color m_dragonStatColorSpeed = Color.cyan;
+	[SerializeField] private Color m_dragonStatColorEnergy = Color.yellow;
+
+	[SerializeField] private Color[] m_dragonTierColors = new Color[0];
 	#endregion
 
 	// -----------------------------------------------------------------------//
@@ -289,8 +309,10 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static SpecialDevice specialDevice {
 		get {
 			// Has the special device been initialized?
-			if(!instance.m_specialDeviceInitialized) {
+			if(!instance.m_specialDeviceInitialized || Application.isEditor) {
 				// No! Do it now
+				instance.m_specialDevice = SpecialDevice.NONE;
+
 				// Override if debugging
 				if(DebugSettings.simulatedSpecialDevice != SpecialDevice.NONE) {
 					instance.m_specialDevice = DebugSettings.simulatedSpecialDevice;
@@ -298,8 +320,9 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 
 #if UNITY_IOS
 				// Is it an iPhone X?
-				else if(Device.generation == DeviceGeneration.iPhoneX ||
-				        Device.generation > DeviceGeneration.iPhoneX) {		// [AOC] HACK!! Small trick to support newest iPhone Xs. Should be replaced by the proper enum values as soon as they are available
+				else if(Device.generation >= DeviceGeneration.iPhoneX && 
+				        Device.generation < DeviceGeneration.iPhoneUnknown &&	// [AOC] HACK!! Small trick to support newest iPhones starting at iPhoneX
+				        ASPECT_RATIO > 1.5f) {		// [AOC] Make sure it's not an iPad / Tablet, where the UI resizing would create a lot of issues
 					instance.m_specialDevice = SpecialDevice.IPHONE_X;
 				}
 #elif UNITY_ANDROID
@@ -324,9 +347,23 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get {
 			// If not yet initialized, do it now
 			if(m_safeArea == null) {
-				// Use Unity's safeArea or custom ones based on device?
-				// [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
-				if(!DebugSettings.useUnitySafeArea) {
+
+#if (!UNITY_EDITOR && UNITY_ANDROID)
+                //  Use Calety cutout safe area for Android 9
+                if (DeviceUtilsManager.SharedInstance.DeviceHasCutout())
+                {
+                    short[] safe = DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea();
+                    Debug.Log("DeviceUtilsManager.SharedInstance.DeviceGetCutoutSafeArea() --> left: " + safe[0] + " right: " + safe[1] + " top: " + safe[2] + " bottom: " + safe[3]);
+                    int maxx = Mathf.Max(safe[0], safe[1]);
+                    m_safeArea = new UISafeArea(
+                        (float)maxx, (float)safe[2], (float)maxx, (float)safe[3]);
+
+                }
+                else
+#endif
+                // Use Unity's safeArea or custom ones based on device?
+                // [AOC] Unity's safeArea doesn't seem to work properly with some resolutions, needs further research but eventually should be the way to go
+                if (!DebugSettings.useUnitySafeArea) {
 					// Select target safe area based on special device
 					return instance.m_safeAreas[(int)specialDevice];
 				} else {
@@ -383,16 +420,6 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		// Reset some runtime vars to their initial value
 		// [AOC] ScriptableObject Singletons are permanently loaded in the editor, thus not resetting runtime variables :(
 		m_safeArea = null;
-	}
-
-	/// <summary>
-	/// A change has occurred in the inspector.
-	/// </summary>
-	private void OnValidate() {
-		// Make sure we have as many sound slots as tiers
-		if(m_dragonTiersSFX.Length != (int)DragonTier.COUNT) {
-			m_dragonTiersSFX.Resize((int)DragonTier.COUNT);
-		}
 	}
 
     //------------------------------------------------------------------------//
@@ -459,6 +486,29 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 			case "special":	return instance.m_petCategoryColorSpecial; break;
 			default: 		return instance.m_petCategoryColorDefault; break;
 		}
+	}
+
+	/// <summary>
+	/// Get the color assigned to a specific dragon stat.
+	/// </summary>
+	/// <returns>The color linked to the requested dragon stat.</returns>
+	/// <param name="_stat">Stat whose color we want.</param>
+	public static Color GetDragonStatColor(DragonDataSpecial.Stat _stat) {
+		switch(_stat) {
+			case DragonDataSpecial.Stat.HEALTH:	return instance.m_dragonStatColorHp;		break;
+			case DragonDataSpecial.Stat.SPEED:	return instance.m_dragonStatColorSpeed;		break;
+			case DragonDataSpecial.Stat.ENERGY:	return instance.m_dragonStatColorEnergy;	break;
+			default: return Color.white; break;
+		}
+	}
+
+	/// <summary>
+	/// Get the color assigned to a specific dragon tier.
+	/// </summary>
+	/// <returns>The color linked to the given dragon tier.</returns>
+	/// <param name="_tier">Tier whose color we want.</param>
+	public static Color GetDragonTierColor(DragonTier _tier) {
+		return instance.m_dragonTierColors[(int)_tier];
 	}
 
 	/// <summary>
@@ -605,5 +655,23 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	/// <param name="_tier">Dragon tier whose SFX we want.</param>
 	public static string GetDragonTierSFX(DragonTier _tier) {
 		return instance.m_dragonTiersSFX[(int)_tier];
+	}
+
+	/// <summary>
+	/// Given a dragon tier, get the icon linked to it.
+	/// Use in combination with GetSpriteTag() to insert the icon within a text
+	/// </summary>
+	/// <returns>The id of the requested dragon tier icon.</returns>
+	/// <param name="_tier">Tier whose icon is required.</param>
+	public static string GetDragonTierIcon(DragonTier _tier) {
+		// Get definition of the wanted tier
+		DefinitionNode tierDef = DefinitionsManager.SharedInstance.GetDefinition(
+			DefinitionsCategory.DRAGON_TIERS, 
+			IDragonData.TierToSku(_tier)
+		);
+		if(tierDef == null) return string.Empty;
+
+		// Return icon name
+		return tierDef.GetAsString("icon");
 	}
 }

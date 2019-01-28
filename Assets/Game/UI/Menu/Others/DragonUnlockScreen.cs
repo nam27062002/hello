@@ -68,7 +68,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-		DragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
+		IDragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 
 		// Initialize dragon info
 		if(m_dragonName != null) {
