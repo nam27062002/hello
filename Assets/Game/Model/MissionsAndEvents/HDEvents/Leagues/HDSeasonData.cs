@@ -185,6 +185,7 @@ public class HDSeasonData {
     }
 
     private void LoadData(SimpleJSON.JSONNode _data) {
+        LoadStatus(_data);
         LoadDates(_data);
 
         promoteRange = new RangeInt();
@@ -197,6 +198,10 @@ public class HDSeasonData {
         if (_data.ContainsKey("demoteRange")) {
             demoteRange.min = _data["demoteRange"]["lower"].AsInt;
             demoteRange.max = _data["demoteRange"]["upper"].AsInt;
+        }
+
+        if (currentLeague == null) {
+            currentLeague = HDLiveDataManager.league.GetLeagueData(_data["league"]["order"].AsInt);
         }
 
         currentLeague.LoadData(_data["league"]);
