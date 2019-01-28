@@ -160,26 +160,31 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	}
 
     public void OperatorDoIdle() {
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {			
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
     public void OperatorDoActionA() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_A);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {			
+			m_operatorPilot.PressAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
 	public void OperatorDoActionB() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_B);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {
+			m_operatorPilot.PressAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
     public void OperatorDoScared() {
-        if ( m_operatorPilot != null )
-        {
+        if ( m_operatorPilot != null ){
             m_operatorPilot.PressAction(Pilot.Action.Scared);
             m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
             m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);

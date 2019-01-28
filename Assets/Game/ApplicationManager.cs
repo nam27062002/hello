@@ -534,17 +534,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			}
 			
 			// Chests notification
-			int max = UsersManager.currentUser.dailyChests.Length;
-			bool missingChests = false;
-			for (int i = 0; i < max && !missingChests; i++) 
+			Chest[] chests = UsersManager.currentUser.dailyChests;
+			if (chests != null) 
 			{
-				if ( UsersManager.currentUser.dailyChests[i].state == Chest.State.COLLECTED )
-					missingChests = true;
-			}
-			if ( missingChests )
-			{
-                int moreSeconds = 9 * 60 * 60;  // 9 AM
-				HDNotificationsManager.instance.ScheduleNewChestsNotification((int) ChestManager.timeToReset.TotalSeconds + moreSeconds );
+				int max = chests.Length;
+				bool missingChests = false;
+				for (int i = 0; i < max && !missingChests; i++) 
+				{
+					if (chests[i] != null && chests[i].state == Chest.State.COLLECTED)
+						missingChests = true;
+				}
+				if (missingChests) 
+				{
+					int moreSeconds = 9 * 60 * 60;  // 9 AM
+					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
+				}
 			}
         }
     }
