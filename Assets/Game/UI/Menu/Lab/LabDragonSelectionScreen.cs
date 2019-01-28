@@ -51,6 +51,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 
     // Cache some data
     private DragonDataSpecial m_dragonData = null;
+    private const string LAB_MUSIC = "hd_lab_music";
+    private int m_labMusicCount = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -196,7 +198,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
-        InstanceManager.musicController.Ambience_Play("hd_lab_music", gameObject);
+        // if ( InstanceManager.musicController.Ambience_ToPlay.music_key != LAB_MUSIC )
+        if (m_labMusicCount <= 0)
+        {
+            m_labMusicCount++;
+            InstanceManager.musicController.Ambience_Play(LAB_MUSIC, gameObject);
+        }
+        
     
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
@@ -225,7 +233,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
     /// </summary>
     public void OnBackButton() {
         // Stop lab music
-        InstanceManager.musicController.Ambience_Stop("hd_lab_music", gameObject);
+        m_labMusicCount--;
+        InstanceManager.musicController.Ambience_Stop(LAB_MUSIC, gameObject);
         
 		// Go back to default mode
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
