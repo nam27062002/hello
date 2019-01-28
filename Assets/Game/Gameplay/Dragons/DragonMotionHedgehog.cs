@@ -354,7 +354,9 @@ public class DragonMotionHedgehog : DragonMotion {
 		{
             if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
             {
-                CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+                IEntity entity = collision.gameObject.GetComponent<IEntity>();
+                if ( entity == null )
+                    CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
             }
             else
             {
