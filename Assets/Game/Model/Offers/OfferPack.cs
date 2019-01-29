@@ -458,6 +458,7 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
 		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
 		SetValueIfMissing(ref _def, "featured", m_featured.ToString(CultureInfo.InvariantCulture));
