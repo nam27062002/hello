@@ -196,6 +196,10 @@ public class LeaguesRewardScreen : IRewardScreen {
         UsersManager.currentUser.PushReward(m_season.reward);
         m_season.RequestFinalize();
 
+        // Immediately save persistence in case the rewards opening gets interrupted
+        HDLiveDataManager.instance.SaveEventsToCache();
+        PersistenceFacade.instance.Save_Request(true);
+
         // Next step!
         AdvanceStep();
     }
