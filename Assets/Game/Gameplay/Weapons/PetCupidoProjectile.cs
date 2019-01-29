@@ -24,9 +24,16 @@ public class PetCupidoProjectile : PetProjectile {
         {
             if (m_checkEntities[i].machine != null)
             {
-                AI.Machine enittyMachine = m_checkEntities[i].machine as AI.Machine;
-                if ( enittyMachine != null && !enittyMachine.IsDying() && !enittyMachine.IsDead())
-                    enittyMachine.InLove(m_inLoveDuration);
+                bool validTarget = true;
+                AI.Machine entityMachine = m_checkEntities[i].machine as AI.Machine;
+
+                if (m_entityTags > 0 || m_ignoreEntityTags > 0) {
+                    validTarget = m_checkEntities[i].HasTag(m_entityTags) && !m_checkEntities[i].HasTag(m_ignoreEntityTags);
+                }
+
+                if (validTarget && entityMachine != null && !entityMachine.IsDying() && !entityMachine.IsDead()) {
+                    entityMachine.InLove(m_inLoveDuration);
+                }
             }
         }
 

@@ -115,7 +115,7 @@ namespace AI {
 			}
 		}
 
-		public override void OnDie() {
+		public override void BrainExit() {
 			if (m_brain != null) m_brain.Exit();
 		}
 
@@ -140,7 +140,7 @@ namespace AI {
 
 			// state machine updates
 			if (m_brain != null) {
-				if (!(m_machine.IsDead() || m_machine.IsDying() || m_machine.GetSignal(Signals.Type.InLove) )) {
+				if (!(m_machine.IsDead() || m_machine.IsDying() /*|| m_machine.GetSignal(Signals.Type.InLove)*/ )) {
 					m_brain.Update();
 				}
 			}
