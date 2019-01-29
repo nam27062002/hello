@@ -16,10 +16,9 @@ public class LoadAssetBundleOp : AssetBundlesOp
 
     public void Setup(AssetBundleHandle handle, OnDoneCallback onDone)
     {
-        Reset();
+        base.Setup(onDone);
 
-        m_handle = handle;
-        OnDone = onDone;
+        m_handle = handle;        
     }    
 
     protected override void ExtendedPerform()

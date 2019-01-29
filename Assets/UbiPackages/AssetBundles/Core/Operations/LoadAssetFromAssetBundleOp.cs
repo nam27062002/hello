@@ -19,9 +19,9 @@ public class LoadAssetFromAssetBundleOp : AssetBundlesOp
 
     public void Setup(AssetBundle assetBundle, string assetName, OnDoneCallback onDone)
     {
+        base.Setup(onDone);
         m_assetBundle = assetBundle;
-        m_assetName = assetName;
-        OnDone = onDone;
+        m_assetName = assetName;        
     }
 
     protected override void ExtendedPerform()
@@ -46,8 +46,8 @@ public class LoadAssetFromAssetBundleOp : AssetBundlesOp
         {
             object asset = m_request.asset;
             if (asset != null)
-            {
-                NotifySuccess(asset);
+            {               
+                NotifySuccess(asset);                
             }
             else
             {

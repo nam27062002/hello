@@ -16,8 +16,9 @@ public class LoadAssetBundleListOp : AssetBundlesOp
 
     public void Setup(List<string> assetBundleIds, OnDoneCallback onDone)
     {
-        m_assetBundleIds = assetBundleIds;
-        OnDone = onDone;
+        base.Setup(onDone);
+
+        m_assetBundleIds = assetBundleIds;        
     }
 
     protected override void ExtendedPerform()

@@ -4,13 +4,15 @@
 public abstract class AssetBundlesOp
 {    
     public enum EResult
-    {
+    {      
+        None,  
         Success,
+        Error_Internal,
         Error_AB_Handle_Not_Found,      // No asset bundle handle found for an id
         Error_AB_Couldnt_Be_Loaded,     // There was a problem when loading an asset bundle from disk
         Error_Asset_Not_Found_In_AB,    // No asset with the name specified was found in an asset bundle
         Error_AB_Is_Not_A_Scene_Bundle, // This error arises when trying to load a scene from a non scene asset bundle
-        Error_AB_Is_Not_Loaded          // This error arises when trying to unload an asset bundle that hasn't been loaded
+        Error_AB_Is_Not_Loaded          // This error arises when trying to unload an asset bundle that hasn't been loaded        
     };
 
     public delegate void OnDoneCallback(EResult result, object data);
@@ -22,28 +24,46 @@ public abstract class AssetBundlesOp
         set { m_onDone = value; }
     }
 
-    private bool m_isPerforming;
+    private enum EState
+    {
+        None,
+        Performing,
+        Done
+    };
+
+    private EState State { get; set; }
+
     public bool IsPerforming
     {        
-        get { return m_isPerforming; }
-        private set { m_isPerforming = value;  }
+        get { return State == EState.Performing; }        
+    }
+
+    public bool IsDone
+    {
+        get { return State == EState.Done; }
     }
 
     public void Reset()
     {
         m_onDone = null;
-        IsPerforming = false;
+        State = EState.None;
 
         ExtendedReset();
     }
 
     protected virtual void ExtendedReset() {}
 
+    public void Setup(OnDoneCallback onDone)
+    {
+        Reset();
+        OnDone = onDone;
+    }
+
     public void Perform()
     {
         if (!IsPerforming)
         {
-            IsPerforming = true;
+            State = EState.Performing;
             ExtendedPerform();
         }
     }
@@ -72,7 +92,7 @@ public abstract class AssetBundlesOp
 
     protected void NotifyOnDone(EResult result, object data)
     {
-        IsPerforming = false;
+        State = EState.Done;
 
         if (OnDone != null)
         {

@@ -32,11 +32,12 @@ public class LoadSceneFromAssetBundleOp : AssetBundlesOp
 
     private void Setup(bool isLoad, AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode, OnDoneCallback onDone)
     {
+        base.Setup(onDone);
+
         m_isLoad = isLoad;
         m_assetBundle = assetBundle;
         m_sceneName = sceneName;
-        m_loadSceneMode = loadSceneMode;
-        OnDone = onDone;
+        m_loadSceneMode = loadSceneMode;        
     }
 
     protected override void ExtendedPerform()
