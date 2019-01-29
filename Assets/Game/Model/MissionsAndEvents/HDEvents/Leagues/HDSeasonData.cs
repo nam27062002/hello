@@ -113,12 +113,35 @@ public class HDSeasonData {
     }
 
     public void LoadStatus(SimpleJSON.JSONNode _data) {
-        int status = _data["status"].AsInt;
+        string status = _data["status"];
         switch (status) {
-            case 0: state = State.NOT_JOINED; break;
-            case 1: state = State.JOINED; break;
-            case 2: state = State.PENDING_REWARDS; break;
-            case 11: state = State.WAITING_NEW_SEASON; break;
+            case "0":
+            case "NOT_JOINED":
+                state = State.NOT_JOINED; 
+                break;
+
+            case "1":
+            case "JOINED":
+                state = State.JOINED; 
+                break;
+
+            case "WAITING_RESULTS":
+                state = State.WAITING_RESULTS;
+                break;
+
+            case "2":
+            case "PENDING_REWARDS":
+                state = State.PENDING_REWARDS;
+                break;
+
+            case "REWARDS_COLLECTED":
+                state = State.REWARDS_COLLECTED;
+                break;
+
+            case "11":
+            case "WAITING_NEW_SEASON":
+                state = State.WAITING_NEW_SEASON; 
+                break;
         }
     }
 

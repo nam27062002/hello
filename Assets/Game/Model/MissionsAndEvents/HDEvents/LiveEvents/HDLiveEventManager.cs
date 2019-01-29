@@ -150,6 +150,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
             OnNewStateInfo(json);
             UpdateStateFromTimers();
+            if (data.m_state == HDLiveEventData.State.REWARD_COLLECTED) {
+                FinishEvent();
+            }
         }
         m_dataLoadedFromCache = true;
     }
