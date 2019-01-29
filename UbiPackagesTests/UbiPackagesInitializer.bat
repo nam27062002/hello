@@ -15,8 +15,8 @@ exit /b 0
 :link_ubi_packages		
 	set resultMsg=
 	set ubiPackagesFolderName=UbiPackages
-	set pathToUbiPackagesSource=..\Assets\!UbiPackagesFolderName!
-	set pathToUbiPackagesDest=%1\Assets\!UbiPackagesFolderName!
+	set pathToUbiPackagesSource=..\Assets\!ubiPackagesFolderName!
+	set pathToUbiPackagesDest=%1\Assets\!ubiPackagesFolderName!
 
 	REM Checks if the link already exists 
 	if exist !pathToUbiPackagesDest! (
