@@ -87,7 +87,7 @@ namespace AI {
 				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
 				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
 
-				m_pilot.OnDie();
+				m_pilot.BrainExit();
 			}
 
 			if (EntityManager.instance != null)

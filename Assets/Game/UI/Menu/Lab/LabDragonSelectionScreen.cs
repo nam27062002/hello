@@ -222,9 +222,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// The show animation has finished.
 	/// </summary>
     public void OnShowPostAnimation() {
-        HDSeasonData m_season = HDLiveDataManager.league.season;
-        if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+        MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
+
+        if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
+            HDSeasonData m_season = HDLiveDataManager.league.season;
+            if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
+                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+            }
         }
     }
 

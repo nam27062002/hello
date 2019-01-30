@@ -33,6 +33,7 @@ public abstract class HDLiveEventData {
 		NOT_JOINED,
 		JOINED,
 		REWARD_AVAILABLE,
+        REWARD_COLLECTED,
 		FINALIZED,
 		REFUND,
         REQUIRES_UPDATE
@@ -140,7 +141,11 @@ public abstract class HDLiveEventData {
 			{
 				stateStr = "pending_rewards";
 			}break;
-			case State.JOINED:
+            case State.REWARD_COLLECTED: 
+            {
+                stateStr = "collected_rewards";
+            }break;
+            case State.JOINED:
 			{
 				stateStr = "joined";
 			}break;
@@ -193,7 +198,11 @@ public abstract class HDLiveEventData {
 				{
 					m_state = State.REWARD_AVAILABLE;
 				}break;
-				case "finalized":
+                case "collected_rewards":
+                {
+                    m_state = State.REWARD_COLLECTED;
+                }break;
+                case "finalized":
 				{
 					m_state = State.FINALIZED;
 				}break;

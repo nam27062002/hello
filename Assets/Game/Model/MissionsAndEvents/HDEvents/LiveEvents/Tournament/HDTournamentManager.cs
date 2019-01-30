@@ -556,8 +556,12 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			}
 		}
 
-		// Done!
-		return rewards;
+        if (data.m_state == HDLiveEventData.State.REWARD_AVAILABLE) {
+            data.m_state = HDLiveEventData.State.REWARD_COLLECTED;
+        }
+
+        // Done!
+        return rewards;
 	}
 
 
