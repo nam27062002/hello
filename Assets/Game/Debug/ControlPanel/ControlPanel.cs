@@ -388,7 +388,8 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         CP2,
         Persistence,
 		Server,
-		Offers
+		Offers,
+		Loading
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -404,6 +405,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Log_SetupChannel(ELogChannel.Persistence, "Persistence", Colors.fuchsia);
 		Log_SetupChannel(ELogChannel.Server, "Server", Colors.teal);
 		Log_SetupChannel(ELogChannel.Offers, "Offers", Colors.gold);
+		Log_SetupChannel(ELogChannel.Loading, "Loading", Colors.darkGray);
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)
