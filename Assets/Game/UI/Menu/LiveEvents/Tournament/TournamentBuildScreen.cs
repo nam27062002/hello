@@ -392,7 +392,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 		}
 	}
 
@@ -422,7 +422,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622
             if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||

@@ -145,8 +145,9 @@ public class EventRewardScreen : MonoBehaviour {
 			// Mark event as collected
 			m_questManager.FinishEvent();
 
-			// Immediately save persistence in case the rewards opening gets interrupted
-			PersistenceFacade.instance.Save_Request(true);
+            // Immediately save persistence in case the rewards opening gets interrupted
+            HDLiveDataManager.instance.SaveEventsToCache();
+            PersistenceFacade.instance.Save_Request(true);
 		}
 
 		// Initialize progress bar

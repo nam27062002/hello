@@ -9,8 +9,8 @@ public class PetProjectile : Projectile
         get { return m_tier; }
         set { m_tier = value; } 
     }
-    [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
-    [SerializeField] [EnumMask] private IEntity.Tag m_ignoreEntityTags = 0;
+    [SerializeField] [EnumMask] protected IEntity.Tag m_entityTags = 0;
+    [SerializeField] [EnumMask] protected IEntity.Tag m_ignoreEntityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
     [SerializeField] private LayerMask m_groundMask = 0;
     [SerializeField] IEntity.Type m_firingEntityType = IEntity.Type.PET;

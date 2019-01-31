@@ -61,7 +61,11 @@ public class UserMissions : IUserMissions {
     }
 
     protected override DragonTier GetMaxTierUnlocked() {
-        return DragonManager.biggestOwnedDragon.tier;
+        if (DragonManager.biggestOwnedDragon != null) {
+            return DragonManager.biggestOwnedDragon.tier;
+        }
+
+        return DragonTier.TIER_0;
     }
 
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {

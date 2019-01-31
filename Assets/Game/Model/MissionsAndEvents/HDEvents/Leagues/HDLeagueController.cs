@@ -51,11 +51,19 @@ public class HDLeagueController : HDLiveDataController {
     }
 
     public override bool ShouldSaveData() {
-        return false;
+        return m_season != null && m_season.state > HDSeasonData.State.TEASING && m_season.state < HDSeasonData.State.WAITING_NEW_SEASON;
     }
 
     public override SimpleJSON.JSONNode SaveData() {
-        return null;
+        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+        data["sku"] = m_season.currentLeague.sku;
+        if (m_season.nextLeague != null) {
+            data["nextSku"] = m_season.nextLeague.sku;
+        }
+        data["status"] = m_season.state.ToString();
+
+        return data;
     }
 
     public override void LoadDataFromCache() {
@@ -63,6 +71,10 @@ public class HDLeagueController : HDLiveDataController {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
 
             LoadData(json);
+
+            if (season.state == HDSeasonData.State.REWARDS_COLLECTED) {
+                season.RequestFinalize();
+            }
         }
         m_dataLoadedFromCache = true;
     }

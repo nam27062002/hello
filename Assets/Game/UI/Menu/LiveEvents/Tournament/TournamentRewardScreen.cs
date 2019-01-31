@@ -143,8 +143,9 @@ public class TournamentRewardScreen : MonoBehaviour {
 				// Mark tournament as collected
 				m_tournamentManager.FinishEvent();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
 
-				// Immediately save persistence in case the rewards opening gets interrupted
-				PersistenceFacade.instance.Save_Request(true);
+                // Immediately save persistence in case the rewards opening gets interrupted
+                HDLiveDataManager.instance.SaveEventsToCache();
+                PersistenceFacade.instance.Save_Request(true);
 			}
 
 			// Set initial state
@@ -311,7 +312,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_state = State.FLOW_NOT_STARTED;
 
 				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}
 

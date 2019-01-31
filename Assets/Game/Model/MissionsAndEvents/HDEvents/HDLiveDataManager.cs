@@ -74,7 +74,13 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     };
 
 	private static Dictionary<int, HDLiveDataManager.ComunicationErrorCodes> s_errorCodesDict = new Dictionary<int, ComunicationErrorCodes> {
-		{ 601, ComunicationErrorCodes.LDATA_NOT_FOUND },
+        {  0, ComunicationErrorCodes.NO_ERROR },
+        {  1, ComunicationErrorCodes.NET_ERROR },
+        {  2, ComunicationErrorCodes.RESPONSE_NOT_VALID },
+        {  3, ComunicationErrorCodes.OTHER_ERROR },
+        {  4, ComunicationErrorCodes.NO_RESPONSE },
+
+        { 601, ComunicationErrorCodes.LDATA_NOT_FOUND },
 		{ 602, ComunicationErrorCodes.ENTRANCE_FREE_INVALID },
 		{ 603, ComunicationErrorCodes.ENTRANCE_AMOUNT_NOT_VALID },
 		{ 604, ComunicationErrorCodes.ENTRANCE_TYPE_NOT_VALID },
@@ -89,7 +95,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 		{ 613, ComunicationErrorCodes.TOURNAMENT_IS_OVER },
 		{ 614, ComunicationErrorCodes.GAMEMODE_NOT_EXISTS },
 		{ 615, ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS },
-		//{ 616, ComunicationErrorCodes.EMPTY_REQUIRED_PARAMETERS },
+		
 		{ 617, ComunicationErrorCodes.MATCHMAKING_ERROR },
 		{ 618, ComunicationErrorCodes.QUEST_IS_OVER },
 		{ 619, ComunicationErrorCodes.IS_NOT_A_QUEST },

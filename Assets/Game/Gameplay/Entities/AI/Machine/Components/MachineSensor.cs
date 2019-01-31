@@ -72,7 +72,7 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Warning, true);
 				m_machine.SetSignal(Signals.Type.Danger, true);
 				m_machine.SetSignal(Signals.Type.Critical, 	true);
-			} else if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert)) {
+			} else if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.InLove)) {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
 				m_machine.SetSignal(Signals.Type.Critical, 	false);
