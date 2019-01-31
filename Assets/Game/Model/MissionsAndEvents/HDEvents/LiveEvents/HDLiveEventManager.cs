@@ -312,7 +312,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
 	public void RequestRewards()
     {
-		if (!m_requestingRewards)
+		if (!m_requestingRewards && m_data.m_state < HDLiveEventData.State.REWARD_COLLECTED)
 		{
 			m_requestingRewards = true;
 			if ( HDLiveDataManager.TEST_CALLS )
@@ -371,8 +371,10 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		{
 			if ( responseJson.ContainsKey("code") )
 			{
-				if (responseJson["code"].AsInt == m_data.m_eventId )
-					data.m_state = HDLiveEventData.State.FINALIZED;		
+                if (responseJson["code"].AsInt == m_data.m_eventId) {
+                    data.m_state = HDLiveEventData.State.FINALIZED;
+                    HDLiveDataManager.instance.SaveEventsToCache();
+                }
 			}
 		}
 		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
