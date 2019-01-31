@@ -306,7 +306,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private void ShowWaterMode()
 	{
-		if ( IsFuryOn() )
+		if ( IsFuryOn() && !m_isFuryPaused )
 		{
 			// Change to water modes
 			switch( m_type )
@@ -336,7 +336,7 @@ public class FireBreathNew : DragonBreathBehaviour {
 
 	private void ShowNormalMode()
 	{
-		if ( IsFuryOn() )
+		if ( IsFuryOn() && !m_isFuryPaused)
 		{
 			switch( m_type )
 			{
