@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4260669437074598}
   - component: {fileID: 20007992308652792}
   - component: {fileID: 124226203209713926}
-  - component: {fileID: 114059647863125248}
-  - component: {fileID: 114451952609199292}
+  - component: {fileID: 114042997660386640}
+  - component: {fileID: 114289463934842464}
   m_Layer: 0
   m_Name: ARCamera
   m_TagString: MainCamera
@@ -222,7 +222,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -295,7 +295,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -308,7 +308,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114059647863125248
+--- !u!114 &114042997660386640
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -316,7 +316,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342133212630612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a4b6acd582a14203ad36dea32d269cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 145d0bef74970498dac39aaf50e095e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_ClearMaterial: {fileID: 2100000, guid: e5989df018ac6454eb936ab3e3b8f6d7, type: 2}
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackedCamera: {fileID: 20007992308652792}
---- !u!114 &114451952609199292
+--- !u!114 &114289463934842464
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -373,7 +373,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342133212630612}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eb681b26f7c342ab9d678f47436c45c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4db885dddff774f69bf1d02436a9955f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114815947201902700
