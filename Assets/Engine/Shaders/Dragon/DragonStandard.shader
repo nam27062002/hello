@@ -34,6 +34,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 		_ReflectionMap("Reflection Map", Cube) = "white" {}
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.0
+		_ReflectionColor("Reflection color", Color) = (1.0, 1.0, 1.0, 1.0)
 
 		_FireMap("Fire Map", 2D) = "white" {}
 		_FireAmount("Fire amount", Range(0.0, 1.0)) = 0.0
@@ -81,7 +82,10 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		/// Enum Material Properties
 		[KeywordEnum(None, Reflection, Fire, Dissolve, Colorize)] FXLayer("Additional FX layer", Float) = 0
 		[KeywordEnum(Normal, AutoInnerLight, BlinkLights, Emissive)] SelfIlluminate("Emission layer", Float) = 0
-			
+
+		[KeywordEnum(Normal, Color, ColorRamp)] ReflectionType("Reflection type", Float) = 0
+
+
 	}
 
 	SubShader {
@@ -126,6 +130,8 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE
+			#pragma shader_feature REFLECTIONTYPE_NORMAL REFLECTIONTYPE_COLOR REFLECTIONTYPE_COLORRAMP
+
 
 			#include "UnityCG.cginc" 
 			#include "Lighting.cginc"
