@@ -402,8 +402,9 @@ public class GameSceneController : GameSceneControllerBase {
                             }
 
 							if ( done )
-							{	
-								PoolManager.Rebuild();
+							{
+                                LevelManager.SetArtSceneActive();
+                                PoolManager.Rebuild();
 								Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_ENTER);
                                 HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
 								m_switchingArea = false;
