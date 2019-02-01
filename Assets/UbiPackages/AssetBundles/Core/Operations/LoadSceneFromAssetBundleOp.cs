@@ -78,4 +78,17 @@ public class LoadSceneFromAssetBundleOp : AssetBundlesOp
             NotifySuccess(null);
         }
     }
+
+    protected override void UpdateAllowSceneActivation(bool value)
+    {
+        if (m_operation != null)
+        {
+            m_operation.allowSceneActivation = value;
+        }
+    }
+
+    protected override float ExtendedProgress
+    {
+        get { return (m_operation == null) ? 0f : m_operation.progress; }
+    }
 }

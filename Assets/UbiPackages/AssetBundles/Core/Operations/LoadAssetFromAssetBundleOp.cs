@@ -55,4 +55,17 @@ public class LoadAssetFromAssetBundleOp : AssetBundlesOp
             }            
         }
     }
+
+    protected override void UpdateAllowSceneActivation(bool value)
+    {
+        if (m_request != null)
+        {
+            m_request.allowSceneActivation = value;
+        }
+    }    
+
+    protected override float ExtendedProgress
+    {
+        get { return (m_request == null) ? 0f : m_request.progress; }
+    }
 }

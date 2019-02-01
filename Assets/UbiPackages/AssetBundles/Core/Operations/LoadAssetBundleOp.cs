@@ -11,7 +11,7 @@ public class LoadAssetBundleOp : AssetBundlesOp
     protected override void ExtendedReset()
     {
         m_handle = null;
-        m_request = null;
+        m_request = null;        
     }
 
     public void Setup(AssetBundleHandle handle, OnDoneCallback onDone)
@@ -20,6 +20,11 @@ public class LoadAssetBundleOp : AssetBundlesOp
 
         m_handle = handle;        
     }    
+
+    public AssetBundleHandle GetHandle()
+    {
+        return m_handle;
+    }
 
     protected override void ExtendedPerform()
     {
@@ -41,5 +46,21 @@ public class LoadAssetBundleOp : AssetBundlesOp
                 NotifySuccess(ab);
             }
         }        
+    }
+
+    protected override void UpdateAllowSceneActivation(bool value)
+    {                
+        if (m_request != null)
+        {
+            m_request.allowSceneActivation = value;
+        }        
+    }
+
+    protected override float ExtendedProgress
+    {
+        get
+        {            
+            return (m_request == null) ? 0f : m_request.progress;
+        }
     }
 }

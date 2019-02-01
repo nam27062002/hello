@@ -40,13 +40,32 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
 
 
     private string m_assetBundleId;
-    private string m_resourceName;    
+    private string m_resourceName;
+
+    private AssetBundlesOpRequest m_request;
+
+    private enum EStep
+    {
+        None,
+        LoadingAssetBundle,
+        LoadingResourceFromAssetBundle,
+        Done
+    };
+    
+    private EStep Step { get; set; }
+
+    protected override void ExtendedReset()
+    {
+        Step = EStep.None;
+    }
 
     public void Setup(string assetBundleId, string resourceName, OnDoneCallback onDone)
     {
+        Setup(onDone);
+
         m_assetBundleId = assetBundleId;
-        m_resourceName = resourceName;        
-        OnDone = onDone;
+        m_resourceName = resourceName;                
+        Step = EStep.None;
     }
         
     protected override void ExtendedPerform()
@@ -57,12 +76,13 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
             AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_assetBundleId);
             if (handle.IsLoaded())
             {
-                LoadResourceFromAssetBundle(handle.AssetBundle, m_resourceName, NotifyOnDone);                
+                LoadResourceFromAssetBundleInternal(handle.AssetBundle);                
             }
             else 
             {
                 // Needs to load the asset bundle before loading the asset
-                AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(m_assetBundleId, OnAssetBundleLoaded);
+                Step = EStep.LoadingAssetBundle;                
+                SetRequest(AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(m_assetBundleId, OnAssetBundleLoaded, true));
             }
         }                
     }
@@ -75,18 +95,84 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
             AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_assetBundleId);
             if (handle.IsLoaded())
             {
-                LoadResourceFromAssetBundle(handle.AssetBundle, m_resourceName, NotifyOnDone);                
+                LoadResourceFromAssetBundleInternal(handle.AssetBundle);                
             }
             else
             {
+                result = EResult.Error_Internal;
                 AssetBundlesManager.Log_AssertABIsNotLoadedButCallbackWasSuccessful(m_assetBundleId);
             }            
         }
-        else
+        
+        if (IsResultError(result))
         {
-            NotifyError(result);
+            NotifyOnDoneInternal(result, null);            
         }
     }
 
-    protected abstract void LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone);    
+    protected abstract AssetBundlesOpRequest LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone);    
+
+    private void LoadResourceFromAssetBundleInternal(AssetBundle assetBundle)
+    {
+        Step = EStep.LoadingResourceFromAssetBundle;
+        SetRequest(LoadResourceFromAssetBundle(assetBundle, m_resourceName, NotifyOnDoneInternal));        
+    }    
+
+    private void NotifyOnDoneInternal(EResult result, object data)
+    {
+        Step = EStep.Done;
+        NotifyOnDone(result, data);
+    }
+
+    protected override void UpdateAllowSceneActivation(bool value)
+    {            
+        if (m_request != null)
+        {
+            m_request.allowSceneActivation = value;
+        }        
+    }
+
+    protected override float ExtendedProgress
+    {
+        get
+        {
+            float returnValue = 0f;
+            switch (Step)
+            {
+                case EStep.None:
+                    break;
+
+                case EStep.LoadingAssetBundle:
+                case EStep.LoadingResourceFromAssetBundle:
+                    if (m_request != null)
+                    {
+                        returnValue = m_request.progress;                        
+                    }
+
+                    if (Step == EStep.LoadingResourceFromAssetBundle)
+                    {
+                        returnValue += 1.0f;
+                    }
+
+                    returnValue /= 2f;
+                    break;
+                
+
+                case EStep.Done:
+                    returnValue = 1f;
+                    break;
+            }            
+
+            return returnValue;
+        }
+    }
+
+    private void SetRequest(AssetBundlesOpRequest request)
+    {
+        m_request = request;
+        if (m_request != null && Step == EStep.LoadingResourceFromAssetBundle)
+        {
+            m_request.allowSceneActivation = AllowSceneActivation;
+        }
+    }
 }

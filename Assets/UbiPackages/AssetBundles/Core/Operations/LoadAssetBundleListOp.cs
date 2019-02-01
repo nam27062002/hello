@@ -72,4 +72,23 @@ public class LoadAssetBundleListOp : AssetBundlesOp
             NotifyError(result);
         }
     }
+
+    protected override float ExtendedProgress
+    {
+        get
+        {
+            float soFar = 0;
+            int count = m_assetBundleIds.Count;
+            for (int i = 0; i < count; i++)
+            {
+                AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_assetBundleIds[i]);                
+                if (handle != null)
+                {
+                    soFar += AssetBundlesManager.Instance.Loader_GetProgress(handle.Id);                                   
+                }
+            }
+
+            return (count == 0) ? 1f : soFar / count;
+        }
+    }    
 }

@@ -108,7 +108,8 @@ public class AssetBundlesManager
                             dependencies.Add(id);
 
                             handle = new AssetBundleHandle();
-                            handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
+                            //handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
+                            handle.SetupLocal(id, localAssetBundlesPath + "/" + id, dependencies);
                             m_assetBundleHandles.Add(m_localAssetBundleIds[i], handle);
                         }
                     }
@@ -150,7 +151,7 @@ public class AssetBundlesManager
     public AssetBundleHandle GetAssetBundleHandle(string id)
     {
         AssetBundleHandle returnValue = null;
-        if (m_assetBundleHandles != null)
+        if (m_assetBundleHandles != null && !string.IsNullOrEmpty(id))
         {
             m_assetBundleHandles.TryGetValue(id, out returnValue);
         }
@@ -168,23 +169,68 @@ public class AssetBundlesManager
         }
 
         return returnValue;        
-    }    
-    
-    public void LoadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone)
+    }
+
+    public List<string> GetDependenciesIncludingSelfList(List<string> ids)
     {
-        if (IsAssetBundleValid(id))
+        List<string> returnValue = null;
+        if (ids != null)
         {
-            List<string> abIds = GetDependenciesIncludingSelf(id);
-            LoadAssetBundleList(abIds, onDone);
+            int count = ids.Count;
+            List<string> abIds;
+            for (int i = 0; i < count; i++)
+            {
+                abIds = GetDependenciesIncludingSelf(ids[i]);
+                UbiListUtils.AddRange(returnValue, abIds, false, true);
+            }
         }
-        else
+
+        return returnValue;
+    }
+
+    private AssetBundlesOpRequest PreprocessRequest(bool buildRequest, ref AssetBundlesOp.OnDoneCallback onDone)
+    {
+        AssetBundlesOpRequest returnValue = null;
+        if (buildRequest)
         {
-            onDone(AssetBundlesOp.EResult.Error_AB_Handle_Not_Found, null);
+            returnValue = new AssetBundlesOpRequest();
+            returnValue.Setup(onDone);
+            onDone = returnValue.NotifyResult;
+        }
+
+        return returnValue;
+    }
+
+    private void PostprocessRequest(AssetBundlesOpRequest request, AssetBundlesOp op)
+    {
+        if (request != null)
+        {
+            request.Op = op;
         }
     }
 
-    public void LoadAssetBundleList(List<string> ids, AssetBundlesOp.OnDoneCallback onDone)
+    public AssetBundlesOpRequest LoadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {
+        AssetBundlesOpRequest returnValue;
+
+        if (IsAssetBundleValid(id))
+        {
+            List<string> abIds = GetDependenciesIncludingSelf(id);
+            returnValue = LoadAssetBundleList(abIds, onDone, buildRequest);
+        }
+        else
+        {
+            returnValue = PreprocessRequest(buildRequest, ref onDone);
+            onDone(AssetBundlesOp.EResult.Error_AB_Handle_Not_Found, null);
+        }
+
+        return returnValue;
+    }        
+
+    private AssetBundlesOp LoadAssetBundleListInternal(List<string> ids, AssetBundlesOp.OnDoneCallback onDone)
+    {
+        AssetBundlesOp returnValue = null;
+
         if (ids != null && ids.Count > 0)
         {
             if (IsAssetBundleListValid(ids))
@@ -204,6 +250,8 @@ public class AssetBundlesManager
                     LoadAssetBundleListOp op = new LoadAssetBundleListOp();
                     op.Setup(ids, onDone);
                     Ops_PerformOp(op);
+
+                    returnValue = op;
                 }
             }
             else if (onDone != null)
@@ -215,6 +263,17 @@ public class AssetBundlesManager
         {
             onDone(AssetBundlesOp.EResult.Success, null);
         }
+
+        return returnValue;
+    }
+
+    public AssetBundlesOpRequest LoadAssetBundleList(List<string> ids, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
+    {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+        AssetBundlesOp op = LoadAssetBundleListInternal(ids, onDone);
+        PostprocessRequest(returnValue, op);
+
+        return returnValue;
     }
 
     public bool IsAssetBundleValid(string id)
@@ -297,15 +356,20 @@ public class AssetBundlesManager
     /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
     /// <param name="assetName">Name of the asset to load.</param>    
     /// <param name="onDone">Callback that will be called when the asset has been loaded or if an error happened throughout the process.</param>    
-    public void LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone)
-    {   
+    public AssetBundlesOpRequest LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
+    {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
         {
             LoadAssetFromAssetBundlesFullOp op = new LoadAssetFromAssetBundlesFullOp();
             op.Setup(assetBundleId, assetName, onDone);
             Ops_PerformOp(op);
-        }        
-    }
+            PostprocessRequest(returnValue, op);
+        }
+
+        return returnValue;
+    }   
 
     /// <summary>
     /// Loads asynchronously an asset called <c>assetName</c> from an asset bundle. 
@@ -313,12 +377,18 @@ public class AssetBundlesManager
     /// <param name="assetBundle">Asset bundle that contains the asset.</param>
     /// <param name="assetName">Name of the asset to load.</param>    
     /// <param name="onDone">Callback that will be called when the asset has been loaded or if an error happened throughout the process.</param>    
-    public void LoadAssetFromAssetBundleAsync(AssetBundle assetBundle, string assetName, AssetBundlesOp.OnDoneCallback onDone)
+    public AssetBundlesOpRequest LoadAssetFromAssetBundleAsync(AssetBundle assetBundle, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);        
+
         LoadAssetFromAssetBundleOp op = new LoadAssetFromAssetBundleOp();
         op.Setup(assetBundle, assetName, onDone);
         Ops_PerformOp(op);
-    }
+
+        PostprocessRequest(returnValue, op);
+
+        return returnValue;
+    }   
 
     public void UnloadAssetBundle(string assetBundleId, AssetBundlesOp.OnDoneCallback onDone)
     {
@@ -388,7 +458,7 @@ public class AssetBundlesManager
                 }
             }
         }        
-    }
+    }      
 
     /// <summary>
     /// Loads asynchronously a scene called <c>sceneName</c> from an asset bundle with <c>assetBundleId</c> as id. This method will download and load the asset bundle before loading
@@ -398,14 +468,19 @@ public class AssetBundlesManager
     /// <param name="sceneName">Name of the scene to load.</param>    
     /// <param name="loadSceneMode">Allows you to specify whether or not to load the scene additively.</param>    
     /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
-    public void LoadSceneAsync(string assetBundleId, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, AssetBundlesOp.OnDoneCallback onDone = null)
+    public AssetBundlesOpRequest LoadSceneAsync(string assetBundleId, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, AssetBundlesOp.OnDoneCallback onDone = null, bool buildRequest=false)
     {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
         if (!LoadSceneFromAssetBundlesFullOp.EarlyExit(assetBundleId, sceneName, onDone))
         {
             LoadSceneFromAssetBundlesFullOp op = new LoadSceneFromAssetBundlesFullOp();
             op.Setup(assetBundleId, sceneName, loadSceneMode, onDone);
             Ops_PerformOp(op);
+            PostprocessRequest(returnValue, op);
         }
+
+        return returnValue;
     }
 
     /// <summary>
@@ -415,11 +490,17 @@ public class AssetBundlesManager
     /// <param name="sceneName">Name of the scene to load.</param>        
     /// <param name="loadSceneMode">Allows you to specify whether or not to load the scene additively.</param>    
     /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
-    public void LoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, AssetBundlesOp.OnDoneCallback onDone = null)
+    public AssetBundlesOpRequest LoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single, AssetBundlesOp.OnDoneCallback onDone = null, bool buildRequest = false)
     {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
         LoadSceneFromAssetBundleOp op = new LoadSceneFromAssetBundleOp();
         op.SetupLoad(assetBundle, sceneName, loadSceneMode, onDone);
         Ops_PerformOp(op);
+
+        PostprocessRequest(returnValue, op);
+
+        return returnValue;
     }
 
     /// <summary>
@@ -429,14 +510,21 @@ public class AssetBundlesManager
     /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
     /// <param name="sceneName">Name of the scene to load.</param>        
     /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
-    public void UnloadSceneAsync(string assetBundleId, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null)
+    public AssetBundlesOpRequest UnloadSceneAsync(string assetBundleId, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null, bool buildRequest = false)
     {
-        if (!LoadSceneFromAssetBundlesFullOp.EarlyExit(assetBundleId, sceneName, onDone))
+        AssetBundlesOpRequest returnValue;
+        if (LoadSceneFromAssetBundlesFullOp.EarlyExit(assetBundleId, sceneName, onDone))
+        {
+            returnValue = PreprocessRequest(buildRequest, ref onDone);
+        }
+        else
         {
             AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
-            UnLoadSceneFromAssetBundleAsync(handle.AssetBundle, sceneName, onDone);            
+            returnValue = UnLoadSceneFromAssetBundleAsync(handle.AssetBundle, sceneName, onDone, buildRequest);            
         }
-    }
+
+        return returnValue;
+    }    
 
     /// <summary>
     /// Unloads asynchronously a scene called <c>sceneName</c>.
@@ -444,11 +532,17 @@ public class AssetBundlesManager
     /// <param name="assetBundle">Asset bundle that contains the asset.</param>
     /// <param name="sceneName">Name of the scene to load.</param>            
     /// <param name="onDone">Callback that will be called when the scene has been loaded or if an error happened throughout the process.</param>    
-    public void UnLoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null)
+    public AssetBundlesOpRequest UnLoadSceneFromAssetBundleAsync(AssetBundle assetBundle, string sceneName, AssetBundlesOp.OnDoneCallback onDone = null, bool buildRequest = false)
     {
+        AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
         LoadSceneFromAssetBundleOp op = new LoadSceneFromAssetBundleOp();
         op.SetupUnload(assetBundle, sceneName, onDone);
         Ops_PerformOp(op);
+
+        PostprocessRequest(returnValue, op);
+
+        return returnValue;
     }    
 
     public Object LoadResource(string assetBundleId, string resourceName, bool isAsset, LoadSceneMode mode = LoadSceneMode.Single)
@@ -475,16 +569,19 @@ public class AssetBundlesManager
     /// <param name="resourceName">Name of the resource to load.</param>    
     /// <param name="isAsset"><c>true</c> is the resource to load is an asset. <c>false</c> if it's a scene</param>    
     /// <param name="onDone">Callback that will be called when the asset has been loaded or if an error happened throughout the process.</param>    
-    public void LoadResourceAsync(string assetBundleId, string resourceName, bool isAsset, AssetBundlesOp.OnDoneCallback onDone, LoadSceneMode mode = LoadSceneMode.Single)
+    public AssetBundlesOpRequest LoadResourceAsync(string assetBundleId, string resourceName, bool isAsset, AssetBundlesOp.OnDoneCallback onDone, LoadSceneMode mode = LoadSceneMode.Single, bool buildRequest = false)
     {
+        AssetBundlesOpRequest returnValue;
         if (isAsset)
         {
-            LoadAssetAsync(assetBundleId, resourceName, onDone);
+            returnValue = LoadAssetAsync(assetBundleId, resourceName, onDone, buildRequest);
         }
         else
         {
-            LoadSceneAsync(assetBundleId, resourceName, mode, onDone);
-        }        
+            returnValue = LoadSceneAsync(assetBundleId, resourceName, mode, onDone, buildRequest);
+        }
+
+        return returnValue;
     }
 
     /// <summary>
@@ -494,15 +591,15 @@ public class AssetBundlesManager
     /// <param name="resourceName">Name of the resource to load.</param>    
     /// <param name="isAsset"><c>true</c> is the resource to load is an asset. <c>false</c> if it's a scene</param>    
     /// <param name="onDone">Callback that will be called when the resource has been loaded or if an error happened throughout the process.</param>    
-    public void LoadResourceFromAssetBundleAsync(AssetBundle assetBundle, string resourceName, bool isAsset, AssetBundlesOp.OnDoneCallback onDone, LoadSceneMode mode = LoadSceneMode.Single)
+    public void LoadResourceFromAssetBundleAsync(AssetBundle assetBundle, string resourceName, bool isAsset, AssetBundlesOp.OnDoneCallback onDone, LoadSceneMode mode = LoadSceneMode.Single, bool buildRequest = false)
     {
         if (isAsset)
         {
-            LoadAssetFromAssetBundleAsync(assetBundle, resourceName, onDone);
+            LoadAssetFromAssetBundleAsync(assetBundle, resourceName, onDone, buildRequest);
         }
         else
         {
-            LoadSceneFromAssetBundleAsync(assetBundle, resourceName, mode, onDone);
+            LoadSceneFromAssetBundleAsync(assetBundle, resourceName, mode, onDone, buildRequest);
         }        
     }
 
@@ -661,6 +758,32 @@ public class AssetBundlesManager
             if (handle != null)
             {
                 returnValue = handle.NeedsToRequestToLoad();
+            }
+        }
+
+        return returnValue;
+    }
+
+    public float Loader_GetProgress(string id)
+    {
+        float returnValue = 0f;
+        AssetBundleHandle handle = GetAssetBundleHandle(id);
+        if (handle != null)
+        {
+            if (handle.IsLoaded())
+            {
+                returnValue = 1f;
+            }
+            else if (handle.IsLoading())
+            {
+                if (m_loaderLoadAssetBundleOp != null)
+                {
+                    AssetBundleHandle loaderHandle = m_loaderLoadAssetBundleOp.GetHandle();
+                    if (loaderHandle != null && loaderHandle.Id == id)
+                    {
+                        returnValue = m_loaderLoadAssetBundleOp.Progress;
+                    }
+                }
             }
         }
 

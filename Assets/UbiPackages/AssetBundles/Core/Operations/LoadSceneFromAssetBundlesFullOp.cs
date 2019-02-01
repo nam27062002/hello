@@ -15,8 +15,8 @@ public class LoadSceneFromAssetBundlesFullOp : LoadResourceFromAssetBundlesFullO
         base.Setup(assetBundleId, sceneName, onDone);
     }
 
-    protected override void LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone)
+    protected override AssetBundlesOpRequest LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone)
     {
-        AssetBundlesManager.Instance.LoadSceneFromAssetBundleAsync(assetBundle, resourceName, m_loadSceneMode, onDone);
+        return AssetBundlesManager.Instance.LoadSceneFromAssetBundleAsync(assetBundle, resourceName, m_loadSceneMode, onDone, true);
     }
 }

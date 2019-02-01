@@ -15,6 +15,11 @@ public abstract class AssetBundlesOp
         Error_AB_Is_Not_Loaded          // This error arises when trying to unload an asset bundle that hasn't been loaded        
     };
 
+    public static bool IsResultError(EResult result)
+    {
+        return result != EResult.None && result != EResult.Success;
+    }
+
     public delegate void OnDoneCallback(EResult result, object data);
 
     private OnDoneCallback m_onDone;
@@ -42,6 +47,46 @@ public abstract class AssetBundlesOp
     {
         get { return State == EState.Done; }
     }
+
+    private bool m_allowSceneActivation = true;   
+    public bool AllowSceneActivation
+    {
+        get { return m_allowSceneActivation; }
+        
+        set
+        {
+            m_allowSceneActivation = value;
+            UpdateAllowSceneActivation(m_allowSceneActivation);
+        }
+    }
+
+
+    protected virtual void UpdateAllowSceneActivation(bool value) {}
+
+    public float Progress
+    {
+        get
+        {
+            float returnValue = ExtendedProgress;
+            if (IsDone)
+            {
+                returnValue = 1f;
+            }
+            else if (returnValue >= 1f)
+            {
+                returnValue = 0.99f;
+            }
+            
+            if (!AllowSceneActivation && returnValue > 0.9f)
+            {
+                returnValue = 0.9f;
+            }                            
+
+            return returnValue;
+        }
+    }
+
+    protected abstract float ExtendedProgress { get; }
 
     public void Reset()
     {

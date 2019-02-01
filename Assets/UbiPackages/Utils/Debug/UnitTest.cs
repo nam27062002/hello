@@ -23,7 +23,7 @@ public abstract class UnitTest
         ExtendedPerform();
     }
 
-    protected virtual void ExtendedPerform() {}
+    protected abstract void ExtendedPerform();
 
     private bool GetHasPassed()
     {
