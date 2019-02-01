@@ -163,7 +163,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
                 case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
-                    HDLiveDataManager.instance.RequestMyLiveData(true);
+                    HDLiveDataManager.instance.RequestMyLiveData();
                     OnDismissButton();
                 } break;
 
