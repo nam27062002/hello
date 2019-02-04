@@ -109,7 +109,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private float m_impulseMagnitude = 0;
 	protected Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
-    private Vector3 m_externalForce;	// Used for wind flows, to be set every frame
+    protected Vector3 m_externalForce;	// Used for wind flows, to be set every frame
 	private Quaternion m_desiredRotation;
 	protected Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;

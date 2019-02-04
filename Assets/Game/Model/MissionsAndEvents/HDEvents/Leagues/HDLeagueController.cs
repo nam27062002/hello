@@ -23,6 +23,8 @@ public class HDLeagueController : HDLiveDataController {
 
         m_season = new HDSeasonData();
         CreateLeagues();
+
+        m_dataLoadedFromCache = false;
     }
 
     private void CreateLeagues() {
@@ -66,6 +68,18 @@ public class HDLeagueController : HDLiveDataController {
         return data;
     }
 
+    public override bool IsFinishPending() {
+        bool isFinishPending = m_isFinishPending;
+
+        if (isFinishPending) {
+            m_season.RequestFinalize();
+            HDLiveDataManager.instance.ForceRequestLeagues();
+            m_isFinishPending = false;
+        }
+
+        return isFinishPending;
+    }
+
     public override void LoadDataFromCache() {
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
@@ -73,10 +87,10 @@ public class HDLeagueController : HDLiveDataController {
             LoadData(json);
 
             if (season.state == HDSeasonData.State.REWARDS_COLLECTED) {
-                season.RequestFinalize();
+                m_isFinishPending = true;
             }
+            m_dataLoadedFromCache = true;
         }
-        m_dataLoadedFromCache = true;
     }
 
     public override void LoadData(SimpleJSON.JSONNode _data) {
@@ -98,6 +112,8 @@ public class HDLeagueController : HDLiveDataController {
                 m_season.nextLeague = leagueData;
             }
         }
+
+        m_dataLoadedFromCache = false;
     }
 
     public override void OnLiveDataResponse() {

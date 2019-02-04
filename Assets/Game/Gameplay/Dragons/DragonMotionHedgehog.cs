@@ -231,7 +231,9 @@ public class DragonMotionHedgehog : DragonMotion {
                     m_sonicImpulse += GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier * _deltaTime;
                 }
                 m_impulse = m_sonicImpulse;
-				ApplyExternalForce();
+				// ApplyExternalForce();    
+                // ignore external forces
+                m_externalForce = GameConstants.Vector3.zero;
 				m_rbody.velocity = m_impulse;
 				RotateToDirection( m_direction );
 			}break;

@@ -22,6 +22,13 @@ public class PetProjectile : Projectile
         set{ m_explodeIfHomingtargetNull = value; }
     }
 
+    [SerializeField] bool m_breaksArmor = false;
+    public bool breaksArmor
+    {
+        get{ return m_breaksArmor; }
+    }
+    
+
     protected override void Update()
     {
         base.Update();

@@ -28,15 +28,31 @@ public class ArmorVulnerableArea : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider _other) {
-		if (_other.CompareTag("Player") && m_timer <= 0f) {
-			DragonPlayer player = InstanceManager.player;
-
-			bool isHitValid = m_machine.ReduceDurability(player.IsBreakingMovement(), IEntity.Type.PLAYER);
-
-			if (isHitValid)	{
-				m_hitParticle.Spawn(transform.position + m_hitParticle.offset);
-				m_timer = m_timeBetweenAttaks;
-			}
-		}
+        if (m_timer <= 0f)
+        {
+            if (_other.CompareTag("Player") ) {
+                DragonPlayer player = InstanceManager.player;
+    
+                bool isHitValid = m_machine.ReduceDurability(player.IsBreakingMovement(), IEntity.Type.PLAYER);
+    
+                if (isHitValid) {
+                    m_hitParticle.Spawn(transform.position + m_hitParticle.offset);
+                    m_timer = m_timeBetweenAttaks;
+                }
+            }
+            else if ( _other.CompareTag("PlayerProjectile") )
+            {
+                PetProjectile projectile = _other.GetComponent<PetProjectile>();
+                if ( projectile && projectile.breaksArmor )
+                {
+                    bool isHitValid = m_machine.ReduceDurability(true, IEntity.Type.PLAYER);
+                    if (isHitValid) {
+                        m_hitParticle.Spawn(transform.position + m_hitParticle.offset);
+                        m_timer = m_timeBetweenAttaks;
+                    }    
+                }
+            }
+        }
+		
 	}
 }
