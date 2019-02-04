@@ -267,7 +267,7 @@ public static class Prefs {
 		try {
 			dt = DateTime.Parse(Get(_key, string.Empty, _mode), System.Globalization.CultureInfo.InvariantCulture);
 		} catch(Exception _e) {
-			Debug.LogError(_e.ToString());
+			Debug.LogError("CATCHED EXCEPTION\n" + _e.ToString());
 		}
 		return dt;
 	}
