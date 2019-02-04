@@ -221,40 +221,39 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
-					// Make sure we have enough and adjust new balance
-					// Resources flow makes it easy for us!
-					ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
-					purchaseFlow.forceConfirmation = true;  // [AOC] For currency packs always request confirmation (UMR compliance)
-					purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
-					purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
-				}
-				break;
+				// Make sure we have enough and adjust new balance
+				// Resources flow makes it easy for us!
+				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
+				purchaseFlow.forceConfirmation = true;  // [AOC] For currency packs always request confirmation (UMR compliance)
+				purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
+				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
+			} break;
 
 			case UserProfile.Currency.REAL: {
-					// Do a first quick check on Internet connectivity
-					Log("Quick connectivity check");
-					if(Application.internetReachability == NetworkReachability.NotReachable) {
-						// We have no internet connectivity, finalize the IAP
-						Log("No internet connectivity, finalize the IAP");
-						EndPurchase(false);
-						UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-					} else {
-						// Start real money transaction flow!
-						Log("Internet connectivity OK, start real money transaction flow!");
+				// Do a first quick check on Internet connectivity
+				Log("Quick connectivity check");
+				if(Application.internetReachability == NetworkReachability.NotReachable) {
+					// We have no internet connectivity, finalize the IAP
+					Log("No internet connectivity, finalize the IAP");
+					EndPurchase(false);
+					UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+				} else {
+					// Start real money transaction flow!
+					Log("Internet connectivity OK, start real money transaction flow!");
 
-						// Open loading popup to block all the UI while the transaction is in progress
-						Log("Opening Loading Popup!");
-						m_loadingPopupController = PopupManager.PopupLoading_Open();
+					// Open loading popup to block all the UI while the transaction is in progress
+					Log("Opening Loading Popup!");
+					m_loadingPopupController = PopupManager.PopupLoading_Open();
 
-						// Check connection to the store
+					// Check connection to the store
 #if UNITY_EDITOR
-						// [AOC] Editor override
-						// Simulate some delay
-						UbiBCN.CoroutineManager.DelayedCall(() => {
-							OnConnectionCheckFinished(null);
-						}, 3f);
+					// [AOC] Editor override
+					// Simulate some delay
+					UbiBCN.CoroutineManager.DelayedCall(() => {
+						OnConnectionCheckFinished(null);
+					}, 3f);
 #else
-						GameServerManager.SharedInstance.CheckConnection(OnConnectionCheckFinished);
+					GameServerManager.SharedInstance.CheckConnection(OnConnectionCheckFinished);
 #endif
                 }
 			} break;
@@ -275,6 +274,7 @@ public abstract class IPopupShopPill : MonoBehaviour {
 			// No error! Proceed with the IAP flow
 			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
             if(GameStoreManager.SharedInstance.IsInitializing()) {
+				Log("Store not yet initialized. Waiting...");
                 GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
             } else {
                 RequestIAP();

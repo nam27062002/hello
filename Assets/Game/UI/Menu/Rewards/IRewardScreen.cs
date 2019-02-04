@@ -19,14 +19,14 @@ public abstract class IRewardScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	protected enum State {
+	public enum State {
 		ANIMATING,
 		IDLE,
 		FLOW_NOT_STARTED
 	}
 
 	// Basic steps. If more steps are needed by heirs, they should implement their 
-	// own enum starting with Step.FINISH and use int cast to comunicate with the base.
+	// own enum starting with Step.FINISH + 1 and use int cast to comunicate with the base.
 	protected enum Step {
 		INIT = 0,
 		INITIAL_DELAY,
@@ -193,7 +193,7 @@ public abstract class IRewardScreen : MonoBehaviour {
 				// Change state advance step after some delay
 				UbiBCN.CoroutineManager.DelayedCall(
 					() => {
-						m_state = State.IDLE;
+						SetAnimatingState(State.IDLE);
 						AdvanceStep();
 					}, m_initialDelay
 				);
@@ -217,7 +217,7 @@ public abstract class IRewardScreen : MonoBehaviour {
 				m_sceneController.OnAnimFinished.RemoveListener(OnSceneAnimFinished);
 
 				// Reset state
-				m_state = State.FLOW_NOT_STARTED;
+				SetAnimatingState(State.FLOW_NOT_STARTED);
 			} break;
 		}
 	}
@@ -231,8 +231,8 @@ public abstract class IRewardScreen : MonoBehaviour {
 		int nextStep = SelectNextStep();
 
 		// Hide tap to continue text
-		m_tapToContinue.Hide();
-		m_state = State.ANIMATING;
+		ToggleTapToContinue(false);
+		SetAnimatingState(State.ANIMATING);
 
 		// Store new step and show the right screen
 		m_step = nextStep;
@@ -247,6 +247,22 @@ public abstract class IRewardScreen : MonoBehaviour {
 		OnLaunchNewStep(oldStep, m_step);
 
 		//Debug.Log("<color=green>Step changed from " + oldStep + " to " + nextStep + " (" + m_givenGlobalRewards + ")</color>");
+	}
+
+	/// <summary>
+	/// Toggles the tap to continue.
+	/// </summary>
+	/// <param name="_toggle">Show or hide?</param>
+	public void ToggleTapToContinue(bool _toggle) {
+		m_tapToContinue.ForceSet(_toggle);
+	}
+
+	/// <summary>
+	/// Define the animating state.
+	/// </summary>
+	/// <param name="_state">State of the animation.</param>
+	public void SetAnimatingState(State _state) {
+		m_state = _state;
 	}
 
 	//------------------------------------------------------------------//
@@ -307,13 +323,14 @@ public abstract class IRewardScreen : MonoBehaviour {
 	/// Intro anim finished.
 	/// To be connected in the UI.
 	/// </summary>
-	public virtual void OnIntroAnimFinished() {
+	// [AOC] DPRECATED Replace with a SetState() + ToggleTapToContinue()
+	/*public virtual void OnIntroAnimFinished() {
 		// Change logic state
 		m_state = State.IDLE;
 
 		// Show tap to continue text
-		m_tapToContinue.ForceShow();
-	}
+		ToggleTapToContinue(true);
+	}*/
 
 	/// <summary>
 	/// An animation for a reward has started in the 3d scene!
@@ -334,10 +351,10 @@ public abstract class IRewardScreen : MonoBehaviour {
 	/// </summary>
 	protected virtual void OnSceneAnimFinished() {
 		// Change logic state
-		m_state = State.IDLE;
+		SetAnimatingState(State.IDLE);
 
 		// Show tap to continue text
-		m_tapToContinue.Show();
+		ToggleTapToContinue(true);
 	}
 	/// <summary>
 	/// Screen is about to be displayed.

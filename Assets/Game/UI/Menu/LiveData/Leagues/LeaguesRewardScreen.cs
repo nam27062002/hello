@@ -51,14 +51,10 @@ public class LeaguesRewardScreen : IRewardScreen {
 	[Space]
 	[SerializeField] private Localizer m_leagueNameText = null;
 	[SerializeField] private TextMeshProUGUI m_rankText = null;
-	//[SerializeField] private MenuTrophyLoader m_trophyLoader = null;
 	[SerializeField] private Image m_leagueIcon = null;
-
-	// Final result layouts
 	[Space]
-	[SerializeField] private GameObject[] m_promotionObjects = null;
-	[SerializeField] private GameObject[] m_neutralObjects = null;
-	[SerializeField] private GameObject[] m_demotionObjects = null;
+	[SerializeField] private Animator m_introScreenAnim = null;
+	[SerializeField] private Animator m_resultScreenAnim = null;
 
 	// Internal references
 	private HDSeasonData m_season = null;
@@ -93,13 +89,7 @@ public class LeaguesRewardScreen : IRewardScreen {
 		m_season = HDLiveDataManager.league.season;
 
 		// Initialize visual info
-		if(m_leagueIcon != null) {
-			m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + m_season.nextLeague.icon);
-		}
-
-		if(m_leagueNameText != null) {
-			m_leagueNameText.Localize(m_season.nextLeague.tidName);
-		}
+		RefreshLeagueInfo(m_season.currentLeague);
 
 		if(m_rankText != null) {
 			m_rankText.text = UIUtils.FormatOrdinalNumber(
@@ -110,9 +100,6 @@ public class LeaguesRewardScreen : IRewardScreen {
 
 		// Select promotion/demotion objets
 		HDSeasonData.Result result = m_season.result;
-		ToggleObjects(ref m_promotionObjects, result == HDSeasonData.Result.PROMOTION);
-		ToggleObjects(ref m_neutralObjects, result == HDSeasonData.Result.NO_CHANGE || result == HDSeasonData.Result.UNKNOWN);	// [AOC] Unknown shouldn't happen at this point, but just in case
-		ToggleObjects(ref m_demotionObjects, result == HDSeasonData.Result.DEMOTION);
 	}
 
 	//------------------------------------------------------------------------//
@@ -151,6 +138,17 @@ public class LeaguesRewardScreen : IRewardScreen {
 
 		// Perform extra stuff depending on new step
 		switch(_newStep) {
+			case (int)Step.INTRO: {
+				// Trigger UI animation
+				m_introScreenAnim.SetTrigger("in");
+			} break;
+
+			case (int)CustomStep.SEASON_RESULT: {
+				// Trigger UI animation
+				m_resultScreenAnim.SetInteger("result", (int)m_season.result);   // Animator uses the same indexes as the enum to select its state
+				m_resultScreenAnim.SetTrigger("in");
+			} break;
+
 			case (int)Step.FINISH: {
 				// Save!
 				PersistenceFacade.instance.Save_Request();
@@ -176,21 +174,29 @@ public class LeaguesRewardScreen : IRewardScreen {
 		}
 	}
 
+	/// <summary>
+	/// Refresh league icon and name with the given league data.
+	/// </summary>
+	/// <param name="_league">Data to be used.</param>
+	private void RefreshLeagueInfo(HDLeagueData _league) {
+		if(m_leagueIcon != null) {
+			m_leagueIcon.sprite = Resources.Load<Sprite>(UIConstants.LEAGUE_ICONS_PATH + _league.icon);
+		}
+
+		if(m_leagueNameText != null) {
+			m_leagueNameText.Localize(_league.tidName);
+		}
+	}
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//
     /// <summary>
-    /// Intro anim finished.
-    /// To be connected in the UI.
+    /// THe collect rewards button has been pressed.
     /// </summary>
-    public override void OnIntroAnimFinished() {
-        // Change logic state
-        m_state = State.IDLE;
-    }
-
-    public void OnCollectRewardsButton() {
+	public void OnCollectRewardsButton() {
         // Ignore if we're still animating some step (prevent spamming)
-        if (m_state == State.ANIMATING) return;
+        if(m_state == State.ANIMATING) return;
 
         // Go to leagues Reward Screen
         UsersManager.currentUser.PushReward(m_season.reward);
@@ -200,7 +206,18 @@ public class LeaguesRewardScreen : IRewardScreen {
         HDLiveDataManager.instance.SaveEventsToCache();
         PersistenceFacade.instance.Save_Request(true);
 
+		// Trigger UI animation
+		m_resultScreenAnim.SetTrigger("out");
+
         // Next step!
-        AdvanceStep();
+		// [AOC] Animation will do it (for a better sync)
+       // AdvanceStep();
     }
+
+	/// <summary>
+	/// Animation tells us to switch league info.
+	/// </summary>
+	public void OnSwitchLeagueInfo() {
+		RefreshLeagueInfo(m_season.nextLeague);
+	}
 }
