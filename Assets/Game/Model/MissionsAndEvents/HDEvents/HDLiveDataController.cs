@@ -10,6 +10,8 @@ public abstract class HDLiveDataController {
     protected bool m_active = false;
     public bool isActive { get { return m_active; } }
 
+    protected bool m_isFinishPending = false;
+
 
     //---[Methods]--------------------------------------------------------------
     public void DeleteCache() {
@@ -27,6 +29,8 @@ public abstract class HDLiveDataController {
     public abstract void CleanData();
     public abstract bool ShouldSaveData();
     public abstract SimpleJSON.JSONNode SaveData();
+
+    public abstract bool IsFinishPending();
     public abstract void LoadDataFromCache();
     public abstract void LoadData(SimpleJSON.JSONNode _data);
 

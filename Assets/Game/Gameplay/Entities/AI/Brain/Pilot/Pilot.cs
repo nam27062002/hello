@@ -188,10 +188,6 @@ namespace AI {
 			m_impulse = Vector3.zero;
 			m_externalImpulse = Vector3.zero;
 
-            ReleaseAction(Action.Attack);
-            ReleaseAction(Action.Button_A);
-            ReleaseAction(Action.Button_B);
-            ReleaseAction(Action.Button_C);
             PressAction(Action.Stop);
 		}
 
