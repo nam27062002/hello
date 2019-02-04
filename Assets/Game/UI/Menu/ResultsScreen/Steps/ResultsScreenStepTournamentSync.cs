@@ -196,14 +196,14 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
-		} 
-		else if ( _errorCode == HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER )
-		{
-			// No! :) Go to next step
-			OnFinished.Invoke();
-		}
-		else
-		{
+		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.TOURNAMENT_IS_OVER
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED) {
+            m_event.ForceFinishByError();
+            // No! :) Go to next step
+            OnFinished.Invoke();
+        } else {
 			// Yes :( Show error screen
 			m_errorPanel.Show();
 		}
@@ -221,11 +221,14 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
-		}
-		else if ( _errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER )
+		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND 
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID 
+                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED)
 		{
-			// No! :) Go to next step
-			OnFinished.Invoke();
+            m_event.ForceFinishByError();
+            // No! :) Go to next step
+            OnFinished.Invoke();
 		} else {
 			// Yes :( Show error screen
 			m_errorPanel.Show();

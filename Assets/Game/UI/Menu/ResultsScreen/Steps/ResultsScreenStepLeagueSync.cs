@@ -10,6 +10,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using System.Diagnostics;
+
+
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
@@ -32,6 +35,11 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	[SerializeField] private Localizer m_messageText = null;
 
     private HDSeasonData m_season;
+    private bool m_updateEnabled;
+
+
+    private Stopwatch m_stopwatch;
+
 
     // Public
     private bool m_hasBeenDismissed = false;
@@ -65,7 +73,9 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 
 		// Reset flags
 		m_hasBeenDismissed = false;
-	}
+
+        m_updateEnabled = false;
+    }
 
 	/// <summary>
 	/// Check whether this step must be displayed or not based on the run results.
@@ -97,14 +107,19 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		m_busyPanel.Show();
 
         m_season.SetScore(m_controller.score, true);
+        m_stopwatch = new Stopwatch();
+        m_stopwatch.Start();
 
-        InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
+        m_updateEnabled = true;
     }
 
-    void UpdatePeriodic() { 
-        if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
-            OnLeagueScoreSent(m_season.scoreDataError);
-            CancelInvoke();
+    void Update() {
+        if (m_updateEnabled) {
+            if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
+                OnLeagueScoreSent(m_season.scoreDataError);
+                m_stopwatch.Stop();
+                m_updateEnabled = false;
+            }
         }
     }
 

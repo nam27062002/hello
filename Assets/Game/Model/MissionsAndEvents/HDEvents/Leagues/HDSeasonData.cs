@@ -226,11 +226,12 @@ public class HDSeasonData {
             demoteRange.max = _data["demoteRange"]["upper"].AsInt;
         }
 
-        if (currentLeague == null) {
-            currentLeague = HDLiveDataManager.league.GetLeagueData(_data["league"]["order"].AsInt);
-        }
-
+        currentLeague = HDLiveDataManager.league.GetLeagueData(_data["league"]["order"].AsInt);
         currentLeague.LoadData(_data["league"]);
+
+        if (_data.ContainsKey("nextLeague")) {
+            currentLeague = HDLiveDataManager.league.GetLeagueData(_data["nextLeague"]["order"].AsInt);
+        }
 
         if (_data.ContainsKey("leaderboard")) {
             currentLeague.leaderboard.LoadData(_data["leaderboard"]);

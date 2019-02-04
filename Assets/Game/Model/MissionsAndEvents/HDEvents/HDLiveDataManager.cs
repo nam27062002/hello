@@ -333,16 +333,21 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         if (outErr == ComunicationErrorCodes.NO_ERROR) {
             int max = m_managers.Count;
             for (int i = 0; i < max; i++) {
+                bool finishLoadingData = true;
                 if (responseJson.ContainsKey(m_managers[i].type)) {
                     // To avoid collecting infinite rewards disabing the network. 
                     // We are going to load the cached data to check if we have
                     // a finish call pending.
-                    if (!m_managers[i].IsFinishPending()) {
+                    if (m_managers[i].IsFinishPending()) {
+                        finishLoadingData = false;
+                    } else { 
                         m_managers[i].LoadData(responseJson[m_managers[i].type]);
                     }
                 }
 
-                m_managers[i].OnLiveDataResponse();
+                if (finishLoadingData) {
+                    m_managers[i].OnLiveDataResponse();
+                }
             }
         } else {
             int max = m_managers.Count;
