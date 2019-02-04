@@ -106,6 +106,7 @@ public class HDSeasonData {
     //---[Initialization]-------------------------------------------------------
 
     public void RequestData(bool _fetchLeaderboard) {
+        Clean();
         __RequestFullData(_fetchLeaderboard);
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
@@ -131,7 +132,9 @@ public class HDSeasonData {
 
             case "2":
             case "PENDING_REWARDS":
-                state = State.PENDING_REWARDS;
+                if (state < State.REWARDS_COLLECTED) {
+                    state = State.PENDING_REWARDS;
+                }
                 break;
 
             case "REWARDS_COLLECTED":
@@ -396,6 +399,8 @@ public class HDSeasonData {
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             state = State.WAITING_NEW_SEASON;
+            HDLiveDataManager.instance.SaveEventsToCache();
+
             finalizeDataState = HDLiveData.State.VALID;
         } else {
             finalizeDataState = HDLiveData.State.ERROR;

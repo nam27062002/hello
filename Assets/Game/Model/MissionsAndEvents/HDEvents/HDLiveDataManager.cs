@@ -129,6 +129,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     // Avoid using dictionaries when possible
     private List<HDLiveDataController> m_managers;
     protected long m_lastMyEventsRequestTimestamp = 0;
+    protected long m_lastLeaguesRequestTimestamp = 0;
 
     public const long CACHE_TIMEOUT_MS = 1000 * 60 * 60 * 24 * 7;   // 7 days timeout
 
@@ -181,7 +182,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         if (GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - cacheTimestamp < CACHE_TIMEOUT_MS) {
             int max = m_managers.Count;
             for (int i = 0; i < max; ++i) {
-                m_managers[i].LoadDataFromCache();
+                LoadEventFromCache(i);
             }
         } else {
             // Delete cache!
@@ -190,6 +191,10 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                 m_managers[i].DeleteCache();
             }
         }
+    }
+
+    private void LoadEventFromCache(int _index) {
+        m_managers[_index].LoadDataFromCache();
     }
 
     public void SaveEventsToCacheWithParams(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
@@ -306,10 +311,16 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
     }
 
     public void ForceRequestLeagues() {
-        if (TEST_CALLS) {
-            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
-        } else {
-            GameServerManager.SharedInstance.HDLiveData_GetMyLeagues(MyLiveDataResponse);
+        long deltaTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaguesRequestTimestamp;
+
+        if (deltaTime > 1000 * 60 * 0.5f) { // half a minute
+            m_lastLeaguesRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
+
+            if (TEST_CALLS) {
+                ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+            } else {
+                GameServerManager.SharedInstance.HDLiveData_GetMyLeagues(MyLiveDataResponse);
+            }
         }
     }
 
@@ -318,11 +329,17 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         ComunicationErrorCodes outErr = ComunicationErrorCodes.NO_ERROR;
         ResponseLog("GetMyEvents", _error, _response);
         SimpleJSON.JSONNode responseJson = ResponseErrorCheck(_error, _response, out outErr);
+
         if (outErr == ComunicationErrorCodes.NO_ERROR) {
             int max = m_managers.Count;
             for (int i = 0; i < max; i++) {
                 if (responseJson.ContainsKey(m_managers[i].type)) {
-                    m_managers[i].LoadData(responseJson[m_managers[i].type]);
+                    // To avoid collecting infinite rewards disabing the network. 
+                    // We are going to load the cached data to check if we have
+                    // a finish call pending.
+                    if (!m_managers[i].IsFinishPending()) {
+                        m_managers[i].LoadData(responseJson[m_managers[i].type]);
+                    }
                 }
 
                 m_managers[i].OnLiveDataResponse();

@@ -144,6 +144,18 @@ public abstract class HDLiveEventManager : HDLiveDataController {
         return ToJson();
     }
 
+    public override bool IsFinishPending() {
+        bool isFinishPending = m_isFinishPending;
+
+        if (isFinishPending) {
+            FinishEvent();
+            HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
+            m_isFinishPending = false;
+        }
+
+        return isFinishPending;
+    }
+
     public override void LoadDataFromCache() {
         CleanData();
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
@@ -151,7 +163,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             OnNewStateInfo(json);
             UpdateStateFromTimers();
             if (data.m_state == HDLiveEventData.State.REWARD_COLLECTED) {
-                FinishEvent();
+                m_isFinishPending = true;
             }
         }
         m_dataLoadedFromCache = true;
