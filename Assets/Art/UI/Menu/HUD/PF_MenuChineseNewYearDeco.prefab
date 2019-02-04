@@ -72,9 +72,10 @@ GameObject:
   m_Component:
   - component: {fileID: 224809077022289946}
   - component: {fileID: 222856136130806444}
+  - component: {fileID: 95015645643636496}
   - component: {fileID: 114849781086069044}
   m_Layer: 5
-  m_Name: FlowerSpawner
+  m_Name: FlowerSpawner_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,7 +109,7 @@ GameObject:
   - component: {fileID: 222496364515828890}
   - component: {fileID: 114737597391362526}
   m_Layer: 5
-  m_Name: FlowerPetals (1)
+  m_Name: FlowerPetals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,7 +143,7 @@ GameObject:
   - component: {fileID: 222639917389329926}
   - component: {fileID: 114268914073247708}
   m_Layer: 5
-  m_Name: FlowerCenter (2)
+  m_Name: FlowerCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193,7 +194,7 @@ GameObject:
   - component: {fileID: 222023530540531030}
   - component: {fileID: 114274113403387128}
   m_Layer: 5
-  m_Name: FlowerPetals (2)
+  m_Name: FlowerPetals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,7 +211,7 @@ GameObject:
   - component: {fileID: 222749031340743884}
   - component: {fileID: 114431210541134496}
   m_Layer: 5
-  m_Name: FlowerCenter (1)
+  m_Name: FlowerCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,7 +228,7 @@ GameObject:
   - component: {fileID: 222924874440233306}
   - component: {fileID: 114337201880138732}
   m_Layer: 5
-  m_Name: FlowerPetals (3)
+  m_Name: FlowerPetals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -260,7 +261,7 @@ GameObject:
   - component: {fileID: 222751331564056852}
   - component: {fileID: 114751874110736140}
   m_Layer: 5
-  m_Name: FlowerCenter (3)
+  m_Name: FlowerCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,8 +277,9 @@ GameObject:
   - component: {fileID: 224776535532984408}
   - component: {fileID: 222454581007004920}
   - component: {fileID: 114775614810788866}
+  - component: {fileID: 95348000108364162}
   m_Layer: 5
-  m_Name: FlowerSpawner (3)
+  m_Name: FlowerSpawner_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,9 +294,10 @@ GameObject:
   m_Component:
   - component: {fileID: 224721663253712564}
   - component: {fileID: 222042346853937282}
+  - component: {fileID: 95562205217084258}
   - component: {fileID: 114672982863363278}
   m_Layer: 5
-  m_Name: FlowerSpawner (2)
+  m_Name: FlowerSpawner_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,9 +329,10 @@ GameObject:
   m_Component:
   - component: {fileID: 224322777644130482}
   - component: {fileID: 222649150140680358}
+  - component: {fileID: 95236875876862298}
   - component: {fileID: 114815659243857498}
   m_Layer: 5
-  m_Name: FlowerSpawner (1)
+  m_Name: FlowerSpawner_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -385,6 +389,74 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!95 &95015645643636496
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1192755638990754}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd4cd04f72d0cd5438c9427ebb92ed5c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!95 &95236875876862298
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1957995345052928}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd4cd04f72d0cd5438c9427ebb92ed5c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!95 &95348000108364162
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1829353444948872}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd4cd04f72d0cd5438c9427ebb92ed5c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!95 &95562205217084258
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1874543047563316}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: fd4cd04f72d0cd5438c9427ebb92ed5c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114029045200896472
 MonoBehaviour:
   m_ObjectHideFlags: 1
