@@ -68,7 +68,7 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 		BREAK_OBJECT_NEED_TURBO,
 		SHIELD_POISON_LOST,
 		SHIELD_MINE_LOST,
-		DRUNK,
+		OLD_DRUNK,
 		KEY_FOUND,
 		KEY_LIMIT,
 		BREAK_OBJECT_SHALL_NOT_PASS,
@@ -239,7 +239,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.AddListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.AddListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
             case Type.BREAK_OBJECT_TO_OPEN: Messenger.AddListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
-			case Type.DRUNK:				Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.AddListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
@@ -294,7 +293,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 			case Type.BREAK_OBJECT_NEED_TURBO:		Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_NEED_TURBO, OnBreakObjectNeedTurbo);	break;
 			case Type.BREAK_OBJECT_SHALL_NOT_PASS:	Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_SHALL_NOT_PASS, OnBreakObjectShallNotPass);	break;			
             case Type.BREAK_OBJECT_TO_OPEN: Messenger.RemoveListener(MessengerEvents.BREAK_OBJECT_TO_OPEN, OnBreakObjectToOpen);   break;          
-			case Type.DRUNK:				Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggled);	break;
 			case Type.KEY_FOUND:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED, OnKeyCollected);			break;
 			case Type.KEY_LIMIT:			Messenger.RemoveListener(MessengerEvents.TICKET_COLLECTED_FAIL, OnKeyCollectedFail);			break;
 			case Type.DAMAGE_RECEIVED: 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);			break;
@@ -784,14 +782,6 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
     void OnBreakObjectToOpen() {
         Show();
     }
-
-	/// <summary>
-	/// Drunk state has changed.
-	/// </summary>
-	/// <param name="_isDrunk">Whether the player is drunk or not.</param>
-	private void OnDrunkToggled(bool _isDrunk) {
-		if(_isDrunk) Show();
-	}
 
 	/// <summary>
 	/// A key has been found while playing.

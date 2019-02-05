@@ -154,8 +154,6 @@ public class DragonEatBehaviour : EatBehaviour {
 			}
 		}
 		m_dragon.AddEnergy(reward.energy);
-		if (reward.alcohol != 0)
-			m_dragon.AddAlcohol(reward.alcohol);
 	}
 
 	void OnMultiplierLost()
