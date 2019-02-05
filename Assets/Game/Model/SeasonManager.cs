@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 //----------------------------------------------------------------------------//
@@ -58,11 +59,13 @@ public class SeasonManager : Singleton<SeasonManager> {
 					m_activeSeason = PlayerPrefs.GetString(ACTIVE_SEASON_CACHE_KEY, NO_SEASON_SKU);
 				} else {
 					// Load from content - first definition with the "active" field set to true
-					DefinitionNode activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(
-						DefinitionsCategory.SEASONS, 
-						"active", 
-						"true"
-					);
+					DefinitionNode activeSeasonDef = null;
+					List<DefinitionNode> seasonDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SEASONS);
+					for(int i = 0; i < seasonDefs.Count && activeSeasonDef == null; ++i) {
+						if(seasonDefs[i].GetAsBool("active")) {
+							activeSeasonDef = seasonDefs[i];
+						}
+					}
 
 					// Store new season
 					m_activeSeason = activeSeasonDef == null ? NO_SEASON_SKU : activeSeasonDef.sku;
