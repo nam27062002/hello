@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class FileEditorTools
@@ -43,4 +44,11 @@ public class FileEditorTools
 
         FileUtil.ReplaceFile(oldPath, newPath);
     }
+    
+    public static void WriteToFile(string path, string content, bool append = false)
+    {
+        StreamWriter writer = new StreamWriter(path, append);
+        writer.WriteLine(content);
+        writer.Close();
+    }    
 }

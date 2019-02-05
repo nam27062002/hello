@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 public class UbiListUtils
 {
@@ -124,23 +125,27 @@ public class UbiListUtils
         return returnValue;
     }
 
-    /*
-    public void ClearDuplicates<T>(List<T> list)
+    public static string GetListAsString(List<string> list, string separator=", ")
     {
-        if (list != null)
-        {         
+        if (list == null || list.Count == 0)
+        {
+            return "";
+        }
+        else
+        {
+            StringBuilder builder = new StringBuilder();
             int count = list.Count;
-            for (int i = count - 1; i > 0; i--)
+            for (int i = 0; i < count; i++)
             {
-                for (int j = i - 1; j > -1; j--)
+                if (i > 0)
                 {
-                    if (list[i].Equals(list[j]))
-                    {
-                        list.RemoveAt(i);
-                    }
-                } 
+                    builder.Append(separator);
+                }
+
+                builder.Append(list[i]);
             }
-        }        
+
+            return builder.ToString();
+        }
     }
-    */
 }
