@@ -19,7 +19,11 @@ public class AddressablesEditor : MonoBehaviour
 
     private const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
     private const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/src/Editor/editor_" + ADDRESSSABLES_CATALOG_FILENAME;
-    private const string ADDRESSABLES_ENGINE_CATALOG_PATH = STREAMING_ASSETS_ROOT_PATH + "/" + ADDRESSSABLES_CATALOG_FILENAME;    
+
+	private const string ADDRESSABLES_ENGINE_CATALOG_FOLDER_PARENT = "Assets";
+	private const string ADDRESSABLES_ENGINE_CATALOG_FOLDER_NAME = "StreamingAssets";
+	private static string ADDRESSABLES_ENGINE_CATALOG_FOLDER_PATH = FileEditorTools.PathCombine(ADDRESSABLES_ENGINE_CATALOG_FOLDER_PARENT, ADDRESSABLES_ENGINE_CATALOG_FOLDER_NAME);
+	private static string ADDRESSABLES_ENGINE_CATALOG_PATH = ADDRESSABLES_ENGINE_CATALOG_FOLDER_PATH + "/" + ADDRESSSABLES_CATALOG_FILENAME;    
 
     [MenuItem(ADDRESSABLES_AB_MENU_BUILD)]
     static void BuildAssetBundles()
@@ -49,7 +53,15 @@ public class AddressablesEditor : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_MENU_GENERATE_CATALOG)]
     static void GenerateCatalog()
     {
+		string path = ADDRESSABLES_ENGINE_CATALOG_FOLDER_PATH;
+		if (!AssetDatabase.IsValidFolder(path))
+		{
+			AssetDatabase.CreateFolder(ADDRESSABLES_ENGINE_CATALOG_FOLDER_PARENT, ADDRESSABLES_ENGINE_CATALOG_FOLDER_NAME);
+		}
+
         AddressablesEditorTools.Build(ADDRESSABLES_EDITOR_CATALOG_PATH, ADDRESSABLES_ENGINE_CATALOG_PATH, AddressablesTypes.EProviderMode.AsCatalog);
+
+		AssetDatabase.Refresh();
     }
 
     [MenuItem(ADDRESSABLES_BUILD_MENU_CLEAR)]
