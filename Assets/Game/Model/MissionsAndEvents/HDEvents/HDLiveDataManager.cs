@@ -310,10 +310,10 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         }
     }
 
-    public void ForceRequestLeagues() {
+    public void ForceRequestLeagues(bool _force = false) {
         long deltaTime = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong() - m_lastLeaguesRequestTimestamp;
 
-        if (deltaTime > 1000 * 60 * 0.5f) { // half a minute
+        if (_force || deltaTime > 1000 * 60 * 0.5f) { // half a minute
             m_lastLeaguesRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
             if (TEST_CALLS) {
