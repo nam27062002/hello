@@ -353,8 +353,19 @@ public class DragonMotionHedgehog : DragonMotion {
 	override protected void OnCollisionEnter(Collision collision)
 	{
 		base.OnCollisionEnter(collision);
-		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
-		{
+		OnHedgehogCollision( collision );
+	}
+    
+    public override void OnCollisionStay(Collision collision)
+    {
+        base.OnCollisionStay(collision);
+        OnHedgehogCollision( collision );
+    }
+
+    protected void OnHedgehogCollision(Collision collision)
+    {
+        if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
+        {
             if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
             {
                 IEntity entity = collision.gameObject.GetComponent<IEntity>();
@@ -373,11 +384,13 @@ public class DragonMotionHedgehog : DragonMotion {
                     }
                 }
             }
-			
-		}
-	}
+            
+        }
+    }
 
-	override public bool CanIResumeEating()
+
+
+    override public bool CanIResumeEating()
 	{
 		bool ret = base.CanIResumeEating();
 		if ( m_cheskStateForResume && (m_state == State.Extra_1 || m_state == State.Extra_2) )
