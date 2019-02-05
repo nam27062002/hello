@@ -3,11 +3,79 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class AddressablesEditorTools
+/// <summary>
+/// This class is responsible for building data required to use Addressables system. Typically these data is composed by:
+/// 1)Addressables catalog used by the player, which is generated out of the editor Addressables catalog and it's adapted to use the provider mode specified at build time.
+/// 2)Asset bundles, which may be local or remote.
+/// 
+/// This class can be extended if you need to customize its behaviour.
+/// </summary>
+public class AddressablesEditorManager
 {
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
-    
-    public static void Build(string editorCatalogPath, string engineCatalogPath, AddressablesTypes.EProviderMode providerMode)
+
+    private static string STREAMING_ASSETS_ROOT_PATH = FileEditorTools.PathCombine("Assets", "StreamingAssets");
+
+    private const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
+    private const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/editor_" + ADDRESSSABLES_CATALOG_FILENAME;
+
+    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";    
+
+    private string m_localDestinationPath;
+    private string m_editorCatalogFolderParent;    
+    private string m_engineCatalogPath;
+    private string m_assetBundlesLocalDestinationPath;
+
+    public AddressablesEditorManager()
+    {
+        m_localDestinationPath = FileEditorTools.PathCombine(STREAMING_ASSETS_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
+        m_engineCatalogPath = FileEditorTools.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);
+        m_assetBundlesLocalDestinationPath = FileEditorTools.PathCombine(m_localDestinationPath, "AssetBundles");
+    }
+
+    public void ClearBuild()
+    {        
+        FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);        
+    }
+
+    public virtual void CustomizeEditorCatalog()
+    {
+        Debug.Log("Customize editor catalog");
+    }
+
+    public void GenerateEngineCatalog()
+    {        
+        if (FileEditorTools.Exists(m_localDestinationPath))
+        {
+            FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);            
+        }
+
+        FileEditorTools.CreateDirectory(m_localDestinationPath);
+
+        BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_engineCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
+    }
+
+    public void BuildAssetBundles()
+    {
+        AssetBundlesEditorTools.BuildAssetBundles();
+    }
+
+    public void DistributeAssetBundles()
+    {
+        Debug.Log("Distributing build...");        
+        AssetBundlesEditorTools.CopyAssetBundles(m_assetBundlesLocalDestinationPath);
+    }
+
+    public void Build()
+    {
+        ClearBuild();
+        CustomizeEditorCatalog();
+        GenerateEngineCatalog();
+        BuildAssetBundles();
+        DistributeAssetBundles();
+    }
+
+    private void BuildCatalog(string editorCatalogPath, string engineCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         // Loads the catalog
         TextAsset textAsset = (TextAsset)AssetDatabase.LoadAssetAtPath(editorCatalogPath, typeof(TextAsset));
