@@ -230,7 +230,7 @@ public class HDSeasonData {
         currentLeague.LoadData(_data["league"]);
 
         if (_data.ContainsKey("nextLeague")) {
-            currentLeague = HDLiveDataManager.league.GetLeagueData(_data["nextLeague"]["order"].AsInt);
+            nextLeague = HDLiveDataManager.league.GetLeagueData(_data["nextLeague"]["order"].AsInt);
         }
 
         if (_data.ContainsKey("leaderboard")) {

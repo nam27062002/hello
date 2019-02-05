@@ -141,7 +141,7 @@ public class LeaguesScreenController : MonoBehaviour {
 
                 case HDSeasonData.State.WAITING_NEW_SEASON: {
                         if (m_season.timeToEnd.TotalSeconds <= 0) {
-                            HDLiveDataManager.instance.ForceRequestLeagues();
+                            HDLiveDataManager.instance.ForceRequestLeagues(true);
                             SetActivePanel(Panel.LOADING);
                             CancelInvoke();
                         }
