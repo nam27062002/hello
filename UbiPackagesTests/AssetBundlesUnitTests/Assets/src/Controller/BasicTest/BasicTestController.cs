@@ -32,6 +32,8 @@ public class BasicTestController : MonoBehaviour
         return (ELoadResourceMode)value;
     }
 
+    private bool m_useRequests = true;
+
     #region asset_cube
     private static string ASSET_CUBE_AB_NAME = "01/asset_cubes";
     private static string ASSET_CUBE_ASSET_NAME = "UbiCube";
@@ -146,11 +148,11 @@ public class BasicTestController : MonoBehaviour
         //string abId = "ab/logo";
         if (m_loadResourceMode != ELoadResourceMode.AsyncFull)
         {
-            AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(abId, LoadResource_OnAssetBundleLoaded);
+            AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(abId, LoadResource_OnAssetBundleLoaded, m_useRequests);
         }
         else
         {
-            AssetBundlesManager.Instance.LoadResourceAsync(m_loadResourceABId, m_loadResourceName, m_loadResourceIsAsset, LoadResource_OnAssetLoaded, m_loadResourceSceneMode);
+            AssetBundlesManager.Instance.LoadResourceAsync(m_loadResourceABId, m_loadResourceName, m_loadResourceIsAsset, LoadResource_OnAssetLoaded, m_loadResourceSceneMode, m_useRequests);
         }
     }
 
@@ -167,7 +169,7 @@ public class BasicTestController : MonoBehaviour
             else if (m_loadResourceMode == ELoadResourceMode.Async)
             {
                 AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_loadResourceABId);
-                AssetBundlesManager.Instance.LoadResourceFromAssetBundleAsync(handle.AssetBundle, m_loadResourceName, m_loadResourceIsAsset, LoadResource_OnAssetLoaded, m_loadResourceSceneMode);
+                AssetBundlesManager.Instance.LoadResourceFromAssetBundleAsync(handle.AssetBundle, m_loadResourceName, m_loadResourceIsAsset, LoadResource_OnAssetLoaded, m_loadResourceSceneMode, m_useRequests);
             }
         }
         else 
@@ -357,7 +359,9 @@ public class BasicTestController : MonoBehaviour
     {
         Memory_BeginSample("AB_INIT");        
 
-        string localAssetBundlesPath = Application.streamingAssetsPath;
+        string localAssetBundlesPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Addressables");
+        localAssetBundlesPath = System.IO.Path.Combine(localAssetBundlesPath, "AssetBundles");
+
         List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
         AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
 
@@ -403,7 +407,16 @@ public class BasicTestController : MonoBehaviour
             Ui_NeedsToUpdateMemoryUsed = true;
             //Debug.Log("Memory sample " + memory_sampleName + " diff = " + (memory_sampleAtEnd - memory_sampleAtBegin));
         }
-    }    
+    }
+    #endregion
+
+    #region request
+    private AssetBundlesOpRequest m_request;
+
+    private void Request_OnDone(AssetBundlesOp.EResult result, object data)
+    {
+        Debug.Log("Request_OnDone " + result);
+    }
     #endregion
 
     public void Update()
@@ -412,7 +425,19 @@ public class BasicTestController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            Debug.Log(Memory_GetUsedSize());
+            //Debug.Log(Memory_GetUsedSize());            
+            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);
+
+            //UnitTestAddRange<string>.TestBatch();
+            UnitTestSplitIntersecionAndDisjoint<string>.TestBatch();
+        }
+
+        if (m_request != null)
+        {
+            Debug.Log("request.progress = " + m_request.progress);
+
+            if (m_request.isDone)
+                m_request = null;
         }
 
         if (Ui_NeedsToUpdateMemoryUsed)
@@ -420,5 +445,5 @@ public class BasicTestController : MonoBehaviour
             Ui_UpdateMemoryUsed();
             Ui_NeedsToUpdateMemoryUsed = false;
         }
-    }
+    }   
 }
