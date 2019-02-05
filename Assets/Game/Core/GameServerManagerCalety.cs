@@ -339,6 +339,10 @@ public class GameServerManagerCalety : GameServerManager {
             ServerManager.SharedInstance.CancelPendingCommands();
             NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
 
+            // We need to log out from server to overcome a Calety's limitation. Calety was made for an online game considering that the game would reload every time a request fails, which guarantees that 
+            // action packet id will get reseted. We need to simulate that behaviour to make sure the action packet ids is going to be in sync with the server after network recovery
+            GameSessionManager.SharedInstance.LogOutFromServer();
+
             Connection_OnServerDown();
 
             m_isProcessingConnectionLost = false;

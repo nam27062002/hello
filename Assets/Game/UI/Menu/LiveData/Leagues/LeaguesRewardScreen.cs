@@ -209,6 +209,9 @@ public class LeaguesRewardScreen : IRewardScreen {
 		// Trigger UI animation
 		m_resultScreenAnim.SetTrigger("out");
 
+		// Prevent button spamming
+		SetAnimatingState(State.ANIMATING);
+
         // Next step!
 		// [AOC] Animation will do it (for a better sync)
        // AdvanceStep();
