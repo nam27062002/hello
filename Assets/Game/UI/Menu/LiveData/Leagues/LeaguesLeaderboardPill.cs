@@ -80,6 +80,10 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 
 	[Space]
 	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+	[SerializeField] private Button m_scrollToButton = null;
+	public Button scrollToButton {
+		get { return m_scrollToButton; }
+	}
 
 	// Internal
 	private LeaguesLeaderboardPillData m_lastUsedData = null;

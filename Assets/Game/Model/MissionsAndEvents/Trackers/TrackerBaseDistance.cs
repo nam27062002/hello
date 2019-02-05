@@ -33,7 +33,9 @@ public class TrackerBaseDistance : TrackerBase {
 	}
 
 	protected void UpdateLastPosition() {
-		m_lastPosition = m_playerTransform.position;
+        if (m_playerTransform != null) {
+            m_lastPosition = m_playerTransform.position;
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -68,8 +70,8 @@ public class TrackerBaseDistance : TrackerBase {
 		m_deltaDistance = 0f;
 
 		m_playerTransform = InstanceManager.player.transform;
-		m_lastPosition = m_playerTransform.position;
-	}
+        UpdateLastPosition();
+    }
 
 	/// <summary>
 	/// Sets the initial value for the tracker.
@@ -92,14 +94,18 @@ public class TrackerBaseDistance : TrackerBase {
 	private void OnGameUpdated() {
 		// We'll receive this event only while the game is actually running, so no need to check anything
 		if (m_updateDistance) {
-			m_deltaDistance += (m_playerTransform.position - m_lastPosition).magnitude;
+            if (m_playerTransform != null) {
+                m_deltaDistance += (m_playerTransform.position - m_lastPosition).magnitude;
 
-			long integerPart = (long)m_deltaDistance;
-			m_deltaDistance -= integerPart;
+                long integerPart = (long)m_deltaDistance;
+                m_deltaDistance -= integerPart;
 
-			currentValue += integerPart;
+                currentValue += integerPart;
+            } else { 
+                m_playerTransform = InstanceManager.player.transform;
+            }
 
-			UpdateLastPosition();
-		}
+            UpdateLastPosition();
+        }
 	}
 }

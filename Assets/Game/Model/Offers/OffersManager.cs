@@ -39,6 +39,12 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		get { return instance.m_featuredOffer; }
 	}
 
+	private bool m_autoRefreshEnabled = true;
+	public static bool autoRefreshEnabled {
+		get { return instance.m_autoRefreshEnabled; }
+		set { instance.m_autoRefreshEnabled = value; }
+	}
+
 	// Internal
 	private List<OfferPack> m_allEnabledOffers = new List<OfferPack>();	// All enabled and non-expired offer packs, regardless of type
 	private List<OfferPack> m_allOffers = new List<OfferPack>();        // All defined offer packs, regardless of state and type
@@ -73,11 +79,14 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// </summary>
 	private void Update() {
 		// Refresh offers periodically for better performance
-		if(m_timer <= 0) {
-			m_timer = settings.refreshFrequency;
-			Refresh(false);
+		// Only if allowed
+		if(m_autoRefreshEnabled) {
+			if(m_timer <= 0) {
+				m_timer = settings.refreshFrequency;
+				Refresh(false);
+			}
+			m_timer -= Time.deltaTime;
 		}
-		m_timer -= Time.deltaTime;
 	}
 
 	/// <summary>

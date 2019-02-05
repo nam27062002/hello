@@ -297,6 +297,23 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// [AOC] TODO!!
 	}
 
+	/// <summary>
+	/// A purchase has been started.
+	/// </summary>
+	protected override void OnPurchaseStarted() {
+		// Prevent offers from expiring
+		OffersManager.autoRefreshEnabled = false;
+	}
+
+	/// <summary>
+	/// A purchase has finished.
+	/// </summary>
+	/// <param name="_success">Has it been successful?</param>
+	protected override void OnPurchaseFinished(bool _success) {
+		// Restore offers auto-refresh
+		OffersManager.autoRefreshEnabled = true;
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL UTILS														  //
 	//------------------------------------------------------------------------//

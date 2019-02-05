@@ -65,6 +65,9 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     private PoolHandler m_level3PoolHandler;
     Vector3 m_tmpVector = GameConstants.Vector3.right;
 
+    protected float m_fireNodeTimer = 0;
+    Rect m_bounds2D;
+    
 	// Use this for initialization
 	void Start () {
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
@@ -240,6 +243,16 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     					}
     				}
     			}
+                
+                if ( m_fire )
+                {
+                    m_fireNodeTimer -= Time.deltaTime;
+                    if (m_fireNodeTimer <= 0) {
+                        m_fireNodeTimer += 0.25f;
+                        m_bounds2D.Set(m_circle.center.x - m_circle.radius, m_circle.center.y - m_circle.radius, m_circle.radius * 2, m_circle.radius * 2);
+                        FirePropagationManager.instance.FireUpNodes(m_bounds2D, Overlaps, m_tier, m_fireType, m_motion.direction, IEntity.Type.PLAYER);
+                    }
+                }
             }
 		}
 		else
@@ -282,6 +295,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			}
 		}
 	}
+    
+    public bool Overlaps(CircleAreaBounds _circle)
+    {
+        return m_circle.Overlaps(_circle.center, _circle.radius);
+    }
+    
     
     void LateUpdate()
     {
