@@ -9,7 +9,7 @@ public class AssetBundlesEditorTools
     public static void BuildAssetBundles()
     {
         Debug.Log("Building asset bundles...");
-        string assetBundleDirectory = "AssetBundles/" + EditorUserBuildSettings.activeBuildTarget.ToString();
+        string assetBundleDirectory = FileEditorTools.PathCombine(ASSET_BUNDLES_PATH, EditorUserBuildSettings.activeBuildTarget.ToString());
 
         FileEditorTools.DeleteFileOrDirectory(assetBundleDirectory);
         if (!Directory.Exists(assetBundleDirectory))
@@ -24,37 +24,26 @@ public class AssetBundlesEditorTools
     {
         string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
         string assetBundlesPath = FileEditorTools.PathCombine(ASSET_BUNDLES_PATH, activeBuildTarget);
-
-        /*
-        if (!Directory.Exists(dstPath))
-        {
-            CreateDirectory(dstPath);
+       
+        if (FileEditorTools.Exists(dstPath))
+        {                       
+            FileEditorTools.DeleteFileOrDirectory(dstPath);            
         }
-        else
-        {                                
-            DeleteFileOrDirectory(dstPath);
-        }
+                
+        FileEditorTools.CreateDirectory(dstPath);        
+        FileEditorTools.CopyDirectory(assetBundlesPath, dstPath);        
 
-        dstPath = PathCombine(dstPath, "AssetBundles");
-
-        if (!Directory.Exists(dstPath))
-        {
-            CreateDirectory(dstPath);
-        }*/
-
-        // Copy all asset bundles to StreamingAssets
-        FileEditorTools.CopyFileOrDirectory(assetBundlesPath, dstPath);
-
-        // Rename the dependencies manifest
+        // Rename the dependencies bundle
         string origDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, activeBuildTarget);
         string newDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, AssetBundlesManager.DependenciesFileName);
         FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
         FileEditorTools.DeleteFileOrDirectory(origDependenciesManifestPath);
 
+        // Rename the dependencies manifest        
         string extension = ".manifest";
         origDependenciesManifestPath += extension;
         newDependenciesManifestPath += extension;
         FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
-        FileEditorTools.DeleteFileOrDirectory(origDependenciesManifestPath);
+        FileEditorTools.DeleteFileOrDirectory(origDependenciesManifestPath);                
     }   
 }
