@@ -40,7 +40,11 @@ public class FileEditorTools
             Debug.Log("Deleting " + path);
         }
 
-        //if (File.Exists(path))
+        if (AssetDatabase.IsValidFolder(path))
+        {            
+            AssetDatabase.DeleteAsset(path);
+        }
+        else
         {
             FileUtil.DeleteFileOrDirectory(path);
         }
