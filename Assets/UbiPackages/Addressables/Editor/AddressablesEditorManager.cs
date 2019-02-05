@@ -84,7 +84,9 @@ public class AddressablesEditorManager
             sm_logger.LogError("Engine catalog wasn't generated because editor catalog " + editorCatalogPath + " couldn not be loaded");
         }
         else
-        { 
+        {
+            AssetDatabase.RemoveUnusedAssetBundleNames();
+
             JSONNode catalogJSON = JSON.Parse(textAsset.text);
             AddressablesCatalog editorCatalog = new AddressablesCatalog();
             editorCatalog.Load(catalogJSON, sm_logger);
