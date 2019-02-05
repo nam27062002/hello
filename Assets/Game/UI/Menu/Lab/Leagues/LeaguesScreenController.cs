@@ -93,7 +93,8 @@ public class LeaguesScreenController : MonoBehaviour {
                 case HDSeasonData.State.JOINED:
                 case HDSeasonData.State.WAITING_RESULTS:
                 case HDSeasonData.State.WAITING_NEW_SEASON: {
-                        if (m_season.liveDataState != HDLiveData.State.WAITING_RESPONSE) {
+                        if (m_season.liveDataState != HDLiveData.State.PARTIAL 
+                        &&  m_season.liveDataState != HDLiveData.State.WAITING_RESPONSE) {
                             Refresh();
                         }
                     }
