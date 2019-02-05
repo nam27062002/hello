@@ -51,6 +51,9 @@ namespace LevelEditor {
 
 		private List<string> m_levelsSkuList = new List<string>();
 
+        // Only load ART levels
+        private bool m_onlyArt = false;
+
 		// Every type of scene goes in a different sub-folder
 		private string assetDirForCurrentMode {
 			get { 
@@ -185,26 +188,32 @@ namespace LevelEditor {
 
 			// Some spacing
 			GUILayout.Space(5f);
-			
-			// Big juicy text showing the current level being edited
-			GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
-			titleStyle.fontSize = 20;
-			titleStyle.alignment = TextAnchor.MiddleCenter;
-			if(activeLevels != null && activeLevels.Count > 0) {
-				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
-			} else {
-				EditorGUILayout.BeginHorizontal(); {
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                // Big juicy text showing the current level being edited
+                GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
+    			titleStyle.fontSize = 20;
+			    titleStyle.alignment = TextAnchor.MiddleCenter;
+			    if(activeLevels != null && activeLevels.Count > 0) {
+    				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
+			    } else {
 					GUILayout.FlexibleSpace();
 					GUILayout.Label("No level loaded", titleStyle);
 					if(GUILayout.Button("Detect", GUILayout.Height(30f))) {
 						Init();
 					}
 					GUILayout.FlexibleSpace();
-				} EditorGUILayoutExt.EndHorizontalSafe();
-			}
-			
-			// Some more spacing
-			GUILayout.Space(5f);
+			    }
+                if (LevelEditor.settings.selectedMode == LevelEditorSettings.Mode.ART)
+                {
+                    m_onlyArt = GUILayout.Toggle(m_onlyArt, "Only Art Levels");
+                }
+            }
+            EditorGUILayoutExt.EndHorizontalSafe();
+
+            // Some more spacing
+            GUILayout.Space(5f);
 
 			if(GUILayout.Button("Load Scenes From Definition")) {
 				OnLoadScenesFromDefinition();
@@ -514,6 +523,8 @@ namespace LevelEditor {
 
 			LevelEditorSettings.Mode oldMode = LevelEditor.settings.selectedMode;
 
+            bool onlyArt = m_onlyArt && (oldMode == LevelEditorSettings.Mode.ART);
+
             if (common)
             {
                 List<string> commonScene = def.GetAsList<string>("common");
@@ -521,7 +532,11 @@ namespace LevelEditor {
                 {
                     EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i / (float)commonScene.Count);
                     LevelEditor.settings.selectedMode = GetModeByName(commonScene[i]);
-                    OnLoadLevel(commonScene[i] + ".unity");
+                    if (!onlyArt || commonScene[i].StartsWith("ART"))
+                    {
+                        OnLoadLevel(commonScene[i] + ".unity");
+
+                    }
                 }
             }
 
@@ -534,7 +549,10 @@ namespace LevelEditor {
                     {
                         EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i / (float)editorOnlyScenes.Count);
                         LevelEditor.settings.selectedMode = GetModeByName(editorOnlyScenes[i]);
-                        OnLoadLevel(editorOnlyScenes[i] + ".unity");
+                        if (!onlyArt || editorOnlyScenes[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(editorOnlyScenes[i] + ".unity");
+                        }
                     }
                 }
 
@@ -545,7 +563,10 @@ namespace LevelEditor {
                     {
                         EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i / (float)gameplayWip.Count);
                         LevelEditor.settings.selectedMode = GetModeByName(gameplayWip[i]);
-                        OnLoadLevel(gameplayWip[i] + ".unity");
+                        if (!onlyArt || gameplayWip[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(gameplayWip[i] + ".unity");
+                        }
                     }
                 }
             }
@@ -567,7 +588,10 @@ namespace LevelEditor {
                         {
                             _continue = true;
                             LevelEditor.settings.selectedMode = GetModeByName(areaScenes[i]);
-                            OnLoadLevel(areaScenes[i] + ".unity");
+                            if (!onlyArt || areaScenes[i].StartsWith("ART"))
+                            {
+                                OnLoadLevel(areaScenes[i] + ".unity");
+                            }
                         }
                     }
                     areaIndex++;
