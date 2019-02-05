@@ -92,6 +92,7 @@ public class LeaguesScreenController : MonoBehaviour {
                 case HDSeasonData.State.NOT_JOINED:
                 case HDSeasonData.State.JOINED:
                 case HDSeasonData.State.WAITING_RESULTS:
+                case HDSeasonData.State.REWARDS_COLLECTED:
                 case HDSeasonData.State.WAITING_NEW_SEASON: {
                         if (m_season.liveDataState != HDLiveData.State.PARTIAL 
                         &&  m_season.liveDataState != HDLiveData.State.WAITING_RESPONSE) {
@@ -325,7 +326,7 @@ public class LeaguesScreenController : MonoBehaviour {
 
     public void RefreshLiveData() {
         SetActivePanel(Panel.LOADING);
-        HDLiveDataManager.instance.RequestMyLiveData();
+        HDLiveDataManager.instance.RequestMyLiveData(true);
         UbiBCN.CoroutineManager.DelayedCall(Refresh, 1f);
     }
 

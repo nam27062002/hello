@@ -92,7 +92,7 @@ public class LeaguesPanelError : LeaguesScreenPanel {
 
 
     //------------------------------------------------------------------------//
-    // CALLBACK METHODS                                                        //
+    // CALLBACK METHODS                                                       //
     //------------------------------------------------------------------------//
     public void OnRetryButton() {
         if (m_errorGroup == ErrorGroup.NETWORK || m_errorCode == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
@@ -115,7 +115,7 @@ public class LeaguesPanelError : LeaguesScreenPanel {
                 case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
-                        leaguesScreenController.RefreshSeasonData();
+                        leaguesScreenController.RefreshLiveData();
                     }
                     break;
 

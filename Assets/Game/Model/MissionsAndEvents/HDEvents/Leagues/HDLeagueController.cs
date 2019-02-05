@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 
 public class HDLeagueController : HDLiveDataController {
@@ -71,12 +72,14 @@ public class HDLeagueController : HDLiveDataController {
     public override bool IsFinishPending() {
         bool isFinishPending = m_isFinishPending;
 
-        if (isFinishPending) {
+        if (isFinishPending
+        &&  Application.internetReachability != NetworkReachability.NotReachable 
+        &&  GameSessionManager.SharedInstance.IsLogged()) {
             m_season.RequestFinalize();
-            HDLiveDataManager.instance.ForceRequestLeagues();
+            HDLiveDataManager.instance.ForceRequestLeagues(true);
             m_isFinishPending = false;
         }
-
+    
         return isFinishPending;
     }
 
