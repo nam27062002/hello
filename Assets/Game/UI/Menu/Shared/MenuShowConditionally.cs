@@ -38,6 +38,28 @@ public class MenuShowConditionally : MonoBehaviour {
 		HIDE_ON_TARGET_SCREENS
 	}
 
+	private struct VisibilitySetup {
+		public bool show;					// Show or hide?
+		public bool delayed;				// Delay?
+		public bool allowExternalChecks;    // Allow external checks?
+
+		public bool animate;				// Animate?
+		public bool restartAnimation;		// Restart the animation even if in the same state?
+		public bool disableAfterAnimation;	// If hiding, disable object after the animation?
+
+		public static VisibilitySetup Default() {
+			return new VisibilitySetup { 
+				show = true, 
+				delayed = false, 
+				allowExternalChecks = true, 
+
+				animate = true, 
+				restartAnimation = false, 
+				disableAfterAnimation = true 
+			};
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
 	//------------------------------------------------------------------//
@@ -69,6 +91,7 @@ public class MenuShowConditionally : MonoBehaviour {
 	[SerializeField] private List<MenuScreen> m_targetScreens = new List<MenuScreen>();
 
 	// Animation options
+	[SerializeField] private float m_delay = 0f;
 	[SerializeField] private bool m_restartShowAnimation = false;
 
 	// Events
@@ -92,7 +115,7 @@ public class MenuShowConditionally : MonoBehaviour {
 
 	// Internal
 	private Coroutine m_coroutine;
-	private bool m_animatorCheckOverride = false;
+	private bool m_allowExternalChecks = true;
 	private bool m_firstEnablePassed = false;
 
 	//------------------------------------------------------------------//
@@ -102,21 +125,23 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Get external references
-		Debug.Assert(m_targetAnimator != null, "No target defined!");
-
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
 		// The animator must ask for permission before showing itself!
-		m_targetAnimator.OnShowCheck.AddListener(OnAnimatorCheck);
+		if(m_targetAnimator != null) {
+			m_targetAnimator.OnShowCheck.AddListener(OnAnimatorCheck);
+		}
 
 		// Start hidden (the Start call will properly initialize it based on current values)
 		// Force a hide and then apply for the first time with current values and without animation
-		Apply(false, false, false);
-		Apply(targetDragonSku, currentMenuScreen, false, false);
+		VisibilitySetup setup = VisibilitySetup.Default();
+		setup.show = false;
+		setup.animate = false;
+		Apply(setup);
+		Apply(targetDragonSku, currentMenuScreen, setup);
 
 		m_coroutine = null;
 	}
@@ -126,7 +151,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Don't animate the first time the object is enabled
-		Apply(targetDragonSku, currentMenuScreen, m_firstEnablePassed, false);
+		VisibilitySetup setup = VisibilitySetup.Default();
+		setup.animate = m_firstEnablePassed;
+		Apply(targetDragonSku, currentMenuScreen, setup);
 		m_firstEnablePassed = true;
 	}
 
@@ -139,7 +166,9 @@ public class MenuShowConditionally : MonoBehaviour {
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnScreenChanged);
 
-		m_targetAnimator.OnShowCheck.RemoveListener(OnAnimatorCheck);
+		if(m_targetAnimator != null) {
+			m_targetAnimator.OnShowCheck.RemoveListener(OnAnimatorCheck);
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -253,17 +282,17 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <summary>
 	/// Apply visibility based on given parameters.
 	/// </summary>
-	/// <param name="_show">Whether to show or hide.</param>
-	/// <param name="_useAnims">Whether to animate or not.</param>
-	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
-	private void Apply(bool _show, bool _useAnims, bool _resetAnim) {
+	/// <param name="_setup">Visibility settings to be applied. <c>delayed</c> value will be overwritten in some cases.</param>
+	//private void Apply(bool _show, bool _useAnims, bool _resetAnim) {
+	private void Apply(VisibilitySetup _setup) {
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("APPLY: " + _show + ", " + _useAnims + ", " + _resetAnim));
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("APPLY: " + _setup.show + ", " + _setup.animate + ", " + _setup.restartAnimation));
 
 		// Let animator do its magic
 		// If forcing animation and going from visible to visible, hide before showing again
-		if(_resetAnim 
-		&& _show 
+		if(m_targetAnimator != null
+		&& _setup.restartAnimation 
+		&& _setup.show
 		&& m_targetAnimator.visible 
 		&& isActiveAndEnabled 
 		&& m_targetAnimator.tweenType != ShowHideAnimator.TweenType.NONE) {
@@ -272,28 +301,24 @@ public class MenuShowConditionally : MonoBehaviour {
 
 			// Go to opposite of the target state
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
-			m_targetAnimator.ForceHide(_useAnims, m_targetAnimator.gameObject != this.gameObject);
+			VisibilitySetup hideSetup = _setup; // struct, will create a new copy
+			hideSetup.show = false;
+			hideSetup.disableAfterAnimation = m_targetAnimator.gameObject != this.gameObject;
+			SetVisibility(hideSetup);
 
-			// Program the animation to the target state in sync with the dragon scroll animation (more or less)
-			if(m_coroutine != null) {
-				StopCoroutine(m_coroutine);
-				m_coroutine = null;
-			}
-			m_coroutine = StartCoroutine(LaunchDelayedAnimation(_show, _useAnims));
+			// Delay the animation to the target state in sync with the dragon scroll animation (more or less)
+			_setup.delayed = true;
+			SetVisibility(_setup);
 		} else {
-			if(m_coroutine != null) {
-				StopCoroutine(m_coroutine);
-				m_coroutine = null;
-			}
 			// Debug
-			if(_show) {
+			if(_setup.show) {
 				ShowHideAnimator.DebugLog(this, Colors.green.Tag("FORCE_SHOW"));
 			} else {
 				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 2"));
 			}
-			m_animatorCheckOverride = true;
-			m_targetAnimator.ForceSet(_show, _useAnims);
-			m_animatorCheckOverride = false;
+
+			_setup.allowExternalChecks = false;
+			SetVisibility(_setup);
 		}
 	}
 
@@ -302,10 +327,62 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <param name="_dragonSku">Dragon sku to be considered.</param>
 	/// <param name="_screen">Menu screen to be considered.</param>
-	/// <param name="_useAnims">Whether to animate or not.</param>
-	/// <param name="_resetAnim">Optionally force the animation to be played, even if going to the same state.</param>
-	private void Apply(string _dragonSku, MenuScreen _screen, bool _useAnims, bool _resetAnim) {
-		Apply(Check(_dragonSku, _screen), _useAnims, m_restartShowAnimation);
+	/// <param name="_setup">Config to be used. <c>show</c> value will be ignored.</param>
+	//private void Apply(string _dragonSku, MenuScreen _screen, bool _useAnims, bool _resetAnim) {
+	private void Apply(string _dragonSku, MenuScreen _screen, VisibilitySetup _setup) {
+		//Apply(Check(_dragonSku, _screen), _useAnims, m_restartShowAnimation);
+		_setup.show = Check(_dragonSku, _screen);
+		Apply(_setup);
+	}
+
+	/// <summary>
+	/// Apply the visibility to the target object!
+	/// </summary>
+	/// <param name="_setup">Visibility parameters.</param>
+	//private void SetVisibility(bool _show, bool _useAnims, bool _externalCheckAllowed, bool _delayed, bool _disableAfterAnimation) {
+	private void SetVisibility(VisibilitySetup _setup) {
+		// Cancel any pending action
+		if(m_coroutine != null) {
+			StopCoroutine(m_coroutine);
+			m_coroutine = null;
+		}
+
+		// Delayed?
+		if(_setup.delayed) {
+			// Yes! Program the coroutine
+			m_coroutine = StartCoroutine(LaunchDelayedAnimation(_setup));
+		} else {
+			// Allow external checks?
+			m_allowExternalChecks = _setup.allowExternalChecks;
+
+			// Apply! Do we have an animator?
+			if(m_targetAnimator != null) {
+				// Yes! Launch it with given parameters
+				if(_setup.show) {
+					// Show: restart animation?
+					if(_setup.animate && _setup.restartAnimation) {
+						m_targetAnimator.RestartShow();
+					} else {
+						m_targetAnimator.ForceShow(_setup.animate);
+					}
+				} else {
+					// Hide: restart animation?
+					if(_setup.animate && _setup.restartAnimation) {
+						m_targetAnimator.RestartHide(_setup.disableAfterAnimation);
+					} else {
+						m_targetAnimator.ForceHide(_setup.animate, _setup.disableAfterAnimation);
+					}
+				}
+			} else {
+				// No! Just apply directly to the game object
+				this.gameObject.SetActive(_setup.show);
+			}
+
+
+			// Restore external check flag
+			m_allowExternalChecks = true;
+
+		}
 	}
 
 	//------------------------------------------------------------------//
@@ -323,10 +400,13 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Just update visibility
 		if(m_checkSelectedDragon) {
+			VisibilitySetup setup = VisibilitySetup.Default();
+			setup.restartAnimation = m_restartShowAnimation;
+
 			Apply(
-				string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku,	// MenuSceneController.selectedDragon is not necessarily updated yet
+				string.IsNullOrEmpty(m_targetDragonSku) ? _sku : m_targetDragonSku, // MenuSceneController.selectedDragon is not necessarily updated yet
 				currentMenuScreen,
-				true, m_restartShowAnimation
+				setup
 			);
 		}
 	}
@@ -348,7 +428,7 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Update visibility
 		if(m_checkSelectedDragon) {
-			Apply(targetDragonSku, currentMenuScreen, true, false);
+			Apply(targetDragonSku, currentMenuScreen, VisibilitySetup.Default());
 		}
 	}
 
@@ -363,7 +443,7 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		// Refresh
 		if(m_checkScreens) {
-			Apply(targetDragonSku, currentMenuScreen, true, false);
+			Apply(targetDragonSku, currentMenuScreen, VisibilitySetup.Default());
 		}
 	}
 
@@ -371,20 +451,23 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// Use it to set the animator's visibility after a delay via StartCoroutine().
 	/// </summary>
 	/// <returns>The coroutine function.</returns>
-	/// <param name="_toShow">Whether to show or hide the object.</param>
-	/// <param name="_useAnims">Whether to use anims or not.</param>
-	private IEnumerator LaunchDelayedAnimation(bool _toShow, bool _useAnims) {
+	/// <param name="_setup">Config to be used.</param>
+	private IEnumerator LaunchDelayedAnimation(VisibilitySetup _setup) {
 		// Delay
-		yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
+		if(m_targetAnimator != null) {
+			yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
+		} else {
+			yield return new WaitForSeconds(m_delay);
+		}
 
 		// Debug
-		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("DELAYED APPLY: " + _toShow + ", " + _useAnims + "\nenabled? " + this.enabled));
+		ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("DELAYED APPLY: " + _setup.show + ", " + _setup.animate + "\nenabled? " + this.enabled));
 
 		// Do it! (If still enabled!)
 		if(this.enabled) {
-			m_animatorCheckOverride = true;
-			m_targetAnimator.ForceSet(_toShow, _useAnims);
-			m_animatorCheckOverride = false;
+			_setup.allowExternalChecks = false;
+			_setup.delayed = false;
+			SetVisibility(_setup);
 		}
 
 		m_coroutine = null;
@@ -399,7 +482,7 @@ public class MenuShowConditionally : MonoBehaviour {
 		if(!this.enabled) return;
 
 		// If check overriden, we triggered the animation ourselves so let it go through
-		if(m_animatorCheckOverride) return;
+		if(!m_allowExternalChecks) return;
 
 		// Check whether we can actualy trigger the animator
 		if(!Check(targetDragonSku, currentMenuScreen)) {

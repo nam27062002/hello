@@ -321,6 +321,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	public const float FlightCeiling = 370f;
 	public const float SpaceStart = 171f;
+    public int m_limitsCheck = 0;
+    public Vector3 m_lastValidPos = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -434,6 +436,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
         RegionManager.Init();
         m_regionManager = RegionManager.Instance;
+
+        m_lastValidPos = m_transform.position;
 
 		if (m_state == State.None)
 			ChangeState(State.Fly);
@@ -1127,8 +1131,28 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		{
 			Vector3 pos = m_transform.position;
 			pos.z = 0f;
-			m_transform.position = pos;
+
+            // check pos
+            m_limitsCheck++;
+            if ( m_limitsCheck > 2 )
+            {
+                if (Physics.Linecast( m_lastValidPos, pos, GameConstants.Layers.GROUND ))
+                {
+                    pos = m_lastValidPos;
+                }
+                else
+                {
+                    m_lastValidPos = pos;
+                }
+            }
+            m_transform.position = pos;
 		}
+        else
+        {
+            m_lastValidPos = m_transform.position;
+        }
+
+        
 
 		/*
 		Vector3 rewardDistance = RewardManager.distance;
