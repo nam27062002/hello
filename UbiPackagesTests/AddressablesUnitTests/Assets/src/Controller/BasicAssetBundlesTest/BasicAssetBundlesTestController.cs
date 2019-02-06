@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// This class is responsible for controlling the SC_BasicTest scene
 /// </summary>
-public class BasicTestController : MonoBehaviour
+public class BasicAssetBundlesTestController : MonoBehaviour
 {
     public Transform m_cubesRoot;
     private int m_cubesLoadedCount;
