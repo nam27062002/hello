@@ -271,10 +271,6 @@ public class DragonPowerUp : MonoBehaviour {
 					DragonEatBehaviour eatBehaviour =  GetComponent<DragonEatBehaviour>();
 					eatBehaviour.AddEatDistance( def.GetAsFloat("param1", 0) * multiplier );
 				}break;
-				case "alcohol_resistance":
-				{
-					player.alcoholResistance = true;
-				}break;
 				case "immune_trash":
 				{
 					List<string> immuneTrash = def.GetAsList<string>("param1");

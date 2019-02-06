@@ -210,15 +210,7 @@ public class DragonDataSpecial : IDragonData {
     public override float energyRefillRate{ 
         get { return m_specialTierDef.GetAsFloat("energyRefillRate"); } 
     }
-    
-    // Alcohol
-    public override float maxAlcohol{ 
-        get { return m_specialTierDef.GetAsFloat("maxAlcohol"); } 
-    }
-    public override float alcoholDrain{ 
-        get { return m_specialTierDef.GetAsFloat("alcoholDrain", 1); } 
-    }
-    
+        
     // Misc
     public override float statsBarRatio{ 
         get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 

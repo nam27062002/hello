@@ -464,14 +464,12 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
-		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
-		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
@@ -495,11 +493,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
 	}
-
-	private void OnDrunkToggle(bool _active)
-	{
-		m_animator.SetBool(GameConstants.Animator.DRUNK, _active);
-	}
+	
 
 	public void OnPetPreFreeRevive()
 	{
@@ -1183,15 +1177,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-
-		if ( m_dragon.IsDrunk() )
-		{
-            //impulse = -impulse;
-            float drunkX = -0.6f;
-            float drunkY = 0.6f;
-            impulse.x = drunkX * impulse.x;
-            impulse.y = drunkY * impulse.y;
-		}
 		UpdateMovementImpulse( _deltaTime, impulse);
 	}
 
@@ -1294,14 +1279,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-        if ( m_dragon.IsDrunk() )
-        {
-            //impulse = -impulse;
-            float drunkX = -0.6f;
-            float drunkY = 0.6f;
-            impulse.x = drunkX * impulse.x;
-            impulse.y = drunkY * impulse.y;
-        }
 		UpdateWaterMovementImpulse(_deltaTime, impulse);
     }
 
@@ -2124,7 +2101,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-    public void OnCollisionStay(Collision collision)
+    public virtual void OnCollisionStay(Collision collision)
     {
         switch (m_state)
         {

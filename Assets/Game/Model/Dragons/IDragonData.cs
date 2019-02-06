@@ -184,10 +184,6 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float energyDrain{ get; }
     public abstract float energyRefillRate{ get; }
     
-        // Alcohol
-    public abstract float maxAlcohol{ get; }
-    public abstract float alcoholDrain{ get; }
-    
         // Misc
     public abstract float statsBarRatio{ get; }
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }

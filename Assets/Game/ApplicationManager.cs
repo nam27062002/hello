@@ -1123,13 +1123,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
     }
 
-    private bool Debug_IsDrunkOn { get; set; }
-
-    public void Debug_TestToggleDrunk()
-    {
-        Debug_IsDrunkOn = !Debug_IsDrunkOn;
-        Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
-    }
 
     private bool Debug_IsFrameColorOn { get; set; }
 
