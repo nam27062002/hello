@@ -2,34 +2,20 @@
 using UnityEngine.SceneManagement;
 
 public class AddressablesFromResourcesProvider : AddressablesProvider
-{
-    public AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
-    {
-        // There's no dependencies when an asset is loaded from resources
-        AddressablesOpResult returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, null);
-
-        return returnValue;
-    }
-
-    public void UnloadDependencies(AddressablesCatalogEntry entry)
-    {
-        // There's no dependencies when an asset is loaded from resources
-    }
-
-    public bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)
+{    
+    public override bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)
     {
         SceneManager.LoadScene(entry.AssetName, mode);
         return true;
     }
 
-    public AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode)
+    public override AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode)
     {
         AsyncOperation op = SceneManager.LoadSceneAsync(entry.AssetName, mode);
         return ProcessAsyncOperation(op, AddressablesError.EType.Error_Invalid_Scene);
     }
 
-    public AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry)
+    public override AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry)
     {        
         AsyncOperation op = SceneManager.UnloadSceneAsync(entry.AssetName);
         return ProcessAsyncOperation(op, AddressablesError.EType.Error_Invalid_Scene);        

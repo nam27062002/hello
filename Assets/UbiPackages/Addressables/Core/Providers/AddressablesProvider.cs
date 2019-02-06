@@ -1,11 +1,19 @@
 ﻿using UnityEngine.SceneManagement;
 
-public interface AddressablesProvider
+public abstract class AddressablesProvider
 {
-    AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry);
-    void UnloadDependencies(AddressablesCatalogEntry entry);
+    public virtual AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
+    {
+        // By default there's no dependencies
+        AddressablesOpResult returnValue = new AddressablesOpResult();
+        returnValue.Setup(null, null);
 
-    bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode);
-    AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode);
-    AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry);
+        return returnValue;
+    }
+
+    public virtual void UnloadDependencies(AddressablesCatalogEntry entry) {}
+
+    public abstract bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode);
+    public abstract AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode);
+    public abstract AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry);
 }
