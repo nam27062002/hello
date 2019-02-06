@@ -52,7 +52,51 @@ public class AddressablesManager
     public bool IsInitialized()
     {
         return m_isInitialized;
+    }       
+
+    /// <summary>
+    /// Loads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Addressable id which dependencies are requested to be loaded</param>
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp LoadDependenciesAsync(string id)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.LoadDependenciesAsync(entry);
+
+            Ops_AddOp(returnValue);
+        }
+        else
+        {            
+            returnValue = Errors_ProcessManagerNotInitialized(true);         
+        }
+
+        return returnValue;
     }
+
+    /// <summary>
+    /// Unloads the dependencies (typically asset bundles if the addressable is stored in an asset bundle) that were loaded in order to be able to load the addressable with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Addressable id which dependencies are requested to be unloaded</param>
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public void UnloadDependencies(string id)
+    {        
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            provider.UnloadDependencies(entry);            
+        }
+        else
+        {            
+            Errors_ProcessManagerNotInitialized(false);           
+        }        
+    }    
 
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
@@ -77,11 +121,31 @@ public class AddressablesManager
         return returnValue;
     }
 
-    /*public AddressablesAsyncOperation LoadSceneAsync(string id, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+    /// <summary>
+    /// Loads asynchronously the scene corresponding to the addressable id <c>id</c>. If this addressable has some dependencies then they'll be downloaded and loaded before loading it, if required.   
+    /// </summary>    
+    /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>            
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode)
     {
+        AddressablesOp returnValue;
 
-    }
-    */
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.LoadSceneAsync(entry, mode);
+
+            Ops_AddOp(returnValue);
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
+        }        
+
+        return returnValue;
+    }    
 
     public AddressablesOp UnloadSceneAsync(string id)
     {
@@ -92,22 +156,17 @@ public class AddressablesManager
             AddressablesCatalogEntry entry;
             AddressablesProvider provider = Providers_GetProvider(id, out entry);
             returnValue =  provider.UnloadSceneAsync(entry);
+
+            Ops_AddOp(returnValue);
         }
         else
         {
-            AddressablesOpResult opResult;
-            Errors_ProcessManagerNotInitialized(true, out opResult);
-            returnValue = opResult;
+            returnValue = Errors_ProcessManagerNotInitialized(true);
         }
-
-        if (returnValue != null)
-        {
-            Ops_AddOp(returnValue);
-        }
-
+        
         return returnValue;
     }    
-
+    
     public void Update()
     {
         if (IsInitialized())
@@ -159,20 +218,20 @@ public class AddressablesManager
     #endregion
 
     #region errors
-    private void Errors_ProcessManagerNotInitialized(bool returnOp, out AddressablesOpResult opResult)
+    private AddressablesOp Errors_ProcessManagerNotInitialized(bool returnOp)
     {
-        LogErrorManagerNotInitialized();
+        AddressablesOp returnValue = null;
+
+        LogErrorManagerNotInitialized();        
 
         if (returnOp)
         {
             AddressablesError error = new AddressablesError(AddressablesError.EType.Error_Manager_Not_initialized);
-            opResult = new AddressablesOpResult();
-            opResult.Setup(error, null);
+            returnValue = new AddressablesOpResult();
+            returnValue.Setup(error, null);        
         }
-        else
-        {
-            opResult = null;
-        }
+
+        return returnValue;
     }
     #endregion
 
@@ -192,19 +251,16 @@ public class AddressablesManager
             entry = m_entryHelper;
             entry.SetupAsEntryInResources(id);
         }
-
-        if (m_catalog.TryGetEntry(id, out entry))
+        
+        switch (entry.LocationType)
         {
-            switch (entry.LocationType)
-            {
-                case AddressablesTypes.ELocationType.Resources:
-                    returnValue = m_providerFromResources;
-                    break;
+            case AddressablesTypes.ELocationType.Resources:
+                returnValue = m_providerFromResources;
+                break;
 
-                case AddressablesTypes.ELocationType.AssetBundles:
-                    returnValue = m_providerFromAB;
-                    break;
-            }
+            case AddressablesTypes.ELocationType.AssetBundles:
+                returnValue = m_providerFromAB;
+                break;
         }
 
         return returnValue;

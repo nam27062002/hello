@@ -875,23 +875,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 465517818}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7745b298c77263f4aab5af391605e3db, type: 3}
+  m_Script: {fileID: 11500000, guid: 3be509e3c8d28d846b45696e0721768b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cubesRoot: {fileID: 1572975392}
   m_uiButtons:
-  - {fileID: 2111822142}
-  - {fileID: 130369661}
-  - {fileID: 609781899}
-  - {fileID: 107820608}
   - {fileID: 1643496856}
   - {fileID: 1233665452}
-  - {fileID: 788974226}
-  - {fileID: 1129891005}
-  m_uiCubeDropdown: {fileID: 888146909}
+  - {fileID: 130369661}
+  - {fileID: 609781899}
+  m_uiCubeDropdown: {fileID: 0}
   m_uiSceneCubeDropdown: {fileID: 156468833}
   m_uiOperationResult: {fileID: 1109847197}
-  m_uiMemoryUsed: {fileID: 638378182}
 --- !u!4 &465517820
 Transform:
   m_ObjectHideFlags: 0
@@ -1488,7 +1482,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &638378181
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2066,7 +2060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &788974225
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2614,7 +2608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1062733826}
   m_Layer: 5
-  m_Name: ABRoot
+  m_Name: AddressablesRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2640,7 +2634,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -49.69995}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1071009150
@@ -2905,8 +2899,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 332, y: -109}
-  m_SizeDelta: {x: 729.6, y: 46.1}
+  m_AnchoredPosition: {x: 332.5, y: -141.99998}
+  m_SizeDelta: {x: 730.6, y: 112.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1109847197
 MonoBehaviour:
@@ -2934,7 +2928,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 3
     m_MaxSize: 40
-    m_Alignment: 1
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -2965,7 +2959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1129891004
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3169,7 +3163,7 @@ GameObject:
   - component: {fileID: 1233665453}
   - component: {fileID: 1233665452}
   m_Layer: 5
-  m_Name: ABReset
+  m_Name: AddressablesReset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3758,7 +3752,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1631944148
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3873,7 +3867,7 @@ GameObject:
   - component: {fileID: 1643496857}
   - component: {fileID: 1643496856}
   m_Layer: 5
-  m_Name: ABInit
+  m_Name: AddressablesInit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -5,6 +5,13 @@
     private AssetBundlesOp.OnDoneCallback OnDone;
 
     private bool m_isDone;
+    
+    public AssetBundlesOp.EResult Result { get; set; }
+    public object Data { get; set; }
+    public T GetData<T>() 
+    {
+        return (Data == null) ? default(T): (T)Data;
+    }
 
     public bool isDone
     {
@@ -52,6 +59,8 @@
 
     public void Setup(AssetBundlesOp.OnDoneCallback onDone)
     {
+        Result = AssetBundlesOp.EResult.None;
+        Data = null;
         OnDone = onDone;
     }
 
@@ -63,6 +72,9 @@
 
     public void NotifyResult(AssetBundlesOp.EResult result, object data)
     {
+        Result = result;
+        Data = data;
+
         isDone = true;   
         if (OnDone != null)
         {

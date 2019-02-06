@@ -15,8 +15,8 @@ public class FileEditorTools
     {
         if (!string.IsNullOrEmpty(path) && !Exists(path))
         {            
-            string[] tokens = path.Split(Path.DirectorySeparatorChar);
-            //string[] tokens = path.Split('/');
+            //string[] tokens = path.Split(Path.DirectorySeparatorChar);
+            string[] tokens = path.Split('/');
             int count = tokens.Length;
             string pathSoFar = "";
             string newPath;
@@ -51,8 +51,7 @@ public class FileEditorTools
     }
 
     public static string PathCombine(string path1, string path2)
-    {   
-        /*     
+    {              
         if (string.IsNullOrEmpty(path1))
         {
             return path2;
@@ -64,9 +63,39 @@ public class FileEditorTools
         else
         {
             return path1 + "/" + path2;
-        }*/
+        }
             
-        return Path.Combine(path1, path2);        
+        //return Path.Combine(path1, path2);        
+    }
+
+    public static string[] SeparatePathInTokens(string path)
+    {
+        //return (string.IsNullOrEmpty(path)) ? null : path.Split(Path.DirectorySeparatorChar);
+        return (string.IsNullOrEmpty(path)) ? null : path.Split('/');
+    }
+
+    public static string GetFileName(string path, bool includeExtension)
+    {
+        string[] tokens = SeparatePathInTokens(path);
+        string returnValue;
+        if (tokens == null)
+        {
+            returnValue = null;
+        }
+        else
+        {
+            returnValue = tokens[tokens.Length - 1];
+            if (!includeExtension)
+            {
+                tokens = returnValue.Split('.');
+                if (tokens.Length > 1)
+                {
+                    returnValue = tokens[0];
+                }
+            }
+        }
+
+        return returnValue;
     }
 
     public static void CopyDirectory(string srcPath, string dstPath)

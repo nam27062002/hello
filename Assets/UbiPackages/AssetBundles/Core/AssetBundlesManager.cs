@@ -441,8 +441,10 @@ public class AssetBundlesManager
     /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
     /// <param name="sceneName">Name of the scene to load.</param>
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>        
-    public void LoadScene(string assetBundleId, string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
-    {        
+    public AssetBundlesOp.EResult LoadScene(string assetBundleId, string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
+    {
+        AssetBundlesOp.EResult result = AssetBundlesOp.EResult.Error_Internal;
+
         AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
         if (handle != null)
         {
@@ -454,11 +456,22 @@ public class AssetBundlesManager
                     if (assetBundle.isStreamedSceneAssetBundle)
                     {                        
                         SceneManager.LoadScene(sceneName, mode);
+                        result = AssetBundlesOp.EResult.Success;
                     }
                 }
             }
-        }        
-    }      
+            else
+            {
+                result = AssetBundlesOp.EResult.Error_AB_Is_Not_Loaded;
+            }
+        }  
+        else
+        {
+            result = AssetBundlesOp.EResult.Error_AB_Handle_Not_Found;
+        }
+
+        return result;
+    }   
 
     /// <summary>
     /// Loads asynchronously a scene called <c>sceneName</c> from an asset bundle with <c>assetBundleId</c> as id. This method will download and load the asset bundle before loading
