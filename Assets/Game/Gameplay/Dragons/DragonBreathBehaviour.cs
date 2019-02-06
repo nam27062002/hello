@@ -335,7 +335,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
-        if ( _reward.fury > 0 )
+        if ( _reward.fury > 0f )
             AddFury(m_furyMax * _reward.fury);
 	}
 

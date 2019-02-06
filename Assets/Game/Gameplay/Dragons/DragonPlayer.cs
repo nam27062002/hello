@@ -59,17 +59,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
-	private float m_alcohol = 0;
-	public float alcohol { get { return m_alcohol; } }
-	private float m_alcoholMax = 1;
-	public float alcoholMax {get{return m_alcoholMax;}}
-	public float m_alcoholDrain = 1;
-	private bool m_alcoholResistance = false;
-	public bool alcoholResistance
-	{
-		get{ return m_alcoholResistance; }
-		set{ m_alcoholResistance = value; }
-	}
 
 	// Cache content data
 	private float m_healthMax = 1f;
@@ -271,9 +260,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.baseEnergy;
 
-        m_alcoholMax = m_data.maxAlcohol;
-        m_alcoholDrain = m_data.alcoholDrain;
-
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref healthModifierDefs, "threshold", DefinitionsManager.SortType.NUMERIC);		// Sort by threshold
@@ -398,21 +384,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			}
 		}
 
-		if ( m_alcohol > 0 )
-		{
-			bool drunk = IsDrunk();
-
-				// Recide Alcohol
-			m_alcohol -= Time.deltaTime * m_alcoholDrain;
-			if ( m_alcohol < 0 )
-				m_alcohol = 0;
-
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-
 		if (m_superSizeTimer > 0 )
 		{
 			m_superSizeTimer -= Time.deltaTime;
@@ -428,12 +399,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
-#if UNITY_EDITOR
-		if ( Input.GetKeyDown(KeyCode.J) )
-		{
-			AddAlcohol(100);
-		}
-#endif
 	}
 
 	//------------------------------------------------------------------//
@@ -635,23 +600,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
 		m_energy = Mathf.Min(m_energyMax, Mathf.Max(0, m_energy + _offset));
-	}
-
-	public void AddAlcohol( float _offset ){
-		if ( !m_alcoholResistance )
-		{
-			bool drunk = IsDrunk();
-			m_alcohol += _offset;
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-	}
-
-	public bool IsDrunk()
-	{
-		return m_alcohol > m_alcoholMax;
 	}
 
 	/// <summary>

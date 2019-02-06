@@ -146,6 +146,8 @@ public class HDSeasonData {
                 state = State.WAITING_NEW_SEASON; 
                 break;
         }
+
+        liveDataState = HDLiveData.State.PARTIAL;
     }
 
     public void UpdateState() {

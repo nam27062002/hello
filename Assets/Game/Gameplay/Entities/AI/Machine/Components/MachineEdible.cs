@@ -99,7 +99,6 @@ namespace AI {
 				// Get the reward to be given from the entity
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 				if (_source != IEntity.Type.PLAYER) {
-					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk
 					if (reward.health < 0) {
 						reward.health = 0;

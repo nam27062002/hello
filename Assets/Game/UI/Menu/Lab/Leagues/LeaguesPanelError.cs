@@ -92,11 +92,11 @@ public class LeaguesPanelError : LeaguesScreenPanel {
 
 
     //------------------------------------------------------------------------//
-    // CALLBACK METHODS                                                        //
+    // CALLBACK METHODS                                                       //
     //------------------------------------------------------------------------//
     public void OnRetryButton() {
         if (m_errorGroup == ErrorGroup.NETWORK || m_errorCode == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
-            if (Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged()) {
+            if (Application.internetReachability != NetworkReachability.NotReachable) {
                 leaguesScreenController.RefreshLiveData();
             } else { // Message no connection
                 UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
@@ -115,7 +115,7 @@ public class LeaguesPanelError : LeaguesScreenPanel {
                 case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
-                        leaguesScreenController.RefreshSeasonData();
+                        leaguesScreenController.RefreshLiveData();
                     }
                     break;
 

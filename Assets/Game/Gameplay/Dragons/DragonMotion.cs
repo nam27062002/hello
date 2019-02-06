@@ -321,6 +321,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	public const float FlightCeiling = 370f;
 	public const float SpaceStart = 171f;
+    public int m_limitsCheck = 0;
+    public Vector3 m_lastValidPos = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -435,6 +437,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         RegionManager.Init();
         m_regionManager = RegionManager.Instance;
 
+        m_lastValidPos = m_transform.position;
+
 		if (m_state == State.None)
 			ChangeState(State.Fly);
 
@@ -460,14 +464,12 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	void OnEnable() {
 		Messenger.AddListener(MessengerEvents.PLAYER_DIED, PnPDied);
-		Messenger.AddListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
 	void OnDisable()
 	{
 		Messenger.RemoveListener(MessengerEvents.PLAYER_DIED, PnPDied);
-		Messenger.RemoveListener<bool>(MessengerEvents.DRUNK_TOGGLED, OnDrunkToggle);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
@@ -491,11 +493,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
 		m_deadTimer = 1000;
 	}
-
-	private void OnDrunkToggle(bool _active)
-	{
-		m_animator.SetBool(GameConstants.Animator.DRUNK, _active);
-	}
+	
 
 	public void OnPetPreFreeRevive()
 	{
@@ -1127,8 +1125,28 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		{
 			Vector3 pos = m_transform.position;
 			pos.z = 0f;
-			m_transform.position = pos;
+
+            // check pos
+            m_limitsCheck++;
+            if ( m_limitsCheck > 2 )
+            {
+                if (Physics.Linecast( m_lastValidPos, pos, GameConstants.Layers.GROUND ))
+                {
+                    pos = m_lastValidPos;
+                }
+                else
+                {
+                    m_lastValidPos = pos;
+                }
+            }
+            m_transform.position = pos;
 		}
+        else
+        {
+            m_lastValidPos = m_transform.position;
+        }
+
+        
 
 		/*
 		Vector3 rewardDistance = RewardManager.distance;
@@ -1159,15 +1177,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-
-		if ( m_dragon.IsDrunk() )
-		{
-            //impulse = -impulse;
-            float drunkX = -0.6f;
-            float drunkY = 0.6f;
-            impulse.x = drunkX * impulse.x;
-            impulse.y = drunkY * impulse.y;
-		}
 		UpdateMovementImpulse( _deltaTime, impulse);
 	}
 
@@ -1270,14 +1279,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	{
 		Vector3 impulse = GameConstants.Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
-        if ( m_dragon.IsDrunk() )
-        {
-            //impulse = -impulse;
-            float drunkX = -0.6f;
-            float drunkY = 0.6f;
-            impulse.x = drunkX * impulse.x;
-            impulse.y = drunkY * impulse.y;
-        }
 		UpdateWaterMovementImpulse(_deltaTime, impulse);
     }
 
@@ -2100,7 +2101,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-    public void OnCollisionStay(Collision collision)
+    public virtual void OnCollisionStay(Collision collision)
     {
         switch (m_state)
         {

@@ -133,7 +133,6 @@ public class Entity : IEntity, IBroadcastListener {
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
 
-		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
 		m_reward.category = m_def.Get("category");
 
@@ -241,10 +240,6 @@ public class Entity : IEntity, IBroadcastListener {
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
 			newReward.coins = 0;
-		}
-
-		if (_reason == DyingReason.BURNED || _reason == DyingReason.DESTROYED) {
-			newReward.alcohol = 0;
 		}
 
 		// Give PC?
