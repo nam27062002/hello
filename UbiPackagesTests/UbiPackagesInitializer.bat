@@ -9,19 +9,25 @@ echo off
 
 setlocal EnableDelayedExpansion
 
-call :link_ubi_packages AssetBundlesUnitTests
-exit /b 0
+call :project AssetBundlesUnitTests
+goto :finish
 
-:link_ubi_packages		
+:project
+	call :link %1 UbiPackages
+	call :link %1 Calety
+	call :link %1 CaletyExternalPlugins	
+	goto :nofinish
+
+:link		
 	set resultMsg=
-	set ubiPackagesFolderName=UbiPackages
+	set ubiPackagesFolderName=%2
 	set pathToUbiPackagesSource=..\Assets\!ubiPackagesFolderName!
 	set pathToUbiPackagesDest=%1\Assets\!ubiPackagesFolderName!
 
 	REM Checks if the link already exists 
 	if exist !pathToUbiPackagesDest! (
 		set resultMsg=Symbolic link [!pathToUbiPackagesDest!] already exists
-		goto finish	
+		goto show_result	
 	) 
 
 	REM Searches for UbiPackages folder source
@@ -29,26 +35,31 @@ exit /b 0
 		goto foundSource
 	) else (
 		set resultMsg=ERROR: UbiPackages source not found in !pathToUbiPackagesSource!
-		goto :finish
+		goto :show_result
 	)
 
-	:foundSource
-		set relativePathToSource=..\..\!pathToUbiPackagesSource!
-		echo Symbolic linking !pathToUbiPackagesDest! to !pathToUbiPackagesSource!...
-	
-		REM Makes the symbolic link
-		mklink /d !pathToUbiPackagesDest! !relativePathToSource!
-	
-		if exist !pathToUbiPackagesDest! (		
-			set resultMsg=SUCCESS
-		) else (
-			set resultMsg=mklink failed		
-		)
+:foundSource		
+	set relativePathToSource=..\..\!pathToUbiPackagesSource!
+	echo Symbolic linking !pathToUbiPackagesDest! to !pathToUbiPackagesSource!...
+
+	REM Makes the symbolic link
+	mklink /d !pathToUbiPackagesDest! !relativePathToSource!
+
+	if exist !pathToUbiPackagesDest! (		
+		set resultMsg=SUCCESS
+	) else (
+		set resultMsg=mklink failed		
+	)
 		
-	:finish		
-		echo !resultMsg!		
-		
-		pause
-		exit /b 0
+:show_result		
+	echo !resultMsg!		
+	goto :nofinish
+	
+:finish
+	pause
+	exit /b 0
+	
+:nofinish
+
 
 
