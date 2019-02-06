@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -91,7 +92,9 @@ public class MenuShowConditionally : MonoBehaviour {
 	[SerializeField] private List<MenuScreen> m_targetScreens = new List<MenuScreen>();
 
 	// Animation options
-	[SerializeField] private float m_delay = 0f;
+	[FormerlySerializedAs("m_delay")]
+	[SerializeField] private float m_hideDelay = 0f;
+	[SerializeField] private float m_showDelay = 0f;
 	[SerializeField] private bool m_restartShowAnimation = false;
 
 	// Events
@@ -303,6 +306,7 @@ public class MenuShowConditionally : MonoBehaviour {
 			// Dont disable if animator parent is the same as this one, otherwise the logic of this behaviour will stop working!
 			VisibilitySetup hideSetup = _setup; // struct, will create a new copy
 			hideSetup.show = false;
+			hideSetup.delayed = false;
 			hideSetup.disableAfterAnimation = m_targetAnimator.gameObject != this.gameObject;
 			SetVisibility(hideSetup);
 
@@ -317,6 +321,10 @@ public class MenuShowConditionally : MonoBehaviour {
 				ShowHideAnimator.DebugLog(this, Colors.red.Tag("FORCE_HIDE 2"));
 			}
 
+			// If no animator is defined (and animating), use delays
+			if(_setup.animate && m_targetAnimator == null) {
+				_setup.delayed = true;
+			}
 			_setup.allowExternalChecks = false;
 			SetVisibility(_setup);
 		}
@@ -341,6 +349,14 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// <param name="_setup">Visibility parameters.</param>
 	//private void SetVisibility(bool _show, bool _useAnims, bool _externalCheckAllowed, bool _delayed, bool _disableAfterAnimation) {
 	private void SetVisibility(VisibilitySetup _setup) {
+		ShowHideAnimator.DebugLog(this, Colors.orange.Tag("SET VISIBILITY: " 
+														  + _setup.show + ", " 
+		                                                  + _setup.animate + ", " 
+		                                                  + _setup.allowExternalChecks + ", "
+		                                                  + _setup.delayed + ", "
+		                                                  + _setup.disableAfterAnimation
+		                                                 ));
+
 		// Cancel any pending action
 		if(m_coroutine != null) {
 			StopCoroutine(m_coroutine);
@@ -350,7 +366,8 @@ public class MenuShowConditionally : MonoBehaviour {
 		// Delayed?
 		if(_setup.delayed) {
 			// Yes! Program the coroutine
-			m_coroutine = StartCoroutine(LaunchDelayedAnimation(_setup));
+			//m_coroutine = StartCoroutine(LaunchDelayedAnimation(_setup));
+			m_coroutine = LaunchDelayedAnimation(_setup);
 		} else {
 			// Allow external checks?
 			m_allowExternalChecks = _setup.allowExternalChecks;
@@ -359,19 +376,11 @@ public class MenuShowConditionally : MonoBehaviour {
 			if(m_targetAnimator != null) {
 				// Yes! Launch it with given parameters
 				if(_setup.show) {
-					// Show: restart animation?
-					if(_setup.animate && _setup.restartAnimation) {
-						m_targetAnimator.RestartShow();
-					} else {
-						m_targetAnimator.ForceShow(_setup.animate);
-					}
+					// Show
+					m_targetAnimator.ForceShow(_setup.animate);
 				} else {
-					// Hide: restart animation?
-					if(_setup.animate && _setup.restartAnimation) {
-						m_targetAnimator.RestartHide(_setup.disableAfterAnimation);
-					} else {
-						m_targetAnimator.ForceHide(_setup.animate, _setup.disableAfterAnimation);
-					}
+					// Hide
+					m_targetAnimator.ForceHide(_setup.animate, _setup.disableAfterAnimation);
 				}
 			} else {
 				// No! Just apply directly to the game object
@@ -452,12 +461,41 @@ public class MenuShowConditionally : MonoBehaviour {
 	/// </summary>
 	/// <returns>The coroutine function.</returns>
 	/// <param name="_setup">Config to be used.</param>
+
+	private Coroutine LaunchDelayedAnimation(VisibilitySetup _setup) {
+		// How much delay?
+		float delay = 0f;
+		if(m_targetAnimator != null) {
+			delay = m_targetAnimator.tweenDuration;
+		} else {
+			delay = _setup.show ? m_showDelay : m_hideDelay;
+		}
+
+		// Trigger the delayed action
+		return UbiBCN.CoroutineManager.DelayedCall(
+			() => {
+				// Debug
+				ShowHideAnimator.DebugLog(this, Colors.yellow.Tag("DELAYED APPLY: " + _setup.show + ", " + _setup.animate + "\nenabled? " + this.enabled));
+
+				// Do it! (If still enabled!)
+				if(this.enabled) {
+					_setup.allowExternalChecks = false;
+					_setup.delayed = false;
+					SetVisibility(_setup);
+				}
+
+				// Clear coroutine reference
+				m_coroutine = null;
+			}, delay
+		);
+	}
+	/*
 	private IEnumerator LaunchDelayedAnimation(VisibilitySetup _setup) {
 		// Delay
 		if(m_targetAnimator != null) {
 			yield return new WaitForSeconds(m_targetAnimator.tweenDuration);
 		} else {
-			yield return new WaitForSeconds(m_delay);
+			yield return new WaitForSeconds(_setup.show ? m_showDelay : m_hideDelay);
 		}
 
 		// Debug
@@ -472,6 +510,7 @@ public class MenuShowConditionally : MonoBehaviour {
 
 		m_coroutine = null;
 	}
+	*/
 
 	/// <summary>
 	/// An animator is checking whether it can be displayed.
