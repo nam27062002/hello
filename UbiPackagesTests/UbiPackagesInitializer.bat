@@ -9,7 +9,7 @@ echo off
 
 setlocal EnableDelayedExpansion
 
-call :project AssetBundlesUnitTests
+call :project AddressablesUnitTests
 goto :finish
 
 :project
