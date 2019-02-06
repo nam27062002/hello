@@ -2124,7 +2124,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-    public void OnCollisionStay(Collision collision)
+    public virtual void OnCollisionStay(Collision collision)
     {
         switch (m_state)
         {
