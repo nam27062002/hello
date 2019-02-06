@@ -1,4 +1,4 @@
-// TrackerDestroy.cs
+﻿// TrackerDestroy.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 09/05/2017.
@@ -35,8 +35,8 @@ public class TrackerDestroy : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		// Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		// Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 	}
 
 	/// <summary>
@@ -54,8 +54,8 @@ public class TrackerDestroy : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		// Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		// Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 
 		// Call parent
 		base.Clear();

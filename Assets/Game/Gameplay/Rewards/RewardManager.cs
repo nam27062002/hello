@@ -1,4 +1,4 @@
-// ScoreManager.cs
+﻿// ScoreManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 22/10/2015.
@@ -281,10 +281,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
@@ -306,10 +306,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
@@ -166,7 +166,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		ExtendedStart();
 
-		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 
@@ -200,7 +200,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}

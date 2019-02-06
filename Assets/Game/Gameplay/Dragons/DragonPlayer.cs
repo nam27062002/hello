@@ -311,7 +311,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
@@ -333,7 +333,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 

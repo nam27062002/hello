@@ -142,10 +142,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-			Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.AddListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
@@ -164,10 +164,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }

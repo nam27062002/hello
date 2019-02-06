@@ -65,14 +65,14 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_waitJawsEvent = true;
 		}
 
-		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener<IEntity,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 		// m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener<IEntity,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 	}
 

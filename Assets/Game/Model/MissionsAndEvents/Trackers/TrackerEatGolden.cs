@@ -1,4 +1,4 @@
-// TrackerKill.cs
+﻿// TrackerKill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/03/2017.
@@ -35,7 +35,7 @@ public class TrackerEatGolden : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class TrackerEatGolden : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 
 		// Call parent
 		base.Clear();

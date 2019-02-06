@@ -1,4 +1,4 @@
-// TrackerBurn.cs
+﻿// TrackerBurn.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/03/2017.
@@ -35,7 +35,7 @@ public class TrackerBurn : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class TrackerBurn : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
 
 		// Call parent
 		base.Clear();

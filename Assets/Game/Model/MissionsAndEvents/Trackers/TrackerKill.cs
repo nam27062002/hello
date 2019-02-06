@@ -1,4 +1,4 @@
-// TrackerKill.cs
+﻿// TrackerKill.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/03/2017.
@@ -35,9 +35,9 @@ public class TrackerKill : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
+		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 	}
 
 	/// <summary>
@@ -55,9 +55,9 @@ public class TrackerKill : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
+		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 
 		// Call parent
 		base.Clear();
