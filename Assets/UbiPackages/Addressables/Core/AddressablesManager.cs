@@ -197,7 +197,10 @@ public class AddressablesManager
 
     private void Ops_AddOp(AddressablesOp op)
     {
-        m_ops.Add(op);
+        if (!op.IsDone)
+        {
+            m_ops.Add(op);
+        }
     }
 
     private void Ops_Update()
