@@ -154,5 +154,11 @@ public class FileEditorTools
         StreamWriter writer = new StreamWriter(path, append);
         writer.WriteLine(content);
         writer.Close();
-    }    
+    }   
+    
+    public static int GetFilesAmount(string path)
+    {
+        string[] files = Directory.GetFiles(path);
+        return (files == null) ? 0 : files.Length;
+    } 
 }
