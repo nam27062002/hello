@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 11447402}
   - component: {fileID: 114000011327172364}
   - component: {fileID: 114000011558897754}
-  - component: {fileID: 114911447019432680}
   - component: {fileID: 114877917579243700}
   - component: {fileID: 114776725440998684}
   - component: {fileID: 114877269495697346}
@@ -565,9 +564,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_paused: 0
-  m_dead: 0
-  m_reviveStart: 0
-  m_hitStop: 0
+  m_hitStopTimer: 0
+  m_hitStopDuration: 0.1
+  m_hitStopDelay: 0.1
+  m_ignoreHitStops: 0
   m_slowMoTimer: 0
   m_slowMoDuration: 0
   m_slowMoCurve:
@@ -649,34 +649,3 @@ MonoBehaviour:
     m_fogStart: -25.6
     m_fogEnd: 674.76
   m_transitionDuration: 1.6
---- !u!114 &114911447019432680
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21b004808c23bd443b3b992a6e418cd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_material: {fileID: 2100000, guid: c68159e287fd5cd4b9322d920fe401ea, type: 2}
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_timeEffect: 1

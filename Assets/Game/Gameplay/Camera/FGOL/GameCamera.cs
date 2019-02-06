@@ -1530,19 +1530,9 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
     {
         NeedsToSetupPostProcessEffects = false;
 
-        SetupDrunkEffect();
         SetupFrameColorEffect();
     }
 
-    private void SetupDrunkEffect()
-    {
-        // The effect is enabled if the feature is enabled for this device
-        DrunkCameraEffect effect = GetComponent<DrunkCameraEffect>();
-        if (effect != null)
-        {
-            effect.enabled = FeatureSettingsManager.instance.IsDrunkEffectEnabled;
-        }
-    }
 
     private void SetupFrameColorEffect()
     {
