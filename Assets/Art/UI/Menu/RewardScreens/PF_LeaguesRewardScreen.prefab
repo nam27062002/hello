@@ -1714,7 +1714,6 @@ GameObject:
   - component: {fileID: 114754854364087874}
   - component: {fileID: 114896901801588628}
   - component: {fileID: 114267855570983988}
-  - component: {fileID: 114901793957032468}
   - component: {fileID: 114511814902717244}
   - component: {fileID: 114148263961363816}
   m_Layer: 5
@@ -9025,14 +9024,6 @@ MonoBehaviour:
   m_leagueIcon: {fileID: 114676749568414366}
   m_introScreenAnim: {fileID: 95801193871388098}
   m_resultScreenAnim: {fileID: 95763302935116162}
-  m_promotionObjects:
-  - {fileID: 1595885936581286}
-  - {fileID: 1313678182469068}
-  m_neutralObjects:
-  - {fileID: 1253587474105700}
-  m_demotionObjects:
-  - {fileID: 1522258965702552}
-  - {fileID: 1313678182469068}
 --- !u!114 &114897841097924668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9074,33 +9065,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.216}
   m_EffectDistance: {x: 0, y: -10}
   m_UseGraphicAlpha: 0
---- !u!114 &114901793957032468
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1616854970349790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647d42d5f2c2143299f6c5fe086b2be9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnBackButton:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114896901801588628}
-        m_MethodName: OnContinueButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114907307231855052
 MonoBehaviour:
   m_ObjectHideFlags: 1
