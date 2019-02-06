@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
-using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This class is responsible for serving a resource (either an assets or an scene) given a name 
@@ -7,14 +8,208 @@ using UnityEngine;
 public class AddressablesManager
 {
     private AddressablesCatalog m_catalog;
-
-    public void Initialize(JSONClass catalogJSON, Logger logger)
+    private bool m_isInitialized = false;
+    private AddressablesCatalogEntry m_entryHelper;
+    
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, Logger logger)
     {
         sm_logger = logger;
-        
-        m_catalog = new AddressablesCatalog();        
+
+        // Loads the catalog
+        if (m_catalog == null)
+        {
+            m_catalog = new AddressablesCatalog();
+        }
+
         m_catalog.Load(catalogJSON, logger);        
+
+        // Loads the providers
+        m_providerFromAB = new AddressablesFromAssetBundlesProvider();
+        m_providerFromAB.Initialize(assetBundlesManifestPath, logger);
+
+        m_providerFromResources = new AddressablesFromResourcesProvider();
+
+        Ops_Init();
+
+        m_entryHelper = new AddressablesCatalogEntry();
+
+        m_isInitialized = true;
+    }    
+
+    public void Reset()
+    {
+        if (IsInitialized())
+        {
+            m_catalog.Reset();          
+            m_providerFromAB.Reset();
+
+            Ops_Reset();     
+
+            m_isInitialized = false;
+        }
     }
+
+    public bool IsInitialized()
+    {
+        return m_isInitialized;
+    }
+
+    /// <summary>
+    /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
+    /// </summary>    
+    /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>        
+    /// <returns><c>true</c> if the scene has been loaded successfully.</returns>
+    public bool LoadScene(string id, LoadSceneMode mode)
+    {
+        bool returnValue = false;
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.LoadScene(entry, mode);
+        }        
+        else 
+        {
+            LogErrorManagerNotInitialized();
+        }
+
+        return returnValue;
+    }
+
+    /*public AddressablesAsyncOperation LoadSceneAsync(string id, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+    {
+
+    }
+    */
+
+    public AddressablesOp UnloadSceneAsync(string id)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue =  provider.UnloadSceneAsync(entry);
+        }
+        else
+        {
+            AddressablesOpResult opResult;
+            Errors_ProcessManagerNotInitialized(true, out opResult);
+            returnValue = opResult;
+        }
+
+        if (returnValue != null)
+        {
+            Ops_AddOp(returnValue);
+        }
+
+        return returnValue;
+    }    
+
+    public void Update()
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.Update();
+            Ops_Update();
+        }
+    }
+
+    #region ops
+    private List<AddressablesOp> m_ops;
+
+    private void Ops_Init()
+    {
+        if (m_ops == null)
+        {
+            m_ops = new List<AddressablesOp>();
+        }
+    }
+
+    private void Ops_Reset()
+    {
+        if (m_ops != null)
+        {
+            m_ops.Clear();
+        }
+    }
+
+    private void Ops_AddOp(AddressablesOp op)
+    {
+        m_ops.Add(op);
+    }
+
+    private void Ops_Update()
+    {
+        for (int i = m_ops.Count - 1; i > -1; i--)
+        {
+            if (m_ops[i].IsDone)
+            {
+                if (m_ops[i].OnDone != null)
+                {
+                    m_ops[i].OnDone(m_ops[i]);
+                }
+
+                m_ops.RemoveAt(i);
+            }
+        }
+    }
+    #endregion
+
+    #region errors
+    private void Errors_ProcessManagerNotInitialized(bool returnOp, out AddressablesOpResult opResult)
+    {
+        LogErrorManagerNotInitialized();
+
+        if (returnOp)
+        {
+            AddressablesError error = new AddressablesError(AddressablesError.EType.Error_Manager_Not_initialized);
+            opResult = new AddressablesOpResult();
+            opResult.Setup(error, null);
+        }
+        else
+        {
+            opResult = null;
+        }
+    }
+    #endregion
+
+    #region providers
+    private AddressablesFromAssetBundlesProvider m_providerFromAB;
+    private AddressablesFromResourcesProvider m_providerFromResources;
+
+    private AddressablesProvider Providers_GetProvider(string id, out AddressablesCatalogEntry entry)
+    {
+        AddressablesProvider returnValue = m_providerFromResources;
+
+        entry = m_catalog.GetEntry(id);
+
+        // If id is not in the catalog we assume that id is a path to the resource
+        if (entry == null)
+        {
+            entry = m_entryHelper;
+            entry.SetupAsEntryInResources(id);
+        }
+
+        if (m_catalog.TryGetEntry(id, out entry))
+        {
+            switch (entry.LocationType)
+            {
+                case AddressablesTypes.ELocationType.Resources:
+                    returnValue = m_providerFromResources;
+                    break;
+
+                case AddressablesTypes.ELocationType.AssetBundles:
+                    returnValue = m_providerFromAB;
+                    break;
+            }
+        }
+
+        return returnValue;
+    }
+    #endregion
 
     #region logger
     private static Logger sm_logger;
@@ -45,6 +240,22 @@ public class AddressablesManager
         if (CanLog())
         {
             sm_logger.LogError(msg);
+        }
+    }
+
+    private void LogErrorManagerNotInitialized()
+    {
+        if (CanLog())
+        {
+            sm_logger.LogError("Manager is not initialized");
+        }
+    }
+
+    private void LogErrorIdNotFound(string id)
+    {
+        if (CanLog())
+        {
+            sm_logger.LogError("Addressables id <" + id + "> is not in the catalog");
         }
     }
     #endregion    

@@ -16,7 +16,7 @@ public class AddressablesCatalog
         m_entries = new Dictionary<string, AddressablesCatalogEntry>();
     }
 
-    private void Reset()
+    public void Reset()
     {
         if (m_entries != null)
         {
@@ -95,6 +95,19 @@ public class AddressablesCatalog
     public AddressablesCatalogEntry GetEntry(string id)
     {
         return (m_entries != null && m_entries.ContainsKey(id)) ? m_entries[id] : null;
+    }
+
+    public bool TryGetEntry(string id, out AddressablesCatalogEntry entry)
+    {
+        if (m_entries != null)
+        {
+            return m_entries.TryGetValue(id, out entry);
+        }
+        else
+        {
+            entry = null;
+            return false;
+        }
     }
 
     public Dictionary<string, AddressablesCatalogEntry> GetEntries()

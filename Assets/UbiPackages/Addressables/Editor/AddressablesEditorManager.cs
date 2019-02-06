@@ -23,13 +23,13 @@ public class AddressablesEditorManager
 
     private string m_localDestinationPath;
     private string m_editorCatalogFolderParent;    
-    private string m_engineCatalogPath;
+    private string m_playerCatalogPath;
     private string m_assetBundlesLocalDestinationPath;
 
     public AddressablesEditorManager()
     {
         m_localDestinationPath = FileEditorTools.PathCombine(STREAMING_ASSETS_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
-        m_engineCatalogPath = FileEditorTools.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);
+        m_playerCatalogPath = FileEditorTools.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);
         m_assetBundlesLocalDestinationPath = FileEditorTools.PathCombine(m_localDestinationPath, "AssetBundles");
     }
 
@@ -52,7 +52,7 @@ public class AddressablesEditorManager
 
         FileEditorTools.CreateDirectory(m_localDestinationPath);
 
-        BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_engineCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
+        BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
     }
 
     public void BuildAssetBundles()
@@ -75,7 +75,7 @@ public class AddressablesEditorManager
         DistributeAssetBundles();
     }
 
-    private void BuildCatalog(string editorCatalogPath, string engineCatalogPath, AddressablesTypes.EProviderMode providerMode)
+    private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         // Loads the catalog
         TextAsset textAsset = (TextAsset)AssetDatabase.LoadAssetAtPath(editorCatalogPath, typeof(TextAsset));
@@ -139,7 +139,7 @@ public class AddressablesEditorManager
             }
             
             SimpleJSON.JSONClass json = engineCatalog.ToJSON();            
-            FileEditorTools.WriteToFile(engineCatalogPath, json.ToString());            
+            FileEditorTools.WriteToFile(playerCatalogPath, json.ToString());            
         }
     }
 
@@ -158,6 +158,9 @@ public class AddressablesEditorManager
             }
             else
             {
+                string fileName = FileEditorTools.GetFileName(path, false);
+                entry.AssetName = fileName;
+
                 string assetBundleNameFromCatalog = "";
 
                 if (entry.LocationType == AddressablesTypes.ELocationType.AssetBundles)

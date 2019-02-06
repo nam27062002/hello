@@ -44,11 +44,14 @@ public class AddressablesCatalogEntry
         get { return m_assetBundleName; }
         set { m_assetBundleName = value; }
     }
+    
+    public string AssetName { get; set; }       
 
     private const string ATT_ID = "id";
     private const string ATT_LOCATION_TYPE = "locationType";    
     private const string ATT_PATH = "path";
     private const string ATT_AB_NAME = "abName";
+    private const string ATT_ASSET_NAME = "assetName";
 
     public void Reset()
     {
@@ -109,7 +112,18 @@ public class AddressablesCatalogEntry
             {
                 LogLoadAttributeError(att, value);
             }
+
+            att = ATT_ASSET_NAME;
+            AssetName = data[att];
         }
+    }
+
+    public void SetupAsEntryInResources(string id)
+    {
+        Id = id;
+        Path = id;
+        AssetName = id;
+        LocationType = AddressablesTypes.ELocationType.Resources;
     }
 
     public JSONClass ToJSON()
@@ -122,6 +136,7 @@ public class AddressablesCatalogEntry
         AddToJSON(data, ATT_LOCATION_TYPE, AddressablesTypes.ELocationTypeToString(LocationType));
         AddToJSON(data, ATT_PATH, Path);
         AddToJSON(data, ATT_AB_NAME, AssetBundleName);
+        AddToJSON(data, ATT_ASSET_NAME, AssetName);
 
         return data;
     }
