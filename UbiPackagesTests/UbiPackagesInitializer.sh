@@ -42,8 +42,13 @@ createSymbolicLink()
 project()
 {
 	link $1 UbiPackages
-	link $1 Calety
-	link $1 CaletyExternalPlugins
+	#link $1 Calety
+	#link $1 CaletyExternalPlugins
+
+	#path=$1"/Assets/Plugins"
+	#mkdir $path
+	#mkdir $path"/iOS"
+	#link $1 Plugins/iOS/Calety
 }
 
 project AddressablesUnitTests
