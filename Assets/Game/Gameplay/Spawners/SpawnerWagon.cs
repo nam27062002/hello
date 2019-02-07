@@ -257,7 +257,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		return i;
 	}
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 		int index = -1;
 		for (int i = 0; i < m_wagonList.Count && index == -1; ++i) {
 			if (m_wagonList[i].gameObject == _entity) {

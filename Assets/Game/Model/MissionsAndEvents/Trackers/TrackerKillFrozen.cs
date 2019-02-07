@@ -35,9 +35,9 @@ public class TrackerKillFrozen : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 	}
 
 
@@ -49,9 +49,9 @@ public class TrackerKillFrozen : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 
 
 		// Call parent
@@ -80,19 +80,18 @@ public class TrackerKillFrozen : TrackerBase {
 	/// <summary>
 	/// An entity has been killed.
 	/// </summary>
-	/// <param name="_entity">The source entity, optional.</param>
+	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnDestroy(Transform _entity, Reward _reward) {
-		IEntity prey = _entity.GetComponent<IEntity>();
-		if (prey != null && (prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET)){
+	private void OnDestroy(Transform _t, IEntity _e, Reward _reward) {		
+		if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
             // Check if in love
-            if (prey.machine != null && prey.machine.IsFreezing()) {
+            if (_e.machine != null && _e.machine.IsFreezing()) {
     			// Count automatically if we don't have any type filter
     			if(m_targetSkus.Count == 0) {
     				currentValue++;
     			} else {
     				// Is it one of the target types?
-    				if(m_targetSkus.Contains(prey.sku)) {
+    				if(m_targetSkus.Contains(_e.sku)) {
     					// Found!
     					currentValue++;
     				}

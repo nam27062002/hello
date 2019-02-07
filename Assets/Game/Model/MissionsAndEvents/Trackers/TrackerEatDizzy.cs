@@ -35,14 +35,14 @@ public class TrackerEatDizzy : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 	}
 
 	/// <summary>
 	/// Destructor
 	/// </summary>
 	~TrackerEatDizzy() {
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 	}
 
 	//------------------------------------------------------------------------//
@@ -53,7 +53,7 @@ public class TrackerEatDizzy : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
 
 		// Call parent
 		base.Clear();
@@ -81,18 +81,17 @@ public class TrackerEatDizzy : TrackerBase {
 	/// <summary>
 	/// An entity has been killed.
 	/// </summary>
-	/// <param name="_entity">The source entity, optional.</param>
+	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnKill(Transform _entity, Reward _reward) {
-		if ( InstanceManager.player.IsDrunk() ){
-			IEntity prey = _entity.GetComponent<IEntity>();
-			if (prey != null && prey.onDieStatus.source == IEntity.Type.PLAYER){
+	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
+		if ( InstanceManager.player.IsDrunk() ){			
+			if (_e != null && _e.onDieStatus.source == IEntity.Type.PLAYER){
 				// Count automatically if we don't have any type filter
 				if(m_targetSkus.Count == 0) {
 					currentValue++;
 				} else {
 					// Is it one of the target types?
-					if(m_targetSkus.Contains(prey.sku)) {
+					if(m_targetSkus.Contains(_e.sku)) {
 						// Found!
 						currentValue++;
 					}

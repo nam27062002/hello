@@ -281,11 +281,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -306,11 +306,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -689,7 +689,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
-	private void OnKill(Transform _entity, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
 
 		if (!string.IsNullOrEmpty(_reward.origin))
 		{
@@ -720,20 +720,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		}
 
 		// Add the reward
-		ApplyReward(_reward, _entity);
+		ApplyReward(_reward, _t);
 
 		// Update multiplier
 		UpdateScoreMultiplier();
 	}
 
-	private void OnBurned( Transform _entity, Reward _reward){
+	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
 		_reward.coins = (int)(_reward.coins * m_burnCoinsMultiplier);
-		OnKill( _entity, _reward );
+		OnKill(_t, _e, _reward );
 	}
 
-	private void OnFlockEaten(Transform _entity, Reward _reward) {
+	private void OnFlockEaten(Transform _t, IEntity _e, Reward _reward) {
 		// Add the reward
-		ApplyReward(_reward, _entity);
+		ApplyReward(_reward, _t);
 	}
 
 	private void OnLetterCollected(Reward _reward){

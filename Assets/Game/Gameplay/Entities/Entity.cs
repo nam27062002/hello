@@ -222,7 +222,7 @@ public class Entity : IEntity, IBroadcastListener {
 		base.Disable(_destroyed);
 
 		if (m_spawner != null) {
-			m_spawner.RemoveEntity(gameObject, _destroyed);
+			m_spawner.RemoveEntity(this, _destroyed);
 		}
 
         m_spawned = false;		

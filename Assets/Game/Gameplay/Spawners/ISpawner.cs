@@ -12,7 +12,7 @@ public interface ISpawner : IQuadTreeItem {
 
 	bool MustCheckCameraBounds(); // this spawner will kill its entities if it is outside camera disable area
 
-	void RemoveEntity(GameObject _entity, bool _killedByPlayer);
+	void RemoveEntity(IEntity _entity, bool _killedByPlayer);
 	void ForceRemoveEntities();
     void ForceReset(); // Used for debug purpose    
     void ForceGolden( IEntity entity );

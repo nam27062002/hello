@@ -368,7 +368,7 @@ public class Spawner : AbstractSpawner {
 
 						string key = m_entitySku[m_prefabIndex];
 						if (RewardManager.killCount.ContainsKey(key)) {
-							eaten = RewardManager.killCount[key];
+							eaten += RewardManager.killCount[key];
 						}
 
 						float rnd = Random.Range(0f, 1f);
@@ -510,13 +510,13 @@ public class Spawner : AbstractSpawner {
 		}
 	}
 
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
 			if (m_groupBonus > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
 			}
 
 			// Reroll the Golden chance

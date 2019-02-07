@@ -166,7 +166,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		ExtendedStart();
 
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 
@@ -200,7 +200,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
@@ -324,11 +324,11 @@ public class DragonBreathBehaviour : MonoBehaviour {
     }
 
 
-	protected virtual void OnEntityBurned(Transform t, Reward reward)
+	protected virtual void OnEntityBurned(Transform _t, IEntity _e, Reward _reward)
 	{
-		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
-		m_dragon.AddLife( healthReward, DamageType.NONE, t );
-		m_dragon.AddEnergy(reward.energy);
+		float healthReward = m_healthBehaviour.GetBoostedHp(_reward.origin, _reward.health);
+		m_dragon.AddLife(healthReward, DamageType.NONE, _t);
+		m_dragon.AddEnergy(_reward.energy);
 		//AddFury(reward.fury);??
 	}
 

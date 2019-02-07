@@ -35,9 +35,9 @@ public class TrackerKill : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 	}
 
 	/// <summary>
@@ -55,9 +55,9 @@ public class TrackerKill : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
-		Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
 
 		// Call parent
 		base.Clear();
@@ -85,17 +85,16 @@ public class TrackerKill : TrackerBase {
 	/// <summary>
 	/// An entity has been killed.
 	/// </summary>
-	/// <param name="_entity">The source entity, optional.</param>
+	/// <param name="_e">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnKill(Transform _entity, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
 		// Count automatically if we don't have any type filter
 		if(m_targetSkus.Count == 0) {
 			currentValue++;
 		} else {
 			// Is it one of the target types?
-			IEntity prey = _entity.GetComponent<IEntity>();
-			if(prey != null) {
-				if(m_targetSkus.Contains(prey.sku)) {
+			if(_e != null) {
+				if(m_targetSkus.Contains(_e.sku)) {
 					// Found!
 					currentValue++;
 				}

@@ -142,10 +142,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.AddListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-			Messenger.AddListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
@@ -164,10 +164,10 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 
 		if ( m_particlesFeedbackEnabled )
 		{
-			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
-			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
-			Messenger.RemoveListener<IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEaten);
+			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
+			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
 			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
@@ -220,12 +220,12 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
     /// </summary>
     /// <param name="_type">The type of feedback to be displayed.</param>
     /// <param name="_entity">The source of the kill.</param>
-    private void SpawnKillFeedback(FeedbackData.Type _type, Transform _entity) {
+    private void SpawnKillFeedback(FeedbackData.Type _type, Transform _t, IEntity _e) {
 		// Some checks first
-		if(_entity == null) return;
+		if(_t == null) return;
 
-		// Get the feedback data from the source entity
-		Entity entity = _entity.GetComponent<Entity>();
+        // Get the feedback data from the source entity
+        Entity entity = _e as Entity;
 		if(entity == null) return;
 
         // Check that there's actually some text to be spawned
@@ -236,7 +236,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
         TextCacheItemData itemData = m_cacheDatas[ECacheTypes.Kill].GetCacheItemDataAvailable() as TextCacheItemData;
         if (itemData != null)
         {
-            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);            
+            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _t.position, text);            
             m_feedbacksQueue.Enqueue(itemData.Controller);
         }       
     }
@@ -315,8 +315,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">The eaten entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnEaten(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.EAT, _entity);
+	private void OnEaten(Transform _t, IEntity _e, Reward _reward) {
+		SpawnKillFeedback(FeedbackData.Type.EAT, _t, _e);
 	}
 
 	/// <summary>
@@ -324,8 +324,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">The burned entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnBurned(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.BURN, _entity);
+	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
+		SpawnKillFeedback(FeedbackData.Type.BURN, _t, _e);
 	}
 
 	/// <summary>
@@ -333,8 +333,8 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">The destroyed entity.</param>
 	/// <param name="_reward">The reward given. Won't be used.</param>
-	private void OnDestroyed(Transform _entity, Reward _reward) {
-		SpawnKillFeedback(FeedbackData.Type.DESTROY, _entity);
+	private void OnDestroyed(Transform _t, IEntity _e, Reward _reward) {
+		SpawnKillFeedback(FeedbackData.Type.DESTROY, _t, _e);
 	}
 		
 	/// <summary>
@@ -342,7 +342,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">Entity.</param>
 	/// <param name="_reawrd">Reawrd.</param>
-	private void OnFlockEaten(Transform _entity, Reward _reward) {		
+	private void OnFlockEaten(Transform _t, IEntity _e, Reward _reward) {		
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback		
         string text = LocalizationManager.SharedInstance.Localize("TID_FEEDBACK_FLOCK_BONUS");
 
@@ -350,7 +350,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
         TextCacheItemData itemData = m_cacheDatas[ECacheTypes.FlockBonus].GetCacheItemDataAvailable() as TextCacheItemData;
         if (itemData != null)
         {
-            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);
+            itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _t.position, text);
             m_feedbacksQueue.Enqueue(itemData.Controller);
         }           		
 	}
