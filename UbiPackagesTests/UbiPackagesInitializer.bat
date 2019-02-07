@@ -20,32 +20,32 @@ goto :finish
 
 :link		
 	set resultMsg=
-	set ubiPackagesFolderName=%2
-	set pathToUbiPackagesSource=..\Assets\!ubiPackagesFolderName!
-	set pathToUbiPackagesDest=%1\Assets\!ubiPackagesFolderName!
+	set folderName=%2
+	set pathToFolderNameSource=..\Assets\!folderName!
+	set pathToFolderNameDest=%1\Assets\!folderName!
 
 	REM Checks if the link already exists 
-	if exist !pathToUbiPackagesDest! (
-		set resultMsg=Symbolic link [!pathToUbiPackagesDest!] already exists
+	if exist !pathToFolderNameDest! (
+		set resultMsg=Symbolic link [!pathToFolderNameDest!] already exists
 		goto show_result	
 	) 
 
-	REM Searches for UbiPackages folder source
-	if exist !pathToUbiPackagesSource! (
+	REM Searches for folder source
+	if exist !pathToFolderNameSource! (
 		goto foundSource
 	) else (
-		set resultMsg=ERROR: UbiPackages source not found in !pathToUbiPackagesSource!
+		set resultMsg=ERROR: source not found in !pathToFolderNameSource!
 		goto :show_result
 	)
 
 :foundSource		
-	set relativePathToSource=..\..\!pathToUbiPackagesSource!
-	echo Symbolic linking !pathToUbiPackagesDest! to !pathToUbiPackagesSource!...
+	set relativePathToSource=..\..\!pathToFolderNameSource!
+	echo Symbolic linking !pathToFolderNameDest! to !pathToFolderNameSource!...
 
 	REM Makes the symbolic link
-	mklink /d !pathToUbiPackagesDest! !relativePathToSource!
+	mklink /d !pathToFolderNameDest! !relativePathToSource!
 
-	if exist !pathToUbiPackagesDest! (		
+	if exist !pathToFolderNameDest! (		
 		set resultMsg=SUCCESS
 	) else (
 		set resultMsg=mklink failed		
