@@ -1,3 +1,4 @@
+#if UNITY_WINDOWS
 using System;
 using NUnit.Framework.Constraints;
 using UnityEngine;
@@ -366,3 +367,4 @@ namespace MemoryProfilerWindow
         }
     }
 }
+#endif

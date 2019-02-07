@@ -1,3 +1,4 @@
+#if UNITY_WINDOWS
 using System.IO;
 using UnityEngine;
 using UnityEditor;
@@ -205,4 +206,5 @@ public static class PackedMemorySnapshotUtility
     }
 
 }
+#endif
 

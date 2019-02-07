@@ -1,3 +1,4 @@
+#if UNITY_WINDOWS
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -175,3 +176,4 @@ namespace MemoryProfilerWindow
         }
     }
 }
+#endif

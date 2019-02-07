@@ -1,3 +1,4 @@
+#if UNITY_WINDOWS
 using System;
 using Assets.Editor.Treemap;
 using UnityEditor;
@@ -389,3 +390,4 @@ namespace MemoryProfilerWindow
         }
     }
 }
+#endif
