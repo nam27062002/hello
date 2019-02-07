@@ -38,7 +38,19 @@ public class BasicAddressablesTestController : MonoBehaviour
         string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
-        string catalogAsText = File.ReadAllText(addressablesCatalogPath);
+        string catalogAsText;
+        if (Application.platform == RuntimePlatform.Android) //Need to extract file from apk first
+        {
+            WWW reader = new WWW(addressablesCatalogPath);
+            while (!reader.isDone) { }
+
+            catalogAsText = reader.text;
+        }
+        else
+        {
+            catalogAsText = File.ReadAllText(addressablesCatalogPath);
+        }
+        
         JSONNode catalogASJSON = JSON.Parse(catalogAsText);        
         m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, logger);        
     }
