@@ -6,7 +6,7 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     public void Initialize(string assetBundlesManifestPath, Logger logger)
     {
         List<string> localAssetBundleIds = new List<string> { "01/scene_cubes", "01/asset_cubes" };
-        localAssetBundleIds = null;
+        //localAssetBundleIds = null;
         AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, logger);
     }
 
