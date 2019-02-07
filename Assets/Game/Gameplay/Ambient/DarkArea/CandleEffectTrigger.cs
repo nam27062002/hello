@@ -39,20 +39,22 @@ public class CandleEffectTrigger : MonoBehaviour {
         m_vDirection = m_vDirection.normalized;
     }
 
+	private bool m_playerInside = false;
 
     void OnTriggerEnter( Collider other)
 	{
-//      if (other.CompareTag("PlayerGroun"))
-//      {
-        Messenger.Broadcast<bool, CandleEffectTrigger>(MessengerEvents.DARK_ZONE_TOGGLE, true, this);
-//      }
+		if (other.CompareTag("Player") && !m_playerInside) {
+			Messenger.Broadcast<bool, CandleEffectTrigger> (MessengerEvents.DARK_ZONE_TOGGLE, true, this);
+			m_playerInside = true;
+		}
 	}
     void OnTriggerExit(Collider other)
     {
-//      if (other.CompareTag("Player"))
-//      {
-        Messenger.Broadcast<bool, CandleEffectTrigger>(MessengerEvents.DARK_ZONE_TOGGLE, false, this);
-//      }
+		if (other.CompareTag("Player") && m_playerInside)
+		{
+			Messenger.Broadcast<bool, CandleEffectTrigger>(MessengerEvents.DARK_ZONE_TOGGLE, false, this);
+			m_playerInside = false;
+		}
     }
 
 

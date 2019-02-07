@@ -194,7 +194,14 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	public static Dictionary<string, int> categoryKillCount{
 		get{ return instance.m_categoryKillCount; }
 	}
-	/*
+
+    private Dictionary<string, int> m_npcPremiumCount = new Dictionary<string, int>();
+    public static Dictionary<string, int> npcPremiumCount {
+        get { return instance.m_npcPremiumCount; }
+    }
+
+
+    /*
 	// Distance moved by the player
 	private Vector3 m_distance;
 	public static Vector3 distance{
@@ -207,8 +214,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	}
 	*/
 
-	// Revive tracking
-	private int m_freeReviveCount = 0;
+    // Revive tracking
+    private int m_freeReviveCount = 0;
 	public static int freeReviveCount {
 		get { return instance.m_freeReviveCount; }
 		set { instance.m_freeReviveCount = value; }
@@ -463,7 +470,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		// Tracking vars
 		instance.m_killCount.Clear();
 		instance.m_categoryKillCount.Clear();
-		instance.m_freeReviveCount = 0;
+        instance.m_npcPremiumCount.Clear();
+        instance.m_freeReviveCount = 0;
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
 		instance.m_deathType = DamageType.NORMAL;

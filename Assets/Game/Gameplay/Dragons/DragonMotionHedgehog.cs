@@ -217,8 +217,9 @@ public class DragonMotionHedgehog : DragonMotion {
 			{
 				float impulseMag = m_impulse.magnitude;
                 m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.1f);
-                
 				ApplyExternalForce();
+                if (m_impulse.sqrMagnitude > m_sonicMaxSpeed * m_sonicMaxSpeed)
+                    m_impulse = m_impulse.normalized * m_sonicMaxSpeed;
 				m_rbody.velocity = m_impulse;
                 RotateToDirection( m_direction );
                 
@@ -352,8 +353,19 @@ public class DragonMotionHedgehog : DragonMotion {
 	override protected void OnCollisionEnter(Collision collision)
 	{
 		base.OnCollisionEnter(collision);
-		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
-		{
+		OnHedgehogCollision( collision );
+	}
+    
+    public override void OnCollisionStay(Collision collision)
+    {
+        base.OnCollisionStay(collision);
+        OnHedgehogCollision( collision );
+    }
+
+    protected void OnHedgehogCollision(Collision collision)
+    {
+        if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
+        {
             if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
             {
                 IEntity entity = collision.gameObject.GetComponent<IEntity>();
@@ -372,11 +384,13 @@ public class DragonMotionHedgehog : DragonMotion {
                     }
                 }
             }
-			
-		}
-	}
+            
+        }
+    }
 
-	override public bool CanIResumeEating()
+
+
+    override public bool CanIResumeEating()
 	{
 		bool ret = base.CanIResumeEating();
 		if ( m_cheskStateForResume && (m_state == State.Extra_1 || m_state == State.Extra_2) )
@@ -455,7 +469,9 @@ public class DragonMotionHedgehog : DragonMotion {
             AudioController.Play( m_bounceSound, m_transform );
         }
         m_direction = Vector3.Reflect( m_direction,  normal);
-        m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+        m_direction.Normalize();
+        // m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+        m_sonicImpulse = m_direction * Mathf.Min(m_sonicImpulse.magnitude, m_sonicMaxSpeed);
         m_impulse = m_sonicImpulse;
         // Increase multiplier
         Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP);
