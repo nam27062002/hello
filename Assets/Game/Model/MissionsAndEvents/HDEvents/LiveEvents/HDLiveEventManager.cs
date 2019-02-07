@@ -459,7 +459,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 	    		{
 		    		List<Modifier> mods = data.definition.m_otherMods;
 					for (int i = 0; i < mods.Count; i++) {
-		    			mods[i].Apply();
+                        if (mods[i] != null) {
+                            mods[i].Apply();
+                        }
 					}
 				}
 			}
@@ -473,7 +475,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             m_active = false;
     		List<Modifier> mods = data.definition.m_otherMods;
 			for (int i = 0; i < mods.Count; i++) {
-    			mods[i].Remove();
+                if (mods[i] != null) {
+                    mods[i].Remove();
+                }
 			}
     	}
     }
