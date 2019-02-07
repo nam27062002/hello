@@ -1293,7 +1293,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4703135058235706}
-  - component: {fileID: 114559452262488032}
   m_Layer: 0
   m_Name: lab_outer_rocks
   m_TagString: Untagged
@@ -3458,6 +3457,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4611959788567058}
+  - component: {fileID: 114810997348294552}
   m_Layer: 0
   m_Name: LAB_DECO
   m_TagString: Untagged
@@ -10654,7 +10654,8 @@ MonoBehaviour:
   m_checkScreens: 1
   m_mode: 1
   m_targetScreens: 1200000014000000
-  m_delay: 0
+  m_hideDelay: 0
+  m_showDelay: 0
   m_restartShowAnimation: 0
 --- !u!114 &114388421584229830
 MonoBehaviour:
@@ -11105,7 +11106,8 @@ MonoBehaviour:
   m_checkScreens: 1
   m_mode: 0
   m_targetScreens: 1100000012000000130000000800000014000000
-  m_delay: 0
+  m_hideDelay: 0
+  m_showDelay: 0
   m_restartShowAnimation: 0
 --- !u!114 &114536873834159396
 MonoBehaviour:
@@ -11123,30 +11125,6 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
---- !u!114 &114559452262488032
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1292413917702706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetAnimator: {fileID: 0}
-  m_checkSelectedDragon: 0
-  m_hideForDragons: 0
-  m_targetDragonSku: 
-  m_showIfShadow: 0
-  m_showIfLocked: 0
-  m_showIfAvailable: 0
-  m_showIfOwned: 1
-  m_checkScreens: 1
-  m_mode: 1
-  m_targetScreens: 11000000120000001300000014000000
-  m_delay: 0
-  m_restartShowAnimation: 0
 --- !u!114 &114577509569732466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11214,7 +11192,8 @@ MonoBehaviour:
   m_checkScreens: 1
   m_mode: 0
   m_targetScreens: 0c0000000d0000000e0000000f000000
-  m_delay: 0
+  m_hideDelay: 0
+  m_showDelay: 0
   m_restartShowAnimation: 0
 --- !u!114 &114631703115955346
 MonoBehaviour:
@@ -11492,6 +11471,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 27
+--- !u!114 &114810997348294552
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1830822633447896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1ccf5c30da243be93264797f5bc17c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_targetAnimator: {fileID: 0}
+  m_checkSelectedDragon: 0
+  m_hideForDragons: 0
+  m_targetDragonSku: 
+  m_showIfShadow: 0
+  m_showIfLocked: 0
+  m_showIfAvailable: 0
+  m_showIfOwned: 1
+  m_checkScreens: 1
+  m_mode: 0
+  m_targetScreens: 0c0000000d0000000e0000000f00000011000000120000001300000014000000
+  m_hideDelay: 0.5
+  m_showDelay: 0
+  m_restartShowAnimation: 0
 --- !u!114 &114811373314087254
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11624,7 +11628,8 @@ MonoBehaviour:
   m_checkScreens: 1
   m_mode: 0
   m_targetScreens: 14000000
-  m_delay: 0
+  m_hideDelay: 0
+  m_showDelay: 0
   m_restartShowAnimation: 0
 --- !u!114 &114980794330561174
 MonoBehaviour:
