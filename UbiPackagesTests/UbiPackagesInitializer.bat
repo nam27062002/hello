@@ -14,8 +14,8 @@ goto :finish
 
 :project
 	call :link %1 UbiPackages
-	call :link %1 Calety
-	call :link %1 CaletyExternalPlugins	
+	REM call :link %1 Calety
+	REM call :link %1 CaletyExternalPlugins	
 	goto :nofinish
 
 :link		
