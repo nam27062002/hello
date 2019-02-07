@@ -1139,7 +1139,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					m_freezeEmitter[i].transform.position = bloodPos;
 					empty = false;
 				} else {
-					m_bloodEmitter[i] = null;
+					m_freezeEmitter[i] = null;
 				}
 			}
 
