@@ -367,7 +367,7 @@ public class Spawner : AbstractSpawner {
 						float eaten = 1f;
 
 						string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
-                       			if (RewardManager.npcPremiumCount.ContainsKey(key)) {
+                        if (RewardManager.npcPremiumCount.ContainsKey(key)) {
 							eaten += RewardManager.npcPremiumCount[key];
 						}
 
@@ -510,7 +510,7 @@ public class Spawner : AbstractSpawner {
 		}
     }
 
-    protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+    protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
         if (m_isPremiumCurrencyNPC && _killedByPlayer) {
             string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
             if (RewardManager.npcPremiumCount.ContainsKey(key)) {
@@ -520,10 +520,8 @@ public class Spawner : AbstractSpawner {
             }
         }
     }
-
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+    	
 	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
-    protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
 			if (m_groupBonus > 0 && _lastEntity != null) {
