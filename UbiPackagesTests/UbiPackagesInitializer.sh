@@ -9,25 +9,22 @@ echo
 echo "Preparing UbiPackages framework and symbolic linkages..."
 echo
 
-link_ubi_packages()
+link()
 {
-	echo "link_ubi_packages" $1
+	echo "link" $1 $2
 
-	ubiPackagesFolderName="UbiPackages"
+	folderName=$2
 
 	#Path to the original directory has to be absolute 
-	pathToUbiPackagesOriginal=$PWD"/../Assets/"$ubiPackagesFolderName
-	pathToUbiPackagesLink="$1/Assets/"$ubiPackagesFolderName
-
-	#echo "pathToUbiPackagesOriginal="$pathToUbiPackagesOriginal
-	#echo "pathToUbiPackagesLink="$pathToUbiPackagesLink
+	pathToFolderOriginal=$PWD"/../Assets/"$folderName
+	pathToFolderLink="$1/Assets/"$folderName
 
 	# Checks if the link already exists 
-	if [ -L $pathToUbiPackagesLink ]
+	if [ -L $pathToFolderLink ]
 	then
-		echo "Symbolic link ${pathToUbiPackagesLink} already exists"
+		echo "Symbolic link ${pathToFolderLink} already exists"
 	else
-		createSymbolicLink $pathToUbiPackagesOriginal $pathToUbiPackagesLink	
+		createSymbolicLink $pathToFolderOriginal $pathToFolderLink	
 	fi
 }
 
@@ -42,4 +39,11 @@ createSymbolicLink()
 	fi
 }
 
-link_ubi_packages AssetBundlesUnitTests
+project()
+{
+	link $1 UbiPackages
+	link $1 Calety
+	link $1 CaletyExternalPlugins
+}
+
+project AddressablesUnitTests
