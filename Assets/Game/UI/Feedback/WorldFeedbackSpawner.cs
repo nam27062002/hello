@@ -146,7 +146,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-			Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+			Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.AddListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
 	        
         }
@@ -168,7 +168,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroyed);
 			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-			Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
+			Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnStarCombo);
 			Messenger.RemoveListener<Transform>(MessengerEvents.ENTITY_ESCAPED, OnEscaped);
         }
 		
@@ -360,7 +360,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_entity">Entity.</param>
 	/// <param name="_reawrd">Reawrd.</param>
-	private void OnStarCombo(Transform _entity, Reward _reward) {		
+	private void OnStarCombo(Transform _t, IEntity _e, Reward _reward) {		
 		// Spawn flock feedback bonus, score will be displayed as any other score feedback		
 		string text = LocalizationManager.SharedInstance.Localize("TID_STARS_REWARD");
 
@@ -368,7 +368,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
 		TextCacheItemData itemData = m_cacheDatas[ECacheTypes.FlockBonus].GetCacheItemDataAvailable() as TextCacheItemData;
 		if (itemData != null)
 		{
-			itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _entity.position, text);
+			itemData.SpawnText(CacheWatch.ElapsedMilliseconds, _t.position, text);
 			m_feedbacksQueue.Enqueue(itemData.Controller);
 		}           		
 	}
