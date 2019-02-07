@@ -11,8 +11,8 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;
     
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, Logger logger)
-    {
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, List<string> localAssetBundleIds, Logger logger)
+    {        
         sm_logger = logger;
 
         // Loads the catalog
@@ -25,7 +25,7 @@ public class AddressablesManager
 
         // Loads the providers
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(assetBundlesManifestPath, logger);
+        m_providerFromAB.Initialize(localAssetBundleIds, assetBundlesManifestPath, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 

@@ -3,10 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(string assetBundlesManifestPath, Logger logger)
-    {
-        List<string> localAssetBundleIds = new List<string> { "01/scene_cubes", "01/asset_cubes" };
-        //localAssetBundleIds = null;
+    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, Logger logger)
+    {        
         AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, logger);
     }
 

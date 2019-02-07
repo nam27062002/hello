@@ -51,8 +51,11 @@ public class BasicAddressablesTestController : MonoBehaviour
             catalogAsText = File.ReadAllText(addressablesCatalogPath);
         }
         
-        JSONNode catalogASJSON = JSON.Parse(catalogAsText);        
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, logger);        
+        JSONNode catalogASJSON = JSON.Parse(catalogAsText);
+        List<string> localAssetBundleIds = new List<string> { "01/scene_cubes", "01/asset_cubes" };
+        //localAssetBundleIds = null;
+
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, localAssetBundleIds, logger);        
     }
 
     public void Addressables_Reset()
