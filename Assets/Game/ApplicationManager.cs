@@ -328,6 +328,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
         HDAddressablesManager.Instance.Update();
+        GameStoreManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
         {
@@ -534,17 +535,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			}
 			
 			// Chests notification
-			int max = UsersManager.currentUser.dailyChests.Length;
-			bool missingChests = false;
-			for (int i = 0; i < max && !missingChests; i++) 
+			Chest[] chests = UsersManager.currentUser.dailyChests;
+			if (chests != null) 
 			{
-				if ( UsersManager.currentUser.dailyChests[i].state == Chest.State.COLLECTED )
-					missingChests = true;
-			}
-			if ( missingChests )
-			{
-                int moreSeconds = 9 * 60 * 60;  // 9 AM
-				HDNotificationsManager.instance.ScheduleNewChestsNotification((int) ChestManager.timeToReset.TotalSeconds + moreSeconds );
+				int max = chests.Length;
+				bool missingChests = false;
+				for (int i = 0; i < max && !missingChests; i++) 
+				{
+					if (chests[i] != null && chests[i].state == Chest.State.COLLECTED)
+						missingChests = true;
+				}
+				if (missingChests) 
+				{
+					int moreSeconds = 9 * 60 * 60;  // 9 AM
+					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
+				}
 			}
         }
     }
@@ -1119,13 +1124,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
     }
 
-    private bool Debug_IsDrunkOn { get; set; }
-
-    public void Debug_TestToggleDrunk()
-    {
-        Debug_IsDrunkOn = !Debug_IsDrunkOn;
-        Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
-    }
 
     private bool Debug_IsFrameColorOn { get; set; }
 

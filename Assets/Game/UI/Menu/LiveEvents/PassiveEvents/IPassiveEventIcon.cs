@@ -1,4 +1,4 @@
-// IPassiveEventIcon.cs
+﻿// IPassiveEventIcon.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 29/11/2018.
@@ -55,8 +55,8 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 
 		// Subscribe to external events
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventStateUpdated);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -66,8 +66,8 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventStateUpdated);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewEventDefinition);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransition);
 	}
 
@@ -194,7 +194,7 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
         
 		// Just one last check to make sure event is active
         if(show) {
-       		show = m_passiveEventManager.m_isActive;
+       		show = m_passiveEventManager.isActive;
         }
 
 		// If going visible, refresh data
@@ -238,14 +238,14 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 	/// <summary>
 	/// Received a new event definition.
 	/// </summary>
-    private void OnNewEventDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+    private void OnNewEventDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		RefreshData(true);
 	}
 
 	/// <summary>
 	/// A live event has finished.
 	/// </summary>
-    private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+    private void OnEventFinished(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
         RefreshVisibility();
     }
 

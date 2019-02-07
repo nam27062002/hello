@@ -69,9 +69,9 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	}
 
 	void Start(){
-		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		if ( HDLiveDataManager.instance.ShouldRequestMyLiveData() )
 		{
-			HDLiveEventsManager.instance.RequestMyEvents();
+			HDLiveDataManager.instance.RequestMyLiveData();
 		}
 	}
 
@@ -94,7 +94,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
 		{
 			// Check quest rewards
-			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+			HDQuestManager quest = HDLiveDataManager.quest;
 			if (quest.EventExists())
 			{
 				quest.UpdateStateFromTimers();
@@ -618,7 +618,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
     		// Do it as well if the event is pending reward collection
     		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
     		{
-    			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+    			HDQuestManager quest = HDLiveDataManager.quest;
     			if ( quest.EventExists() )	
     			{
     				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())

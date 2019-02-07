@@ -1,4 +1,4 @@
-// DragonPlayer.cs
+﻿// DragonPlayer.cs
 // Hungry Dragon
 //
 // Created by Marc Saña Forrellach on 05/08/2015.
@@ -59,17 +59,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
-	private float m_alcohol = 0;
-	public float alcohol { get { return m_alcohol; } }
-	private float m_alcoholMax = 1;
-	public float alcoholMax {get{return m_alcoholMax;}}
-	public float m_alcoholDrain = 1;
-	private bool m_alcoholResistance = false;
-	public bool alcoholResistance
-	{
-		get{ return m_alcoholResistance; }
-		set{ m_alcoholResistance = value; }
-	}
 
 	// Cache content data
 	private float m_healthMax = 1f;
@@ -241,17 +230,17 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     		// Get data from dragon manager
     		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
-    			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
+    			if ( HDLiveDataManager.tournament.UsingProgressionDragon() )
     			{
     				m_data = DragonManager.GetDragonData(m_sku);
     			}
     			else
     			{
-					// Use tmp data
-					m_data = IDragonData.CreateFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_sku));
-					if(m_data is DragonDataClassic) {
-						(m_data as DragonDataClassic).progression.SetToMaxLevel();
-					}
+                    // Use tmp data
+                    HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
+                    HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
+
+                    m_data = IDragonData.CreateFromBuild(def.m_build);
     			}
     		}
     		else
@@ -270,9 +259,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.baseEnergy;
-
-        m_alcoholMax = m_data.maxAlcohol;
-        m_alcoholDrain = m_data.alcoholDrain;
 
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
@@ -398,21 +384,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			}
 		}
 
-		if ( m_alcohol > 0 )
-		{
-			bool drunk = IsDrunk();
-
-				// Recide Alcohol
-			m_alcohol -= Time.deltaTime * m_alcoholDrain;
-			if ( m_alcohol < 0 )
-				m_alcohol = 0;
-
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-
 		if (m_superSizeTimer > 0 )
 		{
 			m_superSizeTimer -= Time.deltaTime;
@@ -428,12 +399,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
-#if UNITY_EDITOR
-		if ( Input.GetKeyDown(KeyCode.J) )
-		{
-			AddAlcohol(100);
-		}
-#endif
 	}
 
 	//------------------------------------------------------------------//
@@ -635,23 +600,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	/// <param name="_offset">The amount of energy to be added/removed.</param>
 	public void AddEnergy(float _offset) {
 		m_energy = Mathf.Min(m_energyMax, Mathf.Max(0, m_energy + _offset));
-	}
-
-	public void AddAlcohol( float _offset ){
-		if ( !m_alcoholResistance )
-		{
-			bool drunk = IsDrunk();
-			m_alcohol += _offset;
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-	}
-
-	public bool IsDrunk()
-	{
-		return m_alcohol > m_alcoholMax;
 	}
 
 	/// <summary>

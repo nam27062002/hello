@@ -521,10 +521,6 @@ public class ProfilerControlPanelController : MonoBehaviour
     #region test
     public BossCameraAffector m_bossCameraAffector;
 
-    public void Test_OnToggleDrunkEffect()
-    {
-        ApplicationManager.instance.Debug_TestToggleDrunk();
-    }
 
     public void Test_OnToggleFrameColorEffect()
     {

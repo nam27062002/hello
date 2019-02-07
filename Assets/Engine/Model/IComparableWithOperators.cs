@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -17,7 +18,7 @@ using System;
 /// Inherit from this one instead and just implement the abstract methods!
 /// From https://damieng.com/blog/2005/10/11/automaticcomparisonoperatoroverloadingincsharp.
 /// </summary>
-public abstract class IComparableWithOperators<T> : IComparable<T>, IEquatable<T> where T : IComparableWithOperators<T> {
+public abstract class IComparableWithOperators<T> : IComparer<T>, IComparable<T>, IEquatable<T> where T : IComparableWithOperators<T> {
 	//------------------------------------------------------------------------//
 	// ABSTRACT METHODS														  //
 	// To be implemented by heirs.											  //
@@ -35,15 +36,23 @@ public abstract class IComparableWithOperators<T> : IComparable<T>, IEquatable<T
 	/// <returns>The hash code corresponding to this object.</returns>
 	protected abstract int GetHashCodeImpl();
 
-	//------------------------------------------------------------------------//
-	// IComparable<T> IMPLEMENTATION										  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Compare this instance with another one.
-	/// </summary>
-	/// <returns>The result of the comparison (-1, 0, 1).</returns>
-	/// <param name="_other">Instance to be compared to.</param>
-	public int CompareTo(T _other) {
+    //------------------------------------------------------------------------//
+    // IComparer<T> IMPLEMENTATION                                          //
+    //------------------------------------------------------------------------//
+
+    public int Compare(T x, T y) { 
+        return InternalCompare(x, y);
+    }
+
+    //------------------------------------------------------------------------//
+    // IComparable<T> IMPLEMENTATION										  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Compare this instance with another one.
+    /// </summary>
+    /// <returns>The result of the comparison (-1, 0, 1).</returns>
+    /// <param name="_other">Instance to be compared to.</param>
+    public int CompareTo(T _other) {
 		if(_other == null) return 1;
 		return CompareToImpl(_other);
 	}
@@ -74,11 +83,11 @@ public abstract class IComparableWithOperators<T> : IComparable<T>, IEquatable<T
 		return this == _other;    // T is of type IComparableWithOperators<T> so it should be ok to use the == operator :)
 	}
 
-	/// <summary>
-	/// Get the hash code corresponding to this object. Used in hashable classes such as Dictionary.
-	/// </summary>
-	/// <returns>The hash code corresponding to this object.</returns>
-	public override int GetHashCode() {
+    /// <summary>
+    /// Get the hash code corresponding to this object. Used in hashable classes such as Dictionary.
+    /// </summary>
+    /// <returns>The hash code corresponding to this object.</returns>
+    public override int GetHashCode() {
 		return GetHashCodeImpl();
 	}
 

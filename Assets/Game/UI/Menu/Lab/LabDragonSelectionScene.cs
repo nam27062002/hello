@@ -44,6 +44,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	[Space]
 	[SerializeField] private GameObject m_dragonPurchasedFX = null;
 	[SerializeField] private Transform m_dragonPurchasedFXAnchor = null;
+	[Space]
+	[SerializeField] private GameObject m_leagueTrophyPreview = null;
+	public GameObject leagueTrophyPreview {
+		get { return m_leagueTrophyPreview; }
+	}
 
 	// Internal references
 	private ScreenData m_labScreenData = null;

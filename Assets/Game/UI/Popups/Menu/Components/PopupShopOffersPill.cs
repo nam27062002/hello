@@ -102,16 +102,26 @@ public class PopupShopOffersPill : IPopupShopPill {
 		}
 
 		// Compute price before applying the discount
-		float discount = m_pack.def.GetAsFloat("discount");
-		discount = Mathf.Clamp(discount, 0.01f, 0.99f);	// [AOC] Just to be sure input discount is valid
-		m_previousPrice = m_price/(1f - discount);
+		float discount = m_pack.def.GetAsFloat("discount", 0f);
+		bool validDiscount = discount > 0f;
+		if(validDiscount) {
+			discount = Mathf.Clamp(discount, 0.01f, 0.99f); // [AOC] Just to be sure input discount is valid
+			m_previousPrice = m_price / (1f - discount);
 
-		// [AOC] Beautify original price so it's more credible
-		// 		 Put the same decimal part as the actual price
-		m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
+			// [AOC] Beautify original price so it's more credible
+			// 		 Put the same decimal part as the actual price
+			m_previousPrice = Mathf.Floor(m_previousPrice) + (m_price - Mathf.Floor(m_price));
+		} else {
+			m_previousPrice = m_price;
+		}
 
 		// Init visuals
-		OfferColorGradient gradientSetup = OfferItemPrefabs.GetGradient(discount);
+		OfferColorGradient gradientSetup = null;
+		if(validDiscount) {
+			gradientSetup = OfferItemPrefabs.GetGradient(discount);
+		} else {
+			gradientSetup = OfferItemPrefabs.GetGradient(0.9f);	// [AOC] Hardcoded!! Use high-discount colors
+		}
 
 		// Pack name
 		m_packNameText.Localize(m_pack.def.GetAsString("tidName"));
@@ -123,50 +133,58 @@ public class PopupShopOffersPill : IPopupShopPill {
 		RefreshTimer();
 
 		// Discount
-		m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
-		m_discountText.Localize(
-			"TID_OFFER_DISCOUNT_PERCENTAGE",
-			StringUtils.FormatNumber(discount * 100f, 0)
-		);
+		// Don't show if no discount is applied
+		m_discountText.gameObject.SetActive(validDiscount);
+		if(validDiscount) {
+			m_discountText.text.colorGradient = Gradient4ToVertexGradient(gradientSetup.discountGradient);
+			m_discountText.Localize(
+				"TID_OFFER_DISCOUNT_PERCENTAGE",
+				StringUtils.FormatNumber(discount * 100f, 0)
+			);
+		}
 
 		// Price
 		string localizedPrice = GetLocalizedIAPPrice(m_price);
 		m_priceText.text = localizedPrice;
 
 		// Original price
-		// [AOC] This gets quite tricky. We will try to keep the format of the 
-		//		 localized price (given by the store), but replacing the actual amount.
-		// Supported cases: "$150" "150€" "$ 150" "150 €"
-		string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
-		string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
+		// Don't show if there is no valid discount
+		m_previousPriceText.gameObject.SetActive(validDiscount);
+		if(validDiscount) {
+			// [AOC] This gets quite tricky. We will try to keep the format of the 
+			//		 localized price (given by the store), but replacing the actual amount.
+			// Supported cases: "$150" "150€" "$ 150" "150 €"
+			string localizedPreviousPrice = StringUtils.FormatNumber(m_previousPrice, 2);
+			string currencySymbol = (productInfo != null) ? productInfo.m_strCurrencySymbol : "$";
 
-		// a) "$150"
-		if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-			localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+			// a) "$150"
+			if(localizedPrice.StartsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+				localizedPreviousPrice = currencySymbol + localizedPreviousPrice;
+			}
+
+			// b) "$ 150"
+			else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
+				localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
+			}
+
+			// c) "150€"
+			else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+				localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
+			}
+
+			// d) "150 €"
+			else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
+				localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
+			}
+
+			// e) Anything else
+			else {
+				// Show just the formatted number - nothing to do
+			}
+
+			// Done! Set text
+			m_previousPriceText.text = localizedPreviousPrice;
 		}
-
-		// b) "$ 150"
-		else if(localizedPrice.StartsWith(currencySymbol + " ", StringComparison.InvariantCultureIgnoreCase)) {
-			localizedPreviousPrice = currencySymbol + " " + localizedPreviousPrice;
-		}
-
-		// c) "150€"
-		else if(localizedPrice.EndsWith(currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-			localizedPreviousPrice = localizedPreviousPrice + currencySymbol;
-		}
-
-		// d) "150 €"
-		else if(localizedPrice.EndsWith(" " + currencySymbol, StringComparison.InvariantCultureIgnoreCase)) {
-			localizedPreviousPrice = localizedPreviousPrice + " " + currencySymbol;
-		}
-
-		// e) Anything else
-		else {
-			// Show just the formatted number - nothing to do
-		}
-
-		// Done! Set text
-		m_previousPriceText.text = localizedPreviousPrice;
 
 		// Featured highlight
 		if(m_featuredHighlight != null) {
@@ -176,13 +194,17 @@ public class PopupShopOffersPill : IPopupShopPill {
 		// Items
 		for(int i = 0; i < m_itemSlots.Length; ++i) {
 			// Skip if no slot (i.e. single item layouts)
-			if(m_itemSlots[i] == null) continue;
+			OfferItemSlot slot = m_itemSlots[i];
+			if(slot == null) continue;
 
-			// If there are not enough item, hide the slot!
-			if(i >= m_pack.items.Count) {
-				m_itemSlots[i].InitFromItem(null);
-			} else {
-				m_itemSlots[i].InitFromItem(m_pack.items[i]);
+			// Start hidden and initialize after some delay
+			// [AOC] We do this because initializing the slots at the same time that the popup is being instantiated results in weird behaviours
+			slot.InitFromItem(null);
+			if(i < m_pack.items.Count) {
+				OfferPackItem item = m_pack.items[i];
+				UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+					slot.InitFromItem(item);
+				}, 1);
 			}
 		}
 
@@ -273,6 +295,23 @@ public class PopupShopOffersPill : IPopupShopPill {
 	/// </summary>
 	override protected void ShowPurchaseSuccessFeedback() {
 		// [AOC] TODO!!
+	}
+
+	/// <summary>
+	/// A purchase has been started.
+	/// </summary>
+	protected override void OnPurchaseStarted() {
+		// Prevent offers from expiring
+		OffersManager.autoRefreshEnabled = false;
+	}
+
+	/// <summary>
+	/// A purchase has finished.
+	/// </summary>
+	/// <param name="_success">Has it been successful?</param>
+	protected override void OnPurchaseFinished(bool _success) {
+		// Restore offers auto-refresh
+		OffersManager.autoRefreshEnabled = true;
 	}
 
 	//------------------------------------------------------------------------//

@@ -37,7 +37,7 @@ public class TrackerKillFrozen : TrackerBase {
 		// Subscribe to external events
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
 		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		// Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 	}
 
 
@@ -51,7 +51,7 @@ public class TrackerKillFrozen : TrackerBase {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnDestroy);
 		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnDestroy);
-		// Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
+		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnDestroy);
 
 
 		// Call parent
@@ -86,7 +86,7 @@ public class TrackerKillFrozen : TrackerBase {
 		IEntity prey = _entity.GetComponent<IEntity>();
 		if (prey != null && (prey.onDieStatus.source == IEntity.Type.PLAYER || prey.onDieStatus.source == IEntity.Type.PET)){
             // Check if in love
-            if (prey.machine.IsFreezing()){
+            if (prey.machine != null && prey.machine.IsFreezing()) {
     			// Count automatically if we don't have any type filter
     			if(m_targetSkus.Count == 0) {
     				currentValue++;

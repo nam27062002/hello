@@ -194,7 +194,14 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	public static Dictionary<string, int> categoryKillCount{
 		get{ return instance.m_categoryKillCount; }
 	}
-	/*
+
+    private Dictionary<string, int> m_npcPremiumCount = new Dictionary<string, int>();
+    public static Dictionary<string, int> npcPremiumCount {
+        get { return instance.m_npcPremiumCount; }
+    }
+
+
+    /*
 	// Distance moved by the player
 	private Vector3 m_distance;
 	public static Vector3 distance{
@@ -207,8 +214,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	}
 	*/
 
-	// Revive tracking
-	private int m_freeReviveCount = 0;
+    // Revive tracking
+    private int m_freeReviveCount = 0;
 	public static int freeReviveCount {
 		get { return instance.m_freeReviveCount; }
 		set { instance.m_freeReviveCount = value; }
@@ -256,6 +263,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     }
 
     private bool m_switchingArea = false;
+    private bool m_canLoseMultiplier = true;
+    public bool canLoseMultiplier
+    {
+        get{ return m_canLoseMultiplier; }
+        set{ m_canLoseMultiplier = value; }
+    }
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -292,6 +305,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
 
 	/// <summary>
@@ -316,6 +330,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
     
     
@@ -349,7 +364,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
 			// If timer has ended, end multiplier streak
-			if(m_scoreMultiplierTimer <= 0) 
+			if(m_scoreMultiplierTimer <= 0 && canLoseMultiplier) 
 			{
 				if (m_currentScoreMultiplierIndex != 0)
 				{
@@ -455,7 +470,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		// Tracking vars
 		instance.m_killCount.Clear();
 		instance.m_categoryKillCount.Clear();
-		instance.m_freeReviveCount = 0;
+        instance.m_npcPremiumCount.Clear();
+        instance.m_freeReviveCount = 0;
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
 		instance.m_deathType = DamageType.NORMAL;
@@ -835,6 +851,16 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     private void OnLeavingArea(float t)
     {
         m_switchingArea = true;
+    }
+    
+    private void OnForceUp()
+    {
+        // Check if we've reached next threshold
+        if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 ) 
+        {
+            // Change current multiplier
+            SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
+        }
     }
 
     public static int GetReviveCost()

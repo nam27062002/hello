@@ -1,4 +1,4 @@
-// GoalsScreenGlobalEventsTab.cs
+﻿// GoalsScreenGlobalEventsTab.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/06/2017.
@@ -39,8 +39,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[SerializeField] private GlobalEventsPanel[] m_panels = new GlobalEventsPanel[(int)Panel.COUNT];
-	[SerializeField] private TextMeshProUGUI m_rewardsErrorMessage;
-
 
 	// Internal
 	private Panel m_activePanel = Panel.OFFLINE;
@@ -57,7 +55,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		// Shouldn't happen, the custom editor makes sure everyhting is ok
 		Debug.Assert(m_panels.Length == (int)Panel.COUNT, "Unexpected amount of defined panels");
 
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Init panels
 		for(int i = 0; i < m_panels.Length; i++) {
@@ -76,8 +74,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
 		Messenger.AddListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
 
-		Messenger.AddListener<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.AddListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 		Messenger.AddListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
 	}
 
@@ -90,8 +88,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_ERROR, OnNoEvent);
 		Messenger.RemoveListener(MessengerEvents.GLOBAL_EVENT_CUSTOMIZER_NO_EVENTS, OnNoEvent);
 
-		Messenger.RemoveListener<int,HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
-		Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
+		Messenger.RemoveListener<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewards);
+		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, OnNewDefinition);
 		Messenger.RemoveListener(MessengerEvents.LIVE_EVENT_STATES_UPDATED, OnEventsUpdated);
 	}
 
@@ -123,11 +121,11 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		m_panels[(int)m_activePanel].Refresh();
 	}
 
-	protected void OnRewards(int _eventId ,HDLiveEventsManager.ComunicationErrorCodes _err)
+	protected void OnRewards(int _eventId ,HDLiveDataManager.ComunicationErrorCodes _err)
 	{
 		if ( _eventId == m_questManager.data.m_eventId )	
 		{
-			if ( _err == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR )
+			if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 			{
 				EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 				scr.StartFlow();
@@ -135,24 +133,8 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			}
 			else
 			{
-
 				// Show error message and retry button
-				switch( _err )
-				{
-					case HDLiveEventsManager.ComunicationErrorCodes.NET_ERROR:
-					{
-						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NET_ERROR");
-					}break;
-					case HDLiveEventsManager.ComunicationErrorCodes.NO_RESPONSE:
-					{
-						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_NO_RESPONSE");
-					}break;
-					default:
-					{
-						m_rewardsErrorMessage.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");
-					}break;
-				}
-
+				(m_panels[(int)Panel.RETRY_REWARDS] as GlobalEventsPanelRetryRewards).SetError(_err);
 				SetActivePanel(Panel.RETRY_REWARDS);
 			}
 		}
@@ -181,7 +163,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	private void SelectPanel() {
 
 		Panel targetPanel = Panel.NO_EVENT;
-		HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
 		{
 			if (Application.internetReachability == NetworkReachability.NotReachable || !GameSessionManager.SharedInstance.IsLogged ())
@@ -301,7 +283,7 @@ public class GlobalEventsScreenController : MonoBehaviour {
 		{
 			// Show loading and ask for my evetns
 			SetActivePanel(Panel.LOADING);
-			if (!HDLiveEventsManager.instance.RequestMyEvents())
+			if (!HDLiveDataManager.instance.RequestMyLiveData())
 			{
 				StartCoroutine( RemoveLoading());
 			}
@@ -321,9 +303,9 @@ public class GlobalEventsScreenController : MonoBehaviour {
         ApplicationManager.Apps_OpenAppInStore(ApplicationManager.EApp.HungryDragon);
     }
 
-	void OnNewDefinition(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _err)
+	void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err)
 	{
-		if ( _err == HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
+		if ( _err == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR && _eventId == m_questManager.data.m_eventId)
 		{
 			Refresh();
 		}

@@ -1,4 +1,4 @@
-// GameSceneController.cs
+﻿// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -160,9 +160,9 @@ public class GameSceneController : GameSceneControllerBase {
         }
         else
         {
-            if ( HDLiveEventsManager.instance.m_tournament.m_isActive )
+            if ( HDLiveDataManager.tournament.isActive)
             {
-                string dragon = HDLiveEventsManager.instance.m_tournament.GetToUseDragon();
+                string dragon = HDLiveDataManager.tournament.GetToUseDragon();
                 DragonManager.LoadDragon(dragon);
             }
             else
@@ -298,8 +298,8 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.RUNNING: {
 				// Update running time
 				if (!m_freezeElapsedSeconds && !m_switchingArea)
-					m_elapsedSeconds += Time.deltaTime;
-				
+					m_elapsedSeconds += Time.deltaTime;				
+
 				// Notify listeners
 				Messenger.Broadcast(MessengerEvents.GAME_UPDATED);
 			} break;
@@ -780,6 +780,7 @@ public class GameSceneController : GameSceneControllerBase {
         
         if (isSpecial)
         {
+            HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
             DragonDataSpecial specialData = InstanceManager.player.data as DragonDataSpecial;
             string powerLevel = "P" + specialData.powerLevel;
             int specialOwned = UsersManager.currentUser.GetNumOwnedSpecialDragons();
@@ -789,7 +790,7 @@ public class GameSceneController : GameSceneControllerBase {
                                                             specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level,
                                                             powerLevel,
                                                             specialOwned,
-                                                            ""
+                                                            (leagueData != null)? leagueData.sku : ""
                                                             );
         }
             

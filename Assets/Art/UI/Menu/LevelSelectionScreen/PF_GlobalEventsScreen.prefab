@@ -146,7 +146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1069267275343304
 GameObject:
   m_ObjectHideFlags: 1
@@ -2107,7 +2107,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224584129537891576}
-  - component: {fileID: 114045592745123304}
+  - component: {fileID: 114511822160178420}
   - component: {fileID: 114758997387520248}
   m_Layer: 5
   m_Name: RetryPanel
@@ -3677,17 +3677,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 1
---- !u!114 &114045592745123304
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1778916438656430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5b88587ec5ea477fb3752c3c6c63f33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114047813904645114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6966,7 +6955,7 @@ MonoBehaviour:
   - {fileID: 114035437313277944}
   - {fileID: 114567902720356070}
   - {fileID: 114950074090773448}
-  - {fileID: 114045592745123304}
+  - {fileID: 114511822160178420}
   - {fileID: 114176428590542862}
   m_rewardsErrorMessage: {fileID: 114301049295780544}
 --- !u!114 &114405243611181870
@@ -7872,6 +7861,18 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &114511822160178420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1778916438656430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 817f43820ce954a8c88c9a4c0031cf75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_errorText: {fileID: 114301049295780544}
 --- !u!114 &114513530948342270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -20394,7 +20395,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 637.64, y: 100}
+  m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224554268477985206
 RectTransform:

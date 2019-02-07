@@ -95,7 +95,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
 			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 		}
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 	}
 
 	/// <summary>
@@ -109,7 +109,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			if (FeatureSettingsManager.IsControlPanelEnabled) {
 				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 			}
-			Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+			Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		}
 	}
 
@@ -595,7 +595,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnEventFinished(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		Refresh();
 	}
 

@@ -5,8 +5,13 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 {	
 	[SerializeField] private bool m_isBlocker = false;
 	[SerializeField] private bool m_unbreakableBlocker = false;
+    public bool unbreakableBlocker
+    {
+        get{ return m_unbreakableBlocker; }
+    }
 
 	[SerializeField] private DragonTier m_tierWithTurboBreak = 0;
+    public DragonTier tierWithTurboBreak{ get{ return m_tierWithTurboBreak; } }
 	[SerializeField] private DragonTier m_tierNoTurboBreak = 0;
 
 	[SerializeField] private int m_hitCount = 1;

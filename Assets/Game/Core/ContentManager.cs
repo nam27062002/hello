@@ -202,6 +202,7 @@ public class ContentManager
 
 		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.LEAGUES, new string[] { "Rules/leaguesDefinitions" });
 
         // Disguises
         kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions" });

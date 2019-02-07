@@ -509,12 +509,11 @@ public class RewardSceneController : MenuScreenScene {
 		// If we're in the right mode, make it the selected dragon
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonReward.sku);
 		if(dragonData != null) {
-			// Does the target game mode match the current one?
-			if(SceneController.DragonTypeToMode(dragonData.type) == SceneController.mode) {
-				// Yes! Select rewarded dragon
-				InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+			// Tell the dragon selection screen for that dragon's type to make it the selected one next time we go there
+			if(dragonData is DragonDataSpecial) {
+				LabDragonSelectionScreen dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>();
+				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
 			} else {
-				// No! Tell the dragon selection screen to make it the selected one next time we enter the screen
 				MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
 				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
 			}

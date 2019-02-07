@@ -36,13 +36,13 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
-	override public bool MustBeDisplayed() {
-		// [AOC] Disabled for 1.16 until 1.18
-		return false;
-
+	override public bool MustBeDisplayed() {		
 		// Don't if score has been dismissed
 		ResultsScreenStepLeagueSync syncStep = m_controller.GetStep(ResultsScreenController.Step.LEAGUE_SYNC) as ResultsScreenStepLeagueSync;
 		if(syncStep != null && syncStep.hasBeenDismissed) return false;
+
+		// Neither if there is no active season!
+		if(!HDLiveDataManager.league.season.IsRunning()) return false;
 
 		return true;
 	}
@@ -52,8 +52,10 @@ public class ResultsScreenStepLeagueLeaderboard : ResultsScreenSequenceStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Initialize league icon with current player's league info
-		// [AOC] TODO!!
-		//m_leagueIcon.InitFromDefinition(leagueDef, false);
+		HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
+        if (leagueData != null) {
+            m_leagueIcon.Init(leagueData.tidName, leagueData.icon);
+        }
 	}
 
 	/// <summary>

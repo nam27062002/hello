@@ -51,6 +51,9 @@ namespace LevelEditor {
 
 		private List<string> m_levelsSkuList = new List<string>();
 
+        // Only load ART levels
+        private bool m_onlyArt = false;
+
 		// Every type of scene goes in a different sub-folder
 		private string assetDirForCurrentMode {
 			get { 
@@ -185,26 +188,32 @@ namespace LevelEditor {
 
 			// Some spacing
 			GUILayout.Space(5f);
-			
-			// Big juicy text showing the current level being edited
-			GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
-			titleStyle.fontSize = 20;
-			titleStyle.alignment = TextAnchor.MiddleCenter;
-			if(activeLevels != null && activeLevels.Count > 0) {
-				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
-			} else {
-				EditorGUILayout.BeginHorizontal(); {
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                // Big juicy text showing the current level being edited
+                GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
+    			titleStyle.fontSize = 20;
+			    titleStyle.alignment = TextAnchor.MiddleCenter;
+			    if(activeLevels != null && activeLevels.Count > 0) {
+    				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
+			    } else {
 					GUILayout.FlexibleSpace();
 					GUILayout.Label("No level loaded", titleStyle);
 					if(GUILayout.Button("Detect", GUILayout.Height(30f))) {
 						Init();
 					}
 					GUILayout.FlexibleSpace();
-				} EditorGUILayoutExt.EndHorizontalSafe();
-			}
-			
-			// Some more spacing
-			GUILayout.Space(5f);
+			    }
+                if (LevelEditor.settings.selectedMode == LevelEditorSettings.Mode.ART)
+                {
+                    m_onlyArt = GUILayout.Toggle(m_onlyArt, "Only Art Levels");
+                }
+            }
+            EditorGUILayoutExt.EndHorizontalSafe();
+
+            // Some more spacing
+            GUILayout.Space(5f);
 
 			if(GUILayout.Button("Load Scenes From Definition")) {
 				OnLoadScenesFromDefinition();
@@ -444,22 +453,32 @@ namespace LevelEditor {
 			Dictionary<string,DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS);
 			m_levelsSkuList.Clear();
 			List<string> options = new List<string>(defs.Count);
+            List<string> optionsext = new List<string>(defs.Count);
 
-			foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
+            foreach (KeyValuePair<string, DefinitionNode> kvp in defs) {
 				m_levelsSkuList.Add(kvp.Key);
 				string id = kvp.Key + " (" + kvp.Value.Get("common");
 
+                optionsext.Add("common (" + kvp.Value.Get("common") + ")");
+
 				int areaIndex = 1;
 				string areaString = kvp.Value.Get("area"+areaIndex);
+                optionsext.Add("area" + areaIndex + " (" + areaString + ")");
 				while(!string.IsNullOrEmpty(areaString))
 				{
 					id += ";" + areaString;
 					areaIndex++;
 					areaString = kvp.Value.Get("area"+areaIndex);
+                    optionsext.Add("area" + areaIndex + " (" + areaString + ")");
 				}
 				id += ")";
 				options.Add(id);
 			}
+            for (int c = 0; c < 4; c++)
+            {
+                options.Add(optionsext[c]);
+            }
+
 
 			// Show selection popup
 			SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
@@ -468,10 +487,33 @@ namespace LevelEditor {
 
 		private void OnLoadScenesFromDefinitions( int id )
 		{
-			string sku = m_levelsSkuList[id];
+            bool common = true, leveleditor = true, area = true;
 
-			// Store level data of the new level
-			LevelEditor.settings.levelSku = sku;
+            string sku;
+            if (id > 2)
+            {
+                sku = m_levelsSkuList[0];
+                if (id == 3)
+                {
+                    leveleditor = area = false;
+                }
+                else
+                {
+                    leveleditor = common = false;
+
+                }
+
+            }
+            else
+            {
+                sku = m_levelsSkuList[id > 2 ? 0 : id];
+
+            }
+
+
+
+            // Store level data of the new level
+            LevelEditor.settings.levelSku = sku;
 			EditorUtility.SetDirty(LevelEditor.settings);
 			AssetDatabase.SaveAssets();
 
@@ -481,56 +523,80 @@ namespace LevelEditor {
 
 			LevelEditorSettings.Mode oldMode = LevelEditor.settings.selectedMode;
 
-			List<string> commonScene = def.GetAsList<string>("common");
-			for( int i = 0; i<commonScene.Count; i++ )
-			{
-				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i/(float)commonScene.Count);
-				LevelEditor.settings.selectedMode = GetModeByName( commonScene[i]);
-				OnLoadLevel( commonScene[i] + ".unity" );
-			}
+            bool onlyArt = m_onlyArt && (oldMode == LevelEditorSettings.Mode.ART);
 
-			List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
-			for( int i = 0; i<editorOnlyScenes.Count; i++ )
-			{
-				if ( !string.IsNullOrEmpty(editorOnlyScenes[i]) )
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i/(float)editorOnlyScenes.Count);
-					LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
-					OnLoadLevel( editorOnlyScenes[i] + ".unity" );
-				}
-			}
+            if (common)
+            {
+                List<string> commonScene = def.GetAsList<string>("common");
+                for (int i = 0; i < commonScene.Count; i++)
+                {
+                    EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i / (float)commonScene.Count);
+                    LevelEditor.settings.selectedMode = GetModeByName(commonScene[i]);
+                    if (!onlyArt || commonScene[i].StartsWith("ART"))
+                    {
+                        OnLoadLevel(commonScene[i] + ".unity");
 
-			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-			for( int i = 0; i<gameplayWip.Count; i++ )
-			{
-				if ( !string.IsNullOrEmpty( gameplayWip[i] ))
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i/(float)gameplayWip.Count);
-					LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
-					OnLoadLevel( gameplayWip[i] + ".unity" );
-				}
-			}
+                    }
+                }
+            }
 
-			List<string> areaScenes = new List<string>();
-			int areaIndex = 1;
-			bool _continue = false;
-			do
-			{
-				areaScenes.Clear();
-				areaScenes = def.GetAsList<string>("area"+areaIndex);
-				_continue = false;
-				for( int i = 0;i<areaScenes.Count; i++ )
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + areaIndex + ": " + areaScenes[i] + "...", (float)i/(float)areaScenes.Count);
-					if (!string.IsNullOrEmpty(areaScenes[i]))
-					{
-						_continue = true;
-						LevelEditor.settings.selectedMode = GetModeByName( areaScenes[i]);
-						OnLoadLevel( areaScenes[i] + ".unity" );	
-					}
-				}
-				areaIndex++;
-			}while( _continue );
+            if (leveleditor)
+            {
+                List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
+                for (int i = 0; i < editorOnlyScenes.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(editorOnlyScenes[i]))
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i / (float)editorOnlyScenes.Count);
+                        LevelEditor.settings.selectedMode = GetModeByName(editorOnlyScenes[i]);
+                        if (!onlyArt || editorOnlyScenes[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(editorOnlyScenes[i] + ".unity");
+                        }
+                    }
+                }
+
+                List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+                for (int i = 0; i < gameplayWip.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(gameplayWip[i]))
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i / (float)gameplayWip.Count);
+                        LevelEditor.settings.selectedMode = GetModeByName(gameplayWip[i]);
+                        if (!onlyArt || gameplayWip[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(gameplayWip[i] + ".unity");
+                        }
+                    }
+                }
+            }
+
+            if (area)
+            {
+                List<string> areaScenes = new List<string>();
+                int areaIndex = id < 3 ? 1 : id - 3;
+                bool _continue = false;
+                do
+                {
+                    areaScenes.Clear();
+                    areaScenes = def.GetAsList<string>("area" + areaIndex);
+                    _continue = false;
+                    for (int i = 0; i < areaScenes.Count; i++)
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + areaIndex + ": " + areaScenes[i] + "...", (float)i / (float)areaScenes.Count);
+                        if (!string.IsNullOrEmpty(areaScenes[i]))
+                        {
+                            _continue = true;
+                            LevelEditor.settings.selectedMode = GetModeByName(areaScenes[i]);
+                            if (!onlyArt || areaScenes[i].StartsWith("ART"))
+                            {
+                                OnLoadLevel(areaScenes[i] + ".unity");
+                            }
+                        }
+                    }
+                    areaIndex++;
+                } while (_continue && id < 3);
+            }
 
 			// Hide progress bar!
 			EditorUtility.ClearProgressBar();

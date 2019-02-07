@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using AI;
@@ -189,7 +189,7 @@ public class Spawner : AbstractSpawner {
 		if (m_eventOnly) {
 			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 				// Maybe only check if joined?
-			enabledByEvents = HDLiveEventsManager.instance.m_quest.IsRunning() && HDLiveEventsManager.instance.m_quest.m_isActive;
+			enabledByEvents = HDLiveDataManager.quest.IsRunning() && HDLiveDataManager.quest.isActive;
 		}
 
 		if (enabledByEvents) {
@@ -366,9 +366,9 @@ public class Spawner : AbstractSpawner {
 					if (m_isPremiumCurrencyNPC) {
 						float eaten = 1f;
 
-						string key = m_entitySku[m_prefabIndex];
-						if (RewardManager.killCount.ContainsKey(key)) {
-							eaten = RewardManager.killCount[key];
+						string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
+                        if (RewardManager.npcPremiumCount.ContainsKey(key)) {
+							eaten = RewardManager.npcPremiumCount[key];
 						}
 
 						float rnd = Random.Range(0f, 1f);
@@ -508,9 +508,20 @@ public class Spawner : AbstractSpawner {
 				m_groupBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
 			}
 		}
-	}
+    }
 
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+    protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+        if (m_isPremiumCurrencyNPC && _killedByPlayer) {
+            string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
+            if (RewardManager.npcPremiumCount.ContainsKey(key)) {
+                RewardManager.npcPremiumCount[key]++;
+            } else {
+                RewardManager.npcPremiumCount.Add(key, 1);
+            }
+        }
+    }
+
+    protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
 			if (m_groupBonus > 0 && _lastEntity != null) {

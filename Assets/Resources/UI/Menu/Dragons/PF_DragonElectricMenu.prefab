@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 114462059673221986}
   - component: {fileID: 11455772}
   - component: {fileID: 114425573981224140}
+  - component: {fileID: 114267392783029662}
   m_Layer: 0
   m_Name: PF_DragonElectricMenu
   m_TagString: Untagged
@@ -252,6 +253,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -979,6 +981,7 @@ GameObject:
   - component: {fileID: 4305941997357360}
   - component: {fileID: 198625780005322524}
   - component: {fileID: 199260697215528530}
+  - component: {fileID: 114416252841379642}
   m_Layer: 0
   m_Name: PS_ElectricBody
   m_TagString: Untagged
@@ -1118,6 +1121,7 @@ GameObject:
   - component: {fileID: 4344259369239014}
   - component: {fileID: 198309091108894990}
   - component: {fileID: 199563191276213106}
+  - component: {fileID: 114434017678550342}
   m_Layer: 0
   m_Name: Glow
   m_TagString: Untagged
@@ -2415,6 +2419,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114151457271463450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2452,6 +2457,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 13
+--- !u!114 &114267392783029662
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f996de6264cf4e73a2f19fcf80acb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_applyOnStart: 1
+  m_targets: []
+  m_uiTargets: []
+  m_transformTargets:
+  - target: {fileID: 4134279938840336}
+    newRenderQueue: 3000
+    graphics: 0
+    renderers: 1
+  - target: {fileID: 4815156712940056}
+    newRenderQueue: 3000
+    graphics: 0
+    renderers: 1
 --- !u!114 &114278763746462684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2467,6 +2495,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114322163561225090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2482,6 +2511,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114351697616446884
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2497,6 +2527,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114375252810781572
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2517,6 +2548,24 @@ MonoBehaviour:
   springSpeed: 7
   m_upDir: {x: 0, y: -90, z: 0}
   m_disableOnResults: 0
+--- !u!114 &114416252841379642
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1553989114560322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 414586}
+  m_resetFirst: 1
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
 --- !u!114 &114425573981224140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2537,6 +2586,24 @@ MonoBehaviour:
     - type: 0
       name: Tail_Down
   - element: []
+--- !u!114 &114434017678550342
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1707799099123376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 1
+  m_scale: 1
+  m_transform: {fileID: 414586}
+  m_resetFirst: 1
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 0
 --- !u!114 &114462059673221986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2637,6 +2704,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114718486738036614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2652,6 +2720,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 0
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114829698272587164
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2667,6 +2736,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114846310519056416
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2718,6 +2788,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!137 &137255820600226756
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -3056,7 +3127,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1426282466
+  randomSeed: 966130360
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6468,7 +6539,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 271654677
+  randomSeed: -1441607719
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9829,7 +9900,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -946950781
+  randomSeed: 391566551
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13241,7 +13312,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 132861287
+  randomSeed: 2042741165
   InitialModule:
     serializedVersion: 3
     enabled: 1

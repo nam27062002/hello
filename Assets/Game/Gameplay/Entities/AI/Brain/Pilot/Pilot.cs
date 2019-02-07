@@ -144,7 +144,7 @@ namespace AI {
 			m_actions &= ~_action;
 		}
 
-		public virtual void OnDie() {}
+		public virtual void BrainExit() {}
 
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
@@ -187,7 +187,8 @@ namespace AI {
 			m_boostSpeed = 0f;
 			m_impulse = Vector3.zero;
 			m_externalImpulse = Vector3.zero;
-			PressAction(Action.Stop);
+
+            PressAction(Action.Stop);
 		}
 
 		public void SetDirection(Vector3 _dir, bool _force = false) {

@@ -87,7 +87,7 @@ namespace AI {
 				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
 				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
 
-				m_pilot.OnDie();
+				m_pilot.BrainExit();
 			}
 
 			if (EntityManager.instance != null)
@@ -99,7 +99,6 @@ namespace AI {
 				// Get the reward to be given from the entity
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 				if (_source != IEntity.Type.PLAYER) {
-					reward.alcohol = 0;
 					// Pets never harm player if they eat bad junk
 					if (reward.health < 0) {
 						reward.health = 0;

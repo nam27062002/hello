@@ -57,6 +57,9 @@ public class DragonHealthBehaviour : MonoBehaviour {
 	private Dictionary<DamageType, float> m_armorPercentageType;
 	private Dictionary<string, float> m_armorPercentageOrigin;
 
+    protected List<DamageType> m_ignoreDamageTypes = new List<DamageType>();
+    
+
 	private Dictionary<string, float> m_eatingHpBoosts = new Dictionary<string, float>();
 	private float m_globalEatingHpBoost = 0;
 
@@ -195,6 +198,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		if(enabled) {
 			if ( m_dragon.IsInvulnerable() )
 				return;
+                
+            if (m_ignoreDamageTypes.Contains(_type))
+                return;
+                
 			if ( m_dragon.HasShield( _type ) )
 			{
 				m_dragon.LoseShield( _type, _source );
@@ -252,6 +259,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 		if ( m_dragon.IsInvulnerable() )
 			return;
+            
+        if (m_ignoreDamageTypes.Contains(_type))
+            return;
+            
 		// Check shields
 		if ( m_dragon.HasShieldActive( _type ) )
 		{
@@ -451,4 +462,19 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		return rewardHealth;
 	}
 
+
+    public void AddDamageIgnore( DamageType _type )
+    {
+        m_ignoreDamageTypes.Add( _type );
+    }
+    
+    public void RemoveDamageIgnore( DamageType _type )
+    {
+        m_ignoreDamageTypes.Remove( _type );
+    }
+    
+    public void CleanDotDamage()
+    {
+        m_dots.Clear();
+    }
 }

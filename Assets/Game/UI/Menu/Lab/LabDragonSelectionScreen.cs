@@ -42,8 +42,17 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[Tooltip("Use it to sync with animation")]
 	[SerializeField] private float m_dragonChangeInfoDelay = 0.15f;
 
-	// Cache some data
-	private DragonDataSpecial m_dragonData = null;
+    // Use it to automatically select a specific dragon upon entering this screen
+    // If the screen is already the active one, the selection will be applied the next time the screen is entered from a different screen
+    private string m_pendingToSelectDragon = string.Empty;
+    public string pendingToSelectDragon {
+        set { m_pendingToSelectDragon = value; }
+    }
+
+    // Cache some data
+    private DragonDataSpecial m_dragonData = null;
+    private const string LAB_MUSIC = "hd_lab_music";
+    private int m_labMusicCount = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -189,23 +198,66 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
-        InstanceManager.musicController.Ambience_Play("hd_lab_music", gameObject);
+        // if ( InstanceManager.musicController.Ambience_ToPlay.music_key != LAB_MUSIC )
+        if (m_labMusicCount <= 0)
+        {
+            m_labMusicCount++;
+            InstanceManager.musicController.Ambience_Play(LAB_MUSIC, gameObject);
+        }
+        
     
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
 			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
 		}
-	} 
+
+        // If we have a dragon selection pending, do it now!
+        if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+            InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
+            m_pendingToSelectDragon = string.Empty;
+        }
+    } 
 
 	/// <summary>
-	/// Back button has been pressed.
+	/// The show animation has finished.
 	/// </summary>
-    public void OnBackButton() {
-        // AudioController.PlayMusic("hd_menu_music");
-        InstanceManager.musicController.Ambience_Stop("hd_lab_music", gameObject);
-        
-		SceneController.SetMode(SceneController.Mode.DEFAULT);
+    public void OnShowPostAnimation() {
+        MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
+
+        if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
+            HDSeasonData m_season = HDLiveDataManager.league.season;
+            if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
+                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+            }
+        }
     }
+
+    /// <summary>
+    /// Back button has been pressed.
+    /// </summary>
+    public void OnBackButton() {
+        // Stop lab music
+        m_labMusicCount--;
+        InstanceManager.musicController.Ambience_Stop(LAB_MUSIC, gameObject);
+        
+		// Go back to default mode
+		SceneController.SetMode(SceneController.Mode.DEFAULT);
+        HDLiveDataManager.instance.SwitchToQuest();
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+    }
+
+	/// <summary>
+	/// The play button has been pressed.
+	/// </summary>
+	public void OnPlayButton() {
+		// Go to the special missions screen
+		// If the leagues tutorial has not yet been triggered, go to the leagues screen instead
+		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES);
+		} else {
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_MISSIONS);
+		}
+	}
 
 	/// <summary>
 	/// A new dragon has been selected.
