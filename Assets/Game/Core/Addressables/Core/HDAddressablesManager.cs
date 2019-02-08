@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using SimpleJSON;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,11 +25,33 @@ public class HDAddressablesManager
         }
     }
 
+    private AddressablesManager m_addressablesManager = new AddressablesManager();
+
     private void Initialize()
     {
-        string localAssetBundlesPath = Application.streamingAssetsPath;
+        Logger logger = new ConsoleLogger("Addressables");
+        string addressablesPath = Path.Combine(Application.streamingAssetsPath, "Addressables");
+        string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+
+        string catalogAsText;
+        if (Application.platform == RuntimePlatform.Android) //Need to extract file from apk first
+        {
+            WWW reader = new WWW(addressablesCatalogPath);
+            while (!reader.isDone) { }
+
+            catalogAsText = reader.text;
+        }
+        else
+        {
+            catalogAsText = File.ReadAllText(addressablesCatalogPath);
+        }
+
+        JSONNode catalogASJSON = JSON.Parse(catalogAsText);
         List<string> localAssetBundleIds = new List<string> { "so_medieval_castle" };
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);        
+        //localAssetBundleIds = null;
+
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, localAssetBundleIds, logger);        
     }
 
     #region ingame
@@ -36,39 +60,39 @@ public class HDAddressablesManager
         private List<string> PrevAreaRealSceneNames { get; set; }
         private List<string> NextAreaRealSceneNames { get; set; }
 
-        private List<string> AssetBundlesToUnload { get; set; }
-        private List<string> AssetBundlesToLoad { get; set; }
+        private List<string> DependencyIdsToUnload { get; set; }
+        private List<string> DependencyIdsToLoad { get; set; }
 
-        private List<UbiAsyncOperation> m_prevAreaScenesToUnload;
-        private List<UbiAsyncOperation> m_nextAreaScenesToLoad;        
+        private List<AddressablesOp> m_prevAreaScenesToUnload;
+        private List<AddressablesOp> m_nextAreaScenesToLoad;        
 
         public Ingame_SwitchAreaHandle(List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
         {
             PrevAreaRealSceneNames = prevAreaRealSceneNames;
             NextAreaRealSceneNames = nextAreaRealSceneNames;
 
-            List<string> prevAreaSceneAssetBundleIds = Instance.GetSceneAssetBundleIdList(prevAreaRealSceneNames);
-            List<string> nextAreaSceneAssetBundleIds = Instance.GetSceneAssetBundleIdList(nextAreaRealSceneNames);
+            List<string> prevAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(prevAreaRealSceneNames);
+            List<string> nextAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(nextAreaRealSceneNames);
 
             List<string> assetBundleIdsToStay;
             List<string> assetBundleIdsToUnload;
-            UbiListUtils.SplitIntersectionAndDisjoint(prevAreaSceneAssetBundleIds, nextAreaSceneAssetBundleIds, out assetBundleIdsToStay, out assetBundleIdsToUnload);
+            UbiListUtils.SplitIntersectionAndDisjoint(prevAreaSceneDependencyIds, nextAreaSceneDependencyIds, out assetBundleIdsToStay, out assetBundleIdsToUnload);
 
             List<string> assetBundleIdsToLoad;            
-            UbiListUtils.SplitIntersectionAndDisjoint(nextAreaSceneAssetBundleIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
+            UbiListUtils.SplitIntersectionAndDisjoint(nextAreaSceneDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
-            AssetBundlesToLoad = assetBundleIdsToLoad;
-            AssetBundlesToUnload = assetBundleIdsToUnload;            
+            DependencyIdsToLoad = assetBundleIdsToLoad;
+            DependencyIdsToUnload = assetBundleIdsToUnload;            
         }       
 
         public bool NeedsToUnloadPrevAreaDependencies()
         {
-            return AssetBundlesToUnload != null && AssetBundlesToUnload.Count > 0;
+            return DependencyIdsToUnload != null && DependencyIdsToUnload.Count > 0;
         }
 
         public void UnloadPrevAreaDependencies()
         {
-            AssetBundlesManager.Instance.UnloadAssetBundleList(AssetBundlesToUnload, null);
+            Instance.UnloadDependencyIdsList(DependencyIdsToUnload);            
         }
 
         public bool NeedsToUnloadPrevAreaScenes()
@@ -76,11 +100,11 @@ public class HDAddressablesManager
             return PrevAreaRealSceneNames != null && PrevAreaRealSceneNames.Count > 0;
         }
 
-        public List<UbiAsyncOperation> UnloadPrevAreaScenes()
+        public List<AddressablesOp> UnloadPrevAreaScenes()
         {            
             if (m_prevAreaScenesToUnload == null)
             {
-                m_prevAreaScenesToUnload = new List<UbiAsyncOperation>();
+                m_prevAreaScenesToUnload = new List<AddressablesOp>();
                 if (PrevAreaRealSceneNames != null)
                 {
                     int count = PrevAreaRealSceneNames.Count;
@@ -96,12 +120,12 @@ public class HDAddressablesManager
 
         public bool NeedsToLoadNextAreaDependencies()
         {
-            return AssetBundlesToLoad != null && AssetBundlesToLoad.Count > 0;
+            return DependencyIdsToLoad != null && DependencyIdsToLoad.Count > 0;
         }
 
-        public UbiAsyncOperation LoadNextAreaDependencies()
+        public AddressablesOp LoadNextAreaDependencies()
         {
-            return AssetBundlesManager.Instance.LoadAssetBundleList(AssetBundlesToLoad, null, true);
+            return Instance.LoadDependencyIdsList(DependencyIdsToLoad);
         }
 
         public bool NeedsToLoadNextAreaScenes()
@@ -109,11 +133,11 @@ public class HDAddressablesManager
             return NextAreaRealSceneNames != null && NextAreaRealSceneNames.Count > 0;
         }
 
-        public List<UbiAsyncOperation> LoadNextAreaScenesAsync()
+        public List<AddressablesOp> LoadNextAreaScenesAsync()
         {            
             if (m_nextAreaScenesToLoad == null)
             {
-                m_nextAreaScenesToLoad = new List<UbiAsyncOperation>();
+                m_nextAreaScenesToLoad = new List<AddressablesOp>();
                 if (NextAreaRealSceneNames != null)
                 {
                     int count = NextAreaRealSceneNames.Count;
@@ -142,158 +166,45 @@ public class HDAddressablesManager
 
     public Ingame_SwitchAreaHandle Ingame_SwitchArea(List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
     {
-        return new Ingame_SwitchAreaHandle(prevAreaRealSceneNames, nextAreaRealSceneNames);
+            return new Ingame_SwitchAreaHandle(prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
     #endregion    
-
-    private string GetAssetBundleIdFromScenName(string sceneName)
-    {
-        return sceneName.ToLower();
-    }
-
+   
     public void LoadScene(string sceneName, LoadSceneMode mode)
     {
-        if (IsSceneInAssetBundles(sceneName))
-        {
-            LoadSceneFromAssetBundles(GetAssetBundleIdFromScenName(sceneName), sceneName, mode);
-        }
-        else
-        {
-            LoadSceneFromBuild(sceneName, LoadSceneMode.Additive);
-        }
+        m_addressablesManager.LoadScene(sceneName, mode);
     }    
 
-    public UbiAsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode)
+    public AddressablesOp LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
     {
-        UbiAsyncOperation returnValue;
-        if (IsSceneInAssetBundles(sceneName))
-        {
-            returnValue = LoadSceneFromAssetBundlesAsync(GetAssetBundleIdFromScenName(sceneName), sceneName, mode);
-        }
-        else
-        {
-            returnValue = LoadSceneFromBuildAsync(sceneName, LoadSceneMode.Additive);
-        }
-
-        return returnValue;
+        return m_addressablesManager.LoadSceneAsync(sceneName, mode);
     }
 
-    public UbiAsyncOperation UnloadSceneAsync(string sceneName)
+    public AddressablesOp UnloadSceneAsync(string sceneName)
+    {        
+        return m_addressablesManager.UnloadSceneAsync(sceneName);
+    }
+    
+    private AddressablesOp LoadDependencyIdsList(List<string> dependencyIds)
     {
-        UbiAsyncOperation returnValue;
-        if (IsSceneInAssetBundles(sceneName))
-        {
-            returnValue = UnloadSceneFromAssetBundlesAsync(GetAssetBundleIdFromScenName(sceneName), sceneName);
-        }
-        else
-        {
-            returnValue = UnloadSceneFromBuildAsync(sceneName);
-        }
-
-        return returnValue;        
+        return m_addressablesManager.LoadDependencyIdsListAsync(dependencyIds);
     }
 
-    private bool IsSceneInAssetBundles(string sceneName)
+    private void UnloadDependencyIdsList(List<string> dependencyIds)
     {
-        return sceneName == "SO_Medieval_Castle";
+        m_addressablesManager.UnloadDependencyIdsList(dependencyIds);
     }
 
-    /// <summary>
-    /// Returns the id of the asset bundle where this scene is stored.
-    /// </summary>
-    /// <param name="sceneName">Name of a scene</param>
-    /// <returns>id of the asset bundle where this scene is stored.</returns>
-    private string GetSceneAssetBundleId(string sceneName)
+    private List<string> GetSceneDependencyIdsList(List<string> sceneNames)
     {
-        return (IsSceneInAssetBundles(sceneName)) ? sceneName.ToLower() : null;
-    }
-
-    private List<string> GetSceneAssetBundleIdList(List<string> sceneNames)
-    {
-        List<string> returnValue = null;
-        if (sceneNames != null)
-        {
-            returnValue = new List<string>();
-
-            int count = sceneNames.Count;
-            for (int i = 0; i < count; i++)
-            {
-                UbiListUtils.AddRange(returnValue, GetSceneDependenciesIds(sceneNames[i]), false, true);
-            }
-        }
-
-        return returnValue;
-    }
-
-    private List<string> GetSceneDependenciesIds(string sceneName)
-    {
-        string sceneAssetBundleId = GetSceneAssetBundleId(sceneName);
-        return AssetBundlesManager.Instance.GetDependenciesIncludingSelf(sceneAssetBundleId);
-    }
-
-    private void LoadSceneFromBuild(string sceneName, LoadSceneMode mode)
-    {
-        SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-    }
-
-    private void LoadSceneFromAssetBundles(string assetBundleId, string sceneName, LoadSceneMode mode)
-    {
-        AssetBundlesManager.Instance.LoadScene(assetBundleId, sceneName, mode);
-    }
-
-    private UbiAsyncOperation LoadSceneFromAssetBundlesAsync(string assetBundleId, string sceneName, LoadSceneMode mode)
-    {
-        return AssetBundlesManager.Instance.LoadSceneAsync(assetBundleId, sceneName, mode, OnLoadSceneFromAssetBundleDone, true);        
-    }
-
-    private void OnLoadSceneFromAssetBundleDone(AssetBundlesOp.EResult result, object data)
-    {
-        Debug.Log("OnLoaded " + result);
+        return m_addressablesManager.GetDependencyIdsList(sceneNames);        
     }    
-
-    private UbiAsyncOperation LoadSceneFromBuildAsync(string sceneName, LoadSceneMode mode)
-    {
-        AsyncOperation loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-        if (DebugUtils.SoftAssert(loadingTask != null, "The common scene " + sceneName + " couldn't be found (probably mispelled or not added to Build Settings)"));      
-
-        return new UbiUnityAsyncOperation(loadingTask);        
-    }    
-
-    private UbiAsyncOperation UnloadSceneFromAssetBundlesAsync(string assetBundleId, string sceneName)
-    {
-        return AssetBundlesManager.Instance.UnloadSceneAsync(assetBundleId, sceneName, null, true);        
-    }
-
-    private UbiAsyncOperation UnloadSceneFromBuildAsync(string sceneName)
-    {
-        AsyncOperation loadingTask = SceneManager.UnloadSceneAsync(sceneName);
-        return new UbiUnityAsyncOperation(loadingTask);
-    }
-
+    
     public void Update()
     {
-        AssetBundlesManager.Instance.Update();
-
-        if (Input.GetKeyDown(KeyCode.M))
+        if (m_addressablesManager != null)
         {
-            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(SCENE_AB, Request_OnDone, true);
-            m_request = AssetBundlesManager.Instance.LoadSceneAsync(SCENE_AB, SCENE_NAME, LoadSceneMode.Additive, Request_OnDone, true);
-        }
-
-        if (m_request != null && !m_request.isDone)
-        {
-            Debug.Log(m_request.progress);
-        }
-    }
-
-    private static string SCENE_NAME = "SO_Medieval_Castle";
-    private static string SCENE_AB = SCENE_NAME.ToLower();
-
-    private AssetBundlesOpRequest m_request;
-
-    private void Request_OnDone(AssetBundlesOp.EResult result, object data)
-    {
-        Debug.Log("Request_OnDone " + result);
+            m_addressablesManager.Update();
+        }        
     }
 }
