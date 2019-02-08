@@ -287,7 +287,14 @@ public class AddressablesManager
 
     private void Ops_AddOp(AddressablesOp op)
     {
-        if (!op.isDone)
+        if (op.isDone)
+        {
+            if (op.Error != null)
+            {
+                Errors_ProcessAddressablesOpError(op.Error);
+            }
+        }
+        else
         {
             m_ops.Add(op);
         }
@@ -325,10 +332,10 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }
+    }    
     #endregion
 
-    #region providers
+        #region providers
     private AddressablesFromAssetBundlesProvider m_providerFromAB;
     private AddressablesFromResourcesProvider m_providerFromResources;
 
@@ -405,6 +412,14 @@ public class AddressablesManager
         if (CanLog())
         {
             sm_logger.LogError("Addressables id <" + id + "> is not in the catalog");
+        }
+    }
+
+    private void Errors_ProcessAddressablesOpError(AddressablesError error)
+    {
+        if (CanLog())
+        {
+            sm_logger.LogError("Error when retrieving Addressable operation: " + error.ToString());
         }
     }
     #endregion    

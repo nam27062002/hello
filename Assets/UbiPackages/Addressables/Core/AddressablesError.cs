@@ -22,4 +22,15 @@
         Type = EType.Error_Asset_Bundles;
         AssetBundlesError = abError;
     }
+
+    public override string ToString()
+    {
+        string returnValue = "Error type: " + Type.ToString();
+        if (Type == EType.Error_Asset_Bundles)
+        {
+            returnValue += " AssetBundlesError: " + AssetBundlesError.ToString();
+        }
+
+        return returnValue;
+    }
 }
