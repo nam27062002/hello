@@ -1,7 +1,13 @@
-﻿using UnityEngine.SceneManagement;
+﻿using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public abstract class AddressablesProvider
 {
+    public virtual List<string> GetDependencyIds(AddressablesCatalogEntry entry)
+    {
+        return null;
+    }
+
     public virtual AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         // By default there's no dependencies

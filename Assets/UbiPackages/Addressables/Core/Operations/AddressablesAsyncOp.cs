@@ -10,7 +10,7 @@ public class AddressablesAsyncOp : AddressablesOp
         Operation = operation;
     }   
 
-    public override bool IsDone
+    public override bool isDone
     {
         get
         {            
@@ -18,11 +18,11 @@ public class AddressablesAsyncOp : AddressablesOp
         }
     }    
 
-    public override float Progress
+    protected override float ExtendedProgress
     {
         get
         {
-            if (IsDone)
+            if (isDone)
             {
                 return 1f;
             }

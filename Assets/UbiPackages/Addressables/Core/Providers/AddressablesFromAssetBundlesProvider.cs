@@ -13,9 +13,20 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.Reset();
     }
 
+    public override List<string> GetDependencyIds(AddressablesCatalogEntry entry)
+    {
+        return AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);       
+    }
+
     public override AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(entry.AssetBundleName, null, true);
+        return ProcessAssetBundlesOpRequest(request);
+    }
+
+    public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
+    {
+        AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleList(dependencyIds, null, true);
         return ProcessAssetBundlesOpRequest(request);
     }
 
@@ -23,6 +34,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);
         AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);        
+    }
+
+    public void UnloadDependencyIdsList(List<string> dependencyIds)
+    {
+        AssetBundlesManager.Instance.UnloadAssetBundleList(dependencyIds, null);
     }
 
     public override bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)

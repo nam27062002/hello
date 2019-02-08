@@ -52,7 +52,61 @@ public class AddressablesManager
     public bool IsInitialized()
     {
         return m_isInitialized;
-    }       
+    }
+
+    /// <summary>
+    /// Returns the list of dependencies (typically asset bundles) ids required to load the addressable with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Addressable id which dependencies are requested.</param>    
+    public List<string> GetDependencyIds(string id)
+    {
+        List<string> returnValue = null;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.GetDependencyIds(entry);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Returns the list of dependencies (typically asset bundles) ids required to load the addressables which identifiers are passed as a parameter in <c>id</c>.
+    /// </summary>
+    /// <param name="id">List of addressable ids which dependencies are requested.</param>    
+    public List<string> GetDependencyIdsList(List<string> ids)
+    {
+        List<string> returnValue = null;
+
+        if (IsInitialized())
+        {
+            if (ids != null && ids.Count > 0)
+            {
+                returnValue = new List<string>();
+
+                AddressablesCatalogEntry entry;
+                AddressablesProvider provider;
+                int count = ids.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    provider = Providers_GetProvider(ids[i], out entry);
+                    UbiListUtils.AddRange(returnValue, provider.GetDependencyIds(entry), false, true);
+                }
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
 
     /// <summary>
     /// Loads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
@@ -80,6 +134,29 @@ public class AddressablesManager
     }
 
     /// <summary>
+    /// Loads asynchronously a list of dependencies (typically asset bundles).
+    /// </summary>
+    /// <param name="id">List of dependency ids to load.</param>
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            // Dependencies are only handled by provider from Asset Bundles
+            returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);            
+            Ops_AddOp(returnValue);
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
+        }
+
+        return returnValue;        
+    }
+
+    /// <summary>
     /// Unloads the dependencies (typically asset bundles if the addressable is stored in an asset bundle) that were loaded in order to be able to load the addressable with <c>id</c> as an identifier.
     /// </summary>
     /// <param name="id">Addressable id which dependencies are requested to be unloaded</param>
@@ -96,7 +173,20 @@ public class AddressablesManager
         {            
             Errors_ProcessManagerNotInitialized(false);           
         }        
-    }    
+    }  
+    
+    public void UnloadDependencyIdsList(List<string> dependencyIds)
+    {
+        if (IsInitialized())
+        {
+            // Dependencies are only handled by provider from Asset Bundles
+            m_providerFromAB.UnloadDependencyIdsList(dependencyIds);                        
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
 
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
@@ -197,7 +287,7 @@ public class AddressablesManager
 
     private void Ops_AddOp(AddressablesOp op)
     {
-        if (!op.IsDone)
+        if (!op.isDone)
         {
             m_ops.Add(op);
         }
@@ -207,7 +297,7 @@ public class AddressablesManager
     {
         for (int i = m_ops.Count - 1; i > -1; i--)
         {
-            if (m_ops[i].IsDone)
+            if (m_ops[i].isDone)
             {
                 if (m_ops[i].OnDone != null)
                 {

@@ -1,10 +1,47 @@
-﻿public abstract class AddressablesOp
+﻿public abstract class AddressablesOp : UbiAsyncOperation
 {
     public delegate void OnDoneCallback(AddressablesOp op);
 
-    public abstract bool IsDone { get; }
+    public abstract bool isDone { get; }
 
-    public abstract float Progress { get; }
+    private bool m_allowSceneActivation = true;
+    public bool allowSceneActivation
+    {
+        get { return m_allowSceneActivation; }
+
+        set
+        {
+            m_allowSceneActivation = value;
+            UpdateAllowSceneActivation(m_allowSceneActivation);
+        }
+    }
+
+    protected virtual void UpdateAllowSceneActivation(bool value) { }
+
+    public float progress
+    {
+        get
+        {
+            float returnValue = ExtendedProgress;
+            if (isDone)
+            {
+                returnValue = 1f;
+            }
+            else if (returnValue >= 1f)
+            {
+                returnValue = 0.99f;
+            }
+
+            if (!allowSceneActivation && returnValue > 0.9f)
+            {
+                returnValue = 0.9f;
+            }
+
+            return returnValue;
+        }
+    }
+
+    protected abstract float ExtendedProgress { get; }     
 
     public virtual AddressablesError Error
     {
@@ -37,7 +74,7 @@
         set
         {
             m_onDone = value;
-            if (IsDone && m_onDone != null)
+            if (isDone && m_onDone != null)
             {
                 m_onDone(this);
             }

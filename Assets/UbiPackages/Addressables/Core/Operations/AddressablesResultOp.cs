@@ -1,5 +1,5 @@
 ﻿public class AddressablesOpResult : AddressablesOp
 {
-    public override bool IsDone { get { return true; } }
-    public override float Progress { get { return 1f; } }        
+    public override bool isDone { get { return true; } }
+    protected override float ExtendedProgress { get { return 1f; } }        
 }
