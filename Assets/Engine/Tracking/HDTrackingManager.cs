@@ -75,6 +75,7 @@ public class HDTrackingManager
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
 		REWARD_PREREG,					// Reward given from pre-registration
+		REWARD_DAILY,					// Daily rewards system
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
