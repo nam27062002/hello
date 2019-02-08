@@ -129,7 +129,6 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
     public override void CleanData()
     {
-        Deactivate();
         if (data != null){
             data.Clean();
       	}

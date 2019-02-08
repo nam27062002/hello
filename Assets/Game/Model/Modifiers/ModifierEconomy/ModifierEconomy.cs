@@ -42,8 +42,8 @@
     //------------------------------------------------------------------------//
     // METHODS                                                                //
     //------------------------------------------------------------------------//
-    protected ModifierEconomy() : base(TYPE_CODE) { }
-    protected ModifierEconomy(DefinitionNode _def) : base(TYPE_CODE, _def) { }
-    protected ModifierEconomy(SimpleJSON.JSONNode _data) : base(TYPE_CODE, _data) { }
+    protected ModifierEconomy(string _target) : base(TYPE_CODE, _target) { }
+    protected ModifierEconomy(string _target, DefinitionNode _def) : base(TYPE_CODE, _target, _def) { }
+    protected ModifierEconomy(string _target, SimpleJSON.JSONNode _data) : base(TYPE_CODE, _target, _data) { }
 
 }

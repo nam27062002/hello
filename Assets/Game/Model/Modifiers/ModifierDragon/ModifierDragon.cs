@@ -43,9 +43,9 @@ public abstract class ModifierDragon : Modifier {
     //------------------------------------------------------------------------//
     // METHODS																  //
     //------------------------------------------------------------------------//
-    protected ModifierDragon() : base(TYPE_CODE) { }
-    protected ModifierDragon(DefinitionNode _def) : base(TYPE_CODE, _def) { }
-    protected ModifierDragon(SimpleJSON.JSONNode _data) : base(TYPE_CODE, _data) { }
+    protected ModifierDragon(string _target) : base(TYPE_CODE, _target) { }
+    protected ModifierDragon(string _target, DefinitionNode _def) : base(TYPE_CODE, _target, _def) { }
+    protected ModifierDragon(string _target, SimpleJSON.JSONNode _data) : base(TYPE_CODE, _target, _data) { }
 
 
     public override void Remove() { }
