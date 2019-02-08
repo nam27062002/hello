@@ -87,8 +87,10 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected IViewControl m_viewControl;
 
+    protected EntityEquip m_equip;
+    public EntityEquip equip { get { return m_equip; } }
 
-	public OnDieStatus onDieStatus;
+    public OnDieStatus onDieStatus;
 
 
 	protected virtual void Awake() {
@@ -107,8 +109,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_pilot = GetComponent<AI.AIPilot>();
 		m_machine = GetComponent<AI.IMachine>();
 		m_viewControl = GetComponent<IViewControl>();
+        m_equip = GetComponent<EntityEquip>();
 
-		onDieStatus = new OnDieStatus();
+        onDieStatus = new OnDieStatus();
 	}
 
 	public virtual void Spawn(ISpawner _spawner) {
