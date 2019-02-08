@@ -732,7 +732,7 @@ public class UserProfile : UserPersistenceSystem
 	public void UnlockMap() {
 		// Reset timer to the start of the following day, in local time zone
 		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//DateTime tomorrow = DateTime.Now.Date.AddDays(1);	// Using local time zone to compute tomorrow's date
 		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
 
 		// [AOC] Testing purposes
