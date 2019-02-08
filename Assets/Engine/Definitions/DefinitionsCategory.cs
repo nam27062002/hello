@@ -84,6 +84,7 @@ public class DefinitionsCategory
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
 	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
     public const string LEAGUES = "LEAGUES";
+	public const string DAILY_REWARDS = "DAILY_REWARDS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";
