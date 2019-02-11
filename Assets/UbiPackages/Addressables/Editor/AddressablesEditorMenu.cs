@@ -6,9 +6,10 @@ using UnityEngine;
 /// This class is resposible for managing all related to Addressables menu stuff. This class just deals with the view, the actual stuff is done by <c>AddressablesEditorManager</c>
 /// </summary>
 public class AddressablesEditorMenu : MonoBehaviour
-{    
-    private const string ADDRESSABLES_MENU = "Addressables";    
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU = ADDRESSABLES_MENU + "/" + "Build by Steps";
+{
+    private const string ADDRESSABLES_MENU = "Tech/Addressables";
+    private const string ADDRESSABLES_BUILD_MENU = ADDRESSABLES_MENU + "/Build";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU = ADDRESSABLES_BUILD_MENU + "/" + "Build by Steps";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "1. Clear";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Customize editor catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3. Generate player catalog";
@@ -16,7 +17,7 @@ public class AddressablesEditorMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Distribute Asset Bundles";
 
-    private const string ADDRESSABLES_BUILD_MENU = ADDRESSABLES_MENU + "/" + "Build";
+    private const string ADDRESSABLES_BUILD_MENU_ALL = ADDRESSABLES_BUILD_MENU + "/" + "Build";
     
     public static AddressablesEditorManager m_manager;
     public static AddressablesEditorManager Manager
@@ -85,7 +86,7 @@ public class AddressablesEditorMenu : MonoBehaviour
         AssetDatabase.Refresh();                        
     }    
 
-    [MenuItem(ADDRESSABLES_BUILD_MENU)]
+    [MenuItem(ADDRESSABLES_BUILD_MENU_ALL)]
     public static void Build()
     {
         Manager.Build();

@@ -2,9 +2,10 @@
 using UnityEditor;
 using UnityEngine;
 
-public class AssetBundlesEditorTools
+public class AssetBundlesEditorManager
 {
-    private static string ASSET_BUNDLES_PATH = "AssetBundles";    
+    private static string ASSET_BUNDLES_PATH = "AssetBundles";
+    public static string REMOTE_ASSETS_FOLDER = "RemoteAssets";
 
     public static void BuildAssetBundles()
     {

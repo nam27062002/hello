@@ -17,6 +17,8 @@ public class AddressablesEditorManager
 
     private static string STREAMING_ASSETS_ROOT_PATH = FileEditorTools.PathCombine("Assets", "StreamingAssets");
 
+    public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
+
     public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
     {
         AddressablesCatalog returnValue = null;
@@ -75,13 +77,13 @@ public class AddressablesEditorManager
 
     public void BuildAssetBundles()
     {
-        AssetBundlesEditorTools.BuildAssetBundles();
+        AssetBundlesEditorManager.BuildAssetBundles();
     }
 
     public void DistributeAssetBundles()
     {
-        Debug.Log("Distributing build...");        
-        AssetBundlesEditorTools.CopyAssetBundles(m_assetBundlesLocalDestinationPath);
+        Debug.Log("Distributing build...");
+        AssetBundlesEditorManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath);
     }
 
     public void Build()
@@ -169,7 +171,7 @@ public class AddressablesEditorManager
         AddressablesCatalog catalog = GetEditorCatalog(m_playerCatalogPath);
 
         AssetBundle manifestBundle = null;
-        AssetBundleManifest abManifest = AssetBundlesEditorTools.LoadAssetBundleManifest(out manifestBundle);
+        AssetBundleManifest abManifest = AssetBundlesEditorManager.LoadAssetBundleManifest(out manifestBundle);
         
         ParseAssetBundlesOutput output = AddressablesEditorManager.ParseAssetBundles(catalog, abManifest);
 

@@ -48,10 +48,8 @@ namespace AssetBundleBrowser
 
         const float k_ToolbarPadding = 15;
         const float k_MenubarPadding = 32;
-
-        private const string AB_BASE_PATH = "Assets/AssetBundles/";
-        [MenuItem(AB_BASE_PATH + "Browser", priority = 2050)]
-        static void ShowWindow()
+        
+        public static void ShowWindow()
         {
             s_instance = null;
             instance.titleContent = new GUIContent("AssetBundles");
