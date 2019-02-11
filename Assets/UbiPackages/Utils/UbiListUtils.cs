@@ -3,6 +3,24 @@ using System.Text;
 
 public class UbiListUtils
 {
+    private class Helper<T>
+    {
+        public Dictionary<T, bool> m_dictionary = new Dictionary<T, bool>();
+    }
+
+    private static Dictionary<System.Type, object> sm_helpers = new Dictionary<System.Type, object>();
+
+    private static Helper<T> GetHelper<T>()
+    {        
+        System.Type type = typeof(T);
+        if (!sm_helpers.ContainsKey(type))
+        {
+            sm_helpers.Add(type, new Helper<T>());
+        }
+
+        return (sm_helpers[type]) as Helper<T>;
+    }
+
     /// <summary>
     /// Compares the elements of two lists
     /// </summary>
@@ -11,7 +29,10 @@ public class UbiListUtils
     /// <param name="l2"></param>
     /// <returns>Returns <c>true</c> if both lists contain the same elements (elements that are equal, not the same instances)</returns>
     public static bool Compare<T>(List<T> l1, List<T> l2)
-    {        
+    {
+        Helper<T> helper = GetHelper<T>();
+        Dictionary<T, bool> dict = helper.m_dictionary;        
+
         int count1 = (l1 == null) ? 0 : l1.Count;
         int count2 = (l2 == null) ? 0 : l2.Count;
         bool returnValue = count1 == count2;
@@ -19,9 +40,19 @@ public class UbiListUtils
         {                        
             for (int i = 0; i < count1; i++)
             {
-                returnValue = l1[i].Equals(l2[i]);
-            }            
-        }       
+                dict.Add(l1[i], true);                
+            }
+
+            for (int i = 0; i < count1 && returnValue; i++)
+            {
+                if (!dict.ContainsKey(l2[i]))
+                {
+                    returnValue = false;
+                }                
+            }
+        }
+
+        dict.Clear();
 
         return returnValue;
     }
