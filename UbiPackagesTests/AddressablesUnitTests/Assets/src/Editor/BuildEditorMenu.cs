@@ -3,7 +3,7 @@ using UnityEngine;
 
 // Output the build size or a failure depending on BuildPlayer.
 
-public class BuildPlayerExample : MonoBehaviour
+public class BuildEditorMenu : MonoBehaviour
 {
     [MenuItem("Build/Build")]
     public static void Build()
@@ -46,5 +46,14 @@ public class BuildPlayerExample : MonoBehaviour
 			Debug.Log("Build failed");
 		}
 		*/
-    }    
+
+        AssetDatabase.Refresh();
+    }
+
+    [MenuItem("Build/Process Addressables and Build")]
+    public static void ProcessAddressablesAndBuild()
+    {
+        AddressablesEditorMenu.Build();
+        Build();
+    }
 }
