@@ -8,20 +8,21 @@ using UnityEngine;
 public class AddressablesCatalog
 {
     private static string CATALOG_ATT_ENTRIES = "entries";
+    public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
 
     private Dictionary<string, AddressablesCatalogEntry> m_entries;
+    private List<string> m_localABList;    
 
     public AddressablesCatalog()
     {
         m_entries = new Dictionary<string, AddressablesCatalogEntry>();
+        m_localABList = new List<string>();
     }
 
     public void Reset()
     {
-        if (m_entries != null)
-        {
-            m_entries.Clear();
-        }
+        m_entries.Clear();
+        m_localABList.Clear();
     }
 
     public void Load(JSONNode catalogJSON, Logger logger)
@@ -31,6 +32,7 @@ public class AddressablesCatalog
         if (catalogJSON != null)
         {
             LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);
+            LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST]);
         }
     }
 
@@ -38,7 +40,8 @@ public class AddressablesCatalog
     {
         // Create new object
         JSONClass data = new JSONClass();        
-        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());
+        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());        
+        data.Add(CATALOG_ATT_LOCAL_AB_LIST, UbiListUtils.GetListAsString(m_localABList));
 
         return data;
     }
@@ -90,7 +93,7 @@ public class AddressablesCatalog
         }
 
         return data;
-    }
+    }    
 
     public AddressablesCatalogEntry GetEntry(string id)
     {
@@ -113,5 +116,56 @@ public class AddressablesCatalog
     public Dictionary<string, AddressablesCatalogEntry> GetEntries()
     {
         return m_entries;
+    }
+
+    public void LoadLocalABList(string list)
+    {
+        if (list != null)
+        {
+            string[] abList = list.Split(',');
+            int count = abList.Length;
+            string abName;
+            for (int i = 0; i < count; i++)
+            {
+                abName = abList[i].Trim();
+
+                // Makes sure that there's no duplicates
+                if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
+                {
+                    m_localABList.Add(abName);
+                }
+            }
+        }
+    }
+
+    public List<string> GetLocalABList()
+    {
+        return m_localABList;
+    }
+
+    public void SetLocalABList(List<string> value)
+    {
+        m_localABList = value;
+    }
+
+    public List<string> GetUsedABList()
+    {
+        List<string> returnValue = new List<string>();
+
+        AddressablesCatalogEntry entry;
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in m_entries)
+        {
+            entry = kvp.Value;
+            if (entry != null && entry.IsValid())
+            {
+                if (entry.LocationType == AddressablesTypes.ELocationType.AssetBundles &&
+                    !returnValue.Contains(entry.AssetBundleName))
+                {
+                    returnValue.Add(entry.AssetBundleName);
+                }                
+            }
+        }
+
+        return returnValue;
     }
 }

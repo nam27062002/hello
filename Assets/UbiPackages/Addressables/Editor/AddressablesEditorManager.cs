@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,8 +17,25 @@ public class AddressablesEditorManager
 
     private static string STREAMING_ASSETS_ROOT_PATH = FileEditorTools.PathCombine("Assets", "StreamingAssets");
 
-    private const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
-    private const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/editor_" + ADDRESSSABLES_CATALOG_FILENAME;
+    public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
+    {
+        AddressablesCatalog returnValue = null;
+
+        // Loads the catalog        
+        StreamReader reader = new StreamReader(editorCatalogPath);
+        string content = reader.ReadToEnd();        
+        reader.Close();
+                
+        JSONNode catalogJSON = JSON.Parse(content);
+        returnValue = new AddressablesCatalog();
+        returnValue.Load(catalogJSON, sm_logger);
+
+        return returnValue;
+    }
+
+    public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
+    public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
+    private const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
     private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";    
 
@@ -43,7 +61,7 @@ public class AddressablesEditorManager
         Debug.Log("Customize editor catalog");
     }
 
-    public void GenerateEngineCatalog()
+    public void GeneratePlayerCatalog()
     {        
         if (FileEditorTools.Exists(m_localDestinationPath))
         {
@@ -70,28 +88,28 @@ public class AddressablesEditorManager
     {
         ClearBuild();
         CustomizeEditorCatalog();
-        GenerateEngineCatalog();
+        GeneratePlayerCatalog();
         BuildAssetBundles();
+        ProcessAssetBundles();
         DistributeAssetBundles();
-    }
+    }  
 
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
-        // Loads the catalog
-        TextAsset textAsset = (TextAsset)AssetDatabase.LoadAssetAtPath(editorCatalogPath, typeof(TextAsset));
-        if (textAsset == null)
-        {
-            sm_logger.LogError("Engine catalog wasn't generated because editor catalog " + editorCatalogPath + " couldn not be loaded");
-        }
-        else
-        {
-            AssetDatabase.RemoveUnusedAssetBundleNames();
+        AssetDatabase.RemoveUnusedAssetBundleNames();
 
-            JSONNode catalogJSON = JSON.Parse(textAsset.text);
-            AddressablesCatalog editorCatalog = new AddressablesCatalog();
-            editorCatalog.Load(catalogJSON, sm_logger);
+        AddressablesCatalog editorCatalog = GetEditorCatalog(editorCatalogPath);
+        if (editorCatalog != null)
+        {
+            AssetDatabase.RemoveUnusedAssetBundleNames();            
 
-            AddressablesCatalog engineCatalog = new AddressablesCatalog();            
+            // Copies editor catalog in player catalog
+            AddressablesCatalog playerCatalog = new AddressablesCatalog();
+            playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
+
+            // Clears player catalog entries because they'll be added only with the information that player requires
+            Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
+            playerCatalogEntries.Clear();
 
             // Loops through all entries to configure actual assets according to their location and provider mode
             Dictionary<string, AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
@@ -101,9 +119,9 @@ public class AddressablesEditorManager
             {                
                 if (ProcessEntry(pair.Value, scenesToAdd, scenesToRemove))
                 {
-                    engineCatalog.GetEntries().Add(pair.Key, pair.Value);
+                    playerCatalog.GetEntries().Add(pair.Key, pair.Value);
                 }
-            }
+            }            
 
             if (scenesToAdd.Count > 0 || scenesToRemove.Count > 0)
             {
@@ -138,8 +156,55 @@ public class AddressablesEditorManager
                 EditorBuildSettings.scenes = newSceneList.ToArray();
             }
             
-            SimpleJSON.JSONClass json = engineCatalog.ToJSON();            
+            JSONClass json = playerCatalog.ToJSON();            
             FileEditorTools.WriteToFile(playerCatalogPath, json.ToString());            
+        }
+    }
+
+    /// <summary>
+    /// Processes asset bundles along with the addressables catalog in order to determine which bundles are local and which ones are remote.
+    /// </summary>
+    public void ProcessAssetBundles()
+    {
+        AddressablesCatalog catalog = GetEditorCatalog(m_playerCatalogPath);
+
+        AssetBundle manifestBundle = null;
+        AssetBundleManifest abManifest = AssetBundlesEditorTools.LoadAssetBundleManifest(out manifestBundle);
+        
+        ParseAssetBundlesOutput output = AddressablesEditorManager.ParseAssetBundles(catalog, abManifest);
+
+        if (manifestBundle != null)
+        {
+            manifestBundle.Unload(true);
+        }        
+
+        if (catalog != null)
+        {
+            if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
+            {
+                sm_logger.LogWarning("The following asset bundles have been generated but they are not used by addressables: " + UbiListUtils.GetListAsString(output.m_ABInManifestNotUsed));
+            }
+
+            if (output.m_LocalABNotUsedList != null && output.m_LocalABNotUsedList.Count > 0)
+            {
+                sm_logger.LogWarning("The following asset bundles are defined as local in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
+                                     "> but no entries use them. Consider delete them from the field <" + 
+                                     AddressablesCatalog.CATALOG_ATT_LOCAL_AB_LIST + ">: " + UbiListUtils.GetListAsString(output.m_LocalABNotUsedList));
+            }
+
+            if (output.m_ABInUsedNotInManifest != null && output.m_ABInUsedNotInManifest.Count > 0)
+            {
+                sm_logger.LogError("The following asset bundles are used by some entries in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
+                                    "> but they haven't been generated: " + UbiListUtils.GetListAsString(output.m_ABInUsedNotInManifest));
+            }
+
+            // Updates local AB list
+            catalog.SetLocalABList(output.m_LocalABList);
+
+            // Generates remote AB list file
+
+            JSONClass json = catalog.ToJSON();
+            FileEditorTools.WriteToFile(m_playerCatalogPath, json.ToString());
         }
     }
 
@@ -194,4 +259,116 @@ public class AddressablesEditorManager
     {
         return FileEditorTools.PathCombine("Assets", path);
     }
+
+    public class ParseAssetBundlesOutput
+    {
+        public List<string> m_LocalABNotUsedList = new List<string>();
+        public List<string> m_ABInUsedNotInManifest = new List<string>();
+        public List<string> m_ABInManifestNotUsed = new List<string>();
+        public List<string> m_LocalABList = new List<string>();
+        public List<string> m_RemoteABList = new List<string>();  
+        
+        public void Reset()
+        {
+            m_LocalABNotUsedList.Clear();
+            m_ABInUsedNotInManifest.Clear();
+            m_ABInManifestNotUsed.Clear();
+            m_LocalABList.Clear();
+            m_RemoteABList.Clear();
+        }
+    }
+
+    public static ParseAssetBundlesOutput ParseAssetBundles(AddressablesCatalog catalog, AssetBundleManifest abManifest)
+    {
+        ParseAssetBundlesOutput returnValue = new ParseAssetBundlesOutput();
+
+        List<string> catalogLocalABs;
+        List<string> catalogUsedABs;
+        if (catalog == null)
+        {
+            catalogLocalABs = new List<string>();
+            catalogUsedABs = new List<string>();
+        }
+        else
+        {
+            catalogLocalABs = catalog.GetLocalABList();
+            catalogUsedABs = catalog.GetUsedABList();
+        }
+
+        // Searches for local ABs that are not used
+        // We ignore the local ones that are not defined in used because they're not really neccessary
+        UbiListUtils.SplitIntersectionAndDisjoint(catalogLocalABs, catalogUsedABs, out catalogLocalABs, out returnValue.m_LocalABNotUsedList);
+
+        if (abManifest == null)
+        {
+            UbiListUtils.AddRange(returnValue.m_ABInUsedNotInManifest, catalogUsedABs, false, true);
+            returnValue.m_LocalABList.Clear();
+        }
+        else
+        {
+            List<string> catalogRemoteABs;
+            UbiListUtils.SplitIntersectionAndDisjoint(catalogUsedABs, catalogLocalABs, out catalogLocalABs, out catalogRemoteABs);
+
+            List<string> manifestABs = new List<string>(abManifest.GetAllAssetBundles());
+
+            // Loops through all local asset bundles to add them and their dependencies if they're in the
+            // manifest or to add them to returnValue.m_ABInUsedNotInManifest if they're not.            
+            string abName;            
+            List<string> dependencies;
+            int count = catalogLocalABs.Count;
+            for (int i = 0; i < count; i++)
+            {
+                abName = catalogLocalABs[i];
+                if (manifestABs.Contains(abName))
+                {
+                    returnValue.m_LocalABList.Add(abName);
+                    dependencies = new List<string>(abManifest.GetAllDependencies(abName));
+                    UbiListUtils.AddRange(returnValue.m_LocalABList, dependencies, false, true);
+                }
+                else
+                {
+                    returnValue.m_ABInUsedNotInManifest.Add(abName);
+                }
+            }
+
+            // Loops through all local asset bundles to add them and their dependencies if they're in the
+            // manifest or to add them to returnValue.m_ABInUsedNotInManifest if they're not.
+            if (catalogRemoteABs != null)
+            {
+                List<string> remoteDependencies;
+                List<string> localDependencies;
+                count = catalogRemoteABs.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    abName = catalogRemoteABs[i];
+                    if (manifestABs.Contains(abName))
+                    {
+                        returnValue.m_RemoteABList.Add(abName);
+                        dependencies = new List<string>(abManifest.GetAllDependencies(abName));
+                        UbiListUtils.SplitIntersectionAndDisjoint(dependencies, returnValue.m_LocalABList, out localDependencies, out remoteDependencies);
+                        UbiListUtils.AddRange(returnValue.m_RemoteABList, remoteDependencies, false, true);
+                    }
+                    else
+                    {
+                        returnValue.m_ABInUsedNotInManifest.Add(abName);
+                    }
+                }
+            }
+
+            if (manifestABs != null)
+            {
+                count = manifestABs.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    abName = manifestABs[i];
+                    if (!returnValue.m_LocalABList.Contains(abName) && !returnValue.m_RemoteABList.Contains(abName))
+                    {
+                        returnValue.m_ABInManifestNotUsed.Add(abName);
+                    }
+                }
+            }
+        }
+
+        return returnValue;
+    }    
 }

@@ -20,7 +20,24 @@ public class AssetBundlesManager
 
             return sm_instance;
         }
-    }       
+    }  
+    
+    public static AssetBundleManifest LoadManifest(string path, out AssetBundle manifestBundle)
+    {
+        AssetBundleManifest abManifest = null;
+        manifestBundle = null;
+        if (path != null && File.Exists(path))
+        {            
+            manifestBundle = AssetBundle.LoadFromFile(path);
+            if (manifestBundle != null)
+            {
+                string assetName = "AssetBundleManifest";
+                abManifest = manifestBundle.LoadAsset<AssetBundleManifest>(assetName);
+            }            
+        }
+
+        return abManifest;
+    }
 
     /// <summary>
     /// List of the local asset bundle ids.
@@ -29,7 +46,7 @@ public class AssetBundlesManager
     
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string DependenciesFileName = "dependencies";        
+    public static string DEPENDENCIES_FILENAME = "dependencies";        
 
     /// <summary>
     /// Initialize the system.
@@ -62,7 +79,7 @@ public class AssetBundlesManager
         m_localAssetBundleIds = localAssetBundleIds;
 
         AssetBundleManifest manifest = null;
-        string path = Path.Combine(localAssetBundlesPath, DependenciesFileName);        
+        string path = Path.Combine(localAssetBundlesPath, DEPENDENCIES_FILENAME);        
         AssetBundle manifestBundle = AssetBundle.LoadFromFile(path);
         if (manifestBundle != null)
         {

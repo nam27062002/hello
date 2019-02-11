@@ -9,11 +9,12 @@ public class AddressablesEditorMenu : MonoBehaviour
 {    
     private const string ADDRESSABLES_MENU = "Addressables";    
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU = ADDRESSABLES_MENU + "/" + "Build by Steps";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "1.Clear";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2.Customize editor catalog";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ENGINE_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3.Generate engine catalog";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4.Generate Asset Bundles";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5.Distribute Asset Bundles";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "1. Clear";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Customize editor catalog";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3. Generate player catalog";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4. Generate Asset Bundles";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Distribute Asset Bundles";
 
     private const string ADDRESSABLES_BUILD_MENU = ADDRESSABLES_MENU + "/" + "Build";
     
@@ -52,11 +53,11 @@ public class AddressablesEditorMenu : MonoBehaviour
         AssetDatabase.Refresh();
     }    
 
-    // 3.Generate Engine Catalog
-    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ENGINE_CATALOG)]
-    static void GenerateEngineCatalog()
+    // 3.Generate Player Catalog
+    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
+    static void GeneratePlayerCatalog()
     {
-        Manager.GenerateEngineCatalog();
+        Manager.GeneratePlayerCatalog();
         AssetDatabase.Refresh();
     }
     
@@ -66,9 +67,17 @@ public class AddressablesEditorMenu : MonoBehaviour
     {
         Manager.BuildAssetBundles();
         AssetDatabase.Refresh();
+    }
+
+    // 5. Process Asset Bundles
+    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES)]
+    static void ProcessAssetBundles()
+    {
+        Manager.ProcessAssetBundles();
+        AssetDatabase.Refresh();
     }    
 
-    // 5. Distribute Asset Bundles
+    // 6. Distribute Asset Bundles
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES)]
     static void DistributeAssetBundles()
     {

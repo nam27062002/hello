@@ -20,6 +20,24 @@ public class AssetBundlesEditorTools
         BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, EditorUserBuildSettings.activeBuildTarget);
     }
 
+    public static AssetBundleManifest LoadAssetBundleManifest(out AssetBundle manifestBundle)
+    {
+        AssetBundleManifest abManifest = null;
+        manifestBundle = null;
+
+        string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
+        string assetBundleDirectory = Path.Combine(ASSET_BUNDLES_PATH, activeBuildTarget);
+        assetBundleDirectory = Path.Combine(assetBundleDirectory, activeBuildTarget);
+        
+        if (assetBundleDirectory != null && File.Exists(assetBundleDirectory))
+        {
+            abManifest = AssetBundlesManager.LoadManifest(assetBundleDirectory, out manifestBundle);
+        }        
+
+        return abManifest;
+    }
+
+
     public static void CopyAssetBundles(string dstPath)
     {
         string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
@@ -37,7 +55,7 @@ public class AssetBundlesEditorTools
 
             // Rename the dependencies bundle
             string origDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, activeBuildTarget);
-            string newDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, AssetBundlesManager.DependenciesFileName);
+            string newDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
             FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
             FileEditorTools.DeleteFileOrDirectory(origDependenciesManifestPath);
 
