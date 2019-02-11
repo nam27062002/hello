@@ -362,7 +362,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         string localAssetBundlesPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Addressables");
         localAssetBundlesPath = System.IO.Path.Combine(localAssetBundlesPath, "AssetBundles");
 
-        List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" , "01/cubes/materials" };
         AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
 
         Memory_EndSample(true);
@@ -427,6 +427,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         {
             //Debug.Log(Memory_GetUsedSize());            
             //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);            
+            //Download("01/scene_cubes");
         }
 
         if (m_request != null)
@@ -442,5 +443,60 @@ public class BasicAssetBundlesTestController : MonoBehaviour
             Ui_UpdateMemoryUsed();
             Ui_NeedsToUpdateMemoryUsed = false;
         }
-    }   
+    }
+
+    /*
+    private bool isBundleBaseInited = false;
+    private string bundleBaseDownloadingURL;
+
+    private void Download(string assetBundleName)
+    {
+        if (!isBundleBaseInited)
+        {
+            SetDevelopmentAssetBundleServer();
+        }
+
+        WWW download = null;
+
+        if (!bundleBaseDownloadingURL.EndsWith("/"))
+        {
+            bundleBaseDownloadingURL += "/";
+        }
+
+        string url = bundleBaseDownloadingURL + assetBundleName;
+        
+        download = new WWW(url);
+
+        while (!download.isDone) ;
+
+        Debug.Log(assetBundleName + " downloaded with error = " + download.error);                
+    }
+
+    /// <summary>
+    /// Sets base downloading URL to a local development server URL.
+    /// </summary>
+    public void SetDevelopmentAssetBundleServer()
+    {
+        TextAsset urlFile = Resources.Load("AssetBundleServerURL") as TextAsset;
+        string url = (urlFile != null) ? urlFile.text.Trim() : null;
+        if (url == null || url.Length == 0)
+        {
+            Debug.LogError("Development Server URL could not be found.");
+        }
+        else
+        {            
+            SetSourceAssetBundleURL(url);
+        }
+    }
+
+    public void SetSourceAssetBundleURL(string absolutePath)
+    {
+        if (!absolutePath.EndsWith("/"))
+        {
+            absolutePath += "/";
+        }
+
+        bundleBaseDownloadingURL = absolutePath;
+    }    
+    */
 }
