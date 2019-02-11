@@ -67,6 +67,7 @@ public class DefinitionsCategory
 	public const string DECORATIONS 		= "DECORATIONS";
 	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";
 	public const string FREEZE_CONSTANTS	= "FREEZE_CONSTANTS";
+    public const string EQUIPABLE           = "EQUIPABLE";
 
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";

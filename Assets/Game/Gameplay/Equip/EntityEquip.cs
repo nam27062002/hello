@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityEquip : MonoBehaviour {
@@ -16,7 +17,7 @@ public class EntityEquip : MonoBehaviour {
     [SerializeField] private Item[] m_inventory = new Item[0];
 
     private AttachPoint[] m_attachPoints = new AttachPoint[(int)Equipable.AttachPoint.Count];
-
+    private List<string> m_equippedSkus = new List<string>();
 
     void Awake() {
         // Store attach points sorted to match AttachPoint enum
@@ -43,6 +44,7 @@ public class EntityEquip : MonoBehaviour {
                     if (equipable != null && attackPointIdx < m_attachPoints.Length && m_attachPoints[attackPointIdx] != null) {
                         if (m_attachPoints[attackPointIdx].item == null) {
                             m_attachPoints[attackPointIdx].EquipAccessory(equipable);
+                            m_equippedSkus.Add(equipable.sku);
                             for (int j = 0; j < item.toDisableOnEquip.Length; ++j) {
                                 item.toDisableOnEquip[j].SetActive(false);
                             }
@@ -51,5 +53,18 @@ public class EntityEquip : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public bool HasSomethingEquiped() {
+        return m_equippedSkus.Count > 0;
+    }
+
+    public bool HasEquipped(string _sku) {
+        for (int i = 0; i < m_equippedSkus.Count; ++i) {
+            if (m_equippedSkus[i].Equals(_sku)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

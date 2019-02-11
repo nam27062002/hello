@@ -99,8 +99,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_otherSpawnablesCount = 0;
 		ISpawnable thisSpawn = this as ISpawnable;
 		for (int i = 0; i < spawners.Length; i++) {
-			if (spawners[i] != thisSpawn)
-			{
+			if (spawners[i] != thisSpawn) {
 				m_otherSpawnables[m_otherSpawnablesCount] = spawners[i];
 				m_otherSpawnablesCount++;
 			}
