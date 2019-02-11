@@ -361,7 +361,7 @@ public class ProfilerControlPanelController : MonoBehaviour
 		new Vector3(371, 250, 0f),
 		new Vector3(744, 182, 0f),
         new Vector3(-60, -129, 0f),
-        new Vector3(360, 69, 0f),                         
+        new Vector3(355, 69, 0f),                         
 
         //---------------------- Castle area ----------------------
         new Vector3(414, 68, 0f),
