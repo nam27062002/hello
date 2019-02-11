@@ -121,7 +121,9 @@ namespace AssetBundles
 
             KillRunningAssetBundleServer();
 
-            //BuildScript.CreateAssetBundleDirectory();
+            if (!Directory.Exists(assetBundlesDirectory))
+                Directory.CreateDirectory(assetBundlesDirectory);
+
             WriteServerURL();
 
             string args = assetBundlesDirectory;
