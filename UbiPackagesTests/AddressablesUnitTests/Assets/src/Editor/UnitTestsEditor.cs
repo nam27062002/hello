@@ -10,6 +10,10 @@ public class UnitTestsEditor : MonoBehaviour
     private const string MENU_ADDRESSABLES_PARSE_ABS = MENU_ADDRESSABLES + "/Parse ABs Test";
     private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT });
 
+    private const string MENU_UBI_DOWNLOADABLES = MENU + "/Downloadables";
+    private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_UBI_DOWNLOADABLES + "/Parse Catalog";
+    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG });
+
     private const string MENU_UBI_LISTS = MENU + "/UbiLists";
     private const string MENU_UBI_LISTS_ADD_RANGE = MENU_UBI_LISTS + "/AddRange Test";
     private const string MENU_UBI_LISTS_SPLIT = MENU_UBI_LISTS + "/Split Test";
@@ -26,6 +30,8 @@ public class UnitTestsEditor : MonoBehaviour
             case MENU_ADDRESSABLES_PARSE_ABS:
                 return UTAddressablesEditorParseABs.GetUnitTestBatch();
 
+            case MENU_DOWNLOADABLES_PARSE_CATALOG:
+                return UTLoadDownloadablesCatalog.GetUnitTestBatch();
             case MENU_UBI_LISTS_ADD_RANGE:
                 return UTListAddRange<string>.GetUnitTestBatch();
 
@@ -40,6 +46,12 @@ public class UnitTestsEditor : MonoBehaviour
     public static void UnitTests_Addressables_ParseABs()
     {
         PerformAllTests(MENU_ADDRESSABLES_PARSE_ABS);        
+    }
+
+    [MenuItem(MENU_DOWNLOADABLES_PARSE_CATALOG)]
+    public static void UnitTests_Downloadables_ParseCatalog()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_PARSE_CATALOG);
     }
 
     [MenuItem(MENU_UBI_LISTS_ADD_RANGE)]
@@ -67,6 +79,7 @@ public class UnitTestsEditor : MonoBehaviour
         List<string> keys = new List<string>();
         UbiListUtils.AddRange(keys, MENU_UBI_LISTS_ALL_NAMES, false, true);
         UbiListUtils.AddRange(keys, MENU_ADDRESSABLES_ALL_NAMES, false, true);
+        UbiListUtils.AddRange(keys, MENU_DOWNLOADABLES_ALL_NAMES, false, true);
 
         List <UnitTestBatch> batches = GetUnitTestBatchList(keys);
         PerformUnitTestBatchList(batches);
