@@ -40,6 +40,8 @@ public class LevelManager : Singleton<LevelManager> {
 
 	private static List<string> m_toSplitScenes = new List<string>();
 
+    private static Dictionary<string, int> m_scenesLoaded = new Dictionary<string, int>();
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -101,10 +103,35 @@ public class LevelManager : Singleton<LevelManager> {
 			m_toSplitScenes.Clear();
 		}
 
-	}    
-   
+	}
+    
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (!m_scenesLoaded.ContainsKey(scene.name))
+        {
+            m_scenesLoaded.Add(scene.name, 1);
+        }
+
+        Debug.Log("OnSceneLoaded: " + scene.name);        
+    }
+
+    private static void OnSceneUnloaded(Scene scene)
+    {
+        if (m_scenesLoaded.ContainsKey(scene.name))
+        {
+            m_scenesLoaded.Remove(scene.name);
+        }
+
+        Debug.Log("OnSceneUnloaded: " + scene.name);        
+    }
+
     public static LevelLoader LoadLevel()
-    {        
+    {
+        m_scenesLoaded.Clear();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+
         // Destroy any existing level in the game scene
         LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
         for (int i = 0; i < activeLevels.Length; i++)
@@ -149,6 +176,13 @@ public class LevelManager : Singleton<LevelManager> {
         return returnValue;
     }
 
+    public static void UnloadLevel()
+    {
+        m_scenesLoaded.Clear();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+    }
+
     public static LevelLoader SwitchArea( string area )
     {                
         // Load additively all the scenes of the current level
@@ -156,7 +190,18 @@ public class LevelManager : Singleton<LevelManager> {
 
         // Current area scenes need to be unloaded
         List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(m_currentArea);
-        returnValue.AddRealSceneNameListToUnload(realSceneNamesPerArea);
+
+        if (realSceneNamesPerArea != null)
+        {
+            int count = realSceneNamesPerArea.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (IsSceneLoaded(realSceneNamesPerArea[i]))
+                {
+                    returnValue.AddRealSceneNameToUnload(realSceneNamesPerArea[i]);
+                }
+            }
+        }
 
         // Load area
         m_currentArea = area;
@@ -164,19 +209,28 @@ public class LevelManager : Singleton<LevelManager> {
         returnValue.AddRealSceneNameListToLoad(realSceneNamesPerArea);
 
         return returnValue;
-    }    
+    }   
+    
+    private static bool IsSceneLoaded(string sceneName)
+    {
+        return m_scenesLoaded.ContainsKey(sceneName);
+    } 
 
 	public static void DisableCurrentArea()
-	{		
+	{
+        Scene s;
 		for( int i = 0;i< m_currentAreaScenes.Count; i++ )
 		{
-			Scene s = SceneManager.GetSceneByName(m_currentAreaScenes[i]);
-			if (s != null)
-			{
-				GameObject[] gos = s.GetRootGameObjects();
-				for( int j = 0; j<gos.Length; ++j )
-					gos[j].SetActive(false);
-			}
+            if (IsSceneLoaded(m_currentAreaScenes[i]))
+            {
+                s = SceneManager.GetSceneByName(m_currentAreaScenes[i]);
+                if (s != null)
+                {
+                    GameObject[] gos = s.GetRootGameObjects();
+                    for (int j = 0; j < gos.Length; ++j)
+                        gos[j].SetActive(false);
+                }
+            }
 		}
 	}   
 

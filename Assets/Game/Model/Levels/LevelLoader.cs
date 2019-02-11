@@ -73,7 +73,7 @@ public class LevelLoader
                 case EState.LoadingNextAreaDependencies:
                     if (m_loadLevelHandle.NeedsToLoadNextAreaDependencies())
                     {
-                        m_tasks = new List<UbiAsyncOperation>();
+                        m_tasks = new List<AddressablesOp>();
                         m_tasks.Add(m_loadLevelHandle.LoadNextAreaDependencies());
                     }                    
                     break;
@@ -112,7 +112,7 @@ public class LevelLoader
 
     private HDAddressablesManager.Ingame_SwitchAreaHandle m_loadLevelHandle;
 
-    private List<UbiAsyncOperation> m_tasks;
+    private List<AddressablesOp> m_tasks;
 
     private bool m_loadSync;
 
@@ -286,7 +286,7 @@ public class LevelLoader
         return returnValue;
     }
 
-    private void SetAllowSceneActivation(List<UbiAsyncOperation> tasks, bool value)
+    private void SetAllowSceneActivation(List<AddressablesOp> tasks, bool value)
     {
         if (tasks != null)
         {
