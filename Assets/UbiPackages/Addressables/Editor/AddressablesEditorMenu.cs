@@ -86,7 +86,7 @@ public class AddressablesEditorMenu : MonoBehaviour
     }    
 
     [MenuItem(ADDRESSABLES_BUILD_MENU)]
-    static void Build()
+    public static void Build()
     {
         Manager.Build();
         AssetDatabase.Refresh();
