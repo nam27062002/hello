@@ -129,9 +129,7 @@ public class AddressablesCatalogEntry
     public JSONClass ToJSON()
     {
         JSONClass data = new JSONClass();
-
-        if (Id != null)
-
+        
         AddToJSON(data, ATT_ID, Id);
         AddToJSON(data, ATT_LOCATION_TYPE, AddressablesTypes.ELocationTypeToString(LocationType));
         AddToJSON(data, ATT_PATH, Path);

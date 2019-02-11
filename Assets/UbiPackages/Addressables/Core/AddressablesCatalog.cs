@@ -78,39 +78,28 @@ public class AddressablesCatalog
 
     private JSONArray EntriesToJSON()
     {
-        JSONArray data = new JSONArray();
-        if (m_entries != null)
+        JSONArray data = new JSONArray();        
+        AddressablesCatalogEntry entry;
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in m_entries)
         {
-            AddressablesCatalogEntry entry;
-            foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in m_entries)
+            entry = kvp.Value;
+            if (entry != null && entry.IsValid())
             {
-                entry = kvp.Value;
-                if (entry != null && entry.IsValid())
-                {
-                    data.Add(entry.ToJSON());
-                }
+                data.Add(entry.ToJSON());
             }
-        }
+        }        
 
         return data;
     }    
 
     public AddressablesCatalogEntry GetEntry(string id)
     {
-        return (m_entries != null && m_entries.ContainsKey(id)) ? m_entries[id] : null;
+        return (m_entries.ContainsKey(id)) ? m_entries[id] : null;
     }
 
     public bool TryGetEntry(string id, out AddressablesCatalogEntry entry)
     {
-        if (m_entries != null)
-        {
-            return m_entries.TryGetValue(id, out entry);
-        }
-        else
-        {
-            entry = null;
-            return false;
-        }
+        return m_entries.TryGetValue(id, out entry);        
     }
 
     public Dictionary<string, AddressablesCatalogEntry> GetEntries()
