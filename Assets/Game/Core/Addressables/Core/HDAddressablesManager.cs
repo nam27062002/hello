@@ -47,11 +47,8 @@ public class HDAddressablesManager
             catalogAsText = File.ReadAllText(addressablesCatalogPath);
         }
 
-        JSONNode catalogASJSON = JSON.Parse(catalogAsText);
-        List<string> localAssetBundleIds = new List<string> { "so_medieval_castle" };
-        //localAssetBundleIds = null;
-
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, localAssetBundleIds, logger);        
+        JSONNode catalogASJSON = JSON.Parse(catalogAsText);        
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, logger);        
     }
 
     #region ingame
