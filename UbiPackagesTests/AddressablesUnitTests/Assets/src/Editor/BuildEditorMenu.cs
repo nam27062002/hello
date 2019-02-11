@@ -5,8 +5,12 @@ using UnityEngine;
 
 public class BuildEditorMenu : MonoBehaviour
 {
-    [MenuItem("Build/Build")]
-    public static void Build()
+    private const string BUILD_MENU = "Tech/Build";
+    private const string BUILD_MENU_BUILD_PLAYER = BUILD_MENU + "/Build Player";
+    private const string BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER = BUILD_MENU + "/Build Addressables and Player";
+
+    [MenuItem(BUILD_MENU_BUILD_PLAYER)]
+    public static void BuildPlayer()
     {
         string[] sceneNames = null;
         EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
@@ -50,10 +54,10 @@ public class BuildEditorMenu : MonoBehaviour
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Build/Process Addressables and Build")]
-    public static void ProcessAddressablesAndBuild()
+    [MenuItem(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER)]
+    public static void BuildAddressablesAndPlayer()
     {
         AddressablesEditorMenu.Build();
-        Build();
+        BuildPlayer();
     }
 }
