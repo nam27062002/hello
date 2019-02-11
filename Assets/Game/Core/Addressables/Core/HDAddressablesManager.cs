@@ -34,20 +34,23 @@ public class HDAddressablesManager
         string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
-        string catalogAsText;
-        if (Application.platform == RuntimePlatform.Android) //Need to extract file from apk first
+        string catalogAsText = null;
+        if (File.Exists(addressablesCatalogPath))
         {
-            WWW reader = new WWW(addressablesCatalogPath);
-            while (!reader.isDone) { }
+            if (Application.platform == RuntimePlatform.Android) //Need to extract file from apk first
+            {
+                WWW reader = new WWW(addressablesCatalogPath);
+                while (!reader.isDone) { }
 
-            catalogAsText = reader.text;
-        }
-        else
-        {
-            catalogAsText = File.ReadAllText(addressablesCatalogPath);
+                catalogAsText = reader.text;
+            }
+            else
+            {
+                catalogAsText = File.ReadAllText(addressablesCatalogPath);
+            }
         }
 
-        JSONNode catalogASJSON = JSON.Parse(catalogAsText);        
+        JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);        
         m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, logger);        
     }
 
