@@ -426,10 +426,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             //Debug.Log(Memory_GetUsedSize());            
-            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);
-
-            //UnitTestAddRange<string>.TestBatch();
-            UnitTestSplitIntersecionAndDisjoint<string>.TestBatch();
+            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);            
         }
 
         if (m_request != null)
