@@ -19,7 +19,8 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         Monster     = (1 << 13),
         Fish        = (1 << 14),
         CarnivourusPlant = (1 << 15),
-        Spider      = (1 << 16)
+        Spider      = (1 << 16),
+        Armored     = (1 << 17)
     }
 
 

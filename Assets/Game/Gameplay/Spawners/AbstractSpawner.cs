@@ -269,7 +269,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
         int index = -1;
         for (int i = 0; i < EntitiesToSpawn && index == -1; i++) {
-            if (m_entities[i] != null && m_entities[i].gameObject == _entity) {
+            if (m_entities[i] != null && m_entities[i] == _entity) {
                 index = i;                                                
             }
         }
