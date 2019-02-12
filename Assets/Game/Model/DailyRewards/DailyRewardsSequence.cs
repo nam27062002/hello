@@ -101,6 +101,24 @@ public class DailyRewardsSequence {
 		// Aux vars
 		DailyReward reward = GetNextReward();
 
+		// Tracking (before advancing the indexes!)
+		// Special case when the reward is a pet replaced by gf
+		string sourceType = reward.sourceDef.Get("type");
+		string trackingType = reward.reward.type;
+		string trackingSku = reward.reward.sku;
+		if(sourceType == Metagame.RewardPet.TYPE_CODE && reward.reward.type != sourceType) {
+			trackingType = sourceType + "," + reward.reward.type;
+			trackingSku = reward.sourceDef.Get("rewardSku") + "," + reward.reward.type;
+		}
+		HDTrackingManager.Instance.Notify_DailyReward(
+			rewardIdx,
+			m_totalRewardIdx,
+			trackingType,
+			_doubled ? reward.reward.amount * 2 : reward.reward.amount,
+			trackingSku,
+			_doubled
+		);
+
 		// Do it!
 		reward.Collect(_doubled);
 
