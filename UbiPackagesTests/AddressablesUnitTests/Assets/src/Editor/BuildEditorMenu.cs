@@ -11,6 +11,7 @@ public class BuildEditorMenu : MonoBehaviour
     
     private static void InternalBuildPlayer()
     {
+		Debug.Log("Building player...");
         string[] sceneNames = null;
         EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
         if (scenes != null)
@@ -53,6 +54,7 @@ public class BuildEditorMenu : MonoBehaviour
     [MenuItem(BUILD_MENU_BUILD_PLAYER)]
     private static void BuildPlayer()
     {
+		InternalBuildPlayer();
         AssetDatabase.Refresh();
         OnDone(BUILD_MENU_BUILD_PLAYER);
     }
@@ -60,6 +62,7 @@ public class BuildEditorMenu : MonoBehaviour
     [MenuItem(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER)]
     public static void BuildAddressablesAndPlayer()
     {
+		Debug.Log("Building addressables...");
         AddressablesEditorMenu.Build();
         InternalBuildPlayer();
         OnDone(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER);
