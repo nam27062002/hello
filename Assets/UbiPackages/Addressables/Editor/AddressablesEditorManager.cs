@@ -55,7 +55,8 @@ public class AddressablesEditorManager
 
     public void ClearBuild()
     {        
-        FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);        
+        FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);
+        FileEditorTools.DeleteFileOrDirectory(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER);
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -78,13 +79,7 @@ public class AddressablesEditorManager
     public void BuildAssetBundles()
     {
         AssetBundlesEditorManager.BuildAssetBundles();
-    }
-
-    public void DistributeAssetBundles()
-    {
-        Debug.Log("Distributing build...");
-        AssetBundlesEditorManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath);
-    }
+    }    
 
     public void Build()
     {
@@ -92,8 +87,7 @@ public class AddressablesEditorManager
         CustomizeEditorCatalog();
         GeneratePlayerCatalog();
         BuildAssetBundles();
-        ProcessAssetBundles();
-        DistributeAssetBundles();
+        ProcessAssetBundles();       
     }  
 
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
@@ -201,16 +195,32 @@ public class AddressablesEditorManager
             }
 
             // Updates local AB list
-            catalog.SetLocalABList(output.m_LocalABList);
+            catalog.SetLocalABList(output.m_LocalABList);            
+
+            // Copy local asset bundles
+            AssetBundlesEditorManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
+
+            // Copy manifest
+            AssetBundlesEditorManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);
+
+            // Copy remote asset bundles
+            AssetBundlesEditorManager.CopyAssetBundles(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
 
             // Generates remote AB list file
+            GenerateDownloadablesCatalog(output.m_RemoteABList, m_playerCatalogPath);            
 
+            // Copy player catalog into the player's folder
             JSONClass json = catalog.ToJSON();
             FileEditorTools.WriteToFile(m_playerCatalogPath, json.ToString());
         }
-    }
+    }    
 
-    private static bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)
+    public void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
+    {
+        AssetBundlesEditorManager.GenerateDownloadablesCatalog(fileNames, playerFolder);
+    }     
+
+    private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)
     {        
         string path = entry.Path;
         bool success = !string.IsNullOrEmpty(path);

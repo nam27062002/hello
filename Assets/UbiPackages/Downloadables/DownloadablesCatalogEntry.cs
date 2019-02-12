@@ -6,12 +6,18 @@ public class DownloadablesCatalogEntry
     private static string ATT_SIZE = "size";
 
     public long CRC { get; private set; }
-    public long FileSizeBytes { get; private set; }
+    public long Size { get; private set; }
 
     public void Reset()
     {
         CRC = 0L;
-        FileSizeBytes = 0L;
+        Size = 0L;
+    }
+
+    public void Setup(long crc, long size)
+    {
+        CRC = crc;
+        Size = size;
     }
 
     /// <summary>
@@ -26,7 +32,7 @@ public class DownloadablesCatalogEntry
         if (data != null)
         {
             CRC = data[ATT_CRC].AsLong;
-            FileSizeBytes = data[ATT_SIZE].AsLong;
+            Size = data[ATT_SIZE].AsLong;
         }
     }
 
@@ -35,7 +41,7 @@ public class DownloadablesCatalogEntry
         JSONClass data = new JSONClass();
 
         data[ATT_CRC] = CRC;
-        data[ATT_SIZE] = FileSizeBytes;        
+        data[ATT_SIZE] = Size;        
 
         return data;
     }
@@ -50,6 +56,6 @@ public class DownloadablesCatalogEntry
 
     public override string ToString()
     {
-        return string.Format("[{0}|{1}|", CRC, FileSizeBytes + "]");
+        return string.Format("[{0}|{1}|", CRC, Size + "]");
     }
 }

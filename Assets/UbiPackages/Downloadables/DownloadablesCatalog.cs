@@ -74,6 +74,14 @@ public class DownloadablesCatalog
         return Entries;
     }    
 
+    public void AddEntry(string id, DownloadablesCatalogEntry entry)
+    {
+        if (!Entries.ContainsKey(id))
+        {
+            Entries.Add(id, entry);
+        }
+    }
+
     private JSONClass EntriesToJSON()
     {
         JSONClass data = new JSONClass();

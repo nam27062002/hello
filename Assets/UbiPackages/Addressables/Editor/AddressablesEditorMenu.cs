@@ -14,8 +14,7 @@ public class AddressablesEditorMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Customize editor catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3. Generate player catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4. Generate Asset Bundles";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Distribute Asset Bundles";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";    
 
     private const string ADDRESSABLES_BUILD_MENU_ALL = ADDRESSABLES_BUILD_MENU + "/" + "Build";
     
@@ -39,11 +38,13 @@ public class AddressablesEditorMenu : MonoBehaviour
     }
 
     // 1.Clear
+    // Deletes AssetBundles/<currentPlatformName> folder, Assets/Streaming_Assets/Addressables folder, Downloadables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
     static void ClearBuild()
-    {
+    {        
         Manager.ClearBuild();
-        AssetDatabase.Refresh();
+        AssetBundlesEditorManager.Clear();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
     }    
 
     // 2.Customize Editor Catalog
@@ -51,23 +52,25 @@ public class AddressablesEditorMenu : MonoBehaviour
     static void CustomizeEditorCatalog()
     {
         Manager.CustomizeEditorCatalog();
-        AssetDatabase.Refresh();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG);
     }    
 
     // 3.Generate Player Catalog
+    // Generates addressablesCatalog.json in Assets/StreamingAssets/Addressables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
     static void GeneratePlayerCatalog()
     {
         Manager.GeneratePlayerCatalog();
-        AssetDatabase.Refresh();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG);
     }
     
     // 4. Generate Asset Bundles
+    // Generates asset bundles in AssetBundles/<currentPlatformName> folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES)]
     static void BuildAssetBundles()
     {
         Manager.BuildAssetBundles();
-        AssetDatabase.Refresh();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES);
     }
 
     // 5. Process Asset Bundles
@@ -75,21 +78,19 @@ public class AddressablesEditorMenu : MonoBehaviour
     static void ProcessAssetBundles()
     {
         Manager.ProcessAssetBundles();
-        AssetDatabase.Refresh();
-    }    
-
-    // 6. Distribute Asset Bundles
-    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_DISTRIBUTE_ASSET_BUNDLES)]
-    static void DistributeAssetBundles()
-    {
-        Manager.DistributeAssetBundles();
-        AssetDatabase.Refresh();                        
-    }    
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES);
+    }        
 
     [MenuItem(ADDRESSABLES_BUILD_MENU_ALL)]
     public static void Build()
     {
-        Manager.Build();
+        Manager.Build();        
+        OnDone(ADDRESSABLES_BUILD_MENU_ALL);
+    }   
+    
+    private static void OnDone(string taskName)
+    {
         AssetDatabase.Refresh();
-    }    
+        Debug.Log(taskName + " done.");
+    } 
 }

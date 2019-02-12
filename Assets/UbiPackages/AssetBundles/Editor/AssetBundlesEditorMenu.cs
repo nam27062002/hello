@@ -16,7 +16,7 @@ public class AssetBundlesEditorMenu : MonoBehaviour
     [MenuItem(MENU_LAUNCH_LOCAL_SERVER)]
     public static void ToggleLocalAssetBundleServer()
     {
-        AssetBundles.LaunchAssetBundleServer.SetRemoteAssetsFolderName(AssetBundlesEditorManager.REMOTE_ASSETS_FOLDER);
+        AssetBundles.LaunchAssetBundleServer.SetRemoteAssetsFolderName(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER);
         AssetBundles.LaunchAssetBundleServer.ToggleLocalAssetBundleServer();
     }
 

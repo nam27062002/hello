@@ -14,22 +14,8 @@ public class FileEditorTools
     public static void CreateDirectory(string path)
     {
         if (!string.IsNullOrEmpty(path) && !Exists(path))
-        {            
-            //string[] tokens = path.Split(Path.DirectorySeparatorChar);
-            string[] tokens = path.Split('/');
-            int count = tokens.Length;
-            string pathSoFar = "";
-            string newPath;
-            for (int i = 0; i < count; i++)
-            {
-                newPath = PathCombine(pathSoFar, tokens[i]);
-                if (!Exists(newPath))
-                {
-                    AssetDatabase.CreateFolder(pathSoFar,tokens[i]);
-                }
-
-                pathSoFar = newPath;
-            }
+        {
+            Directory.CreateDirectory(path);           
         }            
     }
 
@@ -96,7 +82,7 @@ public class FileEditorTools
         }
 
         return returnValue;
-    }
+    }    
 
     public static void CopyDirectory(string srcPath, string dstPath)
     {
