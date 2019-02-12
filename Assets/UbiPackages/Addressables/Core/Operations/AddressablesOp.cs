@@ -59,8 +59,8 @@
     public void Setup(AddressablesError error, object asset)
     {
         Error = error;
-        m_asset = null;
-    }
+        m_asset = asset;
+    }    
 
     private OnDoneCallback m_onDone;
 

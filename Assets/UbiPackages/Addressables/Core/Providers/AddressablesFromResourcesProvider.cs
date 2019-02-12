@@ -21,7 +21,7 @@ public class AddressablesFromResourcesProvider : AddressablesProvider
         return ProcessAsyncOperation(op, AddressablesError.EType.Error_Invalid_Scene);        
     }
 
-    private AddressablesOp ProcessAsyncOperation(AsyncOperation op, AddressablesError.EType errorType)
+    protected AddressablesOp ProcessAsyncOperation(AsyncOperation op, AddressablesError.EType errorType)
     {
         AddressablesOp returnValue;
         if (op == null)
@@ -37,6 +37,21 @@ public class AddressablesFromResourcesProvider : AddressablesProvider
             asyncOp.Setup(new UbiUnityAsyncOperation(op));
             returnValue = asyncOp;
         }
+
+        return returnValue;
+    }
+
+    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    {
+        Object o = Resources.Load(entry.AssetName);
+        return (T)System.Convert.ChangeType(o, typeof(T));        
+    }
+
+    public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
+    {
+        Object data = Resources.Load(entry.AssetName);
+        AddressablesOp returnValue = new AddressablesOpResult();
+        returnValue.Setup(null, data);
 
         return returnValue;
     }

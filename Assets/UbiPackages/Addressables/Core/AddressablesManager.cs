@@ -29,6 +29,10 @@ public class AddressablesManager
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
+#if UNITY_EDITOR
+        //m_providerFromEditor = new AddressablesFromEditorProvider();
+#endif
+
         Ops_Init();
 
         m_entryHelper = new AddressablesCatalogEntry();
@@ -255,7 +259,45 @@ public class AddressablesManager
         }
         
         return returnValue;
-    }    
+    }   
+    
+    public T LoadAsset<T>(string id)
+    {
+        T returnValue = default(T);
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.LoadAsset<T>(entry);            
+        }
+        else
+        {
+            LogErrorManagerNotInitialized();
+        }
+
+        return returnValue;
+    }
+
+    public AddressablesOp LoadAssetAsync(string id)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.LoadAssetAsync(entry);
+
+            Ops_AddOp(returnValue);
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
+        }
+
+        return returnValue;
+    } 
     
     public void Update()
     {
@@ -335,9 +377,13 @@ public class AddressablesManager
     }    
     #endregion
 
-        #region providers
+    #region providers
     private AddressablesFromAssetBundlesProvider m_providerFromAB;
     private AddressablesFromResourcesProvider m_providerFromResources;
+
+#if UNITY_EDITOR
+    //private AddressablesFromEditorProvider m_providerFromEditor;
+#endif
 
     private AddressablesProvider Providers_GetProvider(string id, out AddressablesCatalogEntry entry)
     {
@@ -350,8 +396,11 @@ public class AddressablesManager
         {
             entry = m_entryHelper;
             entry.SetupAsEntryInResources(id);
-        }
-        
+        }        
+
+//#if UNITY_EDITOR
+        //returnValue = m_providerFromEditor;
+//#else
         switch (entry.LocationType)
         {
             case AddressablesTypes.ELocationType.Resources:
@@ -362,12 +411,13 @@ public class AddressablesManager
                 returnValue = m_providerFromAB;
                 break;
         }
+//#endif        
 
         return returnValue;
     }
-    #endregion
+#endregion
 
-    #region logger
+#region logger
     private static Logger sm_logger;
 
     public static bool CanLog()
@@ -422,5 +472,5 @@ public class AddressablesManager
             sm_logger.LogError("Error when retrieving Addressable operation: " + error.ToString());
         }
     }
-    #endregion    
+#endregion
 }

@@ -22,4 +22,7 @@ public abstract class AddressablesProvider
     public abstract bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode);
     public abstract AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode);
     public abstract AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry);
+
+    public abstract T LoadAsset<T>(AddressablesCatalogEntry entry);
+    public abstract AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry);
 }
