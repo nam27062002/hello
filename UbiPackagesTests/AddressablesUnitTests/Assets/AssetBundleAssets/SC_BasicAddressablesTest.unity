@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44658017, g: 0.49641502, b: 0.57482153, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.4964127, b: 0.57481724, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -131,7 +131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &107820604
 RectTransform:
   m_ObjectHideFlags: 0
@@ -600,7 +600,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 120}
+  m_AnchoredPosition: {x: 0, y: -225}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &267102445
@@ -878,12 +878,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3be509e3c8d28d846b45696e0721768b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cubesRoot: {fileID: 1572975392}
   m_uiButtons:
   - {fileID: 1643496856}
   - {fileID: 1233665452}
   - {fileID: 130369661}
   - {fileID: 609781899}
-  m_uiSceneCubeDropdown: {fileID: 156468833}
+  - {fileID: 2111822142}
+  m_uiSceneCubesDropdown: {fileID: 156468833}
+  m_uiAssetCubesDropdown: {fileID: 888146909}
   m_uiOperationResult: {fileID: 1109847197}
 --- !u!4 &465517820
 Transform:
@@ -1033,7 +1036,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AB Init
+  m_Text: Init
 --- !u!222 &540937112
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2859,7 +2862,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AB Reset
+  m_Text: Reset
 --- !u!222 &1101265422
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3751,7 +3754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1631944148
 RectTransform:
   m_ObjectHideFlags: 0
