@@ -17,7 +17,9 @@ public class AddressablesEditorMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";    
 
     private const string ADDRESSABLES_BUILD_MENU_ALL = ADDRESSABLES_BUILD_MENU + "/" + "Build";
-    
+
+    private const string ADDRESSABLES_SIMULATOR_MODE = ADDRESSABLES_MENU + "/Simulator mode";
+
     public static AddressablesEditorManager m_manager;
     public static AddressablesEditorManager Manager
     {
@@ -92,5 +94,24 @@ public class AddressablesEditorMenu : MonoBehaviour
     {
         AssetDatabase.Refresh();
         Debug.Log(taskName + " done.");
-    } 
+    }    
+
+    [MenuItem(ADDRESSABLES_SIMULATOR_MODE)]
+    public static void ToggleSimulatorMode()
+    {
+        if (Application.isPlaying)
+        {
+            Debug.LogError("This option can't be toggled when the player is running");
+            return;
+        }
+
+        AddressablesManager.SimulationMode = !AddressablesManager.SimulationMode;        
+    }
+
+    [MenuItem(ADDRESSABLES_SIMULATOR_MODE, true)]
+    public static bool ToggleSimulatorModeValidate()
+    {        
+        Menu.SetChecked(ADDRESSABLES_SIMULATOR_MODE, AddressablesManager.SimulationMode);
+        return true;
+    }    
 }

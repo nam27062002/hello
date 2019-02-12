@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -7,21 +8,81 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class AddressablesManager
 {
+#if UNITY_EDITOR
+    public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
+    {        
+        AddressablesCatalog returnValue = null;
+
+        // Loads the catalog        
+        StreamReader reader = new StreamReader(editorCatalogPath);
+        string content = reader.ReadToEnd();
+        reader.Close();
+
+        JSONNode catalogJSON = JSON.Parse(content);
+        returnValue = new AddressablesCatalog();
+        returnValue.Load(catalogJSON, sm_logger);
+
+        return returnValue;
+    }
+
+    public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
+    public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
+    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+
+    private const string SIMULATION_MODE_KEY = "SimulationMode";
+
+    /// Flag to indicate if we want to simulate assetBundles in Editor without building them actually.
+    private static int sm_SimulationMode = -1;
+    public static bool SimulationMode
+    {
+        get
+        {
+            if (sm_SimulationMode == -1)
+                sm_SimulationMode = UnityEditor.EditorPrefs.GetBool(SIMULATION_MODE_KEY, true) ? 1 : 0;
+
+            return sm_SimulationMode != 0;
+        }
+
+        set
+        {
+            int newValue = value ? 1 : 0;
+            if (newValue != sm_SimulationMode)
+            {
+                sm_SimulationMode = newValue;
+                UnityEditor.EditorPrefs.SetBool(SIMULATION_MODE_KEY, value);
+            }
+        }
+    }
+#endif
+
     private AddressablesCatalog m_catalog;
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;
     
     public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, Logger logger)
-    {        
+    {
         sm_logger = logger;
 
-        // Loads the catalog
-        if (m_catalog == null)
-        {
-            m_catalog = new AddressablesCatalog();
-        }
+        bool buildCatalog = true;
 
-        m_catalog.Load(catalogJSON, logger);        
+#if UNITY_EDITOR
+        // editor catalog is used instead in simulation mode
+        if (SimulationMode)
+        {
+            m_catalog = GetEditorCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH);
+            buildCatalog = false;
+        }
+#endif
+        if (buildCatalog)
+        {
+            // Loads the catalog
+            if (m_catalog == null)
+            {
+                m_catalog = new AddressablesCatalog();
+            }
+
+            m_catalog.Load(catalogJSON, logger);
+        }
 
         // Loads the providers
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
@@ -30,7 +91,7 @@ public class AddressablesManager
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
 #if UNITY_EDITOR
-        //m_providerFromEditor = new AddressablesFromEditorProvider();
+        m_providerFromEditor = new AddressablesFromEditorProvider();
 #endif
 
         Ops_Init();
@@ -56,7 +117,7 @@ public class AddressablesManager
     public bool IsInitialized()
     {
         return m_isInitialized;
-    }
+    }   
 
     /// <summary>
     /// Returns the list of dependencies (typically asset bundles) ids required to load the addressable with <c>id</c> as an identifier.
@@ -382,7 +443,7 @@ public class AddressablesManager
     private AddressablesFromResourcesProvider m_providerFromResources;
 
 #if UNITY_EDITOR
-    //private AddressablesFromEditorProvider m_providerFromEditor;
+    private AddressablesFromEditorProvider m_providerFromEditor;
 #endif
 
     private AddressablesProvider Providers_GetProvider(string id, out AddressablesCatalogEntry entry)
@@ -398,9 +459,6 @@ public class AddressablesManager
             entry.SetupAsEntryInResources(id);
         }        
 
-//#if UNITY_EDITOR
-        //returnValue = m_providerFromEditor;
-//#else
         switch (entry.LocationType)
         {
             case AddressablesTypes.ELocationType.Resources:
@@ -411,7 +469,13 @@ public class AddressablesManager
                 returnValue = m_providerFromAB;
                 break;
         }
-//#endif        
+
+#if UNITY_EDITOR
+        if (SimulationMode)
+        {
+            returnValue = m_providerFromEditor;
+        }
+#endif
 
         return returnValue;
     }

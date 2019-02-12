@@ -21,23 +21,12 @@ public class AddressablesEditorManager
 
     public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
     {
-        AddressablesCatalog returnValue = null;
-
-        // Loads the catalog        
-        StreamReader reader = new StreamReader(editorCatalogPath);
-        string content = reader.ReadToEnd();        
-        reader.Close();
-                
-        JSONNode catalogJSON = JSON.Parse(content);
-        returnValue = new AddressablesCatalog();
-        returnValue.Load(catalogJSON, sm_logger);
-
-        return returnValue;
+        return AddressablesManager.GetEditorCatalog(editorCatalogPath);        
     }
 
-    public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
-    public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
-    private const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+    public const string ADDRESSSABLES_CATALOG_FILENAME = AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME;
+    public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+    private const string ADDRESSABLES_EDITOR_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH;
 
     private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";    
 

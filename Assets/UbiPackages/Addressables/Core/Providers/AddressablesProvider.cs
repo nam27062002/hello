@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public abstract class AddressablesProvider
@@ -25,4 +26,24 @@ public abstract class AddressablesProvider
 
     public abstract T LoadAsset<T>(AddressablesCatalogEntry entry);
     public abstract AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry);
+
+    protected AddressablesOp ProcessAsyncOperation(AsyncOperation op, AddressablesError.EType errorType)
+    {
+        AddressablesOp returnValue;
+        if (op == null)
+        {
+            AddressablesOpResult opResult = new AddressablesOpResult();
+            AddressablesError error = new AddressablesError(errorType);
+            opResult.Setup(error, null);
+            returnValue = opResult;
+        }
+        else
+        {
+            AddressablesAsyncOp asyncOp = new AddressablesAsyncOp();
+            asyncOp.Setup(new UbiUnityAsyncOperation(op));
+            returnValue = asyncOp;
+        }
+
+        return returnValue;
+    }
 }
