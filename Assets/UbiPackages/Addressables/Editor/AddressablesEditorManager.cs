@@ -43,18 +43,21 @@ public class AddressablesEditorManager
     }
 
     public void ClearBuild()
-    {        
+    {
+        Debug.Log("Clearing addressables...");
         FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);
         FileEditorTools.DeleteFileOrDirectory(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER);
     }
 
     public virtual void CustomizeEditorCatalog()
     {
-        Debug.Log("Customize editor catalog");
+        Debug.Log("Customizing editor catalog...");
     }
 
     public void GeneratePlayerCatalog()
-    {        
+    {
+        Debug.Log("Generating player catalog...");
+
         if (FileEditorTools.Exists(m_localDestinationPath))
         {
             FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);            
@@ -118,11 +121,10 @@ public class AddressablesEditorManager
                 for (int i = 0; i < count; i++)
                 {
                     scenePath = scenes[i].path;
-                    if (!scenesToRemove.Contains(scenePath))
-                    {
-                        newSceneList.Add(scenes[i]);                        
-                    }
-
+                    scenes[i].enabled = !scenesToRemove.Contains(scenePath);                    
+                    
+                    newSceneList.Add(scenes[i]);                                            
+                    
                     if (scenesToAdd.Contains(scenePath))
                     {
                         scenesToAdd.Remove(scenePath);
@@ -151,6 +153,8 @@ public class AddressablesEditorManager
     /// </summary>
     public void ProcessAssetBundles()
     {
+        Debug.Log("Processing asset bundles...");
+
         AddressablesCatalog catalog = GetEditorCatalog(m_playerCatalogPath);
 
         AssetBundle manifestBundle = null;
