@@ -29,8 +29,9 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Data
+	public DefinitionNode sourceDef = null;
 	public int order = 0;
-	public Metagame.Reward reward;
+	public Metagame.Reward reward = null;
 
 	public bool canBeDoubled {
 		get {
@@ -71,6 +72,8 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 	public void Reset() {
 		// Clear reward
 		reward = null;
+		sourceDef = null;
+		order = 0;
 
 		// Reset state
 		collected = false;
@@ -79,11 +82,15 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 
 	/// <summary>
 	/// Initialize data with a given definition.
+	/// Use it when creating a new reward sequence.
 	/// </summary>
 	/// <param name="_def">Definition from the DAILY_REWARDS category.</param>
 	public void InitFromDef(DefinitionNode _def) {
 		// Clear previous data and put default values
 		Reset();
+
+		// Store source definition
+		sourceDef = _def;
 
 		// Create new reward
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
@@ -91,6 +98,33 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 		rewardData.amount = _def.GetAsLong("amount");
 		rewardData.sku = _def.GetAsString("sku");
 		reward = Metagame.Reward.CreateFromData(rewardData, ECONOMY_GROUP, DEFAULT_SOURCE);
+
+		// Special case: If the reward is already owned by the time the sequence 
+		// is generated (i.e. Pets), use its replacement instead.
+		// This won't be the case if the reward is obtained via other means after the
+		// sequence is generated (as designed).
+		if(reward.WillBeReplaced()) {
+			reward = reward.replacement;
+		}
+	}
+
+	/// <summary>
+	/// Collect the reward :)
+	/// No checks performed.
+	/// </summary>
+	/// <param name="_doubled">Has the reward been doubled?</param>
+	public void Collect(bool _doubled) {
+		// Double the reward?
+		// [AOC] Just in case, don't do it again if it has already been doubled!
+		if(_doubled && !this.doubled) {
+			reward.bonusPercentage = 100f;
+			this.doubled = true;
+		}
+
+		// Just push the reward to the rewards queue and marked it as collected
+		// [AOC] From this moment on, the rewards are already in the pending rewards list if the flow is interrupted
+		UsersManager.currentUser.PushReward(reward);
+		this.collected = true;
 	}
 
 	//------------------------------------------------------------------------//
@@ -126,6 +160,11 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 		// Reset any existing data
 		Reset();
 
+		// Def (we're only saving the sku)
+		if(_data.ContainsKey("sku")) {
+			sourceDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DAILY_REWARDS, _data["sku"]);
+		}
+
 		// Reward
 		reward = Metagame.Reward.CreateFromJson(_data, ECONOMY_GROUP, DEFAULT_SOURCE);
 
@@ -139,8 +178,20 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 	/// </summary>
 	/// <returns>The json.</returns>
 	public SimpleJSON.JSONClass SaveData() {
+		// Aux vars
+		SimpleJSON.JSONClass data = null;
+
 		// Reward
-		SimpleJSON.JSONClass data = reward.ToJson() as SimpleJSON.JSONClass;
+		if(reward != null) {
+			data = reward.ToJson() as SimpleJSON.JSONClass;
+		} else {
+			data = new SimpleJSON.JSONClass();
+		}
+
+		// Def (we're only saving the sku)
+		if(sourceDef != null) {
+			data.Add("sku", sourceDef.sku);
+		}
 
 		// State
 		data.Add("collected", collected);
