@@ -36,13 +36,17 @@ public class DailyRewardsSequence {
 	}
 
 	// Rewards indexing
-	public int totalRewardIdx;	// The total index of the NEXT reward to be collected, that is, counting all collected rewards in all sequences
+	private int m_totalRewardIdx;
+	public int totalRewardIdx {	// The total index of the NEXT reward to be collected, that is, counting all collected rewards in all sequences
+		get { return m_totalRewardIdx; }
+	}
+
 	public int rewardIdx {      // The index within the sequence [0..SEQUENCE_SIZE - 1] of the NEXT reward to be collected
-		get { return totalRewardIdx % SEQUENCE_SIZE; }
+		get { return m_totalRewardIdx % SEQUENCE_SIZE; }
 	}
 
 	// Other vars
-	public DateTime nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
+	private DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -66,8 +70,8 @@ public class DailyRewardsSequence {
 		}
 
 		// Other vars
-		totalRewardIdx = 0;
-		nextCollectionTimestamp = DateTime.MinValue;
+		m_totalRewardIdx = 0;
+		m_nextCollectionTimestamp = DateTime.MinValue;	// Already expired so first reward can be collected
 	}
 
 	/// <summary>
@@ -84,7 +88,7 @@ public class DailyRewardsSequence {
 	/// <returns><c>true</c>, if collect next reward was caned, <c>false</c> otherwise.</returns>
 	public bool CanCollectNextReward() {
 		// Check timestamps
-		return GameServerManager.SharedInstance.GetEstimatedServerTime() >= nextCollectionTimestamp;
+		return GameServerManager.SharedInstance.GetEstimatedServerTime() >= m_nextCollectionTimestamp;
 	}
 
 	/// <summary>
@@ -94,27 +98,30 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <param name="_doubled">Has the reward been doubled?</param>
 	public void CollectNextReward(bool _doubled) {
+		// Aux vars
+		DailyReward reward = GetNextReward();
+
+		// Do it!
+		reward.Collect(_doubled);
+
 		// Advance index!
-		totalRewardIdx++;
+		m_totalRewardIdx++;
 
 		// Do we need to generate a new sequence?
 		if(rewardIdx >= SEQUENCE_SIZE) {
 			Generate();
 		}
 
-		// Reset timer to the start of the following day, in local time zone
-		// [AOC] The fact that we are saving the next collection timestamp will that
-		// 		 cheat attempts by advancing the devices clock, although successful,
-		//		 are punished by never being able to come back to normal time.
-		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		DateTime tomorrow = DateTime.Now.Date.AddDays(1);    // Using local time zone to compute tomorrow's date
-		nextCollectionTimestamp = tomorrow.ToUniversalTime();  // Work in UTC (to be able to compare with Server time)
+		// Reset timestamp to 00:00 of local time (but using server timezone!)
+		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now; // Local
+		m_nextCollectionTimestamp = serverTime + toMidnight;   // Local 00:00 in server timezone
 
 		// [AOC] Testing purposes
-		//nextCollectionTimestamp = DateTime.Now.AddSeconds(30).ToUniversalTime();
+		//m_nextCollectionTimestamp = serverTime.AddSeconds(30);
 
 		// Program local notification
-		// [AOC] TODO!!
+		// [AOC] Actually don't! It will be programmed when the application goes on pause (ApplicationManager class)
 	}
 
 	//------------------------------------------------------------------------//
@@ -123,7 +130,7 @@ public class DailyRewardsSequence {
 	/// <summary>
 	/// Generate a new sequence of rewards.
 	/// </summary>
-	private void Generate() {
+	public void Generate() {
 		// Gather all defined reward definitions
 		List<DefinitionNode> rewardDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DAILY_REWARDS);
 
@@ -133,25 +140,24 @@ public class DailyRewardsSequence {
 			rewardDefsByDay[rewardDefs[i].GetAsInt("day")] = rewardDefs[i];
 		}
 
-		// 
+		// Generate rewards for the next SEQUENCE_SIZE days (totalRewardIdx to totalRewardIdx + SEQUENCE_SIZE)
+		for(int i = 0; i < SEQUENCE_SIZE; ++i) {
+			// Find out closest reward corresponding to the current total reward index for this day
+			// With this, day 14 will use def for day 14, but day 13 will reuse the def for day 6 instead :)
+			int targetDay = m_totalRewardIdx + i + 1;
+			while(targetDay >= 0 && !rewardDefsByDay.ContainsKey(targetDay)) {
+				targetDay -= SEQUENCE_SIZE;
+			}
 
-		/*
-		 for(int totalRewardIdx = 0; totalRewardIdx < 31; ++totalRewardIdx) {
-                if(totalRewardIdx % SEQUENCE_SIZE == 0) {
-                    Console.WriteLine();
-                }
-                
-                int rewardIdx = totalRewardIdx % SEQUENCE_SIZE;
-                int day = totalRewardIdx + 1;
-                
-                // Find out closest reward corresponding to that day of the week
-                int targetDay = day;
-                while(!rewards.Contains(targetDay)) {
-                    targetDay -= 7;
-                }
-                Console.WriteLine(day + " (" + totalRewardIdx + ")" + " -> " + targetDay + " (" + rewardIdx + ")");
-            }
-		 */
+			// This should never happen (as we should have definitions for at least days 1 to SEQUENCE_SIZE), but just in case
+			if(targetDay < 0) {
+				Debug.LogError(Color.red.Tag("ERROR! Couldn't find a reward for slot " + i + " (day " + (m_totalRewardIdx + i + 1) + ")"));
+				targetDay = 1;	// If we don't have a reward for day 1, something is really wrong xDD
+			}
+
+			// Initialize reward with the definition for the target day
+			m_rewards[i].InitFromDef(rewardDefsByDay[targetDay]);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -172,6 +178,16 @@ public class DailyRewardsSequence {
 				m_rewards[i].LoadData(rewardsData[i]);
 			}
 		}
+
+		// Current reward index
+		if(_data.ContainsKey("totalRewardIdx")) {
+			m_totalRewardIdx = _data["totalRewardIdx"];
+		}
+
+		// Collect timestamp
+		if(_data.ContainsKey("nextCollectionTimestamp")) {
+			m_nextCollectionTimestamp = DateTime.Parse(_data["nextCollectionTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
+		}
 	}
 
 	/// <summary>
@@ -179,15 +195,29 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <returns>The json.</returns>
 	public SimpleJSON.JSONClass SaveData() {
-		// Reward
-		/*SimpleJSON.JSONClass data = reward.ToJson() as SimpleJSON.JSONClass;
+		// Create a new json data object
+		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 
-		// State
-		data.Add("collected", collected);
-		data.Add("doubled", doubled);
+		// Rewards
+		SimpleJSON.JSONArray rewardsData = new SimpleJSON.JSONArray();
+		for(int i = 0; i < m_rewards.Length; ++i) {
+			// Even if the reward is not valid, add an entry all the same to keep the array's consistency
+			if(m_rewards[i] != null) {
+				rewardsData.Add(m_rewards[i].SaveData());
+			} else {
+				rewardsData.Add(new SimpleJSON.JSONClass());
+			}
+		}
+		data.Add("rewards", rewardsData);
 
-		return data;*/
-		return null;
+		// Current reward index
+		data.Add("totalRewardIdx", m_totalRewardIdx);
+
+		// Collect timestamp
+		data.Add("nextCollectionTimestamp", m_nextCollectionTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
+
+		// Done!
+		return data;
 	}
 
 	//------------------------------------------------------------------------//
