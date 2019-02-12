@@ -330,6 +330,11 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+	private DailyRewardsSequence m_dailyRewards;
+	public DailyRewardsSequence dailyRewards {
+		get { return m_dailyRewards; }
+	}
+
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 	private Queue<string> m_offerPacksRotationalHistory = new Queue<string>();    // Historic of rotational offers 
@@ -480,6 +485,7 @@ public class UserProfile : UserPersistenceSystem
         m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
     
         m_rewards = new Stack<Metagame.Reward>();
+		m_dailyRewards = new DailyRewardsSequence();
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 		m_offerPacksRotationalHistory = new Queue<string>();
@@ -1029,6 +1035,14 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
+		// Daily rewards
+		key = "dailyRewards";
+		if(_data.ContainsKey(key)) {
+			m_dailyRewards.LoadData(_data[key]);
+		} else {
+			m_dailyRewards.Generate();	// Generate a new sequence
+		}
+
 		// Offer Packs
 		key = "offerPacks";
 		m_offerPacksPersistenceData.Clear();
@@ -1233,6 +1247,10 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 		data.Add("rewards", rewardsData);
+
+		// Daily rewards
+		JSONClass dailyRewardsData = m_dailyRewards.SaveData();
+		data.Add("dailyRewards", dailyRewardsData);
 
 		// Offer packs
 		JSONClass offersData = new SimpleJSON.JSONClass();
