@@ -550,6 +550,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
 				}
 			}
+
+			// Daily reward notification
+			// [AOC] TODO!!
         }
     }
 
@@ -557,6 +560,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
+		HDNotificationsManager.instance.CancelDailyRewardNotification();
     }
 
     #region game
