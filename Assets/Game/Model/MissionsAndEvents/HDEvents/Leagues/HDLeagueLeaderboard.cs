@@ -9,7 +9,7 @@ public class HDLeagueLeaderboard {
     public long playerScore { get { return m_playerScore; } set { if (m_playerScore < value) m_playerScore = value; } }
 
     private int m_playerRank;
-    public int playerRank { get { return m_playerRank; } }
+    public int playerRank { get { return m_playerRank; } set { m_playerRank = value; } }
 
     private List<HDLiveData.Leaderboard.Record> m_records;
     public List<HDLiveData.Leaderboard.Record> records { get { return m_records; } }

@@ -329,6 +329,14 @@ public class ARKitManager : MonoBehaviour {
 
     public void UnInitialise() {
         if (m_bInitialised) {
+
+			#if !UNITY_EDITOR
+			#if UNITY_IOS
+			UnityARSessionNativeInterface.GetARSessionNativeInterface().Pause();
+			#endif
+			#endif
+
+
             PermissionsManager.SharedInstance.RemovePermissionsListener(m_kPermissionsListener);
             m_kPermissionsListener = null;
 

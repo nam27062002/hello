@@ -336,6 +336,10 @@ public class HDSeasonData {
                 FindNextLeague();
             }
 
+            if (responseJson.ContainsKey("rank")) {
+                currentLeague.leaderboard.playerRank = responseJson["rank"].AsInt;
+            }
+
             HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
 
             rewardDataState = HDLiveData.State.VALID;
