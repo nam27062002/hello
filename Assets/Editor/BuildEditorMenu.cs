@@ -8,10 +8,10 @@ public class BuildEditorMenu : MonoBehaviour
     private const string BUILD_MENU = "Tech/Build";
     private const string BUILD_MENU_BUILD_PLAYER = BUILD_MENU + "/Build Player";
     private const string BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER = BUILD_MENU + "/Build Addressables and Player";
-
-    [MenuItem(BUILD_MENU_BUILD_PLAYER)]
-    public static void BuildPlayer()
+    
+    private static void InternalBuildPlayer()
     {
+		Debug.Log("Building player...");
         string[] sceneNames = null;
         EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
         if (scenes != null)
@@ -35,8 +35,7 @@ public class BuildEditorMenu : MonoBehaviour
         buildPlayerOptions.options = BuildOptions.None;
         buildPlayerOptions.assetBundleManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
 
-        string result = BuildPipeline.BuildPlayer(buildPlayerOptions);
-        Debug.Log("Build DONE with result " + result);
+        BuildPipeline.BuildPlayer(buildPlayerOptions);        
         /*
 		BuildSummary summary = report.summary;
 
@@ -49,15 +48,29 @@ public class BuildEditorMenu : MonoBehaviour
 		{
 			Debug.Log("Build failed");
 		}
-		*/
+		*/        
+    }
 
+    [MenuItem(BUILD_MENU_BUILD_PLAYER)]
+    private static void BuildPlayer()
+    {
+		InternalBuildPlayer();
         AssetDatabase.Refresh();
+        OnDone(BUILD_MENU_BUILD_PLAYER);
     }
 
     [MenuItem(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER)]
     public static void BuildAddressablesAndPlayer()
     {
+		Debug.Log("Building addressables...");
         AddressablesEditorMenu.Build();
-        BuildPlayer();
+        InternalBuildPlayer();
+        OnDone(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER);
+    }
+
+    private static void OnDone(string taskName)
+    {
+        AssetDatabase.Refresh();
+        Debug.Log(taskName + " done.");
     }
 }
