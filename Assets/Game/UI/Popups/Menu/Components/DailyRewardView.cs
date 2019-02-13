@@ -1,0 +1,235 @@
+// DailyRewardView.cs
+// Hungry Dragon
+// 
+// Created by Alger Ortín Castellví on 12/02/2019.
+// Copyright (c) 2019 Ubisoft. All rights reserved.
+
+//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+using UnityEngine.UI;
+
+//----------------------------------------------------------------------------//
+// CLASSES																	  //
+//----------------------------------------------------------------------------//
+/// <summary>
+/// View controller for a single daily reward.
+/// </summary>
+public class DailyRewardView : MetagameRewardView {
+	//------------------------------------------------------------------------//
+	// CONSTANTS															  //
+	//------------------------------------------------------------------------//
+	public enum State {
+		IDLE = 0,
+		COOLDOWN,
+		CURRENT,
+		COLLECTED
+	}
+
+	// Fake singleton - since it's private to this class, no need to create a full singleton infrastructure
+	private static DailyRewardViewSettings s_settings = null;
+	private static DailyRewardViewSettings settings {
+		get {
+			if(s_settings == null) {
+				s_settings = Resources.Load<DailyRewardViewSettings>(DailyRewardViewSettings.PATH);
+			}
+			return s_settings;
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES												  //
+	//------------------------------------------------------------------------//
+	// Exposed members
+	[Separator("DailyRewardView Custom Fields")]
+	[Comment("Mandatory:")]
+	[SerializeField] private Animator m_stateAnimator = null;
+	[SerializeField] private UIGradient m_backgroundGradient = null;
+	[Space]
+	[Comment("Optional depending on reward type / index:")]
+	[SerializeField] private Localizer m_dayText = null;
+	[SerializeField] private MenuPetLoader m_petLoader = null;
+	[SerializeField] private MenuEggLoader m_eggLoader = null;
+	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+
+	// Data
+	private DailyReward m_dailyReward = null;
+	public DailyReward dailyReward {
+		get { return m_dailyReward; }
+	}
+
+	private int m_rewardIdx = -1;
+	public int rewardIdx {
+		get { return m_rewardIdx; }
+	}
+
+	private State m_state = State.IDLE;
+	public State state {
+		get { return m_state; }
+		set { m_state = value; Refresh(false); }
+	}
+	
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	public void OnDestroy() {
+		// Unsubscribe from external listeners
+		if(m_tooltipTrigger != null) {
+			m_tooltipTrigger.OnTooltipOpen.RemoveListener(OnTooltipOpen);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize this view with the given data.
+	/// </summary>
+	/// <param name="_reward">Reward object.</param>
+	/// <param name="_rewardIdx">Reward index within the sequence.</param>
+	/// <param name="_state">Which state should the view be on?</param>
+	public void InitFromData(DailyReward _reward, int _rewardIdx, State _state) {
+		// Store data
+		m_dailyReward = _reward;
+		m_rewardIdx = _rewardIdx;
+		m_state = _state;
+
+		// Perform a first refresh!
+		Refresh(true);
+	}
+
+	/// <summary>
+	/// Force a refresh of all the visuals.
+	/// </summary>
+	public override void Refresh() {
+		// Created to hide parent basically
+		Refresh(true);
+	}
+
+	/// <summary>
+	/// Force a refresh of all the visuals.
+	/// </summary>
+	/// <param name="_reloadPreview">Whether to reload the preview or not.</param>
+	public void Refresh(bool _reloadPreview) {
+		// Let parent do its thing
+		base.Refresh();
+
+		// Day Text
+		if(m_dayText != null) {
+			m_dayText.Localize(m_dayText.tid, StringUtils.FormatNumber(m_rewardIdx + 1));
+		}
+
+		// Depending on reward type, toggle different objects on/off
+		bool isPet = m_reward.type == Metagame.RewardPet.TYPE_CODE;
+		bool isEgg = m_reward.type == Metagame.RewardEgg.TYPE_CODE;
+
+		// Pet Loader
+		if(m_petLoader != null) {
+			// Activate? Only for pets
+			m_petLoader.gameObject.SetActive(isPet);
+
+			// Reload preview if required
+			if(_reloadPreview) {
+				if(isPet) {
+					m_petLoader.Load(m_reward.sku);
+				} else {
+					m_petLoader.Unload();
+				}
+			}
+		}
+
+		// Egg Loader
+		if(m_eggLoader != null) {
+			// Activate? Only for eggs
+			m_eggLoader.gameObject.SetActive(isEgg);
+
+			// Reload preview if required
+			if(_reloadPreview) {
+				if(isEgg) {
+					m_eggLoader.Load(m_reward.sku);
+				} else {
+					m_eggLoader.Unload();
+				}
+			}
+		}
+
+		// Tooltip trigger
+		if(m_tooltipTrigger != null) {
+			// Activate? Only for pets
+			m_tooltipTrigger.gameObject.SetActive(isPet);
+
+			// Listen to events only if active
+			m_tooltipTrigger.OnTooltipOpen.RemoveListener(OnTooltipOpen);
+			if(m_tooltipTrigger.gameObject.activeSelf) {
+				m_tooltipTrigger.OnTooltipOpen.AddListener(OnTooltipOpen);
+			}
+		}
+
+		// Background gradient color
+		// [AOC] Unfortunately, Unity doesn't allow animating custom serializable 
+		//       properties (Gradient4), so we need to do that manually -_-
+		if(m_backgroundGradient != null) {
+			// Select gradient based on reward state
+			bool isSpecial = isPet || isEgg;
+			Gradient4 targetGradient = settings.defaultGradient;
+			switch(m_state) {
+				case State.IDLE: {
+					targetGradient = isSpecial ? settings.specialGradient : settings.defaultGradient;
+				} break;
+
+				case State.COOLDOWN: {
+					targetGradient = settings.cooldownGradient;
+				} break;
+
+				case State.CURRENT: {
+					targetGradient = settings.currentGradient;
+				} break;
+
+				case State.COLLECTED: {
+					targetGradient = settings.collectedGradient;
+				} break;
+			}
+
+			// Apply!
+			m_backgroundGradient.gradient.Set(targetGradient);
+		}
+
+		// State animator
+		if(m_stateAnimator != null) {
+			m_stateAnimator.SetInteger("state", (int)m_state);
+			m_stateAnimator.SetBool("isSpecial", isPet || isEgg);
+		}
+
+		// If the reward is in Cooldown state, render on top so the flag doesn't get hidden by other rewards in the sequence
+		if(m_state == State.COOLDOWN) {
+			this.transform.SetAsLastSibling();
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// A tooltip is about to be opened.
+	/// </summary>
+	/// <param name="_tooltip">Tooltip that will be opened.</param>
+	/// <param name="_trigger">The trigger opening the tooltip.</param>
+	public void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
+		// Initialize with this reward's info
+		// For now only appliable to pet reward ype (other types shouldn't receive this event anyways)
+		if(m_reward.type == Metagame.RewardPet.TYPE_CODE) {
+			// Gather definition of this pet's power
+			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_reward.def.GetAsString("powerup"));
+
+			// Initialize tooltip - it should have a PowerTooltip component attached
+			PowerTooltip powerTooltip = _tooltip.GetComponent<PowerTooltip>();
+			if(powerTooltip != null) {
+				powerTooltip.InitFromDefinition(powerDef, PowerIcon.Mode.PET);
+			}
+		}
+	}
+}
