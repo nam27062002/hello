@@ -11,9 +11,18 @@ public class AddressablesCatalog
     public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
 
     private Dictionary<string, AddressablesCatalogEntry> m_entries;
-    private List<string> m_localABList;    
+    private List<string> m_localABList;
 
-    public AddressablesCatalog()
+#if UNITY_EDITOR
+    private bool m_editorMode;
+
+    public AddressablesCatalog(bool editorMode=false) : base()
+    {
+        m_editorMode = editorMode;
+    }
+#endif
+    
+    public AddressablesCatalog()    
     {
         m_entries = new Dictionary<string, AddressablesCatalogEntry>();
         m_localABList = new List<string>();
@@ -56,7 +65,12 @@ public class AddressablesCatalog
             int count = entries.Count;
             for (int i = 0; i < count; ++i)
             {
+#if UNITY_EDITOR
+                entry = new AddressablesCatalogEntry(m_editorMode);
+#else
                 entry = new AddressablesCatalogEntry();
+#endif
+
                 entry.Load(entries[i]);
                 if (entry.IsValid())
                 {

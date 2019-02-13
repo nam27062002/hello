@@ -28,15 +28,6 @@ public class AddressablesCatalogEntry
         set { m_locationType = value; }
     }
 
-#if UNITY_EDITOR
-    private string m_guid;
-    public string GUID
-    {
-        get { return m_guid; }
-        private set { m_guid = value; }
-    }
-#endif      
-
     private string m_assetBundleName;
     public string AssetBundleName
     {
@@ -53,7 +44,25 @@ public class AddressablesCatalogEntry
 
 #if UNITY_EDITOR
     private const string ATT_GUID = "guid";
+
+    private string m_guid;
+    public string GUID
+    {
+        get { return m_guid; }
+        private set { m_guid = value; }
+    }
+
+    private bool m_editorMode;
+
+    public AddressablesCatalogEntry(bool editorMode) : base()
+    {
+        m_editorMode = editorMode;
+    }
 #endif
+
+    public AddressablesCatalogEntry()
+    {
+    }
 
     public void Reset()
     {
@@ -65,7 +74,6 @@ public class AddressablesCatalogEntry
 #if UNITY_EDITOR
         GUID = null;
 #endif
-
     }
 
     /// <summary>
@@ -108,7 +116,7 @@ public class AddressablesCatalogEntry
             att = ATT_GUID;
             GUID = data[att];
 
-            if (string.IsNullOrEmpty(GUID) && false)
+            if (string.IsNullOrEmpty(GUID) && m_editorMode)
             {
                 LogLoadAttributeError(att, value);
             }
@@ -182,7 +190,13 @@ public class AddressablesCatalogEntry
                 break;
 
             case AddressablesTypes.ELocationType.Resources:
-                returnValue = true; //!string.IsNullOrEmpty(AssetName);
+                returnValue = !string.IsNullOrEmpty(AssetName);
+#if UNITY_EDITOR
+                if (m_editorMode)
+                {
+                    returnValue = true;
+                }
+#endif
                 break;
 
             case AddressablesTypes.ELocationType.AssetBundles:
