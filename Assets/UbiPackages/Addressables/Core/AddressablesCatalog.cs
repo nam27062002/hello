@@ -32,7 +32,7 @@ public class AddressablesCatalog
         if (catalogJSON != null)
         {
             LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);
-            LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST]);
+            LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
         }
     }
 
@@ -41,7 +41,7 @@ public class AddressablesCatalog
         // Create new object
         JSONClass data = new JSONClass();        
         data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON(onlyRelevantData));        
-        data.Add(CATALOG_ATT_LOCAL_AB_LIST, UbiListUtils.GetListAsString(m_localABList));
+        data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
 
         return data;
     }
@@ -107,24 +107,39 @@ public class AddressablesCatalog
         return m_entries;
     }
 
-    public void LoadLocalABList(string list)
+    public void LoadLocalABList(JSONArray entries)
     {
-        if (list != null)
-        {
-            string[] abList = list.Split(',');
-            int count = abList.Length;
+        if (entries != null)
+        {            
+            int count = entries.Count;
             string abName;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < count; ++i)
             {
-                abName = abList[i].Trim();
+                abName = entries[i];
 
+                abName = abName.Trim();
                 // Makes sure that there's no duplicates
                 if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
                 {
                     m_localABList.Add(abName);
                 }
+            }          
+        }
+    }
+
+    private JSONArray LocalABListToJSON()
+    {
+        JSONArray data = new JSONArray();
+        int count = m_localABList.Count;
+        for (int i = 0; i < count; i++)
+        {            
+            if (!string.IsNullOrEmpty(m_localABList[i]))
+            {
+                data.Add(m_localABList[i]);
             }
         }
+
+        return data;
     }
 
     public List<string> GetLocalABList()
