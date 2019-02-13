@@ -29,27 +29,27 @@ public class AddressablesManager
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
     public const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
-    private const string SIMULATION_MODE_KEY = "SimulationMode";
+    private const string EDITOR_MODE_KEY = "EditorMode";
 
     /// Flag to indicate if we want to simulate assetBundles in Editor without building them actually.
-    private static int sm_SimulationMode = -1;
-    public static bool SimulationMode
+    private static int sm_editorMode = -1;
+    public static bool EditorMode
     {
         get
         {
-            if (sm_SimulationMode == -1)
-                sm_SimulationMode = UnityEditor.EditorPrefs.GetBool(SIMULATION_MODE_KEY, true) ? 1 : 0;
+            if (sm_editorMode == -1)
+                sm_editorMode = UnityEditor.EditorPrefs.GetBool(EDITOR_MODE_KEY, true) ? 1 : 0;
 
-            return sm_SimulationMode != 0;
+            return sm_editorMode != 0;
         }
 
         set
         {
             int newValue = value ? 1 : 0;
-            if (newValue != sm_SimulationMode)
+            if (newValue != sm_editorMode)
             {
-                sm_SimulationMode = newValue;
-                UnityEditor.EditorPrefs.SetBool(SIMULATION_MODE_KEY, value);
+                sm_editorMode = newValue;
+                UnityEditor.EditorPrefs.SetBool(EDITOR_MODE_KEY, value);
             }
         }
     }
@@ -66,8 +66,8 @@ public class AddressablesManager
         bool buildCatalog = true;
 
 #if UNITY_EDITOR
-        // editor catalog is used instead in simulation mode
-        if (SimulationMode)
+        // editor catalog is used instead in editor mode
+        if (EditorMode)
         {
             m_catalog = GetEditorCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH);
             buildCatalog = false;
@@ -452,6 +452,8 @@ public class AddressablesManager
 
         entry = m_catalog.GetEntry(id);
 
+        bool entryWasFound = (entry != null);
+
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)
         {
@@ -471,7 +473,8 @@ public class AddressablesManager
         }
 
 #if UNITY_EDITOR
-        if (SimulationMode)
+        // Editor mode must be used only when there's an entry defined for the addressable requested, otherwise we need to use the default provider (fromResources)
+        if (EditorMode && entryWasFound)
         {
             returnValue = m_providerFromEditor;
         }
