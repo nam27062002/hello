@@ -3,7 +3,7 @@ using UnityEngine;
 
 // Output the build size or a failure depending on BuildPlayer.
 
-public class BuildEditorMenu : MonoBehaviour
+public class EditorBuildMenu : MonoBehaviour
 {
     private const string BUILD_MENU = "Tech/Build";
     private const string BUILD_MENU_BUILD_PLAYER = BUILD_MENU + "/Build Player";
@@ -63,7 +63,7 @@ public class BuildEditorMenu : MonoBehaviour
     public static void BuildAddressablesAndPlayer()
     {
 		Debug.Log("Building addressables...");
-        AddressablesEditorMenu.Build();
+        EditorAddressablesMenu.Build();
         InternalBuildPlayer();
         OnDone(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER);
     }
