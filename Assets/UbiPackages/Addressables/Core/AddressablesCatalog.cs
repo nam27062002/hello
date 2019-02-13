@@ -16,7 +16,7 @@ public class AddressablesCatalog
 #if UNITY_EDITOR
     private bool m_editorMode;
 
-    public AddressablesCatalog(bool editorMode=false) : base()
+    public AddressablesCatalog(bool editorMode=false) : this()
     {
         m_editorMode = editorMode;
     }
@@ -45,11 +45,11 @@ public class AddressablesCatalog
         }
     }
 
-    public JSONClass ToJSON(bool onlyRelevantData)
+    public JSONClass ToJSON()
     {
         // Create new object
         JSONClass data = new JSONClass();        
-        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON(onlyRelevantData));        
+        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());        
         data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
 
         return data;
@@ -90,7 +90,7 @@ public class AddressablesCatalog
         }
     }
 
-    private JSONArray EntriesToJSON(bool onlyRelevantData)
+    private JSONArray EntriesToJSON()
     {
         JSONArray data = new JSONArray();        
         AddressablesCatalogEntry entry;
@@ -99,7 +99,7 @@ public class AddressablesCatalog
             entry = kvp.Value;
             if (entry != null && entry.IsValid())
             {
-                data.Add(entry.ToJSON(onlyRelevantData));
+                data.Add(entry.ToJSON());
             }
         }        
 

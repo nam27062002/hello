@@ -22,9 +22,9 @@ public class EditorAddressablesManager
     private static string GENERATED_FOLDER = "Generated";
     private static string RESOURCES_GENERATED_FOLDER = FileEditorTools.PathCombine("Resources", GENERATED_FOLDER);
 
-    public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
+    public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
     {
-        return AddressablesManager.GetEditorCatalog(editorCatalogPath);        
+        return AddressablesManager.GetCatalog(catalogPath, editorMode);        
     }
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME;
@@ -90,14 +90,14 @@ public class EditorAddressablesManager
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetEditorCatalog(editorCatalogPath);
+        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
         if (editorCatalog != null)
         {
             AssetDatabase.RemoveUnusedAssetBundleNames();            
 
             // Copies editor catalog in player catalog
             AddressablesCatalog playerCatalog = new AddressablesCatalog();
-            playerCatalog.Load(editorCatalog.ToJSON(true), sm_logger);
+            playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
 
             // Clears player catalog entries because they'll be added only with the information that player requires
             Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
@@ -147,7 +147,7 @@ public class EditorAddressablesManager
                 EditorBuildSettings.scenes = newSceneList.ToArray();
             }
             
-            JSONClass json = playerCatalog.ToJSON(true);            
+            JSONClass json = playerCatalog.ToJSON();            
             FileEditorTools.WriteToFile(playerCatalogPath, json.ToString());            
         }
     }
@@ -159,7 +159,7 @@ public class EditorAddressablesManager
     {
         Debug.Log("Processing asset bundles...");
 
-        AddressablesCatalog catalog = GetEditorCatalog(m_playerCatalogPath);
+        AddressablesCatalog catalog = GetCatalog(m_playerCatalogPath, false);
 
         AssetBundle manifestBundle = null;
         AssetBundleManifest abManifest = EditorAssetBundlesManager.LoadAssetBundleManifest(out manifestBundle);
@@ -214,7 +214,7 @@ public class EditorAddressablesManager
             GenerateDownloadablesCatalog(output.m_RemoteABList, m_playerCatalogPath);            
 
             // Copy player catalog into the player's folder
-            JSONClass json = catalog.ToJSON(true);
+            JSONClass json = catalog.ToJSON();
             FileEditorTools.WriteToFile(m_playerCatalogPath, json.ToString());
         }
     }    

@@ -54,7 +54,7 @@ public class AddressablesCatalogEntry
 
     private bool m_editorMode;
 
-    public AddressablesCatalogEntry(bool editorMode) : base()
+    public AddressablesCatalogEntry(bool editorMode) : this()
     {
         m_editorMode = editorMode;
     }
@@ -143,21 +143,22 @@ public class AddressablesCatalogEntry
         LocationType = AddressablesTypes.ELocationType.Resources;
     }
 
-    public JSONClass ToJSON(bool onlyRelevantData)
+    public JSONClass ToJSON()
     {
         JSONClass data = new JSONClass();
         
         AddToJSON(data, ATT_ID, Id);
         AddToJSON(data, ATT_LOCATION_TYPE, AddressablesTypes.ELocationTypeToString(LocationType));
 
+        bool needsToAddAssetBundleName = LocationType == AddressablesTypes.ELocationType.AssetBundles;
 #if UNITY_EDITOR
-        if (!onlyRelevantData)
+        if (m_editorMode)
         {
-            AddToJSON(data, ATT_GUID, GUID);
+            AddToJSON(data, ATT_GUID, GUID);            
+            needsToAddAssetBundleName = true;
         }
 #endif
-
-        if (!onlyRelevantData || LocationType == AddressablesTypes.ELocationType.AssetBundles)
+        if (needsToAddAssetBundleName)
         {
             AddToJSON(data, ATT_AB_NAME, AssetBundleName);
         }
@@ -207,7 +208,7 @@ public class AddressablesCatalogEntry
         return returnValue;
     }  
 
-    #region log
+#region log
     private void LogLoadAttributeError(string att, string value, string validValues=null)
     {
         if (sm_logger != null)
@@ -235,5 +236,5 @@ public class AddressablesCatalogEntry
             sm_logger.LogError(thisMsg);
         }
     }
-    #endregion
+#endregion
 }

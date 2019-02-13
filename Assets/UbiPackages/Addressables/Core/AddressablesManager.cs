@@ -9,17 +9,17 @@ using UnityEngine.SceneManagement;
 public class AddressablesManager
 {
 #if UNITY_EDITOR
-    public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
+    public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
     {        
         AddressablesCatalog returnValue = null;
 
         // Loads the catalog        
-        StreamReader reader = new StreamReader(editorCatalogPath);
+        StreamReader reader = new StreamReader(catalogPath);
         string content = reader.ReadToEnd();
         reader.Close();
 
         JSONNode catalogJSON = JSON.Parse(content);
-        returnValue = new AddressablesCatalog();
+        returnValue = new AddressablesCatalog(editorMode);
         returnValue.Load(catalogJSON, sm_logger);
 
         return returnValue;
@@ -69,7 +69,7 @@ public class AddressablesManager
         // editor catalog is used instead in editor mode
         if (EditorMode)
         {
-            m_catalog = GetEditorCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH);
+            m_catalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);
             buildCatalog = false;
         }
 #endif
