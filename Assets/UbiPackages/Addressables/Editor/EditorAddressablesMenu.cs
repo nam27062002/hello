@@ -3,9 +3,9 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// This class is resposible for managing all related to Addressables menu stuff. This class just deals with the view, the actual stuff is done by <c>AddressablesEditorManager</c>
+/// This class is resposible for managing all related to Addressables menu stuff. This class just deals with the view, the actual stuff is done by <c>EditorAddressablesManager</c>
 /// </summary>
-public class AddressablesEditorMenu : MonoBehaviour
+public class EditorAddressablesMenu : MonoBehaviour
 {
     private const string ADDRESSABLES_MENU = "Tech/Addressables";
     private const string ADDRESSABLES_BUILD_MENU = ADDRESSABLES_MENU + "/Build";
@@ -20,14 +20,14 @@ public class AddressablesEditorMenu : MonoBehaviour
 
     private const string ADDRESSABLES_EDITOR_MODE = ADDRESSABLES_MENU + "/Editor mode";
 
-    public static AddressablesEditorManager m_manager;
-    public static AddressablesEditorManager Manager
+    public static EditorAddressablesManager m_manager;
+    public static EditorAddressablesManager Manager
     {
         get
         {
             if (m_manager == null)
             {
-                m_manager = new AddressablesEditorManager();
+                m_manager = new EditorAddressablesManager();
             }
 
             return m_manager;
@@ -45,7 +45,7 @@ public class AddressablesEditorMenu : MonoBehaviour
     static void ClearBuild()
     {        
         Manager.ClearBuild();
-        AssetBundlesEditorManager.Clear();
+        EditorAssetBundlesManager.Clear();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
     }    
 

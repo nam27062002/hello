@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public class AssetBundlesEditorMenu : MonoBehaviour
+public class EditorAssetBundlesMenu : MonoBehaviour
 {
     private const string ROOT_MENU = "Tech/AssetBundles/";
     private const string MENU_BROWSER = ROOT_MENU + "Browser";
@@ -16,7 +16,7 @@ public class AssetBundlesEditorMenu : MonoBehaviour
     [MenuItem(MENU_LAUNCH_LOCAL_SERVER)]
     public static void ToggleLocalAssetBundleServer()
     {
-        AssetBundles.LaunchAssetBundleServer.SetRemoteAssetsFolderName(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER);
+        AssetBundles.LaunchAssetBundleServer.SetRemoteAssetsFolderName(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER);
         AssetBundles.LaunchAssetBundleServer.ToggleLocalAssetBundleServer();
     }
 

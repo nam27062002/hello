@@ -11,7 +11,7 @@ using UnityEngine;
 /// 
 /// This class can be extended if you need to customize its behaviour.
 /// </summary>
-public class AddressablesEditorManager
+public class EditorAddressablesManager
 {
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
 
@@ -35,7 +35,7 @@ public class AddressablesEditorManager
     private string m_playerCatalogPath;
     private string m_assetBundlesLocalDestinationPath;
 
-    public AddressablesEditorManager()
+    public EditorAddressablesManager()
     {
         m_localDestinationPath = FileEditorTools.PathCombine(STREAMING_ASSETS_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = FileEditorTools.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);
@@ -46,7 +46,7 @@ public class AddressablesEditorManager
     {
         Debug.Log("Clearing addressables...");
         FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);
-        FileEditorTools.DeleteFileOrDirectory(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER);
+        FileEditorTools.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER);
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -70,7 +70,7 @@ public class AddressablesEditorManager
 
     public void BuildAssetBundles()
     {
-        AssetBundlesEditorManager.BuildAssetBundles();
+        EditorAssetBundlesManager.BuildAssetBundles();
     }    
 
     public void Build()
@@ -158,9 +158,9 @@ public class AddressablesEditorManager
         AddressablesCatalog catalog = GetEditorCatalog(m_playerCatalogPath);
 
         AssetBundle manifestBundle = null;
-        AssetBundleManifest abManifest = AssetBundlesEditorManager.LoadAssetBundleManifest(out manifestBundle);
+        AssetBundleManifest abManifest = EditorAssetBundlesManager.LoadAssetBundleManifest(out manifestBundle);
         
-        ParseAssetBundlesOutput output = AddressablesEditorManager.ParseAssetBundles(catalog, abManifest);
+        ParseAssetBundlesOutput output = EditorAddressablesManager.ParseAssetBundles(catalog, abManifest);
 
         if (manifestBundle != null)
         {
@@ -191,13 +191,13 @@ public class AddressablesEditorManager
             catalog.SetLocalABList(output.m_LocalABList);            
 
             // Copy local asset bundles
-            AssetBundlesEditorManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
+            EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
 
             // Copy manifest
-            AssetBundlesEditorManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);
+            EditorAssetBundlesManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);
 
             // Copy remote asset bundles
-            AssetBundlesEditorManager.CopyAssetBundles(AssetBundlesEditorManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
+            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
 
             // Generates remote AB list file
             GenerateDownloadablesCatalog(output.m_RemoteABList, m_playerCatalogPath);            
@@ -210,7 +210,7 @@ public class AddressablesEditorManager
 
     public void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
     {
-        AssetBundlesEditorManager.GenerateDownloadablesCatalog(fileNames, playerFolder);
+        EditorAssetBundlesManager.GenerateDownloadablesCatalog(fileNames, playerFolder);
     }     
 
     private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)

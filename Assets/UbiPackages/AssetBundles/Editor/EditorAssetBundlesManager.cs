@@ -4,7 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-public class AssetBundlesEditorManager
+public class EditorAssetBundlesManager
 {
     public static string ASSET_BUNDLES_PATH = "AssetBundles";
     public static string DOWNLOADABLES_FOLDER = "Downloadables";
