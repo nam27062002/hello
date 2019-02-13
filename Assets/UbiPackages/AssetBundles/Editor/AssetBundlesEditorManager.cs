@@ -114,13 +114,16 @@ public class AssetBundlesEditorManager
         string assetBundlesPath = GetAssetBundlesDirectory();
         string origDependenciesManifestPath = FileEditorTools.PathCombine(assetBundlesPath, activeBuildTarget);
         string newDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
-        FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);        
+        if (File.Exists(origDependenciesManifestPath))
+        {
+            FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
 
-        // Rename the dependencies manifest        
-        string extension = ".manifest";
-        origDependenciesManifestPath += extension;
-        newDependenciesManifestPath += extension;
-        FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);        
+            // Rename the dependencies manifest        
+            string extension = ".manifest";
+            origDependenciesManifestPath += extension;
+            newDependenciesManifestPath += extension;
+            FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
+        }
     }    
 
     public static void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
