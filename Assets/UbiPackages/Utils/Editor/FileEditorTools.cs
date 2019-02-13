@@ -60,6 +60,31 @@ public class FileEditorTools
         return (string.IsNullOrEmpty(path)) ? null : path.Split('/');
     }
 
+    public static string GetPathWithoutExtension(string path)
+    {
+        string returnValue = path;
+        if (!string.IsNullOrEmpty(path))
+        {
+            string[] tokens = path.Split('.');
+            if (tokens.Length > 1)
+            {
+                returnValue = "";
+
+                for (int i = 0; i < tokens.Length - 1; i++)
+                {
+                    if (i > 0)
+                    {
+                        returnValue += ".";
+                    }
+
+                    returnValue += tokens[i];
+                }
+            }
+        }
+
+        return returnValue;
+    }
+
     public static string GetFileName(string path, bool includeExtension)
     {
         string[] tokens = SeparatePathInTokens(path);
@@ -73,11 +98,7 @@ public class FileEditorTools
             returnValue = tokens[tokens.Length - 1];
             if (!includeExtension)
             {
-                tokens = returnValue.Split('.');
-                if (tokens.Length > 1)
-                {
-                    returnValue = tokens[0];
-                }
+                returnValue = GetPathWithoutExtension(returnValue);
             }
         }
 

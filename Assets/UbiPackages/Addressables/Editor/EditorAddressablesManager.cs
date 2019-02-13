@@ -19,6 +19,9 @@ public class EditorAddressablesManager
 
     public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
 
+    private static string GENERATED_FOLDER = "Generated";
+    private static string RESOURCES_GENERATED_FOLDER = FileEditorTools.PathCombine("Resources", GENERATED_FOLDER);
+
     public static AddressablesCatalog GetEditorCatalog(string editorCatalogPath)
     {
         return AddressablesManager.GetEditorCatalog(editorCatalogPath);        
@@ -47,6 +50,7 @@ public class EditorAddressablesManager
         Debug.Log("Clearing addressables...");
         FileEditorTools.DeleteFileOrDirectory(m_localDestinationPath);
         FileEditorTools.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER);
+        FileEditorTools.DeleteFileOrDirectory(FileEditorTools.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -93,7 +97,7 @@ public class EditorAddressablesManager
 
             // Copies editor catalog in player catalog
             AddressablesCatalog playerCatalog = new AddressablesCatalog();
-            playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
+            playerCatalog.Load(editorCatalog.ToJSON(true), sm_logger);
 
             // Clears player catalog entries because they'll be added only with the information that player requires
             Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
@@ -143,7 +147,7 @@ public class EditorAddressablesManager
                 EditorBuildSettings.scenes = newSceneList.ToArray();
             }
             
-            JSONClass json = playerCatalog.ToJSON();            
+            JSONClass json = playerCatalog.ToJSON(true);            
             FileEditorTools.WriteToFile(playerCatalogPath, json.ToString());            
         }
     }
@@ -188,13 +192,20 @@ public class EditorAddressablesManager
             }
 
             // Updates local AB list
-            catalog.SetLocalABList(output.m_LocalABList);            
+            catalog.SetLocalABList(output.m_LocalABList);
+
+            if (FileEditorTools.Exists(m_assetBundlesLocalDestinationPath))
+            {
+                FileEditorTools.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+            }
+
+            FileEditorTools.CreateDirectory(m_assetBundlesLocalDestinationPath);
 
             // Copy local asset bundles
             EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
 
-            // Copy manifest
-            EditorAssetBundlesManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);
+            // Copy manifest            
+            EditorAssetBundlesManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);            
 
             // Copy remote asset bundles
             EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
@@ -203,7 +214,7 @@ public class EditorAddressablesManager
             GenerateDownloadablesCatalog(output.m_RemoteABList, m_playerCatalogPath);            
 
             // Copy player catalog into the player's folder
-            JSONClass json = catalog.ToJSON();
+            JSONClass json = catalog.ToJSON(true);
             FileEditorTools.WriteToFile(m_playerCatalogPath, json.ToString());
         }
     }    
@@ -215,29 +226,31 @@ public class EditorAddressablesManager
 
     private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)
     {        
-        string path = entry.Path;
+        string entryPath = (entry == null) ? null : AssetDatabase.GUIDToAssetPath(entry.GUID);
+        string path = entryPath;
         bool success = !string.IsNullOrEmpty(path);
 
         if (success)
-        {
-            path = GetPathWithAssets(path);
+        {            
             AssetImporter assetImporter = AssetImporter.GetAtPath(path);
             if (assetImporter == null)
             {
                 sm_logger.LogError("No resource found in " + path);
             }
-            else
-            {
+            else            
+            {                
                 string fileName = FileEditorTools.GetFileName(path, false);
                 entry.AssetName = fileName;
 
                 string assetBundleNameFromCatalog = "";
 
-                if (entry.LocationType == AddressablesTypes.ELocationType.AssetBundles)
+                switch (entry.LocationType)
                 {
-                    assetBundleNameFromCatalog = entry.AssetBundleName;
+                    case AddressablesTypes.ELocationType.AssetBundles:
+                        assetBundleNameFromCatalog = entry.AssetBundleName;
+                        break;                    
                 }
-
+                
                 if (assetImporter.assetBundleName != assetBundleNameFromCatalog)
                 {
                     assetImporter.assetBundleName = assetBundleNameFromCatalog;
@@ -247,7 +260,33 @@ public class EditorAddressablesManager
                 if (IsScene(path))
                 {
                     List<string> list = (entry.LocationType == AddressablesTypes.ELocationType.Resources) ? scenesToAdd : scenesToRemove;
-                    list.Add(GetPathWithAssets(entry.Path));
+                    list.Add(path);
+                }
+                else if (entry.LocationType == AddressablesTypes.ELocationType.Resources)
+                {
+                    // if the asset is not already in Resources folder then it's copied to Resources folder
+                    if (path.Contains("Resources"))
+                    {
+                        string resourcesPath = path.Replace("Assets/Resources/", "");
+                        entry.AssetName = FileEditorTools.GetPathWithoutExtension(resourcesPath);
+                    }
+                    else
+                    {                        
+                        string token = "Assets/";
+                        if (path.StartsWith(token))
+                        {
+                            string pathFromResources = path.Substring(token.Length);                            
+                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;
+
+                            FileEditorTools.CreateDirectory(Path.GetDirectoryName(resourcesPath));
+                            File.Copy(path, resourcesPath, true);
+                            entry.AssetName = GENERATED_FOLDER + "/" + FileEditorTools.GetPathWithoutExtension(pathFromResources);
+                        }
+                        else
+                        {
+                            Debug.Log("Wrong path for entry id " + entry.Id + ". It should start by " + token);
+                        }                                                
+                    }
                 }
             }
         }
@@ -258,12 +297,7 @@ public class EditorAddressablesManager
     private static bool IsScene(string path)
     {
         return !string.IsNullOrEmpty(path) && path.IndexOf(".unity") > -1;
-    }
-
-    private static string GetPathWithAssets(string path)
-    {
-        return FileEditorTools.PathCombine("Assets", path);
-    }
+    }    
 
     public class ParseAssetBundlesOutput
     {

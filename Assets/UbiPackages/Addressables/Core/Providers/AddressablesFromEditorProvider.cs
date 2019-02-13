@@ -10,10 +10,9 @@ using UnityEngine;
 public class AddressablesFromEditorProvider : AddressablesProvider
 {   
     private string GetPath(AddressablesCatalogEntry entry)
-    {
-        return (entry == null) ? null : "Assets/" + entry.Path;
+    {                
+        return (entry == null) ? null : AssetDatabase.GUIDToAssetPath(entry.GUID);
     } 
-
 
     private string GetSceneName(AddressablesCatalogEntry entry)
     {
@@ -68,6 +67,7 @@ public class AddressablesFromEditorProvider : AddressablesProvider
 
     private Object LoadAssetObject(AddressablesCatalogEntry entry)
     {
+        Debug.Log("LoadAsset by Editor provider");
         return AssetDatabase.LoadMainAssetAtPath(GetPath(entry));
     }
 

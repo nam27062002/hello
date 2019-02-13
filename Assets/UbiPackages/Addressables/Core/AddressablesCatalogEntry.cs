@@ -28,15 +28,14 @@ public class AddressablesCatalogEntry
         set { m_locationType = value; }
     }
 
-    /// <summary>
-    /// Location type. Used to determine where the asset is stored.
-    /// </summary>
-    private string m_path;
-    public string Path
+#if UNITY_EDITOR
+    private string m_guid;
+    public string GUID
     {
-        get { return m_path; }
-        private set { m_path = value; }
+        get { return m_guid; }
+        private set { m_guid = value; }
     }
+#endif      
 
     private string m_assetBundleName;
     public string AssetBundleName
@@ -48,16 +47,25 @@ public class AddressablesCatalogEntry
     public string AssetName { get; set; }       
 
     private const string ATT_ID = "id";
-    private const string ATT_LOCATION_TYPE = "locationType";    
-    private const string ATT_PATH = "path";
+    private const string ATT_LOCATION_TYPE = "locationType";        
     private const string ATT_AB_NAME = "abName";
     private const string ATT_ASSET_NAME = "assetName";
+
+#if UNITY_EDITOR
+    private const string ATT_GUID = "guid";
+#endif
 
     public void Reset()
     {
         Id = null;
         LocationType = AddressablesTypes.ELocationType.None;
-        Path = null;       
+        AssetBundleName = null;
+        AssetName = null;
+
+#if UNITY_EDITOR
+        GUID = null;
+#endif
+
     }
 
     /// <summary>
@@ -93,25 +101,27 @@ public class AddressablesCatalogEntry
                 {
                     LogLoadAttributeError(att, value, AddressablesTypes.GetValidLocationTypeNamesAsString());
                 }
-            }          
+            }
 
-            // Path
-            att = ATT_PATH;
-            Path = data[att];
+#if UNITY_EDITOR
+            // GUID
+            att = ATT_GUID;
+            GUID = data[att];
 
-            if (string.IsNullOrEmpty(Path))
+            if (string.IsNullOrEmpty(GUID) && false)
             {
                 LogLoadAttributeError(att, value);
             }
+#endif
 
-            // Asset Bundle name
+            // Asset Bundle name            
             att = ATT_AB_NAME;
             AssetBundleName = data[att];
 
             if (string.IsNullOrEmpty(AssetBundleName) && LocationType == AddressablesTypes.ELocationType.AssetBundles)
             {
                 LogLoadAttributeError(att, value);
-            }
+            }            
 
             att = ATT_ASSET_NAME;
             AssetName = data[att];
@@ -120,20 +130,30 @@ public class AddressablesCatalogEntry
 
     public void SetupAsEntryInResources(string id)
     {
-        Id = id;
-        Path = id;
+        Id = id;        
         AssetName = id;
         LocationType = AddressablesTypes.ELocationType.Resources;
     }
 
-    public JSONClass ToJSON()
+    public JSONClass ToJSON(bool onlyRelevantData)
     {
         JSONClass data = new JSONClass();
         
         AddToJSON(data, ATT_ID, Id);
         AddToJSON(data, ATT_LOCATION_TYPE, AddressablesTypes.ELocationTypeToString(LocationType));
-        AddToJSON(data, ATT_PATH, Path);
-        AddToJSON(data, ATT_AB_NAME, AssetBundleName);
+
+#if UNITY_EDITOR
+        if (!onlyRelevantData)
+        {
+            AddToJSON(data, ATT_GUID, GUID);
+        }
+#endif
+
+        if (!onlyRelevantData || LocationType == AddressablesTypes.ELocationType.AssetBundles)
+        {
+            AddToJSON(data, ATT_AB_NAME, AssetBundleName);
+        }
+
         AddToJSON(data, ATT_ASSET_NAME, AssetName);
 
         return data;
@@ -162,7 +182,7 @@ public class AddressablesCatalogEntry
                 break;
 
             case AddressablesTypes.ELocationType.Resources:
-                returnValue = !string.IsNullOrEmpty(Path);
+                returnValue = true; //!string.IsNullOrEmpty(AssetName);
                 break;
 
             case AddressablesTypes.ELocationType.AssetBundles:

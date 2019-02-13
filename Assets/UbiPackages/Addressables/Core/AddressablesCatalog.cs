@@ -36,11 +36,11 @@ public class AddressablesCatalog
         }
     }
 
-    public JSONClass ToJSON()
+    public JSONClass ToJSON(bool onlyRelevantData)
     {
         // Create new object
         JSONClass data = new JSONClass();        
-        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());        
+        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON(onlyRelevantData));        
         data.Add(CATALOG_ATT_LOCAL_AB_LIST, UbiListUtils.GetListAsString(m_localABList));
 
         return data;
@@ -76,7 +76,7 @@ public class AddressablesCatalog
         }
     }
 
-    private JSONArray EntriesToJSON()
+    private JSONArray EntriesToJSON(bool onlyRelevantData)
     {
         JSONArray data = new JSONArray();        
         AddressablesCatalogEntry entry;
@@ -85,7 +85,7 @@ public class AddressablesCatalog
             entry = kvp.Value;
             if (entry != null && entry.IsValid())
             {
-                data.Add(entry.ToJSON());
+                data.Add(entry.ToJSON(onlyRelevantData));
             }
         }        
 
