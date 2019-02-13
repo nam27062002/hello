@@ -4,6 +4,20 @@ using UnityEngine.SceneManagement;
 
 public abstract class AddressablesProvider
 {
+    public static Logger Logger { get; set; }
+    public static bool CanLog()
+    {
+        return (Logger != null && Logger.CanLog());
+    }
+
+    public static void Log(string msg)
+    {
+        if (CanLog())
+        {
+            Logger.Log(msg);
+        }
+    }
+
     public virtual List<string> GetDependencyIds(AddressablesCatalogEntry entry)
     {
         return null;

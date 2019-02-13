@@ -61,12 +61,22 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 
     public override T LoadAsset<T>(AddressablesCatalogEntry entry)
     {
+        if (CanLog())
+        {
+            Log("LoadAsset by FromAssetBundles provider");
+        }
+
         object o = AssetBundlesManager.Instance.LoadAsset(entry.AssetBundleName, entry.AssetName);
         return (T)System.Convert.ChangeType(o, typeof(T));
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
     {
+        if (CanLog())
+        {
+            Log("LoadAsset by FromAssetBundles provider");
+        }
+        
         AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetAsync(entry.AssetBundleName, entry.AssetName, null, true);
         return ProcessAssetBundlesOpRequest(request);
     }

@@ -38,6 +38,11 @@ public class AddressablesFromResourcesProvider : AddressablesProvider
 
     private Object LoadAssetObject(AddressablesCatalogEntry entry)
     {
+        if (CanLog())
+        {
+            Log("LoadAsset by FromResources provider");
+        }
+
         return Resources.Load(entry.AssetName);
     }
 }

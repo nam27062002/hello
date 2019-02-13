@@ -85,6 +85,8 @@ public class AddressablesManager
         }
 
         // Loads the providers
+        AddressablesProvider.Logger = logger;
+
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
         m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, logger);
 

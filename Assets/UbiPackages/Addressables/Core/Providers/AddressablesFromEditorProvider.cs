@@ -67,7 +67,11 @@ public class AddressablesFromEditorProvider : AddressablesProvider
 
     private Object LoadAssetObject(AddressablesCatalogEntry entry)
     {
-        Debug.Log("LoadAsset by Editor provider");
+        if (CanLog())
+        {
+            Log("LoadAsset by Editor provider");
+        }
+
         return AssetDatabase.LoadMainAssetAtPath(GetPath(entry));
     }
 
