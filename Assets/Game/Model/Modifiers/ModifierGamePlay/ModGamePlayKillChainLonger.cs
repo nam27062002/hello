@@ -6,7 +6,7 @@ public class ModGamePlayKillChainLonger : ModifierGamePlay {
 	private float m_percentage;
 
 	//------------------------------------------------------------------------//
-	public ModGamePlayKillChainLonger(DefinitionNode _def) : base(_def) {
+	public ModGamePlayKillChainLonger(DefinitionNode _def) : base(TARGET_CODE, _def) {
 		m_percentage = _def.GetAsFloat("param1");
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}

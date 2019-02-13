@@ -34,6 +34,6 @@ public abstract class ModifierGatcha : Modifier {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-    protected ModifierGatcha(DefinitionNode _def) : base(TYPE_CODE, _def) { }
+    protected ModifierGatcha(string _target, DefinitionNode _def) : base(TYPE_CODE, _target, _def) { }
 
 }

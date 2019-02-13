@@ -62,12 +62,14 @@ public abstract class Modifier : IModifierDefinition {
     //------------------------------------------------------------------------//
     // INTERNAL METHODS														  //
     //------------------------------------------------------------------------//
-    protected Modifier(string _type) {
+    protected Modifier(string _type, string _target) {
         m_type = _type;
+        m_target = _target;
     }
 
-    protected Modifier(string _type, DefinitionNode _def) {
+    protected Modifier(string _type, string _target, DefinitionNode _def) {
         m_type = _type;
+        m_target = _target;
 
         m_sku           = _def.sku;
         m_uiCategory    = _def.Get("uiCategory");
@@ -77,8 +79,9 @@ public abstract class Modifier : IModifierDefinition {
         m_tidDescShort  = _def.Get("tidDescShort");
     }
 
-    protected Modifier(string _type, SimpleJSON.JSONNode _data) {
+    protected Modifier(string _type, string _target, SimpleJSON.JSONNode _data) {
         m_type = _type;
+        m_target = _target;
 
         m_sku           = SKU_CUSTOM;
 		m_uiCategory    = _data.GetSafe("uiCategory", m_uiCategory);

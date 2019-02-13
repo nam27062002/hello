@@ -62,11 +62,13 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     private void CheckEvent(IDragonData _data) {
         if (EventExists() && m_data.m_state <= HDLiveEventData.State.REWARD_AVAILABLE) {
             ModEconomyDragonPrice discount = m_passiveEventDefinition.mainMod as ModEconomyDragonPrice;
-            IDragonData dragonData = DragonManager.GetDragonData(discount.dragonSku);
-            if (dragonData.isOwned) {
-                FinishEvent(); // finish event and deactivate mods.
-            } else {
-                Activate(); // start event and activate mods.
+            if (discount != null) {
+                IDragonData dragonData = DragonManager.GetDragonData(discount.dragonSku);
+                if (dragonData.isOwned) {
+                    FinishEvent(); // finish event and deactivate mods.
+                } else {
+                    Activate(); // start event and activate mods.
+                }
             }
         }
     }
