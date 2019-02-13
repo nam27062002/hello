@@ -7,9 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_StPatricksBalloon
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
   m_ShaderKeywords: EMISSIVE_NONE FRESNEL FXLAYER_NONE MAINCOLOR_TEXTURE REFLECTIONTYPE_NORMAL
-    SELFILLUMINATE_NORMAL SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
+    SELFILLUMINATE_NORMAL VERTEXCOLOR_NONE _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -51,6 +51,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: f5cc71e505c5522478c481afa9e3b9f9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatCap:
+        m_Texture: {fileID: 2800000, guid: f5cc71e505c5522478c481afa9e3b9f9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -82,6 +86,7 @@ Material:
     - ReflectionType: 0
     - SelfIlluminate: 0
     - VertexColor: 0
+    - _Amplitude: 0.01
     - _BlendMode: 0
     - _BlinkTimeMultiplier: 0
     - _BumpScale: 1
@@ -115,7 +120,7 @@ Material:
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _EnableTint: 0
     - _EnableVertexOffset: 0
     - _EnableVertexOffsetX: 0
@@ -124,7 +129,8 @@ Material:
     - _EnableWaveEmission: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 9.38
+    - _Fresnel: 4.64
+    - _FresnelPower: 1.09
     - _GlossMapScale: 1
     - _Glossiness: 0.842
     - _GlossyReflections: 1
@@ -144,7 +150,8 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecExponent: 108.2
     - _SpecularHighlights: 1
-    - _SpecularPower: 22.55
+    - _SpecularPower: 81.2
+    - _SpeedWave: 5
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
@@ -163,5 +170,5 @@ Material:
     - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.9044118, g: 0.6982591, b: 0.6982591, a: 0}
     - _SecondLightDir: {r: -0.93547213, g: -0.35340053, b: -0, a: 0}
-    - _SpecularDir: {r: 0.6, g: 0.8000001, b: -0, a: 0}
+    - _SpecularDir: {r: 0.3218782, g: 0.29832613, b: -0.8985521, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
