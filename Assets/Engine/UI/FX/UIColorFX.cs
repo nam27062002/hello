@@ -100,6 +100,14 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		set { m_contrast = value; SetDirty(); }
 	}
 
+	[Space]
+	[Tooltip("If toggled, multiply will be applied after Brightness, Saturation and Contrast (but always before additive)")]
+	[SerializeField] private bool m_lateMultiply = false;
+	public bool lateMultiply {
+		get { return m_lateMultiply; }
+		set { m_lateMultiply = value; SetDirty(); }
+	}
+
 	// Custom materials for images and fonts
 	// Unfortunately they can't share the same material since rendering techniques are a bit different
 	private Material m_imageMaterial = null;
@@ -303,6 +311,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 			_mat.SetFloat("_BrightnessAmount", brightness);
 			_mat.SetFloat("_SaturationAmount", saturation);
 			_mat.SetFloat("_ContrastAmount", contrast);
+			_mat.SetFloat("_LateMultiply", lateMultiply ? 1f : 0f);
 		}
 	}
 

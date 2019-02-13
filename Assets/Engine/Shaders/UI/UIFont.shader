@@ -16,6 +16,8 @@ Shader "Custom/UI/UIFont" {
 		_SaturationAmount ("Saturation", Float) = 1
 		_BrightnessAmount ("Brightness", Float) = 1
 		_ContrastAmount ("Contrast", Float) = 1
+
+		[Toggle] _LateMultiply("Late Multiply", Float) = 0
 		
 		_StencilComp ("Stencil Comparison", Float) = 8
 		_Stencil ("Stencil ID", Float) = 0
