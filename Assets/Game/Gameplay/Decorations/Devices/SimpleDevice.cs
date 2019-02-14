@@ -18,30 +18,23 @@ public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
 		m_operatorSpawner = GetComponent<DeviceOperatorSpawner>();
 		m_inflammable = GetComponent<InflammableDecoration>();
 
-		m_operatorAvailable = false;
+        m_operatorAvailable = false;
 		m_enabled = false;
-	}
+
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+    }
 
     public void Spawn(ISpawner _spawner) {
         OnRespawn();
     }
 
-
-
-    /// <summary>
-    /// Component enabled.
-    /// </summary>
-    protected virtual void OnEnable() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
-	}
-
 	/// <summary>
 	/// Component disabled.
 	/// </summary>
-	protected virtual void OnDisable() {
+	protected virtual void OnDestroy() {
 		// Unsubscribe from external events
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -110,7 +103,8 @@ public class SimpleDevice : MonoBehaviour, ISpawnable, IBroadcastListener {
 
 	protected virtual void OnAreaLoaded() {
 		m_enabled = true;
-	}
+        m_operatorAvailable = false;
+    }
 
 	protected virtual void OnAreaExit() {
 		m_enabled = false;
