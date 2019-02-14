@@ -46,12 +46,13 @@ public class AssetBundlesManager
     
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string DEPENDENCIES_FILENAME = "dependencies";        
+    public static string DEPENDENCIES_FILENAME = "dependencies";
 
     /// <summary>
     /// Initialize the system.
     /// </summary>
     /// <param name="localAssetBundleNames">List of the local asset bundle ids.</param>
+    /// <param name="localAssetBundlesPath">Relative path from StreamingAssets to local AssetBundles folder. Example: in your folder is in "/Assets/StreamingAssets/AssetBundles" then you need to use "AssetBundles"</param>
     public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
@@ -70,7 +71,7 @@ public class AssetBundlesManager
 
         if (Logger.CanLog())
         {
-            Logger.Log("Initializing AssetBundlesManager");
+            Logger.Log("Initializing AssetBundlesManager: " + UbiListUtils.GetListAsString(localAssetBundleIds));
         }
 
         Loader_Init();
@@ -82,13 +83,20 @@ public class AssetBundlesManager
     }
 
     private void LoadManifest(string directory)
-    {
-        AssetBundleManifest manifest = null;
-        string path = Path.Combine(directory, DEPENDENCIES_FILENAME);
-
-        if (File.Exists(path))
+    {        
+        if (string.IsNullOrEmpty(directory))
         {
-            AssetBundle manifestBundle = AssetBundle.LoadFromFile(path);
+            return;
+        }
+
+        BetterStreamingAssets.Initialize();
+
+        AssetBundleManifest manifest = null;
+        string path = Path.Combine(directory, DEPENDENCIES_FILENAME);               
+
+        if (BetterStreamingAssets.FileExists(path))
+        {            
+            AssetBundle manifestBundle = BetterStreamingAssets.LoadAssetBundle(path);
             if (manifestBundle != null)
             {
                 string assetName = "AssetBundleManifest";
@@ -111,6 +119,9 @@ public class AssetBundlesManager
                     List<string> manifestAssetBundleIds = new List<string>(manifest.GetAllAssetBundles());
                     if (m_localAssetBundleIds != null)
                     {
+                        // Full directory is used so we can use AssetBundle.LoadFromFileAsyn() to load asset bundles from streaming assets and from downloadables folder in device storage
+                        string fullDirectory = Path.Combine(Application.streamingAssetsPath, directory);
+
                         int count = m_localAssetBundleIds.Count;
                         for (int i = 0; i < count; i++)
                         {
@@ -134,7 +145,7 @@ public class AssetBundlesManager
 
                                 handle = new AssetBundleHandle();
                                 //handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
-                                handle.SetupLocal(id, directory + "/" + id, dependencies);
+                                handle.SetupLocal(id, Path.Combine(fullDirectory, id), dependencies);
                                 m_assetBundleHandles.Add(m_localAssetBundleIds[i], handle);
                             }
                         }
@@ -383,7 +394,7 @@ public class AssetBundlesManager
     /// <param name="assetName">Name of the asset to load.</param>    
     /// <param name="onDone">Callback that will be called when the asset has been loaded or if an error happened throughout the process.</param>    
     public AssetBundlesOpRequest LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
-    {
+    {        
         AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
 
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
