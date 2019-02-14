@@ -359,7 +359,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     {
         Memory_BeginSample("AB_INIT");        
 
-        string localAssetBundlesPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Addressables");
+        string localAssetBundlesPath = "Addressables";
         localAssetBundlesPath = System.IO.Path.Combine(localAssetBundlesPath, "AssetBundles");
 
         List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" , "01/cubes/materials" };
