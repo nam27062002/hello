@@ -30,24 +30,16 @@ public class HDAddressablesManager
     private void Initialize()
     {
         Logger logger = new ConsoleLogger("Addressables");
-        string addressablesPath = Path.Combine(Application.streamingAssetsPath, "Addressables");
+        string addressablesPath = "Addressables";
         string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
-        string catalogAsText = null;
-        if (File.Exists(addressablesCatalogPath))
-        {
-            if (Application.platform == RuntimePlatform.Android) //Need to extract file from apk first
-            {
-                WWW reader = new WWW(addressablesCatalogPath);
-                while (!reader.isDone) { }
+        BetterStreamingAssets.Initialize();
 
-                catalogAsText = reader.text;
-            }
-            else
-            {
-                catalogAsText = File.ReadAllText(addressablesCatalogPath);
-            }
+        string catalogAsText = null;
+        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
+        {
+            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
         }
 
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);        
