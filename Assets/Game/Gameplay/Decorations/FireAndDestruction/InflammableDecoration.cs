@@ -153,6 +153,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 
             for (int i = 0; i < m_fireNodes.Length; i++) {
                 m_fireNodes[i].Init(this, m_entity, m_burnParticle, m_feedbackParticle, m_feedbackParticleMatchDirection, m_hitRadius);
+                if (!gameObject.activeInHierarchy) {
+                    m_fireNodes[i].Disable();
+                }
             }
             m_startPosition = transform.position;
 
