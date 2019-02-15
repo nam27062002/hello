@@ -144,4 +144,11 @@ public class OTA_NPCSceneController : MonoBehaviour {
         }
         m_sw.Close();*/
     }
+
+
+    [SerializeField] private string m_guid = "";
+    public void FindGUI() {
+        string path = AssetDatabase.GUIDToAssetPath(m_guid);
+        Debug.Log(path);
+    }
 }

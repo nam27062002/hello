@@ -14,10 +14,10 @@ public class OTA_NPCSceneControllerEditor : Editor {
 		m_component = target as OTA_NPCSceneController;
 	}
 
-	public override void OnInspectorGUI() {
-		DrawDefaultInspector();
+    public override void OnInspectorGUI() {
+        DrawDefaultInspector();
 
-		if (GUILayout.Button("Build")) { 
+        if (GUILayout.Button("Build")) {
             string[] scenePaths = new string[3];
             scenePaths[0] = "Assets/Game/Scenes/Levels/Spawners/" + m_component.area1Scene + ".unity";
             scenePaths[1] = "Assets/Game/Scenes/Levels/Spawners/" + m_component.area2Scene + ".unity";
@@ -46,7 +46,12 @@ public class OTA_NPCSceneControllerEditor : Editor {
 
             m_component.CompareSets();
         }
-	}
+
+
+        if (GUILayout.Button("Find by GUID")) {
+            m_component.FindGUI();
+        }
+    }
 
 	public void FindISpawner(Transform _t, ref List<ISpawner> _list) {		
 		ISpawner c = _t.GetComponent<ISpawner>();
