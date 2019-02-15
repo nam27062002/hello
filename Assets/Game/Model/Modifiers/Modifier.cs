@@ -71,12 +71,14 @@ public abstract class Modifier : IModifierDefinition {
         m_type = _type;
         m_target = _target;
 
-        m_sku           = _def.sku;
-        m_uiCategory    = _def.Get("uiCategory");
-        m_iconPath      = _def.Get("icon");
-        m_tidName       = _def.Get("tidName");
-        m_tidDesc       = _def.Get("tidDesc");
-        m_tidDescShort  = _def.Get("tidDescShort");
+        if (_def != null) {
+            m_sku           = _def.sku;
+            m_uiCategory    = _def.Get("uiCategory");
+            m_iconPath      = _def.Get("icon");
+            m_tidName       = _def.Get("tidName");
+            m_tidDesc       = _def.Get("tidDesc");
+            m_tidDescShort  = _def.Get("tidDescShort");
+        }
     }
 
     protected Modifier(string _type, string _target, SimpleJSON.JSONNode _data) {
@@ -84,11 +86,14 @@ public abstract class Modifier : IModifierDefinition {
         m_target = _target;
 
         m_sku           = SKU_CUSTOM;
-		m_uiCategory    = _data.GetSafe("uiCategory", m_uiCategory);
-		m_iconPath      = _data.GetSafe("icon", m_iconPath);
-		m_tidName       = _data.GetSafe("tidName", m_tidName);
-		m_tidDesc       = _data.GetSafe("tidDesc", m_tidDesc);
-		m_tidDescShort  = _data.GetSafe("tidDescShort", m_tidDescShort);
+
+        if (_data != null) {
+            m_uiCategory    = _data.GetSafe("uiCategory", m_uiCategory);
+            m_iconPath      = _data.GetSafe("icon", m_iconPath);
+            m_tidName       = _data.GetSafe("tidName", m_tidName);
+            m_tidDesc       = _data.GetSafe("tidDesc", m_tidDesc);
+            m_tidDescShort  = _data.GetSafe("tidDescShort", m_tidDescShort);
+        }
     }
 
 
