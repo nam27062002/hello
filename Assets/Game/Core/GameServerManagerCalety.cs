@@ -339,6 +339,10 @@ public class GameServerManagerCalety : GameServerManager {
             ServerManager.SharedInstance.CancelPendingCommands();
             NetworkManager.SharedInstance.ReportServerDownShouldBeSolved();
 
+            // We need to log out from server to overcome a Calety's limitation. Calety was made for an online game considering that the game would reload every time a request fails, which guarantees that 
+            // action packet id will get reseted. We need to simulate that behaviour to make sure the action packet ids is going to be in sync with the server after network recovery
+            GameSessionManager.SharedInstance.LogOutFromServer();
+
             Connection_OnServerDown();
 
             m_isProcessingConnectionLost = false;
@@ -1277,7 +1281,7 @@ public class GameServerManagerCalety : GameServerManager {
                 //--------------------------------------------------------------
                 case ECommand.HDLeagues_GetSeason: {
                         JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
-                        Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, false);
+                        Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_SEASON, data, true);
                     }
                     break;
                 
@@ -1296,17 +1300,17 @@ public class GameServerManagerCalety : GameServerManager {
                 break;
 
                 case ECommand.HDLeagues_SetScore: {
-                    JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
-                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_SET_SCORE, data, false);
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_SET_SCORE, data, true);
                 }
                 break;
                 
                 case ECommand.HDLeagues_GetMyRewards:
-                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_MY_REWARDS, null, false);
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_GET_MY_REWARDS, null, true);
                 break;
 
                 case ECommand.HDLeagues_FinishMySeason:
-                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_FINISH_MY_SEASON, null, false);
+                    Command_SendCommandAsGameAction(ACTION_HD_LEAGUES_FINISH_MY_SEASON, null, true);
                 break;
                 //--------------------------------------------------------------
 

@@ -8,9 +8,6 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
-
-using System.Diagnostics;
 
 
 //----------------------------------------------------------------------------//
@@ -36,9 +33,6 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 
     private HDSeasonData m_season;
     private bool m_updateEnabled;
-
-
-    private Stopwatch m_stopwatch;
 
 
     // Public
@@ -107,8 +101,6 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 		m_busyPanel.Show();
 
         m_season.SetScore(m_controller.score, true);
-        m_stopwatch = new Stopwatch();
-        m_stopwatch.Start();
 
         m_updateEnabled = true;
     }
@@ -117,7 +109,6 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
         if (m_updateEnabled) {
             if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
                 OnLeagueScoreSent(m_season.scoreDataError);
-                m_stopwatch.Stop();
                 m_updateEnabled = false;
             }
         }

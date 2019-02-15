@@ -259,7 +259,6 @@ MonoBehaviour:
   m_invulnerableTime: 5
   m_health: 0
   m_energy: 0
-  m_alcoholDrain: 1
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
   m_alwaysSpawnCorpse: 1
@@ -564,6 +563,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   m_useBoostOnIntro: 0
+  m_limitsCheck: 0
+  m_lastValidPos: {x: 0, y: 0, z: 0}
 --- !u!114 &11442574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -590,7 +591,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moving: 0
+  movingTap: 0
   action: 0
+  actionTap: 0
 --- !u!114 &11455772
 MonoBehaviour:
   m_ObjectHideFlags: 1

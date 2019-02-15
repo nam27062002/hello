@@ -1,4 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿ // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "Hungry Dragon/Particles/Transparent particles standard"
 {
@@ -40,7 +40,8 @@ Shader "Hungry Dragon/Particles/Transparent particles standard"
 		[Toggle(NOISE_TEXTURE_DISSOLVE)] _EnableNoiseTextureDissolve("Enable noise texture dissolve", int) = 0.0
 		[Toggle(NOISEUV)] _EnableNoiseUV("Enable noise uv channel", int) = 0.0
 
-		[Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, AdditiveAlphaBlend, 4, Premultiply, 5)] BlendMode("Blend mode", Float) = 0.0
+		//added multiply mode
+		[Enum(Additive, 0, SoftAdditive, 1, AdditiveDouble, 2, AlphaBlend, 3, AdditiveAlphaBlend, 4, Premultiply, 5, Multiply, 6)] BlendMode("Blend mode", Float) = 0.0
 
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("SrcBlend", Float) = 5.0 //"SrcAlpha"
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("DestBlend", Float) = 1.0 //"One"

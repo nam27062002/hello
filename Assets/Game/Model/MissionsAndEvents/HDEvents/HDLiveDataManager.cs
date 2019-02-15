@@ -338,6 +338,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                     // To avoid collecting infinite rewards disabing the network. 
                     // We are going to load the cached data to check if we have
                     // a finish call pending.
+                    LoadEventFromCache(i);
                     if (m_managers[i].IsFinishPending()) {
                         finishLoadingData = false;
                     } else { 
@@ -349,7 +350,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
                     m_managers[i].OnLiveDataResponse();
                 }
             }
-        } else {
+        } else if (outErr != ComunicationErrorCodes.NET_ERROR) {
             int max = m_managers.Count;
             for (int i = 0; i < max; i++) {
                 m_managers[i].CleanData();

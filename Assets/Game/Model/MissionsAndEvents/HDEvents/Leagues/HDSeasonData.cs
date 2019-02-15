@@ -146,6 +146,8 @@ public class HDSeasonData {
                 state = State.WAITING_NEW_SEASON; 
                 break;
         }
+
+        liveDataState = HDLiveData.State.PARTIAL;
     }
 
     public void UpdateState() {
@@ -332,6 +334,10 @@ public class HDSeasonData {
                 SetNextLeague(responseJson["nextLeague"]["sku"]);
             } else {
                 FindNextLeague();
+            }
+
+            if (responseJson.ContainsKey("rank")) {
+                currentLeague.leaderboard.playerRank = responseJson["rank"].AsInt;
             }
 
             HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);

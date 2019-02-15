@@ -147,7 +147,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     public override bool IsFinishPending() {
         bool isFinishPending = m_isFinishPending;
 
-        if (isFinishPending) {
+        if (isFinishPending
+        &&  Application.internetReachability != NetworkReachability.NotReachable
+        &&  GameSessionManager.SharedInstance.IsLogged()) {
             FinishEvent();
             HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
             m_isFinishPending = false;
@@ -456,7 +458,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 	    		{
 		    		List<Modifier> mods = data.definition.m_otherMods;
 					for (int i = 0; i < mods.Count; i++) {
-		    			mods[i].Apply();
+                        if (mods[i] != null) {
+                            mods[i].Apply();
+                        }
 					}
 				}
 			}
@@ -470,7 +474,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             m_active = false;
     		List<Modifier> mods = data.definition.m_otherMods;
 			for (int i = 0; i < mods.Count; i++) {
-    			mods[i].Remove();
+                if (mods[i] != null) {
+                    mods[i].Remove();
+                }
 			}
     	}
     }

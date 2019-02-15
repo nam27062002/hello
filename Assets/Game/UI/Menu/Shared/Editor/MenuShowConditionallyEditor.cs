@@ -34,7 +34,8 @@ public class MenuShowConditionallyEditor : Editor {
 	private SerializedProperty m_targetAnimatorProp = null;
 
 	private SerializedProperty m_restartAnimProp = null;
-	private SerializedProperty m_delayProp = null;
+	private SerializedProperty m_showDelayProp = null;
+	private SerializedProperty m_hideDelayProp = null;
 
 	private SerializedProperty m_checkSelectedDragonProp = null;
 	private SerializedProperty m_hideForDragonsProp = null;
@@ -63,7 +64,8 @@ public class MenuShowConditionallyEditor : Editor {
 		m_targetAnimatorProp = serializedObject.FindProperty("m_targetAnimator");
 
 		m_restartAnimProp = serializedObject.FindProperty("m_restartShowAnimation");
-		m_delayProp = serializedObject.FindProperty("m_delay");
+		m_showDelayProp = serializedObject.FindProperty("m_showDelay");
+		m_hideDelayProp = serializedObject.FindProperty("m_hideDelay");
 
 		m_checkSelectedDragonProp = serializedObject.FindProperty("m_checkSelectedDragon");
 		m_hideForDragonsProp = serializedObject.FindProperty("m_hideForDragons");
@@ -122,9 +124,13 @@ public class MenuShowConditionallyEditor : Editor {
 
 		// Delay - only if no target is selected
 		EditorGUI.BeginDisabledGroup(validAnimator); {
-			content.text = m_delayProp.displayName;
 			content.tooltip = "If a target animator is defined, the animator's delay will be used instead.";
-			EditorGUILayout.PropertyField(m_delayProp, content, true);
+
+			content.text = m_showDelayProp.displayName;
+			EditorGUILayout.PropertyField(m_showDelayProp, content, true);
+
+			content.text = m_hideDelayProp.displayName;
+			EditorGUILayout.PropertyField(m_hideDelayProp, content, true);
 		} EditorGUI.EndDisabledGroup();
 
 		// Dragon-based visibility

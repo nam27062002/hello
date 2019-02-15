@@ -57,6 +57,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
         m_components = GetComponents<ISpawnable>();
 
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+
         if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
 
             ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
@@ -88,7 +92,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 
                 m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
 
-
                 m_respawnCount = 0;
             }
 			return;
@@ -96,24 +99,6 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 
 		// we are not goin to use this spawner, lets destroy it
 		Destroy(gameObject);
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -137,6 +122,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 				EntityManager.instance.UnregisterDecoration (m_decoration);
 			}
 		}
+
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
 	/// <summary>
