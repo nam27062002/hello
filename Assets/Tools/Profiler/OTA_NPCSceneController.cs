@@ -98,15 +98,15 @@ public class OTA_NPCSceneController : MonoBehaviour {
                     m_npcs_area1_area2_area3);
 
 
-        WriteHashSet("npcs_area1", m_npcs_area1);
-        WriteHashSet("npcs_area2", m_npcs_area2);
-        WriteHashSet("npcs_area3", m_npcs_area3);
+        WriteHashSet("npc_medieval_village", m_npcs_area1);
+        WriteHashSet("npc_medieval_castle", m_npcs_area2);
+        WriteHashSet("npc_medieval_dark", m_npcs_area3);
 
-        WriteHashSet("npcs_area1_area2", m_npcs_area1_area2);
-        WriteHashSet("npcs_area1_area3", m_npcs_area1_area3);
-        WriteHashSet("npcs_area2_area3", m_npcs_area2_area3);
+        WriteHashSet("npc_medieval_village_castle", m_npcs_area1_area2);
+        WriteHashSet("npc_medieval_village_dark", m_npcs_area1_area3);
+        WriteHashSet("npc_medieval_castle_dark", m_npcs_area2_area3);
 
-        WriteHashSet("npcs_area1_area2_area3", m_npcs_area1_area2_area3);
+        WriteHashSet("npc_medieval_common", m_npcs_area1_area2_area3);
     }
 
     private void CompareSets(HashSet<string> _sourceA, HashSet<string> _sourceB, HashSet<string> _sourceC, 
