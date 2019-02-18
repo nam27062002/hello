@@ -14,6 +14,13 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.Reset();
     }
 
+    public override bool IsResourceAvailable(AddressablesCatalogEntry entry)
+    {
+        // A resource is available if its dependencies and itself are available
+        List<string> dependencies = GetDependencyIds(entry);
+        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencies);
+    }
+
     public override List<string> GetDependencyIds(AddressablesCatalogEntry entry)
     {
         return AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);       

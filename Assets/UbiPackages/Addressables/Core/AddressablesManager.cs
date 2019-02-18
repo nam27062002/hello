@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, JSONNode downloadablesCatalogJSON, string assetBundlesManifestPath, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, Logger logger)
     {
         sm_logger = logger;
 
@@ -173,6 +173,25 @@ public class AddressablesManager
         }
 
         return returnValue;
+    }
+
+    /// <summary>
+    /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
+    /// </summary>
+    /// <param name="id">Resource id (either scene or asset)</param>
+    /// <returns>Whether or not the resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded</returns>
+    public bool IsResourceAvailable(string id)
+    {        
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            return provider.IsResourceAvailable(entry);            
+        }
+        else
+        {
+            return false;
+        }     
     }
 
     /// <summary>

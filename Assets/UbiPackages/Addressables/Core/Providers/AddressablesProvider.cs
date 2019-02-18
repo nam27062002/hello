@@ -23,6 +23,12 @@ public abstract class AddressablesProvider
         return null;
     }
 
+    public virtual bool IsResourceAvailable(AddressablesCatalogEntry entry)
+    {
+        // By default there's no dependencies so it's available
+        return true;
+    }
+
     public virtual AddressablesOp DownloadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         // By default there's no dependencies
