@@ -45,6 +45,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// </summary>
 	private void OnEnable() {
 		// Initialize UI
+		m_rewardIndexSetter.SetValue(UsersManager.currentUser.dailyRewards.totalRewardIdx);
 
 		// Subscribe to events
 		m_rewardIndexSetter.OnValueChanged.AddListener(OnRewardIndexChanged);
