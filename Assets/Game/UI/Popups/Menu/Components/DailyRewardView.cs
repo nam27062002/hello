@@ -38,6 +38,20 @@ public class DailyRewardView : MetagameRewardView {
 		}
 	}
 
+	// Auxiliar struct
+	[System.Serializable]
+	public class OffsetPerType {
+		[RewardTypeList]
+		public string type = "";
+		public Vector2 offset = GameConstants.Vector2.zero;
+		public float scale = 1f;
+
+		public void Apply(RectTransform _rt) {
+			_rt.anchoredPosition = offset;
+			_rt.SetLocalScale(scale);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -52,6 +66,9 @@ public class DailyRewardView : MetagameRewardView {
 	[SerializeField] private MenuPetLoader m_petLoader = null;
 	[SerializeField] private MenuEggLoader m_eggLoader = null;
 	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+	[Space]
+	[Comment("Extra Setup")]
+	[SerializeField] private OffsetPerType[] m_iconOffsets = new OffsetPerType[0];
 
 	// Data
 	private DailyReward m_dailyReward = null;
@@ -98,6 +115,9 @@ public class DailyRewardView : MetagameRewardView {
 		m_rewardIdx = _rewardIdx;
 		m_state = _state;
 
+		// Init metagame reward
+		base.InitFromReward(_reward.reward);
+
 		// Perform a first refresh!
 		Refresh(true);
 	}
@@ -124,38 +144,73 @@ public class DailyRewardView : MetagameRewardView {
 		}
 
 		// Depending on reward type, toggle different objects on/off
-		bool isPet = m_reward.type == Metagame.RewardPet.TYPE_CODE;
-		bool isEgg = m_reward.type == Metagame.RewardEgg.TYPE_CODE;
+		bool isPet = false;
+		bool isEgg = false;
+		if(m_reward != null) {
+			isPet = m_reward.type == Metagame.RewardPet.TYPE_CODE;
+			isEgg = m_reward.type == Metagame.RewardEgg.TYPE_CODE;
+		}
 
-		// Pet Loader
-		if(m_petLoader != null) {
-			// Activate? Only for pets
-			m_petLoader.gameObject.SetActive(isPet);
+		// 2D Preview: Disable if a 3D preview is available
+		if(m_icon != null) {
+			if((isEgg && m_eggLoader != null) || (isPet && m_petLoader != null)) {
+				m_icon.gameObject.SetActive(false);
+			} else {
+				m_icon.gameObject.SetActive(true);
 
-			// Reload preview if required
-			if(_reloadPreview) {
-				if(isPet) {
-					m_petLoader.Load(m_reward.sku);
-				} else {
-					m_petLoader.Unload();
+				// [AOC] HACK!! Add some offset depending on reward type
+				OffsetPerType offset = null;
+				for(int i = 0; i < m_iconOffsets.Length; ++i) {
+					if(m_iconOffsets[i].type == m_reward.type) {
+						offset = m_iconOffsets[i];
+						break;	// Stop looping
+					}
 				}
+
+				// If no offset was found, use default values
+				if(offset == null) {
+					offset = new OffsetPerType();
+				}
+
+				// Apply offset
+				offset.Apply(m_icon.rectTransform);
 			}
 		}
 
-		// Egg Loader
-		if(m_eggLoader != null) {
-			// Activate? Only for eggs
-			m_eggLoader.gameObject.SetActive(isEgg);
+		// 3D Previews
+		// [AOC] We must delay them because initializing the 3D views at the same time that the popup is being instantiated results in weird behaviours
+		UbiBCN.CoroutineManager.DelayedCallByFrames(() => {
+			// Pet Loader
+			if(m_petLoader != null) {
+				// Activate?
+				m_petLoader.gameObject.SetActive(isPet);
+				if(m_icon != null) m_icon.gameObject.SetActive(!isPet);
 
-			// Reload preview if required
-			if(_reloadPreview) {
-				if(isEgg) {
-					m_eggLoader.Load(m_reward.sku);
-				} else {
-					m_eggLoader.Unload();
+				// Reload preview if required
+				if(_reloadPreview) {
+					if(isPet) {
+						m_petLoader.Load(m_reward.sku);
+					} else {
+						m_petLoader.Unload();
+					}
 				}
 			}
-		}
+
+			// Egg Loader
+			if(m_eggLoader != null) {
+				// Activate?
+				m_eggLoader.gameObject.SetActive(isEgg);
+
+				// Reload preview if required
+				if(_reloadPreview) {
+					if(isEgg) {
+						m_eggLoader.Load(m_reward.sku);
+					} else {
+						m_eggLoader.Unload();
+					}
+				}
+			}
+		}, 1);
 
 		// Tooltip trigger
 		if(m_tooltipTrigger != null) {

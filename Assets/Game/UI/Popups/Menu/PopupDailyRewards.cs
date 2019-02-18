@@ -26,6 +26,10 @@ public class PopupDailyRewards : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed References
 	[SerializeField] private DailyRewardView[] m_rewardSlots = new DailyRewardView[DailyRewardsSequence.SEQUENCE_SIZE];
+	public DailyRewardView[] rewardSlots {
+		get { return m_rewardSlots; }
+	}
+
 	[Space]
 	[SerializeField] private GameObject m_collectButton = null;
 	[SerializeField] private GameObject m_doubleButton = null;
@@ -83,7 +87,7 @@ public class PopupDailyRewards : MonoBehaviour {
 
 		// Initialize buttons
 		m_collectButton.SetActive(canCollect);
-		m_doubleButton.SetActive(currentReward.canBeDoubled);
+		m_doubleButton.SetActive(canCollect && currentReward.canBeDoubled);
 		m_dismissButton.SetActive(!canCollect);
 	}
 

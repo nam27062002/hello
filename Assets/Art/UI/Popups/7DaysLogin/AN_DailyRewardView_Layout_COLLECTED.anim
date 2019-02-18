@@ -38,6 +38,22 @@ AnimationClip:
       - serializedVersion: 2
         time: 0
         value: 0
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_IsActive
+    path: ScaleRoot/RewardText
+    classID: 1
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 2
+        time: 0
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -45,7 +61,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_brightness
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -61,7 +77,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.r
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -77,7 +93,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.g
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -93,7 +109,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.b
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -109,7 +125,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.a
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -125,7 +141,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.r
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -141,7 +157,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.g
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -157,7 +173,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.b
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -173,7 +189,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_contrast
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -189,7 +205,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_saturation
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -199,7 +215,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -215,7 +231,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -225,24 +241,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.z
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_IsActive
-    path: ScaleRoot/RewardText
-    classID: 1
     script: {fileID: 0}
   m_PPtrCurves: []
   m_SampleRate: 30
@@ -267,77 +267,77 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 479345918
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 137444658
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 1710021081
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 361114966
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 2358213868
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 136983063
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 1710741244
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 362619507
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 2887224432
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2601027447
       attribute: 4023273365
       script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 434248171
+      path: 2892771597
       attribute: 538195251
       script: {fileID: 0}
       typeID: 224
@@ -387,6 +387,22 @@ AnimationClip:
       - serializedVersion: 2
         time: 0
         value: 0
+        inSlope: Infinity
+        outSlope: Infinity
+        tangentMode: 103
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_IsActive
+    path: ScaleRoot/RewardText
+    classID: 1
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 2
+        time: 0
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -394,7 +410,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_brightness
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -410,7 +426,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.r
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -426,7 +442,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.g
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -442,7 +458,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.b
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -458,7 +474,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorAdd.a
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -474,7 +490,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.r
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -490,7 +506,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.g
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -506,7 +522,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_colorMultiply.b
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -522,7 +538,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_contrast
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -538,7 +554,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_saturation
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot/RewardIcon
     classID: 114
     script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   - curve:
@@ -548,7 +564,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.x
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -564,7 +580,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.y
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
     script: {fileID: 0}
   - curve:
@@ -574,24 +590,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_AnchoredPosition.z
-    path: ScaleRoot/RewardIcon
+    path: ScaleRoot/RewardIconRoot
     classID: 224
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 2
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_IsActive
-    path: ScaleRoot/RewardText
-    classID: 1
     script: {fileID: 0}
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
