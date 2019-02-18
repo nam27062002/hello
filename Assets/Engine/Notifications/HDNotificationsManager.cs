@@ -169,16 +169,20 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     {
         ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
     }
+    
+    public void ScheduleNewDailyReward(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
+    }
+    
 
     public void CancelNewChestsNotification()
     {
         CancelNotification(SKU_NEW_CHESTS);
     }
 
-	public void ScheduleDailyRewardNotification() {
-		// [AOC] TODO!! Clamp notifications between 9AM and 9PM (or whatever is designed)
-		int secondsToCollection = (int)UsersManager.currentUser.dailyRewards.timeToCollection.TotalSeconds;
-		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, secondsToCollection);
+	public void ScheduleDailyRewardNotification(int seconds) {
+		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
 	}
 
 	public void CancelDailyRewardNotification() {
