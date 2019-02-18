@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// This operation loads a resource (asset or scene) from an asset bundle, if this asset bundle or any dependencies haven't been downloaded or loaded yet then this operation resolves that 
@@ -12,24 +13,29 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
         EResult result = EResult.Success;
         object data = null;
 
-        AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(assetBundleId);
+        AssetBundlesManager abManager = AssetBundlesManager.Instance;
+        AssetBundleHandle handle = abManager.GetAssetBundleHandle(assetBundleId);
         if (handle == null)
         {
             result = EResult.Error_AB_Handle_Not_Found;
             returnValue = true;
         }
-        else if (handle.IsLoaded())
+        else
         {
-            AssetBundle assetBundle = handle.AssetBundle;
-            if (assetBundle == null)
+            List<string> abIds = abManager.GetDependenciesIncludingSelf(assetBundleId);
+            if (abManager.IsAssetBundleListAvailable(abIds) && abManager.IsAssetBundleListLoaded(abIds))
             {
-                AssetBundlesManager.Log_AssertABIsNullButIsLoaded(assetBundleId);
+                AssetBundle assetBundle = handle.AssetBundle;
+                if (assetBundle == null)
+                {
+                    AssetBundlesManager.Log_AssertABIsNullButIsLoaded(assetBundleId);
 
-                result = EResult.Error_AB_Couldnt_Be_Loaded;
-                returnValue = true;
-            }
+                    result = EResult.Error_AB_Couldnt_Be_Loaded;
+                    returnValue = true;
+                }
+            }            
         }
-
+        
         if (returnValue && onDone != null)
         {
             onDone(result, data);
@@ -47,12 +53,59 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
     private enum EStep
     {
         None,
-        LoadingAssetBundle,
+        DownloadingAssetBundleAndDependencies,
+        LoadingAssetBundleAndDependencies,
         LoadingResourceFromAssetBundle,
         Done
     };
-    
-    private EStep Step { get; set; }
+
+    private EStep m_step;
+    private EStep Step
+    {
+        get
+        {
+            return m_step;
+        }
+
+        set
+        {
+            m_step = value;
+
+            AssetBundlesManager abManager = AssetBundlesManager.Instance;
+            AssetBundleHandle handle = abManager.GetAssetBundleHandle(m_assetBundleId);
+            List<string> abIds = abManager.GetDependenciesIncludingSelf(m_assetBundleId);
+
+            switch (m_step)
+            {
+                case EStep.DownloadingAssetBundleAndDependencies:
+                    if (abManager.IsAssetBundleListAvailable(abIds))
+                    {
+                        Step = EStep.LoadingAssetBundleAndDependencies;
+                    }
+                    else
+                    {
+                        SetRequest(AssetBundlesManager.Instance.DownloadAssetBundleAndDependencies(m_assetBundleId, OnAssetBundleDownloaded, true));
+                    }
+                    break;
+
+                case EStep.LoadingAssetBundleAndDependencies:
+                    if (abManager.IsAssetBundleListLoaded(abIds))
+                    {
+                        Step = EStep.LoadingResourceFromAssetBundle;
+                    }
+                    else
+                    {
+                        // Needs to load the asset bundle and its dependencies before loading the asset                        
+                        SetRequest(AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(m_assetBundleId, OnAssetBundleLoaded, true));
+                    }
+                    break;
+
+                case EStep.LoadingResourceFromAssetBundle:
+                    SetRequest(LoadResourceFromAssetBundle(handle.AssetBundle, m_resourceName, NotifyOnDoneInternal));
+                    break;
+            }
+        }
+    }
 
     protected override void ExtendedReset()
     {
@@ -71,20 +124,22 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
     protected override void ExtendedPerform()
     {
         if (!EarlyExit(m_assetBundleId, m_resourceName, NotifyOnDone))
-        {            
-            // EarlyExit guarantees handle won't be null
-            AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_assetBundleId);
-            if (handle.IsLoaded())
-            {
-                LoadResourceFromAssetBundleInternal(handle.AssetBundle);                
-            }
-            else 
-            {
-                // Needs to load the asset bundle before loading the asset
-                Step = EStep.LoadingAssetBundle;                
-                SetRequest(AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(m_assetBundleId, OnAssetBundleLoaded, true));
-            }
+        {
+            Step = EStep.DownloadingAssetBundleAndDependencies;
         }                
+    }
+    
+    private void OnAssetBundleDownloaded(EResult result, object data)
+    {
+        if (result == EResult.Success)
+        {
+            Step = EStep.LoadingAssetBundleAndDependencies;
+        }
+
+        if (IsResultError(result))
+        {
+            NotifyOnDoneInternal(result, null);
+        }
     }
 
     private void OnAssetBundleLoaded(EResult result, object data)
@@ -95,7 +150,7 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
             AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_assetBundleId);
             if (handle.IsLoaded())
             {
-                LoadResourceFromAssetBundleInternal(handle.AssetBundle);                
+                Step = EStep.LoadingResourceFromAssetBundle;
             }
             else
             {
@@ -110,13 +165,7 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
         }
     }
 
-    protected abstract AssetBundlesOpRequest LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone);    
-
-    private void LoadResourceFromAssetBundleInternal(AssetBundle assetBundle)
-    {
-        Step = EStep.LoadingResourceFromAssetBundle;
-        SetRequest(LoadResourceFromAssetBundle(assetBundle, m_resourceName, NotifyOnDoneInternal));        
-    }    
+    protected abstract AssetBundlesOpRequest LoadResourceFromAssetBundle(AssetBundle assetBundle, string resourceName, OnDoneCallback onDone);        
 
     private void NotifyOnDoneInternal(EResult result, object data)
     {
@@ -142,7 +191,7 @@ public abstract class LoadResourceFromAssetBundlesFullOp : AssetBundlesOp
                 case EStep.None:
                     break;
 
-                case EStep.LoadingAssetBundle:
+                case EStep.LoadingAssetBundleAndDependencies:
                 case EStep.LoadingResourceFromAssetBundle:
                     if (m_request != null)
                     {

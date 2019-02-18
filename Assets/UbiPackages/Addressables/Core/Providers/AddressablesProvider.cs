@@ -23,6 +23,15 @@ public abstract class AddressablesProvider
         return null;
     }
 
+    public virtual AddressablesOp DownloadDependenciesAsync(AddressablesCatalogEntry entry)
+    {
+        // By default there's no dependencies
+        AddressablesOpResult returnValue = new AddressablesOpResult();
+        returnValue.Setup(null, null);
+
+        return returnValue;
+    }
+
     public virtual AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         // By default there's no dependencies

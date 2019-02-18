@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using SimpleJSON;
 
@@ -18,56 +19,33 @@ namespace Downloadables
 
         public static readonly string DOWNLOADS_FOLDER_NAME = Path.Combine(DOWNLOADABLES_FOLDER_NAME, "Downloads");
         public static readonly string DOWNLOADS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+        public static readonly string DOWNLOADS_ROOT_PATH_WITH_SLASH = DOWNLOADS_ROOT_PATH + "/";
 
-        private enum EInitializeState
-        {
-            Not_Initialized,
-            Initializing,
-            Initialized,
-            Error
-        };
+        private bool IsInitialized { get; set; }        
+        
+        private Disk m_disk;
 
-        private EInitializeState InitializeState { get; set; }
-
-        private Error InitializeError { get; set; }        
-
-        private DiskDriver m_diskDriver;
-
-        private Directory m_manifestsDirectory;
-
-        private Directory m_downloadsDirectory;
-
-        public delegate void OnInitialized(Error error);
-
-        private OnInitialized m_onInitialized;
-
-        public Manager(DiskDriver diskDriver, Logger logger)
+        private Cleaner m_cleaner;
+        
+        public Manager(DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Logger logger)
         {
             sm_logger = logger;
-            m_diskDriver = diskDriver;            
+
+            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
+            m_cleaner = new Cleaner(m_disk, 180);
+            CatalogEntryStatus.sm_disk = m_disk;            
 
             Reset();
         }
 
         public void Reset()
         {
-            InitializeState = EInitializeState.Not_Initialized;
-            InitializeError = null;            
-
-            CatalogStatus_Reset();
-
-            if (m_manifestsDirectory == null)
-            {
-                m_manifestsDirectory = new Directory(MANIFESTS_ROOT_PATH, m_diskDriver);
-            }
-
-            if (m_downloadsDirectory == null)
-            {
-                m_downloadsDirectory = new Directory(DOWNLOADS_ROOT_PATH, m_diskDriver);
-            }
+            IsInitialized = false;
+            m_cleaner.Reset();
+            Catalog_Reset();            
         }
 
-        public void Initialize(JSONNode catalogJSON, OnInitialized onInitialized)
+        public void Initialize(JSONNode catalogJSON)
         {
             Reset();          
 
@@ -75,217 +53,163 @@ namespace Downloadables
             {                
                 Log("Initializing Downloadables manager..." );
             }
-
-            InitializeState = EInitializeState.Initializing;
-            m_onInitialized = onInitialized;
-
-            Error error = ProcessCatalog(catalogJSON);
-            OnInitializeDone(error);
-        }
-
-        private void OnInitializeDone(Error error)
-        {
-            if (error == null)
-            {
-                InitializeState = EInitializeState.Initialized;
-            }
-            else
-            {
-                InitializeState = EInitializeState.Error;
-                InitializeError = error;
-            }
-
-            if (m_onInitialized != null)
-            {
-                m_onInitialized(InitializeError);
-                m_onInitialized = null;
-            }
-        }
-
-        private Error ProcessCatalog(JSONNode catalogJSON)
-        {
-            Error returnValue = null;                             
             
-            // Updates catalog information in Manifests folder and it also loads these entries in catalogStatus
-            returnValue = UpdateManifests(catalogJSON);
+            ProcessCatalog(catalogJSON);
 
-            if (returnValue == null)
+            IsInitialized = true;
+        } 
+
+        private void ProcessCatalog(JSONNode catalogJSON)
+        {    
+            if (catalogJSON != null)
+            {                
+                JSONClass assets = (JSONClass)catalogJSON["assets"];
+                if (assets != null)
+                {
+                    List<string> ids = new List<string>();
+
+                    string id;
+                    ArrayList keys = assets.GetKeys();
+                    int count = keys.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        id = (string)keys[i];
+                        ids.Add(id);
+
+                        Catalog_AddEntryStatus(id, assets[id]);                        
+                    }
+
+                    if (ids.Count > 0)
+                    {
+                        m_cleaner.CleanAllExcept(ids);
+                    }
+                }
+            }            
+        }                 
+        
+        public bool IsIdAvailable(string id)
+        {
+            bool returnValue = false;
+            if (IsInitialized)
             {
-                returnValue = UpdateDownloads();
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);
             }
 
             return returnValue;
-        } 
-        
-        private Error UpdateManifests(JSONNode catalogJSON)
+        }
+
+        public bool IsIdsListAvailable(List<string> ids)
         {
-            Catalog catalog = new Catalog();
-            catalog.Load(catalogJSON, sm_logger);
-
-            Error returnValue;
-
-            // Updates catalog information in Manifests folder and it also loads these entries in catalogStatus
-            List<string> fileNames = m_manifestsDirectory.Directory_GetFiles(out returnValue);
-            if (returnValue == null)
+            bool returnValue = true;
+            if (ids != null)
             {
-                Error error = null;
-
-                int count = fileNames.Count;
-                bool outdated;
-                string id;
-                CatalogEntry requestEntry;
-                JSONNode json;
-                EntryStatus manifestEntryStatus;
-                string fileName;                
-                for (int i = 0; i < count; i++)
+                int count = ids.Count;
+                for (int i = 0; i < count && returnValue; i++)
                 {
-                    fileName = Path.GetFileName(fileNames[i]);
-                    id = Path.GetFileNameWithoutExtension(fileNames[i]);
-
-                    // Checks if the current manifest belongs to the request catalog
-                    requestEntry = catalog.GetEntry(id);
-
-                    // It's not in the catalog, which means that it won't be used anymore, so it must be deleted
-                    if (requestEntry == null)
-                    {
-                        m_manifestsDirectory.File_Delete(fileName, out error);
-                    }
-                    else
-                    {
-                        json = m_manifestsDirectory.File_ReadJSON(fileName, out error);
-                        if (json == null)
-                        {
-                            if (CanLog())
-                            {
-                                LogError("Invalid json for downloadable " + id + " error = " + ((error == null) ? "null" : error.ToString()));
-                            }
-                        }
-
-                        manifestEntryStatus = new EntryStatus();
-                        manifestEntryStatus.Load(json, error);
-                        CatalogStatus_AddEntry(id, manifestEntryStatus);
-
-                        if (error == null)
-                        {
-                            // Checks if the information stored is outdated
-                            outdated = manifestEntryStatus.ManifestEntry.CRC != requestEntry.CRC || manifestEntryStatus.ManifestEntry.Size != requestEntry.Size;
-
-                            if (outdated)
-                            {                                
-                                // Deletes the downloaded file if it exists as it's outdated
-                                if (m_downloadsDirectory.File_Exists(fileName, out error))
-                                {
-                                    m_downloadsDirectory.File_Delete(fileName, out error);
-                                }
-
-                                manifestEntryStatus.ManifestEntry.CRC = requestEntry.CRC;
-                                manifestEntryStatus.ManifestEntry.Size = requestEntry.Size;
-
-                                m_manifestsDirectory.File_WriteJSON(fileName, manifestEntryStatus.ToJSON(), out error);                                                      
-                            }
-                        }
-                    }
-                }
-
-                // Adds entries in catalog that weren't found in Manifests folder to catalogStatus
-                Dictionary<string, CatalogEntry> entries = catalog.GetEntries();
-                foreach (KeyValuePair<string, CatalogEntry> pair in entries)
-                {
-                    if (!m_catalogStatus.ContainsKey(pair.Key))
-                    {
-                        manifestEntryStatus = new EntryStatus();
-                        manifestEntryStatus.Load(pair.Value.ToJSON(), null);
-                        CatalogStatus_AddEntry(pair.Key, manifestEntryStatus);
-                    }
+                    returnValue = IsIdAvailable(ids[i]);
                 }
             }
 
             return returnValue;
         }
 
-        private Error UpdateDownloads()
-        {
-            Error returnValue;
-
-            List<string> fileNames = m_downloadsDirectory.Directory_GetFiles(out returnValue);
-            if (returnValue == null)
+        public float GetIdMbLeftToDownload(string id)
+        {           
+            float returnValue = float.MaxValue;
+            if (IsInitialized)
             {
-                Error error;
-                string id;
-                string fileName;
-                int count = fileNames.Count;
-                FileInfo fileInfo;
-                EntryStatus entryStatus;
-                long length;
-                for (int i = 0; i < count; i++)
-                {
-                    id = Path.GetFileNameWithoutExtension(fileNames[i]);
-                    fileName = Path.GetFileName(fileNames[i]);
-
-                    entryStatus = CatalogStatus_GetEntry(id);
-
-                    // If this id is not supported by the catalog then it needs to be deleted
-                    if (entryStatus == null)
-                    {
-                        m_downloadsDirectory.File_Delete(fileName, out error);
-                    }
-                    else
-                    {
-                        fileInfo = m_downloadsDirectory.File_GetInfo(fileName, out error);
-                        if (error != null)
-                        {
-                            entryStatus.DataError = error;
-                        }
-                        else if (fileInfo != null)
-                        {
-                            length = fileInfo.Length;
-
-                            // Deletes this file because it's size doesn't match the one required by catalog
-                            if (length > entryStatus.ManifestEntry.Size)
-                            {
-                                m_downloadsDirectory.File_Delete(fileName, out error);
-                                length = 0;
-                            }
-
-                            entryStatus.DataEntry.Size = length;
-                        }
-                    }                    
-                }
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                returnValue = (entry == null) ? 0 : entry.GetMbLeftToDownload();
             }
 
             return returnValue;
-        }            
+        }
 
-        #region catalog_status
-        private Dictionary<string, EntryStatus> m_catalogStatus;
-
-        private void CatalogStatus_Reset()
+        public float GetIdTotalMb(string id)
         {
-            if (m_catalogStatus == null)
+            float returnValue = float.MaxValue;
+            if (IsInitialized)
             {
-                m_catalogStatus = new Dictionary<string, EntryStatus>();
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                returnValue = (entry == null) ? 0 : entry.GetTotalMb();
+                if (entry != null)
+                {
+                    entry.GetTotalMb();
+                }                
+            }
+
+            return returnValue;
+        }
+
+        public string GetPathToDownload(string id)
+        {
+            return DOWNLOADS_ROOT_PATH_WITH_SLASH + id;
+        }
+
+        public void RequestIdList(List<string> ids)
+        {
+
+        }
+
+        public List<string> GetIds()
+        {
+            List<string> returnValue = new List<string>();
+            foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+            {
+                returnValue.Add(pair.Key);
+            }
+
+            return returnValue;
+        }
+
+        public void Update()
+        {
+            m_disk.Update();
+            m_cleaner.Update();
+            Catalog_Update();
+        }        
+
+        #region catalog
+        private Dictionary<string, CatalogEntryStatus> m_catalog;
+
+        private void Catalog_Reset()
+        {            
+            if (m_catalog == null)
+            {
+                m_catalog = new Dictionary<string, CatalogEntryStatus>();
             }
             else
             {
-                m_catalogStatus.Clear();
+                m_catalog.Clear();
             }
         }
 
-        private void CatalogStatus_AddEntry(string id, EntryStatus entry)
+        private void Catalog_AddEntryStatus(string id, JSONNode json)
         {
-            m_catalogStatus.Add(id, entry);
-        }
+            CatalogEntryStatus entry = new CatalogEntryStatus();
+            entry.LoadManifest(id, json);
+            m_catalog.Add(id, entry);
+        }        
 
-        private EntryStatus CatalogStatus_GetEntry(string id)
+        private CatalogEntryStatus Catalog_GetEntryStatus(string id)
         {
-            EntryStatus entry = null;
-            m_catalogStatus.TryGetValue(id, out entry);
+            CatalogEntryStatus entry = null;
+            m_catalog.TryGetValue(id, out entry);
             return entry;
+        }  
+        
+        public Dictionary<string, CatalogEntryStatus> Catalog_GetEntryStatusList()
+        {
+            return m_catalog;
         }
 
-        public Dictionary<string, EntryStatus> CatalogStatus_GetCatalog()
+        private void Catalog_Update()
         {
-            return m_catalogStatus;
+            foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+            {
+                pair.Value.Update();
+            }
         }
         #endregion
 

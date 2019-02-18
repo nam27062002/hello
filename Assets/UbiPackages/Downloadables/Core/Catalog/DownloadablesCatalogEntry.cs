@@ -6,8 +6,8 @@ namespace Downloadables
     {
         private static string ATT_CRC = "crc32";
         private static string ATT_SIZE = "size";
-
-        public long CRC { get; set; }
+        
+        public long CRC { get; set; }        
         public long Size { get; set; }
 
         public void Reset()
@@ -47,18 +47,16 @@ namespace Downloadables
         {
             JSONClass data = new JSONClass();
 
-            data[ATT_CRC] = CRC;
-            data[ATT_SIZE] = Size;
+            JSON_AddLongAtt(data, ATT_CRC, CRC);
+            JSON_AddLongAtt(data, ATT_SIZE, Size);            
 
             return data;
-        }
+        }       
 
-        private void AddToJSON(JSONClass data, string attId, string value)
+        private void JSON_AddLongAtt(JSONClass data, string attName, long value)
         {
-            if (data != null && !string.IsNullOrEmpty(attId) && value != null)
-            {
-                data[attId] = value;
-            }
+            JSONNumber jsonNumber = new JSONNumber(value);
+            data.Add(attName, jsonNumber);
         }
 
         public override string ToString()

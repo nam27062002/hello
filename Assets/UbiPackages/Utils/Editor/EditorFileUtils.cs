@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class FileEditorTools
+public class EditorFileUtils
 {
     private static bool VERBOSE = false;
 

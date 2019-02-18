@@ -39,7 +39,7 @@ public class AssetBundleHandle
     /// Path where the asset bundle is stored in disk
     /// </summary>
     private string m_localPath;
-    public string LocalPath
+    public string Path
     {
         get
         {
@@ -55,31 +55,19 @@ public class AssetBundleHandle
     public void Reset()
     {
         Id = null;
-        LocalPath = null;
+        Path = null;
         m_dependenciesIncludingSelf = null;
         AssetBundle = null;
     }
 
-    public void SetupLocal(string id, string localPath, List<string> dependencies)
+    public void Setup(string id, string path, List<string> dependencies, bool isRemote)
     {
-        m_isRemote = false;
-        LocalPath = localPath;
+        m_isRemote = isRemote;
+        Path = path;
 
-        Setup(id, dependencies);
-    }
-
-    public void SetupRemote(string id, string url, List<string> dependencies)
-    {
-        m_isRemote = false;
-        Setup(id, dependencies);
-        LoadState = AssetBundlesTypes.ELoadState.None;
-    }
-
-    private void Setup(string id, List<string> dependencies)
-    {
         m_id = id;
-        m_dependenciesIncludingSelf = dependencies;                
-    }
+        m_dependenciesIncludingSelf = dependencies;
+    }        
 
     public bool IsRemote()
     {

@@ -11,14 +11,24 @@ public class DiskDriver
         return Directory.Exists(path);
     }
 
+    public virtual DirectoryInfo Directory_CreateDirectory(string path)
+    {
+        return Directory.CreateDirectory(path);
+    }
+
     public virtual List<string> Directory_GetFiles(string path)
     {
         return new List<string>(Directory.GetFiles(path));        
     }  
     
     public virtual string File_ReadAllText(string path)
-    {
+    {     
         return File.ReadAllText(path);
+    }
+
+    public virtual byte[] File_ReadAllBytes(string path)
+    {
+        return File.ReadAllBytes(path);
     }
 
     public virtual void File_WriteAllText(string path, string content)

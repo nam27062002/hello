@@ -57,16 +57,8 @@ public class AddressablesManager
 
     private AddressablesCatalog m_catalog;
     private bool m_isInitialized = false;
-    private AddressablesCatalogEntry m_entryHelper;
-
-    private Downloadables.Manager m_downloadablesManager;
-    
-    public AddressablesManager()
-    {
-        Logger logger = new ConsoleLogger("Downloadables");
-        m_downloadablesManager = new Downloadables.Manager(new DiskDriver(), logger);
-    }
-
+    private AddressablesCatalogEntry m_entryHelper;    
+        
     public void Initialize(JSONNode catalogJSON, JSONNode downloadablesCatalogJSON, string assetBundlesManifestPath, Logger logger)
     {
         sm_logger = logger;
@@ -96,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, logger);
+        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -106,9 +98,7 @@ public class AddressablesManager
 
         Ops_Init();
 
-        m_entryHelper = new AddressablesCatalogEntry();        
-        
-        m_downloadablesManager.Initialize(downloadablesCatalogJSON, null);
+        m_entryHelper = new AddressablesCatalogEntry();                        
 
         m_isInitialized = true;
     }    
@@ -120,9 +110,7 @@ public class AddressablesManager
             m_catalog.Reset();          
             m_providerFromAB.Reset();
 
-            Ops_Reset();
-
-            m_downloadablesManager.Reset();
+            Ops_Reset();            
 
             m_isInitialized = false;
         }
@@ -182,6 +170,31 @@ public class AddressablesManager
         else
         {
             Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Addressable id which dependencies are requested to be downloaded</param>
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp DownloadDependenciesAsync(string id)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.DownloadDependenciesAsync(entry);
+
+            Ops_AddOp(returnValue);
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
         }
 
         return returnValue;
@@ -377,7 +390,7 @@ public class AddressablesManager
     public void Update()
     {
         if (IsInitialized())
-        {
+        {            
             m_providerFromAB.Update();
             Ops_Update();
         }

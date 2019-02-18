@@ -6,7 +6,7 @@ public abstract class UnitTest
 
     private string m_name;
     private bool m_hasPassed;
-    protected float m_timeStartAt;
+    protected float m_timeStartAt = -1;
 
     private OnDoneCallback m_onDone;
 
@@ -18,6 +18,7 @@ public abstract class UnitTest
         m_onDone = onDone;
         SetHasPassed(false);
         m_isDone = false;
+        m_timeStartAt = -1f;
     }
 
     public void Perform()
@@ -28,6 +29,11 @@ public abstract class UnitTest
     }
 
     protected abstract void ExtendedPerform();
+
+    public bool HasStarted()
+    {
+        return m_timeStartAt >= 0;
+    }
 
     private bool GetHasPassed()
     {
