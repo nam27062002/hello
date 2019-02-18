@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-using UnityEditor;
+//using UnityEditor;
 
 
 public class OTA_NPCSceneController : MonoBehaviour {
@@ -127,7 +127,7 @@ public class OTA_NPCSceneController : MonoBehaviour {
     private void WriteHashSet(string _fileName, HashSet<string> _set) {
         List<string> sorted = _set.ToList();
         sorted.Sort();
-
+        /*
         foreach (string npc in sorted) {
             string path = "Assets/Resources/" + IEntity.ENTITY_PREFABS_PATH + npc + ".prefab";
             AssetImporter ai = AssetImporter.GetAtPath(path);
@@ -148,7 +148,7 @@ public class OTA_NPCSceneController : MonoBehaviour {
 
     [SerializeField] private string m_guid = "";
     public void FindGUI() {
-        string path = AssetDatabase.GUIDToAssetPath(m_guid);
-        Debug.Log(path);
+       // string path = AssetDatabase.GUIDToAssetPath(m_guid);
+       // Debug.Log(path);
     }
 }

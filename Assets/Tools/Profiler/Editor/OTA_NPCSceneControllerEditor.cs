@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.IO;
 using System.Collections.Generic;
 
 
@@ -51,6 +52,10 @@ public class OTA_NPCSceneControllerEditor : Editor {
         if (GUILayout.Button("Find by GUID")) {
             m_component.FindGUI();
         }
+
+        if (GUILayout.Button("Export NPCs AB")) {
+            ExportNPCassetBundles();
+        }
     }
 
 	public void FindISpawner(Transform _t, ref List<ISpawner> _list) {		
@@ -63,4 +68,51 @@ public class OTA_NPCSceneControllerEditor : Editor {
 			FindISpawner(t, ref _list);
 		}
 	}
+
+    private void ExportNPCassetBundles() {
+        string[] paths = { "Assets/AI", "Assets/Art/3D/Gameplay/Entities", "Assets/Resources/Game/Entities/NewEntites/" };
+
+        List<string> entries = new List<string>();
+        for (int i = 0; i < paths.Length; ++i) {
+            PrintDirectory(new DirectoryInfo(paths[i]), ref entries);
+        }
+
+        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_npc_addressables.json", false);
+        writer.AutoFlush = true;
+
+        writer.Write("{\"entries\":[");
+        for (int i = 0; i < entries.Count; ++i) {
+            writer.Write(entries[i]);
+            if (i < entries.Count - 1) {
+                writer.Write(",");
+            }
+        }
+        writer.Write("]}");
+        writer.Close();
+    }
+
+    private void PrintDirectory(DirectoryInfo _directory, ref List<string> _entries) {
+        DirectoryInfo[] directories = _directory.GetDirectories();
+        foreach (DirectoryInfo directory in directories) {
+            PrintDirectory(directory, ref _entries);
+        }
+
+        FileInfo[] files = _directory.GetFiles();
+        foreach (FileInfo file in files) {
+            string filePath = file.FullName;
+            filePath = filePath.Substring(filePath.IndexOf("Assets/", System.StringComparison.Ordinal));
+
+            AssetImporter ai = AssetImporter.GetAtPath(filePath);
+            if (ai != null) {
+                string assetBundle = ai.assetBundleName;
+
+                if (!string.IsNullOrEmpty(assetBundle)) {
+                    _entries.Add("{\"id\":\"" + Path.GetFileNameWithoutExtension(file.Name) + "\"," +
+                    	          "\"locationType\":\"AssetBundles\"," +
+                    	          "\"guid\":\"" + AssetDatabase.AssetPathToGUID(filePath) + "\"," +
+                    	          "\"abName\":\"" + assetBundle + "\"}");
+                }
+            }
+        }
+    }
 }
