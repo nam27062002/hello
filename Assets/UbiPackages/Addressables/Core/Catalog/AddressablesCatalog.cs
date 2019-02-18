@@ -9,9 +9,12 @@ public class AddressablesCatalog
 {
     private static string CATALOG_ATT_ENTRIES = "entries";
     public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
+    public static string CATALOG_ATT_AREAS = "areas";
 
     private Dictionary<string, AddressablesCatalogEntry> m_entries;
     private List<string> m_localABList;
+
+    private Dictionary<string, AddressablesCatalogArea> m_areas;
 
 #if UNITY_EDITOR
     private bool m_editorMode;
@@ -26,12 +29,14 @@ public class AddressablesCatalog
     {
         m_entries = new Dictionary<string, AddressablesCatalogEntry>();
         m_localABList = new List<string>();
+        m_areas = new Dictionary<string, AddressablesCatalogArea>();
     }
 
     public void Reset()
     {
         m_entries.Clear();
         m_localABList.Clear();
+        m_areas.Clear();
     }
 
     public void Load(JSONNode catalogJSON, Logger logger)
@@ -42,15 +47,16 @@ public class AddressablesCatalog
         {
             LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);
             LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
+            LoadAreas(catalogJSON[CATALOG_ATT_AREAS].AsArray, logger);
         }
     }
 
     public JSONClass ToJSON()
-    {
-        // Create new object
+    {        
         JSONClass data = new JSONClass();        
         data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());        
         data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
+        data.Add(CATALOG_ATT_AREAS, AreasToJSON());
 
         return data;
     }
@@ -185,5 +191,51 @@ public class AddressablesCatalog
         }
 
         return returnValue;
+    }
+
+    private void LoadAreas(JSONArray areas, Logger logger)
+    {
+        if (areas != null)
+        {            
+            AddressablesCatalogArea area;
+            int count = areas.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                area = new AddressablesCatalogArea();
+                area.Load(areas[i]);              
+                if (m_areas.ContainsKey(area.Id))
+                {
+                    if (logger != null && logger.CanLog())
+                    {
+                        logger.LogError("Duplicate area " + area.Id + " found in catalog");
+                    }
+                }
+                else
+                {
+                    m_areas.Add(area.Id, area);
+                }                
+            }
+        }
+    }
+
+    private JSONArray AreasToJSON()
+    {
+        JSONArray data = new JSONArray();        
+        foreach (KeyValuePair<string, AddressablesCatalogArea> pair in m_areas)
+        {            
+            data.Add(pair.Value.ToJSON());            
+        }
+
+        return data;
+    }
+
+    public Dictionary<string, AddressablesCatalogArea> GetAreas()
+    {
+        return m_areas;
+    }
+
+    public AddressablesCatalogArea GetArea(string areaId)
+    {
+        return (!string.IsNullOrEmpty(areaId) && m_areas.ContainsKey(areaId)) ? m_areas[areaId] : null;
     }
 }

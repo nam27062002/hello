@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 public class UnitTestBatch
 {
@@ -14,6 +15,16 @@ public class UnitTestBatch
     /// </summary>
     private List<UnitTest> m_failTest = new List<UnitTest>();
 
+    private enum EPerformStep
+    {
+        None,
+        PerformingSuccess,
+        PerformingFail,
+        Done
+    };
+
+    private EPerformStep m_performStep = EPerformStep.None;
+
     public UnitTestBatch(string name)
     {
         Name = name;
@@ -23,6 +34,19 @@ public class UnitTestBatch
     {
         List<UnitTest> list = (successExpected) ? m_successTest : m_failTest;
         list.Add(test);
+    }
+
+    public void AddBatch(UnitTestBatch batch)
+    {
+        for (int i = 0; i < batch.m_successTest.Count; i++)
+        {
+            AddTest(batch.m_successTest[i], true);
+        }
+
+        for (int i = 0; i < batch.m_failTest.Count; i++)
+        {
+            AddTest(batch.m_failTest[i], false);
+        }
     }
 
     public static void PrintSuccessHeader()
@@ -35,31 +59,77 @@ public class UnitTestBatch
         Debug.Log("");
         Debug.Log("FAIL TESTS:");
     }
+   
+    private void SetPerformStep(EPerformStep step)
+    {
+        m_performStep = step;
+
+        switch(m_performStep)
+        {
+            case EPerformStep.PerformingSuccess:
+                PrintSuccessHeader();
+                if (m_successTest.Count > 0)
+                {
+                    m_successTest[0].Perform();
+                }
+                break;
+
+            case EPerformStep.PerformingFail:
+                PrintFailHeader();
+                if (m_failTest.Count > 0)
+                {
+                    m_failTest[0].Perform();
+                }
+                break;
+        }
+    }
 
     public void PerformAllTests()
-    {
-        PrintSuccessHeader();
-        PerformSuccessTests();
-
-        PrintFailHeader();
-        PerformFailTests();
-    }
-
-    public void PerformSuccessTests()
-    {
-        int count = m_successTest.Count;
-        for (int i = 0; i < count; i++)
+    {        
+        SetPerformStep(EPerformStep.PerformingSuccess);
+    }        
+   
+    private bool IsStepDone(List<UnitTest> list)
+    {        
+        if (list.Count > 0)
         {
-            m_successTest[i].Perform();
+            list[0].Update();
+            if (list[0].IsDone())
+            {
+                list.RemoveAt(0);
+                if (list.Count > 0)
+                {
+                    list[0].Perform();
+                }
+            }
         }
+
+        return (list.Count == 0);
     }
 
-    public void PerformFailTests()
+    public bool Update()
     {
-        int count = m_failTest.Count;
-        for (int i = 0; i < count; i++)
+        bool isStepDone;
+
+        switch (m_performStep)
         {
-            m_failTest[i].Perform();
+            case EPerformStep.PerformingSuccess:
+                isStepDone = IsStepDone(m_successTest);
+                if (isStepDone)
+                {
+                    SetPerformStep(EPerformStep.PerformingFail);
+                }                   
+                break;
+
+            case EPerformStep.PerformingFail:
+                isStepDone = IsStepDone(m_failTest);
+                if (isStepDone)
+                {
+                    SetPerformStep(EPerformStep.Done);
+                }
+                break;
         }
-    }
+
+        return m_performStep == EPerformStep.Done;
+    }   
 }

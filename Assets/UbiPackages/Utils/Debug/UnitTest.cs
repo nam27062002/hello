@@ -6,24 +6,34 @@ public abstract class UnitTest
 
     private string m_name;
     private bool m_hasPassed;
-    protected float m_timeStartAt;
+    protected float m_timeStartAt = -1;
 
     private OnDoneCallback m_onDone;
-    
+
+    private bool m_isDone;
+
     public void Setup(string name, OnDoneCallback onDone)
     {
         m_name = name;
         m_onDone = onDone;
         SetHasPassed(false);
+        m_isDone = false;
+        m_timeStartAt = -1f;
     }
 
     public void Perform()
     {
+        m_isDone = false;
         m_timeStartAt = Time.realtimeSinceStartup;
         ExtendedPerform();
     }
 
     protected abstract void ExtendedPerform();
+
+    public bool HasStarted()
+    {
+        return m_timeStartAt >= 0;
+    }
 
     private bool GetHasPassed()
     {
@@ -37,6 +47,7 @@ public abstract class UnitTest
 
     protected void NotifyPasses(bool success)
     {
+        m_isDone = true;
         SetHasPassed(success);
 
         if (m_onDone != null)
@@ -60,6 +71,11 @@ public abstract class UnitTest
     public string GetName()
     {
         return (m_name == null) ? GetType().ToString() : m_name;
+    }
+
+    public bool IsDone()
+    {
+        return m_isDone;
     }
 
     public virtual void Update() {}

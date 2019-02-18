@@ -3,7 +3,7 @@ using System.IO;
 
 public class UTLoadDownloadablesCatalog : UnitTest
 {
-    private static string ROOT_PATH = "Assets/Editor/Downloadables/UnitTests";    
+    private static string ROOT_PATH = "Assets/Editor/Downloadables/UnitTests/Catalogs/00";    
 
     private static Logger sm_logger = new ConsoleLogger("UTLoadDownloadablesCatalog");
 
@@ -39,7 +39,7 @@ public class UTLoadDownloadablesCatalog : UnitTest
         reader.Close();
 
         JSONNode catalogJSON = JSON.Parse(content);
-        DownloadablesCatalog catalog = new DownloadablesCatalog();
+        Downloadables.Catalog catalog = new Downloadables.Catalog();
         catalog.Load(catalogJSON, sm_logger);
 
         JSONNode jsonAfterLoading = catalog.ToJSON();

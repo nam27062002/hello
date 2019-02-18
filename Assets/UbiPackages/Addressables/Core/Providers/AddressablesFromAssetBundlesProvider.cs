@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using SimpleJSON;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, Logger logger)
+    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, JSONNode downloadablesCatalog, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, downloadablesCatalog, logger);
     }
 
     public void Reset()
@@ -13,9 +14,22 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.Reset();
     }
 
+    public override bool IsResourceAvailable(AddressablesCatalogEntry entry)
+    {
+        // A resource is available if its dependencies and itself are available
+        List<string> dependencies = GetDependencyIds(entry);
+        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencies);
+    }
+
     public override List<string> GetDependencyIds(AddressablesCatalogEntry entry)
     {
         return AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);       
+    }
+
+    public override AddressablesOp DownloadDependenciesAsync(AddressablesCatalogEntry entry)
+    {
+        AssetBundlesOpRequest request = AssetBundlesManager.Instance.DownloadAssetBundleAndDependencies(entry.AssetBundleName, null, true);
+        return ProcessAssetBundlesOpRequest(request);
     }
 
     public override AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)

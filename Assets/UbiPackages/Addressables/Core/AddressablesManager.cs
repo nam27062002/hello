@@ -57,9 +57,9 @@ public class AddressablesManager
 
     private AddressablesCatalog m_catalog;
     private bool m_isInitialized = false;
-    private AddressablesCatalogEntry m_entryHelper;
-    
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, Logger logger)
+    private AddressablesCatalogEntry m_entryHelper;    
+        
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, Logger logger)
     {
         sm_logger = logger;
 
@@ -88,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, logger);
+        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -98,7 +98,7 @@ public class AddressablesManager
 
         Ops_Init();
 
-        m_entryHelper = new AddressablesCatalogEntry();
+        m_entryHelper = new AddressablesCatalogEntry();                        
 
         m_isInitialized = true;
     }    
@@ -110,7 +110,7 @@ public class AddressablesManager
             m_catalog.Reset();          
             m_providerFromAB.Reset();
 
-            Ops_Reset();     
+            Ops_Reset();            
 
             m_isInitialized = false;
         }
@@ -170,6 +170,50 @@ public class AddressablesManager
         else
         {
             Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
+    /// </summary>
+    /// <param name="id">Resource id (either scene or asset)</param>
+    /// <returns>Whether or not the resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded</returns>
+    public bool IsResourceAvailable(string id)
+    {        
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            return provider.IsResourceAvailable(entry);            
+        }
+        else
+        {
+            return false;
+        }     
+    }
+
+    /// <summary>
+    /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Addressable id which dependencies are requested to be downloaded</param>
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp DownloadDependenciesAsync(string id)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            returnValue = provider.DownloadDependenciesAsync(entry);
+
+            Ops_AddOp(returnValue);
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
         }
 
         return returnValue;
@@ -365,11 +409,30 @@ public class AddressablesManager
     public void Update()
     {
         if (IsInitialized())
-        {
+        {            
             m_providerFromAB.Update();
             Ops_Update();
         }
     }
+
+    #region areas
+    /// <summary>
+    /// Returns the list of dependencies (typically asset bundles) ids that need the area with <c>id</c> as an identifier.
+    /// </summary>
+    /// <param name="id">Area id which dependencies are requested.</param>    
+    public List<string> Areas_GetDependencyIds(string areaId)
+    {
+        List<string> returnValue = null;   
+        AddressablesCatalogArea area = m_catalog.GetArea(areaId);
+        if (area != null)
+        {
+            returnValue = AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
+        }
+
+        return returnValue;
+    }
+
+    #endregion
 
     #region ops
     private List<AddressablesOp> m_ops;

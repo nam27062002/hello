@@ -107,6 +107,9 @@ public class LevelLoader
     public delegate void OnChangeStateCallback(EState prevState, EState newState);
     private OnChangeStateCallback OnChangeState;
 
+    private string m_prevArea;
+    private string m_nextArea;
+
     private List<string> m_realSceneNamesToLoad;
     private List<string> m_realSceneNamesToUnload;
 
@@ -115,6 +118,12 @@ public class LevelLoader
     private List<AddressablesOp> m_tasks;
 
     private bool m_loadSync;
+
+    public LevelLoader(string prevArea, string nextArea)
+    {
+        m_prevArea = prevArea;
+        m_nextArea = nextArea;
+    }
 
     public void Reset()
     {
@@ -185,7 +194,7 @@ public class LevelLoader
         m_loadSync = loadSync;
         OnChangeState = onChangeState;
             
-        m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_realSceneNamesToUnload, m_realSceneNamesToLoad);        
+        m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad);        
         State = EState.UnloadingPrevAreaScenes;        
     }
 

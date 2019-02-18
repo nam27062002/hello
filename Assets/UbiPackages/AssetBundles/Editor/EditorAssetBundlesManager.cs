@@ -14,12 +14,12 @@ public class EditorAssetBundlesManager
     public static void Clear()
     {
         string assetBundleDirectory = GetAssetBundlesDirectory();
-        FileEditorTools.DeleteFileOrDirectory(assetBundleDirectory);
+        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
     }
 
     public static string GetAssetBundlesDirectory()
     {
-        return FileEditorTools.PathCombine(ASSET_BUNDLES_PATH, EditorUserBuildSettings.activeBuildTarget.ToString());
+        return EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, EditorUserBuildSettings.activeBuildTarget.ToString());
     }
 
     public static void BuildAssetBundles()
@@ -27,7 +27,7 @@ public class EditorAssetBundlesManager
         Debug.Log("Building asset bundles...");
         string assetBundleDirectory = GetAssetBundlesDirectory();
 
-        FileEditorTools.DeleteFileOrDirectory(assetBundleDirectory);
+        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
         if (!Directory.Exists(assetBundleDirectory))
         {
             Directory.CreateDirectory(assetBundleDirectory);
@@ -58,14 +58,14 @@ public class EditorAssetBundlesManager
     {        
         string assetBundlesPath = GetAssetBundlesDirectory();
 
-        if (FileEditorTools.GetFilesAmount(assetBundlesPath) > 0 && fileNames.Count > 0)
+        if (EditorFileUtils.GetFilesAmount(assetBundlesPath) > 0 && fileNames.Count > 0)
         {
-            if (FileEditorTools.Exists(dstPath))
+            if (EditorFileUtils.Exists(dstPath))
             {
-                FileEditorTools.DeleteFileOrDirectory(dstPath);
+                EditorFileUtils.DeleteFileOrDirectory(dstPath);
             }
 
-            FileEditorTools.CreateDirectory(dstPath);
+            EditorFileUtils.CreateDirectory(dstPath);
             
             int count = fileNames.Count;
             string srcFile;
@@ -75,13 +75,13 @@ public class EditorAssetBundlesManager
             for (int i = 0; i < count; i++)
             {
                 fileName = fileNames[i];
-                srcFile = FileEditorTools.PathCombine(assetBundlesPath, fileName);
+                srcFile = EditorFileUtils.PathCombine(assetBundlesPath, fileName);
                 
                 if (File.Exists(srcFile))
                 {
                     directory = dstPath;
                     dstFile = GetDirectoryAndFileName(ref directory, ref fileName);                    
-                    FileEditorTools.CreateDirectory(directory);
+                    EditorFileUtils.CreateDirectory(directory);
                     File.Copy(srcFile, dstFile, true);
                 }
                 else
@@ -98,12 +98,12 @@ public class EditorAssetBundlesManager
         int count = tokens.Length;
         for (int i = 0; i < count - 1; i++)
         {
-            dstPath = FileEditorTools.PathCombine(dstPath, tokens[i]);
+            dstPath = EditorFileUtils.PathCombine(dstPath, tokens[i]);
         }
 
         fileName = tokens[count - 1];
 
-        return FileEditorTools.PathCombine(dstPath, fileName);
+        return EditorFileUtils.PathCombine(dstPath, fileName);
     }
 
     public static void CopyAssetBundlesManifest(string dstPath)
@@ -112,31 +112,31 @@ public class EditorAssetBundlesManager
 
         // Rename the dependencies bundle
         string assetBundlesPath = GetAssetBundlesDirectory();
-        string origDependenciesManifestPath = FileEditorTools.PathCombine(assetBundlesPath, activeBuildTarget);
-        string newDependenciesManifestPath = FileEditorTools.PathCombine(dstPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
+        string origDependenciesManifestPath = EditorFileUtils.PathCombine(assetBundlesPath, activeBuildTarget);
+        string newDependenciesManifestPath = EditorFileUtils.PathCombine(dstPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
         if (File.Exists(origDependenciesManifestPath))
         {
-            FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
+            EditorFileUtils.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
 
             // Rename the dependencies manifest        
             string extension = ".manifest";
             origDependenciesManifestPath += extension;
             newDependenciesManifestPath += extension;
-            FileEditorTools.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
+            EditorFileUtils.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
         }
     }    
 
     public static void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
-    {
+    {        
         string assetBundlesDirectory = GetAssetBundlesDirectory();
 
-        DownloadablesCatalog catalog = new DownloadablesCatalog();
+        Downloadables.Catalog catalog = new Downloadables.Catalog();
 
         if (fileNames != null)
         {
             string fileName;
             string path;
-            DownloadablesCatalogEntry entry;
+            Downloadables.CatalogEntry entry;
             int count = fileNames.Count;
             for (int i = 0; i < count; i++)
             {
@@ -146,7 +146,7 @@ public class EditorAssetBundlesManager
                 if (File.Exists(path))
                 {
                     byte[] bytes = File.ReadAllBytes(path);
-                    entry = new DownloadablesCatalogEntry();
+                    entry = new Downloadables.CatalogEntry();
                     entry.Setup(StringUtils.CRC32(bytes), bytes.Length);
 
                     catalog.AddEntry(fileName, entry);
@@ -160,12 +160,13 @@ public class EditorAssetBundlesManager
         }
 
         JSONClass json = catalog.ToJSON();
-        FileEditorTools.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
+        EditorFileUtils.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
 
         // It copies it to the player's folder too
         if (!string.IsNullOrEmpty(playerFolder))
         {
-            FileEditorTools.WriteToFile(playerFolder, json.ToString());
-        }
+            string path = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
+            EditorFileUtils.WriteToFile(path, json.ToString());
+        }        
     }
 }

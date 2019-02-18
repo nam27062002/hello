@@ -2,8 +2,14 @@
 using UnityEditor;
 using UnityEngine;
 
-public class UnitTestsEditor : MonoBehaviour
+[InitializeOnLoad]
+public class EditorUnitTests : MonoBehaviour
 {
+    static EditorUnitTests()
+    {
+        EditorApplication.update += Internal_Update;
+    }
+
     private const string MENU = "Unit Tests";
 
     private const string MENU_ADDRESSABLES = MENU + "/Addressables";
@@ -12,7 +18,12 @@ public class UnitTestsEditor : MonoBehaviour
 
     private const string MENU_UBI_DOWNLOADABLES = MENU + "/Downloadables";
     private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_UBI_DOWNLOADABLES + "/Parse Catalog";
-    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG });
+    private const string MENU_DOWNLOADABLES_INITIALIZE = MENU_UBI_DOWNLOADABLES + "/Initialize";
+    private const string MENU_DOWNLOADABLES_DISK = MENU_UBI_DOWNLOADABLES + "/Disk";
+    private const string MENU_DOWNLOADABLES_CLEANER = MENU_UBI_DOWNLOADABLES + "/Cleaner";
+    private const string MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS = MENU_UBI_DOWNLOADABLES + "/Catalog Entry Status";
+    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG, MENU_DOWNLOADABLES_INITIALIZE,
+                                                                                               MENU_DOWNLOADABLES_DISK, MENU_DOWNLOADABLES_CLEANER, MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS });
 
     private const string MENU_UBI_LISTS = MENU + "/UbiLists";
     private const string MENU_UBI_LISTS_ADD_RANGE = MENU_UBI_LISTS + "/AddRange Test";
@@ -22,6 +33,9 @@ public class UnitTestsEditor : MonoBehaviour
     private static List<string> MENU_UBI_LISTS_ALL_NAMES = new List<string>(new string[] { MENU_UBI_LISTS_ADD_RANGE, MENU_UBI_LISTS_SPLIT });
 
     private const string MENU_ALL = MENU + "/All Tests";
+    private const string MENU_RESET = MENU + "/Reset Tests";
+
+    private static UnitTestBatch sm_unitTestBatch;
 
     private static UnitTestBatch GetUnitTestBatch(string key)
     {
@@ -32,6 +46,19 @@ public class UnitTestsEditor : MonoBehaviour
 
             case MENU_DOWNLOADABLES_PARSE_CATALOG:
                 return UTLoadDownloadablesCatalog.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_INITIALIZE:
+                return UTDownloadablesInitialize.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_DISK:
+                return UTDownloadablesDisk.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS:
+                return UTDownloadablesCatalogEntryStatus.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_CLEANER:
+                return UTDownloadablesCleaner.GetUnitTestBatch();
+
             case MENU_UBI_LISTS_ADD_RANGE:
                 return UTListAddRange<string>.GetUnitTestBatch();
 
@@ -54,6 +81,30 @@ public class UnitTestsEditor : MonoBehaviour
         PerformAllTests(MENU_DOWNLOADABLES_PARSE_CATALOG);
     }
 
+    [MenuItem(MENU_DOWNLOADABLES_INITIALIZE)]
+    public static void UnitTests_Downloadables_Initialize()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_INITIALIZE);
+    }
+
+    [MenuItem(MENU_DOWNLOADABLES_DISK)]
+    public static void UnitTests_Downloadables_Disk()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_DISK);
+    }
+
+    [MenuItem(MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS)]
+    public static void UnitTests_Downloadables_CatalogEntryStatus()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS);
+    }
+
+    [MenuItem(MENU_DOWNLOADABLES_CLEANER)]
+    public static void UnitTests_Downloadables_Cleaner()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_CLEANER);
+    }
+    
     [MenuItem(MENU_UBI_LISTS_ADD_RANGE)]
     public static void UnitTests_UbiLists_AddRange()
     {
@@ -85,12 +136,18 @@ public class UnitTestsEditor : MonoBehaviour
         PerformUnitTestBatchList(batches);
     }
 
+    [MenuItem(MENU_RESET)]
+    private static void UnitTest_Reset()
+    {
+        sm_unitTestBatch = null;
+    }
+
     private static void PerformAllTests(string key)
     {
-        UnitTestBatch batch = GetUnitTestBatch(key);
-        if (batch != null)
+        sm_unitTestBatch = GetUnitTestBatch(key);
+        if (sm_unitTestBatch != null)
         {
-            batch.PerformAllTests();
+            sm_unitTestBatch.PerformAllTests();
         }
     }
 
@@ -113,20 +170,27 @@ public class UnitTestsEditor : MonoBehaviour
     {        
         if (batches != null)
         {
-            int count = batches.Count;
+            sm_unitTestBatch = new UnitTestBatch("Batch List");
 
-            // First success tests
-            UnitTestBatch.PrintSuccessHeader();
+            int count = batches.Count;            
             for (int i = 0; i < count; i++)
             {
-                batches[i].PerformSuccessTests();
+                sm_unitTestBatch.AddBatch(batches[i]);
             }
 
-            UnitTestBatch.PrintFailHeader();
-            for (int i = 0; i < count; i++)
-            {
-                batches[i].PerformFailTests();
-            }
+            sm_unitTestBatch.PerformAllTests();
         }        
+    }   
+
+    static void Internal_Update()
+    {
+        if (sm_unitTestBatch != null)
+        {
+            if (sm_unitTestBatch.Update())
+            {
+                Debug.Log("DONE");
+                sm_unitTestBatch = null;
+            }
+        }
     }
 }
