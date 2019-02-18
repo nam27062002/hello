@@ -70,20 +70,35 @@ public class HDAddressablesManager
         private List<AddressablesOp> m_prevAreaScenesToUnload;
         private List<AddressablesOp> m_nextAreaScenesToLoad;        
 
-        public Ingame_SwitchAreaHandle(List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+        public Ingame_SwitchAreaHandle(string prevArea, string nextArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
         {
             PrevAreaRealSceneNames = prevAreaRealSceneNames;
             NextAreaRealSceneNames = nextAreaRealSceneNames;
 
+            // Retrieves the dependencies of the previous area scenes
             List<string> prevAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(prevAreaRealSceneNames);
+
+            // Retrieves the dependencies of the next area scenes
             List<string> nextAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(nextAreaRealSceneNames);
+
+            // Retrieves the dependencies of the previous area defined in addressablesCatalog.json
+            List<string> prevAreaDependencyIds = Instance.m_addressablesManager.Areas_GetDependencyIds(prevArea);
+
+            // Adds the dependencies of the scenes and the dependencies of the addressables areas
+            prevAreaDependencyIds = UbiListUtils.AddRange(prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
+
+            // Retrieves the dependencies of the next area defined in addressablesCatalog.json
+            List<string> nextAreaDependencyIds = Instance.m_addressablesManager.Areas_GetDependencyIds(nextArea);
+
+            // Adds the dependencies of the scenes and the dependencies of the addressables areas
+            nextAreaDependencyIds = UbiListUtils.AddRange(nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);
 
             List<string> assetBundleIdsToStay;
             List<string> assetBundleIdsToUnload;
-            UbiListUtils.SplitIntersectionAndDisjoint(prevAreaSceneDependencyIds, nextAreaSceneDependencyIds, out assetBundleIdsToStay, out assetBundleIdsToUnload);
+            UbiListUtils.SplitIntersectionAndDisjoint(prevAreaDependencyIds, nextAreaDependencyIds, out assetBundleIdsToStay, out assetBundleIdsToUnload);
 
             List<string> assetBundleIdsToLoad;            
-            UbiListUtils.SplitIntersectionAndDisjoint(nextAreaSceneDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
+            UbiListUtils.SplitIntersectionAndDisjoint(nextAreaDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
             DependencyIdsToLoad = assetBundleIdsToLoad;
             DependencyIdsToUnload = assetBundleIdsToUnload;            
@@ -168,7 +183,7 @@ public class HDAddressablesManager
         }
     }
 
-    public Ingame_SwitchAreaHandle Ingame_SwitchArea(List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+    public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
     {
         // Makes sure that all scenes are available. For now a scene is not scheduled to be loaded if it's not available because there's no support
         // for downloading stuff during the loading screen. 
@@ -188,7 +203,7 @@ public class HDAddressablesManager
             }
         }
 
-        return new Ingame_SwitchAreaHandle(prevAreaRealSceneNames, nextAreaRealSceneNames);
+        return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
     #endregion    
    
