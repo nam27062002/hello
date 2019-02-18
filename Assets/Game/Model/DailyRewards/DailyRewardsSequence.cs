@@ -239,6 +239,30 @@ public class DailyRewardsSequence {
 	}
 
 	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
+	// DEBUG																  //
 	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Manually force a specific total reward index.
+	/// </summary>
+	/// <param name="_value">New index.</param>
+	public void DEBUG_SetTotalRewardIdx(int _value) {
+		// Advance index!
+		m_totalRewardIdx = _value;
+
+		// Do we need to generate a new sequence?
+		if(rewardIdx >= SEQUENCE_SIZE) {
+			Generate();
+		}
+	}
+
+	/// <summary>
+	/// Skip the cooldown timer.
+	/// </summary>
+	public void DEBUG_SkipCooldownTimer() {
+		// Nothing to do if not in cooldown
+		if(CanCollectNextReward()) return;
+
+		// Set collection timestamp to current time
+		m_nextCollectionTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+	}
 }
