@@ -164,7 +164,7 @@ public class EditorAddressablesManager
         AssetBundle manifestBundle = null;
         AssetBundleManifest abManifest = EditorAssetBundlesManager.LoadAssetBundleManifest(out manifestBundle);
         
-        ParseAssetBundlesOutput output = EditorAddressablesManager.ParseAssetBundles(catalog, abManifest);
+        ParseAssetBundlesOutput output = ParseAssetBundles(catalog, abManifest);
 
         if (manifestBundle != null)
         {
@@ -209,6 +209,20 @@ public class EditorAddressablesManager
 
             // Copy remote asset bundles
             EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
+
+            Dictionary<string, AddressablesCatalogArea> areas = catalog.GetAreas();
+            if (areas != null)
+            {
+                List<string> allAssetBundles = UbiListUtils.AddRange(output.m_LocalABList, output.m_RemoteABList, true, true);
+
+                List<string> abs, disjoints;
+                foreach (KeyValuePair<string, AddressablesCatalogArea> pair in areas)
+                {
+                    abs = pair.Value.AssetBundleIds;
+                    UbiListUtils.SplitIntersectionAndDisjoint(pair.Value.AssetBundleIds, allAssetBundles, out abs, out disjoints);
+                    pair.Value.AssetBundleIds = abs;
+                }
+            }
 
             // Generates remote AB list file            
             GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            

@@ -256,6 +256,8 @@ public class AssetBundlesManager
         List<string> returnValue = null;
         if (ids != null)
         {
+            returnValue = new List<string>();
+
             int count = ids.Count;
             List<string> abIds;
             for (int i = 0; i < count; i++)
