@@ -144,7 +144,7 @@ public class LevelManager : Singleton<LevelManager> {
         DefinitionNode def = m_currentLevelData.def;
 
         // Load additively all the scenes of the current level
-        LevelLoader returnValue = new LevelLoader();
+        LevelLoader returnValue = new LevelLoader("", "");
 
         // Common Scenes
         List<string> commonScenes = def.GetAsList<string>("common");
@@ -186,7 +186,7 @@ public class LevelManager : Singleton<LevelManager> {
     public static LevelLoader SwitchArea( string area )
     {                
         // Load additively all the scenes of the current level
-        LevelLoader returnValue = new LevelLoader();
+        LevelLoader returnValue = new LevelLoader("", "");
 
         // Current area scenes need to be unloaded
         List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(m_currentArea);
