@@ -38,6 +38,6 @@ public abstract class ModifierGamePlay : Modifier {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-    protected ModifierGamePlay(DefinitionNode _def) : base(TYPE_CODE, _def) { }
+    protected ModifierGamePlay(string _starget, DefinitionNode _def) : base(TYPE_CODE, _starget, _def) { }
 
 }

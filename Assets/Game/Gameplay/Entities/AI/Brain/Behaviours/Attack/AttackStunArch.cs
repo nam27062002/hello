@@ -14,7 +14,9 @@ namespace AI {
 			public float m_stunDuration;
 			public string m_beamSound;
 			public float m_delayAfterEnd;
-		}
+
+            public IEntity.Tag ignoreTag = 0;
+        }
 		
 
 		[CreateAssetMenu(menuName = "Behaviour/Attack/Stun Arch")]
@@ -63,7 +65,7 @@ namespace AI {
 						particlePrefab = Resources.Load<ParticleSystem>("Particles/Master/PS_PetStun");
 					}break;
 				}
-
+                            
 				if ( particlePrefab )
 				{
 					m_particle = Instantiate<ParticleSystem>(particlePrefab);
@@ -154,22 +156,24 @@ namespace AI {
 						for (int e = 0; e < m_numCheckEntities; e++) 
 						{
 							Entity entity = m_checkEntities[e];
-                            Machine enittyMachine = entity.machine as Machine;
-                            if (enittyMachine != null) {
-                                // Start bite attempt
-                                Vector3 heading = (entity.machine.position - arcOrigin);
-                                float dot = Vector3.Dot(heading, arcDir);
-                                if (dot > 0) {
-                                    // Check arc
-                                    float radius = 1f;
-                                    Vector3 circleCenter = entity.machine.position;
-                                    if (entity.circleArea != null) {
-                                        radius = entity.circleArea.radius;
-                                        circleCenter = entity.circleArea.center;
-                                        circleCenter.z = 0;
-                                    }
-                                    if (MathUtils.TestArcVsCircle(arcOrigin_0, arcAngle, arcLength, arcDir, circleCenter, radius)) {    // stun entity
-                                        enittyMachine.Stun(m_stunData.m_stunDuration);
+                            if (!entity.HasTag(m_stunData.ignoreTag)) {
+                                Machine enittyMachine = entity.machine as Machine;
+                                if (enittyMachine != null) {
+                                    // Start bite attempt
+                                    Vector3 heading = (entity.machine.position - arcOrigin);
+                                    float dot = Vector3.Dot(heading, arcDir);
+                                    if (dot > 0) {
+                                        // Check arc
+                                        float radius = 1f;
+                                        Vector3 circleCenter = entity.machine.position;
+                                        if (entity.circleArea != null) {
+                                            radius = entity.circleArea.radius;
+                                            circleCenter = entity.circleArea.center;
+                                            circleCenter.z = 0;
+                                        }
+                                        if (MathUtils.TestArcVsCircle(arcOrigin_0, arcAngle, arcLength, arcDir, circleCenter, radius)) {    // stun entity
+                                            enittyMachine.Stun(m_stunData.m_stunDuration);
+                                        }
                                     }
                                 }
                             }

@@ -8,7 +8,7 @@ public class ModGatchaPet : ModifierGatcha {
 	private float m_weight;
 
 	//------------------------------------------------------------------------//
-	public ModGatchaPet(DefinitionNode _def) : base(_def) {
+	public ModGatchaPet(DefinitionNode _def) : base(TARGET_CODE, _def) {
         m_skuList = _def.GetAsList<string>("param1", ";");
 		m_weight = _def.GetAsFloat("param2");
 

@@ -246,17 +246,20 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 					Music_CurrentAudioObject.Stop();	// Force stop
 					Music_CurrentKey = keyToPlay;
 					Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
-					m_waitingMusicToFinish = waitToPlay;
-					if ( m_waitingMusicToFinish )
-					{
-						Ambience_Stop( Ambience_ToPlay.music_key, Ambience_ToPlay.game_object);
-						Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
-					}
-					// AudioController.PauseMusic();	// Pause Music manually to fade in while unpausing!
-					// AudioController.UnpauseMusic( musicFadeOut );
-					if ( musicFadeOut > 0 )
-						Music_CurrentAudioObject.FadeIn( musicFadeOut );
-                    secondsToSwitchMusic = minSecondsToSwitchMusic;
+                    if ( Music_CurrentAudioObject != null )
+                    {
+    					m_waitingMusicToFinish = waitToPlay;
+    					if ( m_waitingMusicToFinish )
+    					{
+    						Ambience_Stop( Ambience_ToPlay.music_key, Ambience_ToPlay.game_object);
+    						Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
+    					}
+    					// AudioController.PauseMusic();	// Pause Music manually to fade in while unpausing!
+    					// AudioController.UnpauseMusic( musicFadeOut );
+    					if ( musicFadeOut > 0 )
+    						Music_CurrentAudioObject.FadeIn( musicFadeOut );
+                        secondsToSwitchMusic = minSecondsToSwitchMusic;
+                    }
                 }
 				else if ( Music_CurrentAudioObject.IsPlaying() && !Music_CurrentAudioObject.isFadingOut)
 				{
@@ -269,12 +272,15 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 			{
 				Music_CurrentKey = keyToPlay;
 				Music_CurrentAudioObject = AudioController.PlayMusic(Music_CurrentKey, m_musicVolume);
-				m_waitingMusicToFinish = waitToPlay;
-				if ( m_waitingMusicToFinish )
-				{
-					Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
-				}
-                secondsToSwitchMusic = minSecondsToSwitchMusic;
+                if (Music_CurrentAudioObject != null)
+                {
+    				m_waitingMusicToFinish = waitToPlay;
+    				if ( m_waitingMusicToFinish )
+    				{
+    					Music_CurrentAudioObject.completelyPlayedDelegate = OnMusicCompleted;
+    				}
+                    secondsToSwitchMusic = minSecondsToSwitchMusic;
+                }
             }
            
         }

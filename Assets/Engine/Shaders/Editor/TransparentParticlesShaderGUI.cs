@@ -205,7 +205,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         "BLENDMODE_ADDITIVEDOUBLE",
         "BLENDMODE_ALPHABLEND",
         "BLENDMODE_ADDITIVEALPHABLEND",
-        "BLENDMODE_PREMULTIPLY"
+        "BLENDMODE_PREMULTIPLY",
+        //añado multiply
+        "BLENDMODE_MULTIPLY"
     };
 
     public static void setBlendMode(Material material, int blendMode)
@@ -217,6 +219,7 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         material.DisableKeyword("BLENDMODE_ALPHABLEND");
         material.DisableKeyword("BLENDMODE_ADDITIVEALPHABLEND");
         material.DisableKeyword("BLENDMODE_PREMULTIPLY");
+        material.DisableKeyword("BLENDMODE_MULTIPLY");
 
         material.EnableKeyword(blendModes[blendMode]);
         material.SetFloat("BlendMode", (float)blendMode);
@@ -257,6 +260,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
                 material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 Debug.Log("Blend mode premultiply");
+                break;
+            //I add the multiply module
+            case 6:                                                         //Just multiply
+                material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.DstColor);
+                material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                Debug.Log("Blend mode multiply");
                 break;
         }
     }

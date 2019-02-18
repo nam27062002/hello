@@ -6,12 +6,12 @@ public class ModEntityXP : ModifierEntity {
 	private float m_percentage;
 
 	//------------------------------------------------------------------------//
-	public ModEntityXP(DefinitionNode _def) : base(_def) {
+	public ModEntityXP(DefinitionNode _def) : base(TARGET_CODE, _def) {
 		m_percentage = _def.GetAsFloat("param1");
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
 	}
 
-    public ModEntityXP(float _percentage) : base(null) {
+    public ModEntityXP(float _percentage) : base(TARGET_CODE, null) {
         m_percentage = _percentage;
         BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }

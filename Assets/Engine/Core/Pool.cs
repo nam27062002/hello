@@ -63,8 +63,10 @@ public class Pool {
 	public void Update() {
 		while (m_returnObjects.Count > 0) {
 			GameObject go = m_returnObjects.Dequeue();
-			go.transform.SetParent(m_containerObj.transform);		// Return particle system to pool's hierarchy
-			m_freeObjects.Enqueue(go);
+            if (go != null) {
+                go.transform.SetParent(m_containerObj.transform);       // Return particle system to pool's hierarchy
+                m_freeObjects.Enqueue(go);
+            }
 		}
 	}
 

@@ -374,6 +374,10 @@ public class DragonMotionHedgehog : DragonMotion {
                         CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);        
                     }
                 }
+                else
+                {
+                    CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+                }
             }
             
         }

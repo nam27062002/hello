@@ -6,7 +6,7 @@ public class ModGamePlaySC : ModifierGamePlay {
 	private float m_percentage;
 
 	//------------------------------------------------------------------------//
-	public ModGamePlaySC(DefinitionNode _def) : base(_def) {
+	public ModGamePlaySC(DefinitionNode _def) : base(TARGET_CODE, _def) {
 		m_percentage = _def.GetAsFloat("param1");
 		BuildTextParams(m_percentage + "%", UIConstants.PET_CATEGORY_SCORE.ToHexString("#"));
 	}

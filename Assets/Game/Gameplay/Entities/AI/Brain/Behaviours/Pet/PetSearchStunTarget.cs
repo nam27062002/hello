@@ -12,7 +12,8 @@ namespace AI {
 			public Range m_shutdownRange = new Range(10,20);
 			[Tooltip("Coma separated list of entity skus to ignore")]
 			public string m_ignoreSkus;
-		}
+            public IEntity.Tag ignoreTag = 0;
+        }
 
 		[CreateAssetMenu(menuName = "Behaviour/Pet/Search Stun Target")]
 		public class PetSearchStunTarget : StateComponent {
@@ -91,45 +92,42 @@ namespace AI {
 					for (int e = 0; e < m_numCheckEntities; e++) 
 					{
 						Entity entity = m_checkEntities[e];
-						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget )
-						{
-							// if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
-							{
-								// Test if in front of player!
-								Vector3 entityDir = machine.position - m_owner.dragonMotion.position;
-								if( Vector2.Dot( m_owner.dragonMotion.direction, entityDir) > 0)
-								{
-									bool ignore = false;
-									for( int i = 0; i<m_ignoreSkusCount && !ignore; ++i)
-									{
-										if ( entity.sku.Equals(m_ignoreSkus[i]) )
-										{
-											ignore = true;
-										}
-									}
-									if ( ignore )
-										continue;
+                        if (!entity.HasTag(m_data.ignoreTag)) {
+                            Machine machine = entity.machine as Machine;
+                            if (machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget) {
+                                // if ( entity.IsEdible( m_data.maxValidTier ) && entity.edibleFromTier >= m_data.minValidTier)
+                                {
+                                    // Test if in front of player!
+                                    Vector3 entityDir = machine.position - m_owner.dragonMotion.position;
+                                    if (Vector2.Dot(m_owner.dragonMotion.direction, entityDir) > 0) {
+                                        bool ignore = false;
+                                        for (int i = 0; i < m_ignoreSkusCount && !ignore; ++i) {
+                                            if (entity.sku.Equals(m_ignoreSkus[i])) {
+                                                ignore = true;
+                                            }
+                                        }
+                                        if (ignore)
+                                            continue;
 
-									// Check if physics reachable
-									RaycastHit hit;
-									Vector3 dir = entity.circleArea.center - m_machine.position;
-									bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-									if ( !hasHit )
-									{
-										// Check if closed? Not for the moment
-										m_transitionParam[0] = entity.transform;
-										if ( entity.circleArea )
-											m_sensor.SetupEnemy(entity.transform, entity.circleArea.radius * entity.circleArea.radius, null);
-										else
-											m_sensor.SetupEnemy(entity.transform, 0, null);
-										m_machine.SetSignal(Signals.Type.Warning, true);
-										Transition( onEnemyTargeted, m_transitionParam);
-										break;
-									}
-								}
-							}
-						}
+                                        // Check if physics reachable
+                                        RaycastHit hit;
+                                        Vector3 dir = entity.circleArea.center - m_machine.position;
+                                        bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
+                                        if (!hasHit) {
+                                            // Check if closed? Not for the moment
+                                            m_transitionParam[0] = entity.transform;
+                                            if (entity.circleArea)
+                                                m_sensor.SetupEnemy(entity.transform, entity.circleArea.radius * entity.circleArea.radius, null);
+                                            else
+                                                m_sensor.SetupEnemy(entity.transform, 0, null);
+                                            m_machine.SetSignal(Signals.Type.Warning, true);
+                                            Transition(onEnemyTargeted, m_transitionParam);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
 					}
 				}
 			}
