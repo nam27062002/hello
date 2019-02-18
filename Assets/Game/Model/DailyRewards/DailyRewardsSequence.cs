@@ -30,8 +30,8 @@ public class DailyRewardsSequence {
 	private DailyReward[] m_rewards;
 	public DailyReward[] rewards {
 		get {
-			if(m_rewards == null) Generate();
-			return rewards;
+			if(!ValidateRewards()) Generate();	// Just in case
+			return m_rewards;
 		}
 	}
 
@@ -47,6 +47,9 @@ public class DailyRewardsSequence {
 
 	// Other vars
 	private DateTime m_nextCollectionTimestamp;	// UTC, time at which the cooldown has expired and the player can collect the next reward
+	public DateTime nextCollectionTimestamp {
+		get { return m_nextCollectionTimestamp; }
+	}
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -71,7 +74,7 @@ public class DailyRewardsSequence {
 
 		// Other vars
 		m_totalRewardIdx = 0;
-		m_nextCollectionTimestamp = DateTime.MinValue;	// Already expired so first reward can be collected
+		m_nextCollectionTimestamp = DateTime.MinValue;  // Already expired so first reward can be collected
 	}
 
 	/// <summary>
@@ -79,7 +82,7 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <returns>The next reward to be collected. Shouldn't be null.</returns>
 	public DailyReward GetNextReward() {
-		return rewards[rewardIdx];	// Should always be valid
+		return m_rewards[rewardIdx];	// Should always be valid
 	}
 
 	/// <summary>
@@ -178,6 +181,38 @@ public class DailyRewardsSequence {
 		}
 	}
 
+	/// <summary>
+	/// Make sure the rewards are valid.
+	/// </summary>
+	/// <returns>Whether all the rewards in the sequence are valid. Returns <c>false</c> if at least one reward is not valid.</returns>
+	private bool ValidateRewards() {
+		// Check array
+		if(m_rewards == null) {
+			return false;
+		}
+
+		// Check sequence size
+		if(m_rewards.Length != SEQUENCE_SIZE) {
+			return false;
+		}
+
+		// Check rewards
+		for(int i = 0; i < SEQUENCE_SIZE; ++i) {
+			// Check Daily Reward object
+			if(m_rewards[i] == null) {
+				return false;
+			}
+
+			// Check Metagame Reward object
+			if(m_rewards[i].reward == null) {
+				return false;
+			}
+		}
+
+		// Everything ok!
+		return true;
+	}
+
 	//------------------------------------------------------------------------//
 	// PERSISTENCE METHODS													  //
 	//------------------------------------------------------------------------//
@@ -189,14 +224,6 @@ public class DailyRewardsSequence {
 		// Reset any existing data
 		Reset();
 
-		// Rewards
-		if(_data.ContainsKey("rewards")) {
-			SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
-			for(int i = 0; i < rewardsData.Count && i < m_rewards.Length; ++i) {
-				m_rewards[i].LoadData(rewardsData[i]);
-			}
-		}
-
 		// Current reward index
 		if(_data.ContainsKey("totalRewardIdx")) {
 			m_totalRewardIdx = _data["totalRewardIdx"];
@@ -206,13 +233,33 @@ public class DailyRewardsSequence {
 		if(_data.ContainsKey("nextCollectionTimestamp")) {
 			m_nextCollectionTimestamp = DateTime.Parse(_data["nextCollectionTimestamp"], PersistenceFacade.JSON_FORMATTING_CULTURE);
 		}
+
+		// Rewards
+		if(_data.ContainsKey("rewards")) {
+			SimpleJSON.JSONArray rewardsData = _data["rewards"].AsArray;
+			for(int i = 0; i < rewardsData.Count && i < m_rewards.Length; ++i) {
+				if(m_rewards[i] != null) {
+					m_rewards[i].LoadData(rewardsData[i]);
+				}
+			}
+		}
+
+		// Make sure rewards are valid, generate a new sequence otherwise
+		if(!ValidateRewards()) {
+			Generate();
+		}
 	}
 
 	/// <summary>
 	/// Serialize into json.
 	/// </summary>
-	/// <returns>The json.</returns>
+	/// <returns>The json. Can be null if sequence has never been generated.</returns>
 	public SimpleJSON.JSONClass SaveData() {
+		// If sequence is not valid, don't save
+		if(!ValidateRewards()) {
+			return null;
+		}
+
 		// Create a new json data object
 		SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
 

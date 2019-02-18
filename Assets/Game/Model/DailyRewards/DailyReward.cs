@@ -17,7 +17,7 @@ using System;
 /// Data structure representing a daily reward.
 /// </summary>
 [Serializable]
-public class DailyReward : IComparableWithOperators<DailyReward> {
+public class DailyReward {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -96,7 +96,7 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 		Metagame.Reward.Data rewardData = new Metagame.Reward.Data();
 		rewardData.typeCode = _def.GetAsString("type");
 		rewardData.amount = _def.GetAsLong("amount");
-		rewardData.sku = _def.GetAsString("sku");
+		rewardData.sku = _def.GetAsString("rewardSku");
 		reward = Metagame.Reward.CreateFromData(rewardData, ECONOMY_GROUP, DEFAULT_SOURCE);
 
 		// Special case: If the reward is already owned by the time the sequence 
@@ -128,28 +128,6 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 	}
 
 	//------------------------------------------------------------------------//
-	// IComparableWithOperators IMPLEMENTATION								  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// IComparable interface implementation.
-	/// </summary>
-	protected override int CompareToImpl(DailyReward _other) {
-		if(_other == null) return 1;    // If other is not a valid object reference, this instance is greater.
-		return this.order.CompareTo(_other.order);
-	}
-
-	/// <summary>
-	/// IComparable interface implementation.
-	/// </summary>
-	protected override int GetHashCodeImpl() {
-		return this.order.GetHashCode();
-	}
-
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-
-	//------------------------------------------------------------------------//
 	// PERSISTENCE METHODS													  //
 	//------------------------------------------------------------------------//
 	/// <summary>
@@ -160,9 +138,13 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 		// Reset any existing data
 		Reset();
 
+		Debug.Log(Colors.cyan.Tag("LOADING DAILY REWARD DATA\n") + new JsonFormatter().PrettyPrint(_data.ToString()));
+
 		// Def (we're only saving the sku)
-		if(_data.ContainsKey("sku")) {
-			sourceDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DAILY_REWARDS, _data["sku"]);
+		if(_data.ContainsKey("sourceSku")) {
+			sourceDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DAILY_REWARDS, _data["sourceSku"]);
+		} else {
+			Debug.Log(Colors.red.Tag("ERROR! Daily Reward doesn't contain sourceSku property!\n" + _data.ToString()));
 		}
 
 		// Reward
@@ -185,12 +167,13 @@ public class DailyReward : IComparableWithOperators<DailyReward> {
 		if(reward != null) {
 			data = reward.ToJson() as SimpleJSON.JSONClass;
 		} else {
+			Debug.Log(Colors.red.Tag("ERROR! Attempting to save a daily reward without a reward being created"));
 			data = new SimpleJSON.JSONClass();
 		}
 
 		// Def (we're only saving the sku)
 		if(sourceDef != null) {
-			data.Add("sku", sourceDef.sku);
+			data.Add("sourceSku", sourceDef.sku);
 		}
 
 		// State
