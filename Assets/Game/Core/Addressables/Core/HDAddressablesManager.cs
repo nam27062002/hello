@@ -36,14 +36,26 @@ public class HDAddressablesManager
 
         BetterStreamingAssets.Initialize();
 
+        // Retrieves addressables catalog
         string catalogAsText = null;
         if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
         {
             catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
         }
 
-        JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);        
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, logger);        
+        JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
+        // Retrieves downloadables catalog
+        // TODO: Retrieve this information from the assetsLUT cached
+        string downloadablesPath = addressablesPath;
+        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog.json");
+        if (BetterStreamingAssets.FileExists(downloadablesCatalogPath))
+        {
+            catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
+        }
+
+        JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, logger);        
     }
 
     #region ingame
@@ -158,7 +170,25 @@ public class HDAddressablesManager
 
     public Ingame_SwitchAreaHandle Ingame_SwitchArea(List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
     {
-            return new Ingame_SwitchAreaHandle(prevAreaRealSceneNames, nextAreaRealSceneNames);
+        // Makes sure that all scenes are available. For now a scene is not scheduled to be loaded if it's not available because there's no support
+        // for downloading stuff during the loading screen. 
+        // TODO: To delete this stuff when downloading unavailable stuff flow is implemented
+        if (nextAreaRealSceneNames != null)
+        {            
+            for (int i = 0; i < nextAreaRealSceneNames.Count;)
+            {
+                if (!m_addressablesManager.IsResourceAvailable(nextAreaRealSceneNames[i]))
+                {
+                    nextAreaRealSceneNames.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
+        }
+
+        return new Ingame_SwitchAreaHandle(prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
     #endregion    
    
@@ -185,6 +215,11 @@ public class HDAddressablesManager
     private void UnloadDependencyIdsList(List<string> dependencyIds)
     {
         m_addressablesManager.UnloadDependencyIdsList(dependencyIds);
+    }
+
+    private List<string> GetSceneDependenciyIds(string sceneName)
+    {
+        return m_addressablesManager.GetDependencyIds(sceneName);
     }
 
     private List<string> GetSceneDependencyIdsList(List<string> sceneNames)
