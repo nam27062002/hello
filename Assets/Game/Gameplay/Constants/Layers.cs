@@ -12,6 +12,9 @@ namespace GameConstants {
         /// <summary>Ground, GroundVisible, PreyOnlyCollisions</summary>
         public static readonly int GROUND_PREYCOL = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
 
+        /// <summary>Ground, GroundVisible, PreyOnlyCollisions</summary>
+        public static readonly int GROUND_PLAYER_OBSTACLE = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PlayerOnlyCollisions");
+        
         /// <summary>Ground, GroundVisible, PreyOnlyCollisions, Obstacle</summary>
         public static readonly int GROUND_PREYCOL_OBSTACLE = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Obstacle");
 
