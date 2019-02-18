@@ -1,11 +1,17 @@
 {
 	"entries":
 	[		
-		{"id":"HDCube", "locationType":"AssetBundles", "guid":"22af1aa4a7222e34bafbafd489c6d24e", "abName":"asset_cubes"},
+		{"id":"HDCube", "locationType":"AssetBundles", "guid":"22af1aa4a7222e34bafbafd489c6d24e", "abName":"asset_cubes" },
 		{"id":"UbiCube", "locationType":"AssetBundles", "guid":"0439e4585edc513469bee470f9156e7d", "abName":"asset_cubes"},
 		{"id":"UnityCube", "locationType":"AssetBundles", "guid":"a1846f78285db3f48ac25072cc4a110f", "abName":"asset_cubes"},
 		{"id":"SC_Cubes", "locationType":"AssetBundles", "guid":"30d1c6d856462494e8613e02f4867777", "abName":"scene_cubes"}
-	],
+	],	
 	
-	"localAssetBundles":[]
+	"localAssetBundles":["asset_cubes"],
+	
+	"areas":
+	[		
+		{"id":"area_asset_cubes", "assetBundles":["asset_cubes"]},
+		{"id":"area_scene_cubes", "assetBundles":["scene_cubes"]}
+	]
 }

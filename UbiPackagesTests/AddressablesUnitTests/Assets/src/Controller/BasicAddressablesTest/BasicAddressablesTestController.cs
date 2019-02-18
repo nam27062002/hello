@@ -27,8 +27,10 @@ public class BasicAddressablesTestController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.M))
         {
             //List<string> list = m_addressablesManager.GetDependencyIds(SCENE_CUBES_SCENE_NAME);
-            List<string> ids = new List<string>() { /*SCENE_CUBES_SCENE_NAME,*/ "HDCube", "UbiCube" };
-            List<string> list = m_addressablesManager.GetDependencyIdsList(ids);
+            //List<string> ids = new List<string>() { /*SCENE_CUBES_SCENE_NAME,*/ "HDCube", "UbiCube" };
+            //List<string> list = m_addressablesManager.GetDependencyIdsList(ids);            
+
+            List<string> list = m_addressablesManager.Areas_GetDependencyIds("area_asset_cubes");
             Debug.Log("dependencies = " + UbiListUtils.GetListAsString(list));            
         }
     }
