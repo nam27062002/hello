@@ -58,8 +58,16 @@ public class AddressablesManager
     private AddressablesCatalog m_catalog;
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;
+
+    private Downloadables.Manager m_downloadablesManager;
     
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, Logger logger)
+    public AddressablesManager()
+    {
+        Logger logger = new ConsoleLogger("Downloadables");
+        m_downloadablesManager = new Downloadables.Manager(new DiskDriver(), logger);
+    }
+
+    public void Initialize(JSONNode catalogJSON, JSONNode downloadablesCatalogJSON, string assetBundlesManifestPath, Logger logger)
     {
         sm_logger = logger;
 
@@ -98,7 +106,9 @@ public class AddressablesManager
 
         Ops_Init();
 
-        m_entryHelper = new AddressablesCatalogEntry();
+        m_entryHelper = new AddressablesCatalogEntry();        
+        
+        m_downloadablesManager.Initialize(downloadablesCatalogJSON, null);
 
         m_isInitialized = true;
     }    
@@ -110,7 +120,9 @@ public class AddressablesManager
             m_catalog.Reset();          
             m_providerFromAB.Reset();
 
-            Ops_Reset();     
+            Ops_Reset();
+
+            m_downloadablesManager.Reset();
 
             m_isInitialized = false;
         }

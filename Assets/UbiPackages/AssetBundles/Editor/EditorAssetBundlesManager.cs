@@ -127,16 +127,16 @@ public class EditorAssetBundlesManager
     }    
 
     public static void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
-    {
+    {        
         string assetBundlesDirectory = GetAssetBundlesDirectory();
 
-        DownloadablesCatalog catalog = new DownloadablesCatalog();
+        Downloadables.Catalog catalog = new Downloadables.Catalog();
 
         if (fileNames != null)
         {
             string fileName;
             string path;
-            DownloadablesCatalogEntry entry;
+            Downloadables.CatalogEntry entry;
             int count = fileNames.Count;
             for (int i = 0; i < count; i++)
             {
@@ -146,7 +146,7 @@ public class EditorAssetBundlesManager
                 if (File.Exists(path))
                 {
                     byte[] bytes = File.ReadAllBytes(path);
-                    entry = new DownloadablesCatalogEntry();
+                    entry = new Downloadables.CatalogEntry();
                     entry.Setup(StringUtils.CRC32(bytes), bytes.Length);
 
                     catalog.AddEntry(fileName, entry);
@@ -165,7 +165,8 @@ public class EditorAssetBundlesManager
         // It copies it to the player's folder too
         if (!string.IsNullOrEmpty(playerFolder))
         {
-            FileEditorTools.WriteToFile(playerFolder, json.ToString());
-        }
+            string path = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
+            FileEditorTools.WriteToFile(path, json.ToString());
+        }        
     }
 }

@@ -62,4 +62,24 @@ public class UnitTestBatch
             m_failTest[i].Perform();
         }
     }
+
+    public bool Update()
+    {
+        bool isDone = true;
+        int count = m_successTest.Count;
+        for (int i = 0; i < count; i++)
+        {
+            m_successTest[i].Update();
+            isDone = isDone && m_successTest[i].IsDone();            
+        }
+
+        count = m_failTest.Count;
+        for (int i = 0; i < count; i++)
+        {
+            m_failTest[i].Update();
+            isDone = isDone && m_successTest[i].IsDone();
+        }
+
+        return isDone;
+    }   
 }

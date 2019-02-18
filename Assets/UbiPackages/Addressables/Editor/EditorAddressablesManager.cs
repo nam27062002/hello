@@ -210,8 +210,8 @@ public class EditorAddressablesManager
             // Copy remote asset bundles
             EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
 
-            // Generates remote AB list file
-            GenerateDownloadablesCatalog(output.m_RemoteABList, m_playerCatalogPath);            
+            // Generates remote AB list file            
+            GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
 
             // Copy player catalog into the player's folder
             JSONClass json = catalog.ToJSON();

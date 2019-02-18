@@ -103,48 +103,7 @@ public class FileEditorTools
         }
 
         return returnValue;
-    }    
-
-    public static void CopyDirectory(string srcPath, string dstPath)
-    {
-        if (VERBOSE)
-        {
-            Debug.Log("Copy " + srcPath + " into " + dstPath);
-        }
-      
-        if (Exists(srcPath))
-        {
-            if (!Exists(dstPath))
-            {
-                CreateDirectory(dstPath);
-            }
-
-            string[] files = Directory.GetFiles(srcPath);
-
-            string fileName;
-            string dstFile;
-
-            // Copies the files and overwrite destination files if they already exist.           
-            foreach (string s in files)
-            {
-                // Uses static Path methods to extract only the file name from the path.
-                fileName = Path.GetFileName(s);
-                dstFile = PathCombine(dstPath, fileName);
-                File.Copy(s, dstFile, true);
-            }
-
-            // Copies the subdirectories            
-            string dstSubdirectoryPath;
-            string[] subdirectories = Directory.GetDirectories(srcPath);
-            foreach (string s in subdirectories)
-            {
-                // Uses static Path methods to extract only the file name from the path.
-                fileName = Path.GetFileName(s);                
-                dstSubdirectoryPath = PathCombine(dstPath, fileName);
-                CopyDirectory(s, dstSubdirectoryPath);
-            }
-        }        
-    }
+    }       
 
     public static void RenameFile(string oldPath, string newPath)
     {
