@@ -63,7 +63,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 	/// </summary>
 	private void Update() {
 		// Update timer text
-		System.TimeSpan remainingTime = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+		System.TimeSpan remainingTime = UsersManager.currentUser.dailyRewards.timeToCollection;
 		m_timerText.text = "Skip DR Timer\n" + TimeUtils.FormatTime(remainingTime.TotalSeconds, TimeUtils.EFormat.DIGITS, 3);
 	}
 
