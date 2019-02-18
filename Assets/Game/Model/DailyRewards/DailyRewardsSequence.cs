@@ -50,7 +50,19 @@ public class DailyRewardsSequence {
 	public DateTime nextCollectionTimestamp {
 		get { return m_nextCollectionTimestamp; }
 	}
-	
+
+	public TimeSpan timeToCollection {
+		get {
+			// Avoid negative values
+			TimeSpan remainingTime = m_nextCollectionTimestamp - GameServerManager.SharedInstance.GetEstimatedServerTime();
+			if(remainingTime.TotalSeconds < 0) {
+				return new TimeSpan(0);
+			} else {
+				return remainingTime;
+			}
+		}
+	} 
+
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
