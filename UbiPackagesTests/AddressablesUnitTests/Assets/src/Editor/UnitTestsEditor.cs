@@ -12,7 +12,8 @@ public class UnitTestsEditor : MonoBehaviour
 
     private const string MENU_UBI_DOWNLOADABLES = MENU + "/Downloadables";
     private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_UBI_DOWNLOADABLES + "/Parse Catalog";
-    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG });
+    private const string MENU_DOWNLOADABLES_INITIALIZE = MENU_UBI_DOWNLOADABLES + "/Initialize";
+    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG, MENU_DOWNLOADABLES_INITIALIZE });
 
     private const string MENU_UBI_LISTS = MENU + "/UbiLists";
     private const string MENU_UBI_LISTS_ADD_RANGE = MENU_UBI_LISTS + "/AddRange Test";
@@ -23,6 +24,8 @@ public class UnitTestsEditor : MonoBehaviour
 
     private const string MENU_ALL = MENU + "/All Tests";
 
+    private static UnitTestBatch sm_unitTestBatch;
+
     private static UnitTestBatch GetUnitTestBatch(string key)
     {
         switch (key)
@@ -32,6 +35,10 @@ public class UnitTestsEditor : MonoBehaviour
 
             case MENU_DOWNLOADABLES_PARSE_CATALOG:
                 return UTLoadDownloadablesCatalog.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_INITIALIZE:
+                return UTDownloadablesInitialize.GetUnitTestBatch();
+
             case MENU_UBI_LISTS_ADD_RANGE:
                 return UTListAddRange<string>.GetUnitTestBatch();
 
@@ -52,6 +59,12 @@ public class UnitTestsEditor : MonoBehaviour
     public static void UnitTests_Downloadables_ParseCatalog()
     {
         PerformAllTests(MENU_DOWNLOADABLES_PARSE_CATALOG);
+    }
+
+    [MenuItem(MENU_DOWNLOADABLES_INITIALIZE)]
+    public static void UnitTests_Downloadables_Initialize()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_INITIALIZE);
     }
 
     [MenuItem(MENU_UBI_LISTS_ADD_RANGE)]
@@ -87,10 +100,10 @@ public class UnitTestsEditor : MonoBehaviour
 
     private static void PerformAllTests(string key)
     {
-        UnitTestBatch batch = GetUnitTestBatch(key);
-        if (batch != null)
+        sm_unitTestBatch = GetUnitTestBatch(key);
+        if (sm_unitTestBatch != null)
         {
-            batch.PerformAllTests();
+            sm_unitTestBatch.PerformAllTests();
         }
     }
 
@@ -128,5 +141,16 @@ public class UnitTestsEditor : MonoBehaviour
                 batches[i].PerformFailTests();
             }
         }        
+    }
+
+    void Update()
+    {
+        if (sm_unitTestBatch != null)
+        {
+            if (sm_unitTestBatch.Update())
+            {
+                sm_unitTestBatch = null;
+            }
+        }
     }
 }
