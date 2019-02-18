@@ -1220,7 +1220,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	/// <param name="_amount">Final given amount (after scaling and doubling).</param>
 	/// <param name="_sku">(Optional) Sku of the reward.</param>
 	/// <param name="_doubled">Was the reward doubled by watching an ad?</param>
-	public virtual void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) {
+	public override void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) {
 		Track_DailyReward(_rewardIdx, _totalRewardIdx, _type, _amount, _sku, _doubled);
 	}
     #endregion
@@ -2205,7 +2205,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 			Track_AddParamInt(e, TRACK_PARAM_DAY, _rewardIdx + 1);	// [0..N-1] -> [1..N]
 			Track_AddParamInt(e, TRACK_PARAM_CUMULATIVE_DAYS, _totalRewardIdx + 1);	// [0..N-1] -> [1..N]
 			Track_AddParamString(e, TRACK_PARAM_TYPE, _type);
-			Track_AddParamLong(e, TRACK_PARAM_AMOUNT, _amount);
+			Track_AddParamInt(e, TRACK_PARAM_AMOUNT, (int)_amount);
 			Track_AddParamString(e, TRACK_PARAM_SKU, _sku);
 			Track_AddParamBool(e, TRACK_PARAM_AD_VIEWED, _doubled);
 		}
