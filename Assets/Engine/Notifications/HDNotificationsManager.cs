@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+
 public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
 {
 	private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
@@ -174,11 +176,13 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     }
 
 	public void ScheduleDailyRewardNotification() {
-		
+		// [AOC] TODO!! Clamp notifications between 9AM and 9PM (or whatever is designed)
+		int secondsToCollection = (int)UsersManager.currentUser.dailyRewards.timeToCollection.TotalSeconds;
+		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, secondsToCollection);
 	}
 
 	public void CancelDailyRewardNotification() {
-		//CancelNotification()
+		CancelNotification(SKU_DAILY_REWARD);
 	}
     #endregion
 
