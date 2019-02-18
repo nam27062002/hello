@@ -135,7 +135,8 @@ public class PopupDailyRewards : MonoBehaviour {
 		}
 
 		// Close the poopup - don't destroy though, since we'll open it again after the rewards flow
-		GetComponent<PopupController>().Close(false);
+		//GetComponent<PopupController>().Close(false);
+		GetComponent<PopupController>().Close(true);
 	}
 
 	//------------------------------------------------------------------------//
