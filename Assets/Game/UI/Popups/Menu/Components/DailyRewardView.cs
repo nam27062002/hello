@@ -259,8 +259,9 @@ public class DailyRewardView : MetagameRewardView {
 			m_stateAnimator.SetBool("isSpecial", isPet || isEgg);
 		}
 
-		// If the reward is in Cooldown state, render on top so the flag doesn't get hidden by other rewards in the sequence
-		if(m_state == State.COOLDOWN) {
+		// If the reward is in Current or Cooldown state, render on top so the decorations 
+		// don't get hidden by other rewards in the sequence
+		if(m_state == State.COOLDOWN || m_state == State.CURRENT) {
 			this.transform.SetAsLastSibling();
 		}
 	}
