@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SimpleJSON;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
@@ -13,11 +15,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     private int m_cubesLoadedCount;
 
     void Start()
-    {
-        //string localAssetBundlesPath = Application.streamingAssetsPath;
-        //List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
-        //AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
-
+    {        
         Camera.main.eventMask = 0;
 
         m_cubesLoadedCount = 0;
@@ -35,7 +33,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     private bool m_useRequests = true;
 
     #region asset_cube
-    private static string ASSET_CUBE_AB_NAME = "01/asset_cubes";
+    private static string ASSET_CUBE_AB_NAME = "asset_cubes";
     private static string ASSET_CUBE_ASSET_NAME = "UbiCube";
 
     public void AssetCube_OnAddCube()
@@ -73,7 +71,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     #endregion
 
     #region scene_cubes
-    private static string SCENE_CUBES_AB_NAME = "01/scene_cubes";
+    private static string SCENE_CUBES_AB_NAME = "scene_cubes";
     private static string SCENE_CUBES_SCENE_NAME = "SC_Cubes";
 
     public void SceneCubes_Init()
@@ -148,11 +146,24 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         //string abId = "ab/logo";
         if (m_loadResourceMode != ELoadResourceMode.AsyncFull)
         {
-            AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(abId, LoadResource_OnAssetBundleLoaded, m_useRequests);
+            AssetBundlesManager.Instance.DownloadAssetBundleAndDependencies(abId, LoadResource_OnAssetBundleDownloaded, m_useRequests);            
         }
         else
         {
             AssetBundlesManager.Instance.LoadResourceAsync(m_loadResourceABId, m_loadResourceName, m_loadResourceIsAsset, LoadResource_OnAssetLoaded, m_loadResourceSceneMode, m_useRequests);
+        }
+    }
+
+    private void LoadResource_OnAssetBundleDownloaded(AssetBundlesOp.EResult result, object data)
+    {
+        Debug.Log("LoadResource_OnAssetBundleDownloaded " + result);
+        if (result == AssetBundlesOp.EResult.Success)
+        {
+            AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(m_loadResourceABId, LoadResource_OnAssetBundleLoaded, m_useRequests);            
+        }
+        else
+        {
+            LoadResource_OnDone(result, data);
         }
     }
 
@@ -357,13 +368,18 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     #region ab
     public void AB_Init()
     {
-        Memory_BeginSample("AB_INIT");        
+        Memory_BeginSample("AB_INIT");
+
+        BetterStreamingAssets.Initialize();
 
         string localAssetBundlesPath = "Addressables";
-        localAssetBundlesPath = System.IO.Path.Combine(localAssetBundlesPath, "AssetBundles");
+        localAssetBundlesPath = Path.Combine(localAssetBundlesPath, "AssetBundles");
 
-        List<string> localAssetBundleIds = new List<string> { "01/asset_cubes", "01/scene_cubes" , "01/cubes/materials" };
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, null);
+        string path = Path.Combine("Addressables", "downloadablesCatalog.json");       
+        string text = (BetterStreamingAssets.FileExists(path)) ? BetterStreamingAssets.ReadAllText(path) : null;
+        JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);
+        List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, null);
 
         Memory_EndSample(true);
     }

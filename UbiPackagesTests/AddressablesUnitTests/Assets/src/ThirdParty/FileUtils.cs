@@ -11,7 +11,7 @@ public class FileUtils
             RemoveDirectoryInDeviceStorage(strDirectoryPath, strForceProjectFolder);
             return true;
         }
-        catch (IOException e)
+        catch (IOException)
         {
             //Debug.TaggedLog("TryDelete", e.StackTrace);
             return false;
@@ -54,7 +54,7 @@ public class FileUtils
                 {
                     System.IO.File.SetAttributes(strFile, FileAttributes.Normal);
                 }
-                catch (UnauthorizedAccessException e)
+                catch (UnauthorizedAccessException)
                 {
                     //CaletyUtils.Log.d("RemoveDirectoryInDeviceStorage: " + e.ToString());
                 }
