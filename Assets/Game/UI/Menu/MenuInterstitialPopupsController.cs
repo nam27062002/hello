@@ -109,7 +109,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 			if(_value) {
 				m_stateFlags |= _flag;
 			} else {
-				m_stateFlags &= _flag;
+				m_stateFlags &= ~_flag;
 			}
 		}
 	}
