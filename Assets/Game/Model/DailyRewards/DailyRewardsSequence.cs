@@ -23,9 +23,9 @@ public class DailyRewardsSequence {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const int SEQUENCE_SIZE = 7; // [AOC] CHECK!! From content?
+	public const int SEQUENCE_SIZE = 7;
 
-#if PLAYTEST && DEBUG
+#if PLAYTEST
 	public const float PLAYTEST_COOLDOWN_DURATION = 3 * 60f;    // Seconds
 #endif
 
@@ -157,7 +157,7 @@ public class DailyRewardsSequence {
 
 		// Reset timestamp to 00:00 of local time (but using server timezone!)
 		DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
-#if PLAYTEST && DEBUG
+#if PLAYTEST
 		m_nextCollectionTimestamp = serverTime.AddSeconds(PLAYTEST_COOLDOWN_DURATION);
 #else
 		TimeSpan toMidnight = DateTime.Today.AddDays(1) - DateTime.Now; // Local
@@ -166,7 +166,7 @@ public class DailyRewardsSequence {
 
 		// Program local notification
 		// [AOC] Actually don't! It will be programmed when the application goes on pause (ApplicationManager class)
-#if PLAYTEST && DEBUG
+#if PLAYTEST
 		// [AOC] DEBUG!! We'll do it just for the playtest
 		HDNotificationsManager.instance.ScheduleDailyRewardNotification();
 #endif
