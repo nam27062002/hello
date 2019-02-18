@@ -137,10 +137,11 @@ public class OTA_NPCSceneControllerEditor : Editor {
 
         SimpleJSON.JSONArray entries = data["entries"].AsArray;
         for (int i = 0; i < entries.Count; ++i) {
-            string assetPath = AssetDatabase.GUIDToAssetPath(entries["guid"]);
+            SimpleJSON.JSONClass entry = entries[i].AsObject;
+            string assetPath = AssetDatabase.GUIDToAssetPath(entry["guid"]);
             AssetImporter ai = AssetImporter.GetAtPath(assetPath);
             if (ai != null) {
-                ai.SetAssetBundleNameAndVariant(entries["abName"], "");
+                ai.SetAssetBundleNameAndVariant(entry["abName"], "");
             }
         }
     }
