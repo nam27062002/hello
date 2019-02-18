@@ -42,7 +42,30 @@ public class PopupDailyRewards : MonoBehaviour {
 	private DailyRewardsSequence m_sequence = null;
 
 	//------------------------------------------------------------------------//
-	// METHODS																  //
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Component has been enabled.
+	/// </summary>
+	public void OnEnable() {
+		// Subscribe to external events
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS, DEBUG_OnRefresh);
+		}
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	public void OnDisable() {
+		// Unsubscribe from external events
+		if(FeatureSettingsManager.IsControlPanelEnabled) {
+			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS, DEBUG_OnRefresh);
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize the popup with current Daily Rewards Sequence.
@@ -193,5 +216,52 @@ public class PopupDailyRewards : MonoBehaviour {
 			// Launch the rewards flow, double reward
 			CollectNextReward(true);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Control panel handler.
+	/// </summary>
+	private void DEBUG_OnRefresh() {
+		// Just reinitialize
+		InitWithCurrentData();
+	}
+
+	/// <summary>
+	/// Initialize with debug setup.
+	/// </summary>
+	/// <param name="_rewardIdx">Current reward index.</param>
+	/// <param name="_canCollect">Can the reward be collected?</param>
+	/// <param name="_canDouble">Can the reward be doubled? Will be ignored if _canCollect is false.</param>
+	public void DEBUG_Init(int _rewardIdx, bool _canCollect, bool _canDouble) {
+		// Rewards
+		for(int i = 0; i < m_rewardSlots.Length; ++i) {
+			// Skip if slot is not valid
+			if(m_rewardSlots[i] == null) continue;
+
+			// Figure out reward state
+			DailyRewardView.State state = DailyRewardView.State.IDLE;
+			if(i < _rewardIdx) {
+				// Reward already collected
+				state = DailyRewardView.State.COLLECTED;
+			} else if(i == _rewardIdx) {
+				// Current reward! Can it be collected?
+				if(_canCollect) {
+					state = DailyRewardView.State.CURRENT;
+				} else {
+					state = DailyRewardView.State.COOLDOWN;
+				}
+			}
+
+			// Initialize reward view!
+			m_rewardSlots[i].DEBUG_Init(state, i);
+		}
+
+		// Buttons
+		m_collectButton.SetActive(_canCollect);
+		m_doubleButton.SetActive(_canCollect && _canDouble);
+		m_dismissButton.SetActive(!_canCollect);
 	}
 }

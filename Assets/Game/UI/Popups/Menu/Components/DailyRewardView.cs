@@ -287,4 +287,102 @@ public class DailyRewardView : MetagameRewardView {
 			}
 		}
 	}
+
+	//------------------------------------------------------------------------//
+	// DEBUG																  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Simulate a debug state.
+	/// </summary>
+	/// <param name="_state">State to simulate.</param>
+	/// <param name="_rewardIdx">Reward index within the sequence.</param>
+	public void DEBUG_Init(State _state, int _rewardIdx) {
+		// Simulate some visuals
+		// Check Mark
+		GameObject checkMarkObj = this.FindObjectRecursive("CheckMark");
+		if(checkMarkObj != null) {
+			checkMarkObj.SetActive(_state == State.COLLECTED);
+		}
+		
+		// Day Text
+		if(m_dayText != null) {
+			m_dayText.text.text = "Day " + StringUtils.FormatNumber(_rewardIdx + 1);
+		}
+
+		// Background gradient color
+		if(m_backgroundGradient != null) {
+			// Select gradient based on reward state
+			bool isSpecial = _rewardIdx == DailyRewardsSequence.SEQUENCE_SIZE - 1;
+			Gradient4 targetGradient = settings.defaultGradient;
+			switch(_state) {
+				case State.IDLE: {
+					targetGradient = isSpecial ? settings.specialGradient : settings.defaultGradient;
+				} break;
+
+				case State.COOLDOWN: {
+					targetGradient = settings.cooldownGradient;
+				} break;
+
+				case State.CURRENT: {
+					targetGradient = settings.currentGradient;
+				} break;
+
+				case State.COLLECTED: {
+					targetGradient = settings.collectedGradient;
+				} break;
+			}
+
+			// Apply!
+			m_backgroundGradient.gradient.Set(targetGradient);
+			m_backgroundGradient.enabled = false;
+			m_backgroundGradient.enabled = true;
+		}
+
+		// Simulate what the animator would do
+		AnimationClip[] clips = m_stateAnimator.runtimeAnimatorController.animationClips;
+
+		//string stateId = "AN_DailyRewardView_Layout_DEFAULT";
+		for(int i = 0; i < clips.Length; ++i) {
+			switch(clips[i].name) {
+				// Frame color layer
+				case "AN_DailyRewardView_FrameColor_CURRENT": {
+					if(_state == State.CURRENT) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+
+				case "AN_DailyRewardView_FrameColor_IDLE": {
+					if(_state != State.CURRENT) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+
+				// Layout layer
+				case "AN_DailyRewardView_Layout_COLLECTED": {
+					if(_state == State.COLLECTED) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+				
+				case "AN_DailyRewardView_Layout_DEFAULT": {
+					if(_state != State.COLLECTED) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+
+				// Cooldown Flag layer
+				case "AN_DailyRewardView_Flag_COOLDOWN": {
+					if(_state == State.COOLDOWN) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+
+				case "AN_DailyRewardView_Flag_DEFAULT": {
+					if(_state != State.COOLDOWN) {
+						clips[i].SampleAnimation(this.gameObject, 0f);
+					}
+				} break;
+			}
+		}
+	}
 }
