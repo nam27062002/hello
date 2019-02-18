@@ -143,11 +143,15 @@ public class DailyRewardsSequence {
 		// Do it!
 		reward.Collect(_doubled);
 
+		// Do we need to generate a new sequence?
+		// [AOC] Before increasing the total index!! Otherwise rewardIdx will give 0
+		bool newSequenceNeeded = rewardIdx + 1 >= SEQUENCE_SIZE;
+
 		// Advance index!
 		m_totalRewardIdx++;
 
-		// Do we need to generate a new sequence?
-		if(rewardIdx >= SEQUENCE_SIZE) {
+		// Generate the new sequence if needed (AFTER increasing the index)
+		if(newSequenceNeeded) {
 			Generate();
 		}
 
@@ -317,11 +321,14 @@ public class DailyRewardsSequence {
 	/// </summary>
 	/// <param name="_value">New index.</param>
 	public void DEBUG_SetTotalRewardIdx(int _value) {
+		// Do we need to generate a new sequence?
+		bool needNewSequence = Mathf.Abs(m_totalRewardIdx - _value) > SEQUENCE_SIZE;
+
 		// Advance index!
 		m_totalRewardIdx = _value;
 
 		// Do we need to generate a new sequence?
-		if(rewardIdx >= SEQUENCE_SIZE) {
+		if(needNewSequence) {
 			Generate();
 		}
 	}
