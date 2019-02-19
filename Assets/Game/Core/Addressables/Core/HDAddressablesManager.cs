@@ -17,15 +17,14 @@ public class HDAddressablesManager : AddressablesManager
         {
             if (sm_instance == null)
             {
-                sm_instance = new HDAddressablesManager();
-                sm_instance.Initialize();
+                sm_instance = new HDAddressablesManager();             
             }
 
             return sm_instance;
         }
     }    
 
-    private void Initialize()
+    public void Initialise()
     {
         Logger logger = new ConsoleLogger("Addressables");
         string addressablesPath = "Addressables";
@@ -53,7 +52,52 @@ public class HDAddressablesManager : AddressablesManager
         }
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, true, logger);        
+    }
+
+    // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
+    // which may be called when rebooting the game
+    public override bool LoadScene(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    {
+        if (IsInitialized())
+        {
+            return base.LoadScene(id, mode);
+        }
+        else
+        {
+            SceneManager.LoadScene(id, mode);
+            return true;
+        }
+    }
+
+    // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene,
+    // which may be called when rebooting the game
+    public override AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    {
+        if (IsInitialized())
+        {
+            return base.LoadSceneAsync(id, mode);
+        }
+        else
+        {
+            AddressablesAsyncOp op = new AddressablesAsyncOp();            
+            op.Setup(new UbiUnityAsyncOperation(SceneManager.LoadSceneAsync(id, mode)));
+            return op;
+        }        
+    }
+
+    public override AddressablesOp UnloadSceneAsync(string id)
+    {
+        if (IsInitialized())
+        {
+            return base.UnloadSceneAsync(id);
+        }
+        else
+        {
+            AddressablesAsyncOp op = new AddressablesAsyncOp();
+            op.Setup(new UbiUnityAsyncOperation(SceneManager.UnloadSceneAsync(id)));
+            return op;
+        }
     }
 
     #region ingame

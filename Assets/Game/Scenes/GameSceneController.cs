@@ -26,7 +26,7 @@ public class GameSceneController : GameSceneControllerBase {
 	public const string NAME = "SC_Game";
 	public const float INITIAL_DELAY = 1f;	// Seconds. Initial delay before actually start the loading. Useful to give time to initialize and load assets for the loading screen.
 	public const float COUNTDOWN = 3.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
-	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
+	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering303
 
 	public enum EStates {
 		INIT,
@@ -205,6 +205,7 @@ public class GameSceneController : GameSceneControllerBase {
                 break;
 
             case LevelLoader.EState.Done:
+            	LevelManager.SetArtSceneActive();
                 PoolManager.Rebuild();
                 Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_ENTER);
                 HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();

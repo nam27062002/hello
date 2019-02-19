@@ -211,7 +211,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads = new List<string>();
 
         test.Setup(diskDriver, "00", assetId, jsonCatalogEntry, 
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, jsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);                
@@ -233,7 +233,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads = new List<string>();
 
         test.Setup(diskDriver, "00", assetId, jsonCatalogEntry,
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, jsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);        
@@ -284,7 +284,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads = new List<string>();        
 
         test.Setup(diskDriver, "asset_cubes_orig", assetId, jsonCatalogEntry,
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, resultJsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);        
@@ -309,7 +309,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads = new List<string>();
 
         test.Setup(diskDriver, "asset_cubes_orig_verified", assetId, jsonCatalogEntry,
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, resultJsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);        
@@ -334,7 +334,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads = new List<string>();
 
         test.Setup(diskDriver, "asset_cubes_orig_verified_too_big", assetId, jsonCatalogEntry,
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, resultJsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);
@@ -360,7 +360,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         resultFilesInDownloads.Add(assetId);
 
         test.Setup(diskDriver, "asset_cubes_orig_verified_smaller", assetId, jsonCatalogEntry,
-            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.DownloadingData,
+            CatalogEntryStatus.EState.ReadingDataInfo, CatalogEntryStatus.EState.InQueueForDownload,
             exceptionConf, 3f, resultJsonCatalogEntry, resultFilesInManifests, resultFilesInDownloads);
 
         batch.AddTest(test, true);

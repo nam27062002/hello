@@ -26,14 +26,24 @@ namespace Downloadables
         private Disk m_disk;
 
         private Cleaner m_cleaner;
+
+        private Downloader m_downloader;
+
+        /// <summary>
+        /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
+        /// </summary>
+        public bool IsAutomaticDownloaderEnabled { get; set; }
         
         public Manager(DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Logger logger)
         {
             sm_logger = logger;
 
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
+            CatalogEntryStatus.sm_disk = m_disk;
             m_cleaner = new Cleaner(m_disk, 180);
-            CatalogEntryStatus.sm_disk = m_disk;            
+
+            Logger downloaderLogger = new ConsoleLogger("Downloader");
+            m_downloader = new Downloader(m_disk, downloaderLogger);
 
             Reset();
         }
@@ -41,11 +51,13 @@ namespace Downloadables
         public void Reset()
         {
             IsInitialized = false;
+            IsAutomaticDownloaderEnabled = false;
             m_cleaner.Reset();
-            Catalog_Reset();            
+            Catalog_Reset();
+            m_downloader.Reset();        
         }
 
-        public void Initialize(JSONNode catalogJSON)
+        public void Initialize(JSONNode catalogJSON, bool isAutomaticDownloaderEnabled)
         {
             Reset();          
 
@@ -57,6 +69,17 @@ namespace Downloadables
             ProcessCatalog(catalogJSON);
 
             IsInitialized = true;
+            IsAutomaticDownloaderEnabled = isAutomaticDownloaderEnabled;
+
+            string urlBase = null;
+            if (catalogJSON != null)
+            {
+                urlBase = catalogJSON["urlBase"];
+            }
+
+            //http://10.44.4.69:7888/
+
+            m_downloader.Initialize(urlBase);
         } 
 
         private void ProcessCatalog(JSONNode catalogJSON)
@@ -147,9 +170,43 @@ namespace Downloadables
             return DOWNLOADS_ROOT_PATH_WITH_SLASH + id;
         }
 
+        /// <summary>
+        /// Request a downloadable with <c>id</c> as an identifier to be downloaded.
+        /// </summary>
+        /// <param name="id">Downloadable identifier to download</param>
+        public void RequestId(string id)
+        {
+            if (IsInitialized)
+            {
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                if (entry == null && CanLog())
+                {
+                    LogError("Downloadable id " + id + " requested but it doesn't exist in catalog");
+                }
+                else if (entry.CanBeRequested())
+                {
+                    entry.Request();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Request a list of downloadables to be downloaded.
+        /// </summary>
+        /// <param name="id">List of downloadable identifiers to download</param>
         public void RequestIdList(List<string> ids)
         {
-
+            if (IsInitialized)
+            {
+                if (ids != null)
+                {
+                    int count = ids.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        RequestId(ids[i]);
+                    }
+                }
+            }
         }
 
         public List<string> GetIds()
@@ -165,9 +222,12 @@ namespace Downloadables
 
         public void Update()
         {
-            m_disk.Update();
-            m_cleaner.Update();
-            Catalog_Update();
+            if (IsInitialized)
+            {
+                m_disk.Update();
+                m_cleaner.Update();
+                Catalog_Update();
+            }
         }        
 
         #region catalog
@@ -192,7 +252,7 @@ namespace Downloadables
             m_catalog.Add(id, entry);
         }        
 
-        private CatalogEntryStatus Catalog_GetEntryStatus(string id)
+        public CatalogEntryStatus Catalog_GetEntryStatus(string id)
         {
             CatalogEntryStatus entry = null;
             m_catalog.TryGetValue(id, out entry);
@@ -206,9 +266,32 @@ namespace Downloadables
 
         private void Catalog_Update()
         {
+            bool canDownload = !m_downloader.IsDownloading;
+            CatalogEntryStatus entryToDownload = null;
+
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
                 pair.Value.Update();
+                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload && 
+                    m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
+                {
+                    if (entryToDownload == null || !entryToDownload.IsRequestRunning())
+                    {
+                        if (pair.Value.IsRequestRunning())
+                        {
+                            entryToDownload = pair.Value;
+                        }
+                        else if (IsAutomaticDownloaderEnabled && pair.Value.CanAutomaticDownload())
+                        {
+                            entryToDownload = pair.Value;
+                        }                        
+                    }                    
+                }
+            }            
+
+            if (entryToDownload != null)
+            {                
+                m_downloader.StartDownloadThread(entryToDownload);
             }
         }
         #endregion

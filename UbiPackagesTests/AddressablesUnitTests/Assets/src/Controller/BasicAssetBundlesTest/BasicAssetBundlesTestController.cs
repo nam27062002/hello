@@ -379,7 +379,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         string text = (BetterStreamingAssets.FileExists(path)) ? BetterStreamingAssets.ReadAllText(path) : null;
         JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);
         List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, null);
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, null);
 
         Memory_EndSample(true);
     }
@@ -435,15 +435,22 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     }
     #endregion
 
+    private MockDiskDriver.EExceptionType m_diskDriverExceptionType = MockDiskDriver.EExceptionType.UnauthorizedAccess;
     public void Update()
     {
         AssetBundlesManager.Instance.Update();
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+        }
+        else if (Input.GetKeyDown(KeyCode.M))
         {
             //Debug.Log(Memory_GetUsedSize());            
-            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);            
-            //Download("01/scene_cubes");
+            //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);                        
+
+            Test_Download();
+            //Test_Dependencies();
         }
 
         if (m_request != null)
@@ -461,9 +468,29 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         }
     }
 
-    /*
+    void OnApplicationQuit()
+    {
+        AssetBundlesManager.Instance.Reset();
+    }
+    
+    private void Test_Download()
+    {
+        Download("scene_cubes");
+    }
+
+    private void Test_Dependencies()
+    {
+#if UNITY_EDITOR
+        MockDiskDriver diskDriver = AssetBundlesManager.Instance.GetMockDiskDriver();
+
+        m_diskDriverExceptionType = (m_diskDriverExceptionType == MockDiskDriver.EExceptionType.None) ? MockDiskDriver.EExceptionType.UnauthorizedAccess : MockDiskDriver.EExceptionType.None;
+        diskDriver.SetExceptionTypeToThrow(m_diskDriverExceptionType);
+#endif
+
+    }
+
     private bool isBundleBaseInited = false;
-    private string bundleBaseDownloadingURL;
+    private string bundleBaseDownloadingURL = "http://10.44.4.69:7888/";
 
     private void Download(string assetBundleName)
     {
@@ -513,6 +540,5 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         }
 
         bundleBaseDownloadingURL = absolutePath;
-    }    
-    */
+    }        
 }
