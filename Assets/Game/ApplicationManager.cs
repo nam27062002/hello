@@ -381,6 +381,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // doesn't finish then events can get lost (HDK-1897)
         HDTrackingManager.Instance.SaveOfflineUnsentEventsEnabled = !pause;
 
+        GameSettings.OnApplicationPause(pause);
+
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
         {
