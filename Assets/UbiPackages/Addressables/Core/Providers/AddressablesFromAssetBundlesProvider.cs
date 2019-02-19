@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, JSONNode downloadablesCatalog, Logger logger)
+    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, downloadablesCatalog, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, downloadablesCatalog, isAutomaticDownloaderEnabled, logger);
     }
 
     public void Reset()
@@ -36,6 +36,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(entry.AssetBundleName, null, true);
         return ProcessAssetBundlesOpRequest(request);
+    }
+
+    public List<string> GetDependenciesIncludingSelfList(List<string> dependencyIds)
+    {
+        return AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(dependencyIds);
     }
 
     public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
@@ -100,7 +105,20 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AddressablesFromAssetBundlesOp op = new AddressablesFromAssetBundlesOp();
         op.Setup(request);
         return op;
-    }  
+    }
+
+    public bool IsAutomaticDownloaderEnabled
+    {
+        get
+        {
+            return AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+        }
+
+        set
+        {
+            AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = value;
+        }
+    }
 
     public void Update()
     {

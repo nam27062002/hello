@@ -23,9 +23,9 @@ namespace Downloadables
             None,
             ReadingManifest,
             ReadingDataInfo,
-            DownloadingData,
-            CalculatingCRC,
-            DealingWithCRCMismatch,
+            InQueueForDownload,
+            Downloading,
+            CalculatingCRC,            
             Available
         };
 
@@ -41,8 +41,7 @@ namespace Downloadables
             {
                 m_state = value;
 
-                // Latest error and save are reseted so the income state will be executed and will be able to save 
-                // data right away
+                // Latest error and save are reseted so the incoming state will be executed and will be able to save data right away
                 m_latestErrorAt = -1f;
                 m_latestSaveAt = -1f;
 
@@ -51,6 +50,13 @@ namespace Downloadables
                     case EState.ReadingDataInfo:
                         m_dataInfo.Size = 0;
                         m_dataInfo.CRC = 0;
+                        break;
+
+                    case EState.Available:
+                        if (m_requestState == ERequestState.Running)
+                        {
+                            m_requestState = ERequestState.Done;
+                        }
                         break;
                 }
             }
@@ -62,6 +68,52 @@ namespace Downloadables
 
         private float m_latestErrorAt;
         private float m_latestSaveAt;
+
+        public enum ERequestState
+        {
+            None,
+            Running,
+            Done
+        };
+
+        private ERequestState m_requestState;        
+        public ERequestState RequestState
+        {
+            get
+            {
+                return m_requestState;
+            }
+
+            private set
+            {
+                m_requestState = value;
+
+                switch (m_requestState)
+                {
+                    case ERequestState.None:
+                        RequestError = null;
+                        break;
+
+                    case ERequestState.Running:
+                        // Latest error and save are reseted so the request will be resolved with no delays
+                        m_latestErrorAt = -1f;
+                        m_latestSaveAt = -1f;
+                        break;
+                }
+            }
+        }
+
+        public Error RequestError { get; private set; }
+
+        /// <summary>
+        /// Amount of times this downloadable has been tried to be downloaded with error as a result
+        /// </summary>
+        private int DownloadingErrorTimes { get; set; }
+
+        /// <summary>
+        /// Amount of times a CRC mismatch error happened
+        /// </summary>
+        private int CRCMismatchErrorTimes { get; set; }
 
         public CatalogEntryStatus()
         {
@@ -77,6 +129,9 @@ namespace Downloadables
             m_manifest.Reset();
             m_dataInfo.Reset();
             State = EState.None;
+            RequestState = ERequestState.None;
+            DownloadingErrorTimes = 0;
+            CRCMismatchErrorTimes = 0;
         }
 
         public void LoadManifest(string id, JSONNode json)
@@ -88,7 +143,14 @@ namespace Downloadables
         
         public void Update()
         {
-            bool canUpdate = true;            
+            if (m_requestState == ERequestState.Done)
+            {
+                m_requestState = ERequestState.None;
+            }
+
+            // If the request is done then we need to wait until the result is read and the request is cleaned up before keeping updating            
+            bool canUpdate = m_requestState != ERequestState.Done && m_state != EState.Downloading;            
+
             if (m_latestErrorAt >= 0f)
             {
                 float timeSinceLatestError = Time.realtimeSinceStartup - m_latestErrorAt;
@@ -107,16 +169,12 @@ namespace Downloadables
                         ProcessReadingDataInfo();
                         break;
 
-                    case EState.DownloadingData:
+                    case EState.InQueueForDownload:
                         break;
 
                     case EState.CalculatingCRC:
                         ProcessCalculatingCRC();
-                        break;
-
-                    case EState.DealingWithCRCMismatch:
-                        ProcessDealingWithCRCMismatch();
-                        break;
+                        break;                    
                 }
             }
 
@@ -147,7 +205,25 @@ namespace Downloadables
                 {
                     m_manifest.NeedsToSave = false;
                 }
+                else
+                {
+                    NotifyError(error);
+                }
             }
+        }
+
+        private void NotifyError(Error error)
+        {
+            if (error != null)
+            {
+                DownloadingErrorTimes++;
+
+                if (m_requestState == ERequestState.Running)
+                {
+                    RequestError = error;
+                    RequestState = ERequestState.Done;
+                }
+            }            
         }
 
         public CatalogEntryManifest GetManifest()
@@ -196,6 +272,7 @@ namespace Downloadables
             if (error != null)
             {
                 m_latestErrorAt = Time.realtimeSinceStartup;
+                NotifyError(error);
             }
 
             if (canAdvance)
@@ -241,13 +318,18 @@ namespace Downloadables
                             m_dataInfo.CRC = 0;
 
                             m_manifest.IsVerified = false;
-                            State = EState.DownloadingData;
+                            State = EState.InQueueForDownload;
                         }
                     }
                     else
                     {
-                        State = EState.DownloadingData;
+                        State = EState.InQueueForDownload;
                     }
+                }
+
+                if (error != null)
+                {
+                    NotifyError(error);
                 }
             }
         }
@@ -275,7 +357,8 @@ namespace Downloadables
                         }
                         else
                         {
-                            State = EState.DealingWithCRCMismatch;
+                            CRCMismatchErrorTimes++;
+                            State = EState.ReadingDataInfo;
                         }
                     }
                 }
@@ -283,18 +366,13 @@ namespace Downloadables
                 {
                     State = EState.ReadingDataInfo;
                 }
-            }            
-        }
-
-        private void ProcessDealingWithCRCMismatch()
-        {
-            Error error = null;
-            sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
-            if (error == null)
-            {
-                State = EState.ReadingDataInfo;
             }
-        }
+            
+            if (error != null)
+            {
+                NotifyError(error);
+            }            
+        }        
 
         public long GetTotalBytes()
         {
@@ -325,6 +403,54 @@ namespace Downloadables
         public bool Compare(CatalogEntryStatus other)
         {
             return other != null && other.m_manifest.Compare(other.m_manifest) && m_dataInfo.Compare(other.m_dataInfo);
+        }
+
+        public bool CanBeRequested()
+        {
+            return RequestState == ERequestState.None;
+        }        
+
+        public void Request()
+        {
+            if (RequestState == ERequestState.None)
+            {
+                RequestState = ERequestState.Running;
+            }
+        }        
+        
+        public bool IsRequestRunning()
+        {
+            return RequestState == ERequestState.Running;
+        }
+
+        public bool CanAutomaticDownload()
+        {
+            return CRCMismatchErrorTimes < 2 && DownloadingErrorTimes < 2;
+        }
+
+        public void OnDownloadStart()
+        {
+            if (State == EState.InQueueForDownload)
+            {
+                State = EState.Downloading;
+            }
+        }
+
+        public void OnDownloadFinish(Error error)
+        {
+            if (State == EState.Downloading)
+            {
+                if (error == null || m_manifest.Size == m_dataInfo.Size)
+                {
+                    State = EState.CalculatingCRC;
+                }
+                else
+                {
+                    State = EState.InQueueForDownload;
+                }
+
+                NotifyError(error);           
+            }
         }
     }
 }

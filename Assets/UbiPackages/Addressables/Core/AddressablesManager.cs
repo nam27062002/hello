@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, Logger logger)
     {
         sm_logger = logger;
 
@@ -88,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, logger);
+        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, isAutomaticDownloaderEnabled, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -404,8 +404,24 @@ public class AddressablesManager
         }
 
         return returnValue;
-    } 
-    
+    }
+
+    public bool IsAutomaticDownloaderEnabled
+    {
+        get
+        {
+            return (m_providerFromAB == null) ? false : m_providerFromAB.IsAutomaticDownloaderEnabled;
+        }
+
+        set
+        {
+            if (m_providerFromAB != null)
+            {
+                m_providerFromAB.IsAutomaticDownloaderEnabled = value;
+            }
+        }
+    }
+
     public void Update()
     {
         if (IsInitialized())
@@ -426,7 +442,7 @@ public class AddressablesManager
         AddressablesCatalogArea area = m_catalog.GetArea(areaId);
         if (area != null)
         {
-            returnValue = AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
+            returnValue = m_providerFromAB.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
         }
 
         return returnValue;

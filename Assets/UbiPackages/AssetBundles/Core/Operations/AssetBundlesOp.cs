@@ -8,11 +8,15 @@ public abstract class AssetBundlesOp
         None,  
         Success,
         Error_Internal,
-        Error_AB_Handle_Not_Found,      // No asset bundle handle found for an id
-        Error_AB_Couldnt_Be_Loaded,     // There was a problem when loading an asset bundle from disk
-        Error_Asset_Not_Found_In_AB,    // No asset with the name specified was found in an asset bundle
-        Error_AB_Is_Not_A_Scene_Bundle, // This error arises when trying to load a scene from a non scene asset bundle
-        Error_AB_Is_Not_Loaded          // This error arises when trying to unload an asset bundle that hasn't been loaded        
+        Error_AB_Handle_Not_Found,          // No asset bundle handle found for an id
+        Error_AB_Couldnt_Be_Loaded,         // There was a problem when loading an asset bundle from disk
+        Error_Asset_Not_Found_In_AB,        // No asset with the name specified was found in an asset bundle
+        Error_AB_Is_Not_A_Scene_Bundle,     // This error arises when trying to load a scene from a non scene asset bundle
+        Error_AB_Is_Not_Loaded,             // This error arises when trying to unload an asset bundle that hasn't been loaded    
+        Error_AB_Is_Not_Downloadable,       // This error arises when trying to download an asset bundle which name doesn't match the one given in downloadables catalog  
+        Error_AB_Disk_IOException,          // This error arises when trying to access to the disk, typically because there's no free space
+        Error_AB_Disk_UnauthorizedAccess,   // This error arises when trying to access to the disk with no permission, typically when the user hasn't granted storage permissions
+        Error_AB_Download_Internal          // This error arises when an unexpected situation happens, typicaly related to logic 
     };
 
     public static bool IsResultError(EResult result)

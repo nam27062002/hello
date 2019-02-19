@@ -52,13 +52,19 @@ public class AssetBundlesManager
 
     private Downloadables.Manager m_downloadablesManager;
 
+#if UNITY_EDITOR
+    private MockDiskDriver m_diskDriver;
+#endif
+
     /// <summary>
     /// Initialize the system.
     /// </summary>
     /// <param name="localAssetBundleIds">List of the local asset bundle ids.</param>
     /// <param name="localAssetBundlesPath">Relative path from StreamingAssets to local AssetBundles folder. Example: in your folder is in "/Assets/StreamingAssets/AssetBundles" then you need to use "AssetBundles"</param>
-    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>
-    public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, JSONNode downloadablesCatalog, Logger logger)
+    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
+    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>
+    /// <param name="logger">Logger</param>
+    public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -84,13 +90,26 @@ public class AssetBundlesManager
 
         m_localAssetBundleIds = localAssetBundleIds;
 
+#if UNITY_EDITOR
+        MockDiskDriver diskDriver = new MockDiskDriver();
+        m_diskDriver = diskDriver;
+        //m_diskDriver.SetExceptionTypeToThrow(MockDiskDriver.EExceptionType.UnauthorizedAccess);
+#else
         DiskDriver diskDriver = new DiskDriver();
+#endif
         Logger downloadablesLogger = new ConsoleLogger("Downloadables");
         m_downloadablesManager = new Downloadables.Manager(diskDriver, null, downloadablesLogger);
-        m_downloadablesManager.Initialize(downloadablesCatalog);
+        m_downloadablesManager.Initialize(downloadablesCatalog, isAutomaticDownloaderEnabled);
 
         LoadManifest(localAssetBundlesPath);        
     }
+
+#if UNITY_EDITOR
+    public MockDiskDriver GetMockDiskDriver()
+    {
+        return m_diskDriver;
+    }
+#endif
 
     private void LoadManifest(string directory)
     {        
@@ -220,12 +239,33 @@ public class AssetBundlesManager
 
         Ops_Reset();
         Loader_Reset();
-        m_downloadablesManager = null;
+
+        if (m_downloadablesManager != null)
+        {
+            m_downloadablesManager.Reset();
+            m_downloadablesManager = null;
+        }
     }
 
     private bool IsInitialized()
     {
         return m_assetBundleHandles != null;
+    }
+
+    public bool IsAutomaticDownloaderEnabled
+    {
+        get
+        {
+            return (m_downloadablesManager == null) ? false : m_downloadablesManager.IsAutomaticDownloaderEnabled;
+        }
+
+        set
+        {
+            if (m_downloadablesManager != null)
+            {
+                m_downloadablesManager.IsAutomaticDownloaderEnabled = value;
+            }
+        }
     }
 
     public AssetBundleHandle GetAssetBundleHandle(string id)
@@ -801,6 +841,11 @@ public class AssetBundlesManager
         }        
     }
 
+    public Downloadables.CatalogEntryStatus GetDownloadablesCatalogEntryStatus(string id)
+    {
+        return m_downloadablesManager.Catalog_GetEntryStatus(id);
+    }
+
     public void Update()
     {
         if (IsInitialized())
@@ -811,7 +856,7 @@ public class AssetBundlesManager
         }
     }
 
-    #region ops
+#region ops
     private List<AssetBundlesOp> m_ops;
 
     private void Ops_Init()
@@ -865,9 +910,9 @@ public class AssetBundlesManager
             }
         }
     }
-    #endregion
+#endregion
 
-    #region loader    
+#region loader    
     /// <summary>
     /// Queue containing the asset bundle ids to load
     /// </summary>
@@ -1012,9 +1057,9 @@ public class AssetBundlesManager
             }
         }
     }        
-    #endregion
+#endregion
 
-    #region logger
+#region logger
     private static Logger sm_logger;
 
     public static Logger Logger
@@ -1040,5 +1085,5 @@ public class AssetBundlesManager
             Logger.LogError("ASSERT: asset bundle " + assetBundleId + " is not loaded but callback returned success");
         }
     }
-    #endregion
+#endregion
 }
