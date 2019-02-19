@@ -206,6 +206,8 @@ public class GameSceneController : GameSceneControllerBase {
         
 		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
+        Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
         PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
@@ -305,7 +307,7 @@ public class GameSceneController : GameSceneControllerBase {
 				
 			case EStates.RUNNING: {
 				// Update running time
-				if (!m_freezeElapsedSeconds && !m_switchingArea)
+				if (m_freezeElapsedSeconds <= 0 && !m_switchingArea)
 					m_elapsedSeconds += Time.deltaTime;
 
 				// Dynamic loading
@@ -457,7 +459,18 @@ public class GameSceneController : GameSceneControllerBase {
         CustomParticlesCulling.Manager_OnDestroy();
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
 	}
+
+    public void OnPlayerLeavingArea(float _estimatedTime)
+    {
+        m_freezeElapsedSeconds++;
+    }
+    public void OnPlayerEnteringArea()
+    {
+        m_freezeElapsedSeconds--;
+    }
 
     public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
