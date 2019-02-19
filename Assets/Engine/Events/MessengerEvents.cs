@@ -58,7 +58,6 @@ public enum MessengerEvents {
 	DEBUG_SIMULATION_FINISHED,
 	DEBUG_UNLOCK_LEVELS,
 	DEBUG_REFRESH_MISSION_INFO,	// no params
-	DEBUG_REFRESH_DAILY_REWARDS,	// no params
 	CP_PREF_CHANGED,			// params _string _prefID
 	CP_BOOL_CHANGED,			// params: string _prefID, bool _newValue
 	CP_STRING_CHANGED,			// params: string _prefID, string _newValue

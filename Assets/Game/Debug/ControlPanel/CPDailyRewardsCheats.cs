@@ -83,7 +83,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 		PersistenceFacade.instance.Save_Request();
 
 		// Notify game
-		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS);
+		Broadcaster.Broadcast(BroadcastEventType.DEBUG_REFRESH_DAILY_REWARDS);
 	}
 
 	/// <summary>
@@ -97,7 +97,7 @@ public class CPDailyRewardsCheats : MonoBehaviour {
 		PersistenceFacade.instance.Save_Request();
 
 		// Notify game
-		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS);
+		Broadcaster.Broadcast(BroadcastEventType.DEBUG_REFRESH_DAILY_REWARDS);
 	}
 
 	/// <summary>

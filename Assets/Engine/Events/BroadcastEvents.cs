@@ -41,6 +41,9 @@ public enum BroadcastEventType
     GAME_ENDED,
     
     BOOST_TOGGLED,              // params: ToggleParam
+
+	// Debug
+	DEBUG_REFRESH_DAILY_REWARDS,    // no params
     
     COUNT,
 }

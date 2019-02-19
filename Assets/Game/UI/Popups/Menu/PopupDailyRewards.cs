@@ -15,7 +15,7 @@ using UnityEngine;
 /// Daily rewards popup.
 /// </summary>
 [RequireComponent(typeof(PopupController))]
-public class PopupDailyRewards : MonoBehaviour {
+public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -51,7 +51,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	public void OnEnable() {
 		// Subscribe to external events
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
-			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS, DEBUG_OnRefresh);
+			Broadcaster.AddListener(BroadcastEventType.DEBUG_REFRESH_DAILY_REWARDS, this);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	public void OnDisable() {
 		// Unsubscribe from external events
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
-			Messenger.RemoveListener(MessengerEvents.DEBUG_REFRESH_DAILY_REWARDS, DEBUG_OnRefresh);
+			Broadcaster.RemoveListener(BroadcastEventType.DEBUG_REFRESH_DAILY_REWARDS, this);
 		}
 	}
 
@@ -271,14 +271,6 @@ public class PopupDailyRewards : MonoBehaviour {
 	// DEBUG																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Control panel handler.
-	/// </summary>
-	private void DEBUG_OnRefresh() {
-		// Just reinitialize
-		InitWithCurrentData(true);
-	}
-
-	/// <summary>
 	/// Initialize with debug setup.
 	/// </summary>
 	/// <param name="_rewardIdx">Current reward index.</param>
@@ -312,5 +304,19 @@ public class PopupDailyRewards : MonoBehaviour {
 		m_collectButton.SetActive(_canCollect);
 		m_doubleButton.SetActive(_canCollect && _canDouble);
 		m_dismissButton.SetActive(!_canCollect);
+	}
+
+	/// <summary>
+	/// A global event has been sent.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			case BroadcastEventType.DEBUG_REFRESH_DAILY_REWARDS: {
+				// Just reinitialize
+				InitWithCurrentData(true);
+			} break;
+		}
 	}
 }
