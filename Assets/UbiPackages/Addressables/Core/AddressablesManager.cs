@@ -305,7 +305,7 @@ public class AddressablesManager
     /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>        
     /// <returns><c>true</c> if the scene has been loaded successfully.</returns>
-    public bool LoadScene(string id, LoadSceneMode mode)
+    public virtual bool LoadScene(string id, LoadSceneMode mode)
     {
         bool returnValue = false;
         if (IsInitialized())
@@ -328,7 +328,7 @@ public class AddressablesManager
     /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>            
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public virtual AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
     {
         AddressablesOp returnValue;
 
@@ -348,7 +348,7 @@ public class AddressablesManager
         return returnValue;
     }    
 
-    public AddressablesOp UnloadSceneAsync(string id)
+    public virtual AddressablesOp UnloadSceneAsync(string id)
     {
         AddressablesOp returnValue;
 

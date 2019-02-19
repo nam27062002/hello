@@ -172,7 +172,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Destroy();
         Device_Destroy();
-        
+
+        HDAddressablesManager.Instance.Reset();
+
         m_isAlive = false;
         Messenger.Broadcast(MessengerEvents.APPLICATION_QUIT);
 
