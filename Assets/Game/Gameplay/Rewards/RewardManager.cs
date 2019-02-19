@@ -800,6 +800,13 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 				instance.m_deathSource = entity.sku;
 			}
 		}
+        
+        // Lose score multiplier
+        if (m_currentScoreMultiplierIndex != 0)
+        {
+            SetScoreMultiplier(0);
+            Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_LOST);
+        }
 	}
 
 	/// <summary>

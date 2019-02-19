@@ -372,7 +372,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	IEnumerator DelayedEnd(float _delay)
 	{
 		// InstanceManager.gameSceneController.PauseGame(true, true);
-		InstanceManager.gameSceneController.freezeElapsedSeconds = true;
+		InstanceManager.gameSceneController.freezeElapsedSeconds++;
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
