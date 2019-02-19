@@ -22,16 +22,33 @@ using System.Collections.Generic;
 [CustomPropertyDrawer(typeof(FileListAttribute))]
 public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	//------------------------------------------------------------------//
+	// CONSTANTS														//
+	//------------------------------------------------------------------//
+	private const float FILE_LIST_REFRESH_INTERVAL = 30f;	// Don't update the file list at every frame, it's very time consuming!
+
+	//------------------------------------------------------------------//
 	// MEMBERS															//
 	//------------------------------------------------------------------//
-	// Data that mus be kept between opening the sku list popup and capturing its result
+	// Data that must be kept between opening the sku list popup and capturing its result
 	private List<FileInfo> m_files = new List<FileInfo>();
-	private List<string> m_options = new List<string>();
+	private string[] m_options = null;
+	private List<string> m_optionsTempList = new List<string>();
 	private SerializedProperty m_targetProperty = null;
+
+	// Internal logic
+	private int m_selectedIdx = 0;
+	private double m_fileListRefreshTimer = -FILE_LIST_REFRESH_INTERVAL;	// Force a first refresh
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Drawer constructor.
+	/// </summary>
+	public FileListAttributeEditor() {
+		
+	}
+
 	/// <summary>
 	/// A change has occurred in the inspector, draw the property and store new values.
 	/// Use the m_pos member as position reference and update it using AdvancePos() method.
@@ -47,47 +64,23 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 			return;
 		}
 
+		// Update file list if needed
+		if(EditorApplication.timeSinceStartup > m_fileListRefreshTimer + FILE_LIST_REFRESH_INTERVAL) {
+			// Refresh file list
+			RefreshFileList();
+
+			// Find out index of the current value
+			RefreshSelectedIdx(_property.stringValue);
+		}
+
 		// Store property
 		m_targetProperty = _property;
 
-		// Obtain the attribute
-		FileListAttribute attr = attribute as FileListAttribute;
-
-		// Clear both the files and the options lists
-		m_files.Clear();
-		m_options.Clear();
-
-		// Insert "NONE" option at the beginning
-		if(attr.m_allowEmptyValue) {
-			m_files.Add(null);	// "NONE" value is ""
-			m_options.Add("-");
-		}
-
-		// Get the file list (recursively)
-		string dirPath = Application.dataPath + "/" + attr.m_folderPath;
-		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
-		ScanFiles(dirInfo, attr.m_filter);
-
-		// Find out current selected value
-		// If current value was not found, force it to first value (which will be "NONE" if allowed)
-		int selectedIdx = 0;
-		if(!String.IsNullOrEmpty(_property.stringValue)) {
-			for(int i = 0; i < m_files.Count; i++) {
-				if(m_files[i] == null) continue;
-
-				// [AOC] Windows uses backward slashes, which Unity doesn't recognize
-				if(StringUtils.SafePath(m_files[i].FullName).Contains(StringUtils.SafePath(_property.stringValue))) {
-					selectedIdx = i;
-					break;
-				}
-			}
-		}
-		
 		// Display the property
 		// Unity's Popup control manages the sub-menu logic! ^_^
 		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, selectedIdx, m_options.ToArray());
-		if(newSelectedIdx != selectedIdx) {
+		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, m_selectedIdx, m_options);
+		if(newSelectedIdx != m_selectedIdx) {
 			OnFileSelected(newSelectedIdx);
 		}
 
@@ -110,6 +103,41 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 			m_targetProperty.stringValue = StringUtils.FormatPath(m_files[_selectedIdx].FullName, attr.m_format);	// Options array match the file list, so no need to do anything else :)
 		}
 		m_targetProperty.serializedObject.ApplyModifiedProperties();
+
+		// Update selected index
+		m_selectedIdx = _selectedIdx;
+	}
+
+	/// <summary>
+	/// Refresh the whole file list.
+	/// Don't abuse this method!
+	/// </summary>
+	private void RefreshFileList() {
+		// Obtain the attribute
+		FileListAttribute attr = attribute as FileListAttribute;
+
+		// Clear both the files and the options lists
+		m_files.Clear();
+		m_optionsTempList.Clear();
+		m_options = null;
+
+		// Insert "NONE" option at the beginning
+		if(attr.m_allowEmptyValue) {
+			m_files.Add(null);  // "NONE" value is ""
+			m_optionsTempList.Add("-");
+		}
+
+		// Get the file list (recursively)
+		string dirPath = Application.dataPath + "/" + attr.m_folderPath;
+		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+		ScanFiles(dirInfo, attr.m_filter);
+
+		// Convert options temp list to array and free memory
+		m_options = m_optionsTempList.ToArray();
+		m_optionsTempList.Clear();
+
+		// Reset timer
+		m_fileListRefreshTimer = EditorApplication.timeSinceStartup;
 	}
 
 	/// <summary>
@@ -129,7 +157,7 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 
 		// Clean up displayed names and add to the options list as well
 		for(int i = 0; i < files.Length; i++) {
-			m_options.Add(_prefix + Path.GetFileNameWithoutExtension(files[i].Name));	// Strip filename from full file path and attach prefix
+			m_optionsTempList.Add(_prefix + Path.GetFileNameWithoutExtension(files[i].Name));	// Strip filename from full file path and attach prefix
 		}
 
 		// Recursively scan subdirs as well
@@ -138,6 +166,27 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 			// Update prefix (so all files in this subdir are in nested menus
 			string prefix = _prefix + dirs[i].Name + "/";
 			ScanFiles(dirs[i], _filter, prefix);
+		}
+	}
+
+	/// <summary>
+	/// Find the index of the given value within the m_files array.
+	/// If given value is not found, the index will be set to 0, forcing selection 
+	/// to the first value (which will be "NONE" if allowed).
+	/// </summary>
+	/// <param name="_toFind">Value to find.</param>
+	private void RefreshSelectedIdx(string _toFind) {
+		m_selectedIdx = 0;
+		if(!String.IsNullOrEmpty(_toFind)) {
+			for(int i = 0; i < m_files.Count; i++) {
+				if(m_files[i] == null) continue;
+
+				// [AOC] Windows uses backward slashes, which Unity doesn't recognize
+				if(StringUtils.SafePath(m_files[i].FullName).Contains(StringUtils.SafePath(_toFind))) {
+					m_selectedIdx = i;
+					break;
+				}
+			}
 		}
 	}
 }
