@@ -35,6 +35,11 @@ public class BasicAddressablesTestController : MonoBehaviour
         }
     }
 
+    void OnApplicationQuit()
+    {
+        m_addressablesManager.Reset();
+    }
+
     private ELoadResourceMode GetLoadResourceModeFromDropdown(Dropdown dropdown)
     {
         int value = (dropdown == null) ? 0 : dropdown.value;
