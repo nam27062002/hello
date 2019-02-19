@@ -268,14 +268,14 @@ namespace AssetBundleBrowser.AssetBundleModel
         {
             get
             {
-                return m_ConcreteCounter;
+				return m_ConcreteAssets.Count;
             }
         }
         public int DependentCounter
         {
             get
             {
-                return m_DependentCounter;
+				return m_DependentAssets.Count;
             }
         }
 
