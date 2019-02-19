@@ -117,7 +117,10 @@ public class OTA_NPCSceneControllerEditor : Editor {
 
                 if (!string.IsNullOrEmpty(assetBundle)) {
                     if (_entries != null) {
-                        _entries.Add("{\"id\":\"" + Path.GetFileNameWithoutExtension(file.Name) + "\"," +
+                        string assetName = Path.GetFileNameWithoutExtension(file.Name);
+                        string assetPath = Path.GetDirectoryName(filePath);
+                        string id = assetPath.Substring(assetPath.LastIndexOf('/') + 1) + "/" + assetName;
+                        _entries.Add("{\"id\":\"" + id + "\"," +
                                       "\"locationType\":\"AssetBundles\"," +
                                       "\"guid\":\"" + AssetDatabase.AssetPathToGUID(filePath) + "\"," +
                                       "\"abName\":\"" + assetBundle + "\"}");
