@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// This class is responsible for tayloring Addressables UbiPackage to meet Hungry Dragon needs
 /// </summary>
-public class HDAddressablesManager
+public class HDAddressablesManager : AddressablesManager
 {
     private static HDAddressablesManager sm_instance;
 
@@ -23,9 +23,7 @@ public class HDAddressablesManager
 
             return sm_instance;
         }
-    }
-
-    private AddressablesManager m_addressablesManager = new AddressablesManager();
+    }    
 
     private void Initialize()
     {
@@ -55,7 +53,7 @@ public class HDAddressablesManager
         }
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, logger);        
     }
 
     #region ingame
@@ -76,19 +74,19 @@ public class HDAddressablesManager
             NextAreaRealSceneNames = nextAreaRealSceneNames;
 
             // Retrieves the dependencies of the previous area scenes
-            List<string> prevAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(prevAreaRealSceneNames);
+            List<string> prevAreaSceneDependencyIds = Instance.GetDependencyIdsList(prevAreaRealSceneNames);
 
             // Retrieves the dependencies of the next area scenes
-            List<string> nextAreaSceneDependencyIds = Instance.GetSceneDependencyIdsList(nextAreaRealSceneNames);
+            List<string> nextAreaSceneDependencyIds = Instance.GetDependencyIdsList(nextAreaRealSceneNames);
 
             // Retrieves the dependencies of the previous area defined in addressablesCatalog.json
-            List<string> prevAreaDependencyIds = Instance.m_addressablesManager.Areas_GetDependencyIds(prevArea);
+            List<string> prevAreaDependencyIds = Instance.Areas_GetDependencyIds(prevArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             prevAreaDependencyIds = UbiListUtils.AddRange(prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
 
             // Retrieves the dependencies of the next area defined in addressablesCatalog.json
-            List<string> nextAreaDependencyIds = Instance.m_addressablesManager.Areas_GetDependencyIds(nextArea);
+            List<string> nextAreaDependencyIds = Instance.Areas_GetDependencyIds(nextArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             nextAreaDependencyIds = UbiListUtils.AddRange(nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);
@@ -144,7 +142,7 @@ public class HDAddressablesManager
 
         public AddressablesOp LoadNextAreaDependencies()
         {
-            return Instance.LoadDependencyIdsList(DependencyIdsToLoad);
+            return Instance.LoadDependencyIdsListAsync(DependencyIdsToLoad);
         }
 
         public bool NeedsToLoadNextAreaScenes()
@@ -192,7 +190,7 @@ public class HDAddressablesManager
         {            
             for (int i = 0; i < nextAreaRealSceneNames.Count;)
             {
-                if (!m_addressablesManager.IsResourceAvailable(nextAreaRealSceneNames[i]))
+                if (!IsResourceAvailable(nextAreaRealSceneNames[i]))
                 {
                     nextAreaRealSceneNames.RemoveAt(i);
                 }
@@ -205,48 +203,5 @@ public class HDAddressablesManager
 
         return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
-    #endregion    
-   
-    public void LoadScene(string sceneName, LoadSceneMode mode)
-    {
-        m_addressablesManager.LoadScene(sceneName, mode);
-    }    
-
-    public AddressablesOp LoadSceneAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
-    {
-        return m_addressablesManager.LoadSceneAsync(sceneName, mode);
-    }
-
-    public AddressablesOp UnloadSceneAsync(string sceneName)
-    {        
-        return m_addressablesManager.UnloadSceneAsync(sceneName);
-    }
-    
-    private AddressablesOp LoadDependencyIdsList(List<string> dependencyIds)
-    {
-        return m_addressablesManager.LoadDependencyIdsListAsync(dependencyIds);
-    }
-
-    private void UnloadDependencyIdsList(List<string> dependencyIds)
-    {
-        m_addressablesManager.UnloadDependencyIdsList(dependencyIds);
-    }
-
-    private List<string> GetSceneDependenciyIds(string sceneName)
-    {
-        return m_addressablesManager.GetDependencyIds(sceneName);
-    }
-
-    private List<string> GetSceneDependencyIdsList(List<string> sceneNames)
-    {
-        return m_addressablesManager.GetDependencyIdsList(sceneNames);        
-    }    
-    
-    public void Update()
-    {
-        if (m_addressablesManager != null)
-        {
-            m_addressablesManager.Update();
-        }        
-    }
+    #endregion                       
 }
