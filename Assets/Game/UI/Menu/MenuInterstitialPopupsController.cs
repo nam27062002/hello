@@ -430,8 +430,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Don't display if another popup was opened
 		if(m_currentPopup != null) return;
 
+		// Never if feature not enabled
+		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
+
 		// Never if daily rewards are not yet enabled
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_DAILY_REWARDS_AT_RUN) return;
+		if(!UsersManager.currentUser.HasPlayedGames(GameSettings.ENABLE_DAILY_REWARDS_AT_RUN)) return;
 
 		// If the reward is available show the popup!
 		bool showPopup = false;
