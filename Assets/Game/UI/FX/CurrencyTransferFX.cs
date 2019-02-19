@@ -27,6 +27,7 @@ public class CurrencyTransferFX : MonoBehaviour {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	public const string COINS = "UI/FX/PF_CoinsTransferFX";
+	public const string PC = "UI/FX/PF_PCTransferFX";
     public const string GOLDEN_FRAGMENTS = "UI/FX/PF_GoldenFragmentsTransferFX";
 
 	//------------------------------------------------------------------------//
@@ -514,6 +515,20 @@ public class CurrencyTransferFX : MonoBehaviour {
 		// Load the prefab from resources and use corresponding method
 		GameObject prefab = Resources.Load<GameObject>(_prefabPath);
 		return InstantiateAndLaunch(prefab, _parent, _from, _to);
+	}
+
+	/// <summary>
+	/// Given a game currency, return the default prefab for it.
+	/// </summary>
+	/// <returns>The path of the default prefab for the given currency.</returns>
+	/// <param name="_currency">Currency.</param>
+	public static string GetDefaultPrefabPathForCurrency(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.SOFT: return COINS;
+			case UserProfile.Currency.HARD: return PC;
+			case UserProfile.Currency.GOLDEN_FRAGMENTS: return GOLDEN_FRAGMENTS;
+		}
+		return string.Empty;
 	}
 
 	/// <summary>
