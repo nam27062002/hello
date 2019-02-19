@@ -67,6 +67,10 @@ public class DailyRewardView : MetagameRewardView {
 	[SerializeField] private MenuEggLoader m_eggLoader = null;
 	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
 	[Space]
+	[Comment("VFX (optional)")]
+	[SerializeField] private PrefabLoader m_currentGlowFX = null;
+	[SerializeField] private PrefabLoader m_collectFX = null;
+	[Space]
 	[Comment("Extra Setup")]
 	[SerializeField] private OffsetPerType[] m_iconOffsets = new OffsetPerType[0];
 
@@ -184,7 +188,6 @@ public class DailyRewardView : MetagameRewardView {
 			if(m_petLoader != null) {
 				// Activate?
 				m_petLoader.gameObject.SetActive(isPet);
-				if(m_icon != null) m_icon.gameObject.SetActive(!isPet);
 
 				// Reload preview if required
 				if(_reloadPreview) {
@@ -251,6 +254,17 @@ public class DailyRewardView : MetagameRewardView {
 
 			// Apply!
 			m_backgroundGradient.gradient.Set(targetGradient);
+			m_backgroundGradient.enabled = false;
+			m_backgroundGradient.enabled = true;
+		}
+
+		// Current glow FX
+		if(m_currentGlowFX != null) {
+			if(m_state == State.CURRENT) {
+				m_currentGlowFX.Load();
+			} else if(m_currentGlowFX.loadedInstance != null) {
+				m_currentGlowFX.Unload();
+			}
 		}
 
 		// State animator
@@ -264,6 +278,24 @@ public class DailyRewardView : MetagameRewardView {
 		if(m_state == State.COOLDOWN || m_state == State.CURRENT) {
 			this.transform.SetAsLastSibling();
 		}
+	}
+
+	/// <summary>
+	/// Trigger the collect FX.
+	/// Won't perform any checks.
+	/// </summary>
+	public void LaunchCollectFX() {
+		// VFX
+		if(m_collectFX != null) {
+			m_collectFX.Load();
+			if(m_collectFX.loadedInstance != null) {
+				ParticleSystem ps = m_collectFX.GetComponent<ParticleSystem>();
+				if(ps != null) ps.Play();
+			}
+		}
+
+		// SFX
+		AudioController.Play("hd_lab_power_upgraded");
 	}
 
 	//------------------------------------------------------------------------//

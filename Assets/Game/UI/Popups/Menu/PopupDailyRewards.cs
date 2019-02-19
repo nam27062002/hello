@@ -37,6 +37,7 @@ public class PopupDailyRewards : MonoBehaviour {
 
 	// Internal logic
 	private bool m_rewardsFlowPending = false;
+	private bool m_rewardCollected = false;	// Prevent collect spamming
 
 	// Cache some data
 	private DailyRewardsSequence m_sequence = null;
@@ -70,7 +71,8 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// <summary>
 	/// Initialize the popup with current Daily Rewards Sequence.
 	/// </summary>
-	private void InitWithCurrentData() {
+	/// <param name="_dismissButtonAllowed">Allow dismiss button?</param>
+	private void InitWithCurrentData(bool _dismissButtonAllowed) {
 		// Aux vars
 		m_sequence = UsersManager.currentUser.dailyRewards;
 		DailyReward currentReward = m_sequence.GetNextReward();
@@ -111,7 +113,7 @@ public class PopupDailyRewards : MonoBehaviour {
 		// Initialize buttons
 		m_collectButton.SetActive(canCollect);
 		m_doubleButton.SetActive(canCollect && currentReward.canBeDoubled);
-		m_dismissButton.SetActive(!canCollect);
+		m_dismissButton.SetActive(!canCollect && _dismissButtonAllowed);
 	}
 
 	/// <summary>
@@ -120,23 +122,69 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// <param name="_doubled">Has the reward been doubled?</param>
 	private void CollectNextReward(bool _doubled) {
 		// Prevent spamming
-		if(m_rewardsFlowPending) return;
+		if(m_rewardCollected) return;
+
+		// Aux vars
+		float closeDelay = 0f;
 
 		// Make sure the reward can be collected
 		if(m_sequence.CanCollectNextReward()) {
+			// Aux vars
+			DailyReward collectedReward = m_sequence.GetNextReward();
+			DailyRewardView collectedRewardSlot = m_rewardSlots[m_sequence.rewardIdx];
+
 			// Collect the reward! (This only pushes the reward to the stack and updates its state)
 			m_sequence.CollectNextReward(_doubled);
 
 			// Save persistence
 			PersistenceFacade.instance.Save_Request();
 
-			// Program the reward flow
-			m_rewardsFlowPending = true;
+			// Depending on reward type, either show simple feedback or trigger rewards flow
+			switch(collectedReward.reward.type) {
+				case Metagame.RewardEgg.TYPE_CODE:
+				case Metagame.RewardPet.TYPE_CODE: {
+					// Program the reward flow, will be triggered once the popup is closed
+					m_rewardsFlowPending = true;
+				} break;
+
+				default: {
+					// Pop the reward from the reward's stack and collect it
+					Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
+					reward.Collect();
+
+					// Currency FX
+					Transform target = InstanceManager.menuSceneController.hud.scCounter.transform;
+					CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+						CurrencyTransferFX.GetDefaultPrefabPathForCurrency(reward.currency),
+						this.GetComponentInParent<Canvas>().transform,
+						collectedRewardSlot.transform.position + new Vector3(0f, 0f, -0.5f),       // Offset Z so the coins don't collide with the UI elements
+						target.position + new Vector3(0f, 0f, -0.5f)
+					);
+					fx.totalDuration = 0.5f;
+
+					// Refresh popup view
+					InitWithCurrentData(false);
+
+					// Close the popup after some delay
+					closeDelay = fx.totalDuration * 0.5f;	// Give enough time to enjoy the fireworks
+				} break;
+			}
+
+			// Trigger some nice VFX and SFX, regardless of the reward type
+			collectedRewardSlot.LaunchCollectFX();
+
+			// Prevent spamming
+			m_rewardCollected = true;
 		}
 
-		// Close the poopup - don't destroy though, since we'll open it again after the rewards flow
-		//GetComponent<PopupController>().Close(false);
-		GetComponent<PopupController>().Close(true);
+		// Close popup (with optional delay)
+		if(closeDelay > 0f) {
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => { GetComponent<PopupController>().Close(true); }
+			, 1f);	
+		} else {
+			GetComponent<PopupController>().Close(true);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -147,7 +195,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// </summary>
 	public void OnOpenPreAnimation() {
 		// Init visuals
-		InitWithCurrentData();
+		InitWithCurrentData(true);
 
 		// Reset logic
 		m_rewardsFlowPending = false;
@@ -170,7 +218,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// </summary>
 	public void OnCollectButton() {
 		// Prevent spamming
-		if(m_rewardsFlowPending) return;
+		if(m_rewardCollected) return;
 
 		// Launch the rewards flow, no doubling
 		CollectNextReward(false);
@@ -181,7 +229,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// </summary>
 	public void OnDoubleButton() {
 		// Prevent spamming
-		if(m_rewardsFlowPending) return;
+		if(m_rewardCollected) return;
 
 		// Trigger rewarded ad
 		PopupAdBlocker.Launch(true, GameAds.EAdPurpose.DAILY_REWARD_DOUBLE, OnAdRewardCallback);
@@ -227,7 +275,7 @@ public class PopupDailyRewards : MonoBehaviour {
 	/// </summary>
 	private void DEBUG_OnRefresh() {
 		// Just reinitialize
-		InitWithCurrentData();
+		InitWithCurrentData(true);
 	}
 
 	/// <summary>
