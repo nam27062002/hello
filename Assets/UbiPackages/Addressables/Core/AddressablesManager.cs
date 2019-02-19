@@ -328,7 +328,7 @@ public class AddressablesManager
     /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>            
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode)
+    public AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
     {
         AddressablesOp returnValue;
 
