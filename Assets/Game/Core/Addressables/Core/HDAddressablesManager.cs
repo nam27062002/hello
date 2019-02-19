@@ -53,7 +53,7 @@ public class HDAddressablesManager : AddressablesManager
         }
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, true, logger);        
     }
 
     #region ingame
