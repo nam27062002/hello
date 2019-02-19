@@ -216,7 +216,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 		for (int i = 0; i < toDelete.Count; ++i) {
 			m_pools.Remove(toDelete[i]);
-		}
+        }
 		toDelete.Clear();
 
 		Resources.UnloadUnusedAssets();
@@ -241,14 +241,12 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
-        if (_prefabName.Contains("PF_Cupido_Arrow")) {
-            Debug.LogWarning("CREATING PF_Cupido_Arrow");
-        }
-
         if (_container.pool == null) {
 			PoolData data = _container.buildData;
-			GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
-			if (go != null) {
+
+            GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_prefabName);
+            //GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
+            if (go != null) {
 				int size = data.size;
 
 				if (sm_printPools) size = 1;				
