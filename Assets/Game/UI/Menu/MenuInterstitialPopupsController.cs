@@ -30,8 +30,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		NEW_DRAGON_UNLOCKED = 1 << 1,
 		POPUP_DISPLAYED = 1 << 2,
 		WAIT_FOR_CUSTOM_POPUP = 1 << 3,
-		CHECKING_CONNECTION = 1 << 4,
-		SHOW_DAILY_REWARDS = 1 << 5
+		CHECKING_CONNECTION = 1 << 4
 	}
 
 	//------------------------------------------------------------------------//
@@ -438,13 +437,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		bool showPopup = false;
 		if(UsersManager.currentUser.dailyRewards.CanCollectNextReward()) {
 			showPopup = true;
-			SetFlag(StateFlag.SHOW_DAILY_REWARDS, true);	// Show daily rewards again when coming back to this screen
-		}
-
-		// If it was programmed
-		else if(GetFlag(StateFlag.SHOW_DAILY_REWARDS)) {
-			showPopup = true;
-			SetFlag(StateFlag.SHOW_DAILY_REWARDS, false);
 		}
 
 		// Show it?
@@ -482,11 +474,11 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
                 CheckPromotedIAPs();
 				//CheckTermsAndConditions();
 				CheckCustomizerPopup();
-				CheckDailyRewards();
 			} break;
 
 		    case MenuScreen.DRAGON_SELECTION: {
 				// Coming from any screen (high priority)
+				CheckDailyRewards();
 				CheckLabUnlock();
 				CheckPreRegRewards();
 				CheckShark();
@@ -544,7 +536,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 			// Check if we need to open any other popup
 			switch(InstanceManager.menuSceneController.currentScreen) {
 				case MenuScreen.PLAY: {
-					CheckDailyRewards();
+					// Add any checks here
 				} break;
 			}
 		}
