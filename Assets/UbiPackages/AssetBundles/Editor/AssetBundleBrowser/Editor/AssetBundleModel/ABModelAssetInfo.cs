@@ -72,6 +72,8 @@ namespace AssetBundleBrowser.AssetBundleModel
     {
         internal bool isScene { get; set; }
         internal bool isFolder { get; set; }
+        internal bool isPresentInMultipleBundles { get; set; }
+
         internal long fileSize;
 
         private HashSet<string> m_Parents;
@@ -87,6 +89,7 @@ namespace AssetBundleBrowser.AssetBundleModel
             m_Parents = new HashSet<string>();
             isScene = false;
             isFolder = false;
+            isPresentInMultipleBundles = false;
         }
 
         internal string fullAssetName
