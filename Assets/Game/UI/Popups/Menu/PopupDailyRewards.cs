@@ -37,7 +37,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 
 	// Internal logic
 	private bool m_rewardsFlowPending = false;
-	private bool m_rewardCollected = false;	// Prevent collect spamming
+	private bool m_rewardCollected = false; // Prevent collect spamming
+
+	// Internal references
+	private CurrencyTransferFX m_currencyFX = null;
 
 	// Cache some data
 	private DailyRewardsSequence m_sequence = null;
@@ -153,20 +156,35 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 					reward.Collect();
 
 					// Currency FX
-					Transform target = InstanceManager.menuSceneController.hud.scCounter.transform;
-					CurrencyTransferFX fx = CurrencyTransferFX.LoadAndLaunch(
+					// Make it fly to the matching currency counter in the HUD
+					Transform target = InstanceManager.menuSceneController.hud.GetCurrencyCounter(reward.currency).transform;
+
+					// [AOC] Because origin and target are in different canvases, we need to do some coordinate conversions
+					Canvas mainCanvas = target.GetComponentInParent<Canvas>();
+					Vector3 toViewportPoint = mainCanvas.worldCamera.WorldToViewportPoint(target.position);
+					Vector3 toWorldPos = PopupManager.canvas.worldCamera.ViewportToWorldPoint(toViewportPoint);
+					Vector3 fromWorldPos = collectedRewardSlot.transform.position;
+
+					// Offset Z a bit so the coins don't collide with the UI elements
+					// [AOC] We're assuming that UI canvases (both main and popup) are at Z0
+					fromWorldPos.z = -0.5f;
+					toWorldPos.z = -0.5f;
+					Debug.Log(Colors.lime.Tag("From " + fromWorldPos + " to " + toWorldPos));
+
+					// Ready!
+					m_currencyFX = CurrencyTransferFX.LoadAndLaunch(
 						CurrencyTransferFX.GetDefaultPrefabPathForCurrency(reward.currency),
 						this.GetComponentInParent<Canvas>().transform,
-						collectedRewardSlot.transform.position + new Vector3(0f, 0f, -0.5f),       // Offset Z so the coins don't collide with the UI elements
-						target.position + new Vector3(0f, 0f, -0.5f)
+						fromWorldPos,
+						toWorldPos
 					);
-					fx.totalDuration = 0.5f;
+					m_currencyFX.totalDuration = 0.5f;
 
 					// Refresh popup view
 					InitWithCurrentData(false);
 
 					// Close the popup after some delay
-					closeDelay = fx.totalDuration * 0.5f;	// Give enough time to enjoy the fireworks
+					closeDelay = m_currencyFX.totalDuration * 0.75f;	// Give enough time to enjoy the fireworks (if we don't, the popups canvas will be delayed and the FX will disappear :s)
 				} break;
 			}
 
@@ -181,7 +199,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		if(closeDelay > 0f) {
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => { GetComponent<PopupController>().Close(true); }
-			, 1f);	
+				, closeDelay);	
 		} else {
 			GetComponent<PopupController>().Close(true);
 		}
@@ -210,6 +228,12 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 			PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 			scr.StartFlow(false);
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
+		}
+
+		// If we have a currency FX running, move it to the main Canvas so it doesn't disappear
+		if(m_currencyFX != null) {
+			m_currencyFX.transform.SetParent(InstanceManager.menuSceneController.GetUICanvasGO().transform, false);
+			m_currencyFX = null;
 		}
 	}
 
