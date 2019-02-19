@@ -74,6 +74,20 @@ public class PrefabLoader : MonoBehaviour {
 	// OTHER METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
+	/// Load assigned prefab.
+	/// </summary>
+	public void Load() {
+		Load(m_resourcePath);
+	}
+
+	/// <summary>
+	/// Reload prefab based on mode.
+	/// </summary>
+	public void Reload() {
+		Load(m_resourcePath);
+	}
+
+	/// <summary>
 	/// Load the prefab at the given path
 	/// </summary>
 	/// <param name="_resourcePath">Full path of the prefab to be loaded, starting inside the Resources folder and without extension.</param>
@@ -107,13 +121,6 @@ public class PrefabLoader : MonoBehaviour {
 
 		// Update path
 		m_resourcePath = _resourcePath;
-	}
-
-	/// <summary>
-	/// Reload prefab based on mode.
-	/// </summary>
-	public void Reload() {
-		Load(m_resourcePath);
 	}
 
 	/// <summary>
