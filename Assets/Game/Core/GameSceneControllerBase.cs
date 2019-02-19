@@ -38,8 +38,8 @@ public class GameSceneControllerBase : SceneController, IBroadcastListener {
 		get { return m_paused; }
 	}
 
-	protected bool m_freezeElapsedSeconds = false;
-	public bool freezeElapsedSeconds {
+	protected int m_freezeElapsedSeconds = 0;
+	public int freezeElapsedSeconds {
 		get { return m_freezeElapsedSeconds; }
 		set { m_freezeElapsedSeconds = value; }
 	}

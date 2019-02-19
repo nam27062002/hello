@@ -131,7 +131,7 @@ namespace AI {
                                         // Check if physics reachable
                                         RaycastHit hit;
                                         Vector3 dir = entity.circleArea.center - m_machine.position;
-                                        bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, GameConstants.Layers.GROUND_OBSTACLE);
+                                        bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, GameConstants.Layers.GROUND_PLAYER_OBSTACLE);
                                         if (!hasHit) {
                                             // Check if closed? Not for the moment
                                             m_transitionParam[0] = entity.transform;
