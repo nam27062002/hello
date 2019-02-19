@@ -728,6 +728,15 @@ public class UserProfile : UserPersistenceSystem
 		}
 	}
 
+	/// <summary>
+	/// Check whether the player has played a specific amount of games or not.
+	/// </summary>
+	/// <returns><c>true</c> if the player has played AT LEAST the given amount of games, <c>false</c> otherwise.</returns>
+	/// <param name="_toCheck">Number of games to check.</param>
+	public bool HasPlayedGames(int _toCheck) {
+		return m_gamesPlayed >= _toCheck;
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
