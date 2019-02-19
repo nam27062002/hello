@@ -143,8 +143,8 @@ public class LevelManager : Singleton<LevelManager> {
         DebugUtils.SoftAssert(m_currentLevelData != null, "Current level has not been set!");
         DefinitionNode def = m_currentLevelData.def;
 
-        // Load additively all the scenes of the current level
-        LevelLoader returnValue = new LevelLoader("", "");
+        string areaName = "area1"; // [AOC] Adding default value in case dragon's initial area is not defined in content        
+        LevelLoader returnValue = new LevelLoader(null, areaName);
 
         // Common Scenes
         List<string> commonScenes = def.GetAsList<string>("common");
@@ -167,8 +167,7 @@ public class LevelManager : Singleton<LevelManager> {
         }
 
 
-        // Load area by dragon
-        string areaName = "area1"; // [AOC] Adding default value in case dragon's initial area is not defined in content
+        // Load area by dragon        
         m_currentArea = areaName;
         List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(areaName);
         returnValue.AddRealSceneNameListToLoad(realSceneNamesPerArea);
@@ -186,7 +185,7 @@ public class LevelManager : Singleton<LevelManager> {
     public static LevelLoader SwitchArea( string area )
     {                
         // Load additively all the scenes of the current level
-        LevelLoader returnValue = new LevelLoader("", "");
+        LevelLoader returnValue = new LevelLoader(m_currentArea, area);
 
         // Current area scenes need to be unloaded
         List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(m_currentArea);
