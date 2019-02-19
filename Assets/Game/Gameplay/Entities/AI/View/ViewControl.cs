@@ -1249,7 +1249,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();
-        }		
+        }	
+        m_freezingLevel = freezeLevel;	
 	}
 
 	public void SetStunned( bool stunned ){
