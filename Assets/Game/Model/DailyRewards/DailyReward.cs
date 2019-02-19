@@ -97,6 +97,10 @@ public class DailyReward {
 		rewardData.typeCode = _def.GetAsString("type");
 		rewardData.amount = _def.GetAsLong("amount");
 		rewardData.sku = _def.GetAsString("rewardSku");
+		if(rewardData.typeCode == Metagame.RewardSoftCurrency.TYPE_CODE) {
+			// Apply SC scaling
+			rewardData.amount = Metagame.RewardSoftCurrency.ScaleByMaxDragonOwned(rewardData.amount);
+		}
 		reward = Metagame.Reward.CreateFromData(rewardData, ECONOMY_GROUP, DEFAULT_SOURCE);
 
 		// Special case: If the reward is already owned by the time the sequence 
