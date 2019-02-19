@@ -9,12 +9,19 @@ using System.Collections.Generic;
 [CanEditMultipleObjects]
 public class OTA_NPCSceneControllerEditor : Editor {
 
-	private OTA_NPCSceneController m_component;
+    private OTA_NPCSceneController m_component;
+    private EditorAddressablesEntities m_addressablesEntities;
 
+    public void Awake() {
+        m_component = target as OTA_NPCSceneController;
+        m_addressablesEntities = new EditorAddressablesEntities();
+    }
 
-	public void Awake() {
-		m_component = target as OTA_NPCSceneController;
-	}
+    private void OnEnable() {
+        if (m_addressablesEntities == null) {
+            m_addressablesEntities = new EditorAddressablesEntities();
+        }
+    }
 
     public override void OnInspectorGUI() {
         DrawDefaultInspector();
@@ -67,71 +74,35 @@ public class OTA_NPCSceneControllerEditor : Editor {
         }
     }
 
-	public void FindISpawner(Transform _t, ref List<ISpawner> _list) {		
-		ISpawner c = _t.GetComponent<ISpawner>();
-		if (c != null) {
-			_list.Add(c);
-		}
-		// Not found, iterate children transforms
-		foreach(Transform t in _t) {
-			FindISpawner(t, ref _list);
-		}
-	}
+    public void FindISpawner(Transform _t, ref List<ISpawner> _list) {
+        ISpawner c = _t.GetComponent<ISpawner>();
+        if (c != null) {
+            _list.Add(c);
+        }
+        // Not found, iterate children transforms
+        foreach (Transform t in _t) {
+            FindISpawner(t, ref _list);
+        }
+    }
 
     private void ExportNPCassetBundles() {
-        string[] paths = { "Assets/AI", "Assets/Art/3D/Gameplay/Entities", "Assets/Resources/Game/Entities/NewEntites/" };
+        List<AddressablesCatalogEntry> entries;
+        List<string> bundles;
 
-        List<string> entries = new List<string>();
-        for (int i = 0; i < paths.Length; ++i) {
-            PrintDirectory(new DirectoryInfo(paths[i]), entries, null);
-        }
+        m_addressablesEntities.GetEntriesAll(out entries, out bundles);
 
         StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_npc_addressables.json", false);
         writer.AutoFlush = true;
 
         writer.Write("{\"entries\":[");
         for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i]);
+            writer.Write(entries[i].ToJSON().ToString());
             if (i < entries.Count - 1) {
                 writer.Write(",");
             }
         }
         writer.Write("]}");
         writer.Close();
-    }
-
-    private void PrintDirectory(DirectoryInfo _directory, List<string> _entries, HashSet<string> _bundles) {
-        DirectoryInfo[] directories = _directory.GetDirectories();
-        foreach (DirectoryInfo directory in directories) {
-            PrintDirectory(directory, _entries, _bundles);
-        }
-
-        FileInfo[] files = _directory.GetFiles();
-        foreach (FileInfo file in files) {
-            string filePath = file.FullName;
-            filePath = filePath.Substring(filePath.IndexOf("Assets/", System.StringComparison.Ordinal));
-
-            AssetImporter ai = AssetImporter.GetAtPath(filePath);
-            if (ai != null) {
-                string assetBundle = ai.assetBundleName;
-
-                if (!string.IsNullOrEmpty(assetBundle)) {
-                    if (_entries != null) {
-                        string assetName = Path.GetFileNameWithoutExtension(file.Name);
-                        string assetPath = Path.GetDirectoryName(filePath);
-                        string id = assetPath.Substring(assetPath.LastIndexOf('/') + 1) + "/" + assetName;
-                        _entries.Add("{\"id\":\"" + id + "\"," +
-                                      "\"locationType\":\"AssetBundles\"," +
-                                      "\"guid\":\"" + AssetDatabase.AssetPathToGUID(filePath) + "\"," +
-                                      "\"abName\":\"" + assetBundle + "\"}");
-                    }
-
-                    if (_bundles != null) {
-                        _bundles.Add(assetBundle);
-                    }
-                }
-            }
-        }
     }
 
     private void ImportNPCassetBundles() {
@@ -150,25 +121,19 @@ public class OTA_NPCSceneControllerEditor : Editor {
     }
 
     private void CreateAddressables() {
-        string[] paths = { "Assets/AI", "Assets/Art/3D/Gameplay/Entities", "Assets/Resources/Game/Entities/NewEntites/" };
+        List<AddressablesCatalogEntry> entries;
+        List<string> bundles;
 
-        List<string> entries = new List<string>();
-        HashSet<string> bundlesSet = new HashSet<string>();
+        m_addressablesEntities.GetEntriesPrefab(out entries, out bundles);
 
-        PrintDirectory(new DirectoryInfo("Assets/AI"), null, bundlesSet);
-        PrintDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), null, bundlesSet);
-        PrintDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), entries, bundlesSet);
-
-        List<string> bundles = bundlesSet.ToList();
-
-
-        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_addressablesCatalog.json", false);
-        writer.AutoFlush = true;
+        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_addressablesCatalog.json", false) {
+            AutoFlush = true
+        };
 
         writer.Write("{");
         writer.Write("\"entries\":[");
         for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i]);
+            writer.Write(entries[i].ToJSON().ToString());
             if (i < entries.Count - 1) {
                 writer.Write(",");
             }

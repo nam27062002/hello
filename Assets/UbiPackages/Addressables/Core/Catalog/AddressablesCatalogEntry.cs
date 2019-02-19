@@ -58,6 +58,13 @@ public class AddressablesCatalogEntry
     {
         m_editorMode = editorMode;
     }
+
+    public AddressablesCatalogEntry(string id, string gui, bool editorMode) : this() 
+    {
+        Id = id;
+        GUID = gui;
+        m_editorMode = editorMode;
+    }
 #endif
 
     public AddressablesCatalogEntry()
