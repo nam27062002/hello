@@ -56,7 +56,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 
 	// Loading tech
 	private AsyncOperation m_unloadTask;
-	private AsyncOperation m_loadTask;
+	private UbiAsyncOperation m_loadTask;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -173,8 +173,8 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 
 			// Loading the intermediate loading screen
 			case ESceneState.LOADING_LOADING_SCENE: {
-				// Trigger the load of the loading scene - this will unload all active scenes
-				m_loadTask = SceneManager.LoadSceneAsync(loadingScene);
+                // Trigger the load of the loading scene - this will unload all active scenes                
+                m_loadTask = HDAddressablesManager.Instance.LoadSceneAsync(loadingScene);                
 			} break;
 
 			// Unload unused resources from the scene we're leaving.
@@ -186,7 +186,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			// Stay here until the loading is done.
 			case ESceneState.LOADING: {
 				// Trigger the load of the new scene - this will unload all active scenes (including loading scene if any)
-				m_loadTask = SceneManager.LoadSceneAsync(nextScene);
+				m_loadTask = HDAddressablesManager.Instance.LoadSceneAsync(nextScene);
 			} break;
 
 			// Unload the intermediate loading screen
