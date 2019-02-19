@@ -275,6 +275,23 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		Messenger.Broadcast<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, _settingId, _value);
 	}
 
+    public static void OnApplicationPause( bool _pause )
+    {
+        if ( _pause )
+        {
+            // Mute all sound when the app pauses
+            instance.m_audioMixer.SetFloat("MusicVolume", -80f);
+            instance.m_audioMixer.SetFloat("SfxVolume", -80f);
+            instance.m_audioMixer.SetFloat("Sfx2DVolume", -80f);
+        }
+        else
+        {
+            // Restore all sound when the app resumes
+            Set(SOUND_ENABLED, Get(SOUND_ENABLED));
+            Set(MUSIC_ENABLED, Get(MUSIC_ENABLED));    
+        }
+    }
+
 	/// <summary>
 	/// Open the given URL, optionally adding a delay to it to give enough time
 	/// to SFX and other stuff to be played before losing focus.

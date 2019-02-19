@@ -172,7 +172,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Destroy();
         Device_Destroy();
-        
+
+        HDAddressablesManager.Instance.Reset();
+
         m_isAlive = false;
         Messenger.Broadcast(MessengerEvents.APPLICATION_QUIT);
 
@@ -327,6 +329,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDTrackingManager.Instance.Update();
         HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
+        HDAddressablesManager.Instance.Update();
         GameStoreManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
@@ -380,6 +383,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Unsent events shouldn't be stored when the game is getting paused because the procedure might take longer than the time that the OS concedes and if the procedure
         // doesn't finish then events can get lost (HDK-1897)
         HDTrackingManager.Instance.SaveOfflineUnsentEventsEnabled = !pause;
+
+        GameSettings.OnApplicationPause(pause);
 
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
