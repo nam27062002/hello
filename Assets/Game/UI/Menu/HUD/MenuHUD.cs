@@ -28,6 +28,21 @@ public class MenuHUD : MonoBehaviour {
 		get { return m_photoButton; }
 	}
 
+	[SerializeField] private ProfileCurrencyCounter m_scCounter = null;
+	public ProfileCurrencyCounter scCounter {
+		get { return m_scCounter; }
+	}
+
+	[SerializeField] private ProfileCurrencyCounter m_pcCounter = null;
+	public ProfileCurrencyCounter pcCounter {
+		get { return m_pcCounter; }
+	}
+
+	[SerializeField] private ProfileCurrencyCounter m_gfCounter = null;
+	public ProfileCurrencyCounter gfCounter {
+		get { return m_gfCounter; }
+	}
+
 	// Internal
 	private ShowHideAnimator m_animator = null;
 	public ShowHideAnimator animator {
@@ -81,6 +96,20 @@ public class MenuHUD : MonoBehaviour {
 
 		// Open popup!
 		popup.Open();
+	}
+
+	/// <summary>
+	/// Get the currency counter corresponding to a specific currency.
+	/// </summary>
+	/// <returns>The currency counter.</returns>
+	/// <param name="_currency">Target currency.</param>
+	public ProfileCurrencyCounter GetCurrencyCounter(UserProfile.Currency _currency) {
+		switch(_currency) {
+			case UserProfile.Currency.SOFT: return m_scCounter; break;
+			case UserProfile.Currency.HARD: return m_pcCounter; break;
+			case UserProfile.Currency.GOLDEN_FRAGMENTS: return m_gfCounter; break;
+		}
+		return null;
 	}
 
 	//------------------------------------------------------------------//
