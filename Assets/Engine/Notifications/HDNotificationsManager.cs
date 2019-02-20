@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+
 public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
 {
 	private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
@@ -139,6 +141,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     private const string SKU_EGG_HATCHED = "sku.not.01";
     private const string SKU_NEW_MISSIONS = "sku.not.02";
     private const string SKU_NEW_CHESTS = "sku.not.03";
+	private const string SKU_DAILY_REWARD = "sku.not.04";
 
     private const string DEFAULT_ACTION = "Action";
 
@@ -166,11 +169,25 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     {
         ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
     }
+    
+    public void ScheduleNewDailyReward(int seconds)
+    {
+        ScheduleNotificationFromSku(SKU_NEW_CHESTS, DEFAULT_ACTION, seconds);
+    }
+    
 
     public void CancelNewChestsNotification()
     {
         CancelNotification(SKU_NEW_CHESTS);
     }
+
+	public void ScheduleDailyRewardNotification(int seconds) {
+		ScheduleNotificationFromSku(SKU_DAILY_REWARD, DEFAULT_ACTION, seconds);
+	}
+
+	public void CancelDailyRewardNotification() {
+		CancelNotification(SKU_DAILY_REWARD);
+	}
     #endregion
 
 
