@@ -21,16 +21,22 @@ namespace Downloadables
                 Catalog assetsLUTCatalog = new Catalog();
                 assetsLUTCatalog.Load(assetsLUTJson, null);
 
+#if UNITY_EDITOR
+                string runtimePlatform = UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString();
+#else
+                string runtimePlatform = (Application.platform == RuntimePlatform.Android) ? "Android" : "iOS";
+#endif
+                string prefix = "AssetBundles/" + runtimePlatform + "/";
+            
                 downloadablesCatalog.UrlBase = assetsLUTCatalog.UrlBase;
 
                 string  key = "release";
                 if (assetsLUTJson.ContainsKey(key))
                 {
                     downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
-                }                
+                }
 
-                string runtimePlatform = (Application.platform == RuntimePlatform.Android) ? "Android" : "iOS";
-                string prefix = "AssetBundles/" + runtimePlatform + "/";
+                downloadablesCatalog.UrlBase += prefix;
 
                 // Deletes all asset bundle entries because we are going to reenter them
                 Dictionary<string, CatalogEntry> entries = assetsLUTCatalog.GetEntries();
@@ -262,13 +268,14 @@ namespace Downloadables
         {
             if (IsInitialized)
             {
+                m_downloader.CurrentNetworkReachability = Application.internetReachability;
                 m_disk.Update();
                 m_cleaner.Update();
-                Catalog_Update();
+                Catalog_Update();                
             }
         }        
 
-        #region catalog
+#region catalog
         private Dictionary<string, CatalogEntryStatus> m_catalog;
 
         private void Catalog_Reset()
@@ -332,9 +339,9 @@ namespace Downloadables
                 m_downloader.StartDownloadThread(entryToDownload);
             }
         }
-        #endregion
+#endregion
 
-        #region logger
+#region logger
         private static Logger sm_logger;
 
         public bool CanLog()
@@ -365,6 +372,6 @@ namespace Downloadables
                 sm_logger.LogError(msg);
             }
         }        
-        #endregion
+#endregion
     }
 }
