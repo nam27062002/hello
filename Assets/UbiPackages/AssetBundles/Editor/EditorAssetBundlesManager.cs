@@ -22,10 +22,10 @@ public class EditorAssetBundlesManager
         return EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, EditorUserBuildSettings.activeBuildTarget.ToString());
     }
 
-    public static void BuildAssetBundles()
+    public static void BuildAssetBundles(BuildTarget platform)
     {
         Debug.Log("Building asset bundles...");
-        string assetBundleDirectory = GetAssetBundlesDirectory();
+        string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
         EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
         if (!Directory.Exists(assetBundleDirectory))
@@ -33,7 +33,7 @@ public class EditorAssetBundlesManager
             Directory.CreateDirectory(assetBundleDirectory);
         }
 
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, EditorUserBuildSettings.activeBuildTarget);
+        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, platform);
     }
 
     public static AssetBundleManifest LoadAssetBundleManifest(out AssetBundle manifestBundle)
@@ -182,8 +182,7 @@ public class EditorAssetBundlesManager
     {
         Downloadables.Catalog assetsLUTCatalog = new Downloadables.Catalog();
         
-        string assetsLUTPath = ASSETS_LUT_PATH;
-        string assetsLUTFileName = ASSETS_LUT_FILENAME;
+        string assetsLUTPath = ASSETS_LUT_PATH;        
         string assetsLUTFullPath = ASSETS_LUT_FULL_PATH;
         JSONNode assetsLUTJson = null;
         if (File.Exists(assetsLUTFullPath))
@@ -260,8 +259,7 @@ public class EditorAssetBundlesManager
         Downloadables.Catalog downloadablesCatalog = new Downloadables.Catalog();
         Downloadables.Catalog assetsLUTCatalog = new Downloadables.Catalog();
         
-        string assetsLUTPath = ASSETS_LUT_PATH;
-        string assetsLUTFileName = ASSETS_LUT_FILENAME;
+        string assetsLUTPath = ASSETS_LUT_PATH;        
         string assetsLUTFullPath = ASSETS_LUT_FULL_PATH;
         JSONNode assetsLUTJson = null;
         if (File.Exists(assetsLUTFullPath))
