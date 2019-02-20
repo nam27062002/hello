@@ -153,7 +153,7 @@ public class DragonEatBehaviour : EatBehaviour {
 				m_dragonHealth.ReceiveDamage(Mathf.Abs(_reward.health), DamageType.NORMAL, _t, true);
 			}
 		}
-		m_dragon.AddEnergy(reward.energy);
+		m_dragon.AddEnergy(_reward.energy);
 	}
 
 	void OnMultiplierLost()
