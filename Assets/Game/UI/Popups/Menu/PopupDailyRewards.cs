@@ -35,6 +35,11 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_doubleButton = null;
 	[SerializeField] private GameObject m_dismissButton = null;
 
+	[Space]
+	[SerializeField] private ShowHideAnimator m_currencyCounterAnim = null;
+	[SerializeField] private ProfileCurrencyCounter m_currencyCounter = null;
+	[SerializeField] private Transform m_currencyFXAnchor = null;
+
 	// Internal logic
 	private bool m_rewardsFlowPending = false;
 	private bool m_rewardCollected = false; // Prevent collect spamming
@@ -153,17 +158,17 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 				default: {
 					// Pop the reward from the reward's stack and collect it
 					Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
-					reward.Collect();
+
+					// Set the right currency in the counter and show it
+					m_currencyCounter.SetCurrency(reward.currency);
+
+					// Show currency group
+					m_currencyCounterAnim.ForceShow();
 
 					// Currency FX
-					// Make it fly to the matching currency counter in the HUD
-					Transform target = InstanceManager.menuSceneController.hud.GetCurrencyCounter(reward.currency).transform;
-
-					// [AOC] Because origin and target are in different canvases, we need to do some coordinate conversions
-					Canvas mainCanvas = target.GetComponentInParent<Canvas>();
-					Vector3 toViewportPoint = mainCanvas.worldCamera.WorldToViewportPoint(target.position);
-					Vector3 toWorldPos = PopupManager.canvas.worldCamera.ViewportToWorldPoint(toViewportPoint);
+					// Make it fly to the matching currency counter
 					Vector3 fromWorldPos = collectedRewardSlot.transform.position;
+					Vector3 toWorldPos = m_currencyFXAnchor.transform.position;
 
 					// Offset Z a bit so the coins don't collide with the UI elements
 					// [AOC] We're assuming that UI canvases (both main and popup) are at Z0
@@ -178,13 +183,17 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 						fromWorldPos,
 						toWorldPos
 					);
-					m_currencyFX.totalDuration = 0.5f;
+					m_currencyFX.totalDuration = 0.3f;
 
 					// Refresh popup view
 					InitWithCurrentData(false);
 
 					// Close the popup after some delay
-					closeDelay = m_currencyFX.totalDuration * 0.75f;	// Give enough time to enjoy the fireworks (if we don't, the popups canvas will be delayed and the FX will disappear :s)
+					//closeDelay = m_currencyFX.totalDuration * 1.5f;	// Give enough time to enjoy the fireworks (if we don't, the popups canvas will be delayed and the FX will disappear :s)
+					closeDelay = 1.5f;
+
+					// Collect the reward!
+					reward.Collect();
 				} break;
 			}
 
@@ -198,8 +207,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		// Close popup (with optional delay)
 		if(closeDelay > 0f) {
 			UbiBCN.CoroutineManager.DelayedCall(
-				() => { GetComponent<PopupController>().Close(true); }
-				, closeDelay);	
+				() => {
+					GetComponent<PopupController>().Close(true);
+					m_currencyCounterAnim.Hide();
+				}, closeDelay);	
 		} else {
 			GetComponent<PopupController>().Close(true);
 		}
@@ -217,6 +228,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 
 		// Reset logic
 		m_rewardsFlowPending = false;
+
+		// Hide background currency counters
+		m_currencyCounterAnim.ForceHide(false);
+		Messenger.Broadcast<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, false);
 	}
 
 	/// <summary>
@@ -235,6 +250,9 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 			m_currencyFX.transform.SetParent(InstanceManager.menuSceneController.GetUICanvasGO().transform, false);
 			m_currencyFX = null;
 		}
+
+		// Restore background currency counters
+		Messenger.Broadcast<bool>(MessengerEvents.UI_TOGGLE_CURRENCY_COUNTERS, true);
 	}
 
 	/// <summary>
