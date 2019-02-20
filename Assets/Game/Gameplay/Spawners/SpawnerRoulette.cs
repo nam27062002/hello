@@ -237,7 +237,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 
 	private int GetPrefabIndex() { return (m_currentPoolHandlerIndex + 1) % m_entityPrefabList.Length; }
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 
 		if (m_currentEntity != null && m_currentEntity.gameObject == _entity) {			
 			if (ProfilerSettingsManager.ENABLED) {               
@@ -264,7 +264,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	public void ForceRemoveEntities() {
 		if (m_state != State.Idle) {
 			if (m_currentEntity != null) {
-				RemoveEntity(m_currentEntity.gameObject, false);
+				RemoveEntity(m_currentEntity, false);
 			}
 			m_respawnTime = m_gameSceneController.elapsedSeconds;
 			m_state = State.Idle;

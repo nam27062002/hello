@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 namespace AI {
@@ -165,7 +165,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				SetSignal(Signals.Type.Destroyed, true);
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity, reward);
 				return true;
 			}
 			return false;
