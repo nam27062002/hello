@@ -12,6 +12,8 @@ public class OTA_NPCSceneControllerEditor : Editor {
     private OTA_NPCSceneController m_component;
     private EditorAddressablesEntities m_addressablesEntities;
 
+    private AssetBundleSubsets m_assetBundleSubsets;
+
     public void Awake() {
         m_component = target as OTA_NPCSceneController;
         m_addressablesEntities = new EditorAddressablesEntities();
@@ -71,6 +73,10 @@ public class OTA_NPCSceneControllerEditor : Editor {
 
         if (GUILayout.Button("Create Addressables")) {
             CreateAddressables();
+        }
+
+        if (GUILayout.Button("TEST")) {
+            m_assetBundleSubsets = new AssetBundleSubsets(3);
         }
     }
 
