@@ -34,7 +34,8 @@ public class NetworkManager
 
         WebProxy proxy = null;
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+        
+#if UNITY_ANDROID && !UNITY_EDITOR && false
         System.IntPtr descPtr = NetworkClient_GetDefaultProxyURL();
         string strProxyHost = Marshal.PtrToStringAnsi(descPtr);
 
@@ -44,7 +45,7 @@ public class NetworkManager
         {
             proxy = new WebProxy(strProxyHost, iProxyPort);
         }
-#elif UNITY_IOS && !UNITY_EDITOR
+#elif UNITY_IOS && !UNITY_EDITOR && false
 		System.IntPtr descPtr = NetworkClient_GetDefaultProxyURL();
 		string strProxyHost = Marshal.PtrToStringAnsi(descPtr);
 
@@ -55,7 +56,7 @@ public class NetworkManager
             proxy = new WebProxy(strProxyHost, iProxyPort);
         }
 #else
-#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX && false
         System.IntPtr descPtr = NetworkClient_GetDefaultProxyURL();
         string strProxyHost = Marshal.PtrToStringAnsi(descPtr);
 
