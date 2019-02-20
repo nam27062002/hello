@@ -38,8 +38,17 @@ namespace Downloadables
 
             if (data != null)
             {
-                CRC = data[ATT_CRC].AsLong;
-                Size = data[ATT_SIZE].AsLong;
+                string key = ATT_CRC;
+                if (data.ContainsKey(key))
+                {
+                    CRC = data[key].AsLong;
+                }
+
+                key = ATT_SIZE;
+                if (data.ContainsKey(key))
+                {
+                    Size = data[key].AsLong;
+                }
             }
         }
 
