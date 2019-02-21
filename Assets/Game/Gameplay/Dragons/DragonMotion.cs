@@ -322,7 +322,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	public const float FlightCeiling = 370f;
 	public const float SpaceStart = 171f;
     public int m_limitsCheck = 0;
-    public Vector3 m_lastValidPos = Vector3.zero;
+    public Vector3 m_lastPhysicsValidPos = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -437,7 +437,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         RegionManager.Init();
         m_regionManager = RegionManager.Instance;
 
-        m_lastValidPos = m_transform.position;
+        m_lastPhysicsValidPos = m_transform.position;
 
 		if (m_state == State.None)
 			ChangeState(State.Fly);
@@ -1130,20 +1130,21 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
             m_limitsCheck++;
             if ( m_limitsCheck > 2 )
             {
-                if (Physics.Linecast( m_lastValidPos, pos, GameConstants.Layers.GROUND ))
+                if (Physics.Linecast( m_lastPhysicsValidPos, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
                 {
-                    pos = m_lastValidPos;
+                    pos = m_lastPhysicsValidPos;
+                    CustomOnCollisionEnter( m_raycastHit.collider, m_raycastHit.normal, m_raycastHit.point );
                 }
                 else
                 {
-                    m_lastValidPos = pos;
+                    m_lastPhysicsValidPos = pos;
                 }
             }
             m_transform.position = pos;
 		}
         else
         {
-            m_lastValidPos = m_transform.position;
+            m_lastPhysicsValidPos = m_transform.position;
         }
 
         
@@ -2079,27 +2080,33 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	protected virtual void OnCollisionEnter(Collision collision)
 	{
-		if ( collision.collider.CompareTag("Bounce") )
-		{
-			if (Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
-				Bounce( collision.contacts[0].normal );
-		}
+        CustomOnCollisionEnter(collision.collider, collision.contacts[0].normal, collision.contacts[0].point);
+	}
+    
+    protected virtual void CustomOnCollisionEnter( Collider _collider, Vector3 _normal, Vector3 _point )
+    {
+        if ( _collider.CompareTag("Bounce") )
+        {
+            if (Vector3.Dot( _normal, m_impulse) < 0)
+                Bounce( _normal );
+        }
 
-		switch( m_state )
-		{
-			case State.InsideWater:
-			{
-			}break;
+        switch( m_state )
+        {
+            case State.InsideWater:
+            {
+            }break;
 
-			case State.OuterSpace: {
-				OutterSpaceCollision( collision.contacts[0].normal );
+            case State.OuterSpace: {
+                OutterSpaceCollision( _normal );
             } break;
 
-			default:
-			{
-			}break;
-		}
-	}
+            default:
+            {
+            }break;
+        }
+    }
+    
 
     public virtual void OnCollisionStay(Collision collision)
     {

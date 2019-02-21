@@ -532,5 +532,17 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             Debug.Log(text);
         }
     }
+
+	/// <summary>
+	/// Trigger a text feedback.
+	/// </summary>
+	public static void LaunchTextFeedback(string _text, Color _color) {
+		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+			_text,
+			new Vector2(0.5f, 0.5f),
+			ControlPanel.panel.parent as RectTransform
+		);
+		text.text.color = _color;
+	}
     #endregion
 }

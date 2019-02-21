@@ -1210,6 +1210,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         Track_LabResult(ranking, currentLeague, upcomingLeague);
     }
+
+	/// <summary>
+	/// A daily reward has been collected.
+	/// </summary>
+	/// <param name="_rewardIdx">Reward index within the sequence [0..SEQUENCE_SIZE - 1].</param>
+	/// <param name="_totalRewardIdx">Cumulated reward index [0..N].</param>
+	/// <param name="_type">Reward type. For replaced pets, use pet-gf.</param>
+	/// <param name="_amount">Final given amount (after scaling and doubling).</param>
+	/// <param name="_sku">(Optional) Sku of the reward.</param>
+	/// <param name="_doubled">Was the reward doubled by watching an ad?</param>
+	public override void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) {
+		Track_DailyReward(_rewardIdx, _totalRewardIdx, _type, _amount, _sku, _doubled);
+	}
     #endregion
 
     /// <summary>
@@ -2151,7 +2164,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_UPCOMING_LEAGUE, upcomingLeague);
         }
         m_eventQueue.Enqueue(e);
-    }    
+    }
 
     private void Track_UnlockMap(string location, string unlockType)
     {
@@ -2165,6 +2178,39 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+
+	/// <summary>
+	/// A daily reward has been collected.
+	/// </summary>
+	/// <param name="_rewardIdx">Reward index within the sequence [0..SEQUENCE_SIZE - 1].</param>
+	/// <param name="_totalRewardIdx">Cumulated reward index [0..N].</param>
+	/// <param name="_type">Reward type. For replaced pets, use pet,gf.</param>
+	/// <param name="_amount">Final given amount (after scaling and doubling).</param>
+	/// <param name="_sku">(Optional) Sku of the reward. For replaced pets, use petSku,gf.</param>
+	/// <param name="_doubled">Was the reward doubled by watching an ad?</param>
+	private void Track_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) {
+		// Debug
+		if(FeatureSettingsManager.IsDebugEnabled) {
+			Log("Track_DailyReward _rewardIdx = " + (_rewardIdx + 1)
+			    + ", _totalRewardIdx = " + (_totalRewardIdx + 1)
+				+ ", _type = " + _type
+			    + ", _amount = " + _amount
+			    + ", _sku = " + _sku
+			    + ", _doubled = " + _doubled
+			   );
+		}
+
+		// Create event
+		HDTrackingEvent e = new HDTrackingEvent("custom.game.sevendaylogin"); {
+			Track_AddParamInt(e, TRACK_PARAM_DAY, _rewardIdx + 1);	// [0..N-1] -> [1..N]
+			Track_AddParamInt(e, TRACK_PARAM_CUMULATIVE_DAYS, _totalRewardIdx + 1);	// [0..N-1] -> [1..N]
+			Track_AddParamString(e, TRACK_PARAM_TYPE, _type);
+			Track_AddParamInt(e, TRACK_PARAM_AMOUNT, (int)_amount);
+			Track_AddParamString(e, TRACK_PARAM_SKU, _sku);
+			Track_AddParamBool(e, TRACK_PARAM_AD_VIEWED, _doubled);
+		}
+		m_eventQueue.Enqueue(e);
+	}
 
     // -------------------------------------------------------------
     // Events
@@ -2184,23 +2230,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AD_REVIVE = "adRevive";
     private const string TRACK_PARAM_ADS_TYPE = "adsType";
     private const string TRACK_PARAM_AD_VIEWING_DURATION = "adViewingDuration";
+	private const string TRACK_PARAM_AD_VIEWED = "ad_viewed";
     private const string TRACK_PARAM_AF_DEF_CURRENCY = "af_def_currency";
     private const string TRACK_PARAM_AF_DEF_LOGPURCHASE = "af_def_logPurchase";
     private const string TRACK_PARAM_AF_DEF_QUANTITY = "af_quantity";
     private const string TRACK_PARAM_AGE = "age";
+	private const string TRACK_PARAM_AMOUNT = "amount";
     private const string TRACK_PARAM_AMOUNT_BALANCE = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA = "amountDelta";
     private const string TRACK_PARAM_ANALYTICS_OPTION = "analytics_optin";
     private const string TRACK_PARAM_AVERAGE_FPS = "avgFPS";
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
+	private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
+	private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
+	private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
+	private const string TRACK_PARAM_CPUFREQUENCY = "cpuFrequency";
+	private const string TRACK_PARAM_CPURAM = "cpuRam";
+	private const string TRACK_PARAM_CUMULATIVE_DAYS = "cumulativeDays";
     private const string TRACK_PARAM_CURRENCY = "currency";
     private const string TRACK_PARAM_CURRENT_LEAGUE = "currentLeague";
-    private const string TRACK_PARAM_CHESTS_FOUND = "chestsFound";
-    private const string TRACK_PARAM_COORDINATESBL = "coordinatesBL";
-    private const string TRACK_PARAM_COORDINATESTR = "coordinatesTR";
-    private const string TRACK_PARAM_CPUFREQUENCY = "cpuFrequency";
-    private const string TRACK_PARAM_CPURAM = "cpuRam";
+	private const string TRACK_PARAM_DAY = "day";
     private const string TRACK_PARAM_DEATH_CAUSE = "deathCause";
     private const string TRACK_PARAM_DEATH_COORDINATES = "deathCoordinates";
     private const string TRACK_PARAM_DEATH_IN_CURRENT_RUN_NB = "deathInCurrentRunNb";
@@ -2303,6 +2353,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_EVENT_SCORE_TOTAL = "scoreTotal";
     private const string TRACK_PARAM_SESSION_PLAY_TIME = "sessionPlaytime";
     private const string TRACK_PARAM_SESSIONS_COUNT = "sessionsCount";
+	private const string TRACK_PARAM_SKU = "sku";
     private const string TRACK_PARAM_SOCIAL_NETWORK_OPTION = "sns_optin";
     private const string TRACK_PARAM_SOURCE_OF_PET = "sourceOfPet";
     private const string TRACK_PARAM_SOURCE = "source";
@@ -2327,6 +2378,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOTAL_STORE_VISITS = "totalStoreVisits";
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
+	private const string TRACK_PARAM_TYPE = "type";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
@@ -2335,8 +2387,6 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
-
-
 
     //------------------------------------------------------------------------//
     private void Track_SendEvent(HDTrackingEvent _e) {
@@ -2563,6 +2613,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
         int valueToSend = (value) ? 1 : 0;
         _e.data.Add(paramName, valueToSend);
     }
+
+	private void Track_AddParamInt(HDTrackingEvent _e, string paramName, int value) {
+		_e.data.Add(paramName, value);
+	}
+
+	private void Track_AddParamLong(HDTrackingEvent _e, string paramName, long value) {
+		_e.data.Add(paramName, value);
+	}
 
     private void Track_AddParamFloat(HDTrackingEvent _e, string paramName, float value) {
         // MAX value accepted by ETL

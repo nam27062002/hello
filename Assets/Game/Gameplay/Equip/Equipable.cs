@@ -41,7 +41,10 @@ public class Equipable : MonoBehaviour {
 	[SerializeField] private AttachPoint m_attachPoint;
     public AttachPoint attachPoint { get { return m_attachPoint; } set { m_attachPoint = value; } }
 
-	[SerializeField] private bool m_showOnResults = true;
+    [SerializeField][EquipableSkuList(true)] private string m_sku = "";
+    public string sku { get { return m_sku; } }
+
+    [SerializeField] private bool m_showOnResults = true;
 	public bool showOnResults{ get{ return m_showOnResults; } }
 
 

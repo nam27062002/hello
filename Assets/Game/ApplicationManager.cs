@@ -172,7 +172,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Destroy();
         Device_Destroy();
-        
+
+        HDAddressablesManager.Instance.Reset();
+
         m_isAlive = false;
         Messenger.Broadcast(MessengerEvents.APPLICATION_QUIT);
 
@@ -327,6 +329,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDTrackingManager.Instance.Update();
         HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
+        HDAddressablesManager.Instance.Update();
         GameStoreManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
@@ -380,6 +383,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Unsent events shouldn't be stored when the game is getting paused because the procedure might take longer than the time that the OS concedes and if the procedure
         // doesn't finish then events can get lost (HDK-1897)
         HDTrackingManager.Instance.SaveOfflineUnsentEventsEnabled = !pause;
+
+        GameSettings.OnApplicationPause(pause);
 
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
@@ -550,6 +555,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
 				}
 			}
+
+			// Daily reward notification
+            if (UsersManager.currentUser.dailyRewards.CanCollectNextReward())
+            {
+                // reward pending
+            }
+            else
+            {
+                // time to reward
+                System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
+                double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
+                int moreSeconds = 9 * 60 * 60;  // 9 AM
+                HDNotificationsManager.instance.ScheduleNewDailyReward ((int)secondsToMidnight + moreSeconds);
+            }
+			// [AOC] TODO!!
         }
     }
 
@@ -557,6 +577,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
+		HDNotificationsManager.instance.CancelDailyRewardNotification();
     }
 
     #region game

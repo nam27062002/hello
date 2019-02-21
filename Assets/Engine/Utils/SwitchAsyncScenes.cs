@@ -63,8 +63,8 @@ public class SwitchAsyncScenes
     private List<string> ScenesToUnload { get; set; }
     private List<string> ScenesToLoad { get; set; }
 
-    private List<AsyncOperation> mTasks;
-    private List<AsyncOperation> Tasks
+    private List<AddressablesOp> mTasks;
+    private List<AddressablesOp> Tasks
     {
         get
         {
@@ -85,7 +85,7 @@ public class SwitchAsyncScenes
     public SwitchAsyncScenes()
     {
         Reset();
-        Tasks = new List<AsyncOperation>();
+        Tasks = new List<AddressablesOp>();
     }
 
     public void Reset()
@@ -197,28 +197,28 @@ public class SwitchAsyncScenes
         }
     }
 
-    private void PrepareTasks(List<string> scenes, ref List<AsyncOperation> loadingTasks, bool load)
+    private void PrepareTasks(List<string> scenes, ref List<AddressablesOp> loadingTasks, bool load)
     {
         if (loadingTasks == null)
         {
-            loadingTasks = new List<AsyncOperation>();
+            loadingTasks = new List<AddressablesOp>();
         }
 
         if (scenes != null)
         {
-            AsyncOperation loadingTask = null;
+            AddressablesOp loadingTask = null;
             for (int i = 0; i < scenes.Count && !string.IsNullOrEmpty(scenes[i]); i++)
             {
                 if (load)
                 {
-                    loadingTask = SceneManager.LoadSceneAsync(scenes[i], LoadSceneMode.Additive);
+                    loadingTask = HDAddressablesManager.Instance.LoadSceneAsync(scenes[i], LoadSceneMode.Additive);
                 }
                 else
                 {
-                    loadingTask = SceneManager.UnloadSceneAsync(scenes[i]);
+                    loadingTask = HDAddressablesManager.Instance.UnloadSceneAsync(scenes[i]);
                 }
 
-                if (DebugUtils.SoftAssert(loadingTask != null, "The scene " + scenes[i] + "  couldn't be found (probably mispelled or not added to Build Settings)"))
+                if (DebugUtils.SoftAssert(loadingTask != null && loadingTask.Error == null, "The scene " + scenes[i] + "  couldn't be found (probably mispelled or not added to Build Settings)"))
                 {
                     loadingTasks.Add(loadingTask);
                 }
