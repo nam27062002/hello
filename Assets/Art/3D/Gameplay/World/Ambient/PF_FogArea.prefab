@@ -59,9 +59,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 0}
 --- !u!114 &114048117126946778
@@ -114,30 +114,15 @@ MonoBehaviour:
   m_insideScale: 1.5
   m_attributes:
     m_fogGradient:
-      key0:
-        serializedVersion: 2
-        rgba: 4279835126
-      key1:
-        serializedVersion: 2
-        rgba: 4294967295
-      key2:
-        serializedVersion: 2
-        rgba: 16777215
-      key3:
-        serializedVersion: 2
-        rgba: 0
-      key4:
-        serializedVersion: 2
-        rgba: 0
-      key5:
-        serializedVersion: 2
-        rgba: 0
-      key6:
-        serializedVersion: 2
-        rgba: 0
-      key7:
-        serializedVersion: 2
-        rgba: 0
+      serializedVersion: 2
+      key0: {r: 0.9647059, g: 0.09803922, b: 0.09803922, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 1, g: 1, b: 1, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 11584
       ctime1: 37394
       ctime2: 37394
@@ -159,5 +144,8 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_fogStart: 0
     m_fogEnd: 0
+  m_isFireFog: 0
   m_drawInside: 0
   m_startScale: {x: 0, y: 0, z: 0}
+  m_enterTransitionDuration: 1.6
+  m_exitTransitionDuration: 1.6
