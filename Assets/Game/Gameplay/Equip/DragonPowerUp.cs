@@ -341,7 +341,7 @@ public class DragonPowerUp : MonoBehaviour {
 
 		// Color and format based on type
 		string type = _powerDef.GetAsString("type");
-		Color color = GetColor(type);
+		Color color = GetColor(_powerDef);
 		switch(type) {
 			// Powers with custom formats
 			case "lower_damage":
@@ -411,6 +411,19 @@ public class DragonPowerUp : MonoBehaviour {
 
 		// Get the color for this power type
 		string type = _powerDef.GetAsString("type");
+
+		// Some types need special treatment
+		switch(type) {
+			case "combined": {
+				// Use the color from second combined power type
+				string powerUp2 = _powerDef.Get("param2");
+				DefinitionNode powerUp2Def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerUp2);
+				if(powerUp2Def != null) {
+					type = powerUp2Def.GetAsString("type");
+				}
+			} break;
+		}
+
 		return GetColor(type);
 	}
 
@@ -419,7 +432,7 @@ public class DragonPowerUp : MonoBehaviour {
 	/// </summary>
 	/// <returns>The color assigned to the power's type.</returns>
 	/// <param name="_type">Power type to be consulted.</param>
-	public static Color GetColor(string _type) {
+	private static Color GetColor(string _type) {
 		// As of 09/10/2017, we're matching each power's color with the color of the pet category it belongs to
 		switch(_type) {
 			// Eat
@@ -427,14 +440,13 @@ public class DragonPowerUp : MonoBehaviour {
 			case "vacuum":
 			case "prey_hp_boost":
             case "drop_present":
-                {
+            {
 				return UIConstants.PET_CATEGORY_EAT;
 			} break;
 
 			// Health
 			case "food_increase":
 			case "hp_increase":
-			case "combined":
 			{
 				return UIConstants.PET_CATEGORY_HEALTH;
 			} break;
@@ -495,6 +507,12 @@ public class DragonPowerUp : MonoBehaviour {
 			case "mummy":			
 			{
 				return UIConstants.PET_CATEGORY_SPECIAL;
+			} break;
+
+			// Special Cases
+			case "combined": {
+				// Should never be called, since we're parsing the type of the second combined power instead
+				return Color.black;
 			} break;
 
 			// Default or unknown

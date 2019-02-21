@@ -22,7 +22,9 @@ public class HDAddressablesManager : AddressablesManager
 
             return sm_instance;
         }
-    }    
+    }
+
+    private float m_pollAutomaticDownloaderAt;
 
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
@@ -66,7 +68,9 @@ public class HDAddressablesManager : AddressablesManager
 
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
         
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, true, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, logger);
+
+        m_pollAutomaticDownloaderAt = 0f;
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -129,6 +133,20 @@ public class HDAddressablesManager : AddressablesManager
             AddressablesAsyncOp op = new AddressablesAsyncOp();
             op.Setup(new UbiUnityAsyncOperation(SceneManager.UnloadSceneAsync(id)));
             return op;
+        }
+    }
+
+    protected override void ExtendedUpdate()
+    {
+        if (Time.realtimeSinceStartup >= m_pollAutomaticDownloaderAt)
+        {
+            // We don't want the automatic downloader to interfere with the ingame experience
+            // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled        
+            bool value = !FlowManager.IsInGameScene() && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+            if (value != IsAutomaticDownloaderEnabled)
+                IsAutomaticDownloaderEnabled = value;
+
+            m_pollAutomaticDownloaderAt = Time.realtimeSinceStartup + 3f;
         }
     }
 
