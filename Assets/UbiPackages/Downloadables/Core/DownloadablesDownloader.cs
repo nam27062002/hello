@@ -48,7 +48,7 @@ namespace Downloadables
 
             m_downloadThread = null;
             m_urlBase = null;
-        }               
+        }        
 
         public bool IsDownloading { get { return m_downloadThread != null && m_downloadThread.IsAlive; } }
 
@@ -71,7 +71,7 @@ namespace Downloadables
 
         public void StartDownloadThread(CatalogEntryStatus entryStatus)
         {           
-            if (entryStatus != null)
+            if (IsInitialized() && entryStatus != null)
             {
                 if (CanLog())
                 {
@@ -85,7 +85,7 @@ namespace Downloadables
         }
 
         private void DoDownload(CatalogEntryStatus entryStatus)
-        {                        
+        {                                    
             FileStream saveFileStream = null;
             Error error = null;
 
