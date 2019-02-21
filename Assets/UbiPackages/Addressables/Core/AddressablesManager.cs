@@ -428,8 +428,12 @@ public class AddressablesManager
         {            
             m_providerFromAB.Update();
             Ops_Update();
+
+            ExtendedUpdate();
         }
     }
+
+    protected virtual void ExtendedUpdate() {}
 
     #region areas
     /// <summary>
