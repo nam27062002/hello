@@ -68,7 +68,7 @@ public class HDAddressablesManager : AddressablesManager
 
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
         
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, logger);
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, null, logger);
 
         m_pollAutomaticDownloaderAt = 0f;
     }

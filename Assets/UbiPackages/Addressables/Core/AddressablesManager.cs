@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, AssetBundlesTracker tracker, Logger logger)
     {
         sm_logger = logger;
 
@@ -88,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, isAutomaticDownloaderEnabled, logger);
+        m_providerFromAB.Initialize(m_catalog.GetLocalABList(), assetBundlesManifestPath, downloadablesCatalogJSON, isAutomaticDownloaderEnabled, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
