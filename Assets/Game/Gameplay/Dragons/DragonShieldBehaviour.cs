@@ -16,22 +16,24 @@ public class DragonShieldBehaviour : MonoBehaviour {
 	void Start () {
         m_dragon = GetComponent<DragonPlayer>();
         m_dragonHealth = m_dragon.dragonHealthBehaviour;
-		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 	}
 
     private void OnDestroy()
     {
-        Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+        Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+        Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
     }
     
-    void OnEntityEaten(Transform t, Reward reward) {
+    void OnEntityEaten(Transform t, IEntity entity, Reward reward) {
         if (reward.health >= 0) {
             float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
             AddShield(h);
         }
     }
 
-    private void OnEntityDestroyed(Transform _entity, Reward _reward) {
+    private void OnEntityDestroyed(Transform _entity,  IEntity _e, Reward _reward) {
         if (_reward.health >= 0) {
             AddShield( _reward.health );
         }

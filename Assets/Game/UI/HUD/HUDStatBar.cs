@@ -28,7 +28,8 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		Health,
 		Energy,
 		Fury,
-		SuperFury
+		SuperFury,
+        Shield
 	}
 
 	public enum Bars {
@@ -145,51 +146,62 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		}
 
 		ResizeBars();
-
-		if ( m_type == Type.Health )
-		{
-			// Check remaining lives to show more health Icons!
-			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-            Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
-            Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
-			RefreshIcons();
-		}
-
-		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		m_timer = 10;
-		m_timerDuration = 10;
-		if ( m_type == Type.SuperFury )
-		{
-			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
-		}
-
-		if (m_type == Type.Energy)
-		{
-            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-            string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
-            text.text = t;
-			Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
-		}
+        
+        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+        m_timer = 10;
+        m_timerDuration = 10;
+        
+        switch(m_type)
+        {
+            case Type.Health:
+            {
+                // Check remaining lives to show more health Icons!
+                Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+                Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+                Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
+                RefreshIcons();
+            }break;
+            case Type.SuperFury:
+            {
+                Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+            }break;
+            case Type.Energy:
+            {
+                TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
+                text.text = t;
+                Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
+            }break;
+            case Type.Shield:
+            {
+                if (InstanceManager.player.dragonShieldBehaviour == null)
+                    gameObject.SetActive(false);
+            }break;
+        }
 
 		m_ready = true;
 	}
 
 	void OnDestroy()
 	{
-		if ( m_type == Type.Health )
-		{
-			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
-            Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
-		}
-		else if (m_type == Type.Energy)
-		{
-			Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
-		}
-		else if ( m_type == Type.SuperFury )
-		{
-			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
-		}
+        switch( m_type )
+        {
+            case Type.Health:
+            {
+                Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+                Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+                Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
+            }break;
+            case Type.Energy:
+            {
+                Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
+            }break;
+            case Type.SuperFury:
+            {
+                Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+            }break;
+        }
+    
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
     
@@ -449,6 +461,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energyMax;
 			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
+            case Type.Shield:   return InstanceManager.player.shieldMax;
 		}
 		return 1;
 	}
@@ -461,6 +474,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energyBase;
 			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
+            case Type.Shield:   return InstanceManager.player.shieldMax;
 		}
 		return 1;
 	}
@@ -472,6 +486,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energy;
 			case Type.Fury:		return InstanceManager.player.furyProgression;
 			case Type.SuperFury:return InstanceManager.player.superFuryProgression;
+            case Type.Shield:   return InstanceManager.player.shield;
 		}		
 		return 0;
 	}
@@ -578,6 +593,10 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
 			}break;
+            case Type.Shield:
+            {
+                
+            }break;
 		}
 
 		// How many units correspond to the minimum threshold in pixels?
