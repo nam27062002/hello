@@ -9,8 +9,8 @@ namespace Downloadables
     /// </summary>
     public class CatalogEntryStatus
     {
-        public static float TIME_TO_WAIT_AFTER_ERROR = 3f;
-        public static float TIME_TO_WAIT_BETWEEN_SAVES = 3f;
+        public static float TIME_TO_WAIT_AFTER_ERROR = 60f;
+        public static float TIME_TO_WAIT_BETWEEN_SAVES = 60f;
         private static float BYTES_TO_MB = 1024 * 1024;
 
         public static Disk sm_disk;
@@ -50,7 +50,7 @@ namespace Downloadables
                     case EState.ReadingDataInfo:
                         m_dataInfo.Size = 0;
                         m_dataInfo.CRC = 0;
-                        break;
+                        break;                
 
                     case EState.Available:
                         if (m_requestState == ERequestState.Running)
@@ -98,6 +98,7 @@ namespace Downloadables
                         // Latest error and save are reseted so the request will be resolved with no delays
                         m_latestErrorAt = -1f;
                         m_latestSaveAt = -1f;
+                        m_latestDownloadingErrorAt = -1f;
                         break;
                 }
             }
@@ -105,15 +106,14 @@ namespace Downloadables
 
         public Error RequestError { get; private set; }
 
-        /// <summary>
-        /// Amount of times this downloadable has been tried to be downloaded with error as a result
-        /// </summary>
-        private int DownloadingErrorTimes { get; set; }
-
+        private float m_latestDownloadingErrorAt;
+       
         /// <summary>
         /// Amount of times a CRC mismatch error happened
         /// </summary>
         private int CRCMismatchErrorTimes { get; set; }
+
+        private float m_realtimeSinceStartup { get; set; }
 
         public CatalogEntryStatus()
         {
@@ -129,9 +129,9 @@ namespace Downloadables
             m_manifest.Reset();
             m_dataInfo.Reset();
             State = EState.None;
-            RequestState = ERequestState.None;
-            DownloadingErrorTimes = 0;
+            RequestState = ERequestState.None;            
             CRCMismatchErrorTimes = 0;
+            m_latestDownloadingErrorAt = -1f;
         }
 
         public void LoadManifest(string id, JSONNode json)
@@ -141,22 +141,30 @@ namespace Downloadables
             State = EState.ReadingManifest;
         }
         
+        private bool HasErrorExpired()
+        {
+            bool returnValue = m_latestErrorAt < 0f;
+            if  (!returnValue)
+            {
+                float timeSinceLatestError = Time.realtimeSinceStartup - m_latestErrorAt;
+                returnValue = timeSinceLatestError >= TIME_TO_WAIT_AFTER_ERROR;                 
+            }
+
+            return returnValue;
+        }
+
         public void Update()
         {
+            // Stored so it can be used by callbacks that are called from downloader thread, which can't use Time.realtiemSinceStartup because this must be called from main thread
+            m_realtimeSinceStartup = Time.realtimeSinceStartup;
+
             if (m_requestState == ERequestState.Done)
-            {
+            {               
                 m_requestState = ERequestState.None;
             }
 
-            // If the request is done then we need to wait until the result is read and the request is cleaned up before keeping updating            
-            bool canUpdate = m_requestState != ERequestState.Done && m_state != EState.Downloading;            
-
-            if (m_latestErrorAt >= 0f)
-            {
-                float timeSinceLatestError = Time.realtimeSinceStartup - m_latestErrorAt;
-                canUpdate = timeSinceLatestError >= TIME_TO_WAIT_AFTER_ERROR;
-            }
-
+            // It shouldn't be updated if it's downloading because all stuff is done by DownloadablesDownloader in a separate thread
+            bool canUpdate = m_state != EState.Downloading && HasErrorExpired();
             if (canUpdate)
             {
                 switch (m_state)
@@ -174,23 +182,23 @@ namespace Downloadables
 
                     case EState.CalculatingCRC:
                         ProcessCalculatingCRC();
-                        break;                    
-                }
-            }
-
-            if (m_manifest.NeedsToSave)
-            {
-                bool canSave = true;
-
-                if (m_latestSaveAt >= 0f)
-                {
-                    float timeSinceLatestSave = Time.realtimeSinceStartup - m_latestSaveAt;
-                    canSave = timeSinceLatestSave >= TIME_TO_WAIT_BETWEEN_SAVES;                    
+                        break;
                 }
 
-                if (canSave)
+                if (m_manifest.NeedsToSave)
                 {
-                    Save();
+                    bool canSave = true;
+
+                    if (m_latestSaveAt >= 0f)
+                    {
+                        float timeSinceLatestSave = Time.realtimeSinceStartup - m_latestSaveAt;
+                        canSave = timeSinceLatestSave >= TIME_TO_WAIT_BETWEEN_SAVES;
+                    }
+
+                    if (canSave)
+                    {
+                        Save();
+                    }
                 }
             }
         }
@@ -216,8 +224,8 @@ namespace Downloadables
         {
             if (error != null)
             {
-                DownloadingErrorTimes++;
-
+                m_latestErrorAt = m_realtimeSinceStartup; ;                
+                                
                 if (m_requestState == ERequestState.Running)
                 {
                     RequestError = error;
@@ -270,8 +278,7 @@ namespace Downloadables
             }
 
             if (error != null)
-            {
-                m_latestErrorAt = Time.realtimeSinceStartup;
+            {                                
                 NotifyError(error);
             }
 
@@ -424,14 +431,14 @@ namespace Downloadables
         }
 
         public bool CanAutomaticDownload()
-        {
-            return CRCMismatchErrorTimes < 2 && DownloadingErrorTimes < 2;
-        }
+        {            
+            return CRCMismatchErrorTimes < 2 && HasErrorExpired();
+        }        
 
         public void OnDownloadStart()
         {
             if (State == EState.InQueueForDownload)
-            {
+            {                
                 State = EState.Downloading;
             }
         }

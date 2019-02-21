@@ -119,7 +119,7 @@ public class ContentManager
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
         ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
-        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
+        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer, true, true);                
     }
 
     private static void InitDefinitions()

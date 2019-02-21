@@ -45,11 +45,11 @@ public class EditorAddressablesManager
         m_assetBundlesLocalDestinationPath = EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
     }
 
-    public void ClearBuild()
+    public void ClearBuild(BuildTarget target)
     {
         Debug.Log("Clearing addressables...");
         EditorFileUtils.DeleteFileOrDirectory(m_localDestinationPath);
-        EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
     }
 
@@ -72,19 +72,36 @@ public class EditorAddressablesManager
         BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
     }
 
-    public void BuildAssetBundles()
+    public void BuildAssetBundles(BuildTarget platform)
     {
-        EditorAssetBundlesManager.BuildAssetBundles();
+        EditorAssetBundlesManager.BuildAssetBundles(platform);
     }    
 
-    public void Build()
+    public void BuildForTargetPlatform()
     {
-        ClearBuild();
+        ClearBuild(EditorUserBuildSettings.activeBuildTarget);
         CustomizeEditorCatalog();
         GeneratePlayerCatalog();
-        BuildAssetBundles();
-        ProcessAssetBundles();       
-    }  
+        BuildAssetBundles(EditorUserBuildSettings.activeBuildTarget);
+        ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
+    }
+
+    public void BuildForBothPlatforms()
+    {
+        ClearBuild(BuildTarget.iOS);
+        ClearBuild(BuildTarget.Android);
+
+        CustomizeEditorCatalog();
+        GeneratePlayerCatalog();
+
+        BuildTarget target = EditorUserBuildSettings.activeBuildTarget;        
+        BuildTarget other = (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android) ? BuildTarget.iOS : BuildTarget.Android;
+        BuildAssetBundles(other);
+        ProcessAssetBundles(other, false);
+
+        BuildAssetBundles(target);
+        ProcessAssetBundles(target, true);
+    }
 
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
@@ -155,7 +172,7 @@ public class EditorAddressablesManager
     /// <summary>
     /// Processes asset bundles along with the addressables catalog in order to determine which bundles are local and which ones are remote.
     /// </summary>
-    public void ProcessAssetBundles()
+    public void ProcessAssetBundles(BuildTarget target, bool copyToPlayer)
     {
         Debug.Log("Processing asset bundles...");
 
@@ -194,22 +211,26 @@ public class EditorAddressablesManager
             // Updates local AB list
             catalog.SetLocalABList(output.m_LocalABList);
 
-            if (EditorFileUtils.Exists(m_assetBundlesLocalDestinationPath))
+            if (copyToPlayer)
             {
-                EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+                if (EditorFileUtils.Exists(m_assetBundlesLocalDestinationPath))
+                {
+                    EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+                }
+
+                EditorFileUtils.CreateDirectory(m_assetBundlesLocalDestinationPath);
+
+                // Copy local asset bundles
+                EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
+
+                // Copy manifest            
+                EditorAssetBundlesManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);
             }
 
-            EditorFileUtils.CreateDirectory(m_assetBundlesLocalDestinationPath);
-
-            // Copy local asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);
-
-            // Copy manifest            
-            EditorAssetBundlesManager.CopyAssetBundlesManifest(m_assetBundlesLocalDestinationPath);            
-
             // Copy remote asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, output.m_RemoteABList);
-
+            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);
+            
+            /*
             Dictionary<string, AddressablesCatalogArea> areas = catalog.GetAreas();
             if (areas != null)
             {
@@ -225,11 +246,12 @@ public class EditorAddressablesManager
             }
 
             // Generates remote AB list file            
-            GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
+            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
 
             // Copy player catalog into the player's folder
-            JSONClass json = catalog.ToJSON();
-            EditorFileUtils.WriteToFile(m_playerCatalogPath, json.ToString());
+            //JSONClass json = catalog.ToJSON();
+            //EditorFileUtils.WriteToFile(m_playerCatalogPath, json.ToString());
+            */
         }
     }    
 
