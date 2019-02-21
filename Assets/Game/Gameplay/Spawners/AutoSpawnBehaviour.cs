@@ -237,7 +237,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		m_state = State.Idle;
 	}
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {}
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {}
 
 	public void DrawStateGizmos() {}
 

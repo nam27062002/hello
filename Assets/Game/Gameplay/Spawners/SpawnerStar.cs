@@ -126,7 +126,7 @@ public class SpawnerStar : AbstractSpawner {
 		spawning.transform.position = transform.position + m_points[point]; // set position
 	}
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
 		if (_killedByPlayer) {
 			for (int i = 0; i < m_quantity; ++i) {
 				if (m_pointToEntityIndex[i] == index) {
@@ -138,7 +138,7 @@ public class SpawnerStar : AbstractSpawner {
 		}
 	}
 
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		//
 		if (_allKilledByPlayer) {
 			// clear indexes

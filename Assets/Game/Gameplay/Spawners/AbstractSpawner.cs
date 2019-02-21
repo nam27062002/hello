@@ -244,7 +244,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     public void ForceRemoveEntities() {
         for (int i = 0; i < EntitiesToSpawn; i++) {
             if (m_entities[i] != null) {
-                RemoveEntity(m_entities[i].gameObject, false);
+                RemoveEntity(m_entities[i], false);
             }
         }
 
@@ -266,10 +266,10 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 			entity.SetGolden(Spawner.EntityGoldMode.Gold);
     }
 
-    public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+    public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
         int index = -1;
         for (int i = 0; i < EntitiesToSpawn && index == -1; i++) {
-            if (m_entities[i] != null && m_entities[i].gameObject == _entity) {
+            if (m_entities[i] != null && m_entities[i] == _entity) {
                 index = i;                                                
             }
         }
@@ -293,7 +293,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
 
             // Returns the entity to the pool
-			ReturnEntityToPool(handler, _entity);
+			ReturnEntityToPool(handler, _entity.gameObject);
 
 			OnRemoveEntity(_entity, index, _killedByPlayer);
 
@@ -384,8 +384,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    
-	protected virtual void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {}
-    protected virtual void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {}
+	protected virtual void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {}
+    protected virtual void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {}
     protected virtual void OnForceRemoveEntities() {}
     public virtual void DrawStateGizmos() {}
     #endregion

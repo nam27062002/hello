@@ -12,16 +12,21 @@ namespace Downloadables
     /// </summary>
     public class Downloader
     {
+        private static int TIMEOUT = 10000;
+
         private string m_urlBase;
         private Disk m_disk;
         private Logger m_logger;
 
         private Thread m_downloadThread = null;
 
+        public NetworkReachability CurrentNetworkReachability { get; set; }
+
         public Downloader(Disk disk, Logger logger)
         {            
             m_disk = disk;
             m_logger = logger;
+            CurrentNetworkReachability = NetworkReachability.NotReachable;
         }
 
         public void Initialize(string urlBase)
@@ -43,29 +48,30 @@ namespace Downloadables
 
             m_downloadThread = null;
             m_urlBase = null;
-        }               
+        }        
 
         public bool IsDownloading { get { return m_downloadThread != null && m_downloadThread.IsAlive; } }
 
         public bool ShouldDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
         {
             // Wifi = Always yes.
-            /*if (AssetBundleManager.CurrentReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+            // TODO: To let the user download via Carrier
+            if (CurrentNetworkReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
             {
                 return true;
             }
-            else if (AssetBundleManager.CurrentReachability == NetworkReachability.ReachableViaCarrierDataNetwork
+            /*else if (AssetBundleManager.CurrentReachability == NetworkReachability.ReachableViaCarrierDataNetwork
                 && assetBundleQueueInfo.Has4GPermission)
             {
                 return true;
             }
-            return false;*/
-            return true;
+            */
+            return false;            
         }
 
         public void StartDownloadThread(CatalogEntryStatus entryStatus)
         {           
-            if (entryStatus != null)
+            if (IsInitialized() && entryStatus != null)
             {
                 if (CanLog())
                 {
@@ -79,7 +85,7 @@ namespace Downloadables
         }
 
         private void DoDownload(CatalogEntryStatus entryStatus)
-        {                        
+        {                                    
             FileStream saveFileStream = null;
             Error error = null;
 
@@ -113,8 +119,9 @@ namespace Downloadables
                     }
 
                     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(downloadURL);
-                    request.Timeout = 5000; //5 secs timeout
-                    request.ReadWriteTimeout = 5000;
+                    request.Proxy = NetworkManager.SharedInstance.GetCurrentProxySettings();
+                    request.Timeout = TIMEOUT;
+                    request.ReadWriteTimeout = TIMEOUT;
                     request.AddRange((int)existingLength, (int)entryStatus.GetTotalBytes());
 
                     if (CanLog())
@@ -265,10 +272,9 @@ namespace Downloadables
                     {
                         if (CanLog())
                         {
-                            Log("AssetBundler DoDownload. Completed. Throwing to CRC Check.");
+                            Log("AssetBundler DoDownload. Completed.");
                         }
-
-                        entryStatus.OnDownloadFinish(null);
+                        
                         //download completed
                         //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.CRCCheck));
                         //AssetBundleManager.Instance.ResetPollingTime(); //we reset the poll to start the next download immediately
@@ -298,6 +304,7 @@ namespace Downloadables
                     {
                         LogError("AssetBundler DoDownload: Exception caused assetbundle download failure. Performing full file/CRC to work out file status: " + we.ToString());
                     }
+                    error = new Error(we);
                     //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.CRCCheck)); //no error because timeouts aren't a problem with the bundle
                 }
             }

@@ -127,11 +127,11 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
         machine.EnterDevice(true);
     }
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {        
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {        
         m_parents[index] = null;
     }
     
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		m_allKilledByPlayer = _allKilledByPlayer;
 	}
 

@@ -73,7 +73,7 @@ namespace AI {
 				// [AOC] Notify game!
 				Reward r = m_entity.reward;
 				r.SetNoReward();
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_machine.transform, r);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, m_entity, r);
                 
                 if ( playerTriggeredExplosion && !m_machine.IsDying())
                 {
