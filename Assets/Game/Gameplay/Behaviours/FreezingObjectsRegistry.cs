@@ -32,12 +32,13 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 	}
 
 
-	public void Register( Transform tr, float distance )
+	public Registry Register( Transform tr, float distance )
 	{
 		Registry reg = new Registry();
 		reg.m_transform = tr;
 		reg.m_distanceSqr = distance * distance;
 		m_registry.Add( reg );
+        return reg;
 	}
 
 	public void Unregister( Transform tr )
@@ -50,6 +51,11 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 			}
 		}
 	}
+    
+    public void Unregister( Registry reg )
+    {
+        m_registry.Remove( reg);
+    }
 
 	public bool Overlaps( CircleAreaBounds bounds )
 	{
