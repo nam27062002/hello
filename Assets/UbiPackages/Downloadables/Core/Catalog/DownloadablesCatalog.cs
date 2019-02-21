@@ -9,9 +9,11 @@ namespace Downloadables
     /// </summary>
     public class Catalog
     {
-        private Dictionary<string, CatalogEntry> Entries { get; set; }
+        public static string CATALOG_ATT_URL_BASE = "urlBase";
+        public static string CATALOG_ATT_ENTRIES = "assets";        
 
-        private static string CATALOG_ATT_ENTRIES = "assets";
+        public string UrlBase { get; set; }
+        private Dictionary<string, CatalogEntry> Entries { get; set; }        
 
         public Catalog()
         {
@@ -34,6 +36,8 @@ namespace Downloadables
 
             if (catalogJSON != null)
             {
+                UrlBase = catalogJSON[CATALOG_ATT_URL_BASE];
+
                 CatalogEntry entry;
                 JSONClass assets = (JSONClass)catalogJSON[CATALOG_ATT_ENTRIES];
                 if (assets != null)
@@ -66,6 +70,7 @@ namespace Downloadables
         public JSONClass ToJSON()
         {
             JSONClass data = new JSONClass();
+            data.Add(CATALOG_ATT_URL_BASE, UrlBase);
             data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());
 
             return data;

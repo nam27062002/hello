@@ -322,7 +322,9 @@ public class Catapult : SimpleDevice {
 
 	protected override void OnAreaExit() {
 		base.OnAreaExit();
-        m_animator.speed = 0;
+        if (m_animator != null) {
+            m_animator.speed = 0;
+        }
 	}
 
 	//-------------------------------------------------------------------

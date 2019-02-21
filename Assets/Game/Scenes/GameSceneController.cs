@@ -26,7 +26,7 @@ public class GameSceneController : GameSceneControllerBase {
 	public const string NAME = "SC_Game";
 	public const float INITIAL_DELAY = 1f;	// Seconds. Initial delay before actually start the loading. Useful to give time to initialize and load assets for the loading screen.
 	public const float COUNTDOWN = 3.5f;	// Seconds. This countdown is used as a safety net if the intro animation does not end or does not send the proper event
-	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering
+	public const float MIN_LOADING_TIME = 1f;	// Seconds, to avoid loading screen flickering303
 
 	public enum EStates {
 		INIT,
@@ -174,6 +174,8 @@ public class GameSceneController : GameSceneControllerBase {
         
 		
 		Messenger.AddListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
+        Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
         PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
@@ -203,6 +205,7 @@ public class GameSceneController : GameSceneControllerBase {
                 break;
 
             case LevelLoader.EState.Done:
+            	LevelManager.SetArtSceneActive();
                 PoolManager.Rebuild();
                 Broadcaster.Broadcast(BroadcastEventType.GAME_AREA_ENTER);
                 HDTrackingManagerImp.Instance.Notify_StartPerformanceTracker();
@@ -297,7 +300,7 @@ public class GameSceneController : GameSceneControllerBase {
 				
 			case EStates.RUNNING: {
 				// Update running time
-				if (!m_freezeElapsedSeconds && !m_switchingArea)
+				if (m_freezeElapsedSeconds <= 0 && !m_switchingArea)
 					m_elapsedSeconds += Time.deltaTime;				
 
 				// Notify listeners
@@ -344,7 +347,18 @@ public class GameSceneController : GameSceneControllerBase {
         CustomParticlesCulling.Manager_OnDestroy();
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
+        Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnPlayerEnteringArea);
 	}
+
+    public void OnPlayerLeavingArea(float _estimatedTime)
+    {
+        m_freezeElapsedSeconds++;
+    }
+    public void OnPlayerEnteringArea()
+    {
+        m_freezeElapsedSeconds--;
+    }
 
     public override void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {

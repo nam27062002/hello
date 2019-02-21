@@ -24,6 +24,9 @@ public class HDAddressablesManager : AddressablesManager
         }
     }    
 
+    /// <summary>
+    /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
+    /// </summary>
     public void Initialise()
     {
         Logger logger = new ConsoleLogger("Addressables");
@@ -44,15 +47,44 @@ public class HDAddressablesManager : AddressablesManager
 
         // Retrieves downloadables catalog
         // TODO: Retrieve this information from the assetsLUT cached
+        /*
         string downloadablesPath = addressablesPath;
         string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog.json");
         if (BetterStreamingAssets.FileExists(downloadablesCatalogPath))
         {
             catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
         }
+        JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        */
 
-        JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, true, logger);        
+        // downloadablesCatalog is created out of latest assetsLUT
+        ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
+        if (assetsLUT == null)
+        {
+            assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
+        }
+
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
+        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, true, logger);        
+    }
+
+    private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
+    {        
+        Downloadables.Catalog catalog = new Downloadables.Catalog();
+        catalog.UrlBase = assetsLUT.m_strURLBase + assetsLUT.m_iReleaseVersion + "/";
+
+        Downloadables.CatalogEntry entry;        
+        foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
+        {
+            entry = new Downloadables.CatalogEntry();
+            entry.CRC = pair.Value;
+            entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+
+            catalog.AddEntry(pair.Key, entry);
+        }
+
+        return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());        
     }
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
