@@ -30,15 +30,24 @@ public class DragonIcePowers : MonoBehaviour {
     {
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
+        
+        // Radius scale
+        float scale = InstanceManager.player.data.scale;
+        m_frozenAreaRadius = m_frozenAreaRadius * scale;
+        m_frozenAreaRadiusUnderwater = m_frozenAreaRadiusUnderwater * scale;
+        if (m_powerLevel >= 2)
+        {
+            m_frozenAreaRadius += m_frozenAreaRadius * m_frozenAreaRadiusPercentageUpgrade;
+            m_frozenAreaRadiusUnderwater += m_frozenAreaRadiusUnderwater * m_frozenAreaRadiusPercentageUpgrade;    
+        }
         m_currentRadius = m_frozenAreaRadius;
+        
+        // Increase shield
         if ( m_powerLevel >= 1 )
         {
             InstanceManager.player.dragonShieldBehaviour.m_maxShield += m_increaseShield;
         }
-        if (m_powerLevel >= 2)
-        {
-            m_currentRadius += m_currentRadius * m_frozenAreaRadiusPercentageUpgrade;
-        }
+        
         m_motion = InstanceManager.player.dragonMotion;
         m_boost = InstanceManager.player.dragonBoostBehaviour;
     }
@@ -50,8 +59,7 @@ public class DragonIcePowers : MonoBehaviour {
         {
             radius = m_frozenAreaRadiusUnderwater;    
         }
-        if (m_powerLevel >= 2)
-            radius += radius * m_frozenAreaRadiusPercentageUpgrade;
+        
         m_currentRadius = Mathf.Lerp(m_currentRadius, radius, Time.deltaTime * 5.0f);
         m_frozenRegistry.m_distanceSqr = m_currentRadius * m_currentRadius;
         m_frozenRegistry.m_killOnFrozen = m_powerLevel >= 3 && m_boost.IsBoostActive();
