@@ -357,7 +357,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                m_logger.Log(msg);
+                //m_logger.Log(msg);
             }
         }
 
@@ -365,7 +365,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                m_logger.LogWarning(msg);
+                //m_logger.LogWarning(msg);
             }
         }
 
@@ -373,7 +373,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                m_logger.LogError(msg);
+                //m_logger.LogError(msg);
             }
         }
     }
