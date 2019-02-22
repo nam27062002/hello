@@ -110,7 +110,7 @@ namespace AI {
 				m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 				// Dispatch global event
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_machine.transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, m_machineTransform, m_entity, reward);
 			}
 		}
 

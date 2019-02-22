@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -35,7 +35,9 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
     public OnBurnDelegate onBurn;
     //------
 
-	private FireNodeSetup m_fireNodeSetup;
+    private Transform m_transform;
+
+    private FireNodeSetup m_fireNodeSetup;
 
 	private GameObject m_view;
 	private GameObject m_viewBurned;
@@ -69,8 +71,12 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 
 	public string sku { get { return m_entity.sku; } }
 
+
+
 	// Use this for initialization
 	void Awake() {
+        m_transform = transform;
+
         m_feedbackParticle.CreatePool();
 		m_burnParticle.CreatePool();	
 		m_disintegrateParticle.CreatePool();
@@ -117,14 +123,14 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	/// A new level was loaded.
 	/// </summary>
 	private void OnLevelLoaded() {
-        ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+        ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(m_transform.position.z);
 
         if (zone == ZoneManager.Zone.None) {
             Destroy(this);
         } else {
-            m_fireNodes = transform.GetComponentsInChildren<FireNode>(true);
-            m_view = transform.Find("view").gameObject;
-            m_viewBurned = transform.Find("view_burned").gameObject;
+            m_fireNodes = m_transform.GetComponentsInChildren<FireNode>(true);
+            m_view = m_transform.Find("view").gameObject;
+            m_viewBurned = m_transform.Find("view_burned").gameObject;
 
             m_renderers = m_view.GetComponentsInChildren<Renderer>();
             for (int i = 0; i < m_renderers.Length; i++) {
@@ -157,7 +163,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
                     m_fireNodes[i].Disable();
                 }
             }
-            m_startPosition = transform.position;
+            m_startPosition = m_transform.position;
 
             m_initialized = true;
         }
@@ -168,7 +174,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 			m_fireNodeSetup = new FireNodeSetup();
 		}
 
-		m_fireNodeSetup.Init(transform);
+		m_fireNodeSetup.Init(m_transform);
 		m_fireNodeSetup.Build(m_boxelSize);
 	}
 
@@ -185,7 +191,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 			m_fireNodes[i].Reset();
 		}
 
-		transform.position = m_startPosition;
+		m_transform.position = m_startPosition;
 		ResetViewMaterials();
 
 		m_state = m_nextState = State.Idle;
@@ -231,7 +237,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 				m_entity.onDieStatus.source = m_burnSource;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, m_entity.reward);
 
 				break;
 
@@ -262,7 +268,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 				m_entity.onDieStatus.source = m_burnSource;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
 
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, transform, m_entity.reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, m_entity.reward);
 
 				m_timer.Start(250f);
 				break;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using SimpleJSON;
+using UnityEngine;
 
 namespace Downloadables
 {
@@ -10,6 +11,49 @@ namespace Downloadables
     /// </summary>
     public class Manager
     {
+        public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson)
+        {
+            JSONNode returnValue = null;
+            if (assetsLUTJson != null)
+            {
+                Catalog downloadablesCatalog = new Catalog();
+
+                Catalog assetsLUTCatalog = new Catalog();
+                assetsLUTCatalog.Load(assetsLUTJson, null);
+
+#if UNITY_EDITOR
+                string runtimePlatform = UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString();
+#else
+                string runtimePlatform = (Application.platform == RuntimePlatform.Android) ? "Android" : "iOS";
+#endif
+                string prefix = "AssetBundles/" + runtimePlatform + "/";
+            
+                downloadablesCatalog.UrlBase = assetsLUTCatalog.UrlBase;
+
+                string  key = "release";
+                if (assetsLUTJson.ContainsKey(key))
+                {
+                    downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
+                }
+
+                downloadablesCatalog.UrlBase += prefix;
+
+                // Deletes all asset bundle entries because we are going to reenter them
+                Dictionary<string, CatalogEntry> entries = assetsLUTCatalog.GetEntries();
+                foreach (KeyValuePair<string, CatalogEntry> pair in entries)
+                {
+                    if (pair.Key.Contains(prefix))
+                    {
+                        downloadablesCatalog.AddEntry(pair.Key.Replace(prefix, ""), pair.Value);
+                    }
+                }
+
+                returnValue = downloadablesCatalog.ToJSON();                
+            }
+
+            return returnValue;
+        }       
+             
         public static readonly string DESKTOP_DEVICE_STORAGE_PATH_SIMULATED = "DeviceStorageSimulated/";
 
         public static readonly string DOWNLOADABLES_FOLDER_NAME = "Downloadables";
@@ -40,10 +84,8 @@ namespace Downloadables
 
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
             CatalogEntryStatus.sm_disk = m_disk;
-            m_cleaner = new Cleaner(m_disk, 180);
-
-            Logger downloaderLogger = new ConsoleLogger("Downloader");
-            m_downloader = new Downloader(m_disk, downloaderLogger);
+            m_cleaner = new Cleaner(m_disk, 180);            
+            m_downloader = new Downloader(m_disk, logger);
 
             Reset();
         }
@@ -74,10 +116,10 @@ namespace Downloadables
             string urlBase = null;
             if (catalogJSON != null)
             {
-                urlBase = catalogJSON["urlBase"];
+                urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
             }
 
-            //http://10.44.4.69:7888/
+            ////http://10.44.4.69:7888/
 
             m_downloader.Initialize(urlBase);
         } 
@@ -86,7 +128,7 @@ namespace Downloadables
         {    
             if (catalogJSON != null)
             {                
-                JSONClass assets = (JSONClass)catalogJSON["assets"];
+                JSONClass assets = (JSONClass)catalogJSON[Catalog.CATALOG_ATT_ENTRIES];
                 if (assets != null)
                 {
                     List<string> ids = new List<string>();
@@ -224,13 +266,14 @@ namespace Downloadables
         {
             if (IsInitialized)
             {
+                m_downloader.CurrentNetworkReachability = Application.internetReachability;
                 m_disk.Update();
                 m_cleaner.Update();
-                Catalog_Update();
+                Catalog_Update();                
             }
         }        
 
-        #region catalog
+#region catalog
         private Dictionary<string, CatalogEntryStatus> m_catalog;
 
         private void Catalog_Reset()
@@ -294,9 +337,9 @@ namespace Downloadables
                 m_downloader.StartDownloadThread(entryToDownload);
             }
         }
-        #endregion
+#endregion
 
-        #region logger
+#region logger
         private static Logger sm_logger;
 
         public bool CanLog()
@@ -327,6 +370,6 @@ namespace Downloadables
                 sm_logger.LogError(msg);
             }
         }        
-        #endregion
+#endregion
     }
 }
