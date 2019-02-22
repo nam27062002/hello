@@ -164,7 +164,7 @@ public class PetDogSpawner : AbstractSpawner {
         m_operatorPilot = pilot;
     }    
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
         if (m_operator != null && _entity == m_operator.gameObject) {
             m_operator = null;
             m_operatorPilot = null;

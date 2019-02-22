@@ -379,7 +379,10 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         string text = (BetterStreamingAssets.FileExists(path)) ? BetterStreamingAssets.ReadAllText(path) : null;
         JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);
         List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, null);
+
+        Logger logger = new ConsoleLogger("AssetBundles");
+        AssetBundlesTracker tracker = new AssetBundlesDummyTracker(logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, tracker, logger);
 
         Memory_EndSample(true);
     }

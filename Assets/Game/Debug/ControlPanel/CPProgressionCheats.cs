@@ -22,12 +22,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public enum CurrencyOperation {
-		ADD,
-		REMOVE,
-		SET
-	}
-	
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -102,7 +97,7 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// </summary>
 	/// <param name="_currency">Target currency.</param>
 	/// <param name="_operation">Target operation.</param>
-	public void OnSetCurrency(UserProfile.Currency _currency, CurrencyOperation _operation) {
+	public void OnSetCurrency(UserProfile.Currency _currency, CPOperation _operation) {
 		// Use longs to allow big numbers
 		// Get amount from linked input field
 		TMP_InputField input = GetComponentInChildren<TMP_InputField>();
@@ -111,15 +106,15 @@ public class CPProgressionCheats : MonoBehaviour {
 
 		// Compute amount to add
 		switch(_operation) {
-			case CurrencyOperation.ADD: {
+			case CPOperation.ADD: {
 				UsersManager.currentUser.EarnCurrency(_currency, (ulong)amount, false, HDTrackingManager.EEconomyGroup.CHEAT);
 			} break;
 
-			case CurrencyOperation.REMOVE: {
+			case CPOperation.REMOVE: {
 				UsersManager.currentUser.SpendCurrency(_currency, (ulong)amount);
 			} break;
 
-			case CurrencyOperation.SET: {
+			case CPOperation.SET: {
 				// Apply the amount respecting the current free/paid ratio
 				UserProfile.CurrencyData data = UsersManager.currentUser.GetCurrencyData(_currency);
 				float ratio = data.amount > 0 ? (float)data.freeAmount/(float)data.amount : 1f;
@@ -134,21 +129,21 @@ public class CPProgressionCheats : MonoBehaviour {
 	/// <summary>
 	/// Specialized versions to be used as button callbacks.
 	/// </summary>
-	public void OnAddCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.ADD); }
-	public void OnRemoveCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.REMOVE); }
-	public void OnSetCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CurrencyOperation.SET); }
+	public void OnAddCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.ADD); }
+	public void OnRemoveCoins() { OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.REMOVE); }
+	public void OnSetCoins() 	{ OnSetCurrency(UserProfile.Currency.SOFT, CPOperation.SET); }
 
-	public void OnAddPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.ADD); }
-	public void OnRemovePC() 	{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.REMOVE); }
-	public void OnSetPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CurrencyOperation.SET); }
+	public void OnAddPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.ADD); }
+	public void OnRemovePC() 	{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.REMOVE); }
+	public void OnSetPC() 		{ OnSetCurrency(UserProfile.Currency.HARD, CPOperation.SET); }
 
-	public void OnSetGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.SET); }
-	public void OnAddGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.ADD); }
-	public void OnRemoveGoldenFragments() 	{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CurrencyOperation.REMOVE); }
+	public void OnSetGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.SET); }
+	public void OnAddGoldenFragments() 		{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.ADD); }
+	public void OnRemoveGoldenFragments() 	{ OnSetCurrency(UserProfile.Currency.GOLDEN_FRAGMENTS, CPOperation.REMOVE); }
 
-	public void OnAddKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.ADD); }
-	public void OnRemoveKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.REMOVE); }
-	public void OnSetKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CurrencyOperation.SET); }
+	public void OnAddKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.ADD); }
+	public void OnRemoveKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.REMOVE); }
+	public void OnSetKeys() 	{ OnSetCurrency(UserProfile.Currency.KEYS, CPOperation.SET); }
 
 	/// <summary>
 	/// Add xp to the currently selected dragon (if owned). Debug purposes only.

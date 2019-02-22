@@ -205,6 +205,7 @@ public class TrackerBase {
             case "kill_in_love":    return new TrackerKillInLove(_params);
             case "kill_stunned":    return new TrackerKillStunned(_params);
             case "kill_frozen":     return new TrackerKillFrozen(_params);
+            case "kill_equipped":   return new TrackerKillEquipped(_params);
 			case "burn":			return new TrackerBurn(_params);
 			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();

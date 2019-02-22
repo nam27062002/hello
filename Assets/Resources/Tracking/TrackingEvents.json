@@ -600,7 +600,21 @@
           "dna",
           "etl"
         ]
-      },		  
+      },
+        "custom.game.sevendaylogin": {
+            "Parameters": [
+                { "day": { "Status": "OK" } },
+                { "cumulativeDays": { "Status": "OK" } },
+                { "type": { "Status": "OK" } },
+                { "amount": { "Status": "OK" } },
+                { "sku": { "Status": "OK" } },
+                { "ad_viewed": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
 		"af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1414,6 +1428,30 @@
 	  "offerType": {
 		"Type": "STRING:15",
 		"Values": []
-      }	  
+      },
+      "day": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "cumulativeDays": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "type": {
+        "Type": "STRING:16",
+        "Values": []
+      },
+      "amount": {
+        "Type": "INT:4",
+        "Values": []
+      },
+      "sku": {
+        "Type": "STRING:16",
+        "Values": []
+      },
+      "ad_viewed": {
+        "Type": "BOOL",
+        "Values": []
+      }
     }
 }

@@ -219,36 +219,41 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+    }    
+    
+    private void CustomAwake()
+    {
+        // Initialize server cache
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if ( settingsInstance )
+        {
+            m_buildVersion = settingsInstance.GetClientBuildVersion();
+        }
+        else
+        {
+            m_buildVersion = Application.version;
+        }
+        CacheServerManager.SharedInstance.Init(m_buildVersion);
 
-		// Initialize server cache
-		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-		if ( settingsInstance )
-		{
-			m_buildVersion = settingsInstance.GetClientBuildVersion();
-		}
-		else
-		{
-			m_buildVersion = Application.version;
-		}
-		CacheServerManager.SharedInstance.Init(m_buildVersion);
+        // Initialize content
+        ContentManager.InitContent();
 
-		// Initialize content
-		ContentManager.InitContent();
-
-		// Used for android permissions
-		PopupManager.CreateInstance(true);
+        // Used for android permissions
+        PopupManager.CreateInstance(true);
         
-		// Initialize localization
+        // Initialize localization
         SetSavedLanguage();
 
-		// Always start in DEFAULT mode
-		SceneController.SetMode(Mode.DEFAULT);
-    }    
+        // Always start in DEFAULT mode
+        SceneController.SetMode(Mode.DEFAULT);
+    }
 
 	/// <summary>
 	/// First update.
 	/// </summary>
-	void Start() {                        
+	void Start() { 
+    
+        CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now

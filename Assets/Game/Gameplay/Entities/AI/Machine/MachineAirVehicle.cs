@@ -70,7 +70,7 @@ namespace AI {
 							// Initialize some death info
 							m_entity.onDieStatus.source = _source;
 							// Dispatch global event
-							Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+							Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, reward);
 							*/
 						}
 						return true;

@@ -5,6 +5,11 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+
+//----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 namespace Metagame {
@@ -56,6 +61,19 @@ namespace Metagame {
 				tid += "_PLURAL";
 			}
 			return tid;
+		}
+
+		/// <summary>
+		/// Scale the given SC amount using the biggest owned dragon of the current user as a reference.
+		/// </summary>
+		/// <returns>The scaled SC amount.</returns>
+		/// <param name="_amount">Base SC amount to be scaled.</param>
+		public static long ScaleByMaxDragonOwned(long _amount) {
+			DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
+			if(rewardScaleFactorDef != null) {
+				return Mathf.RoundToInt(((float)_amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
+			}
+			return _amount;
 		}
 	}
 

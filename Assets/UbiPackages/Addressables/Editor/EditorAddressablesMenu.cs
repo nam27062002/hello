@@ -16,7 +16,8 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4. Generate Asset Bundles";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";    
 
-    private const string ADDRESSABLES_BUILD_MENU_ALL = ADDRESSABLES_BUILD_MENU + "/" + "Build";
+    private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";
+    private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
 
     private const string ADDRESSABLES_EDITOR_MODE = ADDRESSABLES_MENU + "/Editor mode";
 
@@ -44,7 +45,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
     static void ClearBuild()
     {        
-        Manager.ClearBuild();
+        Manager.ClearBuild(EditorUserBuildSettings.activeBuildTarget);
         EditorAssetBundlesManager.Clear();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
     }    
@@ -71,7 +72,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES)]
     static void BuildAssetBundles()
     {
-        Manager.BuildAssetBundles();
+        Manager.BuildAssetBundles(EditorUserBuildSettings.activeBuildTarget);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES);
     }
 
@@ -79,16 +80,23 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES)]
     static void ProcessAssetBundles()
     {
-        Manager.ProcessAssetBundles();
+        Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES);
     }        
 
-    [MenuItem(ADDRESSABLES_BUILD_MENU_ALL)]
+    [MenuItem(ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM)]
+    public static void BuildForTargetPlatform()
+    {
+        Manager.BuildForTargetPlatform();        
+        OnDone(ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM);
+    }
+
+    [MenuItem(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS)]
     public static void Build()
     {
-        Manager.Build();        
-        OnDone(ADDRESSABLES_BUILD_MENU_ALL);
-    }   
+        Manager.BuildForBothPlatforms();
+        OnDone(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS);
+    }
     
     private static void OnDone(string taskName)
     {
