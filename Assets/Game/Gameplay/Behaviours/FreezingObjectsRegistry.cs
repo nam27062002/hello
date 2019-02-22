@@ -15,8 +15,10 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
     List<AI.Machine> m_machines = new List<AI.Machine>();   // to froze machines
     List<AI.Machine> m_freezingMachines = new List<AI.Machine>();   // already freezing
     List<float> m_freezingLevels = new List<float>();
+    List<bool> m_freezingKills = new List<bool>();
 
     List<AI.Machine> m_toFreeze = new List<AI.Machine>();
+    List<bool> m_toKill = new List<bool>();
 
 	public static float m_freezinSpeed = 1;
 	public static float m_defrostSpeed = 0.5f;
@@ -86,13 +88,22 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
            
             max = m_machines.Count;
             m_toFreeze.Clear();
-            
+            m_toKill.Clear();
             for (int i = max-1; i >=0 ; i--)
             {
                 Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
                 if ( freezing != null )
                 {
                     m_toFreeze.Add( m_machines[i] );
+                    if ( freezing.m_killOnFrozen )
+                    {
+                        // Check random
+                        m_toKill.Add(true);
+                    }
+                    else
+                    {
+                        m_toKill.Add(false);
+                    }
                     m_machines.RemoveAt( i );
                 }   
             }
@@ -112,6 +123,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
                             // Remove from freezing
                         m_freezingMachines.RemoveAt(i);
                         m_freezingLevels.RemoveAt(i);
+                        m_freezingKills.RemoveAt(i);
                             
                     }
                     else
@@ -126,10 +138,8 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
                     {
                         m_freezingLevels[i] = 1.0f;
                     }
-                        
                     m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
-                    
-                    if ( freezing.m_killOnFrozen && m_freezingLevels[i] >= 1.0f )
+                    if ( m_freezingKills[i] && m_freezingLevels[i] >= 1.0f )
                     {
                         m_freezingMachines[i].Smash(IEntity.Type.PLAYER);
                     }
@@ -141,6 +151,8 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
             {
                 m_freezingLevels.Add( freezingChange );
                 m_freezingMachines.Add( m_toFreeze[i] );
+                m_freezingKills.Add( m_toKill[i] );
+                
                 m_toFreeze[i].SetFreezingLevel( freezingChange );
             }
         }
@@ -159,7 +171,11 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
         if ( m_freezingMachines.Contains( _machine ) )
         {
             _machine.SetFreezingLevel(0);
-            m_freezingMachines.Remove( _machine );
+            int index = m_freezingMachines.IndexOf( _machine );
+            
+            m_freezingMachines.RemoveAt( index );
+            m_freezingLevels.RemoveAt(index);
+            m_freezingKills.RemoveAt(index);
         }
     }
     

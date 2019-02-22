@@ -54,11 +54,7 @@ public class DragonIcePowers : MonoBehaviour {
             radius += radius * m_frozenAreaRadiusPercentageUpgrade;
         m_currentRadius = Mathf.Lerp(m_currentRadius, radius, Time.deltaTime * 5.0f);
         m_frozenRegistry.m_distanceSqr = m_currentRadius * m_currentRadius;
-        
-        if ( m_powerLevel >= 3 && m_boost.IsBoostActive() )
-        {
-            m_frozenRegistry.m_killOnFrozen = true;
-        }
+        m_frozenRegistry.m_killOnFrozen = m_powerLevel >= 3 && m_boost.IsBoostActive();
     }
     
     // Update is called once per frame
