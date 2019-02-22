@@ -381,7 +381,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
 
         Logger logger = new ConsoleLogger("AssetBundles");
-        AssetBundlesTracker tracker = new AssetBundlesDummyTracker(logger);
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(logger);
         AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, tracker, logger);
 
         Memory_EndSample(true);
