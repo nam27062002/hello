@@ -52,7 +52,7 @@ public class AssetBundlesManager
 
     private Downloadables.Manager m_downloadablesManager;
 
-    private AssetBundlesTracker m_tracker;
+    private Downloadables.Tracker m_tracker;
 
 #if UNITY_EDITOR
     private MockDiskDriver m_diskDriver;
@@ -66,7 +66,7 @@ public class AssetBundlesManager
     /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
     /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, AssetBundlesTracker tracker, Logger logger)
+    public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
