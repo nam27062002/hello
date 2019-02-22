@@ -651,7 +651,8 @@ public class GameSceneController : GameSceneControllerBase {
                 string[] tokens;
                 for (int i = 0; i < scenesToUnload.Count;) {
                     tokens = scenesToUnload[i].Split('_');
-                    if (tokens.Length > 1 && tokens[0].CompareTo("SP") == 0){
+                    if ((tokens.Length > 1 && tokens[0].CompareTo("SP") == 0) ||
+                        (!LevelManager.IsSceneLoaded(scenesToUnload[i]))) {
                         scenesToUnload.RemoveAt(i);
                     }else{
                         i++;
