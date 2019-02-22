@@ -138,8 +138,9 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		// Make sure the reward can be collected
 		if(m_sequence.CanCollectNextReward()) {
 			// Aux vars
+			int rewardIdx = m_sequence.rewardIdx;
 			Metagame.Reward collectedReward = m_sequence.GetNextReward().reward;
-			DailyRewardView collectedRewardSlot = m_rewardSlots[m_sequence.rewardIdx];
+			DailyRewardView collectedRewardSlot = m_rewardSlots[rewardIdx];
 
 			// Collect the reward! (This only pushes the reward to the stack and updates its state)
 			m_sequence.CollectNextReward(_doubled);
@@ -182,7 +183,13 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 					m_currencyFX.totalDuration = 0.3f;
 
 					// Refresh popup view
+					// If it's the last reward of the sequence, trigger nice animation for the newly generated sequence
 					InitWithCurrentData(false);
+					if(rewardIdx == DailyRewardsSequence.SEQUENCE_SIZE - 1) {
+						for(int i = 0; i < m_rewardSlots.Length; ++i) {
+							m_rewardSlots[i].GetComponent<ShowHideAnimator>().RestartShow();
+						}
+					}
 
 					// Close the popup after some delay
 					//closeDelay = m_currencyFX.totalDuration * 1.5f;	// Give enough time to enjoy the fireworks (if we don't, the popups canvas will be delayed and the FX will disappear :s)
