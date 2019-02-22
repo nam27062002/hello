@@ -330,6 +330,11 @@ public class UserProfile : UserPersistenceSystem
 	private Stack<Metagame.Reward> m_rewards = new Stack<Metagame.Reward>();
 	public Stack<Metagame.Reward> rewardStack { get { return m_rewards; } }
 
+	private DailyRewardsSequence m_dailyRewards;
+	public DailyRewardsSequence dailyRewards {
+		get { return m_dailyRewards; }
+	}
+
 	// Offer Packs
 	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 	private Queue<string> m_offerPacksRotationalHistory = new Queue<string>();    // Historic of rotational offers 
@@ -480,6 +485,8 @@ public class UserProfile : UserPersistenceSystem
         m_globalEvents = new Dictionary<int, GlobalEventUserData>();    
     
         m_rewards = new Stack<Metagame.Reward>();
+		Debug.Log(Colors.cyan.Tag("CREATING NEW DAILY REWARDS SEQUENCE (Reset)"));
+		m_dailyRewards = new DailyRewardsSequence();
 
 		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
 		m_offerPacksRotationalHistory = new Queue<string>();
@@ -721,6 +728,15 @@ public class UserProfile : UserPersistenceSystem
 		}
 	}
 
+	/// <summary>
+	/// Check whether the player has played a specific amount of games or not.
+	/// </summary>
+	/// <returns><c>true</c> if the player has played AT LEAST the given amount of games, <c>false</c> otherwise.</returns>
+	/// <param name="_toCheck">Number of games to check.</param>
+	public bool HasPlayedGames(int _toCheck) {
+		return m_gamesPlayed >= _toCheck;
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
@@ -732,7 +748,7 @@ public class UserProfile : UserPersistenceSystem
 	public void UnlockMap() {
 		// Reset timer to the start of the following day, in local time zone
 		// [AOC] Small trick to figure out the start of a day, from http://stackoverflow.com/questions/3362959/datetime-now-first-and-last-minutes-of-the-day
-		//DateTime tomorrow = DateTime.Now.AddDays(1);	// Using local time zone to compute tomorrow's date
+		//DateTime tomorrow = DateTime.Now.Date.AddDays(1);	// Using local time zone to compute tomorrow's date
 		//m_mapResetTimestamp = tomorrow.Date.ToUniversalTime();	// Work in UTC
 
 		// [AOC] Testing purposes
@@ -1029,6 +1045,18 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 
+		// Daily rewards
+		key = "dailyRewards";
+		m_dailyRewards.Reset();
+		Debug.Log(Colors.cyan.Tag("LOADING DAILY REWARDS"));
+		if(_data.ContainsKey(key)) {
+			Debug.Log(Colors.lime.Tag("VALID DATA!!\n") + new JsonFormatter().PrettyPrint(_data[key].ToString()));
+			m_dailyRewards.LoadData(_data[key]);
+		} else {
+			Debug.Log(Colors.red.Tag("INVALID DATA! Generating new sequence"));
+			m_dailyRewards.Generate();	// Generate a new sequence
+		}
+
 		// Offer Packs
 		key = "offerPacks";
 		m_offerPacksPersistenceData.Clear();
@@ -1233,6 +1261,16 @@ public class UserProfile : UserPersistenceSystem
 			}
 		}
 		data.Add("rewards", rewardsData);
+
+		// Daily rewards
+		Debug.Log(Color.cyan.Tag("SAVING DAILY REWARDS!"));
+		JSONClass dailyRewardsData = m_dailyRewards.SaveData();
+		if(dailyRewardsData != null) {  // Can be null if the sequence was never generated
+			Debug.Log(Colors.lime.Tag("VALID DATA!\n") + new JsonFormatter().PrettyPrint(dailyRewardsData.ToString()));
+			data.Add("dailyRewards", dailyRewardsData);
+		} else {
+			Debug.Log(Colors.red.Tag("INVALID DATA!"));
+		}
 
 		// Offer packs
 		JSONClass offersData = new SimpleJSON.JSONClass();

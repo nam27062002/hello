@@ -555,6 +555,21 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
 				}
 			}
+
+			// Daily reward notification
+            if (UsersManager.currentUser.dailyRewards.CanCollectNextReward())
+            {
+                // reward pending
+            }
+            else
+            {
+                // time to reward
+                System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
+                double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
+                int moreSeconds = 9 * 60 * 60;  // 9 AM
+                HDNotificationsManager.instance.ScheduleNewDailyReward ((int)secondsToMidnight + moreSeconds);
+            }
+			// [AOC] TODO!!
         }
     }
 
@@ -562,6 +577,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
+		HDNotificationsManager.instance.CancelDailyRewardNotification();
     }
 
     #region game

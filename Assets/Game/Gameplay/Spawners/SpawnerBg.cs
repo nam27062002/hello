@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class SpawnerBg : AbstractSpawner {
@@ -192,13 +192,13 @@ public class SpawnerBg : AbstractSpawner {
         pilot.guideFunction = m_guideFunction;
     }   
    
-    protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+    protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
             // check if player has destroyed all the flock
             if (m_flockBonus > 0 && _lastEntity != null) {
                 Reward reward = new Reward();
                 reward.score = (int)(m_flockBonus * EntitiesKilled);
-                Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+                Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
             }
 
             m_respawnCount++;

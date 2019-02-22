@@ -38,6 +38,7 @@ uniform fixed _Alpha;
 uniform fixed _SaturationAmount;
 uniform fixed _BrightnessAmount;
 uniform fixed _ContrastAmount;
+uniform fixed _LateMultiply;
 
 fixed4 _TextureSampleAdd;
 float4 _ClipRect;
@@ -85,8 +86,12 @@ fixed3 ContrastSaturationBrightness(fixed3 _color, fixed _b, fixed _s, fixed _c)
 // Aux method to apply color changes to the output vertex color.
 // To be called right before the vertex shader return.
 void ApplyVertexColorModifiers(inout fixed4 _color) {
-	// Apply color multiplier and extra alpha
-	_color *= _ColorMultiply;
+	// Apply color multiplier
+	// Don't multiply if the _LateMultiply property is on (we'll do it after BrightConSat)
+	// Use max to choose which color to multiply by (if _LateMultiply is enabled, the color will be multiplied by 1 -> no effect)
+	_color *= max(_ColorMultiply, _LateMultiply);
+
+	// Apply extra alpha
 	_color.a *= _Alpha;
 }
 
@@ -95,7 +100,12 @@ void ApplyVertexColorModifiers(inout fixed4 _color) {
 void ApplyFragmentColorModifiers(inout fixed4 _color) {
 	// Apply contrast/saturation/brightness
 	_color.rgb = ContrastSaturationBrightness(_color.rgb, _BrightnessAmount, _SaturationAmount, _ContrastAmount);
-	
+
+	// If the _LateMultiply property is on, do the multiply now
+	// Use max to choose which color to multiply by (if _LateMultiply is not enabled, the color will be multiplied by 1 -> no effect)
+	fixed invLateMultiply = 1.0 - _LateMultiply;
+	_color *= max(_ColorMultiply, invLateMultiply);
+
 	// Apply additive color - after contrast/saturation/brightness to be able to do sepia-like effects
 	_color += _ColorAdd;
 	

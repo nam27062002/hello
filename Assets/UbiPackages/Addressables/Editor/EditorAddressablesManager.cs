@@ -124,11 +124,14 @@ public class EditorAddressablesManager
             Dictionary<string, AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
+            AddressablesCatalogEntry entry;
             foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
             {                
                 if (ProcessEntry(pair.Value, scenesToAdd, scenesToRemove))
                 {
-                    playerCatalog.GetEntries().Add(pair.Key, pair.Value);
+                    entry = new AddressablesCatalogEntry();
+                    entry.Load(pair.Value.ToJSON());
+                    playerCatalog.GetEntries().Add(pair.Key, entry);
                 }
             }            
 

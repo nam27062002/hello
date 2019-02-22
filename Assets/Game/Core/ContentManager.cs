@@ -183,7 +183,8 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[] { "Rules/entityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DECORATIONS, new string[] { "Rules/decorationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ENTITY_CATEGORIES, new string[] { "Rules/entityCategoryDefinitions" });
-        kDefinitionFiles.Add(DefinitionsCategory.FREEZE_CONSTANTS, new string[] { "Rules/freezeConstantDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.FREEZE_CONSTANTS, new string[] { "Rules/freezeConstantDefinitions" }); 
+        kDefinitionFiles.Add(DefinitionsCategory.EQUIPABLE, new string[] { "Rules/equipableDefinitions" });
 
         // Game
         kDefinitionFiles.Add(DefinitionsCategory.SCORE_MULTIPLIERS, new string[] { "Rules/scoreMultiplierDefinitions" });
@@ -196,6 +197,8 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.PREREG_REWARDS, new string[] { "Rules/preRegRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARDS, new string[] { "Rules/dailyRewardsDefinitions" });
+
             // Interstitials
         // kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    

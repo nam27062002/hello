@@ -96,7 +96,7 @@ namespace AI {
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.BURNED);
-			Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, reward);
+			Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, m_entity, reward);
 
 			if ( instant )
 			{

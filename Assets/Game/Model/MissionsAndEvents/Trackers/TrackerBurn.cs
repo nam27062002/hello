@@ -1,4 +1,4 @@
-// TrackerBurn.cs
+﻿// TrackerBurn.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/03/2017.
@@ -35,7 +35,7 @@ public class TrackerBurn : TrackerBase {
 		Debug.Assert(m_targetSkus != null);
 
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
 	}
 
 	/// <summary>
@@ -53,7 +53,7 @@ public class TrackerBurn : TrackerBase {
 	/// </summary>
 	override public void Clear() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurn);
 
 		// Call parent
 		base.Clear();
@@ -83,15 +83,14 @@ public class TrackerBurn : TrackerBase {
 	/// </summary>
 	/// <param name="_entity">The source entity, optional.</param>
 	/// <param name="_reward">The reward given.</param>
-	private void OnBurn(Transform _entity, Reward _reward) {
+	private void OnBurn(Transform _t, IEntity _e, Reward _reward) {
 		// Count automatically if we don't have any type filter
 		if(m_targetSkus.Count == 0) {
 			currentValue++;
 		} else {
-			// Is it one of the target types?
-			IEntity prey = _entity.GetComponent<IEntity>();
-			if(prey != null) {
-				if(m_targetSkus.Contains(prey.sku)) {
+			// Is it one of the target types?			
+			if(_e != null) {
+				if(m_targetSkus.Contains(_e.sku)) {
 					// Found!
 					currentValue++;
 				}

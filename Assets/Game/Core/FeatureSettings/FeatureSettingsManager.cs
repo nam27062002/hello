@@ -1469,6 +1469,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 #endif
     }
 
+	public static bool IsDailyRewardsEnabled() {
+		// Feel free to disable it
+		return true;
+	}
+
     /// <summary>
     /// When <c>true</c> tracking is enabled. When <c>false</c> no tracking stuff is done at all
     /// </summary>

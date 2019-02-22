@@ -22,11 +22,6 @@ public class CPMissionCheats : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private enum Operation {
-		ADD,
-		REMOVE,
-		SET
-	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -67,7 +62,7 @@ public class CPMissionCheats : MonoBehaviour {
 	/// Read the input textfield value and performs the required operation.
 	/// </summary>
 	/// <param name="_operation">Target operation.</param>
-	private void SetValue(Operation _operation) {
+	private void SetValue(CPOperation _operation) {
 		// Error check
 		string errorMsg = string.Empty;
 
@@ -79,7 +74,7 @@ public class CPMissionCheats : MonoBehaviour {
 		}
 
 		if(!string.IsNullOrEmpty(errorMsg)) {
-			TextFeedback(errorMsg, Color.red);
+			ControlPanel.LaunchTextFeedback(errorMsg, Color.red);
 			return;
 		}
 
@@ -88,11 +83,11 @@ public class CPMissionCheats : MonoBehaviour {
 
 		// Compute amount to add
 		switch(_operation) {
-			case Operation.ADD: {
+			case CPOperation.ADD: {
 				amount = m.objective.currentValue + amount;
 			} break;
 
-			case Operation.REMOVE: {
+			case CPOperation.REMOVE: {
 				amount = m.objective.currentValue - amount;
 			} break;
 		}
@@ -107,14 +102,14 @@ public class CPMissionCheats : MonoBehaviour {
 		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_MISSION_INFO);
 
 		// Done!
-		TextFeedback("SUCCESS!", Color.green);
+		ControlPanel.LaunchTextFeedback("SUCCESS!", Color.green);
 	}
 
 	/// <summary>
 	/// Read the input textfield value and performs the required operation.
 	/// </summary>
 	/// <param name="_operation">Target operation.</param>
-	private void SkipCooldownMinutes(Operation _operation) {
+	private void SkipCooldownMinutes(CPOperation _operation) {
 		// Error check
 		string errorMsg = string.Empty;
 
@@ -126,7 +121,7 @@ public class CPMissionCheats : MonoBehaviour {
 		}
 
 		if(!string.IsNullOrEmpty(errorMsg)) {
-			TextFeedback(errorMsg, Color.red);
+			ControlPanel.LaunchTextFeedback(errorMsg, Color.red);
 			return;
 		}
 
@@ -136,15 +131,15 @@ public class CPMissionCheats : MonoBehaviour {
 
 		// Compute amount to add
 		switch(_operation) {
-			case Operation.ADD: {
+			case CPOperation.ADD: {
 				amount = -amount;
 			} break;
 
-			case Operation.REMOVE: {
+			case CPOperation.REMOVE: {
 				amount = amount;
 			} break;
 
-			case Operation.SET: {
+			case CPOperation.SET: {
 				amount = (float)m.cooldownRemaining.TotalSeconds - amount;	// That should give us the amount we need to skip to set the remaining cd to "amount"
 			} break;
 		}
@@ -159,19 +154,7 @@ public class CPMissionCheats : MonoBehaviour {
 		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_MISSION_INFO);
 
 		// Done!
-		TextFeedback("SUCCESS!", Color.green);
-	}
-
-	/// <summary>
-	/// Trigger a text feedback.
-	/// </summary>
-	private void TextFeedback(string _text, Color _color) {
-		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
-			_text,
-			new Vector2(0.5f, 0.5f),
-			ControlPanel.panel.parent as RectTransform
-		);
-		text.text.color = _color;
+		ControlPanel.LaunchTextFeedback("SUCCESS!", Color.green);
 	}
 
 	//------------------------------------------------------------------------//
@@ -180,13 +163,13 @@ public class CPMissionCheats : MonoBehaviour {
 	/// <summary>
 	/// Specialized versions to be used as button callbacks.
 	/// </summary>
-	public void OnAddValue() 	{ SetValue(Operation.ADD); }
-	public void OnRemoveValue() { SetValue(Operation.REMOVE); }
-	public void OnSetValue() 	{ SetValue(Operation.SET); }
+	public void OnAddValue() 	{ SetValue(CPOperation.ADD); }
+	public void OnRemoveValue() { SetValue(CPOperation.REMOVE); }
+	public void OnSetValue() 	{ SetValue(CPOperation.SET); }
 
-	public void OnAddCooldown() 	{ SkipCooldownMinutes(Operation.ADD); }
-	public void OnRemoveCooldown() 	{ SkipCooldownMinutes(Operation.REMOVE); }
-	public void OnSetCooldown() 	{ SkipCooldownMinutes(Operation.SET); }
+	public void OnAddCooldown() 	{ SkipCooldownMinutes(CPOperation.ADD); }
+	public void OnRemoveCooldown() 	{ SkipCooldownMinutes(CPOperation.REMOVE); }
+	public void OnSetCooldown() 	{ SkipCooldownMinutes(CPOperation.SET); }
 
 	/// <summary>
 	/// Instantly complete the mission.
@@ -195,10 +178,10 @@ public class CPMissionCheats : MonoBehaviour {
 		// Error check
 		Mission m = MissionManager.GetMission(m_difficulty);
 		if(m == null) {
-			TextFeedback("NO VALID MISSION!", Color.red);
+			ControlPanel.LaunchTextFeedback("NO VALID MISSION!", Color.red);
 			return;
 		} else if(m.state != Mission.State.ACTIVE) {
-			TextFeedback("MISSION MUST BE ACTIVE!", Color.red);
+			ControlPanel.LaunchTextFeedback("MISSION MUST BE ACTIVE!", Color.red);
 			return;
 		}
 
@@ -213,7 +196,7 @@ public class CPMissionCheats : MonoBehaviour {
 		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_MISSION_INFO);
 
 		// Done!
-		TextFeedback("SUCCESS!", Color.green);
+		ControlPanel.LaunchTextFeedback("SUCCESS!", Color.green);
 	}
 
 	/// <summary>
@@ -223,10 +206,10 @@ public class CPMissionCheats : MonoBehaviour {
 		// Error check
 		Mission m = MissionManager.GetMission(m_difficulty);
 		if(m == null) {
-			TextFeedback("NO VALID MISSION!", Color.red);
+			ControlPanel.LaunchTextFeedback("NO VALID MISSION!", Color.red);
 			return;
 		} else if(m.state != Mission.State.COOLDOWN) {
-			TextFeedback("MISSION MUST BE IN COOLDOWN!", Color.red);
+			ControlPanel.LaunchTextFeedback("MISSION MUST BE IN COOLDOWN!", Color.red);
 			return;
 		}
 
@@ -237,7 +220,7 @@ public class CPMissionCheats : MonoBehaviour {
 		Messenger.Broadcast(MessengerEvents.DEBUG_REFRESH_MISSION_INFO);
 
 		// Done!
-		TextFeedback("SUCCESS!", Color.green);
+		ControlPanel.LaunchTextFeedback("SUCCESS!", Color.green);
 	}
 
     public void OnCompleteAndSkip() {

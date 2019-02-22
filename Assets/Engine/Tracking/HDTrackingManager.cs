@@ -75,6 +75,7 @@ public class HDTrackingManager
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
 		REWARD_PREREG,					// Reward given from pre-registration
+		REWARD_DAILY,					// Daily rewards system
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
@@ -553,6 +554,17 @@ public class HDTrackingManager
     /// <param name="currentLeague">Name of the league that user have participated</param>
     /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
     public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
+
+	/// <summary>
+	/// A daily reward has been collected.
+	/// </summary>
+	/// <param name="_rewardIdx">Reward index within the sequence [0..SEQUENCE_SIZE - 1].</param>
+	/// <param name="_totalRewardIdx">Cumulated reward index [0..N].</param>
+	/// <param name="_type">Reward type. For replaced pets, use pet-gf.</param>
+	/// <param name="_amount">Final given amount (after scaling and doubling).</param>
+	/// <param name="_sku">(Optional) Sku of the reward.</param>
+	/// <param name="_doubled">Was the reward doubled by watching an ad?</param>
+	public virtual void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) { }
     #endregion
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so

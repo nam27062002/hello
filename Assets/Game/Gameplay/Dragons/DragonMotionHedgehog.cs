@@ -341,45 +341,44 @@ public class DragonMotionHedgehog : DragonMotion {
         }
     }
 
-	override protected void OnCollisionEnter(Collision collision)
-	{
-		base.OnCollisionEnter(collision);
-		OnHedgehogCollision( collision );
-	}
+    override protected void CustomOnCollisionEnter(Collider _collider, Vector3 _normal, Vector3 _point)
+    {
+        base.CustomOnCollisionEnter( _collider, _normal, _point );
+        OnHedgehogCollision( _collider, _normal, _point );
+    }
     
     public override void OnCollisionStay(Collision collision)
     {
         base.OnCollisionStay(collision);
-        OnHedgehogCollision( collision );
+        OnHedgehogCollision( collision.collider, collision.contacts[0].normal, collision.contacts[0].point );
     }
 
-    protected void OnHedgehogCollision(Collision collision)
+    protected void OnHedgehogCollision(Collider _collider, Vector3 _normal, Vector3 _point)
     {
-        if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
+        if ( m_state == State.Extra_2 && Vector3.Dot( _normal, m_impulse) < 0)
         {
-            if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
+            if ( _collider.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
             {
-                IEntity entity = collision.gameObject.GetComponent<IEntity>();
+                IEntity entity = _collider.gameObject.GetComponent<IEntity>();
                 if ( entity == null )
-                    CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+                    CustomBounce(_point, _normal);
             }
             else
             {
-                BreakableBehaviour breakableBehaviour = collision.gameObject.GetComponent<BreakableBehaviour>();
+                BreakableBehaviour breakableBehaviour = _collider.gameObject.GetComponent<BreakableBehaviour>();
                 if( breakableBehaviour != null )
                 {
                     if ( breakableBehaviour.unbreakableBlocker || m_dragon.GetTierWhenBreaking() < breakableBehaviour.tierWithTurboBreak )
                     {
                         // if I cannot breake it then bounce
-                        CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);        
+                        CustomBounce(_point, _normal);        
                     }
                 }
                 else
                 {
-                    CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+                    CustomBounce(_point, _normal);
                 }
             }
-            
         }
     }
 

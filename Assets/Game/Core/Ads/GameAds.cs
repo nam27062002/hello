@@ -12,7 +12,8 @@ public class GameAds : UbiBCN.SingletonMonoBehaviour<GameAds> {
         REMOVE_MISSION,
 		SKIP_MISSION_COOLDOWN,
         EVENT_SCORE_X2,
-        INTERSTITIAL
+        INTERSTITIAL,
+		DAILY_REWARD_DOUBLE
     };
 
 	public static bool adsAvailable {
