@@ -8,6 +8,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 	{
 		public Transform m_transform;
 		public float m_distanceSqr;
+        public bool m_killOnFrozen;
 	};
 
 	List<Registry> m_registry;
@@ -42,6 +43,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 		Registry reg = new Registry();
 		reg.m_transform = tr;
 		reg.m_distanceSqr = distance * distance;
+        reg.m_killOnFrozen = false;
 		m_registry.Add( reg );
         return reg;
 	}
@@ -62,73 +64,85 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
         m_registry.Remove( reg);
     }
 
-	public bool Overlaps( CircleAreaBounds bounds )
+	public Registry Overlaps( CircleAreaBounds bounds )
 	{
-		for( int i = 0; i<m_registry.Count; i++ )
+        Registry ret = null;
+		for( int i = 0; i<m_registry.Count && ret == null; i++ )
 		{
 			Vector2 v = (Vector2)(bounds.center - m_registry[i].m_transform.position);
-			if ( v.sqrMagnitude < m_registry[i].m_distanceSqr )
-				return true;
+            if (v.sqrMagnitude < m_registry[i].m_distanceSqr)
+                ret = m_registry[i];
 		}
-		return false;
+		return ret;
 	}
     
     
     public void CheckFreeze()
     {
-        float freezingChange = Time.deltaTime * m_freezinSpeed;
-        int max;
-       
-        max = m_machines.Count;
-        m_toFreeze.Clear();
-        
-        for (int i = max-1; i >=0 ; i--)
+        if ( m_registry.Count > 0 )
         {
-            bool freezing = FreezingObjectsRegistry.instance.Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
-            if ( freezing )
+            float freezingChange = Time.deltaTime * m_freezinSpeed;
+            int max;
+           
+            max = m_machines.Count;
+            m_toFreeze.Clear();
+            
+            for (int i = max-1; i >=0 ; i--)
             {
-                m_toFreeze.Add( m_machines[i] );
-                m_machines.RemoveAt( i );
-            }   
-        }
-        
-        max = m_freezingMachines.Count;
-        for (int i = max-1; i >=0 ; i--)
-        {
-            bool freezing = FreezingObjectsRegistry.instance.Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
-            if ( !freezing )
-            {
-                m_freezingLevels[i] -= freezingChange;
-                if ( m_freezingLevels[i] <= 0 )
+                Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
+                if ( freezing != null )
                 {
-                    m_freezingMachines[i].SetFreezingLevel(0);
-                        // Add to non freezing
-                    m_machines.Add( m_freezingMachines[i] );
-                        // Remove from freezing
-                    m_freezingMachines.RemoveAt(i);
-                    m_freezingLevels.RemoveAt(i);
-                        
+                    m_toFreeze.Add( m_machines[i] );
+                    m_machines.RemoveAt( i );
+                }   
+            }
+            
+            max = m_freezingMachines.Count;
+            for (int i = max-1; i >=0 ; i--)
+            {
+                Registry freezing = Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
+                if ( freezing == null)
+                {
+                    m_freezingLevels[i] -= freezingChange;
+                    if ( m_freezingLevels[i] <= 0 )
+                    {
+                        m_freezingMachines[i].SetFreezingLevel(0);
+                            // Add to non freezing
+                        m_machines.Add( m_freezingMachines[i] );
+                            // Remove from freezing
+                        m_freezingMachines.RemoveAt(i);
+                        m_freezingLevels.RemoveAt(i);
+                            
+                    }
+                    else
+                    {
+                        m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                    }
                 }
                 else
                 {
+                    m_freezingLevels[i] += freezingChange;
+                    if (m_freezingLevels[i] > 1.0f)
+                    {
+                        m_freezingLevels[i] = 1.0f;
+                    }
+                        
                     m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                    
+                    if ( freezing.m_killOnFrozen && m_freezingLevels[i] >= 1.0f )
+                    {
+                        m_freezingMachines[i].Smash(IEntity.Type.PLAYER);
+                    }
                 }
             }
-            else
+    
+            max = m_toFreeze.Count;
+            for (int i = 0; i < max; i++)
             {
-                m_freezingLevels[i] += freezingChange;
-                if (m_freezingLevels[i] > 1.0f)
-                    m_freezingLevels[i] = 1.0f;
-                m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                m_freezingLevels.Add( freezingChange );
+                m_freezingMachines.Add( m_toFreeze[i] );
+                m_toFreeze[i].SetFreezingLevel( freezingChange );
             }
-        }
-
-        max = m_toFreeze.Count;
-        for (int i = 0; i < max; i++)
-        {
-            m_freezingLevels.Add( freezingChange );
-            m_freezingMachines.Add( m_toFreeze[i] );
-            m_toFreeze[i].SetFreezingLevel( freezingChange );
         }
     }
     
