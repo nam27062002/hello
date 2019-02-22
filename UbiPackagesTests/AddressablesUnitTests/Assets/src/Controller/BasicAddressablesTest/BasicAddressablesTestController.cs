@@ -74,6 +74,10 @@ public class BasicAddressablesTestController : MonoBehaviour
         {
             catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
         }
+        else
+        {
+            catalogAsText = null;
+        }
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
