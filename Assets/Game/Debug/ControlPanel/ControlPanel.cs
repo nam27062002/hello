@@ -407,7 +407,7 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 		Log_SetupChannel(ELogChannel.Server, "Server", Colors.teal);
 		Log_SetupChannel(ELogChannel.Offers, "Offers", Colors.gold);
 		Log_SetupChannel(ELogChannel.Loading, "Loading", Colors.darkGray);
-        Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.);        
+        Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.lime);        
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)
