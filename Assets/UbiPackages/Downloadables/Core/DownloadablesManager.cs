@@ -84,10 +84,8 @@ namespace Downloadables
 
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
             CatalogEntryStatus.sm_disk = m_disk;
-            m_cleaner = new Cleaner(m_disk, 180);
-
-            Logger downloaderLogger = new ConsoleLogger("Downloader");
-            m_downloader = new Downloader(m_disk, downloaderLogger);
+            m_cleaner = new Cleaner(m_disk, 180);            
+            m_downloader = new Downloader(m_disk, logger);
 
             Reset();
         }
