@@ -381,6 +381,8 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 			m_decorations[i].CustomUpdate();
 		}
 
+        FreezingObjectsRegistry.instance.CheckFreeze();
+
 #if UNITY_EDITOR
 		if ( Input.GetKey(KeyCode.G) )
 		{

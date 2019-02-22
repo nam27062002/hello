@@ -691,7 +691,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		if (m_holdingBlood <= 0)
 		{
 			StartBlood();
-			if ( m_holdingPrey.IsFreezing() ){
+			if ( FreezingObjectsRegistry.instance.IsFreezing( m_holdingPrey ) ){
 				StartFreezing();
 			}
 		}

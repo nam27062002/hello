@@ -75,7 +75,6 @@ namespace AI {
 
 		bool IsDead();
 		bool IsDying();
-		bool IsFreezing();
         bool IsStunned();
         bool IsInLove();
 
