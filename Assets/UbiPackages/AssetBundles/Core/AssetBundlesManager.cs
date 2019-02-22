@@ -358,11 +358,14 @@ public class AssetBundlesManager
         bool returnValue = IsAssetBundleListValid(ids);
         if (returnValue)
         {
-            int count = ids.Count;
-            for (int i = 0; i < count && returnValue; i++)
-            {
-                returnValue = IsAssetBundleAvailable(ids[i]);
-            }            
+			if(ids != null) 
+			{
+				int count = ids.Count;
+				for(int i = 0; i < count && returnValue; i++) 
+				{
+					returnValue = IsAssetBundleAvailable(ids[i]);
+				}
+			}
         }
 
         return returnValue;
