@@ -138,7 +138,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 		// Make sure the reward can be collected
 		if(m_sequence.CanCollectNextReward()) {
 			// Aux vars
-			DailyReward collectedReward = m_sequence.GetNextReward();
+			Metagame.Reward collectedReward = m_sequence.GetNextReward().reward;
 			DailyRewardView collectedRewardSlot = m_rewardSlots[m_sequence.rewardIdx];
 
 			// Collect the reward! (This only pushes the reward to the stack and updates its state)
@@ -148,7 +148,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 			PersistenceFacade.instance.Save_Request();
 
 			// Depending on reward type, either show simple feedback or trigger rewards flow
-			switch(collectedReward.reward.type) {
+			switch(collectedReward.type) {
 				case Metagame.RewardEgg.TYPE_CODE:
 				case Metagame.RewardPet.TYPE_CODE: {
 					// Program the reward flow, will be triggered once the popup is closed
@@ -156,11 +156,8 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 				} break;
 
 				default: {
-					// Pop the reward from the reward's stack and collect it
-					Metagame.Reward reward = UsersManager.currentUser.rewardStack.Peek();
-
 					// Set the right currency in the counter and show it
-					m_currencyCounter.SetCurrency(reward.currency);
+					m_currencyCounter.SetCurrency(collectedReward.currency);
 
 					// Show currency group
 					m_currencyCounterAnim.ForceShow();
@@ -174,11 +171,10 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 					// [AOC] We're assuming that UI canvases (both main and popup) are at Z0
 					fromWorldPos.z = -0.5f;
 					toWorldPos.z = -0.5f;
-					Debug.Log(Colors.lime.Tag("From " + fromWorldPos + " to " + toWorldPos));
 
 					// Ready!
 					m_currencyFX = CurrencyTransferFX.LoadAndLaunch(
-						CurrencyTransferFX.GetDefaultPrefabPathForCurrency(reward.currency),
+						CurrencyTransferFX.GetDefaultPrefabPathForCurrency(collectedReward.currency),
 						this.GetComponentInParent<Canvas>().transform,
 						fromWorldPos,
 						toWorldPos
@@ -193,7 +189,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 					closeDelay = 1.5f;
 
 					// Collect the reward!
-					reward.Collect();
+					collectedReward.Collect();
 				} break;
 			}
 
