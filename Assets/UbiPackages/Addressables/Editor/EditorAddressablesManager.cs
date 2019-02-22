@@ -248,7 +248,7 @@ public class EditorAddressablesManager
             }
 
             // Generates remote AB list file            
-            GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
+            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
 
             // Copy player catalog into the player's folder
             JSONClass json = catalog.ToJSON();
