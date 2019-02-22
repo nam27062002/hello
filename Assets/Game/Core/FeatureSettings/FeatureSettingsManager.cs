@@ -22,6 +22,21 @@ using UnityEngine;
 /// </summary>
 public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSettingsManager>
 {
+    private static bool sm_initialized = false;
+
+    /// <summary>
+    /// Initializes static stuff. It's not done with a static constructor because UnityEngine.Debug.isDebugBuild can't be called from a constructor
+    /// </summary>
+    private static void Static_Initialize()
+    {
+        if (!sm_initialized)
+        {
+            // It's stored in a variable because UnityEngine.Debug.isDebugBuild must be called from the main thread and DownloadablesDownloader, which is executed in its own thread
+            // needs to check this variable
+            sm_isDebugBuild = UnityEngine.Debug.isDebugBuild;
+            sm_initialized = true;
+        }
+    }    
 
     private DeviceQualityManager m_deviceQualityManager;
 
@@ -1370,6 +1385,8 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         }
     }
 
+    private static bool sm_isDebugBuild;
+
     /// <summary>
     /// Returns whether or not debug mode is enabled. 
     /// It's a static method to be sure that it will be available at all times since it's looked up by some MonoBehaviours when awaking
@@ -1378,7 +1395,12 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         get
         {
-            return UnityEngine.Debug.isDebugBuild;
+            if (!sm_initialized)
+            {
+                Static_Initialize();
+            }
+
+            return sm_isDebugBuild;
         }
     }
 

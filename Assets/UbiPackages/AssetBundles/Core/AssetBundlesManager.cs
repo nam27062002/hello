@@ -100,7 +100,7 @@ public class AssetBundlesManager
 #else
         DiskDriver diskDriver = new DiskDriver();
 #endif
-        Logger downloadablesLogger = new ConsoleLogger("Downloadables");
+        Logger downloadablesLogger = logger;
         m_downloadablesManager = new Downloadables.Manager(diskDriver, null, downloadablesLogger);
         m_downloadablesManager.Initialize(downloadablesCatalog, isAutomaticDownloaderEnabled);
 

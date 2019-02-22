@@ -31,7 +31,8 @@ public class HDAddressablesManager : AddressablesManager
     /// </summary>
     public void Initialise()
     {
-        Logger logger = new ConsoleLogger("Addressables");
+        Logger logger = ((FeatureSettingsManager.IsDebugEnabled)) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+        
         string addressablesPath = "Addressables";
         string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");

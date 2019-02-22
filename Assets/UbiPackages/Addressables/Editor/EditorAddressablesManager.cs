@@ -232,8 +232,7 @@ public class EditorAddressablesManager
 
             // Copy remote asset bundles
             EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);
-            
-            /*
+                        
             Dictionary<string, AddressablesCatalogArea> areas = catalog.GetAreas();
             if (areas != null)
             {
@@ -252,9 +251,8 @@ public class EditorAddressablesManager
             //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
 
             // Copy player catalog into the player's folder
-            //JSONClass json = catalog.ToJSON();
-            //EditorFileUtils.WriteToFile(m_playerCatalogPath, json.ToString());
-            */
+            JSONClass json = catalog.ToJSON();
+            EditorFileUtils.WriteToFile(m_playerCatalogPath, json.ToString());            
         }
     }    
 
