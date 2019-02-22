@@ -137,7 +137,7 @@ public class CPNumericValueEditor : MonoBehaviour {
 		}
 
 		// Update textfield
-		SetValue(amount);
+		SetValue(amount, true);
 	}
 
 	//------------------------------------------------------------------------//

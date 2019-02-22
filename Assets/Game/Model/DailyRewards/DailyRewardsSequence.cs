@@ -322,15 +322,19 @@ public class DailyRewardsSequence {
 	/// <param name="_value">New index.</param>
 	public void DEBUG_SetTotalRewardIdx(int _value) {
 		// Do we need to generate a new sequence?
-		bool needNewSequence = Mathf.Abs(m_totalRewardIdx - _value) > SEQUENCE_SIZE;
+		int currentSequenceIdx = m_totalRewardIdx / SEQUENCE_SIZE;
+		int newSequenceIdx = _value / SEQUENCE_SIZE;
 
-		// Advance index!
-		m_totalRewardIdx = _value;
+		// Advance index to the beginning ot the corresponding sequence (so the sequence is generated from day 0)
+		m_totalRewardIdx = SEQUENCE_SIZE * newSequenceIdx;
 
 		// Do we need to generate a new sequence?
-		if(needNewSequence) {
+		if(currentSequenceIdx != newSequenceIdx) {
 			Generate();
 		}
+
+		// Advance index to the actual target index
+		m_totalRewardIdx = _value;
 	}
 
 	/// <summary>
