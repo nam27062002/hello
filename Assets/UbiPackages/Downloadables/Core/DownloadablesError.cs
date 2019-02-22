@@ -12,11 +12,15 @@ namespace Downloadables
             Disk_UnauthorizedAccess,
             Disk_IOException,
             Disk_Other,
+            CRC_Mismatch,                           // This error arises when the file downloaded doesn't match the CRC stated by the catalog
+            Network_Uri_Malformed,                  // This error arises when the uri of the downloadable to download is malformed
             Network_Server_Size_Mismatch,           // This error arises when the client requests for more bytes than the ones available in server
             Network_Unauthorized_Reachability,      // This error arises when trying to download with unauthorized reachability (4G with no permission) 
             Network_Web_Exception,                  // This error arises when there's a problem accessing a url
             Internal
         };
+
+        //public static int TypesCount = Enum.GetValues(typeof(EType)).Length;
 
         public EType Type;
 
@@ -41,7 +45,11 @@ namespace Downloadables
                 }
                 else if (e is WebException)
                 {
-                    Type = EType.Disk_Other;
+                    Type = EType.Network_Web_Exception;
+                }
+                else if (e is UriFormatException)
+                {
+                    Type = EType.Network_Uri_Malformed;
                 }
                 else
                 {
