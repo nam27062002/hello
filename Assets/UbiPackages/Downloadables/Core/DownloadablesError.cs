@@ -20,6 +20,7 @@ namespace Downloadables
             Network_Web_Exception_Connect_Failure,  // This error arises when the server is down
             Network_Web_Exception_Timeout,          // This error arises when there's no response from server after a while
             Network_Web_Exception_Other,            // This error arises when there's any other related to web problem 
+            NotAvailable,                           // This error arises when the downloadable is not available but it's been requested
             Other
         };
 

@@ -91,6 +91,7 @@ namespace Downloadables
                 // Latest error and save are reseted so the incoming state will be executed and will be able to save data right away
                 m_latestErrorAt = -1f;
                 m_latestSaveAt = -1f;
+                m_latestSimulationAt = -1f;
 
                 switch (m_state)
                 {
@@ -119,6 +120,7 @@ namespace Downloadables
 
         private float m_latestErrorAt;
         private float m_latestSaveAt;
+        private float m_latestSimulationAt;
 
         public enum ERequestState
         {
@@ -148,7 +150,8 @@ namespace Downloadables
                     case ERequestState.Running:
                         // Latest error and save are reseted so the request will be resolved with no delays
                         m_latestErrorAt = -1f;
-                        m_latestSaveAt = -1f;                        
+                        m_latestSaveAt = -1f;
+                        m_latestSimulationAt = -1f;
                         break;
                 }
             }
@@ -194,8 +197,20 @@ namespace Downloadables
             bool returnValue = m_latestErrorAt < 0f;
             if  (!returnValue)
             {
-                float timeSinceLatestError = Time.realtimeSinceStartup - m_latestErrorAt;
+                float timeSinceLatestError = sm_realtimeSinceStartup - m_latestErrorAt;
                 returnValue = timeSinceLatestError >= TIME_TO_WAIT_AFTER_ERROR;                 
+            }
+
+            return returnValue;
+        }
+
+        private bool HasSimulationExpired()
+        {
+            bool returnValue = m_latestSimulationAt < 0f;
+            if (!returnValue)
+            {
+                float timeSinceLatestSimulation = sm_realtimeSinceStartup - m_latestSimulationAt;
+                returnValue = timeSinceLatestSimulation >= TIME_TO_WAIT_AFTER_ERROR;
             }
 
             return returnValue;
@@ -240,7 +255,7 @@ namespace Downloadables
 
                     if (m_latestSaveAt >= 0f)
                     {
-                        float timeSinceLatestSave = Time.realtimeSinceStartup - m_latestSaveAt;
+                        float timeSinceLatestSave = sm_realtimeSinceStartup - m_latestSaveAt;
                         canSave = timeSinceLatestSave >= TIME_TO_WAIT_BETWEEN_SAVES;
                     }
 
@@ -498,9 +513,23 @@ namespace Downloadables
             return RequestState == ERequestState.Running;
         }
 
-        public bool CanAutomaticDownload()
-        {            
-            return CRCMismatchErrorTimes < 2 && HasErrorExpired();
+        public bool CanAutomaticDownload(bool simulation)
+        {
+            bool returnValue = CRCMismatchErrorTimes < 2;
+            if (returnValue)
+            {
+                returnValue = (simulation) ? HasSimulationExpired() : HasErrorExpired();
+            }
+
+            return returnValue;
+        }        
+
+        // Used only for tracking purposes
+        public void SimulateDownload()
+        {
+            m_latestSimulationAt = sm_realtimeSinceStartup;
+            TrackDownloadStart();
+            TrackDownloadEnd(Error.EType.Network_Unauthorized_Reachability);
         }        
 
         public void OnDownloadStart()
@@ -530,8 +559,16 @@ namespace Downloadables
             }
         }
 
+        /// <summary>
+        /// This method is called when the download is complete and verified if everything went ok or when an error happened
+        /// </summary>        
         private void OnDownloadEnd(Error.EType errorType)
         {
+            if (errorType == Error.EType.None)
+            {
+                m_manifest.DownloadedTimes++;
+            }
+
             if (sm_onDownloadEndCallback != null)
             {
                 sm_onDownloadEndCallback(this, errorType);

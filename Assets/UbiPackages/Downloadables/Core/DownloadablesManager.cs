@@ -71,6 +71,7 @@ namespace Downloadables
         private Disk m_disk;
         private Cleaner m_cleaner;
         private Downloader m_downloader;
+        private Tracker m_tracker;
 
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
@@ -83,6 +84,8 @@ namespace Downloadables
 
             m_network = network;
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
+            m_tracker = tracker;
+
             CatalogEntryStatus.StaticSetup(m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
             m_downloader = new Downloader(network, m_disk, logger);
@@ -148,19 +151,27 @@ namespace Downloadables
             }            
         }                 
         
-        public bool IsIdAvailable(string id)
+        public bool IsIdAvailable(string id, bool track = false)
         {
             bool returnValue = false;
             if (IsInitialized)
             {
                 CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
-                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);
+                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);                
+
+                if (track)
+                {
+                    float existingSize = GetIdMbDownloadedSoFar(id);
+                    NetworkReachability reachability = m_network.CurrentNetworkReachability;
+                    Error.EType result = (returnValue) ? Error.EType.None : Error.EType.NotAvailable;
+                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalMb(id), 0, reachability, reachability, result, false);
+                }
             }
 
             return returnValue;
         }
 
-        public bool IsIdsListAvailable(List<string> ids)
+        public bool IsIdsListAvailable(List<string> ids, bool track = false)
         {
             bool returnValue = true;
             if (ids != null)
@@ -168,8 +179,20 @@ namespace Downloadables
                 int count = ids.Count;
                 for (int i = 0; i < count && returnValue; i++)
                 {
-                    returnValue = IsIdAvailable(ids[i]);
+                    // IsIdAvailable() must be called for every id so that the result will be tracked if it needs to
+                    returnValue = IsIdAvailable(ids[i], track) && returnValue;
                 }
+            }
+
+            return returnValue;
+        }
+
+        private float GetIdMbDownloadedSoFar(string id)
+        {
+            float returnValue = float.MaxValue;
+            if (IsInitialized)
+            {
+                returnValue = GetIdTotalMb(id) - GetIdMbLeftToDownload(id);                
             }
 
             return returnValue;
@@ -315,29 +338,49 @@ namespace Downloadables
             bool canDownload = !m_downloader.IsDownloading;
             CatalogEntryStatus entryToDownload = null;
 
+            CatalogEntryStatus entryToSimulateDownload = null;
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
                 pair.Value.Update();
-                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload && 
-                    m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
-                {
-                    if (entryToDownload == null || !entryToDownload.IsRequestRunning())
+                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload)
+                {                  
+                    if (m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
                     {
-                        if (pair.Value.IsRequestRunning())
-                        {
-                            entryToDownload = pair.Value;
-                        }
-                        else if (IsAutomaticDownloaderEnabled && pair.Value.CanAutomaticDownload())
-                        {
-                            entryToDownload = pair.Value;
-                        }                        
-                    }                    
+                        ProcessCandidateToDownload(ref entryToDownload, pair.Value, false);
+                    }
+                    else
+                    {
+                        ProcessCandidateToDownload(ref entryToSimulateDownload, pair.Value, true);
+                    }
                 }
             }            
 
-            if (entryToDownload != null)
+            // A simulation is performed only if there's no an actual download to perform
+            if (entryToDownload == null)
+            {
+                if (entryToSimulateDownload != null)
+                {
+                    entryToSimulateDownload.SimulateDownload();
+                }
+            }
+            else
             {                
                 m_downloader.StartDownloadThread(entryToDownload);
+            }
+        }
+
+        private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
+        {
+            if (candidateSoFar == null || !candidateSoFar.IsRequestRunning())
+            {
+                if (entry.IsRequestRunning())
+                {
+                    candidateSoFar = entry;
+                }
+                else if (IsAutomaticDownloaderEnabled && entry.CanAutomaticDownload(simulation))
+                {
+                    candidateSoFar = entry;
+                }
             }
         }
 #endregion

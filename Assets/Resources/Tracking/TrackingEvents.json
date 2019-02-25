@@ -601,7 +601,7 @@
           "etl"
         ]
       },
-        "custom.game.sevendaylogin": {
+	  "custom.game.sevendaylogin": {
             "Parameters": [
                 { "day": { "Status": "OK" } },
                 { "cumulativeDays": { "Status": "OK" } },
@@ -614,15 +614,34 @@
                 "dna",
                 "etl"
             ]
-        },
-		"af_purchase": {
+      },
+	  "custom.game.otaend": {
+	      "Parameters": [
+                { "action": { "Status": "OK" } },
+                { "assetBundle": { "Status": "OK" } },
+                { "maxReached": { "Status": "OK" } },
+                { "mbAvailable_end": { "Status": "OK" } },
+                { "mbAvailable_start": { "Status": "OK" } },
+                { "network_type_end": { "Status": "OK" } },
+				{ "network_type_start": { "Status": "OK" } },
+				{ "result": { "Status": "OK" } },
+				{ "size": { "Status": "OK" } },
+				{ "timeSpent": { "Status": "OK" } },
+				{ "type_buildversion": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+	  },	  
+	  "af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
                 {"af_def_currency": {"Status": "OK"}},
                 {"af_quantity": {"Status": "OK"}}
             ],
             "APIs": ["appsflyer"]
-        },
+      },	  
         "fb_purchase": {
             "Parameters": [
                 {"fb_def_logPurchase": {"Status": "OK"}},
@@ -1452,6 +1471,42 @@
       "ad_viewed": {
         "Type": "BOOL",
         "Values": []
-      }
+      },
+	  "type_buildversion": {
+		"Type": "STRING:16",
+        "Values": []
+	  },
+	  "assetBundle": {
+        "Type": "STRING:32",
+        "Values": []
+      },
+	  "result": {
+        "Type": "STRING:64",
+        "Values": []
+      },
+	  "network_type_start": {
+        "Type": "STRING:8",
+        "Values": []
+      },
+	  "network_type_end": {
+        "Type": "STRING:8",
+        "Values": []
+      },
+	   "timeSpent": {
+        "Type": "INT:4",
+        "Values": []
+      },
+	  "mbAvailable_start": {
+        "Type": "FLOAT",
+        "Values": []
+      },
+	  "mbAvailable_end": {
+        "Type": "FLOAT",
+        "Values": []
+      },
+	  "size": {
+        "Type": "FLOAT",
+        "Values": []
+      }	  
     }
 }
