@@ -81,7 +81,7 @@ public class BasicAddressablesTestController : MonoBehaviour
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
-        AssetBundlesTracker tracker = new AssetBundlesDummyTracker(logger);
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(logger);
         m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, false, tracker, logger);        
     }
 

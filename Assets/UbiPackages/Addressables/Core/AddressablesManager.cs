@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, AssetBundlesTracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string assetBundlesManifestPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
     {
         sm_logger = logger;
 

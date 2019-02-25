@@ -96,6 +96,21 @@ public class ProfileCurrencyCounter : MonoBehaviour {
 	}
 
 	//------------------------------------------------------------------//
+	// PUBLIC METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// Change the currency tracked by this counter.
+	/// </summary>
+	/// <param name="_currency">New currency to be tracked.</param>
+	public void SetCurrency(UserProfile.Currency _currency) {
+		// Store new currency
+		m_currency = _currency;
+
+		// Update
+		UpdateText(false);
+	}
+
+	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
 	/// <summary>
