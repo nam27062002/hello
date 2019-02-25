@@ -10,19 +10,14 @@ using System.Collections.Generic;
 public class OTA_NPCSceneControllerEditor : Editor {
 
     private OTA_NPCSceneController m_component;
-    private EditorAddressablesEntities m_addressablesEntities;
-
     private AssetBundleSubsets m_assetBundleSubsets;
 
     public void Awake() {
         m_component = target as OTA_NPCSceneController;
-        m_addressablesEntities = new EditorAddressablesEntities();
     }
 
     private void OnEnable() {
-        if (m_addressablesEntities == null) {
-            m_addressablesEntities = new EditorAddressablesEntities();
-        }
+
     }
 
     public override void OnInspectorGUI() {
@@ -152,7 +147,7 @@ public class OTA_NPCSceneControllerEditor : Editor {
         List<AddressablesCatalogEntry> entries;
         List<string> bundles;
 
-        m_addressablesEntities.GetEntriesAll(out entries, out bundles);
+        EditorAddressables_NPCs_Particles.GetEntriesAll(out entries, out bundles);
 
         StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_npc_addressables.json", false);
         writer.AutoFlush = true;
@@ -187,7 +182,7 @@ public class OTA_NPCSceneControllerEditor : Editor {
         List<AddressablesCatalogEntry> entries;
         List<string> bundles;
 
-        m_addressablesEntities.GetEntriesPrefab(out entries, out bundles);
+        EditorAddressables_NPCs_Particles.GetEntriesPrefab(out entries, out bundles);
 
         StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_addressablesCatalog.json", false) {
             AutoFlush = true
