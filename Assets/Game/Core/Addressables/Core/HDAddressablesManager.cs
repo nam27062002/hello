@@ -67,17 +67,48 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
-        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
-        
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
         Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, null, logger);
 
         m_pollAutomaticDownloaderAt = 0f;
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
-    {        
+    {
+        string urlBase = null;
+
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
+                    break;
+            }
+
+            //http://10.44.4.69:7888/            
+        }
+
+        if (string.IsNullOrEmpty(urlBase))
+        {
+            urlBase = assetsLUT.m_strURLBase;
+        }
+
         Downloadables.Catalog catalog = new Downloadables.Catalog();
-        catalog.UrlBase = assetsLUT.m_strURLBase + assetsLUT.m_iReleaseVersion + "/";
+        catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
 
         Downloadables.CatalogEntry entry;        
         foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)

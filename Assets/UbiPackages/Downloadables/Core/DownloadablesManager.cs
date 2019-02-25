@@ -113,15 +113,11 @@ namespace Downloadables
             IsInitialized = true;
             IsAutomaticDownloaderEnabled = isAutomaticDownloaderEnabled;
 
-            string urlBase = null;
             if (catalogJSON != null)
             {
-                urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
+                string urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
+                m_downloader.Initialize(urlBase);
             }
-
-            ////http://10.44.4.69:7888/
-
-            m_downloader.Initialize(urlBase);
         } 
 
         private void ProcessCatalog(JSONNode catalogJSON)

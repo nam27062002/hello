@@ -49,7 +49,7 @@ public class AssetBundlesManager
 
 #if UNITY_EDITOR
     private MockNetworkDriver m_networkDriver;
-    private MockDiskDriver m_diskDriver;    
+    private MockDiskDriver m_diskDriver;
 #endif
 
     /// <summary>
@@ -57,7 +57,8 @@ public class AssetBundlesManager
     /// </summary>
     /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
     /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
-    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>
+    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>    
+    /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
     public void Initialize(string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
     {
