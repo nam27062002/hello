@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR
+using System.IO;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -103,7 +104,7 @@ public class AssetBundleSubsets {
             sorted.Sort();
 
             foreach (string prefab in sorted) {
-                string[] path = AssetDatabase.FindAssets("t:prefab " + prefab);
+                string[] path = AssetDatabase.FindAssets("t:prefab " + Path.GetFileName(prefab));
                 for (int i = 0; i < path.Length; ++i) {
                     string assetPath = AssetDatabase.GUIDToAssetPath(path[i]);
                     AssetImporter ai = AssetImporter.GetAtPath(assetPath);

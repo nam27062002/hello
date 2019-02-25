@@ -159,13 +159,11 @@ public class EditorAssetBundlesMenu : MonoBehaviour
                 sceneRoot[t].SetActive(false);
             }
 
-
             for (int s = 0; s < spawners.Count; ++s) {
                 List<string> prefabs = spawners[s].GetPrefabList();
-
                 if (prefabs != null) {
                     for (int j = 0; j < prefabs.Count; ++j) {
-                        assetBundleSubsets.AddAssetName(s, prefabs[j]);
+                        assetBundleSubsets.AddAssetName(i, prefabs[j]);
                     }
                 }
             }
@@ -180,8 +178,8 @@ public class EditorAssetBundlesMenu : MonoBehaviour
             spawners.Clear();
         }
 
-        //m_component.CompareSets();
         assetBundleSubsets.BuildSubsets();
+        assetBundleSubsets.AssignBundles();
     }
 
     [MenuItem(MENU_AUTO_GENERATE_PARTICLES, false, 54)]
