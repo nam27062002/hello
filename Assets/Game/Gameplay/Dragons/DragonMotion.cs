@@ -1130,7 +1130,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
             m_limitsCheck++;
             if ( m_limitsCheck > 2 )
             {
-                if (Physics.Linecast( m_lastPhysicsValidPos, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
+                bool safeIsEnabled = (FeatureSettingsManager.IsDebugEnabled) ? Prefs.GetBoolPlayer(DebugSettings.INGAME_DRAGON_MOTION_SAFE, true) : true;               
+                if (safeIsEnabled && Physics.Linecast( m_lastPhysicsValidPos, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
                 {
                     pos = m_lastPhysicsValidPos;
                     CustomOnCollisionEnter( m_raycastHit.collider, m_raycastHit.normal, m_raycastHit.point );
