@@ -42,7 +42,8 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 	public const string INGAME_SPAWNERS					        = "INGAME_SPAWNERS";	
 	public const string INGAME_PARTICLES_FEEDBACK 		        = "INGAME_PARTICLES_FEEDBACK";
     public const string INGAME_PARTICLES_EATEN 			        = "INGAME_PARTICLES_EATEN";
-	public const string FOG_MANAGER   							= "FOG_MANAGER";
+    public const string INGAME_DRAGON_MOTION_SAFE               = "INGAME_DRAGON_MOTION_SAFE";
+    public const string FOG_MANAGER   							= "FOG_MANAGER";
 	public const string FOG_BLEND_TYPE   						= "FOG_BLEND_TYPE";
 
 	public const string DPAD_MODE 						        = "DPAD_MODE";
