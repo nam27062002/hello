@@ -28,13 +28,14 @@ public class OTA_NPCSceneController : MonoBehaviour {
 
 
 
+
     public void Build(int _area, List<ISpawner> _spawners) {
         HashSet<string> targetSet = m_area1_NPCs;
 
         switch(_area) {
-            case 1: targetSet = m_area1_NPCs; break;
-            case 2: targetSet = m_area2_NPCs; break;
-            case 3: targetSet = m_area3_NPCs; break;
+            case 0: targetSet = m_area1_NPCs; break;
+            case 1: targetSet = m_area2_NPCs; break;
+            case 2: targetSet = m_area3_NPCs; break;
         }
 
         targetSet.Clear();

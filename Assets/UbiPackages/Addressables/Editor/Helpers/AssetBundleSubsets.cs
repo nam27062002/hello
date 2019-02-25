@@ -11,19 +11,21 @@ public class AssetBundleSubsets {
     private HashSet<string>[] m_subsets;
 
     private string   m_subsetPrefix;
-    private string[] m_subsetNames;
+    private string[] m_setNames;
 
-
+    private Dictionary<string, string> m_assetLODsMap;
 
 
 
     public AssetBundleSubsets(int _sets) {
         m_sets = new HashSet<string>[_sets];
-        m_subsetNames = new string[_sets];
+        m_setNames = new string[_sets];
 
         for (int i = 0; i < _sets; ++i) {
+            m_sets[i] = new HashSet<string>();
+
             char c = (char)('A' + i);
-            m_subsetNames[i] = c.ToString();
+            m_setNames[i] = c.ToString();
         }
         m_subsetPrefix = "auto_bundle_";
 
@@ -31,10 +33,15 @@ public class AssetBundleSubsets {
         BuildCombinations();
 
         m_subsets = new HashSet<string>[m_combinations.Count];
+        for (int i = 0; i < m_subsets.Length; ++i) {
+            m_subsets[i] = new HashSet<string>();
+        }
+
+        m_assetLODsMap = new Dictionary<string, string>();
     }
 
     public void ChangeSubsetName(int _set, string _name) {
-        m_subsetNames[_set] = _name;
+        m_setNames[_set] = _name;
     }
 
     public void ChangeSubsetPrefix(string _prefix) {
@@ -45,20 +52,68 @@ public class AssetBundleSubsets {
         m_sets[_set].Add(_name);
     }
 
+    public void AddAssetName(int _set, string _name, string _lods) {
+        m_sets[_set].Add(_name);
+
+        if (!m_assetLODsMap.ContainsKey(_name)) {
+            m_assetLODsMap.Add(_name, _lods);
+        }
+    }
+
     public void BuildSubsets() {
         for (int set = 0; set < m_sets.Length; ++set) {
             foreach (string asset in m_sets[set]) {
-                for (int combination = m_sets.Length; combination < m_combinations.Count; ++combination) {
+                bool storeInSet = true;
+                for (int combination = m_combinations.Count - 1; combination >= m_sets.Length; --combination) {
                     if (CombinationContainsAsset(asset, set, m_combinations[combination])) {
                         m_subsets[combination].Add(asset);
+                        storeInSet = false;
+                        break;
                     }
+                }
+                if (storeInSet) {
+                    m_subsets[set].Add(asset);
                 }
             }
         }
 
+        int assetCount = 0;
+        for (int subset = 0; subset < m_subsets.Length; subset++) {
+            List<string> sorted = m_subsets[subset].ToList();
+            sorted.Sort();
+
+            string output = "-++[" + GetSubSetName(subset) + "]++++-----------------------\n";
+            foreach (string asset in sorted) {
+                output += "    " + asset;
+                if (m_assetLODsMap.ContainsKey(asset)) {
+                    output += " [" + m_assetLODsMap[asset] + "]";
+                }
+                output += "\n";
+                assetCount++;
+            }
+            output += "-++----";
+
+            Debug.LogWarning(output);
+        }
     }
 
-    public bool CombinationContainsAsset(string _asset, int _sourceSet, List<int> _combination) {
+    public void AssignBundles() {
+        for (int subset = 0; subset < m_subsets.Length; subset++) {
+            List<string> sorted = m_subsets[subset].ToList();
+            sorted.Sort();
+
+            foreach (string prefab in sorted) {
+                string[] path = AssetDatabase.FindAssets("t:prefab " + prefab);
+                for (int i = 0; i < path.Length; ++i) {
+                    string assetPath = AssetDatabase.GUIDToAssetPath(path[i]);
+                    AssetImporter ai = AssetImporter.GetAtPath(assetPath);
+                    ai.SetAssetBundleNameAndVariant(GetSubSetName(subset), "");
+                }
+            }
+        }
+    }
+
+    private bool CombinationContainsAsset(string _asset, int _sourceSet, List<int> _combination) {
         bool contains = true;
         foreach (int set in _combination) {
             if (set != _sourceSet) {
@@ -87,24 +142,15 @@ public class AssetBundleSubsets {
         }
     }
 
-    /*
-    public void SetBundlesNames() {
-        for (int i = 0; i < m_subsets.Length; ++i) {
-            SetBundleNames(i);
+    private string GetSubSetName(int _set) {
+        string name = m_subsetPrefix;
+
+        for (int i = 0; i < m_combinations[_set].Count; ++i) {
+            if (i > 0) name += "_";
+            name += m_setNames[m_combinations[_set][i]];
         }
+
+        return name;
     }
-
-    private void SetBundleNames(int _subset) {
-        List<string> sorted = m_subsets[_subset].ToList();
-        sorted.Sort();
-
-        foreach (string prefab in sorted) {
-            string[] path = AssetDatabase.FindAssets(prefab + ".prefab");
-            if (path.Length > 0) {
-                AssetImporter ai = AssetImporter.GetAtPath(path[0]);
-                ai.SetAssetBundleNameAndVariant(m_assetBundleNames[_subset], "");
-            }
-        }
-    }*/
 }
 #endif

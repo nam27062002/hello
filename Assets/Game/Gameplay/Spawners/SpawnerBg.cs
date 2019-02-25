@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnerBg : AbstractSpawner {
 	[System.Serializable]
@@ -142,6 +142,12 @@ public class SpawnerBg : AbstractSpawner {
         }
 
         m_guideFunction = GetComponent<IGuideFunction>();
+    }
+
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefabStr);
+        return list;
     }
 
     protected override bool CanRespawnExtended() {

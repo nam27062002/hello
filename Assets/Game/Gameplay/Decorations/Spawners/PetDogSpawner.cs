@@ -61,6 +61,10 @@ public class PetDogSpawner : AbstractSpawner {
 			ForceRemoveEntities();
 		}
 	}
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
     //-------------------------------------------------------------------
 
     //-------------------------------------------------------------------

@@ -83,7 +83,13 @@ public class SpawnerStar : AbstractSpawner {
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefab);
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {

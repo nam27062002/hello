@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using AI;
 
 public class DeviceOperatorSpawner : AbstractSpawner {	
@@ -47,6 +47,10 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 			ForceRemoveEntities();
 		}
 	}
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
     //-------------------------------------------------------------------
 
     //-------------------------------------------------------------------
