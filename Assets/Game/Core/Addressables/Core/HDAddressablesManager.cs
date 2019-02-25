@@ -31,7 +31,7 @@ public class HDAddressablesManager : AddressablesManager
     /// </summary>
     public void Initialise()
     {
-        Logger logger = ((FeatureSettingsManager.IsDebugEnabled)) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
         
         string addressablesPath = "Addressables";
         string assetBundlesPath = addressablesPath;
