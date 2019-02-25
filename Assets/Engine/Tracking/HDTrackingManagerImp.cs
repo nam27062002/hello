@@ -367,13 +367,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 Log("SessionNumber = " + sessionNumber + " trackingID = " + trackingID + " userId = " + userID + " trackPlatform = " + trackPlatform);
             }
 
+            Session_BuildVersion = settingsInstance.GetClientBuildVersion();
+
             TrackingConfig kTrackingConfig = new TrackingConfig();
             kTrackingConfig.m_eTrackPlatform = trackPlatform;
             kTrackingConfig.m_strJSONConfigFilePath = "Tracking/TrackingEvents";
             kTrackingConfig.m_strStartSessionEventName = "custom.etl.session.start";
             kTrackingConfig.m_strEndSessionEventName = "custom.etl.session.end";
             kTrackingConfig.m_strMergeAccountEventName = "MERGE_ACCOUNTS";
-            kTrackingConfig.m_strClientVersion = settingsInstance.GetClientBuildVersion();
+            kTrackingConfig.m_strClientVersion = Session_BuildVersion;
             kTrackingConfig.m_strTrackingID = trackingID;
             kTrackingConfig.m_strUserIDOptional = userID;
             kTrackingConfig.m_iSessionNumber = sessionNumber;
@@ -1223,6 +1225,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	public override void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) {
 		Track_DailyReward(_rewardIdx, _totalRewardIdx, _type, _amount, _sku, _doubled);
 	}
+    #endregion
+
+    #region downloadables
+    public override void Notify_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+                                                string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
+    {
+        Track_DownloadablesEnd(action, downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent, reachabilityAtStart, reachabilityAtEnd, result, maxAttemptsReached);
+    }
     #endregion
 
     /// <summary>
@@ -2212,6 +2222,42 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		m_eventQueue.Enqueue(e);
 	}
 
+    public void Track_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+                                       string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
+    {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DownloadablesEnd action = " + action
+                + ", downloadableId = " + downloadableId
+                + ", existingSizeMbAtStart = " + existingSizeMbAtStart
+                + ", existingSizeMbAtEnd = " + existingSizeMbAtEnd
+                + ", totalSizeMb = " + totalSizeMb
+                + ", timeSpent = " + timeSpent
+                + ", reachabilityAtStart = " + reachabilityAtStart
+                + ", reachabilityAtEnd = " + reachabilityAtEnd
+                + ", result = " + result
+               );
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.otaend");
+        {
+            Track_AddParamString(e, TRACK_PARAM_TYPE_BUILD_VERSION, Session_BuildVersion);
+            Track_AddParamString(e, TRACK_PARAM_ACTION, action);
+            Track_AddParamString(e, TRACK_PARAM_ASSET_BUNDLE, downloadableId);
+            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_START, existingSizeMbAtStart);
+            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_END, existingSizeMbAtEnd);
+            Track_AddParamFloat(e, TRACK_PARAM_SIZE, totalSizeMb);
+            Track_AddParamInt(e, TRACK_PARAM_TIME_SPENT, timeSpent);
+            Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_START, reachabilityAtStart);
+            Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_END, reachabilityAtEnd);
+            Track_AddParamString(e, TRACK_PARAM_RESULT, result);
+            Track_AddParamBool(e, TRACK_PARAM_MAX_REACHED, maxAttemptsReached);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2239,6 +2285,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_AMOUNT_BALANCE = "amountBalance";
     private const string TRACK_PARAM_AMOUNT_DELTA = "amountDelta";
     private const string TRACK_PARAM_ANALYTICS_OPTION = "analytics_optin";
+    private const string TRACK_PARAM_ASSET_BUNDLE = "assetBundle";
     private const string TRACK_PARAM_AVERAGE_FPS = "avgFPS";
     private const string TRACK_PARAM_BOOST_TIME = "boostTime";
     private const string TRACK_PARAM_CATEGORY = "category";
@@ -2306,7 +2353,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_MAP_USAGE = "mapUsedNB";
     private const string TRACK_PARAM_MARKETING_OPTION = "marketing_optin";
     private const string TRACK_PARAM_MAX_REACHED = "maxReached";
-    private const string TRACK_PARAM_MAX_XP = "maxXp";
+    private const string TRACK_PARAM_MB_AVAILABLE_END = "mbAvailable_end";
+    private const string TRACK_PARAM_MB_AVAILABLE_START = "mbAvailable_start";
+    private const string TRACK_PARAM_MAX_XP = "maxXp";    
     private const string TRACK_PARAM_MISSION_DIFFICULTY = "missionDifficulty";
     private const string TRACK_PARAM_MISSION_TARGET = "missionTarget";
     private const string TRACK_PARAM_MISSION_TYPE = "missionType";
@@ -2318,6 +2367,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_NB_ADS_LTD = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS = "nbViews";
+    private const string TRACK_PARAM_NETWORK_TYPE_END = "network_type_end";
+    private const string TRACK_PARAM_NETWORK_TYPE_START = "network_type_start";
     private const string TRACK_PARAM_NEW_AREA = "newArea";
     private const string TRACK_PARAM_OFFER_NAME = "offerName";
     private const string TRACK_PARAM_OFFER_TYPE = "offerType";
@@ -2344,10 +2395,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_RARITY = "rarity";
     private const string TRACK_PARAM_RATE_RESULT = "rateResult";
     private const string TRACK_PARAM_RECORDINGS = "recordings";
+    private const string TRACK_PARAM_RESULT = "result";
     private const string TRACK_PARAM_REWARD_TIER = "rewardTier";
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
+    private const string TRACK_PARAM_SIZE = "size";
     private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";
     private const string TRACK_PARAM_EVENT_SCORE_TOTAL = "scoreTotal";
@@ -2366,6 +2419,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SUBVERSION = "SubVersion";
     private const string TRACK_PARAM_SUPER_FIRE_RUSH_NB = "superFireRushNb";
     private const string TRACK_PARAM_TIME_PLAYED = "timePlayed";
+    private const string TRACK_PARAM_TIME_SPENT = "timeSpent";
     private const string TRACK_PARAM_TRACKING_ID = "trackingID";
     private const string TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR = "topContributor";
     private const string TRACK_PARAM_TOTAL_EGG_BOUGHT_HC = "totalEggBought";
@@ -2379,6 +2433,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_TOURNAMENT_SKU = "tournamentSku";
     private const string TRACK_PARAM_TRIGGERED = "triggered";
 	private const string TRACK_PARAM_TYPE = "type";
+    private const string TRACK_PARAM_TYPE_BUILD_VERSION = "type_buildversion";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
     private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";
     private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
@@ -2725,6 +2780,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
         app_closed,
         no_activity
     }
+
+    public string Session_BuildVersion { get; set; }
 
     /// <summary>
     /// Whether or not the user has paid (actual purchase) during the current session

@@ -67,8 +67,9 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
+        Downloadables.Tracker tracker = new HDDownloadablesTracker(5, null, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, null, logger);
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, tracker, logger);
 
         m_pollAutomaticDownloaderAt = 0f;
     }
