@@ -90,7 +90,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Messenger.AddListener<bool>(MessengerEvents.LOGGED, OnLoggedIn);
     }
 
-    private void Reset() {
+    protected override void Reset()
+    {
+        base.Reset();
+
         State = EState.WaitingForSessionStart;
         IsStartSessionNotified = false;
         AreSDKsInitialised = false;
@@ -104,8 +107,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             TrackingPersistenceSystem.Reset();
         }
 
-        Performance_Reset();
-        Session_Reset();
+        Performance_Reset();       
         m_loadFunnelCalety.Reset();
         m_loadFunnelRazolytics.Reset();
         m_firstUXFunnel.Reset();
@@ -2850,7 +2852,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private bool Session_IsARoundRunning { get; set; }
 
-    private void Session_Reset() {
+    protected override void Session_Reset() {
+        base.Session_Reset();
+
         Session_GameStartSent = false;
         Session_IsPayingSession = false;
         Session_IsAdSession = false;
