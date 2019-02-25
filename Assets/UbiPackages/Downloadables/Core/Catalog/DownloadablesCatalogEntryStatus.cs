@@ -530,8 +530,16 @@ namespace Downloadables
             }
         }
 
+        /// <summary>
+        /// This method is called when the download is complete and verified if everything went ok or when an error happened
+        /// </summary>        
         private void OnDownloadEnd(Error.EType errorType)
         {
+            if (errorType == Error.EType.None)
+            {
+                m_manifest.DownloadedTimes++;
+            }
+
             if (sm_onDownloadEndCallback != null)
             {
                 sm_onDownloadEndCallback(this, errorType);
