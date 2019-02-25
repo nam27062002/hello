@@ -62,7 +62,7 @@ namespace AI {
 				m_transitionParam = new object[1];
 			}
 
-			protected override void OnEnter(State oldState, object[] param) {
+			protected override void OnEnter(State _oldState, object[] _param) {
 				m_pilot.SetMoveSpeed(m_speed);
 				m_pilot.SlowDown(false);
 
@@ -70,9 +70,9 @@ namespace AI {
 				m_targetMachine = null;
 				m_targetEntity = null;
 
-				if ( param != null && param.Length > 0 )
+				if (_param != null && _param.Length > 0 )
 				{
-					m_target = param[0] as Transform;
+					m_target = _param[0] as Transform;
 					if ( m_target ) {
 						m_targetEntity = m_target.GetComponent<Entity>();
 						if ( m_targetEntity )
@@ -103,7 +103,6 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-
 				// if eating move forward only
 				if ( m_eatBehaviour != null && m_eatBehaviour.IsEating() )
 				{
@@ -111,24 +110,19 @@ namespace AI {
 					return;
 				}
                 
-				if (m_checkCanBeBitten && m_targetMachine != null) {
-                    if (!m_targetMachine.CanBeBitten())
-                    {
-                        m_target = null;
-                        if (m_targetMachine != null)
-                        {
-                            m_targetMachine.isPetTarget = false;
-                            m_targetMachine = null;
-                        }
-						m_targetEntity = null;
-					}
+				if (m_checkCanBeBitten && m_targetMachine != null && !m_targetMachine.CanBeBitten())
+                {
+                    m_target = null;
+                    m_targetEntity = null;
+                    m_targetMachine.isPetTarget = false;
+                    m_targetMachine = null;
 				}
 
 				// if collides with ground then -> recover/loose sight
 				if (m_machine.GetSignal(Signals.Type.Collision))
 				{
 					object[] param = m_machine.GetSignalParams(Signals.Type.Collision);
-					if ( param.Length > 0 )
+					if (param != null && param.Length > 0)
 					{
 						Collision collision = param[0] as Collision;
 						if ( collision != null )
@@ -157,17 +151,8 @@ namespace AI {
 					{
 						Vector3 pos;
 						// Chase
-						if (m_targetEntity != null) {
-							pos = m_targetEntity.circleArea.center;
-							/*
-							if (m_targetMachine != null)
-							{
-								if ( Vector3.Dot( m_pilot.direction, m_targetMachine.direction) > 0 )
-								{
-									pos += (m_targetMachine.velocity * Time.deltaTime) * 2;	
-								}
-							}
-							*/
+						if (m_targetEntity != null && m_targetEntity.circleArea != null) {
+							pos = m_targetEntity.circleArea.center;							
 						} else {
 							pos = m_target.position;
 						}
@@ -177,8 +162,6 @@ namespace AI {
 						m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));
 						m_pilot.GoTo(pos);
 					}
-					
-
 				} else {
 					m_transitionParam[0] = m_cooldown.GetRandom();
 					Transition(OnEnemyOutOfSight, m_transitionParam);

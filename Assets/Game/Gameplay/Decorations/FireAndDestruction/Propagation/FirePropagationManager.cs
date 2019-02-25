@@ -177,13 +177,16 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 
 
     public void FireUpNodes(Rect _rectArea, CheckMethod _checkMethod, DragonTier _tier, DragonBreathBehaviour.Type _breathType, Vector3 _direction, IEntity.Type _source)	{
-        m_fireNodesTree.GetHashSetInRange(_rectArea, ref m_selectedFireNodes);
-        foreach (FireNode fireNode in m_selectedFireNodes) {
-			if (fireNode != null && _checkMethod(fireNode.area)) {
-				fireNode.Burn(_direction, true, _tier, _breathType, _source);
-			}
-		}
-        m_selectedFireNodes.Clear();
+        if ( m_fireNodesTree != null)
+        {
+            m_fireNodesTree.GetHashSetInRange(_rectArea, ref m_selectedFireNodes);
+            foreach (FireNode fireNode in m_selectedFireNodes) {
+    			if (fireNode != null && _checkMethod(fireNode.area)) {
+    				fireNode.Burn(_direction, true, _tier, _breathType, _source);
+    			}
+    		}
+            m_selectedFireNodes.Clear();
+        }
     }
 			
 	// :3
