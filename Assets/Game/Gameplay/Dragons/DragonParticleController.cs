@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class DragonParticleController : MonoBehaviour, IBroadcastListener
 {
@@ -128,6 +129,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		if (!string.IsNullOrEmpty(m_reviveParticle)){
 			m_reviveInstance = ParticleManager.InitLeveledParticle( m_reviveParticle, null );
+            SceneManager.MoveGameObjectToScene(m_reviveInstance.gameObject, gameObject.scene);
 		}
 		m_bubblesInstance = ParticleManager.InitParticle(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
@@ -163,6 +165,10 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
 		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
+        if ( m_hiccupAnchor == null )
+        {
+             SceneManager.MoveGameObjectToScene(m_hiccupInstance.gameObject, gameObject.scene);
+        }
 
 		if (dragonAnimEvents != null)
 			dragonAnimEvents.onHiccupEvent += OnHiccup;
@@ -413,6 +419,10 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
     public void StartMummySmoke() {
         m_mummySmokeInstance = ParticleManager.InitLeveledParticle(m_mummySmoke, m_reviveAnchor);
+        if (m_reviveAnchor == null)
+        {
+            SceneManager.MoveGameObjectToScene(m_mummySmokeInstance.gameObject, gameObject.scene);
+        }
         m_mummySmokeInstance.gameObject.SetActive(true);
         m_mummySmokeInstance.Play();
     }
