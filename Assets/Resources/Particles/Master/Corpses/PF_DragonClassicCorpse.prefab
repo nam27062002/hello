@@ -857,6 +857,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -872,6 +873,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -889,6 +891,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -904,6 +907,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -921,6 +925,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -936,6 +941,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -953,6 +959,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -968,6 +975,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -985,6 +993,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1000,6 +1009,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1017,6 +1027,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1032,6 +1043,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1049,6 +1061,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1064,6 +1077,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1235,9 +1249,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300034, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64245150218009906
@@ -1249,9 +1263,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300030, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64416097287774978
@@ -1263,9 +1277,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300032, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64478652793994860
@@ -1277,9 +1291,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300036, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64575228347554322
@@ -1291,9 +1305,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300038, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64581817509100028
@@ -1305,9 +1319,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300040, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!64 &64963864048964594
@@ -1319,9 +1333,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300028, guid: 0475a0b9329a34a60babd0ba55f8740c, type: 3}
 --- !u!114 &114069110183361864
@@ -1351,6 +1365,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114110383528272942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1366,6 +1381,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114171307678827624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1405,6 +1421,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114229025704453526
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1420,6 +1437,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114336922268075704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1435,6 +1453,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114345716492498652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1450,6 +1469,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114404594208889744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1465,6 +1485,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114410788918578620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1545,6 +1566,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_bloodPoints:
   - {fileID: 4289839260087034}
   - {fileID: 4236345984834096}
@@ -1568,6 +1590,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114525828300148646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1583,6 +1606,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114556624215816450
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1610,6 +1634,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114635207923553050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1649,6 +1674,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114690894534447074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1676,6 +1702,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114803425864802088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1691,6 +1718,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114850420437825142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1706,6 +1734,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114858414809650180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1721,6 +1750,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114896453518122112
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1748,3 +1778,4 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
