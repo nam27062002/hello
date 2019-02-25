@@ -338,29 +338,49 @@ namespace Downloadables
             bool canDownload = !m_downloader.IsDownloading;
             CatalogEntryStatus entryToDownload = null;
 
+            CatalogEntryStatus entryToSimulateDownload = null;
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
                 pair.Value.Update();
-                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload && 
-                    m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
-                {
-                    if (entryToDownload == null || !entryToDownload.IsRequestRunning())
+                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload)
+                {                  
+                    if (m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
                     {
-                        if (pair.Value.IsRequestRunning())
-                        {
-                            entryToDownload = pair.Value;
-                        }
-                        else if (IsAutomaticDownloaderEnabled && pair.Value.CanAutomaticDownload())
-                        {
-                            entryToDownload = pair.Value;
-                        }                        
-                    }                    
+                        ProcessCandidateToDownload(ref entryToDownload, pair.Value, false);
+                    }
+                    else
+                    {
+                        ProcessCandidateToDownload(ref entryToSimulateDownload, pair.Value, true);
+                    }
                 }
             }            
 
-            if (entryToDownload != null)
+            // A simulation is performed only if there's no an actual download to perform
+            if (entryToDownload == null)
+            {
+                if (entryToSimulateDownload != null)
+                {
+                    entryToSimulateDownload.SimulateDownload();
+                }
+            }
+            else
             {                
                 m_downloader.StartDownloadThread(entryToDownload);
+            }
+        }
+
+        private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
+        {
+            if (candidateSoFar == null || !candidateSoFar.IsRequestRunning())
+            {
+                if (entry.IsRequestRunning())
+                {
+                    candidateSoFar = entry;
+                }
+                else if (IsAutomaticDownloaderEnabled && entry.CanAutomaticDownload(simulation))
+                {
+                    candidateSoFar = entry;
+                }
             }
         }
 #endregion
