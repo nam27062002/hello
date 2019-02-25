@@ -52,14 +52,43 @@ public class HDDownloadablesTracker : Tracker
         return (type == Error.EType.None) ? "Success" : type.ToString();
     }
 
+    private Dictionary<string, bool> m_idsLoadTracked;
+
     public HDDownloadablesTracker(int maxAttempts, Dictionary<Error.EType, int> maxAttemptsPerErrorType, Logger logger) : base(maxAttempts, maxAttemptsPerErrorType, logger)
     {
     }
 
-    protected override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    public void ResetIdsLoadTracked()
+    {
+        if (m_idsLoadTracked != null)
+        {
+            m_idsLoadTracked.Clear();
+        }
+    }
+
+    public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached)
     {
-        HDTrackingManager.Instance.Notify_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent, 
-                                                           ReachabilityToString(reachabilityAtStart), ReachabilityToString(reachabilityAtEnd), ErrorTypeToString(error), maxAttemptsReached);            
+        bool canTrack = true;
+        if (action == EAction.Load)
+        {
+            canTrack = m_idsLoadTracked == null || !m_idsLoadTracked.ContainsKey(downloadableId);          
+        }
+
+        if (canTrack)
+        {
+            if (action == EAction.Load)
+            {
+                if (m_idsLoadTracked == null)
+                {
+                    m_idsLoadTracked = new Dictionary<string, bool>();
+                }
+
+                m_idsLoadTracked.Add(downloadableId, true);
+            }
+
+            HDTrackingManager.Instance.Notify_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
+                                                                ReachabilityToString(reachabilityAtStart), ReachabilityToString(reachabilityAtEnd), ErrorTypeToString(error), maxAttemptsReached);
+        }
     }    
 }

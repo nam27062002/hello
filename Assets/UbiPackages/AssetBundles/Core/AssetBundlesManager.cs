@@ -45,7 +45,7 @@ public class AssetBundlesManager
     public static string ASSET_BUNDLES_CATALOG_FILENAME = "assetBundlesCatalog.json";
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
-    private Downloadables.Manager m_downloadablesManager;    
+    private Downloadables.Manager m_downloadablesManager;        
 
 #if UNITY_EDITOR
     private MockNetworkDriver m_networkDriver;
@@ -291,7 +291,7 @@ public class AssetBundlesManager
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
     /// which means that either the asset bundle is local or it's remote and it has already been downloaded.
     /// </summary>  
-    public bool IsAssetBundleAvailable(string id)
+    public bool IsAssetBundleAvailable(string id, bool track = false)
     {
         bool returnValue = IsAssetBundleValid(id);
         if (returnValue)
@@ -299,14 +299,14 @@ public class AssetBundlesManager
             AssetBundleHandle handle = GetAssetBundleHandle(id);
             if (handle.IsRemote())
             {
-                returnValue = m_downloadablesManager.IsIdAvailable(id);
+                returnValue = m_downloadablesManager.IsIdAvailable(id, track);
             }
         }
 
         return returnValue;
     }
 
-    public bool IsAssetBundleListAvailable(List<string> ids)
+    public bool IsAssetBundleListAvailable(List<string> ids, bool track = false)
     {
         bool returnValue = IsAssetBundleListValid(ids);
         if (returnValue)
@@ -314,10 +314,11 @@ public class AssetBundlesManager
 			if(ids != null) 
 			{
 				int count = ids.Count;
-				for(int i = 0; i < count && returnValue; i++) 
+				for(int i = 0; i < count; i++) 
 				{
-					returnValue = IsAssetBundleAvailable(ids[i]);
-				}
+                    // IsAssetBundleAvailable() must be called for every id so that the result will be tracked if it needs to
+                    returnValue = IsAssetBundleAvailable(ids[i], track) && returnValue;
+                }
 			}
         }
 

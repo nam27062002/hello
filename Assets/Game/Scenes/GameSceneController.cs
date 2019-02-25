@@ -662,6 +662,8 @@ public class GameSceneController : GameSceneControllerBase {
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
                 m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
+
+                HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;
         }
 		

@@ -129,7 +129,7 @@ namespace Downloadables
             m_currentDownloadTimeAtStart = -1f;
         }
 
-        protected abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+        public abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached);                
 
         protected bool CanLog()
