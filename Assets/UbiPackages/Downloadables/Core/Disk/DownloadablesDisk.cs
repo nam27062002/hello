@@ -18,7 +18,7 @@ namespace Downloadables
         };
 
         private string[] m_rootPaths;
-        private DiskDriver m_diskDriver;
+        public DiskDriver DiskDriver;
 
         /// <summary>
         /// Time in seconds to wait between two issues are notified
@@ -29,7 +29,7 @@ namespace Downloadables
         {
             Reset();
 
-            m_diskDriver = diskDriver;
+            DiskDriver = diskDriver;
 
             m_rootPaths = new string[2];
             m_rootPaths[(int)EDirectoryId.Manifests] = manifestsRootPath;
@@ -81,7 +81,7 @@ namespace Downloadables
 
             try
             {
-                return m_diskDriver.Directory_Exists(GetRootPath(id));                
+                return DiskDriver.Directory_Exists(GetRootPath(id));                
             }
             catch (Exception e)
             {
@@ -100,7 +100,7 @@ namespace Downloadables
 
             try
             {
-                return m_diskDriver.Directory_CreateDirectory(GetRootPath(id));
+                return DiskDriver.Directory_CreateDirectory(GetRootPath(id));
             }
             catch (Exception e)
             {
@@ -120,9 +120,9 @@ namespace Downloadables
             try
             {
                 string rootPath = GetRootPath(id);                
-                if (rootPath != null && m_diskDriver.Directory_Exists(rootPath))
+                if (rootPath != null && DiskDriver.Directory_Exists(rootPath))
                 {
-                    return m_diskDriver.Directory_GetFiles(rootPath);                    
+                    return DiskDriver.Directory_GetFiles(rootPath);                    
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace Downloadables
                 try
                 {
                     error = null;
-                    return m_diskDriver.File_ReadAllText(GetFullPath(id, fileName));
+                    return DiskDriver.File_ReadAllText(GetFullPath(id, fileName));
                 }
                 catch (Exception e)
                 {
@@ -172,7 +172,7 @@ namespace Downloadables
                 try
                 {
                     error = null;
-                    return m_diskDriver.File_ReadAllBytes(GetFullPath(id, fileName));
+                    return DiskDriver.File_ReadAllBytes(GetFullPath(id, fileName));
                 }
                 catch (Exception e)
                 {
@@ -206,7 +206,7 @@ namespace Downloadables
 
                 if (error == null)
                 {
-                    m_diskDriver.File_WriteAllText(GetFullPath(id, fileName), content);
+                    DiskDriver.File_WriteAllText(GetFullPath(id, fileName), content);
                 }
             }
             catch (Exception e)
@@ -250,7 +250,7 @@ namespace Downloadables
 
             try
             {                
-                return m_diskDriver.File_Exists(GetFullPath(id, fileName));
+                return DiskDriver.File_Exists(GetFullPath(id, fileName));
             }
             catch (Exception e)
             {
@@ -271,7 +271,7 @@ namespace Downloadables
             {
                 try
                 {
-                    m_diskDriver.File_Delete(GetFullPath(id, fileName));
+                    DiskDriver.File_Delete(GetFullPath(id, fileName));
                 }
                 catch (Exception e)
                 {
@@ -290,7 +290,7 @@ namespace Downloadables
 
             try
             {                
-                return m_diskDriver.File_GetInfo(GetFullPath(id, fileName));
+                return DiskDriver.File_GetInfo(GetFullPath(id, fileName));
             }
             catch (Exception e)
             {
@@ -302,6 +302,25 @@ namespace Downloadables
                 ProcessError(error, false);
             }
         }    
+
+        public FileStream File_Open(FileInfo info, FileMode mode, FileAccess access, FileShare share, out Error error)
+        {
+            error = null;
+
+            try
+            {
+                return info.Open(mode, access, share);
+            }
+            catch (Exception e)
+            {
+                error = new Error(e);
+                return null;
+            }
+            finally
+            {
+                ProcessError(error, false);
+            }
+        }
     
         public void Update()
         {

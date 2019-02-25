@@ -34,7 +34,7 @@ public class HDAddressablesManager : AddressablesManager
         Logger logger = ((FeatureSettingsManager.IsDebugEnabled)) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
         
         string addressablesPath = "Addressables";
-        string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
+        string assetBundlesPath = addressablesPath;
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
         BetterStreamingAssets.Initialize();

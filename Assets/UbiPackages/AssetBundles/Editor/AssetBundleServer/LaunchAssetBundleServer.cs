@@ -15,7 +15,7 @@ namespace AssetBundles
         [SerializeField]
         int     m_ServerPID = 0;
 
-        private static string sm_remoteAssetsFolderName = "RemoteAssets";
+        private static string sm_remoteAssetsFolderName = "Downloadables";
 
         public static void SetRemoteAssetsFolderName(string name)
         {

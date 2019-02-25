@@ -26,7 +26,7 @@ public class UTDownloadablesInitialize : UnitTest
     public static UnitTestBatch GetUnitTestBatch()
     {        
         UnitTestBatch batch = new UnitTestBatch("UTDownloadablesInitialize");
-        DiskDriver diskDriver = new DiskDriver();
+        ProductionDiskDriver diskDriver = new ProductionDiskDriver();
 
         Dictionary<string, CatalogEntryStatus> resultInMemory;
         Dictionary<string, string> resultManifests;
@@ -37,7 +37,7 @@ public class UTDownloadablesInitialize : UnitTest
         //
         // SUCCESS
         //
-        
+                
         // PURPOSE: Test empty disk folders           
         // INPUT: 
         //      MANIFESTS: Empty
@@ -118,12 +118,12 @@ public class UTDownloadablesInitialize : UnitTest
         // Empty
         resultDownloads = new Dictionary<string, string>();
         test.Setup(diskDriver, "01", "04", resultInMemory, resultManifests, resultDownloads);
-        batch.AddTest(test, true);                
+        batch.AddTest(test, true);           
 
         // PURPOSE: Test CRC mismatch
         // INPUT: 
         //      MANIFESTS: It contains ASSET (former CRC) and OUTDATED_ASSET
-        //      DOWNLOADS: It constains ASSET and OUTDATED_ASSET
+        //      DOWNLOADS: It contains ASSET and OUTDATED_ASSET
         //      CATALOG: only ASSET (new CRC)
         // OUTPUT: 
         //      MANIFESTS: ASSET
@@ -138,14 +138,14 @@ public class UTDownloadablesInitialize : UnitTest
         AddCatalogEntryStatusToCatalog(resultManifests, ASSET_ID, ASSET_CRC_ORIG, ASSET_SIZE_ORIG, 0, 0);
 
         resultDownloads = new Dictionary<string, string>();        
+
         test.Setup(diskDriver, "01", cachePath, resultInMemory, resultManifests, resultDownloads);
         batch.AddTest(test, true);        
-        
-        
+                
         // PURPOSE: Test manifest gets updated an asset's CRC doesn't match the one in catalog
         // INPUT: 
         //      MANIFESTS: It only contains ASSET (outdated CRC)
-        //      DOWNLOADS: It constains ASSET (outdated) and OUTDATED_ASSET
+        //      DOWNLOADS: It contains ASSET (outdated) and OUTDATED_ASSET
         //      CATALOG: only ASSET (new CRC)
         // OUTPUT: 
         //      MANIFESTS: ASSET (new CRC)
@@ -167,7 +167,7 @@ public class UTDownloadablesInitialize : UnitTest
         // PURPOSE: Test manifest gets updated an asset's SIZE in Downloads is bigger than the one specified in catalog
         // INPUT: 
         //      MANIFESTS: It only contains ASSET
-        //      DOWNLOADS: It constains ASSET (bigger size) and OUTDATED_ASSET
+        //      DOWNLOADS: It contains ASSET (bigger size) and OUTDATED_ASSET
         //      CATALOG: only ASSET 
         // OUTPUT: 
         //      MANIFESTS: ASSET 
@@ -184,7 +184,7 @@ public class UTDownloadablesInitialize : UnitTest
 
         resultDownloads = new Dictionary<string, string>();
         test.Setup(diskDriver, "01", cachePath, resultInMemory, resultManifests, resultDownloads);
-        batch.AddTest(test, true);                
+        batch.AddTest(test, true);             
         
         //
         // FAIL               
@@ -245,7 +245,7 @@ public class UTDownloadablesInitialize : UnitTest
     {
         m_catalogPath = catalogPath;
         m_cachePath = cachePath;
-        m_manager = new Manager(diskDriver, OnDiskIssue, sm_logger);
+        m_manager = new Manager(new ProductionNetworkDriver(), diskDriver, OnDiskIssue, null, sm_logger);
         m_resultInMemory = resultInMemory;
         m_resultManifests = resultManifests;
         m_resultDownloads = resultDownloads;        

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SimpleJSON;
+using System.Collections.Generic;
 using System.Text;
 
 public class UbiListUtils
@@ -11,7 +12,7 @@ public class UbiListUtils
     private static Dictionary<System.Type, object> sm_helpers = new Dictionary<System.Type, object>();
 
     private static Helper<T> GetHelper<T>()
-    {        
+    {
         System.Type type = typeof(T);
         if (!sm_helpers.ContainsKey(type))
         {
@@ -31,16 +32,16 @@ public class UbiListUtils
     public static bool Compare<T>(List<T> l1, List<T> l2)
     {
         Helper<T> helper = GetHelper<T>();
-        Dictionary<T, bool> dict = helper.m_dictionary;        
+        Dictionary<T, bool> dict = helper.m_dictionary;
 
         int count1 = (l1 == null) ? 0 : l1.Count;
         int count2 = (l2 == null) ? 0 : l2.Count;
         bool returnValue = count1 == count2;
         if (returnValue && l1 != null && l2 != null)
-        {                        
+        {
             for (int i = 0; i < count1; i++)
             {
-                dict.Add(l1[i], true);                
+                dict.Add(l1[i], true);
             }
 
             for (int i = 0; i < count1 && returnValue; i++)
@@ -48,7 +49,7 @@ public class UbiListUtils
                 if (!dict.ContainsKey(l2[i]))
                 {
                     returnValue = false;
-                }                
+                }
             }
         }
 
@@ -156,7 +157,7 @@ public class UbiListUtils
         return returnValue;
     }
 
-    public static string GetListAsString(List<string> list, string separator=", ")
+    public static string GetListAsString(List<string> list, string separator = ", ")
     {
         if (list == null || list.Count == 0)
         {
@@ -178,5 +179,51 @@ public class UbiListUtils
 
             return builder.ToString();
         }
+    }
+
+    public static List<string> JSONArrayToList(JSONArray array, bool avoidDuplicates = true)
+    {
+        List<string> returnValue = new List<string>();
+        JSONArrayToList(array, returnValue, avoidDuplicates);
+
+        return returnValue;
+    }
+
+    public static void JSONArrayToList(JSONArray array, List<string> outList, bool avoidDuplicates = true)
+    {
+        if (array != null)
+        {
+            int count = array.Count;
+            string entry;
+            for (int i = 0; i < count; ++i)
+            {
+                entry = array[i];
+
+                entry = entry.Trim();
+                // Makes sure that there's no duplicates
+                if (!string.IsNullOrEmpty(entry))
+                {
+                    if (!avoidDuplicates || !outList.Contains(entry))
+                    {
+                        outList.Add(entry);
+                    }
+                }
+            }
+        }
+    }
+
+    public static JSONArray ListToJSONArray(List<string> list)
+    {
+        JSONArray data = new JSONArray();
+        int count = list.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (!string.IsNullOrEmpty(list[i]))
+            {
+                data.Add(list[i]);
+            }
+        }
+
+        return data;
     }
 }

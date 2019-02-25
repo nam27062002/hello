@@ -19,7 +19,7 @@ public class EditorAssetBundlesManager
 
     public static string GetAssetBundlesDirectory()
     {
-        return EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, EditorUserBuildSettings.activeBuildTarget.ToString());
+        return ASSET_BUNDLES_PATH + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();        
     }
 
     public static void BuildAssetBundles(BuildTarget platform)
@@ -43,7 +43,7 @@ public class EditorAssetBundlesManager
 
         string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
         string assetBundlesDirectory = GetAssetBundlesDirectory();
-        assetBundlesDirectory = Path.Combine(assetBundlesDirectory, activeBuildTarget);
+        assetBundlesDirectory = assetBundlesDirectory + "/" + activeBuildTarget;        
 
         if (assetBundlesDirectory != null && File.Exists(assetBundlesDirectory))
         {
@@ -52,7 +52,6 @@ public class EditorAssetBundlesManager
 
         return abManifest;
     }
-
 
     public static void CopyAssetBundles(string dstPath, List<string> fileNames)
     {
@@ -104,27 +103,7 @@ public class EditorAssetBundlesManager
         fileName = tokens[count - 1];
 
         return EditorFileUtils.PathCombine(dstPath, fileName);
-    }
-
-    public static void CopyAssetBundlesManifest(string dstPath)
-    {
-        string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
-
-        // Rename the dependencies bundle
-        string assetBundlesPath = GetAssetBundlesDirectory();
-        string origDependenciesManifestPath = EditorFileUtils.PathCombine(assetBundlesPath, activeBuildTarget);
-        string newDependenciesManifestPath = EditorFileUtils.PathCombine(dstPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
-        if (File.Exists(origDependenciesManifestPath))
-        {
-            EditorFileUtils.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
-
-            // Rename the dependencies manifest        
-            string extension = ".manifest";
-            origDependenciesManifestPath += extension;
-            newDependenciesManifestPath += extension;
-            EditorFileUtils.RenameFile(origDependenciesManifestPath, newDependenciesManifestPath);
-        }
-    }
+    }    
 
     public static void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
     {

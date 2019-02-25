@@ -30,8 +30,12 @@ public class BasicAddressablesTestController : MonoBehaviour
             //List<string> ids = new List<string>() { /*SCENE_CUBES_SCENE_NAME,*/ "HDCube", "UbiCube" };
             //List<string> list = m_addressablesManager.GetDependencyIdsList(ids);            
 
-            List<string> list = m_addressablesManager.Areas_GetDependencyIds("area_asset_cubes");
-            Debug.Log("dependencies = " + UbiListUtils.GetListAsString(list));            
+            //List<string> list = m_addressablesManager.Areas_GetDependencyIds("area_asset_cubes");
+            //Debug.Log("dependencies = " + UbiListUtils.GetListAsString(list));            
+
+#if UNITY_EDITOR
+            AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = !AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled;
+#endif       
         }
     }
 
@@ -53,7 +57,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {            
         Logger logger = new ConsoleLogger("Addressables");
         string addressablesPath = "Addressables";/*Path.Combine(Application.streamingAssetsPath, "Addressables");*/
-        string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
+        string assetBundlesPath = addressablesPath;
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
         string catalogAsText = null;
@@ -81,8 +85,14 @@ public class BasicAddressablesTestController : MonoBehaviour
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
-        Downloadables.Tracker tracker = new Downloadables.DummyTracker(logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, false, tracker, logger);        
+        Dictionary<Downloadables.Error.EType, int> maxPerErrorType = new Dictionary<Downloadables.Error.EType, int>();
+        maxPerErrorType.Add(Downloadables.Error.EType.Network_Unauthorized_Reachability, 5);
+
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(maxPerErrorType, logger);
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, false, tracker, logger);
+
+        //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;
+        //AssetBundlesManager.Instance.GetMockNetworkDriver().MockNetworkReachability = NetworkReachability.NotReachable;
     }
 
     public void Addressables_Reset()

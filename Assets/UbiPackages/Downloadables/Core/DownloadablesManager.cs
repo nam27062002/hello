@@ -65,12 +65,11 @@ namespace Downloadables
         public static readonly string DOWNLOADS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
         public static readonly string DOWNLOADS_ROOT_PATH_WITH_SLASH = DOWNLOADS_ROOT_PATH + "/";
 
-        private bool IsInitialized { get; set; }        
-        
+        private bool IsInitialized { get; set; }
+
+        private NetworkDriver m_network;
         private Disk m_disk;
-
         private Cleaner m_cleaner;
-
         private Downloader m_downloader;
 
         /// <summary>
@@ -78,14 +77,15 @@ namespace Downloadables
         /// </summary>
         public bool IsAutomaticDownloaderEnabled { get; set; }
         
-        public Manager(DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Logger logger)
+        public Manager(NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             sm_logger = logger;
 
+            m_network = network;
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
-            CatalogEntryStatus.sm_disk = m_disk;
+            CatalogEntryStatus.StaticSetup(m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
-            m_downloader = new Downloader(m_disk, logger);
+            m_downloader = new Downloader(network, m_disk, logger);
 
             Reset();
         }
@@ -266,7 +266,7 @@ namespace Downloadables
         {
             if (IsInitialized)
             {
-                m_downloader.CurrentNetworkReachability = Application.internetReachability;
+                m_downloader.CurrentNetworkReachability = m_downloader.NetworkDriver.CurrentNetworkReachability;
                 m_disk.Update();
                 m_cleaner.Update();
                 Catalog_Update();                
@@ -301,6 +301,11 @@ namespace Downloadables
             m_catalog.TryGetValue(id, out entry);
             return entry;
         }  
+
+        public bool Catalog_ContainsEntryStatus(string id)
+        {
+            return m_catalog.ContainsKey(id);            
+        }
         
         public Dictionary<string, CatalogEntryStatus> Catalog_GetEntryStatusList()
         {
@@ -309,6 +314,8 @@ namespace Downloadables
 
         private void Catalog_Update()
         {
+            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);
+
             bool canDownload = !m_downloader.IsDownloading;
             CatalogEntryStatus entryToDownload = null;
 

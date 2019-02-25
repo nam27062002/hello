@@ -372,17 +372,18 @@ public class BasicAssetBundlesTestController : MonoBehaviour
 
         BetterStreamingAssets.Initialize();
 
-        string localAssetBundlesPath = "Addressables";
-        localAssetBundlesPath = Path.Combine(localAssetBundlesPath, "AssetBundles");
+        string localAssetBundlesPath = "Addressables";        
 
         string path = Path.Combine("Addressables", "downloadablesCatalog.json");       
         string text = (BetterStreamingAssets.FileExists(path)) ? BetterStreamingAssets.ReadAllText(path) : null;
-        JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);
-        List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);        
+
+        Dictionary<Downloadables.Error.EType, int> maxPerErrorType = new Dictionary<Downloadables.Error.EType, int>();
+        maxPerErrorType.Add(Downloadables.Error.EType.Network_Unauthorized_Reachability, 5);
 
         Logger logger = new ConsoleLogger("AssetBundles");
-        Downloadables.Tracker tracker = new Downloadables.DummyTracker(logger);
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, tracker, logger);
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(maxPerErrorType, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, json, false, tracker, logger);
 
         Memory_EndSample(true);
     }

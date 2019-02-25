@@ -13,8 +13,30 @@ namespace Downloadables
         public static float TIME_TO_WAIT_BETWEEN_SAVES = 60f;
         private static float BYTES_TO_MB = 1024 * 1024;
 
-        public static Disk sm_disk;
+        private static Disk sm_disk;        
+        private static Tracker sm_tracker;
+
+        public delegate void OnDownloadEndCallback(CatalogEntryStatus entryStatus, Error.EType errorType);
+        private static OnDownloadEndCallback sm_onDownloadEndCallback;
+
+        // Stored so it can be used by callbacks that are called from downloader thread, which can't use Time.realtiemSinceStartup because this must be called from main thread
+        private static float sm_realtimeSinceStartup;
+        private static NetworkReachability sm_currentNetworkReachability;        
+
         private static CatalogEntry sm_entryHelper = new CatalogEntry();
+
+        public static void StaticSetup(Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
+        {            
+            sm_disk = disk;
+            sm_tracker = tracker;
+            sm_onDownloadEndCallback = onDownloadEndCallback;
+        }
+
+        public static void StaticUpdate(float realtimeSinceStartup, NetworkReachability currentNetworkReachability)
+        {
+            sm_realtimeSinceStartup = realtimeSinceStartup;
+            sm_currentNetworkReachability = currentNetworkReachability;
+        }
 
         public string Id { get; private set; }        
 
@@ -25,7 +47,8 @@ namespace Downloadables
             ReadingDataInfo,
             InQueueForDownload,
             Downloading,
-            CalculatingCRC,            
+            CalculatingCRC,
+            DealingWithCRCMismatch,
             Available
         };
 
@@ -39,6 +62,30 @@ namespace Downloadables
 
             private set
             {
+                switch (m_state)
+                {                    
+                    case EState.CalculatingCRC:
+                        if (CalculatingCRCFromADownload)
+                        {
+                            CalculatingCRCFromADownload = false;
+
+                            Error.EType errorType = Error.EType.Other;
+                            switch (value)
+                            {
+                                case EState.Available:
+                                    errorType = Error.EType.None;
+                                    break;
+
+                                case EState.DealingWithCRCMismatch:
+                                    errorType = Error.EType.Network_CRC_Mismatch;
+                                    break;
+                            }
+
+                            OnDownloadEnd(errorType);
+                        }
+                        break;
+                }
+
                 m_state = value;
 
                 // Latest error and save are reseted so the incoming state will be executed and will be able to save data right away
@@ -50,7 +97,11 @@ namespace Downloadables
                     case EState.ReadingDataInfo:
                         m_dataInfo.Size = 0;
                         m_dataInfo.CRC = 0;
-                        break;                
+                        break;
+
+                    case EState.Downloading:
+                        TrackDownloadStart();
+                        break;
 
                     case EState.Available:
                         if (m_requestState == ERequestState.Running)
@@ -97,23 +148,20 @@ namespace Downloadables
                     case ERequestState.Running:
                         // Latest error and save are reseted so the request will be resolved with no delays
                         m_latestErrorAt = -1f;
-                        m_latestSaveAt = -1f;
-                        m_latestDownloadingErrorAt = -1f;
+                        m_latestSaveAt = -1f;                        
                         break;
                 }
             }
         }
 
-        public Error RequestError { get; private set; }
-
-        private float m_latestDownloadingErrorAt;
+        public Error RequestError { get; private set; }        
        
         /// <summary>
         /// Amount of times a CRC mismatch error happened
         /// </summary>
-        private int CRCMismatchErrorTimes { get; set; }
+        private int CRCMismatchErrorTimes { get; set; }        
 
-        private float m_realtimeSinceStartup { get; set; }
+        private bool CalculatingCRCFromADownload { get; set; }
 
         public CatalogEntryStatus()
         {
@@ -131,7 +179,7 @@ namespace Downloadables
             State = EState.None;
             RequestState = ERequestState.None;            
             CRCMismatchErrorTimes = 0;
-            m_latestDownloadingErrorAt = -1f;
+            CalculatingCRCFromADownload = false;
         }
 
         public void LoadManifest(string id, JSONNode json)
@@ -154,10 +202,7 @@ namespace Downloadables
         }
 
         public void Update()
-        {
-            // Stored so it can be used by callbacks that are called from downloader thread, which can't use Time.realtiemSinceStartup because this must be called from main thread
-            m_realtimeSinceStartup = Time.realtimeSinceStartup;
-
+        {           
             if (m_requestState == ERequestState.Done)
             {               
                 m_requestState = ERequestState.None;
@@ -182,6 +227,10 @@ namespace Downloadables
 
                     case EState.CalculatingCRC:
                         ProcessCalculatingCRC();
+                        break;
+
+                    case EState.DealingWithCRCMismatch:
+                        ProcessDealingWithCRCMismatch();
                         break;
                 }
 
@@ -224,7 +273,7 @@ namespace Downloadables
         {
             if (error != null)
             {
-                m_latestErrorAt = m_realtimeSinceStartup; ;                
+                m_latestErrorAt = sm_realtimeSinceStartup;            
                                 
                 if (m_requestState == ERequestState.Running)
                 {
@@ -237,6 +286,11 @@ namespace Downloadables
         public CatalogEntryManifest GetManifest()
         {
             return m_manifest;
+        }
+
+        public bool HasBeenDownloadedBefore()
+        {
+            return m_manifest.DownloadedTimes > 0;
         }
 
         private void ProcessReadingManifest()
@@ -365,7 +419,7 @@ namespace Downloadables
                         else
                         {
                             CRCMismatchErrorTimes++;
-                            State = EState.ReadingDataInfo;
+                            State = EState.DealingWithCRCMismatch;
                         }
                     }
                 }
@@ -374,12 +428,26 @@ namespace Downloadables
                     State = EState.ReadingDataInfo;
                 }
             }
-            
+
             if (error != null)
             {
                 NotifyError(error);
-            }            
-        }        
+            }
+        }
+
+        private void ProcessDealingWithCRCMismatch()
+        {
+            Error error;
+            sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
+            if (error == null)
+            {
+                State = EState.ReadingDataInfo;
+            }
+            else
+            {
+                NotifyError(error);
+            }
+        }
 
         public long GetTotalBytes()
         {
@@ -449,15 +517,43 @@ namespace Downloadables
             {
                 if (error == null || m_manifest.Size == m_dataInfo.Size)
                 {
-                    State = EState.CalculatingCRC;
+                    CalculatingCRCFromADownload = true;
+                    State = EState.CalculatingCRC;                    
                 }
                 else
-                {
+                {                    
                     State = EState.InQueueForDownload;
+                    OnDownloadEnd(error.Type);
                 }
 
                 NotifyError(error);           
             }
         }
-    }
+
+        private void OnDownloadEnd(Error.EType errorType)
+        {
+            if (sm_onDownloadEndCallback != null)
+            {
+                sm_onDownloadEndCallback(this, errorType);
+            }
+
+            TrackDownloadEnd(errorType);
+        }
+
+        private void TrackDownloadStart()
+        {
+            if (sm_tracker != null)
+            {
+                sm_tracker.NotifyDownloadStart(sm_realtimeSinceStartup, Id, DataInfo.Size, sm_currentNetworkReachability, HasBeenDownloadedBefore());
+            }
+        }
+
+        private void TrackDownloadEnd(Error.EType errorType)
+        {
+            if (sm_tracker != null)
+            {
+                sm_tracker.NotifyDownloadEnd(sm_realtimeSinceStartup, Id, DataInfo.Size, m_manifest.Size, sm_currentNetworkReachability, errorType);
+            }
+        }
+    }    
 }
