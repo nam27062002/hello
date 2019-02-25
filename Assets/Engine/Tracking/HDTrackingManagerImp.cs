@@ -2236,7 +2236,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 + ", timeSpent = " + timeSpent
                 + ", reachabilityAtStart = " + reachabilityAtStart
                 + ", reachabilityAtEnd = " + reachabilityAtEnd
-                + ", result = " + result
+                + ", result = " + result 
+                + ", maxAttemptsReached = " + maxAttemptsReached
                );
         }
 
