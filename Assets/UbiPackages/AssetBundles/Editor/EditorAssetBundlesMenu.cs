@@ -73,7 +73,7 @@ public class EditorAssetBundlesMenu : MonoBehaviour
 
     [MenuItem(MENU_IMPORT_ASSET_BUNDLES_NPCS, false, 51)]
     public static void ImportAssetBundles() {
-        string file = File.ReadAllText("Assets/Editor/Addressables/import_npc_asset_bundles.json");
+        string file = File.ReadAllText("Assets/Editor/Addressables/export_npc_asset_bundles.json");
         SimpleJSON.JSONNode data = SimpleJSON.JSONNode.Parse(file);
 
         SimpleJSON.JSONArray entries = data["entries"].AsArray;

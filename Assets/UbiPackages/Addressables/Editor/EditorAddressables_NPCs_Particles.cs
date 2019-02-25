@@ -12,6 +12,7 @@ public static class EditorAddressables_NPCs_Particles {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
@@ -25,6 +26,7 @@ public static class EditorAddressables_NPCs_Particles {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
