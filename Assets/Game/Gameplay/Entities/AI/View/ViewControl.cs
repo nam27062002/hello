@@ -8,11 +8,11 @@ using System.Collections.Generic;
 
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
-	
 
-	private static Material sm_goldenMaterial = null;
-	private static Material sm_goldenFreezeMaterial = null;
-    private static Material sm_goldenInloveMaterial = null;
+
+    public static Material sm_goldenMaterial = null;
+    public static Material sm_goldenFreezeMaterial = null;
+    public static Material sm_goldenInloveMaterial = null;
 	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
@@ -251,8 +251,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         m_rendererMaterials = new List<Material[]>();
-        
-		m_vertexCount = 0;
+
+        m_vertexCount = 0;
 		m_rendererCount = 0;
 
 		if (m_renderers != null) {
