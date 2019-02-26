@@ -64,7 +64,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
-	[SeparatorAttribute("Exclamation Mark")]
+    [SeparatorAttribute("In Love")]
+    [SerializeField] private bool m_useMoveAnimInLove = false;
+
+    [SeparatorAttribute("Exclamation Mark")]
 	[SerializeField] private Transform m_exclamationTransform;
 
 	[SeparatorAttribute("Water")]
@@ -726,7 +729,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 					m_animator.SetFloat(GameConstants.Animator.DIR_Y, m_currentBlendY);
 				}
 
-				m_animator.SetBool(GameConstants.Animator.SWIM, m_swim);
+                if (m_inLove && m_useMoveAnimInLove) {
+                    m_moving = true;
+                }
+
+                m_animator.SetBool(GameConstants.Animator.SWIM, m_swim);
 				m_animator.SetBool(GameConstants.Animator.FLY_DOWN, m_inSpace);
 				if (!m_swim){
 					m_animator.SetBool(GameConstants.Animator.MOVE, m_moving);
@@ -1280,19 +1287,20 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         {
             m_inLove = inlove;
             RefreshMaterialType();
-            if ( inlove ){
-                if (m_inLoveParticleInstance == null)
-                {
+            if ( inlove ) {
+                if (m_inLoveParticleInstance == null) {
                     Vector3 pos = m_transform.position;
                     Quaternion rot = m_transform.rotation;
                     m_inLoveParticleInstance = m_inLoveParticle.Spawn(pos + m_inLoveParticle.offset, rot);
                 }
-            }else{
-                if ( m_inLoveParticleInstance )
+                m_moving = m_useMoveAnimInLove;
+            } else {
+                if (m_inLoveParticleInstance)
                 {
-                    m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+                    m_inLoveParticle.ReturnInstance(m_inLoveParticleInstance);
                     m_inLoveParticleInstance = null;
                 }
+                m_moving = false;
             }
         }
     }
