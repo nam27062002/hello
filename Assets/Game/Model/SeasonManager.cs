@@ -140,7 +140,7 @@ public class SeasonManager : Singleton<SeasonManager> {
     public static bool IsFireworksDay()
     {
         bool ret = false;
-        ret = Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false);
+        ret = DebugSettings.specialDates;
         ret = ret || IsNewYear() || IsChineseNewYear();
         return ret;
     }
