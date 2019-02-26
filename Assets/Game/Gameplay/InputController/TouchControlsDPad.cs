@@ -102,11 +102,11 @@ public class TouchControlsDPad : TouchControls {
 		m_boostRadiusToCheck = m_radiusToCheck * 1.2f;
 
 		// [AOC] Load current setup
-		m_dPadMode = (Mode)Prefs.GetIntPlayer(DebugSettings.DPAD_MODE, (int)m_dPadMode);
-		m_dPadThreshold = Prefs.GetFloatPlayer(DebugSettings.DPAD_THRESHOLD, m_dPadThreshold);
-		m_dPadSmoothFactor = Prefs.GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
-		m_dPadClampDot = Prefs.GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
-		m_dPadBoostFollow = Prefs.GetBoolPlayer(DebugSettings.BOOST_PAD_FOLLOW, m_dPadBoostFollow);
+		m_dPadMode = (Mode)DebugSettings.Prefs_GetIntPlayer(DebugSettings.DPAD_MODE, (int)m_dPadMode);
+		m_dPadThreshold = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.DPAD_THRESHOLD, m_dPadThreshold);
+		m_dPadSmoothFactor = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
+		m_dPadClampDot = DebugSettings.Prefs_GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
+		m_dPadBoostFollow = DebugSettings.Prefs_GetBoolPlayer(DebugSettings.BOOST_PAD_FOLLOW, m_dPadBoostFollow);
 			
 		// Start hidden
 		m_dpadObj.SetActive(false);
@@ -461,19 +461,19 @@ public class TouchControlsDPad : TouchControls {
 		}
 
 		else if(_prefId == DebugSettings.DPAD_THRESHOLD) {
-			m_dPadThreshold = Prefs.GetFloatPlayer(DebugSettings.DPAD_THRESHOLD, m_dPadThreshold);
+			m_dPadThreshold = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.DPAD_THRESHOLD, m_dPadThreshold);
 		}
 
 		else if(_prefId == DebugSettings.DPAD_SMOOTH_FACTOR) {
-			m_dPadSmoothFactor = Prefs.GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
+			m_dPadSmoothFactor = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.DPAD_SMOOTH_FACTOR, m_dPadSmoothFactor);
 		}
 
 		else if(_prefId == DebugSettings.DPAD_BREAK_TOLERANCE) {
-			m_dPadBreakTolerance = Prefs.GetFloatPlayer(DebugSettings.DPAD_BREAK_TOLERANCE, m_dPadBreakTolerance);
+			m_dPadBreakTolerance = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.DPAD_BREAK_TOLERANCE, m_dPadBreakTolerance);
 		}
 
 		else if(_prefId == DebugSettings.DPAD_CLAMP_DOT) {
-			m_dPadClampDot = Prefs.GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
+			m_dPadClampDot = DebugSettings.Prefs_GetBoolPlayer(DebugSettings.DPAD_CLAMP_DOT, m_dPadClampDot);
 		}
 	}
 

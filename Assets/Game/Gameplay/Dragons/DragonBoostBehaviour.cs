@@ -101,7 +101,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 
 	void Start() {
 		// Init debug settings
-		m_CPAutoRestart = Prefs.GetBoolPlayer(DebugSettings.BOOST_AUTO_RESTART, m_CPAutoRestart);
+		m_CPAutoRestart = DebugSettings.Prefs_GetBoolPlayer(DebugSettings.BOOST_AUTO_RESTART, m_CPAutoRestart);
 
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.CP_PREF_CHANGED, OnPrefChanged);
@@ -261,7 +261,7 @@ public class DragonBoostBehaviour : MonoBehaviour {
 	protected void OnPrefChanged(string _prefId) {
 		// We only care about some prefs
 		if(_prefId == DebugSettings.BOOST_AUTO_RESTART) {
-			m_CPAutoRestart = Prefs.GetBoolPlayer(DebugSettings.BOOST_AUTO_RESTART, m_CPAutoRestart);
+			m_CPAutoRestart = DebugSettings.Prefs_GetBoolPlayer(DebugSettings.BOOST_AUTO_RESTART, m_CPAutoRestart);
 		}
 	}
 }

@@ -112,7 +112,7 @@ public class HungryLettersManager : MonoBehaviour
             Spawn();
 
             // [AOC] If cheating, instantiate a dummy letter for every spawner!
-            if (Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+            if (DebugSettings.showAllCollectibles) {
                 SpawnDebug();
             }
         }
