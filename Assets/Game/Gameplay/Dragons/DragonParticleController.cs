@@ -194,6 +194,10 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 		if (!string.IsNullOrEmpty(m_megaFireRush)){
 			m_megaFireRushInstance = ParticleManager.InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
+            if ( m_megaFireRushAnchor == null )
+            {
+                SceneManager.MoveGameObjectToScene(m_megaFireRushInstance.gameObject, gameObject.scene);
+            }
 		}
 	}
 

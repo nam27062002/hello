@@ -179,6 +179,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
         PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
+            // Audio Toolkit to use this scene as root
+        ObjectPoolController.defaultInstantiateSceme = gameObject.scene;
 	}
 
 
@@ -345,6 +347,8 @@ public class GameSceneController : GameSceneControllerBase {
         base.OnDestroy();
 
         CustomParticlesCulling.Manager_OnDestroy();
+        Scene emptyScene = new Scene();
+        ObjectPoolController.defaultInstantiateSceme = emptyScene;
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
