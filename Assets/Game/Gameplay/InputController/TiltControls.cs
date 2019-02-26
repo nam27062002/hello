@@ -47,7 +47,7 @@ public class TiltControls : MonoBehaviour
 	private void Awake() {
 		// [AOC] Debug UI
 		if(m_debugUI != null) {
-			m_debugUI.SetActive(Prefs.GetBoolPlayer(DebugSettings.TILT_CONTROL_DEBUG_UI, false));
+			m_debugUI.SetActive(DebugSettings.tiltControlDebugUI);
 		}
 
 		// Subscribe to external events
