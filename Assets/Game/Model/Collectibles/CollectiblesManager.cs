@@ -235,7 +235,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 
 			// Finally remove the unused spawners from the scene
 			// Unless cheating!
-			if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+			if(!DebugSettings.showAllCollectibles) {
 				toRemove.AddRange(validSpawners);
 				for(int i = 0; i < toRemove.Count; i++) {
 					GameObject.Destroy(toRemove[i].gameObject);
@@ -344,7 +344,7 @@ public class CollectiblesManager : UbiBCN.SingletonMonoBehaviour<CollectiblesMan
 	/// <param name="_selectedCollectible">Selected collectible (will be spared). Can be <c>null</c> (all objects will be removed).</param>
 	private void ClearCollectibles(ref GameObject[] _allCollectibles, GameObject _selectedCollectible) {
 		// Skip for debugging
-		if(Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) return;
+		if(DebugSettings.showAllCollectibles) return;
 
 		// Iterate collectibles to be removed
 		for(int i = 0; i < _allCollectibles.Length; i++) {

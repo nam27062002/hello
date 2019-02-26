@@ -125,7 +125,7 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 
 		if (FeatureSettingsManager.IsDebugEnabled) {
 			// If the debug settings for particles eaten is disabled then they are not spawned
-			if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN, true))
+			if (!DebugSettings.ingameParticlesEaten)
 				return;
 		} 
 
