@@ -23,6 +23,9 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS   															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "tournament";
+	public const int NUMERIC_TYPE_CODE = 2;
+
 	private const float TIME_LIMIT_END_OF_GAME_DELAY = 2f;
 	private const float TIME_ATTACK_END_OF_GAME_DELAY = 2f;
 
@@ -55,8 +58,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
-        m_type = "tournament";
-        m_numericType = 2;
+        m_type = TYPE_CODE;
+		m_numericType = NUMERIC_TYPE_CODE;
 
         m_data = new HDTournamentData();
         m_tournamentData = m_data as HDTournamentData;

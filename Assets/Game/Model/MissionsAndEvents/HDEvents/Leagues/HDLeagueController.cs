@@ -3,6 +3,8 @@ using UnityEngine;
 
 
 public class HDLeagueController : HDLiveDataController {
+	public const string TYPE_CODE = "league";
+
     //---[Attributes]-----------------------------------------------------------
 
     private HDSeasonData m_season;	// Never null
@@ -20,7 +22,7 @@ public class HDLeagueController : HDLiveDataController {
     /// Default constructor.
     /// </summary>
     public HDLeagueController() {
-        m_type = "league";
+		m_type = TYPE_CODE;
 
         m_season = new HDSeasonData();
         CreateLeagues();
@@ -128,7 +130,11 @@ public class HDLeagueController : HDLiveDataController {
             m_leagues[i].WaitForData();
         }
 
-        GameServerManager.SharedInstance.HDLeagues_GetAllLeagues(OnRequestAllLeaguesData);
+		if(HDLiveDataManager.TEST_CALLS) {
+			ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_get_all_leagues.json", OnRequestAllLeaguesData));
+		} else {
+			GameServerManager.SharedInstance.HDLeagues_GetAllLeagues(OnRequestAllLeaguesData);
+		}
     }
 
     private void OnRequestAllLeaguesData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
