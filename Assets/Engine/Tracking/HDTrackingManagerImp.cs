@@ -1050,7 +1050,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_REWARD_TIER, _rewardTier.ToString());
             // Track_AddParamString(e, TRACK_PARAM_EVENT_SCORE_TOTAL, _score.ToString());
             e.data.Add(TRACK_PARAM_EVENT_SCORE_TOTAL, _score);
-            Track_AddParamBool(e, TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR, _topContributor);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_GLOBAL_TOP_CONTRIBUTOR, _topContributor);
 
             // Common stuff
             Track_AddParamSessionsCount(e);
@@ -1297,9 +1297,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, typeNotif);
         Track_AddParamLanguage(e);
         Track_AddParamUserTimezone(e);
-        Track_AddParamBool(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
+        Track_AddParamBoolAsInt(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
 
-        Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+        Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
         Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
 
 #if UNITY_ANDROID
@@ -1335,7 +1335,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.mobile.stop");
         {
-            Track_AddParamBool(e, TRACK_PARAM_IS_PAYING_SESSION, Session_IsPayingSession);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_PAYING_SESSION, Session_IsPayingSession);
             Track_AddParamPlayerProgress(e);
             e.data.Add(TRACK_PARAM_SESSION_PLAY_TIME, (int)Session_PlayTime);
             Track_AddParamString(e, TRACK_PARAM_STOP_CAUSE, stopCause);
@@ -1609,7 +1609,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 e.data.Add(TRACK_PARAM_NB_ADS_SESSION, adsSessions);
             }
 
-            Track_AddParamBool(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_AD_IS_AVAILABLE, adIsAvailable);
             Track_AddParamString(e, TRACK_PARAM_REWARD_TYPE, rewardType);
             Track_AddParamPlayerProgress(e);
             Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
@@ -1626,10 +1626,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         HDTrackingEvent e = new HDTrackingEvent("custom.game.ad.finished");
         {
-            Track_AddParamBool(e, TRACK_PARAM_IS_LOADED, adIsLoaded);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_LOADED, adIsLoaded);
             Track_AddParamString(e, TRACK_PARAM_PROVIDER, provider);
             e.data.Add(TRACK_PARAM_AD_VIEWING_DURATION, adViewingDuration);
-            Track_AddParamBool(e, TRACK_PARAM_MAX_REACHED, maxReached);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_MAX_REACHED, maxReached);
             Track_AddParamString(e, TRACK_PARAM_ADS_TYPE, adType);
         }
         m_eventQueue.Enqueue(e);
@@ -1713,7 +1713,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_BOOST_TIME, boostTimeMs);
             e.data.Add(TRACK_PARAM_MAP_USAGE, mapUsage);
             e.data.Add(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
-            Track_AddParamBool(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
             Track_AddParamEggsPurchasedWithHC(e);
             Track_AddParamEggsFound(e);
             Track_AddParamEggsOpened(e);
@@ -1752,7 +1752,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_STEP_NAME, _step);
             e.data.Add(TRACK_PARAM_STEP_DURATION, _stepDuration);
             e.data.Add(TRACK_PARAM_TOTAL_DURATION, _totalDuration);
-            Track_AddParamBool(e, TRACK_PARAM_FIRST_LOAD, _fistLoad);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_FIRST_LOAD, _fistLoad);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -1986,7 +1986,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_AVERAGE_FPS, (int)FeatureSettingsManager.instance.AverageSystemFPS);
             Track_AddParamString(e, TRACK_PARAM_COORDINATESBL, posblasstring);
             Track_AddParamString(e, TRACK_PARAM_COORDINATESTR, postrasstring);
-            Track_AddParamBool(e, TRACK_PARAM_FIRE_RUSH, fireRush);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_FIRE_RUSH, fireRush);
             Track_AddParamString(e, TRACK_PARAM_DEVICE_PROFILE, FeatureSettingsManager.instance.Device_CurrentProfile);
         }
         m_eventQueue.Enqueue(e);
@@ -2050,7 +2050,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         HDTrackingEvent e = new HDTrackingEvent("custom.game.crash");
         {
             Track_AddParamPlayerProgress(e);
-            Track_AddParamBool(e, TRACK_PARAM_IS_FATAL, isFatal);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_FATAL, isFatal);
             Track_AddParamString(e, TRACK_PARAM_ERROR_TYPE, errorType);
             Track_AddParamString(e, TRACK_PARAM_ERROR_MESSAGE, errorMessage);
         }
@@ -2256,7 +2256,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_START, reachabilityAtStart);
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_END, reachabilityAtEnd);
             Track_AddParamString(e, TRACK_PARAM_RESULT, result);
-            Track_AddParamBool(e, TRACK_PARAM_MAX_REACHED, maxAttemptsReached);
+            Track_AddParamBoolAsInt(e, TRACK_PARAM_MAX_REACHED, maxAttemptsReached);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2667,9 +2667,13 @@ public class HDTrackingManagerImp : HDTrackingManager {
         _e.data.Add(paramName, value);
     }
 
-    private void Track_AddParamBool(HDTrackingEvent _e, string paramName, bool value) {
+    private void Track_AddParamBoolAsInt(HDTrackingEvent _e, string paramName, bool value) {
         int valueToSend = (value) ? 1 : 0;
         _e.data.Add(paramName, valueToSend);
+    }
+    
+    private void Track_AddParamBool(HDTrackingEvent _e, string paramName, bool value) {
+        _e.data.Add(paramName, value);
     }
 
 	private void Track_AddParamInt(HDTrackingEvent _e, string paramName, int value) {
