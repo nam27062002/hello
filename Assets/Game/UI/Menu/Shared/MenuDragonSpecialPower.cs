@@ -6,8 +6,7 @@ using UnityEngine;
 public class MenuDragonSpecialPower : MonoBehaviour {
     private enum EPowerElement {
         ExtraObject = 0,
-        Pet,
-        Disguise
+        Pet
     }
 
     [System.Serializable]
@@ -50,18 +49,29 @@ public class MenuDragonSpecialPower : MonoBehaviour {
     }
 
     private void OnEnable() {
+        Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
         Messenger.AddListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgrade);
 	}
 
     private void OnDisable() {
+        Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
         Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_POWER_UPGRADED, OnPowerUpgrade);
         Messenger.RemoveListener<DragonDataSpecial>(MessengerEvents.SPECIAL_DRAGON_TIER_UPGRADED, OnTierUpgrade);
+    }
+    
+    private void OnStatUpgraded(DragonDataSpecial _data, DragonDataSpecial.Stat _stat) {
+        // Refresh disguise
+        if (m_dragonPreview.equip.dragonDisguiseSku != _data.diguise)
+        {
+            m_dragonPreview.equip.EquipDisguise( _data.diguise );
+        }
     }
 
     private void OnPowerUpgrade(DragonDataSpecial _data) {
         if (enabled) {
-            if (_data.sku == m_dragonPreview.sku) {
+            if (_data.sku == m_dragonPreview.sku)
+            {
                 EnablePowerLevel(_data.powerLevel, true);
             }
         }
@@ -83,16 +93,6 @@ public class MenuDragonSpecialPower : MonoBehaviour {
                         m_dragonPreview.equip.EquipPet("", 4);
                     }
                     break;
-                    case EPowerElement.Disguise:
-                    {
-                        if ( _enable ){
-                            // Equip disguise
-                            m_dragonPreview.equip.EquipDisguise( m_elementsPerPowerLevel[_level].element[e].name );
-                        } else {
-                            // Equip default
-                            m_dragonPreview.equip.EquipDisguise( "" );
-                        }
-                    }break;                
                 }
             }
         }

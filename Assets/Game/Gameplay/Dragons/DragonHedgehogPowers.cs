@@ -24,7 +24,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
 
     [Header("Visual Settings")]
-    public string m_disguiseOnLevelUp = "dragon_hedgehog_1";
     public GameObject m_spikesLvl1;
     public GameObject m_spikesLvl2;
     
@@ -94,7 +93,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         
         if ( m_powerLevel >= 1 )
         {
-            GetComponentInParent<DragonEquip>().EquipDisguise( m_disguiseOnLevelUp );
             if ( m_powerLevel >= 2 )
             {
                 // Create pool of spikes!

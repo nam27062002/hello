@@ -518,6 +518,7 @@ public abstract class IDragonData : IUISelectorItem {
 
             dataSpecial.RefreshPowerLevel();
             dataSpecial.RefreshTier();
+            dataSpecial.RefreshDisguise();
         }
 
         return newData;

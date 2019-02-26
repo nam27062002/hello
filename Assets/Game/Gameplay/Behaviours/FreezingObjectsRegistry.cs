@@ -9,6 +9,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 		public Transform m_transform;
 		public float m_distanceSqr;
         public bool m_killOnFrozen;
+        public float[] m_killTiers;
 	};
 
 	List<Registry> m_registry;
@@ -98,7 +99,12 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
                     if ( freezing.m_killOnFrozen )
                     {
                         // Check random
-                        m_toKill.Add(true);
+                        if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
+                        {
+                            m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
+                        }else{
+                            m_toKill.Add(false);
+                        }
                     }
                     else
                     {

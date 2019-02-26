@@ -12,7 +12,7 @@ public class DragonIcePowers : MonoBehaviour {
 
     [Header("Shield Level 1 Upgrade ")]
     public float m_increaseShield = 50;
-
+    public float[] m_frozenKillProbabiblities = new float[(int)DragonTier.COUNT];
     
     protected float m_currentRadius = 0;
     FreezingObjectsRegistry.Registry m_frozenRegistry;
@@ -24,6 +24,7 @@ public class DragonIcePowers : MonoBehaviour {
     public void Awake()
     {
         m_frozenRegistry = FreezingObjectsRegistry.instance.Register( transform, m_currentRadius);
+        m_frozenRegistry.m_killTiers = m_frozenKillProbabiblities;
     }
 
     public void Start()
