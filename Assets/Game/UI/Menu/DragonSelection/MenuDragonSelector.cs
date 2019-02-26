@@ -162,7 +162,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 			else if(dragon != null) {
 				// a) Goto Game!
 				// Only if enabled!
-				if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+				if(DebugSettings.menuEnableShortcuts) {
 					// Only owned dragons!
 					if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 						// Menu scene controller will manage it
@@ -202,7 +202,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 
 		// Go to the target screen, if any
 		// Only if enabled!
-		if(Prefs.GetBoolPlayer(DebugSettings.MENU_ENABLE_SHORTCUTS)) {
+		if(DebugSettings.menuEnableShortcuts) {
 			if(targetScreen != MenuScreen.NONE) {
 				// Check conditions
 				MenuSceneController menuController = InstanceManager.menuSceneController;

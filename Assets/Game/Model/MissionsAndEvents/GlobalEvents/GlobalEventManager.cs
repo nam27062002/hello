@@ -294,7 +294,7 @@ public class GlobalEventManager : Singleton<GlobalEventManager> {
 		DateTime now = serverTime;
 		if(_force
 		|| instance.m_leaderboardCheckTimestamp < now 
-		|| Prefs.GetBoolPlayer(DebugSettings.GLOBAL_EVENTS_DONT_CACHE_LEADERBOARD, false)) {
+		|| DebugSettings.globalEventsDontCacheLeaderboard) {
 			// Do it
 			Debug.Log("<color=magenta>EVENT LEADERBOARD</color>");
 			#if TEST_GLOBAL_EVENT

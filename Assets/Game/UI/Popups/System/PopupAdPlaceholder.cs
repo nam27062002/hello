@@ -71,7 +71,7 @@ public class PopupAdPlaceholder : MonoBehaviour {
 	public void OnOpenPreAnimation() {
 		// Reset timer
 		// Override if control panel says so
-		float duration = Prefs.GetFloatPlayer(DebugSettings.POPUP_AD_DURATION, m_adDuration);
+		float duration = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.POPUP_AD_DURATION, m_adDuration);
 		if(duration < 0) duration = m_adDuration;
 		m_timer.Start(duration * 1000f);
 		m_adRunning = true;

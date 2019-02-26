@@ -108,14 +108,14 @@ public class MapScroller : MonoBehaviour, IBroadcastListener {
 		adjuster.Update();	// Force a first update!
 
 		// Set initial zoom or keep zoom level between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
+		if(DebugSettings.mapZoomReset) {
 			SetZoom(m_initialZoom); 
 		} else {
 			RefreshScrollSize();
 		}
 
 		// Move camera to current dragon's position or keep scroll position between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_POSITION_RESET, true)) {
+		if(DebugSettings.mapPositionReset) {
 			ScrollToPlayer();
 		}
 
@@ -168,7 +168,7 @@ public class MapScroller : MonoBehaviour, IBroadcastListener {
 		if(m_levelData == null) return false;
 
 		// Check for debug override
-		float zoomSpeed = Prefs.GetFloatPlayer(DebugSettings.MAP_ZOOM_SPEED, m_zoomSpeed);
+		float zoomSpeed = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.MAP_ZOOM_SPEED, m_zoomSpeed);
 
 		// Detect zoom
 		bool zoomChanged = false;
@@ -518,14 +518,14 @@ public class MapScroller : MonoBehaviour, IBroadcastListener {
 		m_camera.GetComponentInChildren<AdjustCameraViewportToRectTransform>().Update();
 
 		// Set initial zoom or keep zoom level between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_ZOOM_RESET, false)) {
+		if(DebugSettings.mapZoomReset) {
 			SetZoom(m_initialZoom); 
 		} else {
 			RefreshScrollSize();
 		}
 
 		// Move camera to current dragon's position or keep scroll position between openings?
-		if(Prefs.GetBoolPlayer(DebugSettings.MAP_POSITION_RESET, true)) {
+		if(DebugSettings.mapPositionReset) {
 			ScrollToPlayer();
 		}
 
