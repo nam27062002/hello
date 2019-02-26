@@ -19,6 +19,7 @@ namespace Downloadables
             Network_Unauthorized_Reachability,      // This error arises when trying to download with unauthorized reachability (4G with no permission)             
             Network_Web_Exception_Connect_Failure,  // This error arises when the server is down
             Network_Web_Exception_Timeout,          // This error arises when there's no response from server after a while
+            Netowrk_Web_Exception_Protocol_Error,   // This error arises when server responds with 403 (Forbidden)
             Network_Web_Exception_Other,            // This error arises when there's any other related to web problem 
             NotAvailable,                           // This error arises when the downloadable is not available but it's been requested
             Other
@@ -58,6 +59,10 @@ namespace Downloadables
 
                         case WebExceptionStatus.Timeout:
                             Type = EType.Network_Web_Exception_Timeout;
+                            break;
+
+                        case WebExceptionStatus.ProtocolError:
+                            Type = EType.Netowrk_Web_Exception_Protocol_Error;
                             break;
 
                         default:
