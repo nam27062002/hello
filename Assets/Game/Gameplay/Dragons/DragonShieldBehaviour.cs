@@ -11,6 +11,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
     public List<DamageType> m_ignoreDamageTypes = new List<DamageType>();
     private DragonPlayer m_dragon;
     private DragonHealthBehaviour m_dragonHealth;
+    
 
 	// Use this for initialization
 	void Start () {
@@ -18,24 +19,41 @@ public class DragonShieldBehaviour : MonoBehaviour {
         m_dragonHealth = m_dragon.dragonHealthBehaviour;
 		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
         Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 	}
 
     private void OnDestroy()
     {
         Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
         Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+        Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
     }
     
     void OnEntityEaten(Transform t, IEntity entity, Reward reward) {
         if (reward.health >= 0) {
-            float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
-            AddShield(h);
+            if ( FreezingObjectsRegistry.instance.IsFreezing(entity.machine) )
+            {
+                float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
+                AddShield(h);
+            }
         }
     }
 
     private void OnEntityDestroyed(Transform _entity,  IEntity _e, Reward _reward) {
         if (_reward.health >= 0) {
-            AddShield( _reward.health );
+            if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine))
+            {
+                AddShield(_reward.health * m_healthShieldRewardFactor);
+            }
+        }
+    }
+    
+    private void OnEntityBurned(Transform _entity,  IEntity _e, Reward _reward) {
+        if (_reward.health >= 0) {
+            // if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine)) // For the ice dragon burning is frozing
+            {
+                AddShield(_reward.health * m_healthShieldRewardFactor);
+            }
         }
     }
     
