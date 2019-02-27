@@ -33,6 +33,9 @@ public class CPConsoleTab : MonoBehaviour {
 
     private StringBuilder m_outputSb = new StringBuilder();    
 
+	// This variable is used instead of in order to make it thread independent, otherwise messages printed from other than main thread would cause an exception on device
+	private bool m_isEnabled = false;
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
@@ -50,9 +53,14 @@ public class CPConsoleTab : MonoBehaviour {
     }
 
     private void OnEnable() {
+		m_isEnabled = true;
         ClearConsole();
         PrintLogs();
     }
+
+	private void OnDisable() {
+		m_isEnabled = false;
+	}
 
     /// <summary>
 	/// Add a new line into the output console.
@@ -141,7 +149,7 @@ public class CPConsoleTab : MonoBehaviour {
         sm_logs.Add(data);
 
 
-        if (sm_instance != null && sm_instance.isActiveAndEnabled) {
+        if (sm_instance != null && sm_instance.m_isEnabled) {
             sm_instance.Output(message, color);
         }
     }
