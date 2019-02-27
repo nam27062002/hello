@@ -65,27 +65,30 @@ namespace Downloadables
         public static readonly string DOWNLOADS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
         public static readonly string DOWNLOADS_ROOT_PATH_WITH_SLASH = DOWNLOADS_ROOT_PATH + "/";
 
-        private bool IsInitialized { get; set; }        
-        
+        private bool IsInitialized { get; set; }
+
+        private NetworkDriver m_network;
         private Disk m_disk;
-
         private Cleaner m_cleaner;
-
         private Downloader m_downloader;
+        private Tracker m_tracker;
 
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
         /// </summary>
         public bool IsAutomaticDownloaderEnabled { get; set; }
         
-        public Manager(DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Logger logger)
+        public Manager(NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             sm_logger = logger;
 
+            m_network = network;
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
-            CatalogEntryStatus.sm_disk = m_disk;
+            m_tracker = tracker;
+
+            CatalogEntryStatus.StaticSetup(m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
-            m_downloader = new Downloader(m_disk, logger);
+            m_downloader = new Downloader(network, m_disk, logger);
 
             Reset();
         }
@@ -113,15 +116,11 @@ namespace Downloadables
             IsInitialized = true;
             IsAutomaticDownloaderEnabled = isAutomaticDownloaderEnabled;
 
-            string urlBase = null;
             if (catalogJSON != null)
             {
-                urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
+                string urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
+                m_downloader.Initialize(urlBase);
             }
-
-            ////http://10.44.4.69:7888/
-
-            m_downloader.Initialize(urlBase);
         } 
 
         private void ProcessCatalog(JSONNode catalogJSON)
@@ -152,19 +151,27 @@ namespace Downloadables
             }            
         }                 
         
-        public bool IsIdAvailable(string id)
+        public bool IsIdAvailable(string id, bool track = false)
         {
             bool returnValue = false;
             if (IsInitialized)
             {
                 CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
-                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);
+                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);                
+
+                if (track)
+                {
+                    float existingSize = GetIdMbDownloadedSoFar(id);
+                    NetworkReachability reachability = m_network.CurrentNetworkReachability;
+                    Error.EType result = (returnValue) ? Error.EType.None : Error.EType.NotAvailable;
+                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalMb(id), 0, reachability, reachability, result, false);
+                }
             }
 
             return returnValue;
         }
 
-        public bool IsIdsListAvailable(List<string> ids)
+        public bool IsIdsListAvailable(List<string> ids, bool track = false)
         {
             bool returnValue = true;
             if (ids != null)
@@ -172,8 +179,20 @@ namespace Downloadables
                 int count = ids.Count;
                 for (int i = 0; i < count && returnValue; i++)
                 {
-                    returnValue = IsIdAvailable(ids[i]);
+                    // IsIdAvailable() must be called for every id so that the result will be tracked if it needs to
+                    returnValue = IsIdAvailable(ids[i], track) && returnValue;
                 }
+            }
+
+            return returnValue;
+        }
+
+        private float GetIdMbDownloadedSoFar(string id)
+        {
+            float returnValue = float.MaxValue;
+            if (IsInitialized)
+            {
+                returnValue = GetIdTotalMb(id) - GetIdMbLeftToDownload(id);                
             }
 
             return returnValue;
@@ -266,7 +285,7 @@ namespace Downloadables
         {
             if (IsInitialized)
             {
-                m_downloader.CurrentNetworkReachability = Application.internetReachability;
+                m_downloader.CurrentNetworkReachability = m_downloader.NetworkDriver.CurrentNetworkReachability;
                 m_disk.Update();
                 m_cleaner.Update();
                 Catalog_Update();                
@@ -301,6 +320,11 @@ namespace Downloadables
             m_catalog.TryGetValue(id, out entry);
             return entry;
         }  
+
+        public bool Catalog_ContainsEntryStatus(string id)
+        {
+            return m_catalog.ContainsKey(id);            
+        }
         
         public Dictionary<string, CatalogEntryStatus> Catalog_GetEntryStatusList()
         {
@@ -309,32 +333,54 @@ namespace Downloadables
 
         private void Catalog_Update()
         {
+            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);
+
             bool canDownload = !m_downloader.IsDownloading;
             CatalogEntryStatus entryToDownload = null;
 
+            CatalogEntryStatus entryToSimulateDownload = null;
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
                 pair.Value.Update();
-                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload && 
-                    m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
-                {
-                    if (entryToDownload == null || !entryToDownload.IsRequestRunning())
+                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload)
+                {                  
+                    if (m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
                     {
-                        if (pair.Value.IsRequestRunning())
-                        {
-                            entryToDownload = pair.Value;
-                        }
-                        else if (IsAutomaticDownloaderEnabled && pair.Value.CanAutomaticDownload())
-                        {
-                            entryToDownload = pair.Value;
-                        }                        
-                    }                    
+                        ProcessCandidateToDownload(ref entryToDownload, pair.Value, false);
+                    }
+                    else
+                    {
+                        ProcessCandidateToDownload(ref entryToSimulateDownload, pair.Value, true);
+                    }
                 }
             }            
 
-            if (entryToDownload != null)
+            // A simulation is performed only if there's no an actual download to perform
+            if (entryToDownload == null)
+            {
+                if (entryToSimulateDownload != null)
+                {
+                    entryToSimulateDownload.SimulateDownload();
+                }
+            }
+            else
             {                
                 m_downloader.StartDownloadThread(entryToDownload);
+            }
+        }
+
+        private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
+        {
+            if (candidateSoFar == null || !candidateSoFar.IsRequestRunning())
+            {
+                if (entry.IsRequestRunning())
+                {
+                    candidateSoFar = entry;
+                }
+                else if (IsAutomaticDownloaderEnabled && entry.CanAutomaticDownload(simulation))
+                {
+                    candidateSoFar = entry;
+                }
             }
         }
 #endregion

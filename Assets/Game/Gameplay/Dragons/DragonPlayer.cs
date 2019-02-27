@@ -237,7 +237,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_shield = new Dictionary<DamageType, int>(comparer);
 		m_shieldTimers = new Dictionary<DamageType, float>(comparer);
 
-        if (Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        if (DebugSettings.useSpecialDragon)
         {
            m_data = DragonManager.GetDragonData(m_sku);
         }
@@ -318,8 +318,8 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
-			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
-			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
+			DebugSettings.invulnerable = true;
+            DebugSettings.infiniteBoost = true;			
 		}
 
         m_mummyModifiers = new List<Modifier>();

@@ -26,15 +26,17 @@ public class HDAddressablesManager : AddressablesManager
 
     private float m_pollAutomaticDownloaderAt;
 
+    private HDDownloadablesTracker m_tracker;
+
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
     public void Initialise()
     {
-        Logger logger = ((FeatureSettingsManager.IsDebugEnabled)) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
         
         string addressablesPath = "Addressables";
-        string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
+        string assetBundlesPath = addressablesPath;
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
 
         BetterStreamingAssets.Initialize();
@@ -67,17 +69,49 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
-        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
-        
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, null, logger);
+        m_tracker = new HDDownloadablesTracker(2, null, logger);
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, m_tracker, logger);
 
         m_pollAutomaticDownloaderAt = 0f;
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
-    {        
+    {
+        string urlBase = null;
+
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
+                    break;
+            }
+
+            //http://10.44.4.69:7888/            
+        }
+
+        if (string.IsNullOrEmpty(urlBase))
+        {
+            urlBase = assetsLUT.m_strURLBase;
+        }
+
         Downloadables.Catalog catalog = new Downloadables.Catalog();
-        catalog.UrlBase = assetsLUT.m_strURLBase + assetsLUT.m_iReleaseVersion + "/";
+        catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
 
         Downloadables.CatalogEntry entry;        
         foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
@@ -274,7 +308,7 @@ public class HDAddressablesManager : AddressablesManager
                 }
             }
         }
-    }
+    }    
 
     public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
     {
@@ -285,18 +319,28 @@ public class HDAddressablesManager : AddressablesManager
         {            
             for (int i = 0; i < nextAreaRealSceneNames.Count;)
             {
-                if (!IsResourceAvailable(nextAreaRealSceneNames[i]))
+                if (IsResourceAvailable(nextAreaRealSceneNames[i], true))
                 {
-                    nextAreaRealSceneNames.RemoveAt(i);
+                    i++;                    
                 }
                 else
                 {
-                    i++;
+                    // Avoid this scene to be loaded since it's not available
+                    nextAreaRealSceneNames.RemoveAt(i);                    
                 }
             }
         }
 
         return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
-    #endregion                       
+
+    /// <summary>
+    /// Method called when the user leaves ingame and the whole level has been unloaded.
+    /// </summary>
+    public void Ingame_NotifyLevelUnloaded()
+    {
+        // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
+        m_tracker.ResetIdsLoadTracked();
+    }
+    #endregion
 }

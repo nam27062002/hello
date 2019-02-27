@@ -145,16 +145,16 @@ public class GameSceneController : GameSceneControllerBase {
 
         // Load the dragon
 		// DEBUG: Special dragon testing
-        if ( /*FeatureSettingsManager.IsDebugEnabled &&*/ Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        if ( DebugSettings.useSpecialDragon )
         {
             // Hola soy special SPECIAAAAAAL
 			// [AOC] xDDDDDDDD
-            string dragon = Prefs.GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
-            DragonTier dragonTier = ( DragonTier )Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_TIER, 0);
-            int powerLevel = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_POWER_LEVEL, 0);
-            int hpBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_HP_BOOST_LEVEL, 0);
-            int speedBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_SPEED_BOOST_LEVEL, 0);
-            int energyBoost = Prefs.GetIntPlayer(DebugSettings.SPECIAL_DRAGON_ENERGY_BOOST_LEVEL, 0);
+            string dragon = DebugSettings.Prefs_GetStringPlayer(DebugSettings.SPECIAL_DRAGON_SKU, "dragon_helicopter");
+            DragonTier dragonTier = ( DragonTier )DebugSettings.specialDragonTier;
+            int powerLevel = DebugSettings.specialDragonPowerLevel;
+            int hpBoost = DebugSettings.specialDragonHpBoostLevel;
+            int speedBoost = DebugSettings.specialDragonSpeedBoostLevel;
+            int energyBoost = DebugSettings.specialDragonEnergyBoostLevel;
             DragonManager.LoadSpecialDragon_DEBUG(dragon, dragonTier, powerLevel, hpBoost, speedBoost, energyBoost);
             
         }
@@ -179,6 +179,8 @@ public class GameSceneController : GameSceneControllerBase {
 
 		ParticleManager.instance.poolLimits = ParticleManager.PoolLimits.LoadedArea;
         PoolManager.instance.poolLimits = PoolManager.PoolLimits.Limited;
+            // Audio Toolkit to use this scene as root
+        ObjectPoolController.defaultInstantiateSceme = gameObject.scene;
 	}
 
 
@@ -345,6 +347,8 @@ public class GameSceneController : GameSceneControllerBase {
         base.OnDestroy();
 
         CustomParticlesCulling.Manager_OnDestroy();
+        Scene emptyScene = new Scene();
+        ObjectPoolController.defaultInstantiateSceme = emptyScene;
 
         Messenger.RemoveListener(MessengerEvents.GAME_COUNTDOWN_ENDED, CountDownEnded);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnPlayerLeavingArea);
@@ -651,7 +655,8 @@ public class GameSceneController : GameSceneControllerBase {
                 string[] tokens;
                 for (int i = 0; i < scenesToUnload.Count;) {
                     tokens = scenesToUnload[i].Split('_');
-                    if (tokens.Length > 1 && tokens[0].CompareTo("SP") == 0){
+                    if ((tokens.Length > 1 && tokens[0].CompareTo("SP") == 0) ||
+                        (!LevelManager.IsSceneLoaded(scenesToUnload[i]))) {
                         scenesToUnload.RemoveAt(i);
                     }else{
                         i++;
@@ -661,6 +666,8 @@ public class GameSceneController : GameSceneControllerBase {
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
                 m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
+
+                HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;
         }
 		

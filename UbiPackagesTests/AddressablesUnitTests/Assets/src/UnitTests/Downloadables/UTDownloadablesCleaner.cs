@@ -6,7 +6,7 @@ public class UTDownloadablesCleaner : UnitTest
     public static UnitTestBatch GetUnitTestBatch()
     {
         UnitTestBatch batch = new UnitTestBatch("UTDownloadablesCleaner");
-        MockDiskDriver diskDriver = new MockDiskDriver();        
+        MockDiskDriver diskDriver = new MockDiskDriver(null);        
         List<string> idsToDelete;
         List<string> resultFilesInManifests;
         List<string> resultFilesInDownloads;

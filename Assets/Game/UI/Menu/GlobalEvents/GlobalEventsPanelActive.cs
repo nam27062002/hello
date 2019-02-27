@@ -44,7 +44,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	private void OnEnable() {
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
 		// Program periodic update call
 		InvokeRepeating("UpdatePeriodic", 0f, EVENT_COUNTDOWN_UPDATE_INTERVAL);
 
@@ -57,7 +60,10 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	private void OnDisable() {
+	protected override void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
 		// Clear periodic update call
 		CancelInvoke();
 

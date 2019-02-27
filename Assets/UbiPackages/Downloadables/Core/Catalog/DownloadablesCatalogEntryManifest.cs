@@ -58,7 +58,7 @@ namespace Downloadables
         /// Amount of times it's been downloaded successfully
         /// </summary>
         private int m_downloadedTimes;
-        private int DownloadedTimes
+        public int DownloadedTimes
         {
             get { return m_downloadedTimes; }
 

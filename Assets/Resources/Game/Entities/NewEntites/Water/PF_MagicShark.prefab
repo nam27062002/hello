@@ -656,15 +656,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
+  m_energy: 20
+  m_energyDrainSec: 1.25
   m_energyRecoverSec: 1
   m_brainResource: {fileID: 11400000, guid: 8b5af2942e113474ab478d8d8fe9e787, type: 2}
   m_railSeparation:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":5,"panicSpeed":8,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":7,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"seconds":10,"dataType":"AI.Behaviour.TimerAData","editorFolded":false}]'
+  m_serializedJson: '[{"speed":2.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"boostSpeed":6,"panicSpeed":10,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":8,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false},{"seconds":7,"dataType":"AI.Behaviour.TimerAData","editorFolded":false}]'
   m_databaseKey: PF_MagicShark
   m_preciseDestArrival: 1
   m_avoidDistanceAttenuation: 2.5
@@ -693,6 +693,7 @@ MonoBehaviour:
   m_animA: latch
   m_animB: 
   m_animC: 
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 2
   m_waterSplashParticle:
@@ -1034,8 +1035,8 @@ MonoBehaviour:
   m_sensor:
     m_senseFire: 0
     m_sightRadius: 14
-    m_maxRadius: 4
-    m_minRadius: 0
+    m_maxRadius: 6
+    m_minRadius: 4
     m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
@@ -1055,9 +1056,9 @@ MonoBehaviour:
     m_disableOnBurn: []
   m_onSpawnSound: 
   m_waterMotion:
-    m_mass: 25
+    m_mass: 20
     m_defaultUpVector: 0
-    m_orientationSpeed: 40
+    m_orientationSpeed: 60
     m_spawnsInsideWater: 1
     m_faceDirectionFreeFall: 1
     m_diveTimeRange:

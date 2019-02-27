@@ -20,8 +20,10 @@ using System.Collections.Generic;
 [Serializable]
 public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	//------------------------------------------------------------------------//
-	// CASSES															  //
+	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "quest";
+	public const int NUMERIC_TYPE_CODE = 1;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -46,8 +48,8 @@ public class HDQuestManager : HDLiveEventManager, IBroadcastListener{
 	/// Default constructor.
 	/// </summary>
 	public HDQuestManager() {
-        m_type = "quest";
-        m_numericType = 1;
+		m_type = TYPE_CODE;
+		m_numericType = NUMERIC_TYPE_CODE;
 
         m_data = new HDQuestData();
         m_questData = m_data as HDQuestData;

@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(List<string> localAssetBundleIds, string assetBundlesManifestPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, AssetBundlesTracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, assetBundlesManifestPath, downloadablesCatalog, isAutomaticDownloaderEnabled, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesCatalog, isAutomaticDownloaderEnabled, tracker, logger);
     }
 
     public void Reset()
@@ -14,11 +14,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.Reset();
     }
 
-    public override bool IsResourceAvailable(AddressablesCatalogEntry entry)
+    public override bool IsResourceAvailable(AddressablesCatalogEntry entry, bool track = false)
     {
         // A resource is available if its dependencies and itself are available
         List<string> dependencies = GetDependencyIds(entry);
-        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencies);
+        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencies, track);
     }
 
     public override List<string> GetDependencyIds(AddressablesCatalogEntry entry)
