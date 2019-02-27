@@ -440,7 +440,9 @@ if $UPLOAD;then
   if $BUILD_IOS; then
   	  mkdir -p "${SMB_PATH}"
       cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"
-      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}" "${SMB_PATH}/"            
+      zip -r "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}/dSYMs" 
+      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${SMB_PATH}/"
+      rm "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip"            
   fi
 
   # Copy APK
