@@ -256,9 +256,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 
                     // Check whether player is within the activation distance
                     bool isWithinDistance = Mathf.Abs((m_dragonMotion.position - m_transform.position).sqrMagnitude) < m_visualActivationRadiusSqr;
-
-                    Debug.Log("isWithinDistance " + isWithinDistance + " | " + m_visible);
-
                     // Show/hide based on trigger
                     if(m_visible && !isWithinDistance) {
                         SetVisible(false);
@@ -427,12 +424,10 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         // Only if we actually have a particle system!
         if (m_particlesObj == null) {            
             if (m_visible && _activate) {
-                Debug.Log("ActivateParticles - LoadParticles");
                 LoadParticles();
             }
         } else {
             if (_activate) {
-                Debug.Log("ActivateParticles - Play");
                 m_particlesObj.Play();
             } else {
                 m_particlesObj.Stop();

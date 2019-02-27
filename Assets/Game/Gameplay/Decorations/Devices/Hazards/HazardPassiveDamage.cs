@@ -32,7 +32,7 @@ public class HazardPassiveDamage : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider _other) {
-		if (m_timer <= 0f) {			
+		if (m_timer <= 0f) {
 			if (_other.CompareTag("Player")) {
 				m_dragon.ReceiveDamage(m_damage, m_type, m_transform);
 			}
