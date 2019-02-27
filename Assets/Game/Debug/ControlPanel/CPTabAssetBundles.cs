@@ -3,13 +3,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CPTabDownloadables : MonoBehaviour
+public class CPTabAssetBundles : MonoBehaviour
 {
-    public class DownloadableView
+    public class AssetBundlleView
     {
-        private TMP_Text m_downloadedNameText;
+        private TMP_Text m_nameText;
         private Slider m_donwloadedSoFarSlider;
         private TMP_Text m_donwloadedSoFarText;
+        private TMP_Text m_abLoadedText;
+        private TMP_Text m_sceneLoadedText;
 
         Downloadables.CatalogEntryStatus m_entry;
 
@@ -18,14 +20,16 @@ public class CPTabDownloadables : MonoBehaviour
             m_entry = entry;
             if (m_entry != null)
             {
-                m_downloadedNameText = go.FindComponentRecursive<TMP_Text>("NameText");
-                m_downloadedNameText.text = entry.Id;
+                m_nameText = go.FindComponentRecursive<TMP_Text>("NameText");
+                m_nameText.text = entry.Id;
 
                 m_donwloadedSoFarSlider = go.FindComponentRecursive<Slider>("Slider");
                 m_donwloadedSoFarSlider.minValue = 0f;
                 m_donwloadedSoFarSlider.maxValue = m_entry.GetTotalBytes();
 
                 m_donwloadedSoFarText = go.FindComponentRecursive<TMP_Text>("Text");
+                m_abLoadedText = go.FindComponentRecursive<TMP_Text>("ABLoadedText");
+                m_sceneLoadedText = go.FindComponentRecursive<TMP_Text>("SceneLoadedText");
             }
         }
 
@@ -35,31 +39,36 @@ public class CPTabDownloadables : MonoBehaviour
             {
                 m_donwloadedSoFarSlider.value = m_entry.GetBytesDownloadedSoFar();
                 m_donwloadedSoFarText.text = m_entry.GetMbDownloadedSoFar() + "Mb";
+                
+                AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_entry.Id);
+                m_abLoadedText.text = "AB Loaded: " + handle.IsLoaded().ToString();
+
+                m_sceneLoadedText.text = "Scene Loaded: " + LevelManager.IsSceneLoaded("SO_Medieval_Castle");
             }
         }
     }
 
-    private List<DownloadableView> m_views = new List<DownloadableView>();
+    private List<AssetBundlleView> m_views = new List<AssetBundlleView>();
 
     [SerializeField]
-    private GameObject m_downloadableViewPrefab;
+    private GameObject m_assetBundleViewPrefab;
 
     [SerializeField]
-    private Transform m_downloadableViewsRoot;
+    private Transform m_assetBundleViewsRoot;
 
     void Start()
     {        
-        DownloadableView view;
+        AssetBundlleView view;
         GameObject go;
         Dictionary<string, Downloadables.CatalogEntryStatus> catalog = AssetBundlesManager.Instance.GetDownloadablesCatalog();
         if (catalog != null)
         {
             foreach (KeyValuePair<string, Downloadables.CatalogEntryStatus> pair in catalog)
             {
-                go = Instantiate(m_downloadableViewPrefab, m_downloadableViewsRoot);
+                go = Instantiate(m_assetBundleViewPrefab, m_assetBundleViewsRoot);
                 go.SetActive(true);
 
-                view = new DownloadableView();
+                view = new AssetBundlleView();
                 view.Setup(go, pair.Value);
                 m_views.Add(view);
             }
