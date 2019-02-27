@@ -37,17 +37,11 @@ public class HDAddressablesManager : AddressablesManager
         
         string addressablesPath = "Addressables";
         string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        BetterStreamingAssets.Initialize();
-
-        // Retrieves addressables catalog
-        string catalogAsText = null;
-        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
-        }
-
+        // Retrieves addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
