@@ -2,15 +2,18 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnable {
-	
-	private Animator m_animator;
+public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
+    private Entity m_entity;
+    private Animator m_animator;
 
 	private Renderer[] m_renderers;
-	private Dictionary<int, List<Material>> m_materials;
+    private List<Material[]> m_rendererMaterials;
+    private Dictionary<int, List<Material>> m_materials;
 	private List<Material> m_materialList;
 
-	private int m_vertexCount;
+    private ViewControl.MaterialType m_materialType = ViewControl.MaterialType.NONE;
+
+    private int m_vertexCount;
 	public int vertexCount { get { return m_vertexCount; } }
 
 	private int m_rendererCount;
@@ -30,14 +33,17 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
     // Use this for initialization
     //-----------------------------------------------
     protected virtual void Awake() {
-		m_animator = transform.FindComponentRecursive<Animator>();
+        m_entity = GetComponent<Entity>();
+
+        m_animator = transform.FindComponentRecursive<Animator>();
 		m_animator.logWarnings = false;
 
 		m_materials = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
+        m_rendererMaterials = new List<Material[]>();
 
-		m_vertexCount = 0;
+        m_vertexCount = 0;
 		m_rendererCount = 0;
 
 		if (m_renderers != null) {
@@ -70,7 +76,8 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
 				renderer.sharedMaterials = materials;
-			}
+                m_rendererMaterials.Add(materials);
+            }
 		}
 
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
@@ -81,6 +88,8 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 		if (m_animEvents != null) {
 			m_animEvents.onAttackStart += animEventsOnAttackStart;
 		}
+
+        Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
     }
 
 	protected virtual void animEventsOnAttackStart() {
@@ -92,26 +101,76 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	}
 
 	public void Spawn(ISpawner _spawner) {
-		// Restore materials
-		for (int i = 0; i < m_renderers.Length; i++) {
-			int id = m_renderers[i].GetInstanceID();
-			Material[] materials = m_renderers[i].sharedMaterials;
-			for (int m = 0; m < materials.Length; m++) {				
-				materials[m] = m_materials[id][m];
-			}
-			m_renderers[i].sharedMaterials = materials;
-		}
-	}
+        m_materialType = ViewControl.MaterialType.NONE;
+        DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+        CheckMaterialType(false, dragonBreath.IsFuryOn(), dragonBreath.type);
+    }
 
     void OnDestroy() {
 		RemoveAudioParent( ref m_onAttackAudioAO );
+        Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
     }
 
     public void PreDisable() {
     	RemoveAudioParent( ref m_onAttackAudioAO );
     }
-	public void CustomUpdate() { }
 
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+        switch (eventType) {
+            case BroadcastEventType.FURY_RUSH_TOGGLED: {
+                    DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+                    CheckMaterialType(false, dragonBreath.IsFuryOn(), dragonBreath.type);
+                }
+                break;
+        }
+    }
+
+    private bool IsBurnableByPlayer(DragonBreathBehaviour.Type _fireType) {
+        if (m_entity != null) {
+            switch (_fireType) {
+                case DragonBreathBehaviour.Type.Mega:
+                return m_entity.IsBurnable();
+                case DragonBreathBehaviour.Type.Standard:
+                default:
+                return m_entity.IsBurnable(InstanceManager.player.data.tier);
+
+            }
+        }
+        return false;
+    }
+
+    private void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+        ViewControl.MaterialType matType = ViewControl.MaterialType.NORMAL;
+        if (_isGolden || _furyActive) {
+            if (IsBurnableByPlayer(_type)) {
+                matType = ViewControl.MaterialType.GOLD;
+            }
+        }
+        if (matType != m_materialType) {
+            SetMaterialType(matType);
+        }
+    }
+
+    public void SetMaterialType(ViewControl.MaterialType _type) {
+        m_materialType = _type;
+
+        // Restore materials
+        if (m_renderers != null) {
+            for (int i = 0; i < m_renderers.Length; i++) {
+                int id = m_renderers[i].GetInstanceID();
+                Material[] materials = m_rendererMaterials[i];
+                for (int m = 0; m < materials.Length; m++) {
+                    switch (_type) {
+                        case ViewControl.MaterialType.GOLD:     materials[m] = ViewControl.sm_goldenMaterial;   break;
+                        case ViewControl.MaterialType.NORMAL:   materials[m] = m_materials[id][m];              break;
+                    }
+                }
+                m_renderers[i].materials = materials;
+            }
+        }
+    }
+
+    public void CustomUpdate() { }
 
 
 	public void Attack(bool _attack) { 

@@ -73,12 +73,7 @@ public class AssetBundleHandle
     {
         return m_isRemote;
     }
-
-    public bool IsDownloaded()
-    {
-        return false;
-    }    
-    
+   
     public List<string> GetDependenciesIncludingSelf()
     {
         return m_dependenciesIncludingSelf;

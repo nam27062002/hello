@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MessengerExtensions;
 using System;
+using UnityEngine.SceneManagement;
 
 #pragma warning disable 1591 // undocumented XML code warning
 
@@ -367,6 +368,8 @@ static public class ObjectPoolController
         get;
         private set;
     }
+    
+    public static Scene defaultInstantiateSceme;
 
     // **************************************************************************************************/
     //          public functions
@@ -391,7 +394,11 @@ static public class ObjectPoolController
         if ( prefabPool == null )
         {
             //Debug.LogWarning( "Object " + prefab.name + " not poolable " );
-            return ( GameObject ) GameObject.Instantiate( prefab ); // prefab not pooled, instantiate normally
+            GameObject newGameObject = ( GameObject ) GameObject.Instantiate( prefab ); // prefab not pooled, instantiate normally
+            if ( defaultInstantiateSceme.isLoaded )
+                SceneManager.MoveGameObjectToScene(newGameObject, defaultInstantiateSceme);
+            return newGameObject;
+                
         }
 
         GameObject go = _GetPool( prefabPool ).GetPooledInstance( null, null, prefab.activeSelf, parent );
@@ -420,7 +427,10 @@ static public class ObjectPoolController
         {
             // no warning displayed by design because this allows to decide later if the object will be poolable or not
             // Debug.LogWarning( "Object " + prefab.name + " not poolable "); 
-            return ( GameObject ) GameObject.Instantiate( prefab, position, quaternion ); // prefab not pooled, instantiate normally
+            GameObject newGameObject = ( GameObject ) GameObject.Instantiate( prefab, position, quaternion ); // prefab not pooled, instantiate normally
+            if (defaultInstantiateSceme.isLoaded)
+                SceneManager.MoveGameObjectToScene(newGameObject, defaultInstantiateSceme);
+            return newGameObject;
         }
 
         GameObject go = _GetPool( prefabPool ).GetPooledInstance( position, quaternion, prefab.activeSelf, parent );
@@ -463,6 +473,8 @@ static public class ObjectPoolController
         _isDuringInstantiate = true;
         GameObject go = _InstantiateGameObject( prefab, position, quaternion, parent ); // prefab not pooled, instantiate normally
         _isDuringInstantiate = false;
+        if (parent == null && defaultInstantiateSceme.isLoaded)
+            SceneManager.MoveGameObjectToScene(go, defaultInstantiateSceme);
 
         PoolableObject pool = go.GetComponent<PoolableObject>();
         if ( pool != null )
@@ -613,7 +625,14 @@ static public class ObjectPoolController
                 poolParentDummyGameObject._SetActive( false );
 
                 if ( _poolableObjectComponent.doNotDestroyOnLoad )
+                {
                     GameObject.DontDestroyOnLoad( poolParentDummyGameObject );
+                }
+                else if ( ObjectPoolController.defaultInstantiateSceme.isLoaded )
+                {
+                    SceneManager.MoveGameObjectToScene(poolParentDummyGameObject, ObjectPoolController.defaultInstantiateSceme);
+                }
+                
             }
         }
 
@@ -693,8 +712,10 @@ static public class ObjectPoolController
             poolObj._serialNumber = ++_globalSerialNumber;
             poolObj.name += poolObj._serialNumber;
 
-            if ( poolObj.doNotDestroyOnLoad )
-                GameObject.DontDestroyOnLoad( poolParent );
+            if (poolObj.doNotDestroyOnLoad)
+                GameObject.DontDestroyOnLoad(poolParent);
+            else if (ObjectPoolController.defaultInstantiateSceme.isLoaded)
+                SceneManager.MoveGameObjectToScene(go, ObjectPoolController.defaultInstantiateSceme);
 
             _pool.Add( poolObj );
 

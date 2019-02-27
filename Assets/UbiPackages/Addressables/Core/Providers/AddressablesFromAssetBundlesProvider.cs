@@ -120,6 +120,19 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         }
     }
 
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return AssetBundlesManager.Instance.IsDownloaderEnabled;
+        }
+
+        set
+        {
+            AssetBundlesManager.Instance.IsDownloaderEnabled = value;
+        }
+    }
+
     public void Update()
     {
         AssetBundlesManager.Instance.Update();

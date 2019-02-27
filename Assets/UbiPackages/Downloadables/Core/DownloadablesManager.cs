@@ -77,7 +77,12 @@ namespace Downloadables
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
         /// </summary>
         public bool IsAutomaticDownloaderEnabled { get; set; }
-        
+
+        /// <summary>
+        /// Enables / Disables downloading feature
+        /// </summary>
+        public bool IsEnabled { get; set; }
+
         public Manager(NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             sm_logger = logger;
@@ -157,8 +162,8 @@ namespace Downloadables
             if (IsInitialized)
             {
                 CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
-                returnValue = (entry != null && entry.State == CatalogEntryStatus.EState.Available);                
-
+                returnValue = (entry != null && entry.IsAvailable(true));                
+                
                 if (track)
                 {
                     float existingSize = GetIdMbDownloadedSoFar(id);
@@ -283,14 +288,14 @@ namespace Downloadables
 
         public void Update()
         {
-            if (IsInitialized)
+            if (IsInitialized && IsEnabled)
             {
                 m_downloader.CurrentNetworkReachability = m_downloader.NetworkDriver.CurrentNetworkReachability;
                 m_disk.Update();
                 m_cleaner.Update();
                 Catalog_Update();                
             }
-        }        
+        }               
 
 #region catalog
         private Dictionary<string, CatalogEntryStatus> m_catalog;

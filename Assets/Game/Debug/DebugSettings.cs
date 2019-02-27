@@ -45,7 +45,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string INGAME_SPAWNERS			    		    = "INGAME_SPAWNERS";
     public const string INGAME_PARTICLES_FEEDBACK 		        = "INGAME_PARTICLES_FEEDBACK";
     private const string INGAME_PARTICLES_EATEN 			    = "INGAME_PARTICLES_EATEN";
-    private const string INGAME_SKIP_DRAGON_MOTION_SAFE         = "INGAME_DRAGON_MOTION_SAFE";
+    public const string INGAME_DRAGON_MOTION_SAFE               = "INGAME_DRAGON_MOTION_SAFE";
     private const string FOG_MANAGER   							= "FOG_MANAGER";
     public const string FOG_BLEND_TYPE   						= "FOG_BLEND_TYPE";
 
@@ -237,9 +237,9 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
         set { Prefs_SetBoolPlayer(INGAME_SPAWNERS, value); }
     }    
 
-    public static bool ingameSkipDragonMotionSafe {
-        get { return Prefs_GetBoolPlayer(INGAME_SKIP_DRAGON_MOTION_SAFE, false); }
-        set { Prefs_SetBoolPlayer(INGAME_SKIP_DRAGON_MOTION_SAFE, value); }
+    public static bool ingameDragonMotionSafe {
+        get { return Prefs_GetBoolPlayer(INGAME_DRAGON_MOTION_SAFE, true); }
+        set { Prefs_SetBoolPlayer(INGAME_DRAGON_MOTION_SAFE, value); }
     }
 
     public static bool useSpecialDragon {

@@ -224,6 +224,22 @@ public class AssetBundlesManager
         }
     }
 
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_downloadablesManager == null) ? false : m_downloadablesManager.IsEnabled;
+        }
+
+        set
+        {
+            if (m_downloadablesManager != null)
+            {
+                m_downloadablesManager.IsEnabled = value;
+            }
+        }
+    }
+
     public AssetBundleHandle GetAssetBundleHandle(string id)
     {
         AssetBundleHandle returnValue = null;
@@ -811,6 +827,11 @@ public class AssetBundlesManager
     public Downloadables.CatalogEntryStatus GetDownloadablesCatalogEntryStatus(string id)
     {
         return m_downloadablesManager.Catalog_GetEntryStatus(id);
+    }
+
+    public Dictionary<string, Downloadables.CatalogEntryStatus> GetDownloadablesCatalog()
+    {
+        return m_downloadablesManager.Catalog_GetEntryStatusList();
     }
 
     public void Update()
