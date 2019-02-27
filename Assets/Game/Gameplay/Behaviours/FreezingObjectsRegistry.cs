@@ -8,8 +8,17 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 	{
 		public Transform m_transform;
 		public float m_distanceSqr;
+        public bool m_checkTier;
+        public DragonTier m_dragonTier;
         public bool m_killOnFrozen;
         public float[] m_killTiers;
+        
+        public Registry()
+        {
+            m_checkTier = false;
+            m_killOnFrozen = false;
+            m_dragonTier = DragonTier.TIER_0;
+        }
 	};
 
 	List<Registry> m_registry;
@@ -87,22 +96,30 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
             Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
             if ( freezing != null )
             {
-                m_toFreeze.Add( m_machines[i] );
-                if ( freezing.m_killOnFrozen )
+                // Check if tier pass
+                Entity entity = m_machines[i].entity as Entity;
+                if (!freezing.m_checkTier || ( entity != null && (entity.IsEdible( freezing.m_dragonTier)|| entity.CanBeHolded( freezing.m_dragonTier ))))
                 {
-                    // Check random
-                    if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
+                    m_toFreeze.Add( m_machines[i] );
+                    if ( freezing.m_killOnFrozen )
                     {
-                        m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
-                    }else{
+                        // Check random
+                        if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
+                        {
+                            m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
+                        }else{
+                            m_toKill.Add(false);
+                        }
+                    }
+                    else
+                    {
                         m_toKill.Add(false);
                     }
+                    m_machines.RemoveAt( i );
                 }
-                else
-                {
-                    m_toKill.Add(false);
-                }
-                m_machines.RemoveAt( i );
+
+
+               
             }   
         }
         
