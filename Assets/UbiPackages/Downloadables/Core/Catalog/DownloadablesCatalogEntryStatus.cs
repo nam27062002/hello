@@ -11,6 +11,7 @@ namespace Downloadables
     {
         public static float TIME_TO_WAIT_AFTER_ERROR = 60f;
         public static float TIME_TO_WAIT_BETWEEN_SAVES = 60f;
+        public static float TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES = 180f;
         private static float BYTES_TO_MB = 1024 * 1024;
 
         private static Disk sm_disk;        
@@ -121,6 +122,7 @@ namespace Downloadables
         private float m_latestErrorAt;
         private float m_latestSaveAt;
         private float m_latestSimulationAt;
+        private float m_latestActualUpdateAt;
 
         public enum ERequestState
         {
@@ -246,6 +248,44 @@ namespace Downloadables
 
                     case EState.DealingWithCRCMismatch:
                         ProcessDealingWithCRCMismatch();
+                        break;
+
+                    case EState.Available:
+                        if (sm_realtimeSinceStartup - m_latestActualUpdateAt >= TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES)
+                        {
+                            m_latestActualUpdateAt = sm_realtimeSinceStartup;
+
+                            Error error;
+
+                            // Verifies that the file is still in disk
+                            bool exists = sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error);
+
+                            bool needsToDownloadAgain = false;
+                            if (error == null)
+                            {
+                                if (exists)
+                                {
+                                    // Gets the downloaded file size
+                                    FileInfo fileInfo = sm_disk.File_GetInfo(Disk.EDirectoryId.Downloads, Id, out error);
+                                    if (error == null)
+                                    {
+                                        if (fileInfo.Length != m_dataInfo.Size)
+                                        {
+                                            needsToDownloadAgain = true;
+                                        }                                        
+                                    }
+                                }
+                                else
+                                {
+                                    needsToDownloadAgain = true;
+                                }
+                            }
+
+                            if (needsToDownloadAgain)
+                            {
+                                State = EState.ReadingDataInfo;
+                            }
+                        }
                         break;
                 }
 
@@ -601,6 +641,24 @@ namespace Downloadables
             {
                 sm_tracker.NotifyDownloadEnd(sm_realtimeSinceStartup, Id, DataInfo.Size, m_manifest.Size, sm_currentNetworkReachability, errorType);
             }
+        }
+
+        public bool IsAvailable(bool checkDisk)
+        {
+            bool returnValue = State == EState.Available;
+            if (returnValue && checkDisk)
+            {
+                Error error;
+                returnValue = sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error);
+            }
+
+            // If the state is not Available anymore then it's reseted
+            if (!returnValue && State == EState.Available)
+            {
+                State = EState.ReadingDataInfo;
+            }
+
+            return returnValue;
         }
     }    
 }

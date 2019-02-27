@@ -224,6 +224,22 @@ public class AssetBundlesManager
         }
     }
 
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_downloadablesManager == null) ? false : m_downloadablesManager.IsEnabled;
+        }
+
+        set
+        {
+            if (m_downloadablesManager != null)
+            {
+                m_downloadablesManager.IsEnabled = value;
+            }
+        }
+    }
+
     public AssetBundleHandle GetAssetBundleHandle(string id)
     {
         AssetBundleHandle returnValue = null;
