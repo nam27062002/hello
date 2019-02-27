@@ -42,7 +42,8 @@ public class AssetBundlesManager
    
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string ASSET_BUNDLES_CATALOG_FILENAME = "assetBundlesCatalog.json";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION = "assetBundlesCatalog";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
     private Downloadables.Manager m_downloadablesManager;        
@@ -120,19 +121,13 @@ public class AssetBundlesManager
 #endif
 
     private void LoadCatalog(string directory)
-    {
-        BetterStreamingAssets.Initialize();
-        
-        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME);
-        if (BetterStreamingAssets.FileExists(path))
-        {
-            JSONNode json = null;
-            string text = BetterStreamingAssets.ReadAllText(path);
-            if (!string.IsNullOrEmpty(text))
-            {
-                json = JSON.Parse(text);
-            }
+    {        
+        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
 
+        if (json != null)
+        { 
             AssetBundlesCatalog catalog = new AssetBundlesCatalog();
             catalog.Load(json, sm_logger);
 
