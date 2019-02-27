@@ -50,22 +50,16 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 		m_registry.Add( reg );
         return reg;
 	}
-
-	public void Unregister( Transform tr )
-	{
-		for( int i = m_registry.Count -1 ;i>=0; i-- )
-		{
-			if ( m_registry[i].m_transform == tr )
-			{
-				m_registry.RemoveAt( i );
-			}
-		}
-	}
     
-    public void Unregister( Registry reg )
+    public void AddRegister( Registry registry )
     {
-        m_registry.Remove( reg);
+        m_registry.Add( registry );
     }
+
+	public void RemoveRegister( Registry registry )
+	{
+        m_registry.Remove(registry);
+	}
 
 	public Registry Overlaps( CircleAreaBounds bounds )
 	{
@@ -82,85 +76,82 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
     
     public void CheckFreeze()
     {
-        if ( m_registry.Count > 0 )
+        float freezingChange = Time.deltaTime * m_freezinSpeed;
+        int max;
+       
+        max = m_machines.Count;
+        m_toFreeze.Clear();
+        m_toKill.Clear();
+        for (int i = max-1; i >=0 ; i--)
         {
-            float freezingChange = Time.deltaTime * m_freezinSpeed;
-            int max;
-           
-            max = m_machines.Count;
-            m_toFreeze.Clear();
-            m_toKill.Clear();
-            for (int i = max-1; i >=0 ; i--)
+            Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
+            if ( freezing != null )
             {
-                Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
-                if ( freezing != null )
+                m_toFreeze.Add( m_machines[i] );
+                if ( freezing.m_killOnFrozen )
                 {
-                    m_toFreeze.Add( m_machines[i] );
-                    if ( freezing.m_killOnFrozen )
+                    // Check random
+                    if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
                     {
-                        // Check random
-                        if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
-                        {
-                            m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
-                        }else{
-                            m_toKill.Add(false);
-                        }
-                    }
-                    else
-                    {
+                        m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
+                    }else{
                         m_toKill.Add(false);
-                    }
-                    m_machines.RemoveAt( i );
-                }   
-            }
-            
-            max = m_freezingMachines.Count;
-            for (int i = max-1; i >=0 ; i--)
-            {
-                Registry freezing = Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
-                if ( freezing == null)
-                {
-                    m_freezingLevels[i] -= freezingChange;
-                    if ( m_freezingLevels[i] <= 0 )
-                    {
-                        m_freezingMachines[i].SetFreezingLevel(0);
-                            // Add to non freezing
-                        m_machines.Add( m_freezingMachines[i] );
-                            // Remove from freezing
-                        m_freezingMachines.RemoveAt(i);
-                        m_freezingLevels.RemoveAt(i);
-                        m_freezingKills.RemoveAt(i);
-                            
-                    }
-                    else
-                    {
-                        m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
                     }
                 }
                 else
                 {
-                    m_freezingLevels[i] += freezingChange;
-                    if (m_freezingLevels[i] > 1.0f)
-                    {
-                        m_freezingLevels[i] = 1.0f;
-                    }
+                    m_toKill.Add(false);
+                }
+                m_machines.RemoveAt( i );
+            }   
+        }
+        
+        max = m_freezingMachines.Count;
+        for (int i = max-1; i >=0 ; i--)
+        {
+            Registry freezing = Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
+            if ( freezing == null)
+            {
+                m_freezingLevels[i] -= freezingChange;
+                if ( m_freezingLevels[i] <= 0 )
+                {
+                    m_freezingMachines[i].SetFreezingLevel(0);
+                        // Add to non freezing
+                    m_machines.Add( m_freezingMachines[i] );
+                        // Remove from freezing
+                    m_freezingMachines.RemoveAt(i);
+                    m_freezingLevels.RemoveAt(i);
+                    m_freezingKills.RemoveAt(i);
+                        
+                }
+                else
+                {
                     m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
-                    if ( m_freezingKills[i] && m_freezingLevels[i] >= 1.0f )
-                    {
-                        m_freezingMachines[i].Smash(IEntity.Type.PLAYER);
-                    }
                 }
             }
-    
-            max = m_toFreeze.Count;
-            for (int i = 0; i < max; i++)
+            else
             {
-                m_freezingLevels.Add( freezingChange );
-                m_freezingMachines.Add( m_toFreeze[i] );
-                m_freezingKills.Add( m_toKill[i] );
-                
-                m_toFreeze[i].SetFreezingLevel( freezingChange );
+                m_freezingLevels[i] += freezingChange;
+                if (m_freezingLevels[i] > 1.0f)
+                {
+                    m_freezingLevels[i] = 1.0f;
+                }
+                m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                if ( m_freezingKills[i] && m_freezingLevels[i] >= 1.0f )
+                {
+                    m_freezingMachines[i].Smash(IEntity.Type.PLAYER);
+                }
             }
+        }
+
+        max = m_toFreeze.Count;
+        for (int i = 0; i < max; i++)
+        {
+            m_freezingLevels.Add( freezingChange );
+            m_freezingMachines.Add( m_toFreeze[i] );
+            m_freezingKills.Add( m_toKill[i] );
+            
+            m_toFreeze[i].SetFreezingLevel( freezingChange );
         }
     }
     
