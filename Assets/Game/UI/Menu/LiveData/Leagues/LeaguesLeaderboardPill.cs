@@ -79,7 +79,7 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
     [SerializeField] private TextMeshProUGUI m_levelText = null;
 
 	[Space]
-	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+	[SerializeField] private LeaguesPlayerInfoTooltip m_tooltip = null;
 	[SerializeField] private Button m_scrollToButton = null;
 	public Button scrollToButton {
 		get { return m_scrollToButton; }
@@ -155,32 +155,28 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 	/// </summary>
 	/// <param name="_tooltip">Tooltip to be setup.</param>
 	public void SetupTooltip(LeaguesPlayerInfoTooltip _tooltip) {
-		// Ignore if tooltip trigger not defined
-		if(m_tooltipTrigger == null) return;
-		
-		// Link the given tooltip to the trigger
-		m_tooltipTrigger.tooltip = _tooltip;
-
-		// Listen to tooltip's open event
-		m_tooltipTrigger.OnTooltipOpen.AddListener(OnTooltipOpen);
+		// Save the tooltip reference
+		m_tooltip = _tooltip;
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// A tooltip is about to be opened.
+	/// Show the tooltip for this pill!
 	/// </summary>
-	/// <param name="_tooltip">Tooltip that will be opened.</param>
-	/// <param name="_trigger">The one who triggered the tooltip.</param>
-	private void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
-		// Ignore if it comes from another trigger
-		if(_trigger != m_tooltipTrigger) return;
+	public void OpenTooltip() {
+		// Ignore if tooltip not initialized
+		if(m_tooltip == null) return;
 
 		// Ignore if we have no data to display
 		if(m_lastUsedData == null) return;
 
 		// Initialize tooltip with this pill's player data
-		(_tooltip as LeaguesPlayerInfoTooltip).Init(m_lastUsedData.record);
+		m_tooltip.Init(m_lastUsedData.record);
+
+		// Show tooltip!
+		m_tooltip.animator.ForceShow();
 	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
 }

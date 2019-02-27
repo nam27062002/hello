@@ -485,6 +485,16 @@ namespace Downloadables
             return diff;
         }
 
+        public long GetBytesDownloadedSoFar()
+        {            
+            return m_dataInfo.Size;
+        }
+
+        public float GetMbDownloadedSoFar()
+        {
+            return GetBytesDownloadedSoFar() / BYTES_TO_MB;
+        }
+
         public float GetMbLeftToDownload()
         {
             return GetBytesLeftToDownload() / BYTES_TO_MB;

@@ -813,6 +813,11 @@ public class AssetBundlesManager
         return m_downloadablesManager.Catalog_GetEntryStatus(id);
     }
 
+    public Dictionary<string, Downloadables.CatalogEntryStatus> GetDownloadablesCatalog()
+    {
+        return m_downloadablesManager.Catalog_GetEntryStatusList();
+    }
+
     public void Update()
     {
         if (IsInitialized())
