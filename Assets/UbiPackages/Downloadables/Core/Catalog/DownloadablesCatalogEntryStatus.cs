@@ -652,6 +652,7 @@ namespace Downloadables
                 returnValue = sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error);
             }
 
+            // If the state is not Available anymore then it's reseted
             if (!returnValue && State == EState.Available)
             {
                 State = EState.ReadingDataInfo;
