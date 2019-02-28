@@ -118,7 +118,7 @@ public class OfferPack {
 		get { return m_featured; }
 	}
 
-	protected int m_frequency = 0;
+	protected int m_frequency = 1;
 	protected int m_maxViews = 0;
 	protected WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
 
@@ -289,7 +289,7 @@ public class OfferPack {
 
 		// Mandatory for featured packs
 		m_featured = false;
-		m_frequency = 0;
+		m_frequency = 1;	// Don't use 0 to avoid infinite loops!
 		m_maxViews = 0;
 		m_whereToShow = WhereToShow.SHOP_ONLY;
 
