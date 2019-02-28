@@ -134,7 +134,7 @@ public class AssetBundlesManager
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
             // Full directory is used so we can use AssetBundle.LoadFromFileAsyn() to load asset bundles from streaming assets and from downloadables folder in device storage
-            string fullLocalDirectory = Path.Combine(Application.streamingAssetsPath, directory);
+            string fullLocalDirectory = Path.Combine("Assets/Resources", directory);
             fullLocalDirectory = Path.Combine(fullLocalDirectory, ASSET_BUNDLES_PATH_RELATIVE);
 
             List<string> assetBundleIds = catalog.GetAllAssetBundleIds();

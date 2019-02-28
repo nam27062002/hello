@@ -34,8 +34,9 @@ public class BasicAddressablesTestController : MonoBehaviour
             //Debug.Log("dependencies = " + UbiListUtils.GetListAsString(list));            
 
 #if UNITY_EDITOR
-            AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = !AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled;
+            //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = !AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled;
 #endif       
+            AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
         }
     }
 
@@ -56,39 +57,29 @@ public class BasicAddressablesTestController : MonoBehaviour
     private void Addressables_Init()
     {            
         Logger logger = new ConsoleLogger("Addressables");
-        string addressablesPath = "Addressables";/*Path.Combine(Application.streamingAssetsPath, "Addressables");*/
+
+        string addressablesPath = "Addressables";
         string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");
 
-        string catalogAsText = null;
-        logger.Log("AddressablesCatalog path = " + addressablesCatalogPath + " Exists = " + File.Exists(addressablesCatalogPath) + " platform = " + Application.platform);
-
-        BetterStreamingAssets.Initialize();
-        
-        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
-        }
-        
+        // Retrieves addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
-        
+
         string downloadablesPath = addressablesPath;
-        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog.json");
-        if (BetterStreamingAssets.FileExists(downloadablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
-        }
-        else
-        {
-            catalogAsText = null;
-        }
+        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog");
+
+        // Retrieves addressables catalog 
+        targetFile = Resources.Load<TextAsset>(downloadablesCatalogPath);
+        catalogAsText = (targetFile == null) ? null : targetFile.text;        
 
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         Dictionary<Downloadables.Error.EType, int> maxPerErrorType = new Dictionary<Downloadables.Error.EType, int>();
         maxPerErrorType.Add(Downloadables.Error.EType.Network_Unauthorized_Reachability, 5);
 
-        Downloadables.Tracker tracker = new Downloadables.DummyTracker(maxPerErrorType, logger);
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(5, maxPerErrorType, logger);
         m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogASJSON, false, tracker, logger);
 
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;

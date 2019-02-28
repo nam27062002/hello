@@ -103,7 +103,7 @@ namespace AssetBundles
                 downloadURL = "http://" + localIP + ":7888/";
             }
 
-            string assetBundleManagerResourcesDirectory = "Assets/StreamingAssets/Addressables/AssetBundles";
+            string assetBundleManagerResourcesDirectory = "Assets/Resources/Addressables/AssetBundles";
             string assetBundleUrlPath = Path.Combine(assetBundleManagerResourcesDirectory, "AssetBundleServerURL.bytes");
             if (!Directory.Exists(assetBundleManagerResourcesDirectory))
             {
