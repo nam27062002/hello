@@ -15,7 +15,7 @@ public class EditorAddressablesManager
 {
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
 
-    private static string STREAMING_ASSETS_ROOT_PATH = EditorFileUtils.PathCombine("Assets", "StreamingAssets");
+    private static string RESOURCES_ROOT_PATH = EditorFileUtils.PathCombine("Assets", "Resources");
 
     public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
 
@@ -40,7 +40,7 @@ public class EditorAddressablesManager
 
     public EditorAddressablesManager()
     {
-        m_localDestinationPath = EditorFileUtils.PathCombine(STREAMING_ASSETS_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
+        m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
         m_assetBundlesLocalDestinationPath = EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
     }

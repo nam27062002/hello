@@ -321,34 +321,54 @@ public class HDSeasonData {
     }
 
     private void OnRequestMyRewards(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-        HDLiveDataManager.ResponseLog("[Leagues] Season Rewards", _error, _response);
+        int errorCode = -1;
+        String responseStr = "";
+        try {
+            errorCode = 0;
+            HDLiveDataManager.ResponseLog("[Leagues] Season Rewards", _error, _response);
 
-        HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
-        SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+            errorCode = 1;
+            HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+            errorCode = 2;
+            SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+            responseStr = responseJson.ToString();
 
-        if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            // parse Json
-            m_rewardIndex = responseJson["index"].AsInt;
+            errorCode = 3;
+            if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
+                errorCode = 4;
+                // parse Json
+                m_rewardIndex = responseJson["index"].AsInt;
 
-            if (responseJson.ContainsKey("nextLeague")) {
-                SetNextLeague(responseJson["nextLeague"]["sku"]);
+                errorCode = 5;
+                if (responseJson.ContainsKey("rank")) {
+                    //TODO: maybe the leaderboard is null?
+                    errorCode = 6;
+                    currentLeague.leaderboard.playerRank = responseJson["rank"].AsInt;
+                }
+
+                errorCode = 7;
+                if (responseJson.ContainsKey("nextLeague")) {
+                    errorCode = 8;
+                    SetNextLeague(responseJson["nextLeague"]["sku"]);
+                } else {
+                    errorCode = 9;
+                    FindNextLeague();
+                }
+                errorCode = 10;
+                HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
+
+                errorCode = 11;
+                rewardDataState = HDLiveData.State.VALID;
             } else {
-                FindNextLeague();
+                m_rewardIndex = -1;
+                rewardDataState = HDLiveData.State.ERROR;
             }
 
-            if (responseJson.ContainsKey("rank")) {
-                currentLeague.leaderboard.playerRank = responseJson["rank"].AsInt;
-            }
-
-            HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
-
-            rewardDataState = HDLiveData.State.VALID;
-        } else {
-            m_rewardIndex = -1;
-            rewardDataState = HDLiveData.State.ERROR;
+            errorCode = 12;
+            rewardDataError = outErr;
+        } catch(Exception e) {
+            throw new System.Exception("HDseasonData.OnRequestMyRewards: " + errorCode + "\n" + responseStr + "\n" + e);
         }
-
-        rewardDataError = outErr;
     }
 
     private void SetNextLeague(string _sku) {
@@ -370,20 +390,17 @@ public class HDSeasonData {
         int leaguesCount = leagues.leaguesCount;
         int rank = currentLeague.leaderboard.playerRank;
 
+        // default case
+        nextLeague = currentLeague;
+
         if (promoteRange.min <= rank && rank < promoteRange.max) {
             if (currentLeague.order < leaguesCount - 1) {
                 nextLeague = leagues.GetLeagueData(currentLeague.order + 1);
-            } else {
-                nextLeague = currentLeague;
             }
         } else if (demoteRange.min <= rank && rank < demoteRange.max) {
             if (currentLeague.order > 0) {
                 nextLeague = leagues.GetLeagueData(currentLeague.order - 1);
-            } else {
-                nextLeague = currentLeague;
             }
-        } else {
-            nextLeague = currentLeague;
         }
     }
 

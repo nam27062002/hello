@@ -22,9 +22,7 @@ public class HDAddressablesManager : AddressablesManager
 
             return sm_instance;
         }
-    }
-
-    private float m_pollDownloaderAt;
+    }    
 
     private HDDownloadablesTracker m_tracker;
 
@@ -37,17 +35,11 @@ public class HDAddressablesManager : AddressablesManager
         
         string addressablesPath = "Addressables";
         string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        BetterStreamingAssets.Initialize();
-
-        // Retrieves addressables catalog
-        string catalogAsText = null;
-        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
-        }
-
+        // Retrieves addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
@@ -71,9 +63,7 @@ public class HDAddressablesManager : AddressablesManager
 
         m_tracker = new HDDownloadablesTracker(2, null, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, m_tracker, logger);
-
-        m_pollDownloaderAt = 0f;
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, m_tracker, logger);        
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -180,16 +170,11 @@ public class HDAddressablesManager : AddressablesManager
 
     protected override void ExtendedUpdate()
     {
-        if (Time.realtimeSinceStartup >= m_pollDownloaderAt)
-        {
-            // We don't want the downloader to interfere with the ingame experience
-            IsDownloaderEnabled = !FlowManager.IsInGameScene();
+        // We don't want the downloader to interfere with the ingame experience
+        IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
-            // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-            IsAutomaticDownloaderEnabled = UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);            
-
-            m_pollDownloaderAt = Time.realtimeSinceStartup + 3f;
-        }
+        // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
+        IsAutomaticDownloaderEnabled = UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     #region ingame
