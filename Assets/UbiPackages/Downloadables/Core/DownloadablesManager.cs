@@ -95,8 +95,7 @@ namespace Downloadables
             m_cleaner = new Cleaner(m_disk, 180);            
             m_downloader = new Downloader(network, m_disk, logger);
 
-            IsEnabled = true;
-            //IsAutomaticDownloaderEnabled = true;
+            IsEnabled = true;            
 
             Reset();
         }
