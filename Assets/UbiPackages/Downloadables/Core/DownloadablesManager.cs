@@ -64,6 +64,9 @@ namespace Downloadables
         public static readonly string DOWNLOADS_FOLDER_NAME = Path.Combine(DOWNLOADABLES_FOLDER_NAME, "Downloads");
         public static readonly string DOWNLOADS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
         public static readonly string DOWNLOADS_ROOT_PATH_WITH_SLASH = DOWNLOADS_ROOT_PATH + "/";
+        
+        public static readonly string DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION = "downloadablesConfig";
+        public static readonly string DOWNLOADABLES_CONFIG_FILENAME = DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION + ".json";        
 
         private bool IsInitialized { get; set; }
 
@@ -76,15 +79,24 @@ namespace Downloadables
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
         /// </summary>
-        public bool IsAutomaticDownloaderEnabled { get; set; }
+        public bool IsAutomaticDownloaderEnabled { get; set; }            
 
         /// <summary>
         /// Enables / Disables downloading feature
         /// </summary>
         public bool IsEnabled { get; set; }
 
-        public Manager(NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
+        private Config Config { get; set; }
+
+        public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
+            if (config == null)
+            {
+                config = new Config();
+            }
+
+            Config = config;
+
             sm_logger = logger;
 
             m_network = network;
@@ -103,25 +115,24 @@ namespace Downloadables
         public void Reset()
         {
             IsInitialized = false;
-            IsAutomaticDownloaderEnabled = false;
+            IsAutomaticDownloaderEnabled = Config.IsAutomaticDownloaderEnabled;
             m_cleaner.Reset();
             Catalog_Reset();
             m_downloader.Reset();        
         }
 
-        public void Initialize(JSONNode catalogJSON, bool isAutomaticDownloaderEnabled)
+        public void Initialize(JSONNode catalogJSON)
         {
             Reset();          
 
             if (CanLog())
             {                
                 Log("Initializing Downloadables manager..." );
-            }
+            }                        
             
             ProcessCatalog(catalogJSON);
 
-            IsInitialized = true;
-            IsAutomaticDownloaderEnabled = isAutomaticDownloaderEnabled;
+            IsInitialized = true;            
 
             if (catalogJSON != null)
             {

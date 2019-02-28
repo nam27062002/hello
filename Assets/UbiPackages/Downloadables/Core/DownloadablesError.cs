@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
@@ -25,7 +26,37 @@ namespace Downloadables
             Other
         };
 
+        private static List<string> sm_typeString;
+        private static List<string> TypeStrings
+        {
+            get
+            {
+                if (sm_typeString == null)
+                {
+                    sm_typeString = new List<string>();
+
+                    int count = Enum.GetValues(typeof(EType)).Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        sm_typeString.Add(((EType)i).ToString());
+                    }
+                }
+
+                return sm_typeString;
+            }
+        }
+
         //public static int TypesCount = Enum.GetValues(typeof(EType)).Length;
+        public static string TypeToString(EType type)
+        {           
+            return TypeStrings[(int)type];
+        }
+
+        public static EType StringToType(string typeAsString)
+        {
+            int index = TypeStrings.IndexOf(typeAsString);
+            return (index == -1) ? EType.None : ((EType)index);
+        }
 
         public EType Type;
 

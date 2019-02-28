@@ -54,7 +54,7 @@ public class HDDownloadablesTracker : Tracker
 
     private Dictionary<string, bool> m_idsLoadTracked;
 
-    public HDDownloadablesTracker(int maxAttempts, Dictionary<Error.EType, int> maxAttemptsPerErrorType, Logger logger) : base(maxAttempts, maxAttemptsPerErrorType, logger)
+    public HDDownloadablesTracker(Downloadables.Config config, Logger logger) : base(config, logger)
     {
     }
 
