@@ -718,7 +718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1441867389173104
 GameObject:
   m_ObjectHideFlags: 1
@@ -962,7 +962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1619774336921340
 GameObject:
   m_ObjectHideFlags: 1
@@ -2063,7 +2063,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224800705262575464}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2297,7 +2297,7 @@ MonoBehaviour:
   m_curveScale: 1
   m_verticalPivot: 0.5
   m_useCustomReferenceSize: 1
-  m_customReferenceSize: 1100
+  m_customReferenceSize: 1300
 --- !u!114 &114153562562804736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2369,7 +2369,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1681382118638196}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5378e1f14d974d419f811d6b0861f20, type: 3}
   m_Name: 
@@ -2740,6 +2740,13 @@ MonoBehaviour:
   m_pcSFX: UI_Buy
   m_skinTitle: {fileID: 0}
   m_skinPower: {fileID: 0}
+  m_dragonName: {fileID: 0}
+  m_dragonDesc: {fileID: 0}
+  m_dragonTierIcon: {fileID: 0}
+  m_newPreysAnimator: {fileID: 0}
+  m_healthText: {fileID: 0}
+  m_energyText: {fileID: 0}
+  m_speedText: {fileID: 0}
   OnAnimFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -3005,7 +3012,7 @@ MonoBehaviour:
   m_curveScale: 1
   m_verticalPivot: 0.5
   m_useCustomReferenceSize: 1
-  m_customReferenceSize: 1100
+  m_customReferenceSize: 1300
 --- !u!114 &114366576984113148
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3998,6 +4005,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114556683690338744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4214,7 +4222,7 @@ MonoBehaviour:
   m_curveScale: 1
   m_verticalPivot: 0.5
   m_useCustomReferenceSize: 1
-  m_customReferenceSize: 1100
+  m_customReferenceSize: 1300
 --- !u!114 &114591233827839608
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4616,7 +4624,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  m_MultiTouchDisable: 1
 --- !u!114 &114662495727443376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -24608,10 +24615,10 @@ RectTransform:
   m_Father: {fileID: 224181860522738086}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1207.596, y: -100}
-  m_SizeDelta: {x: 0, y: 200}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1365.3334, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224141948363135834
 RectTransform:
@@ -25700,7 +25707,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -5, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}

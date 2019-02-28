@@ -97,7 +97,7 @@ namespace Downloadables
             int maxAttempts = m_maxAttempts;
 
             // Checks if the result must be reported (a type of error has a limit for the amount of times it can be reported)
-            if (m_maxAttemptsPerErrorType != null && error != Error.EType.None)
+            if (m_maxAttemptsPerErrorType != null && error != Error.EType.None && m_maxAttemptsPerErrorType.ContainsKey(error))
             {
                 maxAttempts = m_maxAttemptsPerErrorType[error];
             }            

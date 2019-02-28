@@ -60,7 +60,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     }    
 
     // 3.Generate Player Catalog
-    // Generates addressablesCatalog.json in Assets/StreamingAssets/Addressables folder
+    // Generates addressablesCatalog.json in Assets/Resources/Addressables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
     static void GeneratePlayerCatalog()
     {
@@ -78,7 +78,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     }
 
     // 4. Generate Asset Bundles
-    // Generates asset bundles manager in Assets/StreamingAssets/Addressables/AssetBundles folder
+    // Generates asset bundles manager in Assets/Resources/Addressables/AssetBundles folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG)]
     static void GenerateAssetBundlesCatalog()
     {
