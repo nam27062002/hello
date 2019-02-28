@@ -182,7 +182,7 @@ namespace AI {
                         Transition(OnEnemyOutOfSight, m_transitionParam);
                     }
                 } catch (System.Exception e) {
-                    throw new System.Exception("PetChaseTarget.OnUpdate: " + errorCode + "\n" + e);
+                    throw new System.Exception("PetChaseTarget.OnUpdate: " + errorCode + "\n" + " PetName: " + m_stateMachine.gameObject.name + "\n" + e);
                 }
             }
 		}
