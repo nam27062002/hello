@@ -444,6 +444,22 @@ public class AddressablesManager
         }
     }
 
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_providerFromAB == null) ? false : m_providerFromAB.IsDownloaderEnabled;
+        }
+
+        set
+        {
+            if (m_providerFromAB != null)
+            {
+                m_providerFromAB.IsDownloaderEnabled = value;
+            }
+        }
+    }
+
     public void Update()
     {
         if (IsInitialized())
