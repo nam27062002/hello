@@ -37,7 +37,7 @@ public class UTDownloadablesInitialize : UnitTest
         //
         // SUCCESS
         //
-                
+                        
         // PURPOSE: Test empty disk folders           
         // INPUT: 
         //      MANIFESTS: Empty
@@ -77,7 +77,7 @@ public class UTDownloadablesInitialize : UnitTest
         resultDownloads = new Dictionary<string, string>();
         test.Setup(diskDriver, "02", "01", resultInMemory, resultManifests, resultDownloads);
         batch.AddTest(test, true);                
-
+        
         // PURPOSE: Test outdated manifest files in disk are deleted
         // INPUT: 
         //      MANIFESTS: It only contains OUTDATED_ASSET 
@@ -98,7 +98,7 @@ public class UTDownloadablesInitialize : UnitTest
         resultDownloads = new Dictionary<string, string>();
         test.Setup(diskDriver, "01", "03", resultInMemory, resultManifests, resultDownloads);
         batch.AddTest(test, true);        
-        
+                
         // PURPOSE: Test only manifest outdated files in disk are deleted
         // INPUT: 
         //      MANIFESTS: It contains ASSET and OUTDATED_ASSET
@@ -184,7 +184,7 @@ public class UTDownloadablesInitialize : UnitTest
 
         resultDownloads = new Dictionary<string, string>();
         test.Setup(diskDriver, "01", cachePath, resultInMemory, resultManifests, resultDownloads);
-        batch.AddTest(test, true);             
+        batch.AddTest(test, true);                   
         
         //
         // FAIL               

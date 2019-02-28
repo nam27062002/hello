@@ -194,6 +194,9 @@ namespace AI {
                 return (T)kvp.data;
             }
 
+            Fabric.Crashlytics.Crashlytics.RecordCustomException("Pilot - GetComponentData", "Data is NULL", "NPC " + name + " has a null value on " + typeName + " behaviour.");
+            Fabric.Crashlytics.Crashlytics.ThrowNonFatal();
+
             return null;
 		}
 
