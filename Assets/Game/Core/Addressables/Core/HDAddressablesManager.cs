@@ -22,30 +22,24 @@ public class HDAddressablesManager : AddressablesManager
 
             return sm_instance;
         }
-    }
+    }    
 
-    private float m_pollAutomaticDownloaderAt;
+    private HDDownloadablesTracker m_tracker;
 
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
     public void Initialise()
     {
-        Logger logger = ((FeatureSettingsManager.IsDebugEnabled)) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
+        Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
         
         string addressablesPath = "Addressables";
-        string assetBundlesPath = Path.Combine(addressablesPath, "AssetBundles");
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+        string assetBundlesPath = addressablesPath;
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        BetterStreamingAssets.Initialize();
-
-        // Retrieves addressables catalog
-        string catalogAsText = null;
-        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
-        }
-
+        // Addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
@@ -60,6 +54,14 @@ public class HDAddressablesManager : AddressablesManager
         JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         */
 
+        // Downloadables config
+        string downloadablesConfigPath = Path.Combine(addressablesPath, "downloadablesConfig");
+        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
+        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        JSONNode downloadablesConfigJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        Downloadables.Config downloadablesConfig = new Downloadables.Config();
+        downloadablesConfig.Load(downloadablesConfigJSON, logger);
+
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
         if (assetsLUT == null)
@@ -67,29 +69,66 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
-        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
-        
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, null, logger);
-
-        m_pollAutomaticDownloaderAt = 0f;
+        m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);        
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
-    {        
-        Downloadables.Catalog catalog = new Downloadables.Catalog();
-        catalog.UrlBase = assetsLUT.m_strURLBase + assetsLUT.m_iReleaseVersion + "/";
-
-        Downloadables.CatalogEntry entry;        
-        foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
+    {
+        if (assetsLUT != null)
         {
-            entry = new Downloadables.CatalogEntry();
-            entry.CRC = pair.Value;
-            entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+            // urlBase is taken from assetLUT unless it's empty or "localhost", which means that assetsLUT is the one in the build, which must be adapted to the environment
+            string urlBase = assetsLUT.m_strURLBase;
+            if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
+            {
+                Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+                if (kServerConfig != null)
+                {
+                    switch (kServerConfig.m_eBuildEnvironment)
+                    {
+                        case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
+                            urlBase = "http://hdragon-assets-s3.akamaized.net/prod/";
+                            break;
 
-            catalog.AddEntry(pair.Key, entry);
+                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                            urlBase = "http://hdragon-assets-s3.akamaized.net/qc/";
+                            break;
+
+                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
+                            break;
+
+                        case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
+                            break;
+                    }
+
+                    //http://10.44.4.69:7888/            
+                }                
+            }
+
+            Downloadables.Catalog catalog = new Downloadables.Catalog();
+            catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
+
+            Downloadables.CatalogEntry entry;
+            foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
+            {
+                entry = new Downloadables.CatalogEntry();
+                entry.CRC = pair.Value;
+                entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+
+                catalog.AddEntry(pair.Key, entry);
+            }
+
+            return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
         }
-
-        return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());        
+        else
+        {
+            return null;
+        }
     }
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
@@ -139,16 +178,11 @@ public class HDAddressablesManager : AddressablesManager
 
     protected override void ExtendedUpdate()
     {
-        if (Time.realtimeSinceStartup >= m_pollAutomaticDownloaderAt)
-        {
-            // We don't want the automatic downloader to interfere with the ingame experience
-            // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled        
-            bool value = !FlowManager.IsInGameScene() && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
-            if (value != IsAutomaticDownloaderEnabled)
-                IsAutomaticDownloaderEnabled = value;
+        // We don't want the downloader to interfere with the ingame experience
+        IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
-            m_pollAutomaticDownloaderAt = Time.realtimeSinceStartup + 3f;
-        }
+        // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
+        IsAutomaticDownloaderEnabled = UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     #region ingame
@@ -274,7 +308,7 @@ public class HDAddressablesManager : AddressablesManager
                 }
             }
         }
-    }
+    }    
 
     public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
     {
@@ -285,18 +319,28 @@ public class HDAddressablesManager : AddressablesManager
         {            
             for (int i = 0; i < nextAreaRealSceneNames.Count;)
             {
-                if (!IsResourceAvailable(nextAreaRealSceneNames[i]))
+                if (IsResourceAvailable(nextAreaRealSceneNames[i], true))
                 {
-                    nextAreaRealSceneNames.RemoveAt(i);
+                    i++;                    
                 }
                 else
                 {
-                    i++;
+                    // Avoid this scene to be loaded since it's not available
+                    nextAreaRealSceneNames.RemoveAt(i);                    
                 }
             }
         }
 
         return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
     }
-    #endregion                       
+
+    /// <summary>
+    /// Method called when the user leaves ingame and the whole level has been unloaded.
+    /// </summary>
+    public void Ingame_NotifyLevelUnloaded()
+    {
+        // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
+        m_tracker.ResetIdsLoadTracked();
+    }
+    #endregion
 }

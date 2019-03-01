@@ -11,21 +11,23 @@ namespace Downloadables
     /// This class is responsible for downloading a downloadable
     /// </summary>
     public class Downloader
-    {
+    {       
         private static int TIMEOUT = 10000;
 
         private string m_urlBase;
         private Disk m_disk;
+        public NetworkDriver NetworkDriver { get; set; }        
         private Logger m_logger;
 
         private Thread m_downloadThread = null;
 
         public NetworkReachability CurrentNetworkReachability { get; set; }
 
-        public Downloader(Disk disk, Logger logger)
-        {            
-            m_disk = disk;
-            m_logger = logger;
+        public Downloader(NetworkDriver networkDriver, Disk disk, Logger logger)
+        {
+            NetworkDriver = networkDriver;
+            m_disk = disk;            
+            m_logger = logger;            
             CurrentNetworkReachability = NetworkReachability.NotReachable;
         }
 
@@ -76,7 +78,7 @@ namespace Downloadables
                 if (CanLog())
                 {
                     Log("Downloader Starting Download: " + entryStatus.Id);
-                }
+                }                
 
                 entryStatus.OnDownloadStart();
                 m_downloadThread = new Thread(() => DoDownload(entryStatus));
@@ -106,6 +108,12 @@ namespace Downloadables
                     long existingLength = 0;
 
                     FileInfo fileInfo = m_disk.File_GetInfo(Disk.EDirectoryId.Downloads, fileName, out error);
+
+                    if (error != null)
+                    {
+                        return;
+                    }
+
                     if (fileInfo.Exists)
                     {
                         existingLength = fileInfo.Length;
@@ -118,7 +126,7 @@ namespace Downloadables
                         Log("AssetBundler DoDownload: Resuming incomplete DL. " + existingLength + " bytes downloaded already. URL = " + downloadURL);
                     }
 
-                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(downloadURL);
+                    HttpWebRequest request = NetworkDriver.CreateHttpWebRequest(downloadURL);
                     request.Proxy = NetworkManager.SharedInstance.GetCurrentProxySettings();
                     request.Timeout = TIMEOUT;
                     request.ReadWriteTimeout = TIMEOUT;
@@ -150,7 +158,6 @@ namespace Downloadables
                                 return;
                             }
                         }
-
 
                         long serverFileSize = existingLength + response.ContentLength; //response.ContentLength gives me the size that is remaining to be downloaded
 
@@ -193,7 +200,7 @@ namespace Downloadables
                             downloadResumable = false;
                         }
 
-                        using (saveFileStream = fileInfo.Open(downloadResumable ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                        using (saveFileStream = m_disk.DiskDriver.File_Open(fileInfo, downloadResumable ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                         {
                             using (Stream stream = response.GetResponseStream())
                             {
@@ -248,7 +255,7 @@ namespace Downloadables
                                         return;
                                     }
                                     int byteSize = stream.Read(downBuffer, 0, downBuffer.Length);
-                                    saveFileStream.Write(downBuffer, 0, byteSize);
+                                    m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);                                    
                                     totalReceived += byteSize;
                                     sessionReceived += byteSize;
 
@@ -357,7 +364,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                //m_logger.Log(msg);
+                m_logger.Log(msg);
             }
         }
 
@@ -365,7 +372,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                //m_logger.LogWarning(msg);
+                m_logger.LogWarning(msg);
             }
         }
 
@@ -373,7 +380,7 @@ namespace Downloadables
         {
             if (CanLog())
             {
-                //m_logger.LogError(msg);
+                m_logger.LogError(msg);
             }
         }
     }

@@ -168,8 +168,8 @@ public class GameHUD : MonoBehaviour {
     }
 
     private void Debug_SetActive() {
-		gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
-		if(m_speedGameObject != null) m_speedGameObject.SetActive( Prefs.GetBoolPlayer(DebugSettings.SHOW_SPEED) );
+		gameObject.SetActive(DebugSettings.ingameHud);
+		if(m_speedGameObject != null) m_speedGameObject.SetActive( DebugSettings.showSpeed );
     }
 
 	/// <summary>

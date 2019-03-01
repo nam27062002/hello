@@ -156,7 +156,8 @@ public class CurvedText : MonoBehaviour {
 		Vector3[] vertices;
 		Matrix4x4 matrix;
 		Vector3 horizontal = new Vector3(1f, 0f, 0f);
-		for(int i = 0; i < characterCount; i++) {
+		int chars = Mathf.Min(characterCount, textInfo.characterInfo.Length);
+		for(int i = 0; i < chars; i++) {
 			// Skip if vertex is not visible
 			if(!textInfo.characterInfo[i].isVisible) {
 				continue;

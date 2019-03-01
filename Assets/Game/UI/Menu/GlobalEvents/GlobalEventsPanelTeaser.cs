@@ -36,7 +36,10 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	public void OnEnable() {
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
 		// Initialize progress bar
 		if(m_timerProgressBar != null) {
 			m_timerProgressBar.minValue = 0;
@@ -50,7 +53,10 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	public void OnDisable() {
+	protected override  void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
 		// Cancel periodic call
 		CancelInvoke();
 	}

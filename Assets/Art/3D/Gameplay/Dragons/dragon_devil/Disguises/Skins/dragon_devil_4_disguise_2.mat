@@ -12,7 +12,7 @@ Material:
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 3060
   stringTagMap:
     QUEUE: Transparent
     RenderType: Transparent
@@ -70,6 +70,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _BlendMode: 2
     - _BumpScale: 1
@@ -95,6 +96,9 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 1.79
@@ -112,6 +116,8 @@ Material:
     - _SrcBlend: 5
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
@@ -122,6 +128,7 @@ Material:
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.1944204, g: 0.19603859, b: 0.22794116, a: 1}
     - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.022058845, g: 0.005933069, b: 0, a: 0}
     - _SecondLightDir: {r: 11.86, g: -6.2, b: 7.61, a: 0.45}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}

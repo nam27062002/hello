@@ -88,7 +88,7 @@ public class PopupLanguageSelector : MonoBehaviour {
             PlayerPrefs.SetString(PopupSettings.KEY_SETTINGS_LANGUAGE, newLangDef.sku);
 
             // [AOC] If the setting is enabled, replace missing TIDs for english ones
-            if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
+            if(!DebugSettings.showMissingTids) {
                 LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
             }
         }

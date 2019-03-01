@@ -23,7 +23,7 @@ public abstract class AddressablesProvider
         return null;
     }
 
-    public virtual bool IsResourceAvailable(AddressablesCatalogEntry entry)
+    public virtual bool IsResourceAvailable(AddressablesCatalogEntry entry, bool track = false)
     {
         // By default there's no dependencies so it's available
         return true;

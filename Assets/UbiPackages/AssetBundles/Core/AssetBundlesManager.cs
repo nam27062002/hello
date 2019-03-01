@@ -39,40 +39,34 @@ public class AssetBundlesManager
 
         return abManifest;
     }
-
-    /// <summary>
-    /// List of the local asset bundle ids.
-    /// </summary>
-    private List<string> m_localAssetBundleIds;
-    private List<string> m_remoteAssetBundleIds;
-
+   
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string DEPENDENCIES_FILENAME = "dependencies";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION = "assetBundlesCatalog";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
+    public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
-    private Downloadables.Manager m_downloadablesManager;
-
-    private AssetBundlesTracker m_tracker;
+    private Downloadables.Manager m_downloadablesManager;        
 
 #if UNITY_EDITOR
+    private MockNetworkDriver m_networkDriver;
     private MockDiskDriver m_diskDriver;
 #endif
 
     /// <summary>
     /// Initialize the system.
     /// </summary>
-    /// <param name="localAssetBundleIds">List of the local asset bundle ids.</param>
-    /// <param name="localAssetBundlesPath">Relative path from StreamingAssets to local AssetBundles folder. Example: in your folder is in "/Assets/StreamingAssets/AssetBundles" then you need to use "AssetBundles"</param>
-    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
-    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>
+    /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
+    /// <param name="downloadablesConfig">Downloadables configuration</param>        
+    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
+    /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(List<string> localAssetBundleIds, string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, AssetBundlesTracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
 
-        sm_logger = logger;
-        m_tracker = tracker;
+        sm_logger = logger;        
 
         if (sm_logger == null)
         {
@@ -85,158 +79,112 @@ public class AssetBundlesManager
 
         if (Logger.CanLog())
         {
-            Logger.Log("Initializing AssetBundlesManager: " + UbiListUtils.GetListAsString(localAssetBundleIds));
+            Logger.Log("Initializing AssetBundlesManager...");
         }
 
         Loader_Init();
         Ops_Init();
 
-        m_localAssetBundleIds = localAssetBundleIds;
-
 #if UNITY_EDITOR
-        MockDiskDriver diskDriver = new MockDiskDriver();
+        MockNetworkDriver networkDriver = new MockNetworkDriver(null);
+        m_networkDriver = networkDriver;        
+
+        MockDiskDriver diskDriver = new MockDiskDriver(null);
         m_diskDriver = diskDriver;
         //m_diskDriver.SetExceptionTypeToThrow(MockDiskDriver.EExceptionType.UnauthorizedAccess);
 #else
-        DiskDriver diskDriver = new DiskDriver();
+        NetworkDriver networkDriver = new ProductionNetworkDriver();
+        DiskDriver diskDriver = new ProductionDiskDriver();
 #endif
         Logger downloadablesLogger = logger;
-        m_downloadablesManager = new Downloadables.Manager(diskDriver, null, downloadablesLogger);
-        m_downloadablesManager.Initialize(downloadablesCatalog, isAutomaticDownloaderEnabled);
+        m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
+        m_downloadablesManager.Initialize(downloadablesCatalog);
 
-        LoadManifest(localAssetBundlesPath);        
+        LoadCatalog(localAssetBundlesPath);
+
+        if (CanLog())
+        {
+            Logger.Log("AssetBundlesManager initialized successfully");
+        }
     }
 
 #if UNITY_EDITOR
+    public MockNetworkDriver GetMockNetworkDriver()
+    {
+        return m_networkDriver;
+    }
+
     public MockDiskDriver GetMockDiskDriver()
     {
         return m_diskDriver;
     }
 #endif
 
-    private void LoadManifest(string directory)
+    private void LoadCatalog(string directory)
     {        
-        if (string.IsNullOrEmpty(directory))
-        {
-            return;
-        }
+        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
 
-        BetterStreamingAssets.Initialize();
+        if (json != null)
+        { 
+            AssetBundlesCatalog catalog = new AssetBundlesCatalog();
+            catalog.Load(json, sm_logger);
 
-        AssetBundleManifest manifest = null;
-        string path = Path.Combine(directory, DEPENDENCIES_FILENAME);               
+            m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
-        if (BetterStreamingAssets.FileExists(path))
-        {            
-            AssetBundle manifestBundle = BetterStreamingAssets.LoadAssetBundle(path);
-            if (manifestBundle != null)
-            {
-                string assetName = "AssetBundleManifest";
-                manifest = manifestBundle.LoadAsset<AssetBundleManifest>(assetName);
-                if (manifest == null)
-                {
-                    if (Logger.CanLog())
-                    {
-                        Logger.LogError("Error when initializing AssetBundlesManager because asset " + assetName + " wasn't found in manifest asset bundle");
-                    }
-                }
-                else
-                {
-                    m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
-                    
-                    List<string> manifestAssetBundleIds = new List<string>(manifest.GetAllAssetBundles());
-                    if (m_localAssetBundleIds != null)
-                    {
-                        LoadAssetBundlesDefinitions(manifest, manifestAssetBundleIds, m_localAssetBundleIds, directory, true);                                                  
-                    }
+            // Full directory is used so we can use AssetBundle.LoadFromFileAsyn() to load asset bundles from streaming assets and from downloadables folder in device storage
+            string fullLocalDirectory = Path.Combine("Assets/Resources", directory);
+            fullLocalDirectory = Path.Combine(fullLocalDirectory, ASSET_BUNDLES_PATH_RELATIVE);
 
-                    m_remoteAssetBundleIds = m_downloadablesManager.GetIds();
-                    if (m_remoteAssetBundleIds != null)
-                    {
-                        LoadAssetBundlesDefinitions(manifest, manifestAssetBundleIds, m_remoteAssetBundleIds, directory, false);
-                    }
+            List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
 
-                    // No needed anymore
-                    manifestBundle.Unload(true);
-
-                    if (Logger.CanLog())
-                    {
-                        Logger.Log("AssetBundlesManager initialized successfully");
-                    }
-                }
-            }
-            else
-            {
-                if (Logger.CanLog())
-                {
-                    Logger.LogError("Error when initializing AssetBundlesManager: Path for AssetBundleManifest is not valid: " + path);
-                }
-            }
-        }
-    }
-
-    private void LoadAssetBundlesDefinitions(AssetBundleManifest manifest, List<string> manifestAssetBundleIds, List<string> assetBundleIds, 
-                                             string directory, bool local)
-    {        
-        if (assetBundleIds != null)
-        {
             string id;
-            string[] arr;
-            List<string> dependencies;
             AssetBundleHandle handle;
-           
-            string fullDirectory = null;
-            if (local)
-            {
-                // Full directory is used so we can use AssetBundle.LoadFromFileAsyn() to load asset bundles from streaming assets and from downloadables folder in device storage
-                fullDirectory = Path.Combine(Application.streamingAssetsPath, directory);
-            }
-
+            List<string> dependencies;
             int count = assetBundleIds.Count;
             for (int i = 0; i < count; i++)
             {
                 id = assetBundleIds[i];
 
-                // Verifies that the asset bundle is defined in the manifest
-                if (!manifestAssetBundleIds.Contains(id))
+                dependencies = catalog.GetAllDependencies(id);
+
+                // id is also included because it makes downloading logic easier
+                dependencies.Add(id);
+
+                handle = new AssetBundleHandle();
+
+                // The path depends on whether or not the asset bundle is local
+                if (m_downloadablesManager.Catalog_ContainsEntryStatus(id))
                 {
-                    if (Logger.CanLog())
-                    {
-                        Logger.LogError("Asset bundle with id " + assetBundleIds[i] + " can't be found in asset bundles manifest");
-                    }
+                    handle.Setup(id, m_downloadablesManager.GetPathToDownload(id), dependencies, true);
                 }
                 else
                 {
-                    arr = manifest.GetAllDependencies(id);
-                    dependencies = new List<string>(arr);
-
-                    // id is also included because it makes downloading logic easier
-                    dependencies.Add(id);
-
-                    handle = new AssetBundleHandle();
-                    //handle.SetupLocal(id, Path.Combine(localAssetBundlesPath, id), dependencies);
-                    if (local)
-                    {
-                        handle.Setup(id, Path.Combine(fullDirectory, id), dependencies, false);
-                    }
-                    else
-                    {
-                        handle.Setup(id, m_downloadablesManager.GetPathToDownload(id), dependencies, true);
-                    }
-
-                    m_assetBundleHandles.Add(assetBundleIds[i], handle);
+                    handle.Setup(id, Path.Combine(fullLocalDirectory, id), dependencies, false);
                 }
+
+                m_assetBundleHandles.Add(assetBundleIds[i], handle);
+            }            
+        }
+        else
+        {
+            if (CanLog())
+            {
+                Logger.Log("No " + ASSET_BUNDLES_CATALOG_FILENAME + " file found");
             }
         }
-    }
+    }    
 
     public void Reset()
-    {
-        UnloadAssetBundleList(m_localAssetBundleIds, null);
-        m_localAssetBundleIds = null;
-
-        UnloadAssetBundleList(m_remoteAssetBundleIds, null);
-        m_remoteAssetBundleIds = null;
+    {        
+        if (m_assetBundleHandles != null)
+        {
+            foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
+            {
+                UnloadAssetBundle(pair.Key, null);
+            }
+        }
 
         m_assetBundleHandles = null;
 
@@ -267,6 +215,22 @@ public class AssetBundlesManager
             if (m_downloadablesManager != null)
             {
                 m_downloadablesManager.IsAutomaticDownloaderEnabled = value;
+            }
+        }
+    }
+
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_downloadablesManager == null) ? false : m_downloadablesManager.IsEnabled;
+        }
+
+        set
+        {
+            if (m_downloadablesManager != null)
+            {
+                m_downloadablesManager.IsEnabled = value;
             }
         }
     }
@@ -338,7 +302,7 @@ public class AssetBundlesManager
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
     /// which means that either the asset bundle is local or it's remote and it has already been downloaded.
     /// </summary>  
-    public bool IsAssetBundleAvailable(string id)
+    public bool IsAssetBundleAvailable(string id, bool track = false)
     {
         bool returnValue = IsAssetBundleValid(id);
         if (returnValue)
@@ -346,23 +310,27 @@ public class AssetBundlesManager
             AssetBundleHandle handle = GetAssetBundleHandle(id);
             if (handle.IsRemote())
             {
-                returnValue = m_downloadablesManager.IsIdAvailable(id);
+                returnValue = m_downloadablesManager.IsIdAvailable(id, track);
             }
         }
 
         return returnValue;
     }
 
-    public bool IsAssetBundleListAvailable(List<string> ids)
+    public bool IsAssetBundleListAvailable(List<string> ids, bool track = false)
     {
         bool returnValue = IsAssetBundleListValid(ids);
         if (returnValue)
         {
-            int count = ids.Count;
-            for (int i = 0; i < count && returnValue; i++)
-            {
-                returnValue = IsAssetBundleAvailable(ids[i]);
-            }            
+			if(ids != null) 
+			{
+				int count = ids.Count;
+				for(int i = 0; i < count; i++) 
+				{
+                    // IsAssetBundleAvailable() must be called for every id so that the result will be tracked if it needs to
+                    returnValue = IsAssetBundleAvailable(ids[i], track) && returnValue;
+                }
+			}
         }
 
         return returnValue;
@@ -412,7 +380,14 @@ public class AssetBundlesManager
                 }
                 else
                 {
-                    m_downloadablesManager.RequestIdList(ids);                    
+                    int count = ids.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (!IsAssetBundleAvailable(ids[i]))
+                        {
+                            m_downloadablesManager.RequestId(ids[i]);
+                        }
+                    }
 
                     // Creates an op that will be done and will call onDone callback when all downloads are done
                     // or when any downloads fail
@@ -849,6 +824,11 @@ public class AssetBundlesManager
         return m_downloadablesManager.Catalog_GetEntryStatus(id);
     }
 
+    public Dictionary<string, Downloadables.CatalogEntryStatus> GetDownloadablesCatalog()
+    {
+        return m_downloadablesManager.Catalog_GetEntryStatusList();
+    }
+
     public void Update()
     {
         if (IsInitialized())
@@ -1071,6 +1051,11 @@ public class AssetBundlesManager
         {
             return sm_logger;
         } 
+    }
+
+    public static bool CanLog()
+    {
+        return sm_logger != null && sm_logger.CanLog();
     }
 
     public static void Log_AssertABIsNullButIsLoaded(string assetBundleId)

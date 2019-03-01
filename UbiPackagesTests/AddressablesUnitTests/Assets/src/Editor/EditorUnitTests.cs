@@ -16,14 +16,21 @@ public class EditorUnitTests : MonoBehaviour
     private const string MENU_ADDRESSABLES_PARSE_ABS = MENU_ADDRESSABLES + "/Parse ABs Test";
     private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT });
 
-    private const string MENU_UBI_DOWNLOADABLES = MENU + "/Downloadables";
-    private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_UBI_DOWNLOADABLES + "/Parse Catalog";
-    private const string MENU_DOWNLOADABLES_INITIALIZE = MENU_UBI_DOWNLOADABLES + "/Initialize";
-    private const string MENU_DOWNLOADABLES_DISK = MENU_UBI_DOWNLOADABLES + "/Disk";
-    private const string MENU_DOWNLOADABLES_CLEANER = MENU_UBI_DOWNLOADABLES + "/Cleaner";
-    private const string MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS = MENU_UBI_DOWNLOADABLES + "/Catalog Entry Status";
+    private const string MENU_ASSET_BUNDLES = MENU + "/AssetBundles";
+    private const string MENU_ASSET_BUNDLES_LOAD = MENU_ASSET_BUNDLES + "/Load";
+    private static List<string> MENU_ASSET_BUNDLES_ALL_NAMES = new List<string>(new string[] { MENU_ASSET_BUNDLES_LOAD });
+
+    private const string MENU_DOWNLOADABLES = MENU + "/Downloadables";
+    private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_DOWNLOADABLES + "/Parse Catalog";
+    private const string MENU_DOWNLOADABLES_INITIALIZE = MENU_DOWNLOADABLES + "/Initialize";
+    private const string MENU_DOWNLOADABLES_DISK = MENU_DOWNLOADABLES + "/Disk";
+    private const string MENU_DOWNLOADABLES_CLEANER = MENU_DOWNLOADABLES + "/Cleaner";
+    private const string MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS = MENU_DOWNLOADABLES + "/Catalog Entry Status";
+    private const string MENU_DOWNLOADABLES_DOWNLOADER = MENU_DOWNLOADABLES + "/Downloader";
+    private const string MENU_DOWNLOADABLES_All_TESTS = MENU_DOWNLOADABLES + "/All tests";
     private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG, MENU_DOWNLOADABLES_INITIALIZE,
-                                                                                               MENU_DOWNLOADABLES_DISK, MENU_DOWNLOADABLES_CLEANER, MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS });
+                                                                                               MENU_DOWNLOADABLES_DISK, MENU_DOWNLOADABLES_CLEANER, MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS,
+                                                                                               MENU_DOWNLOADABLES_DOWNLOADER});
 
     private const string MENU_UBI_LISTS = MENU + "/UbiLists";
     private const string MENU_UBI_LISTS_ADD_RANGE = MENU_UBI_LISTS + "/AddRange Test";
@@ -44,6 +51,9 @@ public class EditorUnitTests : MonoBehaviour
             case MENU_ADDRESSABLES_PARSE_ABS:
                 return UTAddressablesEditorParseABs.GetUnitTestBatch();
 
+            case MENU_ASSET_BUNDLES_LOAD:
+                return UTAssetBundlesLoad.GetUnitTestBatch();
+
             case MENU_DOWNLOADABLES_PARSE_CATALOG:
                 return UTLoadDownloadablesCatalog.GetUnitTestBatch();
 
@@ -55,6 +65,9 @@ public class EditorUnitTests : MonoBehaviour
 
             case MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS:
                 return UTDownloadablesCatalogEntryStatus.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_DOWNLOADER:
+                return UTDownloadablesDownloader.GetUnitTestBatch();                
 
             case MENU_DOWNLOADABLES_CLEANER:
                 return UTDownloadablesCleaner.GetUnitTestBatch();
@@ -73,6 +86,12 @@ public class EditorUnitTests : MonoBehaviour
     public static void UnitTests_Addressables_ParseABs()
     {
         PerformAllTests(MENU_ADDRESSABLES_PARSE_ABS);        
+    }
+    
+    [MenuItem(MENU_ASSET_BUNDLES_LOAD)]
+    public static void UnitTests_AssetBundles_Load()
+    {
+        PerformAllTests(MENU_ASSET_BUNDLES_LOAD);
     }
 
     [MenuItem(MENU_DOWNLOADABLES_PARSE_CATALOG)]
@@ -99,12 +118,25 @@ public class EditorUnitTests : MonoBehaviour
         PerformAllTests(MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS);
     }
 
+    [MenuItem(MENU_DOWNLOADABLES_DOWNLOADER)]
+    public static void UnitTests_Downloadables_Downloader()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_DOWNLOADER);
+    }
+
     [MenuItem(MENU_DOWNLOADABLES_CLEANER)]
     public static void UnitTests_Downloadables_Cleaner()
     {
         PerformAllTests(MENU_DOWNLOADABLES_CLEANER);
     }
     
+    [MenuItem(MENU_DOWNLOADABLES_All_TESTS)]
+    public static void UnitTests_Downloadables_AllTests()
+    {
+        List<UnitTestBatch> batches = GetUnitTestBatchList(MENU_DOWNLOADABLES_ALL_NAMES);
+        PerformUnitTestBatchList(batches);
+    }
+
     [MenuItem(MENU_UBI_LISTS_ADD_RANGE)]
     public static void UnitTests_UbiLists_AddRange()
     {
@@ -130,6 +162,7 @@ public class EditorUnitTests : MonoBehaviour
         List<string> keys = new List<string>();
         UbiListUtils.AddRange(keys, MENU_UBI_LISTS_ALL_NAMES, false, true);
         UbiListUtils.AddRange(keys, MENU_ADDRESSABLES_ALL_NAMES, false, true);
+        UbiListUtils.AddRange(keys, MENU_ASSET_BUNDLES_ALL_NAMES, false, true);        
         UbiListUtils.AddRange(keys, MENU_DOWNLOADABLES_ALL_NAMES, false, true);
 
         List <UnitTestBatch> batches = GetUnitTestBatchList(keys);

@@ -8,11 +8,11 @@ public class UTDownloadablesDisk : UnitTest
     public static UnitTestBatch GetUnitTestBatch()
     {
         UnitTestBatch batch = new UnitTestBatch("UTDownloadablesDisk");
-        MockDiskDriver diskDriver = new MockDiskDriver();
+        MockDiskDriver diskDriver = new MockDiskDriver(null);
         diskDriver.SetExceptionTypeToThrow(MockDiskDriver.EExceptionType.UnauthorizedAccess);        
 
         UTDownloadablesDisk test;
-
+        
         //
         // SUCCESS
         //        
@@ -111,7 +111,7 @@ public class UTDownloadablesDisk : UnitTest
                 m_disk.File_Exists(Disk.EDirectoryId.Manifests, DISK_FILE_NAME, out error);
 
                 m_diskDriver.SetExceptionTypeToThrow(MockDiskDriver.EExceptionType.IOException);
-                m_disk.File_Delete(Disk.EDirectoryId.Manifests, DISK_FILE_NAME, out error);
+                m_disk.File_WriteAllText(Disk.EDirectoryId.Manifests, DISK_FILE_NAME, "test", out error);
                 break;
         }
     }
