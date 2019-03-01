@@ -86,6 +86,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
     public void CheckFreeze()
     {
         float freezingChange = Time.deltaTime * m_freezinSpeed;
+        float defrostSpeed = Time.deltaTime * m_defrostSpeed;
         int max;
        
         max = m_machines.Count;
@@ -129,7 +130,7 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
             Registry freezing = Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
             if ( freezing == null)
             {
-                m_freezingLevels[i] -= freezingChange;
+                m_freezingLevels[i] -= defrostSpeed;
                 if ( m_freezingLevels[i] <= 0 )
                 {
                     m_freezingMachines[i].SetFreezingLevel(0);
