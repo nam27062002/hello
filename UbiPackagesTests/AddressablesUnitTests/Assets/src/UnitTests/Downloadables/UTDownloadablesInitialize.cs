@@ -245,7 +245,11 @@ public class UTDownloadablesInitialize : UnitTest
     {
         m_catalogPath = catalogPath;
         m_cachePath = cachePath;
-        m_manager = new Manager(new ProductionNetworkDriver(), diskDriver, OnDiskIssue, null, sm_logger);
+
+        Config config = new Config();
+        config.IsAutomaticDownloaderEnabled = false;
+        m_manager = new Manager(config, new ProductionNetworkDriver(), diskDriver, OnDiskIssue, null, sm_logger);
+
         m_resultInMemory = resultInMemory;
         m_resultManifests = resultManifests;
         m_resultDownloads = resultDownloads;        
@@ -268,7 +272,7 @@ public class UTDownloadablesInitialize : UnitTest
         reader.Close();
 
         JSONNode catalogJSON = JSON.Parse(content);        
-        m_manager.Initialize(catalogJSON, false);        
+        m_manager.Initialize(catalogJSON);        
     }
 
     private void OnDone()

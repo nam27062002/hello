@@ -26,8 +26,11 @@ namespace Downloadables
 
         private static CatalogEntry sm_entryHelper = new CatalogEntry();
 
-        public static void StaticSetup(Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
-        {            
+        private static Config sm_config;
+
+        public static void StaticSetup(Config config, Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
+        {
+            sm_config = config;
             sm_disk = disk;
             sm_tracker = tracker;
             sm_onDownloadEndCallback = onDownloadEndCallback;
@@ -78,7 +81,7 @@ namespace Downloadables
                                     break;
 
                                 case EState.DealingWithCRCMismatch:
-                                    errorType = Error.EType.Network_CRC_Mismatch;
+                                    errorType = Error.EType.CRC_Mismatch;
                                     break;
                             }
 
@@ -564,8 +567,8 @@ namespace Downloadables
         }
 
         public bool CanAutomaticDownload(bool simulation)
-        {
-            bool returnValue = CRCMismatchErrorTimes < 2;
+        {                 
+            bool returnValue = CRCMismatchErrorTimes < sm_config.GetMaxTimesPerSessionPerErrorType(Error.EType.CRC_Mismatch);
             if (returnValue)
             {
                 returnValue = (simulation) ? HasSimulationExpired() : HasErrorExpired();

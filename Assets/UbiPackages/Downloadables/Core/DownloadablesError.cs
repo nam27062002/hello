@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
@@ -14,8 +15,7 @@ namespace Downloadables
             Disk_Other,
             CRC_Mismatch,                           // This error arises when the file downloaded doesn't match the CRC stated by the catalog
             Network_Uri_Malformed,                  // This error arises when the uri of the downloadable to download is malformed            
-            Network_Server_Size_Mismatch,           // This error arises when the client requests for more bytes than the ones available in server
-            Network_CRC_Mismatch,                   // This error arises when the CRC of the file downloaded doesn't match with the expected one
+            Network_Server_Size_Mismatch,           // This error arises when the client requests for more bytes than the ones available in server            
             Network_Unauthorized_Reachability,      // This error arises when trying to download with unauthorized reachability (4G with no permission)             
             Network_Web_Exception_Connect_Failure,  // This error arises when the server is down
             Network_Web_Exception_Timeout,          // This error arises when there's no response from server after a while
@@ -25,7 +25,37 @@ namespace Downloadables
             Other
         };
 
+        private static List<string> sm_typeString;
+        private static List<string> TypeStrings
+        {
+            get
+            {
+                if (sm_typeString == null)
+                {
+                    sm_typeString = new List<string>();
+
+                    int count = Enum.GetValues(typeof(EType)).Length;
+                    for (int i = 0; i < count; i++)
+                    {
+                        sm_typeString.Add(((EType)i).ToString());
+                    }
+                }
+
+                return sm_typeString;
+            }
+        }
+
         //public static int TypesCount = Enum.GetValues(typeof(EType)).Length;
+        public static string TypeToString(EType type)
+        {           
+            return TypeStrings[(int)type];
+        }
+
+        public static EType StringToType(string typeAsString)
+        {
+            int index = TypeStrings.IndexOf(typeAsString);
+            return (index == -1) ? EType.None : ((EType)index);
+        }
 
         public EType Type;
 
