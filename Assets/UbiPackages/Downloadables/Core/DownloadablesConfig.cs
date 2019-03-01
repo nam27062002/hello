@@ -139,5 +139,11 @@ namespace Downloadables
 
             return returnValue;
         }
+
+        public int GetMaxTimesPerSessionPerErrorType(Error.EType type)
+        {
+            ErrorConfig errorConfig = GetErrorConfig(type);
+            return (errorConfig == null) ? int.MaxValue : errorConfig.MaxTimesPerSession;
+        }
     }
 }

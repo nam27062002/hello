@@ -115,7 +115,7 @@ public class UTDownloadablesDownloader : UnitTest
         Disk disk = new Disk(m_disk, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
         UTTracker tracker = new UTTracker(config, logger);
 
-        CatalogEntryStatus.StaticSetup(disk, tracker, OnDownloadEndCallback);
+        CatalogEntryStatus.StaticSetup(config, disk, tracker, OnDownloadEndCallback);
 
         m_downloader = new Downloader(m_network, disk, logger);
         string url = "http://192.168.1.2:7888/StandaloneWindows64/";

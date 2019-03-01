@@ -103,7 +103,7 @@ namespace Downloadables
             m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
             m_tracker = tracker;
 
-            CatalogEntryStatus.StaticSetup(m_disk, tracker);
+            CatalogEntryStatus.StaticSetup(config, m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
             m_downloader = new Downloader(network, m_disk, logger);
 
