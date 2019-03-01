@@ -28,7 +28,7 @@ public class AddressablesCatalogArea
         if (data != null)
         {
             Id = data[ATT_ID];
-            LoadAssetBundlesList(data[ATT_ASSET_BUNDLES].AsArray);
+            UbiListUtils.JSONArrayToList(data[ATT_ASSET_BUNDLES].AsArray, AssetBundleIds, true);            
         }
     }
 
@@ -36,43 +36,8 @@ public class AddressablesCatalogArea
     {        
         JSONClass data = new JSONClass();
         data[ATT_ID] = Id;
-        data.Add(ATT_ASSET_BUNDLES, AssetBundlesListToJSON());
+        data.Add(ATT_ASSET_BUNDLES, UbiListUtils.ListToJSONArray(AssetBundleIds));
 
         return data;
-    }
-
-    public void LoadAssetBundlesList(JSONArray entries)
-    {
-        if (entries != null)
-        {
-            int count = entries.Count;
-            string abName;
-            for (int i = 0; i < count; ++i)
-            {
-                abName = entries[i];
-
-                abName = abName.Trim();
-                // Makes sure that there's no duplicates
-                if (!string.IsNullOrEmpty(abName) && !AssetBundleIds.Contains(abName))
-                {
-                    AssetBundleIds.Add(abName);
-                }
-            }
-        }
-    }
-
-    private JSONArray AssetBundlesListToJSON()
-    {
-        JSONArray data = new JSONArray();
-        int count = AssetBundleIds.Count;
-        for (int i = 0; i < count; i++)
-        {
-            if (!string.IsNullOrEmpty(AssetBundleIds[i]))
-            {
-                data.Add(AssetBundleIds[i]);
-            }
-        }
-
-        return data;
-    }
+    }       
 }

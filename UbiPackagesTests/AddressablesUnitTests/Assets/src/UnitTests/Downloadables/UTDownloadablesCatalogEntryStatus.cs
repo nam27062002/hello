@@ -11,7 +11,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
     public static UnitTestBatch GetUnitTestBatch()
     {
         UnitTestBatch batch = new UnitTestBatch("UTDownloadablesCatalogEntryStatus");
-        MockDiskDriver diskDriver = new MockDiskDriver();
+        MockDiskDriver diskDriver = new MockDiskDriver(null);
         JSONNode jsonCatalogEntry;
         JSONNode resultJsonCatalogEntry;
         List<string> resultFilesInManifests;
@@ -389,7 +389,8 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         m_diskDriver = diskDriver;
         m_cacheFolder = cacheFolder;
 
-        CatalogEntryStatus.sm_disk = disk;
+        Config config = new Config();
+        CatalogEntryStatus.StaticSetup(config, disk, null);
         m_entryStatus = new CatalogEntryStatus();
         m_entryStatus.LoadManifest(id, catalogJSON);
 
@@ -424,7 +425,9 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
     public override void Update()
     {
         if (HasStarted())
-        {            
+        {
+            CatalogEntryStatus.StaticUpdate(UnityEngine.Time.realtimeSinceStartup, UnityEngine.Application.internetReachability);
+
             if (!m_testReallyStarted && m_entryStatus.State == m_stateToTest)
             {
                 NotifyTestReallyStarted();

@@ -369,7 +369,7 @@ public class MenuSceneController : SceneController {
         if (_id == DebugSettings.INGAME_HUD) {
             GameObject _uiCanvas = Debug_GetUICanvas();
             if (_uiCanvas != null) {
-                _uiCanvas.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
+                _uiCanvas.gameObject.SetActive(DebugSettings.ingameHud);
             }
         }      
     }

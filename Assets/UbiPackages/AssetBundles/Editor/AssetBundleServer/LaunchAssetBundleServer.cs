@@ -15,7 +15,7 @@ namespace AssetBundles
         [SerializeField]
         int     m_ServerPID = 0;
 
-        private static string sm_remoteAssetsFolderName = "RemoteAssets";
+        private static string sm_remoteAssetsFolderName = "Downloadables";
 
         public static void SetRemoteAssetsFolderName(string name)
         {
@@ -103,7 +103,7 @@ namespace AssetBundles
                 downloadURL = "http://" + localIP + ":7888/";
             }
 
-            string assetBundleManagerResourcesDirectory = "Assets/StreamingAssets/Addressables/AssetBundles";
+            string assetBundleManagerResourcesDirectory = "Assets/Resources/Addressables/AssetBundles";
             string assetBundleUrlPath = Path.Combine(assetBundleManagerResourcesDirectory, "AssetBundleServerURL.bytes");
             if (!Directory.Exists(assetBundleManagerResourcesDirectory))
             {

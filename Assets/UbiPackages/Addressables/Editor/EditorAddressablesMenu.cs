@@ -14,7 +14,8 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_CUSTOMIZE_EDTOR_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "2. Customize editor catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "3. Generate player catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "4. Generate Asset Bundles";
-    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Process Asset Bundles";    
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Generate Asset Bundles Catalog";
+    private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Process Asset Bundles";    
 
     private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";
     private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
@@ -59,7 +60,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     }    
 
     // 3.Generate Player Catalog
-    // Generates addressablesCatalog.json in Assets/StreamingAssets/Addressables folder
+    // Generates addressablesCatalog.json in Assets/Resources/Addressables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
     static void GeneratePlayerCatalog()
     {
@@ -75,6 +76,15 @@ public class EditorAddressablesMenu : MonoBehaviour
         Manager.BuildAssetBundles(EditorUserBuildSettings.activeBuildTarget);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES);
     }
+
+    // 4. Generate Asset Bundles
+    // Generates asset bundles manager in Assets/Resources/Addressables/AssetBundles folder
+    [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG)]
+    static void GenerateAssetBundlesCatalog()
+    {
+        Manager.GenerateAssetBundlesCatalog();
+        OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG);
+    }    
 
     // 5. Process Asset Bundles
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES)]

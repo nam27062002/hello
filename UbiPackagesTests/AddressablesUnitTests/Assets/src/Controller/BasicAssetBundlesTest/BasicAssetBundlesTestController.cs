@@ -368,21 +368,28 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     #region ab
     public void AB_Init()
     {
-        Memory_BeginSample("AB_INIT");
+        Memory_BeginSample("AB_INIT");        
 
-        BetterStreamingAssets.Initialize();
-
-        string localAssetBundlesPath = "Addressables";
-        localAssetBundlesPath = Path.Combine(localAssetBundlesPath, "AssetBundles");
-
-        string path = Path.Combine("Addressables", "downloadablesCatalog.json");       
-        string text = (BetterStreamingAssets.FileExists(path)) ? BetterStreamingAssets.ReadAllText(path) : null;
-        JSONNode json = (string.IsNullOrEmpty(text)) ? null : JSON.Parse(text);
-        List<string> localAssetBundleIds = null;// new List<string> { "asset_cubes", "scene_cubes", "material_cubes" /*, "ab/logo", "ab/scene_cube"*/ };
+        string localAssetBundlesPath = "Addressables";                
+        string path = Path.Combine("Addressables", "downloadablesCatalog");
 
         Logger logger = new ConsoleLogger("AssetBundles");
-        AssetBundlesTracker tracker = new AssetBundlesDummyTracker(logger);
-        AssetBundlesManager.Instance.Initialize(localAssetBundleIds, localAssetBundlesPath, json, false, tracker, logger);
+
+        // Addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;
+        JSONNode json = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);                                
+        
+        // Downloadables config
+        string downloadablesConfigPath = Path.Combine(localAssetBundlesPath, "downloadablesConfig");
+        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
+        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        JSONNode downloadablesConfigASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        Downloadables.Config downloadablesConfig = new Downloadables.Config();
+        downloadablesConfig.Load(downloadablesConfigASJSON, logger);
+        
+        Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, json, tracker, logger);
 
         Memory_EndSample(true);
     }

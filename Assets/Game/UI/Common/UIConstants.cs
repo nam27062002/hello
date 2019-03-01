@@ -261,7 +261,7 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static float menuCameraTransitionDuration {
 		get {
 			// Check if it has been override in the Control Panel
-			float duration = PlayerPrefs.GetFloat(DebugSettings.MENU_CAMERA_TRANSITION_DURATION, instance.m_menuCameraTransitionDuration);
+			float duration = DebugSettings.Prefs_GetFloatPlayer(DebugSettings.MENU_CAMERA_TRANSITION_DURATION, instance.m_menuCameraTransitionDuration);
 			if(duration <= 0) duration = instance.m_menuCameraTransitionDuration;
 			return duration;
 		}

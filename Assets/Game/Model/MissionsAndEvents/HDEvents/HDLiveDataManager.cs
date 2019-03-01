@@ -243,6 +243,33 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         _testResponse(null, response);
     }
 
+	public static IEnumerator DelayedGetEventOfTypeCall(string _eventType, TestResponse _testResponse) {
+		yield return new WaitForSeconds(0.1f);
+
+		// Load sample json file
+		GameServerManager.ServerResponse response = HDLiveDataManager.CreateTestResponse("hd_live_events.json");
+		SimpleJSON.JSONClass responseJson = SimpleJSON.JSONNode.Parse(response["response"] as string) as SimpleJSON.JSONClass;
+
+		// Strip other event types
+		if(responseJson != null) {
+			List<string> keysToDelete = new List<string>();
+			ArrayList keys = responseJson.GetKeys();
+			for(int i = 0; i < keys.Count; ++i) {
+				string key = keys[i] as string;
+				if(key != _eventType) keysToDelete.Add(key);
+			}
+
+			for(int i = 0; i < keysToDelete.Count; ++i) {
+				responseJson.Remove(keysToDelete[i]);	
+			}
+
+			response["response"] = responseJson.ToString();
+		}
+
+		// Done!
+		_testResponse(null, response);
+	}
+
 
     public static SimpleJSON.JSONNode ResponseErrorCheck(FGOL.Server.Error _error, GameServerManager.ServerResponse _response, out HDLiveDataManager.ComunicationErrorCodes outErr) {
         SimpleJSON.JSONNode ret = null;
@@ -292,7 +319,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         if (_force || ShouldRequestMyLiveData()) {
             m_lastMyEventsRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
             if (TEST_CALLS) {
-                ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+				ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
             } else {
                 GameServerManager.SharedInstance.HDEvents_GetMyLiveData(MyLiveDataResponse);
             }
@@ -304,7 +331,14 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
     public void ForceRequestMyEventType(int _type) {
         if (TEST_CALLS) {
-            ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+			for(int i = 0; i < m_managers.Count; ++i) {
+				if(m_managers[i] is HDLiveEventManager) {
+					HDLiveEventManager targetManager = m_managers[i] as HDLiveEventManager;
+					if(targetManager.m_numericType == _type) {
+						ApplicationManager.instance.StartCoroutine(DelayedGetEventOfTypeCall(targetManager.type, MyLiveDataResponse));
+					}
+				}
+			}
         } else {
             GameServerManager.SharedInstance.HDEvents_GetMyEventOfType(_type, MyLiveDataResponse);
         }
@@ -317,7 +351,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
             m_lastLeaguesRequestTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTimeAsLong();
 
             if (TEST_CALLS) {
-                ApplicationManager.instance.StartCoroutine(DelayedCall("hd_live_events.json", MyLiveDataResponse));
+				ApplicationManager.instance.StartCoroutine(DelayedGetEventOfTypeCall(HDLeagueController.TYPE_CODE, MyLiveDataResponse));
             } else {
                 GameServerManager.SharedInstance.HDLiveData_GetMyLeagues(MyLiveDataResponse);
             }

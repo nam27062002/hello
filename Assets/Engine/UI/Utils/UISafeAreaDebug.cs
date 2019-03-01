@@ -57,7 +57,7 @@ public class UISafeAreaDebug : MonoBehaviour {
 	/// </summary>
 	private void Refresh() {
 		// Show? Never if it's not a debug build!
-		bool show = Prefs.GetBoolPlayer(DebugSettings.SHOW_SAFE_AREA, false) && UnityEngine.Debug.isDebugBuild;
+		bool show = DebugSettings.showSafeArea && UnityEngine.Debug.isDebugBuild;
 		this.gameObject.SetActive(show);
 
 		// Refresh bounds

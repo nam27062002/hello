@@ -657,7 +657,7 @@ public class WorldFeedbackSpawner : MonoBehaviour, IBroadcastListener {
     }
 
     private void Debug_SetActive() {
-        enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_FEEDBACK, true);        
+        enabled = DebugSettings.ingameParticlesFeedback;        
     }
     #endregion
 }

@@ -19,10 +19,12 @@ using System.Collections.Generic;
 /// </summary>
 [Serializable]
 public class HDDiscountEventManager : HDPassiveEventManager {
+	new public const string TYPE_CODE = "dragonDiscount";
+	new public const int NUMERIC_TYPE_CODE = 3;
 
     public HDDiscountEventManager() : base() {
-        m_type = "dragonDiscount";
-        m_numericType = 3;
+		m_type = TYPE_CODE;
+		m_numericType = NUMERIC_TYPE_CODE;
         Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, CheckEvent);
     }
 

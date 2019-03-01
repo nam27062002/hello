@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragonElectricPowers : MonoBehaviour {
 
@@ -62,6 +63,7 @@ public class DragonElectricPowers : MonoBehaviour {
         for (int i = 0; i < NUM_LIGHTNINGS; i++)
         {
             m_lightningInstances[i] = Instantiate<GameObject>(m_lightningPrefab);
+            SceneManager.MoveGameObjectToScene(m_lightningInstances[i], gameObject.scene);
             m_lightningPS[i] = m_lightningInstances[i].GetComponent<ParticleSystem>();
         }
         
@@ -92,6 +94,7 @@ public class DragonElectricPowers : MonoBehaviour {
         if (m_powerLevel >= 2)
         {
             m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
+            SceneManager.MoveGameObjectToScene(m_blastParticleSystem.gameObject, gameObject.scene);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
         Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
