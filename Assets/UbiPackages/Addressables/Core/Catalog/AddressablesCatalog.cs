@@ -12,7 +12,10 @@ public class AddressablesCatalog
     public static string CATALOG_ATT_AREAS = "areas";
 
     private Dictionary<string, AddressablesCatalogEntry> m_entries;
+
+#if UNITY_EDITOR
     private List<string> m_localABList;
+#endif
 
     private Dictionary<string, AddressablesCatalogArea> m_areas;
 
@@ -28,15 +31,21 @@ public class AddressablesCatalog
     public AddressablesCatalog()    
     {
         m_entries = new Dictionary<string, AddressablesCatalogEntry>();
-        m_localABList = new List<string>();
         m_areas = new Dictionary<string, AddressablesCatalogArea>();
+
+#if UNITY_EDITOR
+        m_localABList = new List<string>();
+#endif
     }
 
     public void Reset()
     {
-        m_entries.Clear();
-        m_localABList.Clear();
+        m_entries.Clear();      
         m_areas.Clear();
+
+#if UNITY_EDITOR
+        m_localABList.Clear();
+#endif
     }
 
     public void Load(JSONNode catalogJSON, Logger logger)
@@ -45,18 +54,30 @@ public class AddressablesCatalog
 
         if (catalogJSON != null)
         {
-            LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);
-            LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
+            LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);            
             LoadAreas(catalogJSON[CATALOG_ATT_AREAS].AsArray, logger);
+
+#if UNITY_EDITOR
+            if (m_editorMode)
+            {
+                LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
+            }
+#endif
         }
     }
 
     public JSONClass ToJSON()
     {        
         JSONClass data = new JSONClass();        
-        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());        
-        data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
+        data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());                
         data.Add(CATALOG_ATT_AREAS, AreasToJSON());
+
+#if UNITY_EDITOR
+        if (m_editorMode)
+        {
+            data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
+        }
+#endif
 
         return data;
     }
@@ -127,6 +148,7 @@ public class AddressablesCatalog
         return m_entries;
     }
 
+#if UNITY_EDITOR
     public void LoadLocalABList(JSONArray entries)
     {
         if (entries != null)
@@ -165,12 +187,7 @@ public class AddressablesCatalog
     public List<string> GetLocalABList()
     {
         return m_localABList;
-    }
-
-    public void SetLocalABList(List<string> value)
-    {
-        m_localABList = value;
-    }
+    }    
 
     public List<string> GetUsedABList()
     {
@@ -192,6 +209,7 @@ public class AddressablesCatalog
 
         return returnValue;
     }
+#endif
 
     private void LoadAreas(JSONArray areas, Logger logger)
     {

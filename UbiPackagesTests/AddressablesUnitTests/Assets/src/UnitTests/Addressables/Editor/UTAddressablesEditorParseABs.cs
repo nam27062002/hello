@@ -184,7 +184,7 @@ public class UTAddressablesEditorParseABs : UnitTest
         output.m_RemoteABList = new List<string>(new string[] { AB_SCENE_CUBES_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("01", "02", output);        
-        batch.AddTest(test, false);
+        batch.AddTest(test, false);        
 
         return batch;
     }
@@ -239,7 +239,7 @@ public class UTAddressablesEditorParseABs : UnitTest
         AssetBundleManifest abManifest = null;
         if (m_abRootPath != null)
         {
-            string abManifestPath = Path.Combine(m_abRootPath, AssetBundlesManager.DEPENDENCIES_FILENAME);
+            string abManifestPath = Path.Combine(m_abRootPath, "dependencies");
             abManifest = AssetBundlesManager.LoadManifest(abManifestPath, out manifestBundle);                                    
         }
 

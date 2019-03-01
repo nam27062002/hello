@@ -643,7 +643,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	private void Device_CalculateOrientation() 
 	{
 		ScreenOrientation screenOrientation = Screen.orientation;
-		bool verticalOrientationIsAllowed = Prefs.GetBoolPlayer(DebugSettings.VERTICAL_ORIENTATION, false);
+		bool verticalOrientationIsAllowed = DebugSettings.verticalOrientation;
 		Screen.orientation = (verticalOrientationIsAllowed) ? ScreenOrientation.AutoRotation : ScreenOrientation.Landscape;
 	}
 		

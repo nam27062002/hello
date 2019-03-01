@@ -149,7 +149,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 
 		m_active = true;//Prefs.GetBoolPlayer(DebugSettings.FOG_MANAGER, true);
 
-		m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer( DebugSettings.FOG_BLEND_TYPE, 0);
+		m_fogBlendMode = (FogBlendMode) DebugSettings.fogBlendType;
 		OnModeChanged();
 
 		if ( !Application.isPlaying )
@@ -203,7 +203,7 @@ public class FogManager : MonoBehaviour, IBroadcastListener
 	{
 		if ( _key == DebugSettings.FOG_BLEND_TYPE )
 		{
-			m_fogBlendMode = (FogBlendMode) Prefs.GetIntPlayer(_key, 0);
+			m_fogBlendMode = (FogBlendMode) DebugSettings.fogBlendType;
 		}
 	}
 

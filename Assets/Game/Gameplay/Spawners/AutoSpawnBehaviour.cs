@@ -173,7 +173,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
 			// we are not goin to use this spawner, lets destroy it
 			if (m_mustBedestroyed) {
-				Destroy(gameObject);
+				Destroy(gameObject, 0.15f);
 			}
 		} else {
 			// Program the next spawn time
@@ -198,7 +198,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     public bool CanRespawn() {
 		if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
-				Destroy(gameObject);
+				Destroy(gameObject, 0.15f);
 				return false;
 			}
 		}

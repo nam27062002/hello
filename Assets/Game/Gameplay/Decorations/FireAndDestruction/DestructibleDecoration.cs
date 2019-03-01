@@ -259,7 +259,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
         return m_effect != ZoneManager.ZoneEffect.S && enabled && m_spawned;
     }
 
-	public void Break( bool _player = true ) {
+	public void Break(bool _player = true) {
 		GameObject ps = m_destroyParticle.Spawn(m_transform.position + (m_transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {

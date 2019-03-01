@@ -414,6 +414,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
     public override void OnTriggerExit(Collider _other) { }
 
     public void OnBite() {
+        m_state = State.Idle;
+
         GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
 
         if (go != null) {

@@ -80,11 +80,12 @@ namespace AI {
 
 			// The first element in _param must contain the amount of time without detecting an enemy
 			protected override void OnEnter(State _oldState, object[] _param) {
-				if (_param != null && _param.Length > 0) {
+				if (_param != null && _param.Length > 0 && _param[0] is float) {
 					m_shutdownSensorTime = (float)_param[0];
 				} else {
-					m_shutdownSensorTime = 0f;
+					m_shutdownSensorTime = 2.0f;
 				}
+                m_shutdownSensorTime =  Mathf.Max(2.0f, m_shutdownSensorTime);
 
 				if (m_shutdownSensorTime > 0f) {
 					m_timer = m_shutdownSensorTime;

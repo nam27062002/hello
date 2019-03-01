@@ -284,7 +284,7 @@ public class ContentManager
         }
 
         LocalizationManager.SharedInstance.Initialise(ref kLanguagesData, "lang_english", "Localization");
-        LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)PlayerPrefs.GetInt(DebugSettings.LOCALIZATION_DEBUG_MODE);	// [AOC] Initialize localization manager debug mode
+        LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)DebugSettings.localizationDebugMode;	// [AOC] Initialize localization manager debug mode
     }
 
     private static void OnContentReady()

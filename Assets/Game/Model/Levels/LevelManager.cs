@@ -103,8 +103,8 @@ public class LevelManager : Singleton<LevelManager> {
 			m_toSplitScenes.Clear();
 		}
 
-	}
-    
+	}        
+
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (!m_scenesLoaded.ContainsKey(scene.name))
@@ -210,7 +210,7 @@ public class LevelManager : Singleton<LevelManager> {
         return returnValue;
     }   
     
-    private static bool IsSceneLoaded(string sceneName)
+    public static bool IsSceneLoaded(string sceneName)
     {
         return m_scenesLoaded.ContainsKey(sceneName);
     } 
