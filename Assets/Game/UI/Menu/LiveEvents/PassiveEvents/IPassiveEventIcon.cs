@@ -145,7 +145,7 @@ public abstract class IPassiveEventIcon : MonoBehaviour {
 				m_timerText.text = TimeUtils.FormatTime(
 					System.Math.Max(0, remainingSeconds), // Just in case, never go negative
 					TimeUtils.EFormat.ABBREVIATIONS,
-					4
+					2
 				);
 			}
 		}
