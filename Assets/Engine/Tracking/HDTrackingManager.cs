@@ -252,7 +252,18 @@ public class HDTrackingManager
     /// </summary>
     public virtual void Notify_StoreVisited( string origin) {}
 
+    /// <summary>
+    /// Notifies the store section. When player visits a section of the store, HC, SC ...
+    /// </summary>
+    /// <param name="section">Section.</param>
     public virtual void Notify_StoreSection( string section) {}
+    
+    /// <summary>
+    /// Notifies the store item view. When the player clicks on a button to start buying something on the store
+    /// </summary>
+    /// <param name="id">Identifier.</param>
+    public virtual void Notify_StoreItemView( string id) {}
+    
 
     public virtual void Notify_IAPStarted() {}
 

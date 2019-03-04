@@ -686,6 +686,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         Track_StoreSection( section );
     }
     
+    public override void Notify_StoreItemView( string id) {
+        Track_StoreItemView( id );
+    }
 
     public override void Notify_IAPStarted() {
         // The app is paused when the iap popup is shown. According to BI session closed event shouldn't be sent when the app is paused to perform an iap and
@@ -1777,6 +1780,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+    
+    private void Track_StoreItemView( string id ){
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_StoreItemView itemID = " + id );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.shop.itemviewed");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, id);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
     
 
     private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {
