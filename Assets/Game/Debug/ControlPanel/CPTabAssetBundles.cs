@@ -30,6 +30,20 @@ public class CPTabAssetBundles : MonoBehaviour
                 m_donwloadedSoFarText = go.FindComponentRecursive<TMP_Text>("Text");
                 m_abLoadedText = go.FindComponentRecursive<TMP_Text>("ABLoadedText");
                 m_sceneLoadedText = go.FindComponentRecursive<TMP_Text>("SceneLoadedText");
+
+                Button button = go.FindComponentRecursive<Button>("DeleteButton");
+                if (button != null)
+                {
+                    button.onClick.AddListener(OnDelete);
+                }
+            }
+        }
+
+        private void OnDelete()
+        {
+            if (m_entry != null)
+            {
+                m_entry.DeleteDownload();
             }
         }
 
@@ -56,6 +70,9 @@ public class CPTabAssetBundles : MonoBehaviour
     [SerializeField]
     private Transform m_assetBundleViewsRoot;
 
+    [SerializeField]
+    private TMP_Text m_isAutomaticDownloaderAllowed;
+
     void Start()
     {        
         AssetBundlleView view;
@@ -72,6 +89,14 @@ public class CPTabAssetBundles : MonoBehaviour
                 view.Setup(go, pair.Value);
                 m_views.Add(view);
             }
+        }
+    }
+
+    void OnEnable()
+    {
+        if (m_isAutomaticDownloaderAllowed != null)
+        {
+            m_isAutomaticDownloaderAllowed.text = "Automatic Downloader Allowed: " + HDAddressablesManager.Instance.IsAutomaticDownloaderAllowed();
         }
     }
 
