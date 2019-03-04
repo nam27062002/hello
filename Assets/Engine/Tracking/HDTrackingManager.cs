@@ -248,8 +248,11 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when the user opens the app store
+    // <param name="origin">Where the store is open.</param>
     /// </summary>
-    public virtual void Notify_StoreVisited() {}
+    public virtual void Notify_StoreVisited( string origin) {}
+
+    public virtual void Notify_StoreSection( string section) {}
 
     public virtual void Notify_IAPStarted() {}
 

@@ -540,6 +540,42 @@
           "etl"
         ]
       },
+        "custom.shop.entry": {
+            "Parameters": [
+                { "zone": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+        "custom.shop.view": {
+            "Parameters": [
+                { "section": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+        "custom.shop.itemviewed": {
+            "Parameters": [
+                { "itemID": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
       "custom.game.consentpopup": {
         "Parameters": [
           { "age": { "Status": "OK" } },
@@ -1507,6 +1543,14 @@
 	  "size": {
         "Type": "FLOAT",
         "Values": []
-      }	  
+      },
+        "section": {
+            "Type": "STRING:32",
+            "Values": []
+        },
+        "zone": {
+            "Type": "STRING:45",
+            "Values": []
+        }
     }
 }
