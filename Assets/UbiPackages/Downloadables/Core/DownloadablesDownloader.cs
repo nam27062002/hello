@@ -138,7 +138,7 @@ namespace Downloadables
                     }
 
                     bool didComplete = false;
-                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    using (HttpWebResponse response = (HttpWebResponse)NetworkDriver.GetResponse(request))
                     {
                         if (response.ContentLength == 0)
                         {
@@ -255,7 +255,7 @@ namespace Downloadables
                                         return;
                                     }
                                     int byteSize = stream.Read(downBuffer, 0, downBuffer.Length);
-                                    m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);                                    
+                                    m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);
                                     totalReceived += byteSize;
                                     sessionReceived += byteSize;
 

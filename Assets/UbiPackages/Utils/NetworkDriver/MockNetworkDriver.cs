@@ -31,7 +31,7 @@ public class MockNetworkDriver : MockDriver, NetworkDriver
     public HttpWebRequest CreateHttpWebRequest(string url)
     {
         EExceptionType exceptionType = GetExceptionTypeToThrow(EOp.CreateHttpWebRequest, url);
-        if (exceptionType == MockDriver.EExceptionType.None)
+        if (exceptionType == EExceptionType.None)
         {
             return m_prodDriver.CreateHttpWebRequest(url);
         }
@@ -40,5 +40,19 @@ public class MockNetworkDriver : MockDriver, NetworkDriver
             ThrowException(exceptionType);
             return null;
         }          
-    }    
+    }
+
+    public HttpWebResponse GetResponse(HttpWebRequest request)
+    {
+        EExceptionType exceptionType = GetExceptionTypeToThrow(EOp.GetResponse, "*");
+        if (exceptionType == EExceptionType.None)
+        {
+            return m_prodDriver.GetResponse(request);
+        }
+        else
+        {
+            ThrowException(exceptionType);
+            return null;
+        }
+    }
 }

@@ -182,7 +182,12 @@ public class HDAddressablesManager : AddressablesManager
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
         // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-        IsAutomaticDownloaderEnabled = UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+    }
+
+    public bool IsAutomaticDownloaderAllowed()
+    {
+        return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     #region ingame
