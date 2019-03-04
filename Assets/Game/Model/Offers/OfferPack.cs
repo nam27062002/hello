@@ -48,7 +48,8 @@ public class OfferPack {
 	public enum Type {
 		PROGRESSION,
 		PUSHED,
-		ROTATIONAL
+		ROTATIONAL,
+        COUNT
 	}
 
 	public const int MAX_ITEMS = 3; // For now
@@ -924,7 +925,6 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
-
 			default: {
 				newPack = new OfferPack();
 			} break;
@@ -1162,6 +1162,11 @@ public class OfferPack {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
+
+        if ( m_type == Type.PUSHED ){
+            data.Add("customizerId", m_def.customizationCode);
+        }
+        
 
 		// Done!
 		return data;
