@@ -683,11 +683,11 @@ public class HDTrackingManagerImp : HDTrackingManager {
     }
     
     public override void Notify_StoreSection( string section) {
-        Track_StoreSection( section );
+        Track_ShopSection( section );
     }
     
     public override void Notify_StoreItemView( string id) {
-        Track_StoreItemView( id );
+        Track_ShopItemView( id );
     }
 
     public override void Notify_IAPStarted() {
@@ -1766,7 +1766,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
     
-    private void Track_StoreSection( string section ){
+    private void Track_ShopSection( string section ){
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_StoreSection section = " + section );
         }
@@ -1781,7 +1781,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
     
-    private void Track_StoreItemView( string id ){
+    private void Track_ShopItemView( string id ){
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_StoreItemView itemID = " + id );
         }
