@@ -57,11 +57,11 @@ public class AssetBundlesManager
     /// Initialize the system.
     /// </summary>
     /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
-    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
-    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>    
+    /// <param name="downloadablesConfig">Downloadables configuration</param>        
+    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
     /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -97,8 +97,8 @@ public class AssetBundlesManager
         DiskDriver diskDriver = new ProductionDiskDriver();
 #endif
         Logger downloadablesLogger = logger;
-        m_downloadablesManager = new Downloadables.Manager(networkDriver, diskDriver, null, tracker, downloadablesLogger);
-        m_downloadablesManager.Initialize(downloadablesCatalog, isAutomaticDownloaderEnabled);
+        m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
+        m_downloadablesManager.Initialize(downloadablesCatalog);
 
         LoadCatalog(localAssetBundlesPath);
 

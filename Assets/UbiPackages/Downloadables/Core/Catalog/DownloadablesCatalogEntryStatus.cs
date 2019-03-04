@@ -26,8 +26,11 @@ namespace Downloadables
 
         private static CatalogEntry sm_entryHelper = new CatalogEntry();
 
-        public static void StaticSetup(Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
-        {            
+        private static Config sm_config;
+
+        public static void StaticSetup(Config config, Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
+        {
+            sm_config = config;
             sm_disk = disk;
             sm_tracker = tracker;
             sm_onDownloadEndCallback = onDownloadEndCallback;
@@ -78,7 +81,7 @@ namespace Downloadables
                                     break;
 
                                 case EState.DealingWithCRCMismatch:
-                                    errorType = Error.EType.Network_CRC_Mismatch;
+                                    errorType = Error.EType.CRC_Mismatch;
                                     break;
                             }
 
@@ -564,8 +567,8 @@ namespace Downloadables
         }
 
         public bool CanAutomaticDownload(bool simulation)
-        {
-            bool returnValue = CRCMismatchErrorTimes < 2;
+        {                 
+            bool returnValue = CRCMismatchErrorTimes < sm_config.GetMaxTimesPerSessionPerErrorType(Error.EType.CRC_Mismatch);
             if (returnValue)
             {
                 returnValue = (simulation) ? HasSimulationExpired() : HasErrorExpired();
@@ -659,6 +662,24 @@ namespace Downloadables
             }
 
             return returnValue;
+        }
+
+        public void DeleteDownload()
+        {
+            // This entry is allowed to be deleted only if it's not currently downloading
+            if (State != EState.Downloading)
+            {
+                Error error;
+
+                if (sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error))
+                {
+                    // Deletes the download corresponding to this entry, if it exists, as it's outdated
+                    sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
+                }
+
+                // Updates its state if needed
+                IsAvailable(true);
+            }
         }
     }    
 }

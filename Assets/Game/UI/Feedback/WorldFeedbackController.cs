@@ -118,8 +118,10 @@ public class WorldFeedbackController : MonoBehaviour {
 	/// Start the animation using previously set data (via the Init() methods).
 	/// </summary>
 	public void Spawn() {
-		// Activate object (so update is called), but keep it off-screen until delay is over (Init() methods already did it)
-		gameObject.SetActive(true);
+        if (gameObject != null) {
+            // Activate object (so update is called), but keep it off-screen until delay is over (Init() methods already did it)
+            gameObject.SetActive(true);
+        }
 
 		// Reset delay timer
 		m_delayTimer = m_delay;
