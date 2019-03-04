@@ -37,7 +37,7 @@ public class HDAddressablesManager : AddressablesManager
         string assetBundlesPath = addressablesPath;
         string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        // Retrieves addressables catalog 
+        // Addressables catalog 
         TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
         string catalogAsText = (targetFile == null) ? null : targetFile.text;        
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
@@ -54,6 +54,14 @@ public class HDAddressablesManager : AddressablesManager
         JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         */
 
+        // Downloadables config
+        string downloadablesConfigPath = Path.Combine(addressablesPath, "downloadablesConfig");
+        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
+        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        JSONNode downloadablesConfigJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        Downloadables.Config downloadablesConfig = new Downloadables.Config();
+        downloadablesConfig.Load(downloadablesConfigJSON, logger);
+
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
         if (assetsLUT == null)
@@ -61,9 +69,9 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
-        m_tracker = new HDDownloadablesTracker(2, null, logger);
+        m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, m_tracker, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);        
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -174,7 +182,12 @@ public class HDAddressablesManager : AddressablesManager
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
         // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-        IsAutomaticDownloaderEnabled = UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+    }
+
+    public bool IsAutomaticDownloaderAllowed()
+    {
+        return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     #region ingame

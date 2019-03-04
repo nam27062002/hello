@@ -5,7 +5,7 @@ namespace Downloadables
 {
     public class DummyTracker : Tracker
     {
-        public DummyTracker(int maxAttempts, Dictionary<Error.EType, int> maxAttemptsPerErrorType, Logger logger) : base(maxAttempts, maxAttemptsPerErrorType, logger)
+        public DummyTracker(Config config, Logger logger) : base(config, logger)
         {
         }
 

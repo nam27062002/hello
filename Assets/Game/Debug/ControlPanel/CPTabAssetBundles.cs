@@ -30,6 +30,20 @@ public class CPTabAssetBundles : MonoBehaviour
                 m_donwloadedSoFarText = go.FindComponentRecursive<TMP_Text>("Text");
                 m_abLoadedText = go.FindComponentRecursive<TMP_Text>("ABLoadedText");
                 m_sceneLoadedText = go.FindComponentRecursive<TMP_Text>("SceneLoadedText");
+
+                Button button = go.FindComponentRecursive<Button>("DeleteButton");
+                if (button != null)
+                {
+                    button.onClick.AddListener(OnDelete);
+                }                
+            }
+        }
+
+        private void OnDelete()
+        {
+            if (m_entry != null)
+            {
+                m_entry.DeleteDownload();
             }
         }
 
@@ -41,7 +55,10 @@ public class CPTabAssetBundles : MonoBehaviour
                 m_donwloadedSoFarText.text = m_entry.GetMbDownloadedSoFar() + "Mb";
                 
                 AssetBundleHandle handle = AssetBundlesManager.Instance.GetAssetBundleHandle(m_entry.Id);
-                m_abLoadedText.text = "AB Loaded: " + handle.IsLoaded().ToString();
+                if (handle != null)
+                {
+                    m_abLoadedText.text = "AB Loaded: " + handle.IsLoaded().ToString();
+                }
 
                 m_sceneLoadedText.text = "Scene Loaded: " + LevelManager.IsSceneLoaded("SO_Medieval_Castle");
             }
@@ -55,6 +72,9 @@ public class CPTabAssetBundles : MonoBehaviour
 
     [SerializeField]
     private Transform m_assetBundleViewsRoot;
+    
+    [SerializeField]
+    private Toggle m_automaticDownloaderAllowedToggle;
 
     void Start()
     {        
@@ -72,7 +92,15 @@ public class CPTabAssetBundles : MonoBehaviour
                 view.Setup(go, pair.Value);
                 m_views.Add(view);
             }
-        }
+        }        
+    }
+
+    void OnEnable()
+    {
+        if (m_automaticDownloaderAllowedToggle != null)
+        {
+            m_automaticDownloaderAllowedToggle.isOn = HDAddressablesManager.Instance.IsAutomaticDownloaderAllowed();
+        }        
     }
 
     void Update()
