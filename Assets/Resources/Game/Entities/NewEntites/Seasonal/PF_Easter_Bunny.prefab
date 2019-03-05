@@ -11,6 +11,38 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1618991526583932}
   m_IsPrefabParent: 1
+--- !u!1 &1208446770225628
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4694725532196222}
+  - component: {fileID: 114729853574860132}
+  - component: {fileID: 114611903501287676}
+  m_Layer: 21
+  m_Name: HoldPreyPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1444952382312180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4301875238917868}
+  m_Layer: 0
+  m_Name: holdPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1538838611027966
 GameObject:
   m_ObjectHideFlags: 1
@@ -37,13 +69,11 @@ GameObject:
   - component: {fileID: 4861198911436830}
   - component: {fileID: 114439960513274264}
   - component: {fileID: 114540423777700376}
-  - component: {fileID: 114574327875713962}
-  - component: {fileID: 114489530295956190}
+  - component: {fileID: 114425406398562322}
+  - component: {fileID: 114926103008856404}
   - component: {fileID: 114213163797026430}
-  - component: {fileID: 135214472767696070}
-  - component: {fileID: 54784315365418700}
   m_Layer: 22
-  m_Name: PF_Bunny
+  m_Name: PF_Easter_Bunny
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,6 +87,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4545190579502262}
+  - component: {fileID: 95116579572971294}
   m_Layer: 22
   m_Name: view
   m_TagString: Untagged
@@ -64,15 +95,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4301875238917868
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1444952382312180}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.9500008, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4694725532196222}
+  m_Father: {fileID: 4861198911436830}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4512108898886952
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1538838611027966}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: -0.7071068}
-  m_LocalPosition: {x: 0.00018459374, y: 0.5, z: -0.0507646}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalRotation: {x: 0.50000006, y: -0.5, z: -0.4999999, w: 0.5}
+  m_LocalPosition: {x: 0.00018459374, y: 0.40878654, z: -0.0507646}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4545190579502262}
   m_RootOrder: 0
@@ -83,14 +128,27 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1905133565276108}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.743, z: -0.213}
-  m_LocalScale: {x: 1.2695994, y: 1.2695998, z: 1.2695998}
+  m_LocalRotation: {x: -0.7839957, y: 0.06591221, z: -0.08543365, w: -0.61131614}
+  m_LocalPosition: {x: 0.7086462, y: -0.093021646, z: -1.1636622}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4512108898886952}
   m_Father: {fileID: 4861198911436830}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 75.883, y: -192.64, z: -180.25899}
+--- !u!4 &4694725532196222
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1208446770225628}
+  m_LocalRotation: {x: 0.08286872, y: 0.7199823, z: -0.5765718, w: 0.37725744}
+  m_LocalPosition: {x: 0.214, y: 2.181, z: -0.045}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4301875238917868}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 63.223003, y: 96.434006, z: -44.488003}
 --- !u!4 &4861198911436830
 Transform:
   m_ObjectHideFlags: 1
@@ -98,28 +156,31 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1618991526583932}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.007, z: 94.005}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4545190579502262}
+  - {fileID: 4301875238917868}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &54784315365418700
-Rigidbody:
+  m_LocalEulerAnglesHint: {x: 0, y: -150.56601, z: 0}
+--- !u!95 &95116579572971294
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1618991526583932}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_GameObject: {fileID: 1905133565276108}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 50e051f5b38b14eb18a80b914d1d7731, type: 3}
+  m_Controller: {fileID: 9100000, guid: f29c7e2a164dc4f2b8163ebc264217b3, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 0
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114213163797026430
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -134,14 +195,15 @@ MonoBehaviour:
   m_isPlaceHolder: 0
   m_walkSpeed: 9
   m_runSpeed: 20
-  m_minPlaybakSpeed: 0.5
-  m_maxPlaybakSpeed: 1
+  m_minPlaybakSpeed: 1.5
+  m_maxPlaybakSpeed: 3
   m_onBoostMaxPlaybackSpeed: 1
   m_hasNavigationLayer: 0
   m_hasRotationLayer: 0
   m_animA: 
   m_animB: 
   m_animC: 
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -354,6 +416,30 @@ MonoBehaviour:
   m_onPanicAudio: 
   m_idleAudio: hd_flyingbunny_idle
   m_skins: []
+--- !u!114 &114425406398562322
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1618991526583932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_blendSpeedFactor: 1
+  m_energy: 10
+  m_energyDrainSec: 1
+  m_energyRecoverSec: 1
+  m_brainResource: {fileID: 0}
+  m_railSeparation:
+    min: 0.5
+    max: 1
+  m_useSpawnerRotation: 0
+  m_serializedJson: '[{"boostSpeed":20,"panicSpeed":25,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"speed":9,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false}]'
+  m_databaseKey: PF_Easter_Bunny (1)
+  m_updateMachinePos: 1
+  m_updateMachineRot: 0
 --- !u!114 &114439960513274264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -365,37 +451,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_tags: 2054
+  m_tags: 2050
   m_sku: Bunny
   m_hideNeedTierMessage: 0
   m_dieOutsideFrustum: 1
---- !u!114 &114489530295956190
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1618991526583932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 5
-  m_energy: 0.3
-  m_energyDrainSec: 0.7
-  m_energyRecoverSec: 0.025
-  m_brainResource: {fileID: 11400000, guid: ae918391f7583944f947f900687234ec, type: 2}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_useSpawnerRotation: 0
-  m_serializedJson: '[{"restTime":{"min":2,"max":4},"randomLookAt":true,"dataType":"AI.Behaviour.IdleData","editorFolded":false}]'
-  m_databaseKey: PF_Bunny
-  m_preciseDestArrival: 0
-  m_avoidDistanceAttenuation: 5
-  m_avoidCollisions: 1
-  m_avoidWater: 1
-  m_avoidCollisionsFactor: 10
 --- !u!114 &114540423777700376
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -407,10 +466,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.013031125, y: 0.61}
-  radius: 0.83420944
+  offset: {x: 1.3, y: 0.27506053}
+  radius: 0.5577011
   color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114574327875713962
+--- !u!114 &114611903501287676
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1208446770225628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Soldier_Spine1
+  m_parentRoot: {fileID: 0}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
+--- !u!114 &114729853574860132
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1208446770225628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d7c82e1dff94fd898f1ea1dbc6f7f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114926103008856404
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -418,26 +504,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1618991526583932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
+  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_affectedByDragonTrample: 0
   m_enableSensor: 0
   m_sensor:
     m_senseFire: 1
-    m_sightRadius: 6
-    m_maxRadius: 4
-    m_minRadius: 2
-    m_hysteresisOffset: 1
+    m_sightRadius: 0
+    m_maxRadius: 0
+    m_minRadius: 0
+    m_hysteresisOffset: 0
     m_senseAbove: 1
     m_senseBelow: 1
     m_sensorOffset: {x: 0, y: 0, z: 0}
     m_radiusOffset:
-      min: 0.8
-      max: 1.2
+      min: 0.9
+      max: 1.1
     m_senseDelay:
-      min: 0
-      max: 0
+      min: 0.25
+      max: 1.25
   m_edible:
     m_rotateToMouth: 0
   m_inflammable:
@@ -446,32 +532,6 @@ MonoBehaviour:
     m_ashExceptions: []
     m_disableOnBurn: []
   m_onSpawnSound: 
-  m_airMotion:
-    m_mass: 25
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_dragonStyleRotation: 0
-    m_faceDirection: 1
-    m_rollRotation: 1
-    m_rollAngle: 35
-    m_limitHorizontalRotation: 1
-    m_faceLeftAngle: -45
-    m_faceRightAngle: 45
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 360
-    m_faceDownAngle: 45
---- !u!135 &135214472767696070
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1618991526583932}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.23
-  m_Center: {x: -0.01, y: 0.63, z: 0}
 --- !u!137 &137888311362855024
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
