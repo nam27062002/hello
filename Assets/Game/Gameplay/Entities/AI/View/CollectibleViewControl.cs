@@ -9,8 +9,10 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	[SeparatorAttribute("Collect")]
 	[SerializeField] private ParticleData m_onCollectParticle;
 	[SerializeField] private string m_onCollectAudio;
+    [SeparatorAttribute("Skin")]
+    [SerializeField] protected List<ViewControl.SkinData> m_skins = new List<ViewControl.SkinData>();
 
-	private IEntity m_entity;
+    private IEntity m_entity;
 	private AudioObject m_onCollectAudioAO;
 
 	private int m_vertexCount;
@@ -91,9 +93,19 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 		for (int i = 0; i < m_renderers.Length; i++) {
 			int id = m_renderers[i].GetInstanceID();
 			Material[] materials = m_renderers[i].sharedMaterials;
-			for (int m = 0; m < materials.Length; m++) {				
-				materials[m] = m_materials[id][m];
-			}
+			for (int m = 0; m < materials.Length; m++) {
+                Material mat = m_materials[id][m];
+                if (m_skins.Count > 0) {
+                    for (int s = 0; s < m_skins.Count; s++) {
+                        float rnd = UnityEngine.Random.Range(0f, 100f);
+                        if (rnd < m_skins[s].chance) {
+                            mat = m_skins[s].skin;
+                            break;
+                        }
+                    }
+                }
+                materials[m] = mat;
+            }
 			m_renderers[i].sharedMaterials = materials;
 		}
 	}
