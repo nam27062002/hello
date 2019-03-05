@@ -33,18 +33,16 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
         {
             // It's stored in a variable because UnityEngine.Debug.isDebugBuild must be called from the main thread and DownloadablesDownloader, which is executed in its own thread
             // needs to check this variable
-            sm_isDebugBuild = UnityEngine.Debug.isDebugBuild;            
+            sm_isDebugBuild = UnityEngine.Debug.isDebugBuild;
 
-            // Cheats
-            Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-            if (kServerConfig != null)
-            {
-                sm_areCheatsEnabled = kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION;
-            }
-            else
-            {
-                sm_areCheatsEnabled = false;
-            }
+			// Cheats
+			sm_areCheatsEnabled = false;
+			if(Application.isPlaying) {
+				Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+				if(kServerConfig != null) {
+					sm_areCheatsEnabled = kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION;
+				}
+			}
 
             sm_initialized = true;
         }
