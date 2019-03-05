@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
+using System.Text;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -47,13 +48,13 @@ public class AssetBundleDependencyTool : EditorWindow {
 
     Dictionary<string, AssetInfo> assetDictionary = new Dictionary<string, AssetInfo>();
 
-    string textarea;
+    string[] stringArray;
 
     void gatherAssetInfo()
     {
         string[] assetList = AssetDatabase.GetAllAssetPaths();
 
-///        StringB
+        List<string> stringList = new List<string>();
 
         foreach (string assetPath in assetList)
         {
@@ -63,10 +64,12 @@ public class AssetBundleDependencyTool : EditorWindow {
             asset.assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
             asset.references = new List<string>();
 
+            stringList.Add("GUID: " + asset.guid + " PATH: " + asset.assetpath + " TYPE: " + (asset.assetType != null ? asset.assetType.Name: "null") + "\n");
+
             assetDictionary.Add(asset.guid, asset);
         }
 
-
+        stringArray = stringList.ToArray();
     }
 
 
@@ -111,14 +114,16 @@ public class AssetBundleDependencyTool : EditorWindow {
 		
 	}
 
+    Vector2 scrollPos = Vector2.zero;
+
 	/// <summary>
 	/// Update the inspector window.
 	/// </summary>
 	public void OnGUI() {
         EditorGUILayout.LabelField("Asset list:");
-
-
-//        EditorGUILayout.BeginScrollView()
-
+        EditorGUILayout.BeginScrollView(scrollPos);
+        for (int c = 0; c < stringArray.Length; c++)
+            EditorGUILayout.LabelField(stringArray[c]);
+        EditorGUILayout.EndScrollView();
 	}
 }
