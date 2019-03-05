@@ -109,7 +109,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 				m_timerText.text = TimeUtils.FormatTime(
 					System.Math.Max(0, m_targetOffer.remainingTime.TotalSeconds), // Just in case, never go negative
 					TimeUtils.EFormat.ABBREVIATIONS,
-					4
+					2
 				);
 			} else {
 				m_timerText.text = string.Empty;
