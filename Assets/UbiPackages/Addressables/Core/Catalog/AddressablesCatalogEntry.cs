@@ -1,5 +1,4 @@
 ﻿using SimpleJSON;
-using System.Collections.Generic;
 
 /// <summary>
 /// This class is responsible for storing the information related to a single addressable asset that belongs to the addressables catalog
@@ -134,7 +133,7 @@ public class AddressablesCatalogEntry
             att = ATT_ASSET_NAME;
             AssetName = data[att];
         }
-    }
+    }   
 
     public void SetupAsEntryInResources(string id)
     {
