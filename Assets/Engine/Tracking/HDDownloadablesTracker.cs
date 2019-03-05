@@ -66,6 +66,11 @@ public class HDDownloadablesTracker : Tracker
         }
     }
 
+    public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+    {
+        HDTrackingManager.Instance.Notify_DownloadablesStart(action, downloadableId, existingSizeMbAtStart);        
+    }
+
     public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached)
     {
@@ -87,7 +92,7 @@ public class HDDownloadablesTracker : Tracker
                 m_idsLoadTracked.Add(downloadableId, true);
             }
 
-            HDTrackingManager.Instance.Notify_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
+            HDTrackingManager.Instance.Notify_DownloadablesEnd(action, downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
                                                                 ReachabilityToString(reachabilityAtStart), ReachabilityToString(reachabilityAtEnd), ErrorTypeToString(error), maxAttemptsReached);
         }
     }    
