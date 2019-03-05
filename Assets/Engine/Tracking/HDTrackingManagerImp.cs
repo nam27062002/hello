@@ -1230,10 +1230,26 @@ public class HDTrackingManagerImp : HDTrackingManager {
     #endregion
 
     #region downloadables
-    public override void Notify_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    public override void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart)
+    {
+        if (action == Downloadables.Tracker.EAction.Download || action == Downloadables.Tracker.EAction.Update)
+        {
+            int sizeInKb = (int)(existingSizeMbAtStart * 1024);
+            Track_DownloadStarted(GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb);
+        }
+    }
+
+    public override void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
     {
-        Track_DownloadablesEnd(action, downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent, reachabilityAtStart, reachabilityAtEnd, result, maxAttemptsReached);
+        Track_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent, reachabilityAtStart, reachabilityAtEnd, result, maxAttemptsReached);
+
+        if (action == Downloadables.Tracker.EAction.Download || action == Downloadables.Tracker.EAction.Update)
+        {
+            string status = (result == "success") ? "completed" : "failed";
+            int sizeInKb = (int)(existingSizeMbAtEnd * 1024);
+            Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
+        }
     }
     #endregion
 
@@ -2222,9 +2238,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
 			Track_AddParamBool(e, TRACK_PARAM_AD_VIEWED, _doubled);
 		}
 		m_eventQueue.Enqueue(e);
-	}
+	}    
 
-    public void Track_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    private void Track_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                        string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
     {
         // Debug
@@ -2258,7 +2274,56 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_RESULT, result);
             Track_AddParamBoolAsInt(e, TRACK_PARAM_MAX_REACHED, maxAttemptsReached);
         }
+        m_eventQueue.Enqueue(e);        
+    }
+
+    private void Track_DownloadStarted(string downloadType, int sizeInKb)
+    {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DownloadablesStart "
+                + ", downloadType = " + downloadType
+                + ", sizeInKb = " + sizeInKb);
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownloaded");
+        {
+            Track_AddParamString(e, TRACK_PARAM_STATUS, "started");
+            Track_AddParamString(e, TRACK_PARAM_DOWNLOAD_TYPE, downloadType);
+            e.data.Add(TRACK_PARAM_DURATION, 0);            
+            Track_AddParamFloat(e, TRACK_PARAM_SIZE, sizeInKb);
+        }
         m_eventQueue.Enqueue(e);
+    }
+
+    private void Track_DownloadComplete(string action, string downloadType, int sizeInKb, int timeSpent)
+    {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled)
+        {
+            Log("Track_DownloadComplete action = " + action
+                + ", downloadType = " + downloadType
+                + ", sizeInKb = " + sizeInKb
+                + ", timeSpent = " + timeSpent                
+               );
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownloaded");
+        {
+            Track_AddParamString(e, TRACK_PARAM_STATUS, action);
+            Track_AddParamString(e, TRACK_PARAM_DOWNLOAD_TYPE, downloadType);
+            e.data.Add(TRACK_PARAM_DURATION, timeSpent);            
+            Track_AddParamFloat(e, TRACK_PARAM_SIZE, sizeInKb);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+    private static string GetDownloadTypeFromDownloadableId(string downloadableId)
+    {
+        return "SecondaryDownload_" + downloadableId;
     }
 
     // -------------------------------------------------------------
@@ -2307,6 +2372,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_DEATH_TYPE = "deathType";
     private const string TRACK_PARAM_DELTA_XP = "deltaXp";
     private const string TRACK_PARAM_DEVICE_PROFILE = "deviceProfile";
+    private const string TRACK_PARAM_DOWNLOAD_TYPE = "downloadType";
     private const string TRACK_PARAM_DRAGON = "dragon";
     private const string TRACK_PARAM_DRAGON_PROGRESSION = "dragonProgression";
     private const string TRACK_PARAM_DRAGON_SKIN = "dragonSkin";
@@ -2414,6 +2480,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_SOURCE_OF_PET = "sourceOfPet";
     private const string TRACK_PARAM_SOURCE = "source";
     private const string TRACK_PARAM_SPECIAL_OFFER_ACTION = "specialOfferAction";
+    private const string TRACK_PARAM_STATUS = "status";
     private const string TRACK_PARAM_STEP_DURATION = "stepDuration";
     private const string TRACK_PARAM_STEP_NAME = "stepName";
     private const string TRACK_PARAM_STOP_CAUSE = "stopCause";
