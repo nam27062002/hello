@@ -2288,7 +2288,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         // Create event
-        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownloaded");
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownload");
         {
             Track_AddParamString(e, TRACK_PARAM_STATUS, "started");
             Track_AddParamString(e, TRACK_PARAM_DOWNLOAD_TYPE, downloadType);
@@ -2311,7 +2311,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         // Create event
-        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownloaded");
+        HDTrackingEvent e = new HDTrackingEvent("custom.player.contentDownload");
         {
             Track_AddParamString(e, TRACK_PARAM_STATUS, action);
             Track_AddParamString(e, TRACK_PARAM_DOWNLOAD_TYPE, downloadType);
