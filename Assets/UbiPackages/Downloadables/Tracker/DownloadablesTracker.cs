@@ -54,6 +54,8 @@ namespace Downloadables
             m_currentDownloadExistingSizeAtStart = existingSizeMbAtStart;
             m_currentDownloadReachabilityAtStart = reachabilityAtStart;
             m_currentDownloadIsUpdate = isUpdate;
+
+            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, existingSizeMbAtStart);
         }
 
         public void NotifyDownloadEnd(float currentTime, string downloadableId, float existingSizeAtEnd,  float totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
@@ -126,6 +128,8 @@ namespace Downloadables
 
             m_currentDownloadTimeAtStart = -1f;
         }
+
+        public abstract void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart);
 
         public abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached);                

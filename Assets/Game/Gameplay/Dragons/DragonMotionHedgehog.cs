@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragonMotionHedgehog : DragonMotion {
 
@@ -69,9 +70,10 @@ public class DragonMotionHedgehog : DragonMotion {
 
         m_breath = GetComponent<DragonBreathBehaviour>();
         m_fireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_fireParticleImpact, transform.parent);
+        SceneManager.MoveGameObjectToScene(m_fireParticleImpactInstance.gameObject, gameObject.scene);
         m_megaFireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleImpact, transform.parent);
-
-	}
+        SceneManager.MoveGameObjectToScene(m_megaFireParticleImpactInstance.gameObject, gameObject.scene);
+    }
 
 	IEnumerator DelayedBoostSet()
 	{
