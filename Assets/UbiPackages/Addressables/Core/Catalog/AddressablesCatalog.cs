@@ -281,12 +281,17 @@ public class AddressablesCatalog
         return returnValue;
     }        
 
+    /// <summary>
+    /// Optimizes the asset name field of all entries in this catalog
+    /// </summary>
     public void OptimizeEntriesAssetNames()
     {        
         if (m_editorMode)
-        {
+        {            
             Dictionary<string, AddressablesCatalogEntry> assetNames = new Dictionary<string, AddressablesCatalogEntry>();
 
+            // Gets all entries grouped by asset bundle, then loops through them all and stores the ones which filename (which is the smallest possible name) is unique so 
+            // their asset names can be changed to this smallest name. We need to keep the full path as an asset name for the ones that share filename
             string fileName;
             string entryPath;
             int count;
