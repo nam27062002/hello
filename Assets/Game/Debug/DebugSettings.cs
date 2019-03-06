@@ -88,7 +88,9 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public const string SPECIAL_DRAGON_SPEED_BOOST_LEVEL         = "SPECIAL_DRAGON_SPEED_BOOST_LEVEL";
     public const string SPECIAL_DRAGON_ENERGY_BOOST_LEVEL        = "SPECIAL_DRAGON_ENERGY_BOOST_LEVEL";
 
-    private const string SPECIAL_DATES                           = "SHOW_SPECIAL_DATES";   
+    private const string SPECIAL_DATES                           = "SHOW_SPECIAL_DATES";
+
+    public const string AB_AUTOMATIC_DOWNLOADER                 = "AB_AUTOMATIC_DOWNLOADER";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -255,6 +257,11 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     public static bool tiltControlDebugUI {
         get { return Prefs_GetBoolPlayer(TILT_CONTROL_DEBUG_UI, false); }
         set { Prefs_SetBoolPlayer(TILT_CONTROL_DEBUG_UI, value); }
+    }
+
+    public static bool isAutomaticDownloaderEnabled {
+        get { return Prefs_GetBoolPlayer(AB_AUTOMATIC_DOWNLOADER, true); }
+        set { Prefs_SetBoolPlayer(AB_AUTOMATIC_DOWNLOADER, value); }
     }    
 
     // Server debugging tools

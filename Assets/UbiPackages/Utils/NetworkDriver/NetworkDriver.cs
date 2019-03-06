@@ -7,5 +7,6 @@ using System.Net;
 public interface NetworkDriver
 {    
     NetworkReachability CurrentNetworkReachability { get; }
-    HttpWebRequest CreateHttpWebRequest(string url);    
+    HttpWebRequest CreateHttpWebRequest(string url);
+    HttpWebResponse GetResponse(HttpWebRequest request);
 }

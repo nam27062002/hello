@@ -15,4 +15,9 @@ public class ProductionNetworkDriver : NetworkDriver
     {
         return (HttpWebRequest)HttpWebRequest.Create(url);
     }
+
+    public virtual HttpWebResponse GetResponse(HttpWebRequest request)
+    {
+        return (HttpWebResponse)request.GetResponse();
+    }
 }
