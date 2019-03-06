@@ -277,7 +277,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224542655895452892}
-  - component: {fileID: 114061914454753202}
   m_Layer: 5
   m_Name: PF_MenuSpringDeco
   m_TagString: Untagged
@@ -532,38 +531,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114061914454753202
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1773974873679986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets: []
-  - sku: halloween
-    targets: []
-  - sku: spring
-    targets:
-    - obj: {fileID: 1022219607159774}
-      action: 0
-    - obj: {fileID: 1206196914609826}
-      action: 0
-  - sku: midAutumnFestival
-    targets: []
-  - sku: movie_kwwbk
-    targets: []
-  - sku: chineseNewYear
-    targets: []
-  - sku: valentine
-    targets: []
 --- !u!114 &114069550789386130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1364,7 +1331,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -923517304
+  randomSeed: 1963065744
   InitialModule:
     serializedVersion: 3
     enabled: 1
