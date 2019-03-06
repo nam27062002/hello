@@ -69,9 +69,9 @@ public class AddressablesCatalogEntry
         m_editorMode = editorMode;
     }
 
-    public AddressablesCatalogEntry(string id, string gui, bool editorMode) : this() 
-    {
+    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode) : this() {
         Id = id;
+        Variant = variant;
         GUID = gui;
         m_editorMode = editorMode;
     }

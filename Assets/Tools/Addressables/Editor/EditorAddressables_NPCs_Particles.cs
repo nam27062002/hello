@@ -4,7 +4,11 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 
+
 public static class EditorAddressables_NPCs_Particles {
+    private static string[] VARIANTS_PATH = { "/Low/", "/Master/", "/High/", "/VeryHigh/" };
+    private static string[] VARIANTS = { "Low", "Master", "High", "VeryHigh" };
+
     public static void GetEntriesAll(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
@@ -13,6 +17,7 @@ public static class EditorAddressables_NPCs_Particles {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
@@ -27,6 +32,7 @@ public static class EditorAddressables_NPCs_Particles {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
@@ -58,7 +64,15 @@ public static class EditorAddressables_NPCs_Particles {
                             id = assetPath.Substring(assetPath.LastIndexOf('/') + 1) + "/" + id;
                         }
 
-                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, AssetDatabase.AssetPathToGUID(filePath), true) {
+                        string variant = null;
+                        for (int i = 0; i < VARIANTS.Length; ++i) {
+                            if (filePath.Contains(VARIANTS_PATH[i])) {
+                                variant = VARIANTS[i];
+                                break;
+                            }
+                        }
+
+                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true) {
                             LocationType = AddressablesTypes.ELocationType.AssetBundles,
                             AssetName = assetName,
                             AssetBundleName = assetBundle

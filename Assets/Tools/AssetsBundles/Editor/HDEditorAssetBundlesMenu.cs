@@ -25,14 +25,14 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/export_npc_asset_bundles.json", false);
         writer.AutoFlush = true;
 
-        writer.Write("{\"entries\":[");
+        writer.Write("{\"entries\":[\n");
         for (int i = 0; i < entries.Count; ++i) {
             writer.Write(entries[i].ToJSON().ToString());
             if (i < entries.Count - 1) {
-                writer.Write(",");
+                writer.Write(",\n");
             }
         }
-        writer.Write("]}");
+        writer.Write("\n]}");
         writer.Close();
     }
 
@@ -88,7 +88,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             writer.Write("{\"id\":\"area" + (i + 1) + "\", \"assetBundles\":[");
             int bundlesAdded = 0;
             for (int b = 0; b < bundles.Count; ++b) {
-                if (bundles[b].Contains(areas[i])) {
+                if (bundles[b].Contains(areas[i]) || bundles[b].Contains("shared")) {
                     if (bundlesAdded > 0) { writer.Write(","); }
                     writer.Write("\"" + bundles[b] + "\"");
                     bundlesAdded++;
