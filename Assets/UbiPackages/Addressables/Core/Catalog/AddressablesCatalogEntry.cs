@@ -1,5 +1,4 @@
 ﻿using SimpleJSON;
-using System.Collections.Generic;
 
 /// <summary>
 /// This class is responsible for storing the information related to a single addressable asset that belongs to the addressables catalog
@@ -16,7 +15,17 @@ public class AddressablesCatalogEntry
     {
         get { return m_id; }
         private set { m_id = value; }
-    }    
+    }
+
+    /// <summary>
+    /// Variant of an addressable. This is used to be able to have more than one version of the same asset. It's typically used to offer different quality levels of the same asset
+    /// </summary>
+    private string m_variant;
+    public string Variant
+    {
+        get { return m_variant; }
+        private set { m_variant = value; }
+    }
 
     /// <summary>
     /// Location type. Used to determine where the asset is stored.
@@ -38,6 +47,7 @@ public class AddressablesCatalogEntry
     public string AssetName { get; set; }       
 
     private const string ATT_ID = "id";
+    private const string ATT_VARIANT = "variant";
     private const string ATT_LOCATION_TYPE = "locationType";        
     private const string ATT_AB_NAME = "abName";
     private const string ATT_ASSET_NAME = "assetName";
@@ -74,6 +84,7 @@ public class AddressablesCatalogEntry
     public void Reset()
     {
         Id = null;
+        Variant = null;
         LocationType = AddressablesTypes.ELocationType.None;
         AssetBundleName = null;
         AssetName = null;
@@ -105,6 +116,11 @@ public class AddressablesCatalogEntry
             {
                 LogLoadAttributeError(att, value);
             }
+
+            // Variant
+            att = ATT_VARIANT;
+            value = data[att];
+            Variant = value;
 
             // Location type
             att = ATT_LOCATION_TYPE;
@@ -141,7 +157,7 @@ public class AddressablesCatalogEntry
             att = ATT_ASSET_NAME;
             AssetName = data[att];
         }
-    }
+    }   
 
     public void SetupAsEntryInResources(string id)
     {
@@ -155,6 +171,12 @@ public class AddressablesCatalogEntry
         JSONClass data = new JSONClass();
         
         AddToJSON(data, ATT_ID, Id);
+
+        if (!string.IsNullOrEmpty(Variant))
+        {
+            AddToJSON(data, ATT_VARIANT, Variant);
+        }
+        
         AddToJSON(data, ATT_LOCATION_TYPE, AddressablesTypes.ELocationTypeToString(LocationType));
 
         bool needsToAddAssetBundleName = LocationType == AddressablesTypes.ELocationType.AssetBundles;

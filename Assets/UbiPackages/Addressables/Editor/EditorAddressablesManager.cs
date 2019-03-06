@@ -103,15 +103,17 @@ public class EditorAddressablesManager
         BuildAssetBundles(target);
         GenerateAssetBundlesCatalog();
         ProcessAssetBundles(target, true);
-    }
+    }   
 
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
+        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);        
         if (editorCatalog != null)
         {
+            editorCatalog.OptimizeEntriesAssetNames();
+
             AssetDatabase.RemoveUnusedAssetBundleNames();            
 
             // Copies editor catalog in player catalog
@@ -119,21 +121,21 @@ public class EditorAddressablesManager
             playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
 
             // Clears player catalog entries because they'll be added only with the information that player requires
-            Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
-            playerCatalogEntries.Clear();
+            playerCatalog.ClearEntries();            
 
             // Loops through all entries to configure actual assets according to their location and provider mode
-            Dictionary<string, AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+            List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
             AddressablesCatalogEntry entry;
-            foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
+            int count = entries.Count;
+            for (int i = 0; i < count; i++)
             {                
-                if (ProcessEntry(pair.Value, scenesToAdd, scenesToRemove))
+                if (ProcessEntry(entries[i], scenesToAdd, scenesToRemove))
                 {
                     entry = new AddressablesCatalogEntry();
-                    entry.Load(pair.Value.ToJSON());
-                    playerCatalog.GetEntries().Add(pair.Key, entry);
+                    entry.Load(entries[i].ToJSON());
+                    playerCatalog.AddEntry(entry);
                 }
             }            
 
@@ -142,7 +144,7 @@ public class EditorAddressablesManager
                 List<EditorBuildSettingsScene> newSceneList = new List<EditorBuildSettingsScene>();
 
                 EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-                int count = scenes.Length;
+                count = scenes.Length;
                 string scenePath;
                 for (int i = 0; i < count; i++)
                 {
@@ -167,12 +169,14 @@ public class EditorAddressablesManager
                 }
 
                 EditorBuildSettings.scenes = newSceneList.ToArray();
-            }
+            }            
             
             JSONClass json = playerCatalog.ToJSON();            
             EditorFileUtils.WriteToFile(playerCatalogPath, json.ToString());            
         }
     }
+
+
 
     public void GenerateAssetBundlesCatalog()
     {
@@ -323,16 +327,13 @@ public class EditorAddressablesManager
                 sm_logger.LogError("No resource found in " + path);
             }
             else            
-            {                
-                string fileName = EditorFileUtils.GetFileName(path, false);
-                entry.AssetName = fileName;
-
+            {                                
                 string assetBundleNameFromCatalog = "";
 
                 switch (entry.LocationType)
                 {
                     case AddressablesTypes.ELocationType.AssetBundles:
-                        assetBundleNameFromCatalog = entry.AssetBundleName;
+                        assetBundleNameFromCatalog = entry.AssetBundleName;                        
                         break;                    
                 }
                 

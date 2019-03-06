@@ -14,7 +14,13 @@ public class BasicAddressablesTestController : MonoBehaviour
         Sync,
         Async        
     };
-    
+
+    private enum EAddressableIds
+    {
+        HDCube,
+        UbiCube
+    };
+
     void Start ()
     {
         Ui_Init();
@@ -85,6 +91,7 @@ public class BasicAddressablesTestController : MonoBehaviour
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
         m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, tracker, logger);
 
+        Ui_UpdateResolutionDropdown();
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;
         //AssetBundlesManager.Instance.GetMockNetworkDriver().MockNetworkReachability = NetworkReachability.NotReachable;
     }
@@ -122,7 +129,7 @@ public class BasicAddressablesTestController : MonoBehaviour
                     break;
 
                 case ELoadResourceMode.Async:
-                    op = m_addressablesManager.LoadSceneAsync(SCENE_CUBES_SCENE_NAME, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+                    op = m_addressablesManager.LoadSceneAsync(SCENE_CUBES_SCENE_NAME, null, UnityEngine.SceneManagement.LoadSceneMode.Additive);
                     op.OnDone = SceneCubes_OnDoneByOp;
                     break;
             }                                    
@@ -146,7 +153,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            m_addressablesManager.LoadScene(SCENE_CUBES_SCENE_NAME, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            m_addressablesManager.LoadScene(SCENE_CUBES_SCENE_NAME, null, UnityEngine.SceneManagement.LoadSceneMode.Additive);
             SceneCubes_OnDone(null);
         }
         else
@@ -182,29 +189,57 @@ public class BasicAddressablesTestController : MonoBehaviour
     }
     #endregion
 
-    #region asset_cubes    
-    private static string ASSET_CUBES_NAME = "HDCube";
+    #region asset_cubes        
 
     public void AssetCubes_Init()
-    {     
+    {        
     }    
+
+    private string AssetCubes_GetAssetId()
+    {       
+        return ((EAddressableIds)m_uiAssetCubesAddressableIds.value).ToString();
+    }
+
+    private string AssetCubes_GetVariant()
+    {
+        string returnValue = null;
+
+        if (m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()))        
+        {
+            switch (m_uiAssetCubesResolutionDropdown.value)
+            {
+                case 0:
+                    returnValue = "low";
+                    break;
+
+                case 1:
+                    returnValue = "high";
+                    break;
+            }
+        }
+
+        return returnValue;
+    }
 
     public void AssetCubes_OnAdd()
     {        
         Ui_SetEnabled(false);
         Ui_SetOperationResultProcessing();
 
+        string assetId = AssetCubes_GetAssetId();
+        string variant = AssetCubes_GetVariant();
+
         ELoadResourceMode mode = GetLoadResourceModeFromDropdown(m_uiAssetCubesDropdown);
         AddressablesOp op;
         switch (mode)
         {
             case ELoadResourceMode.Sync:
-                op = m_addressablesManager.DownloadDependenciesAsync(ASSET_CUBES_NAME);                
+                op = m_addressablesManager.DownloadDependenciesAsync(assetId);                
                 op.OnDone = AssetCubes_OnDependenciesDownloaded;
                 break;            
             
             case ELoadResourceMode.Async:
-                op = m_addressablesManager.LoadAssetAsync(ASSET_CUBES_NAME);
+                op = m_addressablesManager.LoadAssetAsync(assetId, variant);
                 op.OnDone = AssetCubes_OnDoneByOp;
                 break;
         }        
@@ -214,7 +249,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            op = m_addressablesManager.LoadDependenciesAsync(ASSET_CUBES_NAME);
+            op = m_addressablesManager.LoadDependenciesAsync(AssetCubes_GetAssetId(), AssetCubes_GetVariant());
             op.OnDone = AssetCubes_OnDependenciesLoaded;
         }
         else
@@ -227,7 +262,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(ASSET_CUBES_NAME);
+            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(AssetCubes_GetAssetId(), AssetCubes_GetVariant());
             AssetCubes_InstantiateCube(prefab);
             AssetCubes_OnDone(null);
         }
@@ -282,6 +317,8 @@ public class BasicAddressablesTestController : MonoBehaviour
     public List<UIButton> m_uiButtons;    
     public Dropdown m_uiSceneCubesDropdown;
     public Dropdown m_uiAssetCubesDropdown;
+    public Dropdown m_uiAssetCubesAddressableIds;
+    public Dropdown m_uiAssetCubesResolutionDropdown;
     public Text m_uiOperationResult;    
 
     private void Ui_Init()
@@ -323,15 +360,27 @@ public class BasicAddressablesTestController : MonoBehaviour
         Ui_SetOperationResultEmpty();        
         Ui_SetupDropdownWithLoadResourceModeValues(m_uiSceneCubesDropdown);
         Ui_SetupDropdownWithLoadResourceModeValues(m_uiAssetCubesDropdown);
+        Ui_SetupDropdownWithEnumValues(m_uiAssetCubesAddressableIds, System.Enum.GetNames(typeof(EAddressableIds)));
+
+        m_uiAssetCubesAddressableIds.onValueChanged.AddListener(delegate { Ui_OnAddressableIdChanged(m_uiAssetCubesAddressableIds); });
+    }
+    
+    private void Ui_OnAddressableIdChanged(Dropdown dropDown)
+    {
+        Ui_UpdateResolutionDropdown();
     }
 
-    private void Ui_SetupDropdownWithLoadResourceModeValues(Dropdown value)
+    private void Ui_UpdateResolutionDropdown()
+    {
+        m_uiAssetCubesResolutionDropdown.gameObject.SetActive(m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()));
+    }
+
+    private void Ui_SetupDropdownWithEnumValues(Dropdown value, string[] names)
     {
         if (value != null)
         {
             value.ClearOptions();
-
-            string[] names = System.Enum.GetNames(typeof(ELoadResourceMode));
+            
             if (names != null)
             {
                 List<Dropdown.OptionData> optionsList = new List<Dropdown.OptionData>();
@@ -348,6 +397,12 @@ public class BasicAddressablesTestController : MonoBehaviour
             }
         }
     }
+
+    private void Ui_SetupDropdownWithLoadResourceModeValues(Dropdown value)
+    {
+        string[] names = System.Enum.GetNames(typeof(ELoadResourceMode));
+        Ui_SetupDropdownWithEnumValues(value, names);
+    }    
 
     private void Ui_SetEnabled(bool value)
     {

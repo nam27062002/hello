@@ -663,5 +663,23 @@ namespace Downloadables
 
             return returnValue;
         }
+
+        public void DeleteDownload()
+        {
+            // This entry is allowed to be deleted only if it's not currently downloading
+            if (State != EState.Downloading)
+            {
+                Error error;
+
+                if (sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error))
+                {
+                    // Deletes the download corresponding to this entry, if it exists, as it's outdated
+                    sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
+                }
+
+                // Updates its state if needed
+                IsAvailable(true);
+            }
+        }
     }    
 }

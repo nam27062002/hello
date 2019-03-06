@@ -138,7 +138,8 @@ public class EditorAssetBundlesManager
             Directory.CreateDirectory(DOWNLOADABLES_FOLDER);
         }
 
-        JSONClass json = catalog.ToJSON();
+        catalog.UrlBase = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        JSONClass json = catalog.ToJSON();       
         EditorFileUtils.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
 
         // It copies it to the player's folder too

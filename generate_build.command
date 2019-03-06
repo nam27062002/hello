@@ -375,7 +375,7 @@ if $BUILD_IOS; then
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
-    ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
+    ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${ENVIRONMENT}.xcarchive"
     IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}"
     IPA_FILE="${IPA_NAME}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"

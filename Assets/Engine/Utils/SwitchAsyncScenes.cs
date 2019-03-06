@@ -211,7 +211,7 @@ public class SwitchAsyncScenes
             {
                 if (load)
                 {
-                    loadingTask = HDAddressablesManager.Instance.LoadSceneAsync(scenes[i], LoadSceneMode.Additive);
+                    loadingTask = HDAddressablesManager.Instance.LoadSceneAsync(scenes[i], null, LoadSceneMode.Additive);
                 }
                 else
                 {

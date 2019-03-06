@@ -1,6 +1,5 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// This class is responsible for storing a catalog of <c>AddressablesEntry</c> objects
@@ -11,7 +10,15 @@ public class AddressablesCatalog
     public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
     public static string CATALOG_ATT_AREAS = "areas";
 
-    private Dictionary<string, AddressablesCatalogEntry> m_entries;
+    /// <summary>
+    /// Key: Addressable Id, Value: Addressable entry. This dictionary only contains entries with no variants
+    /// </summary>
+    private Dictionary<string, AddressablesCatalogEntry> m_entriesNoVariants;
+
+    /// <summary>
+    /// Key: Addressable Id, Value: Dictionary where Key:Variant Value: Addressable entry. This dictionary only contains entries with variants
+    /// </summary>
+    private Dictionary<string, Dictionary<string, AddressablesCatalogEntry>> m_entriesWithVariants;
 
 #if UNITY_EDITOR
     private List<string> m_localABList;
@@ -30,7 +37,8 @@ public class AddressablesCatalog
     
     public AddressablesCatalog()    
     {
-        m_entries = new Dictionary<string, AddressablesCatalogEntry>();
+        m_entriesNoVariants = new Dictionary<string, AddressablesCatalogEntry>();
+        m_entriesWithVariants = new Dictionary<string, Dictionary<string, AddressablesCatalogEntry>>();
         m_areas = new Dictionary<string, AddressablesCatalogArea>();
 
 #if UNITY_EDITOR
@@ -40,7 +48,8 @@ public class AddressablesCatalog
 
     public void Reset()
     {
-        m_entries.Clear();      
+        m_entriesNoVariants.Clear();
+        m_entriesWithVariants.Clear();
         m_areas.Clear();
 
 #if UNITY_EDITOR
@@ -101,51 +110,150 @@ public class AddressablesCatalog
                 entry.Load(entries[i]);
                 if (entry.IsValid())
                 {
-                    if (m_entries.ContainsKey(entry.Id))
+                    if (string.IsNullOrEmpty(entry.Variant))
                     {
-                        if (logger != null && logger.CanLog())
-                        {
-                            logger.LogError("Duplicate entry " + entry.Id + " found in catalog");
-                        }
-                    }
+                        EntriesNoVariants_AddEntry(entry, logger);
+                    }                    
                     else
                     {
-                        m_entries.Add(entry.Id, entry);
+                        EntriesWithVariants_AddEntry(entry, logger);
                     }
                 }              
             }
         }
     }
 
+    private void EntriesNoVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
+    {
+        if (m_entriesNoVariants.ContainsKey(entry.Id))
+        {
+            if (logger != null && logger.CanLog())
+            {
+                logger.LogError("Duplicate entry " + entry.Id + " found in catalog");
+            }
+        }
+        else
+        {
+            m_entriesNoVariants.Add(entry.Id, entry);
+        }
+    }
+
+    private void EntriesWithVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
+    {
+        if (!m_entriesWithVariants.ContainsKey(entry.Id))
+        {
+            m_entriesWithVariants.Add(entry.Id, new Dictionary<string, AddressablesCatalogEntry>());
+        }
+
+        Dictionary<string, AddressablesCatalogEntry> entries = m_entriesWithVariants[entry.Id];
+        if (entries.ContainsKey(entry.Variant))
+        {            
+            if (logger != null && logger.CanLog())
+            {
+                logger.LogError("Duplicate entry " + entry.Id + ", " + entry.Variant + " found in catalog");
+            }
+        }
+        else
+        {
+            entries.Add(entry.Variant, entry);
+        }
+    }
+
     private JSONArray EntriesToJSON()
     {
-        JSONArray data = new JSONArray();        
+        JSONArray data = new JSONArray();
+        AddEntriesToJSON(data, m_entriesNoVariants);        
+
+        foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> pair in m_entriesWithVariants)
+        {
+            AddEntriesToJSON(data, pair.Value);
+        }
+
+        return data;
+    }    
+
+    private void AddEntriesToJSON(JSONArray data, Dictionary<string, AddressablesCatalogEntry> entries)
+    {        
         AddressablesCatalogEntry entry;
-        foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in m_entries)
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in entries)
         {
             entry = kvp.Value;
             if (entry != null && entry.IsValid())
             {
                 data.Add(entry.ToJSON());
             }
+        }
+    }
+
+    public AddressablesCatalogEntry GetEntry(string id, string variant = null)
+    {
+        AddressablesCatalogEntry returnValue = null;
+        if (string.IsNullOrEmpty(variant))
+        {
+            m_entriesNoVariants.TryGetValue(id, out returnValue);            
         }        
+        else
+        {
+            Dictionary<string, AddressablesCatalogEntry> entries = null;
+            if (m_entriesWithVariants.TryGetValue(id, out entries))
+            {
+                entries.TryGetValue(variant, out returnValue);
+            }
+        }
 
-        return data;
-    }    
-
-    public AddressablesCatalogEntry GetEntry(string id)
+        return returnValue;
+    }
+    
+    public List<AddressablesCatalogEntry> GetEntries()
     {
-        return (m_entries.ContainsKey(id)) ? m_entries[id] : null;
+        List<AddressablesCatalogEntry> returnValue = new List<AddressablesCatalogEntry>();
+        AddEntriesToList(returnValue, m_entriesNoVariants);
+
+        foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> pair in m_entriesWithVariants)
+        {
+            AddEntriesToList(returnValue, pair.Value);
+        }
+
+        return returnValue;
     }
 
-    public bool TryGetEntry(string id, out AddressablesCatalogEntry entry)
+    private void AddEntriesToList(List<AddressablesCatalogEntry> list, Dictionary<string, AddressablesCatalogEntry> entries)
     {
-        return m_entries.TryGetValue(id, out entry);        
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
+        {
+            list.Add(pair.Value);
+        }
     }
 
-    public Dictionary<string, AddressablesCatalogEntry> GetEntries()
+    public void ClearEntries()
     {
-        return m_entries;
+        m_entriesNoVariants.Clear();
+        m_entriesWithVariants.Clear();
+    }
+
+    public void AddEntry(AddressablesCatalogEntry entry)
+    {
+        if (entry != null)
+        {            
+            if (string.IsNullOrEmpty(entry.Variant))
+            {
+                m_entriesNoVariants.Add(entry.Id, entry);
+            }
+            else
+            {                
+                if (!m_entriesWithVariants.ContainsKey(entry.Id))
+                {
+                    m_entriesWithVariants.Add(entry.Id, new Dictionary<string, AddressablesCatalogEntry>());
+                }
+
+                m_entriesWithVariants[entry.Id].Add(entry.Variant, entry);
+            }
+        }
+    }
+
+    public bool HasEntryVariants(string id)
+    {
+        return m_entriesWithVariants.ContainsKey(id);
     }
 
 #if UNITY_EDITOR
@@ -193,10 +301,13 @@ public class AddressablesCatalog
     {
         List<string> returnValue = new List<string>();
 
+        List<AddressablesCatalogEntry> entries = GetEntries();
+
         AddressablesCatalogEntry entry;
-        foreach (KeyValuePair<string, AddressablesCatalogEntry> kvp in m_entries)
+        int count = entries.Count;
+        for (int i = 0; i < count; i++)
         {
-            entry = kvp.Value;
+            entry = entries[i];
             if (entry != null && entry.IsValid())
             {
                 if (entry.LocationType == AddressablesTypes.ELocationType.AssetBundles &&
@@ -256,4 +367,81 @@ public class AddressablesCatalog
     {
         return (!string.IsNullOrEmpty(areaId) && m_areas.ContainsKey(areaId)) ? m_areas[areaId] : null;
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Returns the entries grouped by asset bundle
+    /// </summary>
+    /// <returns>Returns a <c>Dictionary</c> which key is asset bundle name and the value is the list of <c>AddressablesCatalogEntry</c> objects that refer to that asset bundle.</returns>
+    private Dictionary<string, List<AddressablesCatalogEntry>> GetEntriesGroupedByAssetBundle()
+    {
+        Dictionary<string, List<AddressablesCatalogEntry>> returnValue = new Dictionary<string, List<AddressablesCatalogEntry>>();
+
+        List<AddressablesCatalogEntry> entries = GetEntries();
+
+        AddressablesCatalogEntry entry;
+        int count = entries.Count;
+        for (int i = 0; i < count; i++)
+        {
+            entry = entries[i];            
+            if (entry.LocationType == AddressablesTypes.ELocationType.AssetBundles && !string.IsNullOrEmpty(entry.AssetBundleName))
+            {
+                if (!returnValue.ContainsKey(entry.AssetBundleName))
+                {
+                    returnValue.Add(entry.AssetBundleName, new List<AddressablesCatalogEntry>());
+                }
+
+                returnValue[entry.AssetBundleName].Add(entry);
+            }
+        }
+
+        return returnValue;
+    }        
+
+    /// <summary>
+    /// Optimizes the asset name field of all entries in this catalog
+    /// </summary>
+    public void OptimizeEntriesAssetNames()
+    {        
+        if (m_editorMode)
+        {            
+            Dictionary<string, AddressablesCatalogEntry> assetNames = new Dictionary<string, AddressablesCatalogEntry>();
+
+            // Gets all entries grouped by asset bundle, then loops through them all and stores the ones which filename (which is the smallest possible name) is unique so 
+            // their asset names can be changed to this smallest name. We need to keep the full path as an asset name for the ones that share filename
+            string fileName;
+            string entryPath;
+            int count;
+            Dictionary<string, List<AddressablesCatalogEntry>> entriesGroupedByAssetBundle = GetEntriesGroupedByAssetBundle();
+            foreach (KeyValuePair<string, List<AddressablesCatalogEntry>> pair in entriesGroupedByAssetBundle)
+            {                
+                assetNames.Clear();
+                count = pair.Value.Count;
+                for (int i = 0; i < count; i++)
+                {   
+                    entryPath = UnityEditor.AssetDatabase.GUIDToAssetPath(pair.Value[i].GUID);
+                    fileName = System.IO.Path.GetFileNameWithoutExtension(entryPath);
+                    pair.Value[i].AssetName = entryPath;
+
+                    if (assetNames.ContainsKey(fileName))
+                    {
+                        assetNames[fileName] = null;                        
+                    }
+                    else
+                    {
+                        assetNames.Add(fileName, pair.Value[i]);                        
+                    }
+                }
+
+                foreach (KeyValuePair<string, AddressablesCatalogEntry> p in assetNames)
+                {
+                    if (p.Value != null)
+                    {
+                        p.Value.AssetName = p.Key;
+                    }
+                }
+            }           
+        }        
+    }   
+#endif
 }

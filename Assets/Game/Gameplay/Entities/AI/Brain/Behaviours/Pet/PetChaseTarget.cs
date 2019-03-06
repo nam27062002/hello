@@ -182,7 +182,8 @@ namespace AI {
                         Transition(OnEnemyOutOfSight, m_transitionParam);
                     }
                 } catch (System.Exception e) {
-                    throw new System.Exception("PetChaseTarget.OnUpdate: " + errorCode + "\n" + " PetName: " + m_stateMachine.gameObject.name + "\n" + e);
+                    Fabric.Crashlytics.Crashlytics.RecordCustomException("PetChaseTarget.OnUpdate",  errorCode + " - " + " PetName: " + m_stateMachine.gameObject.name, e.ToString());
+                    //throw new System.Exception("PetChaseTarget.OnUpdate: " + errorCode + "\n" + " PetName: " + m_stateMachine.gameObject.name + "\n" + e);
                 }
             }
 		}
