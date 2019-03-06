@@ -954,12 +954,11 @@ public class AssetBundlesManager
             if (!m_loaderRequests.Contains(id))
             {
                 AssetBundleHandle handle = GetAssetBundleHandle(id);
-                if (handle != null)
+                if (handle != null && handle.NeedsToRequestToLoad())
                 {
                     handle.OnPendingToRequestToLoad();
-                }
-
-                m_loaderRequests.Enqueue(id);
+                    m_loaderRequests.Enqueue(id);
+                }                
             }
         }
     }

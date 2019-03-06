@@ -163,7 +163,7 @@ public class LabGoalsBar : MonoBehaviour {
 		//HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);
 
 		// Go to play!
-		InstanceManager.menuSceneController.OnPlayButton();
+		InstanceManager.menuSceneController.GoToGame();
 	}
 
 	/// <summary>
