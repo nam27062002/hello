@@ -434,8 +434,7 @@ public class BasicAddressablesTestController : MonoBehaviour
                 switch (m_uiButtons[i].m_id)
                 {
                     case UIButton.EId.AddSceneCubes:
-                        thisValue = !SceneCubes_IsLoaded;
-                        //thisValue = true;// SceneCubes_IsLoaded;
+                        thisValue = !SceneCubes_IsLoaded;                        
                         break;
 
                     case UIButton.EId.RemoveSceneCubes:
