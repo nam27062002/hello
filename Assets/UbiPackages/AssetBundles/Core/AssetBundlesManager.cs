@@ -141,13 +141,14 @@ public class AssetBundlesManager
 
             string id;
             AssetBundleHandle handle;
-            List<string> dependencies;
+            List<string> dependencies = new List<string>();
             int count = assetBundleIds.Count;
             for (int i = 0; i < count; i++)
             {
                 id = assetBundleIds[i];
 
-                dependencies = catalog.GetAllDependencies(id);
+                dependencies.Clear();
+                catalog.GetAllDependencies(id, dependencies);
 
                 // id is also included because it makes downloading logic easier
                 dependencies.Add(id);
