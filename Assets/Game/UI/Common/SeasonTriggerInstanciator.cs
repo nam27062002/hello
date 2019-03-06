@@ -28,7 +28,7 @@ public class SeasonTriggerInstanciator : MonoBehaviour {
 	[System.Serializable]
 	public class SeasonalObject {
 		public Transform root = null;
-        // [FileList("Resources/", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+        [FileList("Resources/", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
         public string resource = "";
 
 	}
