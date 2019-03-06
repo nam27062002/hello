@@ -335,7 +335,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 					HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, UserProfile.Currency.NONE);
 
 					// Go to play!
-					InstanceManager.menuSceneController.OnPlayButton();
+					InstanceManager.menuSceneController.GoToGame();
 				}
 			}break;
 			case HDLiveDataManager.ComunicationErrorCodes.NET_ERROR: {
@@ -387,7 +387,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 		HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);
 
 		// Go to play!
-		InstanceManager.menuSceneController.OnPlayButton();
+		InstanceManager.menuSceneController.GoToGame();
 	}
 
 	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
