@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, Downloadables.Tracker tracker, Logger logger)
     {
         sm_logger = logger;
 
@@ -88,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesCatalogJSON, isAutomaticDownloaderEnabled, tracker, logger);
+        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -179,19 +179,41 @@ public class AddressablesManager
     /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
     /// </summary>
     /// <param name="id">Resource id (either scene or asset)</param>
+    /// <param name="track">Whether or not the result should be tracked</param>
     /// <returns>Whether or not the resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded</returns>
-    public bool IsResourceAvailable(string id)
+    public bool IsResourceAvailable(string id, bool track = false)
     {        
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
             AddressablesProvider provider = Providers_GetProvider(id, out entry);
-            return provider.IsResourceAvailable(entry);            
+            return provider.IsResourceAvailable(entry, track);            
         }
         else
         {
             return false;
         }     
+    }
+
+    public bool IsResourceListAvailable(List<string> ids, bool track = false)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            returnValue = true;
+            if (ids != null)
+            {
+                int count = ids.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    // IsResourceAvailable() must be called for every id so that the result can be tracked if it needs to
+                    returnValue = IsResourceAvailable(ids[i], track) && returnValue;
+                }
+            }        
+        }
+
+        return returnValue;
     }
 
     /// <summary>
@@ -418,6 +440,22 @@ public class AddressablesManager
             if (m_providerFromAB != null)
             {
                 m_providerFromAB.IsAutomaticDownloaderEnabled = value;
+            }
+        }
+    }
+
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_providerFromAB == null) ? false : m_providerFromAB.IsDownloaderEnabled;
+        }
+
+        set
+        {
+            if (m_providerFromAB != null)
+            {
+                m_providerFromAB.IsDownloaderEnabled = value;
             }
         }
     }

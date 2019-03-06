@@ -9,13 +9,18 @@ using System.Linq;
 
 namespace AssetBundles
 {
-    internal class LaunchAssetBundleServer : ScriptableSingleton<LaunchAssetBundleServer>
+    public class LaunchAssetBundleServer : ScriptableSingleton<LaunchAssetBundleServer>
     {        
 
         [SerializeField]
         int     m_ServerPID = 0;
 
         private static string sm_remoteAssetsFolderName = "Downloadables";
+
+        public static string GetRemoteAssetsFolderName()
+        {
+            return sm_remoteAssetsFolderName;
+        }
 
         public static void SetRemoteAssetsFolderName(string name)
         {
@@ -42,7 +47,7 @@ namespace AssetBundles
             return true;
         }
 
-        static bool IsRunning()
+        public static bool IsRunning()
         {
             if (instance.m_ServerPID == 0)
                 return false;
@@ -61,7 +66,7 @@ namespace AssetBundles
             }
         }
 
-        static void KillRunningAssetBundleServer()
+        public static void KillRunningAssetBundleServer()
         {
             // Kill the last time we ran
             try
@@ -80,7 +85,7 @@ namespace AssetBundles
 
         public static string overloadedDevelopmentServerURL = "";
 
-        public static void WriteServerURL()
+        public static string GetServerURL()
         {
             string downloadURL;
             if (string.IsNullOrEmpty(overloadedDevelopmentServerURL) == false)
@@ -103,7 +108,14 @@ namespace AssetBundles
                 downloadURL = "http://" + localIP + ":7888/";
             }
 
-            string assetBundleManagerResourcesDirectory = "Assets/StreamingAssets/Addressables/AssetBundles";
+            return downloadURL;
+        }
+
+        public static void WriteServerURL()
+        {
+            string downloadURL = GetServerURL();
+
+            string assetBundleManagerResourcesDirectory = "Assets/Resources/Addressables/AssetBundles";
             string assetBundleUrlPath = Path.Combine(assetBundleManagerResourcesDirectory, "AssetBundleServerURL.bytes");
             if (!Directory.Exists(assetBundleManagerResourcesDirectory))
             {
@@ -140,7 +152,7 @@ namespace AssetBundles
             else
             {
                 //We seem to have launched, let's save the PID
-                instance.m_ServerPID = launchProcess.Id;
+                instance.m_ServerPID = launchProcess.Id;                
             }
         }
 

@@ -8,7 +8,7 @@ namespace Downloadables
     /// </summary>
     public abstract class Tracker
     {
-        private const float BYTES_TO_MB = 1 / (1024 * 1024);
+        private const float BYTES_TO_MB = 1f / (1024 * 1024);
 
         public enum EAction
         {
@@ -16,8 +16,8 @@ namespace Downloadables
             Update,
             Load
         };
-
-        private Dictionary<Error.EType, int> m_maxPerErrorType = null;        
+        
+        private Config Config;
 
         /// <summary>
         /// Key: downloadable id; Value: TrackierInfo containing tracking related information of this downloadable
@@ -32,9 +32,14 @@ namespace Downloadables
         private float m_currentDownloadExistingSizeAtStart;
         private NetworkReachability m_currentDownloadReachabilityAtStart;
 
-        public Tracker(Dictionary<Error.EType, int> maxPerErrorType, Logger logger)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxAttempts">Max amount of attempts allowed per error type</param>        
+        /// <param name="logger"></param>
+        public Tracker(Config config, Logger logger)
         {
-            m_maxPerErrorType = maxPerErrorType;
+            Config = config; 
             m_currentDownloadTimeAtStart = -1;
         }        
 
@@ -49,6 +54,8 @@ namespace Downloadables
             m_currentDownloadExistingSizeAtStart = existingSizeMbAtStart;
             m_currentDownloadReachabilityAtStart = reachabilityAtStart;
             m_currentDownloadIsUpdate = isUpdate;
+
+            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, existingSizeMbAtStart);
         }
 
         public void NotifyDownloadEnd(float currentTime, string downloadableId, float existingSizeAtEnd,  float totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
@@ -84,11 +91,20 @@ namespace Downloadables
             }
 
             bool canLog = true;
+            bool maxReached = false;
+
+            int maxAttempts = Config.MaxTrackingEventsPerErrorType;
 
             // Checks if the result must be reported (a type of error has a limit for the amount of times it can be reported)
-            if (m_maxPerErrorType != null && error != Error.EType.None)
+            ErrorConfig errorConfig = Config.GetErrorConfig(error);
+            if (errorConfig != null)
             {
-                Dictionary<Error.EType, int> info = m_trackerInfo[downloadableId];
+                maxAttempts = errorConfig.MaxTimesPerSession;
+            }            
+            
+            Dictionary<Error.EType, int> info = m_trackerInfo[downloadableId];
+            if (error != Error.EType.None)
+            {
                 if (info.ContainsKey(error))
                 {
                     info[error]++;
@@ -98,22 +114,25 @@ namespace Downloadables
                     info.Add(error, 1);
                 }
 
-                canLog = info[error] <= m_maxPerErrorType[error];                
-            }
+                canLog = info[error] <= maxAttempts;
+                maxReached = info[error] >= maxAttempts;
+            }            
 
             if (canLog)
             {
                 EAction action = (m_currentDownloadIsUpdate) ? EAction.Update : EAction.Download;
                 int timeSpent = (int)(currentTime - m_currentDownloadTimeAtStart);                
                 TrackActionEnd(action, downloadableId, GetSizeInMb(m_currentDownloadExistingSizeAtStart), GetSizeInMb(existingSizeAtEnd),
-                               GetSizeInMb(totalSize), timeSpent, m_currentDownloadReachabilityAtStart, reachabilityAtEnd, error);
+                               GetSizeInMb(totalSize), timeSpent, m_currentDownloadReachabilityAtStart, reachabilityAtEnd, error, maxReached);
             }
 
             m_currentDownloadTimeAtStart = -1f;
         }
 
-        protected abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
-                                             NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error);                
+        public abstract void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart);
+
+        public abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+                                             NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached);                
 
         protected bool CanLog()
         {

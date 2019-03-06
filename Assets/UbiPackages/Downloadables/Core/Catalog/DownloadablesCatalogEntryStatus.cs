@@ -11,6 +11,7 @@ namespace Downloadables
     {
         public static float TIME_TO_WAIT_AFTER_ERROR = 60f;
         public static float TIME_TO_WAIT_BETWEEN_SAVES = 60f;
+        public static float TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES = 180f;
         private static float BYTES_TO_MB = 1024 * 1024;
 
         private static Disk sm_disk;        
@@ -25,8 +26,11 @@ namespace Downloadables
 
         private static CatalogEntry sm_entryHelper = new CatalogEntry();
 
-        public static void StaticSetup(Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
-        {            
+        private static Config sm_config;
+
+        public static void StaticSetup(Config config, Disk disk, Tracker tracker, OnDownloadEndCallback onDownloadEndCallback = null)
+        {
+            sm_config = config;
             sm_disk = disk;
             sm_tracker = tracker;
             sm_onDownloadEndCallback = onDownloadEndCallback;
@@ -77,7 +81,7 @@ namespace Downloadables
                                     break;
 
                                 case EState.DealingWithCRCMismatch:
-                                    errorType = Error.EType.Network_CRC_Mismatch;
+                                    errorType = Error.EType.CRC_Mismatch;
                                     break;
                             }
 
@@ -91,6 +95,7 @@ namespace Downloadables
                 // Latest error and save are reseted so the incoming state will be executed and will be able to save data right away
                 m_latestErrorAt = -1f;
                 m_latestSaveAt = -1f;
+                m_latestSimulationAt = -1f;
 
                 switch (m_state)
                 {
@@ -119,6 +124,8 @@ namespace Downloadables
 
         private float m_latestErrorAt;
         private float m_latestSaveAt;
+        private float m_latestSimulationAt;
+        private float m_latestActualUpdateAt;
 
         public enum ERequestState
         {
@@ -148,7 +155,8 @@ namespace Downloadables
                     case ERequestState.Running:
                         // Latest error and save are reseted so the request will be resolved with no delays
                         m_latestErrorAt = -1f;
-                        m_latestSaveAt = -1f;                        
+                        m_latestSaveAt = -1f;
+                        m_latestSimulationAt = -1f;
                         break;
                 }
             }
@@ -194,8 +202,20 @@ namespace Downloadables
             bool returnValue = m_latestErrorAt < 0f;
             if  (!returnValue)
             {
-                float timeSinceLatestError = Time.realtimeSinceStartup - m_latestErrorAt;
+                float timeSinceLatestError = sm_realtimeSinceStartup - m_latestErrorAt;
                 returnValue = timeSinceLatestError >= TIME_TO_WAIT_AFTER_ERROR;                 
+            }
+
+            return returnValue;
+        }
+
+        private bool HasSimulationExpired()
+        {
+            bool returnValue = m_latestSimulationAt < 0f;
+            if (!returnValue)
+            {
+                float timeSinceLatestSimulation = sm_realtimeSinceStartup - m_latestSimulationAt;
+                returnValue = timeSinceLatestSimulation >= TIME_TO_WAIT_AFTER_ERROR;
             }
 
             return returnValue;
@@ -232,6 +252,44 @@ namespace Downloadables
                     case EState.DealingWithCRCMismatch:
                         ProcessDealingWithCRCMismatch();
                         break;
+
+                    case EState.Available:
+                        if (sm_realtimeSinceStartup - m_latestActualUpdateAt >= TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES)
+                        {
+                            m_latestActualUpdateAt = sm_realtimeSinceStartup;
+
+                            Error error;
+
+                            // Verifies that the file is still in disk
+                            bool exists = sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error);
+
+                            bool needsToDownloadAgain = false;
+                            if (error == null)
+                            {
+                                if (exists)
+                                {
+                                    // Gets the downloaded file size
+                                    FileInfo fileInfo = sm_disk.File_GetInfo(Disk.EDirectoryId.Downloads, Id, out error);
+                                    if (error == null)
+                                    {
+                                        if (fileInfo.Length != m_dataInfo.Size)
+                                        {
+                                            needsToDownloadAgain = true;
+                                        }                                        
+                                    }
+                                }
+                                else
+                                {
+                                    needsToDownloadAgain = true;
+                                }
+                            }
+
+                            if (needsToDownloadAgain)
+                            {
+                                State = EState.ReadingDataInfo;
+                            }
+                        }
+                        break;
                 }
 
                 if (m_manifest.NeedsToSave)
@@ -240,7 +298,7 @@ namespace Downloadables
 
                     if (m_latestSaveAt >= 0f)
                     {
-                        float timeSinceLatestSave = Time.realtimeSinceStartup - m_latestSaveAt;
+                        float timeSinceLatestSave = sm_realtimeSinceStartup - m_latestSaveAt;
                         canSave = timeSinceLatestSave >= TIME_TO_WAIT_BETWEEN_SAVES;
                     }
 
@@ -470,6 +528,16 @@ namespace Downloadables
             return diff;
         }
 
+        public long GetBytesDownloadedSoFar()
+        {            
+            return m_dataInfo.Size;
+        }
+
+        public float GetMbDownloadedSoFar()
+        {
+            return GetBytesDownloadedSoFar() / BYTES_TO_MB;
+        }
+
         public float GetMbLeftToDownload()
         {
             return GetBytesLeftToDownload() / BYTES_TO_MB;
@@ -498,9 +566,23 @@ namespace Downloadables
             return RequestState == ERequestState.Running;
         }
 
-        public bool CanAutomaticDownload()
-        {            
-            return CRCMismatchErrorTimes < 2 && HasErrorExpired();
+        public bool CanAutomaticDownload(bool simulation)
+        {                 
+            bool returnValue = CRCMismatchErrorTimes < sm_config.GetMaxTimesPerSessionPerErrorType(Error.EType.CRC_Mismatch);
+            if (returnValue)
+            {
+                returnValue = (simulation) ? HasSimulationExpired() : HasErrorExpired();
+            }
+
+            return returnValue;
+        }        
+
+        // Used only for tracking purposes
+        public void SimulateDownload()
+        {
+            m_latestSimulationAt = sm_realtimeSinceStartup;
+            TrackDownloadStart();
+            TrackDownloadEnd(Error.EType.Network_Unauthorized_Reachability);
         }        
 
         public void OnDownloadStart()
@@ -530,8 +612,16 @@ namespace Downloadables
             }
         }
 
+        /// <summary>
+        /// This method is called when the download is complete and verified if everything went ok or when an error happened
+        /// </summary>        
         private void OnDownloadEnd(Error.EType errorType)
         {
+            if (errorType == Error.EType.None)
+            {
+                m_manifest.DownloadedTimes++;
+            }
+
             if (sm_onDownloadEndCallback != null)
             {
                 sm_onDownloadEndCallback(this, errorType);
@@ -553,6 +643,42 @@ namespace Downloadables
             if (sm_tracker != null)
             {
                 sm_tracker.NotifyDownloadEnd(sm_realtimeSinceStartup, Id, DataInfo.Size, m_manifest.Size, sm_currentNetworkReachability, errorType);
+            }
+        }
+
+        public bool IsAvailable(bool checkDisk)
+        {
+            bool returnValue = State == EState.Available;
+            if (returnValue && checkDisk)
+            {
+                Error error;
+                returnValue = sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error);
+            }
+
+            // If the state is not Available anymore then it's reseted
+            if (!returnValue && State == EState.Available)
+            {
+                State = EState.ReadingDataInfo;
+            }
+
+            return returnValue;
+        }
+
+        public void DeleteDownload()
+        {
+            // This entry is allowed to be deleted only if it's not currently downloading
+            if (State != EState.Downloading)
+            {
+                Error error;
+
+                if (sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error))
+                {
+                    // Deletes the download corresponding to this entry, if it exists, as it's outdated
+                    sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
+                }
+
+                // Updates its state if needed
+                IsAvailable(true);
             }
         }
     }    

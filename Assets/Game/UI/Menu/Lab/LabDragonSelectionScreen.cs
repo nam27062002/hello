@@ -225,8 +225,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
         MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
 
         if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
-            HDSeasonData m_season = HDLiveDataManager.league.season;
-            if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
+			if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS) {
                 InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
             }
         }
@@ -236,7 +235,11 @@ public class LabDragonSelectionScreen : MonoBehaviour {
     /// Back button has been pressed.
     /// </summary>
     public void OnBackButton() {
-        // Stop lab music
+		// Make sure we are allowed to change screen (prevent spamming)
+		// [AOC] Resolves issue HDK-4255 among others
+		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
+        
+		// Stop lab music
         m_labMusicCount--;
         InstanceManager.musicController.Ambience_Stop(LAB_MUSIC, gameObject);
         

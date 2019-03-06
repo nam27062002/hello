@@ -30,7 +30,14 @@ public class SeasonManager : Singleton<SeasonManager> {
 	//------------------------------------------------------------------------//
 	private string m_activeSeason = NO_SEASON_SKU;
 	public static string activeSeason {
-		get { return instance.m_activeSeason; }
+        get {
+            SeasonManager sm = instance;
+            if (sm != null) {
+                return sm.m_activeSeason;
+            } else {
+                return "";
+            }
+        } 
 	}
 
 	//------------------------------------------------------------------------//
@@ -140,7 +147,7 @@ public class SeasonManager : Singleton<SeasonManager> {
     public static bool IsFireworksDay()
     {
         bool ret = false;
-        ret = Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false);
+        ret = DebugSettings.specialDates;
         ret = ret || IsNewYear() || IsChineseNewYear();
         return ret;
     }

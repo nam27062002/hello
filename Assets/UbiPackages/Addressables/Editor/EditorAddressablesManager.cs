@@ -15,7 +15,7 @@ public class EditorAddressablesManager
 {
     private static Logger sm_logger = new ConsoleLogger("AddressablesEditor");
 
-    private static string STREAMING_ASSETS_ROOT_PATH = EditorFileUtils.PathCombine("Assets", "StreamingAssets");
+    private static string RESOURCES_ROOT_PATH = EditorFileUtils.PathCombine("Assets", "Resources");
 
     public static string REMOTE_ASSETS_FOLDER_NAME = "RemoteAssets";
 
@@ -40,7 +40,7 @@ public class EditorAddressablesManager
 
     public EditorAddressablesManager()
     {
-        m_localDestinationPath = EditorFileUtils.PathCombine(STREAMING_ASSETS_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
+        m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
         m_assetBundlesLocalDestinationPath = EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
     }
@@ -277,17 +277,37 @@ public class EditorAddressablesManager
             }
 
             // Copy remote asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);                                    
+            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);
 
             // Generates remote AB list file            
             //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
+            GenerateDownloadablesConfig(m_localDestinationPath);
         }
     }    
 
     public void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
     {
         EditorAssetBundlesManager.GenerateDownloadablesCatalog(fileNames, playerFolder);
-    }     
+    }
+
+    public void GenerateDownloadablesConfig(string playerFolder)
+    {
+        string sourceFileName = "editor_" + Downloadables.Manager.DOWNLOADABLES_CONFIG_FILENAME;
+        string sourcePath = "Assets/Editor/Downloadables/" + sourceFileName;
+
+        string destPath = playerFolder + "/" + Downloadables.Manager.DOWNLOADABLES_CONFIG_FILENAME;
+
+        if (File.Exists(destPath))
+        {
+            File.Delete(destPath);
+            File.Delete(destPath + ".meta");
+        }
+
+        if (File.Exists(sourcePath))
+        {
+            File.Copy(sourcePath, destPath);
+        }
+    }
 
     private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)
     {        

@@ -567,6 +567,13 @@ public class HDTrackingManager
 	public virtual void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) { }
     #endregion
 
+    #region downloadables
+    public virtual void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart) { }
+
+    public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+                                                string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
+    #endregion
+
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
     public enum ELocation
     {
