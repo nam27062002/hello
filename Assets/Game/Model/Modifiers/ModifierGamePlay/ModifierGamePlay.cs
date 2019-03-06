@@ -14,14 +14,15 @@ public abstract class ModifierGamePlay : Modifier {
 	public new static ModifierGamePlay CreateFromDefinition(DefinitionNode _def) {
 		string target = _def.Get("target");
 
-		switch (target) {
-		case ModGamePlaySpawnFrequency.TARGET_CODE:	return new ModGamePlaySpawnFrequency(_def);
+		switch (target) {		
 		case ModGamePlayKillChainFast.TARGET_CODE:	return new ModGamePlayKillChainFast(_def);
 		case ModGamePlayKillChainLonger.TARGET_CODE:return new ModGamePlayKillChainLonger(_def);
-		case ModGamePlayMissionReward.TARGET_CODE:	return new ModGamePlayMissionReward(_def);
-		case ModGamePlaySC.TARGET_CODE: 			return new ModGamePlaySC(_def);
+		case ModGamePlayMissionReward.TARGET_CODE:	return new ModGamePlayMissionReward(_def);		
 		case ModGamePlayPetPowerUp.TARGET_CODE:		return new ModGamePlayPetPowerUp(_def);
-		}
+        case ModGamePlaySC.TARGET_CODE:             return new ModGamePlaySC(_def);
+        case ModGamePlaySceneSelector.TARGET_CODE:  return new ModGamePlaySceneSelector(_def);
+        case ModGamePlaySpawnFrequency.TARGET_CODE: return new ModGamePlaySpawnFrequency(_def);
+        }
 
 		return null;
 	}

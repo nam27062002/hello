@@ -36,8 +36,14 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	private SerializedProperty m_targetProperty = null;
 
 	// Internal logic
-	private int m_selectedIdx = 0;
-	private double m_fileListRefreshTimer = -FILE_LIST_REFRESH_INTERVAL;	// Force a first refresh
+	private double m_fileListRefreshTimer = -FILE_LIST_REFRESH_INTERVAL;    // Force a first refresh
+
+	// If used within an array/list, because of Unity editor's optimizations, a single instance of the drawer will be used.
+	// The undesired result is that changing the value of the property in any of the elements of the array affects the rest of elements in the array.
+	// To work around this, we'll store current values in a dictionary indexed by full property path.
+	// https://answers.unity.com/questions/1362134/unity-inspector-batching-custom-property-attribute.html
+	//private int m_selectedIdx = 0;
+	private Dictionary<string, int> m_selectedIdxs = new Dictionary<string, int>();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -65,12 +71,13 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 		}
 
 		// Update file list if needed
-		if(EditorApplication.timeSinceStartup > m_fileListRefreshTimer + FILE_LIST_REFRESH_INTERVAL) {
+		if(EditorApplication.timeSinceStartup > m_fileListRefreshTimer + FILE_LIST_REFRESH_INTERVAL
+		|| !m_selectedIdxs.ContainsKey(_property.propertyPath)) {
 			// Refresh file list
 			RefreshFileList();
 
 			// Find out index of the current value
-			RefreshSelectedIdx(_property.stringValue);
+			RefreshSelectedIdx(_property);
 		}
 
 		// Store property
@@ -78,9 +85,10 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 
 		// Display the property
 		// Unity's Popup control manages the sub-menu logic! ^_^
-		m_pos.height = EditorStyles.popup.lineHeight + 5;	// [AOC] Default popup field height + some margin
-		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, m_selectedIdx, m_options);
-		if(newSelectedIdx != m_selectedIdx) {
+		m_pos.height = EditorStyles.popup.lineHeight + 5;   // [AOC] Default popup field height + some margin
+		int currentSelectedIdx = m_selectedIdxs[m_targetProperty.propertyPath];
+		int newSelectedIdx = EditorGUI.Popup(m_pos, _label.text, currentSelectedIdx, m_options);
+		if(newSelectedIdx != currentSelectedIdx) {
 			OnFileSelected(newSelectedIdx);
 		}
 
@@ -105,7 +113,7 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 		m_targetProperty.serializedObject.ApplyModifiedProperties();
 
 		// Update selected index
-		m_selectedIdx = _selectedIdx;
+		m_selectedIdxs[m_targetProperty.propertyPath] = _selectedIdx;
 	}
 
 	/// <summary>
@@ -173,21 +181,27 @@ public class FileListAttributeEditor : ExtendedPropertyDrawer {
 	/// Find the index of the given value within the m_files array.
 	/// If given value is not found, the index will be set to 0, forcing selection 
 	/// to the first value (which will be "NONE" if allowed).
+	/// The index will be stored in the m_selectedIdxs dictionary using the property path as key.
 	/// </summary>
-	/// <param name="_toFind">Value to find.</param>
-	private void RefreshSelectedIdx(string _toFind) {
-		m_selectedIdx = 0;
-		if(!String.IsNullOrEmpty(_toFind)) {
+	/// <param name="_prop">The property the index of whose string value we want to find.</param>
+	private void RefreshSelectedIdx(SerializedProperty _prop) {
+		// Find out selected index
+		int selectedIdx = 0;
+		string toFind = _prop.stringValue;
+		if(!String.IsNullOrEmpty(toFind)) {
 			for(int i = 0; i < m_files.Count; i++) {
 				if(m_files[i] == null) continue;
 
 				// [AOC] Windows uses backward slashes, which Unity doesn't recognize
-				if(StringUtils.SafePath(m_files[i].FullName).Contains(StringUtils.SafePath(_toFind))) {
-					m_selectedIdx = i;
+				if(StringUtils.SafePath(m_files[i].FullName).Contains(StringUtils.SafePath(toFind))) {
+					selectedIdx = i;
 					break;
 				}
 			}
 		}
+
+		// Store selected index in the dictionary
+		m_selectedIdxs[_prop.propertyPath] = selectedIdx;
 	}
 }
 

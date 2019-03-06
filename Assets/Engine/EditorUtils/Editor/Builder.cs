@@ -475,7 +475,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		List<string> levels = def.GetAsList<string>("common");
 
 		int areaIndex = 1;
-		List<string> areaList = def.GetAsList<string>("area"+areaIndex);
+		List<string> areaList = LevelManager.GetOnlyAreaScenesList("area"+areaIndex);
 		while(areaList.Count > 0 && !string.IsNullOrEmpty(areaList[0]) )
 		{
 			for(int i = 0; i<areaList.Count; i++)
@@ -486,7 +486,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				}
 			}
 			areaIndex++;
-			areaList = def.GetAsList<string>("area"+areaIndex);
+			areaList = LevelManager.GetOnlyAreaScenesList("area"+areaIndex);
 		}
 
 		for( int i = 0; i<levels.Count; i++ )
