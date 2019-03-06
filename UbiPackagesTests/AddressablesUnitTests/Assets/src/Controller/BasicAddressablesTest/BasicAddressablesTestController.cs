@@ -112,6 +112,34 @@ public class BasicAddressablesTestController : MonoBehaviour
 
     public bool SceneCubes_IsLoaded { get; set; }
 
+    private string SceneCubes_GetSceneId()
+    {
+        return SCENE_CUBES_SCENE_NAME;
+    }
+
+    private string SceneCubes_GetVariant()
+    {
+        string returnValue = null;
+
+        //if (m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()))
+        {
+            switch (m_uiSceneCubesResolutionDropdown.value)
+            {
+                case 0:
+                    returnValue = "low";
+                    break;
+
+                case 1:
+                    returnValue = "high";
+                    break;
+            }
+        }
+
+        //returnValue = null;
+
+        return returnValue;
+    }
+
     public void SceneCubes_OnAdd()
     {
         if (!SceneCubes_IsLoaded)
@@ -124,12 +152,12 @@ public class BasicAddressablesTestController : MonoBehaviour
             switch (mode)
             {
                 case ELoadResourceMode.Sync:
-                    op = m_addressablesManager.DownloadDependenciesAsync(SCENE_CUBES_SCENE_NAME);
+                    op = m_addressablesManager.DownloadDependenciesAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());
                     op.OnDone = Scene_OnDependenciesDownloaded;
                     break;
 
                 case ELoadResourceMode.Async:
-                    op = m_addressablesManager.LoadSceneAsync(SCENE_CUBES_SCENE_NAME, null, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+                    op = m_addressablesManager.LoadSceneAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant(), UnityEngine.SceneManagement.LoadSceneMode.Additive);
                     op.OnDone = SceneCubes_OnDoneByOp;
                     break;
             }                                    
@@ -140,7 +168,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            op = m_addressablesManager.LoadDependenciesAsync(SCENE_CUBES_SCENE_NAME);
+            op = m_addressablesManager.LoadDependenciesAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());
             op.OnDone = Scene_OnDependenciesLoaded;
         }
         else
@@ -153,7 +181,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            m_addressablesManager.LoadScene(SCENE_CUBES_SCENE_NAME, null, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            m_addressablesManager.LoadScene(SceneCubes_GetSceneId(), SceneCubes_GetVariant(), UnityEngine.SceneManagement.LoadSceneMode.Additive);
             SceneCubes_OnDone(null);
         }
         else
@@ -183,7 +211,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (SceneCubes_IsLoaded)
         {
-            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SCENE_CUBES_SCENE_NAME);            
+            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());            
             op.OnDone = SceneCubes_OnDoneByOp;                        
         }
     }
@@ -298,24 +326,15 @@ public class BasicAddressablesTestController : MonoBehaviour
     {        
         Ui_SetEnabled(true);
         Ui_SetOperationResult(error);
-    }
-
-    /*
-    private void SceneCubes_OnRemove()
-    {
-        if (SceneCubes_IsLoaded)
-        {
-            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SCENE_CUBES_SCENE_NAME);
-            op.OnDone = SceneCubes_OnDoneByOp;
-        }
-    }
-    */
+    }  
     #endregion
 
 
     #region ui
     public List<UIButton> m_uiButtons;    
     public Dropdown m_uiSceneCubesDropdown;
+    public Dropdown m_uiSceneCubesResolutionDropdown;
+
     public Dropdown m_uiAssetCubesDropdown;
     public Dropdown m_uiAssetCubesAddressableIds;
     public Dropdown m_uiAssetCubesResolutionDropdown;
@@ -416,6 +435,7 @@ public class BasicAddressablesTestController : MonoBehaviour
                 {
                     case UIButton.EId.AddSceneCubes:
                         thisValue = !SceneCubes_IsLoaded;
+                        //thisValue = true;// SceneCubes_IsLoaded;
                         break;
 
                     case UIButton.EId.RemoveSceneCubes:
