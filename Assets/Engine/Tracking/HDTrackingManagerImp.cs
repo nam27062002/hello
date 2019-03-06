@@ -1246,7 +1246,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         if (action == Downloadables.Tracker.EAction.Download || action == Downloadables.Tracker.EAction.Update)
         {
-            string status = (result == "success") ? "completed" : "failed";
+			string status = (result == HDDownloadablesTracker.RESULT_SUCCESS) ? "completed" : "failed";
             int sizeInKb = (int)(existingSizeMbAtEnd * 1024);
             Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
         }
