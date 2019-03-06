@@ -231,7 +231,8 @@ public class UTAssetBundlesLoad : UnitTest
         bool passes = catalog.IsAssetBundleLocal(m_abId) == m_isLocal;
         if (passes)
         {
-            List<string> dependencies = catalog.GetAllDependencies(m_abId);
+            List<string> dependencies = new List<string>();
+            catalog.GetAllDependencies(m_abId, dependencies);
             passes = UbiListUtils.Compare(m_dependencies, dependencies);
 
             if (passes && m_checkJSON)
