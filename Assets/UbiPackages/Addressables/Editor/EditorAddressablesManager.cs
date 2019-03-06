@@ -103,15 +103,17 @@ public class EditorAddressablesManager
         BuildAssetBundles(target);
         GenerateAssetBundlesCatalog();
         ProcessAssetBundles(target, true);
-    }
+    }   
 
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
+        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);        
         if (editorCatalog != null)
         {
+            editorCatalog.OptimizeEntriesAssetNames();
+
             AssetDatabase.RemoveUnusedAssetBundleNames();            
 
             // Copies editor catalog in player catalog
@@ -167,12 +169,14 @@ public class EditorAddressablesManager
                 }
 
                 EditorBuildSettings.scenes = newSceneList.ToArray();
-            }
+            }            
             
             JSONClass json = playerCatalog.ToJSON();            
             EditorFileUtils.WriteToFile(playerCatalogPath, json.ToString());            
         }
     }
+
+
 
     public void GenerateAssetBundlesCatalog()
     {
@@ -323,16 +327,13 @@ public class EditorAddressablesManager
                 sm_logger.LogError("No resource found in " + path);
             }
             else            
-            {                
-                string fileName = EditorFileUtils.GetFileName(path, false);
-                entry.AssetName = fileName;
-
+            {                                
                 string assetBundleNameFromCatalog = "";
 
                 switch (entry.LocationType)
                 {
                     case AddressablesTypes.ELocationType.AssetBundles:
-                        assetBundleNameFromCatalog = entry.AssetBundleName;
+                        assetBundleNameFromCatalog = entry.AssetBundleName;                        
                         break;                    
                 }
                 

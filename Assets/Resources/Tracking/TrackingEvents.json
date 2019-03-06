@@ -633,7 +633,18 @@
                 "dna",
                 "etl"
             ]
-	  },	  
+	  },	
+	  "custom.player.contentDownload": {
+	      "Parameters": [
+                { "status": { "Status": "OK" } },
+                { "downloadType": { "Status": "OK" } },
+                { "size": { "Status": "OK" } },
+                { "duration": { "Status": "OK" } }                
+            ],
+            "APIs": [
+                "dna"
+            ]
+	  },	  	  
 	  "af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1507,6 +1518,14 @@
 	  "size": {
         "Type": "FLOAT",
         "Values": []
-      }	  
+      },
+	  "status": {
+		"Type": "STRING:16",
+        "Values": []
+	  },
+	  "downloadType": {
+		"Type": "STRING:64",
+        "Values": []
+	  }
     }
 }

@@ -189,22 +189,41 @@ public class BasicAddressablesTestController : MonoBehaviour
     {     
     }    
 
+    private string AssetCubes_GetAssetId()
+    {
+        string assetId = ASSET_CUBES_NAME + "_";
+        switch (m_uiAssetCubesResolutionDropdown.value)
+        {
+            case 0:
+                assetId += "low";
+                break;
+
+            case 1:
+                assetId += "high";
+                break;
+        }
+
+        return assetId;
+    }
+
     public void AssetCubes_OnAdd()
     {        
         Ui_SetEnabled(false);
         Ui_SetOperationResultProcessing();
+
+        string assetId = AssetCubes_GetAssetId();       
 
         ELoadResourceMode mode = GetLoadResourceModeFromDropdown(m_uiAssetCubesDropdown);
         AddressablesOp op;
         switch (mode)
         {
             case ELoadResourceMode.Sync:
-                op = m_addressablesManager.DownloadDependenciesAsync(ASSET_CUBES_NAME);                
+                op = m_addressablesManager.DownloadDependenciesAsync(assetId);                
                 op.OnDone = AssetCubes_OnDependenciesDownloaded;
                 break;            
             
             case ELoadResourceMode.Async:
-                op = m_addressablesManager.LoadAssetAsync(ASSET_CUBES_NAME);
+                op = m_addressablesManager.LoadAssetAsync(assetId);
                 op.OnDone = AssetCubes_OnDoneByOp;
                 break;
         }        
@@ -214,7 +233,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            op = m_addressablesManager.LoadDependenciesAsync(ASSET_CUBES_NAME);
+            op = m_addressablesManager.LoadDependenciesAsync(AssetCubes_GetAssetId());
             op.OnDone = AssetCubes_OnDependenciesLoaded;
         }
         else
@@ -227,7 +246,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(ASSET_CUBES_NAME);
+            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(AssetCubes_GetAssetId());
             AssetCubes_InstantiateCube(prefab);
             AssetCubes_OnDone(null);
         }
@@ -282,6 +301,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     public List<UIButton> m_uiButtons;    
     public Dropdown m_uiSceneCubesDropdown;
     public Dropdown m_uiAssetCubesDropdown;
+    public Dropdown m_uiAssetCubesResolutionDropdown;
     public Text m_uiOperationResult;    
 
     private void Ui_Init()

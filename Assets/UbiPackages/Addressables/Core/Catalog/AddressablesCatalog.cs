@@ -1,6 +1,5 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// This class is responsible for storing a catalog of <c>AddressablesEntry</c> objects
@@ -256,4 +255,76 @@ public class AddressablesCatalog
     {
         return (!string.IsNullOrEmpty(areaId) && m_areas.ContainsKey(areaId)) ? m_areas[areaId] : null;
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Returns the entries grouped by asset bundle
+    /// </summary>
+    /// <returns>Returns a <c>Dictionary</c> which key is asset bundle name and the value is the list of <c>AddressablesCatalogEntry</c> objects that refer to that asset bundle.</returns>
+    private Dictionary<string, List<AddressablesCatalogEntry>> GetEntriesGroupedByAssetBundle()
+    {
+        Dictionary<string, List<AddressablesCatalogEntry>> returnValue = new Dictionary<string, List<AddressablesCatalogEntry>>();
+        
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in m_entries)
+        {
+            if (pair.Value.LocationType == AddressablesTypes.ELocationType.AssetBundles && !string.IsNullOrEmpty(pair.Value.AssetBundleName))
+            {
+                if (!returnValue.ContainsKey(pair.Value.AssetBundleName))
+                {
+                    returnValue.Add(pair.Value.AssetBundleName, new List<AddressablesCatalogEntry>());
+                }
+
+                returnValue[pair.Value.AssetBundleName].Add(pair.Value);
+            }
+        }
+
+        return returnValue;
+    }        
+
+    /// <summary>
+    /// Optimizes the asset name field of all entries in this catalog
+    /// </summary>
+    public void OptimizeEntriesAssetNames()
+    {        
+        if (m_editorMode)
+        {            
+            Dictionary<string, AddressablesCatalogEntry> assetNames = new Dictionary<string, AddressablesCatalogEntry>();
+
+            // Gets all entries grouped by asset bundle, then loops through them all and stores the ones which filename (which is the smallest possible name) is unique so 
+            // their asset names can be changed to this smallest name. We need to keep the full path as an asset name for the ones that share filename
+            string fileName;
+            string entryPath;
+            int count;
+            Dictionary<string, List<AddressablesCatalogEntry>> entriesGroupedByAssetBundle = GetEntriesGroupedByAssetBundle();
+            foreach (KeyValuePair<string, List<AddressablesCatalogEntry>> pair in entriesGroupedByAssetBundle)
+            {                
+                assetNames.Clear();
+                count = pair.Value.Count;
+                for (int i = 0; i < count; i++)
+                {   
+                    entryPath = UnityEditor.AssetDatabase.GUIDToAssetPath(pair.Value[i].GUID);
+                    fileName = System.IO.Path.GetFileNameWithoutExtension(entryPath);
+                    pair.Value[i].AssetName = entryPath;
+
+                    if (assetNames.ContainsKey(fileName))
+                    {
+                        assetNames[fileName] = null;                        
+                    }
+                    else
+                    {
+                        assetNames.Add(fileName, pair.Value[i]);                        
+                    }
+                }
+
+                foreach (KeyValuePair<string, AddressablesCatalogEntry> p in assetNames)
+                {
+                    if (p.Value != null)
+                    {
+                        p.Value.AssetName = p.Key;
+                    }
+                }
+            }           
+        }        
+    }   
+#endif
 }

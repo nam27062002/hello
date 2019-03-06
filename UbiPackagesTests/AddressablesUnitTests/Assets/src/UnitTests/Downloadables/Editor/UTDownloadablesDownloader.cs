@@ -162,7 +162,7 @@ public class UTDownloadablesDownloader : UnitTest
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);
 
         m_downloader = new Downloader(m_network, m_disk, logger);
-        string url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + "00" + "/";
+        string url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + m_downloadablesFolder + "/";
         m_downloader.Initialize(url);
 
         m_entry = new CatalogEntryStatus();
@@ -431,6 +431,10 @@ public class UTDownloadablesDownloader : UnitTest
     private class UTTracker : Tracker
     {
         public UTTracker(Config config, Logger logger) : base(config, logger)
+        {
+        }
+
+        public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
         {
         }
 
