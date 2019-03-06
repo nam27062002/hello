@@ -133,11 +133,11 @@ public class HDAddressablesManager : AddressablesManager
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
     // which may be called when rebooting the game
-    public override bool LoadScene(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public override bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {
-            return base.LoadScene(id, mode);
+            return base.LoadScene(id, variant, mode);
         }
         else
         {
@@ -148,11 +148,11 @@ public class HDAddressablesManager : AddressablesManager
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene,
     // which may be called when rebooting the game
-    public override AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public override AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {
-            return base.LoadSceneAsync(id, mode);
+            return base.LoadSceneAsync(id, variant, mode);
         }
         else
         {
@@ -162,11 +162,11 @@ public class HDAddressablesManager : AddressablesManager
         }        
     }
 
-    public override AddressablesOp UnloadSceneAsync(string id)
+    public override AddressablesOp UnloadSceneAsync(string id, string variant = null)
     {
         if (IsInitialized())
         {
-            return base.UnloadSceneAsync(id);
+            return base.UnloadSceneAsync(id, variant);
         }
         else
         {
@@ -294,7 +294,7 @@ public class HDAddressablesManager : AddressablesManager
                     int count = NextAreaRealSceneNames.Count;
                     for (int i = 0; i < count; i++)
                     {                        
-                        m_nextAreaScenesToLoad.Add(Instance.LoadSceneAsync(NextAreaRealSceneNames[i], LoadSceneMode.Additive));
+                        m_nextAreaScenesToLoad.Add(Instance.LoadSceneAsync(NextAreaRealSceneNames[i], null, LoadSceneMode.Additive));
                     }
                 }
             }
@@ -309,7 +309,7 @@ public class HDAddressablesManager : AddressablesManager
                 int count = NextAreaRealSceneNames.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    Instance.LoadScene(NextAreaRealSceneNames[i], LoadSceneMode.Additive);
+                    Instance.LoadScene(NextAreaRealSceneNames[i], null, LoadSceneMode.Additive);
                 }
             }
         }
@@ -324,7 +324,7 @@ public class HDAddressablesManager : AddressablesManager
         {            
             for (int i = 0; i < nextAreaRealSceneNames.Count;)
             {
-                if (IsResourceAvailable(nextAreaRealSceneNames[i], true))
+                if (IsResourceAvailable(nextAreaRealSceneNames[i], null, true))
                 {
                     i++;                    
                 }
