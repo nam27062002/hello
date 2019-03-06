@@ -54,7 +54,7 @@ public class HDDownloadablesTracker : Tracker
 
     private Dictionary<string, bool> m_idsLoadTracked;
 
-    public HDDownloadablesTracker(int maxAttempts, Dictionary<Error.EType, int> maxAttemptsPerErrorType, Logger logger) : base(maxAttempts, maxAttemptsPerErrorType, logger)
+    public HDDownloadablesTracker(Downloadables.Config config, Logger logger) : base(config, logger)
     {
     }
 
@@ -64,6 +64,11 @@ public class HDDownloadablesTracker : Tracker
         {
             m_idsLoadTracked.Clear();
         }
+    }
+
+    public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+    {
+        HDTrackingManager.Instance.Notify_DownloadablesStart(action, downloadableId, existingSizeMbAtStart);        
     }
 
     public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
@@ -87,7 +92,7 @@ public class HDDownloadablesTracker : Tracker
                 m_idsLoadTracked.Add(downloadableId, true);
             }
 
-            HDTrackingManager.Instance.Notify_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
+            HDTrackingManager.Instance.Notify_DownloadablesEnd(action, downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
                                                                 ReachabilityToString(reachabilityAtStart), ReachabilityToString(reachabilityAtEnd), ErrorTypeToString(error), maxAttemptsReached);
         }
     }    

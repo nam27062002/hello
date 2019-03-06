@@ -30,7 +30,8 @@ public class MockDriver
         File_Delete,        
 
         // Network
-        CreateHttpWebRequest
+        CreateHttpWebRequest,
+        GetResponse
     }
 
     public class ExceptionConf

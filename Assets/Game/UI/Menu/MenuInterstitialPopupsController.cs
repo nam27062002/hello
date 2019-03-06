@@ -30,7 +30,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		NEW_DRAGON_UNLOCKED = 1 << 1,
 		POPUP_DISPLAYED = 1 << 2,
 		WAIT_FOR_CUSTOM_POPUP = 1 << 3,
-		CHECKING_CONNECTION = 1 << 4
+		CHECKING_CONNECTION = 1 << 4,
+		COMING_FROM_A_RUN = 1 << 5
 	}
 
 	//------------------------------------------------------------------------//
@@ -76,6 +77,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// Update loop.
 	/// </summary>
 	private void Update() {
+		// Customizer popup async operation+
 		if (GetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP)) {
 			if (!GetFlag(StateFlag.POPUP_DISPLAYED)) {
 				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetLastPreparedPopupConfig();
@@ -353,7 +355,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// <param name="_whereToShow">Where are we attempting to show the popup?</param>
 	private void CheckFeaturedOffer(OfferPack.WhereToShow _whereToShow) {
 		// Ignore if a popup has already been displayed in this iteration
-		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+		//if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+		// Don't do it if a popup is currently open
+		if(m_currentPopup != null) return;
 
 		// Minimum amount of runs must be completed
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_OFFERS_POPUPS_AT_RUN) return;
@@ -467,11 +471,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 			return;
 		}
 
-        // if we come from playing whetever is Classic, Lab or Tournament
-        if ( _from == MenuScreen.NONE && _to != MenuScreen.PLAY ) {
+		// Do we come from playing? (whetever is Classic, Lab or Tournament)
+		SetFlag(StateFlag.COMING_FROM_A_RUN, _from == MenuScreen.NONE && _to != MenuScreen.PLAY);
+
+		// If coming from a run, regardles of the destination screen
+		if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
+			// Interstitials
             CheckInterstitialAds();
         }
 
+		// Depending on target screen
 		switch(_to) {
 			case MenuScreen.PLAY: {
                 CheckPromotedIAPs();
@@ -540,6 +549,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 			switch(InstanceManager.menuSceneController.currentScreen) {
 				case MenuScreen.PLAY: {
 					// Add any checks here
+					CheckFeaturedOffer(OfferPack.WhereToShow.PLAY_SCREEN);
+				} break;
+
+				case MenuScreen.DRAGON_SELECTION: {
+					// Coming from a run?
+					if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
+						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
+					} else {
+						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
+					}
 				} break;
 			}
 		}

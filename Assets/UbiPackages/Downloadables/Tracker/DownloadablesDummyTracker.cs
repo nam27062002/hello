@@ -5,8 +5,16 @@ namespace Downloadables
 {
     public class DummyTracker : Tracker
     {
-        public DummyTracker(int maxAttempts, Dictionary<Error.EType, int> maxAttemptsPerErrorType, Logger logger) : base(maxAttempts, maxAttemptsPerErrorType, logger)
+        public DummyTracker(Config config, Logger logger) : base(config, logger)
         {
+        }
+
+        public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+        {
+            if (CanLog())
+            {
+                m_logger.Log("ActionStart " + action.ToString() + " abName = " + downloadableId + " existingSizeMbAtStart = " + existingSizeMbAtStart);
+            }
         }
 
         public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,

@@ -59,7 +59,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, JSONNode downloadablesCatalogJSON, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, Downloadables.Tracker tracker, Logger logger)
     {
         sm_logger = logger;
 
@@ -88,7 +88,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesCatalogJSON, isAutomaticDownloaderEnabled, tracker, logger);
+        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -440,6 +440,22 @@ public class AddressablesManager
             if (m_providerFromAB != null)
             {
                 m_providerFromAB.IsAutomaticDownloaderEnabled = value;
+            }
+        }
+    }
+
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_providerFromAB == null) ? false : m_providerFromAB.IsDownloaderEnabled;
+        }
+
+        set
+        {
+            if (m_providerFromAB != null)
+            {
+                m_providerFromAB.IsDownloaderEnabled = value;
             }
         }
     }

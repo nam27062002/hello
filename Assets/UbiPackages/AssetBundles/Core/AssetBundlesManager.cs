@@ -42,7 +42,8 @@ public class AssetBundlesManager
    
     private Dictionary<string, AssetBundleHandle> m_assetBundleHandles;
 
-    public static string ASSET_BUNDLES_CATALOG_FILENAME = "assetBundlesCatalog.json";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION = "assetBundlesCatalog";
+    public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
     private Downloadables.Manager m_downloadablesManager;        
@@ -56,11 +57,11 @@ public class AssetBundlesManager
     /// Initialize the system.
     /// </summary>
     /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
-    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>    
-    /// <param name="isAutomaticDownloaderEnabled">Whether or not automatic downloader is enabled.</param>    
+    /// <param name="downloadablesConfig">Downloadables configuration</param>        
+    /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
     /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -96,8 +97,8 @@ public class AssetBundlesManager
         DiskDriver diskDriver = new ProductionDiskDriver();
 #endif
         Logger downloadablesLogger = logger;
-        m_downloadablesManager = new Downloadables.Manager(networkDriver, diskDriver, null, tracker, downloadablesLogger);
-        m_downloadablesManager.Initialize(downloadablesCatalog, isAutomaticDownloaderEnabled);
+        m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
+        m_downloadablesManager.Initialize(downloadablesCatalog);
 
         LoadCatalog(localAssetBundlesPath);
 
@@ -120,26 +121,20 @@ public class AssetBundlesManager
 #endif
 
     private void LoadCatalog(string directory)
-    {
-        BetterStreamingAssets.Initialize();
-        
-        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME);
-        if (BetterStreamingAssets.FileExists(path))
-        {
-            JSONNode json = null;
-            string text = BetterStreamingAssets.ReadAllText(path);
-            if (!string.IsNullOrEmpty(text))
-            {
-                json = JSON.Parse(text);
-            }
+    {        
+        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
 
+        if (json != null)
+        { 
             AssetBundlesCatalog catalog = new AssetBundlesCatalog();
             catalog.Load(json, sm_logger);
 
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
             // Full directory is used so we can use AssetBundle.LoadFromFileAsyn() to load asset bundles from streaming assets and from downloadables folder in device storage
-            string fullLocalDirectory = Path.Combine(Application.streamingAssetsPath, directory);
+            string fullLocalDirectory = Path.Combine("Assets/Resources", directory);
             fullLocalDirectory = Path.Combine(fullLocalDirectory, ASSET_BUNDLES_PATH_RELATIVE);
 
             List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
@@ -220,6 +215,22 @@ public class AssetBundlesManager
             if (m_downloadablesManager != null)
             {
                 m_downloadablesManager.IsAutomaticDownloaderEnabled = value;
+            }
+        }
+    }
+
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return (m_downloadablesManager == null) ? false : m_downloadablesManager.IsEnabled;
+        }
+
+        set
+        {
+            if (m_downloadablesManager != null)
+            {
+                m_downloadablesManager.IsEnabled = value;
             }
         }
     }

@@ -389,7 +389,8 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         m_diskDriver = diskDriver;
         m_cacheFolder = cacheFolder;
 
-        CatalogEntryStatus.StaticSetup(disk, null);
+        Config config = new Config();
+        CatalogEntryStatus.StaticSetup(config, disk, null);
         m_entryStatus = new CatalogEntryStatus();
         m_entryStatus.LoadManifest(id, catalogJSON);
 

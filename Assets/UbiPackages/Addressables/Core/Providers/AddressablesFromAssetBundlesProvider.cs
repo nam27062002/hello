@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(string localAssetBundlesPath, JSONNode downloadablesCatalog, bool isAutomaticDownloaderEnabled, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesCatalog, isAutomaticDownloaderEnabled, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalog, tracker, logger);
     }
 
     public void Reset()
@@ -117,6 +117,19 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         set
         {
             AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = value;
+        }
+    }
+
+    public bool IsDownloaderEnabled
+    {
+        get
+        {
+            return AssetBundlesManager.Instance.IsDownloaderEnabled;
+        }
+
+        set
+        {
+            AssetBundlesManager.Instance.IsDownloaderEnabled = value;
         }
     }
 

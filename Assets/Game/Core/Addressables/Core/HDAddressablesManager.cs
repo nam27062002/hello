@@ -22,9 +22,7 @@ public class HDAddressablesManager : AddressablesManager
 
             return sm_instance;
         }
-    }
-
-    private float m_pollAutomaticDownloaderAt;
+    }    
 
     private HDDownloadablesTracker m_tracker;
 
@@ -37,17 +35,11 @@ public class HDAddressablesManager : AddressablesManager
         
         string addressablesPath = "Addressables";
         string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog.json");
+        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        BetterStreamingAssets.Initialize();
-
-        // Retrieves addressables catalog
-        string catalogAsText = null;
-        if (BetterStreamingAssets.FileExists(addressablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(addressablesCatalogPath);            
-        }
-
+        // Addressables catalog 
+        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
+        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
@@ -62,6 +54,14 @@ public class HDAddressablesManager : AddressablesManager
         JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         */
 
+        // Downloadables config
+        string downloadablesConfigPath = Path.Combine(addressablesPath, "downloadablesConfig");
+        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
+        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        JSONNode downloadablesConfigJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        Downloadables.Config downloadablesConfig = new Downloadables.Config();
+        downloadablesConfig.Load(downloadablesConfigJSON, logger);
+
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
         if (assetsLUT == null)
@@ -69,61 +69,66 @@ public class HDAddressablesManager : AddressablesManager
             assetsLUT = ContentDeltaManager.SharedInstance.m_kLocalDeltaData;
         }
 
-        m_tracker = new HDDownloadablesTracker(2, null, logger);
+        m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesCatalogAsJSON, false, m_tracker, logger);
-
-        m_pollAutomaticDownloaderAt = 0f;
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);        
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
     {
-        string urlBase = null;
-
-        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-        if (kServerConfig != null)
+        if (assetsLUT != null)
         {
-            switch (kServerConfig.m_eBuildEnvironment)
+            // urlBase is taken from assetLUT unless it's empty or "localhost", which means that assetsLUT is the one in the build, which must be adapted to the environment
+            string urlBase = assetsLUT.m_strURLBase;
+            if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
             {
-                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
-                    break;
+                Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+                if (kServerConfig != null)
+                {
+                    switch (kServerConfig.m_eBuildEnvironment)
+                    {
+                        case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
+                            urlBase = "http://hdragon-assets-s3.akamaized.net/prod/";
+                            break;
 
-                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-                    break;
+                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                            urlBase = "http://hdragon-assets-s3.akamaized.net/qc/";
+                            break;
 
-                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
-                    break;
+                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
+                            break;
 
-                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
-                    break;
+                        case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
+                            break;
+                    }
+
+                    //http://10.44.4.69:7888/            
+                }                
             }
 
-            //http://10.44.4.69:7888/            
-        }
+            Downloadables.Catalog catalog = new Downloadables.Catalog();
+            catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
 
-        if (string.IsNullOrEmpty(urlBase))
+            Downloadables.CatalogEntry entry;
+            foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
+            {
+                entry = new Downloadables.CatalogEntry();
+                entry.CRC = pair.Value;
+                entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+
+                catalog.AddEntry(pair.Key, entry);
+            }
+
+            return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+        }
+        else
         {
-            urlBase = assetsLUT.m_strURLBase;
+            return null;
         }
-
-        Downloadables.Catalog catalog = new Downloadables.Catalog();
-        catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
-
-        Downloadables.CatalogEntry entry;        
-        foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
-        {
-            entry = new Downloadables.CatalogEntry();
-            entry.CRC = pair.Value;
-            entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
-
-            catalog.AddEntry(pair.Key, entry);
-        }
-
-        return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());        
     }
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
@@ -173,16 +178,16 @@ public class HDAddressablesManager : AddressablesManager
 
     protected override void ExtendedUpdate()
     {
-        if (Time.realtimeSinceStartup >= m_pollAutomaticDownloaderAt)
-        {
-            // We don't want the automatic downloader to interfere with the ingame experience
-            // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled        
-            bool value = !FlowManager.IsInGameScene() && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
-            if (value != IsAutomaticDownloaderEnabled)
-                IsAutomaticDownloaderEnabled = value;
+        // We don't want the downloader to interfere with the ingame experience
+        IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
-            m_pollAutomaticDownloaderAt = Time.realtimeSinceStartup + 3f;
-        }
+        // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
+        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+    }
+
+    public bool IsAutomaticDownloaderAllowed()
+    {
+        return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
     #region ingame
