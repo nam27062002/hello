@@ -42,7 +42,7 @@ public class EditorAddressablesManager
     {
         m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
-        m_assetBundlesLocalDestinationPath = EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
+		m_assetBundlesLocalDestinationPath = "Assets/StreamingAssets/AssetBundles";//EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
     }
 
     public void ClearBuild(BuildTarget target)
@@ -51,6 +51,7 @@ public class EditorAddressablesManager
         EditorFileUtils.DeleteFileOrDirectory(m_localDestinationPath);
         EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
+		EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
     }
 
     public virtual void CustomizeEditorCatalog()
