@@ -162,16 +162,24 @@ public class UTDownloadablesDownloader : UnitTest
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);
 
         m_downloader = new Downloader(m_network, m_disk, logger);
-        string url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + m_downloadablesFolder + "/";
-        m_downloader.Initialize(url);
 
-        m_entry = new CatalogEntryStatus();
-        m_entry.LoadManifest(m_entryId, m_entryJSON);
+		try
+		{
+	        string url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + m_downloadablesFolder + "/";
+	        m_downloader.Initialize(url);
 
-        State = EState.PreparingEntry;
+	        m_entry = new CatalogEntryStatus();
+	        m_entry.LoadManifest(m_entryId, m_entryJSON);
 
-        Action.mockNetworkDriver = m_network;
-        Action.downloader = m_downloader;        
+	        State = EState.PreparingEntry;
+
+	        Action.mockNetworkDriver = m_network;
+	        Action.downloader = m_downloader;
+		}
+		catch (System.Exception e) 
+		{
+			NotifyPasses(false);
+		}
     }
 
     private enum EState
@@ -213,7 +221,7 @@ public class UTDownloadablesDownloader : UnitTest
 
     public override void Update()
     {
-        if (HasStarted())
+		if (HasStarted() && m_entry != null)
         {
             m_currenTime = Time.realtimeSinceStartup;
 

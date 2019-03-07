@@ -121,21 +121,21 @@ public class EditorAddressablesManager
             playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
 
             // Clears player catalog entries because they'll be added only with the information that player requires
-            Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
-            playerCatalogEntries.Clear();
+            playerCatalog.ClearEntries();            
 
             // Loops through all entries to configure actual assets according to their location and provider mode
-            Dictionary<string, AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+            List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
             AddressablesCatalogEntry entry;
-            foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
+            int count = entries.Count;
+            for (int i = 0; i < count; i++)
             {                
-                if (ProcessEntry(pair.Value, scenesToAdd, scenesToRemove))
+                if (ProcessEntry(entries[i], scenesToAdd, scenesToRemove))
                 {
                     entry = new AddressablesCatalogEntry();
-                    entry.Load(pair.Value.ToJSON());
-                    playerCatalog.GetEntries().Add(pair.Key, entry);
+                    entry.Load(entries[i].ToJSON());
+                    playerCatalog.AddEntry(entry);
                 }
             }            
 
@@ -144,7 +144,7 @@ public class EditorAddressablesManager
                 List<EditorBuildSettingsScene> newSceneList = new List<EditorBuildSettingsScene>();
 
                 EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-                int count = scenes.Length;
+                count = scenes.Length;
                 string scenePath;
                 for (int i = 0; i < count; i++)
                 {

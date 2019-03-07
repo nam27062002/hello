@@ -50,18 +50,16 @@ public class AssetBundlesCatalog
         {
             UbiListUtils.JSONArrayToList(json[CATALOG_ATT_LOCAL_LIST].AsArray, m_explicitLocalList, true);            
 
-            LoadDependencies(json[CATALOG_ATT_DEPENDENCIES], logger);            
+            LoadDependencies(json[CATALOG_ATT_DEPENDENCIES], logger);
 
             // Verifies that all asset bundles in local list are defined in dependencies and searches for
-            // implicit local asset bundles, which are the dependencies of any explicit local asset bundles
-            List<string> dependencies;
+            // implicit local asset bundles, which are the dependencies of any explicit local asset bundles            
             int count = m_explicitLocalList.Count;
             for (int i = count - 1; i > -1; i--)
             {                
                 if (m_dependencies.ContainsKey(m_explicitLocalList[i]))
-                {
-                    dependencies = GetAllDependencies(m_explicitLocalList[i]);
-                    UbiListUtils.AddRange(m_localList, dependencies, false, true);
+                {                    
+                    GetAllDependencies(m_explicitLocalList[i], m_localList);                    
                 }
                 else
                 {
@@ -134,20 +132,25 @@ public class AssetBundlesCatalog
         return m_localList.Contains(id);
     }
 
-    public List<string> GetAllDependencies(string id)
-    {
-        List<string> returnValue = new List<string>();
+    public void GetAllDependencies(string id, List<string> output)
+    {        
+        if (output == null)
+        {
+            output = new List<string>();
+        }
+
         if (m_dependencies.ContainsKey(id))
         {
             int count = m_dependencies[id].Count;
             for (int i = 0; i < count; i++)
             {
-                returnValue.Add(m_dependencies[id][i]);
-                UbiListUtils.AddRange(returnValue, GetAllDependencies(m_dependencies[id][i]), false, true);                
+                if (!output.Contains(m_dependencies[id][i]))                    
+                {                    
+                    output.Add(m_dependencies[id][i]);
+                    GetAllDependencies(m_dependencies[id][i], output);                    
+                }
             }
-        }
-
-        return returnValue;
+        }        
     }
 
     public List<string> GetAllAssetBundleIds()

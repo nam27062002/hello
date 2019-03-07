@@ -147,7 +147,8 @@ public class AssetBundlesManager
             {
                 id = assetBundleIds[i];
 
-                dependencies = catalog.GetAllDependencies(id);
+                dependencies = new List<string>();
+                catalog.GetAllDependencies(id, dependencies);
 
                 // id is also included because it makes downloading logic easier
                 dependencies.Add(id);
@@ -953,12 +954,11 @@ public class AssetBundlesManager
             if (!m_loaderRequests.Contains(id))
             {
                 AssetBundleHandle handle = GetAssetBundleHandle(id);
-                if (handle != null)
+                if (handle != null && handle.NeedsToRequestToLoad())
                 {
                     handle.OnPendingToRequestToLoad();
-                }
-
-                m_loaderRequests.Enqueue(id);
+                    m_loaderRequests.Enqueue(id);
+                }                
             }
         }
     }

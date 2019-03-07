@@ -8,7 +8,9 @@ using UnityEngine;
 /// </summary>
 public class HDDownloadablesTracker : Tracker
 {
-    private static string[] sm_reachabilityAsString;
+	public static string RESULT_SUCCESS = "Success";
+
+	private static string[] sm_reachabilityAsString;
 
     private static string ReachabilityToString(NetworkReachability reachability)
     {
@@ -49,7 +51,7 @@ public class HDDownloadablesTracker : Tracker
 
     private static string ErrorTypeToString(Error.EType type)
     {
-        return (type == Error.EType.None) ? "Success" : type.ToString();
+		return (type == Error.EType.None) ? RESULT_SUCCESS : type.ToString();
     }
 
     private Dictionary<string, bool> m_idsLoadTracked;
