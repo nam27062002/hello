@@ -84,6 +84,6 @@ public class MenuNavigationButton : MonoBehaviour {
 			return;
         // To be used only on the menu
         // Let the scene controller manage it
-        InstanceManager.menuSceneController.OnPlayButton();
+        InstanceManager.menuSceneController.GoToGame();
     }
 }

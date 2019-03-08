@@ -36,9 +36,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224537976082648764}
-  - component: {fileID: 114747291124645036}
   m_Layer: 5
-  m_Name: PF_MenuHalloweenDecorations
+  m_Name: PF_MenuHalloweenDeco
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,32 +141,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: ShowHideAnimator+ShowHideAnimatorEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114747291124645036
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1428208077934958}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ba4db6af94a65bae6b40e64dcb45, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_seasonsData:
-  - sku: none
-    targets: []
-  - sku: xmas
-    targets: []
-  - sku: halloween
-    targets:
-    - obj: {fileID: 1870903510646816}
-      action: 0
-    - obj: {fileID: 1156725368838824}
-      action: 0
-  - sku: spring
-    targets: []
-  - sku: midAutumnFestival
-    targets: []
 --- !u!114 &114767391847904138
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,6 +163,8 @@ MonoBehaviour:
   m_checkScreens: 1
   m_mode: 0
   m_targetScreens: 00000000
+  m_hideDelay: 0
+  m_showDelay: 0
   m_restartShowAnimation: 0
 --- !u!114 &114946654437734492
 MonoBehaviour:
@@ -211,7 +186,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 439d4c697af5745a4b5405de29736b40, type: 3}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
