@@ -336,11 +336,10 @@ public class UserProfile : UserPersistenceSystem
 	}
 
 	// Offer Packs
-	private Dictionary<string, JSONClass> m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
-	private Queue<string> m_offerPacksRotationalHistory = new Queue<string>();    // Historic of rotational offers 
-	public Queue<string> offerPacksRotationalHistory {
-		get { return m_offerPacksRotationalHistory; }
-	}
+    private Dictionary<OfferPack.Type, List<JSONClass>> m_newOfferPersistanceData = new Dictionary<OfferPack.Type, List<JSONClass>>();
+    public Dictionary<OfferPack.Type, List<JSONClass>> newOfferPersistanceData {
+        get{ return m_newOfferPersistanceData; }
+    }
     
     // public List<string> m_visitedZones = new List<string>();
     public HashSet<string> m_visitedZones = new HashSet<string>();
@@ -488,8 +487,11 @@ public class UserProfile : UserPersistenceSystem
 		Debug.Log(Colors.cyan.Tag("CREATING NEW DAILY REWARDS SEQUENCE (Reset)"));
 		m_dailyRewards = new DailyRewardsSequence();
 
-		m_offerPacksPersistenceData = new Dictionary<string, JSONClass>();
-		m_offerPacksRotationalHistory = new Queue<string>();
+        m_newOfferPersistanceData = new Dictionary<OfferPack.Type, List<JSONClass>>();
+        for (int i = 0; i < (int)OfferPack.Type.COUNT; i++)
+        {
+            m_newOfferPersistanceData.Add((OfferPack.Type)i, new List<JSONClass>());
+        }
 
         m_visitedZones = new HashSet<string>();
 
@@ -1058,25 +1060,24 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Offer Packs
-		key = "offerPacks";
-		m_offerPacksPersistenceData.Clear();
-		if(_data.ContainsKey(key)) {
-			// Parse json object into the dictionary
-			JSONClass offersJson = _data[key] as JSONClass;
-			foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
-				m_offerPacksPersistenceData.Add(kvp.Key, kvp.Value as JSONClass);
-			}
-		}
+            // Old version. transform to offer packs v2
+        if ( _data.ContainsKey( "offerPacks" ) || _data.ContainsKey("offerPacksRotationalHistory") )
+        {
+            UpdateOfferPacksPersistance( _data );
+        }
 
-		key = "offerPacksRotationalHistory";
-		m_offerPacksRotationalHistory.Clear();
-		if(_data.ContainsKey(key)) {
-			// Parse json array into the queue
-			JSONArray historyData = _data[key].AsArray;
-			for(int i = 0; i < historyData.Count; ++i) {
-				m_offerPacksRotationalHistory.Enqueue(historyData[i]);
-			}
-		}
+        key = "newOffersPacks";
+        if ( _data.ContainsKey(key) ) {
+            int max = (int)OfferPack.Type.COUNT;
+            for (int i = 0; i < max; i++) {
+                OfferPack.Type offerType = (OfferPack.Type)i;
+                string typeStr = OfferPack.TypeToString( offerType );
+                JSONArray array = _data[key][typeStr].AsArray;
+                for (int j = 0; j < array.Count; j++) {
+                    m_newOfferPersistanceData[offerType].Add( array[j].AsObject );
+                }
+            }
+        }
 
         // Visited Zones
         key = "visitedZones";
@@ -1273,18 +1274,18 @@ public class UserProfile : UserPersistenceSystem
 		}
 
 		// Offer packs
-		JSONClass offersData = new SimpleJSON.JSONClass();
-		foreach(KeyValuePair<string, JSONClass> kvp in m_offerPacksPersistenceData) {
-			offersData.Add(kvp.Key, kvp.Value);
-		}
-		data.Add("offerPacks", offersData);
-
-		JSONArray offersHistoryData = new JSONArray();
-		foreach(string s in m_offerPacksRotationalHistory) {
-			offersHistoryData.Add(s);
-		}
-		data.Add("offerPacksRotationalHistory", offersHistoryData);
-
+        JSONClass newOffersData = new SimpleJSON.JSONClass();
+        int count = (int)OfferPack.Type.COUNT;
+        for (int i = 0; i < count; i++) {
+            JSONArray array = new JSONArray();
+            OfferPack.Type t = (OfferPack.Type)i;
+            for (int j = 0; j < m_newOfferPersistanceData[t].Count; j++) {
+                array.Add( m_newOfferPersistanceData[t][j]);
+            }
+            newOffersData.Add(OfferPack.TypeToString(t), array);
+        }
+        data.Add( "newOffersPacks", newOffersData);
+        
         // Visited Zones
         JSONArray zonesArray = new SimpleJSON.JSONArray();
         int max = m_visitedZones.Count;
@@ -1792,6 +1793,90 @@ public class UserProfile : UserPersistenceSystem
 	//------------------------------------------------------------------------//
 	// OFFERS MANAGEMENT													  //
 	//------------------------------------------------------------------------//
+    
+    
+    /// <summary>
+    /// Updates the offer packs persistance.
+    /// </summary>
+    /// <param name="">.</param>
+    public void UpdateOfferPacksPersistance( SimpleJSON.JSONNode _data )
+    {
+        string key = "";
+        key = "offerPacksRotationalHistory";
+        Queue<string> offerPacksRotationalHistory = new Queue<string>();
+        if(_data.ContainsKey(key)) {
+            // Parse json array into the queue
+            JSONArray historyData = _data[key].AsArray;
+            for(int i = 0; i < historyData.Count; ++i) {
+                offerPacksRotationalHistory.Enqueue(historyData[i]);
+            }
+        }
+        
+        key = "offerPacks";
+        if(_data.ContainsKey(key)) {
+            // Parse json object into the dictionary
+            JSONClass offersJson = _data[key] as JSONClass;
+            foreach(KeyValuePair<string, JSONNode> kvp in offersJson.m_Dict) {
+                JSONClass jSONClass = kvp.Value as JSONClass;   // Old data
+                // check type
+                string sku = jSONClass["sku"];
+                DefinitionNode offerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.OFFER_PACKS, sku);
+                OfferPack.Type offerType = OfferPack.StringToType(offerDef.Get("type"));
+                switch( offerType ){
+                    case OfferPack.Type.PROGRESSION:{
+                        //if progression then just keep it
+                        m_newOfferPersistanceData[OfferPack.Type.PROGRESSION].Add(jSONClass);
+                    }break;   
+                    case OfferPack.Type.PUSHED:{
+                            // Keep all but we will clean all pushed offers that do not belong to the customizer we are using
+                            // Extract customizer from key
+                            string offerKey = kvp.Key;
+                            string customizerId = offerKey.Substring( 0, offerKey.Length - sku.Length - 1); // remove _sku from XX_sku
+                            jSONClass.Add("customizerId", customizerId);
+                        m_newOfferPersistanceData[OfferPack.Type.PUSHED].Add(jSONClass);
+                    }break;
+                    case OfferPack.Type.ROTATIONAL:{
+                        // Kepp only if in queue
+                        if ( offerPacksRotationalHistory.Contains( sku ) )
+                        {
+                            m_newOfferPersistanceData[OfferPack.Type.ROTATIONAL].Add( jSONClass );
+                        }
+                    }break;
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Cleans old pushed offers. Removes all push offer packs that are not in the current customizer id
+    /// </summary>
+    /// <param name="currentCustomizerIds">Current customizer identifier.</param>
+    public void CleanOldPushedOffers( HashSet<long> currentCustomizerIds ) {
+        int max = m_newOfferPersistanceData[OfferPack.Type.PUSHED].Count;
+        DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
+        List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
+        string customizerStr = currentCustomizerIds.ToString();
+        
+        for (int i = max-1; i >= 0; i--) {
+            if ( !currentCustomizerIds.Contains(offers[i]["customizerId"].AsLong)) {
+                offers.RemoveAt(i);
+                // No need to check expired because enabled goes to false
+                /*
+                // Check if expired!
+                string key = "endTimestamp";
+                if(offers[i].ContainsKey(key)) {
+                    DateTime endTimestamp = DateTime.Parse(offers[i][key], PersistenceFacade.JSON_FORMATTING_CULTURE);
+                    if ( endTimestamp < serverTime){
+                        // Remove it
+                        offers.RemoveAt(i);
+                    }
+                }
+                */
+            }
+        }
+        m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
+    }
+    
 	/// <summary>
 	/// Register an offer pack for persistence save.
 	/// </summary>
@@ -1800,8 +1885,24 @@ public class UserProfile : UserPersistenceSystem
 		// Don't do it if pack shouldn't be saved
 		if(_pack == null || !_pack.ShouldBePersisted()) return;
 
-		// Save persistence data with unique ID for that pack
-		m_offerPacksPersistenceData[_pack.uniqueId] = _pack.Save();
+        // Search offer just in case we have to override
+        
+        List<JSONClass> offers = m_newOfferPersistanceData[_pack.type];
+        int max = offers.Count;
+        bool found = false;
+        for (int i = 0; i < max && !found; i++){
+            if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
+                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
+                    found = true;
+                    m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+                }
+            }
+        }
+        if (!found){
+            m_newOfferPersistanceData[_pack.type].Add( _pack.Save() );
+        }
+		
 	}
 
 	/// <summary>
@@ -1812,29 +1913,22 @@ public class UserProfile : UserPersistenceSystem
 		if(_pack == null) return;
 
 		// Do we have persistence data for this pack?
-		JSONClass packData = null;
-		if(m_offerPacksPersistenceData.TryGetValue(_pack.uniqueId, out packData)) {
-			// Yes!
-			// Multiple packs may have the same unique ID, with the intention to make 
-			// them mutually exclusive. In order to know which pack with that ID is actually triggered,
-			// check the sku of the pack as well.
-			// Resolves issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-2026
-			if(packData.ContainsKey("sku") && packData["sku"] == _pack.def.sku) {
-				// Match! Load it into the pack
-				_pack.Load(packData);
-			} else {
-				// Sku doesn't match! Immediately mark pack as expired
-				// (Since it means there is or has been another pack with the same uniqueID which was triggered first)
-				_pack.ForceExpiration();
-			}
-		}
+        List<JSONClass> offers = m_newOfferPersistanceData[_pack.type];
+        int max = offers.Count;
+        bool found = false;
+        for (int i = 0; i < max && !found; i++){
+            if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+                found = true;
+                // if not a pushed offer or is pushed and same customization code, so it's exactly the same
+                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
+                    
+                    // Match! Load it into the pack
+                    _pack.Load(offers[i]);
+                }
+            }
+        }
+        
 	}
 
-	/// <summary>
-	/// Cleanup persistence packs that shouldn't be persisted anymore.
-	/// </summary>
-	public void PurgeOfferPacksPersistence() {
-		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
-	}
 }
 
