@@ -582,7 +582,9 @@ public class HDTrackingManager
     #endregion
 
     #region downloadables
-    public virtual void Notify_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    public virtual void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart) { }
+
+    public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
     #endregion
 

@@ -23,10 +23,30 @@ public class LevelManager : Singleton<LevelManager> {
 	//------------------------------------------------------------------//
 	private const string LEVEL_DATA_PATH = "Game/Levels/";
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	private static string m_currentArea = "";
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
+    private static Dictionary<string, HashSet<string>> m_scenesToInclude = new Dictionary<string, HashSet<string>>();
+    public static void AddSceneToInclude(string _area, string _scene) { 
+        if (!m_scenesToInclude.ContainsKey(_area)) { m_scenesToInclude[_area] = new HashSet<string>(); }
+        m_scenesToInclude[_area].Add(_scene);
+    }
+    public static void RemoveSceneToInclude(string _area, string _scene) {
+        m_scenesToInclude[_area].Remove(_scene);
+    }
+
+    private static Dictionary<string, HashSet<string>> m_scenesToExclude = new Dictionary<string, HashSet<string>>();
+    public static void AddSceneToExclude(string _area, string _scene) {
+        if (!m_scenesToExclude.ContainsKey(_area)) { m_scenesToExclude[_area] = new HashSet<string>(); }
+        m_scenesToExclude[_area].Add(_scene);
+    }
+    public static void RemoveSceneToExclude(string _area, string _scene) {
+        m_scenesToExclude[_area].Remove(_scene);
+    }
+
+
+    //-------------------------------------------------------------------
+    private static string m_currentArea = "";
 	public static string currentArea{
 		get{ return m_currentArea; }
 	}
@@ -283,11 +303,28 @@ public class LevelManager : Singleton<LevelManager> {
     {
         List<string> returnValue = new List<string>();
 
+        HashSet<string> includeScenes = null; 
+        if (m_scenesToInclude.ContainsKey(area)) { includeScenes = m_scenesToInclude[area]; }
+
+        HashSet<string> excludeScenes = null;
+        if (m_scenesToExclude.ContainsKey(area)) { excludeScenes = m_scenesToExclude[area]; }
+
         DefinitionNode def = m_currentLevelData.def;
+
         m_currentArea = area;
         m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
-        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++)
-        {
+
+        if (excludeScenes != null) {
+            foreach (string scene in excludeScenes) {
+                m_currentAreaScenes.Remove(scene);
+            }
+        }
+
+        if (includeScenes != null) {
+            m_currentAreaScenes.AddRange(includeScenes);
+        }
+
+        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++) {
             string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
             returnValue.Add(sceneName);
         }
