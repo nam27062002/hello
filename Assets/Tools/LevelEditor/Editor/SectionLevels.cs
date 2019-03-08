@@ -179,11 +179,39 @@ namespace LevelEditor {
 			m_autoSaveTimer = 0f;
 		}
 
+
+        private static readonly string LIGHT_CONTAINER_SCENE_PATH = "Assets/Game/Scenes/Levels/Art/ART_Medieval_Lighting_Container.unity"; //"Assets/Tools/LevelEditor/SC_LevelEditor.unity";
+
+        void lightMapCompleted()
+        {
+            LevelEditorWindow.instance.m_isLightmapping = false;
+            Scene lightScene = EditorSceneManager.GetSceneByPath(LIGHT_CONTAINER_SCENE_PATH);
+            if (m_activeLevels != null)
+            {
+                List<Level> levelList = m_activeLevels[(int)LevelEditorSettings.Mode.ART];
+                int levelCount = levelList.Count;
+                for (int c = 0; c < levelCount; c++)
+                {
+                    if (levelList[c].gameObject.scene == lightScene)
+                    {
+                        levelList.Remove(levelList[c]);
+                        break;
+                    }
+                }
+            }
+            EditorSceneManager.CloseScene(lightScene, true);
+        }
+
+
         void throwLightmap()
         {
             LevelEditorWindow.instance.m_isLightmapping = true;
             LevelEditorWindow.instance.CloseLevelEditorScene();
             Debug.Log("Level: " + activeLevels[0].gameObject.scene.name);
+            EditorSceneManager.OpenScene(LIGHT_CONTAINER_SCENE_PATH, OpenSceneMode.Additive);
+
+            Lightmapping.completed = lightMapCompleted;
+
             Lightmapping.BakeAsync();
         }
 
@@ -221,9 +249,23 @@ namespace LevelEditor {
                 {
                     m_onlyArt = GUILayout.Toggle(m_onlyArt, "Only Art Levels");
 
-                    if (m_onlyArt && activeLevels != null && GUILayout.Button("Throw Lightmap"))
+                    if (activeLevels != null)
                     {
-                        throwLightmap();
+                        if (Lightmapping.isRunning)
+                        {
+                            if (GUILayout.Button("Cancel Lightmap"))
+                            {
+                                Lightmapping.Cancel();
+                                lightMapCompleted();
+                            }
+                        }
+                        else
+                        {
+                            if (GUILayout.Button("Throw Lightmap"))
+                            {
+                                throwLightmap();
+                            }
+                        }
                     }
                 }
 
