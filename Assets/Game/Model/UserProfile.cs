@@ -1606,6 +1606,15 @@ public class UserProfile : UserPersistenceSystem
 		data.userID = this.userId;
 		return data;
 	}
+    
+    public void OnRulesUpdated(){
+        // Because We cach dragon's price on a variable we need to refresh the value
+        foreach(KeyValuePair<string, IDragonData> pair in m_dragonsBySku) {
+            pair.Value.RefreshPrice();
+            
+        }
+    }
+
 
 	//------------------------------------------------------------------------//
 	// DRAGONS MANAGEMENT													  //
