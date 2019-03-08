@@ -1909,26 +1909,17 @@ public class UserProfile : UserPersistenceSystem
         bool found = false;
         for (int i = 0; i < max && !found; i++){
             if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
+                found = true;
                 // if not a pushed offer or is pushed and same customization code, so it's exactly the same
                 if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
-                    found = true;
+                    
                     // Match! Load it into the pack
                     _pack.Load(offers[i]);
                 }
             }
         }
-        if (!found){
-            // Sku doesn't match! Immediately mark pack as expired
-            // (Since it means there is or has been another pack with the same uniqueID which was triggered first)
-            _pack.ForceExpiration();
-        }
+        
 	}
 
-	/// <summary>
-	/// Cleanup persistence packs that shouldn't be persisted anymore.
-	/// </summary>
-	public void PurgeOfferPacksPersistence() {
-		// [AOC] TODO!! Meant for packs with end timestamp that were never purchased and wont be available anymore (no need to persist them)
-	}
 }
 
