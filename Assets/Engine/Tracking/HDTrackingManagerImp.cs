@@ -675,10 +675,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <summary>
     /// Called when the user opens the app store
     /// </summary>
-    public override void Notify_StoreVisited() {
+    public override void Notify_StoreVisited( string origin ) {
         if (TrackingPersistenceSystem != null) {
             TrackingPersistenceSystem.TotalStoreVisits++;
         }
+        Track_OpenShop( origin );
+    }
+    
+    public override void Notify_StoreSection( string section) {
+        Track_ShopSection( section );
+    }
+    
+    public override void Notify_StoreItemView( string id) {
+        Track_ShopItemView( id );
     }
 
     public override void Notify_IAPStarted() {
@@ -1757,6 +1766,53 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+    
+    private void Track_OpenShop( string origin ){
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_OpenShop origin = " + origin );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.shop.entry");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ZONE , origin);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
+    private void Track_ShopSection( string section ){
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_StoreSection section = " + section );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.shop.view");
+        {
+            Track_AddParamString(e, TRACK_PARAM_SECTION , section);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
+    private void Track_ShopItemView( string id ){
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_StoreItemView itemID = " + id );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.shop.itemviewed");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ITEM_ID, id);
+            Track_AddParamPlayerProgress(e);
+            Track_AddParamPlayerSC(e);
+            Track_AddParamPlayerPC(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
+    
 
     private void Track_Funnel(string _event, string _step, int _stepDuration, int _totalDuration, bool _fistLoad) {
         if (FeatureSettingsManager.IsDebugEnabled) {
@@ -2469,6 +2525,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_REWARD_TYPE = "rewardType";
     private const string TRACK_PARAM_SC_EARNED = "scEarned";
     private const string TRACK_PARAM_SCORE = "score";
+    private const string TRACK_PARAM_SECTION = "section";
     private const string TRACK_PARAM_SIZE = "size";
     private const string TRACK_PARAM_SOFT_CURRENCY = "softCurrency";
     private const string TRACK_PARAM_EVENT_SCORE_RUN = "scoreRun";
@@ -2512,6 +2569,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
     private const string TRACK_PARAM_XP = "xp";
     private const string TRACK_PARAM_YEAR_OF_BIRTH = "yearOfBirth";
+    private const string TRACK_PARAM_ZONE = "zone";
 
     //------------------------------------------------------------------------//
     private void Track_SendEvent(HDTrackingEvent _e) {
