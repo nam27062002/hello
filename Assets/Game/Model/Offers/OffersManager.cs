@@ -115,6 +115,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
+        HashSet<long> customizationIds = new HashSet<long>();
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create and initialize new pack
@@ -128,14 +129,27 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 				instance.m_allEnabledOffers.Add(newPack);
 			}
 
-			// If rotational, store to the rotational collection
-			if(newPack.type == OfferPack.Type.ROTATIONAL) {
-				instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
-			}
+            switch( newPack.type ) {
+                case OfferPack.Type.ROTATIONAL:{
+                    // If rotational, store to the rotational collection
+                    instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
+                }break;
+                case OfferPack.Type.PUSHED:{
+                    if (offerDefs[i].customizationCode != -1 )
+                    {
+                        customizationIds.Add(offerDefs[i].customizationCode);
+                    }
+                }break;
+            }
 		}
 
 		// Refresh active and featured offers
 		instance.Refresh(true);
+
+        // Only clean if we have a new customization/s
+        if ( customizationIds.Count > 0 ){
+            UsersManager.currentUser.CleanOldPushedOffers(customizationIds);
+        }
 
 		// Notiy game
 		Messenger.Broadcast(MessengerEvents.OFFERS_RELOADED);
@@ -216,8 +230,13 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		int loopCount = 0;
 		int maxLoops = 50;  // Just in case, prevent infinite loop
 		bool dirty = false;
-		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
-
+		List<SimpleJSON.JSONClass> rotationalOffers = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
+        Queue<string> history = new Queue<string>();
+        int max = rotationalOffers.Count;
+        for (int i = 0; i < max; i++){
+            history.Enqueue( rotationalOffers[i]["sku"]);
+        }
+        
 		// Do we need to activate a new rotational pack?
 		while(m_activeRotationalOffers.Count < settings.rotationalActiveOffers && loopCount < maxLoops) {
 			Log(Colors.orange.Tag("Rotational offers required: {0} active"), m_activeRotationalOffers.Count);
@@ -347,12 +366,12 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 	/// </summary>
 	/// <param name="_offer">Pack to be added.</param>
 	private void UpdateRotationalHistory(OfferPackRotational _offer) {
-		// Aux vars
-		Queue<string> history = UsersManager.currentUser.offerPacksRotationalHistory;
+        // Aux vars
+        List<SimpleJSON.JSONClass> history = UsersManager.currentUser.newOfferPersistanceData[OfferPack.Type.ROTATIONAL];
 
 		// If a pack needs to be added, do it now
 		if(_offer != null) {
-			history.Enqueue(_offer.def.sku);
+            history.Add( _offer.Save() );
 		}
 
 		// Remove as many items as needed until the history size is right
@@ -360,7 +379,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		Log("Checking history size: {0} vs {1} ({2} + {3})", history.Count, maxSize, settings.rotationalHistorySize, m_activeRotationalOffers.Count);
 		while(history.Count > maxSize) {
 			Log("    History too big: Dequeing");
-			history.Dequeue();
+            history.RemoveRange(maxSize, history.Count - maxSize);
 		}
 
 		// Debug

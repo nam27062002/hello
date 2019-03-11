@@ -55,6 +55,6 @@ public class CurrencyShopPopupLauncher : PopupLauncher {
 	/// <param name="_popup">The popup that has just been destroyed.</param>
 	private void OnInitPopup(PopupController _popup) {
 		// Initialize target popup with the requested mode
-		_popup.GetComponent<PopupShop>().Init(m_mode);
+		_popup.GetComponent<PopupShop>().Init(m_mode, "Currency_Shop_Launcher");
 	}
 }
