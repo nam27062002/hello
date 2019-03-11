@@ -128,7 +128,11 @@ public class EditorAddressablesMenu : MonoBehaviour
         AddressablesManager.EditorMode = !AddressablesManager.EditorMode;    
         
         // If no editor mode is enabled then local asset bundles need to be loaded to the player folder so they can be used
-        if (!AddressablesManager.EditorMode)
+        if (AddressablesManager.EditorMode)
+        {
+            DeleteLocalAssetBundlesInPlayerDestination();
+        }
+        else
         {
             CopyLocalAssetBundlesToPlayerDestination(EditorUserBuildSettings.activeBuildTarget);
         }
