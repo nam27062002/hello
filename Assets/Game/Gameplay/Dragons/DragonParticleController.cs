@@ -12,15 +12,15 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 
 	[Space]
-	public string m_reviveParticle = "Dragon/PS_Revive";
+	public string m_reviveParticle = "PS_Revive";
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
 	public ParticleData m_petRevive;
 
 
     //[Space]
-    private string m_mummyPower = "Dragon/PS_MummyPower";
-    private string m_mummySmoke = "Dragon/PS_MummySmokePower";
+    private string m_mummyPower = "PS_MummyPower";
+    private string m_mummySmoke = "PS_MummySmokePower";
     private ParticleSystem m_mummySmokeInstance;
 
 
@@ -109,7 +109,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	ParticleSystem m_landingInstance;
 
 	[Space]
-	public string m_megaFireRush = "Dragon/PS_Revive";
+	public string m_megaFireRush = "PS_Revive";
 	public Transform m_megaFireRushAnchor;
 	private ParticleSystem m_megaFireRushInstance;
 
