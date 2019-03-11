@@ -69,11 +69,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	private ParticleHandler m_corpseHandler;
 
 	[Space]
-	public string m_hiccupParticle;
-	public Transform m_hiccupAnchor = null;
-	private ParticleSystem m_hiccupInstance;
-
-	[Space]
 	public ParticleData m_shieldParticle;
 	public Transform m_shieldAnchor = null;
 	private ParticleSystem m_shieldInstance;
@@ -164,15 +159,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
-        if ( m_hiccupAnchor == null )
-        {
-             SceneManager.MoveGameObjectToScene(m_hiccupInstance.gameObject, gameObject.scene);
-        }
-
-		if (dragonAnimEvents != null)
-			dragonAnimEvents.onHiccupEvent += OnHiccup;
-
+		
 		if ( m_trailsParticle.IsValid() )
 		{
 			GameObject go = m_trailsParticle.CreateInstance();
@@ -608,16 +595,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		}
 	}
 
-	private void OnHiccup()
-	{
-		if ( m_hiccupInstance != null )
-		{
-			m_hiccupInstance.gameObject.SetActive(true);
-			m_hiccupInstance.Play();
-			m_toDeactivate.Add( m_hiccupInstance );
-		}
-	}
-
+    	
 	#region boost_trails
 	void PlayTrails()
 	{
