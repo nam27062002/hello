@@ -92,7 +92,8 @@ public class MenuHUD : MonoBehaviour {
 		// In this particular case we want to allow several purchases in a row, so don't auto-close popup
 		PopupShop shopPopup = popup.GetComponent<PopupShop>();
 		shopPopup.closeAfterPurchase = false;
-		shopPopup.Init(PopupShop.Mode.DEFAULT);
+        
+		shopPopup.Init(PopupShop.Mode.DEFAULT, InstanceManager.menuSceneController.currentScreen.ToString());
 
 		// Open popup!
 		popup.Open();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroadcastListener
 {
-
+    private List<Pet> m_pets;
     private List<Entity> m_entities;
     private List<EntityBg> m_entitiesBg;
 	private List<Cage> m_cages;
@@ -53,38 +53,51 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
     private Collider[] m_checkEntityColliders = new Collider[50];
     private int m_entitiesColliderMask = -1;
 
+    private bool m_updateEnabled;
+
 
     void Awake()
     {
+        m_pets = new List<Pet>();
         m_entities = new List<Entity>();
         m_entitiesBg = new List<EntityBg>();
 		m_cages = new List<Cage>();
 		m_decorations = new List<Decoration>();
         m_searchList = new List<Entity>();
         m_entitiesColliderMask = 1 << LayerMask.NameToLayer("AirPreys") | 1 << LayerMask.NameToLayer("WaterPreys") | 1 << LayerMask.NameToLayer("MachinePreys") | 1 << LayerMask.NameToLayer("GroundPreys") | 1 << LayerMask.NameToLayer("Mines");
-		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
+
+        m_updateEnabled = false;
+
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
     }
 
     override protected void OnDestroy()
     {
         base.OnDestroy();
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_EXIT, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
     }
     
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
-        switch(eventType)
+        switch(eventType) 
         {
-            case BroadcastEventType.GAME_ENDED:
-            {
-                OnGameEnded();
-            }break;
+            case BroadcastEventType.GAME_LEVEL_LOADED:  m_updateEnabled = true; break;
+            case BroadcastEventType.GAME_AREA_ENTER:    m_updateEnabled = true; break;
+            case BroadcastEventType.GAME_AREA_EXIT:     m_updateEnabled = false; break;
+            case BroadcastEventType.GAME_ENDED:         OnGameEnded(); break;
         }
     }
-    
 
-    public void RegisterEntity(Entity _entity)
-    {
+    public void RegisterPet(Pet _pet)   { m_pets.Add(_pet); }
+    public void UnregisterPet(Pet _pet) { m_pets.Remove(_pet); }
+
+    public void RegisterEntity(Entity _entity) {
         // If an entity is registered after entities visibility was disabled then we make sure that entity won't be visible
         if (!Debug_EntitiesVisibility && FeatureSettingsManager.IsProfilerEnabled)
         {
@@ -350,128 +363,123 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
 
     void Update()
 	{
-		int i;
-		int count;
+        if (m_updateEnabled) {
+            int i;
+            int count;
 
-		if (m_entities != null) {
-            count = m_entities.Count - 1;
-            // for (i = 0; i < count; ++i)
-            for( i = count; i >= 0; i--)
-            {
-                m_entities[i].CustomUpdate();
+            count = m_pets.Count - 1;
+            for (i = count; i >= 0; i--) {
+                m_pets[i].CustomUpdate();
             }
 
-            count = m_entitiesBg.Count - 1;
-            // for (i = 0; i < count; ++i)
-			for (i = count; i >= 0; i--)
-            {
-                m_entitiesBg[i].CustomUpdate();
+            if (m_entities != null) {
+                count = m_entities.Count - 1;
+                // for (i = 0; i < count; ++i)
+                for (i = count; i >= 0; i--) {
+                    m_entities[i].CustomUpdate();
+                }
+
+                count = m_entitiesBg.Count - 1;
+                // for (i = 0; i < count; ++i)
+                for (i = count; i >= 0; i--) {
+                    m_entitiesBg[i].CustomUpdate();
+                }
+
+                count = m_cages.Count - 1;
+                // for (i = 0; i < count; ++i)
+                for (i = count; i >= 0; i--) {
+                    m_cages[i].CustomUpdate();
+                }
             }
 
-			count = m_cages.Count - 1;
-			// for (i = 0; i < count; ++i)
-			for( i = count; i >= 0; i-- )
-			{
-				m_cages[i].CustomUpdate();
-			}
-        }
-
-		count = m_decorations.Count - 1;
-		for(i = count; i >= 0; i--) {
-			m_decorations[i].CustomUpdate();
-		}
+            count = m_decorations.Count - 1;
+            for (i = count; i >= 0; i--) {
+                m_decorations[i].CustomUpdate();
+            }
 
         FreezingObjectsRegistry.instance.CheckFreeze();
 
 #if UNITY_EDITOR
-		if ( Input.GetKey(KeyCode.G) )
-		{
-			ForceOnScreenEntitiesGolden();
-		}
+            if (Input.GetKey(KeyCode.G)) {
+                ForceOnScreenEntitiesGolden();
+            }
 #endif
+        }
     }
 
     void FixedUpdate()
     {
-		if (m_entities != null)
-        {
+        if (m_updateEnabled) {
             int i;
-            int count = m_entities.Count - 1;
-            for( i = count; i >= 0; i--)
-            {
-                m_entities[i].CustomFixedUpdate();
+            int count = m_pets.Count - 1;
+            for (i = count; i >= 0; i--) {
+                m_pets[i].CustomFixedUpdate();
             }
 
-            count = m_entitiesBg.Count - 1;
-			for (i = count; i >= 0; i--)
-            {
-				m_entitiesBg[i].CustomFixedUpdate();
-            }
+            if (m_entities != null) {
+                count = m_entities.Count - 1;
+                for (i = count; i >= 0; i--) {
+                    m_entities[i].CustomFixedUpdate();
+                }
 
-			count = m_cages.Count - 1;
-			for( i = count; i>=0; i-- )
-			{
-				m_cages[i].CustomFixedUpdate();
-			}
+                count = m_entitiesBg.Count - 1;
+                for (i = count; i >= 0; i--) {
+                    m_entitiesBg[i].CustomFixedUpdate();
+                }
+
+                count = m_cages.Count - 1;
+                for (i = count; i >= 0; i--) {
+                    m_cages[i].CustomFixedUpdate();
+                }
+            }
         }
     }
 
     void LateUpdate()
     {
-        GameCamera camera = InstanceManager.gameCamera;
-        if (camera != null)
-        {
-            int i;
-            int count = m_entities.Count;
-            // Inverse loop because the current entity could be deleted from the list if it's disabled
-            for (i = count - 1; i > -1; i--)
-            {
-				if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position))
-                {
-                    m_entities[i].Disable(false);
+        if (m_updateEnabled) {
+            GameCamera camera = InstanceManager.gameCamera;
+            if (camera != null) {
+                int i;
+                int count = m_entities.Count;
+                // Inverse loop because the current entity could be deleted from the list if it's disabled
+                for (i = count - 1; i > -1; i--) {
+                    if (m_entities[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_entities[i].machine.position)) {
+                        m_entities[i].Disable(false);
+                    }
+                }
+
+                count = m_entitiesBg.Count;
+                // Inverse loop because the current entity could be deleted from the list if it's disabled
+                for (i = count - 1; i > -1; i--) {
+                    if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundDeactivationArea(m_entitiesBg[i].machine.position)) {
+                        m_entitiesBg[i].Disable(false);
+                    }
+                }
+
+                count = m_cages.Count;
+                // Inverse loop because the current entity could be deleted from the list if it's disabled
+                for (i = count - 1; i > -1; i--) {
+                    if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
+                    {
+                        m_cages[i].Disable(false);
+                    }
                 }
             }
-
-            count = m_entitiesBg.Count;
-            // Inverse loop because the current entity could be deleted from the list if it's disabled
-            for (i = count - 1; i > -1; i--)
-            {
-				if (m_entitiesBg[i].CanDieOutsideFrustrum() && camera.IsInsideBackgroundDeactivationArea(m_entitiesBg[i].machine.position))
-                {
-                    m_entitiesBg[i].Disable(false);
-                }
-            }
-
-			count = m_cages.Count;
-			// Inverse loop because the current entity could be deleted from the list if it's disabled
-			for (i = count - 1; i > -1; i--)
-			{
-				if (m_cages[i].CanDieOutsideFrustrum() && camera.IsInsideDeactivationArea(m_cages[i].transform.position)) //cages don't have machine
-				{
-					m_cages[i].Disable(false);
-				}
-			}
         }
     }
 
-	void OnGameEnded(){
-		if (m_entities != null){
-               m_entities.Clear();
-        }
-		if (m_entitiesBg != null){
-			m_entitiesBg.Clear();
-		}
-		if ( m_cages != null ){
-			m_cages.Clear();
-		}
-		if (m_decorations != null){
-			m_decorations.Clear();
-		}
+	void OnGameEnded() {
+        if (m_pets != null)         { m_pets.Clear(); }
+        if (m_entities != null)     { m_entities.Clear(); }
+		if (m_entitiesBg != null)   { m_entitiesBg.Clear(); }
+		if ( m_cages != null )      { m_cages.Clear(); }
+		if (m_decorations != null)  { m_decorations.Clear(); }
 	}
 
     #region debug
     private bool m_entitiesVisibility = true;
-    public bool Debug_EntitiesVisibility
+    public bool Debug_EntitiesVisibility 
     {
         get
         {

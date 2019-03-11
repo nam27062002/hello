@@ -50,6 +50,8 @@ public class Pet : IEntity, IBroadcastListener {
 		{
 			_rigidbody.interpolation = RigidbodyInterpolation.None;
 		}
+
+        EntityManager.instance.RegisterPet(this);
 	}
 
 	void OnEnable()
@@ -74,24 +76,14 @@ public class Pet : IEntity, IBroadcastListener {
     }
 
 
-	void OnEnded()
-	{
-		gameObject.SetActive(false);
+	void OnEnded() {
+        EntityManager.instance.UnregisterPet(this);
+        gameObject.SetActive(false);
 	}
 
 	private void InitFromDef() {
 		// Get the definition
 		m_def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, sku);
 		m_maxHealth = 1f;
-	}
-
-	void Update()
-	{
-		base.CustomUpdate();
-	}
-
-	void FixedUpdate()
-	{
-		base.CustomFixedUpdate();
 	}
 }

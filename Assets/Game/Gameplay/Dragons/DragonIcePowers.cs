@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DragonIcePowers : MonoBehaviour {
 
+	[Header("Shield Drains")]
+	public float[] m_shieldDrainByTier = new float[ (int)DragonTier.COUNT ]{ 1.1f, 1.1f, 1.1f, 1.1f, 1.1f};
     [Header("Frozen Area Setup")]
     public float m_frozenAreaRadius = 1;
     public float m_frozenAreaRadiusUnderwater = 2;
@@ -54,6 +56,8 @@ public class DragonIcePowers : MonoBehaviour {
         {
             InstanceManager.player.dragonShieldBehaviour.m_maxShield += m_increaseShield;
         }
+
+		InstanceManager.player.dragonShieldBehaviour.m_shieldDrain = m_shieldDrainByTier[ (int)dataSpecial.tier ];
         
         m_motion = InstanceManager.player.dragonMotion;
         m_boost = InstanceManager.player.dragonBoostBehaviour;

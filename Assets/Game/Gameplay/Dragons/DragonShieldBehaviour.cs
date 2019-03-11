@@ -6,7 +6,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
 
     public float m_maxShield = 10;
     public float m_currentShield = 0;
-    public float m_shieldDrain = 1;
+	public float m_shieldDrain = 1;
     public float m_healthShieldRewardFactor = 0.5f;
     public List<DamageType> m_ignoreDamageTypes = new List<DamageType>();
     private DragonPlayer m_dragon;
