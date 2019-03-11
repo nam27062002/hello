@@ -1,7 +1,7 @@
 ﻿using SimpleJSON;
 using System.Collections.Generic;
 
-public class AddressablesCatalogArea 
+public class AddressablesCatalogGroup 
 {
     private const string ATT_ID = "id";
     private const string ATT_ASSET_BUNDLES = "assetBundles";
@@ -10,7 +10,7 @@ public class AddressablesCatalogArea
 
     public List<string> AssetBundleIds { get; set; }
 
-    public AddressablesCatalogArea()
+    public AddressablesCatalogGroup()
     {
         AssetBundleIds = new List<string>();
     }

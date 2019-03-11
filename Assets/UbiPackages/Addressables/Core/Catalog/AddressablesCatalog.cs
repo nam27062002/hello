@@ -8,7 +8,7 @@ public class AddressablesCatalog
 {
     private static string CATALOG_ATT_ENTRIES = "entries";
     public static string CATALOG_ATT_LOCAL_AB_LIST = "localAssetBundles";
-    public static string CATALOG_ATT_AREAS = "areas";
+    public static string CATALOG_ATT_GROUPS = "groups";
 
     /// <summary>
     /// Key: Addressable Id, Value: Addressable entry. This dictionary only contains entries with no variants
@@ -24,7 +24,7 @@ public class AddressablesCatalog
     private List<string> m_localABList;
 #endif
 
-    private Dictionary<string, AddressablesCatalogArea> m_areas;
+    private Dictionary<string, AddressablesCatalogGroup> m_groups;
 
 #if UNITY_EDITOR
     private bool m_editorMode;
@@ -39,7 +39,7 @@ public class AddressablesCatalog
     {
         m_entriesNoVariants = new Dictionary<string, AddressablesCatalogEntry>();
         m_entriesWithVariants = new Dictionary<string, Dictionary<string, AddressablesCatalogEntry>>();
-        m_areas = new Dictionary<string, AddressablesCatalogArea>();
+        m_groups = new Dictionary<string, AddressablesCatalogGroup>();
 
 #if UNITY_EDITOR
         m_localABList = new List<string>();
@@ -50,7 +50,7 @@ public class AddressablesCatalog
     {
         m_entriesNoVariants.Clear();
         m_entriesWithVariants.Clear();
-        m_areas.Clear();
+        m_groups.Clear();
 
 #if UNITY_EDITOR
         m_localABList.Clear();
@@ -64,7 +64,7 @@ public class AddressablesCatalog
         if (catalogJSON != null)
         {
             LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);            
-            LoadAreas(catalogJSON[CATALOG_ATT_AREAS].AsArray, logger);
+            LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger);
 
 #if UNITY_EDITOR
             if (m_editorMode)
@@ -79,7 +79,7 @@ public class AddressablesCatalog
     {        
         JSONClass data = new JSONClass();        
         data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());                
-        data.Add(CATALOG_ATT_AREAS, AreasToJSON());
+        data.Add(CATALOG_ATT_GROUPS, GroupsToJSON());
 
 #if UNITY_EDITOR
         if (m_editorMode)
@@ -322,35 +322,35 @@ public class AddressablesCatalog
     }
 #endif
 
-    private void LoadAreas(JSONArray areas, Logger logger)
+    private void LoadGroups(JSONArray groups, Logger logger)
     {
-        if (areas != null)
+        if (groups != null)
         {            
-            AddressablesCatalogArea area;
-            int count = areas.Count;
+            AddressablesCatalogGroup group;
+            int count = groups.Count;
             for (int i = 0; i < count; ++i)
             {
-                area = new AddressablesCatalogArea();
-                area.Load(areas[i]);              
-                if (m_areas.ContainsKey(area.Id))
+                group = new AddressablesCatalogGroup();
+                group.Load(groups[i]);              
+                if (m_groups.ContainsKey(group.Id))
                 {
                     if (logger != null && logger.CanLog())
                     {
-                        logger.LogError("Duplicate area " + area.Id + " found in catalog");
+                        logger.LogError("Duplicate group " + group.Id + " found in catalog");
                     }
                 }
                 else
                 {
-                    m_areas.Add(area.Id, area);
+                    m_groups.Add(group.Id, group);
                 }                
             }
         }
     }
 
-    private JSONArray AreasToJSON()
+    private JSONArray GroupsToJSON()
     {
         JSONArray data = new JSONArray();        
-        foreach (KeyValuePair<string, AddressablesCatalogArea> pair in m_areas)
+        foreach (KeyValuePair<string, AddressablesCatalogGroup> pair in m_groups)
         {            
             data.Add(pair.Value.ToJSON());            
         }
@@ -358,14 +358,14 @@ public class AddressablesCatalog
         return data;
     }
 
-    public Dictionary<string, AddressablesCatalogArea> GetAreas()
+    public Dictionary<string, AddressablesCatalogGroup> GetGroups()
     {
-        return m_areas;
+        return m_groups;
     }
 
-    public AddressablesCatalogArea GetArea(string areaId)
+    public AddressablesCatalogGroup GetGroup(string groupId)
     {
-        return (!string.IsNullOrEmpty(areaId) && m_areas.ContainsKey(areaId)) ? m_areas[areaId] : null;
+        return (!string.IsNullOrEmpty(groupId) && m_groups.ContainsKey(groupId)) ? m_groups[groupId] : null;
     }
 
 #if UNITY_EDITOR
