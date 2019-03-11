@@ -7,7 +7,7 @@ using UnityEngine;
 public class EditorAssetBundlesManager
 {
     public static string ASSET_BUNDLES_PATH = "AssetBundles";
-    public static string DOWNLOADABLES_FOLDER = "Downloadables";
+    public static string DOWNLOADABLES_FOLDER = "AssetBundles/Remote";
     public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";
     public static string DOWNLOADABLES_CATALOG_PATH = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
 
@@ -87,6 +87,25 @@ public class EditorAssetBundlesManager
                 {
                     Debug.LogError("Asset bundle " + fileNames[i] + " not found");
                 }
+            }
+        }
+    }
+    
+    public static void DeleteAssetBundles(List<string> fileNames)
+    {
+        string assetBundlesPath = GetAssetBundlesDirectory();
+
+        if (EditorFileUtils.GetFilesAmount(assetBundlesPath) > 0 && fileNames.Count > 0)
+        {            
+            int count = fileNames.Count;
+            string fileName;
+            for (int i = 0; i < count; i++)
+            {
+                fileName = EditorFileUtils.PathCombine(assetBundlesPath, fileNames[i]);
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }                
             }
         }
     }

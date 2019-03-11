@@ -71,7 +71,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     #endregion
 
     #region scene_cubes
-    private static string SCENE_CUBES_AB_NAME = "scene_cubes";
+    private static string SCENE_CUBES_AB_NAME = "scene_cubes_low";
     private static string SCENE_CUBES_SCENE_NAME = "SC_Cubes";
 
     public void SceneCubes_Init()
