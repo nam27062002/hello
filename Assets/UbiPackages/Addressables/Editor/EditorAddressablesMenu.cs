@@ -20,6 +20,8 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";
     private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
 
+    private const string ADDRESSABLES_COPY_LOCAL_ASSET_BUNDLES_TO_PLAYER = ADDRESSABLES_MENU + "/" + "Copy Local Asset Bundles To Player";
+
     private const string ADDRESSABLES_EDITOR_MODE = ADDRESSABLES_MENU + "/Editor mode";
 
     public static EditorAddressablesManager m_manager;
@@ -123,7 +125,13 @@ public class EditorAddressablesMenu : MonoBehaviour
             return;
         }
 
-        AddressablesManager.EditorMode = !AddressablesManager.EditorMode;        
+        AddressablesManager.EditorMode = !AddressablesManager.EditorMode;    
+        
+        // If no editor mode is enabled then local asset bundles need to be loaded to the player folder so they can be used
+        if (!AddressablesManager.EditorMode)
+        {
+            CopyLocalAssetBundlesToPlayerDestination(EditorUserBuildSettings.activeBuildTarget);
+        }
     }
 
     [MenuItem(ADDRESSABLES_EDITOR_MODE, true)]
@@ -132,4 +140,14 @@ public class EditorAddressablesMenu : MonoBehaviour
         Menu.SetChecked(ADDRESSABLES_EDITOR_MODE, AddressablesManager.EditorMode);
         return true;
     }    
+     
+    public static void CopyLocalAssetBundlesToPlayerDestination(BuildTarget target)
+    {                
+        Manager.CopyLocalAssetBundlesToPlayerDestination(target);
+    }
+
+    public static void DeleteLocalAssetBundlesInPlayerDestination()
+    {
+        Manager.DeleteLocalAssetBundlesInPlayerDestination();
+    }
 }
