@@ -183,73 +183,110 @@ namespace LevelEditor {
         private static readonly string LIGHT_CONTAINER_SCENE_PATH = "Assets/Game/Scenes/Levels/Art/ART_Medieval_Lighting_Container.unity"; //"Assets/Tools/LevelEditor/SC_LevelEditor.unity";
 
 
-		bool removeSceneFromActiveLevels(LevelEditorSettings.Mode mode, Scene scene)
+		bool removeSceneFromActiveLevels(Scene scene)
 		{
-			if (m_activeLevels != null)
-			{
-				List<Level> levelList = m_activeLevels[(int)mode];
-				int levelCount = levelList.Count;
-				for (int c = 0; c < levelCount; c++)
-				{
-					if (levelList[c].gameObject.scene == scene)
-					{
-						levelList.Remove(levelList[c]);
-						return true;
-					}
-				}
-			}
-			return false;
+            bool ret = false;
+
+            for (int c = 0; c < m_activeLevels.Length; c++)
+            {
+                List<Level> levelList = m_activeLevels[c];
+                if (levelList == null) continue;
+
+                List<Level> newList = new List<Level>();
+
+                int levelCount = levelList.Count;
+                for (int a = 0; a < levelCount; a++)
+                {
+                    if (levelList[a].gameObject.scene != scene)
+                    {
+                        newList.Add(levelList[a]);
+                        ret = true;
+                    }
+                    else
+                    {
+                        Debug.Log("Scene: " + scene.name + " stripped from active levels.");
+                    }
+                }
+                m_activeLevels[c] = newList;
+            }
+			return ret;
 		}
 
-		Level stripNonArtScenes()
+		void stripNonArtScenes()
 		{
-			List<Level> ret = new List<Level> ();
-			List<Level> artLevel = m_activeLevels [(int)LevelEditorSettings.Mode.ART];
-			Level lightmapLevel = null;
+            bool finish;
 
-			foreach (Level level in artLevel) {
-				if (level.gameObject.scene.name.IndexOf ("ART_", System.StringComparison.OrdinalIgnoreCase) >= 0) {
-					ret.Add (level);
-					if (level.gameObject.scene.name.IndexOf ("Medieval_Lighting", System.StringComparison.OrdinalIgnoreCase) >= 0) {
-						lightmapLevel = level;
-					}
-				} else {
-					EditorSceneManager.CloseScene(level.gameObject.scene, true);
-				}
-			}
-			m_activeLevels [(int)LevelEditorSettings.Mode.ART] = ret;
+            do {
+                finish = true;
 
-			return lightmapLevel;
+                for (int c = 0; c < SceneManager.sceneCount; c++)
+                {
+                    Scene scene = SceneManager.GetSceneAt(c);
+
+                    if (scene.name.IndexOf("ART_", System.StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        removeSceneFromActiveLevels(scene);
+                        EditorSceneManager.CloseScene(scene, true);
+                        finish = false;
+                        break;
+                    }
+                }
+            } while (!finish);
 		}
+
+        Level getLightmapScene()
+        {
+            Level ret = null;
+
+            for (int c = 0; c < m_activeLevels.Length; c++)
+            {
+                List<Level> levelList = m_activeLevels[c];
+                if (levelList == null) continue;
+
+                int levelCount = levelList.Count;
+                for (int a = 0; a < levelCount; a++)
+                {
+                    if (levelList[a].gameObject.scene.name.IndexOf("Medieval_Lighting", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return levelList[a];
+                    }
+                }
+            }
+            return null;
+        }
+
 
         void lightMapCompleted()
         {
             LevelEditorWindow.instance.m_isLightmapping = false;
             Scene lightScene = EditorSceneManager.GetSceneByPath(LIGHT_CONTAINER_SCENE_PATH);
 
-			removeSceneFromActiveLevels (LevelEditorSettings.Mode.ART, lightScene);
+			removeSceneFromActiveLevels (lightScene);
             EditorSceneManager.CloseScene(lightScene, true);
         }
 
         void launchLightmap()
         {
-			if (EditorSceneManager.OpenScene (LIGHT_CONTAINER_SCENE_PATH, OpenSceneMode.Additive) == null) {
-				Debug.Log ("Unable to find lightmap container scene: " + LIGHT_CONTAINER_SCENE_PATH);
-				return;
-
-			}
-
-			Level lightmapLevel = stripNonArtScenes ();
+			Level lightmapLevel = getLightmapScene();
 			if (lightmapLevel == null) {
 				Debug.Log ("Unable to find lightmap scene: ART_Medieval_LightingXXX");
 				return;
 			}
-				
+
+            Scene lightScene = EditorSceneManager.OpenScene(LIGHT_CONTAINER_SCENE_PATH, OpenSceneMode.Additive);
+            if ( lightScene == null)
+            {
+                Debug.Log("Unable to find lightmap container scene: " + LIGHT_CONTAINER_SCENE_PATH);
+                return;
+
+            }
+
             LevelEditorWindow.instance.m_isLightmapping = true;
 
             LevelEditorWindow.instance.CloseLevelEditorScene();
+            stripNonArtScenes();
 
-			SceneManager.SetActiveScene (lightmapLevel.gameObject.scene);
+            SceneManager.SetActiveScene (lightmapLevel.gameObject.scene);
 
             Lightmapping.completed = lightMapCompleted;
 
