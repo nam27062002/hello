@@ -148,7 +148,15 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		gameObject.SetActive(false);
 	}
 
-	public bool IsRespawing() { return (m_state == State.Respawning); }
+    public List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    public bool IsRespawing() { return (m_state == State.Respawning); }
 
 	// this spawner will kill its entities if it is outside camera disable area
 	public bool MustCheckCameraBounds() 	{ return false; }

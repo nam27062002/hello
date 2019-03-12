@@ -58,7 +58,11 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
 		gameObject.SetActive(false);
 	}
 
-	public void ForceRemoveEntities(){
+    public List<string> GetPrefabList() {
+        return null;
+    }
+
+    public void ForceRemoveEntities(){
 		for( int i = m_entityInfo.Count - 1; i >= 0; i-- ){
 			RemoveEntity(m_entityInfo[i].m_entity, false);
 		}

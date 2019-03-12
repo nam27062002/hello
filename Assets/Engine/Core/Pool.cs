@@ -186,7 +186,7 @@ public class Pool {
 			// Destroy as many objects from the free list as needed
 			while(toDestroy > 0 && m_freeObjects.Count > 0) {
 				GameObject obj = m_freeObjects.Dequeue();
-				GameObject.Destroy(obj);
+                Object.Destroy(obj);
 				toDestroy--;
 			}
 		}
@@ -200,7 +200,7 @@ public class Pool {
 	}
 
 	private GameObject Instantiate() {
-		GameObject inst = GameObject.Instantiate(m_prefab);					
+		GameObject inst = Object.Instantiate(m_prefab);					
 		inst.name = m_prefab.name;
 		inst.transform.SetParent(m_containerObj.transform, false);
 		inst.SetActive(false);

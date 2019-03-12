@@ -1011,6 +1011,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1026,6 +1027,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1043,6 +1045,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1058,6 +1061,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1075,6 +1079,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1090,6 +1095,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1107,6 +1113,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1122,6 +1129,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1139,6 +1147,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1154,6 +1163,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1171,6 +1181,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1186,6 +1197,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1203,6 +1215,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1218,6 +1231,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -1389,9 +1403,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300002, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64427026950025064
@@ -1403,9 +1417,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300006, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64606209957069538
@@ -1417,9 +1431,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300004, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64635904538240306
@@ -1431,9 +1445,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300012, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64685034815578750
@@ -1445,9 +1459,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300010, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64871522328064532
@@ -1459,9 +1473,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300008, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!64 &64950536343567938
@@ -1473,9 +1487,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 8a51e7ba838f8654d8a72cfcd0b57def, type: 3}
 --- !u!114 &114067233120287774
@@ -1505,6 +1519,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114090384901900634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1520,6 +1535,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114110383528272942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1535,6 +1551,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114138795207646366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1550,6 +1567,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114231852060261872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1589,6 +1607,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114336922268075704
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1604,6 +1623,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114404594208889744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1619,6 +1639,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114410788918578620
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1649,6 +1670,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114439409297956308
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1726,6 +1748,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_bloodPoints:
   - {fileID: 4289839260087034}
   - {fileID: 4236345984834096}
@@ -1773,6 +1796,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114496402942445938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1788,6 +1812,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114498528390629312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1803,6 +1828,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114521731601009736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1830,6 +1856,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114587683254414490
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1845,6 +1872,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114602620595485820
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1860,6 +1888,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114632032086922648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1875,6 +1904,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114644972729892578
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1902,6 +1932,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114707018386119930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1917,6 +1948,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114754695169877364
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1932,6 +1964,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114903183368448926
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1971,6 +2004,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114925139896972322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1998,6 +2032,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114946890542230518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2025,3 +2060,4 @@ MonoBehaviour:
   m_parentRoot: {fileID: 4251770766837416}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0

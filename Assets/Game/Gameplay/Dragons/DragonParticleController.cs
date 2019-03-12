@@ -12,15 +12,15 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 
 	[Space]
-	public string m_reviveParticle = "Dragon/PS_Revive";
+	public string m_reviveParticle = "PS_Revive";
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
 	public ParticleData m_petRevive;
 
 
     //[Space]
-    private string m_mummyPower = "Dragon/PS_MummyPower";
-    private string m_mummySmoke = "Dragon/PS_MummySmokePower";
+    private string m_mummyPower = "PS_MummyPower";
+    private string m_mummySmoke = "PS_MummySmokePower";
     private ParticleSystem m_mummySmokeInstance;
 
 
@@ -69,11 +69,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	private ParticleHandler m_corpseHandler;
 
 	[Space]
-	public string m_hiccupParticle;
-	public Transform m_hiccupAnchor = null;
-	private ParticleSystem m_hiccupInstance;
-
-	[Space]
 	public ParticleData m_shieldParticle;
 	public Transform m_shieldAnchor = null;
 	private ParticleSystem m_shieldInstance;
@@ -114,7 +109,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	ParticleSystem m_landingInstance;
 
 	[Space]
-	public string m_megaFireRush = "Dragon/PS_Revive";
+	public string m_megaFireRush = "PS_Revive";
 	public Transform m_megaFireRushAnchor;
 	private ParticleSystem m_megaFireRushInstance;
 
@@ -164,15 +159,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
-        if ( m_hiccupAnchor == null )
-        {
-             SceneManager.MoveGameObjectToScene(m_hiccupInstance.gameObject, gameObject.scene);
-        }
-
-		if (dragonAnimEvents != null)
-			dragonAnimEvents.onHiccupEvent += OnHiccup;
-
+		
 		if ( m_trailsParticle.IsValid() )
 		{
 			GameObject go = m_trailsParticle.CreateInstance();
@@ -608,16 +595,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		}
 	}
 
-	private void OnHiccup()
-	{
-		if ( m_hiccupInstance != null )
-		{
-			m_hiccupInstance.gameObject.SetActive(true);
-			m_hiccupInstance.Play();
-			m_toDeactivate.Add( m_hiccupInstance );
-		}
-	}
-
+    	
 	#region boost_trails
 	void PlayTrails()
 	{

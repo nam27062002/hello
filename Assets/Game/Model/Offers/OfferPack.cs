@@ -48,7 +48,8 @@ public class OfferPack {
 	public enum Type {
 		PROGRESSION,
 		PUSHED,
-		ROTATIONAL
+		ROTATIONAL,
+        COUNT
 	}
 
 	public const int MAX_ITEMS = 3; // For now
@@ -924,7 +925,6 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
-
 			default: {
 				newPack = new OfferPack();
 			} break;
@@ -1022,7 +1022,7 @@ public class OfferPack {
 	public static string TypeToString(Type _type) {
 		switch(_type) {
 			case Type.PROGRESSION: 	return "progression";
-			case Type.PUSHED: 		return "pushed";
+			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
 		}
 		return TypeToString(DEFAULT_TYPE);
@@ -1036,7 +1036,7 @@ public class OfferPack {
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr) {
 			case "progression": return Type.PROGRESSION;
-			case "pushed":		return Type.PUSHED;
+			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 		}
 		return DEFAULT_TYPE;
@@ -1162,6 +1162,11 @@ public class OfferPack {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
+
+        if ( m_type == Type.PUSHED ){
+            data.Add("customizerId", m_def.customizationCode);
+        }
+        
 
 		// Done!
 		return data;

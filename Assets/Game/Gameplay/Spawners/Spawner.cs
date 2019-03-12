@@ -352,7 +352,15 @@ public class Spawner : AbstractSpawner {
 		m_prefabIndex = GetPrefabIndex();
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_maxSpawns > 0 && m_respawnCount >= m_maxSpawns)
 		{
 			m_readyToBeDisabled = true;

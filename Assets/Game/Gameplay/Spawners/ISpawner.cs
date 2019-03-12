@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public interface ISpawner : IQuadTreeItem {    
 	string name { get; }
 	void Initialize();
     void Clear();
+
+    List<string> GetPrefabList();
     
 	bool IsRespawing();
 	bool IsRespawingPeriodically();

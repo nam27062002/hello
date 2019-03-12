@@ -1,4 +1,4 @@
-﻿// GameSceneController.cs
+// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.

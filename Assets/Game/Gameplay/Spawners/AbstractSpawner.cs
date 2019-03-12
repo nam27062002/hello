@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// This class is responsible for giving an implementation for the ISpawner interface that different subclasses can share. These are some of this class responsabilities:
@@ -346,10 +347,12 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
-    }    
+    }
     #endregion
 
     #region interface_for_subclasses
+    public abstract List<string> GetPrefabList();
+
     public virtual AreaBounds area { get; set; }
 	public Quaternion rotation { get { return transform.rotation; } }
 

@@ -36,4 +36,14 @@ public class SeasonalSpawner : Spawner {
             Destroy(gameObject);
         }
     }
+
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int s = 0; s < m_spawnConfigs.Count; ++s) {
+            for (int j = 0; j < m_spawnConfigs[s].m_spawners.Length; ++j) {
+                list.Add(m_spawnConfigs[s].m_spawners[j]);
+            }
+        }
+        return list;
+    }
 }

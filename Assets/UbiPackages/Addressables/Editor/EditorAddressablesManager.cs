@@ -31,18 +31,20 @@ public class EditorAddressablesManager
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
     private const string ADDRESSABLES_EDITOR_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH;
 
-    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";    
+    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
+
+    private const string ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH = "Assets/StreamingAssets/AssetBundles";
 
     private string m_localDestinationPath;
     private string m_editorCatalogFolderParent;    
     private string m_playerCatalogPath;
-    private string m_assetBundlesLocalDestinationPath;    
+    private string m_assetBundlesLocalDestinationPath;        
 
     public EditorAddressablesManager()
     {
         m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
-		m_assetBundlesLocalDestinationPath = "Assets/StreamingAssets/AssetBundles";//EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
+		m_assetBundlesLocalDestinationPath = "AssetBundles/Local";
     }
 
     public void ClearBuild(BuildTarget target)
@@ -51,7 +53,8 @@ public class EditorAddressablesManager
         EditorFileUtils.DeleteFileOrDirectory(m_localDestinationPath);
         EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
-		EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+		EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString()));
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -270,25 +273,70 @@ public class EditorAddressablesManager
             
             if (copyToPlayer)
             {
-                if (EditorFileUtils.Exists(m_assetBundlesLocalDestinationPath))
+                string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString());
+                if (EditorFileUtils.Exists(localAssetBundlesPath))
                 {
-                    EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+                    EditorFileUtils.DeleteFileOrDirectory(localAssetBundlesPath);
                 }
 
-                EditorFileUtils.CreateDirectory(m_assetBundlesLocalDestinationPath);
+                EditorFileUtils.CreateDirectory(localAssetBundlesPath);
 
                 // Copy local asset bundles
-                EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);                
+                EditorAssetBundlesManager.CopyAssetBundles(localAssetBundlesPath, output.m_LocalABList);
+
+                // Copy local asset bundles to StreamingAssets so they can be used by the player
+                if (!AddressablesManager.EditorMode)
+                {                    
+                    EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+                    EditorFileUtils.CreateDirectory(localAssetBundlesPath);
+                    EditorAssetBundlesManager.CopyAssetBundles(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, output.m_LocalABList);
+                }
+
+                // Deletes original files that were moved to local
+                EditorAssetBundlesManager.DeleteAssetBundles(output.m_LocalABList);
             }
 
             // Copy remote asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);
+            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);            
 
             // Generates remote AB list file            
-            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
+            // GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
+
+            // Deletes original files that were moved to local
+            EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
+
             GenerateDownloadablesConfig(m_localDestinationPath);
         }
     }    
+
+    public void CopyLocalAssetBundlesToPlayerDestination(BuildTarget target)
+    {        
+        string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString());
+
+        DeleteLocalAssetBundlesInPlayerDestination();
+
+        Directory.CreateDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+
+        if (Directory.Exists(localAssetBundlesPath))
+        {
+            string[] files = Directory.GetFiles(localAssetBundlesPath);
+            int count = files.Length;
+            string dstFileName;
+            for (int i = 0; i < count; i++)
+            {             
+                dstFileName = EditorFileUtils.PathCombine(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, Path.GetFileName(files[i]));
+                File.Copy(files[i], dstFileName);
+            }            
+        }        
+    }
+    
+    public void DeleteLocalAssetBundlesInPlayerDestination()
+    {        
+        if (Directory.Exists(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH))
+        {
+            EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+        }
+    }
 
     public void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
     {

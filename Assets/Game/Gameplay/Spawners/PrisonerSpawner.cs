@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
@@ -52,7 +52,11 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		base.OnDestroy();
 	}
-    
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
+
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )

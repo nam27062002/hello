@@ -26,13 +26,15 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private const string TID_OPTIONS_USERPROFILE_LOG_RECEIVE = "TID_SOCIAL_USERPROFILE_LOG_RECEIVE";
     private const string TID_OPTIONS_USERPROFILE_LOG_NETWORK = "TID_SOCIAL_USERPROFILE_LOG_NETWORK";
 
-	#if UNITY_ANDROID
-	const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
-	#elif UNITY_IPHONE
-	const string TID_LOGIN_ERROR = "TID_GAME_CENTER_AUTH_ERROR";
-	#endif
+#if UNITY_ANDROID
+	private const string TID_LOGIN_ERROR = "TID_GOOGLE_PLAY_AUTH_ERROR";
+#elif UNITY_IPHONE
+	private const string TID_LOGIN_ERROR = "TID_GAME_CENTER_AUTH_ERROR";
+#else
+    private const string TID_LOGIN_ERROR = "";
+#endif
 
-	void Awake()
+    void Awake()
     {            
 		Model_Init();
 		Social_Init();
