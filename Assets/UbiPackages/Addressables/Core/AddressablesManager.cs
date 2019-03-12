@@ -498,23 +498,22 @@ public class AddressablesManager
 
     protected virtual void ExtendedUpdate() {}
 
-    #region areas
+    #region groups
     /// <summary>
-    /// Returns the list of dependencies (typically asset bundles) ids that need the area with <c>id</c> as an identifier.
+    /// Returns the list of dependencies (typically asset bundles) ids that need the group with <c>id</c> as an identifier.
     /// </summary>
-    /// <param name="id">Area id which dependencies are requested.</param>    
-    public List<string> Areas_GetDependencyIds(string areaId)
+    /// <param name="id>Group id which dependencies are requested.</param>    
+    public List<string> Groups_GetDependencyIds(string groupId)
     {
         List<string> returnValue = null;   
-        AddressablesCatalogArea area = m_catalog.GetArea(areaId);
-        if (area != null)
+        AddressablesCatalogGroup group = m_catalog.GetGroup(groupId);
+        if (group != null)
         {
-            returnValue = m_providerFromAB.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
+            returnValue = m_providerFromAB.GetDependenciesIncludingSelfList(group.AssetBundleIds);                        
         }
 
         return returnValue;
     }
-
     #endregion
 
     #region ops
