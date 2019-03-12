@@ -10,7 +10,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     {
         bool ret = true;
 #if !UNITY_EDITOR && UNITY_ANDROID
-            ret = PlatformUtilsAndroidImpl.GetSDKLevel() >= 19;
+            ret = PlatformUtilsAndroidImpl.GetSDKLevel() >= 21;
 #endif
         return ret;
     } 
