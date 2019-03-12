@@ -434,6 +434,10 @@ public class UTDownloadablesDownloader : UnitTest
         {
         }
 
+        public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+        {
+        }
+
         public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached)  
         {            

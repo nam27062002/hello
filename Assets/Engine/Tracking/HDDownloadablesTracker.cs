@@ -8,7 +8,9 @@ using UnityEngine;
 /// </summary>
 public class HDDownloadablesTracker : Tracker
 {
-    private static string[] sm_reachabilityAsString;
+	public static string RESULT_SUCCESS = "Success";
+
+	private static string[] sm_reachabilityAsString;
 
     private static string ReachabilityToString(NetworkReachability reachability)
     {
@@ -49,7 +51,7 @@ public class HDDownloadablesTracker : Tracker
 
     private static string ErrorTypeToString(Error.EType type)
     {
-        return (type == Error.EType.None) ? "Success" : type.ToString();
+		return (type == Error.EType.None) ? RESULT_SUCCESS : type.ToString();
     }
 
     private Dictionary<string, bool> m_idsLoadTracked;
@@ -64,6 +66,11 @@ public class HDDownloadablesTracker : Tracker
         {
             m_idsLoadTracked.Clear();
         }
+    }
+
+    public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+    {
+        HDTrackingManager.Instance.Notify_DownloadablesStart(action, downloadableId, existingSizeMbAtStart);        
     }
 
     public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
@@ -87,7 +94,7 @@ public class HDDownloadablesTracker : Tracker
                 m_idsLoadTracked.Add(downloadableId, true);
             }
 
-            HDTrackingManager.Instance.Notify_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
+            HDTrackingManager.Instance.Notify_DownloadablesEnd(action, downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent,
                                                                 ReachabilityToString(reachabilityAtStart), ReachabilityToString(reachabilityAtEnd), ErrorTypeToString(error), maxAttemptsReached);
         }
     }    

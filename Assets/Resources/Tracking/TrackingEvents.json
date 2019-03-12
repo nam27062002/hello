@@ -540,6 +540,42 @@
           "etl"
         ]
       },
+        "custom.shop.entry": {
+            "Parameters": [
+                { "zone": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+        "custom.shop.view": {
+            "Parameters": [
+                { "section": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
+        "custom.shop.itemviewed": {
+            "Parameters": [
+                { "itemID": { "Status": "OK" } },
+                { "playerProgress": { "Status": "OK" } },
+                { "softCurrency": { "Status": "OK" } },
+                { "hardCurrency": { "Status": "OK" } }
+            ],
+            "APIs": [
+                "dna",
+                "etl"
+            ]
+        },
       "custom.game.consentpopup": {
         "Parameters": [
           { "age": { "Status": "OK" } },
@@ -633,7 +669,18 @@
                 "dna",
                 "etl"
             ]
-	  },	  
+	  },	
+	  "custom.player.contentDownload": {
+	      "Parameters": [
+                { "status": { "Status": "OK" } },
+                { "downloadType": { "Status": "OK" } },
+                { "size": { "Status": "OK" } },
+                { "duration": { "Status": "OK" } }                
+            ],
+            "APIs": [
+                "dna"
+            ]
+	  },	  	  
 	  "af_purchase": {
             "Parameters": [
                 {"af_def_logPurchase": {"Status": "OK"}},
@@ -1507,6 +1554,22 @@
 	  "size": {
         "Type": "FLOAT",
         "Values": []
-      }	  
+      },
+	  "status": {
+		"Type": "STRING:16",
+        "Values": []
+	  },
+	  "downloadType": {
+		"Type": "STRING:64",
+        "Values": []
+	  },
+        "section": {
+            "Type": "STRING:32",
+            "Values": []
+        },
+        "zone": {
+            "Type": "STRING:45",
+            "Values": []
+        }
     }
 }
