@@ -80,7 +80,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             }
         }
         writer.Write("],");
-        writer.Write("\"areas\":[");
+        writer.Write("\"groups\":[");
 
         string[] areas = { "village", "castle", "dark" };
         for (int i = 0; i < 3; ++i) {
