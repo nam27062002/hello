@@ -166,7 +166,7 @@ public class MenuDragonSelector : UISelectorTemplate<IDragonData>, IPointerClick
 					// Only owned dragons!
 					if(DragonManager.GetDragonData(dragon.sku).isOwned) {
 						// Menu scene controller will manage it
-						InstanceManager.menuSceneController.OnPlayButton();
+						InstanceManager.menuSceneController.GoToGame();
 					}
 				}
 

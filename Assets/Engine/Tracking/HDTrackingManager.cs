@@ -248,8 +248,22 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when the user opens the app store
+    // <param name="origin">Where the store is open.</param>
     /// </summary>
-    public virtual void Notify_StoreVisited() {}
+    public virtual void Notify_StoreVisited( string origin) {}
+
+    /// <summary>
+    /// Notifies the store section. When player visits a section of the store, HC, SC ...
+    /// </summary>
+    /// <param name="section">Section.</param>
+    public virtual void Notify_StoreSection( string section) {}
+    
+    /// <summary>
+    /// Notifies the store item view. When the player clicks on a button to start buying something on the store
+    /// </summary>
+    /// <param name="id">Identifier.</param>
+    public virtual void Notify_StoreItemView( string id) {}
+    
 
     public virtual void Notify_IAPStarted() {}
 
@@ -568,7 +582,9 @@ public class HDTrackingManager
     #endregion
 
     #region downloadables
-    public virtual void Notify_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    public virtual void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart) { }
+
+    public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
     #endregion
 

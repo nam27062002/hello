@@ -308,8 +308,8 @@ public class ContentManager
         if (UsersManager.currentUser != null)
         {
             // UserProfile
-                // Reload Dragons by Sku?
-                
+            UsersManager.currentUser.OnRulesUpdated();
+            
             // DragonManager
             DragonManager.SetupUser(UsersManager.currentUser);
         }
