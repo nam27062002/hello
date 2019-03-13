@@ -9,6 +9,7 @@ public class AssetBundlesCatalog
 {
     public static string CATALOG_ATT_LOCAL_LIST = "local";
     public static string CATALOG_ATT_DEPENDENCIES = "dependencies";
+    public static string CATALOG_ATT_GROUPS = "groups";
 
     private List<string> m_ids;
 
@@ -26,12 +27,15 @@ public class AssetBundlesCatalog
 
     private Dictionary<string, List<string>> m_dependencies;
 
+    private Dictionary<string, AssetBundlesGroup> m_groups;
+
     public AssetBundlesCatalog()
     {
         m_ids = new List<string>();
         m_localList = new List<string>();
         m_explicitLocalList = new List<string>();
         m_dependencies = new Dictionary<string, List<string>>();
+        m_groups = new Dictionary<string, AssetBundlesGroup>();
     }
 
     public void Reset()
@@ -40,6 +44,7 @@ public class AssetBundlesCatalog
         m_localList.Clear();
         m_explicitLocalList.Clear();
         m_dependencies.Clear();
+        m_groups.Clear();
     }
 
     public void Load(JSONNode json, Logger logger)
@@ -48,7 +53,10 @@ public class AssetBundlesCatalog
 
         if (json != null)
         {
-            UbiListUtils.JSONArrayToList(json[CATALOG_ATT_LOCAL_LIST].AsArray, m_explicitLocalList, true);            
+            if (json.ContainsKey(CATALOG_ATT_LOCAL_LIST))
+            {
+                UbiListUtils.JSONArrayToList(json[CATALOG_ATT_LOCAL_LIST].AsArray, m_explicitLocalList, true);
+            }
 
             LoadDependencies(json[CATALOG_ATT_DEPENDENCIES], logger);
 
@@ -74,6 +82,19 @@ public class AssetBundlesCatalog
             }
 
             UbiListUtils.AddRange(m_localList, m_explicitLocalList, false, true);
+
+            if (json.ContainsKey(CATALOG_ATT_GROUPS))
+            {
+                LoadGroups(json[CATALOG_ATT_GROUPS].AsArray, logger);
+            }
+        }
+    }
+
+    public void ResolveDependencies()
+    {
+        foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+        {
+            pair.Value.ResolveDependencies();
         }
     }
 
@@ -84,7 +105,8 @@ public class AssetBundlesCatalog
         // Only the explicit local asset bundles are included in the json because the rest can be
         // found out
         data.Add(CATALOG_ATT_LOCAL_LIST, UbiListUtils.ListToJSONArray(m_explicitLocalList));
-        data.Add(CATALOG_ATT_DEPENDENCIES, DependenciesToJSON());        
+        data.Add(CATALOG_ATT_DEPENDENCIES, DependenciesToJSON());
+        data.Add(CATALOG_ATT_GROUPS, GroupsToJSON());
 
         return data;
     }
@@ -127,6 +149,53 @@ public class AssetBundlesCatalog
         return data;
     }
 
+    private void LoadGroups(JSONArray groups, Logger logger)
+    {
+        if (groups != null)
+        {
+            AssetBundlesGroup group;
+            int count = groups.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                group = new AssetBundlesGroup();
+                group.Load(groups[i]);
+                if (m_groups.ContainsKey(group.Id))
+                {
+                    if (logger != null && logger.CanLog())
+                    {
+                        logger.LogError("Duplicate group " + group.Id + " found in catalog");
+                    }
+                }
+                else
+                {
+                    m_groups.Add(group.Id, group);
+                }
+            }
+        }
+    }
+
+    private JSONArray GroupsToJSON()
+    {
+        JSONArray data = new JSONArray();
+        foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+        {
+            data.Add(pair.Value.ToJSON());
+        }
+
+        return data;
+    }
+
+    public AssetBundlesGroup GetGroup(string groupId)
+    {
+        AssetBundlesGroup returnValue = null;
+        if (!string.IsNullOrEmpty(groupId))
+        {            
+            m_groups.TryGetValue(groupId, out returnValue);
+        }
+
+        return returnValue;
+    }
+
     public bool IsAssetBundleLocal(string id)
     {
         return m_localList.Contains(id);
@@ -157,7 +226,8 @@ public class AssetBundlesCatalog
     {
         return m_ids;
     }
-   
+
+#if UNITY_EDITOR
     public void AddDirectDependencies(string id, List<string> dependencies)
     {
         if (m_dependencies.ContainsKey(id))
@@ -168,5 +238,11 @@ public class AssetBundlesCatalog
         {
             m_dependencies.Add(id, dependencies);
         }
-    }    
+    }
+
+    public void SetGroups(Dictionary<string, AssetBundlesGroup> value)
+    {
+        m_groups = value;
+    }
+#endif
 }
