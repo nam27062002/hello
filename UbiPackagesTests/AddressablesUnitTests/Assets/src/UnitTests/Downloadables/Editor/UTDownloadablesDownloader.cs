@@ -176,7 +176,7 @@ public class UTDownloadablesDownloader : UnitTest
 	        Action.mockNetworkDriver = m_network;
 	        Action.downloader = m_downloader;
 		}
-		catch (System.Exception e) 
+		catch (System.Exception) 
 		{
 			NotifyPasses(false);
 		}

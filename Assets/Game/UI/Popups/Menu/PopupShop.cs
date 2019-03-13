@@ -78,6 +78,9 @@ public class PopupShop : MonoBehaviour {
 		get { return m_packsPurchased; }
 	}
 
+    protected string m_openOrigin = "";
+    protected bool m_trackScreenChange = false;
+    protected int m_lastTrackedScreen = -1;
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
@@ -123,7 +126,8 @@ public class PopupShop : MonoBehaviour {
 	/// Initialize the popup with the requested mode. Should be called before opening the popup.
 	/// </summary>
 	/// <param name="_mode">Target mode.</param>
-	public void Init(Mode _mode) {
+	public void Init(Mode _mode, string _origin ) {
+        m_openOrigin = _origin;
 		// Refresh pills?
 
 		// Reset scroll lists and hide all tabs
@@ -163,6 +167,8 @@ public class PopupShop : MonoBehaviour {
 			} break;
 		}
 
+        m_trackScreenChange = false;
+        m_lastTrackedScreen = -1;
 		// Go to initial tab
 		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);	// [AOC] The shop popup is keep cached, so if the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
 		m_tabs.GoToScreen(initialTab);
@@ -187,8 +193,12 @@ public class PopupShop : MonoBehaviour {
 	/// The popup is about to be been opened.
 	/// </summary>
 	public void OnOpenPreAnimation() {
-		HDTrackingManager.Instance.Notify_StoreVisited();
-
+		HDTrackingManager.Instance.Notify_StoreVisited( m_openOrigin );
+        // Track initial section
+        m_lastTrackedScreen = m_tabs.currentScreenIdx;
+        string tabName = m_tabs.GetScreen(m_tabs.currentScreenIdx).screenName;
+        HDTrackingManager.Instance.Notify_StoreSection(tabName);
+        m_trackScreenChange = true;
 		m_offersCount.text = OffersManager.activeOffers.Count.ToString();
 
         // Reset packs purchased list
@@ -208,4 +218,15 @@ public class PopupShop : MonoBehaviour {
 	public void OnClosePreAnimation() {
 		
 	}
+    
+    public void OnScreenChanged( NavigationScreenSystem.ScreenChangedEventData changedEventData )
+    {
+        if (m_trackScreenChange && m_lastTrackedScreen != changedEventData.toScreenIdx )
+        {
+            m_lastTrackedScreen = changedEventData.toScreenIdx;
+            HDTrackingManager.Instance.Notify_StoreSection( changedEventData.toScreen.screenName );
+            Debug.Log( changedEventData.ToString() );
+        }
+        
+    }
 }

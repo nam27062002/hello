@@ -119,6 +119,9 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Track
 		m_transactionInProgress = true;
 
+        // Track
+        HDTrackingManager.Instance.Notify_StoreItemView(m_def.sku);
+
 		// Notify heirs
 		OnPurchaseStarted();
 	}

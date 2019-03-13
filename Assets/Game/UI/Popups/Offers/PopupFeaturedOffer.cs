@@ -131,7 +131,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 
 		// Open shop popup
 		PopupController shopPopup = PopupManager.LoadPopup(PopupShop.PATH);
-		shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST);
+		shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST, "Featured_Offer");
 		shopPopup.Open();
 	}
 

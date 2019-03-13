@@ -73,4 +73,39 @@ public class EditorBuildMenu : MonoBehaviour
         AssetDatabase.Refresh();
         Debug.Log(taskName + " done.");
     }
+
+    public static void OnPreBuild(BuildTarget target)
+    {
+        EditorAddressablesMenu.CopyLocalAssetBundlesToPlayerDestination(target);
+        AssetDatabase.Refresh();
+    }
+
+    public static void OnPostBuild()
+    {
+        if (AddressablesManager.EditorMode)
+        {
+            // Local asset bundles are deleted since they were needed only during the building process to make them be in the build
+            EditorAddressablesMenu.DeleteLocalAssetBundlesInPlayerDestination();
+        }
+    }
+
+    public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild
+    {
+        public int callbackOrder { get { return 0; } }
+
+        public void OnPreprocessBuild(BuildTarget target, string path)
+        {
+            OnPreBuild(target);
+        }
+
+        public class BuildPostProcessor : UnityEditor.Build.IPostprocessBuild
+        {
+            public int callbackOrder { get { return 0; } }
+
+            public void OnPostprocessBuild(BuildTarget target, string path)
+            {
+                OnPostBuild();
+            }
+        }
+    }
 }
