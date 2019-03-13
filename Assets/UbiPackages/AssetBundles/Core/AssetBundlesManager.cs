@@ -46,7 +46,14 @@ public class AssetBundlesManager
     public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
-    private Downloadables.Manager m_downloadablesManager;        
+    private Downloadables.Manager m_downloadablesManager;  
+    public Downloadables.Manager DownloadablesManager
+    {
+        get
+        {
+            return m_downloadablesManager;
+        }        
+    }      
 
 #if UNITY_EDITOR
     private MockNetworkDriver m_networkDriver;
@@ -99,23 +106,115 @@ public class AssetBundlesManager
         DiskDriver diskDriver = new ProductionDiskDriver();
 #endif
         Logger downloadablesLogger = logger;
+
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
         m_downloadablesManager.Initialize(downloadablesCatalog);
-
+        
         LoadCatalog(localAssetBundlesPath);
 
+        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
         if (m_groups != null)
         {
+            Downloadables.CatalogGroup downloadablesGroup;
+            List<string> assetBundleIds = new List<string>();
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
             {
-                pair.Value.ResolveDependencies();
+                pair.Value.ExpandDependencies();
+                downloadablesGroup = GetDownloadablesGroupFromAssetBundlesGroup(pair.Value);
+                if (downloadablesGroup != null)
+                {
+                    downloadablesGroups.Add(pair.Key, downloadablesGroup);
+                }                
             }
         }
+
+        m_downloadablesManager.SetGroups(downloadablesGroups);
 
         if (CanLog())
         {
             Logger.Log("AssetBundlesManager initialized successfully");
         }
+    }
+
+    public Downloadables.CatalogGroup GetDownloadablesGroupFromAssetBundlesGroup(AssetBundlesGroup abGroup)
+    {
+        Downloadables.CatalogGroup returnValue = null;
+
+        if (abGroup != null)
+        {
+            List<string> input = abGroup.AssetBundleIds;
+            List<string> downloadablesIds;
+
+            if (input != null)
+            {
+                downloadablesIds = new List<string>();
+
+                AssetBundleHandle handle;
+                int count = input.Count;
+                for (int i = 0; i < count && downloadablesIds != null; i++)
+                {
+                    handle = GetAssetBundleHandle(input[i]);
+                    if (handle == null)
+                    {
+                        if (CanLog())
+                        {
+                            Logger.LogError("Group <" + abGroup.Id + "> is not valid because it constains <" + input[i] + "> which is not a valid asset bundle");
+                        }
+
+                        downloadablesIds = null;
+                    }
+                    else
+                    {
+                        downloadablesIds.Add(input[i]);
+                    }
+                }   
+                
+                if (downloadablesIds != null)
+                {
+                    returnValue = new Downloadables.CatalogGroup();
+                    returnValue.Setup(abGroup.Id, downloadablesIds);                    
+                }            
+            }
+        }
+
+        return returnValue;
+    }
+
+    public bool AddRemoteAssetBundles(string groupId, List<string> input, List<string> output)
+    {
+        bool returnValue = output != null;
+        
+        if (input != null && returnValue)
+        {
+            List<string> internalOutput = new List<string>();
+
+            AssetBundleHandle handle;
+            int count = input.Count;
+            for (int i = 0; i < count && returnValue; i++)
+            {
+                handle = AssetBundlesManager.Instance.GetAssetBundleHandle(input[i]);
+                if (handle == null)
+                {
+                    if (CanLog())
+                    {
+                        Logger.LogError("Group <" + groupId + "> is not valid because it constains <" + input[i] + " is not a valid asset bundle");
+                    }
+
+                    returnValue = false;
+                }
+                else
+                {
+                    internalOutput.Add(input[i]);
+                }
+            }
+
+            if (returnValue)
+            {
+                UbiListUtils.AddRange(output, internalOutput, false, true);
+            }
+        }
+
+        return returnValue;
     }
 
 #if UNITY_EDITOR

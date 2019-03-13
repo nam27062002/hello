@@ -94,7 +94,7 @@ public class AssetBundlesCatalog
     {
         foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
         {
-            pair.Value.ResolveDependencies();
+            pair.Value.ExpandDependencies();
         }
     }
 

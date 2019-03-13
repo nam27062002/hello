@@ -32,10 +32,10 @@ public class AssetBundlesGroup
         }
     }
 
-    public void ResolveDependencies()
+    public void ExpandDependencies()
     {
         AssetBundleIds = AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(AssetBundleIds);
-    }
+    }    
 
     public JSONClass ToJSON()
     {

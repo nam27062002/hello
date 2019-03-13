@@ -21,6 +21,7 @@ public class AddressableGroupsTestController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.M))
         {
+            AssetBundlesManager.Instance.DownloadablesManager.SetGroupPermissionRequested(GROUP_ID, true);
             /*bool available = m_addressablesManager.Groups_IsAvailable(GROUP_ID);
             string msg = "group is ";
             if (!available)
