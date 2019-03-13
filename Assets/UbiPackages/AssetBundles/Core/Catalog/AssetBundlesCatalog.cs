@@ -196,6 +196,11 @@ public class AssetBundlesCatalog
         return returnValue;
     }
 
+    public Dictionary<string, AssetBundlesGroup> GetGroups()
+    {
+        return m_groups;
+    }
+
     public bool IsAssetBundleLocal(string id)
     {
         return m_localList.Contains(id);

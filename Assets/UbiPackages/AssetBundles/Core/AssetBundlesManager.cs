@@ -52,8 +52,8 @@ public class AssetBundlesManager
     private MockNetworkDriver m_networkDriver;
     private MockDiskDriver m_diskDriver;
 #endif
-
-    private AssetBundlesCatalog m_catalog = new AssetBundlesCatalog();
+    
+    private Dictionary<string, AssetBundlesGroup> m_groups;
 
     /// <summary>
     /// Initialize the system.
@@ -104,7 +104,13 @@ public class AssetBundlesManager
 
         LoadCatalog(localAssetBundlesPath);
 
-        m_catalog.ResolveDependencies();
+        if (m_groups != null)
+        {
+            foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+            {
+                pair.Value.ResolveDependencies();
+            }
+        }
 
         if (CanLog())
         {
@@ -131,8 +137,9 @@ public class AssetBundlesManager
         JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
 
         if (json != null)
-        {             
-            m_catalog.Load(json, sm_logger);
+        {
+            AssetBundlesCatalog catalog = new AssetBundlesCatalog();          
+            catalog.Load(json, sm_logger);
 
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
@@ -140,7 +147,7 @@ public class AssetBundlesManager
 			string fullLocalDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);
             fullLocalDirectory = Path.Combine(fullLocalDirectory, ASSET_BUNDLES_PATH_RELATIVE);
 
-            List<string> assetBundleIds = m_catalog.GetAllAssetBundleIds();
+            List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
 
             string id;
             AssetBundleHandle handle;
@@ -151,7 +158,7 @@ public class AssetBundlesManager
                 id = assetBundleIds[i];
 
                 dependencies = new List<string>();
-                m_catalog.GetAllDependencies(id, dependencies);
+                catalog.GetAllDependencies(id, dependencies);
 
                 // id is also included because it makes downloading logic easier
                 dependencies.Add(id);
@@ -169,7 +176,9 @@ public class AssetBundlesManager
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
-            }            
+            }
+
+            m_groups = catalog.GetGroups();         
         }
         else
         {
@@ -182,7 +191,7 @@ public class AssetBundlesManager
 
     public void Reset()
     {
-        m_catalog.Reset();
+        m_groups = null;
 
         if (m_assetBundleHandles != null)
         {
@@ -435,10 +444,12 @@ public class AssetBundlesManager
     public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
     {
         AssetBundlesGroup returnValue = null;
-        if (!string.IsNullOrEmpty(groupId))
-        {            
+        if (!string.IsNullOrEmpty(groupId) && m_groups != null)
+        {
+            m_groups.TryGetValue(groupId, out returnValue);
         }
-        return m_catalog.GetGroup(groupId);
+
+        return returnValue;
     }
 
     public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
