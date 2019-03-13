@@ -10,7 +10,7 @@ namespace Downloadables
     public class CatalogEntryStatus
     {
         public static float TIME_TO_WAIT_AFTER_ERROR = 60f;
-        public static float TIME_TO_WAIT_BETWEEN_SAVES = 60f;
+        public static float TIME_TO_WAIT_BETWEEN_SAVES = 3f;
         public static float TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES = 180f;
         private static float BYTES_TO_MB = 1024 * 1024;
 
@@ -313,7 +313,7 @@ namespace Downloadables
         public void Save()
         {
             if (m_manifest.NeedsToSave)
-            {
+            {                
                 Error error;                
                 sm_disk.File_WriteJSON(Disk.EDirectoryId.Manifests, Id, m_manifest.ToJSON(), out error);
                 if (error == null)
@@ -322,6 +322,7 @@ namespace Downloadables
                 }
                 else
                 {
+                    m_latestSaveAt = sm_realtimeSinceStartup;
                     NotifyError(error);
                 }
             }
