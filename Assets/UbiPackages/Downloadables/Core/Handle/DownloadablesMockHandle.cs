@@ -1,9 +1,34 @@
-﻿using System;
+﻿//----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Downloadables
 {
+    //----------------------------------------------------------------------------//
+    // CLASSES																	  //
+    //----------------------------------------------------------------------------//
+    /// <summary>
+    /// Temporary class used as skeleton for UI development while the Asset Groups are 
+    /// being implemented.
+    /// 
+    /// Example:
+    /// 
+    ///  Creates a mock handle to handle a download of 1000 bytes that starts with 500 bytes already downloaded. 
+    ///  The download will take 20 seconds. 
+    ///  Mobile data permission has already been requested and it hasn't been granted
+    ///  No actions passed in constructor because they'll be added afterwards
+    /// 
+    ///  handle = new Downloadables.MockHandle(500, 1000, 20, true, false, null);
+    /// 
+    ///  No connection error is simulated at t=5s. Download is stopped
+    ///  handle.AddAction(5, Downloadables.Handle.EError.NO_CONNECTION);
+    /// 
+    ///  It simulates that the error has been fixed at t=30s (it will have been stopped 25 seconds). After this the download should resume and it will
+    ///  be done at t=45s
+    ///  handle.AddAction(30, Downloadables.Handle.EError.NONE);             
+    /// </summary>
     public class MockHandle : Handle
     {
         public class Action
@@ -45,8 +70,7 @@ namespace Downloadables
         //------------------------------------------------------------------------//
         // METHODS																  //
         //------------------------------------------------------------------------//
-        public void Setup(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted,
-                          List<Action> actions)
+        public void Setup(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted, List<Action> actions)
         {
             DownloadedBytesAtStart = downloadedBytesAtStart;
             TotalBytes = totalBytes;
