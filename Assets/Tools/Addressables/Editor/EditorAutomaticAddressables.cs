@@ -1,15 +1,102 @@
 ﻿#if UNITY_EDITOR
+
+//#define ALL_BUNDLES_LOCAL
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using SimpleJSON;
 
 
-public static class EditorAddressables_NPCs_Particles {
+public static class EditorAutomaticAddressables {
     private static string[] VARIANTS_PATH = { "/Low/", "/Master/", "/High/", "/VeryHigh/" };
     private static string[] VARIANTS = { "Low", "Master", "High", "VeryHigh" };
 
-    public static void GetEntriesAll(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
+    private static string[] AREAS = { "village", "castle", "dark" };
+
+
+    public static JSONClass BuildRestoreCatalog() {
+        List<AddressablesCatalogEntry> entryList = new List<AddressablesCatalogEntry>();
+        GetEntriesFromDirectory(new DirectoryInfo("Assets"), false, entryList, null);
+
+        JSONClass catalog = new JSONClass();
+        {
+            JSONArray entries = new JSONArray();
+            {
+                foreach (AddressablesCatalogEntry entry in entryList) {
+                    entries.Add(entry.ToJSON());
+                }
+            }
+            catalog.Add("entries", entries);
+        }
+
+        return catalog;
+    }
+
+
+    public static JSONClass BuildCatalog() {
+        List<AddressablesCatalogEntry> entryList;
+        List<string> bundleList;
+
+        GetEntriesPrefab(out entryList, out bundleList);
+
+        JSONClass catalog = new JSONClass();
+        {
+            JSONArray entries = new JSONArray();
+            {
+                foreach (AddressablesCatalogEntry entry in entryList) {
+                    entries.Add(entry.ToJSON());
+                }
+            }
+            catalog.Add("entries", entries);
+
+
+            JSONArray localAssetBundles = new JSONArray();
+            {
+#if ALL_BUNDLES_LOCAL
+                foreach (string bundle in bundleList) {
+                    localAssetBundles.Add(bundle);
+                }
+#else
+                foreach (string bundle in bundleList) {
+                    if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
+                        localAssetBundles.Add(bundle);
+                    }
+                }
+#endif
+            }
+            catalog.Add("localAssetBundles", localAssetBundles);
+
+
+            JSONArray groups = new JSONArray();
+            {
+                for (int i = 0; i < 3; ++i) {
+                    JSONClass group = new JSONClass();
+                    {
+                        JSONArray bundlesInArea = new JSONArray();
+                        foreach (string bundle in bundleList) {
+                            if (bundle.Contains(AREAS[i]) || bundle.Contains("shared")) {
+                                bundlesInArea.Add(bundle);
+                            }
+                        }
+                        group.Add("id", "area" + (i + 1));
+                        group.Add("assetBundles", bundlesInArea);
+                    }
+                    groups.Add(group);
+                }
+
+            }
+            catalog.Add("groups", groups);
+        }
+
+        return catalog;
+    }
+
+
+
+
+    private static void GetEntriesAll(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 
@@ -26,7 +113,7 @@ public static class EditorAddressables_NPCs_Particles {
         _bundles = bundlesSet.ToList();
     }
 
-    public static void GetEntriesPrefab(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
+    private static void GetEntriesPrefab(out List<AddressablesCatalogEntry> _entries, out List<string> _bundles) {
         List<AddressablesCatalogEntry> entries = new List<AddressablesCatalogEntry>();
         HashSet<string> bundlesSet = new HashSet<string>();
 

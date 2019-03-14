@@ -143,74 +143,7 @@ public class OTA_NPCSceneControllerEditor : Editor {
         }
     }
 
-    private void ExportNPCassetBundles() {
-        List<AddressablesCatalogEntry> entries;
-        List<string> bundles;
-
-        EditorAddressables_NPCs_Particles.GetEntriesAll(out entries, out bundles);
-
-        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_npc_addressables.json", false);
-        writer.AutoFlush = true;
-
-        writer.Write("{\"entries\":[");
-        for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i].ToJSON().ToString());
-            if (i < entries.Count - 1) {
-                writer.Write(",");
-            }
-        }
-        writer.Write("]}");
-        writer.Close();
-    }
-
-    private void ImportNPCassetBundles() {
-        string file = File.ReadAllText("Assets/Editor/Addressables/editor_npc_addressables.json");
-        SimpleJSON.JSONNode data = SimpleJSON.JSONNode.Parse(file);
-
-        SimpleJSON.JSONArray entries = data["entries"].AsArray;
-        for (int i = 0; i < entries.Count; ++i) {
-            SimpleJSON.JSONClass entry = entries[i].AsObject;
-            string assetPath = AssetDatabase.GUIDToAssetPath(entry["guid"]);
-            AssetImporter ai = AssetImporter.GetAtPath(assetPath);
-            if (ai != null) {
-                ai.SetAssetBundleNameAndVariant(entry["abName"], "");
-            }
-        }
-    }
-
-    private void CreateAddressables() {
-        List<AddressablesCatalogEntry> entries;
-        List<string> bundles;
-
-        EditorAddressables_NPCs_Particles.GetEntriesPrefab(out entries, out bundles);
-
-        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_addressablesCatalog.json", false) {
-            AutoFlush = true
-        };
-
-        writer.Write("{");
-        writer.Write("\"entries\":[");
-        for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i].ToJSON().ToString());
-            if (i < entries.Count - 1) {
-                writer.Write(",");
-            }
-        }
-        writer.Write("],");
-        writer.Write("\"localAssetBundles\":[");
-        for (int i = 0; i < bundles.Count; ++i) {
-            writer.Write("\"" + bundles[i] + "\"");
-            if (i < bundles.Count - 1) {
-                writer.Write(",");
-            }
-        }
-        writer.Write("],");
-        writer.Write("\"areas\":[");
-        writer.Write("{\"id\":\"area1\", \"assetBundles\":[\"npc_shared\",\"npc_medieval_common\",\"npc_medieval_village\",\"npc_medieval_village_castle\",\"npc_medieval_village_dark\"]},");
-        writer.Write("{\"id\":\"area2\", \"assetBundles\":[\"npc_shared\",\"npc_medieval_common\",\"npc_medieval_castle\",\"npc_medieval_village_castle\",\"npc_medieval_castle_dark\"]},");
-        writer.Write("{\"id\":\"area3\", \"assetBundles\":[\"npc_shared\",\"npc_medieval_common\",\"npc_medieval_dark\",\"npc_medieval_village_dark\",\"npc_medieval_castle_dark\"]}");
-        writer.Write("]");
-        writer.Write("}");
-        writer.Close();
-    }
+    private void ExportNPCassetBundles() { HDEditorAssetBundlesMenu.ExportAssetBundles(); }
+    private void ImportNPCassetBundles() { HDEditorAssetBundlesMenu.ImportAssetBundles(); } 
+    private void CreateAddressables()    { HDEditorAssetBundlesMenu.CreateAddressablesNPCs(); }
 }

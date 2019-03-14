@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#define ALL_BUNDLES_LOCAL
+
+using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
@@ -17,28 +19,16 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
    
     [MenuItem(MENU_EXPORT_ASSET_BUNDLES_NPCS, false, 50)]
     public static void ExportAssetBundles() {
-        List<AddressablesCatalogEntry> entries;
-        List<string> bundles;
-
-        EditorAddressables_NPCs_Particles.GetEntriesAll(out entries, out bundles);
-
-        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/export_npc_asset_bundles.json", false);
+        StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/export_asset_bundles.json", false);
         writer.AutoFlush = true;
 
-        writer.Write("{\"entries\":[\n");
-        for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i].ToJSON().ToString());
-            if (i < entries.Count - 1) {
-                writer.Write(",\n");
-            }
-        }
-        writer.Write("\n]}");
+        writer.Write(EditorAutomaticAddressables.BuildRestoreCatalog().ToString());
         writer.Close();
     }
 
     [MenuItem(MENU_IMPORT_ASSET_BUNDLES_NPCS, false, 51)]
     public static void ImportAssetBundles() {
-        string file = File.ReadAllText("Assets/Editor/Addressables/export_npc_asset_bundles.json");
+        string file = File.ReadAllText("Assets/Editor/Addressables/export_asset_bundles.json");
         SimpleJSON.JSONNode data = SimpleJSON.JSONNode.Parse(file);
 
         SimpleJSON.JSONArray entries = data["entries"].AsArray;
@@ -54,50 +44,11 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
 
     [MenuItem(MENU_CREATE_ADDRESSABLES_NPCS, false, 52)]
     public static void CreateAddressablesNPCs() {
-        List<AddressablesCatalogEntry> entries;
-        List<string> bundles;
-
-        EditorAddressables_NPCs_Particles.GetEntriesPrefab(out entries, out bundles);
-
         StreamWriter writer = new StreamWriter("Assets/Editor/Addressables/editor_addressablesCatalog.json", false) {
             AutoFlush = true
         };
 
-        writer.Write("{");
-        writer.Write("\"entries\":[");
-        for (int i = 0; i < entries.Count; ++i) {
-            writer.Write(entries[i].ToJSON().ToString());
-            if (i < entries.Count - 1) {
-                writer.Write(",");
-            }
-        }
-        writer.Write("],");
-        writer.Write("\"localAssetBundles\":[");
-        for (int i = 0; i < bundles.Count; ++i) {
-            writer.Write("\"" + bundles[i] + "\"");
-            if (i < bundles.Count - 1) {
-                writer.Write(",");
-            }
-        }
-        writer.Write("],");
-        writer.Write("\"groups\":[");
-
-        string[] areas = { "village", "castle", "dark" };
-        for (int i = 0; i < 3; ++i) {
-            if (i > 0) { writer.Write(","); }
-            writer.Write("{\"id\":\"area" + (i + 1) + "\", \"assetBundles\":[");
-            int bundlesAdded = 0;
-            for (int b = 0; b < bundles.Count; ++b) {
-                if (bundles[b].Contains(areas[i]) || bundles[b].Contains("shared")) {
-                    if (bundlesAdded > 0) { writer.Write(","); }
-                    writer.Write("\"" + bundles[b] + "\"");
-                    bundlesAdded++;
-                }
-            }
-            writer.Write("]}");
-        }
-        writer.Write("]");
-        writer.Write("}");
+        writer.Write(EditorAutomaticAddressables.BuildCatalog().ToString());
         writer.Close();
     }
 
