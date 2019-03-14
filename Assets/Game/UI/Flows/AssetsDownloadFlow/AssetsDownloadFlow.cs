@@ -21,14 +21,12 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const float UPDATE_INTERVAL = 1f;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private TextMeshProUGUI m_progressText = null;
+	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[SerializeField] private Localizer m_statusText = null;
 	[SerializeField] private Localizer m_errorText = null;
 
@@ -44,7 +42,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	private void Start() {
 		// Program periodic update
-		InvokeRepeating("PeriodicUpdate", 0f, UPDATE_INTERVAL);
+		InvokeRepeating("PeriodicUpdate", 0f, AssetsDownloadFlowSettings.updateInterval);
 	}
 
 	/// <summary>
@@ -61,7 +59,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// <summary>
 	/// Initialize the widget with the given async operation.
 	/// </summary>
-	/// <param name="_group">Async operation. Use <c>null</c> to hide the widget.</param>
+	/// <param name="_group">Group download handler. Use <c>null</c> to hide the widget.</param>
 	public void InitWithGroupData(TMP_AssetsGroupData _group) {
 		// Store operation
 		m_group = _group;
@@ -146,15 +144,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	private void RefreshData() {
 		// Progress Bar
 		if(m_progressBar != null) {
-			m_progressBar.normalizedValue = m_group.progress;
-		}
-
-		// Progress Text
-		if(m_progressText != null) {
-			m_progressText.text = LocalizationManager.SharedInstance.Localize(
-				"TID_FRACTION",
-				StringUtils.FormatFileSize(m_group.totalBytes)
-			);
+			m_progressBar.Refresh(m_group);
 		}
 
 		// Status text
@@ -194,17 +184,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Opens the right popup according to current group's state.
-	/// </summary>
-	private void OpenPopupByState() {
-		// Ignore if group is not valid (shouldn't happen)
-		if(m_group == null) return;
-
-		// Same if the group is ready (shouldn't happen either)
-		if(m_group.isDone) return;
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -213,6 +192,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		OpenPopupByState();
+		AssetsDownloadFlowPopup.OpenPopupByState(m_group);
 	}
 }
