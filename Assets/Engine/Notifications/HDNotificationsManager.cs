@@ -3,48 +3,60 @@ using System;
 
 public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificationsManager>
 {
-	private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
-	public const string SILENT_FLAG = "Notifications.Silent";
+    private const string HD_NOTIFICATIONS = "HD_NOTIFICATIONS";
+    public const string SILENT_FLAG = "Notifications.Silent";
+    
+    public static bool CanBeUsed()  // This function is here to protect old android not to initialize because of the trilladora
+    {
+        bool ret = true;
+#if !UNITY_EDITOR && UNITY_ANDROID
+            ret = PlatformUtilsAndroidImpl.GetSDKLevel() >= 21;
+#endif
+        return ret;
+    } 
 
     public void Initialise()
     {
-        if (!NotificationsManager.SharedInstance.CheckIfInitialised())
+        if (CanBeUsed())
         {
-			/*
-			#if UNITY_IOS
-			UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound, true);
-			CheckRemoteNotifications();
-			#endif
-			*/
-
-#if UNITY_ANDROID
-			NotificationsManager.NotificationChannelConfig kNotificationsConfig = new NotificationsManager.NotificationChannelConfig ();
-			kNotificationsConfig.m_strResSmallIconName = "push_notifications";
-			kNotificationsConfig.m_bEnableLights = true;
-			kNotificationsConfig.m_bEnableVibration = true;
-			kNotificationsConfig.m_iIconColorARGB = 0x00000000;
-			kNotificationsConfig.m_iLightColorARGB = 0xFFFF8C00;
-			NotificationsManager.SharedInstance.Initialise(kNotificationsConfig);			          
-#else
-			NotificationsManager.SharedInstance.Initialise();			          
-#endif
-
-            int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
-            NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
-
-            if (FeatureSettingsManager.IsDebugEnabled)
-                Log("Notifications enabled = " + GetNotificationsEnabled());
+            if (!NotificationsManager.SharedInstance.CheckIfInitialised())
+            {
+    			/*
+    #if UNITY_IOS
+    			UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound, true);
+    			CheckRemoteNotifications();
+    #endif
+    			*/
+    
+    #if UNITY_ANDROID
+    			NotificationsManager.NotificationChannelConfig kNotificationsConfig = new NotificationsManager.NotificationChannelConfig ();
+    			kNotificationsConfig.m_strResSmallIconName = "push_notifications";
+    			kNotificationsConfig.m_bEnableLights = true;
+    			kNotificationsConfig.m_bEnableVibration = true;
+    			kNotificationsConfig.m_iIconColorARGB = 0x00000000;
+    			kNotificationsConfig.m_iLightColorARGB = 0xFFFF8C00;
+    			NotificationsManager.SharedInstance.Initialise(kNotificationsConfig);			          
+    #else
+    			NotificationsManager.SharedInstance.Initialise();			          
+    #endif
+    
+                int notificationsEnabled = PlayerPrefs.GetInt(HD_NOTIFICATIONS, 1);
+                NotificationsManager.SharedInstance.SetNotificationsEnabled(notificationsEnabled > 0);
+    
+                if (FeatureSettingsManager.IsDebugEnabled)
+                    Log("Notifications enabled = " + GetNotificationsEnabled());
+            }
         }
     }
 
     public void Update()
     {
-#if UNITY_IOS    
+#if UNITY_IOS
 		CheckRemoteNotifications();
-#endif        
+#endif
     }
 
-	#if UNITY_IOS
+#if UNITY_IOS
 	private void CheckRemoteNotifications() {
 		if ( UnityEngine.iOS.NotificationServices.remoteNotificationCount > 0)
 		{
@@ -84,7 +96,7 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 		}
 		return ret;
 	}
-    #endif
+#endif
 
 	public bool GetNotificationsEnabled()
     {
@@ -93,49 +105,60 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 
     public void SetNotificationsEnabled(bool enabled)
     {
-        Log("SetNotificationsEnabled = " + enabled);
-
-		int v  = enabled ? 1 : 0;
-		PlayerPrefs.SetInt(HD_NOTIFICATIONS,v);
-
-        NotificationsManager.SharedInstance.SetNotificationsEnabled(enabled);
-
-		// Clear all notifications
-        NotificationsManager.SharedInstance.CancelAllNotifications();
-
-        // If enabled reschedule all notifications
-		if (enabled){
-			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
-				EggManager.incubatingEgg.ScheduleEggNotification();
-	        }
+        if ( CanBeUsed() )
+        {
+            Log("SetNotificationsEnabled = " + enabled);
+    		int v  = enabled ? 1 : 0;
+    		PlayerPrefs.SetInt(HD_NOTIFICATIONS,v);
+    
+            NotificationsManager.SharedInstance.SetNotificationsEnabled(enabled);
+    
+    		// Clear all notifications
+            NotificationsManager.SharedInstance.CancelAllNotifications();
+    
+            // If enabled reschedule all notifications
+    		if (enabled){
+    			if ( UsersManager.currentUser != null && EggManager.incubatingEgg != null){
+    				EggManager.incubatingEgg.ScheduleEggNotification();
+    	        }
+            }
         }
     }   
 
     private void ScheduleNotificationFromSku(string strSKU, string strAction, int iTimeLeft)
     {
-        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, strSKU);
-        string body = "";
-        if (def != null)
+        if (CanBeUsed())
         {
-            body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
-        }
+            DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.NOTIFICATIONS, strSKU);
+            string body = "";
+            if (def != null)
+            {
+                body = LocalizationManager.SharedInstance.Localize(def.Get("tidName"));
+            }
 
-        ScheduleNotification(strSKU, body, "Action", iTimeLeft);
+            ScheduleNotification(strSKU, body, "Action", iTimeLeft);
+        }
     }
 
     private void ScheduleNotification(string strSKU, string strBody, string strAction, int iTimeLeft)
     {
-        Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
-        NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
+        if (CanBeUsed())
+        {
+            Log("ScheduleNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU + " strBody = " + strBody + " strAction = " + strAction + " iTimeLeft = " + iTimeLeft);
+            NotificationsManager.SharedInstance.ScheduleNotification(strSKU, strBody, strAction, iTimeLeft);
+        }
     }
 
     private void CancelNotification(string strSKU)
     {
-		Log("CancelNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU);
-    	NotificationsManager.SharedInstance.CancelNotification(strSKU);
+        if (CanBeUsed())
+        {
+            Log("CancelNotification enabled = " + GetNotificationsEnabled() + " strSKU = " + strSKU);
+            NotificationsManager.SharedInstance.CancelNotification(strSKU);
+        }
     }
 
-    #region game
+#region game
     // Add here the game related code
 
     private const string SKU_EGG_HATCHED = "sku.not.01";
@@ -188,10 +211,10 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
 	public void CancelDailyRewardNotification() {
 		CancelNotification(SKU_DAILY_REWARD);
 	}
-    #endregion
+#endregion
 
 
-    #region log
+#region log
     private const string LOG_CHANNEL = "[HDNotificationsManager]";
     private void Log(string msg)
     {
@@ -210,5 +233,5 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
         msg = LOG_CHANNEL + msg;
         Debug.LogError(msg);
     }
-    #endregion
+#endregion
 }
