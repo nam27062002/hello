@@ -109,11 +109,31 @@ public class EditorAddressablesManager
         ProcessAssetBundles(target, true);
     }   
 
+    protected virtual JSONNode GetExternalAddressablesCatalogJSON()
+    {
+        return null;
+    }
+
     private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);        
+        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
+
+        JSONNode externalCatalogJSON = GetExternalAddressablesCatalogJSON();
+        if (editorCatalog == null)
+        {
+            if (externalCatalogJSON != null)
+            {
+                editorCatalog = new AddressablesCatalog(true);
+                editorCatalog.Load(externalCatalogJSON, sm_logger);
+            }
+        }
+        else
+        {
+            editorCatalog.Join(externalCatalogJSON, sm_logger);
+        }
+
         if (editorCatalog != null)
         {
             editorCatalog.OptimizeEntriesAssetNames();
@@ -257,12 +277,12 @@ public class EditorAddressablesManager
         {
             if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
             {
-                sm_logger.LogWarning("The following asset bundles have been generated but they are not used by addressables: " + UbiListUtils.GetListAsString(output.m_ABInManifestNotUsed));
+                sm_logger.LogError("The following asset bundles have been generated but they are not used by addressables: " + UbiListUtils.GetListAsString(output.m_ABInManifestNotUsed));
             }
 
             if (output.m_LocalABNotUsedList != null && output.m_LocalABNotUsedList.Count > 0)
             {
-                sm_logger.LogWarning("The following asset bundles are defined as local in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
+                sm_logger.LogError("The following asset bundles are defined as local in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
                                      "> but no entries use them. Consider delete them from the field <" + 
                                      AddressablesCatalog.CATALOG_ATT_LOCAL_AB_LIST + ">: " + UbiListUtils.GetListAsString(output.m_LocalABNotUsedList));
             }
@@ -299,7 +319,14 @@ public class EditorAddressablesManager
             }
 
             // Copy remote asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);            
+            string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
+            EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_RemoteABList);
+
+            // Not used asset bundles are stored anyway just in case they haven't been defined in catalog but they are used
+            if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
+            {
+                //EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_ABInManifestNotUsed);
+            }
 
             // Generates remote AB list file            
             // GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);

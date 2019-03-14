@@ -24,11 +24,16 @@ public class AssetBundlesGroup
     public void Load(JSONNode data)
     {
         Reset();
+        Join(data);
+    }
 
+    public void Join(JSONNode data)
+    {
         if (data != null)
         {
             Id = data[ATT_ID];
-            AssetBundleIds = UbiListUtils.JSONArrayToList(data[ATT_ASSET_BUNDLES].AsArray, true);
+            List<string> abIds = UbiListUtils.JSONArrayToList(data[ATT_ASSET_BUNDLES].AsArray, true);
+            UbiListUtils.AddRange(AssetBundleIds, abIds, false, true);
         }
     }
 

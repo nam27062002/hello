@@ -58,20 +58,27 @@ public class AddressablesCatalog
     public void Load(JSONNode catalogJSON, Logger logger)
     {
         Reset();
+        Join(catalogJSON, logger, true);        
+    }
 
+    public bool Join(JSONNode catalogJSON, Logger logger, bool strictMode=false)
+    {
+        bool success = true;
         if (catalogJSON != null)
         {
-            LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);                        
+            success = LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);
 
 #if UNITY_EDITOR
             if (m_editorMode)
             {
-                LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger);
+                LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
             }
 #endif
         }
-    }
+
+        return success;
+    }   
 
     public JSONClass ToJSON()
     {        
@@ -89,8 +96,9 @@ public class AddressablesCatalog
         return data;
     }
 
-    private void LoadEntries(JSONArray entries, Logger logger)
+    private bool LoadEntries(JSONArray entries, Logger logger)
     {
+        bool success = true;
         if (entries != null)
         {
             AddressablesCatalogEntry.sm_logger = logger;
@@ -110,51 +118,60 @@ public class AddressablesCatalog
                 {
                     if (string.IsNullOrEmpty(entry.Variant))
                     {
-                        EntriesNoVariants_AddEntry(entry, logger);
+                        success = EntriesNoVariants_AddEntry(entry, logger) && success;
                     }                    
                     else
                     {
-                        EntriesWithVariants_AddEntry(entry, logger);
+                        success = EntriesWithVariants_AddEntry(entry, logger) && success;
                     }
                 }              
             }
         }
+
+        return success;
     }
 
-    private void EntriesNoVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
+    private bool EntriesNoVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
     {
-        if (m_entriesNoVariants.ContainsKey(entry.Id))
+        bool success = !m_entriesNoVariants.ContainsKey(entry.Id);
+        if (success)
+        {
+            m_entriesNoVariants.Add(entry.Id, entry);
+        }
+        else
         {
             if (logger != null && logger.CanLog())
             {
                 logger.LogError("Duplicate entry " + entry.Id + " found in catalog");
             }
         }
-        else
-        {
-            m_entriesNoVariants.Add(entry.Id, entry);
-        }
+
+        return success;
     }
 
-    private void EntriesWithVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
-    {
+    private bool EntriesWithVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
+    {        
         if (!m_entriesWithVariants.ContainsKey(entry.Id))
         {
             m_entriesWithVariants.Add(entry.Id, new Dictionary<string, AddressablesCatalogEntry>());
         }
 
         Dictionary<string, AddressablesCatalogEntry> entries = m_entriesWithVariants[entry.Id];
-        if (entries.ContainsKey(entry.Variant))
+
+        bool success = !entries.ContainsKey(entry.Variant);
+        if (success)
+        {
+            entries.Add(entry.Variant, entry);
+        }
+        else
         {            
             if (logger != null && logger.CanLog())
             {
                 logger.LogError("Duplicate entry " + entry.Id + ", " + entry.Variant + " found in catalog");
             }
         }
-        else
-        {
-            entries.Add(entry.Variant, entry);
-        }
+
+        return success;  
     }
 
     private JSONArray EntriesToJSON()
@@ -319,8 +336,8 @@ public class AddressablesCatalog
         return returnValue;
     }
 
-    private void LoadGroups(JSONArray groups, Logger logger)
-    {
+    private void LoadGroups(JSONArray groups, Logger logger, bool strictMode)
+    {        
         if (groups != null)
         {
             AssetBundlesGroup group;
@@ -331,10 +348,12 @@ public class AddressablesCatalog
                 group.Load(groups[i]);              
                 if (m_groups.ContainsKey(group.Id))
                 {
-                    if (logger != null && logger.CanLog())
+                    m_groups[group.Id].Join(groups[i]);
+                    
+                    if (strictMode && logger != null && logger.CanLog())
                     {
                         logger.LogError("Duplicate group " + group.Id + " found in catalog");
-                    }
+                    }                    
                 }
                 else
                 {
