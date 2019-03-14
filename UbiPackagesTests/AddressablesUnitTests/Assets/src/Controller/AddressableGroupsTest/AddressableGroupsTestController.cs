@@ -14,14 +14,33 @@ public class AddressableGroupsTestController : MonoBehaviour
         m_addressablesManager.Reset();
     }
 
+    private Downloadables.MockHandle m_handle;
 
     void Update()
     {
         m_addressablesManager.Update();
 
+        if (m_handle != null)
+        {
+            m_handle.Update();
+
+            Debug.Log(" progress bytes = " + m_handle.GetDownloadedBytes() + " / " + m_handle.GetTotalBytes() +
+                         " progress % = " + m_handle.Progress + " IsAvailable = " + m_handle.IsAvailable() + " error = " + m_handle.GetError());
+        }
+
         if (Input.GetKeyDown(KeyCode.M))
         {
             AssetBundlesManager.Instance.DownloadablesManager.SetGroupPermissionRequested(GROUP_ID, true);
+            
+            /*
+            //m_handle = new Downloadables.MockHandle(0, 100, 60, false, false, null);            
+            //m_handle = new Downloadables.MockHandle(100, 100, 60, false, false, null);
+            //m_handle = new Downloadables.MockHandle(50, 100, 20, false, false, null);                        
+            m_handle = new Downloadables.MockHandle(50, 100, 20, false, false, null);
+            m_handle.AddAction(5, Downloadables.Handle.EError.NO_CONNECTION);
+            m_handle.AddAction(35, Downloadables.Handle.EError.NONE);           
+            */
+
             /*bool available = m_addressablesManager.Groups_IsAvailable(GROUP_ID);
             string msg = "group is ";
             if (!available)
