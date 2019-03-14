@@ -38,6 +38,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return ProcessAssetBundlesOpRequest(request);
     }
 
+    public bool IsDependenciesListAvailable(List<string> dependencyIds)
+    {
+        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencyIds);
+    }
+
     public List<string> GetDependenciesIncludingSelfList(List<string> dependencyIds)
     {
         return AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(dependencyIds);
@@ -131,6 +136,16 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         {
             AssetBundlesManager.Instance.IsDownloaderEnabled = value;
         }
+    }
+
+    public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetAssetBundlesGroup(groupId);
+    }
+
+    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
+    {
+        return AssetBundlesManager.Instance.CreateAssetBundlesGroupFromList(groupId, groupIds);
     }
 
     public void Update()

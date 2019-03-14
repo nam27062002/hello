@@ -46,12 +46,21 @@ public class AssetBundlesManager
     public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
-    private Downloadables.Manager m_downloadablesManager;        
+    private Downloadables.Manager m_downloadablesManager;  
+    public Downloadables.Manager DownloadablesManager
+    {
+        get
+        {
+            return m_downloadablesManager;
+        }        
+    }      
 
 #if UNITY_EDITOR
     private MockNetworkDriver m_networkDriver;
     private MockDiskDriver m_diskDriver;
 #endif
+    
+    private Dictionary<string, AssetBundlesGroup> m_groups;
 
     /// <summary>
     /// Initialize the system.
@@ -97,15 +106,114 @@ public class AssetBundlesManager
         DiskDriver diskDriver = new ProductionDiskDriver();
 #endif
         Logger downloadablesLogger = logger;
+
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
         m_downloadablesManager.Initialize(downloadablesCatalog);
-
+        
         LoadCatalog(localAssetBundlesPath);
+
+        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
+        if (m_groups != null)
+        {
+            Downloadables.CatalogGroup downloadablesGroup;            
+            foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+            {
+                pair.Value.ExpandDependencies();
+                downloadablesGroup = GetDownloadablesGroupFromAssetBundlesGroup(pair.Value);
+                if (downloadablesGroup != null)
+                {
+                    downloadablesGroups.Add(pair.Key, downloadablesGroup);
+                }                
+            }
+        }
+
+        m_downloadablesManager.SetGroups(downloadablesGroups);
 
         if (CanLog())
         {
             Logger.Log("AssetBundlesManager initialized successfully");
         }
+    }
+
+    public Downloadables.CatalogGroup GetDownloadablesGroupFromAssetBundlesGroup(AssetBundlesGroup abGroup)
+    {
+        Downloadables.CatalogGroup returnValue = null;
+
+        if (abGroup != null)
+        {
+            List<string> input = abGroup.AssetBundleIds;
+            List<string> downloadablesIds;
+
+            if (input != null)
+            {
+                downloadablesIds = new List<string>();
+
+                AssetBundleHandle handle;
+                int count = input.Count;
+                for (int i = 0; i < count && downloadablesIds != null; i++)
+                {
+                    handle = GetAssetBundleHandle(input[i]);
+                    if (handle == null)
+                    {
+                        if (CanLog())
+                        {
+                            Logger.LogError("Group <" + abGroup.Id + "> is not valid because it constains <" + input[i] + "> which is not a valid asset bundle");
+                        }
+
+                        downloadablesIds = null;
+                    }
+                    else
+                    {
+                        downloadablesIds.Add(input[i]);
+                    }
+                }   
+                
+                if (downloadablesIds != null)
+                {
+                    returnValue = new Downloadables.CatalogGroup();
+                    returnValue.Setup(abGroup.Id, downloadablesIds);                    
+                }            
+            }
+        }
+
+        return returnValue;
+    }
+
+    public bool AddRemoteAssetBundles(string groupId, List<string> input, List<string> output)
+    {
+        bool returnValue = output != null;
+        
+        if (input != null && returnValue)
+        {
+            List<string> internalOutput = new List<string>();
+
+            AssetBundleHandle handle;
+            int count = input.Count;
+            for (int i = 0; i < count && returnValue; i++)
+            {
+                handle = AssetBundlesManager.Instance.GetAssetBundleHandle(input[i]);
+                if (handle == null)
+                {
+                    if (CanLog())
+                    {
+                        Logger.LogError("Group <" + groupId + "> is not valid because it constains <" + input[i] + " is not a valid asset bundle");
+                    }
+
+                    returnValue = false;
+                }
+                else
+                {
+                    internalOutput.Add(input[i]);
+                }
+            }
+
+            if (returnValue)
+            {
+                UbiListUtils.AddRange(output, internalOutput, false, true);
+            }
+        }
+
+        return returnValue;
     }
 
 #if UNITY_EDITOR
@@ -127,8 +235,8 @@ public class AssetBundlesManager
         JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
 
         if (json != null)
-        { 
-            AssetBundlesCatalog catalog = new AssetBundlesCatalog();
+        {
+            AssetBundlesCatalog catalog = new AssetBundlesCatalog();          
             catalog.Load(json, sm_logger);
 
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
@@ -166,7 +274,9 @@ public class AssetBundlesManager
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
-            }            
+            }
+
+            m_groups = catalog.GetGroups();         
         }
         else
         {
@@ -178,7 +288,9 @@ public class AssetBundlesManager
     }    
 
     public void Reset()
-    {        
+    {
+        m_groups = null;
+
         if (m_assetBundleHandles != null)
         {
             foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
@@ -333,6 +445,130 @@ public class AssetBundlesManager
                 }
 			}
         }
+
+        return returnValue;
+    }
+
+    private float GetAssetBundleMbDownloadedSoFar(string id)
+    {
+        float returnValue = 0f;
+        if (IsAssetBundleValid(id))
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            if (handle.IsRemote())
+            {
+                m_downloadablesManager.GetIdMbLeftToDownload(id);
+            }
+        }         
+
+        return returnValue;
+    }
+
+    public float GetAssetBundleMbLeftToDownload(string id)
+    {
+        float returnValue = 0f;
+        if (IsAssetBundleValid(id))
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            if (handle.IsRemote())
+            {
+                m_downloadablesManager.GetIdMbLeftToDownload(id);
+            }
+        }
+
+        return returnValue;
+    }
+
+    public float GetAssetBundleTotalMb(string id)
+    {
+        float returnValue = 0f;
+        if (IsAssetBundleValid(id))
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            if (handle.IsRemote())
+            {
+                m_downloadablesManager.GetIdTotalMb(id);
+            }
+        }
+
+        return returnValue;
+    }
+
+    public float GetAssetBundleListMbDownloadedSoFar(List<string> ids)
+    {
+        float returnValue = 0f;
+        if (ids != null)
+        {
+            int count = ids.Count;
+            for (int i = 0; i < count; i++)
+            {
+                returnValue += GetAssetBundleMbDownloadedSoFar(ids[i]);
+            }
+        }
+
+        return returnValue;
+    }
+
+    public float GetAssetBundleListMbLeftToDownload(List<string> ids)
+    {
+        float returnValue = 0f;
+        if (ids != null)
+        {
+            int count = ids.Count;
+            for (int i = 0; i < count; i++)
+            {
+                returnValue += GetAssetBundleMbLeftToDownload(ids[i]);
+            }
+        }
+
+        return returnValue;
+    }
+
+    public float GetAssetBundleListTotalMb(List<string> ids)
+    {
+        float returnValue = 0f;
+        if (ids != null)
+        {
+            int count = ids.Count;
+            for (int i = 0; i < count; i++)
+            {
+                returnValue += GetAssetBundleTotalMb(ids[i]);
+            }
+        }
+
+        return returnValue;
+    }
+
+    public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
+    {
+        AssetBundlesGroup returnValue = null;
+        if (!string.IsNullOrEmpty(groupId) && m_groups != null)
+        {
+            m_groups.TryGetValue(groupId, out returnValue);
+        }
+
+        return returnValue;
+    }
+
+    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
+    {
+        AssetBundlesGroup returnValue = new AssetBundlesGroup();
+        List<string> assetBundleIds = new List<string>();
+        if (groupIds != null)
+        {
+            int count = groupIds.Count;
+            AssetBundlesGroup group;
+            for (int i = 0; i < count; i++)
+            {
+                group = GetAssetBundlesGroup(groupId);
+                if (group != null)
+                {
+                    UbiListUtils.AddRange(assetBundleIds, group.AssetBundleIds, false, true);
+                }
+            }
+        }
+
+        returnValue.Setup(groupId, groupIds);
 
         return returnValue;
     }

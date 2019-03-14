@@ -385,7 +385,7 @@ public class UTDownloadablesCatalogEntryStatus : UnitTest
         MockDiskDriver.ExceptionConf exceptionConfAtStart, float disableExceptionAt,
         JSONNode resultManifestJSON, List<string> resultManifests, List<string> resultDownloads)
     {
-        Disk disk = new Disk(diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
+        Disk disk = new Disk(diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.GROUPS_ROOT_PATH, 0, null);
         m_diskDriver = diskDriver;
         m_cacheFolder = cacheFolder;
 
