@@ -16,7 +16,7 @@ public class UTAssetBundlesLoad : UnitTest
         //
         // SUCCESS
         //
-                
+                        
         // PURPOSE: Test no catalog file
         // INPUT: 
         //      No assetBundlesCatalog.json        
@@ -26,8 +26,8 @@ public class UTAssetBundlesLoad : UnitTest
         test = new UTAssetBundlesLoad();
         dependencies = null;
         test.Setup("00", "asset_cubes", dependencies, false);
-        batch.AddTest(test, true);
-
+        batch.AddTest(test, true);        
+        
         // PURPOSE: Test empty catalog file
         // INPUT: 
         //      empty assetBundlesCatalog.json        
@@ -38,7 +38,7 @@ public class UTAssetBundlesLoad : UnitTest
         dependencies = null;
         test.Setup("01", "asset_cubes", dependencies, false);
         batch.AddTest(test, true);                
-
+        
         // PURPOSE: Test a local asset bundle id is discarded if it's not defined in dependencies
         // INPUT: 
         //      LOCAL: asset_cubes
@@ -189,7 +189,7 @@ public class UTAssetBundlesLoad : UnitTest
         test = new UTAssetBundlesLoad();
         dependencies = null;
         test.Setup("00", "asset_cubes", dependencies, true);
-        batch.AddTest(test, false);                
+        batch.AddTest(test, false);                           
 
         return batch;
     }
@@ -250,6 +250,11 @@ public class UTAssetBundlesLoad : UnitTest
                 if (!catalogJSON.ContainsKey("dependencies"))
                 {
                     catalogJSON.Add("dependencies", new JSONClass());
+                }
+
+                if (!catalogJSON.ContainsKey("groups"))
+                {
+                    catalogJSON.Add("groups", new JSONArray());
                 }
 
                 passes = catalog.ToJSON().ToString() == catalogJSON.ToString();

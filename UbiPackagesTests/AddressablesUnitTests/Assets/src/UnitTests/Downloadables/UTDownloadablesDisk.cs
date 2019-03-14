@@ -57,7 +57,7 @@ public class UTDownloadablesDisk : UnitTest
     public void Setup(MockDiskDriver diskDriver, int type, int duration, int issueNotifPeriod, int resultUnauthorizedAccessIssueCount, int resultOutOfSpaceIssueCount, int resultOtherIssueCount)
     {
         m_diskDriver = diskDriver;
-        m_disk = new Disk(diskDriver, "manifests", "downloads", issueNotifPeriod, OnDiskIssue);      
+        m_disk = new Disk(diskDriver, "manifests", "downloads", "groups", issueNotifPeriod, OnDiskIssue);      
 
         m_type = type;
         m_duration = duration;

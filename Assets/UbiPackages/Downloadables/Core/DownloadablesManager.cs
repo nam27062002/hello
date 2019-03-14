@@ -64,7 +64,10 @@ namespace Downloadables
         public static readonly string DOWNLOADS_FOLDER_NAME = Path.Combine(DOWNLOADABLES_FOLDER_NAME, "Downloads");
         public static readonly string DOWNLOADS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
         public static readonly string DOWNLOADS_ROOT_PATH_WITH_SLASH = DOWNLOADS_ROOT_PATH + "/";
-        
+
+        public static readonly string GROUPS_FOLDER_NAME = Path.Combine(MANIFESTS_FOLDER_NAME, "Groups");
+        public static readonly string GROUPS_ROOT_PATH = FileUtils.GetDeviceStoragePath(GROUPS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+
         public static readonly string DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION = "downloadablesConfig";
         public static readonly string DOWNLOADABLES_CONFIG_FILENAME = DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION + ".json";        
 
@@ -88,6 +91,8 @@ namespace Downloadables
 
         private Config Config { get; set; }
 
+        private Dictionary<string, CatalogGroup> m_groups;
+
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             if (config == null)
@@ -100,12 +105,13 @@ namespace Downloadables
             sm_logger = logger;
 
             m_network = network;
-            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, 180, onDiskIssueCallbak);
+            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, GROUPS_ROOT_PATH, 180, onDiskIssueCallbak);
             m_tracker = tracker;
 
             CatalogEntryStatus.StaticSetup(config, m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
             m_downloader = new Downloader(network, m_disk, logger);
+            CatalogGroup.StaticSetup(m_disk);
 
             IsEnabled = true;            
 
@@ -118,7 +124,12 @@ namespace Downloadables
             IsAutomaticDownloaderEnabled = Config.IsAutomaticDownloaderEnabled;
             m_cleaner.Reset();
             Catalog_Reset();
-            m_downloader.Reset();        
+            m_downloader.Reset();
+             
+            if (m_groups != null)
+            {
+                m_groups.Clear();
+            }       
         }
 
         public void Initialize(JSONNode catalogJSON)
@@ -130,7 +141,7 @@ namespace Downloadables
                 Log("Initializing Downloadables manager..." );
             }                        
             
-            ProcessCatalog(catalogJSON);
+            ProcessCatalog(catalogJSON);            
 
             IsInitialized = true;            
 
@@ -140,6 +151,24 @@ namespace Downloadables
                 m_downloader.Initialize(urlBase);
             }
         } 
+
+        public void SetGroups(Dictionary<string, CatalogGroup> groups = null)
+        {
+            m_groups = groups;
+        }
+
+        public void SetGroupPermissionRequested(string groupId, bool value)
+        {
+            if (m_groups != null && !string.IsNullOrEmpty(groupId))
+            {
+                CatalogGroup group = null;
+                m_groups.TryGetValue(groupId, out group);
+                if (group != null)
+                {
+                    group.PermissionRequested = value;
+                }
+            }
+        }
 
         private void ProcessCatalog(JSONNode catalogJSON)
         {    
@@ -312,6 +341,7 @@ namespace Downloadables
 
 #region catalog
         private Dictionary<string, CatalogEntryStatus> m_catalog;
+        private float m_lastGroupsUpdateAt;
 
         private void Catalog_Reset()
         {            
@@ -323,6 +353,8 @@ namespace Downloadables
             {
                 m_catalog.Clear();
             }
+
+            m_lastGroupsUpdateAt = -1;
         }
 
         private void Catalog_AddEntryStatus(string id, JSONNode json)
@@ -384,6 +416,19 @@ namespace Downloadables
             else
             {                
                 m_downloader.StartDownloadThread(entryToDownload);
+            }
+
+            if (m_groups != null)
+            {
+                if (Time.realtimeSinceStartup - m_lastGroupsUpdateAt >= 2f)
+                {
+                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                    {
+                        pair.Value.Update();
+                    }
+
+                    m_lastGroupsUpdateAt = Time.realtimeSinceStartup;
+                }
             }
         }
 

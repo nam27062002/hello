@@ -214,13 +214,13 @@ public class HDAddressablesManager : AddressablesManager
             List<string> nextAreaSceneDependencyIds = Instance.GetDependencyIdsList(nextAreaRealSceneNames);
 
             // Retrieves the dependencies of the previous area defined in addressablesCatalog.json
-            List<string> prevAreaDependencyIds = Instance.Areas_GetDependencyIds(prevArea);
+            List<string> prevAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(prevArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             prevAreaDependencyIds = UbiListUtils.AddRange(prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
 
             // Retrieves the dependencies of the next area defined in addressablesCatalog.json
-            List<string> nextAreaDependencyIds = Instance.Areas_GetDependencyIds(nextArea);
+            List<string> nextAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(nextArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             nextAreaDependencyIds = UbiListUtils.AddRange(nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);

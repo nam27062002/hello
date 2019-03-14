@@ -344,6 +344,56 @@ public class AddressablesManager
         }
     }
 
+    public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
+    {
+        List<string> returnValue = null;
+
+        if (IsInitialized())
+        {
+            AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
+            if (abGroup != null)
+            {
+                returnValue = abGroup.AssetBundleIds;
+            }            
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
+    {
+        AssetBundlesGroup returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
+    {
+        AssetBundlesGroup returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.CreateAssetBundlesGroupFromList(groupId, groupIds);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    
@@ -496,26 +546,7 @@ public class AddressablesManager
         }
     }
 
-    protected virtual void ExtendedUpdate() {}
-
-    #region areas
-    /// <summary>
-    /// Returns the list of dependencies (typically asset bundles) ids that need the area with <c>id</c> as an identifier.
-    /// </summary>
-    /// <param name="id">Area id which dependencies are requested.</param>    
-    public List<string> Areas_GetDependencyIds(string areaId)
-    {
-        List<string> returnValue = null;   
-        AddressablesCatalogArea area = m_catalog.GetArea(areaId);
-        if (area != null)
-        {
-            returnValue = m_providerFromAB.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
-        }
-
-        return returnValue;
-    }
-
-    #endregion
+    protected virtual void ExtendedUpdate() {}    
 
     #region ops
     private List<AddressablesOp> m_ops;
