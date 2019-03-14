@@ -31,7 +31,10 @@ public class UIGradient : BaseMeshEffect {
 	[SerializeField] private Gradient4 m_gradient = new Gradient4(Color.red, Color.red, Color.white, Color.white);
 	public Gradient4 gradient {
 		get { return m_gradient; }
-		set { m_gradient = value; }
+		set { 
+			m_gradient = value;
+			Refresh();
+		}
 	}
 
 	// Internal
@@ -46,6 +49,16 @@ public class UIGradient : BaseMeshEffect {
 	/// </summary>
 	protected UIGradient() { 
 
+	}
+
+	/// <summary>
+	/// Modifies gradient values with the ones from the given gradient.
+	/// </summary>
+	/// <param name="_gradient">Reference gradient.</param>
+	public void SetValues(Gradient4 _gradient) {
+		if(_gradient == null) return;
+		gradient.Set(_gradient);
+		Refresh();
 	}
 
 	/// <summary>
@@ -96,5 +109,18 @@ public class UIGradient : BaseMeshEffect {
 		// Update helper with the processed vertices
 		_vh.Clear();
 		_vh.AddUIVertexTriangleStream(m_newVertexList);
+	}
+
+	//------------------------------------------------------------------//
+	// INTERNAL METHODS													//
+	//------------------------------------------------------------------//
+	/// <summary>
+	/// For some weird Unity thing, the mesh is not properly refreshed when changing 
+	/// the gradient value. Forcing an enable/disable seems to do the trick.
+	/// </summary>
+	private void Refresh() {
+		bool wasEnabled = this.enabled;
+		this.enabled = false;
+		this.enabled = wasEnabled;
 	}
 }
