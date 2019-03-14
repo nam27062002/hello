@@ -44,6 +44,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
 	// Cache some data
 	private IDragonData m_ratingDragonData = null;
+	private MenuScreen m_previousScreen = MenuScreen.NONE;
+	private MenuScreen m_currentScreen = MenuScreen.NONE;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -345,7 +347,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
 			m_currentPopup = PopupAskSurvey.Check();
-			SetFlag(StateFlag.POPUP_DISPLAYED, m_currentPopup != null);
+			if(m_currentPopup != null) {
+				SetFlag(StateFlag.POPUP_DISPLAYED, true);
+			}
 		}
 	}
 
@@ -364,7 +368,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
 		if(OffersManager.featuredOffer != null) {
 			m_currentPopup = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
-			SetFlag(StateFlag.POPUP_DISPLAYED, m_currentPopup != null);
+			if(m_currentPopup != null) {
+				SetFlag(StateFlag.POPUP_DISPLAYED, true);
+			}
 		}
 	}
 
@@ -421,9 +427,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// Checks the lab unlock popup.
 	/// </summary>
 	private void CheckLabUnlock() {
-		// Because the lab popup is triggered by the Menu Dragon Screen Controller, we won't be opening it, just checking whether we can open another popup or not.
-		if(PopupLabUnlocked.Check() || PopupManager.GetOpenPopup(PopupLabUnlocked.PATH) != null) {
-			SetFlag(StateFlag.POPUP_DISPLAYED, true);	// This will prevent other popups to trigger
+		// Don't display if another popup is currently open
+		if(m_currentPopup != null) return;
+
+		// Only if coming from a run or from the Play screen
+		if(m_previousScreen != MenuScreen.NONE && m_previousScreen != MenuScreen.PLAY) return;
+
+		// Can we show the popup?
+		m_currentPopup = PopupLabUnlocked.CheckAndOpen();
+		if(m_currentPopup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
@@ -462,7 +475,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// <param name="_from">Screen we're coming from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
+		// Cache transition data
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
+		m_previousScreen = _from;
+		m_currentScreen = _to;
 
 		// Don't show anything if a dragon has been unlocked during gameplay!
 		// We never want to cover the dragon unlock animation!
@@ -491,7 +507,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		    case MenuScreen.DRAGON_SELECTION: {
 				// Coming from any screen (high priority)
 				CheckDailyRewards();
-				CheckLabUnlock();
 				CheckPreRegRewards();
 				CheckShark();
 				CheckAnimojiTutorial();
@@ -500,6 +515,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 				switch(_from) {
 					// Coming from game
 					case MenuScreen.NONE: {
+						CheckLabUnlock();
 						CheckRating();
 						CheckSurvey();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
@@ -508,6 +524,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 
 					// Coming from PLAY screen
 					case MenuScreen.PLAY: {
+						CheckLabUnlock();
 						CheckSilentNotification();
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
 					} break;
@@ -546,13 +563,16 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 			m_currentPopup = null;
 
 			// Check if we need to open any other popup
-			switch(InstanceManager.menuSceneController.currentScreen) {
+			switch(m_currentScreen) {
 				case MenuScreen.PLAY: {
 					// Add any checks here
 					CheckFeaturedOffer(OfferPack.WhereToShow.PLAY_SCREEN);
 				} break;
 
 				case MenuScreen.DRAGON_SELECTION: {
+					// Always
+					CheckLabUnlock();
+
 					// Coming from a run?
 					if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
 						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);

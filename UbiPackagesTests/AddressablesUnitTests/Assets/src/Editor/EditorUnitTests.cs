@@ -14,7 +14,8 @@ public class EditorUnitTests : MonoBehaviour
 
     private const string MENU_ADDRESSABLES = MENU + "/Addressables";
     private const string MENU_ADDRESSABLES_PARSE_ABS = MENU_ADDRESSABLES + "/Parse ABs Test";
-    private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT });
+    private const string MENU_ADDRESSABLES_JOIN_CATALOGS = MENU_ADDRESSABLES + "/Join Catalogs";
+    private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT, MENU_ADDRESSABLES_JOIN_CATALOGS });
 
     private const string MENU_ASSET_BUNDLES = MENU + "/AssetBundles";
     private const string MENU_ASSET_BUNDLES_LOAD = MENU_ASSET_BUNDLES + "/Load";
@@ -50,6 +51,9 @@ public class EditorUnitTests : MonoBehaviour
         {
             case MENU_ADDRESSABLES_PARSE_ABS:
                 return UTAddressablesEditorParseABs.GetUnitTestBatch();
+
+            case MENU_ADDRESSABLES_JOIN_CATALOGS:
+                return UTAddressablesJoinCatalogs.GetUnitTestBatch();
 
             case MENU_ASSET_BUNDLES_LOAD:
                 return UTAssetBundlesLoad.GetUnitTestBatch();
@@ -87,7 +91,13 @@ public class EditorUnitTests : MonoBehaviour
     {
         PerformAllTests(MENU_ADDRESSABLES_PARSE_ABS);        
     }
-    
+
+    [MenuItem(MENU_ADDRESSABLES_JOIN_CATALOGS)]
+    public static void UnitTests_Addressables_JoinCatalogs()
+    {
+        PerformAllTests(MENU_ADDRESSABLES_JOIN_CATALOGS);
+    }
+
     [MenuItem(MENU_ASSET_BUNDLES_LOAD)]
     public static void UnitTests_AssetBundles_Load()
     {
