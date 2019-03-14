@@ -115,8 +115,7 @@ public class AssetBundlesManager
         Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
         if (m_groups != null)
         {
-            Downloadables.CatalogGroup downloadablesGroup;
-            List<string> assetBundleIds = new List<string>();
+            Downloadables.CatalogGroup downloadablesGroup;            
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
             {
                 pair.Value.ExpandDependencies();

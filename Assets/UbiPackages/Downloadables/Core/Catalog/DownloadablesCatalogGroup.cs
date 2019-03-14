@@ -77,13 +77,10 @@ namespace Downloadables
         private void Load()
         {
             Error error;
-            bool exists = sm_disk.File_Exists(Disk.EDirectoryId.Groups, Id, out error);
-
-            bool canAdvance = error == null;
+            bool exists = sm_disk.File_Exists(Disk.EDirectoryId.Groups, Id, out error);            
             if (error == null && exists)
             {
-                JSONNode json = sm_disk.File_ReadJSON(Disk.EDirectoryId.Groups, Id, out error);
-                canAdvance = (error == null);
+                JSONNode json = sm_disk.File_ReadJSON(Disk.EDirectoryId.Groups, Id, out error);                
                 if (error == null)
                 {
                     LoadFromJSON(json);
