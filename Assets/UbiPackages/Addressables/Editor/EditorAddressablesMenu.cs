@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,7 +31,15 @@ public class EditorAddressablesMenu : MonoBehaviour
         {
             if (m_manager == null)
             {
-                m_manager = new EditorAddressablesManager();
+                object o = Activator.CreateInstance(Type.GetType("HDEditorAddressablesManager"));
+                if (o != null && o is EditorAddressablesManager)
+                {
+                    m_manager = (EditorAddressablesManager)o;
+                }
+                else
+                {
+                    m_manager = new EditorAddressablesManager();
+                }                
             }
 
             return m_manager;
@@ -47,7 +55,9 @@ public class EditorAddressablesMenu : MonoBehaviour
     // Deletes AssetBundles/<currentPlatformName> folder, Assets/Streaming_Assets/Addressables folder, Downloadables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
     static void ClearBuild()
-    {        
+    {
+        //AddressablesCatalog editorCatalog = EditorAddressablesManager.GetCatalog(EditorAddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+
         Manager.ClearBuild(EditorUserBuildSettings.activeBuildTarget);
         EditorAssetBundlesManager.Clear();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
