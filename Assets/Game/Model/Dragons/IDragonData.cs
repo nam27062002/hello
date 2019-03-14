@@ -233,8 +233,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_def = _def;
 		m_sku = m_def.sku;
 
-        m_priceSC = def.GetAsLong("unlockPriceCoins");
-        m_pricePC = def.GetAsLong("unlockPricePC");
+        RefreshPrice();
 
 		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
@@ -330,6 +329,14 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		return 0;
 	}
+
+    /// <summary>
+    /// Refreshs the original price. Sets the original price from the definition
+    /// </summary>
+    public void RefreshPrice(){
+        m_priceSC = m_def.GetAsLong("unlockPriceCoins");
+        m_pricePC = m_def.GetAsLong("unlockPricePC");
+    }
 
 	/// <summary>
 	/// Get the price once the modifiers have been applied.
