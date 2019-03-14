@@ -9,7 +9,11 @@ public class HDEditorAddressablesManager : EditorAddressablesManager
 
     protected override JSONNode GetExternalAddressablesCatalogJSON()
     {
+#if UNITY_EDITOR
         // Scripts to generate game related asset bundles here
+        return EditorAutomaticAddressables.BuildCatalog();
+#else
         return null;
+#endif
     }
 }
