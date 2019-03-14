@@ -3,7 +3,7 @@
 namespace Downloadables
 {
     /// <summary>
-    /// This class is responsible for handling the progress of a collection of downloadables.
+    /// This class is responsible for handling the progress of a list of downloadables.
     /// </summary>
     public abstract class Handle
     {
@@ -32,8 +32,17 @@ namespace Downloadables
         //------------------------------------------------------------------------//
         // METHODS																  //
         //------------------------------------------------------------------------//
+
+        /// <summary>
+        /// Returns whether or not the list of downloadables handled by this class are available.
+        /// </summary>
+        /// <returns></returns>
         public abstract bool IsAvailable();
 
+        /// <summary>
+        /// Returns whether or not the user has already been notified about the downloading of the list of downloadables. 
+        /// </summary>
+        /// <returns></returns>
         public bool NeedsToRequestPermission()
         {
             if (IsAvailable())
@@ -45,9 +54,12 @@ namespace Downloadables
                 return ExtendedNeedsToRequestPermission();
             }
         }
-
+        
         public abstract void SetIsPermissionRequested(bool value);
 
+        /// <summary>
+        /// Returns whether or not the user has granted the permission to download this list of downloadables over MobileData network.
+        /// </summary>        
         public bool GetIsPermissionGranted()
         {
             if (NeedsToRequestPermission())
@@ -62,9 +74,20 @@ namespace Downloadables
 
         public abstract void SetIsPermissionGranted(bool value);
 
+        /// <summary>
+        /// Returns the size in bytes of this list of downloadables that have been downloaded so far.
+        /// </summary>        
         public abstract float GetDownloadedBytes();
+
+        /// <summary>
+        /// Returns the total size in bytes of this list of downloadables.
+        /// </summary>
+        /// <returns></returns>
         public abstract float GetTotalBytes();
 
+        /// <summary>
+        /// Returns the most important error afecting whe whole downloading process. Returns EError.NONE is everything is ok.
+        /// </summary>        
         public EError GetError()
         {
             if (IsAvailable())
