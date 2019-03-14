@@ -156,7 +156,7 @@ public class UTDownloadablesDownloader : UnitTest
         Config config = new Config();        
         m_network = new MockNetworkDriver(getExceptionToThrowDelegate);
         m_diskDriver = new MockDiskDriver(getExceptionToThrowDelegate);
-        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
+        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
         UTTracker tracker = new UTTracker(config, logger);
 
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);

@@ -22,11 +22,9 @@ public class AddressablesCatalog
 
 #if UNITY_EDITOR
     private List<string> m_localABList;
-#endif
 
-    private Dictionary<string, AddressablesCatalogGroup> m_groups;
+    private Dictionary<string, AssetBundlesGroup> m_groups;
 
-#if UNITY_EDITOR
     private bool m_editorMode;
 
     public AddressablesCatalog(bool editorMode=false) : this()
@@ -39,9 +37,9 @@ public class AddressablesCatalog
     {
         m_entriesNoVariants = new Dictionary<string, AddressablesCatalogEntry>();
         m_entriesWithVariants = new Dictionary<string, Dictionary<string, AddressablesCatalogEntry>>();
-        m_groups = new Dictionary<string, AddressablesCatalogGroup>();
 
 #if UNITY_EDITOR
+        m_groups = new Dictionary<string, AssetBundlesGroup>();
         m_localABList = new List<string>();
 #endif
     }
@@ -50,9 +48,9 @@ public class AddressablesCatalog
     {
         m_entriesNoVariants.Clear();
         m_entriesWithVariants.Clear();
-        m_groups.Clear();
 
 #if UNITY_EDITOR
+        m_groups.Clear();
         m_localABList.Clear();
 #endif
     }
@@ -63,12 +61,12 @@ public class AddressablesCatalog
 
         if (catalogJSON != null)
         {
-            LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);            
-            LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger);
+            LoadEntries(catalogJSON[CATALOG_ATT_ENTRIES].AsArray, logger);                        
 
 #if UNITY_EDITOR
             if (m_editorMode)
             {
+                LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
             }
 #endif
@@ -79,12 +77,12 @@ public class AddressablesCatalog
     {        
         JSONClass data = new JSONClass();        
         data.Add(CATALOG_ATT_ENTRIES, EntriesToJSON());                
-        data.Add(CATALOG_ATT_GROUPS, GroupsToJSON());
 
 #if UNITY_EDITOR
         if (m_editorMode)
-        {
+        {            
             data.Add(CATALOG_ATT_LOCAL_AB_LIST, LocalABListToJSON());
+            data.Add(CATALOG_ATT_GROUPS, GroupsToJSON());
         }
 #endif
 
@@ -320,17 +318,16 @@ public class AddressablesCatalog
 
         return returnValue;
     }
-#endif
 
     private void LoadGroups(JSONArray groups, Logger logger)
     {
         if (groups != null)
-        {            
-            AddressablesCatalogGroup group;
+        {
+            AssetBundlesGroup group;
             int count = groups.Count;
             for (int i = 0; i < count; ++i)
             {
-                group = new AddressablesCatalogGroup();
+                group = new AssetBundlesGroup();
                 group.Load(groups[i]);              
                 if (m_groups.ContainsKey(group.Id))
                 {
@@ -350,25 +347,24 @@ public class AddressablesCatalog
     private JSONArray GroupsToJSON()
     {
         JSONArray data = new JSONArray();        
-        foreach (KeyValuePair<string, AddressablesCatalogGroup> pair in m_groups)
+        foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
         {            
             data.Add(pair.Value.ToJSON());            
         }
 
         return data;
     }
-
-    public Dictionary<string, AddressablesCatalogGroup> GetGroups()
+    
+    public Dictionary<string, AssetBundlesGroup> GetGroups()
     {
         return m_groups;
     }
 
-    public AddressablesCatalogGroup GetGroup(string groupId)
+    public AssetBundlesGroup GetGroup(string groupId)
     {
         return (!string.IsNullOrEmpty(groupId) && m_groups.ContainsKey(groupId)) ? m_groups[groupId] : null;
-    }
+    }    
 
-#if UNITY_EDITOR
     /// <summary>
     /// Returns the entries grouped by asset bundle
     /// </summary>

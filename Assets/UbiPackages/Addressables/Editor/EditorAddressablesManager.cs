@@ -220,6 +220,8 @@ public class EditorAddressablesManager
             abCatalog.AddDirectDependencies(abList[i], dependencies);
         }
 
+        abCatalog.SetGroups(editorCatalog.GetGroups());
+
         EditorFileUtils.CreateDirectory(m_localDestinationPath);
 
         string path = Path.Combine(m_localDestinationPath, AssetBundlesManager.ASSET_BUNDLES_CATALOG_FILENAME);
