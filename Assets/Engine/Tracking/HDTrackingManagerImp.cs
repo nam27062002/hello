@@ -1874,17 +1874,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
             // BI only wants these two parameters when terms policy is GDPR
             if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
-            {
-                e.data.Add(TRACK_PARAM_AGE, null);
+            {                
                 e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
             }
             else
-            {
-                e.data.Add(TRACK_PARAM_AGE, _age);
+            {                
                 e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, (_enableAnalytics) ? 1 : 0);
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             }
+
+			// BI only wants age when terms policy is Coppa
+			if (LegalManager.instance.GetTermsPolicy () == LegalManager.ETermsPolicy.Coppa) 
+			{
+				e.data.Add (TRACK_PARAM_AGE, _age);
+			} 
+			else 
+			{
+				e.data.Add(TRACK_PARAM_AGE, null);
+			}
 
         }
         m_eventQueue.Enqueue(e);
