@@ -6,13 +6,13 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_FrozenGlow_AddBlend_01
+  m_Name: VFX_FrozenGlow_Additive_02
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ADDITIVE COLOR_TINT EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2990
+  m_CustomRenderQueue: 3020
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -35,12 +35,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 3
+    - BlendMode: 0
     - Dissolve: 0
     - _ABOffset: 0
     - _ColorMultiplier: 0
     - _Cull: 0
-    - _DstBlend: 10
+    - _DstBlend: 1
     - _EmissionSaturation: 1
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 0
@@ -57,11 +57,11 @@ Material:
     - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 0
     - _GlobalAlpha: 1
-    - _OpacitySaturation: 0.15
+    - _OpacitySaturation: 1
     - _SrcBlend: 5
     - _ZTest: 2
     m_Colors:
-    - _BasicColor: {r: 0, g: 0.048275948, b: 1, a: 0.5}
+    - _BasicColor: {r: 0.33823532, g: 0.8630833, b: 1, a: 0.5}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
