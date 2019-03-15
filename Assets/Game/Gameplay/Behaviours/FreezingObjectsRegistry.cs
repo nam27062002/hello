@@ -2,8 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry> 
+/// <summary>
+/// Freezing objects registry.
+/// Freezing system. This system will take care of npc freezing related stuff
+/// </summary>
+public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
 {
+    /// <summary>
+    /// Registry.
+    /// </summary>
 	public class Registry
 	{
 		public Transform m_transform;
@@ -21,24 +28,44 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
         }
 	};
 
+    // Added registrys
 	List<Registry> m_registry;
+    // Machines to check if start feezing
     List<AI.Machine> m_machines = new List<AI.Machine>();   // to froze machines
+    // Machines with freezint level
     List<AI.Machine> m_freezingMachines = new List<AI.Machine>();   // already freezing
+    // Freezing levels of the machines
     List<float> m_freezingLevels = new List<float>();
+    // If the freezing level has to be killed
     List<bool> m_freezingKills = new List<bool>();
 
+    // Machines going from check to freezing level
     List<AI.Machine> m_toFreeze = new List<AI.Machine>();
+    // if kill a Machines going from check to freezing level
     List<bool> m_toKill = new List<bool>();
-
+    
 	public static float m_freezinSpeed = 1;
 	public static float m_defrostSpeed = 0.5f;
 	public static float m_minFreezeSpeedMultiplier = 0.25f;
+    
+    protected ParticleData m_freezeParticle;
+    public ParticleData freezeParticle{
+        get { return m_freezeParticle; }
+    }
+    
+
+    protected static FreezingObjectsRegistry m_instance;
+    public static FreezingObjectsRegistry instance {
+        get {
+            return m_instance; 
+        }
+    }
 
 
-	public FreezingObjectsRegistry()
+	public void Awake()
 	{
+        m_instance = this;
 		m_registry = new List<Registry>();
-
 		DefinitionNode node = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.FREEZE_CONSTANTS, "freezeConstant");
 		if ( node != null )
 		{
@@ -46,11 +73,37 @@ public class FreezingObjectsRegistry : Singleton<FreezingObjectsRegistry>
 			m_defrostSpeed = node.GetAsFloat( "defrostSpeed", 0.5f );
 			m_minFreezeSpeedMultiplier = node.GetAsFloat("minFreezeSpeedMultiplier", 0.25f);
 		}
-
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 	}
 
 
-	public Registry Register( Transform tr, float distance )
+    private void OnDestroy()
+    {
+        if (m_instance == this)
+            m_instance = null;
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+    }
+    
+    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch(eventType)
+        {
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+                CreatePool();
+                break;
+        }
+    }
+
+
+    void CreatePool()
+    {
+        if (m_freezeParticle == null) {
+            m_freezeParticle = new ParticleData("FX_FrozenSmallNPC","", GameConstants.Vector3.zero );
+        }
+        m_freezeParticle.CreatePool();
+    }
+
+    public Registry Register( Transform tr, float distance )
 	{
 		Registry reg = new Registry();
 		reg.m_transform = tr;
