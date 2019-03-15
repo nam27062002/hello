@@ -121,20 +121,20 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Projectiles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Projectiles/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet, true);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
     }
 
-    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles) {
+    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, bool _onlyInstantiables = false) {
         DirectoryInfo[] directories = _directory.GetDirectories();
         foreach (DirectoryInfo directory in directories) {
-            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles);
+            GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _onlyInstantiables);
         }
 
         FileInfo[] files = _directory.GetFiles();
@@ -145,9 +145,19 @@ public static class EditorAutomaticAddressables {
             AssetImporter ai = AssetImporter.GetAtPath(filePath);
             if (ai != null) {
                 string assetBundle = ai.assetBundleName;
-
                 if (!string.IsNullOrEmpty(assetBundle)) {
+                    bool createEntry = false;
+
                     if (_entries != null) {
+                        if (_onlyInstantiables) {
+                            System.Type t = AssetDatabase.GetMainAssetTypeAtPath(filePath);
+                            createEntry = (t == typeof(UnityEngine.GameObject)) || (t == typeof(UnityEditor.SceneAsset));
+                        } else {
+                            createEntry = true;
+                        }
+                    }
+
+                    if (createEntry) {
                         string assetName = Path.GetFileNameWithoutExtension(file.Name);
                         string assetPath = Path.GetDirectoryName(filePath);
                         string id = assetName;
@@ -170,6 +180,10 @@ public static class EditorAutomaticAddressables {
                             AssetBundleName = assetBundle
                         };
 
+
+
+                        //UnityEditor.PrefabType
+                        //UnityEditor.SceneAsset
                         _entries.Add(entry);
                     }
 
