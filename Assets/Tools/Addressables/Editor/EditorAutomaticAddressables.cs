@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
-
-//#define ALL_BUNDLES_LOCAL
+#define ALL_BUNDLES_LOCAL
 
 using System.Collections.Generic;
 using System.IO;
@@ -102,11 +101,12 @@ public static class EditorAutomaticAddressables {
 
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Projectiles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
@@ -119,11 +119,12 @@ public static class EditorAutomaticAddressables {
 
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Entities/NewEntites/"), true, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Game/Projectiles/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Resources/Particles/"), false, entries, bundlesSet);
 
         _entries = entries;
