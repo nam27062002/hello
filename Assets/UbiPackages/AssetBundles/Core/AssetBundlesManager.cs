@@ -109,6 +109,14 @@ public class AssetBundlesManager
         Logger downloadablesLogger = logger;
 
         AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
+
+        // It deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
+        List<string> idsRemoved = Downloadables.Manager.RemoveEntryIds(downloadablesCatalog, catalog.GetLocalAssetBundlesList());        
+        if (CanLog())
+        {
+            Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
+        }
+
         ProcessCatalog(catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);

@@ -74,6 +74,37 @@ namespace Downloadables
             return returnValue;
         }
 
+        /// <summary>
+        /// Removes the entry ids passed as an argument from <c>catalogJSON</c>
+        /// </summary>
+        /// <param name="catalogJSON">JSON containing downloadable entries</param>
+        /// <param name="entryIdsToRemove">List of downoadable ids to remove from the catalog.</param>
+        /// <returns>List with the downloadable ids actually removed from the catalog.</returns>
+        public static List<string> RemoveEntryIds(JSONNode catalogJSON, List<string> entryIdsToRemove)
+        {
+            List<string> returnValue = null;
+            if (catalogJSON != null && entryIdsToRemove != null && entryIdsToRemove.Count > 0)
+            {
+                JSONClass assets = (JSONClass)catalogJSON[Catalog.CATALOG_ATT_ENTRIES];
+                if (assets != null)
+                {
+                    returnValue = new List<string>();
+
+                    int count = entryIdsToRemove.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (assets.ContainsKey(entryIdsToRemove[i]))
+                        {
+                            returnValue.Add(entryIdsToRemove[i]);
+                            assets.Remove(entryIdsToRemove[i]);
+                        }
+                    }                    
+                }
+            }
+
+            return returnValue;
+        }
+
         public static readonly string DESKTOP_DEVICE_STORAGE_PATH_SIMULATED = "DeviceStorageSimulated/";
 
         public static readonly string DOWNLOADABLES_FOLDER_NAME = "Downloadables";
