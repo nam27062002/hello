@@ -22,6 +22,7 @@ public class UI3DLoaderEditor : Editor {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	private const float BUTTON_HEIGHT = 25f;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -82,9 +83,42 @@ public class UI3DLoaderEditor : Editor {
 			else {
 				EditorGUILayout.PropertyField(p, true);
 			}
-		} while(p.NextVisible(false));		// Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
+		} while(p.NextVisible(false));      // Only direct children, not grand-children (will be drawn by default if using the default EditorGUI.PropertyField)
 
-		// Manual refresh bounds button
+		// Tools
+		EditorGUILayout.Space();
+		EditorGUILayout.BeginHorizontal();
+		{
+			// Clear loaded egg instance
+			GUI.color = Colors.coral;
+			if(GUILayout.Button("UNLOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				m_targetUI3DLoader.Unload();
+			}
+
+			// Force loading the egg
+			GUI.color = Colors.paleGreen;
+			if(GUILayout.Button("RELOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				m_targetUI3DLoader.Load();
+			}
+
+			// Load placeholder
+			GUI.color = Colors.paleYellow;
+			if(GUILayout.Button("LOAD PLACEHOLDER", GUILayout.Height(BUTTON_HEIGHT))) {
+				GameObject newInstance = m_targetUI3DLoader.Load();
+				if(newInstance != null) {
+					// Destroy as soon as awaken (this is meant to be used in edit mode)
+					newInstance.AddComponent<DestroyInSeconds>().lifeTime = 0f;
+
+					// Rename
+					newInstance.gameObject.name = "PLACEHOLDER";
+				}
+			}
+
+			// Reset color
+			GUI.color = Color.white;
+		}
+		EditorGUILayout.EndHorizontal();
+
 		EditorGUILayout.Space();
 		if(GUILayout.Button("LOAD NOW", GUILayout.Height(50f))) {
 			m_targetUI3DLoader.Load();
