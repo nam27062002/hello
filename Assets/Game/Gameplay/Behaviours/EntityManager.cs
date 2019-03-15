@@ -90,7 +90,7 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
             case BroadcastEventType.GAME_LEVEL_LOADED:  m_updateEnabled = true; break;
             case BroadcastEventType.GAME_AREA_ENTER:    m_updateEnabled = true; break;
             case BroadcastEventType.GAME_AREA_EXIT:     m_updateEnabled = false; break;
-            case BroadcastEventType.GAME_ENDED:         OnGameEnded(); break;
+            case BroadcastEventType.GAME_ENDED:         m_updateEnabled = false; OnGameEnded(); break;
         }
     }
 
