@@ -569,37 +569,14 @@ public class AssetBundlesManager
         }
 
         return returnValue;
-    }
-
-    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
-    {
-        AssetBundlesGroup returnValue = new AssetBundlesGroup();
-        List<string> assetBundleIds = new List<string>();
-        if (groupIds != null)
-        {
-            int count = groupIds.Count;
-            AssetBundlesGroup group;
-            for (int i = 0; i < count; i++)
-            {
-                group = GetAssetBundlesGroup(groupId);
-                if (group != null)
-                {
-                    UbiListUtils.AddRange(assetBundleIds, group.AssetBundleIds, false, true);
-                }
-            }
-        }
-
-        returnValue.Setup(groupId, groupIds);
-
-        return returnValue;
-    }
+    }    
 
     public Downloadables.Handle CreateDownloadablesHandle(string groupId)
     {
         return DownloadablesManager.Groups_CreateHandle(groupId);
     }
 
-    public Downloadables.Handle GetDownloadablesHandle(HashSet<string> groupIds)
+    public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
     {
         return DownloadablesManager.Groups_CreateHandle(groupIds);
     }
