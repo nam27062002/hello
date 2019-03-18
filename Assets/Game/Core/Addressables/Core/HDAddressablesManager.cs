@@ -71,7 +71,9 @@ public class HDAddressablesManager : AddressablesManager
 
         m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);        
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);
+
+        InitDownloadableHandles();
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -347,19 +349,80 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-	#endregion
+    #endregion
 
-	#region DOWNLOADABLE GROUPS HANDLERS
-	// [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
-	//		 groups and rules can be tricky to represent in content
+    #region DOWNLOADABLE GROUPS HANDLERS
+    // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
+    //		 groups and rules can be tricky to represent in content
 
-	/// <summary>
-	/// Get the handle for all downloadables required for a specific dragon in its
-	/// current state: owned status, skin equipped, pets equipped, etc...
-	/// </summary>
-	/// <returns>The handle for all downloadables required for that dragon.</returns>
-	/// <param name="_dragonSku">Classic dragon sku.</param>
-	public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = "area1";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = "area2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = "area3";
+    
+    // Combined    
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3 = "areas1_2_3";
+
+    /// <summary>
+    /// Downloadable.Handle objects are cached because they're going to be requested ofter and generating them often may trigger garbage collector often
+    /// </summary>
+    private Dictionary<string, Downloadables.Handle> m_downloadableHandles;
+
+    /// <summary>
+    /// Initializes and stores all downloadable handles that will be required throughout the game session
+    /// </summary>
+    private void InitDownloadableHandles()
+    {
+        m_downloadableHandles = new Dictionary<string, Downloadables.Handle>();
+
+        // All handles should be created and stored here
+
+        //
+        // Level groups
+        //
+        // Area 1
+        Downloadables.Handle handle = CreateDownloadablesHandle(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1, handle);
+
+        // Areas 1 and 2
+        HashSet<string> groupIds = new HashSet<string>();
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
+        handle = CreateDownloadablesHandle(groupIds);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2, handle);
+
+        // Areas 1,2 and 3
+        groupIds = new HashSet<string>();
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_3);
+        handle = CreateDownloadablesHandle(groupIds);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3, handle);
+    }
+
+    /// <summary>
+    /// Returns the downloadables handle corresponding to the id passed as a parameter
+    /// </summary>
+    /// <param name="handleId">Id of the handle requested. This id is the one used in <c>InitDownloadableHandles()</c> when the handles were created.</param>
+    /// <returns>Returns a <c>Downloadables.Handle</c> object which handles the downloading of all downloadables associated to the groups used when <c>handleId</c> was created.</returns>
+    private Downloadables.Handle GetDownloadablesHandle(string handleId)
+    {
+        Downloadables.Handle returnValue = null;
+        if (m_downloadableHandles != null && !string.IsNullOrEmpty(handleId))
+        {
+            m_downloadableHandles.TryGetValue(handleId, out returnValue);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Get the handle for all downloadables required for a specific dragon in its
+    /// current state: owned status, skin equipped, pets equipped, etc...
+    /// </summary>
+    /// <returns>The handle for all downloadables required for that dragon.</returns>
+    /// <param name="_dragonSku">Classic dragon sku.</param>
+    public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
 		// Get target dragon info
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
 
@@ -422,22 +485,22 @@ public class HDAddressablesManager : AddressablesManager
 			}
 		}
 
-		// Now select target asset groups based on final tier
-		List<string> groups = new List<string>();
-		if(_tier >= DragonTier.TIER_0) {	// XS and bigger
-			groups.Add("area1");	// Village
-		}
+        // Now select target asset groups based on final tier
+        string handleId = null;
+        if (_tier >= DragonTier.TIER_3)
+        {    // L and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3; // Village, Castle and Dark
+        }        
+        else if(_tier >= DragonTier.TIER_2) {    // M and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2; // Village and Castle
+        }
+        else if (_tier >= DragonTier.TIER_0)
+        {  // XS and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREA_1; // Village
+        }
 
-		if(_tier >= DragonTier.TIER_2) {    // M and bigger
-			groups.Add("area2");	// Castle
-		}
-
-		if(_tier >= DragonTier.TIER_3) {    // L and bigger
-			groups.Add("area3");    // Dark
-		}
-
-		// Finally get / create the handle for these assets groups
-		if(DebugSettings.useDownloadablesMockHandlers) {
+        // Finally get / create the handle for these assets groups
+        if (DebugSettings.useDownloadablesMockHandlers) {
 			// Debug!
 			// [AOC] TODO!!
 
@@ -452,9 +515,9 @@ public class HDAddressablesManager : AddressablesManager
 			//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
 
 		} else {
-			// The real deal
-			// [AOC] TODO!!
-		}
+            // The real deal
+            Downloadables.Handle handle = GetDownloadablesHandle(handleId);
+        }
 
 		return null;
 	}
