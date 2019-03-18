@@ -10,7 +10,7 @@ namespace Downloadables
     /// This class is responsible for downloading remote assets (downloadables), storing them in disk and retrieving them on demand.
     /// </summary>
     public class Manager
-    {
+    {        
         public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson)
         {
             JSONNode returnValue = null;
@@ -128,7 +128,7 @@ namespace Downloadables
         private Disk m_disk;
         private Cleaner m_cleaner;
         private Downloader m_downloader;
-        private Tracker m_tracker;
+        private Tracker m_tracker;        
 
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
@@ -140,9 +140,7 @@ namespace Downloadables
         /// </summary>
         public bool IsEnabled { get; set; }
 
-        private Config Config { get; set; }
-
-        private Dictionary<string, CatalogGroup> m_groups;
+        private Config Config { get; set; }        
 
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
@@ -164,7 +162,9 @@ namespace Downloadables
             m_downloader = new Downloader(network, m_disk, logger);
             CatalogGroup.StaticSetup(m_disk);
 
-            IsEnabled = true;            
+            IsEnabled = true;
+
+            Handle.StaticSetup(this, diskDriver);
 
             Reset();
         }
@@ -174,14 +174,10 @@ namespace Downloadables
             IsInitialized = false;
             IsAutomaticDownloaderEnabled = Config.IsAutomaticDownloaderEnabled;
             m_cleaner.Reset();
+            Groups_Reset();
             Catalog_Reset();
-            m_downloader.Reset();
-             
-            if (m_groups != null)
-            {
-                m_groups.Clear();
-            }       
-        }
+            m_downloader.Reset();            
+        }        
 
         public void Initialize(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {
@@ -194,7 +190,8 @@ namespace Downloadables
 
             m_groups = groups;
 
-            ProcessCatalog(catalogJSON);            
+            ProcessCatalog(catalogJSON);
+            Groups_Process();
 
             IsInitialized = true;            
 
@@ -203,20 +200,7 @@ namespace Downloadables
                 string urlBase = catalogJSON[Catalog.CATALOG_ATT_URL_BASE];
                 m_downloader.Initialize(urlBase);
             }
-        } 
-       
-        public void SetGroupPermissionRequested(string groupId, bool value)
-        {
-            if (m_groups != null && !string.IsNullOrEmpty(groupId))
-            {
-                CatalogGroup group = null;
-                m_groups.TryGetValue(groupId, out group);
-                if (group != null)
-                {
-                    group.PermissionRequested = value;
-                }
-            }
-        }        
+        }                
 
         private void ProcessCatalog(JSONNode catalogJSON)
         {    
@@ -242,7 +226,6 @@ namespace Downloadables
                 }
 
                 List<string> groups = null;
-
                 if (m_groups != null)
                 {
                     groups = new List<string>();
@@ -269,7 +252,7 @@ namespace Downloadables
                 {
                     float existingSize = GetIdMbDownloadedSoFar(id);
                     NetworkReachability reachability = m_network.CurrentNetworkReachability;
-                    Error.EType result = (returnValue) ? Error.EType.None : Error.EType.NotAvailable;
+                    Error.EType result = (returnValue) ? Error.EType.None : Error.EType.Internal_NotAvailable;
                     m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalMb(id), 0, reachability, reachability, result, false);
                 }
             }
@@ -293,7 +276,7 @@ namespace Downloadables
             return returnValue;
         }
 
-        private float GetIdMbDownloadedSoFar(string id)
+        public float GetIdMbDownloadedSoFar(string id)
         {
             float returnValue = float.MaxValue;
             if (IsInitialized)
@@ -330,7 +313,46 @@ namespace Downloadables
             }
 
             return returnValue;
-        }        
+        }
+
+        public long GetIdBytesDownloadedSoFar(string id)
+        {
+            long returnValue = long.MaxValue;
+            if (IsInitialized)
+            {
+                returnValue = GetIdTotalBytes(id) - GetIdBytesLeftToDownload(id);
+            }
+
+            return returnValue;
+        }
+
+        public long GetIdBytesLeftToDownload(string id)
+        {
+            long returnValue = long.MaxValue;
+            if (IsInitialized)
+            {
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                returnValue = (entry == null) ? 0 : entry.GetBytesLeftToDownload();
+            }
+
+            return returnValue;
+        }
+
+        public long GetIdTotalBytes(string id)
+        {
+            long returnValue = long.MaxValue;
+            if (IsInitialized)
+            {
+                CatalogEntryStatus entry = Catalog_GetEntryStatus(id);
+                returnValue = (entry == null) ? 0 : entry.GetTotalBytes();
+                if (entry != null)
+                {
+                    entry.GetTotalBytes();
+                }
+            }
+
+            return returnValue;
+        }
 
         /// <summary>
         /// Request a downloadable with <c>id</c> as an identifier to be downloaded.
@@ -382,20 +404,25 @@ namespace Downloadables
             return returnValue;
         }
 
+        public NetworkReachability GetCurrentNetworkReachability()
+        {
+            return m_network.CurrentNetworkReachability;
+        }
+
         public void Update()
         {
             if (IsInitialized && IsEnabled)
             {
-                m_downloader.CurrentNetworkReachability = m_downloader.NetworkDriver.CurrentNetworkReachability;
+                m_downloader.Update();
                 m_disk.Update();
                 m_cleaner.Update();
-                Catalog_Update();                
+                Catalog_Update();
+                Groups_Update();
             }
         }               
 
 #region catalog
-        private Dictionary<string, CatalogEntryStatus> m_catalog;
-        private float m_lastGroupsUpdateAt;
+        private Dictionary<string, CatalogEntryStatus> m_catalog;        
 
         private void Catalog_Reset()
         {            
@@ -406,9 +433,7 @@ namespace Downloadables
             else
             {
                 m_catalog.Clear();
-            }
-
-            m_lastGroupsUpdateAt = -1;
+            }            
         }
 
         private void Catalog_AddEntryStatus(string id, JSONNode json)
@@ -470,20 +495,7 @@ namespace Downloadables
             else
             {                
                 m_downloader.StartDownloadThread(entryToDownload);
-            }
-
-            if (m_groups != null)
-            {
-                if (Time.realtimeSinceStartup - m_lastGroupsUpdateAt >= 2f)
-                {
-                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
-                    {
-                        pair.Value.Update();
-                    }
-
-                    m_lastGroupsUpdateAt = Time.realtimeSinceStartup;
-                }
-            }
+            }            
         }
 
         private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
@@ -500,9 +512,154 @@ namespace Downloadables
                 }
             }
         }
-#endregion
+        #endregion
 
-#region logger
+        // Region responsible for handling downloadable groups
+        #region groups
+        private Dictionary<string, CatalogGroup> m_groups;
+        private float m_groupsLastUpdateAt;
+
+        private void Groups_Reset()
+        {
+            if (m_groups != null)
+            {
+                m_groups.Clear();
+            }
+
+            m_groupsLastUpdateAt = -1;
+        }
+
+        private void Groups_Process()
+        {
+            if (m_groups != null)
+            {
+                // Loops through every single group to link every entry status to the groups where they belong                
+                int count;
+                CatalogEntryStatus entryStatus;
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {                    
+                    if (pair.Value.EntryIds != null)
+                    {
+                        count = pair.Value.EntryIds.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            entryStatus = Catalog_GetEntryStatus(pair.Value.EntryIds[i]);
+                            if (entryStatus != null)
+                            {
+                                entryStatus.AddGroup(pair.Value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public CatalogGroup Groups_GetGroup(string groupId)
+        {
+            CatalogGroup returnValue = null;
+            if (m_groups != null && !string.IsNullOrEmpty(groupId))
+            {                
+                m_groups.TryGetValue(groupId, out returnValue);
+            }
+
+            return returnValue;
+        }
+
+        public bool Groups_GetPermissionRequested(string groupId)
+        {
+            bool returnValue = false;
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                returnValue = group.PermissionOverCarrierRequested;
+            }            
+
+            return returnValue;
+        }
+
+        public void Groups_SetIsPermissionRequested(string groupId, bool value)
+        {
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                group.PermissionOverCarrierRequested = value;                
+            }
+        }
+
+        public bool Groups_GetIsPermissionGranted(string groupId)
+        {
+            bool returnValue = false;
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                returnValue = group.PermissionOverCarrierGranted;               
+            }
+
+            return returnValue;
+        }
+
+        public void Groups_SetIsPermissionGranted(string groupId, bool value)
+        {
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                group.PermissionOverCarrierGranted = value;               
+            }
+        }
+
+        private void Groups_Update()
+        {
+            if (m_groups != null)
+            {
+                if (Time.realtimeSinceStartup - m_groupsLastUpdateAt >= 2f)
+                {
+                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                    {
+                        pair.Value.Update();
+                    }
+
+                    m_groupsLastUpdateAt = Time.realtimeSinceStartup;
+                }
+            }
+        }
+
+        public Handle Groups_CreateHandle(string groupId)
+        {
+            ProductionHandle returnValue = new ProductionHandle();
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                returnValue.Setup(groupId, group.EntryIds);                
+            }
+
+            return returnValue;
+        }
+
+        public Handle Groups_CreateHandle(HashSet<string> groupIds)
+        {
+            ProductionHandle returnValue = new ProductionHandle();
+            if (groupIds != null)
+            {
+                CatalogGroup group;
+
+                List<string> entryIds = new List<string>();
+                foreach (string id in groupIds)
+                {
+                    group = Groups_GetGroup(id);
+                    if (group != null)
+                    {
+                        UbiListUtils.AddRange(entryIds, group.EntryIds, false, true);
+                    }
+                }
+
+                returnValue.Setup(groupIds, entryIds);
+            }            
+            
+            return returnValue;
+        }
+        #endregion
+
+        #region logger
         private static Logger sm_logger;
 
         public bool CanLog()

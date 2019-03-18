@@ -501,7 +501,7 @@ public class EditorAddressablesManager
 
         // Searches for local ABs that are not used
         // We ignore the local ones that are not defined in used because they're not really necessary
-        UbiListUtils.SplitIntersectionAndDisjoint(catalogLocalABs, catalogUsedABs, out catalogLocalABs, out returnValue.m_LocalABNotUsedList);
+        //UbiListUtils.SplitIntersectionAndDisjoint(catalogLocalABs, catalogUsedABs, out catalogLocalABs, out returnValue.m_LocalABNotUsedList);
 
         if (abManifest == null)
         {
@@ -526,7 +526,7 @@ public class EditorAddressablesManager
                     dependencies = new List<string>(abManifest.GetAllDependencies(abName));
                     UbiListUtils.AddRange(returnValue.m_LocalABList, dependencies, false, true);
                 }
-                else
+                else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                 {
                     returnValue.m_ABInUsedNotInManifest.Add(abName);
                 }
@@ -552,7 +552,7 @@ public class EditorAddressablesManager
                         UbiListUtils.SplitIntersectionAndDisjoint(dependencies, returnValue.m_LocalABList, out localDependencies, out remoteDependencies);
                         UbiListUtils.AddRange(returnValue.m_RemoteABList, remoteDependencies, false, true);
                     }
-                    else
+                    else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                     {
                         returnValue.m_ABInUsedNotInManifest.Add(abName);
                     }
@@ -565,7 +565,8 @@ public class EditorAddressablesManager
                 for (int i = 0; i < count; i++)
                 {
                     abName = manifestABs[i];
-                    if (!returnValue.m_LocalABList.Contains(abName) && !returnValue.m_RemoteABList.Contains(abName))
+                    if (!returnValue.m_LocalABList.Contains(abName) && !returnValue.m_RemoteABList.Contains(abName) &&
+                        !returnValue.m_ABInManifestNotUsed.Contains(abName))
                     {
                         returnValue.m_ABInManifestNotUsed.Add(abName);
                     }

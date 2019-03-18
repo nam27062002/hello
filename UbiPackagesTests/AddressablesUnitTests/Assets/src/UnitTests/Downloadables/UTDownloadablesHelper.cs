@@ -127,4 +127,21 @@ public class UTDownloadablesHelper
 
         return returnValue;
     }
+
+    public static Dictionary<string, Downloadables.CatalogGroup> GetGroups(Dictionary<string, List<string>> groups)
+    {
+        Dictionary<string, Downloadables.CatalogGroup> returnValue = new Dictionary<string, Downloadables.CatalogGroup>();
+        if (groups != null)
+        {
+            Downloadables.CatalogGroup downloadablesGroup;
+            foreach (KeyValuePair<string, List<string>> pair in groups)
+            {
+                downloadablesGroup = new Downloadables.CatalogGroup();
+                downloadablesGroup.Setup(pair.Key, pair.Value);
+                returnValue.Add(pair.Key, downloadablesGroup);
+            }
+        }
+
+        return returnValue;
+    }
 }

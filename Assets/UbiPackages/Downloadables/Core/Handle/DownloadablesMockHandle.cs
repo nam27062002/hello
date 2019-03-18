@@ -156,14 +156,14 @@ namespace Downloadables
             return (GetDownloadedBytes() == GetTotalBytes());
         }
 
-        public override float GetDownloadedBytes()
+        public override long GetDownloadedBytes()
         {
-            return DownloadedBytesAtStart + ((TotalBytes - DownloadedBytesAtStart) * DownloadingTime) / TimeToDownload;
+            return (long)(DownloadedBytesAtStart + ((TotalBytes - DownloadedBytesAtStart) * DownloadingTime) / TimeToDownload);
         }
 
-        public override float GetTotalBytes()
+        public override long GetTotalBytes()
         {
-            return TotalBytes;
+            return (long)TotalBytes;
         }
 
         public override void SetIsPermissionRequested(bool value)
@@ -184,12 +184,12 @@ namespace Downloadables
         protected override bool ExtendedGetIsPermissionGranted()
         {
             return PermissionGranted;
-        }
-
-        protected override EError ExtendedGetError()
-        {
-            return Error;
         }        
+
+        protected override Error.EType ExtendedGetErrorType()
+        {
+            return EErrorToErrorType(Error);
+        }
 
         public override void Update()
         {

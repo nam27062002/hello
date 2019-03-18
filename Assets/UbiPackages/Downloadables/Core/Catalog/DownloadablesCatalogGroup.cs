@@ -23,32 +23,32 @@ namespace Downloadables
 
         private bool NeedsToSave { get; set; }
 
-        private bool m_permissionRequested;
-        public bool PermissionRequested
+        private bool m_permissionOverCarrierRequested;
+        public bool PermissionOverCarrierRequested
         {
             get
             {
-                return m_permissionRequested;
+                return m_permissionOverCarrierRequested;
             }
 
             set
             {
-                m_permissionRequested = value;
+                m_permissionOverCarrierRequested = value;
                 NeedsToSave = true;
             }
         }
 
-        private bool m_permissionGranted;
-        public bool PermissionGranted
+        private bool m_permissionOverCarrierGranted;
+        public bool PermissionOverCarrierGranted
         {
             get
             {
-                return m_permissionGranted;
+                return m_permissionOverCarrierGranted;
             }
 
             set
             {
-                m_permissionGranted = value;
+                m_permissionOverCarrierGranted = value;
                 NeedsToSave = true;
             }
         }
@@ -58,8 +58,8 @@ namespace Downloadables
         public void Reset()
         {
             EntryIds = null;
-            PermissionRequested = false;
-            PermissionGranted = false;
+            PermissionOverCarrierRequested = false;
+            PermissionOverCarrierGranted = false;
             NeedsToSave = false;
             m_latestSaveAt = -1;
         }
@@ -92,8 +92,8 @@ namespace Downloadables
         {
             if (data != null)
             {
-                m_permissionRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
-                m_permissionGranted = GetAttAsBool(data, ATT_PERMISSION_GRANTED); 
+                m_permissionOverCarrierRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
+                m_permissionOverCarrierGranted = GetAttAsBool(data, ATT_PERMISSION_GRANTED); 
             }
         }
 
@@ -101,8 +101,8 @@ namespace Downloadables
         {
             JSONClass data = new JSONClass();
 
-            AddAttAsInt(data, ATT_PERMISSION_REQUESTED, PermissionRequested);
-            AddAttAsInt(data, ATT_PERMISSION_GRANTED, PermissionGranted);
+            AddAttAsInt(data, ATT_PERMISSION_REQUESTED, PermissionOverCarrierRequested);
+            AddAttAsInt(data, ATT_PERMISSION_GRANTED, PermissionOverCarrierGranted);
             
             return data;            
         }

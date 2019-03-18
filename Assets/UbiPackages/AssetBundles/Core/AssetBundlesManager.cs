@@ -110,9 +110,9 @@ public class AssetBundlesManager
 
         AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
 
-        // It deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
+        // Deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
         List<string> idsRemoved = Downloadables.Manager.RemoveEntryIds(downloadablesCatalog, catalog.GetLocalAssetBundlesList());        
-        if (CanLog())
+        if (idsRemoved != null && idsRemoved.Count > 0 && CanLog())
         {
             Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
         }
@@ -592,6 +592,16 @@ public class AssetBundlesManager
         returnValue.Setup(groupId, groupIds);
 
         return returnValue;
+    }
+
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    {
+        return DownloadablesManager.Groups_CreateHandle(groupId);
+    }
+
+    public Downloadables.Handle GetDownloadablesHandle(HashSet<string> groupIds)
+    {
+        return DownloadablesManager.Groups_CreateHandle(groupIds);
     }
 
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)

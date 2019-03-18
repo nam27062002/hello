@@ -394,6 +394,21 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    
@@ -631,7 +646,9 @@ public class AddressablesManager
 
         entry = m_catalog.GetEntry(id, variant);
 
+#if UNITY_EDITOR
         bool entryWasFound = (entry != null);
+#endif
 
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)

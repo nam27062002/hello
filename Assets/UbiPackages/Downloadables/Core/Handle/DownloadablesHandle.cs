@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Downloadables
 {
@@ -7,26 +8,43 @@ namespace Downloadables
     /// </summary>
     public abstract class Handle
     {
+        protected static Manager sm_manager;
+        protected static DiskDriver sm_diskDriver;
+
+        public static void StaticSetup(Manager manager, DiskDriver diskDriver)
+        {
+            sm_manager = manager;
+            sm_diskDriver = diskDriver;
+        }
+
         //------------------------------------------------------------------------//
         // CONSTANTS															  //
         //------------------------------------------------------------------------//
         public enum EError
         {
-            NO_WIFI,        // and no data permission granted
-            NO_CONNECTION,  // neither wifi nor data
+            NO_WIFI,                        // and no data permission granted
+            NO_CONNECTION,                  // neither wifi nor data
             STORAGE,
-            STORAGE_PERMISSION,
+            STORAGE_PERMISSION,            
+            AUTOMATIC_DOWNLOAD_DISABLED,    // This case shouldn be protected by flow design as no handle should be used before
+                                            // automatic downloading is enabled.
+                                            // No message will be prompted to the user but it's useful to have it separately when debugging
+            AUTOMATIC_DOWNLOAD_NOT_ALLOWED, // It happens when the same file has been downloaded several times unsuccessfully 
+                                            // during the current sesion or timeout since latest error hasn't expired.
+                                            // No message will be prompted to the user but it's useful to have it separately when debugging
             UNKNOWN,
 
             NONE
         }
+
+        private static Array EErrorValues = Enum.GetValues(typeof(EError));
 
         //------------------------------------------------------------------------//
         // MEMBERS AND PROPERTIES												  //
         //------------------------------------------------------------------------//
         public float Progress
         {
-            get { return Mathf.Clamp01(GetDownloadedBytes() / GetTotalBytes()); }
+            get { return Mathf.Clamp01((float)GetDownloadedBytes() / (float)GetTotalBytes()); }
         }
 
         //------------------------------------------------------------------------//
@@ -77,40 +95,115 @@ namespace Downloadables
         /// <summary>
         /// Returns the size in bytes of this list of downloadables that have been downloaded so far.
         /// </summary>        
-        public abstract float GetDownloadedBytes();
+        public abstract long GetDownloadedBytes();
 
         /// <summary>
         /// Returns the total size in bytes of this list of downloadables.
         /// </summary>
         /// <returns></returns>
-        public abstract float GetTotalBytes();
+        public abstract long GetTotalBytes();
+
+        public Error.EType GetErrorType()
+        {
+            if (IsAvailable())
+            {
+                return Error.EType.None;
+            }
+            else
+            {
+                return ExtendedGetErrorType();
+            }
+        }                        
 
         /// <summary>
         /// Returns the most important error afecting whe whole downloading process. Returns EError.NONE is everything is ok.
         /// </summary>        
         public EError GetError()
         {
-            if (IsAvailable())
-            {
-                return EError.NONE;
-            }
-            else
-            {
-                return ExtendedGetError();
-            }
+            return ErrorTypeToEError(GetErrorType());
         }
 
         protected abstract bool ExtendedNeedsToRequestPermission();
 
-        protected abstract bool ExtendedGetIsPermissionGranted();        
+        protected abstract bool ExtendedGetIsPermissionGranted();
 
-        protected abstract EError ExtendedGetError();
+        protected abstract Error.EType ExtendedGetErrorType();        
+
+        protected Error.EType EErrorToErrorType(EError error)
+        {
+            Error.EType candidate;
+            int count = Error.ErrorTypeValues.Length;
+            for (int i = 0; i < count; i++)
+            {
+                candidate = (Error.EType)Error.ErrorTypeValues.GetValue(i); 
+                if (ErrorTypeToEError(candidate) == error)
+                {
+                    return candidate;
+                }
+            }
+
+            return Error.EType.Other;
+        }
+
+        protected EError ErrorTypeToEError(Error.EType errorType)
+        {
+            EError returnValue;
+
+            switch (errorType)
+            {
+                case Error.EType.None:
+                    returnValue = EError.NONE;
+                    break;
+
+                case Error.EType.Network_No_Reachability:
+                    returnValue = EError.NO_CONNECTION;
+                    break;
+
+                case Error.EType.Network_Unauthorized_Reachability:
+                    returnValue = EError.NO_WIFI;
+                    break;
+
+                case Error.EType.Disk_IOException:
+                    returnValue = EError.STORAGE;
+                    break;
+
+                case Error.EType.Disk_UnauthorizedAccess:
+                    returnValue = EError.STORAGE_PERMISSION;
+                    break;
+
+                default:
+                    returnValue = EError.UNKNOWN;
+                    break;
+            }
+
+            return returnValue;
+        }
+
+        public long GetDiskFreeSpaceBytes()
+        {
+            return sm_diskDriver.GetFreeSpaceBytes();
+        }
+
+        public long GetDiskOverflowBytes()
+        {
+            long returnValue = GetDiskFreeSpaceBytes() - GetTotalBytes();
+            if (returnValue > 0)
+            {
+                returnValue = 0;
+            }
+            else
+            {
+                returnValue = -returnValue;
+            }
+
+            return returnValue;
+        }
+
+        public virtual void Retry() {}
 
         /// <summary>
         /// To be called manually to refresh group state, progress, errors, etc.
         /// </summary>
-        public virtual void Update()
-        {
-        }
+        public virtual void Update() {}
     }
 }

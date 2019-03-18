@@ -148,6 +148,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.CreateAssetBundlesGroupFromList(groupId, groupIds);
     }
 
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    {
+        return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupId);
+    }
+
     public void Update()
     {
         AssetBundlesManager.Instance.Update();

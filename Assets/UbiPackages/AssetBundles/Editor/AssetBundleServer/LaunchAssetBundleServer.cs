@@ -115,6 +115,8 @@ namespace AssetBundles
         {
             string downloadURL = GetServerURL();
 
+            UnityEngine.Debug.Log("Server url = " + downloadURL);
+
             string assetBundleManagerResourcesDirectory = "Assets/Resources/Addressables/AssetBundles";
             string assetBundleUrlPath = Path.Combine(assetBundleManagerResourcesDirectory, "AssetBundleServerURL.bytes");
             if (!Directory.Exists(assetBundleManagerResourcesDirectory))

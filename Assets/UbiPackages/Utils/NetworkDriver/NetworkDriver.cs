@@ -9,4 +9,7 @@ public interface NetworkDriver
     NetworkReachability CurrentNetworkReachability { get; }
     HttpWebRequest CreateHttpWebRequest(string url);
     HttpWebResponse GetResponse(HttpWebRequest request);
+    long GetResponseContentLength(HttpWebResponse response);
+    int GetResponseStatusCodeAsInt(HttpWebResponse response);
+    int GetThrottleSleepTime();
 }

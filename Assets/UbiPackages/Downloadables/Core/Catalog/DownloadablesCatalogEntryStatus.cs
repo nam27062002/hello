@@ -1,4 +1,5 @@
 ﻿using SimpleJSON;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -81,7 +82,7 @@ namespace Downloadables
                                     break;
 
                                 case EState.DealingWithCRCMismatch:
-                                    errorType = Error.EType.CRC_Mismatch;
+                                    errorType = Error.EType.Internal_CRC_Mismatch;
                                     break;
                             }
 
@@ -105,6 +106,7 @@ namespace Downloadables
                         break;
 
                     case EState.Downloading:
+                        LatestError = null;                        
                         TrackDownloadStart();
                         break;
 
@@ -161,6 +163,13 @@ namespace Downloadables
                 }
             }
         }
+        
+        public Error LatestError { get; private set; }
+        public void ResetLatestError()
+        {
+            LatestError = null;
+            m_latestErrorAt = -1f;
+        }
 
         public Error RequestError { get; private set; }        
        
@@ -170,6 +179,11 @@ namespace Downloadables
         private int CRCMismatchErrorTimes { get; set; }        
 
         private bool CalculatingCRCFromADownload { get; set; }
+
+        /// <summary>
+        /// Set of groups. Used to look up mobile data access permission
+        /// </summary>
+        private HashSet<CatalogGroup> Groups { get; set; }
 
         public CatalogEntryStatus()
         {
@@ -188,6 +202,11 @@ namespace Downloadables
             RequestState = ERequestState.None;            
             CRCMismatchErrorTimes = 0;
             CalculatingCRCFromADownload = false;
+
+            if (Groups != null)
+            {
+                Groups.Clear();
+            }
         }
 
         public void LoadManifest(string id, JSONNode json)
@@ -332,7 +351,8 @@ namespace Downloadables
         {
             if (error != null)
             {
-                m_latestErrorAt = sm_realtimeSinceStartup;            
+                m_latestErrorAt = sm_realtimeSinceStartup;
+                LatestError = error;
                                 
                 if (m_requestState == ERequestState.Running)
                 {
@@ -567,9 +587,20 @@ namespace Downloadables
             return RequestState == ERequestState.Running;
         }
 
+        public Error.EType GetErrorBlockingDownload()
+        {
+            Error.EType returnValue = Error.EType.None;
+            if (CRCMismatchErrorTimes >= sm_config.GetMaxTimesPerSessionPerErrorType(Error.EType.Internal_CRC_Mismatch))
+            {
+                returnValue = Error.EType.Internal_Too_Many_CRC_Mismatches;
+            }
+
+            return returnValue;
+        }
+
         public bool CanAutomaticDownload(bool simulation)
-        {                 
-            bool returnValue = CRCMismatchErrorTimes < sm_config.GetMaxTimesPerSessionPerErrorType(Error.EType.CRC_Mismatch);
+        {
+            bool returnValue = GetErrorBlockingDownload() == Error.EType.None;
             if (returnValue)
             {
                 returnValue = (simulation) ? HasSimulationExpired() : HasErrorExpired();
@@ -681,6 +712,34 @@ namespace Downloadables
                 // Updates its state if needed
                 IsAvailable(true);
             }
+        }
+
+        public void AddGroup(CatalogGroup group)
+        {
+            if (group != null)
+            {
+                if (Groups == null)
+                {
+                    Groups = new HashSet<CatalogGroup>();
+                }
+
+                Groups.Add(group);
+            }
+        }
+
+        public bool GetPermissionOverCarrierGranted()
+        {            
+            if (Groups != null)
+            {
+                // If the permission has been granted for any groups then it's granted
+                foreach (CatalogGroup group in Groups)
+                {
+                    if (group.PermissionOverCarrierGranted)
+                        return true;
+                }                
+            }
+
+            return false;
         }
     }    
 }
