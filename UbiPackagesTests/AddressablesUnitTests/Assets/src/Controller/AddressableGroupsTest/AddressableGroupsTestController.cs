@@ -1,63 +1,66 @@
 ﻿using System.IO;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AddressableGroupsTestController : MonoBehaviour
-{	
-	void Start ()
+{
+    private Downloadables.MockHandle m_mockHandle;    
+
+    void Start ()
     {
         Addressables_Init();
+        Groups_Init();
     }
 
     void OnApplicationQuit()
     {
         m_addressablesManager.Reset();
-    }
-
-    private Downloadables.MockHandle m_handle;
+    }    
 
     void Update()
     {
         m_addressablesManager.Update();
 
-        if (m_handle != null)
+        if (m_groupsHandle != null)
         {
-            m_handle.Update();
+            m_groupsHandle.Update();
+        }
 
-            Debug.Log(" progress bytes = " + m_handle.GetDownloadedBytes() + " / " + m_handle.GetTotalBytes() +
-                         " progress % = " + m_handle.Progress + " IsAvailable = " + m_handle.IsAvailable() + " error = " + m_handle.GetError());
+        Ui_Update();
+
+        if (m_mockHandle != null)
+        {
+            m_mockHandle.Update();
+
+            Debug.Log(" progress bytes = " + m_mockHandle.GetDownloadedBytes() + " / " + m_mockHandle.GetTotalBytes() +
+                         " progress % = " + m_mockHandle.Progress + " IsAvailable = " + m_mockHandle.IsAvailable() + " error = " + m_mockHandle.GetError());
         }
 
         if (Input.GetKeyDown(KeyCode.M))
+        {            
+            Debug_MockHandle();                                
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
         {
-            AssetBundlesManager.Instance.DownloadablesManager.SetGroupPermissionRequested(GROUP_ID, true);
-            
-            /*
-            //m_handle = new Downloadables.MockHandle(0, 100, 60, false, false, null);            
-            //m_handle = new Downloadables.MockHandle(100, 100, 60, false, false, null);
-            //m_handle = new Downloadables.MockHandle(50, 100, 20, false, false, null);                        
-            m_handle = new Downloadables.MockHandle(50, 100, 20, false, false, null);
-            m_handle.AddAction(5, Downloadables.Handle.EError.NO_CONNECTION);
-            m_handle.AddAction(35, Downloadables.Handle.EError.NONE);           
-            */
-
-            /*bool available = m_addressablesManager.Groups_IsAvailable(GROUP_ID);
-            string msg = "group is ";
-            if (!available)
-            {
-                msg += "not ";
-            }
-
-            msg += "available";
-
-            Debug.Log(msg);         
-            */
+            m_addressablesManager.IsAutomaticDownloaderEnabled = true;            
+        }
+        else if (Input.GetKeyDown(KeyCode.R) && m_groupsHandle != null)
+        {
+            m_groupsHandle.Retry();
         }
     }
 
-    #region group
-    private static string GROUP_ID = "group_asset_cubes";    
-    #endregion
+    private void Debug_MockHandle()
+    {
+        //m_mockHandle = new Downloadables.MockHandle(0, 100, 60, false, false, null);            
+        //m_mockHandle = new Downloadables.MockHandle(100, 100, 60, false, false, null);
+        //m_mockHandle = new Downloadables.MockHandle(50, 100, 20, false, false, null);                        
+        
+        m_mockHandle = new Downloadables.MockHandle(50, 100, 20, false, false, null);
+        m_mockHandle.AddAction(5, Downloadables.Handle.EError.NO_CONNECTION);
+        m_mockHandle.AddAction(35, Downloadables.Handle.EError.NONE);
+    }    
 
     #region addressables
     private AddressablesManager m_addressablesManager = new AddressablesManager();
@@ -97,6 +100,33 @@ public class AddressableGroupsTestController : MonoBehaviour
     public void Addressables_Reset()
     {
         m_addressablesManager.Reset();
+    }
+    #endregion
+
+    #region groups
+    private static string GROUP_ID = "group_asset_cubes";
+
+    private Downloadables.Handle m_groupsHandle;
+
+    private void Groups_Init()
+    {
+        m_groupsHandle = m_addressablesManager.CreateDownloadablesHandle(GROUP_ID);
+    }
+    #endregion
+
+    #region ui
+    public Text m_uiProgress;
+    public Text m_uiError;
+
+    private void Ui_Update()
+    {
+        if (m_groupsHandle != null)
+        {
+            m_uiProgress.text = m_groupsHandle.Progress + "";
+
+            Downloadables.Error.EType errorType = m_groupsHandle.GetErrorType();
+            m_uiError.text = m_groupsHandle.GetError() + "(" + errorType + ", " + (int)errorType + ")";
+        }
     }
     #endregion
 }

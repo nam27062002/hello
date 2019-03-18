@@ -445,7 +445,10 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     }
     #endregion
 
+#if UNITY_EDITOR
     private MockDiskDriver.EExceptionType m_diskDriverExceptionType = MockDiskDriver.EExceptionType.UnauthorizedAccess;
+#endif
+
     public void Update()
     {
         AssetBundlesManager.Instance.Update();

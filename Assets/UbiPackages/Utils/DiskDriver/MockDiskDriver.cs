@@ -1,13 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 public class MockDiskDriver : MockDriver, DiskDriver
 {
-    private ProductionDiskDriver m_prodDriver = new ProductionDiskDriver();
+#if UNITY_EDITOR
+    private static string MOCK_NO_FREE_SPACE_ENABLED = "MockDiskNoFreeSpaceEnabled";
+    private static string MOCK_NO_ACCESS_PERMISSION_ENABLED = "MockDiskNoAccessPermissionEnabled";
+
+    private static bool sm_isNoFreeSpaceEnabled = UnityEditor.EditorPrefs.GetBool(MOCK_NO_FREE_SPACE_ENABLED, false);
+    public static bool IsNoFreeSpaceEnabled
+    {        
+        get
+        {
+            return sm_isNoFreeSpaceEnabled;
+        }
+
+        set
+        {
+            sm_isNoFreeSpaceEnabled = value;
+            UnityEditor.EditorPrefs.SetBool(MOCK_NO_FREE_SPACE_ENABLED, sm_isNoFreeSpaceEnabled);            
+        }
+    }
+
+    private static bool sm_isNoAccessPermissionEnabled = UnityEditor.EditorPrefs.GetBool(MOCK_NO_ACCESS_PERMISSION_ENABLED, false);
+    public static bool IsNoAccessPermissionEnabled
+    {
+        get
+        {
+            return sm_isNoAccessPermissionEnabled;
+        }
+
+        set
+        {
+            sm_isNoAccessPermissionEnabled = value;
+            UnityEditor.EditorPrefs.SetBool(MOCK_NO_ACCESS_PERMISSION_ENABLED, sm_isNoAccessPermissionEnabled);
+        }
+    }
+#endif
+
+    private ProductionDiskDriver m_prodDriver = new ProductionDiskDriver();    
 
     public MockDiskDriver(GetExceptionTypeToThrowDelegate getExceptionToThrowDelegate) : base(getExceptionToThrowDelegate)
     {
+    }
+
+    private bool RequiresDiskAccess(EOp op)
+    {        
+        return RequiresDiskWriteAccess(op) || op == EOp.Directory_Exists || op == EOp.Directory_GetFiles || op == EOp.File_ReadAllText ||
+               op == EOp.File_ReadAllBytes || op == EOp.File_Exists || op == EOp.File_GetInfo || op == EOp.File_Open ||
+               op == EOp.File_Delete;
+    }
+
+    private bool RequiresDiskWriteAccess(EOp op)
+    {
+        return op == EOp.Directory_CreateDirectory || op == EOp.File_Write || op == EOp.File_WriteAllText;
+    }
+
+    public override EExceptionType GetExceptionTypeToThrow(EOp op, string path)
+    {
+#if UNITY_EDITOR        
+        if (IsNoAccessPermissionEnabled && RequiresDiskAccess(op))
+        {
+            return EExceptionType.UnauthorizedAccess;
+        }
+        else
+#endif
+        if (GetFreeSpaceBytes() == 0 && RequiresDiskWriteAccess(op))
+        {
+            return EExceptionType.IOException;
+        }
+        else
+        {
+            return base.GetExceptionTypeToThrow(op, path);
+        }
     }
 
     public bool Directory_Exists(string path)
@@ -81,7 +146,7 @@ public class MockDiskDriver : MockDriver, DiskDriver
     }
 
     public void File_WriteAllText(string path, string content)
-    {
+    {        
         EExceptionType exceptionType = GetExceptionTypeToThrow(EOp.File_WriteAllText, path);
         if (exceptionType == EExceptionType.None)
         {
@@ -89,8 +154,8 @@ public class MockDiskDriver : MockDriver, DiskDriver
         }
         else
         {
-            ThrowException(exceptionType);            
-        }
+            ThrowException(exceptionType);
+        }        
     }
 
     public void File_Write(FileStream fileStream, byte[] arr, int offset, int count)
@@ -159,5 +224,14 @@ public class MockDiskDriver : MockDriver, DiskDriver
         {
             ThrowException(exceptionType);     
         }
-    }    
+    }
+
+    public long GetFreeSpaceBytes()
+    {
+#if UNITY_EDITOR
+        return (IsNoFreeSpaceEnabled) ? 0 : m_prodDriver.GetFreeSpaceBytes();
+#else
+        return m_prodDriver.GetFreeSpaceBytes();
+#endif
+    }
 }

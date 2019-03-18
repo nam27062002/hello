@@ -23,6 +23,7 @@ public class UTDownloadablesDownloader : UnitTest
         JSONNode jsonCatalogEntry;
         Queue<Attempt> queue;
         Attempt attempt;
+        Script script;
 
         sm_isServerUp = AssetBundles.LaunchAssetBundleServer.IsRunning();
         sm_serverDirectory = AssetBundles.LaunchAssetBundleServer.GetRemoteAssetsFolderName();
@@ -30,7 +31,7 @@ public class UTDownloadablesDownloader : UnitTest
         //
         // SUCCESS
         //                       
-               
+        
         // PURPOSE: Test error when accessing to disk to check if the Downloads directory exists        
         test = new UTDownloadablesDownloader();
         jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
@@ -78,7 +79,7 @@ public class UTDownloadablesDownloader : UnitTest
         attempt = new Attempt(MockDriver.EOp.CreateHttpWebRequest, "*", MockDriver.EExceptionType.UriFormatException, Error.EType.Network_Uri_Malformed);
         queue.Enqueue(attempt);
         test.Setup("00", "00", false, SCENE_CUBES, jsonCatalogEntry, queue);
-        batch.AddTest(test, true);                
+        batch.AddTest(test, true);                        
 
         // PURPOSE: Test error when the server is down       
         test = new UTDownloadablesDownloader();
@@ -87,13 +88,106 @@ public class UTDownloadablesDownloader : UnitTest
         queue.Enqueue(new Attempt(Error.EType.Network_Web_Exception_Connect_Failure));
         test.Setup("00", "00", false, SCENE_CUBES, jsonCatalogEntry, queue);        
         batch.AddTest(test, true);                        
-
+        
         // PURPOSE: Test success
         test = new UTDownloadablesDownloader();
         jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
         queue = new Queue<Attempt>();
         queue.Enqueue(new Attempt(Error.EType.None));
         test.Setup("00", "00", true, SCENE_CUBES, jsonCatalogEntry, queue);
+        batch.AddTest(test, true);        
+
+        // PURPOSE: Test Download over carrier but no permission granted
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.Network_Unauthorized_Reachability));
+
+        script = new Script();
+        script.AddAction(0, new ActionNetworkReachability(NetworkReachability.ReachableViaCarrierDataNetwork));
+        test.Setup("00", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script);
+        batch.AddTest(test, true);        
+
+        // PURPOSE: Test Download over carrier because permission is granted
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.None));        
+        script = new Script();
+        script.AddAction(0, new ActionNetworkReachability(NetworkReachability.ReachableViaCarrierDataNetwork));
+        test.Setup("permission_g1_true", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script, "g1");
+        batch.AddTest(test, true);        
+
+        // PURPOSE: Test error when content from server is not sufficient       
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.Network_Server_Size_Mismatch));
+        script = new Script();
+        script.AddAction(0, new ActionNetworkResponseLength(0));
+        test.Setup("00", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script);
+        batch.AddTest(test, true);                
+
+        // PURPOSE: Test trying to resume a partial download unsuccessfully (the file is downloaded but from scratch)
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.None));                
+        test.Setup("scene_cubes_incomplete", "00", true, SCENE_CUBES, jsonCatalogEntry, queue);
+        batch.AddTest(test, true);        
+        
+        // PURPOSE: Test the file is already downloaded so downloader must do nothing
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.None));        
+        test.Setup("scene_cubes_complete", "00", true, SCENE_CUBES, jsonCatalogEntry, queue);
+        batch.AddTest(test, true);                
+
+        // PURPOSE: Test: The downloaded file is bigger than the size stated by the manifest. It will be downloaded from scratch
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.None));        
+        test.Setup("scene_cubes_toobig", "00", true, SCENE_CUBES, jsonCatalogEntry, queue);
+        batch.AddTest(test, true);        
+        
+        // PURPOSE: Test error when content from server is not accessible
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.Network_Web_Exception_No_Access_To_Content));
+        script = new Script();
+        script.AddAction(0, new ActionNetworkResponseStatusCode(300));
+        test.Setup("00", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script);
+        batch.AddTest(test, true);        
+
+        // PURPOSE: Test Download is interrumpted because there's no internet access
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.Network_No_Reachability));
+        script = new Script();
+        script.AddAction(0, new ActionNetworkReachability(NetworkReachability.NotReachable));
+        test.Setup("permission_g1_true", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script, "g1");
+        batch.AddTest(test, true);         
+
+        // PURPOSE: Test Download is interrumpted because there's no empty space in storage
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(Error.EType.Disk_IOException));
+        script = new Script();
+        script.AddAction(0, new ActionDiskNoFreeSpace());
+        test.Setup("permission_g1_true", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, script, "g1");
+        batch.AddTest(test, true);        
+
+        // PURPOSE: Test Download is interrumpted because there's no permission to write in storage
+        test = new UTDownloadablesDownloader();
+        jsonCatalogEntry = UTDownloadablesHelper.GetEntryStatusManifestAsJSON(SCENE_CUBES_CRC, SCENE_CUBES_SIZE, 0, false);
+        queue = new Queue<Attempt>();
+        queue.Enqueue(new Attempt(MockDiskDriver.EOp.File_Open, "*", MockDriver.EExceptionType.UnauthorizedAccess, Error.EType.Disk_UnauthorizedAccess));        
+        test.Setup("permission_g1_true", "00", true, SCENE_CUBES, jsonCatalogEntry, queue, null, "g1");
         batch.AddTest(test, true);
 
         sm_lastTest = test;
@@ -124,7 +218,10 @@ public class UTDownloadablesDownloader : UnitTest
 
     private float m_currenTime;
 
-    public void Setup(string cacheFolder, string downloadablesFolder, bool isServerUp, string entryId, JSONNode entryJSON, Queue<Attempt> attempts, Script script = null)
+    private string m_entryGroupId;
+    
+    public void Setup(string cacheFolder, string downloadablesFolder, bool isServerUp, string entryId, JSONNode entryJSON, 
+        Queue<Attempt> attempts, Script script = null, string entryGroupId = null)
     {
         m_cacheFolder = cacheFolder;
         m_downloadablesFolder = downloadablesFolder;
@@ -133,10 +230,11 @@ public class UTDownloadablesDownloader : UnitTest
         m_entryJSON = entryJSON;
         m_attempts = attempts;
         m_script = script;
+        m_entryGroupId = entryGroupId;
     }
 
     protected override void ExtendedPerform()
-    {
+    {     
         if (AssetBundles.LaunchAssetBundleServer.IsRunning())
         {
             AssetBundles.LaunchAssetBundleServer.KillRunningAssetBundleServer();
@@ -156,7 +254,7 @@ public class UTDownloadablesDownloader : UnitTest
         Config config = new Config();        
         m_network = new MockNetworkDriver(getExceptionToThrowDelegate);
         m_diskDriver = new MockDiskDriver(getExceptionToThrowDelegate);
-        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
+        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.GROUPS_ROOT_PATH, 0, null);
         UTTracker tracker = new UTTracker(config, logger);
 
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);
@@ -171,17 +269,26 @@ public class UTDownloadablesDownloader : UnitTest
 	        m_entry = new CatalogEntryStatus();
 	        m_entry.LoadManifest(m_entryId, m_entryJSON);
 
+            if (m_entryGroupId != null)
+            {
+                CatalogGroup.StaticSetup(m_disk);
+                CatalogGroup entryGroup = new CatalogGroup();
+                entryGroup.Setup(m_entryGroupId, new List<string> { m_entryId });
+                m_entry.AddGroup(entryGroup);
+            }
+
 	        State = EState.PreparingEntry;
 
 	        Action.mockNetworkDriver = m_network;
 	        Action.downloader = m_downloader;
 		}
-		catch (System.Exception) 
+		catch (System.Exception e) 
 		{
-			NotifyPasses(false);
+            Debug.LogError("Exception " + e.ToString());
+            InternalNotifyPasses(false);
 		}
     }
-
+    
     private enum EState
     {
         PreparingEntry,
@@ -210,7 +317,7 @@ public class UTDownloadablesDownloader : UnitTest
                     break;
 
                 case EState.Done:
-                    NotifyPasses(m_success);
+                    InternalNotifyPasses(m_success);
                     m_downloader.Reset();
                     break;
             }
@@ -230,15 +337,19 @@ public class UTDownloadablesDownloader : UnitTest
                 m_script.Update(m_currenTime - m_timeStartAt);
             }
 
-            m_downloader.CurrentNetworkReachability = m_network.CurrentNetworkReachability;
+            m_downloader.Update();
             CatalogEntryStatus.StaticUpdate(m_currenTime, m_network.CurrentNetworkReachability);
 
             m_entry.Update();
 
             switch (State)
-            {
+            {                
                 case EState.PreparingEntry:
-                    if (m_entry.State == CatalogEntryStatus.EState.InQueueForDownload)
+                    if (m_entry.State == CatalogEntryStatus.EState.Available)
+                    {
+                        OnDone(true);
+                    }
+                    else if (m_entry.State == CatalogEntryStatus.EState.InQueueForDownload)
                     {
                         State = EState.WaitingForServer;
                     }
@@ -278,6 +389,11 @@ public class UTDownloadablesDownloader : UnitTest
                     break;
             }            
         }
+    }
+
+    private void InternalNotifyPasses(bool success)
+    {        
+        NotifyPasses(success);
     }
 
     private void OnDownloadEndCallback(CatalogEntryStatus entry, Error.EType errorType)
@@ -355,10 +471,50 @@ public class UTDownloadablesDownloader : UnitTest
 
         public override void Perform()
         {
-            mockNetworkDriver.IsMockNetworkReachabilityEnabled = true;
-            mockNetworkDriver.MockNetworkReachability = m_reachability;            
+            MockNetworkDriver.IsMockNetworkReachabilityEnabled = true;
+            MockNetworkDriver.MockNetworkReachability = m_reachability;            
+        }
+    }    
+
+    public class ActionNetworkResponseLength : Action
+    {
+        private long Length;
+
+        public ActionNetworkResponseLength(long length)
+        {
+            Length = length;
+        }
+
+        public override void Perform()
+        {
+            mockNetworkDriver.IsMockResponseContentLengthEnabled = true;
+            mockNetworkDriver.MockResponseContentLength = Length;
         }
     }
+
+    public class ActionNetworkResponseStatusCode : Action
+    {
+        private int StatusCode;
+
+        public ActionNetworkResponseStatusCode(int statusCode)
+        {
+            StatusCode = statusCode;
+        }
+
+        public override void Perform()
+        {
+            mockNetworkDriver.IsMockResponseStatusCodeEnabled = true;
+            mockNetworkDriver.MockResponseStatusCode = StatusCode;
+        }
+    }
+
+    public class ActionDiskNoFreeSpace : Action
+    {                
+        public override void Perform()
+        {
+            MockDiskDriver.IsNoFreeSpaceEnabled = true;            
+        }
+    }    
 
     public class Script
     {
