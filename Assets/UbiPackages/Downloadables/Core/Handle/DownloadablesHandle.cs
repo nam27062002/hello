@@ -113,7 +113,12 @@ namespace Downloadables
             {
                 return ExtendedGetErrorType();
             }
-        }                        
+        }
+
+        public int GetErrorCode()
+        {
+            return (int)GetErrorType();
+        }
 
         /// <summary>
         /// Returns the most important error afecting whe whole downloading process. Returns EError.NONE is everything is ok.
