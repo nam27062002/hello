@@ -285,6 +285,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { instance.m_useLiveEventsDebugCalls = value; }
 	}
 
+	[SerializeField] private bool m_useDownloadablesMockHandlers = false;
+	public static bool useDownloadablesMockHandlers {
+		get { return instance.m_useDownloadablesMockHandlers; }
+		set { instance.m_useDownloadablesMockHandlers = value; }
+	}
+
 	// UI settings
 	[Separator("UI Debug Tools")]
 	[SerializeField] private bool m_useUnitySafeArea = false;

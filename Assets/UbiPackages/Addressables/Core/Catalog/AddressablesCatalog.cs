@@ -333,6 +333,17 @@ public class AddressablesCatalog
             }
         }
 
+        // We consider that the asset bundles defined in groups and in localAB are necessary
+        if (m_groups != null)
+        {
+            foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+            {
+                UbiListUtils.AddRange(returnValue, pair.Value.AssetBundleIds, false, true);
+            }
+        }
+
+        UbiListUtils.AddRange(returnValue, m_localABList, false, true);
+
         return returnValue;
     }
 

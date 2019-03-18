@@ -19,7 +19,7 @@ namespace Downloadables
 
         private string Id { get; set; }
 
-        private List<string> EntryIds;
+        public List<string> EntryIds;
 
         private bool NeedsToSave { get; set; }
 

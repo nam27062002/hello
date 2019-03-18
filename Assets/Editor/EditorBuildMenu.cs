@@ -63,7 +63,7 @@ public class EditorBuildMenu : MonoBehaviour
     public static void BuildAddressablesAndPlayer()
     {
 		Debug.Log("Building addressables...");
-        EditorAddressablesMenu.Build();
+        EditorAddressablesMenu.BuildForTargetPlatform();
         InternalBuildPlayer();
         OnDone(BUILD_MENU_BUILD_ADDRESSABLES_AND_PLAYER);
     }

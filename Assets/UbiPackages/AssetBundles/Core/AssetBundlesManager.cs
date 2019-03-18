@@ -1,5 +1,6 @@
 ﻿using SimpleJSON;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -107,15 +108,23 @@ public class AssetBundlesManager
 #endif
         Logger downloadablesLogger = logger;
 
+        AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
+
+        // It deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
+        List<string> idsRemoved = Downloadables.Manager.RemoveEntryIds(downloadablesCatalog, catalog.GetLocalAssetBundlesList());        
+        if (CanLog())
+        {
+            Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
+        }
+
+        ProcessCatalog(catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
+
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
-        m_downloadablesManager.Initialize(downloadablesCatalog);
-        
-        LoadCatalog(localAssetBundlesPath);
 
         Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
         if (m_groups != null)
         {
-            Downloadables.CatalogGroup downloadablesGroup;            
+            Downloadables.CatalogGroup downloadablesGroup;
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
             {
                 pair.Value.ExpandDependencies();
@@ -123,11 +132,11 @@ public class AssetBundlesManager
                 if (downloadablesGroup != null)
                 {
                     downloadablesGroups.Add(pair.Key, downloadablesGroup);
-                }                
+                }
             }
         }
-
-        m_downloadablesManager.SetGroups(downloadablesGroups);
+        
+        m_downloadablesManager.Initialize(downloadablesCatalog, downloadablesGroups);        
 
         if (CanLog())
         {
@@ -150,6 +159,8 @@ public class AssetBundlesManager
 
                 AssetBundleHandle handle;
                 int count = input.Count;
+
+                // Only remote asset bundles should be included as this stuff is for downloadables manager
                 for (int i = 0; i < count && downloadablesIds != null; i++)
                 {
                     handle = GetAssetBundleHandle(input[i]);
@@ -157,18 +168,18 @@ public class AssetBundlesManager
                     {
                         if (CanLog())
                         {
-                            Logger.LogError("Group <" + abGroup.Id + "> is not valid because it constains <" + input[i] + "> which is not a valid asset bundle");
+                            Logger.LogError("Group <" + abGroup.Id + "> is not valid because it contains <" + input[i] + "> which is not a valid asset bundle");
                         }
 
                         downloadablesIds = null;
                     }
-                    else
+                    else if (handle.IsRemote())
                     {
                         downloadablesIds.Add(input[i]);
                     }
                 }   
                 
-                if (downloadablesIds != null)
+                if (downloadablesIds != null && downloadablesIds.Count > 0)
                 {
                     returnValue = new Downloadables.CatalogGroup();
                     returnValue.Setup(abGroup.Id, downloadablesIds);                    
@@ -191,7 +202,7 @@ public class AssetBundlesManager
             int count = input.Count;
             for (int i = 0; i < count && returnValue; i++)
             {
-                handle = AssetBundlesManager.Instance.GetAssetBundleHandle(input[i]);
+                handle = GetAssetBundleHandle(input[i]);
                 if (handle == null)
                 {
                     if (CanLog())
@@ -228,17 +239,34 @@ public class AssetBundlesManager
     }
 #endif
 
-    private void LoadCatalog(string directory)
-    {        
-        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);        
-        TextAsset targetFile = Resources.Load<TextAsset>(path);
-        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;        
+    private AssetBundlesCatalog LoadCatalog(string directory)
+    {
+        AssetBundlesCatalog returnValue = null;
 
+        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;
         if (json != null)
         {
-            AssetBundlesCatalog catalog = new AssetBundlesCatalog();          
-            catalog.Load(json, sm_logger);
+            returnValue = new AssetBundlesCatalog();
+            returnValue.Load(json, sm_logger);
+            m_groups = returnValue.GetGroups();
+        }
+        else
+        {
+            if (CanLog())
+            {
+                Logger.Log("No " + ASSET_BUNDLES_CATALOG_FILENAME + " file found");
+            }
+        }
 
+        return returnValue;
+    }  
+
+    private void ProcessCatalog(AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
+    {                
+        if (catalog != null)
+        {            
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
             // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
@@ -264,9 +292,9 @@ public class AssetBundlesManager
                 handle = new AssetBundleHandle();
 
                 // The path depends on whether or not the asset bundle is local
-                if (m_downloadablesManager.Catalog_ContainsEntryStatus(id))
+                if (remoteEntryIds != null && remoteEntryIds.Contains(id))
                 {
-                    handle.Setup(id, m_downloadablesManager.GetPathToDownload(id), dependencies, true);
+                    handle.Setup(id, Downloadables.Manager.GetPathToDownload(id), dependencies, true);
                 }
                 else
                 {
@@ -277,14 +305,7 @@ public class AssetBundlesManager
             }
 
             m_groups = catalog.GetGroups();         
-        }
-        else
-        {
-            if (CanLog())
-            {
-                Logger.Log("No " + ASSET_BUNDLES_CATALOG_FILENAME + " file found");
-            }
-        }
+        }       
     }    
 
     public void Reset()

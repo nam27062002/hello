@@ -241,6 +241,7 @@ public class EditorAddressablesManager
         }
 
         abCatalog.SetGroups(editorCatalog.GetGroups());
+        abCatalog.SetExplicitLocalAssetBundlesList(editorCatalog.GetLocalABList());
 
         EditorFileUtils.CreateDirectory(m_localDestinationPath);
 
@@ -329,7 +330,7 @@ public class EditorAddressablesManager
             }
 
             // Generates remote AB list file            
-            // GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
+            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
 
             // Deletes original files that were moved to local
             EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);

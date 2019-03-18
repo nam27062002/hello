@@ -347,5 +347,146 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-    #endregion
+	#endregion
+
+	#region DOWNLOADABLE GROUPS HANDLERS
+	// [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
+	//		 groups and rules can be tricky to represent in content
+
+	/// <summary>
+	/// Get the handle for all downloadables required for a specific dragon in its
+	/// current state: owned status, skin equipped, pets equipped, etc...
+	/// </summary>
+	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <param name="_dragonSku">Classic dragon sku.</param>
+	public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
+		// Get target dragon info
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
+
+		// Figure out group dependencies for this dragon
+		// 1. Level area dependencies: will depend basically on the dragon's tier
+		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
+		List<string> equippedPowers = GetPowersList(dragonData.persistentDisguise, dragonData.pets);
+
+		// No more dependencies to be checked: return handler!
+		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+	}
+
+	/// <summary>
+	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a special dragon.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <param name="_dragonSku">Special dragon sku.</param>
+	public Downloadables.Handle GetHandleForSpecialDragon(string _dragonSku) {
+		// For now, same logic as with the classic dragons applies :)
+		return GetHandleForClassicDragon(_dragonSku);
+	}
+
+	/// <summary>
+	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a dragon in a tournament.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <param name="_tournamentData">Tournament data.</param>
+	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournamentData) {
+		// Get target dragon info
+		IDragonData dragonData = DragonManager.GetDragonData(_tournamentData.GetToUseDragon());
+
+		// Figure out group dependencies for this dragon
+		// 1. Level area dependencies: will depend basically on the dragon's tier
+		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
+		List<string> equippedPowers = GetPowersList(_tournamentData.GetToUseSkin(), _tournamentData.GetToUsePets());
+
+		// No more dependencies to be checked: return handler!
+		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+	}
+
+	/// <summary>
+	/// Get the handle for all dowloadables required for a dragon tier and a list of equipped powers.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for the given setup.</returns>
+	/// <param name="_tier">Tier.</param>
+	/// <param name="_powers">Powers sku list.</param>
+	private Downloadables.Handle GetHandleForDragonTier(DragonTier _tier, List<string> _powers) {
+		// Check equipped powers to detect those that might modify the target tier
+		for(int i = 0; i < _powers.Count; ++i) {
+			// Is it one of the tier-modifying powers?
+			// [AOC] TODO!! Check whether having multiple powers of this type would accumulate max tier or not
+			switch(_powers[i]) {
+				case "dragonram": {
+					// Increaase tier by 1, don't go out of bounds!
+					_tier = _tier + 1;
+					if(_tier >= DragonTier.COUNT) {
+						_tier = DragonTier.COUNT - 1;
+					}
+				} break;
+			}
+		}
+
+		// Now select target asset groups based on final tier
+		List<string> groups = new List<string>();
+		if(_tier >= DragonTier.TIER_0) {	// XS and bigger
+			groups.Add("area1");	// Village
+		}
+
+		if(_tier >= DragonTier.TIER_2) {    // M and bigger
+			groups.Add("area2");	// Castle
+		}
+
+		if(_tier >= DragonTier.TIER_3) {    // L and bigger
+			groups.Add("area3");    // Dark
+		}
+
+		// Finally get / create the handle for these assets groups
+		if(DebugSettings.useDownloadablesMockHandlers) {
+			// Debug!
+			// [AOC] TODO!!
+
+			//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+			//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+			//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+			//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+			//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+			//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+			//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+			//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+			//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+
+		} else {
+			// The real deal
+			// [AOC] TODO!!
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// Given a skin and a list of pets, create a list with all the powers derived from such equipment.
+	/// </summary>
+	/// <returns>List of power skus derived from given equipment. The first entry will correspond to the skin power.</returns>
+	/// <param name="_skinSku">Skin sku.</param>
+	/// <param name="_pets">Pets skus.</param>
+	private List<string> GetPowersList(string _skinSku, List<string> _pets) {
+		// Aux vars
+		List<string> powers = new List<string>();
+		DefinitionNode def = null;
+
+		// Check skin power
+		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _skinSku);
+		if(def != null) {
+			powers.Add(def.GetAsString("powerup"));
+		}
+
+		// Check pets powers
+		for(int i = 0; i < _pets.Count; i++) {
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _pets[i]);
+			if(def != null) {
+				powers.Add(def.Get("powerup"));
+			}
+		}
+
+		// Done!
+		return powers;
+	}
+
+	#endregion
 }
