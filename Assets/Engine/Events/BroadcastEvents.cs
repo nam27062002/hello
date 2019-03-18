@@ -56,6 +56,7 @@ public class FuryRushToggled : BroadcastEventInfo
 {
     public bool activated = false;
     public DragonBreathBehaviour.Type type = DragonBreathBehaviour.Type.None;
+    public FireColorSetupManager.FireColorType color = FireColorSetupManager.FireColorType.RED;
 }
 
 public class UIMapZoomChanged : BroadcastEventInfo
