@@ -377,14 +377,14 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }
+    }    
 
-    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
     {
-        AssetBundlesGroup returnValue = null;
+        Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
-            returnValue = m_providerFromAB.CreateAssetBundlesGroupFromList(groupId, groupIds);
+            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
         }
         else
         {
@@ -394,12 +394,12 @@ public class AddressablesManager
         return returnValue;
     }
 
-    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
     {
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
-            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
+            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupIds);
         }
         else
         {

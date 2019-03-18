@@ -142,15 +142,15 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         return AssetBundlesManager.Instance.GetAssetBundlesGroup(groupId);
     }
-
-    public AssetBundlesGroup CreateAssetBundlesGroupFromList(string groupId, List<string> groupIds)
-    {
-        return AssetBundlesManager.Instance.CreateAssetBundlesGroupFromList(groupId, groupIds);
-    }
-
+    
     public Downloadables.Handle CreateDownloadablesHandle(string groupId)
     {
         return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupId);
+    }
+
+    public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
+    {
+        return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupIds);
     }
 
     public void Update()
