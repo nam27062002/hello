@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: FX_MT_HeadFlare_Addblend_01
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EMISSIVEPOWER EXTENDED_PARTICLES
+  m_ShaderKeywords: BLENDMODE_ALPHABLEND EMISSIVEPOWER EXTENDED_PARTICLES NOISEUV
     NOISE_TEXTURE NOISE_TEXTURE_ALPHA NOISE_TEXTURE_EMISSION
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -24,41 +24,41 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: eeeaf6eb10ac44d43be21426a2fb0c03, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9c7d340e61a1c594b98e2e1dde48a74e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 7bd5f12deae82654ba8b99678c3355f0, type: 3}
+        m_Texture: {fileID: 2800000, guid: cc8aae88faf94af41bb70353bf6c4951, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 5
+    - BlendMode: 3
     - _ABOffset: 0
     - _ColorMultiplier: 1
     - _Cull: 0
     - _DstBlend: 10
-    - _EmissionSaturation: 3.06
+    - _EmissionSaturation: 1
     - _EmissivePower: 4
     - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
-    - _EnableColorVertex: 1
+    - _EnableColorVertex: 0
     - _EnableEmissivePower: 1
     - _EnableExtendedParticles: 1
     - _EnableNoiseTexture: 1
     - _EnableNoiseTextureAlpha: 1
     - _EnableNoiseTextureDissolve: 0
     - _EnableNoiseTextureEmission: 1
-    - _EnableNoiseUV: 0
+    - _EnableNoiseUV: 1
     - _GlobalAlpha: 1
-    - _OpacitySaturation: 0.66
-    - _SrcBlend: 1
+    - _OpacitySaturation: 1
+    - _SrcBlend: 5
     - _ZTest: 2
     m_Colors:
-    - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _BasicColor: {r: 0, g: 0.006896496, b: 1, a: 1}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
-    - _NoisePanning: {r: 1, g: 0, b: 0, a: 0}
+    - _NoisePanning: {r: -1.5, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.8088235, g: 1, b: 0.97626776, a: 0.5}
+    - _SaturatedColor: {r: 0.4343642, g: 0.516782, b: 0.75735295, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
