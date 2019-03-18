@@ -27,7 +27,9 @@ public class AddressablesManager
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
-    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+
+    public const string ADDRESSABLES_EDITOR_PATH = "Assets/Editor/Addressables/";
+    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = ADDRESSABLES_EDITOR_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;    
 
     private const string EDITOR_MODE_KEY = "EditorMode";
 

@@ -22,14 +22,31 @@ public class EditorAddressablesManager
     private static string GENERATED_FOLDER = "Generated";
     private static string RESOURCES_GENERATED_FOLDER = EditorFileUtils.PathCombine("Resources", GENERATED_FOLDER);
 
-    public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
+    public static AddressablesCatalog GetEditorCatalogFromPath(string path, bool editorMode)
     {
-        return AddressablesManager.GetCatalog(catalogPath, editorMode);        
+        return AddressablesManager.GetCatalog(path, editorMode);
+    }
+
+    public static AddressablesCatalog GetEditorCatalog(bool useTmp=true)
+    {
+        string path;
+        if (useTmp && File.Exists(ADDRESSABLES_EDITOR_TMP_CATALOG_PATH))
+        {
+            path = ADDRESSABLES_EDITOR_TMP_CATALOG_PATH;
+        }
+        else
+        {
+            path = ADDRESSABLES_EDITOR_CATALOG_PATH;
+        }
+
+        return GetEditorCatalogFromPath(path, true);
     }
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME;
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
     private const string ADDRESSABLES_EDITOR_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH;
+    public const string ADDRESSABLES_EDITOR_TMP_PATH = AddressablesManager.ADDRESSABLES_EDITOR_PATH + "tmp/";
+    public const string ADDRESSABLES_EDITOR_TMP_CATALOG_PATH = ADDRESSABLES_EDITOR_TMP_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
     private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
 
@@ -55,6 +72,7 @@ public class EditorAddressablesManager
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
 		EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString()));
         EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_EDITOR_TMP_CATALOG_PATH);
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -73,7 +91,7 @@ public class EditorAddressablesManager
         
         EditorFileUtils.CreateDirectory(m_localDestinationPath);
 
-        BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
+        BuildCatalog(m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
     }
 
     public void BuildAssetBundles(BuildTarget platform)
@@ -114,11 +132,11 @@ public class EditorAddressablesManager
         return null;
     }
 
-    private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
+    private void BuildCatalog(string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
+        AddressablesCatalog editorCatalog = GetEditorCatalog(false);
 
         JSONNode externalCatalogJSON = GetExternalAddressablesCatalogJSON();
         if (editorCatalog == null)
@@ -134,8 +152,18 @@ public class EditorAddressablesManager
             editorCatalog.Join(externalCatalogJSON, sm_logger);
         }
 
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_EDITOR_TMP_CATALOG_PATH);
+
         if (editorCatalog != null)
-        {
+        {            
+            // Writes the full editor catalog
+            if (!Directory.Exists(ADDRESSABLES_EDITOR_TMP_PATH))
+            {
+                Directory.CreateDirectory(ADDRESSABLES_EDITOR_TMP_PATH);
+            }
+
+            EditorFileUtils.WriteToFile(ADDRESSABLES_EDITOR_TMP_CATALOG_PATH, editorCatalog.ToJSON().ToString());
+
             editorCatalog.OptimizeEntriesAssetNames();
 
             AssetDatabase.RemoveUnusedAssetBundleNames();            
@@ -200,8 +228,6 @@ public class EditorAddressablesManager
         }
     }
 
-
-
     public void GenerateAssetBundlesCatalog()
     {
         if (!File.Exists(ADDRESSABLES_EDITOR_CATALOG_PATH))
@@ -225,7 +251,7 @@ public class EditorAddressablesManager
             return;
         }        
 
-        AddressablesCatalog editorCatalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);                
+        AddressablesCatalog editorCatalog = GetEditorCatalog(true);                
         ParseAssetBundlesOutput output = ParseAssetBundles(editorCatalog, abManifest);
 
         List<string> abList = UbiListUtils.AddRange(output.m_LocalABList, output.m_RemoteABList, true, true);
@@ -262,7 +288,7 @@ public class EditorAddressablesManager
     {
         Debug.Log("Processing asset bundles...");
 
-        AddressablesCatalog catalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+        AddressablesCatalog catalog = GetEditorCatalog(true);
 
         AssetBundle manifestBundle = null;
         AssetBundleManifest abManifest = EditorAssetBundlesManager.LoadAssetBundleManifest(out manifestBundle);

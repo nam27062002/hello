@@ -241,14 +241,13 @@ public class AssetBundlesManager
 
     private AssetBundlesCatalog LoadCatalog(string directory)
     {
-        AssetBundlesCatalog returnValue = null;
+        AssetBundlesCatalog returnValue = new AssetBundlesCatalog();
 
         string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);
         TextAsset targetFile = Resources.Load<TextAsset>(path);
         JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;
         if (json != null)
-        {
-            returnValue = new AssetBundlesCatalog();
+        {            
             returnValue.Load(json, sm_logger);
             m_groups = returnValue.GetGroups();
         }
