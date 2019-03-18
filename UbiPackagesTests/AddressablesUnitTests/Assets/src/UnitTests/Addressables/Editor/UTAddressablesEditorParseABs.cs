@@ -231,7 +231,7 @@ public class UTAddressablesEditorParseABs : UnitTest
             string editorCatalogPath = m_addressablesRootPath + "/" + EditorAddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
             if (File.Exists(editorCatalogPath))
             {
-                editorCatalog = EditorAddressablesManager.GetCatalog(editorCatalogPath, true);
+                editorCatalog = EditorAddressablesManager.GetEditorCatalogFromPath(editorCatalogPath, true);
             }
         }
 
