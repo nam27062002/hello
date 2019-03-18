@@ -154,7 +154,7 @@ namespace AI {
 		void OnDisable() {
 			LeaveGroup();
 
-            if ( ApplicationManager.IsAlive )
+            if ( ApplicationManager.IsAlive && FreezingObjectsRegistry.instance != null )
             {
                 FreezingObjectsRegistry.instance.UnregisterMachine( this );
             }

@@ -13,7 +13,7 @@ public class FreezingRegister : MonoBehaviour {
 	
 	// Update is called once per frame
 	void OnDestroy () {
-		if ( FreezingObjectsRegistry.isInstanceCreated )
+		if ( FreezingObjectsRegistry.instance != null)
 			FreezingObjectsRegistry.instance.RemoveRegister( m_registry );
 	}
 

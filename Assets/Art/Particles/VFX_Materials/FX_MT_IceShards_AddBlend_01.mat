@@ -6,28 +6,24 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: VFX_FrozenGlow_AddBlend_01
+  m_Name: FX_MT_IceShards_AddBlend_01
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY EMISSIVEPOWER EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2990
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _ColorRamp:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DissolveTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6408d564a430289439674c4bcb220350, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: e35937c6722dd054da8844ccc837e9a9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5482b59f56d284ed792986664997f1e8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
@@ -35,21 +31,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 3
-    - Dissolve: 0
+    - BlendMode: 5
     - _ABOffset: 0
-    - _ColorMultiplier: 0
+    - _ColorMultiplier: 1
     - _Cull: 0
     - _DstBlend: 10
-    - _EmissionSaturation: 1
+    - _EmissionSaturation: 2
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 0
     - _EnableAutomaticPanning: 0
     - _EnableColorRamp: 0
     - _EnableColorTint: 0
     - _EnableColorVertex: 1
-    - _EnableDissolve: 0
-    - _EnableEmissivePower: 0
+    - _EnableEmissivePower: 1
     - _EnableExtendedParticles: 1
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 0
@@ -57,13 +51,13 @@ Material:
     - _EnableNoiseTextureEmission: 0
     - _EnableNoiseUV: 0
     - _GlobalAlpha: 1
-    - _OpacitySaturation: 0.15
-    - _SrcBlend: 5
+    - _OpacitySaturation: 1
+    - _SrcBlend: 1
     - _ZTest: 2
     m_Colors:
-    - _BasicColor: {r: 0, g: 0.048275948, b: 1, a: 0.5}
+    - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.11764705, g: 0.85395527, b: 1, a: 0.5}
-    - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _SaturatedColor: {r: 0.60294116, g: 0.9014198, b: 1, a: 0.5}
+    - _TintColor: {r: 1, g: 1, b: 1, a: 0.659}

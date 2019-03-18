@@ -560,6 +560,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
                 m_state = _newState;    // This is done so if in the event FURY_RUSH_TOGGLED someone checks if is fury on it says false. Check DragonPlayer CanIResumeEating
                 m_furyRushToggled.activated = false;
                 m_furyRushToggled.type = m_type;
+                m_furyRushToggled.color = m_currentColor;
                 Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
 		        m_type = Type.None;
     		}break;
@@ -630,6 +631,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
                 m_furyRushToggled.activated = true;
                 m_furyRushToggled.type = m_type;
+                m_furyRushToggled.color = m_currentColor;
                 Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
     		}break;
     	}

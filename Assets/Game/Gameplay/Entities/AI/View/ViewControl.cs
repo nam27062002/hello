@@ -64,6 +64,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
+    
+    [SeparatorAttribute("Freeze Particle")]
+    [SerializeField] private bool m_useFreezeParticle = false;
+
     [SeparatorAttribute("In Love")]
     [SerializeField] private bool m_useMoveAnimInLove = false;
 
@@ -186,6 +190,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 	//
     private float m_freezingLevel = 0;
+    private GameObject m_freezingParticle;
 
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
@@ -194,6 +199,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     private ParticleData m_inLoveParticle;
     private GameObject m_inLoveParticleInstance;
     protected bool m_inLove = false;
+
+    
 
 
 	private Transform m_transform;
@@ -554,6 +561,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
+        
+        if ( m_freezingParticle && FreezingObjectsRegistry.instance != null)
+        {
+            FreezingObjectsRegistry.instance.ForceReturnInstance(m_freezingParticle);
+            FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
+            m_freezingParticle = null;
+        }
 
         if ( m_inLoveParticleInstance )
         {
@@ -1256,11 +1270,38 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();
+            // Check Particle
+            if (m_useFreezeParticle)
+            {
+                if ( m_freezingLevel > 0 )
+                {
+                    if (m_freezingParticle == null)
+                        m_freezingParticle = FreezingObjectsRegistry.instance.freezeParticle.Spawn(m_transform);
+                    if ( m_freezingParticle )
+                    {
+                        FreezingObjectsRegistry.instance.ScaleUpParticle( m_freezingParticle );
+                    }
+                }
+                else
+                {
+                    if (m_freezingParticle != null)
+                    {
+                        FreezingObjectsRegistry.instance.ScaleDownParticle( m_freezingParticle, FreezeScaleDownCallback );
+                    }   
+                }
+            }
         }	
         m_freezingLevel = freezeLevel;	
 	}
+    
+    public void FreezeScaleDownCallback()
+    {
+        FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
+        m_freezingParticle = null;
+    }
+    
 
-	public void SetStunned( bool stunned ){
+    public void SetStunned( bool stunned ){
 		if ( stunned ){
 			if (m_isAnimatorAvailable)
 				m_animator.enabled = false;

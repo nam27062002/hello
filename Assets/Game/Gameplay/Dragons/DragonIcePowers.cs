@@ -25,17 +25,15 @@ public class DragonIcePowers : MonoBehaviour {
     private int m_powerLevel = 0;
     private bool m_active = false;
 
-    public void Awake()
+    public void Start()
     {
         m_frozenRegistry = FreezingObjectsRegistry.instance.Register( transform, m_currentRadius);
         m_frozenRegistry.m_checkTier = true;
         
         FreezingObjectsRegistry.instance.RemoveRegister( m_frozenRegistry );    // Start deactivated
         m_frozenRegistry.m_killTiers = m_frozenKillProbabiblities;
-    }
-
-    public void Start()
-    {
+        
+        
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
         m_frozenRegistry.m_dragonTier = dataSpecial.tier;
@@ -91,7 +89,7 @@ public class DragonIcePowers : MonoBehaviour {
     
     // Update is called once per frame
     void OnDestroy () {
-        if ( FreezingObjectsRegistry.isInstanceCreated )
+        if ( FreezingObjectsRegistry.instance != null )
             FreezingObjectsRegistry.instance.RemoveRegister( m_frozenRegistry );
     }
 

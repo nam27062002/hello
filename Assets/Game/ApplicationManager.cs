@@ -1153,6 +1153,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FuryRushToggled furyRushToggled = new FuryRushToggled();
         furyRushToggled.activated = Debug_IsFrameColorOn;
         furyRushToggled.type = DragonBreathBehaviour.Type.Mega;
+        furyRushToggled.color = FireColorSetupManager.FireColorType.RED;
         Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, furyRushToggled);
     }
 
