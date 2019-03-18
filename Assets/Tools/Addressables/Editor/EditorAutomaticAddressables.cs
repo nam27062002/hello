@@ -9,7 +9,8 @@ using SimpleJSON;
 
 
 public static class EditorAutomaticAddressables {
-    private static string[] VARIANTS_PATH = { "/Low/", "/Master/", "/High/", "/VeryHigh/" };
+    private static string[] VARIANTS_PATH = { Path.DirectorySeparatorChar + "Low" + Path.DirectorySeparatorChar, Path.DirectorySeparatorChar + "Master" + Path.DirectorySeparatorChar,
+                                              Path.DirectorySeparatorChar + "High" + Path.DirectorySeparatorChar, Path.DirectorySeparatorChar + "VeryHigh" + Path.DirectorySeparatorChar};
     private static string[] VARIANTS = { "Low", "Master", "High", "VeryHigh" };
 
     private static string[] AREAS = { "village", "castle", "dark" };
@@ -140,7 +141,9 @@ public static class EditorAutomaticAddressables {
         FileInfo[] files = _directory.GetFiles();
         foreach (FileInfo file in files) {
             string filePath = file.FullName;
-            filePath = filePath.Substring(filePath.IndexOf("Assets/", System.StringComparison.Ordinal));
+            string assetsToken = "Assets" + Path.DirectorySeparatorChar;
+            filePath = filePath.Substring(filePath.IndexOf(assetsToken, System.StringComparison.Ordinal));
+
 
             AssetImporter ai = AssetImporter.GetAtPath(filePath);
             if (ai != null) {
@@ -163,7 +166,7 @@ public static class EditorAutomaticAddressables {
                         string id = assetName;
 
                         if (_addLastFolder) {
-                            id = assetPath.Substring(assetPath.LastIndexOf('/') + 1) + "/" + id;
+                            id = assetPath.Substring(assetPath.LastIndexOf(Path.DirectorySeparatorChar) + 1) + "/" + id;
                         }
 
                         string variant = null;
