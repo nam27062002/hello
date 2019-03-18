@@ -52,8 +52,59 @@ namespace Downloadables
             }
 
             return returnValue;
-        }       
-             
+        }
+
+        public static string GetPathToDownload(string id)
+        {
+            return DOWNLOADS_ROOT_PATH_WITH_SLASH + id;
+        }
+
+        public static ArrayList GetEntryIds(JSONNode catalogJSON)
+        {
+            ArrayList returnValue = null;
+            if (catalogJSON != null)
+            {
+                JSONClass assets = (JSONClass)catalogJSON[Catalog.CATALOG_ATT_ENTRIES];
+                if (assets != null)
+                {
+                    returnValue = assets.GetKeys();
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Removes the entry ids passed as an argument from <c>catalogJSON</c>
+        /// </summary>
+        /// <param name="catalogJSON">JSON containing downloadable entries</param>
+        /// <param name="entryIdsToRemove">List of downoadable ids to remove from the catalog.</param>
+        /// <returns>List with the downloadable ids actually removed from the catalog.</returns>
+        public static List<string> RemoveEntryIds(JSONNode catalogJSON, List<string> entryIdsToRemove)
+        {
+            List<string> returnValue = null;
+            if (catalogJSON != null && entryIdsToRemove != null && entryIdsToRemove.Count > 0)
+            {
+                JSONClass assets = (JSONClass)catalogJSON[Catalog.CATALOG_ATT_ENTRIES];
+                if (assets != null)
+                {
+                    returnValue = new List<string>();
+
+                    int count = entryIdsToRemove.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (assets.ContainsKey(entryIdsToRemove[i]))
+                        {
+                            returnValue.Add(entryIdsToRemove[i]);
+                            assets.Remove(entryIdsToRemove[i]);
+                        }
+                    }                    
+                }
+            }
+
+            return returnValue;
+        }
+
         public static readonly string DESKTOP_DEVICE_STORAGE_PATH_SIMULATED = "DeviceStorageSimulated/";
 
         public static readonly string DOWNLOADABLES_FOLDER_NAME = "Downloadables";
@@ -132,15 +183,17 @@ namespace Downloadables
             }       
         }
 
-        public void Initialize(JSONNode catalogJSON)
+        public void Initialize(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {
             Reset();          
 
             if (CanLog())
             {                
                 Log("Initializing Downloadables manager..." );
-            }                        
-            
+            }
+
+            m_groups = groups;
+
             ProcessCatalog(catalogJSON);            
 
             IsInitialized = true;            
@@ -151,12 +204,7 @@ namespace Downloadables
                 m_downloader.Initialize(urlBase);
             }
         } 
-
-        public void SetGroups(Dictionary<string, CatalogGroup> groups = null)
-        {
-            m_groups = groups;
-        }
-
+       
         public void SetGroupPermissionRequested(string groupId, bool value)
         {
             if (m_groups != null && !string.IsNullOrEmpty(groupId))
@@ -168,16 +216,18 @@ namespace Downloadables
                     group.PermissionRequested = value;
                 }
             }
-        }
+        }        
 
         private void ProcessCatalog(JSONNode catalogJSON)
         {    
             if (catalogJSON != null)
-            {                
+            {
+                List<string> ids = null;
+
                 JSONClass assets = (JSONClass)catalogJSON[Catalog.CATALOG_ATT_ENTRIES];
                 if (assets != null)
                 {
-                    List<string> ids = new List<string>();
+                    ids = new List<string>();
 
                     string id;
                     ArrayList keys = assets.GetKeys();
@@ -188,13 +238,22 @@ namespace Downloadables
                         ids.Add(id);
 
                         Catalog_AddEntryStatus(id, assets[id]);                        
-                    }
+                    }                    
+                }
 
-                    if (ids.Count > 0)
+                List<string> groups = null;
+
+                if (m_groups != null)
+                {
+                    groups = new List<string>();
+                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
                     {
-                        m_cleaner.CleanAllExcept(ids);
+                        groups.Add(pair.Key);
                     }
                 }
+
+                // Cleans obsolete stuff
+                m_cleaner.CleanAllExcept(ids, groups);                
             }            
         }                 
         
@@ -271,12 +330,7 @@ namespace Downloadables
             }
 
             return returnValue;
-        }
-
-        public string GetPathToDownload(string id)
-        {
-            return DOWNLOADS_ROOT_PATH_WITH_SLASH + id;
-        }
+        }        
 
         /// <summary>
         /// Request a downloadable with <c>id</c> as an identifier to be downloaded.

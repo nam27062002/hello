@@ -10,8 +10,9 @@ namespace Downloadables
     /// </summary>
     public class Cleaner
     {        
-        private Disk m_disk;
-        private List<string> m_idsToKeep;
+        private Disk m_disk;        
+        private List<string> m_entryIdsToKeep;
+        private List<string> m_groupIdsToKeep;
         private List<string> m_fileNamesToDelete;
         private Disk.EDirectoryId m_directoryIdToDelete;
         private float m_latestErrorTimestamp;
@@ -22,6 +23,7 @@ namespace Downloadables
             Init,
             RetrievingManifests,
             RetrievingDownloads,
+            RetrievingGroups,
             DeletingFiles,
             Done
         };
@@ -37,7 +39,8 @@ namespace Downloadables
 
         public void Reset()
         {
-            m_idsToKeep = null;
+            m_entryIdsToKeep = null;
+            m_groupIdsToKeep = null;
             m_fileNamesToDelete.Clear();
             m_latestErrorTimestamp = -1f;
             m_step = EStep.Init;
@@ -55,14 +58,18 @@ namespace Downloadables
         /// <summary>
         /// Requests to delete all files except the ones in the list of downloadable ids passed as a parameter
         /// </summary>
-        /// <param name="ids">List of downloadable ids to keep from both (manifests and downloads)</param>
-        public void CleanAllExcept(List<string> idsToKeep)
+        /// <param name="entryIdsToKeep">List of downloadable ids to keep from both folders(manifests and downloads)</param>
+        /// <param name="groupIdsToKeep">List of downloadable group ids to keep from Groups folder</param>
+        public void CleanAllExcept(List<string> entryIdsToKeep, List<string> groupIdsToKeep)
         {
             Reset();
 
-            m_idsToKeep = idsToKeep;
+            m_entryIdsToKeep = entryIdsToKeep;
+            m_groupIdsToKeep = groupIdsToKeep;
 
-            if (idsToKeep == null || idsToKeep.Count == 0)
+            int count = (entryIdsToKeep == null || entryIdsToKeep.Count == 0) ? 0 : entryIdsToKeep.Count;
+            count += (groupIdsToKeep == null || groupIdsToKeep.Count == 0) ? 0 : groupIdsToKeep.Count;
+            if (count == 0)
             {
                 SetStep(EStep.Done);
             }
@@ -94,6 +101,10 @@ namespace Downloadables
                         UpdateRetrievingStep(Disk.EDirectoryId.Downloads);
                         break;
 
+                    case EStep.RetrievingGroups:
+                        UpdateRetrievingStep(Disk.EDirectoryId.Groups);
+                        break;
+
                     case EStep.DeletingFiles:
                         Error error = null;
                         while (m_fileNamesToDelete.Count > 0 && error == null)
@@ -107,14 +118,20 @@ namespace Downloadables
 
                         if (m_fileNamesToDelete.Count == 0)
                         {
-                            if (m_directoryIdToDelete == Disk.EDirectoryId.Manifests)
+                            switch (m_directoryIdToDelete)
                             {
-                                SetStep(EStep.RetrievingDownloads);
-                            }
-                            else
-                            {
-                                SetStep(EStep.Done);
-                            }
+                                case Disk.EDirectoryId.Manifests:
+                                    SetStep(EStep.RetrievingDownloads);
+                                    break;
+
+                                case Disk.EDirectoryId.Downloads:
+                                    SetStep(EStep.RetrievingGroups);
+                                    break;
+
+                                default:
+                                    SetStep(EStep.Done);
+                                    break;
+                            }                            
                         }
                         break;
                 }
@@ -135,13 +152,15 @@ namespace Downloadables
             List<string> fileNames = m_disk.Directory_GetFiles(id, out error);
             if (error == null)
             {
+                List<string> sourceIds = (id == Disk.EDirectoryId.Groups) ? m_groupIdsToKeep : m_entryIdsToKeep;
+
                 int count = fileNames.Count;
                 string fileName;
                 for (int i = 0; i < count; i++)
                 {
                     // The id is the fileName without extension
                     fileName = Path.GetFileNameWithoutExtension(fileNames[i]);
-                    if (!m_idsToKeep.Contains(fileName))
+                    if (!sourceIds.Contains(fileName))
                     {
                         // We need to include the extension because m_disk requires it to be able to delete it
                         m_fileNamesToDelete.Add(Path.GetFileName(fileNames[i]));

@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Process Asset Bundles";    
 
     private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";
-    private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
+    //private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
 
     private const string ADDRESSABLES_COPY_LOCAL_ASSET_BUNDLES_TO_PLAYER = ADDRESSABLES_MENU + "/" + "Copy Local Asset Bundles To Player";
 
@@ -31,7 +31,15 @@ public class EditorAddressablesMenu : MonoBehaviour
         {
             if (m_manager == null)
             {
-                m_manager = new EditorAddressablesManager();
+                object o = Activator.CreateInstance(Type.GetType("HDEditorAddressablesManager"));
+                if (o != null && o is EditorAddressablesManager)
+                {
+                    m_manager = (EditorAddressablesManager)o;
+                }
+                else                
+                {
+                    m_manager = new EditorAddressablesManager();
+                }                
             }
 
             return m_manager;
@@ -47,7 +55,9 @@ public class EditorAddressablesMenu : MonoBehaviour
     // Deletes AssetBundles/<currentPlatformName> folder, Assets/Streaming_Assets/Addressables folder, Downloadables folder
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR)]
     static void ClearBuild()
-    {        
+    {
+        //AddressablesCatalog editorCatalog = EditorAddressablesManager.GetCatalog(EditorAddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+
         Manager.ClearBuild(EditorUserBuildSettings.activeBuildTarget);
         EditorAssetBundlesManager.Clear();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_CLEAR);
@@ -103,12 +113,14 @@ public class EditorAddressablesMenu : MonoBehaviour
         OnDone(ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM);
     }
 
+    /*
     [MenuItem(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS)]
     public static void Build()
     {
         Manager.BuildForBothPlatforms();
         OnDone(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS);
     }
+    */
     
     private static void OnDone(string taskName)
     {

@@ -123,7 +123,7 @@ public class UTDownloadablesCleaner : UnitTest
 
         // Copy cache 
         UTDownloadablesHelper.PrepareCache(m_cacheFolder);
-        m_cleaner.CleanAllExcept(m_idsToKeep);
+        m_cleaner.CleanAllExcept(m_idsToKeep, null);
     }
 
     public override void Update()

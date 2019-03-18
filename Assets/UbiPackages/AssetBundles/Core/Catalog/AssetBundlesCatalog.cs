@@ -206,6 +206,11 @@ public class AssetBundlesCatalog
         return m_localList.Contains(id);
     }
 
+    public List<string> GetLocalAssetBundlesList()
+    {
+        return m_localList;
+    }
+
     public void GetAllDependencies(string id, List<string> output)
     {        
         if (output == null)
@@ -248,6 +253,11 @@ public class AssetBundlesCatalog
     public void SetGroups(Dictionary<string, AssetBundlesGroup> value)
     {
         m_groups = value;
+    }
+
+    public void SetExplicitLocalAssetBundlesList(List<string> value)
+    {
+        m_explicitLocalList = value;
     }
 #endif
 }
