@@ -110,7 +110,7 @@ public class AddressableGroupsTestController : MonoBehaviour
 
     private void Groups_Init()
     {
-        //m_groupsHandle = m_addressablesManager.CreateDownloadablesHandle(GROUP_ID);
+        m_groupsHandle = m_addressablesManager.CreateDownloadablesHandle(GROUP_ID);
     }
     #endregion
 
@@ -123,7 +123,9 @@ public class AddressableGroupsTestController : MonoBehaviour
         if (m_groupsHandle != null)
         {
             m_uiProgress.text = m_groupsHandle.Progress + "";
-            m_uiError.text = m_groupsHandle.GetError() + "";
+
+            Downloadables.Error.EType errorType = m_groupsHandle.GetErrorType();
+            m_uiError.text = m_groupsHandle.GetError() + "(" + errorType + ", " + (int)errorType + ")";
         }
     }
     #endregion
