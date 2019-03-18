@@ -564,7 +564,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         
         if ( m_freezingParticle && FreezingObjectsRegistry.instance != null)
         {
-            FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance(m_freezingParticle);
+            FreezingObjectsRegistry.instance.ForceReturnInstance(m_freezingParticle);
+            FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
             m_freezingParticle = null;
         }
 
@@ -1274,22 +1275,33 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
             {
                 if ( m_freezingLevel > 0 )
                 {
-                    m_freezingParticle = FreezingObjectsRegistry.instance.freezeParticle.Spawn(m_transform);
+                    if (m_freezingParticle == null)
+                        m_freezingParticle = FreezingObjectsRegistry.instance.freezeParticle.Spawn(m_transform);
+                    if ( m_freezingParticle )
+                    {
+                        FreezingObjectsRegistry.instance.ScaleUpParticle( m_freezingParticle );
+                    }
                 }
                 else
                 {
-                    if (m_freezingParticle  != null)
+                    if (m_freezingParticle != null)
                     {
-                        FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance(m_freezingParticle);
-                        m_freezingParticle = null;
+                        FreezingObjectsRegistry.instance.ScaleDownParticle( m_freezingParticle, FreezeScaleDownCallback );
                     }   
                 }
             }
         }	
         m_freezingLevel = freezeLevel;	
 	}
+    
+    public void FreezeScaleDownCallback()
+    {
+        FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
+        m_freezingParticle = null;
+    }
+    
 
-	public void SetStunned( bool stunned ){
+    public void SetStunned( bool stunned ){
 		if ( stunned ){
 			if (m_isAnimatorAvailable)
 				m_animator.enabled = false;
