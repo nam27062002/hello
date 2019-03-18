@@ -22,10 +22,10 @@ namespace Downloadables
     /// 
     ///  handle = new Downloadables.MockHandle(500, 1000, 20, true, false, null);
     /// 
-    ///  No connection error is simulated at t=5s. Download is stopped
+    ///  "No connection" error is simulated at t=5s. Download is stopped
     ///  handle.AddAction(5, Downloadables.Handle.EError.NO_CONNECTION);
     /// 
-    ///  It simulates that the error has been fixed at t=30s (it will have been stopped 25 seconds). After this the download should resume and it will
+    ///  Simulate that the error has been fixed at t=30s (it will have been stopped 25 seconds). After this the download should resume and it will
     ///  be done at t=45s
     ///  handle.AddAction(30, Downloadables.Handle.EError.NONE);             
     /// </summary>
@@ -35,7 +35,8 @@ namespace Downloadables
         {
             public float TimeAt { get; set; }
             public EError Error { get; set; }
-            public int Index { get; set; }
+			public bool isError { get { return Error != EError.NONE; } }
+			public int Index { get; set; }
 
             public Action(float timeAt, EError error)
             {
@@ -53,11 +54,14 @@ namespace Downloadables
         private bool PermissionRequested { get; set; }
         private bool PermissionGranted { get; set; }
 
-        private float TimeAtStart { get; set; }
         private float TimeToDownload { get; set; }
         private float DownloadingTime { get; set; }
+		private float DownloadingTimeDelta { get; set; }	// Time downloading during the last "frame"
 
-        private EError Error { get; set; }
+		private float TimeAtStart { get; set; }
+		private float LastUpdateTime { get; set; }
+
+		private EError Error { get; set; }
 
         private List<Action> Actions { get; set; }
 
@@ -80,10 +84,12 @@ namespace Downloadables
 
             TimeToDownload = timeToDownload;
             DownloadingTime = 0f;
+			DownloadingTimeDelta = 0f;
 
             Error = EError.NONE;
 
             TimeAtStart = Time.realtimeSinceStartup;
+			LastUpdateTime = Time.realtimeSinceStartup;
 
             Actions = actions;
             if (Actions != null)
@@ -153,7 +159,7 @@ namespace Downloadables
 
         public override bool IsAvailable()
         {
-            return (GetDownloadedBytes() == GetTotalBytes());
+            return (GetDownloadedBytes() >= GetTotalBytes());
         }
 
         public override long GetDownloadedBytes()
@@ -195,37 +201,76 @@ namespace Downloadables
         {
             if (!IsAvailable())
             {
-                UpdateActions();
+				DownloadingTimeDelta = 0;
 
-                if (Error == EError.NONE)
-                {
-                    DownloadingTime += Time.deltaTime;
-                    if (DownloadingTime > TimeToDownload)
-                    {
-                        DownloadingTime = TimeToDownload;
-                    }
-                }
+				UpdateActions();
+
+				DownloadingTime += DownloadingTimeDelta;
+
+				LastUpdateTime = Time.realtimeSinceStartup;
             }
         }
 
         private void UpdateActions()
         {
-            if (Actions != null && Actions.Count > 0)
-            {
-                float timeSoFar = Time.realtimeSinceStartup - TimeAtStart;
+			// Time at the start and end of the frame
+			float timeAtStart = LastUpdateTime - TimeAtStart;
+			float timeAtEnd = Time.realtimeSinceStartup - TimeAtStart;
 
-                while (Actions.Count > 0 && Actions[0].TimeAt <= timeSoFar)
+			// Aux vars
+			Action lastAction = null;
+			Action currentAction = null;
+
+			// Are there any actions to process?
+			if (Actions != null && Actions.Count > 0)
+            {
+				while (Actions.Count > 0 && Actions[0].TimeAt <= timeAtEnd)
                 {
-                    ApplyAction(Actions[0]);
-                    Actions.RemoveAt(0);
+					currentAction = Actions[0];
+
+					// Adjust timing based on last and current actions
+					if(lastAction != null) {
+						// Last action wasn't an error and we're introducing one in the same frame
+						if(!lastAction.isError && currentAction.isError) {
+							// Increase downloading time with the time elapsed between both actions
+							DownloadingTimeDelta += currentAction.TimeAt - lastAction.TimeAt;
+						}
+					} else {
+						// There wasn't any error and the first action in the frame is an error
+						if(Error == EError.NONE && currentAction.isError) {
+							// Increase downloading time with the time elapsed since the start of the frame
+							DownloadingTimeDelta += currentAction.TimeAt - LastUpdateTime;
+						}
+					}
+
+					// Execute action
+					ApplyAction(currentAction);
+					lastAction = currentAction;
+					Actions.RemoveAt(0);
                 }
-            }
-        }
+			}
+
+			// End of frame: did we execute any action?
+			if(lastAction != null) {
+				// Yes! If it was not an error, increase downloading time with the time elapsed since the action happened
+				if(!lastAction.isError) {
+					DownloadingTimeDelta += timeAtEnd - lastAction.TimeAt;
+				}
+			} else {
+				// No action was executed during this frame
+				// If we are downloading (no error), increase downloading time for the whole duration of the frame
+				if(Error == EError.NONE) {
+					DownloadingTimeDelta = timeAtEnd - timeAtStart;
+				}
+			}
+		}
 
         private void ApplyAction(Action action)
         {
             Debug.Log("ApplyAction at " + action.TimeAt + " Error = " + action.Error);
+
+			EError previousError = Error;
             Error = action.Error;
-        }
-    }
+		}
+	}
 }

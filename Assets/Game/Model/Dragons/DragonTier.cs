@@ -11,11 +11,11 @@
 /// Group the dragons in tiers
 /// </summary>
 public enum DragonTier {
-	TIER_0 = 0,
-	TIER_1,
-	TIER_2,
-	TIER_3,
-	TIER_4,
+	TIER_0 = 0,	// XS
+	TIER_1,		// S
+	TIER_2,		// M
+	TIER_3,		// L
+	TIER_4,		// XL
 
 	COUNT
 }
