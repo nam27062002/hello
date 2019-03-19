@@ -33,7 +33,9 @@ public class ModGamePlaySceneSelector : ModifierGamePlay {
         string[] areas = _param.Split(';');
         foreach (string area in areas) {
             string[] data = area.Split(':');
-            _dict.Add(data[0], data[1].Split(','));
+            if (data.Length == 2) {
+                _dict.Add(data[0], data[1].Split(','));
+            }
         }
     }
 

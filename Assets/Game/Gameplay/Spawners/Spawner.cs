@@ -678,7 +678,7 @@ public class Spawner : AbstractSpawner {
 		}
 	}	
 
-	void OnDrawGizmos() {
+	public virtual void OnDrawGizmos() {
 		Gizmos.color = Colors.paleGreen;
 		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
 

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,5 +45,24 @@ public class SeasonalSpawner : Spawner {
             }
         }
         return list;
+    }
+    public override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+        
+#if UNITY_EDITOR
+        // Only if editor allows it
+        if(showSpawnerInEditor) 
+        {
+            // Draw icon! - only in editor!
+            
+            // Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
+            if (this.m_spawnConfigs != null && this.m_spawnConfigs.Count > 0) {
+                Gizmos.DrawIcon(transform.position, IEntity.ENTITY_PREFABS_PATH + this.m_spawnConfigs[0].m_spawners[0], true);
+            }
+            
+        }
+#endif
+
     }
 }
