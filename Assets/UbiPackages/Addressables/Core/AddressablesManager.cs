@@ -318,12 +318,14 @@ public class AddressablesManager
 
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (EditorMode)
             {
                 returnValue = new AddressablesOpResult();
                 returnValue.Setup(null, null);
             }
             else
+#endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
                 returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);
@@ -362,7 +364,9 @@ public class AddressablesManager
     {
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (!EditorMode)
+#endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
                 m_providerFromAB.UnloadDependencyIdsList(dependencyIds);
@@ -380,7 +384,9 @@ public class AddressablesManager
 
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (!EditorMode)
+#endif
             {
                 AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
                 if (abGroup != null)
@@ -402,7 +408,9 @@ public class AddressablesManager
         AssetBundlesGroup returnValue = null;
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (!EditorMode)
+#endif
             {
                 returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
             }
@@ -420,10 +428,12 @@ public class AddressablesManager
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (EditorMode)
             {
                 groupId = null;
             }
+#endif
 
             returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
         }
@@ -440,10 +450,12 @@ public class AddressablesManager
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
+#if UNITY_EDITOR
             if (EditorMode)
             {
                 groupIds = null;
             }
+#endif
 
             returnValue = m_providerFromAB.CreateDownloadablesHandle(groupIds);
         }
