@@ -9,12 +9,12 @@ using UnityEngine.SceneManagement;
 public class AddressablesManager
 {
 #if UNITY_EDITOR
-    public static AddressablesCatalog GetEditorCatalog(bool useTmp = true)
+    public static AddressablesCatalog GetEditorCatalog(bool useGenerated = true)
     {
         string path;
-        if (useTmp && File.Exists(ADDRESSABLES_EDITOR_TMP_CATALOG_PATH))
+        if (useGenerated && File.Exists(ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH))
         {
-            path = ADDRESSABLES_EDITOR_TMP_CATALOG_PATH;
+            path = ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH;
         }
         else
         {
@@ -45,8 +45,8 @@ public class AddressablesManager
 
     public const string ADDRESSABLES_EDITOR_PATH = "Assets/Editor/Addressables/";
     public const string ADDRESSABLES_EDITOR_CATALOG_PATH = ADDRESSABLES_EDITOR_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
-    public const string ADDRESSABLES_EDITOR_TMP_PATH = AddressablesManager.ADDRESSABLES_EDITOR_PATH + "tmp/";
-    public const string ADDRESSABLES_EDITOR_TMP_CATALOG_PATH = ADDRESSABLES_EDITOR_TMP_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+    public const string ADDRESSABLES_EDITOR_GENERATED_PATH = ADDRESSABLES_EDITOR_PATH + "generated/";
+    public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = ADDRESSABLES_EDITOR_GENERATED_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
     private const string EDITOR_MODE_KEY = "EditorMode";
 
