@@ -1816,8 +1816,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_DURATION, _duration);            
             e.data.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
 
+			LegalManager.ETermsPolicy termsPolicy = LegalManager.instance.GetTermsPolicy();
+
             // BI only wants these two parameters when terms policy is GDPR
-            if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+			if (termsPolicy != LegalManager.ETermsPolicy.GDPR)
             {                
                 e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
@@ -1828,8 +1830,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             }
 
-			// BI only wants age when terms policy is Coppa
-			if (LegalManager.instance.GetTermsPolicy () == LegalManager.ETermsPolicy.Coppa) 
+			// BI only wants age when terms policy is Coppa or GDPR
+			if (termsPolicy == LegalManager.ETermsPolicy.Coppa || termsPolicy == LegalManager.ETermsPolicy.GDPR) 
 			{
 				e.data.Add (TRACK_PARAM_AGE, _age);
 			} 
