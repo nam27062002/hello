@@ -161,7 +161,7 @@ public class Entity : IEntity, IBroadcastListener {
 		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
 		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchOnFromTier");
 
-		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
+        m_maxHealth = m_def.GetAsFloat("maxHealth", 1) * (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
 
 		// Feedback data
 		m_feedbackData.InitFromDef(m_def);

@@ -9,6 +9,21 @@ using UnityEngine.SceneManagement;
 public class AddressablesManager
 {
 #if UNITY_EDITOR
+    public static AddressablesCatalog GetEditorCatalog(bool useGenerated = true)
+    {
+        string path;
+        if (useGenerated && File.Exists(ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH))
+        {
+            path = ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH;
+        }
+        else
+        {
+            path = ADDRESSABLES_EDITOR_CATALOG_PATH;
+        }
+
+        return GetCatalog(path, true);
+    }
+
     public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
     {        
         AddressablesCatalog returnValue = null;
@@ -21,13 +36,17 @@ public class AddressablesManager
         JSONNode catalogJSON = JSON.Parse(content);
         returnValue = new AddressablesCatalog(editorMode);
         returnValue.Load(catalogJSON, sm_logger);
-
+        
         return returnValue;
-    }
+    }    
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
-    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+
+    public const string ADDRESSABLES_EDITOR_PATH = "Assets/Editor/Addressables/";
+    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = ADDRESSABLES_EDITOR_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+    public const string ADDRESSABLES_EDITOR_GENERATED_PATH = ADDRESSABLES_EDITOR_PATH + "generated/";
+    public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = ADDRESSABLES_EDITOR_GENERATED_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
     private const string EDITOR_MODE_KEY = "EditorMode";
 
@@ -69,7 +88,7 @@ public class AddressablesManager
         // editor catalog is used instead in editor mode
         if (EditorMode)
         {
-            m_catalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+            m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
         }
 #endif
@@ -82,7 +101,7 @@ public class AddressablesManager
             }
 
             m_catalog.Load(catalogJSON, logger);
-        }
+        }        
 
         // Loads the providers
         AddressablesProvider.Logger = logger;
@@ -299,9 +318,19 @@ public class AddressablesManager
 
         if (IsInitialized())
         {
-            // Dependencies are only handled by provider from Asset Bundles
-            returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);            
-            Ops_AddOp(returnValue);
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                returnValue = new AddressablesOpResult();
+                returnValue.Setup(null, null);
+            }
+            else
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);
+                Ops_AddOp(returnValue);
+            }
         }
         else
         {
@@ -335,8 +364,13 @@ public class AddressablesManager
     {
         if (IsInitialized())
         {
-            // Dependencies are only handled by provider from Asset Bundles
-            m_providerFromAB.UnloadDependencyIdsList(dependencyIds);                        
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadDependencyIdsList(dependencyIds);
+            }
         }
         else
         {
@@ -350,10 +384,15 @@ public class AddressablesManager
 
         if (IsInitialized())
         {
-            AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
-            if (abGroup != null)
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
             {
-                returnValue = abGroup.AssetBundleIds;
+                AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
+                if (abGroup != null)
+                {
+                    returnValue = abGroup.AssetBundleIds;
+                }
             }            
         }
         else
@@ -369,7 +408,12 @@ public class AddressablesManager
         AssetBundlesGroup returnValue = null;
         if (IsInitialized())
         {
-            returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
+            }
         }
         else
         {
@@ -384,6 +428,13 @@ public class AddressablesManager
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                groupId = null;
+            }
+#endif
+
             returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
         }
         else
@@ -399,6 +450,13 @@ public class AddressablesManager
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
         {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                groupIds = null;
+            }
+#endif
+
             returnValue = m_providerFromAB.CreateDownloadablesHandle(groupIds);
         }
         else
@@ -489,6 +547,23 @@ public class AddressablesManager
             AddressablesCatalogEntry entry;
             AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadAsset<T>(entry);            
+        }
+        else
+        {
+            LogErrorManagerNotInitialized();
+        }
+
+        return returnValue;
+    }
+
+    public object LoadAsset(string id, string variant = null)
+    {
+        object returnValue = null;
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
+            returnValue = provider.LoadAsset(entry);
         }
         else
         {

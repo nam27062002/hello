@@ -75,12 +75,12 @@ public class UTAddressablesJoinCatalogs : UnitTest
         AddressablesCatalog catalog1 = null, catalog2 = null;
         if (File.Exists(m_pathCatalog1))
         {
-            catalog1 = EditorAddressablesManager.GetCatalog(m_pathCatalog1, true);
+            catalog1 = EditorAddressablesManager.GetEditorCatalogFromPath(m_pathCatalog1, true);
         }
 
         if (File.Exists(m_pathCatalog2))
         {
-            catalog2 = EditorAddressablesManager.GetCatalog(m_pathCatalog2, true);
+            catalog2 = EditorAddressablesManager.GetEditorCatalogFromPath(m_pathCatalog2, true);
         }        
 
         bool passes = true;
