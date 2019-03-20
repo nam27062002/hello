@@ -556,6 +556,23 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public object LoadAsset(string id, string variant = null)
+    {
+        object returnValue = null;
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
+            returnValue = provider.LoadAsset(entry);
+        }
+        else
+        {
+            LogErrorManagerNotInitialized();
+        }
+
+        return returnValue;
+    }
+
     public AddressablesOp LoadAssetAsync(string id, string variant = null)
     {
         AddressablesOp returnValue;
