@@ -67,6 +67,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     
     [SeparatorAttribute("Freeze Particle")]
     [SerializeField] private bool m_useFreezeParticle = false;
+    [SerializeField] private float m_freezeParticleScale = 1.0f;
 
     [SeparatorAttribute("In Love")]
     [SerializeField] private bool m_useMoveAnimInLove = false;
@@ -1276,10 +1277,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
                 if ( m_freezingLevel > 0 )
                 {
                     if (m_freezingParticle == null)
+                    { 
                         m_freezingParticle = FreezingObjectsRegistry.instance.freezeParticle.Spawn(m_transform);
+                    }
                     if ( m_freezingParticle )
                     {
-                        FreezingObjectsRegistry.instance.ScaleUpParticle( m_freezingParticle );
+                        m_freezingParticle.transform.position = m_entity.circleArea.center;
+                        FreezingObjectsRegistry.instance.ScaleUpParticle( m_freezingParticle, m_freezeParticleScale );
                     }
                 }
                 else

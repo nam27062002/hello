@@ -81,6 +81,11 @@ public class DragonShieldBehaviour : MonoBehaviour {
             m_currentShield = m_maxShield;
     }
     
+    public void FullShield()
+    {
+        m_currentShield = m_maxShield;
+    }
+
     // Update is called once per frame
     void Update () 
     {

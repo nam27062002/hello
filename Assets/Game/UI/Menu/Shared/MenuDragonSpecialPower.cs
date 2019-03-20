@@ -6,7 +6,8 @@ using UnityEngine;
 public class MenuDragonSpecialPower : MonoBehaviour {
     private enum EPowerElement {
         ExtraObject = 0,
-        Pet
+        Pet,
+        AnimParam
     }
 
     [System.Serializable]
@@ -93,6 +94,14 @@ public class MenuDragonSpecialPower : MonoBehaviour {
                         m_dragonPreview.equip.EquipPet("", 4);
                     }
                     break;
+                    case EPowerElement.AnimParam:
+                        {
+                            if (_enable)
+                            {
+                                string[] _params = m_elementsPerPowerLevel[_level].element[e].name.Split(':');
+                                m_dragonPreview.animator.SetInteger(_params[0], int.Parse(_params[1]));
+                            }
+                        }break;
                 }
             }
         }

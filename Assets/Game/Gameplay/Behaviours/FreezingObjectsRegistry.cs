@@ -58,10 +58,12 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
     // Particles Scaling up
     public List<GameObject> m_scaleUpParticles = new List<GameObject>();    
     public List<float> m_scaleUpParticlesTimers = new List<float>();
+    public List<float> m_scaleUpTargetScale = new List<float>();
     
     // Paticle Scaling down
     public List<GameObject> m_scaleDownParticles = new List<GameObject>();    
     public List<float> m_scaleDownParticlesTimers = new List<float>();
+    public List<float> m_scaleDownStartScale = new List<float>();
     public delegate void ScaleDownDone();
     public List<ScaleDownDone> m_scaleDownCallbacks = new List<ScaleDownDone>();
 
@@ -283,12 +285,13 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         {
             m_scaleUpParticlesTimers[i] += delta;
             float d = m_scaleUpParticlesTimers[i] / m_scaleUpDuration;
-            m_scaleUpParticles[i].transform.localScale = Vector3.one * m_scaleUpCurve.Evaluate(d);
+            m_scaleUpParticles[i].transform.localScale = Vector3.one * m_scaleUpCurve.Evaluate(d) * m_scaleUpTargetScale[i];
             if (m_scaleUpParticlesTimers[i] > m_scaleUpDuration)
             {
                 // Done
                 m_scaleUpParticles.RemoveAt(i);
                 m_scaleUpParticlesTimers.RemoveAt(i);
+                m_scaleUpTargetScale.RemoveAt(i);
             }
         }
         
@@ -297,12 +300,13 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         {
             m_scaleDownParticlesTimers[i] -= delta;
             float d = m_scaleDownParticlesTimers[i] / m_scaleUpDuration;
-            m_scaleDownParticles[i].transform.localScale = Vector3.one * m_scaleUpCurve.Evaluate(d);
+            m_scaleDownParticles[i].transform.localScale = Vector3.one * m_scaleUpCurve.Evaluate(d) * m_scaleDownStartScale[i];
             if (m_scaleDownParticlesTimers[i] <= 0)
             {
                 // Done
                 m_scaleDownParticles.RemoveAt(i);
                 m_scaleDownParticlesTimers.RemoveAt(i);
+                m_scaleDownStartScale.RemoveAt(i);
                 // Callback?
                 m_scaleDownCallbacks[i]();
                 m_scaleDownCallbacks.RemoveAt(i);
@@ -312,10 +316,11 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
     }
 
 
-    public void ScaleUpParticle( GameObject instance )
+    public void ScaleUpParticle( GameObject instance, float scale )
     {
         RemoveScaleDownParticle( instance );
         m_scaleUpParticles.Add(instance);
+        m_scaleUpTargetScale.Add( scale );
         m_scaleUpParticlesTimers.Add(0);
     }
     
@@ -324,6 +329,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         RemoveScaleUpParticle( instance );
         m_scaleDownParticles.Add(instance);
         m_scaleDownParticlesTimers.Add(m_scaleUpDuration);
+        m_scaleDownStartScale.Add( instance.transform.localScale.x );
         m_scaleDownCallbacks.Add(_callbacks);
     }
 
@@ -339,6 +345,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         {
             int index = m_scaleUpParticles.IndexOf( instance );
             m_scaleUpParticles.RemoveAt(index);
+            m_scaleUpTargetScale.RemoveAt(index);
             m_scaleUpParticlesTimers.RemoveAt( index );
         }
     }
@@ -350,6 +357,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             int index = m_scaleDownParticles.IndexOf( instance );
             m_scaleDownParticles.RemoveAt(index);
             m_scaleDownParticlesTimers.RemoveAt( index );
+            m_scaleDownStartScale.RemoveAt(index);
             m_scaleDownCallbacks.RemoveAt(index);
         }
     }
