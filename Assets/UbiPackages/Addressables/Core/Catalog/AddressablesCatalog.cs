@@ -422,7 +422,9 @@ public class AddressablesCatalog
         }
 
         return returnValue;
-    }        
+    }
+
+    private static bool OPTIMIZE_ASSET_NAMES_ENABLED = true;
 
     /// <summary>
     /// Optimizes the asset name field of all entries in this catalog
@@ -449,13 +451,16 @@ public class AddressablesCatalog
                     fileName = System.IO.Path.GetFileNameWithoutExtension(entryPath);
                     pair.Value[i].AssetName = entryPath;
 
-                    if (assetNames.ContainsKey(fileName))
+                    if (OPTIMIZE_ASSET_NAMES_ENABLED)
                     {
-                        assetNames[fileName] = null;                        
-                    }
-                    else
-                    {
-                        assetNames.Add(fileName, pair.Value[i]);                        
+                        if (assetNames.ContainsKey(fileName))
+                        {
+                            assetNames[fileName] = null;
+                        }
+                        else
+                        {
+                            assetNames.Add(fileName, pair.Value[i]);
+                        }
                     }
                 }
 
