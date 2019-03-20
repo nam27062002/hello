@@ -54,6 +54,7 @@ public class DragonIcePowers : MonoBehaviour {
         {
             InstanceManager.player.dragonShieldBehaviour.m_maxShield += m_increaseShield;
         }
+        InstanceManager.player.dragonShieldBehaviour.FullShield();
 
 		InstanceManager.player.dragonShieldBehaviour.m_shieldDrain = m_shieldDrainByTier[ (int)dataSpecial.tier ];
         
