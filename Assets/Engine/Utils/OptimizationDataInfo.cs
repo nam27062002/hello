@@ -30,9 +30,9 @@ public class OptimizationDataInfo:Singleton<OptimizationDataInfo>
     public const String LightmapResourceSaveFolderPath = AssetFolderPath + DirectorySeparator + ResourcesFolderName + DirectorySeparator + LightMaplFolderName;
 
     // Prefabs    
-    public const String PrefabsFolderPathSrc = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_PATH;
-    public const String PrefabsFolderPathDest = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_LOW_PATH;
-    public const String PrefabsMaterialsPathDest = PrefabsFolderPathDest + "Materials";
+    //public const String PrefabsFolderPathSrc = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_PATH;
+    //public const String PrefabsFolderPathDest = ResourceFolderPath + DirectorySeparator + IEntity.ENTITY_PREFABS_PATH;
+    //public const String PrefabsMaterialsPathDest = PrefabsFolderPathDest + "Materials";
 
     public const string ArtScenePath = "Game/Scenes/Levels/Art/";
 	public const string SpawnersScenePath = "Game/Scenes/Levels/Spawners/";

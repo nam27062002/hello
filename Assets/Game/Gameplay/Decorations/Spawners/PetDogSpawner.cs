@@ -84,7 +84,7 @@ public class PetDogSpawner : AbstractSpawner {
 
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
 			string prefab = m_possibleSpawners[i].m_spawnPrefab;
-			m_poolHandlers[i] = PoolManager.RequestPool(prefab, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(prefab, 1);
 		}
 
 		CalculateMaxChance();

@@ -86,7 +86,7 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 		for (int g = 0; g < m_groups.Length; g++) {			
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
 				prefabName = m_groups[g].m_entityPrefabsStr[e];
-				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
+				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, 1);                
 			}
 		}
 	}

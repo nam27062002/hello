@@ -128,7 +128,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, 1);
 		}
 		m_wagonList = new List<IEntity>();
 		m_poolHandlerIndex = new List<int>();

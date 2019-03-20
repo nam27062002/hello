@@ -79,7 +79,7 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
 
 	void CreatePool() {
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
-			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 2, false, false);
+			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], 2, false, false);
 		}
 	}
 

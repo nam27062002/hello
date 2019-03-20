@@ -87,7 +87,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 
 				m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+					m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, m_entities.Length);
 				}
 
 				gameObject.SetActive(false);

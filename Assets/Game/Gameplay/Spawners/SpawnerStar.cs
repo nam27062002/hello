@@ -76,7 +76,7 @@ public class SpawnerStar : AbstractSpawner {
 			m_pointToEntityIndex[i] = -1;
 		}
 
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, m_entities.Length);
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present

@@ -35,7 +35,7 @@ public class EntityEquip : MonoBehaviour {
             if (rnd <= item.probability) {
                 if (string.IsNullOrEmpty(item.season) || item.season.Equals(SeasonManager.activeSeason)) {
                     //this entity must wear this item!
-                    GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/NPC/" + item.equipablePrefabName);
+                    GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(item.equipablePrefabName);
 
                     GameObject objInstance = Instantiate<GameObject>(prefabObj);
                     Equipable equipable = objInstance.GetComponent<Equipable>();

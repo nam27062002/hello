@@ -8,15 +8,11 @@ using System.IO;
 
 
 public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
-	private class PoolData {
-		public int 			size;
-		public string 		path;
-	}
-
+	
 	private class PoolContaier {
 		public Pool 		pool;
 		public PoolHandler 	handler;
-		public PoolData		buildData;
+		public int          size;
 	}
 
     public enum PoolLimits {
@@ -49,10 +45,9 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
     /// Request a pool. Stores a pool request, it'll be created later loading the level.
     /// </summary>
     /// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
-    /// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
     /// <param name="_size">Final pool size.</param>
-    public static PoolHandler RequestPool(string _prefabName, string _prefabPath, int _size) {
-		return instance.__RequestPool(_prefabName, _prefabPath, _size);
+    public static PoolHandler RequestPool(string _prefabName, int _size) {
+		return instance.__RequestPool(_prefabName, _size);
 	}
 
 	public static PoolHandler GetHandler(string _prefabName) {
@@ -82,11 +77,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// Creates the pool. Creates a pool for the resource _prefabPath with the id _prefabName. With an initial size _initSize. It can grow if _canGrow
 	/// </summary>
 	/// <param name="_prefabName">Prefab name. Id to ask for this resource.</param>
-	/// <param name="_prefabPath">Prefab path. Resources path without the prefab name.</param>
 	/// <param name="_initSize">Init size.</param>
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
-	public static PoolHandler CreatePool(string _prefabName, string _prefabPath, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
-		PoolHandler handler 	= instance.__RequestPool(_prefabName, _prefabPath, _initSize);
+	public static PoolHandler CreatePool(string _prefabName, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
+		PoolHandler handler 	= instance.__RequestPool(_prefabName, _initSize);
 		PoolContaier container 	= instance.m_pools[_prefabName];
 
 		instance.__CreatePool(container, _prefabName, _canGrow, _temporay);
@@ -152,7 +146,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 
-	private PoolHandler __RequestPool(string _prefabName, string _prefabPath, int _size) {
+	private PoolHandler __RequestPool(string _prefabName, int _size) {
 		PoolContaier container;
 
 		if (m_poolSizes.ContainsKey(_prefabName)) {
@@ -161,16 +155,11 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 		if (m_pools.ContainsKey(_prefabName)) {
 			container = m_pools[_prefabName];
-			PoolData data = container.buildData;
-			if (data.size < _size)
-				data.size = _size;			
+			if (container.size < _size)
+                container.size = _size;			
 		} else {
-			PoolData data = new PoolData();
-			data.path = _prefabPath;
-			data.size = _size;
-
 			container = new PoolContaier();
-			container.buildData = data;
+			container.size = _size;
 			container.handler = new PoolHandler();
 
 			m_pools[_prefabName] = container;
@@ -198,10 +187,9 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			Pool p = container.pool;
 
 			if (p != null && p.isTemporary) {
-				PoolData data = container.buildData;
-				if (data.size > 0) {
-					if (data.size < p.Size()) {
-						p.Resize(data.size);
+				if (container.size > 0) {
+					if (container.size < p.Size()) {
+						p.Resize(container.size);
 					}
 				} else {
 					p.Clear();
@@ -227,11 +215,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			PoolContaier container = m_pools[keys[i]];
 			Pool p = container.pool;
 
-			if (p != null) {
-				PoolData data = container.buildData;
-				if (data.size > p.Size()) {
+			if (p != null) {				
+				if (container.size > p.Size()) {
 					// increase size
-					p.Resize(data.size);
+					p.Resize(container.size);
 				}
 			} else {
 				// Create pool
@@ -242,22 +229,20 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
         if (_container.pool == null) {
-			PoolData data = _container.buildData;
-
             GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_prefabName);
-            //GameObject go = Resources.Load<GameObject>(data.path + _prefabName);
+
             if (go != null) {
-				int size = data.size;
+				int size = _container.size;
 
-				if (sm_printPools) size = 1;				
-
-				Pool pool = new Pool(go, transform, size, _canGrow, true, _temporay);
+				if (sm_printPools) size = 1;
+               
+                 Pool pool = new Pool(go, transform, size, _canGrow, true, _temporay);
 				_container.pool = pool;
 				m_iterator.Add(pool);
 			} else {
-				Debug.LogError("Can't create a pool for: " + data.path + _prefabName);
+				Debug.LogError("Can't create a pool for: " + _prefabName);
 			}
-			data.size = 0;
+            _container.size = 0;
 		}
 
 		_container.handler.AssignPool(_container.pool);

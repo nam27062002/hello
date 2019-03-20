@@ -124,7 +124,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, 1);
 		}
 		m_currentEntity = null;
 		m_currentPoolHandlerIndex = -1;
