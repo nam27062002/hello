@@ -388,11 +388,11 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
         Material burnedMaterial = FireColorSetupManager.instance.GetDecorationBurnedMaterial( m_extingishColor );
         int max = m_viewBurnedRenderes.Length;
         for (int i = 0; i < max; i++) {
-            Material[] materials = m_renderers[i].materials;
+            Material[] materials = m_viewBurnedRenderes[i].materials;
             for (int m = 0; m < materials.Length; m++) {
                 materials[m] = burnedMaterial;
             }
-            m_renderers[i].materials = materials;
+            m_viewBurnedRenderes[i].materials = materials;
         }
     }
 
