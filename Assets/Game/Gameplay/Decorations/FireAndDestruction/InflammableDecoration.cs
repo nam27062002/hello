@@ -64,6 +64,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	private DeltaTimer m_timer = new DeltaTimer();
 	private State m_state;
 	private State m_nextState;
+    private FireColorSetupManager.FireColorType m_extingishColor = FireColorSetupManager.FireColorType.RED;
 
 	private bool m_initialized = false;
 
@@ -81,8 +82,6 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		m_burnParticle.CreatePool();	
 		m_disintegrateParticle.CreatePool();
 		m_explosionProcHandler = ParticleManager.CreatePool("PF_FireExplosionProc");
-
-		m_ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
 
 		m_state = m_nextState = State.Idle;
 		m_initialized = false;
@@ -105,6 +104,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	}
 
     protected void OnDestroy() {
+        ReturnAshMaterial();
         // Unsubscribe from external events
         Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
@@ -287,12 +287,14 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 			switch (m_state) {
 				case State.Burning: {
 						bool allNodesBurning = true;
-						for (int i = 0; i < m_fireNodes.Length; ++i) {
+                        int max = m_fireNodes.Length;
+						for (int i = 0; i < m_fireNodes.Length && allNodesBurning; ++i) {
 							allNodesBurning = allNodesBurning && m_fireNodes[i].IsBurning();
 						}
 
 						if (allNodesBurning || m_useAnimator) {
 							m_nextState = State.Extinguish;
+                            m_extingishColor = m_fireNodes[0].colorType;
 						}
 					} break;
 
@@ -345,7 +347,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		m_viewBurned.SetActive(true);
 		if (m_collider) m_collider.isTrigger = true;
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
-
+        ReturnAshMaterial();
 		m_state = m_nextState = State.Respawn;
 	}
 
@@ -361,6 +363,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	}
 
 	private void SwitchViewToDissolve() {
+        if (m_ashMaterial == null)
+            m_ashMaterial = FireColorSetupManager.instance.GetDecorationBurnMaterial( m_extingishColor );
 		for (int i = 0; i < m_renderers.Length; i++) {
 			int renderID = m_renderers[i].GetInstanceID();
 			Material[] materials = m_renderers[i].materials;
@@ -386,8 +390,17 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	}
 
 
-	//----------------------------------------------------------------------------------------
-	void OnDrawGizmosSelected() {
+    private void ReturnAshMaterial()
+    {
+        if ( m_ashMaterial && FireColorSetupManager.instance)
+        {
+            FireColorSetupManager.instance.ReturnDecorationBurnMaterial(m_extingishColor, m_ashMaterial);
+            m_ashMaterial = null;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------
+    void OnDrawGizmosSelected() {
 		if (m_fireNodes != null) {
 			Gizmos.color = Color.magenta;
 			for (int i = 0; i < m_fireNodes.Length; i++) {

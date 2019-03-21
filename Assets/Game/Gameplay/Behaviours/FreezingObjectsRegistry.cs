@@ -155,7 +155,9 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
 		return ret;
 	}
     
-    
+    /// <summary>
+    /// Checks the freeze. Freeziing Logic
+    /// </summary>
     public void CheckFreeze()
     {
         float freezingChange = Time.deltaTime * m_freezinSpeed;
@@ -276,6 +278,10 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         return ret;
     }
     
+    
+    /// <summary>
+    /// Freezing view Update
+    /// </summary>
     public void UpdateScaleParticles()
     {
         float delta = Time.deltaTime;
