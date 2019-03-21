@@ -580,6 +580,11 @@ public class AssetBundlesManager
         return DownloadablesManager.Groups_CreateHandle(groupIds);
     }
 
+    public void SetDownloadablesGroupPriority(string groupId, int priority)
+    {
+        DownloadablesManager.Groups_SetPriority(groupId, priority);
+    }
+
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {
         AssetBundlesOpRequest returnValue;

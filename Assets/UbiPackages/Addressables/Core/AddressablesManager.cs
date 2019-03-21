@@ -471,6 +471,23 @@ public class AddressablesManager
     }
 
     /// <summary>
+    /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="priority"></param>
+    public void SetDownloadableGroupPriority(string groupId, int priority)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadablesGroupPriority(groupId, priority);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    
     /// <param name="id">Addressable id corresponding to the scene to load.</param>    

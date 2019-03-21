@@ -111,6 +111,7 @@ public class AddressableGroupsTestController : MonoBehaviour
     private void Groups_Init()
     {
         m_groupsHandle = m_addressablesManager.CreateDownloadablesHandle(GROUP_ID);
+        m_addressablesManager.SetDownloadableGroupPriority("group_scene_cubes", 1);
     }
     #endregion
 
