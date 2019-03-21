@@ -90,6 +90,9 @@ public class AddressablesManager
         {
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
+
+            // We don't want downloadables to download when editor mode is enabled
+            downloadablesCatalogJSON = null;
         }
 #endif
         if (buildCatalog)
