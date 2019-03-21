@@ -85,13 +85,13 @@ public class FireTypeAutoSelector : MonoBehaviour {
     {
         if (FireColorSetupManager.instance != null)
         {
-            if (m_megaMaterialInstance == null)
+            if (m_megaMaterialInstance != null)
             {
                 FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_megaMaterialInstance);
                 m_megaMaterialInstance = null;
             }
             
-            if (m_fireMaterialInstance == null)
+            if (m_fireMaterialInstance != null)
             {
                 FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_fireMaterialInstance);
                 m_fireMaterialInstance = null;
