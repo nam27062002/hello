@@ -26,13 +26,15 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[SerializeField] private GameObject m_root = null;
+	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[SerializeField] private Localizer m_statusText = null;
 	[SerializeField] private Localizer m_errorText = null;
 
 	// Internal logic
-	private bool m_enabled;
-	private TMP_AssetsGroupData m_group = null;
+	private bool m_enabled = true;
+	private Downloadables.Handle m_handle = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -59,10 +61,13 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// <summary>
 	/// Initialize the widget with the given async operation.
 	/// </summary>
-	/// <param name="_group">Group download handler. Use <c>null</c> to hide the widget.</param>
-	public void InitWithGroupData(TMP_AssetsGroupData _group) {
+	/// <param name="_handle">Group download handler. Use <c>null</c> to hide the widget.</param>
+	public void InitWithHandle(Downloadables.Handle _handle) {
 		// Store operation
-		m_group = _group;
+		m_handle = _handle;
+
+		// Force a first refresh
+		RefreshAll(true);
 	}
 
 	/// <summary>
@@ -99,8 +104,8 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		// Update logic state?
 		if(_updateState) {
 			// Unless group is all ok
-			if(m_group != null && !m_group.isDone) {
-				m_group.UpdateState();
+			if(m_handle != null && !m_handle.IsAvailable()) {
+				m_handle.Update();
 			}
 		}
 
@@ -123,26 +128,34 @@ public class AssetsDownloadFlow : MonoBehaviour {
 
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
+			Debug.Log(Color.magenta.Tag("m_enabled false!"));
 			show = false;
 		}
 
 		// Don't show if we don't have valid data
-		else if(m_group == null) {
+		else if(m_handle == null) {
+			Debug.Log(Color.magenta.Tag("m_handle is NULL"));
 			show = false;
 		}
 
-		// Don't show if permission hasn't yet been requested (probably downloading in background via wifi)
-		else if(!m_group.dataPermissionRequested) {
+		// Don't show if permission hasn't yet been requested (we will trigger the popup)
+		else if(m_handle.NeedsToRequestPermission()) {
+			Debug.Log(Color.magenta.Tag("needs to request permission"));
 			show = false;
 		}
 
 		// Don't show if download has already finished
-		else if(m_group.isDone) {
+		else if(m_handle.IsAvailable()) {
+			Debug.Log(Color.magenta.Tag("download finished"));
 			show = false;
 		}
 
+		else {
+			Debug.Log(Color.green.Tag("flow needs displaying!"));
+		}
+
 		// Apply and return
-		gameObject.SetActive(show); // [AOC] TODO!! ShowHide Animator?
+		m_root.SetActive(show); // [AOC] TODO!! ShowHide Animator?
 		return show;
 	}
 
@@ -152,11 +165,11 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	private void RefreshData() {
 		// Progress Bar
 		if(m_progressBar != null) {
-			m_progressBar.Refresh(m_group);
+			m_progressBar.Refresh(m_handle);
 		}
 
 		// Status text
-		bool hasError = m_group.error != TMP_AssetsGroupData.Error.NONE;
+		bool hasError = m_handle.GetError() != Downloadables.Handle.EError.NONE;
 		if(m_statusText != null) {
 			// Just show/hide, no custom text for now
 			m_statusText.gameObject.SetActive(!hasError);
@@ -170,20 +183,20 @@ public class AssetsDownloadFlow : MonoBehaviour {
 			// Set text based on error type
 			if(hasError) {
 				string errorTid = "TID_OTA_ERROR_GENERIC_TITLE";
-				switch(m_group.error) {
-					case TMP_AssetsGroupData.Error.NO_WIFI: {
+				switch(m_handle.GetError()) {
+					case Downloadables.Handle.EError.NO_WIFI: {
 						errorTid = "TID_OTA_ERROR_01_TITLE";
 					} break;
 
-					case TMP_AssetsGroupData.Error.NO_CONNECTION: {
+					case Downloadables.Handle.EError.NO_CONNECTION: {
 						errorTid = "TID_OTA_ERROR_02_TITLE";
 					} break;
 
-					case TMP_AssetsGroupData.Error.STORAGE: {
+					case Downloadables.Handle.EError.STORAGE: {
 						errorTid = "TID_OTA_ERROR_03_TITLE";
 					} break;
 
-					case TMP_AssetsGroupData.Error.STORAGE_PERMISSION: {
+					case Downloadables.Handle.EError.STORAGE_PERMISSION: {
 						errorTid = "TID_OTA_ERROR_04_TITLE";
 					} break;
 				}
