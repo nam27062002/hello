@@ -503,17 +503,17 @@ public class HDAddressablesManager : AddressablesManager
         if (DebugSettings.useDownloadablesMockHandlers) {
 			// Debug!
 			Downloadables.MockHandle handle = new Downloadables.MockHandle(
-				0f, 50f * 1024f * 1024f,
-				10f, false, false
+				0f,	// Bytes
+				50f * 1024f * 1024f,	// Bytes
+				2f * 60f, 	// Seconds
+				false, false
 			);
 
 			return handle;
 		} else {
             // The real deal
-            Downloadables.Handle handle = GetDownloadablesHandle(handleId);
+            return GetDownloadablesHandle(handleId);
         }
-
-		return null;
 	}
 
 	/// <summary>
