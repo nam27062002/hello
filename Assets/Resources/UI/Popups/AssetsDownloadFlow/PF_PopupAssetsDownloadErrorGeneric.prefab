@@ -55,7 +55,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224917407856542992}
-  - component: {fileID: 114835862535892022}
+  - component: {fileID: 114259891936310516}
   - component: {fileID: 114775836160950448}
   - component: {fileID: 95079181783767258}
   - component: {fileID: 225401138904448062}
@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 114857542635166880}
   - component: {fileID: 114560794214833298}
   m_Layer: 5
-  m_Name: ButtonWifiOnly
+  m_Name: ButtonOk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -339,7 +339,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224317601864867044}
   - component: {fileID: 222894684838081798}
-  - component: {fileID: 114404701371154340}
   - component: {fileID: 114343587787251558}
   - component: {fileID: 114206886237228790}
   m_Layer: 5
@@ -664,8 +663,8 @@ MonoBehaviour:
   OnBackButton:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114835862535892022}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114259891936310516}
+        m_MethodName: OnDismiss
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -746,8 +745,8 @@ MonoBehaviour:
           m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114835862535892022}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114259891936310516}
+        m_MethodName: OnDismiss
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -759,6 +758,21 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114259891936310516
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1086538306632282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3760d972b82fc4ab2ab5f6ee07329fe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_update: 1
+  m_messageText: {fileID: 114754099526063950}
+  m_progressBar: {fileID: 114959508940244216}
+  m_errorCodeText: {fileID: 114343587787251558}
 --- !u!114 &114321440804327868
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -805,7 +819,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Error code (-145)
+  m_text: -666
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
   m_sharedMaterial: {fileID: 2116890, guid: 373cfe43d8edb4ade8df1a6d6746c1b8, type: 2}
@@ -874,10 +888,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 114343587787251558}
-    characterCount: 17
+    characterCount: 4
     spriteCount: 0
-    spaceCount: 4
-    wordCount: 3
+    spaceCount: 0
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -908,22 +922,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114404701371154340
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1659771502736542}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71edc7d6fcd854b90af0634aa0e0070d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_tid: TID_OTA_ERROR_GENERIC_BODY
-  m_caseType: 0
-  m_replacements:
-  - '#FFB712'
-  - '#78FD36'
 --- !u!114 &114415592818964048
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1379,28 +1377,6 @@ MonoBehaviour:
           m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114835862535892022}
-        m_MethodName: OnOpenPreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: RestartShow
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
@@ -1421,28 +1397,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: hd_popup_close
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114835862535892022}
-        m_MethodName: OnClosePreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: Hide
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -1566,18 +1520,6 @@ MonoBehaviour:
   m_canvasRenderer: {fileID: 222653168907799470}
   m_TextComponent: {fileID: 114343587787251558}
   m_materialReferenceIndex: 1
---- !u!114 &114835862535892022
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1086538306632282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c6364cda2b54344a1e285934c33439, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_giftAmountText: {fileID: 0}
 --- !u!114 &114839359860529858
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1808,9 +1750,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7340e31eca4814d6fa853cb3930ad965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_progressBar: {fileID: 0}
-  m_progressText: {fileID: 0}
-  m_progressBarGradient: {fileID: 0}
+  m_progressBar: {fileID: 114024068152553208}
+  m_progressText: {fileID: 114839359860529858}
+  m_progressBarGradient: {fileID: 114792079850997804}
 --- !u!114 &114968498200907760
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2368,7 +2310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -12.74, y: 0}
+  m_AnchoredPosition: {x: -12.73999, y: 0}
   m_SizeDelta: {x: -15.499998, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224887196189700504
@@ -2449,7 +2391,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0025634766, y: 0}
+  m_AnchoredPosition: {x: -0.0029296875, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224944594481950056

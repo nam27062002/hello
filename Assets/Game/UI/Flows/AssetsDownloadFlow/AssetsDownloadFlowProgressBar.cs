@@ -36,31 +36,31 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour {
 	// METHODS																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Refresh to display the progress of the given group.
+	/// Refresh to display the progress of the given download handler.
 	/// </summary>
-	/// <param name="_group">Group.</param>
-	public void Refresh(TMP_AssetsGroupData _group) {
+	/// <param name="_handle">Handle to be used.</param>
+	public void Refresh(Downloadables.Handle _handle) {
 		// Just for safety
-		if(_group == null) return;
+		if(_handle == null) return;
 
 		// Progress Bar
 		if(m_progressBar != null) {
-			m_progressBar.normalizedValue = _group.progress;
+			m_progressBar.normalizedValue = _handle.Progress;
 		}
 
 		// Progress Text
 		if(m_progressText != null) {
 			m_progressText.text = LocalizationManager.SharedInstance.Localize(
 				"TID_FRACTION",
-				StringUtils.FormatNumber(_group.downloadedBytes, 2),
-				StringUtils.FormatFileSize(_group.totalBytes, 0)	// No decimals looks better for total size
+				StringUtils.FormatFileSize(_handle.GetDownloadedBytes(), 2),
+				StringUtils.FormatFileSize(_handle.GetTotalBytes(), 0)	// No decimals looks better for total size
 			);
 		}
 
 		// Gradient color
 		if(m_progressBarGradient != null) {
 			m_progressBarGradient.SetValues(
-				AssetsDownloadFlowSettings.GetProgressBarColor(_group)
+				AssetsDownloadFlowSettings.GetProgressBarColor(_handle)
 			);
 		}
 	}
