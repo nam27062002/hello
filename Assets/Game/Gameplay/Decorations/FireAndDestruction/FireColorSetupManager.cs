@@ -28,8 +28,13 @@ public class FireColorSetupManager : MonoBehaviour {
     };
     
     Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>();
+        // Materials used when a decoration is burning
     Dictionary<FireColorType, Material> m_originalBurnMaterial = new Dictionary<FireColorType, Material>();
     Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>();
+    
+        // Materials used when a decoration is burned. This is the destroyed mesh under the normal mesh
+    Dictionary<FireColorType, Material> m_burnedViewMaterial = new Dictionary<FireColorType, Material>();
+    
     Dictionary<FireColorConfig, List<Material>> m_freeConfigMaterials = new Dictionary<FireColorConfig, List<Material>>();
     
     private void Awake()
@@ -65,8 +70,8 @@ public class FireColorSetupManager : MonoBehaviour {
                     loadColors.Add(FireColorVariants.EXPLOSION, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireBlueExplosion"));
                     loadColors.Add(FireColorVariants.TOON, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireBlueToon"));
                     loadColors.Add(FireColorVariants.UNDERWATER, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireBlueUnderwater"));
-                    Material ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
-                    m_originalBurnMaterial.Add(fireColorType, ashMaterial);
+                    m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material));
+                    m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/burnt_texture") as Material));
                 }break;
                 case FireColorType.RED:
                 {
@@ -74,8 +79,8 @@ public class FireColorSetupManager : MonoBehaviour {
                     loadColors.Add(FireColorVariants.EXPLOSION, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireRedExplosion"));
                     loadColors.Add(FireColorVariants.TOON, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireRedToon"));
                     loadColors.Add(FireColorVariants.UNDERWATER, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireRedUnderwater"));
-                    Material ashMaterial = new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material);
-                    m_originalBurnMaterial.Add(fireColorType, ashMaterial);
+                    m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material));
+                    m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/burnt_texture") as Material));
                 }break;
                 case FireColorType.ICE:
                 {
@@ -83,8 +88,8 @@ public class FireColorSetupManager : MonoBehaviour {
                     loadColors.Add(FireColorVariants.EXPLOSION, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireIceExplosion"));
                     loadColors.Add(FireColorVariants.TOON, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireIceToon"));
                     loadColors.Add(FireColorVariants.UNDERWATER, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireIceUnderwater"));
-                    Material ashMaterial = new Material(Resources.Load("Game/Materials/IceBurnToAshes") as Material);
-                    m_originalBurnMaterial.Add(fireColorType, ashMaterial);
+                    m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/IceBurnToAshes") as Material));
+                    m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/Ice_burnt_texture") as Material));
                 }break;
             }
             m_loadedColors.Add( fireColorType, loadColors );
@@ -99,6 +104,8 @@ public class FireColorSetupManager : MonoBehaviour {
         return ret;
     }
     
+    
+    // Burning Decocations materials
     public Material GetDecorationBurnMaterial( FireColorType colorType )
     {
         if ( m_freeDecorationBurnMaterial[colorType].Count <= 0 )
@@ -115,7 +122,14 @@ public class FireColorSetupManager : MonoBehaviour {
     {
         m_freeDecorationBurnMaterial[colorType].Add( mat );
     }
+
+    // Burned Decoration Materials
+    public Material GetDecorationBurnedMaterial(FireColorType colorType)
+    {
+        return m_burnedViewMaterial[colorType];
+    }
     
+    // Material for FyreTypeAutoselector 
     public Material GetConfigMaterial( FireColorConfig fireColorConfig)
     {
         Material ret = null;

@@ -56,6 +56,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	private Dictionary<int, List<Material>> m_originalMaterials = new Dictionary<int, List<Material>>();
 	private Material m_ashMaterial;
 
+    private Renderer[] m_viewBurnedRenderes;
+
 	private Decoration m_entity;
 
 	private ParticleHandler m_explosionProcHandler;
@@ -149,6 +151,8 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
                 m_renderers[i].sharedMaterials = materials;
             }
 
+            m_viewBurnedRenderes = m_viewBurned.GetComponentsInChildren<Renderer>();
+
             m_entity = GetComponent<Decoration>();
             m_collider = GetComponent<BoxCollider>();
             m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
@@ -230,6 +234,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
                 }
 
                 m_viewBurned.SetActive(true);
+                BurnedView();
 
 				SwitchViewToDissolve();
 
@@ -345,6 +350,7 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 	private void Destroy() {
 		m_view.SetActive(false);
 		m_viewBurned.SetActive(true);
+        BurnedView();
 		if (m_collider) m_collider.isTrigger = true;
 		if (m_autoSpawner) m_autoSpawner.StartRespawn();
         ReturnAshMaterial();
@@ -376,8 +382,21 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		}
 		m_ashMaterial.SetFloat("_BurnLevel", 0);
 	}
+    
+    private void BurnedView()
+    {
+        Material burnedMaterial = FireColorSetupManager.instance.GetDecorationBurnedMaterial( m_extingishColor );
+        int max = m_viewBurnedRenderes.Length;
+        for (int i = 0; i < max; i++) {
+            Material[] materials = m_renderers[i].materials;
+            for (int m = 0; m < materials.Length; m++) {
+                materials[m] = burnedMaterial;
+            }
+            m_renderers[i].materials = materials;
+        }
+    }
 
-	private void BurnOperators() {
+    private void BurnOperators() {
 		for (int i = 0; i < m_passengersSpawner.Length; ++i) {
 			m_passengersSpawner[i].PassengersBurn(m_burnSource);
 		}
