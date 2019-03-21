@@ -22,6 +22,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
     public float m_animHisteresisPercentage = 5.0f;
     public float m_animTime = 0.1f;
     protected Animator m_anim;
+    protected ShieldHit m_shieldHit = new ShieldHit();
     
 
 	// Use this for initialization
@@ -133,8 +134,10 @@ public class DragonShieldBehaviour : MonoBehaviour {
     
     public float RecieveDamage(float _amount, DamageType _type, Transform _source = null, bool _hitAnimation = true, string _damageOrigin = "", Entity _entity = null)
     {
-        if ( !m_ignoreDamageTypes.Contains( _type ) )
+        if ( !m_ignoreDamageTypes.Contains( _type ) && m_currentShield > 0)
         {
+            m_shieldHit.value = _amount;
+            m_shieldHit.bigHit = _amount > m_maxShield * 0.1f;
             if ( _amount < m_currentShield )
             {
                 m_currentShield -= _amount;
@@ -145,6 +148,8 @@ public class DragonShieldBehaviour : MonoBehaviour {
                 _amount -= m_currentShield;
                 m_currentShield = 0;
             }
+            m_shieldHit.broken = m_currentShield <= 0;
+            Broadcaster.Broadcast(BroadcastEventType.SHIELD_HIT, m_shieldHit);
         }
         return _amount;
     }
