@@ -88,8 +88,8 @@ namespace Downloadables
 
             Error = EError.NONE;
 
-            TimeAtStart = Time.realtimeSinceStartup;
-			LastUpdateTime = Time.realtimeSinceStartup;
+            TimeAtStart = Time.unscaledTime;
+			LastUpdateTime = Time.unscaledTime;
 
             Actions = actions;
             if (Actions != null)
@@ -207,7 +207,7 @@ namespace Downloadables
 
 				DownloadingTime += DownloadingTimeDelta;
 
-				LastUpdateTime = Time.realtimeSinceStartup;
+				LastUpdateTime = Time.unscaledTime;
             }
         }
 
@@ -215,7 +215,7 @@ namespace Downloadables
         {
 			// Time at the start and end of the frame
 			float timeAtStart = LastUpdateTime - TimeAtStart;
-			float timeAtEnd = Time.realtimeSinceStartup - TimeAtStart;
+			float timeAtEnd = Time.unscaledTime - TimeAtStart;
 
 			// Aux vars
 			Action lastAction = null;
