@@ -159,7 +159,7 @@ namespace AI {
         public bool IsStunned() { return false; }
         public bool IsInLove() { return false; }
 		
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		public bool Smash(IEntity.Type _source) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

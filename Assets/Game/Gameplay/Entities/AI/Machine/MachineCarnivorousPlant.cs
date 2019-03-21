@@ -149,11 +149,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant);
+					m_inflammable.Burn(_transform, _source, instant, fireColorType);
 				}
 				return true;
 			}
