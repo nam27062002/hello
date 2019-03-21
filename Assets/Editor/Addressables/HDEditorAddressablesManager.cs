@@ -11,7 +11,7 @@ public class HDEditorAddressablesManager : EditorAddressablesManager
     {
 #if UNITY_EDITOR
         // Scripts to generate game related asset bundles here
-        return EditorAutomaticAddressables.BuildCatalog();
+        return EditorAutomaticAddressables.BuildCatalog(true);
 #else
         return null;
 #endif

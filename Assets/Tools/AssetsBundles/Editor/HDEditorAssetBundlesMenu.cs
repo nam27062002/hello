@@ -1,6 +1,4 @@
-﻿#define ALL_BUNDLES_LOCAL
-
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
@@ -48,7 +46,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             AutoFlush = true
         };
 
-        writer.Write(EditorAutomaticAddressables.BuildCatalog().ToString());
+        writer.Write(EditorAutomaticAddressables.BuildCatalog(true).ToString());
         writer.Close();
     }
 

@@ -1,5 +1,4 @@
 ﻿#if UNITY_EDITOR
-#define ALL_BUNDLES_LOCAL
 
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +34,7 @@ public static class EditorAutomaticAddressables {
     }
 
 
-    public static JSONClass BuildCatalog() {
+    public static JSONClass BuildCatalog(bool _allBundlesLocal) {
         List<AddressablesCatalogEntry> entryList;
         List<string> bundleList;
 
@@ -54,17 +53,17 @@ public static class EditorAutomaticAddressables {
 
             JSONArray localAssetBundles = new JSONArray();
             {
-#if ALL_BUNDLES_LOCAL
-                foreach (string bundle in bundleList) {
-                    localAssetBundles.Add(bundle);
-                }
-#else
-                foreach (string bundle in bundleList) {
-                    if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
+                if (_allBundlesLocal) {
+                    foreach (string bundle in bundleList) {
                         localAssetBundles.Add(bundle);
                     }
+                } else {
+                    foreach (string bundle in bundleList) {
+                        if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
+                            localAssetBundles.Add(bundle);
+                        }
+                    }
                 }
-#endif
             }
             catalog.Add("localAssetBundles", localAssetBundles);
 
