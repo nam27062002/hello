@@ -466,6 +466,39 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		}
 	}
 
+	/// <summary>
+	/// Check whether we need to trigger any popup related to downloadable assets.
+	/// </summary>
+	private void CheckDownloadAssets() {
+		// Not if another popup is open
+		if(m_currentPopup != null) return;
+
+		// Check for current screen
+		PopupAssetsDownloadFlow downloadPopup = null;
+		switch(m_currentScreen) {
+			case MenuScreen.DRAGON_SELECTION: {
+				MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<MenuDragonScreenController>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
+			} break;
+
+			case MenuScreen.LAB_DRAGON_SELECTION: {
+				// TODO!!
+			} break;
+
+			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
+				// TODO!!
+			} break;
+		}
+
+		// Did we open any popup?
+		if(downloadPopup != null) {
+			m_currentPopup = downloadPopup.GetComponent<PopupController>();
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -539,6 +572,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
                 CheckPromotedIAPs();
             }break;
 		}
+
+		// Download Assets: Always in any screen (screen will already be checked in the function)
+		CheckDownloadAssets();
 	}
 
 	/// <summary>
@@ -570,7 +606,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 				} break;
 
 				case MenuScreen.DRAGON_SELECTION: {
-					// Always
+					// Always (high prio)
 					CheckLabUnlock();
 
 					// Coming from a run?
@@ -581,6 +617,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 					}
 				} break;
 			}
+
+			// Download Assets Popups: Always in any screen (screen will already be checked in the function)
+			CheckDownloadAssets();
 		}
 	}
 

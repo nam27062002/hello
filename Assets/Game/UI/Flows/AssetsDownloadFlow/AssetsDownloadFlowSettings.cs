@@ -57,19 +57,19 @@ public class AssetsDownloadFlowSettings : SingletonScriptableObject<AssetsDownlo
 	// METHODS																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Select the right progress bar color based on group's download state.
+	/// Select the right progress bar color based on handle's download state.
 	/// </summary>
 	/// <returns>The progress bar color.</returns>
-	/// <param name="_group">Group to be checked.</param>
-	public static Gradient4 GetProgressBarColor(TMP_AssetsGroupData _group) {
+	/// <param name="_handle">Handle to be checked.</param>
+	public static Gradient4 GetProgressBarColor(Downloadables.Handle _handle) {
 		// Just in case
-		if(_group == null) return progressBarErrorColor;
+		if(_handle == null) return progressBarErrorColor;
 
 		// a) Download completed
-		if(_group.isDone) return progressBarFinishedColor;
+		if(_handle.IsAvailable()) return progressBarFinishedColor;
 
 		// b) No error
-		if(_group.error == TMP_AssetsGroupData.Error.NONE) return progressBarDownloadingColor;
+		if(_handle.GetError() == Downloadables.Handle.EError.NONE) return progressBarDownloadingColor;
 
 		// c) Error
 		return progressBarErrorColor;
