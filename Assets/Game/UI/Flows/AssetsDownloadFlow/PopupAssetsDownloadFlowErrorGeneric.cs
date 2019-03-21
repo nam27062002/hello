@@ -1,4 +1,4 @@
-// IAssetsDownloadFlowUpdatablePopup.cs
+// PopupAssetsDownloadFlowErrorGeneric.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 13/03/2019.
@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using TMPro;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -15,7 +16,7 @@ using UnityEngine;
 /// <summary>
 /// Auxiliar popup to the Assets Download Flow.
 /// </summary>
-public class AssetsDownloadFlowUpdatablePopup : AssetsDownloadFlowPopup {
+public class PopupAssetsDownloadFlowErrorGeneric : PopupAssetsDownloadFlow {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -23,23 +24,25 @@ public class AssetsDownloadFlowUpdatablePopup : AssetsDownloadFlowPopup {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[SerializeField] private TextMeshProUGUI m_errorCodeText = null;
 
 	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
+	// METHODS																  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// First update.
+	/// Refresh popup's visuals.
 	/// </summary>
-	private void Start() {
-		// Program periodic update
-		InvokeRepeating("PeriodicUpdate", 0f, AssetsDownloadFlowSettings.updateInterval);
-	}
+	public override void Refresh() {
+		// Call parent
+		base.Refresh();
 
-	/// <summary>
-	/// Update at regular intervals.
-	/// </summary>
-	private void PeriodicUpdate() {
-		// Refresh popup's content
-		Refresh();
+		// Set error code
+		if(m_errorCodeText != null) {
+			if(m_handle != null) {
+				m_errorCodeText.text = m_handle.GetErrorCode().ToString();
+			} else {
+				m_errorCodeText.text = "-";	// Shouldn't happen!
+			}
+		}
 	}
 }

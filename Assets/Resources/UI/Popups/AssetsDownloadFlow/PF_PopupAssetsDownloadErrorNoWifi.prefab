@@ -142,7 +142,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224212063538598698}
-  - component: {fileID: 114235638987675878}
+  - component: {fileID: 114219789436913056}
   - component: {fileID: 114623919765346674}
   - component: {fileID: 95046180024942786}
   - component: {fileID: 225508605260609826}
@@ -599,8 +599,8 @@ MonoBehaviour:
           m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114235638987675878}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114219789436913056}
+        m_MethodName: OnDenyDataPermission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -703,8 +703,8 @@ MonoBehaviour:
           m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114235638987675878}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114219789436913056}
+        m_MethodName: OnAllowDataPermission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -852,7 +852,7 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &114235638987675878
+--- !u!114 &114219789436913056
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -860,10 +860,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1267006728588536}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c6364cda2b54344a1e285934c33439, type: 3}
+  m_Script: {fileID: 11500000, guid: 098c696c3b041416d819cded9e1cf5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_giftAmountText: {fileID: 0}
+  m_update: 1
+  m_messageText: {fileID: 114980299391694258}
+  m_progressBar: {fileID: 0}
 --- !u!114 &114247782287372436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1470,9 +1472,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7340e31eca4814d6fa853cb3930ad965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_progressBar: {fileID: 0}
-  m_progressText: {fileID: 0}
-  m_progressBarGradient: {fileID: 0}
+  m_progressBar: {fileID: 114288642754873206}
+  m_progressText: {fileID: 114827460488959138}
+  m_progressBarGradient: {fileID: 114175938451933334}
 --- !u!114 &114545224663660920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1650,28 +1652,6 @@ MonoBehaviour:
           m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114235638987675878}
-        m_MethodName: OnOpenPreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: RestartShow
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
@@ -1692,28 +1672,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: hd_popup_close
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114235638987675878}
-        m_MethodName: OnClosePreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: Hide
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -2050,18 +2008,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnBackButton:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114235638987675878}
-        m_MethodName: OnGoToLab
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114838401398461798
@@ -2377,7 +2324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0007324219, y: 0}
+  m_AnchoredPosition: {x: 0.0009765625, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224299601125697232
@@ -2415,7 +2362,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -12.74, y: 0}
+  m_AnchoredPosition: {x: -12.73999, y: 0}
   m_SizeDelta: {x: -15.499998, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224358354799835780

@@ -80,6 +80,14 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Checks whether a popup needs to be opened with the current handle.
+	/// </summary>
+	/// <returns>The opened popup if any was needed.</returns>
+	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
+		return PopupAssetsDownloadFlow.OpenPopupByState(m_handle);
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
@@ -192,6 +200,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		AssetsDownloadFlowPopup.OpenPopupByState(m_group);
+		PopupAssetsDownloadFlow.OpenPopupByState(m_handle);
 	}
 }

@@ -18,7 +18,7 @@ using TMPro;
 /// <summary>
 /// Auxiliar popup to the Assets Download Flow.
 /// </summary>
-public class AssetsDownloadFlowPopup : MonoBehaviour {
+public class PopupAssetsDownloadFlow : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -34,12 +34,34 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
+	[SerializeField] protected bool m_update = false;
 	[Comment("Optional depending on layout")]
-	[SerializeField] private Localizer m_messageText = null;
-	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
+	[SerializeField] protected Localizer m_messageText = null;
+	[SerializeField] protected AssetsDownloadFlowProgressBar m_progressBar = null;
 
 	// Internal
-	private TMP_AssetsGroupData m_group = null;
+	protected Downloadables.Handle m_handle = null;
+
+	//------------------------------------------------------------------------//
+	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// First update.
+	/// </summary>
+	protected void Start() {
+		// Program periodic update if needed
+		if(m_update) {
+			InvokeRepeating("PeriodicUpdate", 0f, AssetsDownloadFlowSettings.updateInterval);
+		}
+	}
+
+	/// <summary>
+	/// Update at regular intervals.
+	/// </summary>
+	protected void PeriodicUpdate() {
+		// Refresh popup's content
+		Refresh();
+	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -47,12 +69,15 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 	/// <summary>
 	/// Initialize the popup with the given data.
 	/// </summary>
-	/// <param name="_group">The assets group used for initialization.</param>
-	public virtual void Init(TMP_AssetsGroupData _group) {
+	/// <param name="_handle">The assets group used for initialization.</param>
+	public virtual void Init(Downloadables.Handle _handle) {
 		// Store group
-		m_group = _group;
+		m_handle = _handle;
 	}
 
+	/// <summary>
+	/// Refresh popup's visulas.
+	/// </summary>
 	public virtual void Refresh() {
 		// Message
 		if(m_messageText != null) {
@@ -62,18 +87,17 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 					m_messageText.Localize(
 						m_messageText.tid,
 						AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
-							StringUtils.FormatFileSize(m_group.totalBytes)
+							StringUtils.FormatFileSize(m_handle.GetTotalBytes())
 						)
 					);
 				} break;
 
 				case "TID_OTA_ERROR_03_BODY": {
 					// Compute missing storage size
-					float bytesToFree = m_group.totalBytes - m_group.downloadedBytes;
 					m_messageText.Localize(
 						m_messageText.tid,
 						AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
-							StringUtils.FormatFileSize(bytesToFree)
+							StringUtils.FormatFileSize(m_handle.GetDiskOverflowBytes())
 						)
 					);
 				} break;
@@ -86,7 +110,7 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 
 		// Progress Bar
 		if(m_progressBar != null) {
-			m_progressBar.Refresh(m_group);
+			m_progressBar.Refresh(m_handle);
 		}
 	}
 
@@ -94,51 +118,52 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 	// STATIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Opens the right popup according to given group's state.
+	/// Opens the right popup according to given handle's state.
 	/// </summary>
-	/// <returns></returns>
-	public static AssetsDownloadFlowPopup OpenPopupByState(TMP_AssetsGroupData _group) {
-		// Ignore if group is not valid
-		if(_group == null) return null;
+	/// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
+	/// <param name="_handle">The download handle whose information we will be using.</param>
+	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle) {
+		// Ignore if handle is not valid
+		if(_handle == null) return null;
 
-		// Same if the group is ready
-		if(_group.isDone) return null;
+		// Same if the download has finished
+		if(_handle.IsAvailable()) return null;
 
 		// Let's do it!
 		string popupPath = string.Empty;
 
 		// Has the permission been requested?
-		if(!_group.dataPermissionRequested) {
+		if(_handle.NeedsToRequestPermission()) {
 			// No! Open the permission request popup
 			popupPath = PATH_PERMISSION;
-			_group.dataPermissionRequested = true;	// Clear flag
+			_handle.SetIsPermissionRequested(true);	// Clear flag
 		} else {
 			// Yes! Check error code
-			switch(_group.error) {
-				case TMP_AssetsGroupData.Error.NONE: {
+			switch(_handle.GetError()) {
+				case Downloadables.Handle.EError.NONE: {
 					// No error! Show progress popup
 					popupPath = PATH_PROGRESS;
 				} break;
 
-				case TMP_AssetsGroupData.Error.NO_WIFI: {
+				case Downloadables.Handle.EError.NO_WIFI: {
 					popupPath = PATH_ERROR_NO_WIFI;
 				} break;
 
-				case TMP_AssetsGroupData.Error.NO_CONNECTION: {
+				case Downloadables.Handle.EError.NO_CONNECTION: {
 					popupPath = PATH_ERROR_NO_CONNECTION;
 				} break;
 
-				case TMP_AssetsGroupData.Error.STORAGE: {
+				case Downloadables.Handle.EError.STORAGE: {
 					popupPath = PATH_ERROR_STORAGE;
 				} break;
 
-				case TMP_AssetsGroupData.Error.STORAGE_PERMISSION: {
+				case Downloadables.Handle.EError.STORAGE_PERMISSION: {
 					popupPath = PATH_ERROR_STORAGE_PERMISSION;
 				} break;
 
 				default: {
 					// Open generic error popup
-					popupPath = PATH_ERROR_STORAGE;
+					popupPath = PATH_ERROR_GENERIC;
 				} break;
 			}
 		}
@@ -149,8 +174,8 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 			PopupController popup = PopupManager.LoadPopup(popupPath);
 
 			// Initialize it
-			AssetsDownloadFlowPopup flowPopup = popup.GetComponent<AssetsDownloadFlowPopup>();
-			flowPopup.Init(_group);
+			PopupAssetsDownloadFlow flowPopup = popup.GetComponent<PopupAssetsDownloadFlow>();
+			flowPopup.Init(_handle);
 
 			// Open it and return!
 			popup.Open();
@@ -176,7 +201,7 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 	/// </summary>
 	public void OnDenyDataPermission() {
 		// Store new settings
-		m_group.dataPermissionGranted = true;
+		m_handle.SetIsPermissionGranted(false);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);
@@ -187,7 +212,7 @@ public class AssetsDownloadFlowPopup : MonoBehaviour {
 	/// </summary>
 	public void OnAllowDataPermission() {
 		// Store new settings
-		m_group.dataPermissionGranted = false;
+		m_handle.SetIsPermissionGranted(true);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);

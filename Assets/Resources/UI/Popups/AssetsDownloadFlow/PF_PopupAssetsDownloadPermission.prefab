@@ -325,7 +325,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224988186623290432}
-  - component: {fileID: 114262344372489360}
+  - component: {fileID: 114266379484863896}
   - component: {fileID: 114348696111487512}
   - component: {fileID: 95346932567529980}
   - component: {fileID: 225642444467580128}
@@ -525,7 +525,7 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
---- !u!114 &114262344372489360
+--- !u!114 &114266379484863896
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -533,10 +533,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1960418072755932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c6364cda2b54344a1e285934c33439, type: 3}
+  m_Script: {fileID: 11500000, guid: 098c696c3b041416d819cded9e1cf5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_giftAmountText: {fileID: 0}
+  m_messageText: {fileID: 114077579494583540}
+  m_progressBar: {fileID: 0}
 --- !u!114 &114266446953971600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -631,8 +632,8 @@ MonoBehaviour:
           m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114262344372489360}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114266379484863896}
+        m_MethodName: OnAllowDataPermission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -913,28 +914,6 @@ MonoBehaviour:
           m_StringArgument: hd_popup_open
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114262344372489360}
-        m_MethodName: OnOpenPreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: RestartShow
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
@@ -955,28 +934,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: hd_popup_close
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 114262344372489360}
-        m_MethodName: OnClosePreAnimation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: Hide
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -1615,8 +1572,8 @@ MonoBehaviour:
           m_StringArgument: UI_Click
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114262344372489360}
-        m_MethodName: OnGoToLab
+      - m_Target: {fileID: 114266379484863896}
+        m_MethodName: OnDenyDataPermission
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1845,18 +1802,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnBackButton:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114262344372489360}
-        m_MethodName: OnGoToLab
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &114833964674586434
