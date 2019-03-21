@@ -30,6 +30,7 @@ public class FireColorSetupManager : MonoBehaviour {
     Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>> m_loadedColors = new Dictionary<FireColorType, Dictionary<FireColorVariants, FireColorConfig>>();
     Dictionary<FireColorType, Material> m_originalBurnMaterial = new Dictionary<FireColorType, Material>();
     Dictionary<FireColorType, List<Material>> m_freeDecorationBurnMaterial = new Dictionary<FireColorType, List<Material>>();
+    Dictionary<FireColorConfig, List<Material>> m_freeConfigMaterials = new Dictionary<FireColorConfig, List<Material>>();
     
     private void Awake()
     {
@@ -113,6 +114,31 @@ public class FireColorSetupManager : MonoBehaviour {
     public void ReturnDecorationBurnMaterial( FireColorType colorType, Material mat )
     {
         m_freeDecorationBurnMaterial[colorType].Add( mat );
+    }
+    
+    public Material GetConfigMaterial( FireColorConfig fireColorConfig)
+    {
+        Material ret = null;
+        if (!m_freeConfigMaterials.ContainsKey( fireColorConfig ))
+        {
+            m_freeConfigMaterials.Add(fireColorConfig, new List<Material>());
+        }
+        if ( m_freeConfigMaterials[fireColorConfig].Count > 0 )
+        {
+            ret = m_freeConfigMaterials[fireColorConfig][0];
+            m_freeConfigMaterials[fireColorConfig].RemoveAt(0);
+        }
+        else
+        {
+            ret = new Material(fireColorConfig.m_fireMaterial);
+            ret.SetFloat("_Seed", Random.value);
+        }
+        return ret;
+    }
+    
+    public void ReturnConfigMaterial(FireColorConfig _fireColorConfig, Material _mat)
+    {
+        m_freeConfigMaterials[_fireColorConfig].Add( _mat );
     }
 
 }

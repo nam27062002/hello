@@ -17,8 +17,11 @@ public class FireTypeAutoSelector : MonoBehaviour {
 	[SerializeField] private Renderer[] m_rChangeMaterials;
 
 
+    private FireColorConfig m_fireColorConfig;
 	private Material m_fireMaterialInstance;
 	private Material m_megaMaterialInstance;
+    
+    
 
 	void OnEnable() {
 		if (InstanceManager.player != null) {
@@ -32,15 +35,15 @@ public class FireTypeAutoSelector : MonoBehaviour {
 				m_megaOnly[i].SetActive(isMega == true);
 			}
 
-            FireColorConfig fireColorConfig = FireColorSetupManager.instance.GetColorConfig(InstanceManager.player.breathBehaviour.currentColor, m_fireColorVariant);
-            if ( fireColorConfig != null )
+            m_fireColorConfig = FireColorSetupManager.instance.GetColorConfig(InstanceManager.player.breathBehaviour.currentColor, m_fireColorVariant);
+            if ( m_fireColorConfig != null )
             {
     			for (int i = 0; i < m_psChangeStartColors.Length; ++i) {
     				ParticleSystem.MainModule main = m_psChangeStartColors[i].main;
     				ParticleSystem.MinMaxGradient color = main.startColor;
     
-                    color.colorMin = fireColorConfig.m_fireStartColorA;
-                    color.colorMax = fireColorConfig.m_fireStartColorB;
+                    color.colorMin = m_fireColorConfig.m_fireStartColorA;
+                    color.colorMax = m_fireColorConfig.m_fireStartColorB;
     				main.startColor = color;
     			}
     
@@ -48,20 +51,22 @@ public class FireTypeAutoSelector : MonoBehaviour {
     				ParticleSystem.ColorOverLifetimeModule colorOverLifetime = m_psChangeGradientColors[i].colorOverLifetime;
     				ParticleSystem.MinMaxGradient color = colorOverLifetime.color;
                     
-                    color.gradient = fireColorConfig.m_fireGradient;
+                    color.gradient = m_fireColorConfig.m_fireGradient;
     				colorOverLifetime.color = color;
     			}
                 
-                if (fireColorConfig.m_fireMaterial != null)
+                if (m_fireColorConfig.m_fireMaterial != null)
                 {
                     if ( isMega )
                     {
-                        if ( m_megaMaterialInstance == null) m_megaMaterialInstance = new Material(fireColorConfig.m_fireMaterial);
+                        if (m_megaMaterialInstance == null)
+                            m_megaMaterialInstance = FireColorSetupManager.instance.GetConfigMaterial(m_fireColorConfig);
                         SetMaterial(m_megaMaterialInstance);
                     }
                     else
                     {
-                        if (m_fireMaterialInstance == null) m_fireMaterialInstance = new Material(fireColorConfig.m_fireMaterial);
+                        if (m_fireMaterialInstance == null) 
+                            m_fireMaterialInstance = FireColorSetupManager.instance.GetConfigMaterial(m_fireColorConfig);
                         SetMaterial(m_fireMaterialInstance);
                     }
                 }
@@ -69,11 +74,33 @@ public class FireTypeAutoSelector : MonoBehaviour {
             }
 		}
 	}
+
+    private void OnDisable()
+    {
+        // Return materials
+        ReturnMaterials();
+    }
     
-    
+    private void ReturnMaterials()
+    {
+        if (FireColorSetupManager.instance != null)
+        {
+            if (m_megaMaterialInstance == null)
+            {
+                FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_megaMaterialInstance);
+                m_megaMaterialInstance = null;
+            }
+            
+            if (m_fireMaterialInstance == null)
+            {
+                FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_fireMaterialInstance);
+                m_fireMaterialInstance = null;
+            }
+        }
+    }
+
     private void SetMaterial( Material _materialInstance )
     {
-        _materialInstance.SetFloat("_Seed", Random.value);
         for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
             Material[] materials = m_rChangeMaterials[i].materials;
             for (int m = 0; m < materials.Length; ++m) {
