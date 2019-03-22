@@ -1260,6 +1260,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
         }
     }
+
+    public override void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {
+        string actionStr = "";
+
+        switch (_action) {
+            case Downloadables.Popup.EAction.Got_It:                actionStr = "GOT IT"; break;
+            case Downloadables.Popup.EAction.Close:                 actionStr = "CLOSE"; break;
+            case Downloadables.Popup.EAction.Wifi_Only:             actionStr = "WIFI ONLY"; break;
+            case Downloadables.Popup.EAction.Wifi_Mobile:           actionStr = "WIFI AND MOBILE DATA"; break;
+            case Downloadables.Popup.EAction.View_Storage_Options:  actionStr = "VIEW STORAGE OPTIONS"; break;
+        }
+
+        Track_PopupOTA(_popupName, actionStr);
+    }
     #endregion
 
     /// <summary>
@@ -2391,6 +2405,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         return "SecondaryDownload_" + downloadableId;
     }
+
+    private void Track_PopupOTA(string _popupName, string _action) {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_PopupOTA popupName = " + _popupName
+                + ", action = " + _action
+               );
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.ota.popups");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName);
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
 
     // -------------------------------------------------------------
     // Events

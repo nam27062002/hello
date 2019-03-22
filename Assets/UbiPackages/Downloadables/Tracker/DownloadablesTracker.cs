@@ -3,6 +3,16 @@ using UnityEngine;
 
 namespace Downloadables
 {
+    namespace Popup {
+        public enum EAction {
+            Got_It = 0,
+            Close,
+            Wifi_Only,
+            Wifi_Mobile,
+            View_Storage_Options
+        };
+    }
+
     /// <summary>
     /// This class is responsible for defining the interface of the class that will be notified every time a relevant action related to downloadables happens
     /// </summary>

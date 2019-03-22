@@ -586,6 +586,8 @@ public class HDTrackingManager
 
     public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
+
+    public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
     #endregion
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
