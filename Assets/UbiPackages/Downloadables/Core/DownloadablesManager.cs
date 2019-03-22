@@ -186,12 +186,12 @@ namespace Downloadables
             if (CanLog())
             {                
                 Log("Initializing Downloadables manager..." );
-            }
+            }            
 
-            m_groups = groups;
+            ProcessCatalog(catalogJSON, groups);
 
-            ProcessCatalog(catalogJSON);
-            Groups_Process();
+            // Groups need to be initialized after catalog has been loaded
+            Groups_Init(groups);            
 
             IsInitialized = true;            
 
@@ -202,7 +202,7 @@ namespace Downloadables
             }
         }                
 
-        private void ProcessCatalog(JSONNode catalogJSON)
+        private void ProcessCatalog(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {    
             if (catalogJSON != null)
             {
@@ -225,18 +225,18 @@ namespace Downloadables
                     }                    
                 }
 
-                List<string> groups = null;
-                if (m_groups != null)
+                List<string> groupIds = null;
+                if (groups != null)
                 {
-                    groups = new List<string>();
+                    groupIds = new List<string>();
                     foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
                     {
-                        groups.Add(pair.Key);
+                        groupIds.Add(pair.Key);
                     }
                 }
 
                 // Cleans obsolete stuff
-                m_cleaner.CleanAllExcept(ids, groups);                
+                m_cleaner.CleanAllExcept(ids, groupIds);                
             }            
         }                 
         
@@ -462,15 +462,12 @@ namespace Downloadables
 
         private void Catalog_Update()
         {
-            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);
-
-            bool canDownload = !m_downloader.IsDownloading;
-            CatalogEntryStatus entryToDownload = null;
-
-            CatalogEntryStatus entryToSimulateDownload = null;
+            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);            
+            
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
                 pair.Value.Update();
+                /*
                 if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload)
                 {                  
                     if (m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
@@ -482,20 +479,72 @@ namespace Downloadables
                         ProcessCandidateToDownload(ref entryToSimulateDownload, pair.Value, true);
                     }
                 }
-            }            
+                */
+            }
 
-            // A simulation is performed only if there's no an actual download to perform
-            if (entryToDownload == null)
+            bool canDownload = !m_downloader.IsDownloading;
+            if (canDownload)
             {
-                if (entryToSimulateDownload != null)
+                if (Groups_PrioritiesDirty)
                 {
-                    entryToSimulateDownload.SimulateDownload();
+                    Groups_SetupPriorities();
+                    Groups_PrioritiesDirty = false;
+                }
+
+                // Groups are sorted by priority, so as soon as we exit the loop as sson as we get an entry to download
+                int count = m_groupsSortedByPriority.Count;
+                CatalogEntryStatus entryToDownload = null;
+                CatalogEntryStatus entryToSimulateDownload = null;
+                for (int i = 0; i < count; i++)
+                {
+                    if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                    {
+                        break;
+                    }
+                }
+
+                // A simulation is performed only if there's no an actual download to perform
+                if (entryToDownload == null)
+                {
+                    if (entryToSimulateDownload != null)
+                    {
+                        entryToSimulateDownload.SimulateDownload();
+                    }
+                }
+                else
+                {
+                    m_downloader.StartDownloadThread(entryToDownload);
                 }
             }
-            else
-            {                
-                m_downloader.StartDownloadThread(entryToDownload);
-            }            
+        }
+
+        private bool FindEntryToDownloadInList(List<string> entryIds, ref CatalogEntryStatus entryToDownload, ref CatalogEntryStatus entryToSimulateDownload)
+        {            
+            if (entryIds != null)
+            {
+                CatalogEntryStatus entry;
+                int count = entryIds.Count;                
+                for (int i = 0; i < count; i++)
+                {
+                    entry = Catalog_GetEntryStatus(entryIds[i]);
+                    if (entry != null)
+                    {
+                        if (entry.State == CatalogEntryStatus.EState.InQueueForDownload)
+                        {
+                            if (m_downloader.ShouldDownloadWithCurrentConnection(entry))
+                            {
+                                ProcessCandidateToDownload(ref entryToDownload, entry, false);
+                            }
+                            else
+                            {
+                                ProcessCandidateToDownload(ref entryToSimulateDownload, entry, true);
+                            }
+                        }
+                    }
+                }                                
+            }
+
+            return entryToDownload != null || entryToSimulateDownload != null;
         }
 
         private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
@@ -508,7 +557,10 @@ namespace Downloadables
                 }
                 else if (IsAutomaticDownloaderEnabled && entry.CanAutomaticDownload(simulation))
                 {
-                    candidateSoFar = entry;
+                    if (candidateSoFar == null || entry.IsRequestRunning())
+                    {
+                        candidateSoFar = entry;
+                    }
                 }
             }
         }
@@ -516,17 +568,74 @@ namespace Downloadables
 
         // Region responsible for handling downloadable groups
         #region groups
-        private Dictionary<string, CatalogGroup> m_groups;
+        /// <summary>
+        /// Key of the default group used to store all downloadables that don't belong to any explicit group
+        /// </summary>
+        private const string GROUPS_DEFAULT_ID = "internalDefault";
+        
+        private Dictionary<string, CatalogGroup> m_groups = new Dictionary<string, CatalogGroup>();
         private float m_groupsLastUpdateAt;
+
+        private bool Groups_PrioritiesDirty { get; set; }
+
+        private List<CatalogGroup> m_groupsSortedByPriority;
 
         private void Groups_Reset()
         {
-            if (m_groups != null)
+            if (m_groups == null)
+            {
+                m_groups = new Dictionary<string, CatalogGroup>();
+            }
+            else
             {
                 m_groups.Clear();
             }
 
+            if (m_groupsSortedByPriority == null)
+            {
+                m_groupsSortedByPriority = new List<CatalogGroup>();
+            }
+            else
+            {
+                m_groupsSortedByPriority.Clear();
+            }
+
             m_groupsLastUpdateAt = -1;
+            Groups_PrioritiesDirty = false;
+        }
+
+        private void Groups_Init(Dictionary<string, CatalogGroup> groups)
+        {
+            int index = 0;
+            Groups_Reset();
+            foreach (KeyValuePair<string, CatalogGroup> pair in groups)
+            {
+                m_groups.Add(pair.Key, pair.Value);
+                pair.Value.Index = index++;
+                m_groupsSortedByPriority.Add(pair.Value);                
+            }
+
+            Groups_Process();
+
+            // Creates the default group, which will store all entries that don't belong to any other group
+            List<string> entryIds = new List<string>();
+            CatalogGroup defaultGroup = new CatalogGroup();
+            foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+            {
+                if (!pair.Value.BelongsToAnyGroup())
+                {
+                    pair.Value.AddGroup(defaultGroup);
+                    entryIds.Add(pair.Key);                   
+                }
+            }
+
+            defaultGroup.Setup(GROUPS_DEFAULT_ID, entryIds);            
+            m_groups.Add(GROUPS_DEFAULT_ID, defaultGroup);
+            defaultGroup.Index = index;
+            m_groupsSortedByPriority.Add(defaultGroup);
+
+            // We make sure that groups will be sorted by priority as they've just been created
+            Groups_PrioritiesDirty = true;
         }
 
         private void Groups_Process()
@@ -557,7 +666,7 @@ namespace Downloadables
         public CatalogGroup Groups_GetGroup(string groupId)
         {
             CatalogGroup returnValue = null;
-            if (m_groups != null && !string.IsNullOrEmpty(groupId))
+            if (!string.IsNullOrEmpty(groupId))
             {                
                 m_groups.TryGetValue(groupId, out returnValue);
             }
@@ -608,19 +717,21 @@ namespace Downloadables
         }
 
         private void Groups_Update()
-        {
-            if (m_groups != null)
+        {            
+            if (Time.realtimeSinceStartup - m_groupsLastUpdateAt >= 2f)
             {
-                if (Time.realtimeSinceStartup - m_groupsLastUpdateAt >= 2f)
+                if (Groups_PrioritiesDirty)
                 {
-                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
-                    {
-                        pair.Value.Update();
-                    }
-
-                    m_groupsLastUpdateAt = Time.realtimeSinceStartup;
+                    Groups_SetupPriorities();
                 }
-            }
+
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    pair.Value.Update();
+                }
+
+                m_groupsLastUpdateAt = Time.realtimeSinceStartup;
+            }            
         }
 
         public Handle Groups_CreateHandle(string groupId)
@@ -656,6 +767,56 @@ namespace Downloadables
             }            
             
             return returnValue;
+        }
+
+        public void Groups_SetPriority(string groupId, int priority)
+        {
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                if (group.Priority != priority)
+                {
+                    group.Priority = priority;
+                    Groups_PrioritiesDirty = true;
+                }
+            }
+        }
+
+        public void Groups_SetupPriorities()
+        {
+            m_groupsSortedByPriority.Sort(Groups_SortByPriority);
+            Groups_PrioritiesDirty = false;
+        }
+
+        private int Groups_SortByPriority(CatalogGroup x, CatalogGroup y)
+        {
+            if (x.Priority == y.Priority)
+            {
+                // Indices are also taken into consideration because List<T>.Sort is not stable (doesn't maintain the original order. We need to maintain the original order to make sure
+                // that download resumes after sorting with the same group tha was already being downloaded if there's more than one group with the highest priority)
+                // https://social.msdn.microsoft.com/Forums/vstudio/en-US/f5ea4976-1c3d-4e10-90e7-c7a0491fc28a/stable-sort-using-listlttgt?forum=netfxbcl
+                if (x.Index == y.Index)
+                {
+                    return 0;
+                }
+                else if (x.Index > y.Index)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+
+            }
+            else if (x.Priority > y.Priority)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
         }
         #endregion
 

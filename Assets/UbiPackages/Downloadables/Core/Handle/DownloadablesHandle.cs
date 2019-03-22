@@ -44,7 +44,18 @@ namespace Downloadables
         //------------------------------------------------------------------------//
         public float Progress
         {
-            get { return Mathf.Clamp01((float)GetDownloadedBytes() / (float)GetTotalBytes()); }
+            get
+            {
+                float returnValue = 1f;
+
+                long totalBytes = GetTotalBytes();
+                if (!IsAvailable() || totalBytes > 0)
+                {
+                    returnValue = Mathf.Clamp01((float)GetDownloadedBytes() / (float)totalBytes);
+                }
+
+                return returnValue;
+            }
         }
 
         //------------------------------------------------------------------------//

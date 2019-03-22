@@ -55,13 +55,25 @@ namespace Downloadables
 
         private float m_latestSaveAt;
 
+        /// <summary>
+        /// Download priority. Highest priority: 1. The higher this number the lower priority when downloading
+        /// </summary>
+        public int Priority { get; set; }
+
+        /// <summary>
+        /// Internal stuff used only to make List.Sort stable
+        /// </summary>
+        public int Index { get; set; }
+
         public void Reset()
         {
             EntryIds = null;
             PermissionOverCarrierRequested = false;
             PermissionOverCarrierGranted = false;
             NeedsToSave = false;
+            Priority = int.MaxValue;
             m_latestSaveAt = -1;
+            Index = -1;
         }
 
         public void Setup(string id, List<string> entryIds)

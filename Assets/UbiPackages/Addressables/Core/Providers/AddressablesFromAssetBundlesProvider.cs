@@ -152,6 +152,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupIds);
     }
 
+    public void SetDownloadablesGroupPriority(string groupId, int priority)
+    {
+        AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
+    }
+
     public void Update()
     {
         AssetBundlesManager.Instance.Update();
