@@ -358,17 +358,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Closed popups first
 		foreach(PopupController c in instance.m_closedPopups) {
-			GameObject.Destroy(c.gameObject);
+			Destroy(c.gameObject);
 		}
 		instance.m_closedPopups.Clear();
 
 		// Queued popups: Destroy directly (unless open, which will already be handled by the opened popups list)
-		foreach(PopupController c in instance.m_queuedPopups) {
-			if(!c.isOpen) {
-				GameObject.Destroy(c.gameObject);
-			}
-		}
-		instance.m_queuedPopups.Clear();
+		ClearQueue();
 
 		// Opened popups: trigger animation?
 		foreach(PopupController c in instance.m_openedPopups) {
@@ -377,7 +372,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 				c.Close(true);
 			} else {
 				// Destroy directly rather than using PopupController's methods
-				GameObject.Destroy(c.gameObject);
+				Destroy(c.gameObject);
 			}
 		}
 		instance.m_openedPopups.Clear();
@@ -387,6 +382,20 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Allow back events to modify collections
 		instance.m_collectionsBlocked = false;
+	}
+
+	/// <summary>
+	/// Clear the popup's queue and destroy queued popups.
+	/// Currently open popups won't be destroyed.
+	/// </summary>
+	public static void ClearQueue() {
+		// Directly destroy all popups that are not opened
+		foreach(PopupController c in instance.m_queuedPopups) {
+			if(!c.isOpen) {
+				Destroy(c.gameObject);
+			}
+		}
+		instance.m_queuedPopups.Clear();
 	}
 
 	//------------------------------------------------------------------//
