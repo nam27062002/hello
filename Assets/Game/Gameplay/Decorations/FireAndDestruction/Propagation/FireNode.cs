@@ -132,10 +132,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.GoingToExplode;
-					m_parent.LetsBurn(true, m_sourceType);
+					m_parent.LetsBurn(true, m_sourceType, _fireColorType);
 				} else {
 					m_nextState = State.Spreading;
-					m_parent.LetsBurn(false, m_sourceType);
+					m_parent.LetsBurn(false, m_sourceType, _fireColorType);
 				}
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
