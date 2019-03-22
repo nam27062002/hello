@@ -77,23 +77,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1226999385132512
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4614559032996890}
-  - component: {fileID: 114260351435297274}
-  - component: {fileID: 136167184053682384}
-  m_Layer: 5
-  m_Name: area
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &1240896638843282
 GameObject:
   m_ObjectHideFlags: 1
@@ -190,7 +173,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1413422861975094
 GameObject:
   m_ObjectHideFlags: 1
@@ -202,23 +185,6 @@ GameObject:
   - component: {fileID: 114808457903032488}
   m_Layer: 5
   m_Name: Loader (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1442714158850548
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4352355542866416}
-  - component: {fileID: 114261623331478126}
-  - component: {fileID: 135474545097740438}
-  m_Layer: 5
-  m_Name: BossCameraAffectorRadius
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -265,10 +231,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4147289264092718}
-  - component: {fileID: 114928591733718312}
-  - component: {fileID: 64433858098138276}
-  - component: {fileID: 114509353225806246}
-  - component: {fileID: 114320314795482310}
   m_Layer: 5
   m_Name: PLACEHOLDER
   m_TagString: Untagged
@@ -334,15 +296,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4520058090777164}
-  - component: {fileID: 114283246984439722}
-  - component: {fileID: 114096212986250744}
-  - component: {fileID: 114044980934818266}
-  - component: {fileID: 114761734120051698}
-  - component: {fileID: 54954743863749330}
-  - component: {fileID: 114565160943548600}
-  - component: {fileID: 114784927644903842}
-  - component: {fileID: 114187580444287232}
-  - component: {fileID: 114113077152968728}
   m_Layer: 5
   m_Name: PLACEHOLDER
   m_TagString: Untagged
@@ -454,14 +407,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4366124801648628}
-  - component: {fileID: 114835605917519088}
-  - component: {fileID: 114875768975141216}
-  - component: {fileID: 114076602965972432}
-  - component: {fileID: 114545064497494004}
-  - component: {fileID: 114788788715106758}
-  - component: {fileID: 54498662765103680}
-  - component: {fileID: 136116350014443122}
-  - component: {fileID: 114833494560867680}
   m_Layer: 5
   m_Name: PLACEHOLDER
   m_TagString: Untagged
@@ -586,7 +531,7 @@ Transform:
   - {fileID: 4740519623104072}
   - {fileID: 4377359871822124}
   m_Father: {fileID: 4520058090777164}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4271872509969376
 Transform:
@@ -600,19 +545,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4257375235299306}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4352355542866416
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1442714158850548}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4520058090777164}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4366124801648628
 Transform:
@@ -664,25 +596,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4614559032996890}
   - {fileID: 4257375235299306}
-  - {fileID: 4352355542866416}
   m_Father: {fileID: 224413400612382132}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -71.401, y: 0, z: 0}
---- !u!4 &4614559032996890
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1226999385132512}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.095, y: -0.88, z: -0.467}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4520058090777164}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4740519623104072
 Transform:
   m_ObjectHideFlags: 1
@@ -731,6 +648,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -746,6 +664,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -763,6 +682,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -778,6 +698,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -795,6 +716,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -810,6 +732,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -839,50 +762,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1635451428426416}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &54498662765103680
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
---- !u!54 &54954743863749330
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!64 &64433858098138276
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1586250795968688}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 1
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
-  m_Mesh: {fileID: 4300000, guid: c2e234e6e78a24d1dbe6a6b36d4c3bb3, type: 3}
 --- !u!95 &95316218936430462
 Animator:
   serializedVersion: 3
@@ -900,31 +779,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114044980934818266
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01628e63e719848b0a39a0f7f5f86e60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: d95e4279165be4a26a70cb1fa716b06f, type: 2}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[{"speed":13,"idleChance":0,"alwaysSlowdown":true,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"speed":13,"restUpsideDown":false,"teleport":false,"dataType":"AI.Behaviour.BirdIdleData","editorFolded":false},{"speed":57,"arrivalRadius":0.5,"timeout":{"min":1,"max":1.5},"onFailShutdown":{"min":2.5,"max":3.5},"dataType":"AI.Behaviour.PursuitToHoldData","editorFolded":false},{"retreatTime":{"min":3,"max":6},"damage":50,"duration":2,"dataType":"AI.Behaviour.LatchData","editorFolded":false},{"boostSpeed":17,"panicSpeed":17,"faceDirectionOnBoost":true,"dataType":"AI.Behaviour.EvadeData","editorFolded":false},{"tier":3,"dataType":"AI.Behaviour.AttackSelectorData","editorFolded":false},{"seconds":4,"dataType":"AI.Behaviour.TimerAData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"seconds":2,"dataType":"AI.Behaviour.TimerBData","editorFolded":false},{"speed":20,"chaseTimeout":2,"dataType":"AI.Behaviour.PursuitEntityTargetData","editorFolded":false},{"speed":20,"arrivalRadius":1,"hasGuardState":false,"timeout":{"min":2,"max":3},"dataType":"AI.Behaviour.PursuitData","editorFolded":false}]'
-  m_databaseKey: PF_EnemyTier3
-  m_preciseDestArrival: 1
-  m_avoidDistanceAttenuation: 3
-  m_avoidCollisions: 1
-  m_avoidWater: 0
 --- !u!114 &114071908732902954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -952,297 +806,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114076602965972432
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_isPlaceHolder: 0
-  m_walkSpeed: 1
-  m_runSpeed: 1
-  m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
-  m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 0
-  m_hasRotationLayer: 0
-  m_animA: 
-  m_animB: 
-  m_animC: 
-  m_exclamationTransform: {fileID: 0}
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_showDamageFeedback: 0
-  m_damageColor: {r: 1, g: 0, b: 0, a: 1}
-  m_damageTime: 2
-  m_corpseAsset: 
-  m_onEatenParticle:
-    name: PS_GhostBlood
-    path: Blood
-    changeStartColor: 1
-    startColor: {r: 0.18103445, g: 0.75, b: 0, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 0.3764706, g: 1, b: 0.48235294, a: 1}
-      key1: {r: 0, g: 0, b: 0, a: 0}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onEatenFrozenParticle:
-    name: PS_IceExplosion
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onEatenAudio: 
-  m_firePoints: []
-  m_burnParticle:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onBurnAudio: 
-  m_explosionParticles:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onExplosionAudio: 
-  m_explodeWhenBurned: 1
-  m_onAttackAudio: 
-  m_onAttackDealDamageAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
-  m_idleAudio: 
-  m_skins: []
---- !u!114 &114096212986250744
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3085e02792f6243cc9d8323aba91b804, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 1
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 11
-    m_maxRadius: 4
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0
-      max: 0
-  m_edible:
-    m_rotateToMouth: 3
-  m_inflammable:
-    m_burningTime: 0
-    m_canBeDissolved: 1
-    m_ashExceptions: []
-  m_onSpawnSound: 
-  m_airMotion:
-    m_mass: 40
-    m_defaultUpVector: 0
-    m_orientationSpeed: 120
-    m_dragonStyleRotation: 1
-    m_faceDirection: 1
-    m_rollRotation: 0
-    m_rollAngle: 35
-    m_limitHorizontalRotation: 0
-    m_faceLeftAngle: -90
-    m_faceRightAngle: 90
-    m_limitVerticalRotation: 1
-    m_faceUpAngle: 50
-    m_faceDownAngle: 50
---- !u!114 &114113077152968728
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_lifeTime: 0
-  m_replacementPrefab: 
 --- !u!114 &114178682705858980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1257,23 +820,6 @@ MonoBehaviour:
   m_color1: {r: 0.053471025, g: 0.334, b: 0.31078377, a: 1}
   m_color2: {r: 0.22794116, g: 0.18604021, b: 0.20771311, a: 1}
   m_direction: 1
---- !u!114 &114187580444287232
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 235f81986ba7342c9a8af652b7e12248, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_scaleByTier:
-  - 1.2
-  - 1.7
-  - 1.8
-  - 1.65
-  - 1.65
 --- !u!114 &114233723492848040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1320,60 +866,6 @@ MonoBehaviour:
   m_color1: {r: 0.053471025, g: 0.334, b: 0.31078377, a: 1}
   m_color2: {r: 0.22794116, g: 0.18604021, b: 0.20771311, a: 1}
   m_direction: 1
---- !u!114 &114260351435297274
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1226999385132512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 2.39
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
---- !u!114 &114261623331478126
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1442714158850548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 496eb6d30e8434219814682a6649d1ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_bca: {fileID: 114784927644903842}
-  m_collider: {fileID: 135474545097740438}
---- !u!114 &114283246984439722
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: EnemyTier3
-  m_hideNeedTierMessage: 0
-  m_dieOutsideFrustum: 1
---- !u!114 &114320314795482310
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1586250795968688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_lifeTime: 0
-  m_replacementPrefab: 
 --- !u!114 &114352189702019248
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1428,22 +920,6 @@ MonoBehaviour:
   m_showBounds: 1
   m_rectBoundsColor: {r: 1, g: 0, b: 0, a: 0.5}
   m_targetBoundsColor: {r: 0, g: 0, b: 1, a: 0.5}
---- !u!114 &114509353225806246
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1586250795968688}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db034c24f2ef34bb4b159beded17fcf1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_wobbleDuration: 0.5
-  m_wobbleOffset: {x: 0.08, y: 0.08}
-  m_wobbleSpeed: {x: 12, y: 15}
-  m_nextWobbleTimeout: 1
-  m_disableWhenDone: 1
 --- !u!114 &114531192389543766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1455,127 +931,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c32389fbb1dc4742ad9f0bed71f8bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114545064497494004
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15a7ea52045474df5be461e18d5c4f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_blendSpeedFactor: 1
-  m_energy: 10
-  m_energyDrainSec: 1
-  m_energyRecoverSec: 1
-  m_brainResource: {fileID: 11400000, guid: 590111f57a62ae1448c942fac85818f0, type: 2}
-  m_railSeparation:
-    min: 0.5
-    max: 1
-  m_serializedJson: '[{"damage":7,"duration":1.5,"dataType":"AI.Behaviour.CurseData","editorFolded":false}]'
-  m_databaseKey: PF_Ghost01_Static
-  m_updateMachinePos: 1
---- !u!114 &114565160943548600
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba2f224ef9dd2406dad9cae440cae718, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_minEatAnimTime: 0.1
-  m_eatDistance: 1.1
-  m_eatDetectionRadiusMultiplier: 2.25
-  m_eatDetectionSpeedRadiusMultiplier: 0.1
-  m_holdingBloodParticle:
-    name: PS_Blood_Explosion
-    path: Blood
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1.2
-  m_holdingFreezeParticle:
-    name: PS_IceExplosionSmall
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_burpSound: 
-  m_canEatEntities: 1
-  m_eaterTier: 0
-  m_isPet: 0
-  m_isAquatic: 0
-  m_canMultipleLatchOnPlayer: 0
-  m_damageOnBitePlayer: 100
-  m_ignoreBadJunk: 1
 --- !u!114 &114593925043647408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1719,38 +1074,38 @@ MonoBehaviour:
   onStart:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onPlay:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onStepComplete:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onComplete:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onTweenCreated:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   onRewind:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   delay: 0
   duration: 15
   easeType: 1
@@ -1850,265 +1205,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114761734120051698
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c7f34a9724754491924def71fceb76a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_isPlaceHolder: 0
-  m_walkSpeed: 13
-  m_runSpeed: 57
-  m_minPlaybakSpeed: 1
-  m_maxPlaybakSpeed: 1.5
-  m_onBoostMaxPlaybackSpeed: 0
-  m_hasNavigationLayer: 1
-  m_hasRotationLayer: 0
-  m_animA: eatHold
-  m_animB: 
-  m_animC: 
-  m_exclamationTransform: {fileID: 0}
-  m_speedToWaterSplash: 0
-  m_waterSplashParticle:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_showDamageFeedback: 0
-  m_damageColor: {r: 1, g: 0, b: 0, a: 1}
-  m_damageTime: 2
-  m_corpseAsset: PF_EnemyTier3Corpse
-  m_onEatenParticle:
-    name: PS_Blood_Explosion
-    path: Blood
-    changeStartColor: 1
-    startColor: {r: 1, g: 0, b: 0, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onEatenFrozenParticle:
-    name: PS_IceExplosion
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onEatenAudio: hd_dragon_enemy_dead
-  m_firePoints: []
-  m_burnParticle:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onBurnAudio: 
-  m_explosionParticles:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_onExplosionAudio: 
-  m_explodeWhenBurned: 1
-  m_onAttackAudio: hd_dragon_enemy_attack
-  m_onAttackDealDamageAudio: 
-  m_onScaredAudio: 
-  m_onPanicAudio: 
-  m_idleAudio: 
-  m_skins: []
---- !u!114 &114784927644903842
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1664027761618780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ecedc79e668a408395849ca8a7a9c4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frameWidthIncrement: 15
-  frameMeAndPlayer: 0
-  radius: 13
-  detectType: 0
-  m_zoomPerformanceCost: 3
---- !u!114 &114788788715106758
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cae2dd61e8d549c5bd76872a1f91951, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0}
-  radius: 1.2753754
-  color: {r: 0.76, g: 0.23, b: 0.13, a: 0.2}
 --- !u!114 &114808457903032488
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2127,33 +1223,6 @@ MonoBehaviour:
   m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
     type: 2}
   m_loadedInstance: {fileID: 1835281428861978}
---- !u!114 &114833494560867680
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c71af7b337146e6b9fbf30dc2b2ce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_lifeTime: 0
-  m_replacementPrefab: 
---- !u!114 &114835605917519088
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1481a8fd1eb264508b749aceca994767, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_sku: Ghost01
-  m_hideNeedTierMessage: 1
-  m_dieOutsideFrustum: 1
 --- !u!114 &114852880511023798
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2168,100 +1237,6 @@ MonoBehaviour:
   m_tid: TID_DRAGON_INFO_NOW_EDIBLE
   m_caseType: 0
   m_replacements: []
---- !u!114 &114875768975141216
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91e40970ac8a0488ab7347acde654093, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_affectedByDragonTrample: 0
-  m_enableSensor: 0
-  m_sensor:
-    m_senseFire: 1
-    m_sightRadius: 0
-    m_maxRadius: 0
-    m_minRadius: 0
-    m_hysteresisOffset: 0
-    m_senseAbove: 1
-    m_senseBelow: 1
-    m_sensorOffset: {x: 0, y: 0, z: 0}
-    m_radiusOffset:
-      min: 0.9
-      max: 1.1
-    m_senseDelay:
-      min: 0.25
-      max: 1.25
-  m_edible:
-    m_rotateToMouth: 0
-  m_inflammable:
-    m_burningTime: 0
-    m_canBeDissolved: 1
-    m_ashExceptions: []
-  m_onSpawnSound: 
---- !u!114 &114928591733718312
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1586250795968688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8845233bc93a243879832d2842686764, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_unbreakableBlocker: 0
-  m_tierWithTurboBreak: 3
-  m_tierNoTurboBreak: 3
-  m_hitCount: 1
-  m_disableOnBreak: 1
-  m_destroyOnBreak: 1
-  m_onBreakParticle:
-    name: PF_CaveBlockerExplosion
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-  m_corpseAsset: 
-  m_onBreakAudio: Rocks
-  m_view: {fileID: 4368407685112358}
-  m_activateOnDestroy: {fileID: 0}
 --- !u!114 &114975969817457940
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2382,44 +1357,6 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!135 &135474545097740438
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1442714158850548}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 13
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!136 &136116350014443122
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1835281428861978}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.81
-  m_Height: 2.89
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!136 &136167184053682384
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1226999385132512}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.72
-  m_Height: 4.43
-  m_Direction: 2
-  m_Center: {x: 0, y: 0.24, z: -0.27}
 --- !u!137 &137299689430379530
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -2429,6 +1366,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -2444,6 +1382,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -2473,6 +1412,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -2488,6 +1428,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -2636,7 +1577,7 @@ RectTransform:
   m_GameObject: {fileID: 1668267457052054}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 183.75061, y: 183.75061, z: 183.75061}
+  m_LocalScale: {x: 156.23137, y: 156.23137, z: 156.23137}
   m_Children:
   - {fileID: 4366124801648628}
   m_Father: {fileID: 224116699413527940}
@@ -2644,7 +1585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224345976603190656
@@ -2655,7 +1596,7 @@ RectTransform:
   m_GameObject: {fileID: 1545605866021918}
   m_LocalRotation: {x: 0.079183504, y: -0.44907162, z: -0.15454355, w: 0.87645936}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 25.497751, y: 25.497751, z: 25.497751}
+  m_LocalScale: {x: 26.216774, y: 26.216774, z: 26.216774}
   m_Children:
   - {fileID: 4147289264092718}
   m_Father: {fileID: 224624443243225514}
@@ -2663,7 +1604,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -20}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -25.842163, y: 50.19438}
+  m_AnchoredPosition: {x: -20.62143, y: 40.054108}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
@@ -2674,7 +1615,7 @@ RectTransform:
   m_GameObject: {fileID: 1582260704575616}
   m_LocalRotation: {x: 0, y: 0.81915206, z: 0, w: 0.57357645}
   m_LocalPosition: {x: 0, y: 0, z: -0.000030517578}
-  m_LocalScale: {x: 117.06675, y: 117.06675, z: 117.06675}
+  m_LocalScale: {x: 128.12398, y: 128.12398, z: 128.12398}
   m_Children:
   - {fileID: 4520058090777164}
   m_Father: {fileID: 224925082016888350}
@@ -2682,7 +1623,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0053634644, y: -37.23149}
+  m_AnchoredPosition: {x: 0.00289917, y: -31.623657}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224502318328564866
