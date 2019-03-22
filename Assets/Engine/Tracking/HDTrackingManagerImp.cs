@@ -1212,6 +1212,14 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague);
     }
+    
+    public override void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
+    int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+    int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) 
+    {
+        Track_LabGameEnd(dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
+            eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(powerTime * 1000.0f), mapUsage, currentLeague);
+    }
 
     /// <summary>
     /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
@@ -2259,6 +2267,51 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
         m_eventQueue.Enqueue(e);
     }
+    
+    private void Track_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,  
+        string deathType, string deathSource, string deathCoordinates,
+        int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+        int scGained, int hcGained, int powerTimeMs, int mapUsage, string currentLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_LabGameEnd dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower +
+                " timePlayed = " + timePlayed + " score = " + score +
+                " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates +
+                " eggFound = " + eggFound + " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier +
+                " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive +
+                " scGained = " + scGained + " hcGained = " + hcGained +
+                " powerTime = " + powerTimeMs + " mapUsage = " + mapUsage + " currentLeague = " + currentLeague
+                );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.gameend");
+        {
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_LAB_HP, labHp);
+            e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
+            e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
+            Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            e.data.Add(TRACK_PARAM_TIME_PLAYED, timePlayed);
+            // No Need? e.data.Add(TRACK_PARAM_SCORE, score);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_TYPE, deathType);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_CAUSE, deathSource);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_COORDINATES, deathCoordinates);
+            e.data.Add(TRACK_PARAM_EGG_FOUND, eggFound);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_MULTIPLIER, highestMultiplier);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_BASE_MULTIPLIER, highestBaseMultiplier);
+            e.data.Add(TRACK_PARAM_FIRE_RUSH_NB, furyRushNb);
+            e.data.Add(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
+            e.data.Add(TRACK_PARAM_HC_REVIVE, hcRevive);
+            e.data.Add(TRACK_PARAM_AD_REVIVE, adRevive);
+            e.data.Add(TRACK_PARAM_SC_EARNED, scGained);
+            e.data.Add(TRACK_PARAM_HC_EARNED, hcGained);
+            e.data.Add(TRACK_PARAM_POWER_TIME, powerTimeMs);
+            e.data.Add(TRACK_PARAM_MAP_USAGE, mapUsage);
+            e.data.Add(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);
+        }
+        m_eventQueue.Enqueue(e);
+    }
 
     private void Track_LabResult(int ranking, string currentLeague, string upcomingLeague)
     {
@@ -2553,6 +2606,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_POPUP_ACTION = "popupAction";
     private const string TRACK_PARAM_POPUP_MODULAR_VERSION = "popup_modular_version";
     private const string TRACK_PARAM_POPUP_NAME = "popupName";
+    private const string TRACK_PARAM_POWER_TIME = "powerTime";
     private const string TRACK_PARAM_PROMOTION_TYPE = "promotionType";
     private const string TRACK_PARAM_PROVIDER = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH = "providerAuth";

@@ -67,6 +67,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     int layerMask;
     bool destroys = false;
     int destroyFrame = 0;
+    ToggleParam m_toggleParam = new ToggleParam();
     
     private void Awake()
     {
@@ -161,6 +162,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, true);
                 if ( m_machinegunParticle != null)
                     m_machinegunParticle.Play();
+                    
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
             arcOrigin.z = 0;
@@ -275,6 +279,8 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, false);
                 if ( m_machinegunParticle != null )
                     m_machinegunParticle.Stop();
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             
             if ( m_hatchOpen )

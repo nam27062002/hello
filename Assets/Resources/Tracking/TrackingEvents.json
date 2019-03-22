@@ -462,6 +462,36 @@
         "etl"
       ]
     },
+    "custom.lab.gameend": {
+        "Parameters": [
+            { "dragon": { "Status": "OK" } },
+            { "labHp": { "Status": "OK" } },
+            { "labSpeed": { "Status": "OK" } },
+            { "labBoost": { "Status": "OK" } },
+            { "labPower": { "Status": "OK" } },
+            { "timePlayed": { "Status": "OK" } },
+            { "deathType": { "Status": "OK" } },
+            { "deathCause": { "Status": "OK" } },
+            { "deathCoordinates": { "Status": "OK" } },
+            { "eggFound": { "Status": "OK" } },
+            { "highestMultiplier": { "Status": "OK" } },
+            { "highestBaseMultiplier": { "Status": "OK" } },
+            { "fireRushNb": { "Status": "OK" } },
+            { "superFireRushNb": { "Status": "OK" } },
+            { "hcRevive": { "Status": "OK" } },
+            { "adRevive": { "Status": "OK" } },
+            { "scEarned": { "Status": "OK" } },
+            { "hcEarned": { "Status": "OK" } },
+            { "powerTime": { "Status": "OK" } },
+            { "mapUsedNB": { "Status": "OK" } },
+            { "hungryLettersNb": { "Status": "OK" } },
+            { "currentLeague": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
     "custom.lab.result": {
       "Parameters": [
         { "ranking": { "Status": "OK" } },
@@ -874,6 +904,10 @@
     "boostTime": {
       "Type": "INT:4",
       "Values": []
+    },
+    "powerTime": {
+        "Type": "INT:4",
+        "Values": []
     },
     "mapUsedNB": {
       "Type": "INT:4",

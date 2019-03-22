@@ -111,6 +111,7 @@ public class GameSceneController : GameSceneControllerBase {
 
     TrackerBoostTime m_boostTimeTracker;
     TrackerMapUsage m_mapUsageTracker;
+    TrackerSpecialPowerTime m_specialPowerTimeTracker;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -125,6 +126,7 @@ public class GameSceneController : GameSceneControllerBase {
 
         m_boostTimeTracker = new TrackerBoostTime();
         m_mapUsageTracker = new TrackerMapUsage();
+        m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -794,8 +796,11 @@ public class GameSceneController : GameSceneControllerBase {
         }
 
 		m_boostTimeTracker.InitValue(0);
+        m_boostTimeTracker.enabled = true;
 		m_mapUsageTracker.InitValue(0);
-
+        m_mapUsageTracker.enabled = true;
+        m_specialPowerTimeTracker.InitValue(0);
+        m_specialPowerTimeTracker.enabled = true;
 		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
 
         
@@ -826,15 +831,26 @@ public class GameSceneController : GameSceneControllerBase {
         int timePlayed = (int)elapsedSeconds;
         int score = (int)RewardManager.score;
         int dragonProgress = 0;
+        bool isSpecial = false;
         if (InstanceManager.player != null) {
             IDragonData dragonData = InstanceManager.player.data;
-			if (dragonData != null && dragonData.type == IDragonData.Type.CLASSIC) {
-				DragonProgression progression = (dragonData as DragonDataClassic).progression;
-                if (progression != null) {
-                    dragonXp = (int)progression.xp;
+			if (dragonData != null)
+            {
+                if (dragonData.type == IDragonData.Type.CLASSIC) 
+                {
+                    DragonProgression progression = (dragonData as DragonDataClassic).progression;
+                    if (progression != null) {
+                        dragonXp = (int)progression.xp;
+                    }
+    
+                    dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
                 }
-
-                dragonProgress = UsersManager.currentUser.GetDragonProgress(dragonData);
+                else if (dragonData.type == IDragonData.Type.SPECIAL)
+                {
+                    // DragonDataSpecial specialData = dragonData as DragonDataSpecial;
+                    // dragonProgress = specialData.GetLevel();
+                    isSpecial = true;
+                }
             }
         }
         
@@ -852,6 +868,30 @@ public class GameSceneController : GameSceneControllerBase {
             RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
             RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
 
+
+        if ( isSpecial )
+        { 
+            DragonDataSpecial dragonDataSpecial = InstanceManager.player.data as DragonDataSpecial;
+            int labHp = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
+            int labSpeed = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level;
+            int labBoost = dragonDataSpecial.GetStat(DragonDataSpecial.Stat.ENERGY).level;
+            string powerLevel = "P" + dragonDataSpecial.powerLevel;
+            HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
+            string league = (leagueData != null) ? leagueData.sku : "";
+            float powerTime = m_specialPowerTimeTracker.currentValue;
+            // If special dragon
+            HDTrackingManager.Instance.Notify_LabGameEnd(dragonDataSpecial.sku,  labHp, labSpeed, labBoost, powerLevel, 
+                                timePlayed, score, eggsFound,
+                                RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
+                                RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, 
+                                powerTime, (int)m_mapUsageTracker.currentValue, league);
+        }
+
+        m_boostTimeTracker.enabled = false;
+        m_mapUsageTracker.enabled = false;
+        m_specialPowerTimeTracker.enabled = false;
+        
+        
         // Automatic connection system is enabled again since performance is not a constraint anymore
         GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(true);
     }
