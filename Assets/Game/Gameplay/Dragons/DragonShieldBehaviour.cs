@@ -52,7 +52,16 @@ public class DragonShieldBehaviour : MonoBehaviour {
             if ( FreezingObjectsRegistry.instance.IsFreezing(entity.machine) )
             {
                 float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
+                if ( h<0 )
+                {
+                    m_shieldHit.broken = m_currentShield > 0 && (h + m_currentShield <= 0);
+                    m_shieldHit.value = -h;
+                    m_shieldHit.bigHit = -h > m_maxShield * 0.1f;    
+                    Broadcaster.Broadcast(BroadcastEventType.SHIELD_HIT, m_shieldHit);
+                }
                 AddShield(h);
+                
+                
             }
         }
     }

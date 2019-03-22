@@ -246,6 +246,10 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
     IEnumerator BarsRotation()
     {
         m_areParticlesPlaying = true;
+        if (m_particles != null)
+        {
+            m_particles.Play();
+        }
         float timer = 0;
         while( timer < 0.25 )
         {
