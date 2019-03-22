@@ -355,6 +355,13 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
                 
                 if ( m_type == Type.Shield )
                 {
+#if UNITY_EDITOR                    
+                    if ( Input.GetKeyDown(KeyCode.E) )
+                    {
+                        if (!m_areParticlesPlaying)
+                            StartCoroutine(BarsRotation());
+                    }
+#endif                    
                     float f = targetValue - targetValueStep;
                     if (f > 0.001f)
                     {    // Going up

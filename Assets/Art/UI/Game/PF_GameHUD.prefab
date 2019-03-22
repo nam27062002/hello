@@ -12603,7 +12603,7 @@ GameObject:
   - component: {fileID: 4413403590375170}
   - component: {fileID: 198300475435037482}
   - component: {fileID: 199257574939668506}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: IceSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14837,7 +14837,7 @@ GameObject:
   - component: {fileID: 4559592220411022}
   - component: {fileID: 198536909019473864}
   - component: {fileID: 199988998295113382}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: IceDrops
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15685,7 +15685,7 @@ GameObject:
   - component: {fileID: 224716172186983310}
   - component: {fileID: 198472117364291882}
   - component: {fileID: 199464581860662208}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: PS_IceExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96090,10 +96090,10 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1552246089
+  randomSeed: 1941522858
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -96129,8 +96129,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 12
-      minScalar: 5
+      scalar: 0.2
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -96233,8 +96233,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 7
-      minScalar: 5
+      scalar: 0.35
+      minScalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -96456,7 +96456,7 @@ ParticleSystem:
     angle: 0
     length: 3
     boxThickness: {x: 0, y: 0, z: 0}
-    radiusThickness: 1
+    radiusThickness: 0
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
@@ -96474,7 +96474,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1.2
+      value: 0.01
       mode: 0
       spread: 0
       speed:
@@ -96918,7 +96918,7 @@ ParticleSystem:
         m_RotationOrder: 0
     separateAxes: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       serializedVersion: 2
       minMaxState: 3
@@ -116145,7 +116145,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1445271695
+  randomSeed: 1758761443
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -116297,7 +116297,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 8
+      scalar: 0.3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -129568,10 +129568,10 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 1
+  moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1904622228
+  randomSeed: -2016984981
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -129607,8 +129607,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 12
-      minScalar: 5
+      scalar: 1
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -129711,8 +129711,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 2.3
-      minScalar: 1.5
+      scalar: 0.1
+      minScalar: 0.08
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -129889,7 +129889,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 0.2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -166755,8 +166755,8 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: e214e57543559874b962a90ff3418125, type: 2}
-  - {fileID: 2100000, guid: e214e57543559874b962a90ff3418125, type: 2}
+  - {fileID: 2100000, guid: dad27080483cdc84c9ee15f1fd7d554a, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -172098,7 +172098,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 214, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224738247282637130
