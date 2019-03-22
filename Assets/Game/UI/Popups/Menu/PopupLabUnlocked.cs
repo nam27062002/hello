@@ -7,6 +7,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System.Collections.Generic;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -26,28 +27,19 @@ public class PopupLabUnlocked : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed References
+	[SerializeField] private Localizer m_messageText = null;
 	[SerializeField] private TextMeshProUGUI m_giftAmountText = null;
+	[Space]
+	[SerializeField] private GameObject m_goToLabButton = null;
+	[SerializeField] private GameObject m_dismissButton = null;
 
 	// Internal
 	private long m_gfReward = 0;
+	private MenuScreen m_sourceScreen = MenuScreen.DRAGON_SELECTION;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Check whether the popup must be triggered considering the current profile.
-	/// If all checks are passed, opens the popup.
-	/// </summary>
-	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
-	public static PopupController CheckAndOpen() {
-		// All checks passed?
-		if(Check()) {
-			// Show the popup
-			return PopupManager.OpenPopupInstant(PATH);
-		}
-		return null;
-	}
-
 	/// <summary>
 	/// Check whether the popup must be triggered considering the current profile.
 	/// </summary>
@@ -56,6 +48,14 @@ public class PopupLabUnlocked : MonoBehaviour {
 		// Don't if already displayed
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LAB_UNLOCKED)) {
 			return false;
+		}
+
+		// Always if a special dragon is already owned! (probably purchased via offer pack)
+		List<IDragonData> specialDragons = DragonManager.GetDragonsByOrder(IDragonData.Type.SPECIAL);
+		for(int i = 0; i < specialDragons.Count; ++i) {
+			if(specialDragons[i].isOwned) {
+				return true;
+			}
 		}
 
 		// Don't if a dragon of the required tier is not yet owned
@@ -77,6 +77,26 @@ public class PopupLabUnlocked : MonoBehaviour {
 		// Compute GF reward to be given
 		DefinitionNode settingsDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SETTINGS, "gameSettings");
 		m_gfReward = settingsDef.GetAsLong("goldenFragmentsGivenTutorial");
+	}
+
+	/// <summary>
+	/// Initialize this popup with different variations depending on where it's triggered.
+	/// </summary>
+	/// <param name="_sourceScreen">The screen that triggered this popup.</param>
+	public void Init(MenuScreen _sourceScreen) {
+		// Store params
+		m_sourceScreen = _sourceScreen;
+
+		// Toggle some visual elements depending on source screen
+		m_dismissButton.SetActive(_sourceScreen == MenuScreen.LAB_DRAGON_SELECTION);
+		m_goToLabButton.SetActive(_sourceScreen != MenuScreen.LAB_DRAGON_SELECTION);
+
+		// Different text depending on screen
+		if(_sourceScreen == MenuScreen.LAB_DRAGON_SELECTION) {
+			m_messageText.Localize("TID_LAB_UNLOCKED_POPUP_MESSAGE_1_ALT");
+		} else {
+			m_messageText.Localize("TID_LAB_UNLOCKED_POPUP_MESSAGE_1");
+		}
 	}
 
 	/// <summary>
@@ -113,18 +133,27 @@ public class PopupLabUnlocked : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Go to the lab button has been pressed.
+	/// Dismiss button has been pressed.
 	/// </summary>
-	public void OnGoToLab() {
-		// Close this popup
+	public void OnDismiss() {
+		// Close the popup
 		GetComponent<PopupController>().Close(true);
 
-		// Go to the lab main screen after a short delay
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				// Lab button does the trick for us
-				LabButton.GoToLab();
-			}, 0.25f
-		);
+		// Go to the lab if not already there
+		if(m_sourceScreen != MenuScreen.LAB_DRAGON_SELECTION) {
+			// Go to the lab main screen after a short delay
+			UbiBCN.CoroutineManager.DelayedCall(
+				() => {
+					// Clear any other queued poppup
+					// [AOC] This is a bit risky, since we could be preventing an 
+					//       important popup from appearing, but on the other hand 
+					//       we don't want queued popups to pop when entering the lab screen!
+					PopupManager.ClearQueue();
+
+					// Lab button does the trick for us
+					LabButton.GoToLab();
+				}, 0.25f
+			);
+		}
 	} 
 }

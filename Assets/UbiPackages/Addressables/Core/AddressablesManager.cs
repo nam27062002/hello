@@ -90,6 +90,9 @@ public class AddressablesManager
         {
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
+
+            // We don't want downloadables to download when editor mode is enabled
+            downloadablesCatalogJSON = null;
         }
 #endif
         if (buildCatalog)
@@ -465,6 +468,23 @@ public class AddressablesManager
         }
 
         return returnValue;
+    }
+
+    /// <summary>
+    /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="priority"></param>
+    public void SetDownloadableGroupPriority(string groupId, int priority)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadablesGroupPriority(groupId, priority);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
     }
 
     /// <summary>

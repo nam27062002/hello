@@ -1260,6 +1260,20 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
         }
     }
+
+    public override void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {
+        string actionStr = "";
+
+        switch (_action) {
+            case Downloadables.Popup.EAction.Got_It:                actionStr = "GOT IT"; break;
+            case Downloadables.Popup.EAction.Close:                 actionStr = "CLOSE"; break;
+            case Downloadables.Popup.EAction.Wifi_Only:             actionStr = "WIFI ONLY"; break;
+            case Downloadables.Popup.EAction.Wifi_Mobile:           actionStr = "WIFI AND MOBILE DATA"; break;
+            case Downloadables.Popup.EAction.View_Storage_Options:  actionStr = "VIEW STORAGE OPTIONS"; break;
+        }
+
+        Track_PopupOTA(_popupName, actionStr);
+    }
     #endregion
 
     /// <summary>
@@ -1872,8 +1886,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_DURATION, _duration);            
             e.data.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
 
+			LegalManager.ETermsPolicy termsPolicy = LegalManager.instance.GetTermsPolicy();
+
             // BI only wants these two parameters when terms policy is GDPR
-            if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+			if (termsPolicy != LegalManager.ETermsPolicy.GDPR)
             {                
                 e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
@@ -1884,8 +1900,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             }
 
-			// BI only wants age when terms policy is Coppa
-			if (LegalManager.instance.GetTermsPolicy () == LegalManager.ETermsPolicy.Coppa) 
+			// BI only wants age when terms policy is Coppa or GDPR
+			if (termsPolicy == LegalManager.ETermsPolicy.Coppa || termsPolicy == LegalManager.ETermsPolicy.GDPR) 
 			{
 				e.data.Add (TRACK_PARAM_AGE, _age);
 			} 
@@ -2389,6 +2405,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
     {
         return "SecondaryDownload_" + downloadableId;
     }
+
+    private void Track_PopupOTA(string _popupName, string _action) {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_PopupOTA popupName = " + _popupName
+                + ", action = " + _action
+               );
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.ota.popups");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName);
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
 
     // -------------------------------------------------------------
     // Events

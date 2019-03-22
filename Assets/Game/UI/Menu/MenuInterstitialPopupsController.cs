@@ -434,7 +434,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		if(m_previousScreen != MenuScreen.NONE && m_previousScreen != MenuScreen.PLAY) return;
 
 		// Can we show the popup?
-		m_currentPopup = PopupLabUnlocked.CheckAndOpen();
+		if(PopupLabUnlocked.Check()) {
+			m_currentPopup = PopupManager.LoadPopup(PopupLabUnlocked.PATH);
+			PopupLabUnlocked labPopup = m_currentPopup.GetComponent<PopupLabUnlocked>();
+			labPopup.Init(m_currentScreen);
+			PopupManager.EnqueuePopup(m_currentPopup);
+		}
+
+		// Set flag
 		if(m_currentPopup != null) {
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}

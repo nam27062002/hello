@@ -725,6 +725,11 @@ namespace Downloadables
 
                 Groups.Add(group);
             }
+        }        
+        
+        public bool BelongsToAnyGroup()
+        {
+            return Groups == null || Groups.Count > 0;
         }
 
         public bool GetPermissionOverCarrierGranted()
