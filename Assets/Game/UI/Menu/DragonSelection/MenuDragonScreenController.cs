@@ -1,4 +1,4 @@
-﻿// MenuDragonSceneController.cs
+// MenuDragonSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/05/2016.
