@@ -204,15 +204,20 @@ public class LabDragonSelectionScreen : MonoBehaviour {
             m_labMusicCount++;
             InstanceManager.musicController.Ambience_Play(LAB_MUSIC, gameObject);
         }
-        
-    
+
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
-			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
+			PopupManager.EnqueuePopup(PopupLabIntro.PATH);
 		}
 
-        // If we have a dragon selection pending, do it now!
-        if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+		// Trigger lab unlocked popup?
+		if(PopupLabUnlocked.Check()) {
+			PopupLabUnlocked labPopup = PopupManager.EnqueuePopup(PopupLabUnlocked.PATH).GetComponent<PopupLabUnlocked>();
+			labPopup.Init(MenuScreen.LAB_DRAGON_SELECTION);
+		}
+
+		// If we have a dragon selection pending, do it now!
+		if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
             InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
             m_pendingToSelectDragon = string.Empty;
         }

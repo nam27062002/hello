@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Main controller of the dragon selection screen.
 /// </summary>
-public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
+public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -285,7 +285,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 				// Particular case when the first M dragon has been acquired in the Results Screen!
 				if(!_gotoDragonUnlockScreen) {
-					PopupLabUnlocked.CheckAndOpen();
+					CheckAndOpenLabUnlockedPopup();
 				}
 			})
 			.SetAutoKill(true)
@@ -325,7 +325,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 				// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
 				if(m_dragonToReveal == null && m_dragonToTease == null) {
-					PopupLabUnlocked.CheckAndOpen();
+					CheckAndOpenLabUnlockedPopup();
 				}
 			})
 			.SetAutoKill(true)
@@ -398,7 +398,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					// Check the lab unlocked popup!
 					// [AOC] After some delay to wait for the scroll anim to return
 					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.CheckAndOpen();
+						CheckAndOpenLabUnlockedPopup();
 					}, 0.5f);
 				}
 
@@ -480,7 +480,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					// Check the lab unlocked popup!
 					// [AOC] After some delay to wait for the scroll anim to return
 					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.CheckAndOpen();
+						CheckAndOpenLabUnlockedPopup();
 					}, 0.5f);
 				}
 
@@ -523,6 +523,16 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
+	/// <summary>
+	/// Check whether the lab unlocked popup has to be displayed, and does it if needed.
+	/// </summary>
+	private void CheckAndOpenLabUnlockedPopup() {
+		if(PopupLabUnlocked.Check()) {
+			PopupLabUnlocked labPopup = PopupManager.EnqueuePopup(PopupLabUnlocked.PATH).GetComponent<PopupLabUnlocked>();
+			labPopup.Init(MenuScreen.LAB_DRAGON_SELECTION);
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -545,14 +555,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 			if(m_dragonToReveal == null && m_dragonToTease == null) {
 				// [AOC] After some delay to wait for the scroll anim to return
 				UbiBCN.CoroutineManager.DelayedCall(() => {
-					if(PopupLabUnlocked.Check()) {
-						// If some other popup is open, wait for it to be closed before opening the lab unlocked one
-						if(PopupManager.openPopupsCount > 0) {
-							Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
-						} else {
-							PopupLabUnlocked.CheckAndOpen();
-						}
-					}
+					CheckAndOpenLabUnlockedPopup();
 				}, 0.25f);
 			}
 		}
@@ -637,35 +640,4 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
     		}
         }
 	}
-
-	/// <summary>
-	/// A popup has been closed.
-	/// </summary>
-	/// <param name="_popup">Popup that triggered the event.</param>
-	private void OnPopupClosed(PopupController _popup) {
-		// If we're receiving this, means that the lab unlocked popup is pending to be displayed
-		// Check whether we can do it
-		// If there are still some opened popups, don't do anything
-		if(PopupManager.openPopupsCount > 0) return;
-
-		// We can!
-		// Unsubscribe from event
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
-
-		// Open the popup
-		PopupLabUnlocked.CheckAndOpen();
-	}
-    
-    
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch(eventType)
-        {
-            case BroadcastEventType.POPUP_CLOSED:
-            {
-                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
-                OnPopupClosed(info.popupController);
-            }break;
-        }
-    }
 }
