@@ -344,7 +344,10 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		{
             float drain = m_drainModifier;
             if (m_drainModifier < 0)
-                drain = m_drainModifier;
+            {
+                drain = Mathf.Max( m_drainModifier, -99 );  // Max -99%
+            }
+            
 			float amp = m_healthDrainAmpPerSecond + m_healthDrainAmpPerSecond * drain / 100f;
 			damage = damage + (damage * (m_gameController.elapsedSeconds * amp));
 
