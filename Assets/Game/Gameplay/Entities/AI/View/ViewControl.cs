@@ -1271,6 +1271,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();
+            if ( m_freezingLevel > 0 )
+            {
+                AudioController.Play("freeze", m_transform.position);
+            }
+
             // Check Particle
             if (m_useFreezeParticle)
             {
