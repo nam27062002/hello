@@ -338,12 +338,13 @@ public class InflammableDecoration : MonoBehaviour, ISpawnable, IBroadcastListen
 		}
 	}
 
-	public void LetsBurn(bool _explode, IEntity.Type _source) {
+	public void LetsBurn(bool _explode, IEntity.Type _source, FireColorSetupManager.FireColorType _fireColorType) {
 		if (m_state == State.Idle) {
 			if (_explode) 	m_nextState = State.Explode;
 			else 			m_nextState = State.Burning;
 
 			m_burnSource = _source;
+            m_extingishColor = _fireColorType;
 		}
 	}
 
