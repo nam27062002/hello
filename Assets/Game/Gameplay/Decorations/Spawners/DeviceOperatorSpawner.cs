@@ -23,8 +23,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	private PoolHandler m_poolHandler;
 
 	private GameCamera m_newCamera;
-	private IMachine m_operator;
-	private Pilot m_operatorPilot;
+    private IEntity m_operatorEntity;
+    private Pilot m_operatorPilot;
+    private IMachine m_operator;	
 	private Transform m_operatorParent;
 
 	private float m_respawnTime;
@@ -37,6 +38,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 
         m_operator = null;
+        m_operatorEntity = null;
         m_operatorPilot = null;
 		m_operatorParent = null;
     }
@@ -93,9 +95,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         return false;
     }
 
-    protected override uint GetEntitiesAmountToRespawn() {        
+    protected override uint GetEntitiesAmountToRespawn() {
         return GetMaxEntities();
-    }        
+    }
 
 	protected override PoolHandler GetPoolHandler(uint index) {
 		return m_poolHandler;
@@ -106,6 +108,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     }    
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
+        m_operatorEntity = spawning;
+
         Transform groundSensor = spawning.transform.Find("groundSensor");
         Transform t = spawning.transform;
         
@@ -135,7 +139,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     }    
 
 	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
-        if (m_operator != null && _entity == m_operator.gameObject) {
+        if (m_operator != null && _entity == m_operatorEntity) {
             m_operator = null;
             m_operatorPilot = null;
 
