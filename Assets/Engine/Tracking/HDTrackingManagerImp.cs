@@ -1027,6 +1027,15 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (m_playingMode == EPlayingMode.SETTINGS)
             Track_EndPlayingMode(true);
     }
+    
+    /// <summary>
+    /// Notify the tracking when the pause popup appears, used to send custom.game.settings while in game
+    /// </summary>
+    public override void NotifyIngamePause() {
+        // Track popup settings
+        Track_GameSettings( "In_game" );
+    }
+    
 
     public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {
         if (FeatureSettingsManager.IsDebugEnabled) {

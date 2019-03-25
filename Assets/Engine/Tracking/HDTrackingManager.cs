@@ -440,6 +440,11 @@ public class HDTrackingManager
 	public virtual void Notify_SettingsClose(){}
 
     /// <summary>
+    /// Notify the tracking when the pause popup appears, used to send custom.game.settings while in game
+    /// </summary>
+    public virtual void NotifyIngamePause() { }
+
+    /// <summary>
     /// Notifies the start of performance track every X seconds
     /// </summary>
     public virtual void Notify_StartPerformanceTracker() {}
