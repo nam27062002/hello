@@ -48,6 +48,12 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(dependencyIds);
     }
 
+    public AddressablesOp LoadDependencyIdAsync(string dependencyId)
+    {
+        AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(dependencyId, null, true);
+        return ProcessAssetBundlesOpRequest(request);        
+    }
+
     public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
     {
         AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleList(dependencyIds, null, true);
@@ -58,6 +64,19 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);
         AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);        
+    }
+
+    public void UnloadDependencyId(string dependencyId, bool unloadItsDependenciesToo)
+    {
+        if (unloadItsDependenciesToo)
+        {
+            List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(dependencyId);
+            AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);
+        }
+        else
+        {
+            AssetBundlesManager.Instance.UnloadAssetBundle(dependencyId, null);
+        }
     }
 
     public void UnloadDependencyIdsList(List<string> dependencyIds)
