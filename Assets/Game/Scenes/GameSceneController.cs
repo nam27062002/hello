@@ -827,10 +827,13 @@ public class GameSceneController : GameSceneControllerBase {
     }
 
     private void Track_RoundEnd() {
-        int dragonXp = 0;
+        
         int timePlayed = (int)elapsedSeconds;
         int score = (int)RewardManager.score;
+        
+        int dragonXp = 0;
         int dragonProgress = 0;
+        
         bool isSpecial = false;
         if (InstanceManager.player != null) {
             IDragonData dragonData = InstanceManager.player.data;
@@ -847,27 +850,12 @@ public class GameSceneController : GameSceneControllerBase {
                 }
                 else if (dragonData.type == IDragonData.Type.SPECIAL)
                 {
-                    // DragonDataSpecial specialData = dragonData as DragonDataSpecial;
-                    // dragonProgress = specialData.GetLevel();
                     isSpecial = true;
                 }
             }
         }
         
         int eggsFound = (CollectiblesManager.egg != null && CollectiblesManager.egg.collected) ? 1 : 0;
-
-        int chestsFound = 0;
-        for (int i = 0; i < ChestManager.dailyChests.Length; i++) {
-            if (ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
-                // Count chest
-                chestsFound++;
-            }
-        }
-
-        HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
-            RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
-            RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
-
 
         if ( isSpecial )
         { 
@@ -885,6 +873,21 @@ public class GameSceneController : GameSceneControllerBase {
                                 RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
                                 RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, 
                                 powerTime, (int)m_mapUsageTracker.currentValue, league);
+        }
+        else
+        {
+            // CHESTS
+            int chestsFound = 0;
+            for (int i = 0; i < ChestManager.dailyChests.Length; i++) {
+                if (ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
+                    // Count chest
+                    chestsFound++;
+                }
+            }
+        
+            HDTrackingManager.Instance.Notify_RoundEnd(dragonXp, (int)RewardManager.xp, dragonProgress, timePlayed, score, chestsFound, eggsFound,
+                        RewardManager.maxScoreMultiplier, RewardManager.maxBaseScoreMultiplier, RewardManager.furyFireRushAmount, RewardManager.furySuperFireRushAmount,
+                        RewardManager.paidReviveCount, RewardManager.freeReviveCount, (int)RewardManager.coins, (int)RewardManager.pc, m_boostTimeTracker.currentValue, (int)m_mapUsageTracker.currentValue);
         }
 
         m_boostTimeTracker.enabled = false;
