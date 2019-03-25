@@ -128,30 +128,30 @@ public class AssetsDownloadFlow : MonoBehaviour {
 
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
-			Debug.Log(Color.magenta.Tag("m_enabled false!"));
+			//Debug.Log(Color.magenta.Tag("m_enabled false!"));
 			show = false;
 		}
 
 		// Don't show if we don't have valid data
 		else if(m_handle == null) {
-			Debug.Log(Color.magenta.Tag("m_handle is NULL"));
+			//Debug.Log(Color.magenta.Tag("m_handle is NULL"));
 			show = false;
 		}
 
 		// Don't show if permission hasn't yet been requested (we will trigger the popup)
 		else if(m_handle.NeedsToRequestPermission()) {
-			Debug.Log(Color.magenta.Tag("needs to request permission"));
+			//Debug.Log(Color.magenta.Tag("needs to request permission"));
 			show = false;
 		}
 
 		// Don't show if download has already finished
 		else if(m_handle.IsAvailable()) {
-			Debug.Log(Color.magenta.Tag("download finished"));
+			//Debug.Log(Color.magenta.Tag("download finished"));
 			show = false;
 		}
 
 		else {
-			Debug.Log(Color.green.Tag("flow needs displaying!"));
+			//Debug.Log(Color.green.Tag("flow needs displaying!"));
 		}
 
 		// Apply and return
