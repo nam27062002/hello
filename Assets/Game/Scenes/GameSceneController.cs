@@ -800,9 +800,7 @@ public class GameSceneController : GameSceneControllerBase {
 		m_mapUsageTracker.InitValue(0);
         m_mapUsageTracker.enabled = true;
         m_specialPowerTimeTracker.InitValue(0);
-        m_specialPowerTimeTracker.enabled = true;
-		HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
-
+        m_specialPowerTimeTracker.enabled = true;		
         
         if (isSpecial)
         {
@@ -817,10 +815,15 @@ public class GameSceneController : GameSceneControllerBase {
                                                             powerLevel,
                                                             specialOwned,
                                                             (leagueData != null)? leagueData.sku : ""
+                                                            , pets
                                                             );
         }
-            
-        
+        else
+        {
+            HDTrackingManager.Instance.Notify_RoundStart(dragonXp, dragonProgress, dragonSkin, pets);
+        }
+
+
 
         // Automatic connection system is disabled during the round in order to ease performance
         GameServerManager.SharedInstance.Connection_SetIsCheckEnabled(false);

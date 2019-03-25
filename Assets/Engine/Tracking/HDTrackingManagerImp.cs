@@ -1236,9 +1236,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
     /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
-        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague);
+        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
     }
     
     public override void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
@@ -2292,11 +2292,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
-                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague);
+        {
+            string str = "Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
+                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague;
+            if (pets != null) {
+                int count = pets.Count;
+                for (int i = 0; i < count; i++) {
+                    str += " pet[" + i + "] = " + pets[i];
+                }
+            }
+
+            Log(str);
+        }
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
         {
@@ -2306,7 +2316,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
             Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
             e.data.Add(TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED, totalSpecialDragonsUnlocked);
-            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);    
+            Track_AddParamPets(e, pets);        
         }
         m_eventQueue.Enqueue(e);
     }

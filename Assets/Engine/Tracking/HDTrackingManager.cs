@@ -566,7 +566,8 @@ public class HDTrackingManager
     /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
     /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
+    /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets) { }
 
     /// <summary>
     /// Notifies the lab game end.
