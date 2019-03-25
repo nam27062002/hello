@@ -89,7 +89,7 @@ public class BasicAddressablesTestController : MonoBehaviour
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);        
 
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, tracker, logger);
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);
 
         Ui_UpdateResolutionDropdown();
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;

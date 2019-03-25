@@ -4,8 +4,7 @@ using UnityEngine;
 public class MockNetworkDriver : MockDriver, NetworkDriver
 {
 #if UNITY_EDITOR
-    private static string MOCK_THROTTLE_SLEEP_TIME = "NetworkMockThrottleSleepTime";
-    private static int sm_mockThrottleSleepTime;
+    private static string MOCK_THROTTLE_SLEEP_TIME = "NetworkMockThrottleSleepTime";    
     public static int MockThrottleSleepTime
     {
         get
@@ -19,7 +18,42 @@ public class MockNetworkDriver : MockDriver, NetworkDriver
         }
     }
 
-    private static string MOCK_REACHABILITY = "NetworkMockReachability";
+    private static string MOCK_REACHABILITY = "NetworkMockReachability";       
+    public static int MockNetworkReachabilityAsInt
+    {
+        get
+        {
+            return UnityEditor.EditorPrefs.GetInt(MOCK_REACHABILITY, -1);
+        }
+
+        set
+        {
+            UnityEditor.EditorPrefs.SetInt(MOCK_REACHABILITY, value);
+        }
+    }    
+#else
+    private static int sm_mockThrottleSleepTime = 0;
+    public static int MockThrottleSleepTime
+    {
+        get
+        {
+            return sm_mockThrottleSleepTime;
+        }
+
+        set
+        {
+            sm_mockThrottleSleepTime = value;
+        }
+    }    
+
+    private static int sm_mockNetworkReachabilityAsInt = -1;
+    public static int MockNetworkReachabilityAsInt
+    {
+        get { return sm_mockNetworkReachabilityAsInt; }
+        set { sm_mockNetworkReachabilityAsInt = value; }
+    }
+#endif
+
     public static bool IsMockNetworkReachabilityEnabled
     {
         get
@@ -36,26 +70,12 @@ public class MockNetworkDriver : MockDriver, NetworkDriver
         }
     }
 
-    private static NetworkReachability sm_mockReachability;
-    public static int MockNetworkReachabilityAsInt
-    {
-        get
-        {
-            return UnityEditor.EditorPrefs.GetInt(MOCK_REACHABILITY, -1);
-        }
-
-        set
-        {
-            UnityEditor.EditorPrefs.SetInt(MOCK_REACHABILITY, value);
-        }
-    }
-
     public static NetworkReachability MockNetworkReachability
     {
         get
         {
-            int index = UnityEditor.EditorPrefs.GetInt(MOCK_REACHABILITY, -1);
-            return (index == -1) ? NetworkReachability.NotReachable : (NetworkReachability)index;            
+            int index = MockNetworkReachabilityAsInt;
+            return (index == -1) ? NetworkReachability.NotReachable : (NetworkReachability)index;
         }
 
         set
@@ -63,7 +83,6 @@ public class MockNetworkDriver : MockDriver, NetworkDriver
             MockNetworkReachabilityAsInt = (int)value;
         }
     }
-#endif
 
     public ProductionNetworkDriver m_prodDriver = new ProductionNetworkDriver();    
 
