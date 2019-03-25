@@ -315,7 +315,7 @@ public class AddressablesManager
     /// </summary>
     /// <param name="id">Dependency id to load.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public AddressablesOp LoadDependencyIdtAsync(string dependencyId)
+    public AddressablesOp LoadDependencyIdAsync(string dependencyId)
     {
         AddressablesOp returnValue;
 
