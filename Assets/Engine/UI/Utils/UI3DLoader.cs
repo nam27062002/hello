@@ -72,8 +72,10 @@ public class UI3DLoader : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Show loading icon from start
-		ShowLoading(true);
+        Unload();
+
+        // Show loading icon from start
+        ShowLoading(true);
 
 		// If defined, start loading
 		if(m_loadOnAwake) {
