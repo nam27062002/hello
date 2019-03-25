@@ -432,7 +432,7 @@ public class HDTrackingManager
 	/// <summary>
 	/// Notifies the settings open. When settings popup opens
 	/// </summary>
-	public virtual void Notify_SettingsOpen(){}
+	public virtual void Notify_SettingsOpen( string zone ){}
 
 	/// <summary>
 	/// Notifies the settings close. When settings popup closed

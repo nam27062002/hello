@@ -1015,9 +1015,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
     }
 
-    public override void Notify_SettingsOpen() {
+    public override void Notify_SettingsOpen(string zone) {
         if (m_playingMode == EPlayingMode.NONE)
             Track_StartPlayingMode(EPlayingMode.SETTINGS);
+
+        // Track popup settings
+        Track_GameSettings( zone );
     }
 
     public override void Notify_SettingsClose() {
@@ -2045,6 +2048,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_StartPlayingMode playingMode = " + _mode);
         }
+    }
+
+    void Track_GameSettings( string zone )
+    {
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_GameSettings zone = " + zone);
+        }
+        
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.settings");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ZONE, zone);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+        
     }
 
     void Track_EndPlayingMode(bool _isSuccess) {
