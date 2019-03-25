@@ -34,7 +34,7 @@ public class AddressableGroupsTestController : MonoBehaviour
             m_mockHandle.Update();
 
             Debug.Log(" progress bytes = " + m_mockHandle.GetDownloadedBytes() + " / " + m_mockHandle.GetTotalBytes() +
-                         " progress % = " + m_mockHandle.Progress + " IsAvailable = " + m_mockHandle.IsAvailable() + " error = " + m_mockHandle.GetError());
+                         " progress % = " + m_mockHandle.Progress + " at speed = " + m_mockHandle.GetSpeed() + " kbps IsAvailable = " + m_mockHandle.IsAvailable() + " error = " + m_mockHandle.GetError());
         }
 
         if (Input.GetKeyDown(KeyCode.M))

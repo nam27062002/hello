@@ -61,6 +61,8 @@ namespace Downloadables
 		private float TimeAtStart { get; set; }
 		private float LastUpdateTime { get; set; }
 
+		private float DownloadSpeed { get; set; }
+
 		private EError Error { get; set; }
 
         private List<Action> Actions { get; set; }
@@ -85,6 +87,7 @@ namespace Downloadables
             TimeToDownload = timeToDownload;
             DownloadingTime = 0f;
 			DownloadingTimeDelta = 0f;
+			DownloadSpeed = 0f;
 
             Error = EError.NONE;
 
@@ -172,7 +175,11 @@ namespace Downloadables
             return (long)TotalBytes;
         }
 
-        public override void SetIsPermissionRequested(bool value)
+		public override float GetSpeed() {
+			return DownloadSpeed;
+		}
+
+		public override void SetIsPermissionRequested(bool value)
         {
             PermissionRequested = value;
         }
@@ -201,12 +208,26 @@ namespace Downloadables
         {
             if (!IsAvailable())
             {
-				DownloadingTimeDelta = 0;
+				// Store some vars
+				long downloadedBytesAtStart = GetDownloadedBytes();
 
+				// Compute downloading time increase in this frame based on actions performed
+				DownloadingTimeDelta = 0;
 				UpdateActions();
 
+				// Increase total download time
 				DownloadingTime += DownloadingTimeDelta;
 
+				// Compute download speed this frame
+				long downloadedBytesAtEnd = GetDownloadedBytes();
+				long downloadedBytesDelta = downloadedBytesAtEnd - downloadedBytesAtStart;
+				if(DownloadingTimeDelta > 0) {
+					DownloadSpeed = (float)downloadedBytesDelta / DownloadingTimeDelta;
+				} else {
+					DownloadSpeed = 0f;
+				}
+
+				// Update some vars
 				LastUpdateTime = Time.unscaledTime;
             }
         }
