@@ -53,7 +53,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	// Power ups modifiers
 	private float m_drainModifier = 0;
-	private float m_armorPercentageGlobal;
+	private float m_armorPercentageGlobal = 0;
 	private Dictionary<DamageType, float> m_armorPercentageType;
 	private Dictionary<string, float> m_armorPercentageOrigin;
 
@@ -65,6 +65,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 
 	public float m_damageAnimationThreshold = 0;	// to check if hit animation can play when Recieve Damage
 	public float m_dotAnimationThreshold = 0;	// To check if hit animation can play when ReceiveDamageOverTime
+    protected DragonShieldBehaviour m_shield;
 
 	//-----------------------------------------------
 	// Methods
@@ -77,6 +78,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 		m_armorPercentageOrigin = new Dictionary<string, float>();
 
 		m_dragon = GetComponent<DragonPlayer>();
+        m_shield = GetComponent<DragonShieldBehaviour>();
 	}
 
 	// Use this for initialization
@@ -125,8 +127,13 @@ public class DragonHealthBehaviour : MonoBehaviour {
                 // Reverse iterating since we will be removing them from the list when expired
                 for (int i = m_dots.Count - 1; i >= 0; i--) {
                     // Apply damage
-                    float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps);
-                    ReceiveDamage(damage * Time.deltaTime, m_dots[i].type, m_dots[i].source, false);        // No hit animation!
+                    float damage = GetModifiedDamageForCurrentHealth(m_dots[i].dps) * Time.deltaTime;
+                    if ( m_shield != null )
+                    {
+                        damage = m_shield.RecieveDamage(damage, m_dots[i].type, m_dots[i].source, false);
+                    }
+                    if ( damage > 0 )
+                        ReceiveDamage(damage, m_dots[i].type, m_dots[i].source, false);        // No hit animation!
 
                     // Update timer and check for dot finish
                     m_dots[i].timer -= Time.deltaTime;
@@ -202,12 +209,24 @@ public class DragonHealthBehaviour : MonoBehaviour {
             if (m_ignoreDamageTypes.Contains(_type))
                 return;
                 
+            // Shield power up
 			if ( m_dragon.HasShield( _type ) )
 			{
 				m_dragon.LoseShield( _type, _source );
 				return;
 			}
 
+            // Dragon Shield
+            if ( m_shield != null )
+            {
+                _amount = m_shield.RecieveDamage( _amount, _type, _source, _hitAnimation, _damageOrigin, _entity );
+                if ( _amount < 0 )
+                {
+                    return;
+                }
+            }
+
+            // Armors
 			float armorPercentage = m_armorPercentageGlobal;
 			if (m_armorPercentageType.ContainsKey( _type )) 
 			{
@@ -263,7 +282,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
         if (m_ignoreDamageTypes.Contains(_type))
             return;
             
-		// Check shields
+		// Check power up shields
 		if ( m_dragon.HasShieldActive( _type ) )
 		{
 			return;
@@ -274,7 +293,7 @@ public class DragonHealthBehaviour : MonoBehaviour {
 			return;
 		}
 
-
+        // armor
 		float armorPercentage = m_armorPercentageGlobal;
 
 		// Check damage Reduction
