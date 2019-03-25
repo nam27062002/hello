@@ -862,7 +862,7 @@ public class OfferPack {
 		// Show popup
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
-		popup.Open();
+		PopupManager.EnqueuePopup(popup);
 
         // Tracking
         // The experiment name is used as offer name        

@@ -80,6 +80,9 @@ public class PopupSharkPetReward : PopupInfoPet {
 		if(m_collected) return;
 		m_collected = true;
 
+		// Unlock pet
+		UsersManager.currentUser.petCollection.UnlockPet(PET_SKU);
+
 		// Close all open popups
 		PopupManager.Clear(true);
 

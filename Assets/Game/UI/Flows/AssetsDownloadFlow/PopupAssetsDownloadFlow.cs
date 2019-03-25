@@ -122,7 +122,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
 	/// <param name="_handle">The download handle whose information we will be using.</param>
-	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle) {
+	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, bool _onlyIfMandatory) {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
@@ -141,8 +142,10 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 			// Yes! Check error code
 			switch(_handle.GetError()) {
 				case Downloadables.Handle.EError.NONE: {
-					// No error! Show progress popup
-					popupPath = PATH_PROGRESS;
+					// No error! Show progress popup (if non-mandatory popups are allowed)
+					if(!_onlyIfMandatory) {
+						popupPath = PATH_PROGRESS;
+					}
 				} break;
 
 				case Downloadables.Handle.EError.NO_WIFI: {
@@ -177,8 +180,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 			PopupAssetsDownloadFlow flowPopup = popup.GetComponent<PopupAssetsDownloadFlow>();
 			flowPopup.Init(_handle);
 
-			// Open it and return!
-			popup.Open();
+			// Enqueue popup!
+			PopupManager.EnqueuePopup(popup);
 			return flowPopup;
 		}
 

@@ -61,15 +61,11 @@ namespace Downloadables
 		private float TimeAtStart { get; set; }
 		private float LastUpdateTime { get; set; }
 
+		private float DownloadSpeed { get; set; }
+
 		private EError Error { get; set; }
 
         private List<Action> Actions { get; set; }
-
-        private float Speed { get; set; }
-
-        private float SpeedTakenAt { get; set; }
-
-        private float DownloadedBytesAtLatestSpeed { get; set; }
 
         public MockHandle(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted,
                           List<Action> actions = null)
@@ -91,6 +87,7 @@ namespace Downloadables
             TimeToDownload = timeToDownload;
             DownloadingTime = 0f;
 			DownloadingTimeDelta = 0f;
+			DownloadSpeed = 0f;
 
             Error = EError.NONE;
 
@@ -109,10 +106,6 @@ namespace Downloadables
 
             SortActions();
             UpdateActions();
-
-            Speed = 0f;
-            SpeedTakenAt = 0f;
-            DownloadedBytesAtLatestSpeed = DownloadedBytesAtStart;
         }
 
         public void AddAction(float time, EError error)
@@ -182,7 +175,11 @@ namespace Downloadables
             return (long)TotalBytes;
         }
 
-        public override void SetIsPermissionRequested(bool value)
+		public override float GetSpeed() {
+			return DownloadSpeed;
+		}
+
+		public override void SetIsPermissionRequested(bool value)
         {
             PermissionRequested = value;
         }
@@ -209,31 +206,29 @@ namespace Downloadables
 
         public override void Update()
         {
-            if (IsAvailable())
+            if (!IsAvailable())
             {
-                Speed = 0f;
-            }
-            else
-            {
-				DownloadingTimeDelta = 0;
+				// Store some vars
+				long downloadedBytesAtStart = GetDownloadedBytes();
 
+				// Compute downloading time increase in this frame based on actions performed
+				DownloadingTimeDelta = 0;
 				UpdateActions();
-                
+
+				// Increase total download time
 				DownloadingTime += DownloadingTimeDelta;
 
-                if (Time.realtimeSinceStartup - SpeedTakenAt >= 1f)
-                {
-                    Speed = (GetDownloadedBytes() - DownloadedBytesAtLatestSpeed) / (Time.realtimeSinceStartup - SpeedTakenAt);
-                    if (Speed < 0f)
-                    {
-                        Speed = 0f;
-                    }
+				// Compute download speed this frame
+				long downloadedBytesAtEnd = GetDownloadedBytes();
+				long downloadedBytesDelta = downloadedBytesAtEnd - downloadedBytesAtStart;
+				if(DownloadingTimeDelta > 0) {
+					DownloadSpeed = (float)downloadedBytesDelta / DownloadingTimeDelta;
+				} else {
+					DownloadSpeed = 0f;
+				}
 
-                    SpeedTakenAt = Time.realtimeSinceStartup;                    
-                    DownloadedBytesAtLatestSpeed = GetDownloadedBytes();
-                }                                
-
-                LastUpdateTime = Time.unscaledTime;
+				// Update some vars
+				LastUpdateTime = Time.unscaledTime;
             }
         }
 
@@ -298,10 +293,5 @@ namespace Downloadables
 			EError previousError = Error;
             Error = action.Error;
 		}
-
-        public override float GetSpeed()
-        {
-            return Speed;
-        }        
-    }
+	}
 }
