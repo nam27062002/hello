@@ -216,10 +216,7 @@ namespace Downloadables
         /// <summary>
         /// Returns downloading speed in bytes/second
         /// </summary>        
-        public virtual float GetSpeed()
-        {
-            return sm_manager.GetSpeed();
-        }
+        public abstract float GetSpeed();        
 
         public virtual void Retry() {}
 

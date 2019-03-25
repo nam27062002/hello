@@ -451,7 +451,7 @@ namespace Downloadables
         }
 
         /// <summary>
-        /// Returns downloading speed in bytes/second
+        /// Returns current downloading speed in bytes/second 
         /// </summary>        
         public float GetSpeed()
         {
@@ -464,6 +464,21 @@ namespace Downloadables
         public void SetSpeed(float value)
         {
             m_speed = value;
+        }
+
+        public bool IsAnyIdBeingDownloaded(List<string> ids)
+        {
+            bool returnValue = false;
+            if (ids != null && m_downloader.IsDownloading && m_catalogEntryDownloading != null)
+            {
+                int count = ids.Count;
+                for (int i = 0; i < count && !returnValue; i++)
+                {
+                    returnValue = (m_catalogEntryDownloading.Id == ids[i]);                    
+                }
+            }
+
+            return returnValue;
         }
 
         public void Update()
@@ -479,7 +494,8 @@ namespace Downloadables
         }               
 
 #region catalog
-        private Dictionary<string, CatalogEntryStatus> m_catalog;        
+        private Dictionary<string, CatalogEntryStatus> m_catalog;
+        private CatalogEntryStatus m_catalogEntryDownloading;
 
         private void Catalog_Reset()
         {            
@@ -490,7 +506,9 @@ namespace Downloadables
             else
             {
                 m_catalog.Clear();
-            }            
+            }
+
+            m_catalogEntryDownloading = null;
         }
 
         private void Catalog_AddEntryStatus(string id, JSONNode json)
@@ -527,7 +545,9 @@ namespace Downloadables
             }
 
             if (!m_downloader.IsDownloading)
-            {             
+            {
+                m_catalogEntryDownloading = null;
+
                 if (Groups_PrioritiesDirty)
                 {
                     Groups_SetupPriorities();
@@ -558,6 +578,7 @@ namespace Downloadables
                 }
                 else
                 {
+                    m_catalogEntryDownloading = entryToDownload;
                     m_downloader.StartDownloadThread(entryToDownload);
                 }
             }            
