@@ -11,13 +11,15 @@ namespace Downloadables
         private static string ATT_PERMISSION_REQUESTED = "pr";
         private static string ATT_PERMISSION_GRANTED = "pg";
 
+        private static int MIN_PRIORITY = 100;
+
         private static Disk sm_disk;
         public static void StaticSetup(Disk disk)
         {
             sm_disk = disk;
         }
 
-        private string Id { get; set; }
+        public string Id { get; private set; }
 
         public List<string> EntryIds;
 
@@ -71,7 +73,7 @@ namespace Downloadables
             PermissionOverCarrierRequested = false;
             PermissionOverCarrierGranted = false;
             NeedsToSave = false;
-            Priority = int.MaxValue;
+            Priority = MIN_PRIORITY;
             m_latestSaveAt = -1;
             Index = -1;
         }
