@@ -47,7 +47,7 @@ public class PopupAskSurvey : MonoBehaviour {
 	/// If all checks are passed, opens the popup.
 	/// </summary>
 	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
-	public static PopupController Check() {
+	public static PopupController CheckAndOpen() {
 		return null;	// [AOC] As of version 1.3, disable temporarily the survey popup
 
 		// Not if already checked!
@@ -88,7 +88,7 @@ public class PopupAskSurvey : MonoBehaviour {
 		if(HDTrackingManager.Instance.TrackingPersistenceSystem.SessionCount < Prefs.GetIntPlayer(PREF_LAST_DISPLAYED_SESSION, 0) + MIN_SESSIONS) return null;
 
 		// All checks passed! Popup can be displayed!
-		return PopupManager.OpenPopupInstant(PATH);
+		return PopupManager.EnqueuePopup(PATH);
 	}
 
 	/// <summary>
