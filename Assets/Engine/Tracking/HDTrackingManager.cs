@@ -517,6 +517,8 @@ public class HDTrackingManager
     };
 
     public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
+    
+    public virtual void Notify_SocialClick(string net, string zone) { }
 
     /// <summary>
     /// Notifies an A/B experiment has just been applied.

@@ -1162,6 +1162,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_RateThisAppShown(result, dragonProgression);
     }
+    
+    
+    public override void Notify_SocialClick(string net, string zone) 
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_SocialClick net = " + net + " zone = " + zone);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.social.click");
+        {
+            Track_AddParamString(e, TRACK_PARAM_NETWORK, net);
+            Track_AddParamString(e, TRACK_PARAM_ZONE, zone);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
 
     public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
     {
@@ -2588,6 +2604,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_NB_ADS_LTD = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS = "nbViews";
+    private const string TRACK_PARAM_NETWORK = "network";
     private const string TRACK_PARAM_NETWORK_TYPE_END = "network_type_end";
     private const string TRACK_PARAM_NETWORK_TYPE_START = "network_type_start";
     private const string TRACK_PARAM_NEW_AREA = "newArea";

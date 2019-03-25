@@ -50,6 +50,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The Facebook button has been pressed.
 	/// </summary>
 	public void OnFacebookButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Facebook", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.FACEBOOK_URL);
 	}
 
@@ -57,6 +58,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The Twitter button has been pressed.
 	/// </summary>
 	public void OnTwitterButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Twitter", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.TWITTER_URL);
 	}
 
@@ -64,6 +66,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The Instagram button has been pressed.
 	/// </summary>
 	public void OnInstagramButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Instagram", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.INSTAGRAM_URL);
 	}
 
@@ -71,6 +74,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The Web button has been pressed.
 	/// </summary>
 	public void OnWebButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Webpage", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.WEB_URL);
 	}
 
@@ -78,6 +82,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The Weibo button has been pressed.
 	/// </summary>
 	public void OnWeiboButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Weibo", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.WEIBO_URL);
 	}
 
@@ -85,6 +90,7 @@ public class UISocialSetup : MonoBehaviour
 	/// The WeChat button has been pressed.
 	/// </summary>
 	public void OnWeChatButton() {
+        HDTrackingManager.Instance.Notify_SocialClick("Wechat", InstanceManager.menuSceneController.currentScreen.ToString());
 		GameSettings.OpenUrl(GameSettings.WE_CHAT_URL);
 	}
 }

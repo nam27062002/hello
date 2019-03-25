@@ -647,6 +647,17 @@
         "etl"
       ]
     },
+    "custom.social.click": {
+        "Parameters": [
+            { "metwork": { "Status": "OK" } },
+            { "zone": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
     "custom.general.abtest.experiment": {
       "Parameters": [
         { "experimentName": { "Status": "OK" } },
@@ -1575,6 +1586,10 @@
     "result": {
       "Type": "STRING:64",
       "Values": []
+    },
+    "network": {
+        "Type": "STRING:16",
+        "Values": []
     },
     "network_type_start": {
       "Type": "STRING:8",
