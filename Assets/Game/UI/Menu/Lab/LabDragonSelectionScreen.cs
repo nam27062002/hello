@@ -261,6 +261,8 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 
         if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
 			if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS) {
+				// Clear popups and go to leagues screen
+				PopupManager.Clear(true);
                 InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
             }
         }
