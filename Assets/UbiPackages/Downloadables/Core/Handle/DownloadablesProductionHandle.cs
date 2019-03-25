@@ -241,6 +241,12 @@ namespace Downloadables
             }
             
             return returnValue;
-        }                
+        }
+
+        public override float GetSpeed()
+        {
+            // We only take into consideration the downloading speed if it's being used to download any of the downloadable ids handled by this handle
+            return (sm_manager.IsAnyIdBeingDownloaded(DownloadableIds)) ? sm_manager.GetSpeed() : 0f;            
+        }
     }
 }

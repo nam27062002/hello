@@ -65,6 +65,12 @@ namespace Downloadables
 
         private List<Action> Actions { get; set; }
 
+        private float Speed { get; set; }
+
+        private float SpeedTakenAt { get; set; }
+
+        private float DownloadedBytesAtLatestSpeed { get; set; }
+
         public MockHandle(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted,
                           List<Action> actions = null)
         {
@@ -103,6 +109,10 @@ namespace Downloadables
 
             SortActions();
             UpdateActions();
+
+            Speed = 0f;
+            SpeedTakenAt = 0f;
+            DownloadedBytesAtLatestSpeed = DownloadedBytesAtStart;
         }
 
         public void AddAction(float time, EError error)
@@ -199,15 +209,31 @@ namespace Downloadables
 
         public override void Update()
         {
-            if (!IsAvailable())
+            if (IsAvailable())
+            {
+                Speed = 0f;
+            }
+            else
             {
 				DownloadingTimeDelta = 0;
 
 				UpdateActions();
-
+                
 				DownloadingTime += DownloadingTimeDelta;
 
-				LastUpdateTime = Time.unscaledTime;
+                if (Time.realtimeSinceStartup - SpeedTakenAt >= 1f)
+                {
+                    Speed = (GetDownloadedBytes() - DownloadedBytesAtLatestSpeed) / (Time.realtimeSinceStartup - SpeedTakenAt);
+                    if (Speed < 0f)
+                    {
+                        Speed = 0f;
+                    }
+
+                    SpeedTakenAt = Time.realtimeSinceStartup;                    
+                    DownloadedBytesAtLatestSpeed = GetDownloadedBytes();
+                }                                
+
+                LastUpdateTime = Time.unscaledTime;
             }
         }
 
@@ -272,5 +298,10 @@ namespace Downloadables
 			EError previousError = Error;
             Error = action.Error;
 		}
-	}
+
+        public override float GetSpeed()
+        {
+            return Speed;
+        }        
+    }
 }
