@@ -137,37 +137,35 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		if(_handle.NeedsToRequestPermission()) {
 			// No! Open the permission request popup
 			popupPath = PATH_PERMISSION;
-			_handle.SetIsPermissionRequested(true);	// Clear flag
 		} else {
-			// Yes! Check error code
-			switch(_handle.GetError()) {
-				case Downloadables.Handle.EError.NONE: {
-					// No error! Show progress popup (if non-mandatory popups are allowed)
-					if(!_onlyIfMandatory) {
+			// Error popups are not mandatory (so far)
+			if(!_onlyIfMandatory) {
+				// Yes! Check error code
+				switch(_handle.GetError()) {
+					case Downloadables.Handle.EError.NONE: {
 						popupPath = PATH_PROGRESS;
-					}
-				} break;
+					} break;
 
-				case Downloadables.Handle.EError.NO_WIFI: {
-					popupPath = PATH_ERROR_NO_WIFI;
-				} break;
+					case Downloadables.Handle.EError.NO_WIFI: {
+						popupPath = PATH_ERROR_NO_WIFI;
+					} break;
 
-				case Downloadables.Handle.EError.NO_CONNECTION: {
-					popupPath = PATH_ERROR_NO_CONNECTION;
-				} break;
+					case Downloadables.Handle.EError.NO_CONNECTION: {
+						popupPath = PATH_ERROR_NO_CONNECTION;
+					} break;
 
-				case Downloadables.Handle.EError.STORAGE: {
-					popupPath = PATH_ERROR_STORAGE;
-				} break;
+					case Downloadables.Handle.EError.STORAGE: {
+						popupPath = PATH_ERROR_STORAGE;
+					} break;
 
-				case Downloadables.Handle.EError.STORAGE_PERMISSION: {
-					popupPath = PATH_ERROR_STORAGE_PERMISSION;
-				} break;
+					case Downloadables.Handle.EError.STORAGE_PERMISSION: {
+						popupPath = PATH_ERROR_STORAGE_PERMISSION;
+					} break;
 
-				default: {
-					// Open generic error popup
-					popupPath = PATH_ERROR_GENERIC;
-				} break;
+					default: {
+						popupPath = PATH_ERROR_GENERIC;     // Open generic error popup
+					} break;
+				}
 			}
 		}
 
@@ -204,6 +202,7 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnDenyDataPermission() {
 		// Store new settings
+		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(false);
 
 		// Close Popup
@@ -215,6 +214,7 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnAllowDataPermission() {
 		// Store new settings
+		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(true);
 
 		// Close Popup
