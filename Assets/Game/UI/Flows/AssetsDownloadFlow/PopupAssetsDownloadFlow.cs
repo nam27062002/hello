@@ -73,6 +73,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	public virtual void Init(Downloadables.Handle _handle) {
 		// Store group
 		m_handle = _handle;
+
+		// Perform a first refresh
+		Refresh();
 	}
 
 	/// <summary>
