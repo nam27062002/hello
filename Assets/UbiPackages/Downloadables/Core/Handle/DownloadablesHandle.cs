@@ -35,9 +35,7 @@ namespace Downloadables
             UNKNOWN,
 
             NONE
-        }
-
-        private static Array EErrorValues = Enum.GetValues(typeof(EError));
+        }        
 
         //------------------------------------------------------------------------//
         // MEMBERS AND PROPERTIES												  //
@@ -60,7 +58,7 @@ namespace Downloadables
 
         //------------------------------------------------------------------------//
         // METHODS																  //
-        //------------------------------------------------------------------------//
+        //------------------------------------------------------------------------//        
 
         /// <summary>
         /// Returns whether or not the list of downloadables handled by this class are available.
@@ -214,6 +212,11 @@ namespace Downloadables
 
             return returnValue;
         }
+
+        /// <summary>
+        /// Returns downloading speed in bytes/second
+        /// </summary>        
+        public abstract float GetSpeed();        
 
         public virtual void Retry() {}
 

@@ -305,7 +305,10 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 		instance.m_queuedPopups.Enqueue(_popup);
 
 		// Disable it until the queue logic decides to open it
-		_popup.gameObject.SetActive(false);
+		// Unless popup is already open, in which case we will respect it
+		if(!_popup.isOpen) {
+			_popup.gameObject.SetActive(false);
+		}
 
 		// Update the queue logic
 		instance.UpdateQueue();

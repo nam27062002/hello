@@ -10,6 +10,7 @@ public class EditorAssetBundlesMenu : MonoBehaviour
     private const string MENU_LAUNCH_LOCAL_SERVER = ROOT_MENU + "Launch Local Server";
     private const string MENU_GENERATE_ASSETS_LUT_FROM_DOWNLOADABLES_CATALOG = ROOT_MENU + "Generate AssetsLUT from Downloadables";
     private const string MENU_GENERATE_DOWNLOADABLES_CATALOG_FROM_ASSETS_LUT = ROOT_MENU + "Generate Downloadables from AssetsLUT";
+    private const string MENU_CLEAR_DOWNLOADABLES_CACHE = ROOT_MENU + "Clear Downloadables Cache";
 
 
 
@@ -43,4 +44,10 @@ public class EditorAssetBundlesMenu : MonoBehaviour
     public static void GenerateDownloadablesCatalogFromAssetsLUT() {
         EditorAssetBundlesManager.GenerateDownloadablesCatalogFromAssetsLUT();
     }
+
+    [MenuItem(MENU_CLEAR_DOWNLOADABLES_CACHE)]
+    static void ClearDownloadablesCache()
+    {
+        EditorAssetBundlesManager.ClearDownloadablesCache();
+    }    
 }
