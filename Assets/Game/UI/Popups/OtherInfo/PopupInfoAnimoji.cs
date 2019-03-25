@@ -104,6 +104,9 @@ public class PopupInfoAnimoji : MonoBehaviour {
 			}
 		}
 
+		// Clear popup's queue before changing screen
+		PopupManager.ClearQueue();
+
 		// Launch the animoji flow
 		// Give some time for the dragon selection and popup close animations to finish
 		UbiBCN.CoroutineManager.DelayedCall(

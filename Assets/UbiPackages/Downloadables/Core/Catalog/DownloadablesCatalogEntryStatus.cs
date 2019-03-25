@@ -10,7 +10,7 @@ namespace Downloadables
     /// </summary>
     public class CatalogEntryStatus
     {
-        public static float TIME_TO_WAIT_AFTER_ERROR = 60f;
+        public static float TIME_TO_WAIT_AFTER_ERROR = 3f;
         public static float TIME_TO_WAIT_BETWEEN_SAVES = 3f;
         public static float TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES = 180f;
         private static float BYTES_TO_MB = 1024 * 1024;
@@ -696,22 +696,26 @@ namespace Downloadables
             return returnValue;
         }
 
-        public void DeleteDownload()
+        public Error DeleteDownload()
         {
-            // This entry is allowed to be deleted only if it's not currently downloading
-            if (State != EState.Downloading)
+            Error error;
+            if (sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error))
             {
-                Error error;
-
-                if (sm_disk.File_Exists(Disk.EDirectoryId.Downloads, Id, out error))
-                {
-                    // Deletes the download corresponding to this entry, if it exists, as it's outdated
-                    sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
-                }
-
+                // Deletes the download corresponding to this entry, if it exists, as it's outdated
+                sm_disk.File_Delete(Disk.EDirectoryId.Downloads, Id, out error);
+            }
+            
+            if (State == EState.Downloading)
+            {
+                m_dataInfo.Size = 0;
+            }
+            else
+            {                
                 // Updates its state if needed
                 IsAvailable(true);
             }
+
+            return error;
         }
 
         public void AddGroup(CatalogGroup group)
