@@ -127,15 +127,17 @@ public class MenuDragonScreenController : MonoBehaviour {
 				case MenuScreen.EVENT_REWARD: {
 					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 					scr.StartFlow();
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);
 				} break;
 
 				case MenuScreen.PENDING_REWARD: {
 					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 					scr.StartFlow(true);
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}
+
+			// Clear open and queued popups and go to target screen!
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(m_goToScreen);
 
 			// Clear var
 			m_goToScreen = MenuScreen.NONE;
