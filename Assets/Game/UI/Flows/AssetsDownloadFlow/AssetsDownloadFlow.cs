@@ -90,7 +90,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
 	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
-		return PopupAssetsDownloadFlow.OpenPopupByState(m_handle);
+		return PopupAssetsDownloadFlow.OpenPopupByState(m_handle, true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -213,6 +213,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		PopupAssetsDownloadFlow.OpenPopupByState(m_handle);
+		PopupAssetsDownloadFlow.OpenPopupByState(m_handle, false);
 	}
 }
