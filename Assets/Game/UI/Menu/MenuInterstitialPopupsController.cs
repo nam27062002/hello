@@ -493,10 +493,8 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// </summary>
 	private void CheckLabUnlock() {
 		// Only in the right screen
+		// [AOC] The lab unlock popup can also appear in the Lab, but let the screen control it in that case, since there shouln't be conflicts with other popups
 		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
-
-		// Only if coming from a run or from the Play screen
-		if(m_previousScreen != MenuScreen.NONE && m_previousScreen != MenuScreen.PLAY) return;
 
 		// Can we show the popup?
 		PopupController popup = null;
