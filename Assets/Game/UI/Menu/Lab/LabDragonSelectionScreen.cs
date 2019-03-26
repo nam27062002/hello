@@ -246,7 +246,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
         }
 
 		// Do a first refresh
-		Debug.Log(Colors.yellow.Tag(InstanceManager.menuSceneController.selectedDragon));
 		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
 
 		// Check OTA for this dragon
