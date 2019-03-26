@@ -34,7 +34,7 @@ public class AddressableGroupsTestController : MonoBehaviour
             m_mockHandle.Update();
 
             Debug.Log(" progress bytes = " + m_mockHandle.GetDownloadedBytes() + " / " + m_mockHandle.GetTotalBytes() +
-                         " progress % = " + m_mockHandle.Progress + " IsAvailable = " + m_mockHandle.IsAvailable() + " error = " + m_mockHandle.GetError());
+                         " progress % = " + m_mockHandle.Progress + " at speed = " + m_mockHandle.GetSpeed() + " kbps IsAvailable = " + m_mockHandle.IsAvailable() + " error = " + m_mockHandle.GetError());
         }
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -48,6 +48,10 @@ public class AddressableGroupsTestController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.R) && m_groupsHandle != null)
         {
             m_groupsHandle.Retry();
+        }
+        else if (Input.GetKeyDown(KeyCode.D) && m_groupsHandle != null)
+        {
+            m_addressablesManager.IsDownloaderEnabled = !m_addressablesManager.IsDownloaderEnabled;
         }
     }
 
@@ -94,7 +98,7 @@ public class AddressableGroupsTestController : MonoBehaviour
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);
 
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, tracker, logger);        
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);        
     }
 
     public void Addressables_Reset()
@@ -123,7 +127,7 @@ public class AddressableGroupsTestController : MonoBehaviour
     {
         if (m_groupsHandle != null)
         {
-            m_uiProgress.text = m_groupsHandle.Progress + "";
+            m_uiProgress.text = m_groupsHandle.Progress + " at speed:" + (m_groupsHandle.GetSpeed() / 1024f) + "kbps";
 
             Downloadables.Error.EType errorType = m_groupsHandle.GetErrorType();
             m_uiError.text = m_groupsHandle.GetError() + "(" + errorType + ", " + (int)errorType + ")";

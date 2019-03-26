@@ -70,8 +70,15 @@ public class HDAddressablesManager : AddressablesManager
         }
 
         m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
-        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
+
+#if UNITY_EDITOR && false
+        bool useMockDrivers = true;
+#else
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+	    bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);                       
+#endif
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
         InitDownloadableHandles();
     }
@@ -109,11 +116,13 @@ public class HDAddressablesManager : AddressablesManager
                     }
 
                     //http://10.44.4.69:7888/            
+
+                    urlBase += assetsLUT.m_iReleaseVersion + "/";
                 }                
             }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
-            catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
+            catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
@@ -192,7 +201,7 @@ public class HDAddressablesManager : AddressablesManager
         return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
-    #region ingame
+#region ingame
     public class Ingame_SwitchAreaHandle
     {        
         private List<string> PrevAreaRealSceneNames { get; set; }
@@ -349,9 +358,9 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-    #endregion
+#endregion
 
-    #region DOWNLOADABLE GROUPS HANDLERS
+#region DOWNLOADABLE GROUPS HANDLERS
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
@@ -405,7 +414,7 @@ public class HDAddressablesManager : AddressablesManager
     /// </summary>
     /// <param name="handleId">Id of the handle requested. This id is the one used in <c>InitDownloadableHandles()</c> when the handles were created.</param>
     /// <returns>Returns a <c>Downloadables.Handle</c> object which handles the downloading of all downloadables associated to the groups used when <c>handleId</c> was created.</returns>
-    private Downloadables.Handle GetDownloadablesHandle(string handleId)
+    public Downloadables.Handle GetDownloadablesHandle(string handleId)
     {
         Downloadables.Handle returnValue = null;
         if (m_downloadableHandles != null && !string.IsNullOrEmpty(handleId))
@@ -545,5 +554,5 @@ public class HDAddressablesManager : AddressablesManager
 		return powers;
 	}
 
-	#endregion
+#endregion
 }

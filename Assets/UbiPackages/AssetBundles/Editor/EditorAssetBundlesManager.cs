@@ -173,7 +173,7 @@ public class EditorAssetBundlesManager
     private static string ASSETS_LUT_FILENAME = "assetsLUT.json";
     private static string ASSETS_LUT_FULL_PATH = ASSETS_LUT_PATH + "/" + ASSETS_LUT_FILENAME;
 
-    private static string ASSETS_LUT_AB_PREFIX = "AssetBundles/";
+    private static string ASSETS_LUT_AB_PREFIX = Downloadables.Manager.REMOTE_FOLDER;
     private static string ASSETS_LUT_AB_PREFIX_IOS = ASSETS_LUT_AB_PREFIX + "iOS/";
     private static string ASSETS_LUT_AB_PREFIX_ANDROID = ASSETS_LUT_AB_PREFIX + "Android/";    
 
@@ -191,11 +191,21 @@ public class EditorAssetBundlesManager
 
             // Deletes all asset bundle entries because we are going to reenter them
             Dictionary<string, Downloadables.CatalogEntry> entries = assetsLUTCatalog.GetEntries();
-            foreach (KeyValuePair<string, Downloadables.CatalogEntry> pair in entries)
+            if (entries != null)
             {
-                if (pair.Key.Contains(ASSETS_LUT_AB_PREFIX_IOS) || pair.Key.Contains(ASSETS_LUT_AB_PREFIX_ANDROID))
+                List<string> keysToDelete = new List<string>();
+                foreach (KeyValuePair<string, Downloadables.CatalogEntry> pair in entries)
+                {                    
+                    if (pair.Key.Contains("iOS/") || pair.Key.Contains("Android/"))
+                    {
+                        keysToDelete.Add(pair.Key);
+                    }
+                }
+
+                int count = keysToDelete.Count;
+                for (int i = 0; i < count; i++)
                 {
-                    entries.Remove(pair.Key);
+                    entries.Remove(keysToDelete[i]);
                 }
             }
         }
@@ -299,6 +309,15 @@ public class EditorAssetBundlesManager
         else
         {
             Debug.LogError("No assetsLUT file found in " + assetsLUTPath);
+        }
+    }
+
+    public static void ClearDownloadablesCache()
+    {
+        string path = Downloadables.Manager.DOWNLOADABLESS_ROOT_PATH;
+        if (Directory.Exists(path))
+        {
+            EditorFileUtils.DeleteFileOrDirectory(path);
         }
     }
 }

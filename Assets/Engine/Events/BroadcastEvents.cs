@@ -45,6 +45,8 @@ public enum BroadcastEventType
 	// Debug
 	DEBUG_REFRESH_DAILY_REWARDS,    // no params
     
+    SHIELD_HIT,
+    
     COUNT,
 }
 
@@ -56,6 +58,7 @@ public class FuryRushToggled : BroadcastEventInfo
 {
     public bool activated = false;
     public DragonBreathBehaviour.Type type = DragonBreathBehaviour.Type.None;
+    public FireColorSetupManager.FireColorType color = FireColorSetupManager.FireColorType.RED;
 }
 
 public class UIMapZoomChanged : BroadcastEventInfo
@@ -78,4 +81,11 @@ public class EggStateChanged : BroadcastEventInfo
 public class ToggleParam : BroadcastEventInfo
 {
     public bool value = false;
+}
+
+public class ShieldHit : BroadcastEventInfo
+{
+    public float value = 0;
+    public bool broken = false;
+    public bool bigHit = false;
 }

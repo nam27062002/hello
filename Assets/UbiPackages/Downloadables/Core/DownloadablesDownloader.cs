@@ -14,6 +14,7 @@ namespace Downloadables
     {       
         private static int TIMEOUT = 10000;
 
+        private Manager m_manager;
         private string m_urlBase;
         private Disk m_disk;
         public NetworkDriver NetworkDriver { get; set; }        
@@ -24,8 +25,9 @@ namespace Downloadables
         private NetworkReachability CurrentNetworkReachability { get; set; }
         private int ThrottleSleepTime { get; set; }
 
-        public Downloader(NetworkDriver networkDriver, Disk disk, Logger logger)
+        public Downloader(Manager manager, NetworkDriver networkDriver, Disk disk, Logger logger)
         {
+            m_manager = manager;
             NetworkDriver = networkDriver;
             m_disk = disk;            
             m_logger = logger;
@@ -59,6 +61,22 @@ namespace Downloadables
         public bool ShouldDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
         {
             return GetErrorTypeIfDownloadWithCurrentConnection(entryStatus) == Error.EType.None;
+        }
+
+        private Error.EType GetErrorTypeWhileDownloading(CatalogEntryStatus entryStatus)
+        {
+            //if connection has downgraded to a non-allowed network, 
+            //or if downloading is not allowed
+            Error.EType returnValue = GetErrorTypeIfDownloadWithCurrentConnection(entryStatus);
+            if (returnValue == Error.EType.None)
+            {
+                if (m_manager != null && !m_manager.IsEnabled)
+                {
+                    returnValue = Error.EType.Internal_Download_Disabled;
+                }
+            }
+
+            return returnValue;
         }
 
         public Error.EType GetErrorTypeIfDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
@@ -145,7 +163,7 @@ namespace Downloadables
                     request.Proxy = NetworkManager.SharedInstance.GetCurrentProxySettings();
                     request.Timeout = TIMEOUT;
                     request.ReadWriteTimeout = TIMEOUT;
-                    request.AddRange((int)existingLength);//, (int)entryStatus.GetTotalBytes());
+                    request.AddRange((int)existingLength, (int)entryStatus.GetTotalBytes());
 
                     if (CanLog())
                     {
@@ -198,7 +216,7 @@ namespace Downloadables
                             downloadResumable = false;
 
                             // Wipe any copy of the file, as it's not resumable. Don't consider this a failure, just start downloading it anew
-                            m_disk.File_Delete(Disk.EDirectoryId.Downloads, fileName, out error);
+                            error = entryStatus.DeleteDownload();                            
                             if (error != null)
                             {
                                 return;
@@ -228,44 +246,28 @@ namespace Downloadables
 
                                 long serverFileSize = existingLength + contentLength; //response.ContentLength gives me the size that is remaining to be downloaded
 
+                                long latestBytesReceivedAt = stopwatch.ElapsedMilliseconds;
                                 while (totalReceived < serverFileSize)
                                 {
-
-                                    //#if !PRODUCTION && !PREPRODUCTION 
-
                                     //debug throttling logic
                                     int sleepTime = ThrottleSleepTime;
                                     if (sleepTime > 0)
                                     {                                        
                                         Thread.Sleep(sleepTime);
+                                    }                                 
+                                                                        
+                                    // Check if something requires the download to be paused
+                                    Error.EType errorType = GetErrorTypeWhileDownloading(entryStatus);
+
+                                    // If no error has been found then checks data reception timeout 
+                                    if (errorType == Error.EType.None &&
+                                        stopwatch.ElapsedMilliseconds - latestBytesReceivedAt > TIMEOUT)
+                                    {
+                                        errorType = Error.EType.Network_Web_Exception_Timeout;
                                     }
 
-                                    /*
-                                    int internetThrottleStatus = Assets.Code.Common.DebugOptions.GetFieldValue(Assets.Code.Common.DebugField.spoofSlowInternet);
-                                    if (internetThrottleStatus == 1)
-                                    {
-                                        //16ms sleep =  250kb/sec max speed
-                                        Thread.Sleep(16);
-                                    }
-                                    else if (internetThrottleStatus == 2)
-                                    {
-                                        //80ms sleep =  50kb/sec max speed
-                                        Thread.Sleep(80);
-                                    }
-                                    else if (internetThrottleStatus == 3)
-                                    {
-                                        //800ms sleep = 5kb/sec max speed
-                                        Thread.Sleep(800);
-                                    }
-                                    */
-//#endif
-
-                                    //if connection has downgraded to a non-allowed network, 
-                                    //or if user has changed the current prioritised download, this pauses the download
-                                    Error.EType errorType = GetErrorTypeIfDownloadWithCurrentConnection(entryStatus);
                                     if (errorType != Error.EType.None
-                                        //|| AssetBundleManager.CheckAndResetCurrentPriorityChanged()
-                                        //|| AssetBundleManager.CheckAndResetDownloadTimeout())
+                                        //|| AssetBundleManager.CheckAndResetCurrentPriorityChanged()                                        
                                         )
                                     {
                                         error = new Error(errorType);                                        
@@ -276,11 +278,27 @@ namespace Downloadables
                                     }
 
                                     int byteSize = stream.Read(downBuffer, 0, downBuffer.Length);
-                                    m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);
-                                    totalReceived += byteSize;
-                                    sessionReceived += byteSize;
 
-                                    //float currentSpeed = sessionReceived / (float)stopwatch.Elapsed.TotalSeconds;
+                                    if (byteSize > 0)
+                                    {
+                                        m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);
+                                        totalReceived += byteSize;
+                                        sessionReceived += byteSize;
+                                        latestBytesReceivedAt = stopwatch.ElapsedMilliseconds;
+                                    }
+
+                                    if (m_manager != null)
+                                    {
+                                        float totalSeconds = (float)stopwatch.Elapsed.TotalSeconds;
+                                        if (totalSeconds == 0f)
+                                        {
+                                            totalSeconds = 0.01f;
+                                        }
+
+                                        float currentSpeed = sessionReceived / totalSeconds;
+                                        m_manager.SetSpeed(currentSpeed);
+                                    }
+                                    
                                     entryStatus.DataInfo.Size = totalReceived;
                                     //DownloadProgressChanged.Invoke(this, new DownloadProgressChangedEventArgs(assetBundleQueueInfo.AssetBundleName, totalReceived, (long)currentSpeed));
                                 }
