@@ -555,7 +555,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			} break;
 
 			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
-				// TODO!!
+				TournamentBuildScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<TournamentBuildScreen>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
 			} break;
 		}
 
