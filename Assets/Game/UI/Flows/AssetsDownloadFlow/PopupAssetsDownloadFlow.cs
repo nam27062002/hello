@@ -196,6 +196,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// Dismiss button has been pressed.
 	/// </summary>
 	public void OnDismiss() {
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Dismiss);
+
 		// Just close the popup
 		GetComponent<PopupController>().Close(true);
 	}
@@ -207,6 +210,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		// Store new settings
 		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(false);
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Only);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);
@@ -220,6 +226,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(true);
 
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Mobile);
+
 		// Close Popup
 		GetComponent<PopupController>().Close(true);
 	}
@@ -230,6 +239,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	public void OnGoToStorageSettings() {
 		// Go to system permissions screen
 		PermissionsManager.SharedInstance.OpenPermissionSettings();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.View_Storage_Options);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);

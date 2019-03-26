@@ -1301,8 +1301,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         string actionStr = "";
 
         switch (_action) {
-            case Downloadables.Popup.EAction.Got_It:                actionStr = "GOT IT"; break;
-            case Downloadables.Popup.EAction.Close:                 actionStr = "CLOSE"; break;
+			case Downloadables.Popup.EAction.Dismiss:               actionStr = "DISMISS"; break;
             case Downloadables.Popup.EAction.Wifi_Only:             actionStr = "WIFI ONLY"; break;
             case Downloadables.Popup.EAction.Wifi_Mobile:           actionStr = "WIFI AND MOBILE DATA"; break;
             case Downloadables.Popup.EAction.View_Storage_Options:  actionStr = "VIEW STORAGE OPTIONS"; break;
