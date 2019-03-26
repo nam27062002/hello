@@ -105,9 +105,10 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Blockers/Prefabs/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
@@ -123,9 +124,10 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, true);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/" + IEntity.ENTITY_PREFABS_PATH), true, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Blockers/Prefabs/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet, true);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, true);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, true);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();

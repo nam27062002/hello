@@ -18,19 +18,26 @@ using System.Collections;
 /// <summary>
 /// Simple script to load 3D prefabs into a UI canvas.
 /// </summary>
-public class UI3DLoader : MonoBehaviour {
+public class UI3DAddressablesLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public class UI3DLoaderEvent : UnityEvent<UI3DLoader> {}
+	public class UI3DAddressablesLoaderEvent : UnityEvent<UI3DAddressablesLoader> {}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[FileListAttribute("Resources", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
+	[FileListAttribute("", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_resourcePath = "";
-	[SerializeField] private bool m_loadOnAwake = false;
+    public string resourcePath { get { return m_resourcePath; } }
+    [SerializeField] private int m_useFolderLevelInID = 0;
+    public int useFolderLevelInID { get { return m_useFolderLevelInID; } }
+    // this will be stored in the editor
+    [SerializeField] private string m_assetId = "";
+    public string assetId { get { return m_assetId; } }
+
+    [SerializeField] private bool m_loadOnAwake = false;
 
 	[Space]
 	[SerializeField] private Transform m_container = null;
@@ -39,18 +46,12 @@ public class UI3DLoader : MonoBehaviour {
 		set { m_container = value; } 
 	}
 
-	[SerializeField] private UI3DScaler m_scaler = null;
-	public UI3DScaler scaler {
-		get { return m_scaler; }
-		set { m_scaler = value; }
-	}
-
 	[Space]
 	[SerializeField] private GameObject m_loadingPrefab = null;
 
     // Internal
-    private ResourceRequest m_loadingRequest = null;
-	public ResourceRequest loadingRequest {
+    private AddressablesOp m_loadingRequest = null;
+	public AddressablesOp loadingRequest {
 		get { return m_loadingRequest; }
 	}
 
@@ -63,7 +64,7 @@ public class UI3DLoader : MonoBehaviour {
 	private GameObject m_loadingSymbol = null;
 
 	// Events
-	public UI3DLoaderEvent OnLoadingComplete = new UI3DLoaderEvent();
+	public UI3DAddressablesLoaderEvent OnLoadingComplete = new UI3DAddressablesLoaderEvent();
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -95,9 +96,7 @@ public class UI3DLoader : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Delete pending requests
-		if(m_loadingRequest != null) {
-			m_loadingRequest = null;
-		}
+		m_loadingRequest = null;		
 
 		// Delete instance
 		Unload();
@@ -110,13 +109,9 @@ public class UI3DLoader : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
-        // If we're loading, wait for the loading process to end
         if (m_loadingRequest != null) {
             if (m_loadingRequest.isDone) {
-                // Done! Instantiate loaded asset
-                InstantiatePrefab((GameObject)m_loadingRequest.asset);
-
-                // Loading request done!
+                InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());
                 m_loadingRequest = null;
             }
         }
@@ -133,12 +128,10 @@ public class UI3DLoader : MonoBehaviour {
 	/// <returns>The newly loaded instance. Same as loadedInstance.</returns>
 	public GameObject Load() {
 		// If we have an async request running, kill it
-		if(m_loadingRequest != null) {
-			m_loadingRequest = null;
-		}
-
+		m_loadingRequest = null;
+		
         // Load and instantiate the prefab
-        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_resourcePath);
+        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_assetId);
         InstantiatePrefab(prefabObj);
 
 		// Return newly instantiated instance
@@ -151,12 +144,13 @@ public class UI3DLoader : MonoBehaviour {
 	/// If an instance was already loaded, it will be replaced.
 	/// </summary>
 	/// <returns>The async resources request started. Same as accessing the loadingRequest property.</returns>
-	public ResourceRequest LoadAsync() {
+	public AddressablesOp LoadAsync() {
 		// If we have something loaded, destroy it
 		Unload();
 
         // We don't care if we're already loading another asset, it will be ignored once done loading
-        m_loadingRequest = Resources.LoadAsync<GameObject>(m_resourcePath);
+        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
+
 		ShowLoading(true);
 
 		return m_loadingRequest;
@@ -184,14 +178,14 @@ public class UI3DLoader : MonoBehaviour {
 			// If loading icon not instantiated, do it now
 			if(m_loadingSymbol == null) {
 				if(m_loadingPrefab != null) {
-					m_loadingSymbol = GameObject.Instantiate<GameObject>(m_loadingPrefab, this.transform, false);
+					m_loadingSymbol = Instantiate(m_loadingPrefab, this.transform, false);
 				}
 			} else {
 				m_loadingSymbol.SetActive(true);
 			}
 		} else {
 			if(m_loadingSymbol != null) {
-				GameObject.Destroy(m_loadingSymbol);
+                Destroy(m_loadingSymbol);
 				m_loadingSymbol = null;
 			}
 		}
@@ -209,7 +203,7 @@ public class UI3DLoader : MonoBehaviour {
 		Unload();
 
 		// Do it!
-		m_loadedInstance = GameObject.Instantiate<GameObject>(_prefabObj, m_container.transform, false);
+		m_loadedInstance = Instantiate(_prefabObj, m_container.transform, false);
 		if(m_loadedInstance != null) {
 			// Apply layer
 			Renderer[] renderers = m_loadedInstance.transform.GetComponentsInChildren<Renderer>(false);
@@ -236,14 +230,6 @@ public class UI3DLoader : MonoBehaviour {
 			}
 		}
 
-		// The scaler needs refreshing, but do it delayed so the animation has time to initialize
-		// Depending on whether the game is running or not, use frames or seconds
-		if(Application.isPlaying) {
-			StartCoroutine(RefreshScalerDelayed());
-		} else {
-			Invoke("RefreshScaler", 0.1f);
-		}
-
 		// Hide loading icon
 		ShowLoading(false);
 
@@ -251,27 +237,6 @@ public class UI3DLoader : MonoBehaviour {
 		OnLoadingComplete.Invoke(this);
 	}
 
-	/// <summary>
-	/// Force a refresh on the scaler.
-	/// </summary>
-	private void RefreshScaler() {
-		// Just do it
-		if(m_scaler != null) {
-			m_scaler.Refresh(true, true);
-		}
-	}
-
-	/// <summary>
-	/// Force a refresh on the scaler after a one frame delay.
-	/// </summary>
-	/// <returns>The scaler delayed.</returns>
-	private IEnumerator RefreshScalerDelayed() {
-		// Wait a single frame then refresh the scaler
-		yield return new WaitForEndOfFrame();
-
-		// Do it! ^^
-		RefreshScaler();
-	}
 
 	/// <summary>
 	/// Destroy the object using the appropriate method based on whether the application is playing or not.
@@ -279,9 +244,9 @@ public class UI3DLoader : MonoBehaviour {
 	/// <param name="_obj">Object to be destroyed.</param>
 	private void SafeDestroy(Object _obj) {
 		if(Application.isPlaying) {
-			GameObject.Destroy(_obj);
+            Destroy(_obj);
 		} else {
-			GameObject.DestroyImmediate(_obj);
+            DestroyImmediate(_obj);
 		}
 	}
 
