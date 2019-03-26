@@ -108,6 +108,35 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		return OpenPopupByState(true);
 	}
 
+	/// <summary>
+	/// Checks whether a popup needs to be opened with the current handle.
+	/// If so, puts it in the queue and replaces any popup previously queued by this component.
+	/// </summary>
+	/// <param name="_onlyMandatoryPopups">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	/// <returns>The opened popup if any was needed.</returns>
+	public PopupAssetsDownloadFlow OpenPopupByState(bool _onlyMandatoryPopups) {
+		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
+		//				For now we'll just replace the old popup by a new clone.
+
+		// Nothing to open if not enabled
+		if(!m_enabled) return null;
+
+		// Whatever the result, if we already queued a popup, remove it now from the queue
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+		}
+
+		// Do we need to open a popup?
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyMandatoryPopups);
+		if(downloadPopup != null) {
+			// Yes! Store its controller
+			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
+		}
+
+		// Return newly opened popup
+		return downloadPopup;
+	}
+
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
 	//------------------------------------------------------------------------//
@@ -218,32 +247,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 				m_errorText.Localize("TID_OTA_PROGRESS_BAR_DOWNLOADING_PAUSED", LocalizationManager.SharedInstance.Localize(errorTid));
 			}
 		}
-	}
-
-	/// <summary>
-	/// Checks whether a popup needs to be opened with the current handle.
-	/// If so, puts it in the queue and replaces any popup previously queued by this component.
-	/// </summary>
-	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
-	/// <returns>The opened popup if any was needed.</returns>
-	private PopupAssetsDownloadFlow OpenPopupByState(bool _onlyIfMandatory) {
-		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
-		//				For now we'll just replace the old popup by a new clone.
-
-		// Whatever the result, if we already queued a popup, remove it now from the queue
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
-
-		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyIfMandatory);
-		if(downloadPopup != null) {
-			// Yes! Store its controller
-			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
-		}
-
-		// Return newly opened popup
-		return downloadPopup;
 	}
 
 	//------------------------------------------------------------------------//
