@@ -101,6 +101,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
 	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
+		// Not if not enabled
+		if(!m_enabled) return null;
+
 		// Open popup based on handle's state
 		return OpenPopupByState(true);
 	}
