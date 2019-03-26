@@ -8,11 +8,12 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: ChocolateExplosion
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND DISSOLVE_ENABLED EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_ALPHABLEND COLOR_TINT DISSOLVE_ENABLED
+    EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3075
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -36,7 +37,7 @@ Material:
     - _ColorMultiplier: 1
     - _Cull: 0
     - _DstBlend: 10
-    - _EmissionSaturation: 1
+    - _EmissionSaturation: 1.8
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
@@ -60,5 +61,5 @@ Material:
     - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
     - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.25735295, g: 0.1886559, b: 0.15138409, a: 0.5}
+    - _SaturatedColor: {r: 1, g: 0.7724138, b: 0.625, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
