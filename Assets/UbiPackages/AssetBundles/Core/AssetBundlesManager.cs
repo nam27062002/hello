@@ -872,6 +872,25 @@ public class AssetBundlesManager
     }
 
     /// <summary>
+    /// Fills a list with the ids of the asset bundles currently loaded.
+    /// </summary>    
+    public void FillWithLoadedAssetBundleIdList(List<string> ids)
+    {
+        if (ids != null && m_assetBundleHandles != null)
+        {
+            ids.Clear();
+
+            foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
+            {
+                if (pair.Value.IsLoaded())
+                {
+                    ids.Add(pair.Key);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Loads synchronously a scene called <c>sceneName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle and its dependencies have already been downloaded and loaded.
     /// This method makes it easier to migrate from loading a scene from the build to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle and its dependencies before calling 
     /// this method.    
