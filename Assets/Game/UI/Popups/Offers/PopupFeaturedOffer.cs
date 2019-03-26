@@ -123,6 +123,14 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// The popup has been opened.
+	/// </summary>
+	public void OnShowPostAnimation() {
+		// Update pack's view tracking
+		m_pack.NotifyPopupDisplayed();
+	}
+
+	/// <summary>
 	/// The shop button has been pressed.
 	/// </summary>
 	public void OnShopButton() {

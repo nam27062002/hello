@@ -421,7 +421,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		}
 
 		// The offer will do the rest of the checks
-		PopupController popup = OffersManager.featuredOffer.ShowPopupIfPossible(whereToShow);
+		PopupController popup = OffersManager.featuredOffer.EnqueuePopupIfPossible(whereToShow);
 		if(popup != null) {
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
