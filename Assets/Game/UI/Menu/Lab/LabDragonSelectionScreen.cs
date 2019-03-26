@@ -92,9 +92,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		// Subscribe to external events
 		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
-
-		// Do a first refresh
-		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
 	}
 
 	/// <summary>
@@ -169,6 +166,9 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 
 		// First refresh
         Refresh(_animate);
+
+		// Check OTA for this dragon
+		CheckDownloadFlowForDragon(m_dragonData.sku, true);
 	}
 
 	/// <summary>
@@ -251,7 +251,10 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
             InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
             m_pendingToSelectDragon = string.Empty;
         }
-    } 
+
+		// Do a first refresh
+		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
+	} 
 
 	/// <summary>
 	/// The show animation has finished.
@@ -311,14 +314,14 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
+		// Make sure we are the active screen
+		if(InstanceManager.menuSceneController.currentScreen != MenuScreen.LAB_DRAGON_SELECTION) return;
+
 		// [AOC] Add some delay to sync with UI animation
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => {
 				// Get new dragon's data from the dragon manager and do the refresh logic
 				InitWithDragon(DragonManager.GetDragonData(_sku), true);
-
-				// Check downloadables
-				CheckDownloadFlowForDragon(_sku, true);
 			}, m_dragonChangeInfoDelay
 		);
 	}
