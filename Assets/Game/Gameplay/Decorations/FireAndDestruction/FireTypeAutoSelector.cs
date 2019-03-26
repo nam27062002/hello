@@ -2,18 +2,13 @@
 using System.Collections;
 
 public class FireTypeAutoSelector : MonoBehaviour {
+
+    [SerializeField] FireColorSetupManager.FireColorVariants m_fireColorVariant = FireColorSetupManager.FireColorVariants.DEFAULT;
+
 	[SeparatorAttribute("Fire Rush")]
-	[SerializeField] private Color m_fireStartColorA;
-	[SerializeField] private Color m_fireStartColorB;
-	[SerializeField] private Gradient m_fireGradient;
-	[SerializeField] private Material m_fireMaterial;
 	[SerializeField] private GameObject[] m_fireOnly;
 
 	[SeparatorAttribute("Mega Fire Rush")]
-	[SerializeField] private Color m_megaStartColorA;
-	[SerializeField] private Color m_megaStartColorB;
-	[SerializeField] private Gradient m_megaGradient;
-	[SerializeField] private Material m_megaMaterial;
 	[SerializeField] private GameObject[] m_megaOnly;
 
 	[SeparatorAttribute("Game Objects Refereces")]
@@ -22,8 +17,11 @@ public class FireTypeAutoSelector : MonoBehaviour {
 	[SerializeField] private Renderer[] m_rChangeMaterials;
 
 
+    private FireColorConfig m_fireColorConfig;
 	private Material m_fireMaterialInstance;
 	private Material m_megaMaterialInstance;
+    
+    
 
 	void OnEnable() {
 		if (InstanceManager.player != null) {
@@ -37,48 +35,78 @@ public class FireTypeAutoSelector : MonoBehaviour {
 				m_megaOnly[i].SetActive(isMega == true);
 			}
 
-			for (int i = 0; i < m_psChangeStartColors.Length; ++i) {
-				ParticleSystem.MainModule main = m_psChangeStartColors[i].main;
-				ParticleSystem.MinMaxGradient color = main.startColor;
-
-				if (isMega) {
-					color.colorMin = m_megaStartColorA;
-					color.colorMax = m_megaStartColorB;
-				} else {
-					color.colorMin = m_fireStartColorA;
-					color.colorMax = m_fireStartColorB;
-				}
-
-				main.startColor = color;
-			}
-
-			for (int i = 0; i < m_psChangeGradientColors.Length; ++i) {
-				ParticleSystem.ColorOverLifetimeModule colorOverLifetime = m_psChangeGradientColors[i].colorOverLifetime;
-				ParticleSystem.MinMaxGradient color = colorOverLifetime.color;
-
-				if (isMega) color.gradient = m_megaGradient;
-				else 		color.gradient = m_fireGradient;
-
-				colorOverLifetime.color = color;
-			}
-
-			if (m_fireMaterial != null && m_megaMaterial != null) {
-
-				if (m_fireMaterialInstance == null) m_fireMaterialInstance = new Material(m_fireMaterial);
-				if (m_megaMaterialInstance == null) m_megaMaterialInstance = new Material(m_megaMaterial);
-
-				m_fireMaterialInstance.SetFloat("_Seed", Random.value);
-				m_megaMaterialInstance.SetFloat("_Seed", Random.value);
-
-				for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
-					Material[] materials = m_rChangeMaterials[i].materials;
-					for (int m = 0; m < materials.Length; ++m) {
-						if (isMega) materials[m] = m_megaMaterialInstance;
-						else 		materials[m] = m_fireMaterialInstance;
-					}
-					m_rChangeMaterials[i].materials = materials;
-				}
-			}
+            m_fireColorConfig = FireColorSetupManager.instance.GetColorConfig(InstanceManager.player.breathBehaviour.currentColor, m_fireColorVariant);
+            if ( m_fireColorConfig != null )
+            {
+    			for (int i = 0; i < m_psChangeStartColors.Length; ++i) {
+    				ParticleSystem.MainModule main = m_psChangeStartColors[i].main;
+    				ParticleSystem.MinMaxGradient color = main.startColor;
+    
+                    color.colorMin = m_fireColorConfig.m_fireStartColorA;
+                    color.colorMax = m_fireColorConfig.m_fireStartColorB;
+    				main.startColor = color;
+    			}
+    
+    			for (int i = 0; i < m_psChangeGradientColors.Length; ++i) {
+    				ParticleSystem.ColorOverLifetimeModule colorOverLifetime = m_psChangeGradientColors[i].colorOverLifetime;
+    				ParticleSystem.MinMaxGradient color = colorOverLifetime.color;
+                    
+                    color.gradient = m_fireColorConfig.m_fireGradient;
+    				colorOverLifetime.color = color;
+    			}
+                
+                if (m_fireColorConfig.m_fireMaterial != null)
+                {
+                    if ( isMega )
+                    {
+                        if (m_megaMaterialInstance == null)
+                            m_megaMaterialInstance = FireColorSetupManager.instance.GetConfigMaterial(m_fireColorConfig);
+                        SetMaterial(m_megaMaterialInstance);
+                    }
+                    else
+                    {
+                        if (m_fireMaterialInstance == null) 
+                            m_fireMaterialInstance = FireColorSetupManager.instance.GetConfigMaterial(m_fireColorConfig);
+                        SetMaterial(m_fireMaterialInstance);
+                    }
+                }
+                
+            }
 		}
 	}
+
+    private void OnDisable()
+    {
+        // Return materials
+        ReturnMaterials();
+    }
+    
+    private void ReturnMaterials()
+    {
+        if (FireColorSetupManager.instance != null)
+        {
+            if (m_megaMaterialInstance != null)
+            {
+                FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_megaMaterialInstance);
+                m_megaMaterialInstance = null;
+            }
+            
+            if (m_fireMaterialInstance != null)
+            {
+                FireColorSetupManager.instance.ReturnConfigMaterial(m_fireColorConfig, m_fireMaterialInstance);
+                m_fireMaterialInstance = null;
+            }
+        }
+    }
+
+    private void SetMaterial( Material _materialInstance )
+    {
+        for (int i = 0; i < m_rChangeMaterials.Length; ++i) {
+            Material[] materials = m_rChangeMaterials[i].materials;
+            for (int m = 0; m < materials.Length; ++m) {
+                materials[m] = _materialInstance;
+            }
+            m_rChangeMaterials[i].materials = materials;
+        }
+    }
 }
