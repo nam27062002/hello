@@ -538,6 +538,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// The screen is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		// Reset animating flag
+		SetAnimationFlag(false, true);
+
 		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
 		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
@@ -548,7 +551,6 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 
 		// Initialize the assets download flow with currently selected dragon
-		Debug.Log(Colors.yellow.Tag(InstanceManager.menuSceneController.selectedDragon));
 		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, -1, false);	// Don't show popups, the menu interstitial popups controller will take care of it
 	}
 
