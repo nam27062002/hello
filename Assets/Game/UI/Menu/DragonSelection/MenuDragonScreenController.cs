@@ -614,7 +614,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
         {
 			// If needed, show assets download popup and don't continue
-			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupIfNeeded();
+			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
 			if(popup != null) return;
 
     		// Select target screen
