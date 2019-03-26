@@ -1015,15 +1015,27 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
     }
 
-    public override void Notify_SettingsOpen() {
+    public override void Notify_SettingsOpen(string zone) {
         if (m_playingMode == EPlayingMode.NONE)
             Track_StartPlayingMode(EPlayingMode.SETTINGS);
+
+        // Track popup settings
+        Track_GameSettings( zone );
     }
 
     public override void Notify_SettingsClose() {
         if (m_playingMode == EPlayingMode.SETTINGS)
             Track_EndPlayingMode(true);
     }
+    
+    /// <summary>
+    /// Notify the tracking when the pause popup appears, used to send custom.game.settings while in game
+    /// </summary>
+    public override void NotifyIngamePause() {
+        // Track popup settings
+        Track_GameSettings( "In_game" );
+    }
+    
 
     public override void Notify_GlobalEventRunDone(int _eventId, string _eventType, int _runScore, int _score, EEventMultiplier _mulitplier) {
         if (FeatureSettingsManager.IsDebugEnabled) {
@@ -1162,6 +1174,22 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         Track_RateThisAppShown(result, dragonProgression);
     }
+    
+    
+    public override void Notify_SocialClick(string net, string zone) 
+    {
+        if (FeatureSettingsManager.IsDebugEnabled)
+            Log("Track_SocialClick net = " + net + " zone = " + zone);
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.social.click");
+        {
+            Track_AddParamString(e, TRACK_PARAM_NETWORK, net);
+            Track_AddParamString(e, TRACK_PARAM_ZONE, zone);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
 
     public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
     {
@@ -1208,9 +1236,17 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
     /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
-        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague);
+        Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
+    }
+    
+    public override void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
+    int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+    int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) 
+    {
+        Track_LabGameEnd(dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
+            eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(powerTime * 1000.0f), mapUsage, currentLeague);
     }
 
     /// <summary>
@@ -1259,6 +1295,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
             int sizeInKb = (int)(existingSizeMbAtEnd * 1024);
             Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
         }
+    }
+
+    public override void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {
+        string actionStr = "";
+
+        switch (_action) {
+			case Downloadables.Popup.EAction.Dismiss:               actionStr = "DISMISS"; break;
+            case Downloadables.Popup.EAction.Wifi_Only:             actionStr = "WIFI ONLY"; break;
+            case Downloadables.Popup.EAction.Wifi_Mobile:           actionStr = "WIFI AND MOBILE DATA"; break;
+            case Downloadables.Popup.EAction.View_Storage_Options:  actionStr = "VIEW STORAGE OPTIONS"; break;
+        }
+
+        Track_PopupOTA(_popupName, actionStr);
     }
     #endregion
 
@@ -1872,8 +1921,10 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_DURATION, _duration);            
             e.data.Add(TRACK_PARAM_POPUP_MODULAR_VERSION, _modVersion);
 
+			LegalManager.ETermsPolicy termsPolicy = LegalManager.instance.GetTermsPolicy();
+
             // BI only wants these two parameters when terms policy is GDPR
-            if (LegalManager.instance.GetTermsPolicy() != LegalManager.ETermsPolicy.GDPR)
+			if (termsPolicy != LegalManager.ETermsPolicy.GDPR)
             {                
                 e.data.Add(TRACK_PARAM_ANALYTICS_OPTION, null);
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, null);
@@ -1884,8 +1935,8 @@ public class HDTrackingManagerImp : HDTrackingManager {
                 e.data.Add(TRACK_PARAM_MARKETING_OPTION, (_enableMarketing) ? 1 : 0);
             }
 
-			// BI only wants age when terms policy is Coppa
-			if (LegalManager.instance.GetTermsPolicy () == LegalManager.ETermsPolicy.Coppa) 
+			// BI only wants age when terms policy is Coppa or GDPR
+			if (termsPolicy == LegalManager.ETermsPolicy.Coppa || termsPolicy == LegalManager.ETermsPolicy.GDPR) 
 			{
 				e.data.Add (TRACK_PARAM_AGE, _age);
 			} 
@@ -2005,6 +2056,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
         if (FeatureSettingsManager.IsDebugEnabled) {
             Log("Track_StartPlayingMode playingMode = " + _mode);
         }
+    }
+
+    void Track_GameSettings( string zone )
+    {
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_GameSettings zone = " + zone);
+        }
+        
+        HDTrackingEvent e = new HDTrackingEvent("custom.game.settings");
+        {
+            Track_AddParamString(e, TRACK_PARAM_ZONE, zone);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+        
     }
 
     void Track_EndPlayingMode(bool _isSuccess) {
@@ -2225,11 +2291,21 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague)
+    private void Track_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
         if (FeatureSettingsManager.IsDebugEnabled)
-            Log("Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
-                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague);
+        {
+            string str = "Track_LabGameStart dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower + 
+                " totalSpecialDragonsUnlocked = " + totalSpecialDragonsUnlocked + " currentLeague = " + currentLeague;
+            if (pets != null) {
+                int count = pets.Count;
+                for (int i = 0; i < count; i++) {
+                    str += " pet[" + i + "] = " + pets[i];
+                }
+            }
+
+            Log(str);
+        }
 
         HDTrackingEvent e = new HDTrackingEvent("custom.lab.gamestart");
         {
@@ -2239,7 +2315,53 @@ public class HDTrackingManagerImp : HDTrackingManager {
             e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
             Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
             e.data.Add(TRACK_PARAM_TOTAL_SPECIAL_DRAGONS_UNLOCKED, totalSpecialDragonsUnlocked);
-            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);            
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);    
+            Track_AddParamPets(e, pets);        
+        }
+        m_eventQueue.Enqueue(e);
+    }
+    
+    private void Track_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,  
+        string deathType, string deathSource, string deathCoordinates,
+        int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+        int scGained, int hcGained, int powerTimeMs, int mapUsage, string currentLeague)
+    {
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_LabGameEnd dragonName = " + dragonName + " labHp = " + labHp + " labSpeed = " + labSpeed + " labBoost = " + labBoost + " labPower = " + labPower +
+                " timePlayed = " + timePlayed + " score = " + score +
+                " deathType = " + deathType + " deathSource = " + deathSource + " deathCoor = " + deathCoordinates +
+                " eggFound = " + eggFound + " highestMultiplier = " + highestMultiplier + " highestBaseMultiplier = " + highestBaseMultiplier +
+                " furyRushNb = " + furyRushNb + " superFireRushNb = " + superFireRushNb + " hcRevive = " + hcRevive + " adRevive = " + adRevive +
+                " scGained = " + scGained + " hcGained = " + hcGained +
+                " powerTime = " + powerTimeMs + " mapUsage = " + mapUsage + " currentLeague = " + currentLeague
+                );
+        }
+
+        HDTrackingEvent e = new HDTrackingEvent("custom.lab.gameend");
+        {
+            Track_AddParamString(e, TRACK_PARAM_DRAGON, dragonName);
+            e.data.Add(TRACK_PARAM_LAB_HP, labHp);
+            e.data.Add(TRACK_PARAM_LAB_SPEED, labSpeed);
+            e.data.Add(TRACK_PARAM_LAB_BOOST, labBoost);
+            Track_AddParamString(e, TRACK_PARAM_LAB_POWER, labPower);
+            e.data.Add(TRACK_PARAM_TIME_PLAYED, timePlayed);
+            // No Need? e.data.Add(TRACK_PARAM_SCORE, score);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_TYPE, deathType);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_CAUSE, deathSource);
+            Track_AddParamString(e, TRACK_PARAM_DEATH_COORDINATES, deathCoordinates);
+            e.data.Add(TRACK_PARAM_EGG_FOUND, eggFound);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_MULTIPLIER, highestMultiplier);
+            Track_AddParamFloat(e, TRACK_PARAM_HIGHEST_BASE_MULTIPLIER, highestBaseMultiplier);
+            e.data.Add(TRACK_PARAM_FIRE_RUSH_NB, furyRushNb);
+            e.data.Add(TRACK_PARAM_SUPER_FIRE_RUSH_NB, superFireRushNb);
+            e.data.Add(TRACK_PARAM_HC_REVIVE, hcRevive);
+            e.data.Add(TRACK_PARAM_AD_REVIVE, adRevive);
+            e.data.Add(TRACK_PARAM_SC_EARNED, scGained);
+            e.data.Add(TRACK_PARAM_HC_EARNED, hcGained);
+            e.data.Add(TRACK_PARAM_POWER_TIME, powerTimeMs);
+            e.data.Add(TRACK_PARAM_MAP_USAGE, mapUsage);
+            e.data.Add(TRACK_PARAM_HUNGRY_LETTERS_NB, Session_HungryLettersCount);
+            Track_AddParamString(e, TRACK_PARAM_CURRENT_LEAGUE, currentLeague);
         }
         m_eventQueue.Enqueue(e);
     }
@@ -2390,6 +2512,25 @@ public class HDTrackingManagerImp : HDTrackingManager {
         return "SecondaryDownload_" + downloadableId;
     }
 
+    private void Track_PopupOTA(string _popupName, string _action) {
+        // Debug
+        if (FeatureSettingsManager.IsDebugEnabled) {
+            Log("Track_PopupOTA popupName = " + _popupName
+                + ", action = " + _action
+               );
+        }
+
+        // Create event
+        HDTrackingEvent e = new HDTrackingEvent("custom.ota.popups");
+        {
+            Track_AddParamString(e, TRACK_PARAM_POPUP_NAME, _popupName);
+            Track_AddParamString(e, TRACK_PARAM_ACTION, _action);
+            Track_AddParamPlayerProgress(e);
+        }
+        m_eventQueue.Enqueue(e);
+    }
+
+
     // -------------------------------------------------------------
     // Events
     // -------------------------------------------------------------
@@ -2500,6 +2641,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_NB_ADS_LTD = "nbAdsLtd";
     private const string TRACK_PARAM_NB_ADS_SESSION = "nbAdsSession";
     private const string TRACK_PARAM_NB_VIEWS = "nbViews";
+    private const string TRACK_PARAM_NETWORK = "network";
     private const string TRACK_PARAM_NETWORK_TYPE_END = "network_type_end";
     private const string TRACK_PARAM_NETWORK_TYPE_START = "network_type_start";
     private const string TRACK_PARAM_NEW_AREA = "newArea";
@@ -2518,6 +2660,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private const string TRACK_PARAM_POPUP_ACTION = "popupAction";
     private const string TRACK_PARAM_POPUP_MODULAR_VERSION = "popup_modular_version";
     private const string TRACK_PARAM_POPUP_NAME = "popupName";
+    private const string TRACK_PARAM_POWER_TIME = "powerTime";
     private const string TRACK_PARAM_PROMOTION_TYPE = "promotionType";
     private const string TRACK_PARAM_PROVIDER = "provider";
     private const string TRACK_PARAM_PROVIDER_AUTH = "providerAuth";

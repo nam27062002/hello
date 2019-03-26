@@ -259,7 +259,7 @@ public class UTDownloadablesDownloader : UnitTest
 
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);
 
-        m_downloader = new Downloader(m_network, m_disk, logger);
+        m_downloader = new Downloader(null, m_network, m_disk, logger);
 
 		try
 		{

@@ -56,7 +56,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	/// <param name="_rewarded">Rewarded or interstitial?</param>
 	/// <param name="_adPurpose">Purpose of the ad.</param>
 	/// <param name="_onAdFinishedCallback">Callback to be invoked when Ad has finished.</param>
-	public static void Launch(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
+	public static PopupController Launch(bool _rewarded, GameAds.EAdPurpose _adPurpose, UnityAction<bool> _onAdFinishedCallback) {
 		// If ad can't be displayed, show error message instead of the popup
 		if(!GameAds.adsAvailable) {
 			PopupManager.canvas.worldCamera.gameObject.SetActive(true);
@@ -78,7 +78,7 @@ public class PopupAdBlocker : MonoBehaviour {
 			errorText.sequence.onComplete += PopupManager.instance.RefreshCameraActive;
 			// Notify error
 			if(_onAdFinishedCallback != null) _onAdFinishedCallback.Invoke(false);	// Unsuccessful
-			return;
+			return null;
 		}
 
 		if (!m_sBlocking)
@@ -88,11 +88,14 @@ public class PopupAdBlocker : MonoBehaviour {
 			PopupController popup = PopupManager.LoadPopup(PopupAdBlocker.PATH);
 			popup.GetComponent<PopupAdBlocker>().Init(_rewarded, _adPurpose, _onAdFinishedCallback);
 			popup.Open();
+			return popup;
 		}
 		else
 		{
 			if(_onAdFinishedCallback != null) _onAdFinishedCallback.Invoke(false);	// Unsuccessful
 		}
+
+		return null;
 	}
 
 	//------------------------------------------------------------------------//

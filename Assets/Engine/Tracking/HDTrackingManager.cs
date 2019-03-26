@@ -432,12 +432,17 @@ public class HDTrackingManager
 	/// <summary>
 	/// Notifies the settings open. When settings popup opens
 	/// </summary>
-	public virtual void Notify_SettingsOpen(){}
+	public virtual void Notify_SettingsOpen( string zone ){}
 
 	/// <summary>
 	/// Notifies the settings close. When settings popup closed
 	/// </summary>
 	public virtual void Notify_SettingsClose(){}
+
+    /// <summary>
+    /// Notify the tracking when the pause popup appears, used to send custom.game.settings while in game
+    /// </summary>
+    public virtual void NotifyIngamePause() { }
 
     /// <summary>
     /// Notifies the start of performance track every X seconds
@@ -517,6 +522,8 @@ public class HDTrackingManager
     };
 
     public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
+    
+    public virtual void Notify_SocialClick(string net, string zone) { }
 
     /// <summary>
     /// Notifies an A/B experiment has just been applied.
@@ -559,7 +566,33 @@ public class HDTrackingManager
     /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
     /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
+    /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets) { }
+
+    /// <summary>
+    /// Notifies the lab game end.
+    /// </summary>
+    /// <param name="dragonName">Dragon name.</param>
+    /// <param name="labHp">Lab hp.</param>
+    /// <param name="labSpeed">Lab speed.</param>
+    /// <param name="labBoost">Lab boost.</param>
+    /// <param name="labPower">Lab power.</param>
+    /// <param name="timePlayed">Time played.</param>
+    /// <param name="eggFound">Egg found.</param>
+    /// <param name="highestMultiplier">Highest multiplier.</param>
+    /// <param name="highestBaseMultiplier">Highest base multiplier.</param>
+    /// <param name="furyRushNb">Fury rush nb.</param>
+    /// <param name="superFireRushNb">Super fire rush nb.</param>
+    /// <param name="hcRevive">Hc revive.</param>
+    /// <param name="adRevive">Ad revive.</param>
+    /// <param name="scGained">Sc gained.</param>
+    /// <param name="hcGained">Hc gained.</param>
+    /// <param name="powerTime">Power time.</param>
+    /// <param name="mapUsage">Map usage.</param>
+    /// <param name="currentLeague">Current league.</param>
+    public virtual void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
+        int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+        int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) { }
 
     /// <summary>
     /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
@@ -586,6 +619,8 @@ public class HDTrackingManager
 
     public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
+
+    public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
     #endregion
 
     // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so

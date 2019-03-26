@@ -389,7 +389,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);
         
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, json, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, json, true, tracker, logger);
 
         Memory_EndSample(true);
     }
@@ -445,10 +445,6 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     }
     #endregion
 
-#if UNITY_EDITOR
-    private MockDiskDriver.EExceptionType m_diskDriverExceptionType = MockDiskDriver.EExceptionType.UnauthorizedAccess;
-#endif
-
     public void Update()
     {
         AssetBundlesManager.Instance.Update();
@@ -462,8 +458,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
             //Debug.Log(Memory_GetUsedSize());            
             //m_request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(ASSET_CUBE_AB_NAME, Request_OnDone, true);                        
 
-            Test_Download();
-            //Test_Dependencies();
+            Test_Download();            
         }
 
         if (m_request != null)
@@ -489,18 +484,7 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     private void Test_Download()
     {
         Download("scene_cubes");
-    }
-
-    private void Test_Dependencies()
-    {
-#if UNITY_EDITOR
-        MockDiskDriver diskDriver = AssetBundlesManager.Instance.GetMockDiskDriver();
-
-        m_diskDriverExceptionType = (m_diskDriverExceptionType == MockDiskDriver.EExceptionType.None) ? MockDiskDriver.EExceptionType.UnauthorizedAccess : MockDiskDriver.EExceptionType.None;
-        diskDriver.SetExceptionTypeToThrow(m_diskDriverExceptionType);
-#endif
-
-    }
+    }    
 
     private bool isBundleBaseInited = false;
     private string bundleBaseDownloadingURL = "http://10.44.4.69:7888/";

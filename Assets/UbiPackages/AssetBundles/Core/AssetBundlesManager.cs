@@ -55,11 +55,6 @@ public class AssetBundlesManager
             return m_downloadablesManager;
         }        
     }      
-
-#if UNITY_EDITOR
-    private MockNetworkDriver m_networkDriver;
-    private MockDiskDriver m_diskDriver;
-#endif
     
     private Dictionary<string, AssetBundlesGroup> m_groups;
 
@@ -69,9 +64,10 @@ public class AssetBundlesManager
     /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
     /// <param name="downloadablesConfig">Downloadables configuration</param>        
     /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
+    /// <param name="useMockDrivers">When <c>true</c> mock drivers are used, which is useful when testing. Otherwise production drivers are used.</param>
     /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -95,17 +91,19 @@ public class AssetBundlesManager
         Loader_Init();
         Ops_Init();
 
-#if UNITY_EDITOR
-        MockNetworkDriver networkDriver = new MockNetworkDriver(null);
-        m_networkDriver = networkDriver;        
+        NetworkDriver networkDriver;
+        DiskDriver diskDriver;
+        if (useMockDrivers)
+        {
+            networkDriver = new MockNetworkDriver(null);
+            diskDriver = new MockDiskDriver(null);
+        }
+        else
+        {
+            networkDriver = new ProductionNetworkDriver();
+            diskDriver = new ProductionDiskDriver();
+        }
 
-        MockDiskDriver diskDriver = new MockDiskDriver(null);
-        m_diskDriver = diskDriver;
-        //m_diskDriver.SetExceptionTypeToThrow(MockDiskDriver.EExceptionType.UnauthorizedAccess);
-#else
-        NetworkDriver networkDriver = new ProductionNetworkDriver();
-        DiskDriver diskDriver = new ProductionDiskDriver();
-#endif
         Logger downloadablesLogger = logger;
 
         AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
@@ -226,18 +224,6 @@ public class AssetBundlesManager
 
         return returnValue;
     }
-
-#if UNITY_EDITOR
-    public MockNetworkDriver GetMockNetworkDriver()
-    {
-        return m_networkDriver;
-    }
-
-    public MockDiskDriver GetMockDiskDriver()
-    {
-        return m_diskDriver;
-    }
-#endif
 
     private AssetBundlesCatalog LoadCatalog(string directory)
     {
@@ -578,6 +564,11 @@ public class AssetBundlesManager
     public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
     {
         return DownloadablesManager.Groups_CreateHandle(groupIds);
+    }
+
+    public void SetDownloadablesGroupPriority(string groupId, int priority)
+    {
+        DownloadablesManager.Groups_SetPriority(groupId, priority);
     }
 
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
@@ -1071,6 +1062,16 @@ public class AssetBundlesManager
     public Dictionary<string, Downloadables.CatalogEntryStatus> GetDownloadablesCatalog()
     {
         return m_downloadablesManager.Catalog_GetEntryStatusList();
+    }
+
+    public List<Downloadables.CatalogGroup> GetDownloadablesGroupsSortedByPriority()
+    {
+        return m_downloadablesManager.Groups_GetSortedByPriority();
+    }
+
+    public void DeleteAllDownloadables()
+    {
+        m_downloadablesManager.ClearCache();        
     }
 
     public void Update()

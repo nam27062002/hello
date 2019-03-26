@@ -11,13 +11,15 @@ namespace Downloadables
         private static string ATT_PERMISSION_REQUESTED = "pr";
         private static string ATT_PERMISSION_GRANTED = "pg";
 
+        private static int MIN_PRIORITY = 100;
+
         private static Disk sm_disk;
         public static void StaticSetup(Disk disk)
         {
             sm_disk = disk;
         }
 
-        private string Id { get; set; }
+        public string Id { get; private set; }
 
         public List<string> EntryIds;
 
@@ -55,13 +57,25 @@ namespace Downloadables
 
         private float m_latestSaveAt;
 
+        /// <summary>
+        /// Download priority. Highest priority: 1. The higher this number the lower priority when downloading
+        /// </summary>
+        public int Priority { get; set; }
+
+        /// <summary>
+        /// Internal stuff used only to make List.Sort stable
+        /// </summary>
+        public int Index { get; set; }
+
         public void Reset()
         {
             EntryIds = null;
             PermissionOverCarrierRequested = false;
             PermissionOverCarrierGranted = false;
             NeedsToSave = false;
+            Priority = MIN_PRIORITY;
             m_latestSaveAt = -1;
+            Index = -1;
         }
 
         public void Setup(string id, List<string> entryIds)

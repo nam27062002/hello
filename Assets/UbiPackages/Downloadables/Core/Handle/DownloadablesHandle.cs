@@ -35,21 +35,30 @@ namespace Downloadables
             UNKNOWN,
 
             NONE
-        }
-
-        private static Array EErrorValues = Enum.GetValues(typeof(EError));
+        }        
 
         //------------------------------------------------------------------------//
         // MEMBERS AND PROPERTIES												  //
         //------------------------------------------------------------------------//
         public float Progress
         {
-            get { return Mathf.Clamp01((float)GetDownloadedBytes() / (float)GetTotalBytes()); }
+            get
+            {
+                float returnValue = 1f;
+
+                long totalBytes = GetTotalBytes();
+                if (!IsAvailable() || totalBytes > 0)
+                {
+                    returnValue = Mathf.Clamp01((float)GetDownloadedBytes() / (float)totalBytes);
+                }
+
+                return returnValue;
+            }
         }
 
         //------------------------------------------------------------------------//
         // METHODS																  //
-        //------------------------------------------------------------------------//
+        //------------------------------------------------------------------------//        
 
         /// <summary>
         /// Returns whether or not the list of downloadables handled by this class are available.
@@ -203,6 +212,11 @@ namespace Downloadables
 
             return returnValue;
         }
+
+        /// <summary>
+        /// Returns downloading speed in bytes/second
+        /// </summary>        
+        public abstract float GetSpeed();        
 
         public virtual void Retry() {}
 

@@ -78,7 +78,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         sm_logger = logger;
 
@@ -90,6 +90,9 @@ public class AddressablesManager
         {
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
+
+            // We don't want downloadables to download when editor mode is enabled
+            downloadablesCatalogJSON = null;
         }
 #endif
         if (buildCatalog)
@@ -107,7 +110,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, tracker, logger);
+        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -308,6 +311,39 @@ public class AddressablesManager
     }
 
     /// <summary>
+    /// Loads asynchronously a dependency (typically asset bundles).
+    /// </summary>
+    /// <param name="id">Dependency id to load.</param>    
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp LoadDependencyIdAsync(string dependencyId)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                returnValue = new AddressablesOpResult();
+                returnValue.Setup(null, null);
+            }
+            else
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                returnValue = m_providerFromAB.LoadDependencyIdAsync(dependencyId);
+                Ops_AddOp(returnValue);
+            }
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
     /// Loads asynchronously a list of dependencies (typically asset bundles).
     /// </summary>
     /// <param name="id">List of dependency ids to load.</param>    
@@ -358,8 +394,26 @@ public class AddressablesManager
         {            
             Errors_ProcessManagerNotInitialized(false);           
         }        
-    }  
-    
+    }
+
+    public void UnloadDependencyId(string dependencyId, bool unloadItsDependenciesToo)
+    {
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadDependencyId(dependencyId, unloadItsDependenciesToo);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
     public void UnloadDependencyIdsList(List<string> dependencyIds)
     {
         if (IsInitialized())
@@ -465,6 +519,23 @@ public class AddressablesManager
         }
 
         return returnValue;
+    }
+
+    /// <summary>
+    /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="priority"></param>
+    public void SetDownloadableGroupPriority(string groupId, int priority)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadablesGroupPriority(groupId, priority);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
     }
 
     /// <summary>

@@ -73,6 +73,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	public virtual void Init(Downloadables.Handle _handle) {
 		// Store group
 		m_handle = _handle;
+
+		// Perform a first refresh
+		Refresh();
 	}
 
 	/// <summary>
@@ -122,7 +125,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
 	/// <param name="_handle">The download handle whose information we will be using.</param>
-	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle) {
+	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, bool _onlyIfMandatory) {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
@@ -136,35 +140,35 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		if(_handle.NeedsToRequestPermission()) {
 			// No! Open the permission request popup
 			popupPath = PATH_PERMISSION;
-			_handle.SetIsPermissionRequested(true);	// Clear flag
 		} else {
-			// Yes! Check error code
-			switch(_handle.GetError()) {
-				case Downloadables.Handle.EError.NONE: {
-					// No error! Show progress popup
-					popupPath = PATH_PROGRESS;
-				} break;
+			// Error popups are not mandatory (so far)
+			if(!_onlyIfMandatory) {
+				// Yes! Check error code
+				switch(_handle.GetError()) {
+					case Downloadables.Handle.EError.NONE: {
+						popupPath = PATH_PROGRESS;
+					} break;
 
-				case Downloadables.Handle.EError.NO_WIFI: {
-					popupPath = PATH_ERROR_NO_WIFI;
-				} break;
+					case Downloadables.Handle.EError.NO_WIFI: {
+						popupPath = PATH_ERROR_NO_WIFI;
+					} break;
 
-				case Downloadables.Handle.EError.NO_CONNECTION: {
-					popupPath = PATH_ERROR_NO_CONNECTION;
-				} break;
+					case Downloadables.Handle.EError.NO_CONNECTION: {
+						popupPath = PATH_ERROR_NO_CONNECTION;
+					} break;
 
-				case Downloadables.Handle.EError.STORAGE: {
-					popupPath = PATH_ERROR_STORAGE;
-				} break;
+					case Downloadables.Handle.EError.STORAGE: {
+						popupPath = PATH_ERROR_STORAGE;
+					} break;
 
-				case Downloadables.Handle.EError.STORAGE_PERMISSION: {
-					popupPath = PATH_ERROR_STORAGE_PERMISSION;
-				} break;
+					case Downloadables.Handle.EError.STORAGE_PERMISSION: {
+						popupPath = PATH_ERROR_STORAGE_PERMISSION;
+					} break;
 
-				default: {
-					// Open generic error popup
-					popupPath = PATH_ERROR_GENERIC;
-				} break;
+					default: {
+						popupPath = PATH_ERROR_GENERIC;     // Open generic error popup
+					} break;
+				}
 			}
 		}
 
@@ -177,8 +181,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 			PopupAssetsDownloadFlow flowPopup = popup.GetComponent<PopupAssetsDownloadFlow>();
 			flowPopup.Init(_handle);
 
-			// Open it and return!
-			popup.Open();
+			// Enqueue popup!
+			PopupManager.EnqueuePopup(popup);
 			return flowPopup;
 		}
 
@@ -192,6 +196,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// Dismiss button has been pressed.
 	/// </summary>
 	public void OnDismiss() {
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Dismiss);
+
 		// Just close the popup
 		GetComponent<PopupController>().Close(true);
 	}
@@ -201,7 +208,11 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnDenyDataPermission() {
 		// Store new settings
+		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(false);
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Only);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);
@@ -212,7 +223,11 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnAllowDataPermission() {
 		// Store new settings
+		m_handle.SetIsPermissionRequested(true);
 		m_handle.SetIsPermissionGranted(true);
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.Wifi_Mobile);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);
@@ -224,6 +239,9 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	public void OnGoToStorageSettings() {
 		// Go to system permissions screen
 		PermissionsManager.SharedInstance.OpenPermissionSettings();
+
+		// Tracking
+		HDTrackingManager.Instance.Notify_PopupOTA(this.name, Downloadables.Popup.EAction.View_Storage_Options);
 
 		// Close Popup
 		GetComponent<PopupController>().Close(true);

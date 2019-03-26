@@ -5,12 +5,19 @@ using SimpleJSON;
 using UnityEngine;
 
 namespace Downloadables
-{
+{    
     /// <summary>
     /// This class is responsible for downloading remote assets (downloadables), storing them in disk and retrieving them on demand.
     /// </summary>
     public class Manager
-    {        
+    {
+#if UNITY_EDITOR
+        private static bool USE_REMOTE_SERVER = true;
+        public static string REMOTE_FOLDER = (USE_REMOTE_SERVER) ? "AssetBundles/" : "";
+#else
+        public static string REMOTE_FOLDER = "AssetBundles/";
+#endif
+
         public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson)
         {
             JSONNode returnValue = null;
@@ -26,7 +33,7 @@ namespace Downloadables
 #else
                 string runtimePlatform = (Application.platform == RuntimePlatform.Android) ? "Android" : "iOS";
 #endif
-                string prefix = "AssetBundles/" + runtimePlatform + "/";
+                string prefix = REMOTE_FOLDER + runtimePlatform + "/";
             
                 downloadablesCatalog.UrlBase = assetsLUTCatalog.UrlBase;
 
@@ -108,6 +115,7 @@ namespace Downloadables
         public static readonly string DESKTOP_DEVICE_STORAGE_PATH_SIMULATED = "DeviceStorageSimulated/";
 
         public static readonly string DOWNLOADABLES_FOLDER_NAME = "Downloadables";
+        public static readonly string DOWNLOADABLESS_ROOT_PATH = FileUtils.GetDeviceStoragePath(DOWNLOADABLES_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
 
         public static readonly string MANIFESTS_FOLDER_NAME = Path.Combine(DOWNLOADABLES_FOLDER_NAME, "Metadata");
         public static readonly string MANIFESTS_ROOT_PATH = FileUtils.GetDeviceStoragePath(MANIFESTS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
@@ -133,14 +141,32 @@ namespace Downloadables
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
         /// </summary>
-        public bool IsAutomaticDownloaderEnabled { get; set; }            
+        public bool IsAutomaticDownloaderEnabled { get; set; }
+
+        private bool m_isEnabled;
+        /// <summary>
+        /// When <c>true</c> downloader is enabled. When disabled no downloadables, not even the ones requested explictily, will be downloaded.
+        /// It will be disabled when high performance is required, typically when the user is playing the game.        
+        /// </summary>
+        public bool IsEnabled
+        {
+            get { return m_isEnabled; }
+            set
+            {
+                m_isEnabled = value;
+                if (!m_isEnabled)
+                {
+                    SetSpeed(0f);
+                }
+            }
+        }
+
+        private Config Config { get; set; }
 
         /// <summary>
-        /// Enables / Disables downloading feature
+        /// Current downloading speed 
         /// </summary>
-        public bool IsEnabled { get; set; }
-
-        private Config Config { get; set; }        
+        private float m_speed;
 
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
@@ -159,7 +185,7 @@ namespace Downloadables
 
             CatalogEntryStatus.StaticSetup(config, m_disk, tracker);
             m_cleaner = new Cleaner(m_disk, 180);            
-            m_downloader = new Downloader(network, m_disk, logger);
+            m_downloader = new Downloader(this, network, m_disk, logger);
             CatalogGroup.StaticSetup(m_disk);
 
             IsEnabled = true;
@@ -172,11 +198,12 @@ namespace Downloadables
         public void Reset()
         {
             IsInitialized = false;
-            IsAutomaticDownloaderEnabled = Config.IsAutomaticDownloaderEnabled;
+            IsAutomaticDownloaderEnabled = Config.IsAutomaticDownloaderEnabled;            
             m_cleaner.Reset();
             Groups_Reset();
             Catalog_Reset();
-            m_downloader.Reset();            
+            m_downloader.Reset();
+            SetSpeed(0f);
         }        
 
         public void Initialize(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
@@ -186,12 +213,12 @@ namespace Downloadables
             if (CanLog())
             {                
                 Log("Initializing Downloadables manager..." );
-            }
+            }            
 
-            m_groups = groups;
+            ProcessCatalog(catalogJSON, groups);
 
-            ProcessCatalog(catalogJSON);
-            Groups_Process();
+            // Groups need to be initialized after catalog has been loaded
+            Groups_Init(groups);            
 
             IsInitialized = true;            
 
@@ -202,7 +229,7 @@ namespace Downloadables
             }
         }                
 
-        private void ProcessCatalog(JSONNode catalogJSON)
+        private void ProcessCatalog(JSONNode catalogJSON, Dictionary<string, CatalogGroup> groups)
         {    
             if (catalogJSON != null)
             {
@@ -225,18 +252,18 @@ namespace Downloadables
                     }                    
                 }
 
-                List<string> groups = null;
-                if (m_groups != null)
+                List<string> groupIds = null;
+                if (groups != null)
                 {
-                    groups = new List<string>();
-                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                    groupIds = new List<string>();
+                    foreach (KeyValuePair<string, CatalogGroup> pair in groups)
                     {
-                        groups.Add(pair.Key);
+                        groupIds.Add(pair.Key);
                     }
                 }
 
                 // Cleans obsolete stuff
-                m_cleaner.CleanAllExcept(ids, groups);                
+                m_cleaner.CleanAllExcept(ids, groupIds);                
             }            
         }                 
         
@@ -409,6 +436,51 @@ namespace Downloadables
             return m_network.CurrentNetworkReachability;
         }
 
+        /// <summary>
+        /// Deletes all downloadables currently cached.
+        /// </summary>
+        public void ClearCache()
+        {                     
+            if (m_catalog != null)
+            {
+                foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+                {
+                    pair.Value.DeleteDownload();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns current downloading speed in bytes/second 
+        /// </summary>        
+        public float GetSpeed()
+        {
+            return m_speed;
+        }
+
+        /// <summary>
+        /// Sets downloading speed in bytes/second
+        /// </summary>        
+        public void SetSpeed(float value)
+        {
+            m_speed = value;
+        }
+
+        public bool IsAnyIdBeingDownloaded(List<string> ids)
+        {
+            bool returnValue = false;
+            if (ids != null && m_downloader.IsDownloading && m_catalogEntryDownloading != null)
+            {
+                int count = ids.Count;
+                for (int i = 0; i < count && !returnValue; i++)
+                {
+                    returnValue = (m_catalogEntryDownloading.Id == ids[i]);                    
+                }
+            }
+
+            return returnValue;
+        }
+
         public void Update()
         {
             if (IsInitialized && IsEnabled)
@@ -422,7 +494,8 @@ namespace Downloadables
         }               
 
 #region catalog
-        private Dictionary<string, CatalogEntryStatus> m_catalog;        
+        private Dictionary<string, CatalogEntryStatus> m_catalog;
+        private CatalogEntryStatus m_catalogEntryDownloading;
 
         private void Catalog_Reset()
         {            
@@ -433,7 +506,9 @@ namespace Downloadables
             else
             {
                 m_catalog.Clear();
-            }            
+            }
+
+            m_catalogEntryDownloading = null;
         }
 
         private void Catalog_AddEntryStatus(string id, JSONNode json)
@@ -462,40 +537,80 @@ namespace Downloadables
 
         private void Catalog_Update()
         {
-            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);
-
-            bool canDownload = !m_downloader.IsDownloading;
-            CatalogEntryStatus entryToDownload = null;
-
-            CatalogEntryStatus entryToSimulateDownload = null;
+            CatalogEntryStatus.StaticUpdate(Time.realtimeSinceStartup, m_network.CurrentNetworkReachability);            
+            
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
-                pair.Value.Update();
-                if (canDownload && pair.Value.State == CatalogEntryStatus.EState.InQueueForDownload)
-                {                  
-                    if (m_downloader.ShouldDownloadWithCurrentConnection(pair.Value))
-                    {
-                        ProcessCandidateToDownload(ref entryToDownload, pair.Value, false);
-                    }
-                    else
-                    {
-                        ProcessCandidateToDownload(ref entryToSimulateDownload, pair.Value, true);
-                    }
-                }
-            }            
-
-            // A simulation is performed only if there's no an actual download to perform
-            if (entryToDownload == null)
-            {
-                if (entryToSimulateDownload != null)
-                {
-                    entryToSimulateDownload.SimulateDownload();
-                }
+                pair.Value.Update();                
             }
-            else
-            {                
-                m_downloader.StartDownloadThread(entryToDownload);
+
+            if (!m_downloader.IsDownloading)
+            {
+                m_catalogEntryDownloading = null;
+
+                if (Groups_PrioritiesDirty)
+                {
+                    Groups_SetupPriorities();
+                    Groups_PrioritiesDirty = false;
+                }
+
+                // Groups are sorted by priority, so as soon as we exit the loop as sson as we get an entry to download
+                int count = m_groupsSortedByPriority.Count;
+                CatalogEntryStatus entryToDownload = null;
+                CatalogEntryStatus entryToSimulateDownload = null;
+                for (int i = 0; i < count; i++)
+                {
+                    if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                    {
+                        break;
+                    }
+                }
+
+                // A simulation is performed only if there's no an actual download to perform
+                if (entryToDownload == null)
+                {
+                    if (entryToSimulateDownload != null)
+                    {
+                        entryToSimulateDownload.SimulateDownload();
+                    }
+
+                    SetSpeed(0f);
+                }
+                else
+                {
+                    m_catalogEntryDownloading = entryToDownload;
+                    m_downloader.StartDownloadThread(entryToDownload);
+                }
             }            
+        }
+
+        private bool FindEntryToDownloadInList(List<string> entryIds, ref CatalogEntryStatus entryToDownload, ref CatalogEntryStatus entryToSimulateDownload)
+        {            
+            if (entryIds != null)
+            {
+                CatalogEntryStatus entry;
+                int count = entryIds.Count;                
+                for (int i = 0; i < count; i++)
+                {
+                    entry = Catalog_GetEntryStatus(entryIds[i]);
+                    if (entry != null)
+                    {
+                        if (entry.State == CatalogEntryStatus.EState.InQueueForDownload)
+                        {
+                            if (m_downloader.ShouldDownloadWithCurrentConnection(entry))
+                            {
+                                ProcessCandidateToDownload(ref entryToDownload, entry, false);
+                            }
+                            else
+                            {
+                                ProcessCandidateToDownload(ref entryToSimulateDownload, entry, true);
+                            }
+                        }
+                    }
+                }                                
+            }
+
+            return entryToDownload != null || entryToSimulateDownload != null;
         }
 
         private void ProcessCandidateToDownload(ref CatalogEntryStatus candidateSoFar, CatalogEntryStatus entry, bool simulation)
@@ -508,25 +623,89 @@ namespace Downloadables
                 }
                 else if (IsAutomaticDownloaderEnabled && entry.CanAutomaticDownload(simulation))
                 {
-                    candidateSoFar = entry;
+                    if (candidateSoFar == null || entry.IsRequestRunning())
+                    {
+                        candidateSoFar = entry;
+                    }
                 }
             }
         }
-        #endregion
+#endregion
 
         // Region responsible for handling downloadable groups
-        #region groups
-        private Dictionary<string, CatalogGroup> m_groups;
+#region groups
+        /// <summary>
+        /// Key of the default group used to store all downloadables that don't belong to any explicit group
+        /// </summary>
+        private const string GROUPS_DEFAULT_ID = "internalDefault";
+        
+        private Dictionary<string, CatalogGroup> m_groups = new Dictionary<string, CatalogGroup>();
         private float m_groupsLastUpdateAt;
+
+        private bool Groups_PrioritiesDirty { get; set; }
+
+        private List<CatalogGroup> m_groupsSortedByPriority;
 
         private void Groups_Reset()
         {
-            if (m_groups != null)
+            if (m_groups == null)
+            {
+                m_groups = new Dictionary<string, CatalogGroup>();
+            }
+            else
             {
                 m_groups.Clear();
             }
 
+            if (m_groupsSortedByPriority == null)
+            {
+                m_groupsSortedByPriority = new List<CatalogGroup>();
+            }
+            else
+            {
+                m_groupsSortedByPriority.Clear();
+            }
+
             m_groupsLastUpdateAt = -1;
+            Groups_PrioritiesDirty = false;
+        }
+
+        private void Groups_Init(Dictionary<string, CatalogGroup> groups)
+        {
+            int index = 0;
+            Groups_Reset();
+
+            if (groups != null)
+            {
+                foreach (KeyValuePair<string, CatalogGroup> pair in groups)
+                {
+                    m_groups.Add(pair.Key, pair.Value);
+                    pair.Value.Index = index++;
+                    m_groupsSortedByPriority.Add(pair.Value);
+                }
+            }
+
+            Groups_Process();
+
+            // Creates the default group, which will store all entries that don't belong to any other group
+            List<string> entryIds = new List<string>();
+            CatalogGroup defaultGroup = new CatalogGroup();
+            foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
+            {
+                if (!pair.Value.BelongsToAnyGroup())
+                {
+                    pair.Value.AddGroup(defaultGroup);
+                    entryIds.Add(pair.Key);                   
+                }
+            }
+
+            defaultGroup.Setup(GROUPS_DEFAULT_ID, entryIds);            
+            m_groups.Add(GROUPS_DEFAULT_ID, defaultGroup);
+            defaultGroup.Index = index;
+            m_groupsSortedByPriority.Add(defaultGroup);
+
+            // We make sure that groups will be sorted by priority as they've just been created
+            Groups_PrioritiesDirty = true;
         }
 
         private void Groups_Process()
@@ -557,7 +736,7 @@ namespace Downloadables
         public CatalogGroup Groups_GetGroup(string groupId)
         {
             CatalogGroup returnValue = null;
-            if (m_groups != null && !string.IsNullOrEmpty(groupId))
+            if (!string.IsNullOrEmpty(groupId))
             {                
                 m_groups.TryGetValue(groupId, out returnValue);
             }
@@ -608,19 +787,21 @@ namespace Downloadables
         }
 
         private void Groups_Update()
-        {
-            if (m_groups != null)
+        {            
+            if (Time.realtimeSinceStartup - m_groupsLastUpdateAt >= 2f)
             {
-                if (Time.realtimeSinceStartup - m_groupsLastUpdateAt >= 2f)
+                if (Groups_PrioritiesDirty)
                 {
-                    foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
-                    {
-                        pair.Value.Update();
-                    }
-
-                    m_groupsLastUpdateAt = Time.realtimeSinceStartup;
+                    Groups_SetupPriorities();
                 }
-            }
+
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    pair.Value.Update();
+                }
+
+                m_groupsLastUpdateAt = Time.realtimeSinceStartup;
+            }            
         }
 
         public Handle Groups_CreateHandle(string groupId)
@@ -656,6 +837,61 @@ namespace Downloadables
             }            
             
             return returnValue;
+        }
+
+        public void Groups_SetPriority(string groupId, int priority)
+        {
+            CatalogGroup group = Groups_GetGroup(groupId);
+            if (group != null)
+            {
+                if (group.Priority != priority)
+                {
+                    group.Priority = priority;
+                    Groups_PrioritiesDirty = true;
+                }
+            }
+        }
+
+        public void Groups_SetupPriorities()
+        {
+            m_groupsSortedByPriority.Sort(Groups_SortByPriority);
+            Groups_PrioritiesDirty = false;
+        }
+
+        private int Groups_SortByPriority(CatalogGroup x, CatalogGroup y)
+        {
+            if (x.Priority == y.Priority)
+            {
+                // Indices are also taken into consideration because List<T>.Sort is not stable (doesn't maintain the original order. We need to maintain the original order to make sure
+                // that download resumes after sorting with the same group tha was already being downloaded if there's more than one group with the highest priority)
+                // https://social.msdn.microsoft.com/Forums/vstudio/en-US/f5ea4976-1c3d-4e10-90e7-c7a0491fc28a/stable-sort-using-listlttgt?forum=netfxbcl
+                if (x.Index == y.Index)
+                {
+                    return 0;
+                }
+                else if (x.Index > y.Index)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+
+            }
+            else if (x.Priority > y.Priority)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        public List<CatalogGroup> Groups_GetSortedByPriority()
+        {
+            return m_groupsSortedByPriority;
         }
         #endregion
 

@@ -11,10 +11,10 @@ namespace Downloadables
         {
             None = 0,
 
-            Disk_UnauthorizedAccess = 100,
-            Disk_IOException,
-            Disk_Other,
-            
+            Disk_UnauthorizedAccess = 100,                          // The user doesn't have permission to read/write in disk (typically in Android)
+            Disk_IOException,                                       // Typically no free space available
+            Disk_Other,                                             // Any other disk related disk
+
             Network_Uri_Malformed = 200,                            // This error arises when the uri of the downloadable to download is malformed            
             Network_Server_Size_Mismatch,                           // This error arises when the client requests for more bytes than the ones available in server            
             Network_No_Reachability,                                // This error arises when trying to download with no access to internet
@@ -31,7 +31,9 @@ namespace Downloadables
             Internal_NotAvailable,                                  // This error arises when the downloadable is not available but it's been requested
             Internal_Automatic_Download_Disabled,                   // This error arises when automatic downloads are required before the system is disabled, typically because it
                                                                     // hasn't been unlocked yet
-            Other = 400
+            Internal_Download_Disabled,                             // This error arises when downloading is not enabled, typically because high performance is required, for example
+                                                                    // while the user is playing
+            Other = 400                                             // Any other error
         };
 
         public static Array ErrorTypeValues = Enum.GetValues(typeof(EType));

@@ -135,19 +135,25 @@ namespace Downloadables
                 return Error.EType.Network_Unauthorized_Reachability;
             }
 
-            // 3. No automatic download enabled
+            // 3. Downloading is disabled
+            if (!sm_manager.IsEnabled)
+            {
+                return Error.EType.Internal_Download_Disabled;
+            }
+
+            // 4. Automatic downloading is disabled
             if (!sm_manager.IsAutomaticDownloaderEnabled)
             {
                 return Error.EType.Internal_Automatic_Download_Disabled;
             }
 
-            // 4. No free space in storage to complete the download
+            // 5. No free space in storage to complete the download
             if (GetDiskOverflowBytes() > 0)
             {
                 return Error.EType.Disk_IOException;
             }
 
-            // 1., 2., 3. and 4. can be detected without looping through every downloadable. 
+            // 1., 2., 3., 4. and 5. can be detected without looping through every downloadable. 
             // Now we need to go through every downloadable error and process the most severe one            
             return GetMostSevereErrorTypeInDownloadables();
         }
@@ -194,11 +200,17 @@ namespace Downloadables
                 Error.EType errorType;
                 CatalogEntryStatus entryStatus;
                 int count = DownloadableIds.Count;
+                bool isAnyDownloading = false;
                 for (int i = 0; i < count; i++)
                 {
                     entryStatus = sm_manager.Catalog_GetEntryStatus(DownloadableIds[i]);
                     if (entryStatus != null)
                     {
+                        if (entryStatus.State == CatalogEntryStatus.EState.Downloading)
+                        {
+                            isAnyDownloading = true;
+                        }
+
                         errorType = entryStatus.GetErrorBlockingDownload();
 
                         if (errorType == Error.EType.None && entryStatus.LatestError != null)
@@ -219,9 +231,22 @@ namespace Downloadables
                         }                        
                     }
                 }
-            }
 
+                // No error is notified if there's some progress
+                if (isAnyDownloading)
+                {
+                    returnValue = Error.EType.None;
+                }
+
+            }
+            
             return returnValue;
-        }                
+        }
+
+        public override float GetSpeed()
+        {
+            // We only take into consideration the downloading speed if it's being used to download any of the downloadable ids handled by this handle
+            return (sm_manager.IsAnyIdBeingDownloaded(DownloadableIds)) ? sm_manager.GetSpeed() : 0f;            
+        }
     }
 }
