@@ -47,6 +47,8 @@ public class AssetBundlesManager
     public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
     public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
 
+    public static bool LOCAL_IN_STREAMING_ASSETS = true;    
+
     private Downloadables.Manager m_downloadablesManager;  
     public Downloadables.Manager DownloadablesManager
     {
@@ -115,7 +117,7 @@ public class AssetBundlesManager
             Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
         }
 
-        ProcessCatalog(catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
+        ProcessCatalog(localAssetBundlesPath, catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
 
@@ -248,15 +250,23 @@ public class AssetBundlesManager
         return returnValue;
     }  
 
-    private void ProcessCatalog(AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
+    private void ProcessCatalog(string localPath, AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
     {                
         if (catalog != null)
         {            
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
-            // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
-			string fullLocalDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);
-            fullLocalDirectory = Path.Combine(fullLocalDirectory, ASSET_BUNDLES_PATH_RELATIVE);
+            string localDirectory;
+            if (LOCAL_IN_STREAMING_ASSETS)
+            {
+                // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
+                localDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);
+                localDirectory = Path.Combine(localDirectory, ASSET_BUNDLES_PATH_RELATIVE);
+            }
+            else
+            {
+                localDirectory = Path.Combine(localPath, ASSET_BUNDLES_PATH_RELATIVE);
+            }
 
             List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
 
@@ -283,7 +293,7 @@ public class AssetBundlesManager
                 }
                 else
                 {
-                    handle.Setup(id, Path.Combine(fullLocalDirectory, id), dependencies, false);
+                    handle.Setup(id, Path.Combine(localDirectory, id), dependencies, false);
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
