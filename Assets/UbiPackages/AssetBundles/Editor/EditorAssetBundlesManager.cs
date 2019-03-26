@@ -53,7 +53,7 @@ public class EditorAssetBundlesManager
         return abManifest;
     }
 
-    public static void CopyAssetBundles(string dstPath, List<string> fileNames)
+    public static void CopyAssetBundles(string dstPath, List<string> fileNames, bool asText = false)
     {
         string assetBundlesPath = GetAssetBundlesDirectory();
 
@@ -80,6 +80,11 @@ public class EditorAssetBundlesManager
                 {
                     directory = dstPath;
                     dstFile = GetDirectoryAndFileName(ref directory, ref fileName);
+                    if (asText)
+                    {
+                        dstFile += ".txt";
+                    }
+
                     EditorFileUtils.CreateDirectory(directory);
                     File.Copy(srcFile, dstFile, true);
                 }

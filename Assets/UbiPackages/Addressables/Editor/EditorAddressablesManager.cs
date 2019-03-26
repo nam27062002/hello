@@ -38,9 +38,11 @@ public class EditorAddressablesManager
     public const string ADDRESSABLES_EDITOR_GENERATED_PATH = AddressablesManager.ADDRESSABLES_EDITOR_GENERATED_PATH;
     public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH;
 
-    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
+    public static bool ADDRESSABLES_LOCAL_IN_STREAMING_ASSETS = AssetBundlesManager.LOCAL_IN_STREAMING_ASSETS;
+    public static string ADDRESSABLES_LOCAL_FOLDER = (ADDRESSABLES_LOCAL_IN_STREAMING_ASSETS) ? "StreamingAssets" : "Resources/Addressables";
+    private static string ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH = "Assets/" + ADDRESSABLES_LOCAL_FOLDER + "/AssetBundles";    
 
-    private const string ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH = "Assets/StreamingAssets/AssetBundles";
+    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
 
     private string m_localDestinationPath;
     private string m_editorCatalogFolderParent;    
@@ -332,12 +334,12 @@ public class EditorAddressablesManager
                 // Copy local asset bundles
                 EditorAssetBundlesManager.CopyAssetBundles(localAssetBundlesPath, output.m_LocalABList);
 
-                // Copy local asset bundles to StreamingAssets so they can be used by the player
+                // Copy local asset bundles to the player folder so they can be used by the player
                 if (!AddressablesManager.EditorMode)
                 {                    
                     EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
                     EditorFileUtils.CreateDirectory(localAssetBundlesPath);
-                    EditorAssetBundlesManager.CopyAssetBundles(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, output.m_LocalABList);
+                    EditorAssetBundlesManager.CopyAssetBundles(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, output.m_LocalABList, !ADDRESSABLES_LOCAL_IN_STREAMING_ASSETS);
                 }
 
                 // Deletes original files that were moved to local
@@ -380,6 +382,11 @@ public class EditorAddressablesManager
             for (int i = 0; i < count; i++)
             {             
                 dstFileName = EditorFileUtils.PathCombine(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, Path.GetFileName(files[i]));
+                if (!AssetBundlesManager.LOCAL_IN_STREAMING_ASSETS)
+                {
+                    dstFileName += ".txt";
+                }
+
                 File.Copy(files[i], dstFileName);
             }            
         }        
