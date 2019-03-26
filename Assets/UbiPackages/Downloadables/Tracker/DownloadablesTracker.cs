@@ -5,8 +5,7 @@ namespace Downloadables
 {
     namespace Popup {
         public enum EAction {
-            Got_It = 0,
-            Close,
+            Dismiss = 0,
             Wifi_Only,
             Wifi_Mobile,
             View_Storage_Options
