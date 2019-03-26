@@ -261,6 +261,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		m_waitingRewardsData = false;
 
+		// Check OTA for this dragon
+		CheckDownloadFlow(false);   // Don't trigger popups, the menu interstitial popups controller will take care of it
+
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}

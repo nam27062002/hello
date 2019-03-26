@@ -94,17 +94,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
 	/// Raises the disable event.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe to external events
-		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+
 	}
 
 	/// <summary>
@@ -550,6 +546,10 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;
 		}
+
+		// Initialize the assets download flow with currently selected dragon
+		Debug.Log(Colors.yellow.Tag(InstanceManager.menuSceneController.selectedDragon));
+		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, -1, false);	// Don't show popups, the menu interstitial popups controller will take care of it
 	}
 
 	/// <summary>
@@ -580,6 +580,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
+
+			// Unsubscribe to external events
+			Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		}
 	}
 
@@ -591,6 +594,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void OnTransitionEnd(MenuScreen _from, MenuScreen _to) {
 		// If entering this screen
 		if(_to == MenuScreen.DRAGON_SELECTION) {
+			// Subscribe to external events
+			Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+
 			// If we have a dragon selection pending, do it now!
 			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
 				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
