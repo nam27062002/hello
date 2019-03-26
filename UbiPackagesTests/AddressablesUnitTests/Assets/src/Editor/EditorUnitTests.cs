@@ -14,7 +14,8 @@ public class EditorUnitTests : MonoBehaviour
 
     private const string MENU_ADDRESSABLES = MENU + "/Addressables";
     private const string MENU_ADDRESSABLES_PARSE_ABS = MENU_ADDRESSABLES + "/Parse ABs Test";
-    private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT });
+    private const string MENU_ADDRESSABLES_JOIN_CATALOGS = MENU_ADDRESSABLES + "/Join Catalogs";
+    private static List<string> MENU_ADDRESSABLES_ALL_NAMES = new List<string>(new string[] { MENU_ADDRESSABLES_PARSE_ABS, MENU_UBI_LISTS_SPLIT, MENU_ADDRESSABLES_JOIN_CATALOGS });
 
     private const string MENU_ASSET_BUNDLES = MENU + "/AssetBundles";
     private const string MENU_ASSET_BUNDLES_LOAD = MENU_ASSET_BUNDLES + "/Load";
@@ -23,12 +24,13 @@ public class EditorUnitTests : MonoBehaviour
     private const string MENU_DOWNLOADABLES = MENU + "/Downloadables";
     private const string MENU_DOWNLOADABLES_PARSE_CATALOG = MENU_DOWNLOADABLES + "/Parse Catalog";
     private const string MENU_DOWNLOADABLES_INITIALIZE = MENU_DOWNLOADABLES + "/Initialize";
+    private const string MENU_DOWNLOADABLES_PERMISSION = MENU_DOWNLOADABLES + "/Permission";
     private const string MENU_DOWNLOADABLES_DISK = MENU_DOWNLOADABLES + "/Disk";
     private const string MENU_DOWNLOADABLES_CLEANER = MENU_DOWNLOADABLES + "/Cleaner";
     private const string MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS = MENU_DOWNLOADABLES + "/Catalog Entry Status";
     private const string MENU_DOWNLOADABLES_DOWNLOADER = MENU_DOWNLOADABLES + "/Downloader";
     private const string MENU_DOWNLOADABLES_All_TESTS = MENU_DOWNLOADABLES + "/All tests";
-    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG, MENU_DOWNLOADABLES_INITIALIZE,
+    private static List<string> MENU_DOWNLOADABLES_ALL_NAMES = new List<string>(new string[] { MENU_DOWNLOADABLES_PARSE_CATALOG, MENU_DOWNLOADABLES_INITIALIZE, MENU_DOWNLOADABLES_PERMISSION,
                                                                                                MENU_DOWNLOADABLES_DISK, MENU_DOWNLOADABLES_CLEANER, MENU_DOWNLOADABLES_CATALOG_ENTRY_STATUS,
                                                                                                MENU_DOWNLOADABLES_DOWNLOADER});
 
@@ -51,6 +53,9 @@ public class EditorUnitTests : MonoBehaviour
             case MENU_ADDRESSABLES_PARSE_ABS:
                 return UTAddressablesEditorParseABs.GetUnitTestBatch();
 
+            case MENU_ADDRESSABLES_JOIN_CATALOGS:
+                return UTAddressablesJoinCatalogs.GetUnitTestBatch();
+
             case MENU_ASSET_BUNDLES_LOAD:
                 return UTAssetBundlesLoad.GetUnitTestBatch();
 
@@ -59,6 +64,9 @@ public class EditorUnitTests : MonoBehaviour
 
             case MENU_DOWNLOADABLES_INITIALIZE:
                 return UTDownloadablesInitialize.GetUnitTestBatch();
+
+            case MENU_DOWNLOADABLES_PERMISSION:
+                return UTDownloadablesPermission.GetUnitTestBatch();
 
             case MENU_DOWNLOADABLES_DISK:
                 return UTDownloadablesDisk.GetUnitTestBatch();
@@ -87,7 +95,13 @@ public class EditorUnitTests : MonoBehaviour
     {
         PerformAllTests(MENU_ADDRESSABLES_PARSE_ABS);        
     }
-    
+
+    [MenuItem(MENU_ADDRESSABLES_JOIN_CATALOGS)]
+    public static void UnitTests_Addressables_JoinCatalogs()
+    {
+        PerformAllTests(MENU_ADDRESSABLES_JOIN_CATALOGS);
+    }
+
     [MenuItem(MENU_ASSET_BUNDLES_LOAD)]
     public static void UnitTests_AssetBundles_Load()
     {
@@ -105,6 +119,12 @@ public class EditorUnitTests : MonoBehaviour
     {
         PerformAllTests(MENU_DOWNLOADABLES_INITIALIZE);
     }
+
+    [MenuItem(MENU_DOWNLOADABLES_PERMISSION)]
+    public static void UnitTests_Downloadables_Permission()
+    {
+        PerformAllTests(MENU_DOWNLOADABLES_PERMISSION);
+    }    
 
     [MenuItem(MENU_DOWNLOADABLES_DISK)]
     public static void UnitTests_Downloadables_Disk()

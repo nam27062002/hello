@@ -147,6 +147,8 @@ public class PopupPause : PopupPauseBase {
 		// Call parent
 		base.OnOpenPreAnimation();
 
+        HDTrackingManager.Instance.NotifyIngamePause();
+
 		// Hide the mission tab during FTUX
 		if((UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_MISSIONS_AT_RUN || SceneController.mode == SceneController.Mode.TOURNAMENT) && SceneManager.GetActiveScene().name != "SC_Popups") {
 			// Get the tab system component

@@ -357,6 +357,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 				// Parse known links
 				// As defined in the US https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+In-Game+News
+				MenuScreen nextScreen = MenuScreen.NONE;
 				switch(tokens[0]) {
 					case "dragon_selection": {
 						// Navigate to a specific dragon?
@@ -365,7 +366,7 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go to dragon selection screen
-						InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+						nextScreen = MenuScreen.DRAGON_SELECTION;
 					} break;
 
 					case "shop": {
@@ -390,12 +391,12 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(targetPetScreen, true);
+						nextScreen = targetPetScreen;
 					} break;
 
 					case "global_event": {
 						// Just do it!
-						InstanceManager.menuSceneController.GoToScreen(MenuScreen.GLOBAL_EVENTS);
+						nextScreen = MenuScreen.GLOBAL_EVENTS;
 					} break;
 
 					case "tournament": {
@@ -417,8 +418,17 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(MenuScreen.SKINS, true);
+						nextScreen = MenuScreen.SKINS;
 					} break;
+				}
+
+				// Trigger screen transition
+				if(nextScreen != MenuScreen.NONE) {
+					// Go to target screens
+					InstanceManager.menuSceneController.GoToScreen(nextScreen);
+
+					// Clear any queued popups
+					PopupManager.ClearQueue();
 				}
 			} break;
 

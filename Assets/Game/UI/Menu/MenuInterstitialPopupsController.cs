@@ -17,7 +17,7 @@ using System.Collections;
 /// Centralized control to check which interstitial popups should be opened upon
 /// entering the menu.
 /// </summary>
-public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListener {
+public class MenuInterstitialPopupsController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -40,10 +40,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	private StateFlag m_stateFlags = StateFlag.NONE;
 	private float m_waitTimeOut;
 
-	private PopupController m_currentPopup = null;
-
 	// Cache some data
 	private IDragonData m_ratingDragonData = null;
+	private MenuScreen m_previousScreen = MenuScreen.NONE;
+	private MenuScreen m_currentScreen = MenuScreen.NONE;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -55,7 +55,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Register to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
 		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 
 		// Initialize internal vars
 		m_stateFlags = StateFlag.NONE;
@@ -70,7 +69,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Unregister from external events
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnMenuScreenChanged);
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, OnDragonAcquired);
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
     
     /// <summary>
@@ -139,61 +137,46 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Ignore if a popup has already been displayed in this iteration
 		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
+		// Only in the Play screen
+		if(m_currentScreen != MenuScreen.PLAY) return;
+
 		// Is the last accepted version the same as the current one?
 		if(PlayerPrefs.GetInt(PopupConsentLoading.VERSION_PREFS_KEY) != PopupConsentLoading.LEGAL_VERSION) {
-			Debug.Log("<color=RED>LEGAL</color>");
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupConsentLoading.PATH);
+			PopupManager.EnqueuePopup(PopupConsentLoading.PATH);
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
-	private void CheckCustomizerPopup() {
-		// Ignore if a popup has already been displayed in this iteration
-		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
-
-		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			SetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP, HDCustomizerManager.instance.IsCustomiserPopupAvailable());
-			if (GetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP)) {
-				m_waitTimeOut = 5f;
-				BusyScreen.Show(this, false);
-
-				string langServerCode = "en";
-				DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, LocalizationManager.SharedInstance.GetCurrentLanguageSKU());
-				if(langDef != null) {
-					langServerCode = langDef.GetAsString("serverCode", langServerCode);
-				}
-				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
-				if (popupConfig != null) {
-					OpenCustomizerPopup(popupConfig);
-				}
-			}
-		}
-	}
-
+	/// <summary>
+	/// Check Shark Pet reward popup.
+	/// </summary>
     private void CheckShark()
     {
 		// Don't show if a more important popup has already been displayed in this menu loop
 		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
+		// Nothing to do if pet is already owned
+		if(UsersManager.currentUser.petCollection.IsPetUnlocked(PopupSharkPetReward.PET_SKU)) return;
+
 		// Minimum amount of runs must be completed
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_SHARK_PET_REWARD_POPUP_AT_RUN) return;
 
-		string sharkPetSku = PopupSharkPetReward.PET_SKU;
-        if (!UsersManager.currentUser.petCollection.IsPetUnlocked(sharkPetSku))
-        {
-            // Check if hungry shark is installed
-            if (IsHungrySharkGameInstalled())
-            {
-                // Unlock pet
-                UsersManager.currentUser.petCollection.UnlockPet(sharkPetSku);
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
-                // Show popup
-				PopupController popup = PopupManager.OpenPopupInstant(PopupSharkPetReward.PATH);
-				SetFlag(StateFlag.POPUP_DISPLAYED, true);
-            }
+        // Check if hungry shark is installed
+        if (IsHungrySharkGameInstalled())
+        {
+            // Show popup
+			PopupController popup = PopupManager.EnqueuePopup(PopupSharkPetReward.PATH);
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
         }
     }
 
+	/// <summary>
+	/// Is the Hungry Shark Evolution game installed?
+	/// </summary>
+	/// <returns>Whether Hungry Shark Evolution is installed in this device.</returns>
     private bool IsHungrySharkGameInstalled()
     {
         bool ret = false;
@@ -207,17 +190,50 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
         return ret;
     }
 
+	/// <summary>
+	/// Check popups coming from the customizer.
+	/// </summary>
+	private void CheckCustomizerPopup() {
+		// Ignore if a popup has already been displayed in this iteration
+		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
+		// Only in play screen
+		if(m_currentScreen != MenuScreen.PLAY) return;
+
+		// Enough runs have been played?
+		if(UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
+			// Need to wait for it?
+			SetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP, HDCustomizerManager.instance.IsCustomiserPopupAvailable());
+			if(GetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP)) {
+				m_waitTimeOut = 5f;
+				BusyScreen.Show(this, false);
+
+				string langServerCode = "en";
+				DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, LocalizationManager.SharedInstance.GetCurrentLanguageSKU());
+				if(langDef != null) {
+					langServerCode = langDef.GetAsString("serverCode", langServerCode);
+				}
+				Calety.Customiser.CustomiserPopupConfig popupConfig = HDCustomizerManager.instance.GetOrRequestCustomiserPopup(langServerCode);
+				if(popupConfig != null) {
+					OpenCustomizerPopup(popupConfig);
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Popups coming from the customizer.
+	/// </summary>
+	/// <param name="_config">Popup configuration.</param>
 	private void OpenCustomizerPopup(Calety.Customiser.CustomiserPopupConfig _config) {
 		string popupPath = PopupCustomizer.PATH + "PF_PopupLayout_" + _config.m_iLayout;
 
-		PopupController pController = PopupManager.OpenPopupInstant(popupPath);
+		PopupController pController = PopupManager.EnqueuePopup(popupPath);
 		PopupCustomizer pCustomizer = pController.GetComponent<PopupCustomizer>();
 		pCustomizer.InitFromConfig(_config);
 
 		SetFlag(StateFlag.WAIT_FOR_CUSTOM_POPUP, false);
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
-		m_currentPopup = pController;
 
 		BusyScreen.Hide(this, true);
 	}
@@ -226,28 +242,36 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
     /// Checks the interstitial ads.
     /// </summary>
     private void CheckInterstitialAds() {
-        if ( GameAds.instance.IsValidUserForInterstitials() ) {
-            StartCoroutine( LaunchInterstitial() );
+		// If coming from a run, regardles of the destination screen
+		if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
+			if(GameAds.instance.IsValidUserForInterstitials()) {
+				StartCoroutine(LaunchInterstitial());
+			}
         }
     }
 
+	/// <summary>
+	/// Open interstitial ad popup after some delay.
+	/// </summary>
+	/// <returns>Coroutine.</returns>
     IEnumerator LaunchInterstitial() {
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
         yield return new WaitForSeconds(0.25f);
-        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, InterstitialCallback);
-    }
+        PopupAdBlocker.Launch(false, GameAds.EAdPurpose.INTERSTITIAL, OnInterstitialAdEnded);
+	}
 
-    private void InterstitialCallback( bool rewardGiven )
-    {
-        if ( rewardGiven )
-        {
-            GameAds.instance.ResetIntersitialCounter();
-        }
-    }
-
+	/// <summary>
+	/// Check Cross Promotion popups.
+	/// </summary>
     private void CheckInterstitialCP2() {
         // CP2 interstitial has the lowest priority so if the user has already seen a popup or an ad then cp2 interstitial shouldn't be shown
 		if (GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Only after a run
+		if(!GetFlag(StateFlag.COMING_FROM_A_RUN)) return;
 
         bool checkUserRestriction = true;
         if (HDCP2Manager.Instance.CanPlayInterstitial(checkUserRestriction)) {
@@ -262,43 +286,60 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Ignore if a popup has already been displayed in this iteration
 		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
-		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			// Is dragon unlocked?
-			if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
-				// If the dragon has been unlocked outside the menu (leveling up previous dragon),
-				// don't show the popup the very first time to prevent conflict with the dragon 
-				// unlock animation
-				bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
-				if(_checked) {
-					// Check if we need to make the player rate the game
-					if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
-						string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
-						System.DateTime futureDate = System.DateTime.Now;
-						if(!System.DateTime.TryParse(dateStr, out futureDate)) {
-							futureDate = System.DateTime.Now;
-						}
-						if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
-							// Start Asking!
-							if(Application.platform == RuntimePlatform.Android) {
-								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskLikeGame.PATH);
-								SetFlag(StateFlag.POPUP_DISPLAYED, true);
-							} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-								m_currentPopup = PopupManager.OpenPopupInstant(PopupAskRateUs.PATH);
-								SetFlag(StateFlag.POPUP_DISPLAYED, true);
-							}
+		// Enough runs have been played?
+		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) return;
+
+		// Are we in the right screen?
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Coming from game?
+		if(!GetFlag(StateFlag.COMING_FROM_A_RUN)) return;
+
+		// Is dragon unlocked?
+		if(m_ratingDragonData.GetLockState() > IDragonData.LockState.LOCKED) {
+			// If the dragon has been unlocked outside the menu (leveling up previous dragon),
+			// don't show the popup the very first time to prevent conflict with the dragon 
+			// unlock animation
+			bool _checked = Prefs.GetBoolPlayer(Prefs.RATE_CHECK_DRAGON, false);
+			if(_checked) {
+				// Check if we need to make the player rate the game
+				if(Prefs.GetBoolPlayer(Prefs.RATE_CHECK, true)) {
+					string dateStr = Prefs.GetStringPlayer( Prefs.RATE_FUTURE_DATE, System.DateTime.Now.ToString());
+					System.DateTime futureDate = System.DateTime.Now;
+					if(!System.DateTime.TryParse(dateStr, out futureDate)) {
+						futureDate = System.DateTime.Now;
+					}
+					if(System.DateTime.Compare(System.DateTime.Now, futureDate) > 0) {
+						// Start Asking!
+						if(Application.platform == RuntimePlatform.Android) {
+							PopupManager.EnqueuePopup(PopupAskLikeGame.PATH);
+							SetFlag(StateFlag.POPUP_DISPLAYED, true);
+						} else if(Application.platform == RuntimePlatform.IPhonePlayer) {
+							PopupManager.EnqueuePopup(PopupAskRateUs.PATH);
+							SetFlag(StateFlag.POPUP_DISPLAYED, true);
 						}
 					}
-				} else {
-					// Next time we will show the popup
-					Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
 				}
+			} else {
+				// Next time we will show the popup
+				Prefs.SetBoolPlayer(Prefs.RATE_CHECK_DRAGON, true);
 			}
 		}
+		
 	}
+
+	/// <summary>
+	/// Check silent notification popups.
+	/// </summary>
 	private void CheckSilentNotification() {
 		// Ignore if a popup has already been displayed in this iteration
-		if(GetFlag(StateFlag.POPUP_DISPLAYED))
-			return;
+		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
+
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Only when coming from the play screen
+		if(m_previousScreen != MenuScreen.PLAY) return;
 
 		if(PlayerPrefs.GetInt(HDNotificationsManager.SILENT_FLAG) == 1 && !GetFlag(StateFlag.CHECKING_CONNECTION)) 
 		{
@@ -307,20 +348,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 				PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
 			} else {
 				SetFlag(StateFlag.CHECKING_CONNECTION, true);
-				GameServerManager.SharedInstance.CheckConnection( ConnectionCallback );
+				GameServerManager.SharedInstance.CheckConnection( OnConnectionCheck );
 			}
 		}
 	}
 
-	private void ConnectionCallback( FGOL.Server.Error _error) {
-		if(_error != null) {
-			// if there was a connection error show popup
-			ShowGoOnlinePopup();			
-		}
-		PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
-		SetFlag(StateFlag.CHECKING_CONNECTION, false);
-	}
-
+	/// <summary>
+	/// Open a message popup to prompt the player to go online.
+	/// </summary>
 	private void ShowGoOnlinePopup() {
 		IPopupMessage.Config config = IPopupMessage.GetConfig();
 		config.TextType = IPopupMessage.Config.ETextType.DEFAULT;
@@ -333,7 +368,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		config.ButtonMode = IPopupMessage.Config.EButtonsMode.Confirm;
 		config.IsButtonCloseVisible = true;
 
-		PopupManager.PopupMessage_Open(config);		
+		PopupManager.PopupMessage_Open(config);
+
+		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
 	/// <summary>
@@ -343,34 +380,62 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Ignore if a popup has already been displayed in this iteration
 		if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
 
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Only when coming from a run
+		if(!GetFlag(StateFlag.COMING_FROM_A_RUN)) return;
+
+		// Enough games have been played?
 		if (UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_INTERSTITIAL_POPUPS_AT_RUN) {
-			m_currentPopup = PopupAskSurvey.Check();
-			SetFlag(StateFlag.POPUP_DISPLAYED, m_currentPopup != null);
+			if(PopupAskSurvey.CheckAndOpen() != null) {
+				SetFlag(StateFlag.POPUP_DISPLAYED, true);
+			}
 		}
 	}
 
 	/// <summary>
-	/// Checks whether the Featured 	 popup must be opened or not and does it.
+	/// Checks whether the Featured Offer popup must be opened or not and does it.
 	/// </summary>
-	/// <param name="_whereToShow">Where are we attempting to show the popup?</param>
-	private void CheckFeaturedOffer(OfferPack.WhereToShow _whereToShow) {
-		// Ignore if a popup has already been displayed in this iteration
-		//if(GetFlag(StateFlag.POPUP_DISPLAYED)) return;
-		// Don't do it if a popup is currently open
-		if(m_currentPopup != null) return;
-
+	private void CheckFeaturedOffer() {
 		// Minimum amount of runs must be completed
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_OFFERS_POPUPS_AT_RUN) return;
 
-		if(OffersManager.featuredOffer != null) {
-			m_currentPopup = OffersManager.featuredOffer.ShowPopupIfPossible(_whereToShow);
-			SetFlag(StateFlag.POPUP_DISPLAYED, m_currentPopup != null);
+		// Nothing to show if there is no featured offer
+		if(OffersManager.featuredOffer == null) return;
+
+		// Choose a location based on current screen
+		OfferPack.WhereToShow whereToShow = OfferPack.WhereToShow.SHOP_ONLY;
+		switch(m_currentScreen) {
+			case MenuScreen.PLAY: {
+				whereToShow = OfferPack.WhereToShow.PLAY_SCREEN;
+			} break;
+
+			case MenuScreen.DRAGON_SELECTION: {
+				if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
+					whereToShow = OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN;
+				} else {
+					whereToShow = OfferPack.WhereToShow.DRAGON_SELECTION;
+				}
+			} break;
+		}
+
+		// The offer will do the rest of the checks
+		PopupController popup = OffersManager.featuredOffer.ShowPopupIfPossible(whereToShow);
+		if(popup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
+	/// <summary>
+	/// Check wether we need to launch the promoted IAPs popup.
+	/// </summary>
     private void CheckPromotedIAPs() {
+		// Only in the right screens
+		if(m_currentScreen != MenuScreen.PLAY && m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
         if (GameStoreManager.SharedInstance.HavePromotedIAPs()) {
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupPromotedIAPs.PATH);
+			PopupManager.EnqueuePopup(PopupPromotedIAPs.PATH);
             SetFlag(StateFlag.POPUP_DISPLAYED, true);
         }
     }
@@ -385,11 +450,14 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Ignore if it has already been triggered
 		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
 
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
 		// Minimum amount of runs must be completed
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
 
 		// Just launch the popup
-		m_currentPopup = PopupManager.OpenPopupInstant(PopupPreRegRewards.PATH);
+		PopupManager.EnqueuePopup(PopupPreRegRewards.PATH);
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
@@ -406,6 +474,9 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Don't if tutorial is already completed
 		if(Prefs.GetBoolPlayer(PopupInfoAnimoji.ANIMOJI_TUTORIAL_KEY, false)) return;
 
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
 		// Is photo feature available? (FTUX)
 		ShowOnTutorialStep photoTutorialTrigger = InstanceManager.menuSceneController.hud.photoButton.GetComponentsInParent<ShowOnTutorialStep>(true)[0];	// [AOC] GetComponentInParent<T>() doesn't include disabled objects (and the parent object can actually be inactive triggered by the same ShowOnTutorialStep component we're looking for xD), so we're forced to use GetComponentsInParent<T>(bool includeInactive)[0] instead.
 		if(photoTutorialTrigger != null) {
@@ -413,7 +484,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		}
 
 		// All checks passed! Show the popup
-		m_currentPopup = PopupManager.OpenPopupInstant(PopupInfoAnimoji.PATH);
+		PopupManager.EnqueuePopup(PopupInfoAnimoji.PATH);
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
@@ -421,9 +492,24 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// Checks the lab unlock popup.
 	/// </summary>
 	private void CheckLabUnlock() {
-		// Because the lab popup is triggered by the Menu Dragon Screen Controller, we won't be opening it, just checking whether we can open another popup or not.
-		if(PopupLabUnlocked.Check() || PopupManager.GetOpenPopup(PopupLabUnlocked.PATH) != null) {
-			SetFlag(StateFlag.POPUP_DISPLAYED, true);	// This will prevent other popups to trigger
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
+
+		// Only if coming from a run or from the Play screen
+		if(m_previousScreen != MenuScreen.NONE && m_previousScreen != MenuScreen.PLAY) return;
+
+		// Can we show the popup?
+		PopupController popup = null;
+		if(PopupLabUnlocked.Check()) {
+			popup = PopupManager.LoadPopup(PopupLabUnlocked.PATH);
+			PopupLabUnlocked labPopup = popup.GetComponent<PopupLabUnlocked>();
+			labPopup.Init(m_currentScreen);
+			PopupManager.EnqueuePopup(popup);
+		}
+
+		// Set flag
+		if(popup != null) {
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
 
@@ -431,24 +517,53 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// Checks the daily rewards popup.
 	/// </summary>
 	private void CheckDailyRewards() {
-		// Don't display if another popup was opened
-		if(m_currentPopup != null) return;
-
 		// Never if feature not enabled
 		if(!FeatureSettingsManager.IsDailyRewardsEnabled()) return;
+
+		// Only in the right screen
+		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
 
 		// Never if daily rewards are not yet enabled
 		if(!UsersManager.currentUser.HasPlayedGames(GameSettings.ENABLE_DAILY_REWARDS_AT_RUN)) return;
 
 		// If the reward is available show the popup!
-		bool showPopup = false;
 		if(UsersManager.currentUser.dailyRewards.CanCollectNextReward()) {
-			showPopup = true;
+			PopupManager.EnqueuePopup(PopupDailyRewards.PATH);
+			SetFlag(StateFlag.POPUP_DISPLAYED, true);
+		}
+	}
+
+	/// <summary>
+	/// Check whether we need to trigger any popup related to downloadable assets.
+	/// </summary>
+	private void CheckDownloadAssets() {
+		// Get the assets download flow object from the target screen and use it to check whether a popup must be displayed or not.
+		PopupAssetsDownloadFlow downloadPopup = null;
+		switch(m_currentScreen) {
+			case MenuScreen.DRAGON_SELECTION: {
+				MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<MenuDragonScreenController>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
+			} break;
+
+			case MenuScreen.LAB_DRAGON_SELECTION: {
+				LabDragonSelectionScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<LabDragonSelectionScreen>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
+			} break;
+
+			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
+				TournamentBuildScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<TournamentBuildScreen>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
+			} break;
 		}
 
-		// Show it?
-		if(showPopup) {
-			m_currentPopup = PopupManager.OpenPopupInstant(PopupDailyRewards.PATH);
+		// Did we open any popup?
+		if(downloadPopup != null) {
 			SetFlag(StateFlag.POPUP_DISPLAYED, true);
 		}
 	}
@@ -462,7 +577,10 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	/// <param name="_from">Screen we're coming from.</param>
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenChanged(MenuScreen _from, MenuScreen _to) {
+		// Cache transition data
 		//Debug.Log("Transition ended from " + Colors.coral.Tag(_from.ToString()) + " to " + Colors.aqua.Tag(_to.ToString()));
+		m_previousScreen = _from;
+		m_currentScreen = _to;
 
 		// Don't show anything if a dragon has been unlocked during gameplay!
 		// We never want to cover the dragon unlock animation!
@@ -474,54 +592,25 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 		// Do we come from playing? (whetever is Classic, Lab or Tournament)
 		SetFlag(StateFlag.COMING_FROM_A_RUN, _from == MenuScreen.NONE && _to != MenuScreen.PLAY);
 
-		// If coming from a run, regardles of the destination screen
-		if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
-			// Interstitials
-            CheckInterstitialAds();
-        }
-
-		// Depending on target screen
-		switch(_to) {
-			case MenuScreen.PLAY: {
-                CheckPromotedIAPs();
-				//CheckTermsAndConditions();
-				CheckCustomizerPopup();
-			} break;
-
-		    case MenuScreen.DRAGON_SELECTION: {
-				// Coming from any screen (high priority)
-				CheckDailyRewards();
-				CheckLabUnlock();
-				CheckPreRegRewards();
-				CheckShark();
-				CheckAnimojiTutorial();
-
-				// Coming from specific screens
-				switch(_from) {
-					// Coming from game
-					case MenuScreen.NONE: {
-						CheckRating();
-						CheckSurvey();
-						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
-                        CheckInterstitialCP2();
-					} break;
-
-					// Coming from PLAY screen
-					case MenuScreen.PLAY: {
-						CheckSilentNotification();
-						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
-					} break;
-				}
-
-                CheckPromotedIAPs();
-				// Coming from any screen (low priority)
-				// Nothing for now
-			} break;
-            case MenuScreen.TOURNAMENT_INFO:
-            {
-                CheckPromotedIAPs();
-            }break;
-		}
+		// Do all checks here by order!
+		// Each check function should use m_previousScreen and m_currentScreen to decide
+		// Use PopupManager.OpenPopup to force a popup open or PopupManager.EnqueuePopup to put it in a sequence
+		// Check other flags (StateFlag) for other state conditions
+		CheckPromotedIAPs();
+		CheckInterstitialAds();
+		//CheckTermsAndConditions();
+		CheckCustomizerPopup();
+		CheckDailyRewards();
+		CheckPreRegRewards();
+		CheckShark();
+		CheckAnimojiTutorial();
+		CheckLabUnlock();
+		CheckRating();
+		CheckSurvey();
+		CheckSilentNotification();
+		CheckFeaturedOffer();
+		CheckInterstitialCP2();
+		CheckDownloadAssets();
 	}
 
 	/// <summary>
@@ -536,45 +625,27 @@ public class MenuInterstitialPopupsController : MonoBehaviour, IBroadcastListene
 	}
 
 	/// <summary>
-	/// A popup has been closed.
+	/// Server connection check callback.
 	/// </summary>
-	/// <param name="_popup">Popup.</param>
-	private void OnPopupClosed(PopupController _popup) {
-		// Is it our current popup?
-		if(_popup == m_currentPopup) {
-			// Yes! Nullify current popup reference
-			m_currentPopup = null;
-
-			// Check if we need to open any other popup
-			switch(InstanceManager.menuSceneController.currentScreen) {
-				case MenuScreen.PLAY: {
-					// Add any checks here
-					CheckFeaturedOffer(OfferPack.WhereToShow.PLAY_SCREEN);
-				} break;
-
-				case MenuScreen.DRAGON_SELECTION: {
-					// Coming from a run?
-					if(GetFlag(StateFlag.COMING_FROM_A_RUN)) {
-						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION_AFTER_RUN);
-					} else {
-						CheckFeaturedOffer(OfferPack.WhereToShow.DRAGON_SELECTION);
-					}
-				} break;
-			}
+	/// <param name="_error">Error code.</param>
+	private void OnConnectionCheck(FGOL.Server.Error _error) {
+		if(_error != null) {
+			// if there was a connection error show popup
+			ShowGoOnlinePopup();
 		}
+		PlayerPrefs.SetInt(HDNotificationsManager.SILENT_FLAG, 0);
+		SetFlag(StateFlag.CHECKING_CONNECTION, false);
 	}
 
+
+
 	/// <summary>
-	/// A global event has been sent.
+	/// The interstitial ad has finished.
 	/// </summary>
-	/// <param name="_eventType">Event type.</param>
-	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
-	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
-		switch(_eventType) {
-			case BroadcastEventType.POPUP_CLOSED: {
-				PopupManagementInfo info = (PopupManagementInfo)_broadcastEventInfo;
-				OnPopupClosed(info.popupController);
-			} break;
+	/// <param name="rewardGiven">Wether a reward was given or not.</param>
+	private void OnInterstitialAdEnded(bool rewardGiven) {
+		if(rewardGiven) {
+			GameAds.instance.ResetIntersitialCounter();
 		}
 	}
 }

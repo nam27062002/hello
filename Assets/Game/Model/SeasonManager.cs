@@ -71,6 +71,15 @@ public class SeasonManager : Singleton<SeasonManager> {
 					for(int i = 0; i < seasonDefs.Count && activeSeasonDef == null; ++i) {
 						if(seasonDefs[i].GetAsBool("active")) {
 							activeSeasonDef = seasonDefs[i];
+
+							/*// [AOC] TODO!! Whenever the addressable groups are implemented
+							// Make sure required asset groups for this season are downloaded and ready
+							List<string> requiredAssetGroups = activeSeasonDef.GetAsList<string>("requiredAssetGroups");
+							if(!HDAddressablesManager.Instance.IsResourceGroupListAvailable(requiredAssetGroups)) {
+							
+								// Not all assets are available, don't trigger this season
+								activeSeasonDef = null;
+							}*/
 						}
 					}
 

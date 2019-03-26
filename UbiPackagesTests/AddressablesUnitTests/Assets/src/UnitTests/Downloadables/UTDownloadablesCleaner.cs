@@ -104,7 +104,7 @@ public class UTDownloadablesCleaner : UnitTest
         m_cacheFolder = cacheFolder;
 
         m_diskDriver = diskDriver;
-        Disk disk = new Disk(diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, 0, null);
+        Disk disk = new Disk(diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.GROUPS_ROOT_PATH, 0, null);
         m_cleaner = new Cleaner(disk, 1f);
         m_idsToKeep = idsToKeep;
         m_enableExceptionAtStart = enableExceptionAtStart;
@@ -123,7 +123,7 @@ public class UTDownloadablesCleaner : UnitTest
 
         // Copy cache 
         UTDownloadablesHelper.PrepareCache(m_cacheFolder);
-        m_cleaner.CleanAllExcept(m_idsToKeep);
+        m_cleaner.CleanAllExcept(m_idsToKeep, null);
     }
 
     public override void Update()

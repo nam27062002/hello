@@ -57,4 +57,10 @@ public class ProductionDiskDriver : DiskDriver
     {
         File.Delete(path);
     }
+
+    public long GetFreeSpaceBytes()
+    {
+        // TODO
+        return long.MaxValue;
+    }
 }

@@ -22,27 +22,36 @@ public class EditorAddressablesManager
     private static string GENERATED_FOLDER = "Generated";
     private static string RESOURCES_GENERATED_FOLDER = EditorFileUtils.PathCombine("Resources", GENERATED_FOLDER);
 
-    public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
+    public static AddressablesCatalog GetEditorCatalogFromPath(string path, bool editorMode)
     {
-        return AddressablesManager.GetCatalog(catalogPath, editorMode);        
+        return AddressablesManager.GetCatalog(path, editorMode);
+    }
+
+    public static AddressablesCatalog GetEditorCatalog(bool useGenerated=true)
+    {
+        return AddressablesManager.GetEditorCatalog(useGenerated);
     }
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME;
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
     private const string ADDRESSABLES_EDITOR_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_CATALOG_PATH;
+    public const string ADDRESSABLES_EDITOR_GENERATED_PATH = AddressablesManager.ADDRESSABLES_EDITOR_GENERATED_PATH;
+    public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = AddressablesManager.ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH;
 
-    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";    
+    private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
+
+    private const string ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH = "Assets/StreamingAssets/AssetBundles";
 
     private string m_localDestinationPath;
     private string m_editorCatalogFolderParent;    
     private string m_playerCatalogPath;
-    private string m_assetBundlesLocalDestinationPath;    
+    private string m_assetBundlesLocalDestinationPath;        
 
     public EditorAddressablesManager()
     {
         m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
-        m_assetBundlesLocalDestinationPath = EditorFileUtils.PathCombine(m_localDestinationPath, "AssetBundles");
+		m_assetBundlesLocalDestinationPath = "AssetBundles/Local";
     }
 
     public void ClearBuild(BuildTarget target)
@@ -51,6 +60,9 @@ public class EditorAddressablesManager
         EditorFileUtils.DeleteFileOrDirectory(m_localDestinationPath);
         EditorFileUtils.DeleteFileOrDirectory(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString());
         EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER));
+		EditorFileUtils.DeleteFileOrDirectory(EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString()));
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_EDITOR_GENERATED_PATH);
     }
 
     public virtual void CustomizeEditorCatalog()
@@ -69,7 +81,7 @@ public class EditorAddressablesManager
         
         EditorFileUtils.CreateDirectory(m_localDestinationPath);
 
-        BuildCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
+        BuildCatalog(m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog);
     }
 
     public void BuildAssetBundles(BuildTarget platform)
@@ -103,15 +115,56 @@ public class EditorAddressablesManager
         BuildAssetBundles(target);
         GenerateAssetBundlesCatalog();
         ProcessAssetBundles(target, true);
+    }   
+
+    protected virtual JSONNode GetExternalAddressablesCatalogJSON()
+    {
+        return null;
     }
 
-    private void BuildCatalog(string editorCatalogPath, string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
+    public AddressablesCatalog GenerateFullEditorCatalog()
+    {
+        AddressablesCatalog editorCatalog = GetEditorCatalog(false);
+
+        JSONNode externalCatalogJSON = GetExternalAddressablesCatalogJSON();
+        if (editorCatalog == null)
+        {
+            if (externalCatalogJSON != null)
+            {
+                editorCatalog = new AddressablesCatalog(true);
+                editorCatalog.Load(externalCatalogJSON, sm_logger);
+            }
+        }
+        else
+        {
+            editorCatalog.Join(externalCatalogJSON, sm_logger);
+        }
+
+        EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH);
+
+        if (editorCatalog != null)
+        {
+            // Writes the full editor catalog
+            if (!Directory.Exists(ADDRESSABLES_EDITOR_GENERATED_PATH))
+            {
+                Directory.CreateDirectory(ADDRESSABLES_EDITOR_GENERATED_PATH);
+            }
+
+            EditorFileUtils.WriteToFile(ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH, editorCatalog.ToJSON().ToString());
+        }
+
+        return editorCatalog;
+    }
+
+    private void BuildCatalog(string playerCatalogPath, AddressablesTypes.EProviderMode providerMode)
     {
         AssetDatabase.RemoveUnusedAssetBundleNames();
 
-        AddressablesCatalog editorCatalog = GetCatalog(editorCatalogPath, true);
+        AddressablesCatalog editorCatalog = GenerateFullEditorCatalog();
         if (editorCatalog != null)
-        {
+        {                        
+            editorCatalog.OptimizeEntriesAssetNames();
+
             AssetDatabase.RemoveUnusedAssetBundleNames();            
 
             // Copies editor catalog in player catalog
@@ -119,21 +172,21 @@ public class EditorAddressablesManager
             playerCatalog.Load(editorCatalog.ToJSON(), sm_logger);
 
             // Clears player catalog entries because they'll be added only with the information that player requires
-            Dictionary<string, AddressablesCatalogEntry> playerCatalogEntries = playerCatalog.GetEntries();
-            playerCatalogEntries.Clear();
+            playerCatalog.ClearEntries();            
 
             // Loops through all entries to configure actual assets according to their location and provider mode
-            Dictionary<string, AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
+            List<AddressablesCatalogEntry> entries = editorCatalog.GetEntries();
             List<string> scenesToAdd = new List<string>();
             List<string> scenesToRemove = new List<string>();
             AddressablesCatalogEntry entry;
-            foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
+            int count = entries.Count;
+            for (int i = 0; i < count; i++)
             {                
-                if (ProcessEntry(pair.Value, scenesToAdd, scenesToRemove))
+                if (ProcessEntry(entries[i], scenesToAdd, scenesToRemove))
                 {
                     entry = new AddressablesCatalogEntry();
-                    entry.Load(pair.Value.ToJSON());
-                    playerCatalog.GetEntries().Add(pair.Key, entry);
+                    entry.Load(entries[i].ToJSON());
+                    playerCatalog.AddEntry(entry);
                 }
             }            
 
@@ -142,7 +195,7 @@ public class EditorAddressablesManager
                 List<EditorBuildSettingsScene> newSceneList = new List<EditorBuildSettingsScene>();
 
                 EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-                int count = scenes.Length;
+                count = scenes.Length;
                 string scenePath;
                 for (int i = 0; i < count; i++)
                 {
@@ -167,7 +220,7 @@ public class EditorAddressablesManager
                 }
 
                 EditorBuildSettings.scenes = newSceneList.ToArray();
-            }
+            }            
             
             JSONClass json = playerCatalog.ToJSON();            
             EditorFileUtils.WriteToFile(playerCatalogPath, json.ToString());            
@@ -197,7 +250,7 @@ public class EditorAddressablesManager
             return;
         }        
 
-        AddressablesCatalog editorCatalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);                
+        AddressablesCatalog editorCatalog = GetEditorCatalog(true);                
         ParseAssetBundlesOutput output = ParseAssetBundles(editorCatalog, abManifest);
 
         List<string> abList = UbiListUtils.AddRange(output.m_LocalABList, output.m_RemoteABList, true, true);
@@ -211,6 +264,9 @@ public class EditorAddressablesManager
             dependencies = new List<string>(abManifest.GetDirectDependencies(abList[i]));
             abCatalog.AddDirectDependencies(abList[i], dependencies);
         }
+
+        abCatalog.SetGroups(editorCatalog.GetGroups());
+        abCatalog.SetExplicitLocalAssetBundlesList(editorCatalog.GetLocalABList());
 
         EditorFileUtils.CreateDirectory(m_localDestinationPath);
 
@@ -231,7 +287,7 @@ public class EditorAddressablesManager
     {
         Debug.Log("Processing asset bundles...");
 
-        AddressablesCatalog catalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+        AddressablesCatalog catalog = GetEditorCatalog(true);
 
         AssetBundle manifestBundle = null;
         AssetBundleManifest abManifest = EditorAssetBundlesManager.LoadAssetBundleManifest(out manifestBundle);
@@ -247,12 +303,12 @@ public class EditorAddressablesManager
         {
             if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
             {
-                sm_logger.LogWarning("The following asset bundles have been generated but they are not used by addressables: " + UbiListUtils.GetListAsString(output.m_ABInManifestNotUsed));
+                sm_logger.LogError("The following asset bundles have been generated but they are not used by addressables: " + UbiListUtils.GetListAsString(output.m_ABInManifestNotUsed));
             }
 
             if (output.m_LocalABNotUsedList != null && output.m_LocalABNotUsedList.Count > 0)
             {
-                sm_logger.LogWarning("The following asset bundles are defined as local in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
+                sm_logger.LogError("The following asset bundles are defined as local in <" + ADDRESSABLES_EDITOR_CATALOG_FILENAME + 
                                      "> but no entries use them. Consider delete them from the field <" + 
                                      AddressablesCatalog.CATALOG_ATT_LOCAL_AB_LIST + ">: " + UbiListUtils.GetListAsString(output.m_LocalABNotUsedList));
             }
@@ -265,25 +321,77 @@ public class EditorAddressablesManager
             
             if (copyToPlayer)
             {
-                if (EditorFileUtils.Exists(m_assetBundlesLocalDestinationPath))
+                string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString());
+                if (EditorFileUtils.Exists(localAssetBundlesPath))
                 {
-                    EditorFileUtils.DeleteFileOrDirectory(m_assetBundlesLocalDestinationPath);
+                    EditorFileUtils.DeleteFileOrDirectory(localAssetBundlesPath);
                 }
 
-                EditorFileUtils.CreateDirectory(m_assetBundlesLocalDestinationPath);
+                EditorFileUtils.CreateDirectory(localAssetBundlesPath);
 
                 // Copy local asset bundles
-                EditorAssetBundlesManager.CopyAssetBundles(m_assetBundlesLocalDestinationPath, output.m_LocalABList);                
+                EditorAssetBundlesManager.CopyAssetBundles(localAssetBundlesPath, output.m_LocalABList);
+
+                // Copy local asset bundles to StreamingAssets so they can be used by the player
+                if (!AddressablesManager.EditorMode)
+                {                    
+                    EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+                    EditorFileUtils.CreateDirectory(localAssetBundlesPath);
+                    EditorAssetBundlesManager.CopyAssetBundles(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, output.m_LocalABList);
+                }
+
+                // Deletes original files that were moved to local
+                EditorAssetBundlesManager.DeleteAssetBundles(output.m_LocalABList);
             }
 
             // Copy remote asset bundles
-            EditorAssetBundlesManager.CopyAssetBundles(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString(), output.m_RemoteABList);
+            string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
+            EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_RemoteABList);
+
+            // Not used asset bundles are stored anyway just in case they haven't been defined in catalog but they are used
+            if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
+            {
+                //EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_ABInManifestNotUsed);
+            }
 
             // Generates remote AB list file            
-            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);            
+            //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
+
+            // Deletes original files that were moved to local
+            EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
+
             GenerateDownloadablesConfig(m_localDestinationPath);
         }
     }    
+
+    public void CopyLocalAssetBundlesToPlayerDestination(BuildTarget target)
+    {        
+        string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString());
+
+        DeleteLocalAssetBundlesInPlayerDestination();
+
+        Directory.CreateDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+
+        if (Directory.Exists(localAssetBundlesPath))
+        {
+            string[] files = Directory.GetFiles(localAssetBundlesPath);
+            int count = files.Length;
+            string dstFileName;
+            for (int i = 0; i < count; i++)
+            {             
+                dstFileName = EditorFileUtils.PathCombine(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, Path.GetFileName(files[i]));
+                File.Copy(files[i], dstFileName);
+            }            
+        }        
+    }
+    
+    public void DeleteLocalAssetBundlesInPlayerDestination()
+    {        
+        if (Directory.Exists(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH))
+        {
+            EditorFileUtils.DeleteFileOrDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
+        }
+    }
 
     public void GenerateDownloadablesCatalog(List<string> fileNames, string playerFolder)
     {
@@ -323,16 +431,13 @@ public class EditorAddressablesManager
                 sm_logger.LogError("No resource found in " + path);
             }
             else            
-            {                
-                string fileName = EditorFileUtils.GetFileName(path, false);
-                entry.AssetName = fileName;
-
+            {                                
                 string assetBundleNameFromCatalog = "";
 
                 switch (entry.LocationType)
                 {
                     case AddressablesTypes.ELocationType.AssetBundles:
-                        assetBundleNameFromCatalog = entry.AssetBundleName;
+                        assetBundleNameFromCatalog = entry.AssetBundleName;                        
                         break;                    
                 }
                 
@@ -421,7 +526,7 @@ public class EditorAddressablesManager
 
         // Searches for local ABs that are not used
         // We ignore the local ones that are not defined in used because they're not really necessary
-        UbiListUtils.SplitIntersectionAndDisjoint(catalogLocalABs, catalogUsedABs, out catalogLocalABs, out returnValue.m_LocalABNotUsedList);
+        //UbiListUtils.SplitIntersectionAndDisjoint(catalogLocalABs, catalogUsedABs, out catalogLocalABs, out returnValue.m_LocalABNotUsedList);
 
         if (abManifest == null)
         {
@@ -446,7 +551,7 @@ public class EditorAddressablesManager
                     dependencies = new List<string>(abManifest.GetAllDependencies(abName));
                     UbiListUtils.AddRange(returnValue.m_LocalABList, dependencies, false, true);
                 }
-                else
+                else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                 {
                     returnValue.m_ABInUsedNotInManifest.Add(abName);
                 }
@@ -472,7 +577,7 @@ public class EditorAddressablesManager
                         UbiListUtils.SplitIntersectionAndDisjoint(dependencies, returnValue.m_LocalABList, out localDependencies, out remoteDependencies);
                         UbiListUtils.AddRange(returnValue.m_RemoteABList, remoteDependencies, false, true);
                     }
-                    else
+                    else if (!returnValue.m_ABInUsedNotInManifest.Contains(abName))
                     {
                         returnValue.m_ABInUsedNotInManifest.Add(abName);
                     }
@@ -485,7 +590,8 @@ public class EditorAddressablesManager
                 for (int i = 0; i < count; i++)
                 {
                     abName = manifestABs[i];
-                    if (!returnValue.m_LocalABList.Contains(abName) && !returnValue.m_RemoteABList.Contains(abName))
+                    if (!returnValue.m_LocalABList.Contains(abName) && !returnValue.m_RemoteABList.Contains(abName) &&
+                        !returnValue.m_ABInManifestNotUsed.Contains(abName))
                     {
                         returnValue.m_ABInManifestNotUsed.Add(abName);
                     }

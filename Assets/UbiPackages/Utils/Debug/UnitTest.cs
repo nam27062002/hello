@@ -12,6 +12,12 @@ public abstract class UnitTest
 
     private bool m_isDone;
 
+#if UNITY_EDITOR
+    private int m_reachabilityBeforePerform;
+    private int m_networkSleepTimeBeforePerform;
+    private bool m_diskNoFreeSpaceBeforePerform;
+#endif
+
     public void Setup(string name, OnDoneCallback onDone)
     {
         m_name = name;
@@ -23,6 +29,20 @@ public abstract class UnitTest
 
     public void Perform()
     {
+#if UNITY_EDITOR
+        // Stores current reachability in order to be able to restore it once the test is done
+        m_reachabilityBeforePerform = MockNetworkDriver.MockNetworkReachabilityAsInt;
+
+        // We need the test to start in Production mode (with connection)
+        MockNetworkDriver.IsMockNetworkReachabilityEnabled = false;
+
+        m_networkSleepTimeBeforePerform = MockNetworkDriver.MockThrottleSleepTime;
+        MockNetworkDriver.MockThrottleSleepTime = 0;
+
+        m_diskNoFreeSpaceBeforePerform = MockDiskDriver.IsNoFreeSpaceEnabled;
+        MockDiskDriver.IsNoFreeSpaceEnabled = false;
+#endif
+
         m_isDone = false;
         m_timeStartAt = Time.realtimeSinceStartup;
         ExtendedPerform();
@@ -46,7 +66,7 @@ public abstract class UnitTest
     }
 
     protected void NotifyPasses(bool success)
-    {
+    {        
         m_isDone = true;
         SetHasPassed(success);
 
@@ -66,6 +86,13 @@ public abstract class UnitTest
         {
             Debug.LogError(msg);
         }
+
+#if UNITY_EDITOR
+        // Restores reachability to the value that was set before performing this test
+        MockNetworkDriver.MockNetworkReachabilityAsInt = m_reachabilityBeforePerform;
+        MockNetworkDriver.MockThrottleSleepTime = m_networkSleepTimeBeforePerform;
+        MockDiskDriver.IsNoFreeSpaceEnabled = m_diskNoFreeSpaceBeforePerform;
+#endif
     }
 
     public string GetName()

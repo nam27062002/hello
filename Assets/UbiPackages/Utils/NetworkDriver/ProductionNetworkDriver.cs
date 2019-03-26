@@ -3,7 +3,7 @@ using System.Net;
 
 public class ProductionNetworkDriver : NetworkDriver
 {
-    public virtual NetworkReachability CurrentNetworkReachability
+    public NetworkReachability CurrentNetworkReachability
     {
         get
         {
@@ -11,13 +11,28 @@ public class ProductionNetworkDriver : NetworkDriver
         }        
     }
 
-    public virtual HttpWebRequest CreateHttpWebRequest(string url)
+    public HttpWebRequest CreateHttpWebRequest(string url)
     {
         return (HttpWebRequest)HttpWebRequest.Create(url);
     }
 
-    public virtual HttpWebResponse GetResponse(HttpWebRequest request)
+    public HttpWebResponse GetResponse(HttpWebRequest request)
     {
         return (HttpWebResponse)request.GetResponse();
+    }
+
+    public long GetResponseContentLength(HttpWebResponse response)
+    {
+        return response.ContentLength;
+    }
+
+    public int GetResponseStatusCodeAsInt(HttpWebResponse response)
+    {
+        return (int)response.StatusCode;
+    }
+
+    public int GetThrottleSleepTime()
+    {
+        return 0;
     }
 }

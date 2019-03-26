@@ -14,6 +14,7 @@ namespace Downloadables
     {       
         private static int TIMEOUT = 10000;
 
+        private Manager m_manager;
         private string m_urlBase;
         private Disk m_disk;
         public NetworkDriver NetworkDriver { get; set; }        
@@ -21,14 +22,17 @@ namespace Downloadables
 
         private Thread m_downloadThread = null;
 
-        public NetworkReachability CurrentNetworkReachability { get; set; }
+        private NetworkReachability CurrentNetworkReachability { get; set; }
+        private int ThrottleSleepTime { get; set; }
 
-        public Downloader(NetworkDriver networkDriver, Disk disk, Logger logger)
+        public Downloader(Manager manager, NetworkDriver networkDriver, Disk disk, Logger logger)
         {
+            m_manager = manager;
             NetworkDriver = networkDriver;
             m_disk = disk;            
-            m_logger = logger;            
+            m_logger = logger;
             CurrentNetworkReachability = NetworkReachability.NotReachable;
+            ThrottleSleepTime = 0;
         }
 
         public void Initialize(string urlBase)
@@ -56,19 +60,48 @@ namespace Downloadables
 
         public bool ShouldDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
         {
-            // Wifi = Always yes.
-            // TODO: To let the user download via Carrier
-            if (CurrentNetworkReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+            return GetErrorTypeIfDownloadWithCurrentConnection(entryStatus) == Error.EType.None;
+        }
+
+        private Error.EType GetErrorTypeWhileDownloading(CatalogEntryStatus entryStatus)
+        {
+            //if connection has downgraded to a non-allowed network, 
+            //or if downloading is not allowed
+            Error.EType returnValue = GetErrorTypeIfDownloadWithCurrentConnection(entryStatus);
+            if (returnValue == Error.EType.None)
             {
-                return true;
+                if (m_manager != null && !m_manager.IsEnabled)
+                {
+                    returnValue = Error.EType.Internal_Download_Disabled;
+                }
             }
-            /*else if (AssetBundleManager.CurrentReachability == NetworkReachability.ReachableViaCarrierDataNetwork
-                && assetBundleQueueInfo.Has4GPermission)
+
+            return returnValue;
+        }
+
+        public Error.EType GetErrorTypeIfDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
+        {
+            Error.EType returnValue = Error.EType.None;
+            switch (CurrentNetworkReachability)
             {
-                return true;
+                case NetworkReachability.ReachableViaLocalAreaNetwork:
+                    // Wifi = Always Ok                    
+                    break;
+
+                case NetworkReachability.ReachableViaCarrierDataNetwork:
+                    // Over the carrier only if the user has granted permission
+                    if (!entryStatus.GetPermissionOverCarrierGranted())
+                    {
+                        returnValue = Error.EType.Network_Unauthorized_Reachability;
+                    }
+                    break;
+
+                default:
+                    returnValue = Error.EType.Network_No_Reachability;
+                    break;
             }
-            */
-            return false;            
+
+            return returnValue;                        
         }
 
         public void StartDownloadThread(CatalogEntryStatus entryStatus)
@@ -89,7 +122,7 @@ namespace Downloadables
         private void DoDownload(CatalogEntryStatus entryStatus)
         {                                    
             FileStream saveFileStream = null;
-            Error error = null;
+            Error error = null;            
 
             string fileName = entryStatus.Id;            
             try
@@ -124,7 +157,7 @@ namespace Downloadables
                     if (CanLog())
                     {
                         Log("AssetBundler DoDownload: Resuming incomplete DL. " + existingLength + " bytes downloaded already. URL = " + downloadURL);
-                    }
+                    }                    
 
                     HttpWebRequest request = NetworkDriver.CreateHttpWebRequest(downloadURL);
                     request.Proxy = NetworkManager.SharedInstance.GetCurrentProxySettings();
@@ -140,7 +173,8 @@ namespace Downloadables
                     bool didComplete = false;
                     using (HttpWebResponse response = (HttpWebResponse)NetworkDriver.GetResponse(request))
                     {
-                        if (response.ContentLength == 0)
+                        long contentLength = NetworkDriver.GetResponseContentLength(response);
+                        if (contentLength == 0)
                         {
                             //no more to download from the server
                             if (existingLength >= entryStatus.GetTotalBytes())
@@ -157,12 +191,10 @@ namespace Downloadables
                                 error = new Error(Error.EType.Network_Server_Size_Mismatch);
                                 return;
                             }
-                        }
-
-                        long serverFileSize = existingLength + response.ContentLength; //response.ContentLength gives me the size that is remaining to be downloaded
+                        }                        
 
                         bool downloadResumable; // need it for not sending any progress
-                        int responseCode = (int)response.StatusCode;
+                        int responseCode = NetworkDriver.GetResponseStatusCodeAsInt(response);
 
                         if (responseCode == 206) //same as: response.StatusCode == HttpStatusCode.PartialContent
                         {
@@ -183,8 +215,8 @@ namespace Downloadables
                             existingLength = 0;
                             downloadResumable = false;
 
-                            //wipe any copy of the file, as it's not resumable. Don't consider this a failure, just start downloading it anew
-                            m_disk.File_Delete(Disk.EDirectoryId.Downloads, fileName, out error);
+                            // Wipe any copy of the file, as it's not resumable. Don't consider this a failure, just start downloading it anew
+                            error = entryStatus.DeleteDownload();                            
                             if (error != null)
                             {
                                 return;
@@ -197,7 +229,8 @@ namespace Downloadables
                                 Log("AssetBundler DoDownload: file not accessible. Status code: " + responseCode);
                             }
 
-                            downloadResumable = false;
+                            error = new Error(Error.EType.Network_Web_Exception_No_Access_To_Content, "Status Code: " + responseCode);
+                            return;                            
                         }
 
                         using (saveFileStream = m_disk.DiskDriver.File_Open(fileInfo, downloadResumable ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
@@ -210,56 +243,62 @@ namespace Downloadables
                                 long totalReceived = existingLength;
                                 long sessionReceived = 0;
                                 Stopwatch stopwatch = Stopwatch.StartNew();
+
+                                long serverFileSize = existingLength + contentLength; //response.ContentLength gives me the size that is remaining to be downloaded
+
+                                long latestBytesReceivedAt = stopwatch.ElapsedMilliseconds;
                                 while (totalReceived < serverFileSize)
                                 {
+                                    //debug throttling logic
+                                    int sleepTime = ThrottleSleepTime;
+                                    if (sleepTime > 0)
+                                    {                                        
+                                        Thread.Sleep(sleepTime);
+                                    }                                 
+                                                                        
+                                    // Check if something requires the download to be paused
+                                    Error.EType errorType = GetErrorTypeWhileDownloading(entryStatus);
 
-                                    /*#if !PRODUCTION && !PREPRODUCTION
-                                                                        //spoofed no internet
-                                                                        int connectionSpoofed = Assets.Code.Common.DebugOptions.GetFieldValue(Assets.Code.Common.DebugField.spoofConnection);
-                                                                        if (connectionSpoofed == 2)
-                                                                        {
-                                                                            throw new WebException("Internet Disconnected", null, WebExceptionStatus.ConnectFailure, null);
-                                                                        }
+                                    // If no error has been found then checks data reception timeout 
+                                    if (errorType == Error.EType.None &&
+                                        stopwatch.ElapsedMilliseconds - latestBytesReceivedAt > TIMEOUT)
+                                    {
+                                        errorType = Error.EType.Network_Web_Exception_Timeout;
+                                    }
 
-                                                                        //debug throttling logic
-                                                                        int internetThrottleStatus = Assets.Code.Common.DebugOptions.GetFieldValue(Assets.Code.Common.DebugField.spoofSlowInternet);
-                                                                        if (internetThrottleStatus == 1)
-                                                                        {
-                                                                            //16ms sleep =  250kb/sec max speed
-                                                                            Thread.Sleep(16);
-                                                                        }
-                                                                        else if (internetThrottleStatus == 2)
-                                                                        {
-                                                                            //80ms sleep =  50kb/sec max speed
-                                                                            Thread.Sleep(80);
-                                                                        }
-                                                                        else if (internetThrottleStatus == 3)
-                                                                        {
-                                                                            //800ms sleep = 5kb/sec max speed
-                                                                            Thread.Sleep(800);
-                                                                        }
-                                    #endif*/
-
-                                    //if connection has downgraded to a non-allowed network, 
-                                    //or if user has changed the current prioritised download, this pauses the download
-                                    if (!ShouldDownloadWithCurrentConnection(entryStatus)
-                                        //|| AssetBundleManager.CheckAndResetCurrentPriorityChanged()
-                                        //|| AssetBundleManager.CheckAndResetDownloadTimeout())
+                                    if (errorType != Error.EType.None
+                                        //|| AssetBundleManager.CheckAndResetCurrentPriorityChanged()                                        
                                         )
                                     {
-                                        error = new Error(Error.EType.Network_Unauthorized_Reachability);
-                                        //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.Queued));
+                                        error = new Error(errorType);                                        
                                         //AssetBundleManager.Instance.ResetPollingTime();  //we reset the poll to start the next download immediately
                                         stopwatch.Stop();
                                         stream.Close();
                                         return;
                                     }
-                                    int byteSize = stream.Read(downBuffer, 0, downBuffer.Length);
-                                    m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);
-                                    totalReceived += byteSize;
-                                    sessionReceived += byteSize;
 
-                                    //float currentSpeed = sessionReceived / (float)stopwatch.Elapsed.TotalSeconds;
+                                    int byteSize = stream.Read(downBuffer, 0, downBuffer.Length);
+
+                                    if (byteSize > 0)
+                                    {
+                                        m_disk.DiskDriver.File_Write(saveFileStream, downBuffer, 0, byteSize);
+                                        totalReceived += byteSize;
+                                        sessionReceived += byteSize;
+                                        latestBytesReceivedAt = stopwatch.ElapsedMilliseconds;
+                                    }
+
+                                    if (m_manager != null)
+                                    {
+                                        float totalSeconds = (float)stopwatch.Elapsed.TotalSeconds;
+                                        if (totalSeconds == 0f)
+                                        {
+                                            totalSeconds = 0.01f;
+                                        }
+
+                                        float currentSpeed = sessionReceived / totalSeconds;
+                                        m_manager.SetSpeed(currentSpeed);
+                                    }
+                                    
                                     entryStatus.DataInfo.Size = totalReceived;
                                     //DownloadProgressChanged.Invoke(this, new DownloadProgressChangedEventArgs(assetBundleQueueInfo.AssetBundleName, totalReceived, (long)currentSpeed));
                                 }
@@ -289,7 +328,7 @@ namespace Downloadables
                 }
             }
             catch (WebException we)
-            {
+            {                
                 //416 error means we requested some bytes which don't exist.
                 //this means the local game is expecting more data than the server has.
                 //in this case, the file must be finished (no more data on the server), so we throw it to a CRC check to confirm
@@ -305,26 +344,22 @@ namespace Downloadables
                 }
                 else
                 */
-                {
-                    //Debug.LogException(we);
+                {                    
                     if (CanLog())
                     {
                         LogError("AssetBundler DoDownload: Exception caused assetbundle download failure. Performing full file/CRC to work out file status: " + we.ToString());
                     }
-                    error = new Error(we);
-                    //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.CRCCheck)); //no error because timeouts aren't a problem with the bundle
+                    error = new Error(we);                    
                 }
             }
             catch (IOException ioe)
-            {
+            {                
                 //Debug.LogException(ioe);
                 if (CanLog())
                 {
                     LogError("AssetBundler DoDownload: IO/Write Exception. Deleting offending file: " + fileName + ": " + ioe.ToString());
                 }
-                error = new Error(ioe);
-                //AssetBundleDownloadCorruptedOrBroken.Invoke(this, new AssetBundleDeleteAssetBundleFileEventArgs(assetBundleQueueInfo.AssetBundleName, "ASSETBUNDLE_IO_WRITE_EXCEPTION"));
-                //kick it right back off again
+                error = new Error(ioe);                
             }
             catch (ThreadAbortException e)
             {
@@ -332,28 +367,33 @@ namespace Downloadables
                 {
                     LogWarning("AssetBundler DoDownload: Thread aborted. Assuming intentionally.");
                 }
-                error = new Error(e);
-                //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.CRCCheck, ""));
+                error = new Error(e);                
             }
             catch (Exception e)
-            {
-                //Debug.LogException(e);
+            {                
                 if (CanLog())
-                LogError("AssetBundler DoDownload: Exception caused assetbundle download failure. Performing full file/CRC to work out file status. Error:  " + e.ToString());
-                //AssetBundleStateChanged.Invoke(this, new AssetBundleStateChangedEventArgs(assetBundleQueueInfo.AssetBundleName, AssetBundleDownloadState.CRCCheck, e.ToString()));
+                LogError("AssetBundler DoDownload: Exception caused assetbundle download failure. Performing full file/CRC to work out file status. Error:  " + e.ToString());             
                 error = new Error(e);
             }
             finally
             {
-                entryStatus.OnDownloadFinish(error);                
+                entryStatus.OnDownloadFinish(error);
 
                 if (saveFileStream != null)
                 {
                     saveFileStream.Close();
                     saveFileStream = null;
-                }
+                }                
             }
         }    
+
+        public void Update()
+        {
+            // These variables need to be stored so the downloader thread can access them as
+            // there's only access to the source values in the main thread
+            CurrentNetworkReachability = NetworkDriver.CurrentNetworkReachability;
+            ThrottleSleepTime = NetworkDriver.GetThrottleSleepTime();
+        }
 
         private bool CanLog()
         {

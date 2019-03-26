@@ -17,5 +17,7 @@ public interface DiskDriver
     bool File_Exists(string path);
     FileInfo File_GetInfo(string path);
     FileStream File_Open(FileInfo info, FileMode mode, FileAccess access, FileShare share);
-    void File_Delete(string path);    
+    void File_Delete(string path);
+
+    long GetFreeSpaceBytes();
 }

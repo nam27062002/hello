@@ -141,15 +141,15 @@ public class PopupLabUnlocked : MonoBehaviour {
 
 		// Go to the lab if not already there
 		if(m_sourceScreen != MenuScreen.LAB_DRAGON_SELECTION) {
+			// Clear any other queued poppup
+			// [AOC] This is a bit risky, since we could be preventing an 
+			//       important popup from appearing, but on the other hand 
+			//       we don't want queued popups to pop when entering the lab screen!
+			PopupManager.ClearQueue();
+
 			// Go to the lab main screen after a short delay
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
-					// Clear any other queued poppup
-					// [AOC] This is a bit risky, since we could be preventing an 
-					//       important popup from appearing, but on the other hand 
-					//       we don't want queued popups to pop when entering the lab screen!
-					PopupManager.ClearQueue();
-
 					// Lab button does the trick for us
 					LabButton.GoToLab();
 				}, 0.25f
