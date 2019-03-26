@@ -127,15 +127,17 @@ public class MenuDragonScreenController : MonoBehaviour {
 				case MenuScreen.EVENT_REWARD: {
 					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 					scr.StartFlow();
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);
 				} break;
 
 				case MenuScreen.PENDING_REWARD: {
 					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 					scr.StartFlow(true);
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}
+
+			// Clear open and queued popups and go to target screen!
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(m_goToScreen);
 
 			// Clear var
 			m_goToScreen = MenuScreen.NONE;
@@ -511,6 +513,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void CheckDownloadFlowForDragon(string _sku, float _delay = -1f, bool _checkPopups = false) {
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => {
+				// Just in case don't do anything if disabled
+				if(!this.isActiveAndEnabled) return;
+
 				// Get handler for this dragon
 				Downloadables.Handle handle = null;
 
@@ -636,7 +641,11 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
-		// Check OTA after some delay to let the transition animation finish
-		CheckDownloadFlowForDragon(_sku, 0.15f, true);
+		// Make sure this is the active screen
+		// [AOC] Do this because the screen is still enabled when transitioning to the Lab, which also triggers the Dragon Selected event
+		if(InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
+			// Check OTA after some delay to let the transition animation finish
+			CheckDownloadFlowForDragon(_sku, 0.15f, true);
+		}
 	}
 }

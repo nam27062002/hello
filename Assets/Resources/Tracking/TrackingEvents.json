@@ -455,12 +455,46 @@
         { "labBoost": { "Status": "OK" } },
         { "labPower": { "Status": "OK" } },
         { "totalSpecialDragonsUnlocked": { "Status": "OK" } },
-        { "currentLeague": { "Status": "OK" } }
+        { "currentLeague": { "Status": "OK" } },
+        { "pet1": { "Status": "OK" } },
+        { "pet2": { "Status": "OK" } },
+        { "pet3": { "Status": "OK" } },
+        { "pet4": { "Status": "OK" } }
       ],
       "APIs": [
         "dna",
         "etl"
       ]
+    },
+    "custom.lab.gameend": {
+        "Parameters": [
+            { "dragon": { "Status": "OK" } },
+            { "labHp": { "Status": "OK" } },
+            { "labSpeed": { "Status": "OK" } },
+            { "labBoost": { "Status": "OK" } },
+            { "labPower": { "Status": "OK" } },
+            { "timePlayed": { "Status": "OK" } },
+            { "deathType": { "Status": "OK" } },
+            { "deathCause": { "Status": "OK" } },
+            { "deathCoordinates": { "Status": "OK" } },
+            { "eggFound": { "Status": "OK" } },
+            { "highestMultiplier": { "Status": "OK" } },
+            { "highestBaseMultiplier": { "Status": "OK" } },
+            { "fireRushNb": { "Status": "OK" } },
+            { "superFireRushNb": { "Status": "OK" } },
+            { "hcRevive": { "Status": "OK" } },
+            { "adRevive": { "Status": "OK" } },
+            { "scEarned": { "Status": "OK" } },
+            { "hcEarned": { "Status": "OK" } },
+            { "powerTime": { "Status": "OK" } },
+            { "mapUsedNB": { "Status": "OK" } },
+            { "hungryLettersNb": { "Status": "OK" } },
+            { "currentLeague": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
     },
     "custom.lab.result": {
       "Parameters": [
@@ -617,6 +651,17 @@
         "etl"
       ]
     },
+    "custom.social.click": {
+        "Parameters": [
+            { "network": { "Status": "OK" } },
+            { "zone": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
+    },
     "custom.general.abtest.experiment": {
       "Parameters": [
         { "experimentName": { "Status": "OK" } },
@@ -650,6 +695,16 @@
         "dna",
         "etl"
       ]
+    },
+    "custom.game.settings": {
+        "Parameters": [
+            { "zone": { "Status": "OK" } },
+            { "playerProgress": { "Status": "OK" } }
+        ],
+        "APIs": [
+            "dna",
+            "etl"
+        ]
     },
     "custom.game.otaend": {
       "Parameters": [
@@ -874,6 +929,10 @@
     "boostTime": {
       "Type": "INT:4",
       "Values": []
+    },
+    "powerTime": {
+        "Type": "INT:4",
+        "Values": []
     },
     "mapUsedNB": {
       "Type": "INT:4",
@@ -1541,6 +1600,10 @@
     "result": {
       "Type": "STRING:64",
       "Values": []
+    },
+    "network": {
+        "Type": "STRING:16",
+        "Values": []
     },
     "network_type_start": {
       "Type": "STRING:8",

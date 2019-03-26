@@ -537,7 +537,7 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 	/// Check whether we need to trigger any popup related to downloadable assets.
 	/// </summary>
 	private void CheckDownloadAssets() {
-		// Check for current screen
+		// Get the assets download flow object from the target screen and use it to check whether a popup must be displayed or not.
 		PopupAssetsDownloadFlow downloadPopup = null;
 		switch(m_currentScreen) {
 			case MenuScreen.DRAGON_SELECTION: {
@@ -548,11 +548,17 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			} break;
 
 			case MenuScreen.LAB_DRAGON_SELECTION: {
-				// TODO!!
+				LabDragonSelectionScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<LabDragonSelectionScreen>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
 			} break;
 
 			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
-				// TODO!!
+				TournamentBuildScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<TournamentBuildScreen>();
+				if(screenController != null) {
+					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+				}
 			} break;
 		}
 

@@ -66,6 +66,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
     protected float m_fireNodeTimer = 0;
     Rect m_bounds2D;
+    ToggleParam m_toggleParam = new ToggleParam();
+    
     
 	// Use this for initialization
 	void Start () {
@@ -178,6 +180,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_healthBehaviour.AddDamageIgnore( DamageType.MINE );
 
                 m_shootingTimer = 0.1f;
+                m_toggleParam.value = m_active;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             
             if ( m_fire )
@@ -258,6 +262,10 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			if (m_active)
 			{
                 m_active = false;
+                
+                m_toggleParam.value = m_active;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
+                    
                 RewardManager.instance.canLoseMultiplier = true;
 				m_healthBehaviour.RemoveDamageIgnore( DamageType.ARROW );
                 m_healthBehaviour.RemoveDamageIgnore( DamageType.NORMAL );

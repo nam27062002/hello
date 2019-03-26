@@ -35,6 +35,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// Internal logic
 	private bool m_enabled = true;
 	private Downloadables.Handle m_handle = null;
+	private PopupController m_queuedPopup = null;	// We'll only allow one popup per flow
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -53,6 +54,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	private void PeriodicUpdate() {
 		// Get latest data and refresh!
 		RefreshAll(true);
+	}
+
+	/// <summary>
+	/// Component has been disabled.
+	/// </summary>
+	private void OnDisable() {
+		// Clear linked popup (if any)
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -90,7 +101,8 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
 	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
-		return PopupAssetsDownloadFlow.OpenPopupByState(m_handle, true);
+		// Open popup based on handle's state
+		return OpenPopupByState(true);
 	}
 
 	//------------------------------------------------------------------------//
@@ -128,30 +140,30 @@ public class AssetsDownloadFlow : MonoBehaviour {
 
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
-			Debug.Log(Color.magenta.Tag("m_enabled false!"));
+			//Debug.Log(Color.magenta.Tag("m_enabled false!"));
 			show = false;
 		}
 
 		// Don't show if we don't have valid data
 		else if(m_handle == null) {
-			Debug.Log(Color.magenta.Tag("m_handle is NULL"));
+			//Debug.Log(Color.magenta.Tag("m_handle is NULL"));
 			show = false;
 		}
 
 		// Don't show if permission hasn't yet been requested (we will trigger the popup)
 		else if(m_handle.NeedsToRequestPermission()) {
-			Debug.Log(Color.magenta.Tag("needs to request permission"));
+			//Debug.Log(Color.magenta.Tag("needs to request permission"));
 			show = false;
 		}
 
 		// Don't show if download has already finished
 		else if(m_handle.IsAvailable()) {
-			Debug.Log(Color.magenta.Tag("download finished"));
+			//Debug.Log(Color.magenta.Tag("download finished"));
 			show = false;
 		}
 
 		else {
-			Debug.Log(Color.green.Tag("flow needs displaying!"));
+			//Debug.Log(Color.green.Tag("flow needs displaying!"));
 		}
 
 		// Apply and return
@@ -205,6 +217,32 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Checks whether a popup needs to be opened with the current handle.
+	/// If so, puts it in the queue and replaces any popup previously queued by this component.
+	/// </summary>
+	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	/// <returns>The opened popup if any was needed.</returns>
+	private PopupAssetsDownloadFlow OpenPopupByState(bool _onlyIfMandatory) {
+		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
+		//				For now we'll just replace the old popup by a new clone.
+
+		// Whatever the result, if we already queued a popup, remove it now from the queue
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+		}
+
+		// Do we need to open a popup?
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyIfMandatory);
+		if(downloadPopup != null) {
+			// Yes! Store its controller
+			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
+		}
+
+		// Return newly opened popup
+		return downloadPopup;
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -213,6 +251,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		PopupAssetsDownloadFlow.OpenPopupByState(m_handle, false);
+		OpenPopupByState(false);
 	}
 }
