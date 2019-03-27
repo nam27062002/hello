@@ -324,6 +324,11 @@ public class HDAddressablesManager : AddressablesManager
                 }
             }
         }
+
+        public void UnloadNextAreaDependencies()
+        {
+            Instance.UnloadDependencyIdsList(DependencyIdsToLoad);
+        }
     }    
 
     public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)

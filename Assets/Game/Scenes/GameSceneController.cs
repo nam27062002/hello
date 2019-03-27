@@ -669,6 +669,9 @@ public class GameSceneController : GameSceneControllerBase {
                 scenesToLoad.Add(ResultsScreenController.NAME);
                 m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
 
+                List<string> dependencyIds = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
+                HDAddressablesManager.Instance.UnloadDependencyIdsList(dependencyIds);
+
                 HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;
         }

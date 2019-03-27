@@ -198,6 +198,14 @@ public class LevelLoader
         State = EState.UnloadingPrevAreaScenes;        
     }
 
+    public void Unload()
+    {
+        if (m_loadLevelHandle != null)
+        {
+            m_loadLevelHandle.UnloadNextAreaDependencies();
+        }
+    }
+
     public void Update()
     {
         bool needsToChangeState = GetStateProgress(true) >= 1f;       
