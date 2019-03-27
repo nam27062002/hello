@@ -297,7 +297,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// If there are no pending reveals, check for download popups
 				// Otherwise the check will be performed after the reveal animation (via the OnDragonSelected event)
-				CheckDownloadFlowForDragon(_acquiredDragonSku, -1, true);
+				CheckDownloadFlowForDragon(_acquiredDragonSku, true);
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -504,31 +504,26 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Check downloadable group status for a target dragon.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to check.</param>
-	/// <param name="_delay">Optional delay before refreshing the data. Useful to sync with other UI animations.</param>
 	/// <param name="_checkPopups">Open popups if needed?</param>
-	private void CheckDownloadFlowForDragon(string _sku, float _delay = -1f, bool _checkPopups = false) {
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				// Just in case don't do anything if disabled
-				if(!this.isActiveAndEnabled) return;
+	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
+		// Just in case don't do anything if disabled
+		if(!this.isActiveAndEnabled) return;
 
-				// Get handler for this dragon
-				Downloadables.Handle handle = null;
+		// Get handler for this dragon
+		Downloadables.Handle handle = null;
 
-				// We don't want to show anything if the dragon is not owned
-				if(DragonManager.IsDragonOwned(_sku)) {
-					handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
-				}
+		// We don't want to show anything if the dragon is not owned
+		if(DragonManager.IsDragonOwned(_sku)) {
+			handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
+		}
 
-				// Trigger flow!
-				m_assetsDownloadFlow.InitWithHandle(handle);
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
 
-				// Check for popups?
-				if(_checkPopups) {
-					m_assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			}, _delay
-		);
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -551,7 +546,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 		}
 
 		// Initialize the assets download flow with currently selected dragon
-		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, -1, false);	// Don't show popups, the menu interstitial popups controller will take care of it
+		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, false);	// Don't show popups, the menu interstitial popups controller will take care of it
 	}
 
 	/// <summary>
@@ -652,8 +647,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Make sure this is the active screen
 		// [AOC] Do this because the screen is still enabled when transitioning to the Lab, which also triggers the Dragon Selected event
 		if(InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
-			// Check OTA after some delay to let the transition animation finish
-			CheckDownloadFlowForDragon(_sku, 0.15f, true);
+			// Check OTA
+			CheckDownloadFlowForDragon(_sku, true);
 		}
 	}
 }
