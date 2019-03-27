@@ -24,10 +24,18 @@ public class BasicAddressablesTestController : MonoBehaviour
     void Start ()
     {
         Ui_Init();
+        //LoadUbiCubeFromtxtAsync();
     }
 	
 	void Update ()
     {
+        if (m_request != null && m_request.isDone)
+        {
+            AssetBundle ab = m_request.assetBundle;
+            Object ubiCube = ab.LoadAsset("UbiCube");
+            Instantiate(ubiCube);
+        }
+
         m_addressablesManager.Update();
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -44,6 +52,27 @@ public class BasicAddressablesTestController : MonoBehaviour
 #endif       
             AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
         }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            LoadUbiCubeFromTxt();
+        }
+    }
+
+    private void LoadUbiCubeFromTxt()
+    {
+        TextAsset abAsText = (TextAsset)Resources.Load("Addressables/AssetBundles/asset_cubes");
+        byte[] abBytes = abAsText.bytes;
+        AssetBundle ab = AssetBundle.LoadFromMemory(abBytes);
+        Object ubiCube = ab.LoadAsset("UbiCube");
+        Instantiate(ubiCube);
+    }
+
+    AssetBundleCreateRequest m_request;
+    private void LoadUbiCubeFromtxtAsync()
+    {
+        TextAsset abAsText = (TextAsset)Resources.Load("Addressables/AssetBundles/asset_cubes");
+        byte[] abBytes = abAsText.bytes;
+        m_request = AssetBundle.LoadFromMemoryAsync(abBytes);        
     }
 
     void OnApplicationQuit()
