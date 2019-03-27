@@ -71,16 +71,23 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 		// Progress Text
 		if(m_progressText != null) {
 			m_sb.Length = 0;
+
+			// Download progress
+			// 300 KB/800 MB
 			m_sb.Append(LocalizationManager.SharedInstance.Localize(
 				"TID_FRACTION",
 				StringUtils.FormatFileSize(_handle.GetDownloadedBytes(), 2),
 				StringUtils.FormatFileSize(_handle.GetTotalBytes(), 0)  // No decimals looks better for total size
-			));	// 300 KB/800 MB
+			));
 
-			m_sb.Append(LocalizationManager.SharedInstance.ReplaceParameters(" (%U0/%U1)",
-				StringUtils.FormatFileSize(_handle.GetSpeed(), 2),
-				m_localizedSeconds
-			));	// (256 KB/s)
+			// Speed - only if no error
+			if(_handle.GetError() == Downloadables.Handle.EError.NONE) {
+				// (256 KB/s)
+				m_sb.Append(LocalizationManager.SharedInstance.ReplaceParameters(" (%U0/%U1)",
+					StringUtils.FormatFileSize(_handle.GetSpeed(), 2),
+					m_localizedSeconds
+				));
+			}
 
 			m_progressText.text =  m_sb.ToString();
 		}
