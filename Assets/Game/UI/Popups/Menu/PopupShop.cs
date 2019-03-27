@@ -34,12 +34,15 @@ public class PopupShop : MonoBehaviour {
 		OFFERS_FIRST
 	};
 
+	// Order must match tab system setup!
 	public enum Tabs {
+		OFFERS,
 		PC,
 		SC,
-		OFFERS,
 		COUNT
 	};
+
+	private Tabs DEFAULT_INITIAL_TAB = Tabs.OFFERS;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -150,7 +153,7 @@ public class PopupShop : MonoBehaviour {
 				if(m_initialTab != Tabs.COUNT) {
 					initialTab = (int)m_initialTab;
 				} else {
-					initialTab = (int)Tabs.PC;	// Default behaviour
+					initialTab = (int)DEFAULT_INITIAL_TAB;	// Default behaviour
 				}
 			} break;
 
