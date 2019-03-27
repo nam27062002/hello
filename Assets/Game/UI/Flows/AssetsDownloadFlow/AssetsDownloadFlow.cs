@@ -41,9 +41,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// First update.
+	/// Component has been enabled.
 	/// </summary>
-	private void Start() {
+	private void OnEnable() {
 		// Program periodic update
 		InvokeRepeating("PeriodicUpdate", 0f, AssetsDownloadFlowSettings.updateInterval);
 	}
@@ -60,6 +60,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Cancel periodic update
+		CancelInvoke("PeriodicUpdate");
+
 		// Clear linked popup (if any)
 		if(m_queuedPopup != null) {
 			PopupManager.RemoveFromQueue(m_queuedPopup, true);
