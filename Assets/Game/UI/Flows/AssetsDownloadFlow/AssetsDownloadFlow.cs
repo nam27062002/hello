@@ -26,7 +26,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private GameObject m_root = null;
+	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[SerializeField] private Localizer m_statusText = null;
@@ -35,7 +35,8 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// Internal logic
 	private bool m_enabled = true;
 	private Downloadables.Handle m_handle = null;
-	private PopupController m_queuedPopup = null;	// We'll only allow one popup per flow
+	private PopupController m_queuedPopup = null;   // We'll only allow one popup per flow
+	private bool m_restartAnim = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -77,6 +78,11 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <param name="_handle">Group download handler. Use <c>null</c> to hide the widget.</param>
 	public void InitWithHandle(Downloadables.Handle _handle) {
+		// If different than previous handle, restart animation
+		if(m_handle != _handle) {
+			m_restartAnim = true;
+		}
+
 		// Store operation
 		m_handle = _handle;
 
@@ -201,8 +207,15 @@ public class AssetsDownloadFlow : MonoBehaviour {
 			//Debug.Log(Color.green.Tag("flow needs displaying!"));
 		}
 
-		// Apply and return
-		m_root.SetActive(show); // [AOC] TODO!! ShowHide Animator?
+		// Apply - Restart animation?
+		if(m_restartAnim) {
+			m_root.RestartSet(show);
+			m_restartAnim = false;	// Reset flag
+		} else {
+			m_root.Set(show);
+		}
+
+		// Done!
 		return show;
 	}
 
