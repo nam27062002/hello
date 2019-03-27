@@ -746,14 +746,14 @@ namespace Downloadables
 
         public bool Groups_GetPermissionRequested(string groupId)
         {
-            bool returnValue = false;
+            bool returnValue = true;
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
                 returnValue = group.PermissionOverCarrierRequested;
-            }            
+            }
 
-            return returnValue;
+			return returnValue;
         }
 
         public void Groups_SetIsPermissionRequested(string groupId, bool value)
@@ -763,23 +763,22 @@ namespace Downloadables
             {
                 group.PermissionOverCarrierRequested = value;                
             }
-        }
+		}
 
         public bool Groups_GetIsPermissionGranted(string groupId)
         {
-            bool returnValue = false;
+            bool returnValue = true;
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
                 returnValue = group.PermissionOverCarrierGranted;               
             }
-
-            return returnValue;
+			return returnValue;
         }
 
         public void Groups_SetIsPermissionGranted(string groupId, bool value)
         {
-            CatalogGroup group = Groups_GetGroup(groupId);
+			CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
                 group.PermissionOverCarrierGranted = value;               
