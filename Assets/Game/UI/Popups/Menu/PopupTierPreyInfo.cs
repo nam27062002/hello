@@ -83,7 +83,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		// Unsubscribe from external events.
 		if(m_loaders != null) {
 			for(int i = 0; i < m_loaders.Length; i++) {
-                //HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
+                HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
                 m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
 			}
 		}
@@ -154,7 +154,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 
 		// If we already have a layout loaded, destroy it
 		if(m_layoutInstance != null) {
-			GameObject.Destroy(m_layoutInstance);
+			Destroy(m_layoutInstance);
 			m_layoutInstance = null;
 			m_loaders = null;
 		}
@@ -164,7 +164,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		if(layoutPrefab == null) return;
 
 		// Create instance!
-		m_layoutInstance = GameObject.Instantiate<GameObject>(layoutPrefab, m_layoutContainer, false);
+		m_layoutInstance = Instantiate<GameObject>(layoutPrefab, m_layoutContainer, false);
 		if(m_layoutInstance == null) return;
 
 		// Apply some extra properties
@@ -287,7 +287,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
         // Let's go hardcore and actually remove ALL components
         MonoBehaviour[] components = _loader.loadedInstance.GetComponents<MonoBehaviour>();
 		for(int i = 0; i < components.Length; i++) {
-			GameObject.Destroy(components[i]);
+			Destroy(components[i]);
 		}
 
 		// Update materials shaders so the prefab is properly rendered in the UI

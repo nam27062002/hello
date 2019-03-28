@@ -569,6 +569,7 @@ public class GameSceneController : GameSceneControllerBase {
                 m_levelLoader.Perform(m_useSyncLoading);
 
                 PoolManager.PreBuild();
+                ParticleManager.Clear();
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well
