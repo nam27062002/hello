@@ -31,7 +31,7 @@ public class DragonIcePowers : MonoBehaviour {
         m_frozenRegistry.m_checkTier = true;
         
         FreezingObjectsRegistry.instance.RemoveRegister( m_frozenRegistry );    // Start deactivated
-        m_frozenRegistry.m_killTiers = m_frozenKillProbabiblities;
+        
         
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
@@ -61,6 +61,9 @@ public class DragonIcePowers : MonoBehaviour {
         m_motion = InstanceManager.player.dragonMotion;
         m_boost = InstanceManager.player.dragonBoostBehaviour;
         m_breath = InstanceManager.player.breathBehaviour;
+        
+        FreezingObjectsRegistry.instance.m_killOnFrozen = m_powerLevel >= 3;
+        FreezingObjectsRegistry.instance.m_killTiers = m_frozenKillProbabiblities;
     }
 
     void Update()
@@ -73,7 +76,6 @@ public class DragonIcePowers : MonoBehaviour {
         
         m_currentRadius = Mathf.Lerp(m_currentRadius, radius, Time.deltaTime * 5.0f);
         m_frozenRegistry.m_distanceSqr = m_currentRadius * m_currentRadius;
-        m_frozenRegistry.m_killOnFrozen = m_powerLevel >= 3 && m_boost.IsBoostActive();
         m_frozenRegistry.m_checkTier = !m_breath.IsFuryOn();
         
         if ( m_boost.IsBoostActive() && !m_active )
