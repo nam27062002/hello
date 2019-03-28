@@ -28,6 +28,7 @@ public class MenuHUD : MonoBehaviour {
 		get { return m_photoButton; }
 	}
 
+	[Space]
 	[SerializeField] private ProfileCurrencyCounter m_scCounter = null;
 	public ProfileCurrencyCounter scCounter {
 		get { return m_scCounter; }
@@ -42,6 +43,9 @@ public class MenuHUD : MonoBehaviour {
 	public ProfileCurrencyCounter gfCounter {
 		get { return m_gfCounter; }
 	}
+
+	[Space]
+	[SerializeField] private UINotification m_offersNotification = null;
 
 	// Internal
 	private ShowHideAnimator m_animator = null;
@@ -66,17 +70,22 @@ public class MenuHUD : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Start hidden.
+	/// Component has been enabled.
 	/// </summary>
-	private void Start() {
-		
+	private void OnEnable() {
+		// Refresh offers notification
+		RefreshOffersNotification();
+
+		// Subscribe to external events
+		Messenger.AddListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	/// <summary>
-	/// Raises the destroy event.
+	/// Component has been disabled.
 	/// </summary>
-	private void OnDestroy() {
-		
+	private void OnDisable() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener(MessengerEvents.OFFERS_CHANGED, OnOffersChanged);
 	}
 
 	//------------------------------------------------------------------//
@@ -113,7 +122,21 @@ public class MenuHUD : MonoBehaviour {
 		return null;
 	}
 
+	/// <summary>
+	/// Refresh offers notification visibility.
+	/// </summary>
+	public void RefreshOffersNotification() {
+		// Show only if there is at least one offer pack active
+		m_offersNotification.Set(OffersManager.activeOffers.Count > 0);
+	}
+
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Active offers have changed.
+	/// </summary>
+	public void OnOffersChanged() {
+		RefreshOffersNotification();
+	}
 }

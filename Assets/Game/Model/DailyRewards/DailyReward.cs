@@ -142,7 +142,7 @@ public class DailyReward {
 		// Reset any existing data
 		Reset();
 
-		Debug.Log(Colors.cyan.Tag("LOADING DAILY REWARD DATA\n") + new JsonFormatter().PrettyPrint(_data.ToString()));
+		//Debug.Log(Colors.cyan.Tag("LOADING DAILY REWARD DATA\n") + new JsonFormatter().PrettyPrint(_data.ToString()));
 
 		// Def (we're only saving the sku)
 		if(_data.ContainsKey("sourceSku")) {

@@ -261,6 +261,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		m_waitingRewardsData = false;
 
+		// Check OTA for this dragon
+		CheckDownloadFlow(false);   // Don't trigger popups, the menu interstitial popups controller will take care of it
+
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}
@@ -295,7 +298,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	public void OnStartPaying() {
 		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupIfNeeded();
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
 		if(popup != null) return;
 
 		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {

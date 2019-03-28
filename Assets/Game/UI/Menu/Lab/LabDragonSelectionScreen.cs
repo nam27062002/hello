@@ -89,18 +89,14 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+
 	}
 
 	//------------------------------------------------------------------------//
@@ -166,9 +162,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 
 		// First refresh
         Refresh(_animate);
-
-		// Check OTA for this dragon
-		CheckDownloadFlowForDragon(m_dragonData.sku, true);
 	}
 
 	/// <summary>
@@ -254,15 +247,22 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 
 		// Do a first refresh
 		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
+
+		// Check OTA for this dragon
+		CheckDownloadFlowForDragon(m_dragonData.sku, false);	// Don't trigger popups, the menu interstitial popups controller will take care of it
 	} 
 
 	/// <summary>
 	/// The show animation has finished.
 	/// </summary>
     public void OnShowPostAnimation() {
-        MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
+		// Subscribe to external events
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
 
-        if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
+		// If the season has finished, go to the league screen
+		MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
+		if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
 			if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS) {
 				// Clear popups and go to leagues screen
 				PopupManager.Clear(true);
@@ -271,10 +271,19 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
         }
     }
 
-    /// <summary>
-    /// Back button has been pressed.
-    /// </summary>
-    public void OnBackButton() {
+	/// <summary>
+	/// The screen is about to hide.
+	/// </summary>
+	public void OnHidePreAnimation() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+	}
+
+	/// <summary>
+	/// Back button has been pressed.
+	/// </summary>
+	public void OnBackButton() {
 		// Make sure we are allowed to change screen (prevent spamming)
 		// [AOC] Resolves issue HDK-4255 among others
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
@@ -297,7 +306,7 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
 		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupIfNeeded();
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
 		if(popup != null) return;
 
 		// Go to the special missions screen
@@ -322,6 +331,9 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 			() => {
 				// Get new dragon's data from the dragon manager and do the refresh logic
 				InitWithDragon(DragonManager.GetDragonData(_sku), true);
+
+				// Check OTA
+				CheckDownloadFlowForDragon(m_dragonData == null ? "" : m_dragonData.sku, true);
 			}, m_dragonChangeInfoDelay
 		);
 	}

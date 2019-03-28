@@ -125,8 +125,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
 	/// <param name="_handle">The download handle whose information we will be using.</param>
-	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
-	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, bool _onlyIfMandatory) {
+	/// <param name="_onlyMandatoryPopups">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, bool _onlyMandatoryPopups) {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
@@ -142,7 +142,7 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 			popupPath = PATH_PERMISSION;
 		} else {
 			// Error popups are not mandatory (so far)
-			if(!_onlyIfMandatory) {
+			if(!_onlyMandatoryPopups) {
 				// Yes! Check error code
 				switch(_handle.GetError()) {
 					case Downloadables.Handle.EError.NONE: {

@@ -94,17 +94,13 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 	}
 
 	/// <summary>
 	/// Raises the disable event.
 	/// </summary>
 	private void OnDisable() {
-		// Unsubscribe to external events
-		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+
 	}
 
 	/// <summary>
@@ -301,7 +297,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 				// If there are no pending reveals, check for download popups
 				// Otherwise the check will be performed after the reveal animation (via the OnDragonSelected event)
-				CheckDownloadFlowForDragon(_acquiredDragonSku, -1, true);
+				CheckDownloadFlowForDragon(_acquiredDragonSku, true);
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -508,31 +504,26 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// Check downloadable group status for a target dragon.
 	/// </summary>
 	/// <param name="_sku">The sku of the dragon we want to check.</param>
-	/// <param name="_delay">Optional delay before refreshing the data. Useful to sync with other UI animations.</param>
 	/// <param name="_checkPopups">Open popups if needed?</param>
-	private void CheckDownloadFlowForDragon(string _sku, float _delay = -1f, bool _checkPopups = false) {
-		UbiBCN.CoroutineManager.DelayedCall(
-			() => {
-				// Just in case don't do anything if disabled
-				if(!this.isActiveAndEnabled) return;
+	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
+		// Just in case don't do anything if disabled
+		if(!this.isActiveAndEnabled) return;
 
-				// Get handler for this dragon
-				Downloadables.Handle handle = null;
+		// Get handler for this dragon
+		Downloadables.Handle handle = null;
 
-				// We don't want to show anything if the dragon is not owned
-				if(DragonManager.IsDragonOwned(_sku)) {
-					handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
-				}
+		// We don't want to show anything if the dragon is not owned
+		if(DragonManager.IsDragonOwned(_sku)) {
+			handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
+		}
 
-				// Trigger flow!
-				m_assetsDownloadFlow.InitWithHandle(handle);
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
 
-				// Check for popups?
-				if(_checkPopups) {
-					m_assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			}, _delay
-		);
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -542,6 +533,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	/// The screen is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		// Reset animating flag
+		SetAnimationFlag(false, true);
+
 		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
 		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
@@ -550,6 +544,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;
 		}
+
+		// Initialize the assets download flow with currently selected dragon
+		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, false);	// Don't show popups, the menu interstitial popups controller will take care of it
 	}
 
 	/// <summary>
@@ -580,6 +577,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
+
+			// Unsubscribe to external events
+			Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
 		}
 	}
 
@@ -591,6 +591,9 @@ public class MenuDragonScreenController : MonoBehaviour {
 	private void OnTransitionEnd(MenuScreen _from, MenuScreen _to) {
 		// If entering this screen
 		if(_to == MenuScreen.DRAGON_SELECTION) {
+			// Subscribe to external events
+			Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+
 			// If we have a dragon selection pending, do it now!
 			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
 				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
@@ -606,7 +609,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
         {
 			// If needed, show assets download popup and don't continue
-			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupIfNeeded();
+			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
 			if(popup != null) return;
 
     		// Select target screen
@@ -644,8 +647,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Make sure this is the active screen
 		// [AOC] Do this because the screen is still enabled when transitioning to the Lab, which also triggers the Dragon Selected event
 		if(InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
-			// Check OTA after some delay to let the transition animation finish
-			CheckDownloadFlowForDragon(_sku, 0.15f, true);
+			// Check OTA
+			CheckDownloadFlowForDragon(_sku, true);
 		}
 	}
 }

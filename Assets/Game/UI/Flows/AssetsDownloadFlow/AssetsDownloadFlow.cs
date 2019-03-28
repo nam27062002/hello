@@ -26,7 +26,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private GameObject m_root = null;
+	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[SerializeField] private Localizer m_statusText = null;
@@ -35,15 +35,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// Internal logic
 	private bool m_enabled = true;
 	private Downloadables.Handle m_handle = null;
-	private PopupController m_queuedPopup = null;	// We'll only allow one popup per flow
+	private PopupController m_queuedPopup = null;   // We'll only allow one popup per flow
+	private bool m_restartAnim = false;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// First update.
+	/// Component has been enabled.
 	/// </summary>
-	private void Start() {
+	private void OnEnable() {
 		// Program periodic update
 		InvokeRepeating("PeriodicUpdate", 0f, AssetsDownloadFlowSettings.updateInterval);
 	}
@@ -60,6 +61,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
+		// Cancel periodic update
+		CancelInvoke("PeriodicUpdate");
+
 		// Clear linked popup (if any)
 		if(m_queuedPopup != null) {
 			PopupManager.RemoveFromQueue(m_queuedPopup, true);
@@ -74,6 +78,11 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <param name="_handle">Group download handler. Use <c>null</c> to hide the widget.</param>
 	public void InitWithHandle(Downloadables.Handle _handle) {
+		// If different than previous handle, restart animation
+		if(m_handle != _handle) {
+			m_restartAnim = true;
+		}
+
 		// Store operation
 		m_handle = _handle;
 
@@ -101,8 +110,40 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
 	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
+		// Not if not enabled
+		if(!m_enabled) return null;
+
 		// Open popup based on handle's state
 		return OpenPopupByState(true);
+	}
+
+	/// <summary>
+	/// Checks whether a popup needs to be opened with the current handle.
+	/// If so, puts it in the queue and replaces any popup previously queued by this component.
+	/// </summary>
+	/// <param name="_onlyMandatoryPopups">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	/// <returns>The opened popup if any was needed.</returns>
+	public PopupAssetsDownloadFlow OpenPopupByState(bool _onlyMandatoryPopups) {
+		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
+		//				For now we'll just replace the old popup by a new clone.
+
+		// Nothing to open if not enabled
+		if(!m_enabled) return null;
+
+		// Whatever the result, if we already queued a popup, remove it now from the queue
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+		}
+
+		// Do we need to open a popup?
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyMandatoryPopups);
+		if(downloadPopup != null) {
+			// Yes! Store its controller
+			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
+		}
+
+		// Return newly opened popup
+		return downloadPopup;
 	}
 
 	//------------------------------------------------------------------------//
@@ -166,8 +207,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 			//Debug.Log(Color.green.Tag("flow needs displaying!"));
 		}
 
-		// Apply and return
-		m_root.SetActive(show); // [AOC] TODO!! ShowHide Animator?
+		// Apply - Restart animation?
+		// Only restart when showing!
+		if(show && m_restartAnim) {
+			m_root.RestartSet(show);
+		} else {
+			m_root.Set(show);
+		}
+		m_restartAnim = false;  // Reset flag
+
+		// Done!
 		return show;
 	}
 
@@ -215,32 +264,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 				m_errorText.Localize("TID_OTA_PROGRESS_BAR_DOWNLOADING_PAUSED", LocalizationManager.SharedInstance.Localize(errorTid));
 			}
 		}
-	}
-
-	/// <summary>
-	/// Checks whether a popup needs to be opened with the current handle.
-	/// If so, puts it in the queue and replaces any popup previously queued by this component.
-	/// </summary>
-	/// <param name="_onlyIfMandatory">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
-	/// <returns>The opened popup if any was needed.</returns>
-	private PopupAssetsDownloadFlow OpenPopupByState(bool _onlyIfMandatory) {
-		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
-		//				For now we'll just replace the old popup by a new clone.
-
-		// Whatever the result, if we already queued a popup, remove it now from the queue
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
-
-		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyIfMandatory);
-		if(downloadPopup != null) {
-			// Yes! Store its controller
-			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
-		}
-
-		// Return newly opened popup
-		return downloadPopup;
 	}
 
 	//------------------------------------------------------------------------//
