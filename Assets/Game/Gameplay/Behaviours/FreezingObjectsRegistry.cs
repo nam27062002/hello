@@ -17,16 +17,15 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
 		public float m_distanceSqr;
         public bool m_checkTier;
         public DragonTier m_dragonTier;
-        public bool m_killOnFrozen;
-        public float[] m_killTiers;
-        
         public Registry()
         {
             m_checkTier = false;
-            m_killOnFrozen = false;
             m_dragonTier = DragonTier.TIER_0;
         }
 	};
+    
+    public bool m_killOnFrozen;
+    public float[] m_killTiers;
 
     // Added registrys
 	List<Registry> m_registry;
@@ -128,7 +127,6 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
 		Registry reg = new Registry();
 		reg.m_transform = tr;
 		reg.m_distanceSqr = distance * distance;
-        reg.m_killOnFrozen = false;
 		m_registry.Add( reg );
         return reg;
 	}
@@ -177,12 +175,12 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
                 if (!freezing.m_checkTier || ( entity != null && (entity.IsEdible( freezing.m_dragonTier)|| entity.CanBeHolded( freezing.m_dragonTier ))))
                 {
                     m_toFreeze.Add( m_machines[i] );
-                    if ( freezing.m_killOnFrozen )
+                    if ( m_killOnFrozen )
                     {
                         // Check random
                         if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
                         {
-                            m_toKill.Add( Random.Range(0, 100) < freezing.m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
+                            m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
                         }else{
                             m_toKill.Add(false);
                         }
