@@ -208,12 +208,13 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 
 		// Apply - Restart animation?
-		if(m_restartAnim) {
+		// Only restart when showing!
+		if(show && m_restartAnim) {
 			m_root.RestartSet(show);
-			m_restartAnim = false;	// Reset flag
 		} else {
 			m_root.Set(show);
 		}
+		m_restartAnim = false;  // Reset flag
 
 		// Done!
 		return show;
