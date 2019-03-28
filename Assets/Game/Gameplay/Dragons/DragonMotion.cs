@@ -1922,7 +1922,13 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	}
 
-	public void Die(){
+    public void MoveToSpawnPosition(Vector3 _pos) {
+        m_lastPosition = _pos;
+        m_lastPhysicsValidPos = _pos;
+        m_transform.position = _pos;
+    }
+
+    public void Die(){
 
 		ChangeState(State.Dead);
 	}

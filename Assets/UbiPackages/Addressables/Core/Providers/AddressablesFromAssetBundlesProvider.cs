@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 {
-    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {        
-        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalog, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalog, useMockDrivers, tracker, logger);
     }
 
     public void Reset()
@@ -38,9 +38,20 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return ProcessAssetBundlesOpRequest(request);
     }
 
+    public bool IsDependenciesListAvailable(List<string> dependencyIds)
+    {
+        return AssetBundlesManager.Instance.IsAssetBundleListAvailable(dependencyIds);
+    }
+
     public List<string> GetDependenciesIncludingSelfList(List<string> dependencyIds)
     {
         return AssetBundlesManager.Instance.GetDependenciesIncludingSelfList(dependencyIds);
+    }
+
+    public AddressablesOp LoadDependencyIdAsync(string dependencyId)
+    {
+        AssetBundlesOpRequest request = AssetBundlesManager.Instance.LoadAssetBundleAndDependencies(dependencyId, null, true);
+        return ProcessAssetBundlesOpRequest(request);        
     }
 
     public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
@@ -53,6 +64,19 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);
         AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);        
+    }
+
+    public void UnloadDependencyId(string dependencyId, bool unloadItsDependenciesToo)
+    {
+        if (unloadItsDependenciesToo)
+        {
+            List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(dependencyId);
+            AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);
+        }
+        else
+        {
+            AssetBundlesManager.Instance.UnloadAssetBundle(dependencyId, null);
+        }
     }
 
     public void UnloadDependencyIdsList(List<string> dependencyIds)
@@ -76,17 +100,16 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     {
         AssetBundlesOpRequest request = AssetBundlesManager.Instance.UnloadSceneAsync(entry.AssetBundleName, entry.AssetName, null, true);
         return ProcessAssetBundlesOpRequest(request);        
-    }
+    }    
 
-    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    public override object LoadAsset(AddressablesCatalogEntry entry)
     {
         if (CanLog())
         {
             Log("LoadAsset by FromAssetBundles provider");
         }
 
-        object o = AssetBundlesManager.Instance.LoadAsset(entry.AssetBundleName, entry.AssetName);
-        return (T)System.Convert.ChangeType(o, typeof(T));
+        return AssetBundlesManager.Instance.LoadAsset(entry.AssetBundleName, entry.AssetName);        
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
@@ -131,6 +154,26 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         {
             AssetBundlesManager.Instance.IsDownloaderEnabled = value;
         }
+    }
+
+    public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetAssetBundlesGroup(groupId);
+    }
+    
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    {
+        return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupId);
+    }
+
+    public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
+    {
+        return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupIds);
+    }
+
+    public void SetDownloadablesGroupPriority(string groupId, int priority)
+    {
+        AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
     }
 
     public void Update()

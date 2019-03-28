@@ -55,6 +55,8 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 	private DragonMotion m_dragonMotion;
 	private DragonHealthBehaviour m_dragonHealth;
 	private DragonBreathBehaviour m_dragonBreath;
+    
+    private Renderer[] m_viewBurnedRenderes = null;
 
 
 
@@ -119,6 +121,8 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 				m_viewDestroyed = viewDestroyed.gameObject;
 			} else {
 				m_viewDestroyed = m_transform.Find("view_burned").gameObject; // maybe, we'll need another game object, for now we use the burned one
+                // Change material to red one
+                m_viewBurnedRenderes = m_viewDestroyed.GetComponentsInChildren<Renderer>();   
 			}
 			m_corpse = m_viewDestroyed.GetComponent<Corpse>();
 			m_colliderCenter = m_collider.center;
@@ -260,7 +264,13 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
     }
 
 	public void Break(bool _player = true) {
-		GameObject ps = m_destroyParticle.Spawn(m_transform.position + (m_transform.rotation * m_destroyParticle.offset));
+    
+        if (m_viewBurnedRenderes != null)
+        {
+            BurnedView();
+        }
+
+        GameObject ps = m_destroyParticle.Spawn(m_transform.position + (m_transform.rotation * m_destroyParticle.offset));
 		if (ps != null) {
 			if (m_particleFaceDragonDirection) {
 				FaceDragon(ps);
@@ -312,6 +322,19 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
             InstanceManager.timeScaleController.HitStop();
         }
 	}
+    
+    private void BurnedView()
+    {
+        Material burnedMaterial = FireColorSetupManager.instance.GetDecorationBurnedMaterial( FireColorSetupManager.FireColorType.RED );
+        int max = m_viewBurnedRenderes.Length;
+        for (int i = 0; i < max; i++) {
+            Material[] materials = m_viewBurnedRenderes[i].materials;
+            for (int m = 0; m < materials.Length; m++) {
+                materials[m] = burnedMaterial;
+            }
+            m_viewBurnedRenderes[i].materials = materials;
+        }
+    }
 
 	void FaceDragon(GameObject _ps) {
 		DragonMotion dragonMotion = m_dragonBreath.GetComponent<DragonMotion>();

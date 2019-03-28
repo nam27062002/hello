@@ -187,7 +187,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 

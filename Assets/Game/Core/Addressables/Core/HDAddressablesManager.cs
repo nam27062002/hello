@@ -70,8 +70,17 @@ public class HDAddressablesManager : AddressablesManager
         }
 
         m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
-        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);               
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, m_tracker, logger);        
+        JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
+
+#if UNITY_EDITOR && false
+        bool useMockDrivers = true;
+#else
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+	    bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);                       
+#endif
+        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
+
+        InitDownloadableHandles();
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -107,11 +116,13 @@ public class HDAddressablesManager : AddressablesManager
                     }
 
                     //http://10.44.4.69:7888/            
+
+                    urlBase += assetsLUT.m_iReleaseVersion + "/";
                 }                
             }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
-            catalog.UrlBase = urlBase + assetsLUT.m_iReleaseVersion + "/";
+            catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
@@ -133,11 +144,11 @@ public class HDAddressablesManager : AddressablesManager
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
     // which may be called when rebooting the game
-    public override bool LoadScene(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public override bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {
-            return base.LoadScene(id, mode);
+            return base.LoadScene(id, variant, mode);
         }
         else
         {
@@ -148,11 +159,11 @@ public class HDAddressablesManager : AddressablesManager
 
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene,
     // which may be called when rebooting the game
-    public override AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public override AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
         {
-            return base.LoadSceneAsync(id, mode);
+            return base.LoadSceneAsync(id, variant, mode);
         }
         else
         {
@@ -162,11 +173,11 @@ public class HDAddressablesManager : AddressablesManager
         }        
     }
 
-    public override AddressablesOp UnloadSceneAsync(string id)
+    public override AddressablesOp UnloadSceneAsync(string id, string variant = null)
     {
         if (IsInitialized())
         {
-            return base.UnloadSceneAsync(id);
+            return base.UnloadSceneAsync(id, variant);
         }
         else
         {
@@ -190,7 +201,7 @@ public class HDAddressablesManager : AddressablesManager
         return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
     }
 
-    #region ingame
+#region ingame
     public class Ingame_SwitchAreaHandle
     {        
         private List<string> PrevAreaRealSceneNames { get; set; }
@@ -214,13 +225,13 @@ public class HDAddressablesManager : AddressablesManager
             List<string> nextAreaSceneDependencyIds = Instance.GetDependencyIdsList(nextAreaRealSceneNames);
 
             // Retrieves the dependencies of the previous area defined in addressablesCatalog.json
-            List<string> prevAreaDependencyIds = Instance.Areas_GetDependencyIds(prevArea);
+            List<string> prevAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(prevArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             prevAreaDependencyIds = UbiListUtils.AddRange(prevAreaDependencyIds, prevAreaSceneDependencyIds, true, true);
 
             // Retrieves the dependencies of the next area defined in addressablesCatalog.json
-            List<string> nextAreaDependencyIds = Instance.Areas_GetDependencyIds(nextArea);
+            List<string> nextAreaDependencyIds = Instance.GetAssetBundlesGroupDependencyIds(nextArea);
 
             // Adds the dependencies of the scenes and the dependencies of the addressables areas
             nextAreaDependencyIds = UbiListUtils.AddRange(nextAreaDependencyIds, nextAreaSceneDependencyIds, true, true);
@@ -294,7 +305,7 @@ public class HDAddressablesManager : AddressablesManager
                     int count = NextAreaRealSceneNames.Count;
                     for (int i = 0; i < count; i++)
                     {                        
-                        m_nextAreaScenesToLoad.Add(Instance.LoadSceneAsync(NextAreaRealSceneNames[i], LoadSceneMode.Additive));
+                        m_nextAreaScenesToLoad.Add(Instance.LoadSceneAsync(NextAreaRealSceneNames[i], null, LoadSceneMode.Additive));
                     }
                 }
             }
@@ -309,9 +320,14 @@ public class HDAddressablesManager : AddressablesManager
                 int count = NextAreaRealSceneNames.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    Instance.LoadScene(NextAreaRealSceneNames[i], LoadSceneMode.Additive);
+                    Instance.LoadScene(NextAreaRealSceneNames[i], null, LoadSceneMode.Additive);
                 }
             }
+        }
+
+        public void UnloadNextAreaDependencies()
+        {
+            Instance.UnloadDependencyIdsList(DependencyIdsToLoad);
         }
     }    
 
@@ -324,7 +340,7 @@ public class HDAddressablesManager : AddressablesManager
         {            
             for (int i = 0; i < nextAreaRealSceneNames.Count;)
             {
-                if (IsResourceAvailable(nextAreaRealSceneNames[i], true))
+                if (IsResourceAvailable(nextAreaRealSceneNames[i], null, true))
                 {
                     i++;                    
                 }
@@ -347,5 +363,201 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-    #endregion
+#endregion
+
+#region DOWNLOADABLE GROUPS HANDLERS
+    // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
+    //		 groups and rules can be tricky to represent in content
+
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = "area1";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = "area2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = "area3";
+    
+    // Combined    
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3 = "areas1_2_3";
+
+    /// <summary>
+    /// Downloadable.Handle objects are cached because they're going to be requested ofter and generating them often may trigger garbage collector often
+    /// </summary>
+    private Dictionary<string, Downloadables.Handle> m_downloadableHandles;
+
+    /// <summary>
+    /// Initializes and stores all downloadable handles that will be required throughout the game session
+    /// </summary>
+    private void InitDownloadableHandles()
+    {
+        m_downloadableHandles = new Dictionary<string, Downloadables.Handle>();
+
+        // All handles should be created and stored here
+
+        //
+        // Level groups
+        //
+        // Area 1
+        Downloadables.Handle handle = CreateDownloadablesHandle(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1, handle);
+
+        // Areas 1 and 2
+        HashSet<string> groupIds = new HashSet<string>();
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
+        handle = CreateDownloadablesHandle(groupIds);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2, handle);
+
+        // Areas 1,2 and 3
+        groupIds = new HashSet<string>();
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_1);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_2);
+        groupIds.Add(DOWNLOADABLE_GROUP_LEVEL_AREA_3);
+        handle = CreateDownloadablesHandle(groupIds);
+        m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3, handle);
+    }
+
+    /// <summary>
+    /// Returns the downloadables handle corresponding to the id passed as a parameter
+    /// </summary>
+    /// <param name="handleId">Id of the handle requested. This id is the one used in <c>InitDownloadableHandles()</c> when the handles were created.</param>
+    /// <returns>Returns a <c>Downloadables.Handle</c> object which handles the downloading of all downloadables associated to the groups used when <c>handleId</c> was created.</returns>
+    public Downloadables.Handle GetDownloadablesHandle(string handleId)
+    {
+        Downloadables.Handle returnValue = null;
+        if (m_downloadableHandles != null && !string.IsNullOrEmpty(handleId))
+        {
+            m_downloadableHandles.TryGetValue(handleId, out returnValue);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Get the handle for all downloadables required for a specific dragon in its
+    /// current state: owned status, skin equipped, pets equipped, etc...
+    /// </summary>
+    /// <returns>The handle for all downloadables required for that dragon.</returns>
+    /// <param name="_dragonSku">Classic dragon sku.</param>
+    public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
+		// Get target dragon info
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
+
+		// Figure out group dependencies for this dragon
+		// 1. Level area dependencies: will depend basically on the dragon's tier
+		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
+		List<string> equippedPowers = GetPowersList(dragonData.persistentDisguise, dragonData.pets);
+
+		// No more dependencies to be checked: return handler!
+		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+	}
+
+	/// <summary>
+	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a special dragon.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <param name="_dragonSku">Special dragon sku.</param>
+	public Downloadables.Handle GetHandleForSpecialDragon(string _dragonSku) {
+		// For now, same logic as with the classic dragons applies :)
+		return GetHandleForClassicDragon(_dragonSku);
+	}
+
+	/// <summary>
+	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a dragon in a tournament.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for that dragon.</returns>
+	/// <param name="_tournamentData">Tournament data.</param>
+	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournamentData) {
+		// Get target dragon info
+		IDragonData dragonData = DragonManager.GetDragonData(_tournamentData.GetToUseDragon());
+
+		// Figure out group dependencies for this dragon
+		// 1. Level area dependencies: will depend basically on the dragon's tier
+		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
+		List<string> equippedPowers = GetPowersList(_tournamentData.GetToUseSkin(), _tournamentData.GetToUsePets());
+
+		// No more dependencies to be checked: return handler!
+		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+	}
+
+	/// <summary>
+	/// Get the handle for all dowloadables required for a dragon tier and a list of equipped powers.
+	/// </summary>
+	/// <returns>The handle for all downloadables required for the given setup.</returns>
+	/// <param name="_tier">Tier.</param>
+	/// <param name="_powers">Powers sku list.</param>
+	private Downloadables.Handle GetHandleForDragonTier(DragonTier _tier, List<string> _powers) {
+		// Check equipped powers to detect those that might modify the target tier
+		for(int i = 0; i < _powers.Count; ++i) {
+			// Is it one of the tier-modifying powers?
+			// [AOC] TODO!! Check whether having multiple powers of this type would accumulate max tier or not
+			switch(_powers[i]) {
+				case "dragonram": {
+					// Increaase tier by 1, don't go out of bounds!
+					_tier = _tier + 1;
+					if(_tier >= DragonTier.COUNT) {
+						_tier = DragonTier.COUNT - 1;
+					}
+				} break;
+			}
+		}
+
+        // Now select target asset groups based on final tier
+        string handleId = null;
+        if (_tier >= DragonTier.TIER_3)
+        {    // L and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3; // Village, Castle and Dark
+        }        
+        else if(_tier >= DragonTier.TIER_2) {    // M and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2; // Village and Castle
+        }
+        else if (_tier >= DragonTier.TIER_0)
+        {  // XS and bigger
+            handleId = DOWNLOADABLE_GROUP_LEVEL_AREA_1; // Village
+        }
+
+        // Finally get / create the handle for these assets groups
+        if (DebugSettings.useDownloadablesMockHandlers) {
+			// Debug!
+			Downloadables.MockHandle handle = new Downloadables.MockHandle(
+				0f,	// Bytes
+				50f * 1024f * 1024f,	// Bytes
+				2f * 60f, 	// Seconds
+				false, false
+			);
+
+			return handle;
+		} else {
+            // The real deal
+            return GetDownloadablesHandle(handleId);
+        }
+	}
+
+	/// <summary>
+	/// Given a skin and a list of pets, create a list with all the powers derived from such equipment.
+	/// </summary>
+	/// <returns>List of power skus derived from given equipment. The first entry will correspond to the skin power.</returns>
+	/// <param name="_skinSku">Skin sku.</param>
+	/// <param name="_pets">Pets skus.</param>
+	private List<string> GetPowersList(string _skinSku, List<string> _pets) {
+		// Aux vars
+		List<string> powers = new List<string>();
+		DefinitionNode def = null;
+
+		// Check skin power
+		def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _skinSku);
+		if(def != null) {
+			powers.Add(def.GetAsString("powerup"));
+		}
+
+		// Check pets powers
+		for(int i = 0; i < _pets.Count; i++) {
+			def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _pets[i]);
+			if(def != null) {
+				powers.Add(def.Get("powerup"));
+			}
+		}
+
+		// Done!
+		return powers;
+	}
+
+#endregion
 }

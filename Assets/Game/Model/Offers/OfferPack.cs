@@ -831,7 +831,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
-	public virtual PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
+	public virtual PopupController EnqueuePopupIfPossible(WhereToShow _areaToCheck) {
 		// Just in case
 		if(m_def == null) return null;
 
@@ -859,18 +859,10 @@ public class OfferPack {
 		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
 		// All checks passed!
-		// Show popup
+		// Put popup to the queue and return
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
-		popup.Open();
-
-        // Tracking
-        // The experiment name is used as offer name        
-        HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_def), m_def.GetAsString("type"));
-
-		// Update control vars and return
-		m_viewsCount++;
-		m_lastViewTimestamp = serverTime;
+		PopupManager.EnqueuePopup(popup);
 		return popup;
 	}
 
@@ -901,6 +893,19 @@ public class OfferPack {
 
 		// Notify game
 		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
+	}
+
+	/// <summary>
+	/// The pack has been displayed in a featured popup.
+	/// </summary>
+	public void NotifyPopupDisplayed() {
+		// Tracking
+		// The experiment name is used as offer name        
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_def), m_def.GetAsString("type"));
+
+		// Update control vars and return
+		m_viewsCount++;
+		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
 	}
 	#endregion
 

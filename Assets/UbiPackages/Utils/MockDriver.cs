@@ -94,7 +94,7 @@ public class MockDriver
         }
     }
 
-    public EExceptionType GetExceptionTypeToThrow(EOp op, string path)
+    public virtual EExceptionType GetExceptionTypeToThrow(EOp op, string path)
     {
         EExceptionType returnValue = EExceptionType.None;
         if (m_getExceptionTypeToThrowDelegate != null)

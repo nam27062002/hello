@@ -34,12 +34,15 @@ public class PopupShop : MonoBehaviour {
 		OFFERS_FIRST
 	};
 
+	// Order must match tab system setup!
 	public enum Tabs {
+		OFFERS,
 		PC,
 		SC,
-		OFFERS,
 		COUNT
 	};
+
+	private Tabs DEFAULT_INITIAL_TAB = Tabs.OFFERS;
 
 	//------------------------------------------------------------------//
 	// MEMBERS															//
@@ -143,35 +146,42 @@ public class PopupShop : MonoBehaviour {
 		);
 
 		// Select initial tab
-		int initialTab = m_tabs.GetScreenIndex(m_tabs.initialScreen);
+		Tabs goToTab = DEFAULT_INITIAL_TAB;
 		switch(_mode) {
+			default:
 			case Mode.DEFAULT: {
 				// Is initial tab overriden?
 				if(m_initialTab != Tabs.COUNT) {
-					initialTab = (int)m_initialTab;
+					goToTab = m_initialTab;
 				} else {
-					initialTab = (int)Tabs.PC;	// Default behaviour
+					goToTab = DEFAULT_INITIAL_TAB;	// Default behaviour
 				}
 			} break;
 
 			case Mode.SC_ONLY: {
-				initialTab = (int)Tabs.SC; 
+				goToTab = Tabs.SC; 
 			} break;
 
 			case Mode.PC_ONLY: {
-				initialTab = (int)Tabs.PC;
+				goToTab = Tabs.PC;
 			} break;
 
 			case Mode.OFFERS_FIRST: {
-				initialTab = (int)Tabs.OFFERS;
+				goToTab = Tabs.OFFERS;
 			} break;
 		}
 
-        m_trackScreenChange = false;
+		// If initial tab is set to offers, but there are no active offers, fallback to PC tab
+		if(goToTab == Tabs.OFFERS && OffersManager.activeOffers.Count == 0) {
+			goToTab = Tabs.PC;
+		}
+
+		m_trackScreenChange = false;
         m_lastTrackedScreen = -1;
+
 		// Go to initial tab
-		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);	// [AOC] The shop popup is keep cached, so if the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
-		m_tabs.GoToScreen(initialTab);
+		m_tabs.GoToScreen(-1, NavigationScreen.AnimType.NONE);	// [AOC] The shop popup is kept cached, so if the last open tab matches the initial tab, animation wont be triggered. Force it by doing this.
+		m_tabs.GoToScreen((int)goToTab);
 	}
 
 	//------------------------------------------------------------------//

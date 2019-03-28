@@ -20,11 +20,11 @@ public class UTAddressablesEditorParseABs : UnitTest
 
         EditorAddressablesManager.ParseAssetBundlesOutput output;
         UTAddressablesEditorParseABs test;
-                
+
         //----------------------------------------------
         // SUCCESS
         //----------------------------------------------                
-
+        
         // No folder with catalog and manifest
         output = new EditorAddressablesManager.ParseAssetBundlesOutput();
         test = new UTAddressablesEditorParseABs();
@@ -99,7 +99,7 @@ public class UTAddressablesEditorParseABs : UnitTest
         output.m_LocalABList = new List<string>(new string[] { AB_SCENE_CUBES_NAME, AB_AB_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("01", "02_local", output);
-        batch.AddTest(test, true);
+        batch.AddTest(test, true);        
 
         // Only AB_AB_NAME defined in addressables catalog and defined as local
         // AB_AB_NAME doesn't have any dependencies.
@@ -109,19 +109,19 @@ public class UTAddressablesEditorParseABs : UnitTest
         output.m_LocalABList = new List<string>(new string[] { AB_AB_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("01", "04_local", output);
-        batch.AddTest(test, true);
-
+        batch.AddTest(test, true);        
+        
         // Only AB_AB_NAME defined in addressables catalog and defined as local.
         // AB_AB_NAME depends on AB_MATERIALS_NAME
         // AB_SCENE_CUBES_NAME is not used but is defined in the list of local ABs
         output = new EditorAddressablesManager.ParseAssetBundlesOutput();
-        output.m_LocalABNotUsedList = new List<string>(new string[] { AB_SCENE_CUBES_NAME });
-        output.m_ABInManifestNotUsed = new List<string>(new string[] { AB_SCENE_CUBES_NAME });
-        output.m_LocalABList = new List<string>(new string[] { AB_AB_NAME, AB_MATERIALS_NAME });
+        output.m_LocalABNotUsedList = new List<string>(new string[] { });
+        output.m_ABInManifestNotUsed = new List<string>(new string[] { });
+        output.m_LocalABList = new List<string>(new string[] { AB_AB_NAME, AB_MATERIALS_NAME, AB_SCENE_CUBES_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("02", "05_local", output);
         batch.AddTest(test, true);
-
+        
         // AB_AB_NAME and AB_SCENE_CUBES_NAME defined in addressables catalog
         // AB_AB_NAME defined as local.        
         // AB_AB_NAME depends on AB_MATERIALS_NAME        
@@ -152,15 +152,15 @@ public class UTAddressablesEditorParseABs : UnitTest
         output.m_LocalABList = new List<string>(new string[] { AB_AB_NAME, AB_MATERIALS_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("02", "07_local", output);
-        batch.AddTest(test, true);
+        batch.AddTest(test, true);        
 
         // AB_AB_NAME, AB_SCENE_CUBES_NAME and AB_UNKNOWN_NAME defined in addressables catalog
         // AB_AB_NAME and AB_NOT_USED_NAME defined as local.     
         // AB_AB_NAME doesn't depend on AB_MATERIALS_NAME    
-        // AB_UNKNOWN_NAME is not in manifest
+        // AB_UNKNOWN_NAME and AB_NOT_USED_NAME  are not in manifest
         output = new EditorAddressablesManager.ParseAssetBundlesOutput();
-        output.m_ABInUsedNotInManifest = new List<string>(new string[] { AB_UNKNOWN_NAME });
-        output.m_LocalABNotUsedList = new List<string>(new string[] { AB_NOT_USED_NAME });
+        output.m_ABInUsedNotInManifest = new List<string>(new string[] { AB_UNKNOWN_NAME, AB_NOT_USED_NAME });
+        output.m_LocalABNotUsedList = new List<string>(new string[] { });
         output.m_RemoteABList = new List<string>(new string[] { AB_SCENE_CUBES_NAME });
         output.m_LocalABList = new List<string>(new string[] { AB_AB_NAME });
         test = new UTAddressablesEditorParseABs();
@@ -170,7 +170,7 @@ public class UTAddressablesEditorParseABs : UnitTest
         //----------------------------------------------
         // FAIL
         //----------------------------------------------                
-
+                
         // No catalog and no manifest files in an existing folder
         output = new EditorAddressablesManager.ParseAssetBundlesOutput();
         output.m_RemoteABList = new List<string>(new string[] { AB_SCENE_CUBES_NAME, AB_AB_NAME });
@@ -184,7 +184,7 @@ public class UTAddressablesEditorParseABs : UnitTest
         output.m_RemoteABList = new List<string>(new string[] { AB_SCENE_CUBES_NAME });
         test = new UTAddressablesEditorParseABs();
         test.Setup("01", "02", output);        
-        batch.AddTest(test, false);        
+        batch.AddTest(test, false);               
 
         return batch;
     }
@@ -231,7 +231,7 @@ public class UTAddressablesEditorParseABs : UnitTest
             string editorCatalogPath = m_addressablesRootPath + "/" + EditorAddressablesManager.ADDRESSABLES_EDITOR_CATALOG_FILENAME;
             if (File.Exists(editorCatalogPath))
             {
-                editorCatalog = EditorAddressablesManager.GetCatalog(editorCatalogPath, true);
+                editorCatalog = EditorAddressablesManager.GetEditorCatalogFromPath(editorCatalogPath, true);
             }
         }
 

@@ -17,22 +17,22 @@ public class TournamentBuildScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SeparatorAttribute("Dragon")]
+	[Separator("Dragon")]
 	[SerializeField] private MenuDragonLoader 	m_dragonLoader;
 	[SerializeField] private Localizer 			m_dragonName;
 	[SerializeField] private Localizer 			m_dragonSkin;
 	[SerializeField] private PowerIcon 			m_dragonPower;
 
-	[SeparatorAttribute("Pets")]
+	[Separator("Pets")]
 	[SerializeField] private PetSlot[] 			m_petSlots;
 	[SerializeField] private GameObject			m_petEditRoot;
 	[SerializeField] private Transform[]		m_petEditSlots;
 
-	[SeparatorAttribute("Tournament Info")]
+	[Separator("Tournament Info")]
 	[SerializeField] private TextMeshProUGUI	m_goalText;
 	[SerializeField] private ModifierIcon[] 	m_modifier;
 
-	[SeparatorAttribute("Enter button")]
+	[Separator("Enter button")]
 	[SerializeField] private Button 			m_enterCurrencyBtn;
 	[SerializeField] private Button 			m_enterFreeBtn;
 	[SerializeField] private Button 			m_enterAdBtn;
@@ -40,6 +40,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
 	[SerializeField] private Slider				m_nextFreeSlider;
 
+	[Separator("Others")]
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+	public AssetsDownloadFlow assetsDownloadFlow {
+		get { return m_assetsDownloadFlow; }
+	}
 
 	//------------------------------------------------------------------------//
 	private HDTournamentManager 	m_tournament;
@@ -228,6 +233,22 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Check downloadable group status for this tournament's dragon.
+	/// </summary>
+	/// <param name="_checkPopups">Open popups if needed?</param>
+	private void CheckDownloadFlow(bool _checkPopups = false) {
+		// Get handler for this tournament's dragon
+		Downloadables.Handle handle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
+
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -239,6 +260,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 		Refresh();
 
 		m_waitingRewardsData = false;
+
+		// Check OTA for this dragon
+		CheckDownloadFlow(false);   // Don't trigger popups, the menu interstitial popups controller will take care of it
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
@@ -273,6 +297,10 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnStartPaying() {
+		// If needed, show assets download popup and don't continue
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+		if(popup != null) return;
+
 		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
 		} 
@@ -392,7 +420,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 		}
 	}
 
@@ -413,6 +442,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
+			PopupManager.Clear(true);
             InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
@@ -422,6 +452,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
+
+			// Go back to dragon selection screen
+			PopupManager.Clear(true);
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622

@@ -50,10 +50,9 @@ public class AddressablesFromEditorProvider : AddressablesProvider
         return ProcessAsyncOperation(op, AddressablesError.EType.Error_Invalid_Scene);
     }
 
-    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    public override object LoadAsset(AddressablesCatalogEntry entry)
     {
-        Object o = LoadAssetObject(entry);
-        return (T)System.Convert.ChangeType(o, typeof(T));
+        return LoadAssetObject(entry);        
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)

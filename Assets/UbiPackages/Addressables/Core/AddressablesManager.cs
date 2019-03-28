@@ -9,6 +9,21 @@ using UnityEngine.SceneManagement;
 public class AddressablesManager
 {
 #if UNITY_EDITOR
+    public static AddressablesCatalog GetEditorCatalog(bool useGenerated = true)
+    {
+        string path;
+        if (useGenerated && File.Exists(ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH))
+        {
+            path = ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH;
+        }
+        else
+        {
+            path = ADDRESSABLES_EDITOR_CATALOG_PATH;
+        }
+
+        return GetCatalog(path, true);
+    }
+
     public static AddressablesCatalog GetCatalog(string catalogPath, bool editorMode)
     {        
         AddressablesCatalog returnValue = null;
@@ -21,13 +36,17 @@ public class AddressablesManager
         JSONNode catalogJSON = JSON.Parse(content);
         returnValue = new AddressablesCatalog(editorMode);
         returnValue.Load(catalogJSON, sm_logger);
-
+        
         return returnValue;
-    }
+    }    
 
     public const string ADDRESSSABLES_CATALOG_FILENAME = "addressablesCatalog.json";
     public const string ADDRESSABLES_EDITOR_CATALOG_FILENAME = "editor_" + ADDRESSSABLES_CATALOG_FILENAME;
-    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = "Assets/Editor/Addressables/" + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+
+    public const string ADDRESSABLES_EDITOR_PATH = "Assets/Editor/Addressables/";
+    public const string ADDRESSABLES_EDITOR_CATALOG_PATH = ADDRESSABLES_EDITOR_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
+    public const string ADDRESSABLES_EDITOR_GENERATED_PATH = ADDRESSABLES_EDITOR_PATH + "generated/";
+    public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = ADDRESSABLES_EDITOR_GENERATED_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
     private const string EDITOR_MODE_KEY = "EditorMode";
 
@@ -59,7 +78,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         sm_logger = logger;
 
@@ -69,8 +88,11 @@ public class AddressablesManager
         // editor catalog is used instead in editor mode
         if (EditorMode)
         {
-            m_catalog = GetCatalog(ADDRESSABLES_EDITOR_CATALOG_PATH, true);
+            m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
+
+            // We don't want downloadables to download when editor mode is enabled
+            downloadablesCatalogJSON = null;
         }
 #endif
         if (buildCatalog)
@@ -82,13 +104,13 @@ public class AddressablesManager
             }
 
             m_catalog.Load(catalogJSON, logger);
-        }
+        }        
 
         // Loads the providers
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, tracker, logger);
+        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -119,20 +141,21 @@ public class AddressablesManager
     public bool IsInitialized()
     {
         return m_isInitialized;
-    }   
+    }
 
     /// <summary>
     /// Returns the list of dependencies (typically asset bundles) ids required to load the addressable with <c>id</c> as an identifier.
     /// </summary>
     /// <param name="id">Addressable id which dependencies are requested.</param>    
-    public List<string> GetDependencyIds(string id)
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
+    public List<string> GetDependencyIds(string id, string variant = null)
     {
         List<string> returnValue = null;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.GetDependencyIds(entry);
         }
         else
@@ -147,7 +170,8 @@ public class AddressablesManager
     /// Returns the list of dependencies (typically asset bundles) ids required to load the addressables which identifiers are passed as a parameter in <c>id</c>.
     /// </summary>
     /// <param name="id">List of addressable ids which dependencies are requested.</param>    
-    public List<string> GetDependencyIdsList(List<string> ids)
+    /// <param name="variant">Variant of the addressables which dependencies are requested.</param>    
+    public List<string> GetDependencyIdsList(List<string> ids, string variant = null)
     {
         List<string> returnValue = null;
 
@@ -162,7 +186,7 @@ public class AddressablesManager
                 int count = ids.Count;
                 for (int i = 0; i < count; i++)
                 {
-                    provider = Providers_GetProvider(ids[i], out entry);
+                    provider = Providers_GetProvider(ids[i], variant, out entry);
                     UbiListUtils.AddRange(returnValue, provider.GetDependencyIds(entry), false, true);
                 }
             }
@@ -179,14 +203,15 @@ public class AddressablesManager
     /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
     /// </summary>
     /// <param name="id">Resource id (either scene or asset)</param>
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <param name="track">Whether or not the result should be tracked</param>
     /// <returns>Whether or not the resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded</returns>
-    public bool IsResourceAvailable(string id, bool track = false)
+    public bool IsResourceAvailable(string id, string variant = null, bool track = false)
     {        
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             return provider.IsResourceAvailable(entry, track);            
         }
         else
@@ -195,7 +220,7 @@ public class AddressablesManager
         }     
     }
 
-    public bool IsResourceListAvailable(List<string> ids, bool track = false)
+    public bool IsResourceListAvailable(List<string> ids, string variant = null, bool track = false)
     {
         bool returnValue = false;
 
@@ -208,9 +233,26 @@ public class AddressablesManager
                 for (int i = 0; i < count; i++)
                 {
                     // IsResourceAvailable() must be called for every id so that the result can be tracked if it needs to
-                    returnValue = IsResourceAvailable(ids[i], track) && returnValue;
+                    returnValue = IsResourceAvailable(ids[i], variant, track) && returnValue;
                 }
             }        
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Returns whether or not there are variants defined for the addressable which id is passed as a parameter.
+    /// </summary>
+    /// <param name="id">Addressable id</param>
+    /// <returns>Returns whether or not there are variants defined for the addressable which id is passed as a parameter.</returns>
+    public bool HasResourceVariants(string id)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            returnValue = m_catalog.HasEntryVariants(id);
         }
 
         return returnValue;
@@ -220,15 +262,16 @@ public class AddressablesManager
     /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
     /// </summary>
     /// <param name="id">Addressable id which dependencies are requested to be downloaded</param>
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public AddressablesOp DownloadDependenciesAsync(string id)
+    public AddressablesOp DownloadDependenciesAsync(string id, string variant = null)
     {
         AddressablesOp returnValue;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.DownloadDependenciesAsync(entry);
 
             Ops_AddOp(returnValue);
@@ -245,15 +288,16 @@ public class AddressablesManager
     /// Loads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
     /// </summary>
     /// <param name="id">Addressable id which dependencies are requested to be loaded</param>
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public AddressablesOp LoadDependenciesAsync(string id)
+    public AddressablesOp LoadDependenciesAsync(string id, string variant = null)
     {
         AddressablesOp returnValue;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadDependenciesAsync(entry);
 
             Ops_AddOp(returnValue);
@@ -267,9 +311,42 @@ public class AddressablesManager
     }
 
     /// <summary>
+    /// Loads asynchronously a dependency (typically asset bundles).
+    /// </summary>
+    /// <param name="id">Dependency id to load.</param>    
+    /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
+    public AddressablesOp LoadDependencyIdAsync(string dependencyId)
+    {
+        AddressablesOp returnValue;
+
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                returnValue = new AddressablesOpResult();
+                returnValue.Setup(null, null);
+            }
+            else
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                returnValue = m_providerFromAB.LoadDependencyIdAsync(dependencyId);
+                Ops_AddOp(returnValue);
+            }
+        }
+        else
+        {
+            returnValue = Errors_ProcessManagerNotInitialized(true);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
     /// Loads asynchronously a list of dependencies (typically asset bundles).
     /// </summary>
-    /// <param name="id">List of dependency ids to load.</param>
+    /// <param name="id">List of dependency ids to load.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
     public AddressablesOp LoadDependencyIdsListAsync(List<string> dependencyIds)
     {
@@ -277,9 +354,19 @@ public class AddressablesManager
 
         if (IsInitialized())
         {
-            // Dependencies are only handled by provider from Asset Bundles
-            returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);            
-            Ops_AddOp(returnValue);
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                returnValue = new AddressablesOpResult();
+                returnValue.Setup(null, null);
+            }
+            else
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                returnValue = m_providerFromAB.LoadDependencyIdsListAsync(dependencyIds);
+                Ops_AddOp(returnValue);
+            }
         }
         else
         {
@@ -293,27 +380,157 @@ public class AddressablesManager
     /// Unloads the dependencies (typically asset bundles if the addressable is stored in an asset bundle) that were loaded in order to be able to load the addressable with <c>id</c> as an identifier.
     /// </summary>
     /// <param name="id">Addressable id which dependencies are requested to be unloaded</param>
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public void UnloadDependencies(string id)
+    public void UnloadDependencies(string id, string variant)
     {        
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             provider.UnloadDependencies(entry);            
         }
         else
         {            
             Errors_ProcessManagerNotInitialized(false);           
         }        
-    }  
-    
+    }
+
+    public void UnloadDependencyId(string dependencyId, bool unloadItsDependenciesToo)
+    {
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadDependencyId(dependencyId, unloadItsDependenciesToo);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
     public void UnloadDependencyIdsList(List<string> dependencyIds)
     {
         if (IsInitialized())
         {
-            // Dependencies are only handled by provider from Asset Bundles
-            m_providerFromAB.UnloadDependencyIdsList(dependencyIds);                        
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadDependencyIdsList(dependencyIds);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
+    {
+        List<string> returnValue = null;
+
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
+                if (abGroup != null)
+                {
+                    returnValue = abGroup.AssetBundleIds;
+                }
+            }            
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    public AssetBundlesGroup GetAssetBundlesGroup(string groupId)
+    {
+        AssetBundlesGroup returnValue = null;
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }    
+
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                groupId = null;
+            }
+#endif
+
+            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (EditorMode)
+            {
+                groupIds = null;
+            }
+#endif
+
+            returnValue = m_providerFromAB.CreateDownloadablesHandle(groupIds);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <param name="priority"></param>
+    public void SetDownloadableGroupPriority(string groupId, int priority)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadablesGroupPriority(groupId, priority);
         }
         else
         {
@@ -324,16 +541,17 @@ public class AddressablesManager
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    
-    /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>        
     /// <returns><c>true</c> if the scene has been loaded successfully.</returns>
-    public virtual bool LoadScene(string id, LoadSceneMode mode)
+    public virtual bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         bool returnValue = false;
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadScene(entry, mode);
         }        
         else 
@@ -347,17 +565,18 @@ public class AddressablesManager
     /// <summary>
     /// Loads asynchronously the scene corresponding to the addressable id <c>id</c>. If this addressable has some dependencies then they'll be downloaded and loaded before loading it, if required.   
     /// </summary>    
-    /// <param name="Id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="id">Addressable id corresponding to the scene to load.</param>    
+    /// <param name="variant">Variant of the addressable which dependencies are requested.</param>    
     /// <param name="mode">Allows you to specify whether or not to load the scene additively.</param>            
     /// <returns>Returns an <c>AddressablesOp</c> to handle the operation.</returns>
-    public virtual AddressablesOp LoadSceneAsync(string id, LoadSceneMode mode = LoadSceneMode.Single)
+    public virtual AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         AddressablesOp returnValue;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadSceneAsync(entry, mode);
 
             Ops_AddOp(returnValue);
@@ -370,14 +589,14 @@ public class AddressablesManager
         return returnValue;
     }    
 
-    public virtual AddressablesOp UnloadSceneAsync(string id)
+    public virtual AddressablesOp UnloadSceneAsync(string id, string variant = null)
     {
         AddressablesOp returnValue;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue =  provider.UnloadSceneAsync(entry);
 
             Ops_AddOp(returnValue);
@@ -390,14 +609,14 @@ public class AddressablesManager
         return returnValue;
     }   
     
-    public T LoadAsset<T>(string id)
-    {
+    public T LoadAsset<T>(string id, string variant = null)
+    {        
         T returnValue = default(T);
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadAsset<T>(entry);            
         }
         else
@@ -408,14 +627,31 @@ public class AddressablesManager
         return returnValue;
     }
 
-    public AddressablesOp LoadAssetAsync(string id)
+    public object LoadAsset(string id, string variant = null)
+    {
+        object returnValue = null;
+        if (IsInitialized())
+        {
+            AddressablesCatalogEntry entry;
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
+            returnValue = provider.LoadAsset(entry);
+        }
+        else
+        {
+            LogErrorManagerNotInitialized();
+        }
+
+        return returnValue;
+    }
+
+    public AddressablesOp LoadAssetAsync(string id, string variant = null)
     {
         AddressablesOp returnValue;
 
         if (IsInitialized())
         {
             AddressablesCatalogEntry entry;
-            AddressablesProvider provider = Providers_GetProvider(id, out entry);
+            AddressablesProvider provider = Providers_GetProvider(id, variant, out entry);
             returnValue = provider.LoadAssetAsync(entry);
 
             Ops_AddOp(returnValue);
@@ -471,26 +707,7 @@ public class AddressablesManager
         }
     }
 
-    protected virtual void ExtendedUpdate() {}
-
-    #region areas
-    /// <summary>
-    /// Returns the list of dependencies (typically asset bundles) ids that need the area with <c>id</c> as an identifier.
-    /// </summary>
-    /// <param name="id">Area id which dependencies are requested.</param>    
-    public List<string> Areas_GetDependencyIds(string areaId)
-    {
-        List<string> returnValue = null;   
-        AddressablesCatalogArea area = m_catalog.GetArea(areaId);
-        if (area != null)
-        {
-            returnValue = m_providerFromAB.GetDependenciesIncludingSelfList(area.AssetBundleIds);                        
-        }
-
-        return returnValue;
-    }
-
-    #endregion
+    protected virtual void ExtendedUpdate() {}    
 
     #region ops
     private List<AddressablesOp> m_ops;
@@ -569,13 +786,15 @@ public class AddressablesManager
     private AddressablesFromEditorProvider m_providerFromEditor;
 #endif
 
-    private AddressablesProvider Providers_GetProvider(string id, out AddressablesCatalogEntry entry)
+    private AddressablesProvider Providers_GetProvider(string id, string variant, out AddressablesCatalogEntry entry)
     {
         AddressablesProvider returnValue = m_providerFromResources;
 
-        entry = m_catalog.GetEntry(id);
+        entry = m_catalog.GetEntry(id, variant);
 
+#if UNITY_EDITOR
         bool entryWasFound = (entry != null);
+#endif
 
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)

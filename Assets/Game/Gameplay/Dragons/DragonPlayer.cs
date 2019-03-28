@@ -153,6 +153,12 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		get{ return m_dragonHeatlhBehaviour; }
 	}
+    
+    private DragonShieldBehaviour m_dragonShieldBehaviour = null;
+    public DragonShieldBehaviour dragonShieldBehaviour
+    {
+        get{ return m_dragonShieldBehaviour; }
+    }
 
 	private DragonBoostBehaviour m_dragonBoostBehaviour = null;
 	public DragonBoostBehaviour dragonBoostBehaviour
@@ -169,6 +175,16 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		get{ return m_breathBehaviour.GetSuperFuryProgression(); }
 	}
+    
+    public float shield
+    {
+        get{ return m_dragonShieldBehaviour != null ? m_dragonShieldBehaviour.m_currentShield : 0; }
+    }
+    
+    public float shieldMax
+    {
+        get{ return m_dragonShieldBehaviour != null ? m_dragonShieldBehaviour.m_maxShield : 0; }
+    }
 
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
@@ -284,6 +300,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
+        m_dragonShieldBehaviour = GetComponent<DragonShieldBehaviour>();
 		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
@@ -699,12 +716,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 
 		// Move to position
 		if(spawnPointObj != null) {
-			transform.position = spawnPointObj.transform.position;
-			/*
-			if (InstanceManager.pet != null) {
-				InstanceManager.pet.transform.position = spawnPointObj.transform.position;
-			}
-			*/
+			m_dragonMotion.MoveToSpawnPosition(spawnPointObj.transform.position);
 		}
 	}
 

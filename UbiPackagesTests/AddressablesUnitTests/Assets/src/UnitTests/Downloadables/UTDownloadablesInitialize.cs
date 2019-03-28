@@ -272,7 +272,7 @@ public class UTDownloadablesInitialize : UnitTest
         reader.Close();
 
         JSONNode catalogJSON = JSON.Parse(content);        
-        m_manager.Initialize(catalogJSON);        
+        m_manager.Initialize(catalogJSON, null);        
     }
 
     private void OnDone()

@@ -14,14 +14,28 @@ public class BasicAddressablesTestController : MonoBehaviour
         Sync,
         Async        
     };
-    
+
+    private enum EAddressableIds
+    {
+        HDCube,
+        UbiCube
+    };
+
     void Start ()
     {
         Ui_Init();
+        //LoadUbiCubeFromtxtAsync();
     }
 	
 	void Update ()
     {
+        if (m_request != null && m_request.isDone)
+        {
+            AssetBundle ab = m_request.assetBundle;
+            Object ubiCube = ab.LoadAsset("UbiCube");
+            Instantiate(ubiCube);
+        }
+
         m_addressablesManager.Update();
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -38,6 +52,27 @@ public class BasicAddressablesTestController : MonoBehaviour
 #endif       
             AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
         }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            LoadUbiCubeFromTxt();
+        }
+    }
+
+    private void LoadUbiCubeFromTxt()
+    {
+        TextAsset abAsText = (TextAsset)Resources.Load("Addressables/AssetBundles/asset_cubes");
+        byte[] abBytes = abAsText.bytes;
+        AssetBundle ab = AssetBundle.LoadFromMemory(abBytes);
+        Object ubiCube = ab.LoadAsset("UbiCube");
+        Instantiate(ubiCube);
+    }
+
+    AssetBundleCreateRequest m_request;
+    private void LoadUbiCubeFromtxtAsync()
+    {
+        TextAsset abAsText = (TextAsset)Resources.Load("Addressables/AssetBundles/asset_cubes");
+        byte[] abBytes = abAsText.bytes;
+        m_request = AssetBundle.LoadFromMemoryAsync(abBytes);        
     }
 
     void OnApplicationQuit()
@@ -83,8 +118,9 @@ public class BasicAddressablesTestController : MonoBehaviour
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);        
 
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, tracker, logger);
+        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);
 
+        Ui_UpdateResolutionDropdown();
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;
         //AssetBundlesManager.Instance.GetMockNetworkDriver().MockNetworkReachability = NetworkReachability.NotReachable;
     }
@@ -105,6 +141,34 @@ public class BasicAddressablesTestController : MonoBehaviour
 
     public bool SceneCubes_IsLoaded { get; set; }
 
+    private string SceneCubes_GetSceneId()
+    {
+        return SCENE_CUBES_SCENE_NAME;
+    }
+
+    private string SceneCubes_GetVariant()
+    {
+        string returnValue = null;
+
+        //if (m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()))
+        {
+            switch (m_uiSceneCubesResolutionDropdown.value)
+            {
+                case 0:
+                    returnValue = "low";
+                    break;
+
+                case 1:
+                    returnValue = "high";
+                    break;
+            }
+        }
+
+        //returnValue = null;
+
+        return returnValue;
+    }
+
     public void SceneCubes_OnAdd()
     {
         if (!SceneCubes_IsLoaded)
@@ -117,12 +181,12 @@ public class BasicAddressablesTestController : MonoBehaviour
             switch (mode)
             {
                 case ELoadResourceMode.Sync:
-                    op = m_addressablesManager.DownloadDependenciesAsync(SCENE_CUBES_SCENE_NAME);
+                    op = m_addressablesManager.DownloadDependenciesAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());
                     op.OnDone = Scene_OnDependenciesDownloaded;
                     break;
 
                 case ELoadResourceMode.Async:
-                    op = m_addressablesManager.LoadSceneAsync(SCENE_CUBES_SCENE_NAME, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+                    op = m_addressablesManager.LoadSceneAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant(), UnityEngine.SceneManagement.LoadSceneMode.Additive);
                     op.OnDone = SceneCubes_OnDoneByOp;
                     break;
             }                                    
@@ -133,7 +197,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            op = m_addressablesManager.LoadDependenciesAsync(SCENE_CUBES_SCENE_NAME);
+            op = m_addressablesManager.LoadDependenciesAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());
             op.OnDone = Scene_OnDependenciesLoaded;
         }
         else
@@ -146,7 +210,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            m_addressablesManager.LoadScene(SCENE_CUBES_SCENE_NAME, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            m_addressablesManager.LoadScene(SceneCubes_GetSceneId(), SceneCubes_GetVariant(), UnityEngine.SceneManagement.LoadSceneMode.Additive);
             SceneCubes_OnDone(null);
         }
         else
@@ -176,35 +240,63 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (SceneCubes_IsLoaded)
         {
-            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SCENE_CUBES_SCENE_NAME);            
+            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SceneCubes_GetSceneId(), SceneCubes_GetVariant());            
             op.OnDone = SceneCubes_OnDoneByOp;                        
         }
     }
     #endregion
 
-    #region asset_cubes    
-    private static string ASSET_CUBES_NAME = "HDCube";
+    #region asset_cubes        
 
     public void AssetCubes_Init()
-    {     
+    {        
     }    
+
+    private string AssetCubes_GetAssetId()
+    {       
+        return ((EAddressableIds)m_uiAssetCubesAddressableIds.value).ToString();
+    }
+
+    private string AssetCubes_GetVariant()
+    {
+        string returnValue = null;
+
+        if (m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()))        
+        {
+            switch (m_uiAssetCubesResolutionDropdown.value)
+            {
+                case 0:
+                    returnValue = "low";
+                    break;
+
+                case 1:
+                    returnValue = "high";
+                    break;
+            }
+        }
+
+        return returnValue;
+    }
 
     public void AssetCubes_OnAdd()
     {        
         Ui_SetEnabled(false);
         Ui_SetOperationResultProcessing();
 
+        string assetId = AssetCubes_GetAssetId();
+        string variant = AssetCubes_GetVariant();
+
         ELoadResourceMode mode = GetLoadResourceModeFromDropdown(m_uiAssetCubesDropdown);
         AddressablesOp op;
         switch (mode)
         {
             case ELoadResourceMode.Sync:
-                op = m_addressablesManager.DownloadDependenciesAsync(ASSET_CUBES_NAME);                
+                op = m_addressablesManager.DownloadDependenciesAsync(assetId);                
                 op.OnDone = AssetCubes_OnDependenciesDownloaded;
                 break;            
             
             case ELoadResourceMode.Async:
-                op = m_addressablesManager.LoadAssetAsync(ASSET_CUBES_NAME);
+                op = m_addressablesManager.LoadAssetAsync(assetId, variant);
                 op.OnDone = AssetCubes_OnDoneByOp;
                 break;
         }        
@@ -214,7 +306,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            op = m_addressablesManager.LoadDependenciesAsync(ASSET_CUBES_NAME);
+            op = m_addressablesManager.LoadDependenciesAsync(AssetCubes_GetAssetId(), AssetCubes_GetVariant());
             op.OnDone = AssetCubes_OnDependenciesLoaded;
         }
         else
@@ -227,7 +319,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         if (op.Error == null)
         {
-            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(ASSET_CUBES_NAME);
+            GameObject prefab = m_addressablesManager.LoadAsset<GameObject>(AssetCubes_GetAssetId(), AssetCubes_GetVariant());
             AssetCubes_InstantiateCube(prefab);
             AssetCubes_OnDone(null);
         }
@@ -263,25 +355,18 @@ public class BasicAddressablesTestController : MonoBehaviour
     {        
         Ui_SetEnabled(true);
         Ui_SetOperationResult(error);
-    }
-
-    /*
-    private void SceneCubes_OnRemove()
-    {
-        if (SceneCubes_IsLoaded)
-        {
-            AddressablesOp op = m_addressablesManager.UnloadSceneAsync(SCENE_CUBES_SCENE_NAME);
-            op.OnDone = SceneCubes_OnDoneByOp;
-        }
-    }
-    */
+    }  
     #endregion
 
 
     #region ui
     public List<UIButton> m_uiButtons;    
     public Dropdown m_uiSceneCubesDropdown;
+    public Dropdown m_uiSceneCubesResolutionDropdown;
+
     public Dropdown m_uiAssetCubesDropdown;
+    public Dropdown m_uiAssetCubesAddressableIds;
+    public Dropdown m_uiAssetCubesResolutionDropdown;
     public Text m_uiOperationResult;    
 
     private void Ui_Init()
@@ -323,15 +408,27 @@ public class BasicAddressablesTestController : MonoBehaviour
         Ui_SetOperationResultEmpty();        
         Ui_SetupDropdownWithLoadResourceModeValues(m_uiSceneCubesDropdown);
         Ui_SetupDropdownWithLoadResourceModeValues(m_uiAssetCubesDropdown);
+        Ui_SetupDropdownWithEnumValues(m_uiAssetCubesAddressableIds, System.Enum.GetNames(typeof(EAddressableIds)));
+
+        m_uiAssetCubesAddressableIds.onValueChanged.AddListener(delegate { Ui_OnAddressableIdChanged(m_uiAssetCubesAddressableIds); });
+    }
+    
+    private void Ui_OnAddressableIdChanged(Dropdown dropDown)
+    {
+        Ui_UpdateResolutionDropdown();
     }
 
-    private void Ui_SetupDropdownWithLoadResourceModeValues(Dropdown value)
+    private void Ui_UpdateResolutionDropdown()
+    {
+        m_uiAssetCubesResolutionDropdown.gameObject.SetActive(m_addressablesManager.HasResourceVariants(AssetCubes_GetAssetId()));
+    }
+
+    private void Ui_SetupDropdownWithEnumValues(Dropdown value, string[] names)
     {
         if (value != null)
         {
             value.ClearOptions();
-
-            string[] names = System.Enum.GetNames(typeof(ELoadResourceMode));
+            
             if (names != null)
             {
                 List<Dropdown.OptionData> optionsList = new List<Dropdown.OptionData>();
@@ -349,6 +446,12 @@ public class BasicAddressablesTestController : MonoBehaviour
         }
     }
 
+    private void Ui_SetupDropdownWithLoadResourceModeValues(Dropdown value)
+    {
+        string[] names = System.Enum.GetNames(typeof(ELoadResourceMode));
+        Ui_SetupDropdownWithEnumValues(value, names);
+    }    
+
     private void Ui_SetEnabled(bool value)
     {
         if (m_uiButtons != null)
@@ -360,7 +463,7 @@ public class BasicAddressablesTestController : MonoBehaviour
                 switch (m_uiButtons[i].m_id)
                 {
                     case UIButton.EId.AddSceneCubes:
-                        thisValue = !SceneCubes_IsLoaded;
+                        thisValue = !SceneCubes_IsLoaded;                        
                         break;
 
                     case UIButton.EId.RemoveSceneCubes:

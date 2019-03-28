@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Simple manager to load and open popups.
 /// TODO:
-/// - Allow popup queues
+/// - Priority queue
 /// - Optional delay before opening a popup
 /// </summary>
 public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadcastListener {
@@ -44,6 +44,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	[SerializeField] private Queue<ResourceRequest> m_loadingQueue = new Queue<ResourceRequest>();
 	[SerializeField] private HashSet<PopupController> m_openedPopups = new HashSet<PopupController>();
 	[SerializeField] private HashSet<PopupController> m_closedPopups = new HashSet<PopupController>();
+	[SerializeField] private List<PopupController> m_queuedPopups = new List<PopupController>();	// Using a list rather than a queue to be able to remove popups from it. Ideally we would use a custom priority queue.
 
 	// Internal
 	private GraphicRaycaster m_canvasRaycaster = null;
@@ -62,6 +63,10 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 	public static HashSet<PopupController> openedPopups {
 		get { return instance.m_openedPopups; }
+	}
+
+	public static List<PopupController> queuedPopups {		// First popup in the queue is open
+		get { return instance.m_queuedPopups; }
 	}
 
 	//------------------------------------------------------------------//
@@ -203,6 +208,25 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 		return controller;
 	}
 
+	/// <summary>
+	/// Update the enqueued popups and open the top one if needed.
+	/// </summary>
+	private void UpdateQueue() {
+		// Nothing to do if queue is empty
+		if(m_queuedPopups.Count == 0) return;
+
+		// Don't open any popup from the queue if another popup has been opened manually
+		if(m_openedPopups.Count > 0) return;
+
+		// Does the first popup in the queue need to be opened?
+		PopupController firstPopup = m_queuedPopups.First();
+		if(!firstPopup.gameObject.activeSelf) {
+			// Yes! Do it
+			firstPopup.gameObject.SetActive(true);
+			firstPopup.Open();
+		}
+	}
+
 	//------------------------------------------------------------------//
 	// SINGLETON STATIC METHODS											//
 	//------------------------------------------------------------------//
@@ -246,6 +270,78 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Instantiate it and return reference
 		return instance.InstantiatePopup(prefab);
+	}
+
+	/// <summary>
+	/// Load a popup and put it in the queue.
+	/// Will automatically be opened when on top of the queue.
+	/// </summary>
+	/// <returns>The loaded popup instance.</returns>
+	/// <param name="_resourcesPath">The path of the popup in the resources folder.</param>
+	public static PopupController EnqueuePopup(string _resourcesPath) {
+		// Load the popup
+		PopupController popup = LoadPopup(_resourcesPath);
+
+		// Enqueue it
+		EnqueuePopup(popup);
+
+		// Return
+		return popup;
+	}
+
+	/// <summary>
+	/// Put a popup instance in the queue, provided it's not already there.
+	/// Will automatically be opened when on top of the queue.
+	/// If already in the queue and hasn't yet been opened, will be pushed to the end of the queue.
+	/// </summary>
+	/// <param name="_popup">The popup to be enqueued.</param>
+	public static void EnqueuePopup(PopupController _popup) {
+		// Just in case
+		if(_popup == null) return;
+
+		// Is it on the queue?
+		int queueIdx = instance.m_queuedPopups.IndexOf(_popup);
+		if(queueIdx == 0) {
+			// Yes, but first in the queue: do nothing
+			return;
+		} else if(queueIdx > 0) {
+			// Yes! Move it to the end
+			instance.m_queuedPopups.RemoveAt(queueIdx);
+			instance.m_queuedPopups.Add(_popup);
+		} else {
+			// Not in the queue: Add it at the end!
+			// Add it to the queue 
+			instance.m_queuedPopups.Add(_popup);
+
+			// Disable it until the queue logic decides to open it
+			// Unless popup is already open, in which case we will respect it
+			if(!_popup.isOpen) {
+				_popup.gameObject.SetActive(false);
+			}
+
+			// Update the queue logic
+			instance.UpdateQueue();
+		}
+	}
+
+	/// <summary>
+	/// Remove a specific popup from the queue.
+	/// If opened, it will be closed.
+	/// </summary>
+	/// <param name="_popup">Popup to be removed.</param>
+	/// <param name="_destroy">Destroy the popup after removal?</param>
+	public static void RemoveFromQueue(PopupController _popup, bool _destroy) {
+		// Is the popup in the queue?
+		int queueIdx = instance.m_queuedPopups.IndexOf(_popup);
+		if(queueIdx < 0) return;
+
+		// Instantly remove it from the queue
+		instance.m_queuedPopups.RemoveAt(queueIdx);
+
+		// Destroy it?
+		if(_destroy) {
+			Destroy(_popup.gameObject);
+		}
 	}
 
 	/// <summary>
@@ -295,9 +391,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Closed popups first
 		foreach(PopupController c in instance.m_closedPopups) {
-			GameObject.Destroy(c.gameObject);
+			Destroy(c.gameObject);
 		}
 		instance.m_closedPopups.Clear();
+
+		// Queued popups: Destroy directly (unless open, which will already be handled by the opened popups list)
+		ClearQueue();
 
 		// Opened popups: trigger animation?
 		foreach(PopupController c in instance.m_openedPopups) {
@@ -306,7 +405,7 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 				c.Close(true);
 			} else {
 				// Destroy directly rather than using PopupController's methods
-				GameObject.Destroy(c.gameObject);
+				Destroy(c.gameObject);
 			}
 		}
 		instance.m_openedPopups.Clear();
@@ -316,6 +415,20 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 		// Allow back events to modify collections
 		instance.m_collectionsBlocked = false;
+	}
+
+	/// <summary>
+	/// Clear the popup's queue and destroy queued popups.
+	/// Currently open popups won't be destroyed.
+	/// </summary>
+	public static void ClearQueue() {
+		// Directly destroy all popups that are not opened
+		foreach(PopupController c in instance.m_queuedPopups) {
+			if(!c.isOpen) {
+				Destroy(c.gameObject);
+			}
+		}
+		instance.m_queuedPopups.Clear();
 	}
 
 	//------------------------------------------------------------------//
@@ -348,6 +461,12 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 
 			// Add it to the closed popups list
 			m_closedPopups.Add(_popup);
+
+			// If it's in the queue, remove it from there and try to open the next one in queue
+			if(m_queuedPopups.Count > 0) {
+				m_queuedPopups.Remove(_popup);
+				UpdateQueue();
+			}
 		}
 
 		// If there are no more open popups, disable canvas camera for performance
@@ -364,11 +483,16 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 			// Remove it from all the lists
 			m_openedPopups.Remove(_popup);
 			m_closedPopups.Remove(_popup);
+
+			// If it's in the queue, remove it from there and try to open the next one in queue
+			if(m_queuedPopups.Count > 0) {
+				m_queuedPopups.Remove(_popup);
+				UpdateQueue();
+			}
 		}
 
 		// If there are no more open popups, disable canvas camera for performance
 		RefreshCameraActive();
-
 	}
     
     public static PopupController PopupMessage_Open(IPopupMessage.Config _config)
