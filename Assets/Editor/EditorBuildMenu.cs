@@ -22,7 +22,7 @@ public class EditorBuildMenu : MonoBehaviour
             {
                 if (EditorBuildSettings.scenes[i].enabled)
                 {
-                    sceneNames[i] = scenes[i].path;
+					sceneNames.Add(scenes[i].path);
                 }
             }
         }
