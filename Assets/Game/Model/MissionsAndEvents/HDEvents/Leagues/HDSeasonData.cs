@@ -331,7 +331,9 @@ public class HDSeasonData {
             HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
             errorCode = 2;
             SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
-            responseStr = responseJson.ToString();
+            if (responseJson != null) {
+                responseStr = responseJson.ToString();
+            }
 
             errorCode = 3;
             if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
