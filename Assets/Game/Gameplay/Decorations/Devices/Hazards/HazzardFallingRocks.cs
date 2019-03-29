@@ -65,7 +65,7 @@ public class HazzardFallingRocks : MonoBehaviour, IBroadcastListener {
     }
     
 	void CreatePool() {
-		m_poolHandler = PoolManager.RequestPool(m_projectileName, "Game/Projectiles/", m_spawnData.Length);
+		m_poolHandler = PoolManager.RequestPool(m_projectileName, m_spawnData.Length);
 	}
 
 	private void InitTimers() {

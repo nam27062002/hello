@@ -22,6 +22,8 @@ namespace AssetBundleBrowser
 
         const float k_DoubleIndent = 32f;
         const string k_SizeHeader = "Size: ";
+        const string k_AssetCount = "Asset count: ";
+        const string k_RepeatedAssets = "Auto-Included in multiple bundles: ";
         const string k_DependencyHeader = "Dependent On:";
         const string k_DependencyEmpty = k_DependencyHeader + " - None";
         const string k_MessageHeader = "Messages:";
@@ -103,6 +105,27 @@ namespace AssetBundleBrowser
             var str = itemName + k_SizeHeader;
             var sz = new TreeViewItem(str.GetHashCode(), 1, k_SizeHeader + bundle.TotalSize());
 
+            str = itemName + k_AssetCount;
+            var ac = new TreeViewItem(str.GetHashCode(), 1, k_AssetCount + (bundle.ConcreteCounter + bundle.DependentCounter));
+
+            str = itemName + k_RepeatedAssets;
+
+            int dcc = 0;
+
+            List<AssetBundleModel.AssetInfo> depl = bundle.GetDependencies();
+
+            foreach (AssetBundleModel.AssetInfo dep in depl)
+            {
+                if (dep.isPresentInMultipleBundles)
+                {
+                    dcc++;
+                }
+            }
+
+            var dc = new TreeViewItem(str.GetHashCode(), 1, k_RepeatedAssets + dcc);
+
+
+
             str = itemName + k_DependencyHeader;
             var dependency = new TreeViewItem(str.GetHashCode(), 1, k_DependencyEmpty);
             var depList = bundle.GetBundleDependencies();
@@ -132,6 +155,8 @@ namespace AssetBundleBrowser
 
 
             bunRoot.AddChild(sz);
+            bunRoot.AddChild(ac);
+            bunRoot.AddChild(dc);
             bunRoot.AddChild(dependency);
             bunRoot.AddChild(msg);
 

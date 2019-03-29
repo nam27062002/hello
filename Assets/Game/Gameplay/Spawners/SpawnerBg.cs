@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class SpawnerBg : AbstractSpawner {
 	[System.Serializable]
@@ -129,7 +129,7 @@ public class SpawnerBg : AbstractSpawner {
 
         if (m_rails == 0) m_rails = 1;
 
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, m_entities.Length);
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
 
@@ -142,6 +142,12 @@ public class SpawnerBg : AbstractSpawner {
         }
 
         m_guideFunction = GetComponent<IGuideFunction>();
+    }
+
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefabStr);
+        return list;
     }
 
     protected override bool CanRespawnExtended() {

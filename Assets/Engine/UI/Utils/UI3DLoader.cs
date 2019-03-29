@@ -48,8 +48,8 @@ public class UI3DLoader : MonoBehaviour {
 	[Space]
 	[SerializeField] private GameObject m_loadingPrefab = null;
 
-	// Internal
-	private ResourceRequest m_loadingRequest = null;
+    // Internal
+    private ResourceRequest m_loadingRequest = null;
 	public ResourceRequest loadingRequest {
 		get { return m_loadingRequest; }
 	}
@@ -110,16 +110,16 @@ public class UI3DLoader : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
-		// If we're loading, wait for the loading process to end
-		if(m_loadingRequest != null) {
-			if(m_loadingRequest.isDone) {
-				// Done! Instantiate loaded asset
-				InstantiatePrefab((GameObject)m_loadingRequest.asset);
+        // If we're loading, wait for the loading process to end
+        if (m_loadingRequest != null) {
+            if (m_loadingRequest.isDone) {
+                // Done! Instantiate loaded asset
+                InstantiatePrefab((GameObject)m_loadingRequest.asset);
 
-				// Loading request done!
-				m_loadingRequest = null;
-			}
-		}
+                // Loading request done!
+                m_loadingRequest = null;
+            }
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -137,9 +137,9 @@ public class UI3DLoader : MonoBehaviour {
 			m_loadingRequest = null;
 		}
 
-		// Load and instantiate the prefab
-		GameObject prefabObj = Resources.Load<GameObject>(m_resourcePath);
-		InstantiatePrefab(prefabObj);
+        // Load and instantiate the prefab
+        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_resourcePath);
+        InstantiatePrefab(prefabObj);
 
 		// Return newly instantiated instance
 		return m_loadedInstance;
@@ -155,8 +155,8 @@ public class UI3DLoader : MonoBehaviour {
 		// If we have something loaded, destroy it
 		Unload();
 
-		// We don't care if we're already loading another asset, it will be ignored once done loading
-		m_loadingRequest = Resources.LoadAsync<GameObject>(m_resourcePath);
+        // We don't care if we're already loading another asset, it will be ignored once done loading
+        m_loadingRequest = Resources.LoadAsync<GameObject>(m_resourcePath);
 		ShowLoading(true);
 
 		return m_loadingRequest;

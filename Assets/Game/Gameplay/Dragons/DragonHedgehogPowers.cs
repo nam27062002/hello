@@ -142,8 +142,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     }
     
     void CreatePool() {
-        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
-        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", "Game/Projectiles/", 3, true);
+        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", m_spikesNumber, true);
+        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", 3, true);
     }
     
     private void IgnoreLevel2Spikes()

@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.IO;
+using System.Collections.Generic;
 
 public class EditorAssetBundlesMenu : MonoBehaviour
 {
@@ -10,13 +12,15 @@ public class EditorAssetBundlesMenu : MonoBehaviour
     private const string MENU_GENERATE_DOWNLOADABLES_CATALOG_FROM_ASSETS_LUT = ROOT_MENU + "Generate Downloadables from AssetsLUT";
     private const string MENU_CLEAR_DOWNLOADABLES_CACHE = ROOT_MENU + "Clear Downloadables Cache";
 
-    [MenuItem(MENU_BROWSER)]
+
+
+    [MenuItem(MENU_BROWSER, false, 1)]
     static void ShowBrowser()
     {
         AssetBundleBrowser.AssetBundleBrowserMain.ShowWindow();        
     }
         
-    [MenuItem(MENU_LAUNCH_LOCAL_SERVER)]
+    [MenuItem(MENU_LAUNCH_LOCAL_SERVER, false, 2)]
     public static void ToggleLocalAssetBundleServer()
     {
         AssetBundles.LaunchAssetBundleServer.SetRemoteAssetsFolderName(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER);
@@ -24,21 +28,20 @@ public class EditorAssetBundlesMenu : MonoBehaviour
     }
 
     
-    [MenuItem(MENU_LAUNCH_LOCAL_SERVER, true)]
+    [MenuItem(MENU_LAUNCH_LOCAL_SERVER, true, 3)]
     public static bool ToggleLocalAssetBundleServerValidate()
     {
         return AssetBundles.LaunchAssetBundleServer.ToggleLocalAssetBundleServerValidate(MENU_LAUNCH_LOCAL_SERVER);
     }
 
-    [MenuItem(MENU_GENERATE_ASSETS_LUT_FROM_DOWNLOADABLES_CATALOG)]
+    [MenuItem(MENU_GENERATE_ASSETS_LUT_FROM_DOWNLOADABLES_CATALOG, false, 4)]
     public static void GenerateAssetsLUTFromDownloadablesCatalog()
     {
         EditorAssetBundlesManager.GenerateAssetsLUTFromDownloadablesCatalog();        
     }
 
-    [MenuItem(MENU_GENERATE_DOWNLOADABLES_CATALOG_FROM_ASSETS_LUT)]
-    public static void GenerateDownloadablesCatalogFromAssetsLUT()
-    {
+    [MenuItem(MENU_GENERATE_DOWNLOADABLES_CATALOG_FROM_ASSETS_LUT, false, 5)]
+    public static void GenerateDownloadablesCatalogFromAssetsLUT() {
         EditorAssetBundlesManager.GenerateDownloadablesCatalogFromAssetsLUT();
     }
 

@@ -236,7 +236,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
 	public static void GenerateSpawnerIconsInResources(Color _backgroundColor) {
 		// Load all prefabs under the Entites folder
-		string resourcesPath = Application.dataPath + "/Resources/";
+		string resourcesPath = Application.dataPath;
 		string prefabsPath =  resourcesPath + IEntity.ENTITY_PREFABS_PATH;
 
 		string[] files = Directory.GetFiles(prefabsPath, "*.prefab", SearchOption.AllDirectories);

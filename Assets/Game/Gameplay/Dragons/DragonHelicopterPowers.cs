@@ -345,9 +345,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
 	void CreatePool() {
         
         if ( m_powerLevel >= 1 && !string.IsNullOrEmpty(m_missilesProjectileName))
-		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, "Game/Projectiles/", 2, true);
+		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, 2, true);
         if ( m_powerLevel >= 2 && !string.IsNullOrEmpty(m_bombProjectileName))
-            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, "Game/Projectiles/", m_burstCount, true);
+            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, m_burstCount, true);
 	}
     
     public void OnLaunchMissile1()

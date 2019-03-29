@@ -40,7 +40,7 @@ public class ProfilerToolController : MonoBehaviour, IBroadcastListener
                 }
                 else
                 {
-                    PoolManager.CreatePool(m_spawnerPrefab, "Game/Entities/NewEntites/", m_spawnerNumEntities);
+                    PoolManager.CreatePool(m_spawnerPrefab, m_spawnerNumEntities);
                 }
 
                 Spawner spawner;

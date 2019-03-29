@@ -38,19 +38,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		OTHER
 	}
 
-	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
-	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";
-    
-    /// <summary>
-    /// Returns the path where the prefabs for entities are stored. It depends on the quality settings
-    /// </summary>
-    public static string EntityPrefabsPath {
-        get {
-            // Entities LOD flag has been disabled because it's not really worth it
-            //return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
-            return ENTITY_PREFABS_PATH;
-        }
-    }
+
+	public const string ENTITY_PREFABS_PATH = "Art/3D/Gameplay/Entities/Prefabs/";
+
 
     //----------------------------------------------//
     [SerializeField][EnumMask] private Tag m_tags = 0;

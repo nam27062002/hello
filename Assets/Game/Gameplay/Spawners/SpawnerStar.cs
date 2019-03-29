@@ -8,7 +8,9 @@ public class SpawnerStar : AbstractSpawner {
 	[Separator("Entity")]
 	[EntityJunkPrefabListAttribute]
 	[SerializeField] private string m_entityPrefab = "";
-	[SerializeField] private uint m_quantity = 5;
+    public string entityPrefab { get { return m_entityPrefab; } }
+
+    [SerializeField] private uint m_quantity = 5;
 
 	[Separator("Coin Bonus")]
 	[SerializeField] private int m_coinsRewardFlock = 0;
@@ -17,7 +19,9 @@ public class SpawnerStar : AbstractSpawner {
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 
 
-	private PoolHandler m_poolHandler;
+
+
+    private PoolHandler m_poolHandler;
 
 	private float m_respawnTime;
 	private SpawnerConditions m_respawnConditions; 
@@ -72,14 +76,20 @@ public class SpawnerStar : AbstractSpawner {
 			m_pointToEntityIndex[i] = -1;
 		}
 
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, m_entities.Length);
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefab);
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {

@@ -251,7 +251,7 @@ public class ProfilerSpawnerController : MonoBehaviour
         }
         else
         {
-            returnValue = Resources.Load("Game/Entities/NewEntites/" + path) as GameObject;
+            returnValue = Resources.Load(IEntity.ENTITY_PREFABS_PATH + path) as GameObject;
             m_prefabs.Add(path, returnValue);
         }
 
