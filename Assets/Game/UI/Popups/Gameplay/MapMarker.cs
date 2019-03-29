@@ -39,6 +39,8 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 	}
 
 	[Space]
+	[FileList("Resources/UI/Popups/InGame/MapMarkers", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab", true)]
+	[SerializeField] private string m_prefabPath = string.Empty;
 	[SerializeField] private bool m_rotateWithObject = true;
 	[SerializeField] private bool m_zoomCompensation = true;
 
@@ -65,6 +67,12 @@ public class MapMarker : MonoBehaviour, IBroadcastListener {
 	protected virtual void Awake() {
 		// Initialize internal vars
 		m_originalScale = GetMarkerTransform().localScale;
+
+		// If defined, instantiate marker
+		if(!string.IsNullOrEmpty(m_prefabPath)) {
+			GameObject prefab = Resources.Load<GameObject>(m_prefabPath);
+			Instantiate(prefab, this.transform, false);
+		}
 
 		// Subscribe to external events
 		Broadcaster.AddListener(BroadcastEventType.POPUP_OPENED, this);
