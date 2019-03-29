@@ -103,7 +103,7 @@ public class HDAddressablesManager : AddressablesManager
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
                             //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-                            urlBase = "http://hdragon-assets-s3.akamaized.net/qc/";
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
                             break;
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
