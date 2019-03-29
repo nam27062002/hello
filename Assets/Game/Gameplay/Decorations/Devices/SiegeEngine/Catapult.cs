@@ -101,7 +101,7 @@ public class Catapult : SimpleDevice {
 			}
 
 			for (int i = 0; i < m_ammoList.Length; i++) {
-				m_ammoPoolHandlers[i] = PoolManager.RequestPool(m_ammoList[i].name, "Game/Projectiles/", 3);
+				m_ammoPoolHandlers[i] = PoolManager.RequestPool(m_ammoList[i].name, 3);
 			}
 		}
 

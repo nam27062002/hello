@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using AI;
 
 public class DevicePassengersSpawner : AbstractSpawner {	
@@ -39,6 +39,10 @@ public class DevicePassengersSpawner : AbstractSpawner {
 			ForceRemoveEntities();
 		}
 	}
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
     //-------------------------------------------------------------------
 
     //-------------------------------------------------------------------
@@ -83,7 +87,7 @@ public class DevicePassengersSpawner : AbstractSpawner {
 
 				m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 				for (int i = 0; i < m_entityPrefabList.Length; i++) {
-					m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+					m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, m_entities.Length);
 				}
 
 				gameObject.SetActive(false);

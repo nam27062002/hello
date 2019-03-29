@@ -1,4 +1,4 @@
-﻿// GameSceneController.cs
+// GameSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 21/08/2015.
@@ -569,6 +569,7 @@ public class GameSceneController : GameSceneControllerBase {
                 m_levelLoader.Perform(m_useSyncLoading);
 
                 PoolManager.PreBuild();
+                ParticleManager.Clear();
 				ParticleManager.PreBuild();
 
 				// Initialize minimum loading time as well

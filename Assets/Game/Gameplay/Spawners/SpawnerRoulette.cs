@@ -124,7 +124,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, 1);
 		}
 		m_currentEntity = null;
 		m_currentPoolHandlerIndex = -1;
@@ -144,7 +144,15 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 		gameObject.SetActive(false);
 	}
 
-	public bool IsRespawing() { return (m_state == State.Respawning); }
+    public List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    public bool IsRespawing() { return (m_state == State.Respawning); }
 
 	// this spawner will kill its entities if it is outside camera disable area
 	public bool MustCheckCameraBounds() 	{ return false; }

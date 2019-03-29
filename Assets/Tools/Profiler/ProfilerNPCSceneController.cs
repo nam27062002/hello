@@ -61,7 +61,7 @@ public class ProfilerNPCSceneController : MonoBehaviour {
 				Spawner.EntityPrefab[] prefabs = (sp as Spawner).m_entityPrefabList;
 				for (int j = 0; j < prefabs.Length; ++j) {
 					if (!m_npcs.ContainsKey(prefabs[j].name)) {
-						GameObject go = Resources.Load<GameObject>(IEntity.EntityPrefabsPath + prefabs[j].name);
+						GameObject go = Resources.Load<GameObject>(IEntity.ENTITY_PREFABS_PATH + prefabs[j].name);
 						go = GameObject.Instantiate(go);
 						go.transform.SetParent(npcRoot, false);
 						m_npcs.Add(prefabs[j].name, go);
@@ -70,7 +70,7 @@ public class ProfilerNPCSceneController : MonoBehaviour {
 			} else if (sp.GetType() == typeof(SpawnerBg)) {
 				string name = (sp as SpawnerBg).m_entityPrefabStr;
 				if (!m_npcs.ContainsKey(name)) {
-					GameObject go = Resources.Load<GameObject>(IEntity.EntityPrefabsPath + name);
+					GameObject go = Resources.Load<GameObject>(IEntity.ENTITY_PREFABS_PATH + name);
 					go = GameObject.Instantiate(go);
 					go.transform.SetParent(npcRoot, false);
 					m_npcs.Add(name, go);

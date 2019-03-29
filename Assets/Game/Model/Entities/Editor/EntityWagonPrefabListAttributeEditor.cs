@@ -31,12 +31,12 @@ public class EntityWagonPrefabListAttributeEditor : ExtendedPropertyDrawer {
 	private List<string> m_prefabNames = null;
 	private SerializedProperty m_targetProperty = null;
 
-	string m_prefabsPath =  Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_PATH;
+    string m_prefabsPath = Application.dataPath + "/" + IEntity.ENTITY_PREFABS_PATH;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	void BuildPrefabList() {
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    void BuildPrefabList() {
 		// Create the prefab name list
 		m_prefabNames = new List<string>();
 		string[] files = Directory.GetFiles(m_prefabsPath, "*.prefab", SearchOption.AllDirectories);

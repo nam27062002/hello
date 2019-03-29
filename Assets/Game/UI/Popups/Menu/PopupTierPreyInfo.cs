@@ -52,7 +52,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 	protected GameObject m_layoutInstance = null;
 
 	// Loaders logic
-	protected UI3DLoader[] m_loaders = null;
+	protected UI3DAddressablesLoader[] m_loaders = null;
 	protected int m_loaderIdx = 0;
 	protected IEnumerator m_loaderDelayCoroutine = null;
 	protected bool m_openAnimFinished = false;
@@ -83,7 +83,8 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		// Unsubscribe from external events.
 		if(m_loaders != null) {
 			for(int i = 0; i < m_loaders.Length; i++) {
-				m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
+                HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
+                m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
 			}
 		}
 	}
@@ -153,7 +154,7 @@ public class PopupTierPreyInfo : MonoBehaviour {
 
 		// If we already have a layout loaded, destroy it
 		if(m_layoutInstance != null) {
-			GameObject.Destroy(m_layoutInstance);
+			Destroy(m_layoutInstance);
 			m_layoutInstance = null;
 			m_loaders = null;
 		}
@@ -163,14 +164,14 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		if(layoutPrefab == null) return;
 
 		// Create instance!
-		m_layoutInstance = GameObject.Instantiate<GameObject>(layoutPrefab, m_layoutContainer, false);
+		m_layoutInstance = Instantiate<GameObject>(layoutPrefab, m_layoutContainer, false);
 		if(m_layoutInstance == null) return;
 
 		// Apply some extra properties
 		m_layoutInstance.SetLayerRecursively(m_layoutContainer.gameObject.layer);
 
 		// Find out all loaders within the newly instantiated layout
-		m_loaders = m_layoutInstance.GetComponentsInChildren<UI3DLoader>();
+		m_loaders = m_layoutInstance.GetComponentsInChildren<UI3DAddressablesLoader>();
 
 		// Prepare for asynchronous loading!
 		// If a delayed loading is already running, stop it
@@ -280,13 +281,13 @@ public class PopupTierPreyInfo : MonoBehaviour {
 	/// A 3D loader has been complete.
 	/// </summary>
 	/// <param name="_loader">The loader that triggered the event.</param>
-	public void OnLoaderCompleted(UI3DLoader _loader) {
-		// Do any initialization required in the loaded 3D object
-		// Basically remove all components that depend on in-game stuff
-		// Let's go hardcore and actually remove ALL components
-		MonoBehaviour[] components = _loader.loadedInstance.GetComponents<MonoBehaviour>();
+	public void OnLoaderCompleted(UI3DAddressablesLoader _loader) {
+        // Do any initialization required in the loaded 3D object
+        // Basically remove all components that depend on in-game stuff
+        // Let's go hardcore and actually remove ALL components
+        MonoBehaviour[] components = _loader.loadedInstance.GetComponents<MonoBehaviour>();
 		for(int i = 0; i < components.Length; i++) {
-			GameObject.Destroy(components[i]);
+			Destroy(components[i]);
 		}
 
 		// Update materials shaders so the prefab is properly rendered in the UI

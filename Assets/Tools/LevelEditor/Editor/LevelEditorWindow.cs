@@ -76,10 +76,14 @@ namespace LevelEditor {
 		// Styles shortcut
 		public static Styles styles { get { return instance.m_styles; }}
 
-		//------------------------------------------------------------------//
-		// GENERIC METHODS													//
-		//------------------------------------------------------------------//
-		public LevelEditorWindow() {
+        //is throwing lightmap?
+        public bool m_isLightmapping = false;
+
+
+        //------------------------------------------------------------------//
+        // GENERIC METHODS													//
+        //------------------------------------------------------------------//
+        public LevelEditorWindow() {
 			
 		}
 
@@ -95,12 +99,15 @@ namespace LevelEditor {
 
 			// Make sure we parse the scene properly the first time
 			Init();
-		}
 
-		/// <summary>
-		/// The window has been disabled - similar to the destructor.
-		/// </summary>
-		public void OnDisable() {
+            m_isLightmapping = false;
+
+        }
+
+        /// <summary>
+        /// The window has been disabled - similar to the destructor.
+        /// </summary>
+        public void OnDisable() {
 			// Remove editor scene
 			CloseLevelEditorScene();
 
@@ -153,7 +160,8 @@ namespace LevelEditor {
 			for(int i = 0; i < m_sections.Length; i++) {
 				m_sections[i].Init();
 			}
-		}
+
+        }
 
 		/// <summary>
 		/// Load the level editor scene additively, provided it's not already loaded.
@@ -161,7 +169,7 @@ namespace LevelEditor {
 		public void OpenLevelEditorScene() {
 			// If editor scene was not loaded, do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
-			if(!levelEditorScene.isLoaded) {
+			if(!levelEditorScene.isLoaded && !m_isLightmapping) {
 				// Close any non-editable scenes
 				CloseNonEditableScenes();
 
@@ -169,11 +177,17 @@ namespace LevelEditor {
 				EditorSceneManager.OpenScene(EDITOR_SCENE_PATH, OpenSceneMode.Additive);
 			}
 		}
-		
-		/// <summary>
-		/// Unloads the level editor specific stuff.
-		/// </summary>
-		public void CloseLevelEditorScene() {
+
+        public Scene GetLevelEditorScene()
+        {
+            Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
+            return levelEditorScene;
+        }
+
+        /// <summary>
+        /// Unloads the level editor specific stuff.
+        /// </summary>
+        public void CloseLevelEditorScene() {
 			// Just do it
 			Scene levelEditorScene = EditorSceneManager.GetSceneByPath(EDITOR_SCENE_PATH);
 			EditorSceneManager.CloseScene(levelEditorScene, true);

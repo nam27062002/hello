@@ -333,7 +333,7 @@ public class Spawner : AbstractSpawner {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, m_entities.Length);
 		}
 
 		// Get external references
@@ -352,7 +352,15 @@ public class Spawner : AbstractSpawner {
 		m_prefabIndex = GetPrefabIndex();
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_maxSpawns > 0 && m_respawnCount >= m_maxSpawns)
 		{
 			m_readyToBeDisabled = true;

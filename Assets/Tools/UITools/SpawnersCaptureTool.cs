@@ -25,8 +25,7 @@ public class SpawnersCaptureTool : CaptureTool {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	protected const string DRAG_CONTROL_VALUE = ".DragControlValue";
-	private const string ROOT_PATH = "Game/Entities/NewEntites";
+	protected const string DRAG_CONTROL_VALUE = ".DragControlValue";	
 
 	private class PrefabData {
 		public string name = "";
@@ -69,7 +68,7 @@ public class SpawnersCaptureTool : CaptureTool {
 		LocalizationManager.SharedInstance.SetLanguage("lang_english");
 
 		// Gather all prefabs within the root path recursively
-		string dirPath = Application.dataPath + "/Resources/" + ROOT_PATH;
+		string dirPath = Application.dataPath + IEntity.ENTITY_PREFABS_PATH;
 		DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
 		ScanFiles(dirInfo, "*.prefab");
 
@@ -155,7 +154,7 @@ public class SpawnersCaptureTool : CaptureTool {
 			PrefabData prefabData = new PrefabData();
 			prefabData.name = Path.GetFileNameWithoutExtension(files[i].Name);
 			prefabData.displayName = prefabData.name;
-			prefabData.path = ROOT_PATH + "/" + _prefix + prefabData.name;	// Strip filename from full file path and attach prefix
+			prefabData.path = IEntity.ENTITY_PREFABS_PATH + _prefix + prefabData.name;	// Strip filename from full file path and attach prefix
 			Debug.Log(prefabData.path);
 			m_prefabsList.Add(prefabData);
 		}

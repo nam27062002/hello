@@ -33,7 +33,8 @@ public class EditorAssetBundlesManager
             Directory.CreateDirectory(assetBundleDirectory);
         }
 
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.None, platform);
+        // LZ4 algorithm is used to reduce memory footprint
+        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.ChunkBasedCompression, platform);
     }
 
     public static AssetBundleManifest LoadAssetBundleManifest(out AssetBundle manifestBundle)

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
@@ -154,6 +154,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     public void Clear() {
         ForceRemoveEntities();
         gameObject.SetActive(false);
+    }
+
+    public List<string> GetPrefabList() {
+        return null;
     }
 
     public void ForceRemoveEntities() {}

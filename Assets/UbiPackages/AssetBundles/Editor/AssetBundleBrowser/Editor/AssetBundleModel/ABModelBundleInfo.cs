@@ -264,6 +264,22 @@ namespace AssetBundleBrowser.AssetBundleModel
         protected bool m_IsSceneBundle;
         protected long m_TotalSize;
 
+        public int ConcreteCounter
+        {
+            get
+            {
+				return m_ConcreteAssets.Count;
+            }
+        }
+        public int DependentCounter
+        {
+            get
+            {
+				return m_DependentAssets.Count;
+            }
+        }
+
+
         internal BundleDataInfo(string name, BundleFolderInfo parent) : base(name, parent)
         {
             m_ConcreteAssets = new List<AssetInfo>();
@@ -475,6 +491,7 @@ namespace AssetBundleBrowser.AssetBundleModel
                     m_TotalSize += ai.fileSize;
                     if (Model.RegisterAsset(ai, parentBundle) > 1)
                     {
+                        ai.isPresentInMultipleBundles = true;
                         SetDuplicateWarning();
                     }
                 }
@@ -491,6 +508,7 @@ namespace AssetBundleBrowser.AssetBundleModel
             {
                 if (asset != null && asset.IsMessageSet(MessageSystem.MessageFlag.AssetsDuplicatedInMultBundles)) 
                 {
+                    asset.isPresentInMultipleBundles = true;
                     SetDuplicateWarning();
                     return true;
                 }
@@ -513,6 +531,7 @@ namespace AssetBundleBrowser.AssetBundleModel
         protected void SetDuplicateWarning()
         {
             m_BundleMessages.SetFlag(MessageSystem.MessageFlag.AssetsDuplicatedInMultBundles, true);
+
             m_Dirty = true;
         }
 

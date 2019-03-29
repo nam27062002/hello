@@ -13,7 +13,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		public Pool				pool;
 		public ParticleHandler	handler;
 		public int				size;
-		public string			version;
+		public string			variant;
 	}
 
 	public enum PoolLimits {
@@ -147,14 +147,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 		if (m_pools.ContainsKey(def.sku)) {
 			pc = m_pools[def.sku];
 		} else {
-			pc = new PoolContainer();
-			pc.handler = new ParticleHandler();
+            pc = new PoolContainer {
+                handler = new ParticleHandler()
+            };
 
-			m_pools.Add(def.sku, pc);
+            m_pools.Add(def.sku, pc);
 		}
 
 		// default values
-		pc.version = "Master/";
+		pc.variant = "Master";
 		pc.size = def.GetAsInt("count");
 
         // npew read the current profile
@@ -176,7 +177,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
     private void CheckVeryHigh(DefinitionNode _def, ref PoolContainer _pc) {
         bool checkLowerLevel = true;
         if (_def.GetAsBool("veryHighVersion")) {
-            _pc.version = "VeryHigh/";
+            _pc.variant = "VeryHigh";
             checkLowerLevel = false;
         }
 
@@ -192,14 +193,14 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 
     private void CheckHigh(DefinitionNode _def, ref PoolContainer _pc) {
         if (_def.GetAsBool("highVersion")) {
-            _pc.version = "High/";
+            _pc.variant = "High";
         }
         _pc.size = _def.GetAsInt("countHigh", _pc.size);
     }
 
     private void CheckLow(DefinitionNode _def, ref PoolContainer _pc) {
         if (_def.GetAsBool("lowVersion")) {
-            _pc.version = "Low/";
+            _pc.variant = "Low";
         }
         _pc.size = _def.GetAsInt("countLow", _pc.size);
     }
@@ -252,19 +253,15 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				container = new PoolContainer();
 				container.handler = new ParticleHandler();
 				container.size = 1;
-				container.version = "Master/";
+				container.variant = "Master";
 
 				m_pools.Add(_prefabName, container);
 			}
 
-			if (container.pool == null) {
-				if (!string.IsNullOrEmpty(_folderPath)) {
-					if (!_folderPath.EndsWith("/")) _folderPath = _folderPath + "/";
-				}
+			if (container.pool == null) {				
+                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_prefabName, container.variant);
 
-				GameObject go = Resources.Load<GameObject>("Particles/" + container.version + _folderPath + _prefabName);
-
-				if (go != null) {
+                if (go != null) {
 					if (m_poolLimits == PoolLimits.Unlimited) {
 						container.pool = new Pool(go, instance.transform, 1, true, true, true);
 					} else {
@@ -301,74 +298,70 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <returns>The leveled particle.</returns>
 	/// <param name="particle">Particle.</param>
 	/// <param name="_anchor">Anchor.</param>
-	public static ParticleSystem InitLeveledParticle( string particle, Transform _anchor)
+	public static ParticleSystem InitLeveledParticle(string _particle, Transform _anchor)
 	{
 		ParticleSystem ret = null;
-		for(  	FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
-				level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
-				level = level - 1
-				)
+		for(FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
+			level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
+			level = level - 1)
 		{
-			string path = "";
+			string variant = "";
 			switch(level) {
 					//	path = "Particles/VeryLow/";
 					// break;
 				case FeatureSettings.ELevel5Values.very_low:
 				case FeatureSettings.ELevel5Values.low:
-						path = "Particles/Low/";
+                    variant = "Low";
 					break;
 				case FeatureSettings.ELevel5Values.mid:
-						path = "Particles/Master/";
+                    variant = "Master";
 					break;
 				case FeatureSettings.ELevel5Values.high:
-						path = "Particles/High/";
+                    variant = "High";
 					break;
 				case FeatureSettings.ELevel5Values.very_high:
-						path = "Particles/VeryHigh/";
+                    variant = "VeryHigh";
 					break;
 			}
-			if ( !string.IsNullOrEmpty(path) )
-			{
-				GameObject go = Resources.Load<GameObject>( path + particle );
-				if ( go != null )
-				{
-					 ret = InitParticle( go,  _anchor);
+
+			if (!string.IsNullOrEmpty(variant)) {
+                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
+
+				if (go != null) {
+					 ret = InitParticle(go,  _anchor);
 				}
 			}
 		}
 		return ret;
 	}
 
-    public static GameObject InitLeveledParticleObject( string particle, Transform _anchor)
-    {
+    public static GameObject InitLeveledParticleObject(string _particle, Transform _anchor) {
         GameObject ret = null;
         for (FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles;
-                level >= FeatureSettings.ELevel5Values.very_low && ret == null;
-                level = level - 1
-                )
+             level >= FeatureSettings.ELevel5Values.very_low && ret == null;
+             level = level - 1)
         {
-            string path = "";
-            switch (level)
-            {
+            string variant = "";
+            switch (level) {
                 case FeatureSettings.ELevel5Values.very_low:
                 case FeatureSettings.ELevel5Values.low:
-                    path = "Particles/Low/";
-                    break;
+                variant = "Low";
+                break;
                 case FeatureSettings.ELevel5Values.mid:
-                    path = "Particles/Master/";
-                    break;
+                variant = "Master";
+                break;
                 case FeatureSettings.ELevel5Values.high:
-                    path = "Particles/High/";
-                    break;
+                variant = "High";
+                break;
                 case FeatureSettings.ELevel5Values.very_high:
-                    path = "Particles/VeryHigh/";
-                    break;
+                variant = "VeryHigh";
+                break;
             }
-            if (!string.IsNullOrEmpty(path))
-            {
-                GameObject go = Resources.Load<GameObject>(path + particle);
-                if (go != null)
-                {
+
+            if (!string.IsNullOrEmpty(variant)) {
+                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
+
+                if (go != null) {
                     ret = Instantiate(go);
                     ret.transform.SetParentAndReset(_anchor);
                     ret.SetActive(false);
@@ -385,8 +378,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// <returns>The particle.</returns>
 	/// <param name="_prefab">Prefab.</param>
 	/// <param name="_anchor">Anchor.</param>
-	public static ParticleSystem InitParticle(GameObject _prefab, Transform _anchor)
-	{
+	public static ParticleSystem InitParticle(GameObject _prefab, Transform _anchor) {
 		if(_prefab == null) return null;
 
 		GameObject go = Instantiate(_prefab);
