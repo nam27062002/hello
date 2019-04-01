@@ -282,10 +282,13 @@ namespace AssetBundleBrowser.AssetBundleModel
                     Object[] dependencies = EditorUtility.CollectDependencies(new Object[] {obj });
                     foreach (var dep in dependencies)
                     {
-                        string path = AssetDatabase.GetAssetPath(dep);
-                        if ( !path.StartsWith("Asset") )
+                        if ( dep != null )
                         {
-                            m_builtInDependencies.Add( path  +" "+ dep.name +"  " + dep.GetType() );
+                            string path = AssetDatabase.GetAssetPath(dep);
+                            if ( !path.StartsWith("Asset") )
+                            {
+                                m_builtInDependencies.Add( path  +" "+ dep.name +"  " + dep.GetType() );
+                            }
                         }
                     }
                 }
