@@ -191,14 +191,18 @@ public class HDAddressablesManager : AddressablesManager
     {
         // We don't want the downloader to interfere with the ingame experience
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
-
-        // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
+        
+        // We don't want downloadables to interfere with the first user's experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
         IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
     }
 
     public bool IsAutomaticDownloaderAllowed()
     {
-        return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        //return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+
+        // Downloader is enabled from the very beginning in order to make sure we're not blocking stuff (HDK-4568)). The first user's experience should be affected by this because 
+        // downloader stops downloading when the user starts a run
+        return true;
     }
 
 #region ingame
