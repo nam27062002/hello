@@ -53,7 +53,7 @@ public class CameraSnapPointEditor : Editor {
 			} else {
 				camObj = new GameObject();
 				m_editionCamera = camObj.AddComponent<Camera>();
-				m_editionCamera.depth = 100;
+				m_editionCamera.depth = 90;
 			}
 			camObj.name = "CameraSnapPointPreview";
 			camObj.hideFlags = HideFlags.DontSave;
@@ -236,7 +236,7 @@ public class CameraSnapPointEditor : Editor {
 			m_editionCamera.gameObject.SetActive(m_livePreviewProp.boolValue);
 			if(m_livePreviewProp.boolValue) {
 				// Update edition camera
-				m_editionCamera.depth = 100;	// Make sure camera has priority
+				m_editionCamera.depth = 99;	// Make sure camera has priority
 				m_editionCamera.transform.position = m_targetSnapPoint.transform.position;
 				m_targetSnapPoint.Apply(m_editionCamera);
 			}

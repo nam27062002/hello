@@ -33,8 +33,6 @@ namespace AI {
 		private float m_maxRadiusOut 	= 0f;
 		private float m_minRadiusOut 	= 0f;
 	
-		private static int s_groundMask;
-
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		public MachineSensor() {}
 
@@ -51,8 +49,6 @@ namespace AI {
 			m_sightRadiusOut 	= m_sightRadiusIn + m_hysteresisOffset;
 			m_maxRadiusOut 		= m_maxRadiusIn + m_hysteresisOffset;
 			m_minRadiusOut 		= m_minRadiusIn + m_hysteresisOffset;
-
-			s_groundMask = LayerMask.GetMask("Ground", "GroundVisible");			
 		}
 
 		public void SetupEnemy(Transform _tr, float distanceSqr, RectAreaBounds _enemyBounds) {
@@ -76,7 +72,7 @@ namespace AI {
 				m_machine.SetSignal(Signals.Type.Warning, true);
 				m_machine.SetSignal(Signals.Type.Danger, true);
 				m_machine.SetSignal(Signals.Type.Critical, 	true);
-			} else if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert)) {
+			} else if (m_enemy == null || !m_machine.GetSignal(Signals.Type.Alert) || m_machine.GetSignal(Signals.Type.InLove)) {
 				m_machine.SetSignal(Signals.Type.Warning, false);
 				m_machine.SetSignal(Signals.Type.Danger, false);
 				m_machine.SetSignal(Signals.Type.Critical, 	false);
@@ -149,7 +145,7 @@ namespace AI {
 
 						if (isInsideMinArea || isInsideMaxArea) {
 							// Check line cast
-							if (Physics.Linecast(sensorPosition, m_enemy.position, s_groundMask)) {
+                            if (Physics.Linecast(sensorPosition, m_enemy.position, GameConstants.Layers.GROUND)) {
 								isInsideSightArea = false;
 								isInsideMaxArea = false;
 								isInsideMinArea = false;

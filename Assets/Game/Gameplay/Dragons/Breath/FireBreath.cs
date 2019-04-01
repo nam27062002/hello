@@ -77,16 +77,17 @@ public class FireBreath : DragonBreathBehaviour {
 
 	override protected void ExtendedStart() {
 
-		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, "Particles/Master/", m_maxParticles);
-		m_flameUpPoolHandler 		= PoolManager.RequestPool(m_flameUpParticle, "Particles/Master/", m_maxParticles);
-		m_superFlamePoolHandler 	= PoolManager.RequestPool(m_superFlameParticle, "Particles/Master/", m_maxParticles);
-		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, "Particles/Master/", m_maxParticles);
-		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, "Particles/Master/", 1);
+		m_flamePoolHandler 			= PoolManager.RequestPool(m_flameParticle, m_maxParticles);
+		m_flameUpPoolHandler 		= PoolManager.RequestPool(m_flameUpParticle, m_maxParticles);
+		m_superFlamePoolHandler 	= PoolManager.RequestPool(m_superFlameParticle, m_maxParticles);
+		m_superFlameUpPoolHandler 	= PoolManager.RequestPool(m_superFlameUpParticle, m_maxParticles);
+		m_flameLightPoolHandler 	= PoolManager.RequestPool(m_flameLight, 1);
 
-		m_groundMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "FireBlocker");
-		m_noPlayerMask = ~LayerMask.GetMask("Player");
+        m_groundMask = GameConstants.Layers.GROUND_WATER_FIREBLOCK;
+        m_noPlayerMask = ~GameConstants.Layers.PLAYER;
 
-		m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
+
+        m_fireDummyTransform = transform.FindTransformRecursive("Fire_Dummy");
 		m_headTransform = GetComponent<DragonMotion>().head;
 
 		m_length = m_dragon.data.def.GetAsFloat("furyBaseLength");

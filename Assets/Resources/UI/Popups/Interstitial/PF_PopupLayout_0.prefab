@@ -674,7 +674,7 @@ MonoBehaviour:
   m_bold: 1
   m_boldSize: 0.5
   m_outline: 1
-  m_outlineQuality: 0
+  m_outlineQuality: 1
   m_outlineSize: 2
   m_outlineColor: {r: 0.3455882, g: 0.20548487, b: 0.040657435, a: 1}
   m_shadow: 1
@@ -768,6 +768,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114162443143776538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -952,15 +953,15 @@ MonoBehaviour:
     m_FontSize: 75
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 36
+    m_MinSize: 50
     m_MaxSize: 75
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: This is the title!
+    m_LineSpacing: 0.8
+  m_Text: "\xA1Torneo de Acci\xF3n de Gracias pr\xF3ximamente!"
 --- !u!114 &114427514562853378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1349,15 +1350,15 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 9306b7762ae4b4544a6309d97f887fcb, type: 3}
     m_FontSize: 45
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 4
-    m_MaxSize: 50
+    m_BestFit: 1
+    m_MinSize: 35
+    m_MaxSize: 45
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 0.9
+    m_LineSpacing: 0.8
   m_Text: This is the popup's message, with a maximum of 3-4 lines (otherwise text
     is quite small)
 --- !u!114 &114820666804171572
@@ -2065,8 +2066,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: -374.66, y: 90}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -380, y: 120}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!224 &224562877264025262
 RectTransform:

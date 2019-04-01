@@ -23,21 +23,19 @@ public abstract class ModifierEntity : Modifier {
 		return null;
 	}
 
-	#endregion
+    #endregion
 
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
 
 
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	public ModifierEntity(DefinitionNode _def) {
-		base.Init(TYPE_CODE);
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    protected ModifierEntity(string _target) : base(TYPE_CODE, _target) { }
+    protected ModifierEntity(string _target, DefinitionNode _def) : base(TYPE_CODE, _target, _def) {}
 
-		m_def = _def;
-	}
 }

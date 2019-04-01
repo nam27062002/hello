@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -112,7 +112,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 			m_sceneController.Clear();
 
 			// Store current event for faster access
-			m_tournamentManager = HDLiveEventsManager.instance.m_tournament;
+			m_tournamentManager = HDLiveDataManager.tournament;
 			m_tournamentData = m_tournamentManager.data as HDTournamentData;
 			m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 
@@ -135,7 +135,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 			// From now on, if the flow is interrupted, the tournament will not appear anymore and rewards will appear as pending rewards
 			if(m_tournamentManager != null) {
 				// Tournament Rewards
-				List<HDLiveEventDefinition.HDLiveEventReward> rewards = m_tournamentManager.GetMyRewards();
+				List<HDLiveData.Reward> rewards = m_tournamentManager.GetMyRewards();
 				for(int i = 0; i < rewards.Count; ++i) {
 					UsersManager.currentUser.PushReward(rewards[i].reward);
 				}
@@ -143,8 +143,9 @@ public class TournamentRewardScreen : MonoBehaviour {
 				// Mark tournament as collected
 				m_tournamentManager.FinishEvent();	// Mark event as collected immediately after rewards have been pushed to the stack, to prevent exploits
 
-				// Immediately save persistence in case the rewards opening gets interrupted
-				PersistenceFacade.instance.Save_Request(true);
+                // Immediately save persistence in case the rewards opening gets interrupted
+                HDLiveDataManager.instance.SaveEventsToCache();
+                PersistenceFacade.instance.Save_Request(true);
 			}
 
 			// Set initial state
@@ -301,8 +302,8 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_tournamentManager.ClearEvent();
 
 				// Request new event data
-				if(!HDLiveEventsManager.TEST_CALLS) {		// Would read the event again from the json xD
-					HDLiveEventsManager.instance.RequestMyEvents(true);
+				if(!HDLiveDataManager.TEST_CALLS) {		// Would read the event again from the json xD
+					HDLiveDataManager.instance.RequestMyLiveData(true);
 				}
 
 				// Save!
@@ -311,7 +312,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 				m_state = State.FLOW_NOT_STARTED;
 
 				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY);
+				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}
 

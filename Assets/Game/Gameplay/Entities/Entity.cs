@@ -133,12 +133,14 @@ public class Entity : IEntity, IBroadcastListener {
 		m_reward.energy = m_def.GetAsFloat("rewardEnergy");
 		m_reward.fury = m_def.GetAsFloat("rewardFury", 0);
 
-		m_reward.alcohol = m_def.GetAsFloat("alcohol",0);
 		m_reward.origin = m_def.Get("sku");
 		m_reward.category = m_def.Get("category");
 
-		// Simple data
-		m_goldenChance = m_def.GetAsFloat("goldenChance");
+        OnRewardCreated();
+
+
+        // Simple data
+        m_goldenChance = m_def.GetAsFloat("goldenChance");
 		if (sm_goldenModifier && m_goldenChance > 0)
 			m_goldenChance = 1f;
 
@@ -159,10 +161,13 @@ public class Entity : IEntity, IBroadcastListener {
 		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
 		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchOnFromTier");
 
-		m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
+        m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
+        if (InstanceManager.player != null) {
+            m_maxHealth *= (1f + (m_def.GetAsFloat("healthScalePerDragonTier", 0f) * (int)InstanceManager.player.data.tier));
+        }
 
-		// Feedback data
-		m_feedbackData.InitFromDef(m_def);
+        // Feedback data
+        m_feedbackData.InitFromDef(m_def);
 
 		ApplyPowerUpMultipliers();
 	}
@@ -219,7 +224,7 @@ public class Entity : IEntity, IBroadcastListener {
 		base.Disable(_destroyed);
 
 		if (m_spawner != null) {
-			m_spawner.RemoveEntity(gameObject, _destroyed);
+			m_spawner.RemoveEntity(this, _destroyed);
 		}
 
         m_spawned = false;		
@@ -238,10 +243,6 @@ public class Entity : IEntity, IBroadcastListener {
 		// Give coins? True if the entity was golden or has been burnt
 		if(!m_isGolden && !InstanceManager.player.breathBehaviour.IsFuryOn()) {
 			newReward.coins = 0;
-		}
-
-		if (_reason == DyingReason.BURNED || _reason == DyingReason.DESTROYED) {
-			newReward.alcohol = 0;
 		}
 
 		// Give PC?
@@ -385,7 +386,11 @@ public class Entity : IEntity, IBroadcastListener {
 
 		m_reward.xp = m_def.GetAsFloat("rewardXp");
 		m_reward.xp += (m_reward.xp * m_powerUpXpMultiplier) / 100.0f;
-	}
+
+        OnRewardCreated();
+    }
+
+    protected virtual void OnRewardCreated() {}
 
 
 	public static void AddSCMultiplier( float value )

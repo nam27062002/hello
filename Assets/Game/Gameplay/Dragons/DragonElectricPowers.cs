@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragonElectricPowers : MonoBehaviour {
 
@@ -42,6 +43,7 @@ public class DragonElectricPowers : MonoBehaviour {
     private float m_boostDelta = 0;
 
     private float m_superSizeMultiplier = 1;
+    ToggleParam m_toggleParam = new ToggleParam();
 
     private void Awake()
     {
@@ -62,6 +64,7 @@ public class DragonElectricPowers : MonoBehaviour {
         for (int i = 0; i < NUM_LIGHTNINGS; i++)
         {
             m_lightningInstances[i] = Instantiate<GameObject>(m_lightningPrefab);
+            SceneManager.MoveGameObjectToScene(m_lightningInstances[i], gameObject.scene);
             m_lightningPS[i] = m_lightningInstances[i].GetComponent<ParticleSystem>();
         }
         
@@ -92,6 +95,7 @@ public class DragonElectricPowers : MonoBehaviour {
         if (m_powerLevel >= 2)
         {
             m_blastParticleSystem = ParticleManager.InitLeveledParticle(m_blastParticle, null);
+            SceneManager.MoveGameObjectToScene(m_blastParticleSystem.gameObject, gameObject.scene);
             m_blastParticleSystem.gameObject.SetActive(true);
         }
         Messenger.AddListener<bool>(MessengerEvents.SUPER_SIZE_TOGGLE, OnSuperSizeToggle);
@@ -118,6 +122,8 @@ public class DragonElectricPowers : MonoBehaviour {
                 if (!m_active)
                 {
                     m_active = true;
+                    m_toggleParam.value = m_active;
+                    Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
                 }
 
                 bool done = false;
@@ -205,6 +211,8 @@ public class DragonElectricPowers : MonoBehaviour {
 			if (m_active)
 			{
 				m_active = false;
+                m_toggleParam.value = m_active;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
 			}
 		}
 

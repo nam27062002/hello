@@ -65,28 +65,22 @@ namespace AI {
 			}
 
 			protected override void OnUpdate() {
-				Vector3 targetPos = InstanceManager.player.transform.position;
-				targetPos += InstanceManager.player.dragonMotion.direction * m_frontDistance;
+				Vector3 playerPos = InstanceManager.player.transform.position;
+				Vector3 targetPos = playerPos + InstanceManager.player.dragonMotion.direction * m_frontDistance;
 				m_pilot.GoTo(targetPos);
 
 				if ( m_spawnedEntity != null )
 				{
 					m_eatBehaviour.InstantGrabMotion();
-					float magnitude = (targetPos - m_pilot.transform.position).sqrMagnitude;
-					if ( magnitude <= 1 )
-					{
-						// We are done
-						// leave prey
-						if ( m_spawnedEntity != null )
-						{
-							m_eatBehaviour.EndHold();
-							m_spawnedEntity.dieOutsideFrustum = true;
-							m_spawnedEntity = null;
-						}
-
-						m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
-						Transition(OnPreyReleased, m_transitionParam);
-					}
+                    // Check is in front
+                    Vector3 diff = m_machine.position - playerPos;
+                    if (Vector3.Dot(InstanceManager.player.dragonMotion.direction,diff ) > 0)
+                    {
+                        if (diff.sqrMagnitude < m_frontDistance * m_frontDistance)
+                        {
+                            LeavePrey();
+                        }
+                    }
 				}
 				else
 				{
@@ -94,6 +88,21 @@ namespace AI {
 					Transition(OnPreyReleased, m_transitionParam);
 				}
 			}
+            
+            private void LeavePrey()
+            {
+                // We are done
+                        // leave prey
+                        if ( m_spawnedEntity != null )
+                        {
+                            m_eatBehaviour.EndHold();
+                            m_spawnedEntity.dieOutsideFrustum = true;
+                            m_spawnedEntity = null;
+                        }
+
+                        m_transitionParam[0] = m_data.m_eatPauseAfterPreyRelease.GetRandom();
+                        Transition(OnPreyReleased, m_transitionParam);
+            }
 
 			protected override void OnExit(State _newState){
 				m_eatBehaviour.AdvanceHold(true);

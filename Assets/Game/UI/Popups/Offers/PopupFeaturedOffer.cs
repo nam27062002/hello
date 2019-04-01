@@ -123,6 +123,14 @@ public class PopupFeaturedOffer : MonoBehaviour {
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// The popup has been opened.
+	/// </summary>
+	public void OnShowPostAnimation() {
+		// Update pack's view tracking
+		m_pack.NotifyPopupDisplayed();
+	}
+
+	/// <summary>
 	/// The shop button has been pressed.
 	/// </summary>
 	public void OnShopButton() {
@@ -131,7 +139,7 @@ public class PopupFeaturedOffer : MonoBehaviour {
 
 		// Open shop popup
 		PopupController shopPopup = PopupManager.LoadPopup(PopupShop.PATH);
-		shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST);
+		shopPopup.GetComponent<PopupShop>().Init(PopupShop.Mode.OFFERS_FIRST, "Featured_Offer");
 		shopPopup.Open();
 	}
 

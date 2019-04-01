@@ -31,7 +31,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -192.8825, y: 103.243, z: 4.3088512}
+  m_LocalPosition: {x: -9.450433, y: 1.9276681, z: 2.5908546}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4438074997773992}
@@ -686,7 +686,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":true},{"archDuration":1,"archLength":15,"archAngle":45,"beamAnchorPoint":"RailgunDir","stunDuration":5,"beamSound":"hd_pet_alien_attack","delayAfterEnd":0.6,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":45,"dataType":"AI.Behaviour.AttackStunArchData","editorFolded":true},{"maxValidTier":4,"minValidTier":0,"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":2,"max":4},"ignoreSkus":"MineSmall;MineMedium;MineBig;Ghost01;Ghost02;Ghost03;BadJunk","dataType":"AI.Behaviour.PetSearchStunTargetData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":true},{"distance":4,"dataType":"AI.Behaviour.IsTargetCloseEnough+IsTargetCloseEnoughData","editorFolded":true}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":true},{"archDuration":1,"archLength":15,"archAngle":45,"beamAnchorPoint":"RailgunDir","stunDuration":5,"beamSound":"hd_pet_alien_attack","delayAfterEnd":0.6,"consecutiveAttacks":1,"attackDelay":0,"retreatTime":0,"stop":true,"faceEnemy":true,"faceEnemyY":false,"facing":1,"forceFaceToShoot":true,"maxFacingAngle":45,"dataType":"AI.Behaviour.AttackStunArchData","editorFolded":false},{"dragonSizeRangeMultiplier":10,"shutdownRange":{"min":2,"max":4},"ignoreSkus":"","ignoreTag":1288,"dataType":"AI.Behaviour.PetSearchStunTargetData","editorFolded":false},{"petChaseSku":"common","checkCanBeBitten":false,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"distance":4,"dataType":"AI.Behaviour.IsTargetCloseEnough+IsTargetCloseEnoughData","editorFolded":true}]'
   m_databaseKey: PF_PetAlien_59
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -735,6 +735,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 424588}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114395733772365888
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -769,6 +770,7 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 1

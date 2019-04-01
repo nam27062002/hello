@@ -89,13 +89,13 @@ public enum MessengerEvents {
 	REWARD_APPLIED,				// params: Reward _reward, Transform _entity
 	SCORE_MULTIPLIER_CHANGED,	// params: ScoreMultiplier _newMultiplier, int goldScoreMultiplier
 	SCORE_MULTIPLIER_LOST,		// no params
+    SCORE_MULTIPLIER_FORCE_UP,  // no params
 	PREWARM_FURY_RUSH,			// params: DragonBreathBehaviour.Type _type, float duration
 	// FURY_RUSH_TOGGLED,			// params: bool _activated, DragonBreathBehaviour.Type _type
 	HUNT_EVENT_TOGGLED,			// params: Transform _entityLocation, bool _activated
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	// BOOST_TOGGLED,				// params: bool _activated
 	BOOST_SPACE,					// no params
-	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 	UNDERWATER_TOGGLED,			// params: bool _activated
     INTOSPACE_TOGGLED,          // params: bool _activated
@@ -103,20 +103,21 @@ public enum MessengerEvents {
 	BREAK_OBJECT_NEED_TURBO,	// no params
 	BREAK_OBJECT_SHALL_NOT_PASS,// no params
 	BREAK_OBJECT_WITH_FIRE,		// no params
+    BREAK_OBJECT_TO_OPEN,       // no params
     DARK_ZONE_TOGGLE,           // params: bool _enter / _exit, CandleEffectTrigger
 	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
     // Entity events
-    ENTITY_EATEN,				// params: Transform _entity, Reward _reward
-	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
-	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
-	BLOCKER_DESTROYED,			// no params
-	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
-	STAR_COMBO,
-	ENTITY_ESCAPED,				// params: Transform _entity
+    ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
+	ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
+    ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
+    BLOCKER_DESTROYED,			// no params
+	FLOCK_EATEN,                // params: IEntity _entity, Reward _reward
+    STAR_COMBO,
+	ENTITY_ESCAPED,             // params: IEntity _entity
 
-	// Player events
-	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
+    // Player events
+    PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
 	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState
@@ -244,6 +245,9 @@ public enum MessengerEvents {
 	SPECIAL_DRAGON_STAT_UPGRADED,	// params: DragonDataSpecial _dragonData, DragonDataSpecial.Stat _stat
 	SPECIAL_DRAGON_POWER_UPGRADED,	// params: DragonDataSpecial _dragonData
 	SPECIAL_DRAGON_TIER_UPGRADED,	// params: DragonDataSpecial _dragonData
+
+    // Modifiers
+    MODIFIER_ECONOMY_DRAGON_PRICE_CHANGED,  // params: IDragonData
 
 	COUNT
 }

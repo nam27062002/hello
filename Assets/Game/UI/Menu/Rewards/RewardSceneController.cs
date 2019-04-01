@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
 using System;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -505,8 +506,18 @@ public class RewardSceneController : MenuScreenScene {
 	/// </summary>
 	/// <param name="_dragonReward">Dragon reward.</param>
 	private void OpenDragonReward(Metagame.RewardDragon _dragonReward) {
-		// Select this dragon!
-		InstanceManager.menuSceneController.SetSelectedDragon(_dragonReward.sku);
+		// If we're in the right mode, make it the selected dragon
+		IDragonData dragonData = DragonManager.GetDragonData(_dragonReward.sku);
+		if(dragonData != null) {
+			// Tell the dragon selection screen for that dragon's type to make it the selected one next time we go there
+			if(dragonData is DragonDataSpecial) {
+				LabDragonSelectionScreen dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.LAB_DRAGON_SELECTION).ui.GetComponent<LabDragonSelectionScreen>();
+				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+			} else {
+				MenuDragonScreenController dragonSelectionScreen = InstanceManager.menuSceneController.GetScreenData(MenuScreen.DRAGON_SELECTION).ui.GetComponent<MenuDragonScreenController>();
+				dragonSelectionScreen.pendingToSelectDragon = _dragonReward.sku;
+			}
+		}
 
 		// Initialize skin view
 		InitDragonView(_dragonReward);
@@ -847,6 +858,15 @@ public class RewardSceneController : MenuScreenScene {
 
 				// Nullify reward reference
 				m_currentReward = null;
+
+				// Remove screen from screen history
+				// We want to prevent going back to this screen which has already been cleared
+				// At this point (SCREEN_TRANSITION_START) the screen has already been added to the history
+				// Resolves issue HDK-3436 among others
+				List<MenuScreen> history = InstanceManager.menuSceneController.transitionManager.screenHistory;
+				if(history.Last() == _from) {	// Make sure the screen we come from is actually in the history (i.e. screens that don't allow back to them are not added to the history)
+					history.RemoveAt(history.Count - 1);
+				}
 			}
 		}
 	}

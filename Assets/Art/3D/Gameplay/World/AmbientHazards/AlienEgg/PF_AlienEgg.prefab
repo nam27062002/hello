@@ -27,7 +27,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1012900490783292
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1199468427619608
 GameObject:
   m_ObjectHideFlags: 0
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 114980929373182538}
   - component: {fileID: 65463407365028198}
   - component: {fileID: 114354271479642582}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: PF_AlienEgg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,7 +148,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1978048055207050}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -735.03, y: -167.36, z: 0}
+  m_LocalPosition: {x: -756.4608, y: -176.39474, z: -1.4482422}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4898869793567576}
@@ -206,6 +206,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -221,6 +222,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -238,6 +240,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -253,6 +256,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -270,6 +274,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -285,6 +290,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -352,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb53df07d1e6148fcadb69b5a601c7ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_zone1Interaction: 0
+  m_zone1Interaction: 1
   m_knockBackStrength: 0
   m_damageOnDestruction: 8
   m_particleFaceDragonDirection: 0
@@ -431,7 +437,7 @@ MonoBehaviour:
       m_Mode: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    offset: {x: 1.5, y: 2, z: 0}
+    offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
   m_onDestroyAudio: hd_alienegg_broken
@@ -478,6 +484,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8120059800728421a9caa1901cb4b847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: vegetation_small
   m_tier: 0
   m_disintegrable: 1
@@ -612,5 +619,6 @@ MonoBehaviour:
     scale: 1
     orientate: 0
   m_useAnimator: 0
+  m_viewScripts: []
   m_boxelSize: 8
   m_hitRadius: 1.5

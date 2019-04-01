@@ -93,7 +93,7 @@ namespace AI {
 							// Initialize some death info
 							m_entity.onDieStatus.source = _source;
 							// Dispatch global event
-							Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+							Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, reward);
 							*/
 						}
 
@@ -110,7 +110,10 @@ namespace AI {
 			return false;
 		}
 
-		public override bool CanBeBitten() {
+        public override void CheckInLove() { }
+        public override void InLove(float _inLoveDuration) { }
+
+        public override bool CanBeBitten() {
 			return false;
 		}
 	}

@@ -95,7 +95,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		if(FeatureSettingsManager.IsControlPanelEnabled) {
 			Messenger.AddListener(MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 		}
-		Messenger.AddListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+		Messenger.AddListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 	}
 
 	/// <summary>
@@ -109,7 +109,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 			if (FeatureSettingsManager.IsControlPanelEnabled) {
 				Messenger.RemoveListener (MessengerEvents.DEBUG_REFRESH_MISSION_INFO, DEBUG_OnRefreshMissionInfo);
 			}
-			Messenger.RemoveListener<int, HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
+			Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, OnEventFinished);
 		}
 	}
 
@@ -301,7 +301,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
         }
 
 		bool ret = false;
-        if (checkVideoIsReady ) 
+        if ( FeatureSettingsManager.AreAdsEnabled && checkVideoIsReady ) 
         {
 			if ( MopubAdsManager.SharedInstance.IsRewardedReady() || Application.internetReachability != NetworkReachability.NotReachable )	
 			{
@@ -327,6 +327,14 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
 		// Difficulty
 		RefreshDifficulty(m_difficultyText, true);
+
+        // TODO: A more efficient way to access the button
+        if (!FeatureSettingsManager.AreAdsEnabled) {
+            GameObject skipAdButton = m_cooldownObj.FindObjectRecursive("ButtonSkipAd");
+            if (skipAdButton != null) {
+                skipAdButton.SetActive(false);
+            }
+        }
 
 		// Skip with ad button
 		if(m_cooldownSkipFreeText != null) {
@@ -587,7 +595,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		Refresh();
 	}
 
-	private void OnEventFinished(int _eventId, HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnEventFinished(int _eventId, HDLiveDataManager.ComunicationErrorCodes _error) {
 		Refresh();
 	}
 

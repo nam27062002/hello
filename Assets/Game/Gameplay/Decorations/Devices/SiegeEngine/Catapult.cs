@@ -46,7 +46,10 @@ public class Catapult : SimpleDevice {
 	[SeparatorAttribute("Audio")]
 	[SerializeField] private string m_onTossAudio = "";
 
-	[SeparatorAttribute("Debug")]
+    [SeparatorAttribute]
+    [SerializeField] private DestructibleDecoration m_destructibleTrigger = null;
+
+    [SeparatorAttribute("Debug")]
 	[SerializeField] private bool m_forcePreview = false;
 	[SerializeField] private float m_previewStep = 1f;
 	[SerializeField] private float m_previewMaxTime = 20f;
@@ -98,7 +101,7 @@ public class Catapult : SimpleDevice {
 			}
 
 			for (int i = 0; i < m_ammoList.Length; i++) {
-				m_ammoPoolHandlers[i] = PoolManager.RequestPool(m_ammoList[i].name, "Game/Projectiles/", 3);
+				m_ammoPoolHandlers[i] = PoolManager.RequestPool(m_ammoList[i].name, 3);
 			}
 		}
 
@@ -116,18 +119,9 @@ public class Catapult : SimpleDevice {
 		m_animEvents.onAttackDealDamage += new PreyAnimationEvents.OnAttackDealDamageDelegate(OnToss);
 		m_animEvents.onAttackEnd		+= new PreyAnimationEvents.OnAttackEndDelegate(OnReload);
 
-		m_timer = 0;
-		m_state = State.Reload;
-	}
+        m_destructibleTrigger.onDestroy += OnDestroy;
 
-	public override void Initialize() {
-		base.Initialize();
-
-		m_vAngle = (m_vAngleMax + m_vAngleMin) * 0.5f;
-
-		m_timer = 0;
-		m_animator.StopPlayback();
-
+        m_timer = 0;
 		m_state = State.Reload;
 	}
 
@@ -150,7 +144,7 @@ public class Catapult : SimpleDevice {
 					if (!string.IsNullOrEmpty(m_onTossAudio))
 						AudioController.Play(m_onTossAudio, transform.position);
 					m_animator.SetBool( GameConstants.Animator.TOSS , true);
-					m_operatorSpawner.OperatorDoShoot();
+					m_operatorSpawner.OperatorDoActionB();
 					m_state = State.Toss;
 				}
 				m_timer = 0f;
@@ -159,23 +153,32 @@ public class Catapult : SimpleDevice {
 	}
 
 	protected override void OnRespawning() {
-		m_animator.StartPlayback();
+        m_animator.speed = 1;
 		for (int i = 0; i < m_ammo.Length; i++) {
 			if (m_ammo[i] != null) {
 				m_ammo[i].GetComponent<Projectile>().Explode(false);
 				m_ammo[i] = null;
 			}
 		}
-	}
+    }
 
-	protected override void OnOperatorDead() {
-		if (m_state == State.Reload) {
-			m_animator.StartPlayback();
-		}
+    protected override void OnRespawn() {
+        m_vAngle = (m_vAngleMax + m_vAngleMin) * 0.5f;
+
+        m_timer = 0;
+        m_animator.speed = 1;
+
+        m_animator.SetBool(GameConstants.Animator.TOSS, false);
+
+        OnReload();
+    }
+
+    protected override void OnOperatorDead() {
+		m_animator.speed = 0;		
 	}
 
 	protected override void OnOperatorSpawned() {
-		m_animator.StopPlayback();
+		m_animator.speed = 1;
 		if (m_state == State.Reload) { // reload time
 			OnReload();
 		}
@@ -264,13 +267,19 @@ public class Catapult : SimpleDevice {
 	private void OnReload() {
 		if (m_operatorAvailable) {
 			m_animator.SetBool( GameConstants.Animator.RELOAD , true);
-			m_operatorSpawner.OperatorDoReload();
+			m_operatorSpawner.OperatorDoActionA();
 		}
 
 		m_state = State.Reload;
 	}
 
-	private void FindAmmoSpawnTransform() {
+    private void OnDestroy() {
+        if (m_operatorAvailable && m_operatorSpawner != null) {
+            m_operatorSpawner.OperatorDoScared();
+        }
+    }
+
+    private void FindAmmoSpawnTransform() {
 		m_ammoTransform = transform.FindTransformRecursive(m_ammoSpawnTransformName);
 	}
 
@@ -313,7 +322,9 @@ public class Catapult : SimpleDevice {
 
 	protected override void OnAreaExit() {
 		base.OnAreaExit();
-		m_animator.StopPlayback();
+        if (m_animator != null) {
+            m_animator.speed = 0;
+        }
 	}
 
 	//-------------------------------------------------------------------

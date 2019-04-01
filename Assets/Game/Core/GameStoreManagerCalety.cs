@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
@@ -10,6 +11,7 @@ public class GameStoreManagerCalety : GameStoreManager
     /// Listener /////////////////////////////////////////////////////////////
 	private class CaletyGameStoreListener : StoreManager.StoreListenerBase
     {
+        private bool m_isInitialising = false;
     	public bool m_isReady = false;
         private bool m_hasInitFailed = false;
         private GameStoreManagerCalety m_manager;
@@ -24,9 +26,39 @@ public class GameStoreManagerCalety : GameStoreManager
         {
             m_isReady = false;
             m_hasInitFailed = false;
+            m_isInitialising = false;
         }
 
-		public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
+        public void Initialise()
+        {
+            m_isInitialising = false;
+        }
+
+        public bool IsInitialising()
+        {
+            return m_isInitialising;
+        }
+
+        public void InitialiseStore(ref string[] storeSKUs, bool bAvoidVerification = false)
+        {
+            Reset();
+            m_isInitialising = true;
+            StoreManager.SharedInstance.Initialise(ref storeSKUs, bAvoidVerification);
+        }
+
+#if UNITY_EDITOR
+        public void FakeInit(bool success)
+        {
+            m_isInitialising = false;
+            m_hasInitFailed = !success;
+            if (success)
+            {
+                onStoreIsReady();
+            }
+        }
+#endif        
+
+        public override void onPurchaseCompleted(string sku, string strTransactionID, JSONNode kReceiptJSON, string strPlatformOrderID) 
 		{
             string purchaseSkuTriggered = m_manager.GetPurchaseSkuTriggeredByUser();
 
@@ -48,12 +80,8 @@ public class GameStoreManagerCalety : GameStoreManager
             // If the user hasn't triggered this purchase then it means that this purchase is being resumed from a purchase that was interrupted in a previous session
             if (string.IsNullOrEmpty(purchaseSkuTriggered) || purchaseSkuTriggered != sku)
             {
-                if (FeatureSettingsManager.IsDebugEnabled)
-                {
-                    Log("Pending transactions are urged because of an interrupted IAP");
-                }
-
                 // We need to urge to request for pending transactions
+				Log("Pending transactions are urged because of an interrupted IAP");
                 TransactionManager.instance.Pending_UrgeToRequestTransactions();
             }
             else
@@ -61,7 +89,8 @@ public class GameStoreManagerCalety : GameStoreManager
                 bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
                 System.Action onDone = delegate ()
                 {
-                    // string gameSku = PlatformSkuToGameSku( sku );
+					// string gameSku = PlatformSkuToGameSku( sku );
+					Log("PURCHASE_SUCCESSFUL Broadcast " + sku);
                     Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
                 };
 
@@ -121,8 +150,14 @@ public class GameStoreManagerCalety : GameStoreManager
             if (FeatureSettingsManager.IsDebugEnabled)
                 Log("onStoreIsReady");
 
-			m_isReady = true;	
-		}
+			m_isReady = true;
+            OnInitialiseStoreDone();
+        }
+
+        private void OnInitialiseStoreDone()
+        {
+            m_isInitialising = false;
+        }
 
 		/// <summary>
 		/// Ons the IAP promoted received. 
@@ -147,6 +182,7 @@ public class GameStoreManagerCalety : GameStoreManager
                 Log("onStoreIosInitFail errorCode = " + errorCode);
 
             m_hasInitFailed = true;
+            OnInitialiseStoreDone();
         }
 
         public bool HasInitFailed()
@@ -161,7 +197,7 @@ public class GameStoreManagerCalety : GameStoreManager
 	const string AMAZON_ATTRIBUTE = "amazon";
 
 	CaletyGameStoreListener m_storeListener;
-	string[] m_storeSkus;
+	string[] m_storeSkus;    
 
     private bool m_isFirstInit;
 
@@ -169,19 +205,22 @@ public class GameStoreManagerCalety : GameStoreManager
     
     private Queue<string> m_promotedIAPs;
 
+    private float m_waitForInitializationExpiresAt = -1f;
+    private Action m_onWaitForInitializationDone;
 
     public GameStoreManagerCalety () 
 	{
         m_promotedIAPs = new Queue<string>();
 		m_storeListener = new CaletyGameStoreListener(this);
         m_isFirstInit = true;
-        m_purchaseSkuTriggeredByUser = null;
+        m_purchaseSkuTriggeredByUser = null;        
     }
 
     private void Reset()
-    {
+    {        
         m_isFirstInit = true;
         m_storeListener.Reset();
+        ResetWaitForInitialization();
     }
 
 	public override void Initialize()
@@ -196,8 +235,9 @@ public class GameStoreManagerCalety : GameStoreManager
 			m_isFirstInit = false;
         }
 
-		m_storeListener.Reset();
-		StoreManager.SharedInstance.Initialise (ref m_storeSkus, false);		          
+        ResetWaitForInitialization();
+
+        m_storeListener.InitialiseStore(ref m_storeSkus, false);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
@@ -215,6 +255,11 @@ public class GameStoreManagerCalety : GameStoreManager
 #endif        
 	}
 
+    public override bool IsInitializing()
+    {
+        return m_storeListener.IsInitialising();
+    }
+
     private void OnConnectionRecovered()
     {
         TryToSolveInitializeProblems();
@@ -228,10 +273,9 @@ public class GameStoreManagerCalety : GameStoreManager
         // Checks if there was an initialize problem
         if (!IsReady() && m_storeListener.HasInitFailed())
         {
-            m_storeListener.Reset();
-            StoreManager.SharedInstance.Initialise(ref m_storeSkus, false);
+            m_storeListener.InitialiseStore(ref m_storeSkus, false);
         }
-    }
+    }    
 
 	public void CacheStoreSkus()
 	{
@@ -258,9 +302,9 @@ public class GameStoreManagerCalety : GameStoreManager
 
 	public void RegisterPromotedIAP(string _sku) {
         m_promotedIAPs.Enqueue(_sku);
-	}
+	}    
 
-	public override bool IsReady()
+    public override bool IsReady()
 	{
 		return m_storeListener.m_isReady;
 	}
@@ -283,25 +327,29 @@ public class GameStoreManagerCalety : GameStoreManager
     }
 
 
-    public override bool CanMakePayment()
-	{
-        if (!string.IsNullOrEmpty(m_purchaseSkuTriggeredByUser) )   // if purchase in process we dont let make more payments
-        {
-            return false;
-        }
+	public override bool CanMakePayment() {
+		Log("CanMakePayment?");
+		if(!string.IsNullOrEmpty(m_purchaseSkuTriggeredByUser))   // if purchase in process we dont let make more payments
+		{
+			Log("CanMakePayment? NO! Another purchase with sku " + m_purchaseSkuTriggeredByUser + " is running!");
+			return false;
+		}
 #if UNITY_EDITOR
-		return true;
+        return IsReady();
 #else
-		return StoreManager.SharedInstance.CanMakePayments();
-#endif	
-	}
-    	
-	public override void Buy( string _sku )
-	{
-        m_purchaseSkuTriggeredByUser = _sku;
+		Log("CanMakePayment? Asking native library...");
+		bool canMakePayment = StoreManager.SharedInstance.CanMakePayments();
+		Log("CanMakePayment? Native library response is " + canMakePayment);
+		return canMakePayment;
+#endif
+    }
+
+	public override void Buy(string _sku) {
+		Log("Buy() " + _sku);
+		m_purchaseSkuTriggeredByUser = _sku;
 
 #if UNITY_EDITOR
-        StoreManager.SharedInstance.StartCoroutine( SimulatePurchase(_sku) );
+		StoreManager.SharedInstance.StartCoroutine(SimulatePurchase(_sku));
 #else
     	if (StoreManager.SharedInstance.CanMakePayments()) 
     	{
@@ -309,11 +357,12 @@ public class GameStoreManagerCalety : GameStoreManager
 			if ( !string.IsNullOrEmpty( _sku ) )
     		{
                 HDTrackingManager.Instance.Notify_IAPStarted();
+				Log("Requesting product " + _sku + " to the native store");
 				StoreManager.SharedInstance.RequestProduct (_sku);
     		}
     	}
 #endif
-    }		   
+	}		   
 
     IEnumerator SimulatePurchase( string _sku)
     {
@@ -378,23 +427,69 @@ public class GameStoreManagerCalety : GameStoreManager
 		#endif
     	return "";
     }
+    
+    public override void WaitForInitialization(Action onDone, float timeOut=20f)
+    {
+        m_onWaitForInitializationDone = onDone;
+        m_waitForInitializationExpiresAt = Time.realtimeSinceStartup + timeOut;
+    }  
+    
+    private void ResetWaitForInitialization()
+    {
+        m_waitForInitializationExpiresAt = -1f;
+        m_onWaitForInitializationDone = null;
+    }
+
+#if UNITY_EDITOR
+    // Time for the shope to initialize. Increase this value if you want to test what happens when trying to purchase before the shop has been initialized
+    // 40 seconds is the time that is taking to initialize with the current amount of products (86 on January 2019) on the actual device 
+    private float m_fakeInitTimer = 5f;
+#endif
+
+    public override void Update()
+    {
+#if UNITY_EDITOR
+        if (m_fakeInitTimer > 0f)
+        {
+            m_fakeInitTimer -= Time.deltaTime;
+            if (m_fakeInitTimer <= 0f)
+            {
+                m_fakeInitTimer = -1f;
+
+                // Pass true if you want the shop to be initialized successfully
+                m_storeListener.FakeInit(true);
+            }
+        }
+#endif
+        if (m_onWaitForInitializationDone != null)
+        {            
+            if (Time.realtimeSinceStartup >= m_waitForInitializationExpiresAt || !IsInitializing())
+            {                
+                m_onWaitForInitializationDone();
+                ResetWaitForInitialization();
+            }            
+        }
+    }
 
     #region log
     private static void Log(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+        msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.Log(msg, ControlPanel.ELogChannel.Store);
     }
 
     private static void LogError(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogError(msg, ControlPanel.ELogChannel.Store);
     }
 
     private static void LogWarning(string msg)
     {
-        msg = "[Store] " + msg;
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		msg = "[GameStoreManagerCalety]" + msg;
         ControlPanel.LogWarning(msg, ControlPanel.ELogChannel.Store);
     }
     #endregion

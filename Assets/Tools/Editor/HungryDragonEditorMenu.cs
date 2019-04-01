@@ -290,9 +290,17 @@ public class HungryDragonEditorMenu
 	/// <summary>
 	/// Live Events Tools
 	/// </summary>
-	[MenuItem("Hungry Dragon/Tools/Tournament Leaderboard Generation", false, 251)]
-	public static void TournamentLeaderboardGeneration() {
+	[MenuItem("Hungry Dragon/Tools/Tournament Leaderboard Generator", false, 251)]
+	public static void TournamentLeaderboardGenerator() {
 		TournamentLeaderboardGeneratorEditor.ShowWindow();
+	}
+
+	/// <summary>
+	/// Preview of all Ease functions.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/League Leaderboard Generator", false, 252)]
+	public static void LeagueLeaderboardGenerator() {
+		LeagueLeaderboardGeneratorEditor.ShowWindow();
 	}
 
     //--------------------------------------------------- OTHERS -----------------------------------------------------//

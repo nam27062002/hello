@@ -1,4 +1,4 @@
-// ResultsScreenStepTracking.cs
+﻿// ResultsScreenStepTracking.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 05/09/2017.
@@ -43,45 +43,50 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 		// Update global stats
 		UsersManager.currentUser.gamesPlayed = UsersManager.currentUser.gamesPlayed + 1;
 		DragonManager.currentDragon.gamesPlayed = DragonManager.currentDragon.gamesPlayed + 1;
-
-		// Pre-process chests
-		int chestsFound = 0;
-		int totalCollectedChests = ChestManager.collectedChests;
-		long chestsCoinsReward = 0;
-		for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
-			if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
-				// Count chest
-				chestsFound++;
-				totalCollectedChests++;
-
-				// Find out reward
-				Chest.RewardData rewardData = ChestManager.GetRewardData(totalCollectedChests);
-				if(rewardData != null && rewardData.type == Chest.RewardType.SC) {
-					chestsCoinsReward += (long)rewardData.amount;
-				}
-			}
-		}
-
-		// Pre-process missions
-		bool[] missionCompleted = new bool[(int)Mission.Difficulty.COUNT];
-		int [] missionReward = new int[(int)Mission.Difficulty.COUNT];
-		for(int i = 0; i < missionCompleted.Length; i++) {
-			Mission m = MissionManager.GetMission((Mission.Difficulty)i);
-			if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
-				missionCompleted[i] = true;
-                missionReward[i] = (int)m.reward.amount;
-			} else {
-				missionCompleted[i] = false;
-				missionReward[i] = 0;
-			}
-		}
-
+		
+        /*
 		if (FeatureSettingsManager.instance.IsMiniTrackingEnabled) {
+            // Pre-process chests
+            int chestsFound = 0;
+            int totalCollectedChests = ChestManager.collectedChests;
+            long chestsCoinsReward = 0;
+            for(int i = 0; i < ChestManager.dailyChests.Length; i++) {
+                if(ChestManager.dailyChests[i].state == Chest.State.PENDING_REWARD) {
+                    // Count chest
+                    chestsFound++;
+                    totalCollectedChests++;
+    
+                    // Find out reward
+                    Chest.RewardData rewardData = ChestManager.GetRewardData(totalCollectedChests);
+                    if(rewardData != null && rewardData.type == Chest.RewardType.SC) {
+                        chestsCoinsReward += (long)rewardData.amount;
+                    }
+                }
+            }
+    
+            // Pre-process missions
+            bool[] missionCompleted = new bool[(int)Mission.Difficulty.COUNT];
+            int [] missionReward = new int[(int)Mission.Difficulty.COUNT];
+            for(int i = 0; i < missionCompleted.Length; i++) {
+                Mission m = MissionManager.GetMission((Mission.Difficulty)i);
+                if(m != null && m.state == Mission.State.ACTIVE && m.objective.isCompleted) {
+                    missionCompleted[i] = true;
+                    missionReward[i] = (int)m.reward.amount;
+                } else {
+                    missionCompleted[i] = false;
+                    missionReward[i] = 0;
+                }
+            }
+            
 			// Get some special data
 			int level = 0;
 			if(DragonManager.currentDragon.type == IDragonData.Type.CLASSIC) {
 				level = (DragonManager.currentDragon as DragonDataClassic).progression.level;
 			}
+            else if ( DragonManager.currentDragon.type == IDragonData.Type.CLASSIC )
+            {
+                
+            }
 
 			// Do it!
 			MiniTrackingEngine.TrackEvent(
@@ -117,6 +122,7 @@ public class ResultsScreenStepTracking : ResultsScreenStep {
 			// Tracking is sent silently after every round
 			MiniTrackingEngine.SendTrackingFile(true, null);
 		}
+        */
 
 		// Notify we're finished
 		OnFinished.Invoke();

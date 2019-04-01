@@ -189,7 +189,7 @@ public class Spawner : AbstractSpawner {
 		if (m_eventOnly) {
 			// enabledByEvents = GlobalEventManager.CanContribute() == GlobalEventManager.ErrorCode.NONE;
 				// Maybe only check if joined?
-			enabledByEvents = HDLiveEventsManager.instance.m_quest.IsRunning() && HDLiveEventsManager.instance.m_quest.m_isActive;
+			enabledByEvents = HDLiveDataManager.quest.IsRunning() && HDLiveDataManager.quest.isActive;
 		}
 
 		if (enabledByEvents) {
@@ -333,7 +333,7 @@ public class Spawner : AbstractSpawner {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, m_entities.Length);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, m_entities.Length);
 		}
 
 		// Get external references
@@ -352,7 +352,15 @@ public class Spawner : AbstractSpawner {
 		m_prefabIndex = GetPrefabIndex();
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_maxSpawns > 0 && m_respawnCount >= m_maxSpawns)
 		{
 			m_readyToBeDisabled = true;
@@ -366,9 +374,9 @@ public class Spawner : AbstractSpawner {
 					if (m_isPremiumCurrencyNPC) {
 						float eaten = 1f;
 
-						string key = m_entitySku[m_prefabIndex];
-						if (RewardManager.killCount.ContainsKey(key)) {
-							eaten = RewardManager.killCount[key];
+						string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
+                        if (RewardManager.npcPremiumCount.ContainsKey(key)) {
+							eaten += RewardManager.npcPremiumCount[key];
 						}
 
 						float rnd = Random.Range(0f, 1f);
@@ -508,15 +516,26 @@ public class Spawner : AbstractSpawner {
 				m_groupBonus = m_entities[0].score * EntitiesToSpawn * FLOCK_BONUS_MULTIPLIER;
 			}
 		}
-	}
+    }
 
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+    protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
+        if (m_isPremiumCurrencyNPC && _killedByPlayer) {
+            string key = GetPrefabNameToSpawn((uint)m_prefabIndex);
+            if (RewardManager.npcPremiumCount.ContainsKey(key)) {
+                RewardManager.npcPremiumCount[key]++;
+            } else {
+                RewardManager.npcPremiumCount.Add(key, 1);
+            }
+        }
+    }
+    	
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		if (_allKilledByPlayer) {
 			// check if player has destroyed all the flock
-			if (m_groupBonus > 0) {
+			if (m_groupBonus > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.score = (int)(m_groupBonus * EntitiesKilled);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
 			}
 
 			// Reroll the Golden chance
@@ -659,7 +678,7 @@ public class Spawner : AbstractSpawner {
 		}
 	}	
 
-	void OnDrawGizmos() {
+	public virtual void OnDrawGizmos() {
 		Gizmos.color = Colors.paleGreen;
 		Gizmos.DrawCube(transform.position + (Vector3)m_rect.position, m_rect.size);
 

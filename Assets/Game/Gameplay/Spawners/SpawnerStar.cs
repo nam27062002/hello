@@ -8,7 +8,9 @@ public class SpawnerStar : AbstractSpawner {
 	[Separator("Entity")]
 	[EntityJunkPrefabListAttribute]
 	[SerializeField] private string m_entityPrefab = "";
-	[SerializeField] private uint m_quantity = 5;
+    public string entityPrefab { get { return m_entityPrefab; } }
+
+    [SerializeField] private uint m_quantity = 5;
 
 	[Separator("Coin Bonus")]
 	[SerializeField] private int m_coinsRewardFlock = 0;
@@ -17,7 +19,9 @@ public class SpawnerStar : AbstractSpawner {
 	[SerializeField] public Range m_spawnTime = new Range(40f, 45f);
 
 
-	private PoolHandler m_poolHandler;
+
+
+    private PoolHandler m_poolHandler;
 
 	private float m_respawnTime;
 	private SpawnerConditions m_respawnConditions; 
@@ -72,14 +76,20 @@ public class SpawnerStar : AbstractSpawner {
 			m_pointToEntityIndex[i] = -1;
 		}
 
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefab, m_entities.Length);
 
 		// Get external references
 		// Spawners are only used in the game and level editor scenes, so we can be sure that game scene controller will be present
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 	}
 
-	protected override bool CanRespawnExtended() {
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefab);
+        return list;
+    }
+
+    protected override bool CanRespawnExtended() {
 		if (m_respawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			// If we don't have any entity alive, proceed
 			if (EntitiesAlive == 0) {
@@ -126,7 +136,7 @@ public class SpawnerStar : AbstractSpawner {
 		spawning.transform.position = transform.position + m_points[point]; // set position
 	}
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
 		if (_killedByPlayer) {
 			for (int i = 0; i < m_quantity; ++i) {
 				if (m_pointToEntityIndex[i] == index) {
@@ -138,7 +148,7 @@ public class SpawnerStar : AbstractSpawner {
 		}
 	}
 
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		//
 		if (_allKilledByPlayer) {
 			// clear indexes
@@ -148,7 +158,7 @@ public class SpawnerStar : AbstractSpawner {
 			}
 
 			// check if player has destroyed all the flock
-			if (m_coinsRewardFlock > 0) {
+			if (m_coinsRewardFlock > 0 && _lastEntity != null) {
 				Reward reward = new Reward();
 				reward.coins = m_coinsRewardFlock;
 				Messenger.Broadcast<Transform, Reward>(MessengerEvents.STAR_COMBO, _lastEntity.transform, reward);

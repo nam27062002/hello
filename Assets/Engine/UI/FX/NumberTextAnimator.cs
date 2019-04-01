@@ -123,9 +123,13 @@ public class NumberTextAnimator : MonoBehaviour, IBroadcastListener {
 	void Update() {
 		// Skip if we've reached the final value
 		if(m_currentValue != m_finalValue) {
-			// Update current value
-			long newValue = (long)Mathf.SmoothStep(m_initialValue, m_finalValue, (Time.unscaledTime - m_startTime)/m_duration);
-
+            // Update current value
+            float delta = (Time.unscaledTime - m_startTime) / m_duration;
+            long newValue = m_finalValue;
+            if ( delta < 1.0 )
+            {
+                newValue = (long)Mathf.RoundToInt(Mathf.SmoothStep(m_initialValue, m_finalValue, delta ));
+            }
 			// If value has changed, update textfield
 			if(newValue != m_currentValue) {
 				m_currentValue = newValue;

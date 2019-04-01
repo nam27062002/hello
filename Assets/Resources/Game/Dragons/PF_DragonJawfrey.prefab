@@ -80,10 +80,10 @@ GameObject:
   - component: {fileID: 11419346}
   - component: {fileID: 11442574}
   - component: {fileID: 11455772}
-  - component: {fileID: 11487054}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 11487054}
   m_Layer: 12
   m_Name: PF_DragonJawfrey
   m_TagString: Player
@@ -306,7 +306,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -163.21333, y: -189.45549, z: -56.306408}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -532,7 +532,6 @@ MonoBehaviour:
   m_invulnerableTime: 5
   m_health: 0
   m_energy: 0
-  m_alcoholDrain: 1
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
   m_alwaysSpawnCorpse: 0
@@ -562,7 +561,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelUp: {fileID: 1617233673352068, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 4000011218522520}
-  m_reviveParticle: Dragon/PS_Revive
+  m_reviveParticle: PS_Revive
   m_reviveAnchor: {fileID: 4000013037928750}
   m_petRevive:
     name: PS_ReviveFromPet
@@ -622,10 +621,10 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonJawfreyCorpse
-  m_hiccupParticle: Dragon/PS_hiccups
+  m_hiccupParticle: PS_hiccups
   m_hiccupAnchor: {fileID: 4449432731639020}
   m_shieldParticle:
-    name: Dragon/PS_BreakingShield
+    name: PS_BreakingShield
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -804,7 +803,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_introStopAnimationDelta: 0.25
+  m_useBoostOnIntro: 1
+  m_limitsCheck: 0
+  m_lastPhysicsValidPos: {x: 0, y: 0, z: 0}
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -820,6 +821,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -858,7 +860,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moving: 0
+  movingTap: 0
   action: 0
+  actionTap: 0
 --- !u!114 &11444600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2163,7 +2167,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.07661277, y: 0.8354887, z: 0.120635346, w: 0.5305999}
+  m_LocalRotation: {x: 0.032853775, y: 0.11577296, z: -0.003831453, w: 0.99272484}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2902,6 +2906,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010415769646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2917,6 +2922,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010463477452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2955,6 +2961,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010816463694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4748,6 +4755,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000012705948140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4782,6 +4790,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000012860912386
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4819,6 +4828,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000013461850916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4845,6 +4855,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000014186287668
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4860,6 +4871,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114008348236124686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4887,6 +4899,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114040069135383726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4902,6 +4915,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114073584465472632
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4917,6 +4931,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114084824476581444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4932,6 +4947,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114164639988061140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4971,6 +4987,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114244769860900544
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5033,6 +5050,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114442259726504076
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5060,6 +5078,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114460051962895606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5075,6 +5094,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114478689592015682
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5090,6 +5110,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114479126821349726
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5105,6 +5126,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114482995476159930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5120,6 +5142,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114483623526055878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5159,6 +5182,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114666493991554796
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5222,6 +5246,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114709447917837452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5263,6 +5288,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114752085627954470
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5278,6 +5304,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114756965196527398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5317,6 +5344,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114812211798691276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5344,6 +5372,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114855738344375026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5359,6 +5388,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114901319543081744
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5374,6 +5404,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114909070216448264
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5389,6 +5420,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114987343599758630
 MonoBehaviour:
   m_ObjectHideFlags: 1

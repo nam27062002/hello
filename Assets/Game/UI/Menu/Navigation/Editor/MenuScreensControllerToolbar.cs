@@ -131,7 +131,8 @@ public class MenuScreensControllerToolbar {
 
 				case MenuScreen.OPEN_EGG:
 				case MenuScreen.EVENT_REWARD:
-				case MenuScreen.PENDING_REWARD: {
+				case MenuScreen.PENDING_REWARD:
+				case MenuScreen.LEAGUES_REWARD: {
 					s_screenGroups[(int)EScreensGroup.REWARD_SCREENS].screens.Add(scr);
 				} break;
 
@@ -143,7 +144,8 @@ public class MenuScreensControllerToolbar {
 				} break;
 
 				case MenuScreen.LAB_PETS:
-				case MenuScreen.LAB_GOALS:
+				case MenuScreen.LAB_LEAGUES:
+				case MenuScreen.LAB_MISSIONS:
 				case MenuScreen.LAB_DRAGON_SELECTION: {
 					s_screenGroups[(int)EScreensGroup.LAB_SCREENS].screens.Add(scr);
 				} break;

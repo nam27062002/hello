@@ -108,11 +108,11 @@ public class HungryLettersManager : MonoBehaviour
 
 	protected void Start()
 	{
-        if (SceneController.mode != SceneController.Mode.TOURNAMENT || !HDLiveEventsManager.instance.m_tournament.HasModOfType(typeof(ModDragonSize))) {
+        if (SceneController.mode != SceneController.Mode.TOURNAMENT || !HDLiveDataManager.tournament.HasModOfType(typeof(ModDragonSize))) {
             Spawn();
 
             // [AOC] If cheating, instantiate a dummy letter for every spawner!
-            if (Prefs.GetBoolPlayer(DebugSettings.SHOW_ALL_COLLECTIBLES)) {
+            if (DebugSettings.showAllCollectibles) {
                 SpawnDebug();
             }
         }

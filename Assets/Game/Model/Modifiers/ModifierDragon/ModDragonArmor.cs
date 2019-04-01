@@ -6,7 +6,7 @@ public class ModDragonArmor : ModifierDragon {
 	private float m_percentage;
 
 	//------------------------------------------------------------------------//
-	public ModDragonArmor(DefinitionNode _def) : base(_def) {
+	public ModDragonArmor(DefinitionNode _def) : base(TARGET_CODE, _def) {
 		m_percentage = _def.GetAsFloat("param1");
 		BuildTextParams(
 			StringUtils.MultiplierToPercentage(UnityEngine.Mathf.Abs(m_percentage/100f)),

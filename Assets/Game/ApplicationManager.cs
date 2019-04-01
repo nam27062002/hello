@@ -172,7 +172,9 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 
         PersistenceFacade.instance.Destroy();
         Device_Destroy();
-        
+
+        HDAddressablesManager.Instance.Reset();
+
         m_isAlive = false;
         Messenger.Broadcast(MessengerEvents.APPLICATION_QUIT);
 
@@ -327,6 +329,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         HDTrackingManager.Instance.Update();
         HDCustomizerManager.instance.Update();        
 		GameServerManager.SharedInstance.Update();
+        HDAddressablesManager.Instance.Update();
+        GameStoreManager.SharedInstance.Update();
 
         if (NeedsToRestartFlow)
         {
@@ -379,6 +383,8 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         // Unsent events shouldn't be stored when the game is getting paused because the procedure might take longer than the time that the OS concedes and if the procedure
         // doesn't finish then events can get lost (HDK-1897)
         HDTrackingManager.Instance.SaveOfflineUnsentEventsEnabled = !pause;
+
+        GameSettings.OnApplicationPause(pause);
 
         // We need to notify the tracking manager before saving the progress so that any data stored by the tracking manager will be saved too
         if (pause)
@@ -533,18 +539,37 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 			}
 			
 			// Chests notification
-			int max = UsersManager.currentUser.dailyChests.Length;
-			bool missingChests = false;
-			for (int i = 0; i < max && !missingChests; i++) 
+			Chest[] chests = UsersManager.currentUser.dailyChests;
+			if (chests != null) 
 			{
-				if ( UsersManager.currentUser.dailyChests[i].state == Chest.State.COLLECTED )
-					missingChests = true;
+				int max = chests.Length;
+				bool missingChests = false;
+				for (int i = 0; i < max && !missingChests; i++) 
+				{
+					if (chests[i] != null && chests[i].state == Chest.State.COLLECTED)
+						missingChests = true;
+				}
+				if (missingChests) 
+				{
+					int moreSeconds = 9 * 60 * 60;  // 9 AM
+					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
+				}
 			}
-			if ( missingChests )
-			{
+
+			// Daily reward notification
+            if (UsersManager.currentUser.dailyRewards.CanCollectNextReward())
+            {
+                // reward pending
+            }
+            else
+            {
+                // time to reward
+                System.DateTime midnight = UsersManager.currentUser.dailyRewards.nextCollectionTimestamp;
+                double secondsToMidnight = (midnight - System.DateTime.Now).TotalSeconds;
                 int moreSeconds = 9 * 60 * 60;  // 9 AM
-				HDNotificationsManager.instance.ScheduleNewChestsNotification((int) ChestManager.timeToReset.TotalSeconds + moreSeconds );
-			}
+                HDNotificationsManager.instance.ScheduleNewDailyReward ((int)secondsToMidnight + moreSeconds);
+            }
+			// [AOC] TODO!!
         }
     }
 
@@ -552,6 +577,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
     {
 		HDNotificationsManager.instance.CancelNewMissionsNotification();
 		HDNotificationsManager.instance.CancelNewChestsNotification();
+		HDNotificationsManager.instance.CancelDailyRewardNotification();
     }
 
     #region game
@@ -574,31 +600,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         Game_IsPaused = value;
     }
 
-    /// <summary>
-    /// Checks whether or not the customizer needs to reload rules and if so the cached data are reloaded.
-    /// </summary>
-    /// <returns><c>true</c> if the customizer had changes pending to be applied.</returns>
-    public bool Game_ApplyCustomizer()
-    {
-        bool rulesReloaded = HDCustomizerManager.instance.Apply();
-
-        // If rules have been reloaded then cached data have to be updated
-        if (rulesReloaded)
-        {
-            Game_OnRulesUpdated();
-        }
-
-        return rulesReloaded;
-    }
-
-    /// <summary>
-    /// This method is called when rules have changed
-    /// </summary>
-    private void Game_OnRulesUpdated()
-    {
-        // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
-    }
+    
     #endregion
 
     #region device   
@@ -641,7 +643,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 	private void Device_CalculateOrientation() 
 	{
 		ScreenOrientation screenOrientation = Screen.orientation;
-		bool verticalOrientationIsAllowed = Prefs.GetBoolPlayer(DebugSettings.VERTICAL_ORIENTATION, false);
+		bool verticalOrientationIsAllowed = DebugSettings.verticalOrientation;
 		Screen.orientation = (verticalOrientationIsAllowed) ? ScreenOrientation.AutoRotation : ScreenOrientation.Landscape;
 	}
 		
@@ -1142,13 +1144,6 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FeatureSettingsManager.Log("after currentUserProfileLevel = " + FeatureSettingsManager.instance.GetUserProfileLevel() + " currentProfileLevel = " + FeatureSettingsManager.instance.GetCurrentProfileLevel());
     }
 
-    private bool Debug_IsDrunkOn { get; set; }
-
-    public void Debug_TestToggleDrunk()
-    {
-        Debug_IsDrunkOn = !Debug_IsDrunkOn;
-        Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, Debug_IsDrunkOn);
-    }
 
     private bool Debug_IsFrameColorOn { get; set; }
 
@@ -1158,6 +1153,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
         FuryRushToggled furyRushToggled = new FuryRushToggled();
         furyRushToggled.activated = Debug_IsFrameColorOn;
         furyRushToggled.type = DragonBreathBehaviour.Type.Mega;
+        furyRushToggled.color = FireColorSetupManager.FireColorType.RED;
         Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, furyRushToggled);
     }
 

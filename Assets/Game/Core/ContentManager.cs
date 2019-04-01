@@ -86,6 +86,11 @@ public class ContentManager
         }
     }
 
+    public static void Reset()
+    {
+        ContentDeltaManager.SharedInstance.ResetDeltaContentDownloaded();
+    }
+
 	public static void InitContent(bool bAvoidDeltaContent = false, bool _configureServerManager = true)
 	{
 		if (_configureServerManager) {
@@ -113,8 +118,8 @@ public class ContentManager
     private static void InitContentDeltaManager()
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
-        ContentDeltaManager.SharedInstance.SetListener(m_kContentDeltaDelegate);
-        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer);                
+        ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
+        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer, true, true);                
     }
 
     private static void InitDefinitions()
@@ -135,9 +140,9 @@ public class ContentManager
 
         kDefinitionFiles.Add(DefinitionsCategory.NOTIFICATIONS, new string[] { "Rules/notificationsDefinitions" });
 
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2" });
-        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/PM_level_0_area1", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/PM_level_0_area2", "Rules/PM_level_0_common" });
+        kDefinitionFiles.Add(DefinitionsCategory.PARTICLE_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/PM_level_0_area3", "Rules/PM_level_0_common" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA2, new string[] { "Rules/NPC_Pools_level_0_area2" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA1, new string[] { "Rules/NPC_Pools_level_0_area1" });
 		kDefinitionFiles.Add(DefinitionsCategory.POOL_MANAGER_SETTINGS_LEVEL_0_AREA3, new string[] { "Rules/NPC_Pools_level_0_area3" });
@@ -178,7 +183,8 @@ public class ContentManager
         kDefinitionFiles.Add(DefinitionsCategory.ENTITIES, new string[] { "Rules/entityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.DECORATIONS, new string[] { "Rules/decorationDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.ENTITY_CATEGORIES, new string[] { "Rules/entityCategoryDefinitions" });
-        kDefinitionFiles.Add(DefinitionsCategory.FREEZE_CONSTANTS, new string[] { "Rules/freezeConstantDefinitions" });
+        kDefinitionFiles.Add(DefinitionsCategory.FREEZE_CONSTANTS, new string[] { "Rules/freezeConstantDefinitions" }); 
+        kDefinitionFiles.Add(DefinitionsCategory.EQUIPABLE, new string[] { "Rules/equipableDefinitions" });
 
         // Game
         kDefinitionFiles.Add(DefinitionsCategory.SCORE_MULTIPLIERS, new string[] { "Rules/scoreMultiplierDefinitions" });
@@ -191,12 +197,15 @@ public class ContentManager
 		kDefinitionFiles.Add(DefinitionsCategory.PREREG_REWARDS, new string[] { "Rules/preRegRewardsDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.RARITIES, new string[] { "Rules/rarityDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.HUNGRY_LETTERS, new string[] { "Rules/hungryLettersDefinitions" });
+		kDefinitionFiles.Add(DefinitionsCategory.DAILY_REWARDS, new string[] { "Rules/dailyRewardsDefinitions" });
+
             // Interstitials
-        kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
+        // kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_PROFILES, new string[] { "Rules/interstitialAdsProfilesDefinitions" });
         kDefinitionFiles.Add(DefinitionsCategory.INTERSTITIALS_SETUP, new string[] { "Rules/interstitialAdsSettingsDefinitions" });    
 
 		kDefinitionFiles.Add(DefinitionsCategory.DYNAMIC_GATCHA, new string[] {"Rules/dynamicGatchaDefinition"});
 		kDefinitionFiles.Add(DefinitionsCategory.LIVE_EVENTS_MODIFIERS, new string[] {"Rules/modsDefinitions"});
+        kDefinitionFiles.Add(DefinitionsCategory.LEAGUES, new string[] { "Rules/leaguesDefinitions" });
 
         // Disguises
         kDefinitionFiles.Add(DefinitionsCategory.DISGUISES, new string[] { "Rules/disguisesDefinitions", "Rules/specialDisguisesDefinitions" });
@@ -275,7 +284,7 @@ public class ContentManager
         }
 
         LocalizationManager.SharedInstance.Initialise(ref kLanguagesData, "lang_english", "Localization");
-        LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)PlayerPrefs.GetInt(DebugSettings.LOCALIZATION_DEBUG_MODE);	// [AOC] Initialize localization manager debug mode
+        LocalizationManager.SharedInstance.debugMode = (LocalizationManager.DebugMode)DebugSettings.localizationDebugMode;	// [AOC] Initialize localization manager debug mode
     }
 
     private static void OnContentReady()
@@ -285,6 +294,32 @@ public class ContentManager
         // Warn all other managers and definition consumers
 		Messenger.Broadcast(MessengerEvents.DEFINITIONS_LOADED);
     }
+
+    /// <summary>
+    /// This method is called when rules have changed
+    /// </summary>
+    public static void OnRulesUpdated()
+    {
+        // Cached data need to be reloaded
+        OffersManager.InitFromDefinitions();
+
+        // Update all managers 
+        // dragonDefinitions.xml
+        if (UsersManager.currentUser != null)
+        {
+            // UserProfile
+            UsersManager.currentUser.OnRulesUpdated();
+            
+            // DragonManager
+            DragonManager.SetupUser(UsersManager.currentUser);
+        }
+        
+        
+            // seasonsDefinitions
+        SeasonManager.instance.RefreshActiveSeason();       
+    }
+     
+
 
     #region log
     private const bool LOG_USE_COLOR = false;

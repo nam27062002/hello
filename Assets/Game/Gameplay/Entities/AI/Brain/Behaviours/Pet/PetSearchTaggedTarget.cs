@@ -15,13 +15,15 @@ namespace AI {
 		[System.Serializable]
         public class PetSearchTaggedTargetData : StateComponentData {
             public IEntity.Tag tag = 0;
-			[Tooltip("Max tier this pet will consider target.")]
+            public IEntity.Tag ignoreTag = 0;
+            [Tooltip("Max tier this pet will consider target.")]
 			public DragonTier maxValidTier = DragonTier.TIER_4;
 			[Tooltip("Min tier this pet will consider target.")]
 			public DragonTier minValidTier = DragonTier.TIER_0;
             public TargetPriority priority = TargetPriority.Any; 
 			public CheckType checkType;
-			public float dragonSizeRangeMultiplier = 10;
+            public Signals.Type ignoreSignal = Signals.Type.None;
+            public float dragonSizeRangeMultiplier = 10;
 			public Range m_shutdownRange = new Range(10,20);
 		}
 
@@ -37,8 +39,6 @@ namespace AI {
 
 			private Entity[] m_checkEntities = new Entity[50];
 			private int m_numCheckEntities = 0;
-
-			private int m_collidersMask;
 
 			DragonPlayer m_owner;
 			float m_range;
@@ -62,7 +62,6 @@ namespace AI {
 
 				m_transitionParam = new object[1];
 
-                m_collidersMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PlayerOnlyCollisions");
 				m_eatBehaviour = m_pilot.GetComponent<EatBehaviour>();
 
 				base.OnInitialise();
@@ -97,9 +96,9 @@ namespace AI {
 					{
 						Entity entity = m_checkEntities[e];
 						Machine machine = entity.GetComponent<Machine>();
-						if (machine != null && machine.CanBeBitten() && !machine.isPetTarget )
+						if (machine != null && !machine.IsDying() && !machine.IsDead() && machine.CanBeBitten() && !machine.isPetTarget )
 						{
-                            if (entity.HasTag(m_data.tag)) {
+                            if (entity.HasTag(m_data.tag) && !entity.HasTag(m_data.ignoreTag)) {
                                 bool isViable = false;
                                 switch (m_data.checkType) {
                                     case CheckType.Edible: {
@@ -121,27 +120,28 @@ namespace AI {
                                         break;
                                 }
 
+                                if (isViable && m_data.ignoreSignal != Signals.Type.None) {
+                                    isViable = !machine.GetSignal(m_data.ignoreSignal);
+                                }
+
                                 if (isViable) {
-                                    // Check if physics reachable
-                                    RaycastHit hit;
-                                    Vector3 dir = entity.circleArea.center - m_machine.position;
-                                    bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, m_collidersMask);
-                                    if (!hasHit) {
-                                        if (m_data.priority == TargetPriority.Any) {
-                                            target = entity;
+                                    // Test if in front of player!
+                                    Vector3 entityDir = machine.position - m_owner.dragonMotion.position;
+                                    if (Vector2.Dot(m_owner.dragonMotion.direction, entityDir) > 0) {
+                                        // Check if physics reachable
+                                        RaycastHit hit;
+                                        Vector3 dir = entity.circleArea.center - m_machine.position;
+                                        bool hasHit = Physics.Raycast(m_machine.position, dir.normalized, out hit, dir.magnitude, GameConstants.Layers.GROUND_PLAYER_OBSTACLE);
+                                        if (!hasHit) {
+                                            // Check if closed? Not for the moment
+                                            m_transitionParam[0] = entity.transform;
+                                            if (entity.circleArea)
+                                                m_sensor.SetupEnemy(entity.transform, entity.circleArea.radius * entity.circleArea.radius, null);
+                                            else
+                                                m_sensor.SetupEnemy(entity.transform, 0, null);
+                                            m_machine.SetSignal(Signals.Type.Warning, true);
+                                            Transition(onEnemyTargeted, m_transitionParam);
                                             break;
-                                        } else {
-                                            if (target == null) {
-                                                target = entity;
-                                            } else if (m_data.priority == TargetPriority.SmallestTier) {
-                                                if (entity.edibleFromTier < target.edibleFromTier) {
-                                                    target = entity;
-                                                }
-                                            } else if (m_data.priority == TargetPriority.BiggerTier) {
-                                                if (entity.edibleFromTier > target.edibleFromTier) {
-                                                    target = entity;
-                                                }
-                                            }
                                         }
                                     }
                                 }

@@ -5,7 +5,9 @@ namespace AI {
 	public class MachineCollectible : MonoBehaviour, IMachine, ISpawnable {
 		UnityEngine.Events.UnityAction m_deactivateCallback;
 
-		private CollectibleViewControl m_viewControl = null;
+        [SerializeField] private bool m_useSpawnerRotation = false;
+
+        private CollectibleViewControl m_viewControl = null;
 		private IEntity m_entity = null;
 		private Transform m_transform;
 
@@ -52,7 +54,7 @@ namespace AI {
 					m_entity.onDieStatus.reason = IEntity.DyingReason.EATEN;
 
 					// Dispatch global event
-					Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
+					Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
 
 					m_viewControl.Collect();
 
@@ -64,6 +66,15 @@ namespace AI {
 
 		public void Spawn(ISpawner _spawner) {
 			m_isCollected = false;
+
+            if (m_useSpawnerRotation) {
+                Quaternion rot = GameConstants.Quaternion.identity;
+                if (_spawner != null) {
+                    rot = _spawner.rotation;
+                }
+                m_transform.rotation = rot;
+            }
+
             (m_entity as CollectibleEntity).dieOutsideFrustum = m_dieOutsideFrustumRestoreValue;
 		}
 
@@ -107,9 +118,11 @@ namespace AI {
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 		public void CustomFixedUpdate(){}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		public bool Smash(IEntity.Type _source) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

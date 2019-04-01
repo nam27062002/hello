@@ -32,10 +32,10 @@ GameObject:
   - component: {fileID: 11419346}
   - component: {fileID: 11442574}
   - component: {fileID: 11455772}
-  - component: {fileID: 11487054}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
+  - component: {fileID: 11487054}
   m_Layer: 12
   m_Name: PF_DragonFat
   m_TagString: Player
@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -159.33607, y: -184.90869, z: -50.417484}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -253,10 +253,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_fat
   m_invulnerableTime: 5
+  m_health: 0
   m_energy: 0
-  m_alcoholDrain: 1
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
+  m_alwaysSpawnCorpse: 0
 --- !u!114 &11419346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -283,7 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelUp: {fileID: 1617233673352068, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 4000011218522520}
-  m_reviveParticle: Dragon/PS_Revive
+  m_reviveParticle: PS_Revive
   m_reviveAnchor: {fileID: 4000013037928750}
   m_petRevive:
     name: PS_ReviveFromPet
@@ -343,10 +344,10 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonFatCorpse
-  m_hiccupParticle: Dragon/PS_hiccups
+  m_hiccupParticle: PS_hiccups
   m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
-    name: Dragon/PS_BreakingShield
+    name: PS_BreakingShield
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -525,7 +526,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_introStopAnimationDelta: 0.25
+  m_useBoostOnIntro: 1
+  m_limitsCheck: 0
+  m_lastPhysicsValidPos: {x: 0, y: 0, z: 0}
 --- !u!114 &11442574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -552,7 +555,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moving: 0
+  movingTap: 0
   action: 0
+  actionTap: 0
 --- !u!114 &11455772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1524,7 +1529,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: -0.012508092, y: -0.15577622, z: -0.0019727054, w: 0.9877112}
+  m_LocalRotation: {x: 0.026091058, y: -0.61783713, z: 0.020519245, w: 0.78560525}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4015,6 +4020,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114043855092487234
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4041,6 +4047,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114172556035412070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4079,6 +4086,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114203880325784482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4094,6 +4102,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114228706375277902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4146,6 +4155,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114268830838241434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4161,6 +4171,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114273215893796742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4187,6 +4198,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114331133484317870
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4318,6 +4330,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114626458753400776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4344,6 +4357,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114670516413665144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4359,6 +4373,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114673937617531080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4374,6 +4389,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114731096060678930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4389,6 +4405,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114777803639561814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4404,6 +4421,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114791472055404572
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4419,6 +4437,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114796680808979406
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4446,6 +4465,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114887854939168130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4461,6 +4481,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114930952077136908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4476,6 +4497,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114931670651145150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4491,6 +4513,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114998690069533076
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4560,6 +4583,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4575,6 +4599,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -4604,6 +4629,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4619,6 +4645,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

@@ -1,4 +1,4 @@
-// GoalsScreenController.cs
+﻿// GoalsScreenController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/07/2017.
@@ -41,6 +41,7 @@ public class GoalsScreenController : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_eventCountdownText = null;
 	[SerializeField] private Slider m_eventCountdownSlider = null;
 	[Space]
+	[SerializeField] private HorizontalOrVerticalLayoutGroup m_buttonsLayout = null;
 	[SerializeField] private SelectableButtonGroup m_buttons = null;
 
 	HDQuestManager m_quest;
@@ -52,10 +53,13 @@ public class GoalsScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		m_quest = HDLiveEventsManager.instance.m_quest;
+		// Initialize references
+		m_quest = HDLiveDataManager.quest;
+
 		// Subscribe to external events.
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
+		// Force a first refresh
 		if (InstanceManager.menuSceneController != null && InstanceManager.menuSceneController.transitionManager != null)
 		{
 			MenuScreen prev = InstanceManager.menuSceneController.transitionManager.prevScreen;
@@ -69,7 +73,7 @@ public class GoalsScreenController : MonoBehaviour {
 			ExcludeButton(Buttons.CHESTS);
 		}
 
-		// Global Events
+		// Quests
 		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_QUESTS_AT_RUN) {
 			ExcludeButton(Buttons.GLOBAL_EVENTS);
 		}
@@ -114,15 +118,23 @@ public class GoalsScreenController : MonoBehaviour {
 		// Consider tutorial as well!
 		eventAvailable &= UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN;
 
-		// Apply
-		m_eventActiveGroup.SetActive(eventAvailable);
-		m_eventInactiveGroup.SetActive(!eventAvailable);
+		// Does it actually change?
+		bool dirty = false;
+		dirty |= m_eventActiveGroup.activeSelf != eventAvailable;
+		dirty |= m_eventInactiveGroup.activeSelf != !eventAvailable;
 
-		// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
-		//		 Luckily for us Unity provides us with the right tools to rebuild it
-		//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
-		HorizontalOrVerticalLayoutGroup layout = m_eventActiveGroup.transform.GetComponentInParent<HorizontalOrVerticalLayoutGroup>();
-		if(layout != null) LayoutRebuilder.ForceRebuildLayoutImmediate(layout.transform as RectTransform);
+		// Apply
+		if(dirty) {
+			m_eventActiveGroup.SetActive(eventAvailable);
+			m_eventInactiveGroup.SetActive(!eventAvailable);
+
+			// [AOC] Enabling/disabling objects while the layout is inactive makes the layout to not update properly
+			//		 Luckily for us Unity provides us with the right tools to rebuild it
+			//		 Fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-690
+			if(m_buttonsLayout != null) {
+				LayoutRebuilder.ForceRebuildLayoutImmediate(m_buttonsLayout.transform as RectTransform);
+			}
+		}
 
 		// Event Timer - only if active
 		if(m_eventActiveGroup.activeSelf) {

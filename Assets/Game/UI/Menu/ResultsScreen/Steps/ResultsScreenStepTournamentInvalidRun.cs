@@ -1,4 +1,4 @@
-// ResultsScreenStepTournamentInvalidRun.cs
+﻿// ResultsScreenStepTournamentInvalidRun.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 30/05/2018.
@@ -37,7 +37,7 @@ public class ResultsScreenStepTournamentInvalidRun : ResultsScreenSequenceStep {
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
 		// Only if run was not valid
-		return !HDLiveEventsManager.instance.m_tournament.WasLastRunValid();
+		return !HDLiveDataManager.tournament.WasLastRunValid();
 	}
 
 	/// <summary>

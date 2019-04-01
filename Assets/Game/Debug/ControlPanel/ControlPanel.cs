@@ -1,4 +1,4 @@
-﻿// ControlPanel.cs
+// ControlPanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 26/11/2015.
@@ -383,10 +383,14 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
         Customizer,
         GameCenter,
 		ResultsScreen,
-		LiveEvents,
+		LiveData,
         Store,
         CP2,
-        Persistence
+        Persistence,
+		Server,
+		Offers,
+		Loading,
+        Addressables
     };
     
     private static Dictionary<ELogChannel, string> sm_logChannelColors;
@@ -395,11 +399,15 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
 	private static void Log_InitChannels() {
 		Log_SetupChannel(ELogChannel.General, "", Color.white);
 		Log_SetupChannel(ELogChannel.Customizer, "Customizer", Color.green);
-		Log_SetupChannel(ELogChannel.ResultsScreen, "RESULTS", Colors.paleYellow);
-		Log_SetupChannel(ELogChannel.LiveEvents, "LiveEvents", Colors.aqua);
+		Log_SetupChannel(ELogChannel.ResultsScreen, "Results", Colors.paleYellow);
+		Log_SetupChannel(ELogChannel.LiveData, "LiveEvents", Colors.aqua);
         Log_SetupChannel(ELogChannel.Store, "Store", Colors.coral);
         Log_SetupChannel(ELogChannel.CP2, "CP2", Colors.blue);
         Log_SetupChannel(ELogChannel.Persistence, "Persistence", Colors.fuchsia);
+		Log_SetupChannel(ELogChannel.Server, "Server", Colors.teal);
+		Log_SetupChannel(ELogChannel.Offers, "Offers", Colors.gold);
+		Log_SetupChannel(ELogChannel.Loading, "Loading", Colors.darkGray);
+        Log_SetupChannel(ELogChannel.Addressables, "Addressables", Colors.lime);        
     }
 
     private static string Log_GetChannelColor(ELogChannel channel)
@@ -526,5 +534,17 @@ public class ControlPanel : UbiBCN.SingletonMonoBehaviour<ControlPanel> {
             Debug.Log(text);
         }
     }
+
+	/// <summary>
+	/// Trigger a text feedback.
+	/// </summary>
+	public static void LaunchTextFeedback(string _text, Color _color) {
+		UIFeedbackText text = UIFeedbackText.CreateAndLaunch(
+			_text,
+			new Vector2(0.5f, 0.5f),
+			ControlPanel.panel.parent as RectTransform
+		);
+		text.text.color = _color;
+	}
     #endregion
 }

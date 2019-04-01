@@ -1,4 +1,4 @@
-// PopupInfoDragonBonus.cs
+﻿// PopupInfoDragonBonus.cs
 // 
 
 //----------------------------------------------------------------------------//
@@ -32,7 +32,7 @@ public class PopupInfoDragonBonus : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	public void OnOpenPreAnimation() {
 		/*
-		string bonusDragon = HDLiveEventsManager.instance.m_quest.m_questDefinition.m_goal.m_bonusDragon;
+		string bonusDragon = HDLiveDataManager.quest.m_questDefinition.m_goal.m_bonusDragon;
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, bonusDragon);
 		m_text.text = LocalizationManager.SharedInstance.Localize("TID_EVENT_BONUS_DRAGON_INFO_MESSAGE", def.GetLocalized("tidName"));
 		m_icon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + bonusDragon + "/icon_disguise_0");	// Default skin

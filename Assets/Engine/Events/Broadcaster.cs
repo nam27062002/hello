@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Broadcaster
+public static class Broadcaster
 {
     public static List<IBroadcastListener>[] m_listeners = new List<IBroadcastListener>[ (int)BroadcastEventType.COUNT ];
 

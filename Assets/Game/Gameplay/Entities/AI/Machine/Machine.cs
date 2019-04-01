@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Assets.Code.Game.Currents;
 
 namespace AI {
-	public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {	
-		public static int GROUND_MASK;
+    public class Machine : MonoBehaviour, IMachine, ISpawnable, IAttacker, IMotion {		
 		/**************/
 		/*			  */
 		/**************/
@@ -27,6 +26,7 @@ namespace AI {
 
 		protected Transform m_transform;
 		protected IEntity m_entity = null;
+        public IEntity entity{ get{ return m_entity; } }
 		protected Pilot m_pilot = null;
 		protected ViewControl m_viewControl = null;
 		public ViewControl view { get { return m_viewControl; } }
@@ -73,16 +73,8 @@ namespace AI {
 
 		private Vector3		m_externalForces;	// Mostly for currents
 
-		// Freezing
-		private bool m_freezing = false;
-		public bool freezing
-		{
-			get{ return m_freezing; }
-		}
-		private float m_freezingMultiplier = 1;
-
-		float m_stunned = 0;
-
+		protected float m_stunned = 0;
+        protected float m_inLove = 0;
 
 		private object[] m_collisionParams;
 		private object[] m_triggerParams;
@@ -95,8 +87,6 @@ namespace AI {
 
 		// Use this for initialization
 		protected virtual void Awake() {
-			GROUND_MASK = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-
 			m_transform = transform;
 
 			m_entity = GetComponent<IEntity>();
@@ -163,6 +153,12 @@ namespace AI {
 
 		void OnDisable() {
 			LeaveGroup();
+
+            if ( ApplicationManager.IsAlive && FreezingObjectsRegistry.instance != null )
+            {
+                FreezingObjectsRegistry.instance.UnregisterMachine( this );
+            }
+            
 		}
 
 		public virtual void Spawn(ISpawner _spawner) {
@@ -187,6 +183,8 @@ namespace AI {
 				m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound);
+
+            FreezingObjectsRegistry.instance.RegisterMachine( this );
 		}
 
 		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
@@ -229,7 +227,7 @@ namespace AI {
 			SetSignal(Signals.Type.Collision, true, ref m_collisionParams);
 
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+                if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundEnter(_collision);
 				}
 			}
@@ -237,7 +235,7 @@ namespace AI {
 
 		protected virtual void OnCollisionStay(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundStay(_collision);
 				}
 			}
@@ -245,7 +243,7 @@ namespace AI {
 
 		protected virtual void OnCollisionExit(Collision _collision) {
 			if (m_motion != null) {
-				if (((1 << _collision.collider.gameObject.layer) & GROUND_MASK) != 0) {
+				if (((1 << _collision.collider.gameObject.layer) & GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) != 0) {
 					m_motion.OnCollisionGroundExit(_collision);
 				}
 			}
@@ -314,10 +312,9 @@ namespace AI {
 		public virtual void CustomUpdate() {			
 			if (!IsDead()) {
                 CheckStun();
+                CheckInLove();
 
-                if (m_stunned <= 0) {
-                    CheckFreeze();
-
+                if (m_stunned <= 0 ) {
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
                             PlaySound(m_onSpawnSound);
@@ -331,6 +328,8 @@ namespace AI {
 
                     //forward special actions
                     if (m_pilot != null) {
+                        m_viewControl.Scared(m_pilot.IsActionPressed(Pilot.Action.Scared));
+
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.A, m_pilot.IsActionPressed(Pilot.Action.Button_A));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.B, m_pilot.IsActionPressed(Pilot.Action.Button_B));
                         m_viewControl.SpecialAnimation(ViewControl.SpecialAnims.C, m_pilot.IsActionPressed(Pilot.Action.Button_C));
@@ -367,38 +366,55 @@ namespace AI {
 		public void AddExternalForce(Vector3 force) {
 			m_externalForces += force;
 		}
-
-		public void CheckFreeze() {
-			// can freeze?
-			if (m_entity.circleArea != null) {
-				m_freezing = FreezingObjectsRegistry.instance.Overlaps((CircleAreaBounds)m_entity.circleArea.bounds);
-				if (m_freezing) {
-					m_freezingMultiplier -= Time.deltaTime * FreezingObjectsRegistry.m_freezinSpeed;
-				} else {
-					m_freezingMultiplier += Time.deltaTime * FreezingObjectsRegistry.m_defrostSpeed;
-				}
-				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, FreezingObjectsRegistry.m_minFreezeSpeedMultiplier, 1.0f);
-				if ( m_pilot )
-					m_pilot.SetFreezeFactor(m_freezingMultiplier);
-
-				float freezingLevel = (1.0f - m_freezingMultiplier) / (1.0f - FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
-
-				m_viewControl.Freezing(freezingLevel);
-			}
-		}
+        
+        public void SetFreezingLevel( float freezingMultiplier)
+        {
+            if ( m_pilot )
+                m_pilot.SetFreezeFactor(1.0f - freezingMultiplier);
+            // float freezingLevel = (freezingMultiplier - 1.0f) / (FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
+            m_viewControl.Freezing(freezingMultiplier);
+        }
 
 		public void CheckStun() {
 			if (m_stunned > 0) {
 				m_stunned -= Time.deltaTime;
-				m_pilot.SetStunned(m_stunned > 0);
+                if ( m_pilot != null )
+				    m_pilot.SetStunned(m_stunned > 0);
 				m_viewControl.SetStunned(m_stunned > 0);
 			}
 		}
 
 		public void Stun(float _stunTime) {
-            if (m_motion != null) m_motion.Stop();
 			m_stunned = Mathf.Max( _stunTime, m_stunned);
+            if (m_stunned > 0) {
+                if (m_pilot != null)  m_pilot.Stop();
+                if (m_motion != null) m_motion.Stop();
+            }
 		}
+        
+        public virtual void CheckInLove() {
+            if (m_inLove > 0) {
+                m_inLove -= Time.deltaTime;
+                if (m_inLove <= 0) {
+                    SetSignal(Signals.Type.InLove, false);
+                    m_viewControl.SetInLove(false);
+                }
+            }
+        }
+        
+        public virtual void InLove( float _inLoveDuration ) {
+            m_inLove = Mathf.Max( _inLoveDuration, m_inLove);
+            if (m_inLove > 0) {
+                if (m_pilot != null) m_pilot.Stop();
+                SetSignal(Signals.Type.InLove, true);
+
+                SetSignal(Signals.Type.Invulnerable, false);
+                SetSignal(Signals.Type.InvulnerableBite, false);
+                SetSignal(Signals.Type.InvulnerableFire, false);
+
+                m_viewControl.SetInLove(true);
+            }
+        }
 
 		public void SetSignal(Signals.Type _signal, bool _activated) {
 			m_signals.SetValue(_signal, _activated);
@@ -504,10 +520,13 @@ namespace AI {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
-		public bool IsFreezing() {
-			return m_freezing;
-		}
+        public bool IsStunned() {
+            return m_stunned > 0;
+        }
 
+        public bool IsInLove() {
+            return m_inLove > 0;
+        }
 
 		public virtual bool CanBeBitten() {
 			if (!enabled)
@@ -536,7 +555,9 @@ namespace AI {
 				m_entity.onDieStatus.source = _source;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+                if ( _source == IEntity.Type.PLAYER )
+                    InstanceManager.timeScaleController.HitStop();
 				return true;
 			}
 			return false;
@@ -602,11 +623,11 @@ namespace AI {
 			return m_edible.GetDyingFixRot();
 		}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant);
+					m_inflammable.Burn(_transform, _source, instant, fireColorType);
 				}
 				return true;
 			}

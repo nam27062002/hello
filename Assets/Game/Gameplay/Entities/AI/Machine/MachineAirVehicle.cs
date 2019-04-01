@@ -70,7 +70,7 @@ namespace AI {
 							// Initialize some death info
 							m_entity.onDieStatus.source = _source;
 							// Dispatch global event
-							Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+							Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, reward);
 							*/
 						}
 						return true;
@@ -86,12 +86,15 @@ namespace AI {
 			return false;
 		}
 
-		public override bool CanBeBitten() {
+        public override void CheckInLove() {}
+        public override void InLove(float _inLoveDuration) {}
+
+        public override bool CanBeBitten() {
 			return false;
 		}
 
-		public override bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {			
-			if (base.Burn(_transform, _source, instant)) {				
+		public override bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType _fireColorType = FireColorSetupManager.FireColorType.RED) {			
+			if (base.Burn(_transform, _source, instant, _fireColorType)) {				
 				if (m_passengersSpawner != null) {
 					m_passengersSpawner.PassengersBurn(_source);
 				}

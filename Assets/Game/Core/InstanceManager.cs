@@ -88,6 +88,12 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
 		get { return instance.m_fogManager; }
 		set { if(instance != null) instance.m_fogManager = value; }
 	}
+    
+    private TimeScaleController m_timeScaleController = null;
+    public static TimeScaleController timeScaleController{
+        get { return instance.m_timeScaleController; }
+        set { if(instance != null) instance.m_timeScaleController = value; }
+    }
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

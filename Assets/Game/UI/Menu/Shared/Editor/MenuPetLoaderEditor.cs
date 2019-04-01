@@ -18,6 +18,11 @@ using UnityEditor;
 /// </summary>
 [CustomEditor(typeof(MenuPetLoader))]
 public class MenuPetLoaderEditor : Editor {
+	//----------------------------------------------------------------------//
+	// CONSTANTS															//
+	//----------------------------------------------------------------------//
+	private const float BUTTON_HEIGHT = 25f;
+
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
@@ -28,9 +33,23 @@ public class MenuPetLoaderEditor : Editor {
 		// Default inspector
 		DrawDefaultInspector();
 
-		// Force loading the pet
-		if(GUILayout.Button("Load Pet")) {
-			((MenuPetLoader)target).Reload();
-		}
+		// Tools
+		EditorGUILayout.Space();
+		EditorGUILayout.BeginHorizontal(); {
+			// Clear loaded pet instance
+			GUI.color = Colors.coral;
+			if(GUILayout.Button("UNLOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				((MenuPetLoader)target).Unload();
+			}
+
+			// Force loading the pet
+			GUI.color = Colors.paleGreen;
+			if(GUILayout.Button("RELOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				((MenuPetLoader)target).Reload();
+			}
+
+			// Reset color
+			GUI.color = Color.white;
+		} EditorGUILayout.EndHorizontal();
 	}
 }

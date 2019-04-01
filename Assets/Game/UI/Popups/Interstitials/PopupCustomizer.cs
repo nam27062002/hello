@@ -149,7 +149,7 @@ public class PopupCustomizer : MonoBehaviour {
 
 
 	// Internal
-	private CustomizerManager.CustomiserPopupConfig m_config = null;
+	private Calety.Customiser.CustomiserPopupConfig m_config = null;
 	private CaletyConstants.PopupConfig m_localizedConfig = null;
 
 	private CanvasGroup m_menuCanvasGroup = null;
@@ -179,7 +179,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// Initialize the popup given a configuration from the customizer.
 	/// </summary>
 	/// <param name="_config">Config.</param>
-	public void InitFromConfig(CustomizerManager.CustomiserPopupConfig _config) {
+	public void InitFromConfig(Calety.Customiser.CustomiserPopupConfig _config) {
 		// Store config
 		m_config = _config;
 
@@ -321,8 +321,7 @@ public class PopupCustomizer : MonoBehaviour {
 	/// The popup is about to close.
 	/// </summary>
 	public void OnClosePreAnimation() {
-		// Notify customizer manager
-		CustomizerManager.SharedInstance.DiscardPopupResourcesAndSayToServer(m_config, true);
+        HDCustomizerManager.instance.NotifyPopupViewed(m_config);
 
 		// Fade canvas in!
 		if(m_menuCanvasGroup != null) {
@@ -345,19 +344,20 @@ public class PopupCustomizer : MonoBehaviour {
 
 		// Different stuff based on the action assigned to the pressed button
 		// Since we need extra parameters not available in Calety's customizer popup implementation, we'll concatenate them to the target screen
-		CustomizerManager.CustomiserPopupButton button = m_localizedConfig.m_kPopupButtons[_btnIdx] as CustomizerManager.CustomiserPopupButton;
+		Calety.Customiser.CustomiserPopupButton button = m_localizedConfig.m_kPopupButtons[_btnIdx] as Calety.Customiser.CustomiserPopupButton;
 		string[] tokens = string.IsNullOrEmpty(button.m_strParam) ? new string[0] : button.m_strParam.Split(';');
 		switch(button.m_eButtonAction) {
-			case CustomizerManager.ePopupButtonAction.CLOSE: {
+			case Calety.Customiser.ePopupButtonAction.CLOSE: {
 				// Will be done at the end of the method
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.GAME_LINK: {
+			case Calety.Customiser.ePopupButtonAction.GAME_LINK: {
 				// At least one token! (screen id)
 				if(tokens.Length == 0) break;
 
 				// Parse known links
 				// As defined in the US https://mdc-web-tomcat17.ubisoft.org/confluence/display/ubm/%5BHD%5D+In-Game+News
+				MenuScreen nextScreen = MenuScreen.NONE;
 				switch(tokens[0]) {
 					case "dragon_selection": {
 						// Navigate to a specific dragon?
@@ -366,7 +366,7 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go to dragon selection screen
-						InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+						nextScreen = MenuScreen.DRAGON_SELECTION;
 					} break;
 
 					case "shop": {
@@ -391,12 +391,12 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(targetPetScreen, true);
+						nextScreen = targetPetScreen;
 					} break;
 
 					case "global_event": {
 						// Just do it!
-						InstanceManager.menuSceneController.GoToScreen(MenuScreen.GLOBAL_EVENTS);
+						nextScreen = MenuScreen.GLOBAL_EVENTS;
 					} break;
 
 					case "tournament": {
@@ -418,12 +418,21 @@ public class PopupCustomizer : MonoBehaviour {
 						}
 
 						// Go the screen
-						screensController.GoToScreen(MenuScreen.SKINS, true);
+						nextScreen = MenuScreen.SKINS;
 					} break;
+				}
+
+				// Trigger screen transition
+				if(nextScreen != MenuScreen.NONE) {
+					// Go to target screens
+					InstanceManager.menuSceneController.GoToScreen(nextScreen);
+
+					// Clear any queued popups
+					PopupManager.ClearQueue();
 				}
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.OPEN_URL: {
+			case Calety.Customiser.ePopupButtonAction.OPEN_URL: {
 				// Mandatory parameter, just close popup if not defined
 				if(tokens.Length > 0) {
 					// Add some delay to give enough time for SFX to be played and popup to be closed before losing focus
@@ -435,17 +444,17 @@ public class PopupCustomizer : MonoBehaviour {
 				}
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.BUY_PRODUCT: {
+			case Calety.Customiser.ePopupButtonAction.BUY_PRODUCT: {
 				// [AOC] TODO!!
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 
-			case CustomizerManager.ePopupButtonAction.REWARD: {
+			case Calety.Customiser.ePopupButtonAction.REWARD: {
 				// [AOC] TODO!!
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 			} break;
 			
-			case CustomizerManager.ePopupButtonAction.NONE: {
+			case Calety.Customiser.ePopupButtonAction.NONE: {
 				// [AOC] Custom actions to be implemented if needed
 				LogError("Customizer Popup: Action not yet implemented! (" + button.m_eButtonAction.ToString() + " | " + button.m_strParam + ")", true);
 				return;

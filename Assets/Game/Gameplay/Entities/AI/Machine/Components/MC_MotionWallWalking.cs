@@ -149,6 +149,14 @@ namespace AI {
 				m_nextSubState = SubState.Idle;
 			}
 		}
+        
+        protected override void FaceDragon() {
+            m_direction = m_dragon.position - m_machine.position;
+            m_direction.Normalize();
+            m_direction = m_direction - Vector3.Dot(m_direction ,m_groundNormal) * m_groundNormal ;
+            m_direction.Normalize();
+            
+        }
 
 		protected override void UpdateOrientation() {
 			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_groundNormal);
@@ -177,7 +185,7 @@ namespace AI {
 				ray.origin = pos;
 				ray.direction = -m_upVector;
 
-				int hitCount = Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GROUND_MASK);
+				int hitCount = Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE);
 				if (hitCount > 0) {
 					RaycastHit hit = m_raycastHits[0];
 					normal = (hit.normal * 0.75f) + (m_groundNormal * 0.25f);
@@ -211,19 +219,19 @@ namespace AI {
 
 			//down
 			ray.direction = GameConstants.Vector3.down;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
 
 			//up
 			ray.direction = GameConstants.Vector3.up;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
 
 			//right
 			ray.direction = GameConstants.Vector3.right;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
 
 			//left
 			ray.direction = GameConstants.Vector3.left;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GROUND_MASK) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {

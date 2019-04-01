@@ -59,13 +59,15 @@ namespace AI {
 			ray.origin = position + m_upVector * 0.1f;
 			ray.direction = -m_groundNormal;
 
-			int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 5f, GROUND_MASK);
-			if (hits > 0) {
-				position = m_raycastHits[0].point;
-				m_heightFromGround = 0f;
-				m_viewControl.Height(0f);
-				m_onGround = true;
-			}
+			int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 5f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE);
+            for (int i = 0; i < hits; ++i) {
+                if (!m_raycastHits[i].collider.isTrigger) {
+                    position = m_raycastHits[0].point;
+                    m_heightFromGround = 0f;
+                    m_viewControl.Height(0f);
+                    m_onGround = true;
+                }
+            }
 
 			m_gravity = GameConstants.Vector3.zero;
 			m_fallTimer = FREE_FALL_THRESHOLD;
@@ -198,6 +200,13 @@ namespace AI {
 				m_nextSubState = SubState.Idle;
 			}
 		}
+        
+        protected override void FaceDragon() {
+            m_direction = m_dragon.position - m_machine.position;
+            m_direction.y = 0;
+            m_direction.Normalize();
+        }
+        
 
 		protected override void UpdateOrientation() {
 			m_targetRotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_upVector);
@@ -223,13 +232,16 @@ namespace AI {
 			ray.origin = pos;
 			ray.direction = -m_upVector;
 
-			if (Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GROUND_MASK) > 0) {
-				normal = m_raycastHits[0].normal;
-				hitPos = m_raycastHits[0].point;
-				m_heightFromGround = m_raycastHits[0].distance - 3f;
-			} else {
-				m_heightFromGround = 100f;
-			}
+            m_heightFromGround = 100f;
+
+            int hits = Physics.RaycastNonAlloc(ray, m_raycastHits, 6f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE);
+            for (int i = 0; i < hits; ++i) {
+                if (!m_raycastHits[i].collider.isTrigger) {
+                    normal = m_raycastHits[0].normal;
+                    hitPos = m_raycastHits[0].point;
+                    m_heightFromGround = m_raycastHits[0].distance - 3f;
+                }
+            }
 
 			if (m_heightFromGround < 0.3f) {
 				m_gravity = GameConstants.Vector3.zero;

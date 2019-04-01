@@ -141,7 +141,7 @@ namespace AI {
 							if ( inSearchButNotEat || m_preferedEntities.Contains(entity.sku) )
 							{
 								Machine machine = entity.GetComponent<Machine>();
-								if ( machine != null && !machine.isPetTarget)
+								if ( machine != null && !machine.IsDying() && !machine.IsDead() && !machine.isPetTarget)
 								{
 									if ( inSearchButNotEat )
 									{

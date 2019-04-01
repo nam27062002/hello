@@ -1,4 +1,4 @@
-// GlobalEventsScreenActivePanel.cs
+﻿// GlobalEventsScreenActivePanel.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 28/06/2017.
@@ -36,7 +36,10 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been enabled.
 	/// </summary>
-	public void OnEnable() {
+	protected override void OnEnable() {
+		// Call parent
+		base.OnEnable();
+
 		// Initialize progress bar
 		if(m_timerProgressBar != null) {
 			m_timerProgressBar.minValue = 0;
@@ -50,7 +53,10 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
-	public void OnDisable() {
+	protected override  void OnDisable() {
+		// Call parent
+		base.OnDisable();
+
 		// Cancel periodic call
 		CancelInvoke();
 	}
@@ -60,9 +66,9 @@ public class GlobalEventsPanelTeaser : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveEventsManager.instance.m_quest.EventExists() ) return;
+		if ( !HDLiveDataManager.quest.EventExists() ) return;
 
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.quest;
 		HDQuestDefinition questDef = questManager.m_questDefinition;
 
 		// Update timer

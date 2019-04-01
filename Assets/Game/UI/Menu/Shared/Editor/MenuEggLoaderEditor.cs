@@ -18,6 +18,14 @@ using UnityEditor;
 /// </summary>
 [CustomEditor(typeof(MenuEggLoader))]
 public class MenuEggLoaderEditor : Editor {
+	//----------------------------------------------------------------------//
+	// CONSTANTS															//
+	//----------------------------------------------------------------------//
+	private const float BUTTON_HEIGHT = 25f;
+
+	//----------------------------------------------------------------------//
+	// METHODS																//
+	//----------------------------------------------------------------------//
 	/// <summary>
 	/// Draw the inspector.
 	/// </summary>
@@ -25,9 +33,23 @@ public class MenuEggLoaderEditor : Editor {
 		// Default inspector
 		DrawDefaultInspector();
 
-		// Force loading the egg
-		if(GUILayout.Button("Load Egg")) {
-			((MenuEggLoader)target).Reload();
-		}
+		// Tools
+		EditorGUILayout.Space();
+		EditorGUILayout.BeginHorizontal(); {
+			// Clear loaded egg instance
+			GUI.color = Colors.coral;
+			if(GUILayout.Button("UNLOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				((MenuEggLoader)target).Unload();
+			}
+
+			// Force loading the egg
+			GUI.color = Colors.paleGreen;
+			if(GUILayout.Button("RELOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				((MenuEggLoader)target).Reload();
+			}
+
+			// Reset color
+			GUI.color = Color.white;
+		} EditorGUILayout.EndHorizontal();
 	}
 }

@@ -44,6 +44,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	[Space]
 	[SerializeField] private GameObject m_dragonPurchasedFX = null;
 	[SerializeField] private Transform m_dragonPurchasedFXAnchor = null;
+	[Space]
+	[SerializeField] private GameObject m_leagueTrophyPreview = null;
+	public GameObject leagueTrophyPreview {
+		get { return m_leagueTrophyPreview; }
+	}
 
 	// Internal references
 	private ScreenData m_labScreenData = null;
@@ -227,6 +232,10 @@ public class LabDragonSelectionScene : MenuScreenScene {
 	private void OnDragonAcquired(IDragonData _data) {
 		// Ignore if not in special dragon mode
 		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) return;
+
+		// Ignore if acquired dragon is not special
+		// Issue HDK-3435: buying a classic dragon from an offer pack while in the lab
+		if(_data.type != IDragonData.Type.SPECIAL) return;
 
 		// Update camera
 		SelectCameraSnapPoint();

@@ -1,4 +1,4 @@
-// GlobalEventsLeaderboardView.cs
+﻿// GlobalEventsLeaderboardView.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 12/07/2017.
@@ -62,7 +62,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		ToggleLoading(true);
 
 		// Request leaderboard!
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 		if ( m_tournament.EventExists() )
 		{
 			m_tournament.RequestLeaderboard();
@@ -89,7 +89,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 	/// </summary>
 	public void Refresh() {
 		// Get current tournament and init some aux vars
-		m_tournament = HDLiveEventsManager.instance.m_tournament;
+		m_tournament = HDLiveDataManager.tournament;
 		HDTournamentData tournamentData = (HDTournamentData)m_tournament.data;
 		HDTournamentDefinition tournamentDef = tournamentData.definition as HDTournamentDefinition;
 		int playerRank = (int)tournamentData.m_rank;
@@ -121,7 +121,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 
 		// Insert reward pills
 		// Reverse-iterate since we don't want to change the inserting indexes
-		List<HDTournamentDefinition.TournamentReward> rewards = tournamentDef.m_rewards;	// They're already sorted by rank, lower to higher
+		List<HDLiveData.RankedReward> rewards = tournamentDef.m_rewards;	// They're already sorted by rank, lower to higher
 		for(int i = rewards.Count - 1; i >= 0; --i) {
 			// Exclude rewards without anyone yet in the ranks
 			if(rewards[i].ranks.min >= lbData.Count) continue;
@@ -133,7 +133,7 @@ public class TournamentLeaderboardView : MonoBehaviour {
 			itemData.data = rewardPillData;
 			itemData.pillType = 2;
 
-			items.Insert(rewards[i].ranks.min, itemData);
+			items.Insert((int)rewards[i].ranks.min, itemData);
 
 			// Keep track of player pill index
 			if(rewards[i].ranks.min <= playerRank) {	// Reward pill comes before player pill?

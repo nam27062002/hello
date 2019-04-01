@@ -32,6 +32,8 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
 
+	private bool m_newHighScore = true;
+
 	//------------------------------------------------------------------------//
 	// ResultsScreenStep IMPLEMENTATION										  //
 	//------------------------------------------------------------------------//
@@ -40,9 +42,6 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {
-		// [AOC] Disabled for 1.16 until 1.18
-		return false;
-
 		// Always show for now
 		return true;
 	}
@@ -55,18 +54,27 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		// [AOC] TODO!! Better sync with animation?
 		m_scoreText.SetValue(0, m_controller.score);
 
-		// Set high score text
-		// Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
-		// [AOC] TODO!!
-		bool isNewBestScore = false;    // league.IsNewBestScore()
-		long bestScore = 100;			// league.bestScore()
-		if(isNewBestScore) {
+        long leaderboardScore = 0;
+        HDLeagueData leagueData = HDLiveDataManager.league.season.currentLeague;
+        if (leagueData != null) {
+            leaderboardScore = leagueData.leaderboard.playerScore;
+        }
+
+        // Set high score text
+        // Don't show if we have a new high score, the flag animation will cover it! Resolves issue HDK-616.
+        // Can't have a high score if the season is not running either!
+        bool seasonRunning = HDLiveDataManager.league.season.IsRunning();
+        bool isNewBestScore = m_controller.score > leaderboardScore;
+		m_newHighScore = seasonRunning && isNewBestScore;
+		if(isNewBestScore || !seasonRunning) {
+			// Season not running or new high score: hide the previous high score text
 			m_highScoreText.gameObject.SetActive(false);
-		} else {
+		} else if(seasonRunning) {
+			// Season running but we didn't do a high score: show the previous high score text
 			m_highScoreText.gameObject.SetActive(true);
 			m_highScoreText.Localize(
 				m_highScoreText.tid, 
-				StringUtils.FormatNumber(bestScore)
+				StringUtils.FormatNumber(leaderboardScore)
 			);
 		}
 
@@ -74,10 +82,10 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 		m_newHighScoreAnim.gameObject.SetActive(false);
 	}
 
-	/// <summary>
-	/// Called when skip is triggered.
-	/// </summary>
-	override protected void OnSkip() {
+    /// <summary>
+    /// Called when skip is triggered.
+    /// </summary>
+    override protected void OnSkip() {
 		// Nothing to do for now
 	}
 
@@ -89,12 +97,10 @@ public class ResultsScreenStepLeagueScore : ResultsScreenSequenceStep {
 	/// </summary>
 	public void OnShowNewHighScore() {
 		// Check whether we did a new high score and show the corresponding feedback
-		// [AOC] TODO!!
-		bool isNewBestScore = false;    // league.IsNewBestScore()
-		if(isNewBestScore) {
-			// Show widget and launch animation!
-			m_newHighScoreAnim.gameObject.SetActive(true);
-			m_newHighScoreAnim.Launch();
-		}
+		if(!m_newHighScore) return;
+        
+		// Show widget and launch animation!
+		m_newHighScoreAnim.gameObject.SetActive(true);
+		m_newHighScoreAnim.Launch();
 	}
 }

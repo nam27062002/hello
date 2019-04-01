@@ -60,7 +60,7 @@ public class ButtonExtendedEditor : UnityEditor.UI.ButtonEditor {
 		serializedObject.Update();
 
         EditorGUILayoutExt.Separator("ButtonExtended specific");
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("m_MultiTouchDisable"));
+        //EditorGUILayout.PropertyField(serializedObject.FindProperty("m_MultiTouchDisable"));
 
         // Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
         serializedObject.ApplyModifiedProperties();

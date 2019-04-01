@@ -72,28 +72,29 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 		EditorGUI.indentLevel = 0;
 
 		// Mini-preview
-		Rect r = new Rect(contentRect);
-		r.height = EditorStyles.largeLabel.lineHeight;
-		r.width = r.height;	// Squared
-		EditorGUI.LabelField(r, GUIContent.none, previewStyle);
+		Rect previewRect = new Rect(contentRect);
+		previewRect.height = EditorStyles.largeLabel.lineHeight;
+		previewRect.width = previewRect.height;	// Squared
+		EditorGUI.LabelField(previewRect, GUIContent.none, previewStyle);
 
 		// Compute foldable content rect
 		float foldoutWidth = 5f;
 		float foldoutMargin = 12f;
 		Rect foldableContentRect = new Rect(contentRect);
-		foldableContentRect.x += r.width + foldoutMargin + foldoutWidth;
-		foldableContentRect.width -= r.width + foldoutMargin + foldoutWidth;
+		foldableContentRect.x += previewRect.width + foldoutMargin + foldoutWidth;
+		foldableContentRect.width -= previewRect.width + foldoutMargin + foldoutWidth;
 
 		// Foldable
+		Rect r = previewRect;
 		r.x += r.width + foldoutMargin;
 		r.width = foldoutWidth;
 		_property.isExpanded = EditorGUI.Foldout(r, _property.isExpanded, GUIContent.none);
 		if(_property.isExpanded) {
 			// 4 color fields in a 2 by 2 grid layout with a preview in between
 			float colorFieldHeight = EditorStyles.colorField.lineHeight;
-			float colorFieldWidth = Mathf.Max(foldableContentRect.width/3f, 50f);	// Each side of the preview (1/3th of total width, with a min size)
-			float previewSize = Mathf.Min(foldableContentRect.width - 2 * colorFieldWidth, 50f);	// Squared, available space, max size
-			colorFieldWidth = Mathf.Max(colorFieldWidth, (foldableContentRect.width - previewSize)/2f);	// If we have some room left, maximize color fields
+			float colorFieldWidth = Mathf.Max(foldableContentRect.width / 3f, 50f); // Each side of the preview (1/3th of total width, with a min size)
+			float previewSize = Mathf.Min(foldableContentRect.width - 2 * colorFieldWidth, 50f);    // Squared, available space, max size
+			colorFieldWidth = Mathf.Max(colorFieldWidth, (foldableContentRect.width - previewSize) / 2f);   // If we have some room left, maximize color fields
 
 			m_pos.height = previewSize;
 			foldableContentRect.height = m_pos.height;
@@ -118,7 +119,7 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 			r.width = colorFieldWidth;
 			r.height = colorFieldHeight;
 			m_topRightProp.colorValue = EditorGUI.ColorField(r, m_topRightProp.colorValue);
-			
+
 			// Bottom-Left
 			r.x = foldableContentRect.x;
 			r.y = foldableContentRect.y + previewSize - colorFieldHeight;
@@ -132,6 +133,30 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 			r.width = colorFieldWidth;
 			r.height = colorFieldHeight;
 			m_bottomRightProp.colorValue = EditorGUI.ColorField(r, m_bottomRightProp.colorValue);
+
+			// Toolbox (align bottom-left of the foldout content)
+			int numButtons = 2;
+			float buttonSize = 20f;
+			Rect toolBoxRect = new Rect(
+				previewRect.xMax - numButtons * buttonSize,
+				foldableContentRect.yMax - buttonSize,
+				numButtons * buttonSize,
+				buttonSize
+			);
+
+			// Horizontal swap button
+			r = toolBoxRect;
+			r.width = buttonSize;
+			r.height = buttonSize;
+			if(GUI.Button(r, new GUIContent("⇆", "Swap left and right colors"))) {
+				SwapHorizontal();
+			}
+
+			// Vertical swap button
+			r.x += r.width;
+			if(GUI.Button(r, new GUIContent("⇅", "Swap top and bottom colors"))) {
+				SwapVertical();
+			}
 		}
 
 		// Restore indentation and advance line
@@ -188,5 +213,35 @@ public class Gradient4Editor : ExtendedPropertyDrawer {
 		tex.SetPixels(pixels);
 		tex.Apply();
 		return tex;
+	}
+
+	/// <summary>
+	/// Swap the left and right colors.
+	/// </summary>
+	private void SwapHorizontal() {
+		// Top
+		Color tmp = m_topLeftProp.colorValue;
+		m_topLeftProp.colorValue = m_topRightProp.colorValue;
+		m_topRightProp.colorValue = tmp;
+
+		// Bot
+		tmp = m_bottomLeftProp.colorValue;
+		m_bottomLeftProp.colorValue = m_bottomRightProp.colorValue;
+		m_bottomRightProp.colorValue = tmp;
+	}
+
+	/// <summary>
+	/// Swap the top and bottom colors.
+	/// </summary>
+	private void SwapVertical() {
+		// Left
+		Color tmp = m_topLeftProp.colorValue;
+		m_topLeftProp.colorValue = m_bottomLeftProp.colorValue;
+		m_bottomLeftProp.colorValue = tmp;
+
+		// Right
+		tmp = m_bottomRightProp.colorValue;
+		m_bottomRightProp.colorValue = m_topRightProp.colorValue;
+		m_topRightProp.colorValue = tmp;
 	}
 }

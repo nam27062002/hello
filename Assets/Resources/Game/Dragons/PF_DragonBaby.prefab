@@ -80,10 +80,10 @@ GameObject:
   - component: {fileID: 11419346}
   - component: {fileID: 11442574}
   - component: {fileID: 11455772}
-  - component: {fileID: 11487054}
   - component: {fileID: 114000012469074318}
   - component: {fileID: 114000013610103666}
   - component: {fileID: 114682260082358826}
+  - component: {fileID: 11487054}
   m_Layer: 12
   m_Name: PF_DragonBaby
   m_TagString: Player
@@ -665,9 +665,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sku: dragon_baby
   m_invulnerableTime: 5
-  m_alcoholDrain: 1
+  m_health: 0
+  m_energy: 0
   m_dragonCommonSettings: {fileID: 11400000, guid: 34ea001d389df4d7d9d597b2896ba653,
     type: 2}
+  m_alwaysSpawnCorpse: 0
 --- !u!114 &11419346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -694,7 +696,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_levelUp: {fileID: 1617233673352068, guid: c13c434e69a19af419fa213079f8660c, type: 2}
   m_levelUpAnchor: {fileID: 488014}
-  m_reviveParticle: Dragon/PS_Revive
+  m_reviveParticle: PS_Revive
   m_reviveAnchor: {fileID: 4779497968445476}
   m_petRevive:
     name: PS_ReviveFromPet
@@ -734,6 +736,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_bubbles: {fileID: 105258, guid: f3cddb62f324a4668b40f72b9be4eb4e, type: 2}
   m_bubblesAnchor: {fileID: 4000012015477780}
   m_bubblesDrowningMultiplier: 3
@@ -753,10 +756,10 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonBabyCorpse
-  m_hiccupParticle: Dragon/PS_hiccups
+  m_hiccupParticle: PS_hiccups
   m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
-    name: Dragon/PS_BreakingShield
+    name: PS_BreakingShield
     path: 
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -793,6 +796,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_shieldAnchor: {fileID: 490078}
   m_bodyParticles: []
   m_trailsParticle:
@@ -833,6 +837,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_trailsAnchor: {fileID: 4242807932167974}
   m_landingParticle:
     name: 
@@ -872,6 +877,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: -1}
     scale: 1
+    orientate: 0
   m_megaFireRush: PS_MegaFireCharge
   m_megaFireRushAnchor: {fileID: 420968}
 --- !u!114 &11438592
@@ -932,7 +938,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  m_introStopAnimationDelta: 0.25
+  m_useBoostOnIntro: 1
+  m_limitsCheck: 0
+  m_lastPhysicsValidPos: {x: 0, y: 0, z: 0}
 --- !u!114 &11440808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -948,6 +956,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &11442174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -986,7 +995,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moving: 0
+  movingTap: 0
   action: 0
+  actionTap: 0
 --- !u!114 &11444600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1028,6 +1039,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &11459072
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2219,6 +2231,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000010296751380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2245,6 +2258,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000011810721982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2260,6 +2274,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000011932549190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2286,6 +2301,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114000012469074318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2339,6 +2355,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1.2
+    orientate: 0
   m_holdingFreezeParticle:
     name: PS_IceExplosionSmall
     path: 
@@ -2377,6 +2394,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
+    orientate: 0
   m_burpSound: 
   m_canEatEntities: 1
   m_randomSpeedRange:
@@ -4144,6 +4162,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114167805666618576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4159,6 +4178,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114184688112312872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4186,6 +4206,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114303587584269388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4201,6 +4222,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114338696888419692
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4216,6 +4238,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114388038536701654
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4242,6 +4265,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114549786031036028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4280,6 +4304,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114726950430109172
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4320,6 +4345,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114868058575021148
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4335,6 +4361,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!114 &114915309078770630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4361,6 +4388,7 @@ MonoBehaviour:
   m_parentRoot: {fileID: 414586}
   m_worldPositionStays: 1
   m_resetScale: 0
+  m_when: 0
 --- !u!135 &135632681806578016
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -4382,6 +4410,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4397,6 +4426,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -4426,6 +4456,7 @@ SkinnedMeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4441,6 +4472,7 @@ SkinnedMeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5

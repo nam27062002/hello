@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 #pragma warning disable 0414
@@ -50,6 +51,9 @@ namespace LevelEditor {
 		private float m_autoSaveTimer = 0f;
 
 		private List<string> m_levelsSkuList = new List<string>();
+
+        // Only load ART levels
+        private bool m_onlyArt = false;
 
 		// Every type of scene goes in a different sub-folder
 		private string assetDirForCurrentMode {
@@ -174,37 +178,180 @@ namespace LevelEditor {
 			// Reset autosave timer
 			m_autoSaveTimer = 0f;
 		}
-		
-		/// <summary>
-		/// Draw the section.
-		/// </summary>
-		public void OnGUI() {
+
+
+        private static readonly string LIGHT_CONTAINER_SCENE_PATH = "Assets/Game/Scenes/Levels/Art/ART_Medieval_Lighting_Container.unity"; //"Assets/Tools/LevelEditor/SC_LevelEditor.unity";
+
+
+		bool removeSceneFromActiveLevels(Scene scene)
+		{
+            bool ret = false;
+
+            for (int c = 0; c < m_activeLevels.Length; c++)
+            {
+                List<Level> levelList = m_activeLevels[c];
+                if (levelList == null) continue;
+
+                List<Level> newList = new List<Level>();
+
+                int levelCount = levelList.Count;
+                for (int a = 0; a < levelCount; a++)
+                {
+                    if (levelList[a].gameObject.scene != scene)
+                    {
+                        newList.Add(levelList[a]);
+                        ret = true;
+                    }
+                    else
+                    {
+                        Debug.Log("Scene: " + scene.name + " stripped from active levels.");
+                    }
+                }
+                m_activeLevels[c] = newList;
+            }
+			return ret;
+		}
+
+		void stripNonArtScenes()
+		{
+            bool finish;
+
+            do {
+                finish = true;
+
+                for (int c = 0; c < SceneManager.sceneCount; c++)
+                {
+                    Scene scene = SceneManager.GetSceneAt(c);
+
+                    if (scene.name.IndexOf("ART_", System.StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        removeSceneFromActiveLevels(scene);
+                        EditorSceneManager.CloseScene(scene, true);
+                        finish = false;
+                        break;
+                    }
+                }
+            } while (!finish);
+		}
+
+        Level getLightmapScene()
+        {
+            Level ret = null;
+
+            for (int c = 0; c < m_activeLevels.Length; c++)
+            {
+                List<Level> levelList = m_activeLevels[c];
+                if (levelList == null) continue;
+
+                int levelCount = levelList.Count;
+                for (int a = 0; a < levelCount; a++)
+                {
+                    if (levelList[a].gameObject.scene.name.IndexOf("Medieval_Lighting", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return levelList[a];
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        void lightMapCompleted()
+        {
+            LevelEditorWindow.instance.m_isLightmapping = false;
+            Scene lightScene = EditorSceneManager.GetSceneByPath(LIGHT_CONTAINER_SCENE_PATH);
+
+			removeSceneFromActiveLevels (lightScene);
+            EditorSceneManager.CloseScene(lightScene, true);
+        }
+
+        void launchLightmap()
+        {
+			Level lightmapLevel = getLightmapScene();
+			if (lightmapLevel == null) {
+				Debug.Log ("Unable to find lightmap scene: ART_Medieval_LightingXXX");
+				return;
+			}
+
+            Scene lightScene = EditorSceneManager.OpenScene(LIGHT_CONTAINER_SCENE_PATH, OpenSceneMode.Additive);
+            if ( lightScene == null)
+            {
+                Debug.Log("Unable to find lightmap container scene: " + LIGHT_CONTAINER_SCENE_PATH);
+                return;
+
+            }
+
+            LevelEditorWindow.instance.m_isLightmapping = true;
+
+            LevelEditorWindow.instance.CloseLevelEditorScene();
+            stripNonArtScenes();
+
+            SceneManager.SetActiveScene (lightmapLevel.gameObject.scene);
+
+            Lightmapping.completed = lightMapCompleted;
+
+            Lightmapping.BakeAsync();
+        }
+
+
+
+
+        /// <summary>
+        /// Draw the section.
+        /// </summary>
+        public void OnGUI() {
 			// Aux vars
 			bool levelLoaded = (activeLevels != null && activeLevels.Count > 0);
 			bool playing = EditorApplication.isPlaying;
 
 			// Some spacing
 			GUILayout.Space(5f);
-			
-			// Big juicy text showing the current level being edited
-			GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
-			titleStyle.fontSize = 20;
-			titleStyle.alignment = TextAnchor.MiddleCenter;
-			if(activeLevels != null && activeLevels.Count > 0) {
-				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
-			} else {
-				EditorGUILayout.BeginHorizontal(); {
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                // Big juicy text showing the current level being edited
+                GUIStyle titleStyle = new GUIStyle(EditorStyles.largeLabel);
+    			titleStyle.fontSize = 20;
+			    titleStyle.alignment = TextAnchor.MiddleCenter;
+			    if(activeLevels != null && activeLevels.Count > 0) {
+    				GUILayout.Label(activeLevels[0].gameObject.scene.name, titleStyle);
+			    } else {
 					GUILayout.FlexibleSpace();
 					GUILayout.Label("No level loaded", titleStyle);
 					if(GUILayout.Button("Detect", GUILayout.Height(30f))) {
 						Init();
 					}
 					GUILayout.FlexibleSpace();
-				} EditorGUILayoutExt.EndHorizontalSafe();
-			}
-			
-			// Some more spacing
-			GUILayout.Space(5f);
+			    }
+                if (LevelEditor.settings.selectedMode == LevelEditorSettings.Mode.ART)
+                {
+                    m_onlyArt = GUILayout.Toggle(m_onlyArt, "Only Art Levels");
+
+                    if (activeLevels != null)
+                    {
+                        if (Lightmapping.isRunning)
+                        {
+                            if (GUILayout.Button("Cancel Lightmap"))
+                            {
+                                Lightmapping.Cancel();
+                                lightMapCompleted();
+                            }
+                        }
+                        else
+                        {
+                            if (GUILayout.Button("Launch Lightmap"))
+                            {
+                                launchLightmap();
+                            }
+                        }
+                    }
+                }
+
+            }
+            EditorGUILayoutExt.EndHorizontalSafe();
+
+            // Some more spacing
+            GUILayout.Space(5f);
 
 			if(GUILayout.Button("Load Scenes From Definition")) {
 				OnLoadScenesFromDefinition();
@@ -438,19 +585,48 @@ namespace LevelEditor {
 			EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(assetDirForCurrentMode + "/" + name + ".unity"));
 		}
 
+
+        private List<List<string>> m_sceneAreas = new List<List<string>>();
+        private int firstArea = 0;
+
+
+        void stripData(ref List<string> d0, List<string> d1)
+        {
+            for (int c = 0; c < d1.Count; c++)
+            {
+                d0.Remove(d1[c]);
+            }
+        }
+
+        string putSeparators(List<string> list, char separator)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int c = 0; c < list.Count; c++)
+            {
+                sb.Append(list[c]);
+                if (c < list.Count - 1)
+                    sb.Append(separator);
+            }
+
+            return sb.ToString();
+        }
+
 		private void OnLoadScenesFromDefinition(){
-			//  DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVELS, _sku);
 
 			Dictionary<string,DefinitionNode> defs = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.LEVELS);
 			m_levelsSkuList.Clear();
 			List<string> options = new List<string>(defs.Count);
+            List<string> sceneareas = new List<string>();
 
-			foreach(KeyValuePair<string, DefinitionNode> kvp in defs) {
+            foreach (KeyValuePair<string, DefinitionNode> kvp in defs) {
 				m_levelsSkuList.Add(kvp.Key);
 				string id = kvp.Key + " (" + kvp.Value.Get("common");
 
 				int areaIndex = 1;
-				string areaString = kvp.Value.Get("area"+areaIndex);
+
+                string areaString = kvp.Value.Get("area"+areaIndex);
+                sceneareas.Add(areaString);
 				while(!string.IsNullOrEmpty(areaString))
 				{
 					id += ";" + areaString;
@@ -459,19 +635,73 @@ namespace LevelEditor {
 				}
 				id += ")";
 				options.Add(id);
-			}
 
-			// Show selection popup
-			SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
+            }
+
+            //Hungry Dragon specific
+            DefinitionNode dfn = defs["level_0"];
+            firstArea = options.Count;
+
+            options.Add("common (" + dfn.Get("common") + ")");
+
+            m_sceneAreas.Clear();
+
+            List<string> area12 = dfn.GetAsList<string>("area12");
+            List<string> area13 = dfn.GetAsList<string>("area13");
+
+            List<string> area = dfn.GetAsList<string>("area1");
+            stripData(ref area, area12);
+            stripData(ref area, area13);
+            m_sceneAreas.Add(area);
+            options.Add("area1 (" + putSeparators(area, ';') + ")");
+
+            area = dfn.GetAsList<string>("area2");
+            stripData(ref area, area12);
+            m_sceneAreas.Add(area);
+            options.Add("area2 (" + putSeparators(area, ';') + ")");
+
+            area = dfn.GetAsList<string>("area3");
+            stripData(ref area, area13);
+            m_sceneAreas.Add(area);
+            options.Add("area3 (" + putSeparators(area, ';') + ")");
+
+            m_sceneAreas.Add(area12);
+            options.Add("area12 (" + putSeparators(area12, ';') + ")");
+
+            m_sceneAreas.Add(area13);
+            options.Add("area13 (" + putSeparators(area13, ';') + ")");
+
+            // Show selection popup
+            SelectionPopupWindow.Show(options.ToArray(), OnLoadScenesFromDefinitions);
 
 		}
 
 		private void OnLoadScenesFromDefinitions( int id )
 		{
-			string sku = m_levelsSkuList[id];
+            bool common = true, leveleditor = true, area = true;
 
-			// Store level data of the new level
-			LevelEditor.settings.levelSku = sku;
+            string sku;
+            if (id >= firstArea)
+            {
+                sku = m_levelsSkuList[0];
+                if (id == firstArea)
+                {
+                    leveleditor = area = false;
+                }
+                else
+                {
+                    leveleditor = common = false;
+                }
+
+            }
+            else
+            {
+                sku = m_levelsSkuList[id > 2 ? 0 : id];
+
+            }
+
+            // Store level data of the new level
+            LevelEditor.settings.levelSku = sku;
 			EditorUtility.SetDirty(LevelEditor.settings);
 			AssetDatabase.SaveAssets();
 
@@ -481,56 +711,101 @@ namespace LevelEditor {
 
 			LevelEditorSettings.Mode oldMode = LevelEditor.settings.selectedMode;
 
-			List<string> commonScene = def.GetAsList<string>("common");
-			for( int i = 0; i<commonScene.Count; i++ )
-			{
-				EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i/(float)commonScene.Count);
-				LevelEditor.settings.selectedMode = GetModeByName( commonScene[i]);
-				OnLoadLevel( commonScene[i] + ".unity" );
-			}
+            bool onlyArt = m_onlyArt && (oldMode == LevelEditorSettings.Mode.ART);
 
-			List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
-			for( int i = 0; i<editorOnlyScenes.Count; i++ )
-			{
-				if ( !string.IsNullOrEmpty(editorOnlyScenes[i]) )
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i/(float)editorOnlyScenes.Count);
-					LevelEditor.settings.selectedMode = GetModeByName( editorOnlyScenes[i]);
-					OnLoadLevel( editorOnlyScenes[i] + ".unity" );
-				}
-			}
+            if (common)
+            {
+                List<string> commonScene = def.GetAsList<string>("common");
+                for (int i = 0; i < commonScene.Count; i++)
+                {
+                    EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading common scenes: " + commonScene[i] + "...", (float)i / (float)commonScene.Count);
+                    LevelEditor.settings.selectedMode = GetModeByName(commonScene[i]);
+                    if (!onlyArt || commonScene[i].StartsWith("ART"))
+                    {
+                        OnLoadLevel(commonScene[i] + ".unity");
 
-			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-			for( int i = 0; i<gameplayWip.Count; i++ )
-			{
-				if ( !string.IsNullOrEmpty( gameplayWip[i] ))
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i/(float)gameplayWip.Count);
-					LevelEditor.settings.selectedMode = GetModeByName( gameplayWip[i]);
-					OnLoadLevel( gameplayWip[i] + ".unity" );
-				}
-			}
+                    }
+                }
+            }
 
-			List<string> areaScenes = new List<string>();
-			int areaIndex = 1;
-			bool _continue = false;
-			do
-			{
-				areaScenes.Clear();
-				areaScenes = def.GetAsList<string>("area"+areaIndex);
-				_continue = false;
-				for( int i = 0;i<areaScenes.Count; i++ )
-				{
-					EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + areaIndex + ": " + areaScenes[i] + "...", (float)i/(float)areaScenes.Count);
-					if (!string.IsNullOrEmpty(areaScenes[i]))
-					{
-						_continue = true;
-						LevelEditor.settings.selectedMode = GetModeByName( areaScenes[i]);
-						OnLoadLevel( areaScenes[i] + ".unity" );	
-					}
-				}
-				areaIndex++;
-			}while( _continue );
+            if (leveleditor)
+            {
+                List<string> editorOnlyScenes = def.GetAsList<string>("levelEditor");
+                for (int i = 0; i < editorOnlyScenes.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(editorOnlyScenes[i]))
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading level editor scenes: " + editorOnlyScenes[i] + "...", (float)i / (float)editorOnlyScenes.Count);
+                        LevelEditor.settings.selectedMode = GetModeByName(editorOnlyScenes[i]);
+                        if (!onlyArt || editorOnlyScenes[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(editorOnlyScenes[i] + ".unity");
+                        }
+                    }
+                }
+
+                List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
+                for (int i = 0; i < gameplayWip.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(gameplayWip[i]))
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading WIP scenes: " + gameplayWip[i] + "...", (float)i / (float)gameplayWip.Count);
+                        LevelEditor.settings.selectedMode = GetModeByName(gameplayWip[i]);
+                        if (!onlyArt || gameplayWip[i].StartsWith("ART"))
+                        {
+                            OnLoadLevel(gameplayWip[i] + ".unity");
+                        }
+                    }
+                }
+            }
+
+            if (area)
+            {
+                List<string> areaScenes = new List<string>();
+
+                if (id < firstArea)
+                {
+                    int areaIndex = 1;
+                    bool _continue = false;
+                    do
+                    {
+                        areaScenes.Clear();
+                        areaScenes = def.GetAsList<string>("area" + areaIndex);
+                        _continue = false;
+                        for (int i = 0; i < areaScenes.Count; i++)
+                        {
+                            EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + areaIndex + ": " + areaScenes[i] + "...", (float)i / (float)areaScenes.Count);
+                            if (!string.IsNullOrEmpty(areaScenes[i]))
+                            {
+                                _continue = true;
+                                LevelEditor.settings.selectedMode = GetModeByName(areaScenes[i]);
+                                if (!onlyArt || areaScenes[i].StartsWith("ART"))
+                                {
+                                    OnLoadLevel(areaScenes[i] + ".unity");
+                                }
+                            }
+                        }
+                        areaIndex++;
+                    } while (_continue && id < 3);
+                }
+                else
+                {
+                    id = id - firstArea - 1;
+                    areaScenes = m_sceneAreas[id];
+                    for (int i = 0; i < areaScenes.Count; i++)
+                    {
+                        EditorUtility.DisplayProgressBar("Loading Scenes for " + sku + "...", "Loading scenes for Area " + (id + 1) + ": " + areaScenes[i] + "...", (float)i / (float)areaScenes.Count);
+                        if (!string.IsNullOrEmpty(areaScenes[i]))
+                        {
+                            LevelEditor.settings.selectedMode = GetModeByName(areaScenes[i]);
+                            if (!onlyArt || areaScenes[i].StartsWith("ART"))
+                            {
+                                OnLoadLevel(areaScenes[i] + ".unity");
+                            }
+                        }
+                    }
+                }
+            }
 
 			// Hide progress bar!
 			EditorUtility.ClearProgressBar();

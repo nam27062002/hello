@@ -4,6 +4,7 @@ namespace AI {
 	public class BasicPilot : AIPilot {		
 
 		[SerializeField] private bool m_updateMachinePos = true;
+        [SerializeField] private bool m_updateMachineRot = false;
 
 		public override void CustomUpdate() {
 			base.CustomUpdate();
@@ -15,6 +16,10 @@ namespace AI {
 			if (m_updateMachinePos) {
 				m_machine.position = m_target;
 			}
+
+            if (m_updateMachineRot) {
+                m_machine.transform.rotation = Quaternion.LookRotation(m_direction + GameConstants.Vector3.back * 0.1f, m_machine.upVector);
+            }
 		}
 	}
 }

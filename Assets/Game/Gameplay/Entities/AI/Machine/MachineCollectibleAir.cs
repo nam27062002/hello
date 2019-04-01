@@ -76,7 +76,7 @@ namespace AI {
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.EATEN);
 
 				// Dispatch global event
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_EATEN, m_transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
 
 				m_entity.Disable(true);
 			}
@@ -156,8 +156,10 @@ namespace AI {
 		public bool IsDead(){ return false; }
 		public bool IsDying(){ return false; }
 		public bool IsFreezing(){ return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 		
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) { return false; }
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) { return false; }
 		public bool Smash(IEntity.Type _source) { return false; }
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

@@ -42,6 +42,21 @@ public static class TypeUtil {
 	}
 
 	/// <summary>
+	/// Find all types derived from a given one.
+	/// </summary>
+	/// <returns>All the types derived from _targetType.</returns>
+	/// <param name="_targetType">Type whose derived we want.</param>
+	public static List<Type> FindAllDerivedTypes(Type _targetType) {
+		Assembly targetAssembly = Assembly.GetAssembly(_targetType);
+		Type[] allTypesInAssembly = targetAssembly.GetTypes();
+		List<Type> derivedTypes = allTypesInAssembly.Where(
+			(Type _t) => {
+				return _t != _targetType && _targetType.IsAssignableFrom(_t);
+			}).ToList();
+		return derivedTypes;
+	}
+
+	/// <summary>
 	/// 
 	/// </summary>
 	public static void SetPrivateVar(object obj, string varName, object value) {
