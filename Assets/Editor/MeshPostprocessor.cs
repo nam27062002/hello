@@ -15,7 +15,16 @@ public class MeshPostprocessor : AssetPostprocessor {
 
 		importer.animationCompression = ModelImporterAnimationCompression.Optimal;
 		importer.importMaterials = false;
-        importer.isReadable = false;    // Disble Read/Write to avoid multiple instances on memory
 
+        importer.importLights = false;
+        importer.importCameras = false;
+        importer.isReadable = false;    // Disble Read/Write to avoid multiple instances on memory
+    }
+    
+    public Material OnAssignMaterialModel(Material material, Renderer renderer)
+    {
+        var materialPath = "Assets/Art/DefaultMaterial.mat";
+        material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+        return material;
     }
 }
