@@ -110,7 +110,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 		// Unsubscribe to external events.
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
-	}
+        Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+    }
 
 	/// <summary>
 	/// Called every frame
