@@ -36,7 +36,7 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     }
 
     public override void ParseDefinition(SimpleJSON.JSONNode _data) {
-         base.ParseDefinition(_data);
+        base.ParseDefinition(_data);
 
         CheckEvent(null);
     }
@@ -68,8 +68,6 @@ public class HDDiscountEventManager : HDPassiveEventManager {
                 IDragonData dragonData = DragonManager.GetDragonData(discount.dragonSku);
                 if (dragonData.isOwned) {
                     FinishEvent(); // finish event and deactivate mods.
-                } else {
-                    Activate(); // start event and activate mods.
                 }
             }
         }

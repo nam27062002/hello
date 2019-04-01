@@ -81,6 +81,12 @@ namespace AssetBundleBrowser.AssetBundleModel
         private string m_DisplayName;
         private string m_BundleName;
         private MessageSystem.MessageState m_AssetMessages = new MessageSystem.MessageState();
+        public bool HasBuiltInDependencies { 
+            get {
+                bool ret = m_builtInDependencies != null && m_builtInDependencies.Count > 0;
+                return ret; 
+            } 
+        }
 
         internal AssetInfo(string inName, string bundleName="")
         {
@@ -194,7 +200,20 @@ namespace AssetBundleBrowser.AssetBundleModel
                     message = message.Substring(0, message.Length - 1);//remove trailing line break.
                     messages.Add(new MessageSystem.Message(message, MessageType.Info));
                 }
-            }            
+            }      
+            
+            if ( m_builtInDependencies != null && m_builtInDependencies.Count > 0 )
+            {
+                var message = string.Empty;
+                foreach (var str in m_builtInDependencies)
+                {
+                    message += str + "\n";
+                }
+                if (string.IsNullOrEmpty(message) == false)
+                {
+                    messages.Add(new MessageSystem.Message(message, MessageType.Info));
+                }
+            }
 
             messages.Add(new MessageSystem.Message(displayName + "\n" + "Path: " + fullAssetName, MessageType.Info));
 
@@ -242,6 +261,39 @@ namespace AssetBundleBrowser.AssetBundleModel
                 }
             }
             return m_dependencies;
+        }
+        
+        List<string> m_builtInDependencies = null;
+        internal List<string> GetBuiltInDependencies()
+        {
+            //TODO - not sure this refreshes enough. need to build tests around that.
+            if (m_builtInDependencies == null)
+            {
+                m_builtInDependencies = new List<string>();
+                if (AssetDatabase.IsValidFolder(m_AssetName))
+                {
+                    //if we have a folder, its dependencies were already pulled in through alternate means.  no need to GatherFoldersAndFiles
+                    //GatherFoldersAndFiles();
+                }
+                else
+                {
+                    System.Type type = AssetDatabase.GetMainAssetTypeAtPath(m_AssetName);
+                    Object obj = AssetDatabase.LoadAssetAtPath(m_AssetName, AssetDatabase.GetMainAssetTypeAtPath( m_AssetName ));
+                    Object[] dependencies = EditorUtility.CollectDependencies(new Object[] {obj });
+                    foreach (var dep in dependencies)
+                    {
+                        if ( dep != null )
+                        {
+                            string path = AssetDatabase.GetAssetPath(dep);
+                            if ( !path.StartsWith("Asset") )
+                            {
+                                m_builtInDependencies.Add( path  +" "+ dep.name +"  " + dep.GetType() );
+                            }
+                        }
+                    }
+                }
+            }
+            return m_builtInDependencies;
         }
 
     }

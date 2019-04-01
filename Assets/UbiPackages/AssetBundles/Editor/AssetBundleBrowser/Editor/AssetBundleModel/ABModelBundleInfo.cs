@@ -192,6 +192,7 @@ namespace AssetBundleBrowser.AssetBundleModel
             RefreshDupeAssetWarning();
             var flag = m_BundleMessages.HighestMessageFlag();
             m_CachedHighMessage = MessageSystem.GetMessage(flag);
+            
         }
         internal abstract bool RefreshEmptyStatus();
         internal abstract bool RefreshDupeAssetWarning();
@@ -500,6 +501,9 @@ namespace AssetBundleBrowser.AssetBundleModel
                     m_BundleDependencies.Add(bundleName);
                 }
             }
+
+            var buildinDeps = asset.GetBuiltInDependencies();
+            
         }
 
         internal override bool RefreshDupeAssetWarning()

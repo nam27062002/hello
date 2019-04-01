@@ -298,7 +298,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
     /// Load the dragon from its dragon data
     /// </summary>
     /// <param name="_data">Data of the dragon to be loaded.</param>
-    private static void LoadDragon(IDragonData _data) {
+    public static void LoadDragon(IDragonData _data) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {

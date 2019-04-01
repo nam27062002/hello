@@ -89,14 +89,16 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-
+		// Subcribe to external events
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
 	/// Component has been disabled.
 	/// </summary>
 	private void OnDisable() {
-
+		// Unsubscribe from external events
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	//------------------------------------------------------------------------//

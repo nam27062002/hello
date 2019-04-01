@@ -34,6 +34,13 @@ public class BasicAddressablesTestController : MonoBehaviour
             AssetBundle ab = m_request.assetBundle;
             Object ubiCube = ab.LoadAsset("UbiCube");
             Instantiate(ubiCube);
+            m_request = null;
+        }
+
+        if (m_uiDiskFreeSpace != null)
+        {
+            long freeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+            m_uiDiskFreeSpace.text = (freeSpace / 1024f) + " bytes free";
         }
 
         m_addressablesManager.Update();
@@ -367,7 +374,8 @@ public class BasicAddressablesTestController : MonoBehaviour
     public Dropdown m_uiAssetCubesDropdown;
     public Dropdown m_uiAssetCubesAddressableIds;
     public Dropdown m_uiAssetCubesResolutionDropdown;
-    public Text m_uiOperationResult;    
+    public Text m_uiOperationResult;
+    public Text m_uiDiskFreeSpace;
 
     private void Ui_Init()
     {

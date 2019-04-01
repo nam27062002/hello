@@ -52,30 +52,11 @@ namespace AI {
 
 				m_stunAnchor = m_pilot.FindTransformRecursive( m_stunData.m_beamAnchorPoint );
 
-				ParticleSystem particlePrefab = null;
-				switch(FeatureSettingsManager.instance.Particles) 
-				{
-					case FeatureSettings.ELevel5Values.very_low:							
-					case FeatureSettings.ELevel5Values.low:
-					{
-						particlePrefab = Resources.Load<ParticleSystem>("Particles/Low/PS_PetStun");
-					}break;
-					default:
-					{
-						particlePrefab = Resources.Load<ParticleSystem>("Particles/Master/PS_PetStun");
-					}break;
-				}
-                            
-				if ( particlePrefab )
-				{
-					m_particle = Instantiate<ParticleSystem>(particlePrefab);
-					m_particle.transform.parent = m_stunAnchor;
-					m_particle.transform.localPosition = Vector3.zero;
-					m_particle.transform.localRotation = Quaternion.identity;
-					m_particle.Stop();
-				}
-
-			}
+                m_particle = ParticleManager.InitLeveledParticle("PS_PetStun", m_stunAnchor);
+                if (m_particle != null) {
+                    m_particle.gameObject.SetActive(true);
+                }
+            }
 
 			protected override void StartAttack() 
 			{

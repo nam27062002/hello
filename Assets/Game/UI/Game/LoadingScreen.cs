@@ -77,20 +77,14 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	public static void InitWithCurrentData() {
 		// Aux vars
 		IDragonData currentDragon = null;
-		DefinitionNode skinDef = null;
-		List<string> pets = null;
-
 		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveDataManager.tournament;
-			currentDragon = DragonManager.GetDragonData(tournament.GetToUseDragon());
-			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
-			pets = tournament.GetToUsePets();
+			currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
 		} else {
 			currentDragon = DragonManager.currentDragon;
-			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
-			pets = currentDragon.pets;
 		}
 
+		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
+		List<string> pets = currentDragon.pets;
 
 		// Dragon image
 		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
