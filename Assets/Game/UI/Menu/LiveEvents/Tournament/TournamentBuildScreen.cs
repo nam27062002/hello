@@ -94,13 +94,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 
 		//-- Dragon ---------------------------------------------------//
-		string sku = m_tournament.GetToUseDragon();
-		IDragonData dragonData = DragonManager.GetDragonData(sku);
+		IDragonData dragonData = m_tournament.tournamentData.tournamentDef.dragonData;
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		string disguiseSku = m_tournament.GetToUseSkin();
-		m_dragonLoader.LoadDragon(sku, disguiseSku);
-		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
+		m_dragonLoader.LoadDragon(dragonData.sku, dragonData.disguise);
+		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
 		if (disguise.GetAsInt("shopOrder") > 0) { // skins
 			m_dragonSkin.Localize(disguise.Get("tidName"));
 		} else { // default skin
@@ -109,20 +107,18 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		string powerupSku = disguise.Get("powerup");
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
-
 		m_dragonPower.InitFromDefinition(powerup, false);
 
 		//-- Pets -----------------------------------------------------//
 		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
 		m_petEquipSlots = new Transform[m_petSlots.Length];
 
-		List<string> pets = m_tournament.GetToUsePets();
 		for (int i = 0; i < m_petSlots.Length; ++i) {
-			if (i < pets.Count) {				
+			if (i < dragonData.pets.Count && !string.IsNullOrEmpty(dragonData.pets[i])) {				
 				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
 				m_petEquipSlots[i] = ap.transform;
 
-				m_petSlots[i].Refresh(pets[i], true);
+				m_petSlots[i].Refresh(dragonData.pets[i], true);
 				m_petSlots[i].gameObject.SetActive(true);
 
 				m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;				

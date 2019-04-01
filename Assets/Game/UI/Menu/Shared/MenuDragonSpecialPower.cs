@@ -32,12 +32,8 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         m_dragonPreview = GetComponent<MenuDragonPreview>();
 
         DragonDataSpecial dataSpecial = null;
-        if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-            // Use tmp data
-            HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
-            HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-
-            dataSpecial = IDragonData.CreateFromBuild(def.m_build) as DragonDataSpecial;
+        if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
+			dataSpecial = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData as DragonDataSpecial;
         } else {
             dataSpecial = (DragonDataSpecial)DragonManager.GetDragonData(m_dragonPreview.sku);
         }
@@ -63,9 +59,9 @@ public class MenuDragonSpecialPower : MonoBehaviour {
     
     private void OnStatUpgraded(DragonDataSpecial _data, DragonDataSpecial.Stat _stat) {
         // Refresh disguise
-        if (m_dragonPreview.equip.dragonDisguiseSku != _data.diguise)
+        if (m_dragonPreview.equip.dragonDisguiseSku != _data.disguise)
         {
-            m_dragonPreview.equip.EquipDisguise( _data.diguise );
+            m_dragonPreview.equip.EquipDisguise( _data.disguise );
         }
     }
 

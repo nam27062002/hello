@@ -59,7 +59,7 @@ public class DragonPowerUp : MonoBehaviour {
 		// Disguise power up
 		string disguise;
 		if (HDLiveDataManager.tournament.isActive) {
-			disguise = HDLiveDataManager.tournament.GetToUseSkin();
+			disguise = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.disguise;
 		} else {
 			disguise = UsersManager.currentUser.GetEquipedDisguise(dragonSku);
 		}
@@ -76,7 +76,7 @@ public class DragonPowerUp : MonoBehaviour {
 		List<string> pets;
 		// Check if tournament
 		if (HDLiveDataManager.tournament.isActive) {
-			pets = HDLiveDataManager.tournament.GetToUsePets();
+			pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
 		} else {
 			pets = UsersManager.currentUser.GetEquipedPets(dragonSku);
 		}

@@ -463,15 +463,15 @@ public class HDAddressablesManager : AddressablesManager
 	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a dragon in a tournament.
 	/// </summary>
 	/// <returns>The handle for all downloadables required for that dragon.</returns>
-	/// <param name="_tournamentData">Tournament data.</param>
-	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournamentData) {
+	/// <param name="_tournament">Tournament data.</param>
+	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
 		// Get target dragon info
-		IDragonData dragonData = DragonManager.GetDragonData(_tournamentData.GetToUseDragon());
+		IDragonData dragonData = _tournament.tournamentData.tournamentDef.dragonData;
 
 		// Figure out group dependencies for this dragon
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
-		List<string> equippedPowers = GetPowersList(_tournamentData.GetToUseSkin(), _tournamentData.GetToUsePets());
+		List<string> equippedPowers = GetPowersList(dragonData.disguise, dragonData.pets);
 
 		// No more dependencies to be checked: return handler!
 		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
