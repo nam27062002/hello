@@ -105,8 +105,11 @@ public class CPDownloadablesBundleView : MonoBehaviour {
 		Downloadables.Error.EType errorType = Downloadables.Error.EType.None;
 		if(m_entry == null) {
 			errorType = Downloadables.Error.EType.Internal_NotAvailable;
-		} else if(m_entry.LatestError != null) {
-			errorType = m_entry.LatestError.Type;
+		} else {
+            errorType = m_entry.GetErrorBlockingDownload();
+            if (errorType == Downloadables.Error.EType.None && m_entry.LatestError != null) {
+                errorType = m_entry.LatestError.Type;
+            }
 		}
 
 		if(!_forced) {
