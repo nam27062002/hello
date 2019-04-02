@@ -72,12 +72,16 @@ public class PetSlot : MonoBehaviour {
 		// To make sure pet particles are properly scaled, but keeping in mind performance,
 		// have a ParticleScaler constantly checking particle scales during the pet slot
 		// show/hide animations, but disable it when idle
-		petLoader.pscaler.m_whenScale = ParticleScaler.WhenScale.ALWAYS;
-		DisableParticleScaler(m_slotInfo.equippedSlotAnim);
-		m_slotInfo.equippedSlotAnim.OnShowPreAnimation.AddListener(EnableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnShowPostAnimation.AddListener(DisableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnHidePreAnimation.AddListener(EnableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnHidePostAnimation.AddListener(DisableParticleScaler);
+		if(m_petLoader != null && m_slotInfo != null) {
+			m_petLoader.pscaler.m_whenScale = ParticleScaler.WhenScale.ALWAYS;
+			if(m_slotInfo.equippedSlotAnim != null) {
+				DisableParticleScaler(m_slotInfo.equippedSlotAnim);
+				m_slotInfo.equippedSlotAnim.OnShowPreAnimation.AddListener(EnableParticleScaler);
+				m_slotInfo.equippedSlotAnim.OnShowPostAnimation.AddListener(DisableParticleScaler);
+				m_slotInfo.equippedSlotAnim.OnHidePreAnimation.AddListener(EnableParticleScaler);
+				m_slotInfo.equippedSlotAnim.OnHidePostAnimation.AddListener(DisableParticleScaler);
+			}
+		}
 	}
 
 	/// <summary>
@@ -85,10 +89,12 @@ public class PetSlot : MonoBehaviour {
 	/// </summary>
 	private void OnDestroy() {
 		// Unregister listeners
-		m_slotInfo.equippedSlotAnim.OnShowPreAnimation.RemoveListener(EnableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnShowPostAnimation.RemoveListener(DisableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnHidePreAnimation.RemoveListener(EnableParticleScaler);
-		m_slotInfo.equippedSlotAnim.OnHidePostAnimation.RemoveListener(DisableParticleScaler);
+		if(m_slotInfo != null && m_slotInfo.equippedSlotAnim != null) {
+			m_slotInfo.equippedSlotAnim.OnShowPreAnimation.RemoveListener(EnableParticleScaler);
+			m_slotInfo.equippedSlotAnim.OnShowPostAnimation.RemoveListener(DisableParticleScaler);
+			m_slotInfo.equippedSlotAnim.OnHidePreAnimation.RemoveListener(EnableParticleScaler);
+			m_slotInfo.equippedSlotAnim.OnHidePostAnimation.RemoveListener(DisableParticleScaler);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -105,7 +111,7 @@ public class PetSlot : MonoBehaviour {
         m_unloadPetCoroutine = null;
 
 		// Initialize slot info and power icon
-		m_slotInfo.Init(_slotIdx);
+		if(m_slotInfo != null) m_slotInfo.Init(_slotIdx);
 	}
 
 	/// <summary>
@@ -117,16 +123,16 @@ public class PetSlot : MonoBehaviour {
 		m_dragonData = _dragonData;
 
 		// Show?
-		bool show = m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
+		bool show = _dragonData != null && m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
 		this.gameObject.SetActive(show);
 
-		if (show) {
+		if(show) {
 			// Refresh slot info
-			m_slotInfo.Refresh(_dragonData, _animate);
+			if(m_slotInfo != null) m_slotInfo.Refresh(_dragonData, _animate);
 			Refresh(m_dragonData.pets[m_slotIdx], _animate);
 		} else {
 			// Instant hide
-			m_powerIcon.anim.ForceHide(false);
+			if(m_powerIcon != null) m_powerIcon.anim.ForceHide(false);
 		}
 	}
 
@@ -140,17 +146,19 @@ public class PetSlot : MonoBehaviour {
 		bool equipped = (_def != null);
 
 		// Refresh power info
-		// Show
-		m_powerIcon.gameObject.SetActive(true);
-		m_powerIcon.anim.ForceShow(false);
+		if(m_powerIcon != null) {
+			// Show
+			m_powerIcon.gameObject.SetActive(true);
+			m_powerIcon.anim.ForceShow(false);
 
-		// Equipped?
-		if(equipped) {
-			// Get power definition
-			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
-			m_powerIcon.InitFromDefinition(powerDef, false, _animate);
-		} else {
-			m_powerIcon.InitFromDefinition(null, false, _animate);
+			// Equipped?
+			if(equipped) {
+				// Get power definition
+				DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _def.Get("powerup"));
+				m_powerIcon.InitFromDefinition(powerDef, false, _animate);
+			} else {
+				m_powerIcon.InitFromDefinition(null, false, _animate);
+			}
 		}
 
 		// Toggle equipped/empty animators
@@ -159,48 +167,52 @@ public class PetSlot : MonoBehaviour {
 		if(m_emptyAnim != null) m_emptyAnim.ForceSet(!equipped, _animate);
 
 		// Pet preview
-		// Equip or unequip?
-		if(equipped) {
-			// Don't reload if pet is already loaded
-			if(petLoader.petSku != _def.sku || petLoader.petInstance == null) {
-                if (m_unloadPetCoroutine != null) {
-                    StopCoroutine(m_unloadPetCoroutine);
-                    m_unloadPetCoroutine = null;
-                }
+		if(m_petLoader != null) {
+			// Equip or unequip?
+			if(equipped) {
+				// Don't reload if pet is already loaded
+				if(m_petLoader.petSku != _def.sku || m_petLoader.petInstance == null) {
+					if(m_unloadPetCoroutine != null) {
+						StopCoroutine(m_unloadPetCoroutine);
+						m_unloadPetCoroutine = null;
+					}
 
-				// The loader will do everything!
-				petLoader.Load(_def.sku);
+					// The loader will do everything!
+					m_petLoader.Load(_def.sku);
 
-				// Change render queue so the pet is renderd behind the UI!
-				Renderer[] targetRenderers = petLoader.GetComponentsInChildren<Renderer>();
-				for(int i = 0; i < targetRenderers.Length; ++i) {
-					for(int j = 0; j < targetRenderers[i].materials.Length; ++j) {
-						targetRenderers[i].materials[j].renderQueue = 3000;
+					// Change render queue so the pet is renderd behind the UI!
+					Renderer[] targetRenderers = m_petLoader.GetComponentsInChildren<Renderer>();
+					for(int i = 0; i < targetRenderers.Length; ++i) {
+						for(int j = 0; j < targetRenderers[i].materials.Length; ++j) {
+							targetRenderers[i].materials[j].renderQueue = 3000;
+						}
+					}
+				}
+			} else {
+				if(m_petLoader.petInstance != null) {
+					if(m_unloadPetCoroutine != null) {
+						StopCoroutine(m_unloadPetCoroutine);
+						m_unloadPetCoroutine = null;
+					}
+
+					// Animate?
+					if(_animate) {
+						// Toggle the OUT anim
+						MenuPetPreview pet = m_petLoader.petInstance.GetComponent<MenuPetPreview>();
+						pet.SetAnim(MenuPetPreview.Anim.OUT);
+						// Program a delayed destruction of the pet preview (to give some time to see the anim)
+						m_unloadPetCoroutine = UbiBCN.CoroutineManager.DelayedCall(m_petLoader.Unload, 0.3f, true); // [AOC] MAGIC NUMBERS!! More or less synced with the animation
+					} else {
+						m_petLoader.Unload();
 					}
 				}
 			}
-		} else {
-			if(petLoader.petInstance != null) {
-                if (m_unloadPetCoroutine != null) {
-                    StopCoroutine(m_unloadPetCoroutine);
-                    m_unloadPetCoroutine = null;
-                }
-
-				// Animate?
-				if(_animate) {
-					// Toggle the OUT anim
-					MenuPetPreview pet = petLoader.petInstance.GetComponent<MenuPetPreview>();
-					pet.SetAnim(MenuPetPreview.Anim.OUT);
-					// Program a delayed destruction of the pet preview (to give some time to see the anim)
-                    m_unloadPetCoroutine = UbiBCN.CoroutineManager.DelayedCall(() => petLoader.Unload(), 0.3f, true);	// [AOC] MAGIC NUMBERS!! More or less synced with the animation
-				} else {
-					petLoader.Unload();
-				}			
-			}
 		}
 
-
-		m_slotInfo.Refresh(_def, _animate);
+		// Slot info
+		if(m_slotInfo != null) {
+			m_slotInfo.Refresh(_def, _animate);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -210,13 +222,13 @@ public class PetSlot : MonoBehaviour {
 	/// Enable pet preview particle scaler.
 	/// </summary>
 	private void EnableParticleScaler(ShowHideAnimator _anim) {
-		m_petLoader.pscaler.enabled = true;
+		if(m_petLoader != null) m_petLoader.pscaler.enabled = true;
 	}
 
 	/// <summary>
 	/// Disable pet preview particle scaler.
 	/// </summary>
 	private void DisableParticleScaler(ShowHideAnimator _anim) {
-		m_petLoader.pscaler.enabled = false;
+		if(m_petLoader != null) m_petLoader.pscaler.enabled = false;
 	}
 }
