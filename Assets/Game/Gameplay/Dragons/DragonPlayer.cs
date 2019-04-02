@@ -246,19 +246,10 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     		// Get data from dragon manager
     		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
-    			if ( HDLiveDataManager.tournament.UsingProgressionDragon() )
-    			{
-    				m_data = DragonManager.GetDragonData(m_sku);
-    			}
-    			else
-    			{
-                    // Use tmp data
-                    HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
-                    HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-
-                    m_data = IDragonData.CreateFromBuild(def.m_build);
-    			}
-    		}
+				HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
+				HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
+				m_data = def.dragonData;
+			}
     		else
     		{
     			m_data = DragonManager.GetDragonData(m_sku);

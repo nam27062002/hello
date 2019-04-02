@@ -95,7 +95,7 @@ public class PetSlotInfo : MonoBehaviour {
 		m_dragonData = _dragonData;
 
 		// Show?
-		bool show = m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
+		bool show = _dragonData != null && m_slotIdx < _dragonData.pets.Count;	// Depends on the amount of slots for this dragon
 		this.gameObject.SetActive(show);
 
 		if (show) {
@@ -112,19 +112,19 @@ public class PetSlotInfo : MonoBehaviour {
 		// Refresh info
 		// Equipped or empty?
 		bool equipped = (_def != null);
-		m_equippedSlotAnim.ForceSet(equipped, _animate);
-		if (m_emptySlotAnim != null) m_emptySlotAnim.ForceSet(!equipped, _animate);
+		if(m_equippedSlotAnim != null) m_equippedSlotAnim.ForceSet(equipped, _animate);
+		if(m_emptySlotAnim != null) m_emptySlotAnim.ForceSet(!equipped, _animate);
 
 		// Pet info
 		if(equipped) {
 			// Name
-			m_nameText.Localize(_def.Get("tidName"));
+			if(m_nameText != null) m_nameText.Localize(_def.Get("tidName"));
 
 			// Rarity icon
-			string raritySku = _def.Get("rarity");
-			Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
-
 			if (m_rarityIcon != null) {
+				string raritySku = _def.Get("rarity");
+				Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(raritySku);
+
 				m_rarityIcon.sprite = UIConstants.RARITY_ICONS[(int)rarity];
 				m_rarityIcon.gameObject.SetActive(m_rarityIcon.sprite != null);	// Hide if no icon
 			}

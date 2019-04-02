@@ -164,8 +164,7 @@ public class GameSceneController : GameSceneControllerBase {
         {
             if ( HDLiveDataManager.tournament.isActive)
             {
-                string dragon = HDLiveDataManager.tournament.GetToUseDragon();
-                DragonManager.LoadDragon(dragon);
+				DragonManager.LoadDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData);
             }
             else
             {
@@ -794,7 +793,7 @@ public class GameSceneController : GameSceneControllerBase {
                     DragonDataSpecial specialData = dragonData as DragonDataSpecial;
                     dragonProgress = specialData.GetLevel();
                 }
-                dragonSkin = dragonData.diguise;
+                dragonSkin = dragonData.disguise;
                 pets = dragonData.pets;
             }
         }

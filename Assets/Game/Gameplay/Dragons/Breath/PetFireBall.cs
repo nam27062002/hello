@@ -32,40 +32,13 @@ public class PetFireBall :  MonoBehaviour, IProjectile {
 	// Use this for initialization
 	void Start () 
 	{
-		// View particle
-		string version = "";
-		switch(FeatureSettingsManager.instance.Particles)
-		{
-			default:
-			case FeatureSettings.ELevel5Values.very_low:							
-			case FeatureSettings.ELevel5Values.low:
-					version = "Low/";
-				break;
-			case FeatureSettings.ELevel5Values.mid:
-					version = "Master/";
-				break;
-			case FeatureSettings.ELevel5Values.very_high:
-			case FeatureSettings.ELevel5Values.high:
-					version = "High/";
-				break;
-		}
+        m_fireView = ParticleManager.InitLeveledParticle(m_viewParticle, transform);
+        if (m_fireView != null) {
+            m_fireView.gameObject.SetActive(true);
+        }
 
-		string path = "Particles/" + version + m_viewParticle;
-
-		GameObject prefab = Resources.Load<GameObject>(path);
-		if ( prefab )
-		{
-			m_fireView = Instantiate<GameObject>(prefab).GetComponent<ParticleSystem>();
-			if ( m_fireView )
-			{
-				// Anchor
-				m_fireView.transform.SetParent(transform, true);
-				m_fireView.transform.localPosition = GameConstants.Vector3.zero;
-				m_fireView.transform.localRotation = GameConstants.Quaternion.identity;
-			}
-		}
-		////
-		m_explosionParticle.CreatePool();
+        ////
+        m_explosionParticle.CreatePool();
 		m_poolHandler = PoolManager.GetHandler(gameObject.name);
 	}
 	

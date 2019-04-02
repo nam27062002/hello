@@ -127,6 +127,9 @@ namespace Downloadables
         public static readonly string GROUPS_FOLDER_NAME = Path.Combine(MANIFESTS_FOLDER_NAME, "Groups");
         public static readonly string GROUPS_ROOT_PATH = FileUtils.GetDeviceStoragePath(GROUPS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
 
+        public static readonly string DUMP_FOLDER_NAME = Path.Combine(MANIFESTS_FOLDER_NAME, "Dump");
+        public static readonly string DUMP_ROOT_PATH = FileUtils.GetDeviceStoragePath(DUMP_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+
         public static readonly string DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION = "downloadablesConfig";
         public static readonly string DOWNLOADABLES_CONFIG_FILENAME = DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION + ".json";        
 
@@ -180,7 +183,7 @@ namespace Downloadables
             sm_logger = logger;
 
             m_network = network;
-            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, GROUPS_ROOT_PATH, 180, onDiskIssueCallbak);
+            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, GROUPS_ROOT_PATH, DUMP_FOLDER_NAME, 180, onDiskIssueCallbak);
             m_tracker = tracker;
 
             CatalogEntryStatus.StaticSetup(config, m_disk, tracker);

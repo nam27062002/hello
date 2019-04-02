@@ -48,9 +48,13 @@ public class HDTournamentData : HDLiveEventData {
 		get{ return m_lastFreeEntranceTimestamp; }
 		set{ m_lastFreeEntranceTimestamp = value; }
 	}
-		// Default tournament config
+
+	// Default tournament config
 	protected HDLiveData.DragonBuild m_defaultBuild = new HDLiveData.DragonBuild();
 
+	public HDTournamentDefinition tournamentDef {
+		get { return m_definition as HDTournamentDefinition; }
+	}
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //

@@ -20,10 +20,13 @@ public class CPDownloadablesTab : MonoBehaviour
 	[SerializeField] private Toggle m_automaticDownloaderAllowedToggle = null;
     [SerializeField] private TMP_Dropdown m_networkSpeedDropdown = null;
 
+	[SerializeField] private TMP_Text m_diskFreeSpaceLabel = null;
 	// Internal
     private List<Downloadables.CatalogGroup> m_groupsSortedByPriority;
 	private List<CPDownloadablesGroupView> m_views = new List<CPDownloadablesGroupView>();
 	private List<CPDownloadablesGroupView> m_viewsTemp = new List<CPDownloadablesGroupView>();
+
+	private long m_latestDiskFreeSpace = 0;
 
 	/// <summary>
 	/// 
@@ -96,6 +99,38 @@ public class CPDownloadablesTab : MonoBehaviour
             m_groupsSortedByPriority = groupsSortedByPriority.GetRange(0, groupsSortedByPriority.Count);
             UpdateGroupsOrder();
         }
+
+		if (m_diskFreeSpaceLabel != null) 
+		{
+            const float ONE_KILOBYTE = 1024f;
+            const float ONE_MEGABYTE = 1024f * 1024f;
+
+            long freeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+            //if (freeSpace != m_latestDiskFreeSpace) 
+            freeSpace = 1023;
+			{
+				m_latestDiskFreeSpace = freeSpace;
+                
+                string diskSpace;
+                if (m_latestDiskFreeSpace > ONE_KILOBYTE)
+                {
+                    if (m_latestDiskFreeSpace > ONE_MEGABYTE)
+                    {
+                        diskSpace = m_latestDiskFreeSpace / ONE_MEGABYTE + " Mb";
+                    }
+                    else
+                    {
+                        diskSpace = m_latestDiskFreeSpace / ONE_KILOBYTE + " Kb";
+                    }
+                }                
+                else
+                {
+                    diskSpace = m_latestDiskFreeSpace + " bytes";
+                }
+
+				m_diskFreeSpaceLabel.text = "Free disk space = " + diskSpace;
+			}
+		}
 
 #if UNITY_EDITOR
         m_networkSpeedDropdown.value = NETWORK_SPEED_SLEEP_TIME_BY_MODE.IndexOf(MockNetworkDriver.MockThrottleSleepTime);
