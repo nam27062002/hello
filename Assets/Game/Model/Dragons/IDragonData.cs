@@ -554,9 +554,11 @@ public abstract class IDragonData : IUISelectorItem {
         }
 
 		// Shared data
-		// Pets
+		// Pets - At this point the DragonData pets list has already been resized to the number of slots for the tier
 		for(int i = 0; i < _build.pets.Count; ++i) {
-			newData.pets.Add(_build.pets[i]);
+			if(i < newData.pets.Count) {
+				newData.pets[i] = _build.pets[i];
+			}
 		}
 
 		return newData;
