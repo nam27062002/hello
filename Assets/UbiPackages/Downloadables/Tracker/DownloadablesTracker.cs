@@ -56,15 +56,24 @@ namespace Downloadables
         {
             return sizeInBytes * BYTES_TO_MB;
         }
-        public void NotifyDownloadStart(float currentTime, string downloadableId, float existingSizeMbAtStart, NetworkReachability reachabilityAtStart, bool isUpdate)
+
+        /// <summary>
+        /// Notifies a download has started
+        /// </summary>
+        /// <param name="currentTime"></param>
+        /// <param name="downloadableId"></param>
+        /// <param name="existingSizeAtStart">Size in bytes right before starting to download.</param>
+        /// <param name="reachabilityAtStart"></param>
+        /// <param name="isUpdate"></param>
+        public void NotifyDownloadStart(float currentTime, string downloadableId, float existingSizeAtStart, NetworkReachability reachabilityAtStart, bool isUpdate)
         {
             m_currentDownloadTimeAtStart = currentTime;
             m_currentDownloadId = downloadableId;
-            m_currentDownloadExistingSizeAtStart = existingSizeMbAtStart;
+            m_currentDownloadExistingSizeAtStart = existingSizeAtStart;
             m_currentDownloadReachabilityAtStart = reachabilityAtStart;
             m_currentDownloadIsUpdate = isUpdate;
 
-            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, existingSizeMbAtStart);
+            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, GetSizeInMb(existingSizeAtStart));
         }
 
         public void NotifyDownloadEnd(float currentTime, string downloadableId, float existingSizeAtEnd,  float totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
