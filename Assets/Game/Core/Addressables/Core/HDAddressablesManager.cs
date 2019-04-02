@@ -105,10 +105,10 @@ public class HDAddressablesManager : AddressablesManager
                             //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Link to CDN (it uses cache)
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
+                            //urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
                             break;
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
@@ -120,11 +120,11 @@ public class HDAddressablesManager : AddressablesManager
                             break;
                     }
 
-                    //http://10.44.4.69:7888/            
-
-                    urlBase += assetsLUT.m_iReleaseVersion + "/";
+                    //http://10.44.4.69:7888/                                
                 }                
             }
+
+            urlBase += assetsLUT.m_iReleaseVersion + "/";
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
@@ -196,9 +196,9 @@ public class HDAddressablesManager : AddressablesManager
     {
         // We don't want the downloader to interfere with the ingame experience
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
-        
-        // We don't want downloadables to interfere with the first user's experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+
+		// Downloader is disabled while the app is loading in order to let it load faster and smoother
+		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
     }
 
     public bool IsAutomaticDownloaderAllowed()

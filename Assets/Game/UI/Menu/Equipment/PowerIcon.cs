@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+using System.Collections.Generic;
 using TMPro;
 
 //----------------------------------------------------------------------------//
@@ -183,5 +183,87 @@ public class PowerIcon : MonoBehaviour {
 
 		// Set arrow offset to make it point to this icon
 		_tooltip.SetArrowOffset(m_tooltipArrowOffset);
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC UTILS METHODS													  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize a collection of power icons with a given dragon data setup.
+	/// </summary>
+	/// <param name="_powerIcons">Power icons to be initialized.</param>
+	/// <param name="_dragonData">Dragon data to be used for initialization.</param>
+	public static void InitPowerIconsWithDragonData(ref PowerIcon[] _powerIcons, IDragonData _dragonData) {
+		// Check params
+		if(_powerIcons == null) return;
+
+		// Special case: if given dragon data is not valid, hide all icons
+		if(_dragonData == null) {
+			for(int i = 0; i < _powerIcons.Length; ++i) {
+				_powerIcons[i].gameObject.SetActive(false);
+			}
+			return;
+		}
+
+		// Aux vars
+		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
+		List<Mode> iconModes = new List<Mode>();
+
+		// Skin
+		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _dragonData.disguise);
+		if(skinDef == null) {
+			powerDefs.Add(null);
+		} else {
+			powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));   // Can be null
+		}
+		iconModes.Add(Mode.SKIN);
+
+		// Special Dragon Powers
+		if(_dragonData.type == IDragonData.Type.SPECIAL) {
+			DragonDataSpecial dataSpecial = (DragonDataSpecial)_dragonData;
+			for(int i = 1; i <= dataSpecial.powerLevel; ++i) {
+				powerDefs.Add(dataSpecial.specialPowerDefsByOrder[i - 1]);
+				iconModes.Add(Mode.SPECIAL_DRAGON);
+			}
+		}
+
+		// Pets
+		for(int i = 0; i < _dragonData.pets.Count; i++) {
+			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _dragonData.pets[i]);
+			if(petDef == null) {
+				powerDefs.Add(null);
+			} else {
+				powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup")));
+			}
+			iconModes.Add(Mode.PET);
+		}
+
+		// Initialize power icons
+		for(int i = 0; i < _powerIcons.Length; i++) {
+			// Get icon ref
+			PowerIcon powerIcon = _powerIcons[i];
+
+			// Hide if there are not enough powers defined
+			if(i >= powerDefs.Count) {
+				powerIcon.gameObject.SetActive(false);
+				continue;
+			}
+
+			// Hide if there is no power associated
+			if(powerDefs[i] == null) {
+				// Except for classic dragon default skin, which we will leave the power for consistency
+				// (we detect that knowing that skin power is idx 0 and checking dragon type)
+				if(i == 0 && _dragonData.type == IDragonData.Type.CLASSIC) {
+					powerIcon.InitFromDefinition(null, false, false);
+				} else {
+					powerIcon.gameObject.SetActive(false);
+				}
+				continue;   // Nothing else to do
+			}
+
+			// Everything ok! Initialize
+			powerIcon.gameObject.SetActive(true);
+			powerIcon.InitFromDefinition(powerDefs[i], false, false, iconModes[i]);
+		}
 	}
 }

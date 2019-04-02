@@ -15,7 +15,8 @@ namespace Downloadables
         {
             Manifests,
             Downloads,
-            Groups
+            Groups,
+            Dump
         };
 
         private string[] m_rootPaths;
@@ -26,16 +27,17 @@ namespace Downloadables
         /// </summary>
         private float m_issueNotifPeriod;
         
-        public Disk(DiskDriver diskDriver, string manifestsRootPath, string downloadsRootPath, string groupsRootPath, float issuesNofitPeriod, OnIssue onIssueCallbak)
+        public Disk(DiskDriver diskDriver, string manifestsRootPath, string downloadsRootPath, string groupsRootPath, string dumpRootPath, float issuesNofitPeriod, OnIssue onIssueCallbak)
         {
             Reset();
 
             DiskDriver = diskDriver;
 
-            m_rootPaths = new string[3];
+            m_rootPaths = new string[4];
             m_rootPaths[(int)EDirectoryId.Manifests] = manifestsRootPath;
             m_rootPaths[(int)EDirectoryId.Downloads] = downloadsRootPath;
             m_rootPaths[(int)EDirectoryId.Groups] = groupsRootPath;
+            m_rootPaths[(int)EDirectoryId.Dump] = dumpRootPath;
 
             m_onIssueCallback = onIssueCallbak;
             m_issueNotifPeriod = issuesNofitPeriod;
