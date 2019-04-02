@@ -609,9 +609,20 @@ public class MenuDragonScreenController : MonoBehaviour {
     public void OnPlayButton() {
         if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
         {
-			// If needed, show assets download popup and don't continue
-			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
-			if(popup != null) return;
+			// Check whether all assets required for the current dragon are available or not
+			// [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
+			// Get assets download handle for current dragon
+			string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
+			Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
+			if(!currentDragonHandle.IsAvailable()) {
+				// Scroll back to current dragon
+				// This will trigger the OnDragonSelected callback that will then update the Assets Download Flow with the right handler
+				InstanceManager.menuSceneController.SetSelectedDragon(currentDragonSku);
+
+				// If needed, show assets download popup and don't continue
+				PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+				if(popup != null) return;
+			}
 
     		// Select target screen
     		MenuScreen nextScreen = MenuScreen.MISSIONS;
