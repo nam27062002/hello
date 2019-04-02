@@ -60,6 +60,6 @@ public class ProductionDiskDriver : DiskDriver
 
     public long GetFreeSpaceBytes()
     {
-        return DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+		return long.MaxValue;// DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
     }
 }
