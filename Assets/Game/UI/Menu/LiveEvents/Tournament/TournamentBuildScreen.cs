@@ -8,37 +8,27 @@ public class TournamentBuildScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
-	private enum Mode {
-		Build = 0,
-		EditDragon,
-		EditPets
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	[Separator("Dragon")]
-	[SerializeField] private MenuDragonLoader 	m_dragonLoader;
-	[SerializeField] private Localizer 			m_dragonName;
-	[SerializeField] private Localizer 			m_dragonSkin;
-	[SerializeField] private PowerIcon 			m_dragonPower;
-
-	[Separator("Pets")]
-	[SerializeField] private PetSlot[] 			m_petSlots;
-	[SerializeField] private GameObject			m_petEditRoot;
-	[SerializeField] private Transform[]		m_petEditSlots;
+	[SerializeField] private MenuDragonLoader 	m_dragonLoader = null;
+	[SerializeField] private Localizer 			m_dragonName = null;
+	[SerializeField] private Localizer 			m_dragonSkin = null;
+	[SerializeField] private PetSlot[] 			m_petSlots = null;
+	[SerializeField] private PowerIcon[] 		m_powerIcons = null;
 
 	[Separator("Tournament Info")]
-	[SerializeField] private TextMeshProUGUI	m_goalText;
-	[SerializeField] private ModifierIcon[] 	m_modifier;
+	[SerializeField] private TextMeshProUGUI	m_goalText = null;
+	[SerializeField] private ModifierIcon[] 	m_modifier = null;
 
 	[Separator("Enter button")]
-	[SerializeField] private Button 			m_enterCurrencyBtn;
-	[SerializeField] private Button 			m_enterFreeBtn;
-	[SerializeField] private Button 			m_enterAdBtn;
-	[SerializeField] private GameObject			m_nextFreeTimerGroup;
-	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
-	[SerializeField] private Slider				m_nextFreeSlider;
+	[SerializeField] private Button 			m_enterCurrencyBtn = null;
+	[SerializeField] private Button 			m_enterFreeBtn = null;
+	[SerializeField] private Button 			m_enterAdBtn = null;
+	[SerializeField] private GameObject			m_nextFreeTimerGroup = null;
+	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer = null;
+	[SerializeField] private Slider				m_nextFreeSlider = null;
 
 	[Separator("Others")]
 	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
@@ -52,12 +42,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 	private HDTournamentData 		m_data;
 	private ResourcesFlow 			m_purchaseFlow;
 
-	private Transform[] 			m_petEquipSlots;
-
 	private bool m_waitingRewardsData = false;
 	private bool m_hasFreeEntrance;
-
-	private Mode m_mode;
 
 
 	//------------------------------------------------------------------------//
@@ -86,49 +72,48 @@ public class TournamentBuildScreen : MonoBehaviour {
 	/// 
 	/// </summary>
 	public void Refresh() {
-		m_mode = Mode.Build;
-
+		// Internal data
 		m_tournament = HDLiveDataManager.tournament;
 		m_data = m_tournament.data as HDTournamentData;
 		m_definition = m_data.definition as HDTournamentDefinition;
-
 
 		//-- Dragon ---------------------------------------------------//
 		IDragonData dragonData = m_tournament.tournamentData.tournamentDef.dragonData;
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
 		m_dragonLoader.LoadDragon(dragonData.sku, dragonData.disguise);
-		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
-		if (disguise.GetAsInt("shopOrder") > 0) { // skins
-			m_dragonSkin.Localize(disguise.Get("tidName"));
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
+		if (skinDef.GetAsInt("shopOrder") > 0) { // skins
+			m_dragonSkin.Localize(skinDef.Get("tidName"));
 		} else { // default skin
 			m_dragonSkin.gameObject.SetActive(false);
 		}
 
-		string powerupSku = disguise.Get("powerup");
+		/*string powerupSku = disguise.Get("powerup");
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
-		m_dragonPower.InitFromDefinition(powerup, false);
+		m_dragonPower.InitFromDefinition(powerup, false);*/
 
 		//-- Pets -----------------------------------------------------//
 		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
-		m_petEquipSlots = new Transform[m_petSlots.Length];
 
 		for (int i = 0; i < m_petSlots.Length; ++i) {
-			if (i < dragonData.pets.Count && !string.IsNullOrEmpty(dragonData.pets[i])) {				
-				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
-				m_petEquipSlots[i] = ap.transform;
-
+			if (i < dragonData.pets.Count && !string.IsNullOrEmpty(dragonData.pets[i])) {
+				// Load pet
 				m_petSlots[i].Refresh(dragonData.pets[i], true);
 				m_petSlots[i].gameObject.SetActive(true);
 
-				m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;				
+				// Put the pet in the proper position depending on dragon
+				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
+				m_petSlots[i].petLoader.transform.position = ap.transform.position;
 			} else {
-				m_petEquipSlots[i] = null;
+				// Hide slot
 				m_petSlots[i].gameObject.SetActive(false);
-				m_petSlots[i].powerIcon.gameObject.SetActive(false);
 			}
 		}
 
+		//-- Powers ---------------------------------------------------//
+		// [AOC] PowerIcon does all the job for us!
+		PowerIcon.InitPowerIconsWithDragonData(ref m_powerIcons, dragonData);
 
 		//-- Tournament Info ------------------------------------------//
 		//GOALS
@@ -266,30 +251,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	public void OnHidePreAnimation() {
 		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
-	}
-
-	public void OnEditPetsToogle() {
-		if (m_mode != Mode.EditPets) {
-			m_petEditRoot.SetActive(true);
-
-			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
-				if (m_petEquipSlots[i] != null) {
-					m_petSlots[i].petLoader.transform.position = m_petEditSlots[i].position;
-				}
-			}
-
-			m_mode = Mode.EditPets;
-		} else {
-			m_petEditRoot.SetActive(false);
-
-			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
-				if (m_petEquipSlots[i] != null) {
-					m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;
-				}
-			}
-
-			m_mode = Mode.Build;
-		}
 	}
 
 	public void OnStartPaying() {

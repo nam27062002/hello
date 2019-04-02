@@ -247,6 +247,83 @@ public class AssetFinder : EditorWindow {
     }
 
     /// <summary>
+    /// Unchecks all import materials option in models
+    /// </summary>
+    [MenuItem("Hungry Dragon/Tools/Uncheck import materials")]
+    public static void uncheckImportMaterials()
+    {
+        Debug.Log("Obtaining fbx list");
+
+        string[] allAssetPaths = AssetDatabase.GetAllAssetPaths();
+        List<string> allFBXPaths = new List<string>();
+
+        foreach (string assetPath in allAssetPaths)
+        {
+            if (assetPath.ToLower().Contains(".fbx"))
+            {
+                allFBXPaths.Add(assetPath);
+
+            }
+        }
+
+
+        using (StreamWriter sw = new StreamWriter("fbx_with_import_material_check.txt"))
+        {
+            int imc = 0;
+            foreach (string fbxPath in allFBXPaths)
+            {
+                ModelImporter model = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
+
+                if (model != null && model.importMaterials)
+                {
+//                    Debug.Log("Model: " + fbxPath);
+                    sw.WriteLine("Model: " + fbxPath);
+                    model.importMaterials = false;
+                    AssetDatabase.ImportAsset(fbxPath);
+                    imc++;
+                }
+            }
+
+//            Debug.Log("FBX counted: " + allFBXPaths.Count + " whose import materials option is checked: " + imc);
+            sw.WriteLine("FBX counted: " + allFBXPaths.Count + " whose import materials option is checked: " + imc);
+        }
+
+        /*
+
+                Texture2D[] textureList;
+                FindAssetInContent<Texture2D>(Directory.GetCurrentDirectory() + "\\Assets", out textureList);
+
+                float c = 0;
+
+                Debug.Log("Enabled mipmap textures :");
+                foreach (Texture2D texture in textureList)
+                {
+                    string path = AssetDatabase.GetAssetPath(texture);
+                    TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+
+                    if (EditorUtility.DisplayCancelableProgressBar("Reimporting texture", path, c / (float)textureList.Length))
+                    {
+                        EditorUtility.ClearProgressBar();
+                        break;
+                    }
+                    if (textureImporter != null && textureImporter.mipmapEnabled)
+                    {
+                        textureImporter.mipmapEnabled = false;
+                        AssetDatabase.ImportAsset(path);
+                        Debug.Log(">>> " + path);
+                        c++;
+
+                    }
+                }
+
+                EditorUtility.ClearProgressBar();
+                Debug.Log("list length: " + textureList.Length + " Mipmap textures:" + c);
+        */
+    }
+
+
+
+    /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
     [MenuItem("Hungry Dragon/Tools/Seek for directional lights")]

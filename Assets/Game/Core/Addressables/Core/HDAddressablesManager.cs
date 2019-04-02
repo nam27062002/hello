@@ -196,9 +196,9 @@ public class HDAddressablesManager : AddressablesManager
     {
         // We don't want the downloader to interfere with the ingame experience
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
-        
-        // We don't want downloadables to interfere with the first user's experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+
+		// Downloader is disabled while the app is loading in order to let it load faster and smoother
+		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
     }
 
     public bool IsAutomaticDownloaderAllowed()

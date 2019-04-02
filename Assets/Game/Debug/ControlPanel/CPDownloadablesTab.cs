@@ -100,13 +100,35 @@ public class CPDownloadablesTab : MonoBehaviour
             UpdateGroupsOrder();
         }
 
-		if(m_diskFreeSpaceLabel != null) 
+		if (m_diskFreeSpaceLabel != null) 
 		{
-			long freeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
-			if(freeSpace != m_latestDiskFreeSpace) 
+            const float ONE_KILOBYTE = 1024f;
+            const float ONE_MEGABYTE = 1024f * 1024f;
+
+            long freeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+            //if (freeSpace != m_latestDiskFreeSpace) 
+            freeSpace = 1023;
 			{
 				m_latestDiskFreeSpace = freeSpace;
-				m_diskFreeSpaceLabel.text = "Free disk space = " + (freeSpace / 1024f) + " Kbs";
+                
+                string diskSpace;
+                if (m_latestDiskFreeSpace > ONE_KILOBYTE)
+                {
+                    if (m_latestDiskFreeSpace > ONE_MEGABYTE)
+                    {
+                        diskSpace = m_latestDiskFreeSpace / ONE_MEGABYTE + " Mb";
+                    }
+                    else
+                    {
+                        diskSpace = m_latestDiskFreeSpace / ONE_KILOBYTE + " Kb";
+                    }
+                }                
+                else
+                {
+                    diskSpace = m_latestDiskFreeSpace + " bytes";
+                }
+
+				m_diskFreeSpaceLabel.text = "Free disk space = " + diskSpace;
 			}
 		}
 
