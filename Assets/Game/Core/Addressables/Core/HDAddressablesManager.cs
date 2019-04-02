@@ -120,11 +120,11 @@ public class HDAddressablesManager : AddressablesManager
                             break;
                     }
 
-                    //http://10.44.4.69:7888/            
-
-                    urlBase += assetsLUT.m_iReleaseVersion + "/";
+                    //http://10.44.4.69:7888/                                
                 }                
             }
+
+            urlBase += assetsLUT.m_iReleaseVersion + "/";
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
