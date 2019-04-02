@@ -901,7 +901,8 @@ public class OfferPack {
 	public void NotifyPopupDisplayed() {
 		// Tracking
 		// The experiment name is used as offer name        
-		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_def), m_def.GetAsString("type"));
+        string offerName = OffersManager.GenerateTrackingOfferName( m_def );
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), offerName, m_def.GetAsString("type"));
 
 		// Update control vars and return
 		m_viewsCount++;
