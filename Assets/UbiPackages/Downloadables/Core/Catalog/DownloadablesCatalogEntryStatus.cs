@@ -666,7 +666,7 @@ namespace Downloadables
         {
             if (sm_tracker != null)
             {
-                sm_tracker.NotifyDownloadStart(sm_realtimeSinceStartup, Id, DataInfo.Size, sm_currentNetworkReachability, HasBeenDownloadedBefore());
+                sm_tracker.NotifyDownloadStart(sm_realtimeSinceStartup, Id, DataInfo.Size, m_manifest.Size, sm_currentNetworkReachability, HasBeenDownloadedBefore());
             }
         }
 

@@ -280,10 +280,10 @@ namespace Downloadables
                 
                 if (track)
                 {
-                    float existingSize = GetIdMbDownloadedSoFar(id);
+                    long existingSize = GetIdBytesDownloadedSoFar(id);
                     NetworkReachability reachability = m_network.CurrentNetworkReachability;
                     Error.EType result = (returnValue) ? Error.EType.None : Error.EType.Internal_NotAvailable;
-                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalMb(id), 0, reachability, reachability, result, false);
+                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalBytes(id), 0, reachability, reachability, result, false);
                 }
             }
 
