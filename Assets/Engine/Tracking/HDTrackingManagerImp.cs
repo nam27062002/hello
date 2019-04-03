@@ -1238,15 +1238,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <param name="currentLeague">Name of the league that user is participating</param>
     public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
+        // Resets the amount of runs in the current round because a new round has just started
+        Session_RunsAmountInCurrentRound = 0;
+        Session_HungryLettersCount = 0;
+
+        // One more game round
+        TrackingPersistenceSystem.GameRoundCount++;
+
+        if (m_playingMode == EPlayingMode.NONE) {
+            Track_StartPlayingMode(EPlayingMode.PVE);
+        }
+        
         Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
+        
+        Session_NotifyRoundStart();
     }
     
     public override void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
     int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
     int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) 
     {
+        if (m_playingMode == EPlayingMode.PVE) {
+            Track_EndPlayingMode(true);
+        }
+
+        if (TrackingPersistenceSystem != null) {
+            TrackingPersistenceSystem.EggsFound += eggFound;
+        }
+        
         Track_LabGameEnd(dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(powerTime * 1000.0f), mapUsage, currentLeague);
+            
+        Session_NotifyRoundEnd();
     }
 
     /// <summary>
