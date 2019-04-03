@@ -73,6 +73,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_firstUXFunnel = new FunnelData_FirstUX();
     }
 
+    private const float BYTES_TO_MB = 1f / (1024 * 1024);
+    private const float BYTES_TO_KB = 1f / 1024;
+
+    private float GetSizeInMb(float sizeInBytes)
+    {
+        return sizeInBytes * BYTES_TO_MB;
+    }
+
+    private float GetSizeInKb(float sizeInBytes)
+    {
+        return sizeInBytes * BYTES_TO_KB;
+    }
+
     public override void Init() {
         base.Init();
 
@@ -1238,15 +1251,38 @@ public class HDTrackingManagerImp : HDTrackingManager {
     /// <param name="currentLeague">Name of the league that user is participating</param>
     public override void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets)
     {
+        // Resets the amount of runs in the current round because a new round has just started
+        Session_RunsAmountInCurrentRound = 0;
+        Session_HungryLettersCount = 0;
+
+        // One more game round
+        TrackingPersistenceSystem.GameRoundCount++;
+
+        if (m_playingMode == EPlayingMode.NONE) {
+            Track_StartPlayingMode(EPlayingMode.PVE);
+        }
+        
         Track_LabGameStart(dragonName, labHp, labSpeed, labBoost, labPower, totalSpecialDragonsUnlocked, currentLeague, pets);
+        
+        Session_NotifyRoundStart();
     }
     
     public override void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
     int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
     int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) 
     {
+        if (m_playingMode == EPlayingMode.PVE) {
+            Track_EndPlayingMode(true);
+        }
+
+        if (TrackingPersistenceSystem != null) {
+            TrackingPersistenceSystem.EggsFound += eggFound;
+        }
+        
         Track_LabGameEnd(dragonName, labHp, labSpeed, labBoost, labPower, timePlayed, score, Session_LastDeathType, Session_LastDeathSource, Session_LastDeathCoordinates,
             eggFound, highestMultiplier, highestBaseMultiplier, furyRushNb, superFireRushNb, hcRevive, adRevive, scGained, hcGained, (int)(powerTime * 1000.0f), mapUsage, currentLeague);
+            
+        Session_NotifyRoundEnd();
     }
 
     /// <summary>
@@ -1275,25 +1311,23 @@ public class HDTrackingManagerImp : HDTrackingManager {
     #endregion
 
     #region downloadables
-    public override void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart)
+    public override void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, long existingSizeAtStart, long totalSize)
     {
         if (action == Downloadables.Tracker.EAction.Download || action == Downloadables.Tracker.EAction.Update)
-        {
-            int sizeInKb = (int)(existingSizeMbAtStart * 1024);
-            Track_DownloadStarted(GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb);
+        {            
+            Track_DownloadStarted(GetDownloadTypeFromDownloadableId(downloadableId), existingSizeAtStart, totalSize);
         }
     }
 
-    public override void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    public override void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, long existingSizeAtStart, long existingSizeAtEnd, long totalSize, int timeSpent,
                                                 string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
     {
-        Track_DownloadablesEnd(action.ToString(), downloadableId, existingSizeMbAtStart, existingSizeMbAtEnd, totalSizeMb, timeSpent, reachabilityAtStart, reachabilityAtEnd, result, maxAttemptsReached);
+        Track_DownloadablesEnd(action.ToString(), downloadableId, existingSizeAtStart, existingSizeAtEnd, totalSize, timeSpent, reachabilityAtStart, reachabilityAtEnd, result, maxAttemptsReached);
 
         if (action == Downloadables.Tracker.EAction.Download || action == Downloadables.Tracker.EAction.Update)
         {
-			string status = (result == HDDownloadablesTracker.RESULT_SUCCESS) ? "completed" : "failed";
-            int sizeInKb = (int)(existingSizeMbAtEnd * 1024);
-            Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), sizeInKb, timeSpent);
+			string status = (result == HDDownloadablesTracker.RESULT_SUCCESS) ? "completed" : "failed";            
+            Track_DownloadComplete(status, GetDownloadTypeFromDownloadableId(downloadableId), existingSizeAtEnd, timeSpent);
         }
     }
 
@@ -2426,7 +2460,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 		m_eventQueue.Enqueue(e);
 	}    
 
-    private void Track_DownloadablesEnd(string action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+    private void Track_DownloadablesEnd(string action, string downloadableId, long existingSizeAtStart, long existingSizeAtEnd, long totalSize, int timeSpent,
                                        string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached)
     {
         // Debug
@@ -2434,9 +2468,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
         {
             Log("Track_DownloadablesEnd action = " + action
                 + ", downloadableId = " + downloadableId
-                + ", existingSizeMbAtStart = " + existingSizeMbAtStart
-                + ", existingSizeMbAtEnd = " + existingSizeMbAtEnd
-                + ", totalSizeMb = " + totalSizeMb
+                + ", existingSizeMbAtStart = " + existingSizeAtStart
+                + ", existingSizeMbAtEnd = " + existingSizeAtEnd
+                + ", totalSizeMb = " + totalSize
                 + ", timeSpent = " + timeSpent
                 + ", reachabilityAtStart = " + reachabilityAtStart
                 + ", reachabilityAtEnd = " + reachabilityAtEnd
@@ -2451,9 +2485,9 @@ public class HDTrackingManagerImp : HDTrackingManager {
             Track_AddParamString(e, TRACK_PARAM_TYPE_BUILD_VERSION, Session_BuildVersion);
             Track_AddParamString(e, TRACK_PARAM_ACTION, action);
             Track_AddParamString(e, TRACK_PARAM_ASSET_BUNDLE, downloadableId);
-            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_START, existingSizeMbAtStart);
-            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_END, existingSizeMbAtEnd);
-            Track_AddParamFloat(e, TRACK_PARAM_SIZE, totalSizeMb);
+            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_START, GetSizeInMb(existingSizeAtStart));
+            Track_AddParamFloat(e, TRACK_PARAM_MB_AVAILABLE_END, GetSizeInMb(existingSizeAtEnd));
+            Track_AddParamFloat(e, TRACK_PARAM_SIZE, GetSizeInMb(totalSize));
             Track_AddParamInt(e, TRACK_PARAM_TIME_SPENT, timeSpent);
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_START, reachabilityAtStart);
             Track_AddParamString(e, TRACK_PARAM_NETWORK_TYPE_END, reachabilityAtEnd);
@@ -2463,14 +2497,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);        
     }
 
-    private void Track_DownloadStarted(string downloadType, int sizeInKb)
+    private void Track_DownloadStarted(string downloadType, long size, long totalSize)
     {
+        // It needs to be an int because of specification, although it's sent as float below (it's sent as float because this event shares the size attribute with other event that needs the
+        // parameter to be float
+        int sizeInKb = (int)GetSizeInKb(totalSize);
+
         // Debug
         if (FeatureSettingsManager.IsDebugEnabled)
         {
             Log("Track_DownloadablesStart "
                 + ", downloadType = " + downloadType
-                + ", sizeInKb = " + sizeInKb);
+                + ", size = " + size
+                + ", totalSizeInKb = " + totalSize);
         }
 
         // Create event
@@ -2484,8 +2523,12 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
 
-    private void Track_DownloadComplete(string action, string downloadType, int sizeInKb, int timeSpent)
+    private void Track_DownloadComplete(string action, string downloadType, long size, int timeSpent)
     {
+        // It needs to be an int because of specification, although it's sent as float below (it's sent as float because this event shares the size attribute with other event that needs the
+        // parameter to be float
+        int sizeInKb = (int)GetSizeInKb(size);
+
         // Debug
         if (FeatureSettingsManager.IsDebugEnabled)
         {

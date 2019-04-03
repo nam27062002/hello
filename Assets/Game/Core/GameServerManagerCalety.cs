@@ -1333,7 +1333,7 @@ public class GameServerManagerCalety : GameServerManager {
                     {
                         data = JSON.Parse(paramsAsString) as JSONClass;
                     }
-                    Command_SendCommandAsGameAction(COMMAND_CURRENCY_FLUCTUATION, data, false);
+                    Command_SendCommandAsGameAction(COMMAND_CURRENCY_FLUCTUATION, data, true);
                 }
                 break;
                 default: {
