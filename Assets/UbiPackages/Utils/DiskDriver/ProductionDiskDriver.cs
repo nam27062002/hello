@@ -67,7 +67,7 @@ public class ProductionDiskDriver : DiskDriver
     {
         if (m_latestFreeSpace < 0 || m_realtimeSinceStartup - m_latesFreeSpaceAt > 2f)
         {
-            m_latestFreeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+			m_latestFreeSpace = long.MaxValue; //DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
             m_latesFreeSpaceAt = m_realtimeSinceStartup;
         }
 
