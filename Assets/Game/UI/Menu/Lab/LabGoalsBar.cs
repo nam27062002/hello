@@ -158,6 +158,22 @@ public class LabGoalsBar : MonoBehaviour {
 			return;
 		}
 
+		// Just in case, make sure all assets required for the current dragon are available
+		// Usually we shouldn't get access to this screen if not, but in some corner cases it's possible to get to this point (HDK-4661, HDK-4663)
+		// Get assets download handle for current dragon
+		string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
+		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
+		if(!currentDragonHandle.IsAvailable()) {
+			// If needed, show assets download popup
+			PopupAssetsDownloadFlow.OpenPopupByState(currentDragonHandle, false);
+
+			// Go back to lab dragon selection screen
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);
+
+			// Don't do anything else!
+			return;
+		}
+
 		// Tracking
 		// [AOC] TODO!! Tournament as reference:
 		//HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);

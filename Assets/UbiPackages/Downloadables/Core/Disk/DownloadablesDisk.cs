@@ -328,6 +328,8 @@ namespace Downloadables
     
         public void Update()
         {
+            DiskDriver.Update();
+
             float timePassed;
             float now = Time.realtimeSinceStartup;
             for (int i = 0; i < IssueTypesCount; i++)

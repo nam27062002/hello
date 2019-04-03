@@ -15,6 +15,8 @@ public class ModGamePlaySceneSelector : ModifierGamePlay {
 
         m_scenesToExclude = new Dictionary<string, string[]>();
         ParseParams(_def.Get("param2"), m_scenesToExclude);
+
+		BuildTextParams();
     }
 
 	public override void Apply() {
