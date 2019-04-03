@@ -65,7 +65,7 @@ public class MockDiskDriver : MockDriver, DiskDriver
         }
         else
 #endif
-        if (GetFreeSpaceBytes() == 0 && RequiresDiskWriteAccess(op))
+        if (RequiresDiskWriteAccess(op) && GetFreeSpaceBytes() == 0)
         {
             return EExceptionType.IOException;
         }
