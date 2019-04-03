@@ -1,8 +1,13 @@
 ﻿using System.IO;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class ProductionDiskDriver : DiskDriver
-{    
+{
+    private float m_realtimeSinceStartup;
+    private long m_latestFreeSpace = -1;
+    private float m_latesFreeSpaceAt = 0f;
+
     public bool Directory_Exists(string path)
     {
         return Directory.Exists(path);
@@ -60,6 +65,17 @@ public class ProductionDiskDriver : DiskDriver
 
     public long GetFreeSpaceBytes()
     {
-		return long.MaxValue;// DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+        if (m_latestFreeSpace < 0 || m_realtimeSinceStartup - m_latesFreeSpaceAt > 2f)
+        {
+            m_latestFreeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
+            m_latesFreeSpaceAt = m_realtimeSinceStartup;
+        }
+
+		return m_latestFreeSpace;
+    }
+
+    public void Update()
+    {
+        m_realtimeSinceStartup = Time.realtimeSinceStartup;
     }
 }

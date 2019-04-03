@@ -234,4 +234,8 @@ public class MockDiskDriver : MockDriver, DiskDriver
         return m_prodDriver.GetFreeSpaceBytes();
 #endif
     }
+
+    public void Update()
+    {
+    }
 }

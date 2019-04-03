@@ -20,4 +20,5 @@ public interface DiskDriver
     void File_Delete(string path);
 
     long GetFreeSpaceBytes();
+    void Update();
 }
