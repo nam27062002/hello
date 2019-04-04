@@ -94,7 +94,7 @@ namespace Downloadables
                 case NetworkReachability.ReachableViaLocalAreaNetwork:
                     if (REQUEST_PERMISSION_OVER_WIFI_ENABLED)
                     {
-                        if (!entryStatus.GetPermissionOverCarrierGranted())
+                        if (!entryStatus.GetPermissionRequested())
                         {
                             returnValue = Error.EType.Network_Unauthorized_Reachability;
                         }
