@@ -11,7 +11,14 @@ namespace Downloadables
     /// This class is responsible for downloading a downloadable
     /// </summary>
     public class Downloader
-    {       
+    {
+        // Due to strict Apple Store compliance guidelines the user needs to grant permission to download over wifi too
+#if UNITY_IOS
+        private static bool REQUEST_PERMISSION_OVER_WIFI_ENABLED = true;
+#else
+        private static bool REQUEST_PERMISSION_OVER_WIFI_ENABLED = false;
+#endif    
+
         private static int TIMEOUT = 10000;
 
         private Manager m_manager;
@@ -85,7 +92,14 @@ namespace Downloadables
             switch (CurrentNetworkReachability)
             {
                 case NetworkReachability.ReachableViaLocalAreaNetwork:
-                    // Wifi = Always Ok                    
+                    if (REQUEST_PERMISSION_OVER_WIFI_ENABLED)
+                    {
+                        if (!entryStatus.GetPermissionOverCarrierGranted())
+                        {
+                            returnValue = Error.EType.Network_Unauthorized_Reachability;
+                        }
+                    }                    
+
                     break;
 
                 case NetworkReachability.ReachableViaCarrierDataNetwork:
