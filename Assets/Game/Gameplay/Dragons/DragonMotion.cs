@@ -110,7 +110,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	protected Vector3 m_direction;
     private Vector3 m_directionWhenBoostPressed;
     protected Vector3 m_externalForce;	// Used for wind flows, to be set every frame
-	private Quaternion m_desiredRotation;
+	protected Quaternion m_desiredRotation;
 	protected Vector3 m_angularVelocity = Vector3.zero;
 	private float m_boostSpeedMultiplier;
 	public float boostSpeedMultiplier
@@ -146,32 +146,32 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 	
 	/** Distance from the nearest ground collision below the dragon. The maximum distance checked is 10. */
-	private float m_height;
+	protected float m_height;
 	public float height
 	{
 		get { return m_height; }
 	}
-	private bool m_closeToGround = false;
+	protected bool m_closeToGround = false;
 	public bool closeToGround
 	{
 		get{ return m_closeToGround; }
 	}
-	private Vector3 m_lastGroundHit = Vector3.zero;
+	protected Vector3 m_lastGroundHit = Vector3.zero;
 	public Vector3 lastGroundHit
 	{
 		get{ return m_lastGroundHit; }
 	}
-	private Vector3 m_lastGroundHitNormal = Vector3.zero;
+	protected Vector3 m_lastGroundHitNormal = Vector3.zero;
 	public Vector3 lastGroundHitNormal
 	{
 		get{ return m_lastGroundHitNormal; }
 	}
 
-	struct Sensors {
+	protected struct Sensors {
 		public Transform top;
 		public Transform bottom;
 	};
-	private Sensors m_sensor;
+	protected Sensors m_sensor;
 
 	private Transform[] m_hitTargets;
 
@@ -274,7 +274,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-	RaycastHit m_raycastHit = new RaycastHit();
+	protected RaycastHit m_raycastHit = new RaycastHit();
 
 	[Space]
 	private float m_introTimer;
@@ -1106,25 +1106,29 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 			}break;
 		}
+        AfterFixedUpdate();
+	}
+    
+    protected void AfterFixedUpdate()
+    {
+        m_rbody.angularVelocity = m_angularVelocity;
+        if ( m_spinning )
+        {
+            float d = Vector3.Dot(m_direction, m_transform.forward);
+            if (d > 0)
+            {
+                m_rbody.AddRelativeTorque( Vector3.forward * 20 * d, ForceMode.VelocityChange);
+            }
+        }
+        // if ( FeatureSettingsManager.IsDebugEnabled )
+        {
+            m_lastSpeed = (m_transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
+        }
 
-		m_rbody.angularVelocity = m_angularVelocity;
-		if ( m_spinning )
-		{
-			float d = Vector3.Dot(m_direction, m_transform.forward);
-			if (d > 0)
-			{
-				m_rbody.AddRelativeTorque( Vector3.forward * 20 * d, ForceMode.VelocityChange);
-			}
-		}
-		// if ( FeatureSettingsManager.IsDebugEnabled )
-		{
-			m_lastSpeed = (m_transform.position - m_lastPosition).magnitude / Time.fixedDeltaTime;
-		}
-
-		if ( m_state != State.Intro)
-		{
-			Vector3 pos = m_transform.position;
-			pos.z = 0f;
+        if ( m_state != State.Intro)
+        {
+            Vector3 pos = m_transform.position;
+            pos.z = 0f;
 
             // check pos
             m_limitsCheck++;
@@ -1141,7 +1145,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
                 }
             }
             m_transform.position = pos;
-		}
+        }
         else
         {
             m_lastPhysicsValidPos = m_transform.position;
@@ -1149,20 +1153,20 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
         
 
-		/*
-		Vector3 rewardDistance = RewardManager.distance;
-		Vector3 diff = transform.position-m_lastPosition;
-		rewardDistance.x += Mathf.Abs( diff.x );
-		rewardDistance.y += Mathf.Abs( diff.y );
-		rewardDistance.z += Mathf.Abs( diff.z );
-		RewardManager.distance = rewardDistance;
-		*/
+        /*
+        Vector3 rewardDistance = RewardManager.distance;
+        Vector3 diff = transform.position-m_lastPosition;
+        rewardDistance.x += Mathf.Abs( diff.x );
+        rewardDistance.y += Mathf.Abs( diff.y );
+        rewardDistance.z += Mathf.Abs( diff.z );
+        RewardManager.distance = rewardDistance;
+        */
 
-		m_impulseMagnitude = m_impulse.magnitude;
-		m_lastPosition = m_transform.position;
-	}
+        m_impulseMagnitude = m_impulse.magnitude;
+        m_lastPosition = m_transform.position;
+    }
 
-	private void UpdateMovementToPoint( float _deltaTime, Vector3 targetPoint )
+    private void UpdateMovementToPoint( float _deltaTime, Vector3 targetPoint )
 	{
 		Vector3 impulse = (targetPoint - m_transform.position).normalized;
 		UpdateMovementImpulse( _deltaTime, impulse);
@@ -1174,7 +1178,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	/// <summary>
 	/// Updates the movement.
 	/// </summary>
-	private void UpdateMovement( float _deltaTime)
+	protected void UpdateMovement( float _deltaTime)
 	{
 		Vector3 impulse = Vector3.zero;
 		m_controls.GetImpulse(1, ref impulse);
@@ -1582,26 +1586,23 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 
 
-	private bool CheckGround(out RaycastHit _leftHit) {
+	protected bool CheckGround(out RaycastHit _bottomHit) {
 		Vector3 distance = GameConstants.Vector3.down * 10f;
-		bool hit_L = false;
+		bool hit_Bottom = false;
 
-		Vector3 leftSensor  = m_sensor.bottom.position;
-        hit_L = Physics.Linecast(leftSensor, leftSensor + distance, out _leftHit, GameConstants.Layers.GROUND);
+		Vector3 bottomSensor  = m_sensor.bottom.position;
+        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL);
 
-		bool ret = false;
-		if (hit_L) {
-			float d = _leftHit.distance;
-			m_height = d * m_transform.localScale.y;
+		if (hit_Bottom) {
+			m_height = _bottomHit.distance * m_transform.localScale.y;
 			m_closeToGround = m_height < 1f;
-			m_lastGroundHit = _leftHit.point;
-			m_lastGroundHitNormal = _leftHit.normal;
-			ret = (d <= 1f);
+			m_lastGroundHit = _bottomHit.point;
+			m_lastGroundHitNormal = _bottomHit.normal;
 		} else {
 			m_height = 100f;
 			m_closeToGround = false;
 		}
-		return ret;
+		return m_closeToGround;
 	}
 
 	private bool CheckCeiling(out RaycastHit _leftHit) {
