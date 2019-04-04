@@ -191,26 +191,11 @@ namespace Downloadables
             }
 
             return returnValue;
-        }
-
-        public long GetDiskFreeSpaceBytes()
-        {
-            return sm_diskDriver.GetFreeSpaceBytes();
-        }
+        }        
 
         public long GetDiskOverflowBytes()
         {
-            long returnValue = GetDiskFreeSpaceBytes() - GetTotalBytes();
-            if (returnValue > 0)
-            {
-                returnValue = 0;
-            }
-            else
-            {
-                returnValue = -returnValue;
-            }
-
-            return returnValue;
+            return GetTotalBytes() - GetDownloadedBytes();            
         }
 
         /// <summary>

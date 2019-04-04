@@ -1103,6 +1103,13 @@ public class AssetBundlesManager
         m_downloadablesManager.ClearCache();        
     }
 
+#if USE_DUMPER
+    public Downloadables.Dumper GetDownloadablesDumper()
+    {
+        return m_downloadablesManager.GetDumper();
+    }
+#endif
+
     public void Update()
     {
         if (IsInitialized())
