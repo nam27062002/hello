@@ -204,10 +204,17 @@ public class HDAddressablesManager : AddressablesManager
     public bool IsAutomaticDownloaderAllowed()
     {
         //return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
-        
-        // Automatic downloader gets unlocked when the user unlocks the second dragon. This is done to save up on traffic since many user won't made it to the second dragon.
-        IDragonData dragonData = DragonManager.GetClassicDragonsByOrder(1);
-        return dragonData != null && !dragonData.isLocked;        
+
+        // Automatic downloader gets unlocked when the user buys a dragon or when the user unlocks the second dragon. This is done to save up on traffic since many user won't made it to the second dragon.
+        IDragonData dragonData = DragonManager.biggestOwnedDragon;
+        bool returnValue = (dragonData != null && dragonData.GetOrder() > 0);
+        if (!returnValue)
+        {
+            dragonData = DragonManager.GetClassicDragonsByOrder(1);
+            returnValue = dragonData != null && !dragonData.isLocked;
+        }
+
+        return returnValue;
     }
 
 #region ingame
