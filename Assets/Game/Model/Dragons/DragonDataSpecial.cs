@@ -25,7 +25,7 @@ public class DragonDataSpecial : IDragonData {
 	public const string TYPE_CODE = "special";
 
 	// [AOC] TODO!! Move to content
-	public const DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_2;
+	public static readonly DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_1;
 
 	public enum Stat {
 		HEALTH = 0,

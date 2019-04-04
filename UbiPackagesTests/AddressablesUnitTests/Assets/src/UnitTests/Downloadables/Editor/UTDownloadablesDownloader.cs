@@ -254,7 +254,7 @@ public class UTDownloadablesDownloader : UnitTest
         Config config = new Config();        
         m_network = new MockNetworkDriver(getExceptionToThrowDelegate);
         m_diskDriver = new MockDiskDriver(getExceptionToThrowDelegate);
-        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.GROUPS_ROOT_PATH, 0, null);
+        m_disk = new Disk(m_diskDriver, Manager.MANIFESTS_ROOT_PATH, Manager.DOWNLOADS_ROOT_PATH, Manager.GROUPS_ROOT_PATH, Manager.DUMP_ROOT_PATH, 0, null);
         UTTracker tracker = new UTTracker(config, logger);
 
         CatalogEntryStatus.StaticSetup(config, m_disk, tracker, OnDownloadEndCallback);
@@ -598,11 +598,11 @@ public class UTDownloadablesDownloader : UnitTest
         {
         }
 
-        public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+        public override void TrackActionStart(EAction action, string downloadableId, long existingSizeAtStart, long totalSize)
         {
         }
 
-        public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+        public override void TrackActionEnd(EAction action, string downloadableId, long existingSizeAtStart, long existingSizeAtEnd, long totalSize, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached)  
         {            
         }

@@ -33,7 +33,7 @@ namespace Downloadables
 
             DiskDriver = diskDriver;
 
-            m_rootPaths = new string[3];
+            m_rootPaths = new string[4];
             m_rootPaths[(int)EDirectoryId.Manifests] = manifestsRootPath;
             m_rootPaths[(int)EDirectoryId.Downloads] = downloadsRootPath;
             m_rootPaths[(int)EDirectoryId.Groups] = groupsRootPath;
@@ -328,6 +328,8 @@ namespace Downloadables
     
         public void Update()
         {
+            DiskDriver.Update();
+
             float timePassed;
             float now = Time.realtimeSinceStartup;
             for (int i = 0; i < IssueTypesCount; i++)

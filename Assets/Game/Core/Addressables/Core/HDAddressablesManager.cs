@@ -105,10 +105,10 @@ public class HDAddressablesManager : AddressablesManager
                             //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Link to CDN (it uses cache)
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
+                            //urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
                             break;
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
@@ -120,11 +120,11 @@ public class HDAddressablesManager : AddressablesManager
                             break;
                     }
 
-                    //http://10.44.4.69:7888/            
-
-                    urlBase += assetsLUT.m_iReleaseVersion + "/";
+                    //http://10.44.4.69:7888/                                
                 }                
             }
+
+            urlBase += assetsLUT.m_iReleaseVersion + "/";
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
@@ -205,9 +205,13 @@ public class HDAddressablesManager : AddressablesManager
     {
         //return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
 
-        // Downloader is enabled from the very beginning in order to make sure we're not blocking stuff (HDK-4568)). The first user's experience should be affected by this because 
-        // downloader stops downloading when the user starts a run
-        return true;
+		// Automatic downloader gets unlocked when the user buys a dragon or when the user unlocks the second dragon. This is done to save up on traffic since many user won't made it to the second dragon.
+        if (UsersManager.currentUser.GetNumOwnedDragons() > 1) {
+			return true;
+		}
+
+        IDragonData dragonData = DragonManager.GetClassicDragonsByOrder(1);
+        return dragonData != null && !dragonData.isLocked;
     }
 
 #region ingame

@@ -64,6 +64,10 @@ public class Pet : IEntity, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
+    private void OnDestroy() {
+        EntityManager.instance.UnregisterPet(this);
+    }
+
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch(eventType)

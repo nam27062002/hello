@@ -112,8 +112,8 @@ public class CPDownloadablesGroupView : MonoBehaviour {
 		}
 
 		// Permission toggles
-		if(_forced || m_permissionRequestedToggle.isOn != Group.PermissionOverCarrierRequested) {
-			m_permissionRequestedToggle.isOn = Group.PermissionOverCarrierRequested;
+		if(_forced || m_permissionRequestedToggle.isOn != Group.PermissionRequested) {
+			m_permissionRequestedToggle.isOn = Group.PermissionRequested;
 		}
 
 		if(_forced || m_permissionGrantedToggle.isOn != Group.PermissionOverCarrierGranted) {
@@ -137,7 +137,7 @@ public class CPDownloadablesGroupView : MonoBehaviour {
 	/// </summary>
 	/// <param name="_newValue">New value.</param>
 	public void OnPermissionRequestToggle(bool _newValue) {
-		Group.PermissionOverCarrierRequested = _newValue;
+		Group.PermissionRequested = _newValue;
 	}
 
 	/// <summary>
