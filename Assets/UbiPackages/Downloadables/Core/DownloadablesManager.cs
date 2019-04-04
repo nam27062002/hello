@@ -753,7 +753,7 @@ namespace Downloadables
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
-                returnValue = group.PermissionOverCarrierRequested;
+                returnValue = group.PermissionRequested;
             }
 
 			return returnValue;
@@ -764,7 +764,7 @@ namespace Downloadables
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
-                group.PermissionOverCarrierRequested = value;                
+                group.PermissionRequested = value;                
             }
 		}
 
