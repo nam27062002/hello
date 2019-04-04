@@ -35,7 +35,7 @@ namespace Downloadables
 
             Error error;
             List<string> fileNames = m_disk.Directory_GetFiles(Disk.EDirectoryId.Dump, out error);
-            if (fileNames != null)
+            if (error == null && fileNames != null)
             {
                 int number;
                 int count = fileNames.Count;
@@ -61,8 +61,22 @@ namespace Downloadables
                 Error error;
                 if (m_disk.Directory_Exists(Disk.EDirectoryId.Dump, out error))
                 {
-                    m_disk.Directory_Delete(Disk.EDirectoryId.Dump, out error);
+                    List<string> fileNames = m_disk.Directory_GetFiles(Disk.EDirectoryId.Dump, out error);
+                    if (error == null && fileNames != null)
+                    {
+                        string fileName;
+                        int count = fileNames.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            fileName = Path.GetFileName(fileNames[i]);
+                            m_disk.File_Delete(Disk.EDirectoryId.Dump, fileName, out error);                            
+                        }
+                    }                                        
                 }
+
+                UpdateLatestIndexAccordingToFiles();
+
+                IsFillingUp = false;
             }
         }
 
