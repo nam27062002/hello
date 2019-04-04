@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Screen controller for the Lab Dragon Selection screen.
 /// </summary>
-public class LabDragonSelectionScreen : MonoBehaviour {
+public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -38,6 +38,10 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	[SerializeField] private LabStatUpgrader[] m_stats = new LabStatUpgrader[0];
 	[Space]
 	[SerializeField] private GameObject m_loadingUI = null;
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+	public AssetsDownloadFlow assetsDownloadFlow {
+		get { return m_assetsDownloadFlow; }
+	}
 	[Separator("Config")]
 	[Tooltip("Use it to sync with animation")]
 	[SerializeField] private float m_dragonChangeInfoDelay = 0.15f;
@@ -85,12 +89,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Subscribe to external events
-		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
-
-		// Do a first refresh
-		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
+		// Subcribe to external events
+		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	/// <summary>
@@ -98,8 +98,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// </summary>
 	private void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
-		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
 	}
 
 	//------------------------------------------------------------------------//
@@ -122,6 +121,9 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 			})
 			.AppendInterval(1f)     // Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
+				// Check download flow
+				CheckDownloadFlowForDragon(m_dragonData.sku);
+
 				// Unlock input
 				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 			})
@@ -191,6 +193,29 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Check downloadable group status for a target dragon.
+	/// </summary>
+	/// <param name="_sku">The sku of the dragon we want to check.</param>
+	/// <param name="_checkPopups">Open popups if needed?</param>
+	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
+		// Get handler for this dragon
+		Downloadables.Handle handle = null;
+
+		// We don't want to show anything if the dragon is not owned
+		if(DragonManager.IsDragonOwned(_sku)) {
+			handle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(_sku);
+		}
+
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
+
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -204,35 +229,68 @@ public class LabDragonSelectionScreen : MonoBehaviour {
             m_labMusicCount++;
             InstanceManager.musicController.Ambience_Play(LAB_MUSIC, gameObject);
         }
-        
-    
+
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
-			PopupManager.OpenPopupAsync(PopupLabIntro.PATH);
+			PopupManager.EnqueuePopup(PopupLabIntro.PATH);
 		}
 
-        // If we have a dragon selection pending, do it now!
-        if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+		// Trigger lab unlocked popup?
+		if(PopupLabUnlocked.Check()) {
+			PopupLabUnlocked labPopup = PopupManager.EnqueuePopup(PopupLabUnlocked.PATH).GetComponent<PopupLabUnlocked>();
+			labPopup.Init(MenuScreen.LAB_DRAGON_SELECTION);
+		}
+
+		// If we have a dragon selection pending, do it now!
+		if (!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
             InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
             m_pendingToSelectDragon = string.Empty;
         }
-    } 
+
+		// Do a first refresh
+		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
+
+		// Check OTA for this dragon
+		CheckDownloadFlowForDragon(m_dragonData.sku, false);	// Don't trigger popups, the menu interstitial popups controller will take care of it
+	} 
 
 	/// <summary>
 	/// The show animation has finished.
 	/// </summary>
     public void OnShowPostAnimation() {
-        HDSeasonData m_season = HDLiveDataManager.league.season;
-        if (m_season.state == HDSeasonData.State.PENDING_REWARDS) {
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+		// Subscribe to external events
+		Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.AddListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+
+		// If the season has finished, go to the league screen
+		MenuScreen prevScreen = InstanceManager.menuSceneController.transitionManager.prevScreen;
+		if (prevScreen != MenuScreen.LAB_LEAGUES && prevScreen != MenuScreen.LAB_MISSIONS) {
+			if (HDLiveDataManager.league.season.state == HDSeasonData.State.PENDING_REWARDS) {
+				// Clear popups and go to leagues screen
+				PopupManager.Clear(true);
+                InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_LEAGUES, true);
+            }
         }
     }
 
-    /// <summary>
-    /// Back button has been pressed.
-    /// </summary>
-    public void OnBackButton() {
-        // Stop lab music
+	/// <summary>
+	/// The screen is about to hide.
+	/// </summary>
+	public void OnHidePreAnimation() {
+		// Unsubscribe from external events
+		Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		Messenger.RemoveListener<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, OnStatUpgraded);
+	}
+
+	/// <summary>
+	/// Back button has been pressed.
+	/// </summary>
+	public void OnBackButton() {
+		// Make sure we are allowed to change screen (prevent spamming)
+		// [AOC] Resolves issue HDK-4255 among others
+		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
+        
+		// Stop lab music
         m_labMusicCount--;
         InstanceManager.musicController.Ambience_Stop(LAB_MUSIC, gameObject);
         
@@ -246,6 +304,13 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// The play button has been pressed.
 	/// </summary>
 	public void OnPlayButton() {
+		// Prevent spamming
+		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
+
+		// If needed, show assets download popup and don't continue
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+		if(popup != null) return;
+
 		// Go to the special missions screen
 		// If the leagues tutorial has not yet been triggered, go to the leagues screen instead
 		if(!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.LEAGUES_INFO)) {
@@ -260,11 +325,17 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">The sku of the selected dragon.</param>
 	private void OnDragonSelected(string _sku) {
+		// Make sure we are the active screen
+		if(InstanceManager.menuSceneController.currentScreen != MenuScreen.LAB_DRAGON_SELECTION) return;
+
 		// [AOC] Add some delay to sync with UI animation
 		UbiBCN.CoroutineManager.DelayedCall(
 			() => {
 				// Get new dragon's data from the dragon manager and do the refresh logic
 				InitWithDragon(DragonManager.GetDragonData(_sku), true);
+
+				// Check OTA
+				CheckDownloadFlowForDragon(m_dragonData == null ? "" : m_dragonData.sku, true);
 			}, m_dragonChangeInfoDelay
 		);
 	}
@@ -292,5 +363,27 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Open the dragon info popup and initialize it with the current dragon's data
 		PopupSpecialDragonInfo popup = PopupManager.OpenPopupInstant(PopupSpecialDragonInfo.PATH).GetComponent<PopupSpecialDragonInfo>();
 		popup.Init(m_dragonData);
+	}
+
+	/// <summary>
+	/// Broadcast callback.
+	/// </summary>
+	/// <param name="_eventType">Type of event.</param>
+	/// <param name="_broadcastEventInfo">Event data.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		// Find out event type
+		switch(_eventType) {
+			case BroadcastEventType.POPUP_CLOSED: {
+				// Popup closed. Is it the tier unlocked popup?
+				PopupManagementInfo popupEventInfo = (PopupManagementInfo)_broadcastEventInfo;
+				PopupLabTierUnlocked labTierUnlockedPopup = popupEventInfo.popupController.GetComponent<PopupLabTierUnlocked>();
+				if(labTierUnlockedPopup != null) {
+					// Yes! Check OTA
+					CheckDownloadFlowForDragon(m_dragonData.sku, true);
+
+					// [AOC] TODO!! If it's the last tier, show small info popup informing the player that he can still keep upgrading his special dragon stats
+				}
+			} break;
+		}
 	}
 }

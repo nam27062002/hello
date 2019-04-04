@@ -115,7 +115,7 @@ namespace AI {
 			}
 		}
 
-		public override void OnDie() {
+		public override void BrainExit() {
 			if (m_brain != null) m_brain.Exit();
 		}
 
@@ -140,7 +140,7 @@ namespace AI {
 
 			// state machine updates
 			if (m_brain != null) {
-				if (!(m_machine.IsDead() || m_machine.IsDying() || m_machine.GetSignal(Signals.Type.InLove) )) {
+				if (!(m_machine.IsDead() || m_machine.IsDying() /*|| m_machine.GetSignal(Signals.Type.InLove)*/ )) {
 					m_brain.Update();
 				}
 			}
@@ -189,13 +189,16 @@ namespace AI {
             // Since Unity doesn't serialize System.Type, use the Type.FullName to compare types
             string typeName = typeof(T).FullName;
             StateComponentDataKVP kvp = BrainDataBase.instance.GetDataFor(m_databaseKey, typeName);
-            if (kvp != null)
-            {
-                return (T)kvp.data;
-            }
+            /*if (kvp != null){return (T)kvp.data;}*/
 
+            try {
+                T data = (T)kvp.data;
+                return data;
+            } catch {
+                Fabric.Crashlytics.Crashlytics.RecordCustomException("Pilot - GetComponentData", "Data is NULL", "NPC " + name + " has a null value on " + typeName + " behaviour.");
+            }
             return null;
-		}
+        }
 
 		/// <summary>
 		/// Make sure the target AI Pilot has exactly one data per type component.

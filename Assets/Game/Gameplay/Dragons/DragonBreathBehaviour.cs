@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class DragonBreathBehaviour : MonoBehaviour {
@@ -63,6 +63,12 @@ public class DragonBreathBehaviour : MonoBehaviour {
         Mega,
         None
     };
+    
+    public FireColorSetupManager.FireColorType[] m_colors = new FireColorSetupManager.FireColorType[] { FireColorSetupManager.FireColorType.RED, FireColorSetupManager.FireColorType.BLUE };
+    protected FireColorSetupManager.FireColorType m_currentColor;
+    public FireColorSetupManager.FireColorType currentColor{
+        get{ return m_currentColor; }
+    }
 
     public float m_prewarmDuration = 0.5f;
 	protected float m_prewarmFuryTimer;
@@ -140,6 +146,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void Start()
 	{
+        
 		m_healthBehaviour = GetComponent<DragonHealthBehaviour>();
 		m_attackBehaviour = GetComponent<DragonAttackBehaviour>();
 		m_animator = transform.Find("view").GetComponent<Animator>();
@@ -166,11 +173,16 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 		ExtendedStart();
 
-		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.AddListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.AddListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 
 		ChangeState(State.NORMAL);
+        
+        for (int i = 0; i < m_colors.Length; i++)
+        {
+            FireColorSetupManager.instance.LoadColor(m_colors[i]);
+        }
 	}
 
 	/// <summary>
@@ -200,7 +212,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnEntityBurned);
 		Messenger.RemoveListener<Reward, Transform>(MessengerEvents.REWARD_APPLIED, OnRewardApplied);
 		Messenger.RemoveListener<bool>(MessengerEvents.GAME_PAUSED, OnGamePaused);
 	}
@@ -324,18 +336,18 @@ public class DragonBreathBehaviour : MonoBehaviour {
     }
 
 
-	protected virtual void OnEntityBurned(Transform t, Reward reward)
+	protected virtual void OnEntityBurned(Transform _t, IEntity _e, Reward _reward)
 	{
-		float healthReward = m_healthBehaviour.GetBoostedHp(reward.origin, reward.health);
-		m_dragon.AddLife( healthReward, DamageType.NONE, t );
-		m_dragon.AddEnergy(reward.energy);
+		float healthReward = m_healthBehaviour.GetBoostedHp(_reward.origin, _reward.health);
+		m_dragon.AddLife(healthReward, DamageType.NONE, _t);
+		m_dragon.AddEnergy(_reward.energy);
 		//AddFury(reward.fury);??
 	}
 
 	protected virtual void OnRewardApplied( Reward _reward, Transform t)
 	{
 		AddFury( _reward.score );
-        if ( _reward.fury > 0 )
+        if ( _reward.fury > 0f )
             AddFury(m_furyMax * _reward.fury);
 	}
 
@@ -369,6 +381,9 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
 	virtual protected void BeginFury( Type _type )
 	{
+        m_currentColor = m_colors[0];
+        if (_type == Type.Mega)
+            m_currentColor = m_colors[1];
 		RecalculateSize();
 		m_type = _type;
 
@@ -379,7 +394,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 		m_fireNodeTimer -= Time.deltaTime;
 		if (m_fireNodeTimer <= 0) {
 			m_fireNodeTimer += m_checkNodeFireTime;
-			FirePropagationManager.instance.FireUpNodes(bounds2D, Overlaps, m_dragon.data.tier, m_type, direction, IEntity.Type.PLAYER);
+			FirePropagationManager.instance.FireUpNodes(bounds2D, Overlaps, m_dragon.data.tier, m_type, direction, IEntity.Type.PLAYER, m_currentColor);
 		}
 	}
 
@@ -545,6 +560,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
                 m_state = _newState;    // This is done so if in the event FURY_RUSH_TOGGLED someone checks if is fury on it says false. Check DragonPlayer CanIResumeEating
                 m_furyRushToggled.activated = false;
                 m_furyRushToggled.type = m_type;
+                m_furyRushToggled.color = m_currentColor;
                 Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
 		        m_type = Type.None;
     		}break;
@@ -615,6 +631,7 @@ public class DragonBreathBehaviour : MonoBehaviour {
 
                 m_furyRushToggled.activated = true;
                 m_furyRushToggled.type = m_type;
+                m_furyRushToggled.color = m_currentColor;
                 Broadcaster.Broadcast(BroadcastEventType.FURY_RUSH_TOGGLED, m_furyRushToggled);
     		}break;
     	}

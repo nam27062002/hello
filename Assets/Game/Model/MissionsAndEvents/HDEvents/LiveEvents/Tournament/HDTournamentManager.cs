@@ -23,6 +23,9 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS   															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "tournament";
+	public const int NUMERIC_TYPE_CODE = 2;
+
 	private const float TIME_LIMIT_END_OF_GAME_DELAY = 2f;
 	private const float TIME_ATTACK_END_OF_GAME_DELAY = 2f;
 
@@ -45,6 +48,10 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	protected bool m_doneChecking = false;
 
 	protected HDTournamentData m_tournamentData;
+	public HDTournamentData tournamentData {
+		get { return m_tournamentData; }
+	}
+
 	protected HDTournamentDefinition m_tournamentDefinition;
 
 
@@ -55,8 +62,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	/// Default constructor.
 	/// </summary>
 	public HDTournamentManager() {
-        m_type = "tournament";
-        m_numericType = 2;
+        m_type = TYPE_CODE;
+		m_numericType = NUMERIC_TYPE_CODE;
 
         m_data = new HDTournamentData();
         m_tournamentData = m_data as HDTournamentData;
@@ -161,8 +168,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
 		if ( outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR )
 		{
-			HDTournamentData tournamentData = m_data as HDTournamentData;
-            if (tournamentData != null )
+			if (m_tournamentData != null )
             {
             	if ( responseJson.ContainsKey("c") )// Is cheater
             	{
@@ -218,10 +224,10 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
         {
             	// Build
             SimpleJSON.JSONClass _build = new SimpleJSON.JSONClass();
-            _build.Add("dragon", GetToUseDragon());
-			_build.Add("skin", GetToUseSkin());
+            _build.Add("dragon", m_tournamentDefinition.dragonData.sku);
+			_build.Add("skin", m_tournamentDefinition.dragonData.disguise);
 			SimpleJSON.JSONArray arr = new SimpleJSON.JSONArray();
-			List<string> pets = GetToUsePets();
+			List<string> pets = m_tournamentDefinition.dragonData.pets;
 			int max = pets.Count;
 			for (int i = 0; i < max; i++) {
 				arr.Add( pets[i] );
@@ -302,11 +308,9 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		{
 			m_runWasValid = false;
 			Messenger.AddListener(MessengerEvents.GAME_UPDATED, OnGameUpdate);
-			HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
-			HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
-			m_runningGoal = def.m_goal;
+			m_runningGoal = m_tournamentDefinition.m_goal;
 
-			switch( def.m_goal.m_mode )
+			switch(m_runningGoal.m_mode )
 			{
 				case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
 				{
@@ -372,7 +376,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	IEnumerator DelayedEnd(float _delay)
 	{
 		// InstanceManager.gameSceneController.PauseGame(true, true);
-		InstanceManager.gameSceneController.freezeElapsedSeconds = true;
+		InstanceManager.gameSceneController.freezeElapsedSeconds++;
 		if ( m_tracker != null)
 			m_tracker.enabled = false;
 		m_timePlayed = InstanceManager.gameSceneController.elapsedSeconds;
@@ -400,7 +404,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// BUILD METHODS														  //
 	//------------------------------------------------------------------------//
-    public bool UsingProgressionDragon()
+    /*public bool UsingProgressionDragon()
     {
 		HDTournamentData tournamentData = m_data as HDTournamentData;
     	HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
@@ -455,7 +459,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			ret = UsersManager.currentUser.GetEquipedPets(GetToUseDragon());
 		}
 		return ret;
-    }
+    }*/
 
 	//------------------------------------------------------------------------//
 	// SCORE METHODS														  //
@@ -474,10 +478,8 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	/// </summary>
 	public long GetRunScore() {
 		
-		HDTournamentData tournamentData = m_data as HDTournamentData;
-		HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
 		long ret = -1;
-		switch ( def.m_goal.m_mode )
+		switch ( m_tournamentDefinition.m_goal.m_mode )
 		{
 			case HDTournamentDefinition.TournamentGoal.TournamentMode.NORMAL:
 			{
@@ -503,8 +505,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 	/// The overall best score (the one registered in the leaderboard)
 	/// </summary>
 	public long GetBestScore() {
-		HDTournamentData tournamentData = m_data as HDTournamentData;
-		return tournamentData.m_score;
+		return m_tournamentData.m_score;
 	}
 
 	/// <summary>
@@ -556,8 +557,12 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			}
 		}
 
-		// Done!
-		return rewards;
+        if (data.m_state == HDLiveEventData.State.REWARD_AVAILABLE) {
+            data.m_state = HDLiveEventData.State.REWARD_COLLECTED;
+        }
+
+        // Done!
+        return rewards;
 	}
 
 

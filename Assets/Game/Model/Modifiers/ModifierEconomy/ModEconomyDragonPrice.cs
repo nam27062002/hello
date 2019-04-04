@@ -13,14 +13,14 @@ public class ModEconomyDragonPrice : ModifierEconomy {
     private string m_currency;
 
     //------------------------------------------------------------------------//
-    public ModEconomyDragonPrice(DefinitionNode _def) : base(_def) {
+    public ModEconomyDragonPrice(DefinitionNode _def) : base(TARGET_CODE, _def) {        
         m_dragonSku = _def.Get("param1");
         m_percentage = _def.GetAsFloat("param2");
         m_currency = _def.Get("param3");
         BuildTextParams(m_dragonSku, m_percentage + "%", UIConstants.PET_CATEGORY_DEFAULT.ToHexString("#"));
     }
 
-    public ModEconomyDragonPrice(SimpleJSON.JSONNode _data) : base(_data) {
+    public ModEconomyDragonPrice(SimpleJSON.JSONNode _data) : base(TARGET_CODE, _data) {
         m_dragonSku = _data["param1"];
         m_percentage = _data["param2"].AsFloat;
         m_currency = _data["param3"];
@@ -53,7 +53,7 @@ public class ModEconomyDragonPrice : ModifierEconomy {
         SimpleJSON.JSONClass data = base.__ToJson();
 
         data.Add("param1", m_dragonSku);
-        data.Add("param2", m_percentage);
+        data.Add("param2", m_percentage.ToString());
         data.Add("param3", m_currency);
 
         return data;

@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 
 public class HDLeagueController : HDLiveDataController {
+	public const string TYPE_CODE = "league";
+
     //---[Attributes]-----------------------------------------------------------
 
     private HDSeasonData m_season;	// Never null
@@ -19,10 +22,12 @@ public class HDLeagueController : HDLiveDataController {
     /// Default constructor.
     /// </summary>
     public HDLeagueController() {
-        m_type = "league";
+		m_type = TYPE_CODE;
 
         m_season = new HDSeasonData();
         CreateLeagues();
+
+        m_dataLoadedFromCache = false;
     }
 
     private void CreateLeagues() {
@@ -51,11 +56,33 @@ public class HDLeagueController : HDLiveDataController {
     }
 
     public override bool ShouldSaveData() {
-        return false;
+        return m_season != null && m_season.state > HDSeasonData.State.TEASING && m_season.state < HDSeasonData.State.WAITING_NEW_SEASON;
     }
 
     public override SimpleJSON.JSONNode SaveData() {
-        return null;
+        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+
+        data["sku"] = m_season.currentLeague.sku;
+        if (m_season.nextLeague != null) {
+            data["nextSku"] = m_season.nextLeague.sku;
+        }
+        data["status"] = m_season.state.ToString();
+
+        return data;
+    }
+
+    public override bool IsFinishPending() {
+        bool isFinishPending = m_isFinishPending;
+
+        if (isFinishPending
+        &&  Application.internetReachability != NetworkReachability.NotReachable 
+        &&  GameSessionManager.SharedInstance.IsLogged()) {
+            m_season.RequestFinalize();
+            HDLiveDataManager.instance.ForceRequestLeagues(true);
+            m_isFinishPending = false;
+        }
+    
+        return isFinishPending;
     }
 
     public override void LoadDataFromCache() {
@@ -63,8 +90,12 @@ public class HDLeagueController : HDLiveDataController {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
 
             LoadData(json);
+
+            if (season.state == HDSeasonData.State.REWARDS_COLLECTED) {
+                m_isFinishPending = true;
+            }
+            m_dataLoadedFromCache = true;
         }
-        m_dataLoadedFromCache = true;
     }
 
     public override void LoadData(SimpleJSON.JSONNode _data) {
@@ -86,6 +117,8 @@ public class HDLeagueController : HDLiveDataController {
                 m_season.nextLeague = leagueData;
             }
         }
+
+        m_dataLoadedFromCache = false;
     }
 
     public override void OnLiveDataResponse() {
@@ -97,7 +130,11 @@ public class HDLeagueController : HDLiveDataController {
             m_leagues[i].WaitForData();
         }
 
-        GameServerManager.SharedInstance.HDLeagues_GetAllLeagues(OnRequestAllLeaguesData);
+		if(HDLiveDataManager.TEST_CALLS) {
+			ApplicationManager.instance.StartCoroutine(HDLiveDataManager.DelayedCall("league_get_all_leagues.json", OnRequestAllLeaguesData));
+		} else {
+			GameServerManager.SharedInstance.HDLeagues_GetAllLeagues(OnRequestAllLeaguesData);
+		}
     }
 
     private void OnRequestAllLeaguesData(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {

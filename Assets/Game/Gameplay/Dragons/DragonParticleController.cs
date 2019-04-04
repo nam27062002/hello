@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class DragonParticleController : MonoBehaviour, IBroadcastListener
 {
@@ -11,15 +12,15 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 
 	[Space]
-	public string m_reviveParticle = "Dragon/PS_Revive";
+	public string m_reviveParticle = "PS_Revive";
 	public Transform m_reviveAnchor;
 	private ParticleSystem m_reviveInstance;
 	public ParticleData m_petRevive;
 
 
     //[Space]
-    private string m_mummyPower = "Dragon/PS_MummyPower";
-    private string m_mummySmoke = "Dragon/PS_MummySmokePower";
+    private string m_mummyPower = "PS_MummyPower";
+    private string m_mummySmoke = "PS_MummySmokePower";
     private ParticleSystem m_mummySmokeInstance;
 
 
@@ -68,11 +69,6 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	private ParticleHandler m_corpseHandler;
 
 	[Space]
-	public string m_hiccupParticle;
-	public Transform m_hiccupAnchor = null;
-	private ParticleSystem m_hiccupInstance;
-
-	[Space]
 	public ParticleData m_shieldParticle;
 	public Transform m_shieldAnchor = null;
 	private ParticleSystem m_shieldInstance;
@@ -113,7 +109,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 	ParticleSystem m_landingInstance;
 
 	[Space]
-	public string m_megaFireRush = "Dragon/PS_Revive";
+	public string m_megaFireRush = "PS_Revive";
 	public Transform m_megaFireRushAnchor;
 	private ParticleSystem m_megaFireRushInstance;
 
@@ -128,6 +124,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		// m_reviveInstance = InitParticles(m_revive, m_reviveAnchor);
 		if (!string.IsNullOrEmpty(m_reviveParticle)){
 			m_reviveInstance = ParticleManager.InitLeveledParticle( m_reviveParticle, null );
+            SceneManager.MoveGameObjectToScene(m_reviveInstance.gameObject, gameObject.scene);
 		}
 		m_bubblesInstance = ParticleManager.InitParticle(m_bubbles, m_bubblesAnchor);
 		if ( m_bubblesInstance != null )
@@ -162,11 +159,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		if (!string.IsNullOrEmpty(m_corpseAsset)) {
 			m_corpseHandler = ParticleManager.CreatePool(m_corpseAsset, "Corpses/");
 		}
-		m_hiccupInstance = ParticleManager.InitLeveledParticle( m_hiccupParticle, m_hiccupAnchor);
-
-		if (dragonAnimEvents != null)
-			dragonAnimEvents.onHiccupEvent += OnHiccup;
-
+		
 		if ( m_trailsParticle.IsValid() )
 		{
 			GameObject go = m_trailsParticle.CreateInstance();
@@ -188,6 +181,10 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 		if (!string.IsNullOrEmpty(m_megaFireRush)){
 			m_megaFireRushInstance = ParticleManager.InitLeveledParticle( m_megaFireRush, m_megaFireRushAnchor );
+            if ( m_megaFireRushAnchor == null )
+            {
+                SceneManager.MoveGameObjectToScene(m_megaFireRushInstance.gameObject, gameObject.scene);
+            }
 		}
 	}
 
@@ -413,6 +410,10 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
     public void StartMummySmoke() {
         m_mummySmokeInstance = ParticleManager.InitLeveledParticle(m_mummySmoke, m_reviveAnchor);
+        if (m_reviveAnchor == null)
+        {
+            SceneManager.MoveGameObjectToScene(m_mummySmokeInstance.gameObject, gameObject.scene);
+        }
         m_mummySmokeInstance.gameObject.SetActive(true);
         m_mummySmokeInstance.Play();
     }
@@ -594,16 +595,7 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 		}
 	}
 
-	private void OnHiccup()
-	{
-		if ( m_hiccupInstance != null )
-		{
-			m_hiccupInstance.gameObject.SetActive(true);
-			m_hiccupInstance.Play();
-			m_toDeactivate.Add( m_hiccupInstance );
-		}
-	}
-
+    	
 	#region boost_trails
 	void PlayTrails()
 	{

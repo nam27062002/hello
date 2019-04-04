@@ -58,9 +58,13 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
 		gameObject.SetActive(false);
 	}
 
-	public void ForceRemoveEntities(){
+    public List<string> GetPrefabList() {
+        return null;
+    }
+
+    public void ForceRemoveEntities(){
 		for( int i = m_entityInfo.Count - 1; i >= 0; i-- ){
-			RemoveEntity(m_entityInfo[i].m_entity.gameObject, false);
+			RemoveEntity(m_entityInfo[i].m_entity, false);
 		}
 	}
 
@@ -75,7 +79,7 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
 
 	void CreatePool() {
 		for (int i = 0; i<m_possibleSpawners.Count; i++) {
-			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], IEntity.EntityPrefabsPath, 2, false, false);
+			m_poolHandlers[i] = PoolManager.CreatePool( m_possibleSpawners[i], 2, false, false);
 		}
 	}
 
@@ -118,27 +122,24 @@ public class PetXmasElfSpawner : MonoBehaviour, ISpawner, IBroadcastListener {
     }
 
 
-	public void RemoveEntity(GameObject _gameObject, bool _killedByPlayer) {
-
-		
-		Entity entity = _gameObject.GetComponent<Entity>();
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 		for( int i = m_entityInfo.Count - 1; i >= 0; --i )
 		{
-			if ( m_entityInfo[i].m_entity == entity )
+			if ( m_entityInfo[i].m_entity == _entity)
 			{
 				PoolHandler handler = m_poolHandlers[ m_entityInfo[i].m_poolIndex ];
 				if (ProfilerSettingsManager.ENABLED) {               
 					SpawnerManager.RemoveFromTotalLogicUnits(1, m_possibleSpawners[ m_entityInfo[i].m_poolIndex ]);
 				}
 				// Returns the entity to the pool
-				handler.ReturnInstance(_gameObject);
+				handler.ReturnInstance(_entity.gameObject);
 				m_entityInfo.RemoveAt(i);
 				break;
 			}
 		}
 
 		// Unregisters the entity
-		EntityManager.instance.UnregisterEntity(entity);
+		EntityManager.instance.UnregisterEntity(_entity as Entity);
 	} 
 
 	public bool IsRespawing(){

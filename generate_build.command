@@ -375,7 +375,7 @@ if $BUILD_IOS; then
 
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
-    ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}.xcarchive"
+    ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${ENVIRONMENT}.xcarchive"
     IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}"
     IPA_FILE="${IPA_NAME}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
@@ -440,6 +440,16 @@ if $UPLOAD;then
   if $BUILD_IOS; then
   	  mkdir -p "${SMB_PATH}"
       cp "${OUTPUT_DIR}/ipas/${IPA_FILE}" "${SMB_PATH}/"
+      CURRENT_PATH="$(pwd)"
+      cd "${OUTPUT_DIR}/archives/"
+      cp -r "${ARCHIVE_FILE}/dSYMs" "dSYMs"
+      zip -r "${ARCHIVE_FILE}.zip" "dSYMs"
+      rm -rf "dSYMs"
+      cd "${CURRENT_PATH}" 
+
+      cp "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip" "${SMB_PATH}/"
+      rm "${OUTPUT_DIR}/archives/${ARCHIVE_FILE}.zip"            
+    
   fi
 
   # Copy APK

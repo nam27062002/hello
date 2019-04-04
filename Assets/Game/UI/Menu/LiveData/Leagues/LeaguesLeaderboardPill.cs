@@ -40,15 +40,21 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
     //------------------------------------------------------------------------//
 	[System.Serializable]
 	public class TintableGraphic {
-		public Graphic target = null;
+		public Graphic[] targets = null;
 		public Color[] colors = new Color[0];
 
 		public void Tint(int _colorIdx) {
 			if(colors.Length == 0) return;
-			if(_colorIdx < 0 || _colorIdx >= colors.Length) {
-				target.color = colors.Last();
-			} else {
-				target.color = colors[_colorIdx];
+
+			// Select target color
+			Color c = colors.Last();
+			if(_colorIdx >= 0 && _colorIdx < colors.Length) {
+				c = colors[_colorIdx];
+			}
+
+			// Apply to all targets
+			for(int i = 0; i < targets.Length; ++i) {
+				targets[i].color = c;
 			}
 		}
 	}
@@ -79,7 +85,11 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
     [SerializeField] private TextMeshProUGUI m_levelText = null;
 
 	[Space]
-	[SerializeField] private UITooltipTrigger m_tooltipTrigger = null;
+	[SerializeField] private LeaguesPlayerInfoTooltip m_tooltip = null;
+	[SerializeField] private Button m_scrollToButton = null;
+	public Button scrollToButton {
+		get { return m_scrollToButton; }
+	}
 
 	// Internal
 	private LeaguesLeaderboardPillData m_lastUsedData = null;
@@ -94,10 +104,15 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 	public override void InitWithData(LeaguesLeaderboardPillData _data) {
 		// Ranking info
 		// We might not get a valid position if the player hasn't yet participated in the event
-		if(_data.record.rank >= 0) {
-			(m_rankText.target as TextMeshProUGUI).text = StringUtils.FormatNumber(_data.record.rank + 1);
-		} else {
-			(m_rankText.target as TextMeshProUGUI).text = "?";
+		for(int i = 0; i < m_rankText.targets.Length; ++i) {
+			if(m_rankText.targets[i] is TextMeshProUGUI) {
+				TextMeshProUGUI targetText = m_rankText.targets[i] as TextMeshProUGUI;
+				if(_data.record.rank >= 0) {
+					targetText.text = StringUtils.FormatNumber(_data.record.rank + 1);
+				} else {
+					targetText.text = "?";
+				}
+			}
 		}
 
 		m_rankText.Tint(_data.record.rank);
@@ -151,32 +166,28 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
 	/// </summary>
 	/// <param name="_tooltip">Tooltip to be setup.</param>
 	public void SetupTooltip(LeaguesPlayerInfoTooltip _tooltip) {
-		// Ignore if tooltip trigger not defined
-		if(m_tooltipTrigger == null) return;
-		
-		// Link the given tooltip to the trigger
-		m_tooltipTrigger.tooltip = _tooltip;
-
-		// Listen to tooltip's open event
-		m_tooltipTrigger.OnTooltipOpen.AddListener(OnTooltipOpen);
+		// Save the tooltip reference
+		m_tooltip = _tooltip;
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 	/// <summary>
-	/// A tooltip is about to be opened.
+	/// Show the tooltip for this pill!
 	/// </summary>
-	/// <param name="_tooltip">Tooltip that will be opened.</param>
-	/// <param name="_trigger">The one who triggered the tooltip.</param>
-	private void OnTooltipOpen(UITooltip _tooltip, UITooltipTrigger _trigger) {
-		// Ignore if it comes from another trigger
-		if(_trigger != m_tooltipTrigger) return;
+	public void OpenTooltip() {
+		// Ignore if tooltip not initialized
+		if(m_tooltip == null) return;
 
 		// Ignore if we have no data to display
 		if(m_lastUsedData == null) return;
 
 		// Initialize tooltip with this pill's player data
-		(_tooltip as LeaguesPlayerInfoTooltip).Init(m_lastUsedData.record);
+		m_tooltip.Init(m_lastUsedData.record);
+
+		// Show tooltip!
+		m_tooltip.animator.ForceShow();
 	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
 }

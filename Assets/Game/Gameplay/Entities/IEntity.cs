@@ -19,7 +19,8 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         Monster     = (1 << 13),
         Fish        = (1 << 14),
         CarnivourusPlant = (1 << 15),
-        Spider      = (1 << 16)
+        Spider      = (1 << 16),
+        Armored     = (1 << 17)
     }
 
 
@@ -37,19 +38,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		OTHER
 	}
 
-	public const string ENTITY_PREFABS_PATH = "Game/Entities/NewEntites/";
-	public const string ENTITY_PREFABS_LOW_PATH = "Game/Entities/NewEntitesLow/";
-    
-    /// <summary>
-    /// Returns the path where the prefabs for entities are stored. It depends on the quality settings
-    /// </summary>
-    public static string EntityPrefabsPath {
-        get {
-            // Entities LOD flag has been disabled because it's not really worth it
-            //return (FeatureSettingsManager.instance.EntitiesLOD == FeatureSettings.ELevel2Values.low) ? ENTITY_PREFABS_LOW_PATH : ENTITY_PREFABS_PATH;
-            return ENTITY_PREFABS_PATH;
-        }
-    }
+
+	public const string ENTITY_PREFABS_PATH = "Art/3D/Gameplay/Entities/Prefabs/";
+
 
     //----------------------------------------------//
     [SerializeField][EnumMask] private Tag m_tags = 0;
@@ -87,8 +78,10 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	protected IViewControl m_viewControl;
 
+    protected EntityEquip m_equip;
+    public EntityEquip equip { get { return m_equip; } }
 
-	public OnDieStatus onDieStatus;
+    public OnDieStatus onDieStatus;
 
 
 	protected virtual void Awake() {
@@ -97,8 +90,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_otherSpawnablesCount = 0;
 		ISpawnable thisSpawn = this as ISpawnable;
 		for (int i = 0; i < spawners.Length; i++) {
-			if (spawners[i] != thisSpawn)
-			{
+			if (spawners[i] != thisSpawn) {
 				m_otherSpawnables[m_otherSpawnablesCount] = spawners[i];
 				m_otherSpawnablesCount++;
 			}
@@ -107,8 +99,9 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 		m_pilot = GetComponent<AI.AIPilot>();
 		m_machine = GetComponent<AI.IMachine>();
 		m_viewControl = GetComponent<IViewControl>();
+        m_equip = GetComponent<EntityEquip>();
 
-		onDieStatus = new OnDieStatus();
+        onDieStatus = new OnDieStatus();
 	}
 
 	public virtual void Spawn(ISpawner _spawner) {

@@ -63,6 +63,15 @@ uniform float _VOSpeed;
 #if defined (FXLAYER_REFLECTION)
 uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
+
+#if defined (REFLECTIONTYPE_COLOR)
+uniform float4 _ReflectionColor;
+#elif defined (REFLECTIONTYPE_COLORRAMP)
+uniform sampler2D _FireMap;
+uniform float4 _FireMap_TexelSize;
+uniform float4 _FireMap_ST;
+#endif
+
 #elif defined (FXLAYER_FIRE)
 uniform sampler2D _FireMap;
 uniform float4 _FireMap_ST;
@@ -219,6 +228,12 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined (FXLAYER_REFLECTION)		//Used by chinese dragon
 	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
+
+#if defined (REFLECTIONTYPE_COLOR)
+	reflection *= _ReflectionColor;
+#elif defined (REFLECTIONTYPE_COLORRAMP)
+	reflection = tex2D(_FireMap, fixed2(reflection.r, 0));
+#endif
 
 //	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
 //	float ref = specMask * _ReflectionAmount * detail.b;

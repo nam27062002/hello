@@ -16,7 +16,7 @@ public class InstantiateByDateTime : MonoBehaviour {
         bool instantiate = false;
         if ( (m_isNewYear && SeasonManager.IsNewYear()) 
             || (m_isChineseNewYear && SeasonManager.IsChineseNewYear())
-            ||  Prefs.GetBoolPlayer(DebugSettings.SPECIAL_DATES, false)
+            ||  DebugSettings.specialDates
         )
         {
             instantiate = true;

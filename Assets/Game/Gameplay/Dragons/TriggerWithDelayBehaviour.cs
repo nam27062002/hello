@@ -10,14 +10,13 @@ public class TriggerWithDelayBehaviour : StateMachineBehaviour {
 
 	// OnStateMachineEnter is called when entering a statemachine via its Entry Node
 	override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-		// m_blinking = false;
 		m_timer = m_delay.GetRandom();
 	}
 
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-	//override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-	//
-	//}
+	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+	    m_timer = m_delay.GetRandom();
+	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	//override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

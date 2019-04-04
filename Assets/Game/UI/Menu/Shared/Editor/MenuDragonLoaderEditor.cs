@@ -24,6 +24,7 @@ public class MenuDragonLoaderEditor : Editor {
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
 	private const string EQUIPPED_DISGUISE_NAME = "EQUIPPED";
+	private const float BUTTON_HEIGHT = 25f;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -177,13 +178,28 @@ public class MenuDragonLoaderEditor : Editor {
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		serializedObject.ApplyModifiedProperties();
 
-		// Force loading the dragon
-		if(GUILayout.Button("Load Dragon", GUILayout.Height(50))) {
-			for(int i = 0; i < targets.Length; i++) {
-				// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
-				((MenuDragonLoader)targets[i]).RefreshDragon(true);
+		// Tools
+		EditorGUILayout.BeginHorizontal(); {
+			// Clear loaded instance
+			GUI.color = Colors.coral;
+			if(GUILayout.Button("UNLOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				for(int i = 0; i < targets.Length; i++) {
+					((MenuDragonLoader)targets[i]).UnloadDragon();
+				}
 			}
-		}
+
+			// Force loading the preview
+			GUI.color = Colors.paleGreen;
+			if(GUILayout.Button("RELOAD", GUILayout.Height(BUTTON_HEIGHT))) {
+				for(int i = 0; i < targets.Length; i++) {
+					// If the game is not running, we don't have any data on current dragon/skin, so load a placeholder one manually instead
+					((MenuDragonLoader)targets[i]).RefreshDragon(true);
+				}
+			}
+
+			// Reset color
+			GUI.color = Color.white;
+		} EditorGUILayout.EndHorizontal();
 	}
 
 	/// <summary>

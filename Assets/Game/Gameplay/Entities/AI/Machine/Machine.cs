@@ -26,6 +26,7 @@ namespace AI {
 
 		protected Transform m_transform;
 		protected IEntity m_entity = null;
+        public IEntity entity{ get{ return m_entity; } }
 		protected Pilot m_pilot = null;
 		protected ViewControl m_viewControl = null;
 		public ViewControl view { get { return m_viewControl; } }
@@ -72,16 +73,7 @@ namespace AI {
 
 		private Vector3		m_externalForces;	// Mostly for currents
 
-		// Freezing
-		private bool m_freezing = false;
-		public bool freezing
-		{
-			get{ return m_freezing; }
-		}
-		private float m_freezingMultiplier = 1;
-
 		protected float m_stunned = 0;
-
         protected float m_inLove = 0;
 
 		private object[] m_collisionParams;
@@ -161,6 +153,12 @@ namespace AI {
 
 		void OnDisable() {
 			LeaveGroup();
+
+            if ( ApplicationManager.IsAlive && FreezingObjectsRegistry.instance != null )
+            {
+                FreezingObjectsRegistry.instance.UnregisterMachine( this );
+            }
+            
 		}
 
 		public virtual void Spawn(ISpawner _spawner) {
@@ -185,6 +183,8 @@ namespace AI {
 				m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound);
+
+            FreezingObjectsRegistry.instance.RegisterMachine( this );
 		}
 
 		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
@@ -313,7 +313,6 @@ namespace AI {
 			if (!IsDead()) {
                 CheckStun();
                 CheckInLove();
-                CheckFreeze();
 
                 if (m_stunned <= 0 ) {
                     if (m_willPlaySpawnSound) {
@@ -367,25 +366,14 @@ namespace AI {
 		public void AddExternalForce(Vector3 force) {
 			m_externalForces += force;
 		}
-
-		public void CheckFreeze() {
-			// can freeze?
-			if (m_entity.circleArea != null) {
-				m_freezing = FreezingObjectsRegistry.instance.Overlaps((CircleAreaBounds)m_entity.circleArea.bounds);
-				if (m_freezing) {
-					m_freezingMultiplier -= Time.deltaTime * FreezingObjectsRegistry.m_freezinSpeed;
-				} else {
-					m_freezingMultiplier += Time.deltaTime * FreezingObjectsRegistry.m_defrostSpeed;
-				}
-				m_freezingMultiplier = Mathf.Clamp( m_freezingMultiplier, FreezingObjectsRegistry.m_minFreezeSpeedMultiplier, 1.0f);
-				if ( m_pilot )
-					m_pilot.SetFreezeFactor(m_freezingMultiplier);
-
-				float freezingLevel = (1.0f - m_freezingMultiplier) / (1.0f - FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
-
-				m_viewControl.Freezing(freezingLevel);
-			}
-		}
+        
+        public void SetFreezingLevel( float freezingMultiplier)
+        {
+            if ( m_pilot )
+                m_pilot.SetFreezeFactor(1.0f - freezingMultiplier);
+            // float freezingLevel = (freezingMultiplier - 1.0f) / (FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
+            m_viewControl.Freezing(freezingMultiplier);
+        }
 
 		public void CheckStun() {
 			if (m_stunned > 0) {
@@ -532,10 +520,6 @@ namespace AI {
 			return GetSignal(AI.Signals.Type.Chewing) || GetSignal(AI.Signals.Type.Burning);
 		}
 
-		public bool IsFreezing() {
-			return m_freezing;
-		}
-
         public bool IsStunned() {
             return m_stunned > 0;
         }
@@ -571,7 +555,7 @@ namespace AI {
 				m_entity.onDieStatus.source = _source;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
                 if ( _source == IEntity.Type.PLAYER )
                     InstanceManager.timeScaleController.HitStop();
 				return true;
@@ -639,11 +623,11 @@ namespace AI {
 			return m_edible.GetDyingFixRot();
 		}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant);
+					m_inflammable.Burn(_transform, _source, instant, fireColorType);
 				}
 				return true;
 			}

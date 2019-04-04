@@ -112,7 +112,18 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnOpenPostAnimation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114010856613188990}
+        m_MethodName: OnShowPostAnimation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnClosePreAnimation:
@@ -4435,6 +4446,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114036397053807516
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5626,6 +5638,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114139690114612792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5665,6 +5678,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114146567984591624
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7768,6 +7782,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114390801793118388
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9187,6 +9202,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114503086557052766
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9471,6 +9487,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114542622341042942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10265,6 +10282,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114619148765023298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10520,6 +10538,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114640733142200872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10679,6 +10698,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114655423152396366
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -10930,6 +10950,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114675890524032174
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11020,6 +11041,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114690116194965312
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14358,6 +14380,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114930624060876908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -21899,7 +21922,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1314658083
+  randomSeed: -520678220
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -34723,7 +34746,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 399.5, y: -68.82}
+  m_AnchoredPosition: {x: 399.5, y: -68.82001}
   m_SizeDelta: {x: 660.29, y: 134.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224476593303728570
@@ -35063,7 +35086,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224529580249217040
 RectTransform:
@@ -35761,7 +35784,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 107.355, y: -85}
+  m_AnchoredPosition: {x: 107.35501, y: -85}
   m_SizeDelta: {x: 134.71, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224692628599741840

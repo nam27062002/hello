@@ -48,7 +48,8 @@ public class OfferPack {
 	public enum Type {
 		PROGRESSION,
 		PUSHED,
-		ROTATIONAL
+		ROTATIONAL,
+        COUNT
 	}
 
 	public const int MAX_ITEMS = 3; // For now
@@ -118,7 +119,7 @@ public class OfferPack {
 		get { return m_featured; }
 	}
 
-	protected int m_frequency = 0;
+	protected int m_frequency = 1;
 	protected int m_maxViews = 0;
 	protected WhereToShow m_whereToShow = WhereToShow.SHOP_ONLY;
 
@@ -289,7 +290,7 @@ public class OfferPack {
 
 		// Mandatory for featured packs
 		m_featured = false;
-		m_frequency = 0;
+		m_frequency = 1;	// Don't use 0 to avoid infinite loops!
 		m_maxViews = 0;
 		m_whereToShow = WhereToShow.SHOP_ONLY;
 
@@ -458,6 +459,7 @@ public class OfferPack {
 		SetValueIfMissing(ref _def, "uniqueId", m_uniqueId.ToString(CultureInfo.InvariantCulture));
 		SetValueIfMissing(ref _def, "type", TypeToString(DEFAULT_TYPE));
 		SetValueIfMissing(ref _def, "order", m_order.ToString(CultureInfo.InvariantCulture));
+		SetValueIfMissing(ref _def, "discount", (0).ToString(CultureInfo.InvariantCulture));
 
 		// Featuring
 		SetValueIfMissing(ref _def, "featured", m_featured.ToString(CultureInfo.InvariantCulture));
@@ -829,7 +831,7 @@ public class OfferPack {
 	/// </summary>
 	/// <returns>The opened popup if all conditions to display it are met. <c>null</c> otherwise.</returns>
 	/// <param name="_areaToCheck">Area to check.</param>
-	public virtual PopupController ShowPopupIfPossible(WhereToShow _areaToCheck) {
+	public virtual PopupController EnqueuePopupIfPossible(WhereToShow _areaToCheck) {
 		// Just in case
 		if(m_def == null) return null;
 
@@ -857,18 +859,10 @@ public class OfferPack {
 		if(timeSinceLastView.TotalMinutes < m_frequency) return null;
 
 		// All checks passed!
-		// Show popup
+		// Put popup to the queue and return
 		PopupController popup = PopupManager.LoadPopup(PopupFeaturedOffer.PATH);
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(this);
-		popup.Open();
-
-        // Tracking
-        // The experiment name is used as offer name        
-        HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_def), m_def.GetAsString("type"));
-
-		// Update control vars and return
-		m_viewsCount++;
-		m_lastViewTimestamp = serverTime;
+		PopupManager.EnqueuePopup(popup);
 		return popup;
 	}
 
@@ -900,6 +894,20 @@ public class OfferPack {
 		// Notify game
 		Messenger.Broadcast<OfferPack>(MessengerEvents.OFFER_APPLIED, this);
 	}
+
+	/// <summary>
+	/// The pack has been displayed in a featured popup.
+	/// </summary>
+	public void NotifyPopupDisplayed() {
+		// Tracking
+		// The experiment name is used as offer name        
+        string offerName = OffersManager.GenerateTrackingOfferName( m_def );
+		HDTrackingManager.Instance.Notify_OfferShown(false, m_def.GetAsString("iapSku"), offerName, m_def.GetAsString("type"));
+
+		// Update control vars and return
+		m_viewsCount++;
+		m_lastViewTimestamp = GameServerManager.SharedInstance.GetEstimatedServerTime();
+	}
 	#endregion
 
 	//------------------------------------------------------------------------//
@@ -923,7 +931,6 @@ public class OfferPack {
 			case Type.ROTATIONAL: {
 				newPack = new OfferPackRotational();
 			} break;
-
 			default: {
 				newPack = new OfferPack();
 			} break;
@@ -1021,7 +1028,7 @@ public class OfferPack {
 	public static string TypeToString(Type _type) {
 		switch(_type) {
 			case Type.PROGRESSION: 	return "progression";
-			case Type.PUSHED: 		return "pushed";
+			case Type.PUSHED: 		return "push";
 			case Type.ROTATIONAL: 	return "rotational";
 		}
 		return TypeToString(DEFAULT_TYPE);
@@ -1035,7 +1042,7 @@ public class OfferPack {
 	public static Type StringToType(string _typeStr) {
 		switch(_typeStr) {
 			case "progression": return Type.PROGRESSION;
-			case "pushed":		return Type.PUSHED;
+			case "push":		return Type.PUSHED;
 			case "rotational":	return Type.ROTATIONAL;
 		}
 		return DEFAULT_TYPE;
@@ -1161,6 +1168,11 @@ public class OfferPack {
 			data.Add("viewCount", m_viewsCount.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 			data.Add("lastViewTimestamp", m_lastViewTimestamp.ToString(PersistenceFacade.JSON_FORMATTING_CULTURE));
 		}
+
+        if ( m_type == Type.PUSHED ){
+            data.Add("customizerId", m_def.customizationCode);
+        }
+        
 
 		// Done!
 		return data;

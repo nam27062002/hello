@@ -56,7 +56,8 @@ public class PopupSettings : MonoBehaviour {
 
     private void OnOpenAnimation()
     {
-    	HDTrackingManager.Instance.Notify_SettingsOpen();
+        string zone = InstanceManager.menuSceneController.currentScreen.ToString();
+    	HDTrackingManager.Instance.Notify_SettingsOpen(zone);
     }
 
     private void OnCloseAnimation()

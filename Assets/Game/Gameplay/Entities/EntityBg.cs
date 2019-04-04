@@ -21,7 +21,7 @@ public class EntityBg : IEntity
 	{
 		base.Disable( _destroyed );
 		if ( m_spawner != null )
-			m_spawner.RemoveEntity(gameObject, _destroyed);
+			m_spawner.RemoveEntity(this, _destroyed);
 	}
 
 	public override void Spawn(ISpawner _spawner) 

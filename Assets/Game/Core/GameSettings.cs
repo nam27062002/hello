@@ -124,6 +124,9 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	[SerializeField] private int m_enableLabAtRun = 4;
 	public static int ENABLE_LAB_AT_RUN { get { return instance.m_enableLabAtRun; } }
 
+	[SerializeField] private int m_enableDailyRewardsAtRun = 2;
+	public static int ENABLE_DAILY_REWARDS_AT_RUN { get { return instance.m_enableDailyRewardsAtRun; } }
+
 	// Social
 	[Separator("Social")]
 	[SerializeField] private ShareData m_shareDataIOS = new ShareData();
@@ -271,6 +274,23 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 		// Notify game
 		Messenger.Broadcast<string, bool>(MessengerEvents.GAME_SETTING_TOGGLED, _settingId, _value);
 	}
+
+    public static void OnApplicationPause( bool _pause )
+    {
+        if ( _pause )
+        {
+            // Mute all sound when the app pauses
+            instance.m_audioMixer.SetFloat("MusicVolume", -80f);
+            instance.m_audioMixer.SetFloat("SfxVolume", -80f);
+            instance.m_audioMixer.SetFloat("Sfx2DVolume", -80f);
+        }
+        else
+        {
+            // Restore all sound when the app resumes
+            Set(SOUND_ENABLED, Get(SOUND_ENABLED));
+            Set(MUSIC_ENABLED, Get(MUSIC_ENABLED));    
+        }
+    }
 
 	/// <summary>
 	/// Open the given URL, optionally adding a delay to it to give enough time

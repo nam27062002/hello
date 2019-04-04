@@ -20,8 +20,10 @@ using System.Collections.Generic;
 [Serializable]
 public class HDPassiveEventManager : HDLiveEventManager {
 	//------------------------------------------------------------------------//
-	// CASSES																  //
+	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string TYPE_CODE = "passive";
+	public const int NUMERIC_TYPE_CODE = 0;
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -36,8 +38,8 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// Default constructor.
 	/// </summary>
 	public HDPassiveEventManager() {
-        m_type = "passive";
-        m_numericType = 0;
+        m_type = TYPE_CODE;
+		m_numericType = NUMERIC_TYPE_CODE;
 
         m_data = new HDPassiveEventData();
         m_passiveEventData = m_data as HDPassiveEventData;
@@ -76,9 +78,11 @@ public class HDPassiveEventManager : HDLiveEventManager {
 	/// Mark the event as finished.
 	/// </summary>
 	override public void FinishEvent() {
-		// In the case of passive events, we don't need to notify the server
-		Deactivate();
-		m_data.m_state = HDLiveEventData.State.FINALIZED;
-		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+        // In the case of passive events, we don't need to notify the server
+        if (m_active) {
+            Deactivate();
+            m_data.m_state = HDLiveEventData.State.FINALIZED;
+            Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, HDLiveDataManager.ComunicationErrorCodes.NO_ERROR);
+        }
 	}
 }

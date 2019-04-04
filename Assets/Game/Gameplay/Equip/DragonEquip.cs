@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class DragonEquip : MonoBehaviour {
 	//------------------------------------------------------------------------//
@@ -84,8 +85,7 @@ public class DragonEquip : MonoBehaviour {
 				// Check if tournament/build active
                 if ( HDLiveDataManager.tournament.isActive )
 				{
-					string skin = HDLiveDataManager.tournament.GetToUseSkin();
-					EquipDisguise(skin);
+					EquipDisguise(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.disguise);
 				}
 				else
 				{
@@ -171,7 +171,7 @@ public class DragonEquip : MonoBehaviour {
 				// Check if tournament
 				if ( HDLiveDataManager.tournament.isActive)
 				{
-					pets = HDLiveDataManager.tournament.GetToUsePets();
+					pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
 				}
 			}
 
@@ -619,6 +619,7 @@ public class DragonEquip : MonoBehaviour {
 				DragonPlayer player = GetComponent<DragonPlayer>();
 				newInstance.transform.localScale = Vector3.one * player.data.petScale;
 				newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
+                SceneManager.MoveGameObjectToScene(newInstance, gameObject.scene);
 				// newInstance.transform.localScale = Vector3.one * player.data.scale;
 			}
 

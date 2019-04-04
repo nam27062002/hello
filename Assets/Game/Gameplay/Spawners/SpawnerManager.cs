@@ -702,7 +702,7 @@ public class SpawnerManager : UbiBCN.SingletonMonoBehaviour<SpawnerManager>, IBr
     }
 
     private void Debug_SetActive() {
-		m_enabled = Prefs.GetBoolPlayer(DebugSettings.INGAME_SPAWNERS, true);       
+		m_enabled = DebugSettings.ingameSpawners;       
     }
 #endregion
 

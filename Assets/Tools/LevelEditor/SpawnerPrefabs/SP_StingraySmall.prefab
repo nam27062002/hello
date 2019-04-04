@@ -49,6 +49,7 @@ MonoBehaviour:
     width: 2
     height: 2
   m_mixEntities: 0
+  m_forceHeterogeneityMix: 0
   m_entityPrefabList:
   - name: Air/PF_StingraySmall
     chance: 100
@@ -63,6 +64,7 @@ MonoBehaviour:
     max: 1
   m_rails: 4
   m_hasGroupBonus: 0
+  m_eventOnly: 0
   m_minTier: 0
   m_maxTier: 4
   m_checkMaxTier: 0
@@ -70,6 +72,7 @@ MonoBehaviour:
   m_activationTriggers: []
   m_activationKillTriggers: []
   m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
   m_spawnTime:
     min: 120
     max: 120
@@ -78,8 +81,8 @@ MonoBehaviour:
   m_homePosDistance:
     min: 0
     max: 4
+  m_homePosLineRotation: 0
   m_maxSpawns: 0
-  m_checkCurrents: 0
 --- !u!114 &11478514
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,6 +126,6 @@ MonoBehaviour:
   m_scale: {x: 0.4, y: 0.2, z: 1}
   m_rotation: {x: 0, y: 0, z: 0}
   m_boundsScale: {x: 10, y: 10, z: 0}
-  m_forcePreview: 1
+  m_drawPreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 60

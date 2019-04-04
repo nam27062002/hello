@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragonMotionHedgehog : DragonMotion {
 
@@ -69,9 +70,10 @@ public class DragonMotionHedgehog : DragonMotion {
 
         m_breath = GetComponent<DragonBreathBehaviour>();
         m_fireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_fireParticleImpact, transform.parent);
+        SceneManager.MoveGameObjectToScene(m_fireParticleImpactInstance.gameObject, gameObject.scene);
         m_megaFireParticleImpactInstance = ParticleManager.InitLeveledParticle( m_megaFireParticleImpact, transform.parent);
-
-	}
+        SceneManager.MoveGameObjectToScene(m_megaFireParticleImpactInstance.gameObject, gameObject.scene);
+    }
 
 	IEnumerator DelayedBoostSet()
 	{
@@ -96,11 +98,6 @@ public class DragonMotionHedgehog : DragonMotion {
 				{
 					Vector3 impulse = GameConstants.Vector3.zero;
 					m_controls.GetImpulse(1, ref impulse);
-                    if ( m_dragon.IsDrunk() )
-                    {
-                        impulse.x = -impulse.x;
-                    }
-        
 					if ( impulse != GameConstants.Vector3.zero )
 						m_direction = impulse;
 				}
@@ -172,10 +169,6 @@ public class DragonMotionHedgehog : DragonMotion {
     {
         Vector3 impulse = GameConstants.Vector3.zero;
         m_controls.GetImpulse(1, ref impulse);
-        if ( m_dragon.IsDrunk() )
-        {
-            impulse.x = -impulse.x;
-        }
         
         if ( impulse != GameConstants.Vector3.zero )
         {
@@ -217,8 +210,9 @@ public class DragonMotionHedgehog : DragonMotion {
 			{
 				float impulseMag = m_impulse.magnitude;
                 m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.1f);
-                
 				ApplyExternalForce();
+                if (m_impulse.sqrMagnitude > m_sonicMaxSpeed * m_sonicMaxSpeed)
+                    m_impulse = m_impulse.normalized * m_sonicMaxSpeed;
 				m_rbody.velocity = m_impulse;
                 RotateToDirection( m_direction );
                 
@@ -231,7 +225,9 @@ public class DragonMotionHedgehog : DragonMotion {
                     m_sonicImpulse += GameConstants.Vector3.down * 9.81f * m_dragonAirGravityModifier * _deltaTime;
                 }
                 m_impulse = m_sonicImpulse;
-				ApplyExternalForce();
+				// ApplyExternalForce();    
+                // ignore external forces
+                m_externalForce = GameConstants.Vector3.zero;
 				m_rbody.velocity = m_impulse;
 				RotateToDirection( m_direction );
 			}break;
@@ -261,7 +257,7 @@ public class DragonMotionHedgehog : DragonMotion {
 				m_dragon.TryResumeEating();
                 m_cheskStateForResume = true;
 				m_animator.SetBool( GameConstants.Animator.HEDGEHOG_FORM , false);
-                m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
+                // m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
                 InstanceManager.timeScaleController.m_ignoreHitStops = false;
 			}break;
 			case State.Extra_2:
@@ -275,7 +271,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 if ( m_powerLevel >= 2 )
                     m_impulse = GameConstants.Vector3.zero;
                     
-                m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
+                // m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
                 InstanceManager.timeScaleController.m_ignoreHitStops = false;
 			}break;
 		}
@@ -295,7 +291,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 {
                      AudioController.Play( m_rollUpSound, m_transform );
                 }
-                m_mainGroundCollider.transform.position = m_rotationPivot.position;
+                // m_mainGroundCollider.transform.position = m_rotationPivot.position;
                 InstanceManager.timeScaleController.m_ignoreHitStops = true;
 			}break;
 			case State.Extra_2:
@@ -318,7 +314,7 @@ public class DragonMotionHedgehog : DragonMotion {
                 {
                      AudioController.Play( m_shootSound, m_transform );
                 }
-                m_mainGroundCollider.transform.position = m_rotationPivot.position;
+                // m_mainGroundCollider.transform.position = m_rotationPivot.position;
                 InstanceManager.timeScaleController.m_ignoreHitStops = true;
 			}break;
 		}
@@ -347,32 +343,50 @@ public class DragonMotionHedgehog : DragonMotion {
         }
     }
 
-	override protected void OnCollisionEnter(Collision collision)
-	{
-		base.OnCollisionEnter(collision);
-		if ( m_state == State.Extra_2 && Vector3.Dot( collision.contacts[0].normal, m_impulse) < 0)
-		{
-            if ( collision.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
+    override protected void CustomOnCollisionEnter(Collider _collider, Vector3 _normal, Vector3 _point)
+    {
+        base.CustomOnCollisionEnter( _collider, _normal, _point );
+        OnHedgehogCollision( _collider, _normal, _point );
+    }
+    
+    public override void OnCollisionStay(Collision collision)
+    {
+        base.OnCollisionStay(collision);
+        OnHedgehogCollision( collision.collider, collision.contacts[0].normal, collision.contacts[0].point );
+    }
+
+    protected void OnHedgehogCollision(Collider _collider, Vector3 _normal, Vector3 _point)
+    {
+        if ( m_state == State.Extra_2 && Vector3.Dot( _normal, m_impulse) < 0)
+        {
+            if ( _collider.gameObject.layer != GameConstants.Layers.OBSTACLE_INDEX)
             {
-                CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);
+                IEntity entity = _collider.gameObject.GetComponent<IEntity>();
+                if ( entity == null )
+                    CustomBounce(_point, _normal);
             }
             else
             {
-                BreakableBehaviour breakableBehaviour = collision.gameObject.GetComponent<BreakableBehaviour>();
+                BreakableBehaviour breakableBehaviour = _collider.gameObject.GetComponent<BreakableBehaviour>();
                 if( breakableBehaviour != null )
                 {
                     if ( breakableBehaviour.unbreakableBlocker || m_dragon.GetTierWhenBreaking() < breakableBehaviour.tierWithTurboBreak )
                     {
                         // if I cannot breake it then bounce
-                        CustomBounce(collision.contacts[0].point, collision.contacts[0].normal);        
+                        CustomBounce(_point, _normal);        
                     }
                 }
+                else
+                {
+                    CustomBounce(_point, _normal);
+                }
             }
-			
-		}
-	}
+        }
+    }
 
-	override public bool CanIResumeEating()
+
+
+    override public bool CanIResumeEating()
 	{
 		bool ret = base.CanIResumeEating();
 		if ( m_cheskStateForResume && (m_state == State.Extra_1 || m_state == State.Extra_2) )
@@ -451,7 +465,9 @@ public class DragonMotionHedgehog : DragonMotion {
             AudioController.Play( m_bounceSound, m_transform );
         }
         m_direction = Vector3.Reflect( m_direction,  normal);
-        m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+        m_direction.Normalize();
+        // m_sonicImpulse = Vector3.Reflect( m_sonicImpulse,  normal);
+        m_sonicImpulse = m_direction * Mathf.Min(m_sonicImpulse.magnitude, m_sonicMaxSpeed);
         m_impulse = m_sonicImpulse;
         // Increase multiplier
         Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP);

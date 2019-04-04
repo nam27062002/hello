@@ -68,9 +68,11 @@ public class ParticleData {
 	}
 
 	public GameObject CreateInstance() {
-		if (!string.IsNullOrEmpty(path) && !path.EndsWith("/")) path = path + "/";
-		GameObject go = Resources.Load<GameObject>("Particles/Master/" + path + name);
-		GameObject instance = GameObject.Instantiate(go);
+        GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(name, "Master");
+        GameObject instance = null;
+        if (go != null) {
+            instance = UnityEngine.Object.Instantiate(go);
+        }
 		return instance;
 	}
 

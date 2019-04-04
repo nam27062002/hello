@@ -10,31 +10,35 @@ using UnityEditor.SceneManagement;
 
 public class OptimizationToolEditor
 {
+    /*
 	[MenuItem("Hungry Dragon/OptimizationUtility/Enable All")]
 	public static void EnableAll()
 	{
-		//SceneMaterialSetupEditor.GenerateSceneMaterialFromEditor();
-		//SceneMaterialSetupEditor.SetAllBumpMapToNull();
+        //SceneMaterialSetupEditor.GenerateSceneMaterialFromEditor();
+        //SceneMaterialSetupEditor.SetAllBumpMapToNull();
 
-		// Broken
-		//SceneLightmapSetupEditor.UpdateAllLightMapDataInfosEditor();
-		//SceneLightmapSetupEditor.SetAllSetLightmapNearToNull();
+        // Broken
+        //SceneLightmapSetupEditor.UpdateAllLightMapDataInfosEditor();
+        //SceneLightmapSetupEditor.SetAllSetLightmapNearToNull();
 
-		PrefabsSetupEditor.GeneratePrefabsLOD();
-	}
+        // Broken
+        //PrefabsSetupEditor.GeneratePrefabsLOD();
+    }
 
-	[MenuItem("Hungry Dragon/OptimizationUtility/Disable All")]
+    [MenuItem("Hungry Dragon/OptimizationUtility/Disable All")]
 	public static void DisableAll()
 	{
-		//SceneMaterialSetupEditor.RestoreOriginalMaterialFromEditor();
-		//SceneMaterialSetupEditor.DeleteFoldersEditor();
+        //SceneMaterialSetupEditor.RestoreOriginalMaterialFromEditor();
+        //SceneMaterialSetupEditor.DeleteFoldersEditor();
 
-		// Broken
-		//SceneLightmapSetupEditor.RestoreAllLightMapDataInfosEditor();
-		//SceneLightmapSetupEditor.DeleteFoldersEditor();
+        // Broken
+        //SceneLightmapSetupEditor.RestoreAllLightMapDataInfosEditor();
+        //SceneLightmapSetupEditor.DeleteFoldersEditor();
 
-		PrefabsSetupEditor.DeleteFoldersEditor();
+        // Broken
+        //PrefabsSetupEditor.DeleteFoldersEditor();
 	}
+	*/
 }
 /*
 public class DisableShadowsOnPrefabs : EditorWindow
@@ -482,7 +486,8 @@ public class SpawnerScenesVariationsEditor
 }
 
 public class PrefabsSetupEditor
-{               
+{            
+    /*   
 	static Dictionary<int,Material> materialDictionary = new Dictionary<int,Material> ();
 
     [MenuItem("FGOL/OptimizationUtility/Prefabs/GeneratePrefabsLOD")]
@@ -607,4 +612,5 @@ public class PrefabsSetupEditor
         folder = OptimizationDataInfo.PrefabsFolderPathDest;
         OptimizationDataEditor.instance.DeleteADir(folder);
     }   
+    */
 }

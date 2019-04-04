@@ -48,8 +48,8 @@ public class UI3DLoader : MonoBehaviour {
 	[Space]
 	[SerializeField] private GameObject m_loadingPrefab = null;
 
-	// Internal
-	private ResourceRequest m_loadingRequest = null;
+    // Internal
+    private ResourceRequest m_loadingRequest = null;
 	public ResourceRequest loadingRequest {
 		get { return m_loadingRequest; }
 	}
@@ -72,8 +72,10 @@ public class UI3DLoader : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		// Show loading icon from start
-		ShowLoading(true);
+        Unload();
+
+        // Show loading icon from start
+        ShowLoading(true);
 
 		// If defined, start loading
 		if(m_loadOnAwake) {
@@ -92,15 +94,13 @@ public class UI3DLoader : MonoBehaviour {
 	/// A change has been done in the inspector.
 	/// </summary>
 	private void OnDestroy() {
-		// Delete instance and requests
+		// Delete pending requests
 		if(m_loadingRequest != null) {
 			m_loadingRequest = null;
 		}
 
-		if(m_loadedInstance != null) {
-			GameObject.Destroy(m_loadedInstance);
-			m_loadedInstance = null;
-		}
+		// Delete instance
+		Unload();
 
 		// Destroy loading icon
 		ShowLoading(false);
@@ -110,16 +110,16 @@ public class UI3DLoader : MonoBehaviour {
 	/// Update loop.
 	/// </summary>
 	private void Update() {
-		// If we're loading, wait for the loading process to end
-		if(m_loadingRequest != null) {
-			if(m_loadingRequest.isDone) {
-				// Done! Instantiate loaded asset
-				InstantiatePrefab((GameObject)m_loadingRequest.asset);
+        // If we're loading, wait for the loading process to end
+        if (m_loadingRequest != null) {
+            if (m_loadingRequest.isDone) {
+                // Done! Instantiate loaded asset
+                InstantiatePrefab((GameObject)m_loadingRequest.asset);
 
-				// Loading request done!
-				m_loadingRequest = null;
-			}
-		}
+                // Loading request done!
+                m_loadingRequest = null;
+            }
+        }
 	}
 
 	//------------------------------------------------------------------------//
@@ -137,9 +137,9 @@ public class UI3DLoader : MonoBehaviour {
 			m_loadingRequest = null;
 		}
 
-		// Load and instantiate the prefab
-		GameObject prefabObj = Resources.Load<GameObject>(m_resourcePath);
-		InstantiatePrefab(prefabObj);
+        // Load and instantiate the prefab
+        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(m_resourcePath);
+        InstantiatePrefab(prefabObj);
 
 		// Return newly instantiated instance
 		return m_loadedInstance;
@@ -153,16 +153,24 @@ public class UI3DLoader : MonoBehaviour {
 	/// <returns>The async resources request started. Same as accessing the loadingRequest property.</returns>
 	public ResourceRequest LoadAsync() {
 		// If we have something loaded, destroy it
-		if(m_loadedInstance != null) {
-			GameObject.Destroy(m_loadedInstance);
-			m_loadedInstance = null;
-		}
+		Unload();
 
-		// We don't care if we're already loading another asset, it will be ignored once done loading
-		m_loadingRequest = Resources.LoadAsync<GameObject>(m_resourcePath);
+        // We don't care if we're already loading another asset, it will be ignored once done loading
+        m_loadingRequest = Resources.LoadAsync<GameObject>(m_resourcePath);
 		ShowLoading(true);
 
 		return m_loadingRequest;
+	}
+
+	/// <summary>
+	/// Unload existing instance. Nothing will happen if there is no instance.
+	/// </summary>
+	public void Unload() {
+		// Just do it :)
+		if(m_loadedInstance != null) {
+			SafeDestroy(m_loadedInstance);
+			m_loadedInstance = null;
+		}
 	}
 
 	/// <summary>
@@ -198,10 +206,7 @@ public class UI3DLoader : MonoBehaviour {
 	/// <param name="_prefabObj">Prefab object to be instantiated.</param>
 	private void InstantiatePrefab(GameObject _prefabObj) {
 		// If we have something loaded, destroy it
-		if(m_loadedInstance != null) {
-			SafeDestroy(m_loadedInstance);
-			m_loadedInstance = null;
-		}
+		Unload();
 
 		// Do it!
 		m_loadedInstance = GameObject.Instantiate<GameObject>(_prefabObj, m_container.transform, false);

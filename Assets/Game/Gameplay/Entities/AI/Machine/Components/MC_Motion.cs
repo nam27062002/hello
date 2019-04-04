@@ -244,6 +244,7 @@ namespace AI {
                 case State.InLove:
                     FaceDragon();
                     UpdateOrientation();
+                    m_viewControl.StopAttack();
                     break;
 			}
 
@@ -470,7 +471,11 @@ namespace AI {
 					Stop();
 					m_timer = 2f; // fallback timer, if we don't have an event in our animations
 					break;
-			}
+
+                case State.InLove:
+                    m_viewControl.StopAttack();
+                    break;
+            }
 		}
 
 		//--------------------------------------------------

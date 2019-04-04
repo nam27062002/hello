@@ -24,7 +24,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 
 
     [Header("Visual Settings")]
-    public string m_disguiseOnLevelUp = "dragon_hedgehog_1";
     public GameObject m_spikesLvl1;
     public GameObject m_spikesLvl2;
     
@@ -65,6 +64,11 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     private PoolHandler m_level3PoolHandler;
     Vector3 m_tmpVector = GameConstants.Vector3.right;
 
+    protected float m_fireNodeTimer = 0;
+    Rect m_bounds2D;
+    ToggleParam m_toggleParam = new ToggleParam();
+    
+    
 	// Use this for initialization
 	void Start () {
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
@@ -91,7 +95,6 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
         
         if ( m_powerLevel >= 1 )
         {
-            GetComponentInParent<DragonEquip>().EquipDisguise( m_disguiseOnLevelUp );
             if ( m_powerLevel >= 2 )
             {
                 // Create pool of spikes!
@@ -139,8 +142,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     }
     
     void CreatePool() {
-        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", "Game/Projectiles/", m_spikesNumber, true);
-        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", "Game/Projectiles/", 3, true);
+        m_poolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn", m_spikesNumber, true);
+        m_level3PoolHandler = PoolManager.CreatePool("PF_Hedgehog_Horn_P3", 3, true);
     }
     
     private void IgnoreLevel2Spikes()
@@ -177,6 +180,8 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
                     m_healthBehaviour.AddDamageIgnore( DamageType.MINE );
 
                 m_shootingTimer = 0.1f;
+                m_toggleParam.value = m_active;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             
             if ( m_fire )
@@ -240,6 +245,16 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     					}
     				}
     			}
+                
+                if ( m_fire )
+                {
+                    m_fireNodeTimer -= Time.deltaTime;
+                    if (m_fireNodeTimer <= 0) {
+                        m_fireNodeTimer += 0.25f;
+                        m_bounds2D.Set(m_circle.center.x - m_circle.radius, m_circle.center.y - m_circle.radius, m_circle.radius * 2, m_circle.radius * 2);
+                        FirePropagationManager.instance.FireUpNodes(m_bounds2D, Overlaps, m_tier, m_fireType, m_motion.direction, IEntity.Type.PLAYER);
+                    }
+                }
             }
 		}
 		else
@@ -247,6 +262,10 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			if (m_active)
 			{
                 m_active = false;
+                
+                m_toggleParam.value = m_active;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
+                    
                 RewardManager.instance.canLoseMultiplier = true;
 				m_healthBehaviour.RemoveDamageIgnore( DamageType.ARROW );
                 m_healthBehaviour.RemoveDamageIgnore( DamageType.NORMAL );
@@ -282,6 +301,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
 			}
 		}
 	}
+    
+    public bool Overlaps(CircleAreaBounds _circle)
+    {
+        return m_circle.Overlaps(_circle.center, _circle.radius);
+    }
+    
     
     void LateUpdate()
     {

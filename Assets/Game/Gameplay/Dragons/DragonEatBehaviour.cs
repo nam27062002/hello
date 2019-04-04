@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -65,14 +65,14 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_waitJawsEvent = true;
 		}
 
-		Messenger.AddListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 		// m_waitJawsEvent = false;// not working propertly for the moment!
 	}
 
 	void OnDestroy()
 	{
-		Messenger.RemoveListener<Transform,Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnEntityEaten);
 		Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_LOST, OnMultiplierLost);
 	}
 
@@ -144,18 +144,16 @@ public class DragonEatBehaviour : EatBehaviour {
 			m_animator.SetBool( GameConstants.Animator.EAT, false);	
 	}
 
-	void OnEntityEaten(Transform t, Reward reward) {
-		if (reward.health >= 0) {
-			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(reward.origin, reward.health), DamageType.NONE, t);
+	void OnEntityEaten(Transform _t, IEntity _e, Reward _reward) {
+		if (_reward.health >= 0) {
+			m_dragon.AddLife(m_dragonHealth.GetBoostedHp(_reward.origin, _reward.health), DamageType.NONE, _t);
 		} else {
-			if ( !m_immuneTrash.Contains( reward.origin ) )
+			if ( !m_immuneTrash.Contains(_reward.origin ) )
 			{
-				m_dragonHealth.ReceiveDamage(Mathf.Abs(reward.health), DamageType.NORMAL, t, true);
+				m_dragonHealth.ReceiveDamage(Mathf.Abs(_reward.health), DamageType.NORMAL, _t, true);
 			}
 		}
-		m_dragon.AddEnergy(reward.energy);
-		if (reward.alcohol != 0)
-			m_dragon.AddAlcohol(reward.alcohol);
+		m_dragon.AddEnergy(_reward.energy);
 	}
 
 	void OnMultiplierLost()

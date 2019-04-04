@@ -241,6 +241,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	}
 
 	public void OnHidePreAnimation() {
+        CancelInvoke();
 		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
@@ -269,7 +270,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622
             if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||

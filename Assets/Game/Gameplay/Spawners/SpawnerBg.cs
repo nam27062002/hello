@@ -1,5 +1,5 @@
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class SpawnerBg : AbstractSpawner {
 	[System.Serializable]
@@ -129,7 +129,7 @@ public class SpawnerBg : AbstractSpawner {
 
         if (m_rails == 0) m_rails = 1;
 
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, m_entities.Length);
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, m_entities.Length);
 
         m_newCamera = Camera.main.GetComponent<GameCamera>();
 
@@ -142,6 +142,12 @@ public class SpawnerBg : AbstractSpawner {
         }
 
         m_guideFunction = GetComponent<IGuideFunction>();
+    }
+
+    public override List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        list.Add(m_entityPrefabStr);
+        return list;
     }
 
     protected override bool CanRespawnExtended() {
@@ -192,13 +198,13 @@ public class SpawnerBg : AbstractSpawner {
         pilot.guideFunction = m_guideFunction;
     }   
    
-    protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+    protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
         if (_allKilledByPlayer) {
             // check if player has destroyed all the flock
             if (m_flockBonus > 0 && _lastEntity != null) {
                 Reward reward = new Reward();
                 reward.score = (int)(m_flockBonus * EntitiesKilled);
-                Messenger.Broadcast<Transform, Reward>(MessengerEvents.FLOCK_EATEN, _lastEntity.transform, reward);
+                Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, _lastEntity.transform, _lastEntity, reward);
             }
 
             m_respawnCount++;

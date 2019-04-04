@@ -28,20 +28,22 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		Health,
 		Energy,
 		Fury,
-		SuperFury
+		SuperFury,
+        Shield
 	}
 
 	public enum Bars {
 		BASE,
 		EXTRA,
 		DAMAGE,
-
+        BACK,
 		COUNT
 	}
 
 	private const float DAMAGE_BAR_ANIMATION_THRESHOLD = 10f;	// Pixels
 
 	private class BarData {
+        public Transform transform;
 		public Slider slider = null;
         public UIGradient_OLD gradient = null;
         public Color color1 = Color.white;
@@ -96,15 +98,19 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		Transform child;
 
 		// Initialize bars
-		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider" };
+		string[] barNames = { "BaseSlider", "ExtraSlider", "DamageSlider", "Background" };
 		for(int i = 0; i < (int)Bars.COUNT; i++) {
 			m_bars[i] = new BarData();
 			child = transform.Find(barNames[i]);
 			if(child != null) {
+                m_bars[i].transform = child.transform;
 				m_bars[i].slider = child.GetComponent<Slider>();
                 m_bars[i].gradient = child.GetComponentInChildren<UIGradient_OLD>(); // keep a copy of the original colors
-                m_bars[i].color1 = m_bars[i].gradient.color1;
-                m_bars[i].color2 = m_bars[i].gradient.color2;
+                if (m_bars[i].gradient)
+                { 
+                    m_bars[i].color1 = m_bars[i].gradient.color1;
+                    m_bars[i].color2 = m_bars[i].gradient.color2;
+                }
 			}
 		}
 
@@ -145,51 +151,67 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 		}
 
 		ResizeBars();
-
-		if ( m_type == Type.Health )
-		{
-			// Check remaining lives to show more health Icons!
-			Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-            Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
-            Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
-			RefreshIcons();
-		}
-
-		Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
-		m_timer = 10;
-		m_timerDuration = 10;
-		if ( m_type == Type.SuperFury )
-		{
-			Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
-		}
-
-		if (m_type == Type.Energy)
-		{
-            TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
-            string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
-            text.text = t;
-			Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
-		}
+        
+        Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
+        m_timer = 10;
+        m_timerDuration = 10;
+        
+        switch(m_type)
+        {
+            case Type.Health:
+            {
+                // Check remaining lives to show more health Icons!
+                Messenger.AddListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+                Messenger.AddListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+                Messenger.AddListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
+                RefreshIcons();
+            }break;
+            case Type.SuperFury:
+            {
+                Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+            }break;
+            case Type.Energy:
+            {
+                TextMeshProUGUI text = this.FindComponentRecursive<TextMeshProUGUI>();
+                string t = Localizer.ApplyCase(Localizer.Case.UPPER_CASE, LocalizationManager.SharedInstance.Localize(InstanceManager.player.data.tidBoostAction));
+                text.text = t;
+                Broadcaster.AddListener(BroadcastEventType.BOOST_TOGGLED, this);
+            }break;
+            case Type.Shield:
+            {
+                if (InstanceManager.player.dragonShieldBehaviour == null)
+                    gameObject.SetActive(false);
+                Broadcaster.AddListener(BroadcastEventType.SHIELD_HIT, this);
+            }break;
+        }
 
 		m_ready = true;
 	}
 
 	void OnDestroy()
 	{
-		if ( m_type == Type.Health )
-		{
-			Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
-			Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
-            Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
-		}
-		else if (m_type == Type.Energy)
-		{
-			Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
-		}
-		else if ( m_type == Type.SuperFury )
-		{
-			Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
-		}
+        switch( m_type )
+        {
+            case Type.Health:
+            {
+                Messenger.RemoveListener<DamageType, Transform>(MessengerEvents.PLAYER_KO, OnPlayerKo);
+                Messenger.RemoveListener(MessengerEvents.PLAYER_FREE_REVIVE, OnFreeRevive);
+                Messenger.RemoveListener(MessengerEvents.PLAYER_MUMMY_REVIVE, OnMummyRevive);
+            }break;
+            case Type.Energy:
+            {
+                Broadcaster.RemoveListener(BroadcastEventType.BOOST_TOGGLED, this);
+            }break;
+            case Type.SuperFury:
+            {
+                Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
+            }break;
+            case Type.Shield:
+            {
+                Broadcaster.RemoveListener(BroadcastEventType.SHIELD_HIT, this);
+            }break;
+        }
+    
 		Messenger.RemoveListener<IDragonData>(MessengerEvents.DRAGON_LEVEL_UP, OnLevelUp);
 	}
     
@@ -207,14 +229,45 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
                 ToggleParam toggleParam = (ToggleParam)broadcastEventInfo;
                 OnBoostToggled(toggleParam.value); 
             }break;
+            case BroadcastEventType.SHIELD_HIT:
+            {
+                ShieldHit shieldHit = broadcastEventInfo as ShieldHit;
+                if (shieldHit.bigHit)
+                {
+                    // Animation
+                    if (!m_areParticlesPlaying)
+                        StartCoroutine(BarsRotation());
+                }
+            }
+            break;
         }
     }
     
+    IEnumerator BarsRotation()
+    {
+        m_areParticlesPlaying = true;
+        if (m_particles != null)
+        {
+            m_particles.Play();
+        }
+        float timer = 0;
+        while( timer < 0.25 )
+        {
+            timer += Time.deltaTime;
+            float delta = timer / 0.25f;
+            float size = Mathf.Cos(delta * Mathf.PI);
+            SetBarsRotations( Quaternion.Euler(0,0, size * 5 * Mathf.Sin( Time.time * 10 )));
+            yield return null;
+        }
+        SetBarsRotations( Quaternion.identity);
+        m_areParticlesPlaying = false;
+        yield return null;
+    }
 
-	/// <summary>
-	/// Keep values updated
-	/// </summary>
-	private void Update() {
+    /// <summary>
+    /// Keep values updated
+    /// </summary>
+    private void Update() {
 		if (m_ready) {
 			// Only if player is alive
 			if(InstanceManager.player != null) {
@@ -299,6 +352,24 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 						}
 					}
 				}
+                
+                if ( m_type == Type.Shield )
+                {
+#if UNITY_EDITOR                    
+                    if ( Input.GetKeyDown(KeyCode.E) )
+                    {
+                        if (!m_areParticlesPlaying)
+                            StartCoroutine(BarsRotation());
+                    }
+#endif                    
+                    float f = targetValue - targetValueStep;
+                    if (f > 0.001f)
+                    {    // Going up
+                        m_icon.transform.localScale = Vector3.one * (1.0f + Mathf.Max(0, Mathf.Sin(Time.time * 20)) * 0.2f);
+                    } else {
+                        m_icon.transform.localScale = Vector3.one;
+                    }
+                }
 
 				// Damage bar value
 				targetSlider = damageBar.slider;
@@ -337,8 +408,8 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 					}
 				}
 
-				// Text
-				if(m_valueTxt != null &&
+                // Text
+                if (m_valueTxt != null &&
 				    (m_extraBarLastValue != extraBar.slider.value || m_extraBarLastMaxValue != extraBar.slider.maxValue)) {
 					m_extraBarLastValue = extraBar.slider.value;
 					m_extraBarLastMaxValue = extraBar.slider.maxValue;
@@ -449,6 +520,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energyMax;
 			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
+            case Type.Shield:   return InstanceManager.player.shieldMax;
 		}
 		return 1;
 	}
@@ -461,6 +533,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energyBase;
 			case Type.Fury:		return 1;	// [AOC] Fury powerup not yet implemented
 			case Type.SuperFury:return 1;	// [AOC] Fury powerup not yet implemented
+            case Type.Shield:   return InstanceManager.player.shieldMax;
 		}
 		return 1;
 	}
@@ -472,6 +545,7 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			case Type.Energy:	return InstanceManager.player.energy;
 			case Type.Fury:		return InstanceManager.player.furyProgression;
 			case Type.SuperFury:return InstanceManager.player.superFuryProgression;
+            case Type.Shield:   return InstanceManager.player.shield;
 		}		
 		return 0;
 	}
@@ -578,6 +652,10 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 				size.x = fraction * m_maxScreenSize;
 				rectTransform.sizeDelta = size;
 			}break;
+            case Type.Shield:
+            {
+                
+            }break;
 		}
 
 		// How many units correspond to the minimum threshold in pixels?
@@ -625,4 +703,15 @@ public class HUDStatBar : MonoBehaviour, IBroadcastListener {
 			}
 		}
 	}
+    
+    void SetBarsRotations(Quaternion rot)
+    {
+        for (int i = 0; i < (int) Bars.COUNT; i++)
+        {
+            if ( m_bars[i].transform != null )
+            {
+                m_bars[i].transform.localRotation = rot;
+            }
+        }
+    }
 }

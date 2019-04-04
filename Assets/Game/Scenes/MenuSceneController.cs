@@ -185,7 +185,7 @@ public class MenuSceneController : SceneController {
 			// Select dragon classic and go to play
 			DragonManager.GetDragonData("dragon_classic").Acquire();
 			OnDragonSelected("dragon_classic");
-			OnPlayButton();
+			GoToGame();
 		}
 
 	}    
@@ -295,7 +295,7 @@ public class MenuSceneController : SceneController {
 	/// <summary>
 	/// Play button has been pressed.
 	/// </summary>
-	public void OnPlayButton() {
+	public void GoToGame() {
 		// Initialize and show loading screen
 		LoadingScreen.InitWithCurrentData();
 		LoadingScreen.Toggle(true, false);
@@ -369,7 +369,7 @@ public class MenuSceneController : SceneController {
         if (_id == DebugSettings.INGAME_HUD) {
             GameObject _uiCanvas = Debug_GetUICanvas();
             if (_uiCanvas != null) {
-                _uiCanvas.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.INGAME_HUD, true));
+                _uiCanvas.gameObject.SetActive(DebugSettings.ingameHud);
             }
         }      
     }

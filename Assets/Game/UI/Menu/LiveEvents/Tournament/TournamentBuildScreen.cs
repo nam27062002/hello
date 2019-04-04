@@ -8,38 +8,33 @@ public class TournamentBuildScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	private const float UPDATE_FREQUENCY = 1f;	// Seconds
 
-	private enum Mode {
-		Build = 0,
-		EditDragon,
-		EditPets
-	}
-
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
-	[SeparatorAttribute("Dragon")]
-	[SerializeField] private MenuDragonLoader 	m_dragonLoader;
-	[SerializeField] private Localizer 			m_dragonName;
-	[SerializeField] private Localizer 			m_dragonSkin;
-	[SerializeField] private PowerIcon 			m_dragonPower;
+	[Separator("Dragon")]
+	[SerializeField] private MenuDragonLoader 	m_dragonLoader = null;
+	[SerializeField] private Localizer 			m_dragonName = null;
+	[SerializeField] private Localizer 			m_dragonSkin = null;
+	[SerializeField] private PetSlot[] 			m_petSlots = null;
+	[SerializeField] private PowerIcon[] 		m_powerIcons = null;
 
-	[SeparatorAttribute("Pets")]
-	[SerializeField] private PetSlot[] 			m_petSlots;
-	[SerializeField] private GameObject			m_petEditRoot;
-	[SerializeField] private Transform[]		m_petEditSlots;
+	[Separator("Tournament Info")]
+	[SerializeField] private TextMeshProUGUI	m_goalText = null;
+	[SerializeField] private ModifierIcon[] 	m_modifier = null;
 
-	[SeparatorAttribute("Tournament Info")]
-	[SerializeField] private TextMeshProUGUI	m_goalText;
-	[SerializeField] private ModifierIcon[] 	m_modifier;
+	[Separator("Enter button")]
+	[SerializeField] private Button 			m_enterCurrencyBtn = null;
+	[SerializeField] private Button 			m_enterFreeBtn = null;
+	[SerializeField] private Button 			m_enterAdBtn = null;
+	[SerializeField] private GameObject			m_nextFreeTimerGroup = null;
+	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer = null;
+	[SerializeField] private Slider				m_nextFreeSlider = null;
 
-	[SeparatorAttribute("Enter button")]
-	[SerializeField] private Button 			m_enterCurrencyBtn;
-	[SerializeField] private Button 			m_enterFreeBtn;
-	[SerializeField] private Button 			m_enterAdBtn;
-	[SerializeField] private GameObject			m_nextFreeTimerGroup;
-	[SerializeField] private TextMeshProUGUI 	m_nextFreeTimer;
-	[SerializeField] private Slider				m_nextFreeSlider;
-
+	[Separator("Others")]
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+	public AssetsDownloadFlow assetsDownloadFlow {
+		get { return m_assetsDownloadFlow; }
+	}
 
 	//------------------------------------------------------------------------//
 	private HDTournamentManager 	m_tournament;
@@ -47,12 +42,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 	private HDTournamentData 		m_data;
 	private ResourcesFlow 			m_purchaseFlow;
 
-	private Transform[] 			m_petEquipSlots;
-
 	private bool m_waitingRewardsData = false;
 	private bool m_hasFreeEntrance;
-
-	private Mode m_mode;
 
 
 	//------------------------------------------------------------------------//
@@ -81,53 +72,48 @@ public class TournamentBuildScreen : MonoBehaviour {
 	/// 
 	/// </summary>
 	public void Refresh() {
-		m_mode = Mode.Build;
-
+		// Internal data
 		m_tournament = HDLiveDataManager.tournament;
 		m_data = m_tournament.data as HDTournamentData;
 		m_definition = m_data.definition as HDTournamentDefinition;
 
-
 		//-- Dragon ---------------------------------------------------//
-		string sku = m_tournament.GetToUseDragon();
-		IDragonData dragonData = DragonManager.GetDragonData(sku);
+		IDragonData dragonData = m_tournament.tournamentData.tournamentDef.dragonData;
 		m_dragonName.Localize(dragonData.def.Get("tidName"));
 
-		string disguiseSku = m_tournament.GetToUseSkin();
-		m_dragonLoader.LoadDragon(sku, disguiseSku);
-		DefinitionNode disguise = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, disguiseSku);
-		if (disguise.GetAsInt("shopOrder") > 0) { // skins
-			m_dragonSkin.Localize(disguise.Get("tidName"));
+		m_dragonLoader.LoadDragon(dragonData.sku, dragonData.disguise);
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, dragonData.disguise);
+		if (skinDef.GetAsInt("shopOrder") > 0) { // skins
+			m_dragonSkin.Localize(skinDef.Get("tidName"));
 		} else { // default skin
 			m_dragonSkin.gameObject.SetActive(false);
 		}
 
-		string powerupSku = disguise.Get("powerup");
+		/*string powerupSku = disguise.Get("powerup");
 		DefinitionNode powerup = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, powerupSku);
-
-		m_dragonPower.InitFromDefinition(powerup, false);
+		m_dragonPower.InitFromDefinition(powerup, false);*/
 
 		//-- Pets -----------------------------------------------------//
 		DragonEquip dragonEquip = m_dragonLoader.FindComponentRecursive<DragonEquip>();
-		m_petEquipSlots = new Transform[m_petSlots.Length];
 
-		List<string> pets = m_tournament.GetToUsePets();
 		for (int i = 0; i < m_petSlots.Length; ++i) {
-			if (i < pets.Count) {				
-				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
-				m_petEquipSlots[i] = ap.transform;
-
-				m_petSlots[i].Refresh(pets[i], true);
+			if (i < dragonData.pets.Count && !string.IsNullOrEmpty(dragonData.pets[i])) {
+				// Load pet
+				m_petSlots[i].Refresh(dragonData.pets[i], true);
 				m_petSlots[i].gameObject.SetActive(true);
 
-				m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;				
+				// Put the pet in the proper position depending on dragon
+				AttachPoint ap = dragonEquip.GetAttachPoint(Equipable.AttachPoint.Pet_1 + i);
+				m_petSlots[i].petLoader.transform.position = ap.transform.position;
 			} else {
-				m_petEquipSlots[i] = null;
+				// Hide slot
 				m_petSlots[i].gameObject.SetActive(false);
-				m_petSlots[i].powerIcon.gameObject.SetActive(false);
 			}
 		}
 
+		//-- Powers ---------------------------------------------------//
+		// [AOC] PowerIcon does all the job for us!
+		PowerIcon.InitPowerIconsWithDragonData(ref m_powerIcons, dragonData);
 
 		//-- Tournament Info ------------------------------------------//
 		//GOALS
@@ -228,6 +214,22 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Check downloadable group status for this tournament's dragon.
+	/// </summary>
+	/// <param name="_checkPopups">Open popups if needed?</param>
+	private void CheckDownloadFlow(bool _checkPopups = false) {
+		// Get handler for this tournament's dragon
+		Downloadables.Handle handle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
+
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
+	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -240,6 +242,9 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		m_waitingRewardsData = false;
 
+		// Check OTA for this dragon
+		CheckDownloadFlow(false);   // Don't trigger popups, the menu interstitial popups controller will take care of it
+
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}
@@ -248,31 +253,11 @@ public class TournamentBuildScreen : MonoBehaviour {
 		Messenger.RemoveListener<int, HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_REWARDS_RECEIVED, OnRewardsResponse);
 	}
 
-	public void OnEditPetsToogle() {
-		if (m_mode != Mode.EditPets) {
-			m_petEditRoot.SetActive(true);
-
-			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
-				if (m_petEquipSlots[i] != null) {
-					m_petSlots[i].petLoader.transform.position = m_petEditSlots[i].position;
-				}
-			}
-
-			m_mode = Mode.EditPets;
-		} else {
-			m_petEditRoot.SetActive(false);
-
-			for (int i = 0; i < m_petEquipSlots.Length; ++i) {
-				if (m_petEquipSlots[i] != null) {
-					m_petSlots[i].petLoader.transform.position = m_petEquipSlots[i].position;
-				}
-			}
-
-			m_mode = Mode.Build;
-		}
-	}
-
 	public void OnStartPaying() {
+		// If needed, show assets download popup and don't continue
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+		if(popup != null) return;
+
 		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
 		} 
@@ -335,7 +320,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 					HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, UserProfile.Currency.NONE);
 
 					// Go to play!
-					InstanceManager.menuSceneController.OnPlayButton();
+					InstanceManager.menuSceneController.GoToGame();
 				}
 			}break;
 			case HDLiveDataManager.ComunicationErrorCodes.NET_ERROR: {
@@ -387,12 +372,13 @@ public class TournamentBuildScreen : MonoBehaviour {
 		HDTrackingManager.Instance.Notify_TournamentClickOnEnter(m_definition.m_name, _flow.currency);
 
 		// Go to play!
-		InstanceManager.menuSceneController.OnPlayButton();
+		InstanceManager.menuSceneController.GoToGame();
 	}
 
 	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 		}
 	}
 
@@ -413,6 +399,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 			// Go to tournament rewards screen!
 			TournamentRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.TOURNAMENT_REWARD).ui.GetComponent<TournamentRewardScreen>();
 			scr.StartFlow();
+			PopupManager.Clear(true);
             InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_REWARD, true);
 		} else {
 			// Show error message
@@ -422,7 +409,10 @@ public class TournamentBuildScreen : MonoBehaviour {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PLAY, true);
+
+			// Go back to dragon selection screen
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622
             if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||

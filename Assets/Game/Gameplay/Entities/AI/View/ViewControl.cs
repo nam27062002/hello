@@ -8,11 +8,11 @@ using System.Collections.Generic;
 
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
-	
 
-	private static Material sm_goldenMaterial = null;
-	private static Material sm_goldenFreezeMaterial = null;
-    private static Material sm_goldenInloveMaterial = null;
+
+    public static Material sm_goldenMaterial = null;
+    public static Material sm_goldenFreezeMaterial = null;
+    public static Material sm_goldenInloveMaterial = null;
 	private static ulong sm_id = 0;
 
     public static float FREEZE_TIME = 1.0f;
@@ -64,7 +64,15 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	[SerializeField] private string m_animB = "";
 	[SerializeField] private string m_animC = "";
 
-	[SeparatorAttribute("Exclamation Mark")]
+    
+    [SeparatorAttribute("Freeze Particle")]
+    [SerializeField] private bool m_useFreezeParticle = false;
+    [SerializeField] private float m_freezeParticleScale = 1.0f;
+
+    [SeparatorAttribute("In Love")]
+    [SerializeField] private bool m_useMoveAnimInLove = false;
+
+    [SeparatorAttribute("Exclamation Mark")]
 	[SerializeField] private Transform m_exclamationTransform;
 
 	[SeparatorAttribute("Water")]
@@ -183,6 +191,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 	//
     private float m_freezingLevel = 0;
+    private GameObject m_freezingParticle;
 
     private ParticleData m_stunParticle;
     private GameObject m_stunParticleInstance;
@@ -191,6 +200,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     private ParticleData m_inLoveParticle;
     private GameObject m_inLoveParticleInstance;
     protected bool m_inLove = false;
+
+    
 
 
 	private Transform m_transform;
@@ -251,8 +262,8 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         m_rendererMaterials = new List<Material[]>();
-        
-		m_vertexCount = 0;
+
+        m_vertexCount = 0;
 		m_rendererCount = 0;
 
 		if (m_renderers != null) {
@@ -551,6 +562,13 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 			m_stunParticle.ReturnInstance( m_stunParticleInstance );
 			m_stunParticleInstance = null;
 		}
+        
+        if ( m_freezingParticle && FreezingObjectsRegistry.instance != null)
+        {
+            FreezingObjectsRegistry.instance.ForceReturnInstance(m_freezingParticle);
+            FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
+            m_freezingParticle = null;
+        }
 
         if ( m_inLoveParticleInstance )
         {
@@ -726,7 +744,11 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 					m_animator.SetFloat(GameConstants.Animator.DIR_Y, m_currentBlendY);
 				}
 
-				m_animator.SetBool(GameConstants.Animator.SWIM, m_swim);
+                if (m_inLove && m_useMoveAnimInLove) {
+                    m_moving = true;
+                }
+
+                m_animator.SetBool(GameConstants.Animator.SWIM, m_swim);
 				m_animator.SetBool(GameConstants.Animator.FLY_DOWN, m_inSpace);
 				if (!m_swim){
 					m_animator.SetBool(GameConstants.Animator.MOVE, m_moving);
@@ -802,7 +824,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 	public void SpawnEatenParticlesAt(Transform _transform) {
         if (FeatureSettingsManager.IsDebugEnabled) {
             // If the debug settings for particles eaten is disabled then they are not spawned
-            if (!Prefs.GetBoolPlayer(DebugSettings.INGAME_PARTICLES_EATEN, true))
+            if (!DebugSettings.ingameParticlesEaten)
                 return;
         }        
 
@@ -1249,10 +1271,46 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
             m_freezingLevel = freezeLevel;
             RefreshMaterialType();
-        }		
-	}
+            if ( m_freezingLevel > 0 )
+            {
+                AudioController.Play("freeze", m_transform.position);
+            }
 
-	public void SetStunned( bool stunned ){
+            // Check Particle
+            if (m_useFreezeParticle)
+            {
+                if ( m_freezingLevel > 0 )
+                {
+                    if (m_freezingParticle == null)
+                    { 
+                        m_freezingParticle = FreezingObjectsRegistry.instance.freezeParticle.Spawn(m_transform);
+                    }
+                    if ( m_freezingParticle )
+                    {
+                        m_freezingParticle.transform.position = m_entity.circleArea.center;
+                        FreezingObjectsRegistry.instance.ScaleUpParticle( m_freezingParticle, m_freezeParticleScale );
+                    }
+                }
+                else
+                {
+                    if (m_freezingParticle != null)
+                    {
+                        FreezingObjectsRegistry.instance.ScaleDownParticle( m_freezingParticle, FreezeScaleDownCallback );
+                    }   
+                }
+            }
+        }	
+        m_freezingLevel = freezeLevel;	
+	}
+    
+    public void FreezeScaleDownCallback()
+    {
+        FreezingObjectsRegistry.instance.freezeParticle.ReturnInstance( m_freezingParticle );
+        m_freezingParticle = null;
+    }
+    
+
+    public void SetStunned( bool stunned ){
 		if ( stunned ){
 			if (m_isAnimatorAvailable)
 				m_animator.enabled = false;
@@ -1279,19 +1337,20 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         {
             m_inLove = inlove;
             RefreshMaterialType();
-            if ( inlove ){
-                if (m_inLoveParticleInstance == null)
-                {
+            if ( inlove ) {
+                if (m_inLoveParticleInstance == null) {
                     Vector3 pos = m_transform.position;
                     Quaternion rot = m_transform.rotation;
                     m_inLoveParticleInstance = m_inLoveParticle.Spawn(pos + m_inLoveParticle.offset, rot);
                 }
-            }else{
-                if ( m_inLoveParticleInstance )
+                m_moving = m_useMoveAnimInLove;
+            } else {
+                if (m_inLoveParticleInstance)
                 {
-                    m_inLoveParticle.ReturnInstance( m_inLoveParticleInstance );
+                    m_inLoveParticle.ReturnInstance(m_inLoveParticleInstance);
                     m_inLoveParticleInstance = null;
                 }
+                m_moving = false;
             }
         }
     }

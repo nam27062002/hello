@@ -106,6 +106,7 @@ public class HDSeasonData {
     //---[Initialization]-------------------------------------------------------
 
     public void RequestData(bool _fetchLeaderboard) {
+        Clean();
         __RequestFullData(_fetchLeaderboard);
 
         liveDataState = HDLiveData.State.WAITING_RESPONSE;
@@ -113,13 +114,40 @@ public class HDSeasonData {
     }
 
     public void LoadStatus(SimpleJSON.JSONNode _data) {
-        int status = _data["status"].AsInt;
+        string status = _data["status"];
         switch (status) {
-            case 0: state = State.NOT_JOINED; break;
-            case 1: state = State.JOINED; break;
-            case 2: state = State.PENDING_REWARDS; break;
-            case 11: state = State.WAITING_NEW_SEASON; break;
+            case "0":
+            case "NOT_JOINED":
+                state = State.NOT_JOINED; 
+                break;
+
+            case "1":
+            case "JOINED":
+                state = State.JOINED; 
+                break;
+
+            case "WAITING_RESULTS":
+                state = State.WAITING_RESULTS;
+                break;
+
+            case "2":
+            case "PENDING_REWARDS":
+                if (state < State.REWARDS_COLLECTED) {
+                    state = State.PENDING_REWARDS;
+                }
+                break;
+
+            case "REWARDS_COLLECTED":
+                state = State.REWARDS_COLLECTED;
+                break;
+
+            case "11":
+            case "WAITING_NEW_SEASON":
+                state = State.WAITING_NEW_SEASON; 
+                break;
         }
+
+        liveDataState = HDLiveData.State.PARTIAL;
     }
 
     public void UpdateState() {
@@ -185,6 +213,7 @@ public class HDSeasonData {
     }
 
     private void LoadData(SimpleJSON.JSONNode _data) {
+        LoadStatus(_data);
         LoadDates(_data);
 
         promoteRange = new RangeInt();
@@ -199,7 +228,12 @@ public class HDSeasonData {
             demoteRange.max = _data["demoteRange"]["upper"].AsInt;
         }
 
+        currentLeague = HDLiveDataManager.league.GetLeagueData(_data["league"]["order"].AsInt);
         currentLeague.LoadData(_data["league"]);
+
+        if (_data.ContainsKey("nextLeague")) {
+            nextLeague = HDLiveDataManager.league.GetLeagueData(_data["nextLeague"]["order"].AsInt);
+        }
 
         if (_data.ContainsKey("leaderboard")) {
             currentLeague.leaderboard.LoadData(_data["leaderboard"]);
@@ -241,7 +275,9 @@ public class HDSeasonData {
             scoreDataState = HDLiveData.State.WAITING_RESPONSE;
         } else {
             if (_fetchLeaderboard) {
-                currentLeague.leaderboard.RequestData();
+                if (currentLeague != null) {
+                    currentLeague.leaderboard.RequestData();
+                }
             }
             scoreDataState = HDLiveData.State.VALID;
         }
@@ -258,8 +294,10 @@ public class HDSeasonData {
             if (state < State.JOINED) {
                 state = State.JOINED;
             }
-            
-            currentLeague.leaderboard.LoadData(responseJson["leaderboard"]);
+
+            if (currentLeague != null) {
+                currentLeague.leaderboard.LoadData(responseJson["leaderboard"]);
+            }
 
             scoreDataState = HDLiveData.State.VALID;
         } else {
@@ -283,30 +321,56 @@ public class HDSeasonData {
     }
 
     private void OnRequestMyRewards(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
-        HDLiveDataManager.ResponseLog("[Leagues] Season Rewards", _error, _response);
+        int errorCode = -1;
+        String responseStr = "";
+        try {
+            errorCode = 0;
+            HDLiveDataManager.ResponseLog("[Leagues] Season Rewards", _error, _response);
 
-        HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
-        SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
-
-        if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
-            // parse Json
-            m_rewardIndex = responseJson["index"].AsInt;
-
-            if (responseJson.ContainsKey("nextLeague")) {
-                SetNextLeague(responseJson["nextLeague"]["sku"]);
-            } else {
-                FindNextLeague();
+            errorCode = 1;
+            HDLiveDataManager.ComunicationErrorCodes outErr = HDLiveDataManager.ComunicationErrorCodes.NO_ERROR;
+            errorCode = 2;
+            SimpleJSON.JSONNode responseJson = HDLiveDataManager.ResponseErrorCheck(_error, _response, out outErr);
+            if (responseJson != null) {
+                responseStr = responseJson.ToString();
             }
 
-            HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
+            errorCode = 3;
+            if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
+                errorCode = 4;
+                // parse Json
+                m_rewardIndex = responseJson["index"].AsInt;
 
-            rewardDataState = HDLiveData.State.VALID;
-        } else {
-            m_rewardIndex = -1;
-            rewardDataState = HDLiveData.State.ERROR;
+                errorCode = 5;
+                if (responseJson.ContainsKey("rank")) {
+                    //TODO: maybe the leaderboard is null?
+                    errorCode = 6;
+                    currentLeague.leaderboard.playerRank = responseJson["rank"].AsInt;
+                }
+
+                errorCode = 7;
+                if (responseJson.ContainsKey("nextLeague")) {
+                    errorCode = 8;
+                    SetNextLeague(responseJson["nextLeague"]["sku"]);
+                } else {
+                    errorCode = 9;
+                    FindNextLeague();
+                }
+                errorCode = 10;
+                HDTrackingManager.Instance.Notify_LabResult(currentLeague.leaderboard.playerRank, currentLeague.sku, nextLeague.sku);
+
+                errorCode = 11;
+                rewardDataState = HDLiveData.State.VALID;
+            } else {
+                m_rewardIndex = -1;
+                rewardDataState = HDLiveData.State.ERROR;
+            }
+
+            errorCode = 12;
+            rewardDataError = outErr;
+        } catch(Exception e) {
+            throw new System.Exception("HDseasonData.OnRequestMyRewards: " + errorCode + "\n" + responseStr + "\n" + e);
         }
-
-        rewardDataError = outErr;
     }
 
     private void SetNextLeague(string _sku) {
@@ -328,20 +392,17 @@ public class HDSeasonData {
         int leaguesCount = leagues.leaguesCount;
         int rank = currentLeague.leaderboard.playerRank;
 
+        // default case
+        nextLeague = currentLeague;
+
         if (promoteRange.min <= rank && rank < promoteRange.max) {
             if (currentLeague.order < leaguesCount - 1) {
                 nextLeague = leagues.GetLeagueData(currentLeague.order + 1);
-            } else {
-                nextLeague = currentLeague;
             }
         } else if (demoteRange.min <= rank && rank < demoteRange.max) {
             if (currentLeague.order > 0) {
                 nextLeague = leagues.GetLeagueData(currentLeague.order - 1);
-            } else {
-                nextLeague = currentLeague;
             }
-        } else {
-            nextLeague = currentLeague;
         }
     }
 
@@ -364,6 +425,8 @@ public class HDSeasonData {
 
         if (outErr == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
             state = State.WAITING_NEW_SEASON;
+            HDLiveDataManager.instance.SaveEventsToCache();
+
             finalizeDataState = HDLiveData.State.VALID;
         } else {
             finalizeDataState = HDLiveData.State.ERROR;
@@ -416,8 +479,8 @@ public class HDSeasonData {
 	}
 
 	public bool IsRunning() {
-		return state == State.JOINED || state == State.NOT_JOINED;
-	}
+        return (state >= State.NOT_JOINED && state < State.PENDING_REWARDS);
+    }
 
 
 

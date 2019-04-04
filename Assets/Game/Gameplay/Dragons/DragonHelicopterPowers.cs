@@ -67,22 +67,18 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     int layerMask;
     bool destroys = false;
     int destroyFrame = 0;
+    ToggleParam m_toggleParam = new ToggleParam();
     
     private void Awake()
     {
-        if (!string.IsNullOrEmpty(m_machineGunParticleName)){
-            m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
-            m_machinegunParticle.gameObject.SetActive( true );
-        }
         destroys = FeatureSettingsManager.instance.IsHelicopterDestroying;
         if ( destroys )
         {
             results = new RaycastHit[3];
             layerMask = 1 << LayerMask.NameToLayer("Triggers") | 1 << LayerMask.NameToLayer("Obstacle");
         }
-        
-        
     }
+
     // Use this for initialization
     void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
@@ -102,8 +98,12 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         float scale = InstanceManager.player.data.scale;
         m_missilesRange = m_missilesRange * scale;
         m_machinegunDistance = m_machinegunDistance * scale;
-        
-        
+
+        if (!string.IsNullOrEmpty(m_machineGunParticleName)) {
+            m_machinegunParticle = ParticleManager.InitLeveledParticle(m_machineGunParticleName, m_machineGunParticleTransform);
+            m_machinegunParticle.gameObject.SetActive(true);
+        }
+
         // Check if we need to spawn the drone!
         if ( m_powerLevel >= 3 )
         {
@@ -161,6 +161,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, true);
                 if ( m_machinegunParticle != null)
                     m_machinegunParticle.Play();
+                    
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
             arcOrigin.z = 0;
@@ -275,6 +278,8 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, false);
                 if ( m_machinegunParticle != null )
                     m_machinegunParticle.Stop();
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             
             if ( m_hatchOpen )
@@ -339,9 +344,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
 	void CreatePool() {
         
         if ( m_powerLevel >= 1 && !string.IsNullOrEmpty(m_missilesProjectileName))
-		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, "Game/Projectiles/", 2, true);
+		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, 2, true);
         if ( m_powerLevel >= 2 && !string.IsNullOrEmpty(m_bombProjectileName))
-            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, "Game/Projectiles/", m_burstCount, true);
+            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, m_burstCount, true);
 	}
     
     public void OnLaunchMissile1()

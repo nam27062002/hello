@@ -19,10 +19,12 @@ using System.Collections.Generic;
 /// </summary>
 [Serializable]
 public class HDDiscountEventManager : HDPassiveEventManager {
+    new public const string TYPE_CODE = "dragonDiscount";
+    new public const int NUMERIC_TYPE_CODE = 3;
 
     public HDDiscountEventManager() : base() {
-        m_type = "dragonDiscount";
-        m_numericType = 3;
+        m_type = TYPE_CODE;
+        m_numericType = NUMERIC_TYPE_CODE;
         Messenger.AddListener<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, CheckEvent);
     }
 
@@ -34,8 +36,11 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     }
 
     public override void ParseDefinition(SimpleJSON.JSONNode _data) {
-         base.ParseDefinition(_data);
+        base.ParseDefinition(_data);
+    }
 
+    public override void Activate() {
+        base.Activate();
         CheckEvent(null);
     }
 
@@ -43,13 +48,14 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     /// Mark the event as finished.
     /// </summary>
     public override void FinishEvent() {
-        // Tell server
-        if (HDLiveDataManager.TEST_CALLS) {
-            ApplicationManager.instance.StartCoroutine(DelayedCall(m_type + "_finish.json", FinishEventResponse));
-        } else {
-            GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);
+        if (m_active) {
+            if (HDLiveDataManager.TEST_CALLS) {
+                ApplicationManager.instance.StartCoroutine(DelayedCall(m_type + "_finish.json", FinishEventResponse));
+            } else {
+                GameServerManager.SharedInstance.HDEvents_FinishMyEvent(data.m_eventId, FinishEventResponse);
+            }
+            base.FinishEvent();
         }
-        base.FinishEvent();
 	}
 
     protected override void FinishEventResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response) {
@@ -62,11 +68,11 @@ public class HDDiscountEventManager : HDPassiveEventManager {
     private void CheckEvent(IDragonData _data) {
         if (EventExists() && m_data.m_state <= HDLiveEventData.State.REWARD_AVAILABLE) {
             ModEconomyDragonPrice discount = m_passiveEventDefinition.mainMod as ModEconomyDragonPrice;
-            IDragonData dragonData = DragonManager.GetDragonData(discount.dragonSku);
-            if (dragonData.isOwned) {
-                FinishEvent(); // finish event and deactivate mods.
-            } else {
-                Activate(); // start event and activate mods.
+            if (discount != null) {
+                IDragonData dragonData = DragonManager.GetDragonData(discount.dragonSku);
+                if (dragonData.isOwned) {
+                    FinishEvent(); // finish event and deactivate mods.
+                }
             }
         }
     }

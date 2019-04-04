@@ -205,6 +205,7 @@ public class TrackerBase {
             case "kill_in_love":    return new TrackerKillInLove(_params);
             case "kill_stunned":    return new TrackerKillStunned(_params);
             case "kill_frozen":     return new TrackerKillFrozen(_params);
+            case "kill_equipped":   return new TrackerKillEquipped(_params);
 			case "burn":			return new TrackerBurn(_params);
 			case "distance":		return new TrackerDistance();
 			case "dive":			return new TrackerDiveDistance();
@@ -217,7 +218,6 @@ public class TrackerBase {
 			case "daily_chest":		return new TrackerDailyChests();
 			case "kill_chain":		return new TrackerKillChain(_params);
 			case "critical_time":	return new TrackerCriticalTime();
-			case "eat_dizzy":		return new TrackerEatDizzy(_params);
 			// new missions TODO
 			case "eat_gold":        return new TrackerEatGolden(_params);
 			case "eat_suicidal":    return new TrackerEatWhileActionActive(TrackerEatWhileActionActive.Actions.FreeFall, _params);

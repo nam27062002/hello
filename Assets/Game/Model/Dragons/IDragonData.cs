@@ -112,7 +112,7 @@ public abstract class IDragonData : IUISelectorItem {
 	// Disguise
 	// [AOC] We need 2 of these: the temporal disguise (i.e. for preview only) and the actual equipped disguise (the one that will be persisted)
 	[SerializeField] protected string m_disguise;
-	public string diguise {
+	public string disguise {
 		get { return m_disguise; }
 		set { m_disguise = value; }
 	}
@@ -184,10 +184,6 @@ public abstract class IDragonData : IUISelectorItem {
     public abstract float energyDrain{ get; }
     public abstract float energyRefillRate{ get; }
     
-        // Alcohol
-    public abstract float maxAlcohol{ get; }
-    public abstract float alcoholDrain{ get; }
-    
         // Misc
     public abstract float statsBarRatio{ get; }
     public virtual string tidBoostAction { get{ return m_def.GetAsString("tidBoostAction", "TID_INGAME_HUD_BOOST"); } }
@@ -237,8 +233,7 @@ public abstract class IDragonData : IUISelectorItem {
 		m_def = _def;
 		m_sku = m_def.sku;
 
-        m_priceSC = def.GetAsLong("unlockPriceCoins");
-        m_pricePC = def.GetAsLong("unlockPricePC");
+        RefreshPrice();
 
 		string shadowFromDragonsData = m_def.GetAsString("shadowFromDragon");
 		if(!string.IsNullOrEmpty(shadowFromDragonsData)) {
@@ -287,9 +282,10 @@ public abstract class IDragonData : IUISelectorItem {
 
 	/// <summary>
 	/// Unlock this dragon (will be OWNED from now on). Doesn't do any currency transaction.
-	/// Triggers the DRAGON_ACQUIRED event.
+	/// Optionally triggers the DRAGON_ACQUIRED event.
 	/// </summary>
-	public void Acquire() {
+	/// <param name="_notify">Whether to dispatch DRAGON_ACQUIRED message or not.</param>
+	public void Acquire(bool _notify = true) {
 		// Skip if already owned
 		if(m_owned) return;
 
@@ -299,7 +295,9 @@ public abstract class IDragonData : IUISelectorItem {
 		m_revealed = true;
 
 		// Dispatch global event
-		Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
+		if(_notify) {
+			Messenger.Broadcast<IDragonData>(MessengerEvents.DRAGON_ACQUIRED, this);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -334,6 +332,14 @@ public abstract class IDragonData : IUISelectorItem {
 		}
 		return 0;
 	}
+
+    /// <summary>
+    /// Refreshs the original price. Sets the original price from the definition
+    /// </summary>
+    public void RefreshPrice(){
+        m_priceSC = m_def.GetAsLong("unlockPriceCoins");
+        m_pricePC = m_def.GetAsLong("unlockPricePC");
+    }
 
 	/// <summary>
 	/// Get the price once the modifiers have been applied.
@@ -508,23 +514,54 @@ public abstract class IDragonData : IUISelectorItem {
 	}
 
     public static IDragonData CreateFromBuild(HDLiveData.DragonBuild _build) {
+		// Get definition
         DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _build.dragon);
+
+		// Create new dragon data
         IDragonData newData = CreateFromDef(def);
 
-        if (newData is DragonDataClassic) {
-            (newData as DragonDataClassic).progression.SetToMaxLevel();
+		// Initialize dragon data with info from the build object
+		// Stuff depending on dragon type
+        if(newData is DragonDataClassic) {
+			// Classic dragons
+			DragonDataClassic classicData = newData as DragonDataClassic;
+
+			// Level
+			// [AOC] For now, level field is not sent for classic dragons, so put it to the max
+			//classicData.progression.SetLevel(_build.level);
+            classicData.progression.SetToMaxLevel();
+
+			// Skin
+			classicData.disguise = _build.skin;
+			classicData.persistentDisguise = _build.skin;
         } else {
-            DragonDataSpecial dataSpecial = newData as DragonDataSpecial;
+			// Special dragons
+            DragonDataSpecial specialData = newData as DragonDataSpecial;
 
-            dataSpecial.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
-            dataSpecial.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
-            dataSpecial.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
+			// Stats
+            specialData.GetStat(DragonDataSpecial.Stat.HEALTH).level = _build.health;
+            specialData.GetStat(DragonDataSpecial.Stat.SPEED).level = _build.speed;
+            specialData.GetStat(DragonDataSpecial.Stat.ENERGY).level = _build.energy;
 
-            dataSpecial.RefreshPowerLevel();
-            dataSpecial.RefreshTier();
+			// Powers (depends on stat upgrades)
+			specialData.RefreshPowerLevel();
+
+			// Tier (depends on stat upgrades)
+			specialData.RefreshTier();
+
+			// Skin (depends on stat upgrades)
+            specialData.RefreshDisguise();
         }
 
-        return newData;
+		// Shared data
+		// Pets - At this point the DragonData pets list has already been resized to the number of slots for the tier
+		for(int i = 0; i < _build.pets.Count; ++i) {
+			if(i < newData.pets.Count) {
+				newData.pets[i] = _build.pets[i];
+			}
+		}
+
+		return newData;
     }
 
     /// <summary>

@@ -96,7 +96,6 @@ public enum MessengerEvents {
 	SLOW_MOTION_TOGGLED,		// params: bool _activated
 	// BOOST_TOGGLED,				// params: bool _activated
 	BOOST_SPACE,					// no params
-	DRUNK_TOGGLED,				// params: bool _isDrunk
 	BIGGER_DRAGON_NEEDED,		// params: DragonTier _requiredTierSku (use COUNT for generic message), string _entitySku
 	UNDERWATER_TOGGLED,			// params: bool _activated
     INTOSPACE_TOGGLED,          // params: bool _activated
@@ -109,16 +108,16 @@ public enum MessengerEvents {
 	MISSION_ZONE,   			// params: bool _inside, ZoneTrigger _zone
 
     // Entity events
-    ENTITY_EATEN,				// params: Transform _entity, Reward _reward
-	ENTITY_BURNED,				// params: Transform _entity, Reward _reward
-	ENTITY_DESTROYED,			// params: Transform _entity, Reward _reward
-	BLOCKER_DESTROYED,			// no params
-	FLOCK_EATEN,				// params: Transform _entity, Reward _reward
-	STAR_COMBO,
-	ENTITY_ESCAPED,				// params: Transform _entity
+    ENTITY_EATEN,				// params: IEntity _entity, Reward _reward
+	ENTITY_BURNED,              // params: IEntity _entity, Reward _reward
+    ENTITY_DESTROYED,           // params: IEntity _entity, Reward _reward
+    BLOCKER_DESTROYED,			// no params
+	FLOCK_EATEN,                // params: IEntity _entity, Reward _reward
+    STAR_COMBO,
+	ENTITY_ESCAPED,             // params: IEntity _entity
 
-	// Player events
-	PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
+    // Player events
+    PLAYER_DAMAGE_RECEIVED,		// params: float _damage, DamageType _type, Transform _source
 	PLAYER_LOST_SHIELD,			// params: DamageType _type, Transform _originTransform
 	PLAYER_HEALTH_MODIFIER_CHANGED,	// params: DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier
 	PLAYER_STATE_CHANGED,		// params: DragonPlayer.EState _oldState, DragonPlayer.EState _newState

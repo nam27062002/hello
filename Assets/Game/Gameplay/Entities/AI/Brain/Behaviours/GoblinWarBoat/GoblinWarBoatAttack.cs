@@ -97,7 +97,7 @@ namespace AI {
 
 
 			void CreatePool() {
-				m_poolHandler = PoolManager.CreatePool(m_data.projectileName, "Game/Projectiles/", 2, true);
+				m_poolHandler = PoolManager.CreatePool(m_data.projectileName, 2, true);
 			}
 
 			protected override void OnEnter(State _oldState, object[] _param) {

@@ -144,12 +144,29 @@ public abstract class HDLiveEventManager : HDLiveDataController {
         return ToJson();
     }
 
+    public override bool IsFinishPending() {
+        bool isFinishPending = m_isFinishPending;
+
+        if (isFinishPending
+        &&  Application.internetReachability != NetworkReachability.NotReachable
+        &&  GameSessionManager.SharedInstance.IsLogged()) {
+            FinishEvent();
+            HDLiveDataManager.instance.ForceRequestMyEventType(m_numericType);
+            m_isFinishPending = false;
+        }
+
+        return isFinishPending;
+    }
+
     public override void LoadDataFromCache() {
         CleanData();
         if (CacheServerManager.SharedInstance.HasKey(m_type)) {
             SimpleJSON.JSONNode json = SimpleJSON.JSONNode.Parse(CacheServerManager.SharedInstance.GetVariable(m_type));
             OnNewStateInfo(json);
             UpdateStateFromTimers();
+            if (data.m_state == HDLiveEventData.State.REWARD_COLLECTED) {
+                m_isFinishPending = true;
+            }
         }
         m_dataLoadedFromCache = true;
     }
@@ -309,7 +326,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
 	public void RequestRewards()
     {
-		if (!m_requestingRewards)
+		if (!m_requestingRewards && m_data.m_state < HDLiveEventData.State.REWARD_COLLECTED)
 		{
 			m_requestingRewards = true;
 			if ( HDLiveDataManager.TEST_CALLS )
@@ -368,8 +385,10 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		{
 			if ( responseJson.ContainsKey("code") )
 			{
-				if (responseJson["code"].AsInt == m_data.m_eventId )
-					data.m_state = HDLiveEventData.State.FINALIZED;		
+                if (responseJson["code"].AsInt == m_data.m_eventId) {
+                    data.m_state = HDLiveEventData.State.FINALIZED;
+                    HDLiveDataManager.instance.SaveEventsToCache();
+                }
 			}
 		}
 		Messenger.Broadcast<int,HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.LIVE_EVENT_FINISHED, data.m_eventId, outErr);
@@ -439,7 +458,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 	    		{
 		    		List<Modifier> mods = data.definition.m_otherMods;
 					for (int i = 0; i < mods.Count; i++) {
-		    			mods[i].Apply();
+                        if (mods[i] != null) {
+                            mods[i].Apply();
+                        }
 					}
 				}
 			}
@@ -453,7 +474,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             m_active = false;
     		List<Modifier> mods = data.definition.m_otherMods;
 			for (int i = 0; i < mods.Count; i++) {
-    			mods[i].Remove();
+                if (mods[i] != null) {
+                    mods[i].Remove();
+                }
 			}
     	}
     }

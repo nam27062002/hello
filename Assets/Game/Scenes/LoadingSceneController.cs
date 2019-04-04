@@ -203,6 +203,13 @@ public class LoadingSceneController : SceneController {
 	private string m_buildVersion;
     private bool m_waitingTermsDone = false;
 
+	/// <summary>
+	/// This variable is used to implement timeout for states. When the flow enters in a state this variable can be set to the timestamp at when the state should expire.
+	/// If this variables stays set to 0 then state timeout is disabled. This is typically used to prevent the flow from getting stuck in a state, for example, because a 
+	/// server request doesn't receive a response. 
+	/// </summary>
+	private float m_stateTimeoutAt = 0;
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -212,36 +219,41 @@ public class LoadingSceneController : SceneController {
     override protected void Awake() {        		
         // Call parent
 		base.Awake();
+    }    
+    
+    private void CustomAwake()
+    {
+        // Initialize server cache
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if ( settingsInstance )
+        {
+            m_buildVersion = settingsInstance.GetClientBuildVersion();
+        }
+        else
+        {
+            m_buildVersion = Application.version;
+        }
+        CacheServerManager.SharedInstance.Init(m_buildVersion);
 
-		// Initialize server cache
-		CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
-		if ( settingsInstance )
-		{
-			m_buildVersion = settingsInstance.GetClientBuildVersion();
-		}
-		else
-		{
-			m_buildVersion = Application.version;
-		}
-		CacheServerManager.SharedInstance.Init(m_buildVersion);
+        // Initialize content
+        ContentManager.InitContent();
 
-		// Initialize content
-		ContentManager.InitContent();
-
-		// Used for android permissions
-		PopupManager.CreateInstance(true);
+        // Used for android permissions
+        PopupManager.CreateInstance(true);
         
-		// Initialize localization
+        // Initialize localization
         SetSavedLanguage();
 
-		// Always start in DEFAULT mode
-		SceneController.SetMode(Mode.DEFAULT);
-    }    
+        // Always start in DEFAULT mode
+        SceneController.SetMode(Mode.DEFAULT);
+    }
 
 	/// <summary>
 	/// First update.
 	/// </summary>
-	void Start() {                        
+	void Start() { 
+    
+        CustomAwake();                       
         // Load menu scene
         //GameFlow.GoToMenu();
         // [AOC] TEMP!! Simulate loading time with a timer for now
@@ -360,7 +372,7 @@ public class LoadingSceneController : SceneController {
 		LocalizationManager.SharedInstance.SetLanguage(strLanguageSku);
 
 		// [AOC] If the setting is enabled, replace missing TIDs for english ones
-		if(!Prefs.GetBoolPlayer(DebugSettings.SHOW_MISSING_TIDS, false)) {
+		if(!DebugSettings.showMissingTids) {
 			LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
 		}
     }    
@@ -375,6 +387,8 @@ public class LoadingSceneController : SceneController {
             SetState(State.SHOWING_COUNTRY_BLACKLISTED_POPUP);
         } 
 
+		bool stateTimerExpired = (m_stateTimeoutAt > 0 && Time.realtimeSinceStartup >= m_stateTimeoutAt);
+					
     	switch( m_state )
     	{
     		case State.NONE:
@@ -414,8 +428,16 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
             {
-                if (m_gdprListener.m_gdprAnswered)
-                {
+				if (stateTimerExpired && !m_gdprListener.m_gdprAnswered)
+				{
+					if (FeatureSettingsManager.IsDebugEnabled)
+						ControlPanel.Log("WAITING_COUNTRY_CODE has expired", ControlPanel.ELogChannel.Loading);
+					
+					m_gdprListener.onGDPRInfoResponseError(404);
+				}
+
+				if (m_gdprListener.m_gdprAnswered)
+                {					
                     string country = m_gdprListener.m_userCountry;
                         // Recieved values are not good
                     bool isValid = GDPRListener.IsValidCountry(country);                    
@@ -534,6 +556,8 @@ public class LoadingSceneController : SceneController {
 			} break;
 		}
 
+		m_stateTimeoutAt = 0;
+
 		// Switch state
         m_state = state;
 
@@ -550,7 +574,11 @@ public class LoadingSceneController : SceneController {
             }break;
             case State.WAITING_COUNTRY_CODE:
                 {
-                    GDPRManager.SharedInstance.Initialise(true);
+					// A timeout is set just in case, in order to prevent the game from getting stuck if the request above is not responsed because of an error code
+					// that Calety doens't delegate to the listener
+					m_stateTimeoutAt = Time.realtimeSinceStartup + 15f;
+                    
+					GDPRManager.SharedInstance.Initialise(true);
                     GDPRManager.SharedInstance.AddListener( m_gdprListener );
                     GDPRManager.SharedInstance.RequestCountryAndAge();
                 }break;
@@ -626,7 +654,7 @@ public class LoadingSceneController : SceneController {
 
                 // Tech
                 GameSceneManager.CreateInstance(true);
-                HDLiveDataManager.CreateInstance(true);
+                HDLiveDataManager.CreateInstance(false);
                 FlowManager.CreateInstance(true);
                 PoolManager.CreateInstance(true);
                 ActionPointManager.CreateInstance(true);
@@ -658,7 +686,8 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.CreateInstance();
                 TransactionManager.instance.Initialise();
 
-                HDCustomizerManager.instance.Initialise();                                   
+                HDCustomizerManager.instance.Initialise();   
+                HDAddressablesManager.Instance.Initialise();                                
             } break;
 
            case State.WAITING_SAVE_FACADE:

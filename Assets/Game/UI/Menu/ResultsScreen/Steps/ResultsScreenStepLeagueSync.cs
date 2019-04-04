@@ -8,7 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
-using UnityEngine.UI;
+
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -32,6 +32,8 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 	[SerializeField] private Localizer m_messageText = null;
 
     private HDSeasonData m_season;
+    private bool m_updateEnabled;
+
 
     // Public
     private bool m_hasBeenDismissed = false;
@@ -65,14 +67,16 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 
 		// Reset flags
 		m_hasBeenDismissed = false;
-	}
+
+        m_updateEnabled = false;
+    }
 
 	/// <summary>
 	/// Check whether this step must be displayed or not based on the run results.
 	/// </summary>
 	/// <returns><c>true</c> if the step must be displayed, <c>false</c> otherwise.</returns>
 	override public bool MustBeDisplayed() {		
-		return true;
+		return HDLiveDataManager.league.season.IsRunning();
 	}
 
 	/// <summary>
@@ -98,13 +102,15 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
 
         m_season.SetScore(m_controller.score, true);
 
-        InvokeRepeating("UpdatePeriodic", 0f, 0.5f);
+        m_updateEnabled = true;
     }
 
-    void UpdatePeriodic() { 
-        if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
-            OnLeagueScoreSent(m_season.scoreDataError);
-            CancelInvoke();
+    void Update() {
+        if (m_updateEnabled) {
+            if (m_season.scoreDataState > HDLiveData.State.WAITING_RESPONSE) {
+                OnLeagueScoreSent(m_season.scoreDataError);
+                m_updateEnabled = false;
+            }
         }
     }
 
@@ -163,7 +169,7 @@ public class ResultsScreenStepLeagueSync : ResultsScreenStep {
                 case HDLiveDataManager.ComunicationErrorCodes.OTHER_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.LDATA_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_NOT_FOUND: {
-                    HDLiveDataManager.instance.RequestMyLiveData(true);
+                    HDLiveDataManager.instance.RequestMyLiveData();
                     OnDismissButton();
                 } break;
 

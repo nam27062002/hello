@@ -25,7 +25,7 @@ public class DragonDataSpecial : IDragonData {
 	public const string TYPE_CODE = "special";
 
 	// [AOC] TODO!! Move to content
-	public const DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_2;
+	public static readonly DragonTier MIN_TIER_TO_UNLOCK = DragonTier.TIER_1;
 
 	public enum Stat {
 		HEALTH = 0,
@@ -210,15 +210,7 @@ public class DragonDataSpecial : IDragonData {
     public override float energyRefillRate{ 
         get { return m_specialTierDef.GetAsFloat("energyRefillRate"); } 
     }
-    
-    // Alcohol
-    public override float maxAlcohol{ 
-        get { return m_specialTierDef.GetAsFloat("maxAlcohol"); } 
-    }
-    public override float alcoholDrain{ 
-        get { return m_specialTierDef.GetAsFloat("alcoholDrain", 1); } 
-    }
-    
+        
     // Misc
     public override float statsBarRatio{ 
         get { return m_specialTierDef.GetAsFloat("statsBarRatio"); } 
@@ -448,7 +440,8 @@ public class DragonDataSpecial : IDragonData {
 		// Refresh power and tier
 		RefreshPowerLevel();
 		RefreshTier();
-
+        RefreshDisguise();
+        
 		// Notify listeners
 		Messenger.Broadcast<DragonDataSpecial, DragonDataSpecial.Stat>(MessengerEvents.SPECIAL_DRAGON_STAT_UPGRADED, this, _stat);
 
@@ -524,7 +517,6 @@ public class DragonDataSpecial : IDragonData {
         int level = GetLevel();
 
 		// Check Special Dragon power definitions
-		
         int max = m_specialPowerDefsByOrder.Count;
         for (int i = 0; i < max; i++)
         {
@@ -556,6 +548,38 @@ public class DragonDataSpecial : IDragonData {
 			SetTier(biggestTierDefNode);
 		}
 	}
+    
+    public void RefreshDisguise(){
+        // Get dragon's current level
+        int level = GetLevel();
+
+        // Get disguises
+        List<DefinitionNode> skinDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", m_sku);
+
+        // Seach biggest number under level
+        DefinitionNode definition = null;
+        int unlockLevel = -1;
+        for (int i = 0; i < skinDefs.Count; i++)
+        {
+            int testLevel = skinDefs[i].GetAsInt("unlockLevel");
+            if ( testLevel <= level && unlockLevel < testLevel)
+            {
+                testLevel = unlockLevel;
+                definition = skinDefs[i];
+            }
+        }
+
+        if ( definition != null )
+        {
+            m_disguise = m_persistentDisguise = definition.sku;
+        }
+        else
+        {
+            m_disguise = m_persistentDisguise = "";
+        }   
+
+    }
+    
 
 	/// <summary>
 	/// Get this special dragon's accumulated level.
@@ -636,6 +660,9 @@ public class DragonDataSpecial : IDragonData {
 
 		// Tier - Based on level, so just do a refresh
 		RefreshTier();
+
+        // Disguise - Based on level, so just do a refresh
+        RefreshDisguise();
 
 		// By changing tier, pet slots might change, so reload pets (the base already did it)
 		LoadPets(_data);

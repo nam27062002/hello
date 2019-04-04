@@ -57,37 +57,47 @@ public class LeaguesPanelError : LeaguesScreenPanel {
 
         switch (_group) {
             case ErrorGroup.NETWORK: {
-				m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");	// Sorry! You are offline!
-				m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");	// You must be online to see and participate in the Legendary Leagues!
-            } break;
+                    m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");  // Sorry! You are offline!
+                    m_messageText.Localize("TID_LEAGUES_OFFLINE_MESSAGE");  // You must be online to see and participate in the Legendary Leagues!
+                }
+                break;
 
             case ErrorGroup.SEASON: {
-                m_errorCode = m_season.liveDataError;
-				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
-				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
-            } break;
+                    m_errorCode = m_season.liveDataError;
+                    m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+                    m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+                }
+                break;
 
             case ErrorGroup.REWARDS: {
-				m_errorCode = m_season.rewardDataError;
-				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
-				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
-			} break;
+                    m_errorCode = m_season.rewardDataError;
+                    m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+                    m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+                }
+                break;
 
             case ErrorGroup.FINALIZE: {
-                m_errorCode = m_season.finalizeDataError;
-				m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
-				m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
-            } break;
+                    m_errorCode = m_season.finalizeDataError;
+                    m_titleText.Localize("TID_EVENT_RESULTS_UNKNOWN_ERROR");    // Something went wrong!
+                    m_messageText.Localize("TID_REWARD_AMOUNT", HDLiveDataManager.ErrorCodeEnumToInt(m_errorCode).ToString(), string.Empty);
+                }
+                break;
         }
-	}
+
+        if (m_errorCode == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
+            m_titleText.Localize("TID_LEAGUES_OFFLINE_TITLE");  // Sorry! You are offline!
+            m_messageText.Localize("TID_NO_RESPONSE");  // You must be online to see and participate in the Legendary Leagues!
+        }
+    }
+
 
     //------------------------------------------------------------------------//
-    // CALLBACK METHODS                                                        //
+    // CALLBACK METHODS                                                       //
     //------------------------------------------------------------------------//
     public void OnRetryButton() {
-        if (m_errorGroup == ErrorGroup.NETWORK) {
-            if (Application.internetReachability != NetworkReachability.NotReachable && GameSessionManager.SharedInstance.IsLogged()) {
-                leaguesScreenController.RefreshSeasonData();
+        if (m_errorGroup == ErrorGroup.NETWORK || m_errorCode == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR) {
+            if (Application.internetReachability != NetworkReachability.NotReachable) {
+                leaguesScreenController.RefreshLiveData();
             } else { // Message no connection
                 UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
             }
@@ -100,11 +110,12 @@ public class LeaguesPanelError : LeaguesScreenPanel {
                     }
                     break;
 
+                case HDLiveDataManager.ComunicationErrorCodes.NO_ERROR:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_IS_NOT_PENDING_REWARDS:
                 case HDLiveDataManager.ComunicationErrorCodes.LEAGUEDEF_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.USER_LEAGUE_NOT_FOUND:
                 case HDLiveDataManager.ComunicationErrorCodes.SEASON_IS_NOT_ACTIVE: {
-                        leaguesScreenController.RefreshSeasonData();
+                        leaguesScreenController.RefreshLiveData();
                     }
                     break;
 

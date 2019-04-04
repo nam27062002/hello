@@ -361,7 +361,7 @@ public class MenuDragonLoader : MonoBehaviour {
 		switch(m_mode) {
 			case Mode.CURRENT_DRAGON: {
 				if(Application.isPlaying) {
-					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
+					LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.disguise);
 				} else {
 					LoadDragon(m_placeholderDragonSku);
 				}
@@ -390,7 +390,11 @@ public class MenuDragonLoader : MonoBehaviour {
 		m_dragonInstance = null;
 		m_configured = false;
 		foreach(Transform child in transform) {
-			GameObject.Destroy(child.gameObject);	// Immediate so it can be called from the editor
+			if(Application.isPlaying) {
+				Destroy(child.gameObject);   // Immediate so it can be called from the editor
+			} else {
+				DestroyImmediate(child.gameObject);
+			}
 		}
 	}
 

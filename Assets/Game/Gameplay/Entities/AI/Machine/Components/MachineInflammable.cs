@@ -29,6 +29,7 @@ namespace AI {
 
 		private float m_actualBurningTime = 0;
 		public float burningTime { get { return m_actualBurningTime; } }
+        FireColorSetupManager.FireColorType m_burnedColor;
 
 		//-----------------------------------------------
 		//
@@ -73,7 +74,7 @@ namespace AI {
 			return m_renderers;
 		}
 
-		public void Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public void Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			// raise flags
 			m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
@@ -83,20 +84,20 @@ namespace AI {
 			// Initialize some death info
 			m_entity.onDieStatus.source = _source;
 			m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
-
+            
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
-
+            m_burnedColor = fireColorType;
 			if (m_pilot != null) {
 				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
 				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);
 				m_entity.onDieStatus.isPressed_ActionC = m_pilot.IsActionPressed(Pilot.Action.Button_C);
 
-				m_pilot.OnDie();
+				m_pilot.BrainExit();
 			}
 
 			// reward
 			Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.BURNED);
-			Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, reward);
+			Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_machine.transform, m_entity, reward);
 
 			if ( instant )
 			{
@@ -142,7 +143,7 @@ namespace AI {
 					for (int i = 0; i < m_ashExceptions.Count; ++i) {
 						m_ashExceptions[i].enabled = false;
 					}
-					MachineInflammableManager.Add(this);
+					MachineInflammableManager.Add(this, m_burnedColor);
 					break;
 
 				case State.Ashes:

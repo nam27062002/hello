@@ -88,9 +88,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Convex: 1
-  m_InflateMesh: 0
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 0}
 --- !u!114 &114602566159038088
@@ -140,11 +140,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3212619d5311d040b6d3d5485ae7211, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_candleData:
-    m_id: 0
+  m_inData:
     m_radius: 0
     m_fallOff: 0
     m_Color: {r: 0, g: 0, b: 0, a: 0}
     m_Color2: {r: 0, g: 0, b: 0, a: 0}
-    m_time: 0
-  m_direction: {fileID: 0}
+    m_noEffect: 0
+  m_outData:
+    m_radius: 0
+    m_fallOff: 0
+    m_Color: {r: 0, g: 0, b: 0, a: 0}
+    m_Color2: {r: 0, g: 0, b: 0, a: 0}
+    m_noEffect: 0
+  m_tDirection: {fileID: 4168280768002504}

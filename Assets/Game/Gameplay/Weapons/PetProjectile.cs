@@ -9,8 +9,8 @@ public class PetProjectile : Projectile
         get { return m_tier; }
         set { m_tier = value; } 
     }
-    [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
-    [SerializeField] [EnumMask] private IEntity.Tag m_ignoreEntityTags = 0;
+    [SerializeField] [EnumMask] protected IEntity.Tag m_entityTags = 0;
+    [SerializeField] [EnumMask] protected IEntity.Tag m_ignoreEntityTags = 0;
     [SerializeField] private LayerMask m_hitMask = 0;
     [SerializeField] private LayerMask m_groundMask = 0;
     [SerializeField] IEntity.Type m_firingEntityType = IEntity.Type.PET;
@@ -21,6 +21,13 @@ public class PetProjectile : Projectile
         get{ return m_explodeIfHomingtargetNull; }
         set{ m_explodeIfHomingtargetNull = value; }
     }
+
+    [SerializeField] bool m_breaksArmor = false;
+    public bool breaksArmor
+    {
+        get{ return m_breaksArmor; }
+    }
+    
 
     protected override void Update()
     {

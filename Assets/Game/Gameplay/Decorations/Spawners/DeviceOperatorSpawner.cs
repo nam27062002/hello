@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using AI;
 
 public class DeviceOperatorSpawner : AbstractSpawner {	
@@ -23,8 +23,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	private PoolHandler m_poolHandler;
 
 	private GameCamera m_newCamera;
-	private IMachine m_operator;
-	private Pilot m_operatorPilot;
+    private IEntity m_operatorEntity;
+    private Pilot m_operatorPilot;
+    private IMachine m_operator;	
 	private Transform m_operatorParent;
 
 	private float m_respawnTime;
@@ -37,6 +38,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         m_autoSpawner = GetComponent<AutoSpawnBehaviour>();
 
         m_operator = null;
+        m_operatorEntity = null;
         m_operatorPilot = null;
 		m_operatorParent = null;
     }
@@ -47,6 +49,10 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 			ForceRemoveEntities();
 		}
 	}
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
     //-------------------------------------------------------------------
 
     //-------------------------------------------------------------------
@@ -73,7 +79,7 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 
 		m_gameSceneController = InstanceManager.gameSceneControllerBase;
 		
-		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, IEntity.EntityPrefabsPath, (int)GetMaxEntities());
+		m_poolHandler = PoolManager.RequestPool(m_entityPrefabStr, (int)GetMaxEntities());
     }
 
     protected override uint GetMaxEntities() {
@@ -93,9 +99,9 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         return false;
     }
 
-    protected override uint GetEntitiesAmountToRespawn() {        
+    protected override uint GetEntitiesAmountToRespawn() {
         return GetMaxEntities();
-    }        
+    }
 
 	protected override PoolHandler GetPoolHandler(uint index) {
 		return m_poolHandler;
@@ -106,6 +112,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
     }    
 
 	protected override void OnEntitySpawned(IEntity spawning, uint index, Vector3 originPos) {
+        m_operatorEntity = spawning;
+
         Transform groundSensor = spawning.transform.Find("groundSensor");
         Transform t = spawning.transform;
         
@@ -134,8 +142,8 @@ public class DeviceOperatorSpawner : AbstractSpawner {
         m_operatorPilot = pilot;
     }    
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {
-        if (m_operator != null && _entity == m_operator.gameObject) {
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {
+        if (m_operator != null && _entity == m_operatorEntity) {
             m_operator = null;
             m_operatorPilot = null;
 
@@ -160,26 +168,31 @@ public class DeviceOperatorSpawner : AbstractSpawner {
 	}
 
     public void OperatorDoIdle() {
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {			
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
     public void OperatorDoActionA() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_A);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {			
+			m_operatorPilot.PressAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
 	public void OperatorDoActionB() {
-		m_operatorPilot.PressAction(Pilot.Action.Button_B);
-		m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
-        m_operatorPilot.ReleaseAction(Pilot.Action.Scared);
+		if ( m_operatorPilot != null ) {
+			m_operatorPilot.PressAction (Pilot.Action.Button_B);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Button_A);
+			m_operatorPilot.ReleaseAction (Pilot.Action.Scared);
+		}
     }
 
     public void OperatorDoScared() {
-        if ( m_operatorPilot != null )
-        {
+        if ( m_operatorPilot != null ){
             m_operatorPilot.PressAction(Pilot.Action.Scared);
             m_operatorPilot.ReleaseAction(Pilot.Action.Button_A);
             m_operatorPilot.ReleaseAction(Pilot.Action.Button_B);

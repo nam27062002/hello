@@ -125,7 +125,7 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 			m_leagueSelector.enableEvents = true;
 
 			// Select current player's league
-			m_leagueSelector.SelectItem(m_season.currentLeague);
+			m_leagueSelector.SelectItem(defaultLeague);
 		}
 
 		// Program periodic update call
@@ -198,6 +198,9 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 	/// Refresh displayed data.
 	/// </summary>
 	override public void Refresh() {
+		// Don't listen to selector events, since we will be manually refreshing the league info
+		m_leagueSelector.enableEvents = false;
+
 		// Select mode based on season state
 		switch(m_season.state) {
 			case HDSeasonData.State.JOINED: {
@@ -254,6 +257,9 @@ public class LeaguesPanelActive : LeaguesScreenPanel {
 
 		// Currently selected league info
 		RefreshSelectedLeagueInfo();
+
+		// Restore selector events
+		m_leagueSelector.enableEvents = true;
 	}
 
 	//------------------------------------------------------------------------//
