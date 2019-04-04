@@ -47,8 +47,11 @@ public class FireArea : MonoBehaviour {
                 if (prey.IsBurnable()) {
                     bool tagMatch = true;
 
-                    if (m_entityTags > 0 || m_ignoreEntityTags > 0) {
-                        tagMatch = prey.HasTag(m_entityTags) && !prey.HasTag(m_ignoreEntityTags);
+                    if (m_entityTags > 0) { 
+                        tagMatch = tagMatch && prey.HasTag(m_entityTags);
+                    }
+                    if (m_ignoreEntityTags > 0) {
+                        tagMatch = tagMatch && !prey.HasTag(m_ignoreEntityTags);
                     }
 
                     if (tagMatch) {
