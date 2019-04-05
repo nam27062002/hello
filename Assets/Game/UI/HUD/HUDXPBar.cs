@@ -38,7 +38,7 @@ public class HUDXPBar : MonoBehaviour {
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnDebugSettingChanged);
 
 		// Only show if allowed!
-		this.gameObject.SetActive(Prefs.GetBoolPlayer(DebugSettings.SHOW_XP_BAR));
+		this.gameObject.SetActive(DebugSettings.showXpBar);
 	}
 
 	/// <summary>

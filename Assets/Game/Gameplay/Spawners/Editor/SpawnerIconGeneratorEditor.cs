@@ -182,21 +182,21 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
 	public static void GenerateIcon(GameObject _entityPrefab, Color _backgroundColor, string _name) {
 		// Generate a new texture
-		Texture2D tex = null;
+		Texture2D entityPreviewTexture = null;
 		do
 		{
-			tex = AssetPreview.GetAssetPreview(_entityPrefab);
-		}while(tex == null && AssetPreview.IsLoadingAssetPreview( _entityPrefab.GetInstanceID()));
+			entityPreviewTexture = AssetPreview.GetAssetPreview(_entityPrefab);
+		}while(entityPreviewTexture == null && AssetPreview.IsLoadingAssetPreview( _entityPrefab.GetInstanceID()));
 
-		if(tex != null) {
-			// Create a copy, we don't want to modify the source
-			tex = Instantiate<Texture2D>(tex);
+		if(entityPreviewTexture != null) {
+            // Create a copy, we don't want to modify the source
+            Texture2D tex = new Texture2D(entityPreviewTexture.width, entityPreviewTexture.height, TextureFormat.RGBA32, false);
 
 			// Remove ugly grey background
-			Color toReplace = tex.GetPixel(0, 0);	// [AOC] Assume first pixel will always be background - happy assumption
+			Color toReplace = entityPreviewTexture.GetPixel(0, 0);	// [AOC] Assume first pixel will always be background - happy assumption
 			Color replacement = _backgroundColor;
 			if(toReplace != replacement) {
-				Color[] pixels = tex.GetPixels();
+				Color[] pixels = entityPreviewTexture.GetPixels();
 				for(int j = 0; j < pixels.Length; j++) {
 					if(pixels[j] == toReplace) {
 						pixels[j] = replacement;
@@ -236,7 +236,7 @@ public class SpawnerIconGeneratorEditor : Editor {
 	/// <param name="_backgroundColor">The background color of the icon (recommended to use full transparency).</param>
 	public static void GenerateSpawnerIconsInResources(Color _backgroundColor) {
 		// Load all prefabs under the Entites folder
-		string resourcesPath = Application.dataPath + "/Resources/";
+		string resourcesPath = Application.dataPath;
 		string prefabsPath =  resourcesPath + IEntity.ENTITY_PREFABS_PATH;
 
 		string[] files = Directory.GetFiles(prefabsPath, "*.prefab", SearchOption.AllDirectories);

@@ -112,11 +112,18 @@ public class SocialPlatformManager : MonoBehaviour
                         socialPlatform = SocialUtils.EPlatform.Facebook;
                     }
                 }
-#endif
+#endif                
                 switch (socialPlatform)
                 {
                     case SocialUtils.EPlatform.Facebook:
-                        m_socialUtils = new SocialUtilsFb();
+                        if (FacebookManager.SharedInstance.CanUseFBFeatures())
+                        {
+                            m_socialUtils = new SocialUtilsFb();
+                        }
+                        else
+                        {
+                            m_socialUtils = new SocialUtilsDummy(false, false);
+                        }
                         break;
 
                     case SocialUtils.EPlatform.Weibo:
@@ -271,7 +278,7 @@ public class SocialPlatformManager : MonoBehaviour
 
 #if UNITY_EDITOR
             // We want to prevent developers from seeing social login popup every time the game is started since editor doesn't cache the social token
-            //neverLoggedIn = true;
+            neverLoggedIn = true;
 #endif
 
             // If the user has never logged in then we should just marked as not loggedIn

@@ -67,6 +67,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     int layerMask;
     bool destroys = false;
     int destroyFrame = 0;
+    ToggleParam m_toggleParam = new ToggleParam();
     
     private void Awake()
     {
@@ -161,6 +162,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, true);
                 if ( m_machinegunParticle != null)
                     m_machinegunParticle.Play();
+                    
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             Vector3 arcOrigin = m_machingegunAnchor.position;
             arcOrigin.z = 0;
@@ -258,7 +262,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                         DestructibleDecoration decoration = results[i].collider.GetComponent<DestructibleDecoration>();
                         if ( decoration != null && decoration.CanBreakByShooting())
                         {
-                            decoration.Break();
+                            decoration.Break(false);
                         }
                     }
                 }
@@ -275,6 +279,8 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
                 m_animator.SetBool( GameConstants.Animator.SHOOTING, false);
                 if ( m_machinegunParticle != null )
                     m_machinegunParticle.Stop();
+                m_toggleParam.value = m_machinegunFiring;
+                Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
             }
             
             if ( m_hatchOpen )
@@ -339,9 +345,9 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
 	void CreatePool() {
         
         if ( m_powerLevel >= 1 && !string.IsNullOrEmpty(m_missilesProjectileName))
-		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, "Game/Projectiles/", 2, true);
+		    m_missilesPoolHandler = PoolManager.CreatePool(m_missilesProjectileName, 2, true);
         if ( m_powerLevel >= 2 && !string.IsNullOrEmpty(m_bombProjectileName))
-            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, "Game/Projectiles/", m_burstCount, true);
+            m_bombsPoolHandler = PoolManager.CreatePool(m_bombProjectileName, m_burstCount, true);
 	}
     
     public void OnLaunchMissile1()

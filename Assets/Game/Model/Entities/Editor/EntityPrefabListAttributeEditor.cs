@@ -31,7 +31,7 @@ public class EntityPrefabListAttributeEditor : ExtendedPropertyDrawer {
 	private List<string> m_prefabNames = null;
 	private SerializedProperty m_targetProperty = null;
 
-	string m_prefabsPath =  Application.dataPath + "/Resources/" + IEntity.ENTITY_PREFABS_PATH;
+	string m_prefabsPath =  Application.dataPath + "/" + IEntity.ENTITY_PREFABS_PATH;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//

@@ -8,6 +8,9 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -27,7 +30,14 @@ public class SeasonManager : Singleton<SeasonManager> {
 	//------------------------------------------------------------------------//
 	private string m_activeSeason = NO_SEASON_SKU;
 	public static string activeSeason {
-		get { return instance.m_activeSeason; }
+        get {
+            SeasonManager sm = instance;
+            if (sm != null) {
+                return sm.m_activeSeason;
+            } else {
+                return "";
+            }
+        } 
 	}
 
 	//------------------------------------------------------------------------//
@@ -56,11 +66,22 @@ public class SeasonManager : Singleton<SeasonManager> {
 					m_activeSeason = PlayerPrefs.GetString(ACTIVE_SEASON_CACHE_KEY, NO_SEASON_SKU);
 				} else {
 					// Load from content - first definition with the "active" field set to true
-					DefinitionNode activeSeasonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(
-						DefinitionsCategory.SEASONS, 
-						"active", 
-						"true"
-					);
+					DefinitionNode activeSeasonDef = null;
+					List<DefinitionNode> seasonDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.SEASONS);
+					for(int i = 0; i < seasonDefs.Count && activeSeasonDef == null; ++i) {
+						if(seasonDefs[i].GetAsBool("active")) {
+							activeSeasonDef = seasonDefs[i];
+
+							/*// [AOC] TODO!! Whenever the addressable groups are implemented
+							// Make sure required asset groups for this season are downloaded and ready
+							List<string> requiredAssetGroups = activeSeasonDef.GetAsList<string>("requiredAssetGroups");
+							if(!HDAddressablesManager.Instance.IsResourceGroupListAvailable(requiredAssetGroups)) {
+							
+								// Not all assets are available, don't trigger this season
+								activeSeasonDef = null;
+							}*/
+						}
+					}
 
 					// Store new season
 					m_activeSeason = activeSeasonDef == null ? NO_SEASON_SKU : activeSeasonDef.sku;
@@ -90,4 +111,53 @@ public class SeasonManager : Singleton<SeasonManager> {
 			} break;
 		}
 	}
+    
+    public static bool IsNewYear()
+    {
+        bool ret = false;
+        System.DateTime dateTime = System.DateTime.Now;
+        
+        // New Year
+        if ( (dateTime.Day >= 31 && dateTime.Month >= 12) || (dateTime.Day <= 1 && dateTime.Month <= 1 ))
+        {
+            ret = true;
+        }
+        return ret;
+    }
+    
+    public static bool IsChineseNewYear()
+    {
+        bool ret = false;
+        
+        /*
+        // Do not delete this. With the new .Net version at some point should work
+        ChineseLunisolarCalendar chinese   = new ChineseLunisolarCalendar();
+        GregorianCalendar        gregorian = new GregorianCalendar();
+
+        DateTime utcNow = DateTime.Now;
+        // Get Chinese New Year of current UTC date/time
+        DateTime chineseNewYear = chinese.ToDateTime( utcNow.Year, 1, 1, 0, 0, 0, 0 );
+        // Convert back to Gregorian (you could just query properties of `chineseNewYear` directly, but I prefer to use `GregorianCalendar` for consistency:
+        // Int32 year  = gregorian.GetYear( chineseNewYear );
+        // Int32 month = gregorian.GetMonth( chineseNewYear );
+        // Int32 day   = gregorian.GetDayOfMonth( chineseNewYear );
+        
+        int chineseDay = gregorian.GetDayOfYear( chineseNewYear );
+
+        ret = (utcNow.DayOfYear > (chineseDay - 4)) && (utcNow.DayOfYear <= chineseDay);
+        */
+        
+        System.DateTime dateTime = System.DateTime.Now;
+        ret = dateTime.Month == 2 && dateTime.Day >= 4 && dateTime.Day <= 10;
+        return ret;
+        
+    }
+    
+    public static bool IsFireworksDay()
+    {
+        bool ret = false;
+        ret = DebugSettings.specialDates;
+        ret = ret || IsNewYear() || IsChineseNewYear();
+        return ret;
+    }
 }

@@ -27,15 +27,16 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Transform m_previewContainer = null;
-	[SerializeField] private TextMeshProUGUI m_text = null;
-	[Tooltip("Optional")] [SerializeField] private GameObject m_infoButton = null;
+	[SerializeField] protected Transform m_previewContainer = null;
+	[SerializeField] protected TextMeshProUGUI m_text = null;
+	[Tooltip("Optional")] [SerializeField] protected GameObject m_infoButton = null;
 	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_extraInfoText = null;    // Will only be displayed for some types
 	[Tooltip("Optional")] [SerializeField] protected GameObject m_extraInfoRoot = null;    // Will only be displayed for some types
+	[Tooltip("Optional")] [SerializeField] protected Mask m_mask = null;
 	[Space]
-	[SerializeField] private bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
+	[SerializeField] protected bool m_allow3dPreview = false;	// [AOC] In some cases, we want to display a 3d preview when appliable (pets/eggs)
 	[Space]
-	[Tooltip("Optional")] [SerializeField] private GameObject m_separator = null;
+	[Tooltip("Optional")] [SerializeField] protected GameObject m_separator = null;
 
 	// Convenience properties
 	public RectTransform rectTransform {
@@ -156,7 +157,7 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 		// Text color based on item rarity!
 		Gradient4 rarityGradient = null;
-		if(m_item is Metagame.RewardPet && m_item.reward != null) {
+		if(m_item.type == Metagame.RewardPet.TYPE_CODE && m_item.reward != null) {
 			rarityGradient = UIConstants.GetRarityTextGradient(m_item.reward.rarity);
 		} else {
 			rarityGradient = UIConstants.GetRarityTextGradient(Metagame.Reward.Rarity.COMMON);
@@ -223,6 +224,18 @@ public class OfferItemSlot : MonoBehaviour, IBroadcastListener {
 
 			// Set text
 			if(show) m_extraInfoText.text = text;
+		}
+
+		// Mask - depends on preview type
+		if(m_mask != null) {
+			if(m_preview != null) {
+				m_mask.enabled = m_preview.enableMask;
+			} else {
+				m_mask.enabled = false;
+			}
+
+			// Apply to associated mask graphic as well! (Otherwise it will be visible when mask is disabled)
+			if(m_mask.graphic != null) m_mask.graphic.enabled = m_mask.enabled;
 		}
 	}
 

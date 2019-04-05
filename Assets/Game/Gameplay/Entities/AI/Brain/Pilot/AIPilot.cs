@@ -15,10 +15,6 @@ using System.Collections.Generic;
 //----------------------------------------------------------------------------//
 namespace AI {
 	public abstract class AIPilot : Pilot, ISerializationCallbackReceiver {
-		protected static int m_waterMask;
-		protected static int m_groundMask;
-		protected static int m_groundWaterMask;
-
 		//--------------------------------------------------------------------//
 		// MEMBERS AND PROPERTIES											  //
 		//--------------------------------------------------------------------//
@@ -57,13 +53,9 @@ namespace AI {
 		// METHODS															  //
 		//--------------------------------------------------------------------//
 		public override void Spawn(ISpawner _spawner) {
-			m_waterMask = LayerMask.GetMask("Water");
-			m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-			m_groundWaterMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions", "Water");
-
-			Vector3 pos = transform.position;
+			Vector3 pos = m_transform.position;
 			pos.z += zOffset;
-			transform.position = pos;
+            m_transform.position = pos;
 
 			SetArea(_spawner);
 
@@ -85,7 +77,7 @@ namespace AI {
 
 			Stop();
 
-			m_target = transform.position;
+			m_target = m_transform.position;
 			m_slowDown = false;
 
 			// braaiiiinnn ~ ~ ~ ~ ~
@@ -101,12 +93,12 @@ namespace AI {
 
 		public void SetArea(ISpawner _spawner) {
             if (_spawner == null) {
-                m_area = new RectAreaBounds(transform.position, Vector3.one * 2f);
-                m_homePosition = transform.position;
+                m_area = new RectAreaBounds(m_transform.position, Vector3.one * 2f);
+                m_homePosition = m_transform.position;
                 m_guideFunction = null;                
             } else {
                 m_area = _spawner.area;
-				m_homePosition = transform.position;
+				m_homePosition = m_transform.position;
 				m_guideFunction = _spawner.guideFunction;
 			}
 
@@ -123,7 +115,7 @@ namespace AI {
 			}
 		}
 
-		public override void OnDie() {
+		public override void BrainExit() {
 			if (m_brain != null) m_brain.Exit();
 		}
 
@@ -148,7 +140,7 @@ namespace AI {
 
 			// state machine updates
 			if (m_brain != null) {
-				if (!(m_machine.IsDead() || m_machine.IsDying())) {
+				if (!(m_machine.IsDead() || m_machine.IsDying() /*|| m_machine.GetSignal(Signals.Type.InLove)*/ )) {
 					m_brain.Update();
 				}
 			}
@@ -197,13 +189,16 @@ namespace AI {
             // Since Unity doesn't serialize System.Type, use the Type.FullName to compare types
             string typeName = typeof(T).FullName;
             StateComponentDataKVP kvp = BrainDataBase.instance.GetDataFor(m_databaseKey, typeName);
-            if (kvp != null)
-            {
-                return (T)kvp.data;
-            }
+            /*if (kvp != null){return (T)kvp.data;}*/
 
+            try {
+                T data = (T)kvp.data;
+                return data;
+            } catch {
+                Fabric.Crashlytics.Crashlytics.RecordCustomException("Pilot - GetComponentData", "Data is NULL", "NPC " + name + " has a null value on " + typeName + " behaviour.");
+            }
             return null;
-		}
+        }
 
 		/// <summary>
 		/// Make sure the target AI Pilot has exactly one data per type component.

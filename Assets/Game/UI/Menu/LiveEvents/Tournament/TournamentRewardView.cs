@@ -30,9 +30,9 @@ public class TournamentRewardView : MetagameRewardView {
 	[SerializeField] private Localizer m_rankText = null;
 
 	// Internal
-	private HDTournamentDefinition.TournamentReward m_tournamentReward = null;
-	public HDTournamentDefinition.TournamentReward tournamentReward {
-		get { return m_tournamentReward; }
+	private HDLiveData.RankedReward m_rankedReward = null;
+	public HDLiveData.RankedReward rankedReward {
+		get { return m_rankedReward; }
 		set { InitFromReward(value); }
 	}
 
@@ -46,16 +46,16 @@ public class TournamentRewardView : MetagameRewardView {
 	/// <summary>
 	/// Refresh the widget with the data of a specific reward.
 	/// </summary>
-	public void InitFromReward(HDTournamentDefinition.TournamentReward _tournamentReward) {
+	public void InitFromReward(HDLiveData.RankedReward _rankedReward) {
 		// Store new reward
-		m_tournamentReward = _tournamentReward;
+		m_rankedReward = _rankedReward;
 
 		// If given reward is null, disable game object
-		this.gameObject.SetActive(m_tournamentReward != null);
+		this.gameObject.SetActive(m_rankedReward != null);
 
 		// Parent will do the rest
-		if(m_tournamentReward != null) {
-			base.InitFromReward(m_tournamentReward.reward);
+		if(m_rankedReward != null) {
+			base.InitFromReward(m_rankedReward.reward);
 		}
 	}
 
@@ -63,24 +63,24 @@ public class TournamentRewardView : MetagameRewardView {
 	/// Refresh the visuals using current data.
 	/// </summary>
 	override public void Refresh() {
-		if(m_tournamentReward == null) return;
+		if(m_rankedReward == null) return;
 		if(m_reward == null) return;
 
 		// Set target text
 		if(m_rankText != null) {
 			// [AOC] Mini-hack: use different TID for the first reward
 			//		 Use it also when min and max range are the same
-			if(m_tournamentReward.ranks.min == 0
-			|| m_tournamentReward.ranks.min == m_tournamentReward.ranks.max) {
+			if(m_rankedReward.ranks.min == 0
+			|| m_rankedReward.ranks.min == m_rankedReward.ranks.max) {
 				m_rankText.Localize(
 					"TID_TOURNAMENT_REWARDS_RANK_TOP",
-					StringUtils.FormatNumber(m_tournamentReward.ranks.max + 1)
+					StringUtils.FormatNumber(m_rankedReward.ranks.max + 1)
 				);
 			} else {
 				m_rankText.Localize(
 					"TID_TOURNAMENT_REWARDS_RANK",
-					StringUtils.FormatNumber(m_tournamentReward.ranks.min + 1),
-					StringUtils.FormatNumber(m_tournamentReward.ranks.max + 1)
+					StringUtils.FormatNumber(m_rankedReward.ranks.min + 1),
+					StringUtils.FormatNumber(m_rankedReward.ranks.max + 1)
 				);
 			}
 		}

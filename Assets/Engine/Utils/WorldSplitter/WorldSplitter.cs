@@ -49,10 +49,10 @@ public class WorldSplitter : MonoBehaviour
 	[SerializeField]
 	public bool High = true;
 
-    void Start()
+    void Awake()
     {
         Manager_RegisterWorldSplitter(this);
-        if (FeatureSettingsManager.instance.IsReady())
+        if (FeatureSettingsManager.IsReady())
         {
             SetLevelsLOD(FeatureSettingsManager.instance.LevelsLOD);
         }
@@ -73,6 +73,12 @@ public class WorldSplitter : MonoBehaviour
                       (level == FeatureSettings.ELevel4Values.mid && Medium) ||
                       (level == FeatureSettings.ELevel4Values.high && High);
 
-        gameObject.SetActive(active);
+        //gameObject.SetActive(active);
+
+        if (active) {
+            gameObject.SetActive(true);
+        } else {
+            Destroy(gameObject);
+        }
     }
 }

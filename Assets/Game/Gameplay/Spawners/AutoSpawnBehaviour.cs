@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
@@ -32,7 +32,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	private float m_respawnTime;
 	private SpawnerConditions m_spawnConditions;
 
-	private Bounds m_bounds; // view bounds
+    private ISpawnable[] m_components;
+
+
+    private Bounds m_bounds; // view bounds
 
 	private Rect m_rect;
 	public Rect boundingRect { get { return m_rect; } }
@@ -52,60 +55,50 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	//-----------------------------------------------
 	void Start() {
 		m_spawnConditions = GetComponent<SpawnerConditions>();
+        m_components = GetComponents<ISpawnable>();
 
-		if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
-			SpawnerManager.instance.Register(this, true);
+        // Subscribe to external events
+        Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
-			m_decoration = GetComponent<Decoration>();
+        if (m_spawnConditions == null || m_spawnConditions.IsAvailable()) {
 
-			m_newCamera = Camera.main.GetComponent<GameCamera>();
-			m_gameSceneController = InstanceManager.gameSceneControllerBase;
-
-            GameObject view = transform.Find("view").gameObject;
-			Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
-
-            if (renderers.Length > 0) {
-                m_bounds = renderers[0].bounds;
-                for (int i = 1; i < renderers.Length; ++i)
-                {
-                    m_bounds.Encapsulate(renderers[i].bounds);
-                }
+            ZoneManager.Zone zone = InstanceManager.zoneManager.GetZone(transform.position.z);
+            if (zone == ZoneManager.Zone.None) {
+                Destroy(this);
             } else {
-                m_bounds = new Bounds(transform.position, GameConstants.Vector3.one);
+                SpawnerManager.instance.Register(this, true);
+
+                m_decoration = GetComponent<Decoration>();
+
+                m_newCamera = Camera.main.GetComponent<GameCamera>();
+                m_gameSceneController = InstanceManager.gameSceneControllerBase;
+
+                GameObject view = transform.Find("view").gameObject;
+                Renderer[] renderers = view.GetComponentsInChildren<Renderer>();
+
+                if (renderers.Length > 0) {
+                    m_bounds = renderers[0].bounds;
+                    for (int i = 1; i < renderers.Length; ++i) {
+                        m_bounds.Encapsulate(renderers[i].bounds);
+                    }
+                } else {
+                    m_bounds = new Bounds(transform.position, GameConstants.Vector3.one);
+                }
+
+                Vector2 position = (Vector2)m_bounds.min;
+                Vector2 size = (Vector2)m_bounds.size;
+                Vector2 extraSize = size * (transform.position.z * 2f) / 100f; // we have to increase the size due to z depth
+
+                m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
+
+                m_respawnCount = 0;
             }
-
-			Vector2 position = (Vector2)m_bounds.min;
-			Vector2 size = (Vector2)m_bounds.size;
-			Vector2 extraSize = size * (transform.position.z * 2f) / 100f; // we have to increase the size due to z depth
-
-			m_rect = new Rect(position - extraSize * 0.5f, size + extraSize);
-
-
-			m_respawnCount = 0;
-
 			return;
 		}
 
 		// we are not goin to use this spawner, lets destroy it
 		Destroy(gameObject);
-	}
-
-	/// <summary>
-	/// Component enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subscribe to external events
-		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
-	}
-
-	/// <summary>
-	/// Component disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
-		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 	}
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
@@ -129,6 +122,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 				EntityManager.instance.UnregisterDecoration (m_decoration);
 			}
 		}
+
+        // Unsubscribe from external events
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+        Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
 	/// <summary>
@@ -159,6 +156,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
         gameObject.SetActive(false);
     }
 
+    public List<string> GetPrefabList() {
+        return null;
+    }
+
     public void ForceRemoveEntities() {}
     public void ForceReset() {}
 
@@ -172,7 +173,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		if (m_maxSpawns > 0 && m_respawnCount > m_maxSpawns) {
 			// we are not goin to use this spawner, lets destroy it
 			if (m_mustBedestroyed) {
-				Destroy(gameObject);
+				Destroy(gameObject, 0.15f);
 			}
 		} else {
 			// Program the next spawn time
@@ -197,7 +198,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
     public bool CanRespawn() {
 		if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
 			if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
-				Destroy(gameObject);
+				Destroy(gameObject, 0.15f);
 				return false;
 			}
 		}
@@ -228,9 +229,8 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 			}
 			gameObject.SetActive(true);
 		}
-
-		ISpawnable[] components = GetComponents<ISpawnable>();
-		foreach (ISpawnable component in components) {
+		
+		foreach (ISpawnable component in m_components) {
 			component.Spawn(this);
 		}
 
@@ -241,7 +241,7 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		m_state = State.Idle;
 	}
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {}
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {}
 
 	public void DrawStateGizmos() {}
 

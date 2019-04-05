@@ -183,8 +183,8 @@ TID_GEN_LIST_SEPARATOR=,
 TID_GEN_LIST_SEPARATOR_OR=or
 TID_GEN_LIST_SEPARATOR_AND=and
 TID_MISSION_OBJECTIVE_ENEMIES=enemies
-TID_MISSION_OBJECTIVE_KILL_DESC_SINGLE_RUN=Eat %U0 %U1 in a single run!
-TID_MISSION_OBJECTIVE_KILL_DESC_MULTI_RUN=Eat a total of %U0 %U1!
+TID_MISSION_OBJECTIVE_KILL_DESC_SINGLE_RUN=Kill %U0 %U1 in a single run!
+TID_MISSION_OBJECTIVE_KILL_DESC_MULTI_RUN=Kill a total of %U0 %U1!
 TID_MISSION_OBJECTIVE_SURVIVE_DESC_SINGLE_RUN=Survive for %U0 in a single run!
 TID_MISSION_OBJECTIVE_SURVIVE_DESC_MULTI_RUN=Survive %U0 in total!
 TID_MISSION_OBJECTIVE_SCORE_DESC_SINGLE_RUN=Reach %U0 points in a single run!
@@ -203,13 +203,13 @@ TID_PAUSE_TAB_MISSIONS_TITLE=Missions
 TID_PAUSE_TAB_MAP_TITLE=Map
 TID_SETTINGS_TAB_OPTIONS=Options
 TID_PAUSE_TAB_OPTIONS_END_GAME=EXIT RUN
-TID_DRAGON_GET_NOW=<TID_COLOR_BTN_COMMON>GET NOW!<TID_END_COLOR>\n<TID_ICON_SC>%U0
+TID_DRAGON_GET_NOW_SC=<TID_COLOR_BTN_COMMON>GET NOW!<TID_END_COLOR>\n<TID_ICON_SC>%U0
 TID_EGG_PREVIEW_REWARD=Preview it!
 TID_POWERUP_DIVE_NAME=Dive
 TID_POWERUP_DIVE_DESC=Allows the dragon to be controlled underwater.
 TID_POWERUP_DIVE_DESC_SHORT=<color=%U0>Swimming master</color>
 TID_POWERUP_HP_NAME=Health Increase
-TID_POWERUP_HP_DESC=The dragon receives <color=%U1>+%U0%</color> Health!
+TID_POWERUP_HP_DESC=The dragon receives <color=%U1>+%U0%</color> Health.
 TID_POWERUP_HP_DESC_SHORT=<color=%U1>Health +%U0%</color>
 TID_POWERUP_BOOST_NAME=Boost Increase
 TID_POWERUP_BOOST_DESC_SHORT=<color=%U1>Boost +%U0%</color>
@@ -226,7 +226,7 @@ TID_POWERUP_FREE_REVIVE_NAME=Extra Life
 TID_POWERUP_FREE_REVIVE_DESC=Instantly revives the dying dragon once for free.
 TID_POWERUP_FREE_REVIVE_DESC_SHORT=<color=%U0>Free revives</color>
 TID_POWERUP_DRAGONRAM_NAME=Wall Break
-TID_POWERUP_DRAGONRAM_DESC=The dragon can destroy obstacles <color=%U1>%U0</color> size above its own!
+TID_POWERUP_DRAGONRAM_DESC=The dragon can destroy obstacles <color=%U1>%U0</color> size above its own.
 TID_POWERUP_DRAGONRAM_DESC_SHORT=<color=%U0>Breaks walls</color>
 TID_POWERUP_PREYHPBOOST_NAME=The Food You Need
 TID_POWERUP_PREYHPBOOST_DESC=Eating <color=%U2>%U0</color> regenerates <color=%U3>%U1%</color> extra health.
@@ -297,7 +297,7 @@ TID_SAVE_PROMPT_UPDATE_IOS_DESC=<TID_GAME_TITLE> has been updated! To take advan
 TID_SAVE_PROMPT_UPDATE_NAME=Update available
 TID_SAVE_WARN_CLOUD_DISABLE_DESC=If you disable Cloud Save, you can continue playing on this device, but your progress will no longer be saved online. You can re-enable Cloud Save from the Options menu.\n\nAre you sure you want to disable it?
 TID_SAVE_WARN_CLOUD_DISABLE_NAME=Disable Cloud Save
-TID_SAVE_WARN_CLOUD_LOGOUT_NAME=Cloud Save log out
+TID_SAVE_WARN_CLOUD_LOGOUT_NAME=Cloud Save logout
 TID_SAVE_WARN_CLOUD_SWITCH_NAME=Cloud Save switch
 TID_SOCIAL_USERPROFILE_LOG_NETWORK=Log into %U0
 TID_SOCIAL_USERPROFILE_LOG_RECEIVE=Log into %U0 and receive:
@@ -318,14 +318,14 @@ TID_SOCIAL_LOGIN_INCOMPLETE_NAME=Login incomplete
 TID_SOCIAL_LOGIN_MAINMENU_INCENTIVIZED=<sprite name="icon_pc"> %U0
 TID_SOCIAL_PERM_MAINMENU=<#ffe400>Add Friends</color>
 TID_SOCIAL_PERM_MAINMENU_INCENTIVIZED=<#ffe400>Add Friends</color>\n%U0 <sprite name="icon_pc">
-TID_SOCIAL_WARNING_LOGOUT_DESC=If you logout of %U0, you won’t be able to compete with your friends in the Leaderboard. Are you sure you want to continue?
+TID_SOCIAL_WARNING_LOGOUT_DESC=If you log out of %U0, you won’t be able to compete with your friends in the Leaderboard. Are you sure you want to continue?
 TID_EGG_INFO_TITLE=<TID_EGG_PLURAL>
 TID_EGG_INFO_PREMIUM=Purple <TID_COLOR_EGG><TID_EGG_PLURAL><TID_END_COLOR> can only be purchased, but they are <TID_COLOR_GENERIC>instantly opened<TID_END_COLOR>!
 TID_GEN_UNDERSTOOD=Understood!
 TID_GEN_UPDATE=UPDATE
 TID_SAVE_ERROR_UPDATE_TITLE=Update required
 TID_SAVE_ERROR_SAVE_FAILED_ANDROID=There was an error saving your game. Please check that you have storage space available on your device, or unplug it if it’s connected to a computer via USB.\n\nYour progress will not be saved until this issue is fixed.\n\n(%U0).
-TID_SOCIAL_WARNING_LOGOUT_TITLE=Logout
+TID_SOCIAL_WARNING_LOGOUT_TITLE=Log out
 TID_SOCIAL_NETWORK_WEIBO_NAME=Weibo
 TID_SOCIAL_NETWORK_GAMECENTER_NAME=Game Center
 TID_QUIP_DRG_KILL_ENT_CATAPULT_01=Under Siege!
@@ -753,13 +753,13 @@ TID_POWERUP_COINS_NAME=More <TID_SC_NAME_PLURAL>
 TID_POWERUP_COINS_DESC=<TID_SC_NAME_PLURAL> gained by eating prey increase by <color=%U1>%U0%</color>.
 TID_POWERUP_COINS_DESC_SHORT=<color=%U1><TID_SC_NAME_PLURAL> +%U0%</color>
 TID_POWERUP_EAT_GHOST_NAME=Eat Ghosts
-TID_POWERUP_EAT_GHOST_DESC=<TID_PET> prioritizes ghosts when targeting prey to eat. It can eat any type of ghost!
+TID_POWERUP_EAT_GHOST_DESC=<TID_PET> prioritizes ghosts when targeting prey to eat. It can eat any type of ghost.
 TID_POWERUP_EAT_GHOST_DESC_SHORT=<color=%U0>Targets and eats Ghosts</color>
 TID_POWERUP_EAT_MINE_NAME=Eat Mines
-TID_POWERUP_EAT_MINE_DESC=<TID_PET> prioritizes mines when targeting prey to eat. It can eat any type of mine!
+TID_POWERUP_EAT_MINE_DESC=<TID_PET> prioritizes mines when targeting prey to eat. It can eat any type of mine.
 TID_POWERUP_EAT_MINE_DESC_SHORT=<color=%U0>Targets and eats Mines</color>
 TID_POWERUP_EXPLODE_MINE_NAME=Mine Destroyer
-TID_POWERUP_EXPLODE_MINE_DESC=<TID_PET> destroys mines by dashing into them before they hurt you! You can thank him!
+TID_POWERUP_EXPLODE_MINE_DESC=<TID_PET> destroys mines by dashing into them before they hurt you. You can thank him!
 TID_POWERUP_EXPLODE_MINE_DESC_SHORT=<color=%U0>Detonates mines</color>
 TID_POWERUP_PHOENIX_NAME=Fire Chicken
 TID_POWERUP_PHOENIX_DESC=Burns everything in its path during <TID_FIRE_RUSH>.
@@ -767,7 +767,7 @@ TID_POWERUP_PHOENIX_DESC_SHORT=<color=%U0>Burns during <TID_FIRE_RUSH></color>
 TID_GEN_OWNED=Owned
 TID_PET_NO_SLOTS=There are no available slots.\nUnequip another <TID_PET> before equipping this one.
 TID_POWERUP_FIREBALL_NAME=Fireball Shootout
-TID_POWERUP_FIREBALL_DESC=<TID_PET> aims and shoots explosive fireballs at enemies!
+TID_POWERUP_FIREBALL_DESC=<TID_PET> aims and shoots explosive fireballs at enemies.
 TID_POWERUP_FIREBALL_DESC_SHORT=<color=%U0>Spits fireballs</color>
 TID_EGG_SHOW_REWARD=Collection
 TID_POWERUP_FREEZE_AURA_NAME=Freeze Aura
@@ -808,7 +808,7 @@ TID_PAUSE_TAB_MAP_HELP=Drag your finger to move the map.\nPinch to zoom.
 TID_SHOP_BEST_VALUE=Best value
 TID_SHOP_BONUS_AMOUNT=%U0 extra!
 TID_POWERUP_DOG_NAME=Puppy Dog
-TID_POWERUP_DOG_DESC=Sometimes leaves and comes back with a surprise gift!
+TID_POWERUP_DOG_DESC=Sometimes leaves and comes back with a surprise gift.
 TID_POWERUP_DOG_DESC_SHORT=<color=%U0>Brings back gifts</color>
 TID_PHOTO_TAKE_PICTURE=Take picture!
 TID_PHOTO_DRAG_TO_ROTATE=Drag to rotate
@@ -857,7 +857,7 @@ TID_FAQ_PET_DESCRIPTION=How can I get more <TID_COLOR_PET><TID_PET_PLURAL><TID_E
 TID_FAQ_SKINS_DESCRIPTION=What are <TID_COLOR_SKIN><TID_DISGUISE_PLURAL><TID_END_COLOR>?
 TID_FAQ_TIER_DESCRIPTION=How can I get a bigger dragon?
 TID_FAQ_MISSIONS_DESCRIPTION=How can I get more <TID_COLOR_COIN><TID_SC_NAME_PLURAL><TID_END_COLOR>?
-TID_FAQ_CONTROLS_DESCRIPTION=What does the <color=#FFB400FF>Boost</color> mean?
+TID_FAQ_CONTROLS_DESCRIPTION=How do I use the <color=#FFB400FF>Boost</color>?
 TID_FAQ_DRAGON_DESCRIPTION=What can I <color=#FB846CFF>eat</color> and <color=#C9BAAAFF>destroy</color>?
 TID_FAQ_FIRE_RUSH_DESCRIPTION=How does the <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR> work?
 TID_FAQ_MAP_DESCRIPTION=I'm lost! How can I <color=#FFE581FF>explore</color> the world better?
@@ -898,7 +898,7 @@ TID_CONTROLS_DESCRIPTION=While moving the dragon, tap the screen with another fi
 TID_CONTROLS_TITLE=Controls
 TID_GEN_NEW=New!
 TID_DRAGON_UNLOCK=%U0 Unlocked
-TID_TIER_INFO=New prey!
+TID_TIER_INFO=Bigger prey!
 TID_FIRE_RUSH_INFO_TITLE=<TID_FIRE_RUSH>
 TID_FIRE_RUSH_INFO_1=Fill the <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR> bar by eating prey. Once full, you will enter <TID_COLOR_FIRERUSH><TID_FIRE_RUSH><TID_END_COLOR> mode, burning any enemy in your path.
 TID_FIRE_RUSH_INFO_2=Every 8 <TID_COLOR_FIRERUSH><TID_FIRE_RUSH_PLURAL><TID_END_COLOR>, the <color=#56C4FFFF><TID_MEGA_FIRE_RUSH></color> starts, allowing you to burn any type of prey!
@@ -932,7 +932,7 @@ TID_EDIBLE_SHIELDMAN_PL=Shieldmen
 TID_CALIBRATING=Calibrating...
 TID_CALIBRATION_DONE=Done!
 TID_POWERUP_BOMB_NAME=Bomb
-TID_POWERUP_BOMB_DESC=Sometimes explodes, destroying enemies within a certain radius!
+TID_POWERUP_BOMB_DESC=Sometimes explodes, destroying enemies within a certain radius.
 TID_POWERUP_BOMB_DESC_SHORT=<color=%U0>Flying bomb</color>
 TID_EGG=Egg
 TID_EGG_PLURAL=Eggs
@@ -1123,7 +1123,7 @@ TID_POWERUP_PREY_HP_BOOST_GOBLIN_NAME=Generous Goblins
 TID_POWERUP_PREY_HP_BOOST_GOBLIN_DESC=Eating goblins regenerates <color=%U1>%U0%</color> extra health.
 TID_POWERUP_PREY_HP_BOOST_GOBLIN_DESC_SHORT=<color=%U0>Extra food from goblins</color>
 TID_POWERUP_ALCOHOL_RESISTANCE _NAME=High Tolerance
-TID_POWERUP_ALCOHOL_RESISTANCE _DESC=Grants immunity to dizziness!
+TID_POWERUP_ALCOHOL_RESISTANCE _DESC=Grants immunity to dizziness.
 TID_POWERUP_ALCOHOL_RESISTANCE _DESC_SHORT=<color=%U0>Liver of Steel</color>
 TID_POWERUP_CAGE_BREAKER_NAME=Cage Breaker
 TID_POWERUP_CAGE_BREAKER_DESC=<TID_PET> dashes into cages and destroys them.
@@ -1132,19 +1132,19 @@ TID_POWERUP_STUN_NAME=Stun Cannon
 TID_POWERUP_STUN_DESC=<TID_PET> stuns enemies if touched, and renders them unable to move for a couple of seconds.
 TID_POWERUP_STUN_DESC_SHORT=<color=%U0>Master stunner</color>
 TID_POWERUP_FASTER_BOOST_NAME=Faster Boost Regeneration
-TID_POWERUP_FASTER_BOOST_DESC=The Boost bar regenerates <color=%U1>+%U0%</color> faster!
+TID_POWERUP_FASTER_BOOST_DESC=The Boost bar regenerates <color=%U1>+%U0%</color> faster.
 TID_POWERUP_FASTER_BOOST_DESC_SHORT=<color=%U1>Boost regen +%U0%</color>
 TID_POWERUP_UNLIMITED_BOOST_NAME=Crazy Boost
 TID_POWERUP_UNLIMITED_BOOST_DESC=<TID_PET> sometimes goes on a rampage, giving unlimited Boost for a short period of time.
 TID_POWERUP_UNLIMITED_BOOST_DESC_SHORT=<color=%U0>Unlimited Boost</color>
 TID_POWERUP_FINDBONUSCHESTS_NAME=Finds chests
-TID_POWERUP_FINDBONUSCHESTS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest chest!
+TID_POWERUP_FINDBONUSCHESTS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest chest.
 TID_POWERUP_FINDBONUSCHESTS_DESC_SHORT=<color=%U0>Helps you find Chests</color>
 TID_POWERUP_FINDBONUSLETTERS_NAME=Letter Finder
-TID_POWERUP_FINDBONUSLETTERS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest Hungry Letter!
+TID_POWERUP_FINDBONUSLETTERS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest Hungry Letter.
 TID_POWERUP_FINDBONUSLETTERS_DESC_SHORT=<color=%U0>Helps you find Letters</color>
 TID_POWERUP_FINDBONUSEGGS_NAME=Egg Finder
-TID_POWERUP_FINDBONUSEGGS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest Egg!
+TID_POWERUP_FINDBONUSEGGS_DESC=When close enough, the <TID_PET> indicates the direction of the nearest Egg.
 TID_POWERUP_FINDBONUSEGGS_DESC_SHORT=<color=%U0>Helps you find Eggs</color>
 TID_POWERUP_BOOST_DESC=The Boost bar increases by <color=%U1>%U0%</color>.
 TID_EVENT_TIME_REMAINING=Time remaining:
@@ -1296,7 +1296,7 @@ TID_GLOBAL_EVENT_FIRERUSH=Start %U0 <TID_FIRE_RUSH_PLURAL>.
 TID_POWERUP_TRASH_EATER_DESC=<TID_PET> prioritizes trash when targeting prey.
 TID_POWERUP_TRASH_EATER_DESC_SHORT=<color=%U0>Targets and eats Trash</color>
 TID_POWERUP_TRASH_EATER_NAME=Trash Eater
-TID_GEN_LOGOUT=LOGOUT
+TID_GEN_LOGOUT=LOG OUT
 TID_EVENT_BONUS_DRAGON_TITLE=Dragon bonus
 TID_EVENT_SUBTITLE=Contribute as much as you can to the global objective.
 TID_EVENT_DESCRIPTION=You will win lots of rewards!
@@ -1324,7 +1324,7 @@ TID_PHOTO_PET_TITLE=%U0 <color=%U1>%U2</color>
 TID_CANNOT_PAY=The payment could not be completed.
 TID_PET_60_NAME=Alabaster
 TID_POWERUP_DROP_PRESENT_NAME=Give Candy!
-TID_POWERUP_DROP_PRESENT_DESC=Will drop candies behind him. Candies are good for dragons, yum!
+TID_POWERUP_DROP_PRESENT_DESC=Will drop candies behind him. Candies are good for dragons, yum...
 TID_POWERUP_DROP_PRESENT_DESC_SHORT=<color=%U0>Gives Xmas sweets!</color>
 TID_EDIBLE_XMASFOOD=Christmas Sweets
 TID_SETTINGS_USER_ID=User ID: %U0
@@ -1490,7 +1490,7 @@ TID_POWERUP_TRANSFORM_GOLD_NAME=Gold Blossom!
 TID_POWERUP_TRANSFORM_GOLD_DESC=Will sometimes turn on-screen enemies to gold.
 TID_POWERUP_TRANSFORM_GOLD_DESC_SHORT=<color=%U0>Gold transformation</color>
 TID_POWERUP_HP_DOWN_DRAIN_DOWN_NAME=Vigorous
-TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC=Health Drain is reduced by <color=%U0>30%</color>, but max HP is reduced by <color=%U0>50%</color>.
+TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC=Health Drain is reduced by <color=%U0>50%</color>, but max HP is reduced by <color=%U0>30%</color>.
 TID_POWERUP_HP_DOWN_DRAIN_DOWN_DESC_SHORT=<color=%U0>Health Drain vs Max HP</color>
 TID_OFFER_ITEM_SC=%U0 <TID_SC_NAME_PLURAL>
 TID_OFFER_ITEM_HC=%U0 <TID_PC_NAME_PLURAL>
@@ -1835,7 +1835,7 @@ TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_COCKTAILS=Eat as many cocktails as you can 
 TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_ROCKETGOBLINS=Eat as many <TID_EDIBLE_GOBLIN_DRILLER_PL> as you can in %U0.
 TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_TROLLS=Eat as many <TID_EDIBLE_TROLL_PL> as you can in %U0.
 TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_WITCHES=Eat as many <TID_EDIBLE_WITCH_PL> as you can in %U0.
-TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_GOBLINS=Eat as many <TID_EDIBLE_GOBLIN_PL> as you can in %U0.
+TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_GOBLINS=Kill as many <TID_EDIBLE_GOBLIN_PL> as you can in %U0 minutes.
 TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_FAIRIES=Eat as many <TID_EDIBLE_FAIRIES_PL> as you can in %U0.
 TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_GHOSTS=Eat as many <TID_EDIBLE_GHOST_01_PL> as you can in %U0.
 TID_EVENT_TOURNAMENT_DESTROY_TIME_LIMIT_BOATS=Destroy as many <TID_KILLABLE_GOBLIN_BOAT_PL> as you can in %U0.
@@ -1874,8 +1874,8 @@ TID_MOD_DUPLICATEDEGG_DESCRIPTION=One <TID_EGG> opened, 1 <TID_EGG> free!
 TID_POWERUP_SUN_NAME=Flippin' burgers
 TID_POWERUP_SHOOT_BUBBLE_NAME=Bubbles!
 TID_POWERUP_TRANSFORM_ICE_CREAM_NAME=Ice cream magic!
-TID_POWERUP_SUN_DESC=Orbits around the player, burning everything it touches!
-TID_POWERUP_SHOOT_BUBBLE_DESC=When emerged in water it will imprison enemies in bubbles!
+TID_POWERUP_SUN_DESC=Orbits around the player, burning everything it touches.
+TID_POWERUP_SHOOT_BUBBLE_DESC=When emerged in water it will imprison enemies in bubbles.
 TID_POWERUP_TRANSFORM_ICE_CREAM_DESC=Will sometimes transform enemies in delicious ice creams! #Summer
 TID_POWERUP_SUN_DESC_SHORT=<color=%U0>Burns on contact!</color>
 TID_POWERUP_SHOOT_BUBBLE_DESC_SHORT=<color=%U0>Imprison in bubbles</color>
@@ -2105,9 +2105,9 @@ TID_ANIMOJI_PERMISSIONS_BUTTON=Go to device Settings
 TID_SAVE_ERROR_CORRUPTED=There was an error when trying to save your progress. You can retry or continue playing. If you continue playing, your progress might not be saved (%U0).
 TID_CREDITS_ASSOCIATE_PRODUCER=Associate Producer
 TID_DRAGON_SPECIAL_ELECTRIC_NAME=Eelectrozoa
-TID_DRAGON_SPECIAL_ELECTRIC_DESC=Bioluminescent eel dragon with immense electrical power.\nBoost to discharge the ELECTRIC BEAM
+TID_DRAGON_SPECIAL_ELECTRIC_DESC=Bioluminescent eel dragon with immense electrical power.\nBoost to discharge the ELECTRIC BEAM.
 TID_DRAGON_SPECIAL_HELICOPTER_NAME=Mechamuncher
-TID_DRAGON_SPECIAL_HELICOPTER_DESC=Goblin-made mechanical beast equipped with a rapid fire Gatling gun.\nBoost to fire the MACHINE GUN
+TID_DRAGON_SPECIAL_HELICOPTER_DESC=Goblin-made mechanical beast equipped with a rapid fire Gatling gun.\nBoost to fire the MACHINE GUN.
 TID_LAB_ERROR_NO_SPECIAL_DRAGON_OWNED=Own a <TID_SPECIAL_DRAGON> to play!
 TID_SPECIAL_DRAGON=Legendary Dragon
 TID_SPECIAL_DRAGON_PL=Legendary Dragons
@@ -2149,8 +2149,6 @@ TID_LAB_UNLOCKED_POPUP_BUTTON=Go to the <TID_LAB_NAME>!
 TID_LAB_GOALS_TITLE=<TID_LAB_CHALLENGES>
 TID_LAB_MISSIONS_TITLE=<TID_LAB_LEGENDARY_MISSIONS>
 TID_LAB_LEAGUES_TITLE=<TID_LAB_LEGENDARY_LEAGUES>
-TID_LEAGUE_NAME=League
-TID_LEAGUE_NAME_PL=Leagues
 TID_LAB_CHALLENGES=Challenges
 TID_LAB_LEGENDARY_CHALLENGE=Legendary Challenge
 TID_LAB_LEGENDARY_LEAGUES=Legendary Leagues
@@ -2179,3 +2177,275 @@ TID_MOD_DRAGON_DISCOUNT_NAME=%U1 on %U0!
 TID_MOD_DRAGON_DISCOUNT_DESCRIPTION=Unleash %U0 with a great discount\nLimited time offer!
 TID_AREA_CASTLE_ACTION=Break the counterweight to open the gate
 TID_AREA_CASTLE_NAME=Kingdom Spa
+TID_DRAGON_GET_NOW=Get now!
+TID_DRAGON_GET_NOW_DISCOUNT=Only now!
+TID_QUIP_DRG_KILL_XMAS_01=Christmas!
+TID_GLOBAL_EVENT_ARMOUR=Collect %U0 armor pieces!
+TID_QUIP_DRG_KILL_ENT_ARMOUR_PIECES_01=Like a Sir!
+TID_QUIP_DRG_KILL_ENT_ARMOUR_PIECES_02=This is destiny!
+TID_LUNAR_NEW_YEAR=Lunar New Year
+TID_CALETY_01=Used to listen to music while playing.
+TID_CALETY_02=Some ad content may create a calendar event.
+TID_CALETY_03=Needed for Augmented Reality and Animated Faces.
+TID_CALETY_04=Used for recording Animated Faces!
+TID_CALETY_05=Used for taking pictures of your dragons!
+TID_PET_73_NAME=Zhu
+TID_POWERUP_DEADLYFIREWORKS_DESC_SHORT=<color=%U0>Shoots killer fireworks</color>
+TID_POWERUP_DEADLYFIREWORKS_DESC=Launches fireworks that kill enemies.
+TID_POWERUP_DEADLYFIREWORKS_NAME=Deadly Fireworks
+TID_PET_74_NAME=McLuvin
+TID_POWERUP_LOVEATTRACTION_DESC_SHORT=<color=%U0>Paralyzes enemies of love</color>
+TID_POWERUP_LOVEATTRACTION_DESC=Shoots arrows that create an aura of love, stopping enemies from attacking.
+TID_POWERUP_LOVEATTRACTION_NAME=Fatal Attraction
+TID_QUIP_DRG_KILL_ENT_ST_VALENTINES_01=Heartbreaker!
+TID_QUIP_DRG_KILL_ENT_ST_VALENTINES_02=Love is in the air!
+TID_QUIP_DRG_KILL_ENT_ST_VALENTINES_03=Heart Attack!
+TID_SEASON_VALENTINE_NAME=Valentine's Day
+TID_SEASON_CHINESENEWYEAR_NAME=<TID_LUNAR_NEW_YEAR>
+TID_EVENT_TOURNAMENT_KILL_IN_LOVE_NORMAL_ALL=Eat as many preys while they are in love as you can in a single run!
+TID_GLOBAL_EVENT_HEARTS=Collect %U0 hearts!
+TID_GLOBAL_EVENT_RED_ENVELOPE=Collect %U0 red envelopes!
+TID_EVENT_TOURNAMENT_KILL_STUNNED_NORMAL_ALL=Eat %U0 preys while they are stunned!
+TID_EVENT_TOURNAMENT_KILL_FROZEN_NORMAL_ALL=Eat %U0 preys while they are frozen!
+TID_MISSION_OBJECTIVE_KILL_STUNNED_DESC_SINGLE_RUN=Eat %U0 stunned %U1 in a single run!
+TID_MISSION_OBJECTIVE_KILL_FROZEN_DESC_SINGLE_RUN=Eat %U0 frozen %U1 in a single run!
+TID_MISSION_OBJECTIVE_KILL_STUNNED_DESC_MULTI_RUN=Eat %U0 stunned %U1!
+TID_MISSION_OBJECTIVE_KILL_FROZEN_DESC_MULTI_RUN=Eat %U0 frozen %U1!
+TID_MISSION_OBJECTIVE_KILL_IN_LOVE_DESC_SINGLE_RUN=Eat %U0 %U1 while they are in love, in a single run!
+TID_MISSION_OBJECTIVE_KILL_IN_LOVE_DESC_MULTI_RUN=Eat %U0 %U1 while they are in love!
+TID_DRAGON_SPECIAL_HEDGEHOG_NAME=Armordillo
+TID_DRAGON_SPECIAL_HEDGEHOG_DESC=Armored oddball with an erratic spinball attack. Boost to SPIN.
+TID_DRAGON_SPECIAL_HEDGEHOG_BOOST_ABILITY=Spinball
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER1_TITLE=Blastproof
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER1_DESC=Bounce off mines while in spinball
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER2_TITLE=Spinale
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER2_DESC=Sprays spines in all directions when spinball stops
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER3_TITLE=Spinecraft
+TID_DRAGON_SPECIAL_HEDGEHOG_POWER3_DESC=Shoots a huge spine while in spinball
+TID_GEN_ORDINAL_0=%U0th
+TID_GEN_ORDINAL_1=%U0st
+TID_GEN_ORDINAL_2=%U0nd
+TID_GEN_ORDINAL_3=%U0rd
+TID_GEN_ORDINAL_4=%U0th
+TID_GEN_ORDINAL_5=%U0th
+TID_GEN_ORDINAL_6=%U0th
+TID_GEN_ORDINAL_7=%U0th
+TID_GEN_ORDINAL_8=%U0th
+TID_GEN_ORDINAL_9=%U0th
+TID_GEN_ORDINAL_10=%U0th
+TID_GEN_ORDINAL_11=%U0th
+TID_GEN_ORDINAL_12=%U0th
+TID_GEN_ORDINAL_13=%U0th
+TID_GEN_ORDINAL_14=%U0th
+TID_GEN_ORDINAL_15=%U0th
+TID_GEN_ORDINAL_16=%U0th
+TID_GEN_ORDINAL_17=%U0th
+TID_GEN_ORDINAL_18=%U0th
+TID_GEN_ORDINAL_19=%U0th
+TID_GEN_ORDINAL_20=%U0th
+TID_GEN_ORDINAL_21=%U0st
+TID_GEN_ORDINAL_22=%U0nd
+TID_GEN_ORDINAL_23=%U0rd
+TID_GEN_ORDINAL_24=%U0th
+TID_GEN_ORDINAL_25=%U0th
+TID_GEN_ORDINAL_26=%U0th
+TID_GEN_ORDINAL_27=%U0th
+TID_GEN_ORDINAL_28=%U0th
+TID_GEN_ORDINAL_29=%U0th
+TID_GEN_ORDINAL_30=%U0th
+TID_GEN_ORDINAL_31=%U0st
+TID_GEN_ORDINAL_32=%U0nd
+TID_GEN_ORDINAL_33=%U0rd
+TID_GEN_ORDINAL_34=%U0th
+TID_GEN_ORDINAL_35=%U0th
+TID_GEN_ORDINAL_36=%U0th
+TID_GEN_ORDINAL_37=%U0th
+TID_GEN_ORDINAL_38=%U0th
+TID_GEN_ORDINAL_39=%U0th
+TID_GEN_ORDINAL_40=%U0th
+TID_GEN_ORDINAL_41=%U0st
+TID_GEN_ORDINAL_42=%U0nd
+TID_GEN_ORDINAL_43=%U0rd
+TID_GEN_ORDINAL_44=%U0th
+TID_GEN_ORDINAL_45=%U0th
+TID_GEN_ORDINAL_46=%U0th
+TID_GEN_ORDINAL_47=%U0th
+TID_GEN_ORDINAL_48=%U0th
+TID_GEN_ORDINAL_49=%U0th
+TID_GEN_ORDINAL_50=%U0th
+TID_GEN_ORDINAL_51=%U0st
+TID_GEN_ORDINAL_52=%U0nd
+TID_GEN_ORDINAL_53=%U0rd
+TID_GEN_ORDINAL_54=%U0th
+TID_GEN_ORDINAL_55=%U0th
+TID_GEN_ORDINAL_56=%U0th
+TID_GEN_ORDINAL_57=%U0th
+TID_GEN_ORDINAL_58=%U0th
+TID_GEN_ORDINAL_59=%U0th
+TID_GEN_ORDINAL_60=%U0th
+TID_GEN_ORDINAL_61=%U0st
+TID_GEN_ORDINAL_62=%U0nd
+TID_GEN_ORDINAL_63=%U0rd
+TID_GEN_ORDINAL_64=%U0th
+TID_GEN_ORDINAL_65=%U0th
+TID_GEN_ORDINAL_66=%U0th
+TID_GEN_ORDINAL_67=%U0th
+TID_GEN_ORDINAL_68=%U0th
+TID_GEN_ORDINAL_69=%U0th
+TID_GEN_ORDINAL_70=%U0th
+TID_GEN_ORDINAL_71=%U0st
+TID_GEN_ORDINAL_72=%U0nd
+TID_GEN_ORDINAL_73=%U0rd
+TID_GEN_ORDINAL_74=%U0th
+TID_GEN_ORDINAL_75=%U0th
+TID_GEN_ORDINAL_76=%U0th
+TID_GEN_ORDINAL_77=%U0th
+TID_GEN_ORDINAL_78=%U0th
+TID_GEN_ORDINAL_79=%U0th
+TID_GEN_ORDINAL_80=%U0th
+TID_GEN_ORDINAL_81=%U0st
+TID_GEN_ORDINAL_82=%U0nd
+TID_GEN_ORDINAL_83=%U0rd
+TID_GEN_ORDINAL_84=%U0th
+TID_GEN_ORDINAL_85=%U0th
+TID_GEN_ORDINAL_86=%U0th
+TID_GEN_ORDINAL_87=%U0th
+TID_GEN_ORDINAL_88=%U0th
+TID_GEN_ORDINAL_89=%U0th
+TID_GEN_ORDINAL_90=%U0th
+TID_GEN_ORDINAL_91=%U0st
+TID_GEN_ORDINAL_92=%U0nd
+TID_GEN_ORDINAL_93=%U0rd
+TID_GEN_ORDINAL_94=%U0th
+TID_GEN_ORDINAL_95=%U0th
+TID_GEN_ORDINAL_96=%U0th
+TID_GEN_ORDINAL_97=%U0th
+TID_GEN_ORDINAL_98=%U0th
+TID_GEN_ORDINAL_99=%U0th
+TID_LEAGUE_NAME=League
+TID_LEAGUE_NAME_PL=Legendary Leagues
+TID_LEAGUES_SEASON_NAME=Season
+TID_LEAGUES_SEASON_NAME_PL=Seasons
+TID_LEAGUES_TITLE_1=Canary <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_2=Sheep <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_3=Flying Pig <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_4=Goblin <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_5=Eagle <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_6=Croc <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_7=Witch <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_8=Knight <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_9=Giant <TID_LEAGUE_NAME>
+TID_LEAGUES_TITLE_10=Dragon <TID_LEAGUE_NAME>
+TID_LAB_INTRO_POPUP_MESSAGE_3=Compete against players from around the world in the <TID_LEAGUE_NAME_PL>!
+TID_LEAGUES_INFO_POPUP=Introducing the <TID_LEAGUE_NAME_PL>!
+TID_LEAGUES_POPUP_DESCRIPTION=Compete in weekly <TID_LEAGUES_SEASON_NAME_PL> against other players and climb your way to the top leagues to get awesome rewards!
+TID_LEAGUES_WELCOME_TITLE=Welcome to the <TID_LEAGUE_NAME_PL>! You are currently in the
+TID_LEAGUES_ACTIVATE_LEADERBOARD=Play now to enter the <TID_LEAGUE_NAME> and compete your way to the top for great rewards!
+TID_LEAGUES_REWARDS_RESULT_INFO=You have been
+TID_LEAGUES_REWARDS_PROMOTED=Promoted!
+TID_LEAGUES_REWARDS_DEMOTED=Demoted!
+TID_LEAGUES_REWARDS_NEUTRAL=<TID_LEAGUES_SEASON_NAME> over!
+TID_LEAGUES_REWARDS_INTRO=<TID_LEAGUES_SEASON_NAME> over!
+TID_LEAGUES_REWARDS_FINAL_RANK=You ranked
+TID_LEAGUES_REWARDS_COLLECT=Collect\nrewards
+TID_LEAGUES_OFFLINE_TITLE=Sorry! You are offline!
+TID_LEAGUES_OFFLINE_MESSAGE=You must be online to see and participate in the <TID_LEAGUE_NAME_PL>!
+TID_LEAGUES_TEASING_TITLE=Next <TID_LEAGUES_SEASON_NAME> starting soon!
+TID_LEAGUES_TEASING_SOCIAL_MESSAGE=Get your dragon ready for the next worldwide competition!
+TID_LEAGUES_TEASING_NEXT_LEAGUE=You'll be playing in the
+TID_PLAYER_BUILD_NO_PETS_EQUIPPED=No pets equipped!
+TID_LEAGUES_REWARDS_PROCESSING=Keep feeding your dragon while we get your rewards ready!
+TID_DAILY_LOGIN_NAME=Daily Treasure
+TID_DAILY_LOGIN_DAY=Day %U0
+TID_DAILY_LOGIN_CLAIM=Collect
+TID_DAILY_LOGIN_CLAIM_DOUBLE=COLLECT x2
+TID_DAILY_LOGIN_TODAY_REWARD=Come back every day to collect great rewards!
+TID_DAILY_LOGIN_TEXT=Come back tomorrow!
+TID_DAILY_LOGIN_OK_BUTTON=Got it!
+TID_LOCAL_NOTIFICATION_DAILY_REWARD=Come and get your daily treasure!
+TID_SEASON_PATRICK_NAME=St. Patrick's Day
+TID_QUIP_DRG_KILL_ENT_PATRICK_01=Shamrocked!
+TID_QUIP_DRG_KILL_ENT_PATRICK_02=Luckprechaun!
+TID_QUIP_DRG_KILL_ENT_PATRICK_03=Happy St. Patrick's Day!
+TID_EDIBLE_SEASON_ST_PATRICKS_BALLOON=St. Patrick's balloons
+TID_EVENT_TOURNAMENT_KILL_WEARING_NORMAL_STPATRICK=Kill as many humanoids wearing a St. Patrick's hat as you can in a single run!
+TID_EVENT_TOURNAMENT_KILL_TIME_LIMIT_STPATRICK=Kill as many humanoids wearing a St. Patrick's hat as you can in %U0!
+TID_GLOBAL_EVENT_SHAMROCK=Collect %U0 <TID_EDIBLE_SEASON_ST_PATRICKS_BALLOON>!
+TID_STORE_PACK_CAMPAIGN1PROMO25=Medium Medieval Event Pack
+TID_STORE_PACK_CAMPAIGN1PROMO30=Big Medieval Event Pack
+TID_STORE_PACK_CAMPAIGN2PROMO25=Medium Heroic Event Pack
+TID_STORE_PACK_CAMPAIGN2PROMO30=Big Heroic Event Pack
+TID_STORE_PACK_CAMPAIGN1PROMO15=Small Medieval Event Pack
+TID_STORE_PACK_CAMPAIGN2PROMO15=Small Heroic Event Pack
+TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_NAME=One Goblet of Fire, coming up!
+TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_DESC=<TID_FIRE_RUSH> duration increased by <color=%U0>50%</color>, but Score reduced by <color=%U0>10%</color>.
+TID_POWERUP_SCORE_DOWN_FIRE_DURATION_UP_DESC_SHORT=<color=%U0>Score vs Fire duration</color>
+TID_DRAGON_SPECIAL_ICEDRAGON_NAME=Icebreaker
+TID_DRAGON_SPECIAL_ICEDRAGON_DESC=Majestic ice dragon armored with frozen shards. Boost to FREEZE.
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER1_TITLE=Frost Armor
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER1_DESC=Improved ice shield
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER2_TITLE=Polar Wind
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER2_DESC=Increased freeze radius
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER3_TITLE=Ice Pulse
+TID_DRAGON_SPECIAL_ICEDRAGON_POWER3_DESC=Some frozen enemies explode
+TID_DRAGON_SPECIAL_ICEDRAGON_BOOST_ABILITY=Freeze
+TID_STORE_PACK_CAMPAIGN1PROMO25_DESC=Excessively Epic Pack!
+TID_STORE_PACK_CAMPAIGN1PROMO30_DESC=Legendary Lucky Pack!
+TID_STORE_PACK_CAMPAIGN2PROMO25_DESC=Fantastically Fabled Pack!
+TID_STORE_PACK_CAMPAIGN2PROMO30_DESC=Magical Mythological Pack!
+TID_STORE_PACK_CAMPAIGN1PROMO15_DESC=Charmingly Chivalrous Pack!
+TID_STORE_PACK_CAMPAIGN2PROMO15_DESC=Sensational Super Pack!
+TID_ICE_RUSH=Ice Rush
+TID_MEGA_ICE_RUSH=Mega Ice Rush
+TID_SEASON_EASTER_NAME=Easter
+TID_EVENT_TOURNAMENT_KILL_EASTER_EGGS=Collect as many <TID_EDIBLE_EASTER_EGGS_PL> as you can in %U0 minutes.
+TID_MOD_EASTER_EGG_HUNT_NAME=Easter Egg Hunt
+TID_MOD_EASTER_EGG_HUNT_DESCRIPTION=The Easter Bunny has hidden <TID_EDIBLE_EASTER_EGGS_PL> in the world. Find as many as you can!
+TID_MOD_EASTER_EGG_HUNT_DESC_SHORT=Easter Egg Hunt
+TID_GLOBAL_EVENT_EASTER_BUNNIES=Kill %U0 <TID_EDIBLE_EASTER_BUNNIES_PL> hiding in the ground!
+TID_EDIBLE_EASTER_BUNNIES_PL=easter bunnies
+TID_EDIBLE_EASTER_EGGS_PL=Easter Eggs
+TID_QUIP_DRG_KILL_ENT_EASTER_EGG_01=Chocolatey!
+TID_QUIP_DRG_KILL_ENT_EASTER_EGG_02=Chocolate Explosion!
+TID_QUIP_DRG_KILL_ENT_EASTER_EGG_03=Happy Easter!
+TID_MOD_GOBLIN_INVASION_1_NAME=<TID_EDIBLE_GOBLIN_PL> are invading the <TID_LEVEL_AREA_11_NAME>!
+TID_MOD_GOBLIN_INVASION_1_DESCRIPTION=<TID_EDIBLE_GOBLIN_PL> are invading! They have begun their advance on the <TID_LEVEL_AREA_11_NAME>!
+TID_MOD_GOBLIN_INVASION_1_DESC_SHORT=<TID_EDIBLE_GOBLIN_PL> are invading the <TID_LEVEL_AREA_11_NAME>!
+TID_MOD_GOBLIN_INVASION_2_NAME=<TID_EDIBLE_GOBLIN_PL> have taken the <TID_LEVEL_AREA_11_NAME>!
+TID_MOD_GOBLIN_INVASION_2_DESCRIPTION=The <TID_LEVEL_AREA_11_NAME> is under <TID_EDIBLE_GOBLIN_LC> occupation!
+TID_MOD_GOBLIN_INVASION_2_DESC_SHORT=<TID_MOD_GOBLIN_INVASION_2_NAME>
+TID_EDIBLE_GOBLIN_LC=goblin
+TID_GEN_FILESIZE_B=B
+TID_GEN_FILESIZE_KB=KB
+TID_GEN_FILESIZE_MB=MB
+TID_GEN_FILESIZE_GB=GB
+TID_GEN_FILESIZE_TB=TB
+TID_GEN_FILESIZE_PB=PB
+TID_OTA_PERMISSION_POPUP_TITLE=Extra Content Needed!
+TID_OTA_PERMISSION_POPUP_BODY=You need to download %U0 of extra content to play this dragon.\n\nYou can still play with smaller dragons until your download completes.
+TID_OTA_PERMISSION_POPUP_DOWNLOAD=How do you prefer to download?
+TID_OTA_PERMISSION_POPUP_BUTTON1=WiFi and Mobile Data
+TID_OTA_PERMISSION_POPUP_BUTTON2=WiFi only
+TID_OTA_PERMISSION_POPUP_BUTTON3=Continue with WiFi
+TID_OTA_PROGRESS_BAR_DOWNLOADING=Downloading
+TID_OTA_PROGRESS_BAR_DOWNLOADING_V2=Downloading extra content
+TID_OTA_PROGRESS_BAR_DOWNLOADING_PAUSED=Download paused: %U0
+TID_OTA_ERROR_01_TITLE=Download Error
+TID_OTA_ERROR_01_BODY=You seem to have no WiFi network nearby!\n\nDownload using Mobile Data when WiFi is not available?
+TID_OTA_ERROR_02_TITLE=Connection Error
+TID_OTA_ERROR_02_BODY=Couldn't connect to the server, download paused.\n\nCheck your internet connection and try again.
+TID_OTA_ERROR_03_TITLE=Not Enough Storage
+TID_OTA_ERROR_03_BODY=Device storage is full, download paused.\n\nFree %U0 and try again!
+TID_OTA_ERROR_04_TITLE=Permission Needed
+TID_OTA_ERROR_04_BODY=We need your authorization to allow this download!\n\nChange the storage permission settings on your device and try again.
+TID_OTA_ERROR_GENERIC_TITLE=Download Error
+TID_OTA_ERROR_GENERIC_BODY=Oops, something went wrong while downloading your extra content.\n\nIf the problem persists, try restarting the game or contact our customer support.
+TID_OTA_ERROR_SETTINGS_LINK=Go to Settings
+TID_LIVEOPS_01=The goblins are invading! They have begun their advance on the Castle Market!
+TID_LIVEOPS_02=The invasion continues! The goblins have reached the Spa area!
+TID_LIVEOPS_03=The Easter Bunny has hidden Easter Eggs in the world. Find as many as you can!
+TID_LIVEOPS_04=Meet Icebreaker, the new Legendary Dragon! Discover what's new in this update!
+TID_GEN_SHIELD=Shield
+TID_GEN_ICESHIELD=Ice Shield
+TID_LAB_UNLOCKED_POPUP_MESSAGE_1_ALT=Congratulations, you got your first <b><TID_SPECIAL_DRAGON></b>!
+TID_LAB_UNLOCKED_POPUP_BUTTON_DISMISS=Thank you!

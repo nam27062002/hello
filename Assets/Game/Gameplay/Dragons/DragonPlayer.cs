@@ -1,4 +1,4 @@
-// DragonPlayer.cs
+﻿// DragonPlayer.cs
 // Hungry Dragon
 //
 // Created by Marc Saña Forrellach on 05/08/2015.
@@ -59,17 +59,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private float m_energy;
 	public float energy { get { return m_energy; } }
 
-	private float m_alcohol = 0;
-	public float alcohol { get { return m_alcohol; } }
-	private float m_alcoholMax = 1;
-	public float alcoholMax {get{return m_alcoholMax;}}
-	public float m_alcoholDrain = 1;
-	private bool m_alcoholResistance = false;
-	public bool alcoholResistance
-	{
-		get{ return m_alcoholResistance; }
-		set{ m_alcoholResistance = value; }
-	}
 
 	// Cache content data
 	private float m_healthMax = 1f;
@@ -164,6 +153,12 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		get{ return m_dragonHeatlhBehaviour; }
 	}
+    
+    private DragonShieldBehaviour m_dragonShieldBehaviour = null;
+    public DragonShieldBehaviour dragonShieldBehaviour
+    {
+        get{ return m_dragonShieldBehaviour; }
+    }
 
 	private DragonBoostBehaviour m_dragonBoostBehaviour = null;
 	public DragonBoostBehaviour dragonBoostBehaviour
@@ -180,6 +175,16 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	{
 		get{ return m_breathBehaviour.GetSuperFuryProgression(); }
 	}
+    
+    public float shield
+    {
+        get{ return m_dragonShieldBehaviour != null ? m_dragonShieldBehaviour.m_currentShield : 0; }
+    }
+    
+    public float shieldMax
+    {
+        get{ return m_dragonShieldBehaviour != null ? m_dragonShieldBehaviour.m_maxShield : 0; }
+    }
 
 	// Internal
 	private float m_invulnerableAfterReviveTimer;
@@ -232,7 +237,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_shield = new Dictionary<DamageType, int>(comparer);
 		m_shieldTimers = new Dictionary<DamageType, float>(comparer);
 
-        if (Prefs.GetBoolPlayer(DebugSettings.USE_SPECIAL_DRAGON, false))
+        if (DebugSettings.useSpecialDragon)
         {
            m_data = DragonManager.GetDragonData(m_sku);
         }
@@ -241,17 +246,17 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
     		// Get data from dragon manager
     		if ( SceneController.mode == SceneController.Mode.TOURNAMENT )
     		{
-    			if ( HDLiveEventsManager.instance.m_tournament.UsingProgressionDragon() )
+    			if ( HDLiveDataManager.tournament.UsingProgressionDragon() )
     			{
     				m_data = DragonManager.GetDragonData(m_sku);
     			}
     			else
     			{
-					// Use tmp data
-					m_data = IDragonData.CreateFromDef(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_sku));
-					if(m_data is DragonDataClassic) {
-						(m_data as DragonDataClassic).progression.SetToMaxLevel();
-					}
+                    // Use tmp data
+                    HDTournamentData tournamentData = HDLiveDataManager.tournament.data as HDTournamentData;
+                    HDTournamentDefinition def = tournamentData.definition as HDTournamentDefinition;
+
+                    m_data = IDragonData.CreateFromBuild(def.m_build);
     			}
     		}
     		else
@@ -270,9 +275,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		// Cache content data
 		m_healthMax = m_data.maxHealth;
 		m_energyMax = m_data.baseEnergy;
-
-        m_alcoholMax = m_data.maxAlcohol;
-        m_alcoholDrain = m_data.alcoholDrain;
 
 		// Init health modifiers
 		List<DefinitionNode> healthModifierDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.DRAGON_HEALTH_MODIFIERS);
@@ -298,6 +300,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_dragonMotion = GetComponent<DragonMotion>();
 		m_dragonEatBehaviour =  GetComponent<DragonEatBehaviour>();
 		m_dragonHeatlhBehaviour = GetComponent<DragonHealthBehaviour>();
+        m_dragonShieldBehaviour = GetComponent<DragonShieldBehaviour>();
 		m_dragonBoostBehaviour = GetComponent<DragonBoostBehaviour>();
 
 		// gameObject.AddComponent<WindTrailManagement>();
@@ -311,12 +314,12 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
 		Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 		Broadcaster.AddListener(BroadcastEventType.GAME_ENDED, this);
 		if ( ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST )
 		{
-			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INVULNERABLE, true);
-			Prefs.SetBoolPlayer(DebugSettings.DRAGON_INFINITE_BOOST, true);
+			DebugSettings.invulnerable = true;
+            DebugSettings.infiniteBoost = true;			
 		}
 
         m_mummyModifiers = new List<Modifier>();
@@ -333,7 +336,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		Messenger.RemoveListener<DragonBreathBehaviour.Type, float>(MessengerEvents.PREWARM_FURY_RUSH, OnPrewardmFuryRush);
 		Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
 		Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnEntityDestroyed);
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
 	}
 
@@ -398,21 +401,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			}
 		}
 
-		if ( m_alcohol > 0 )
-		{
-			bool drunk = IsDrunk();
-
-				// Recide Alcohol
-			m_alcohol -= Time.deltaTime * m_alcoholDrain;
-			if ( m_alcohol < 0 )
-				m_alcohol = 0;
-
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-
 		if (m_superSizeTimer > 0 )
 		{
 			m_superSizeTimer -= Time.deltaTime;
@@ -428,12 +416,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			if (m_breathBehaviour.IsFuryOn())
 				m_breathBehaviour.RecalculateSize();
 		}
-#if UNITY_EDITOR
-		if ( Input.GetKeyDown(KeyCode.J) )
-		{
-			AddAlcohol(100);
-		}
-#endif
 	}
 
 	//------------------------------------------------------------------//
@@ -505,8 +487,8 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         // TONI END
 
         // Modifiers
-        m_mummyModifiers.Add(new ModDragonInvulnerable(null));
-        m_mummyModifiers.Add(new ModDragonBoostUnlimited(null));
+        m_mummyModifiers.Add(new ModDragonInvulnerable());
+        m_mummyModifiers.Add(new ModDragonBoostUnlimited());
         m_mummyModifiers.Add(new ModEntityScore(300f));
         m_mummyModifiers.Add(new ModEntitySC(200f));
         for (int i = 0; i < m_mummyModifiers.Count; ++i) {
@@ -637,23 +619,6 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		m_energy = Mathf.Min(m_energyMax, Mathf.Max(0, m_energy + _offset));
 	}
 
-	public void AddAlcohol( float _offset ){
-		if ( !m_alcoholResistance )
-		{
-			bool drunk = IsDrunk();
-			m_alcohol += _offset;
-			if ( drunk != IsDrunk() )
-			{
-				Messenger.Broadcast<bool>(MessengerEvents.DRUNK_TOGGLED, IsDrunk());
-			}
-		}
-	}
-
-	public bool IsDrunk()
-	{
-		return m_alcohol > m_alcoholMax;
-	}
-
 	/// <summary>
 	/// Determines whether any type of fury is on.
 	/// </summary>
@@ -703,9 +668,9 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 			}
 	}
 
-	private void OnEntityDestroyed(Transform _entity, Reward _reward) {
+	private void OnEntityDestroyed(Transform _t, IEntity _e, Reward _reward) {
 		if (_reward.health >= 0) {
-			AddLife(_reward.health, DamageType.NONE, _entity);
+			AddLife(_reward.health, DamageType.NONE, _t);
 		}
 		AddEnergy(_reward.energy);
 	}
@@ -751,12 +716,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 
 		// Move to position
 		if(spawnPointObj != null) {
-			transform.position = spawnPointObj.transform.position;
-			/*
-			if (InstanceManager.pet != null) {
-				InstanceManager.pet.transform.position = spawnPointObj.transform.position;
-			}
-			*/
+			m_dragonMotion.MoveToSpawnPosition(spawnPointObj.transform.position);
 		}
 	}
 

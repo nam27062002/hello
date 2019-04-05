@@ -691,7 +691,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 		if (m_holdingBlood <= 0)
 		{
 			StartBlood();
-			if ( m_holdingPrey.IsFreezing() ){
+			if ( FreezingObjectsRegistry.instance.IsFreezing( m_holdingPrey ) ){
 				StartFreezing();
 			}
 		}
@@ -1016,7 +1016,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
                                     target = machine.position;
                                 }
                                 // Check if collision between us!
-                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUNDS))
+                                if (!Physics.Linecast(m_swallow.position, target, GameConstants.Layers.GROUND))
                                 {
     								preyToHold = machine;
     								entityToHold = entity;
@@ -1139,7 +1139,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 					m_freezeEmitter[i].transform.position = bloodPos;
 					empty = false;
 				} else {
-					m_bloodEmitter[i] = null;
+					m_freezeEmitter[i] = null;
 				}
 			}
 

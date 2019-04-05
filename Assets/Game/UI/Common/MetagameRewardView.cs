@@ -135,6 +135,18 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				}
 			} break;
 
+			case Metagame.RewardDragon.TYPE_CODE: {
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.sku);
+				if(dragonDef != null) {
+					iconSprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + dragonDef.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
+					rewardText = dragonDef.GetLocalized("tidName");
+					powerDef = null;
+				} else {
+					// (shouldn't happen)
+					rewardText = LocalizationManager.SharedInstance.Localize("Dragon");
+				}
+			} break;
+
 			case Metagame.RewardEgg.TYPE_CODE:
 			case Metagame.RewardMultiEgg.TYPE_CODE: {
 				// Get the egg definition

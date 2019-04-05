@@ -64,9 +64,7 @@ namespace AI {
 		public float moveSpeed { 
 			get {
 				float ret = 0; 
-				if (!m_stunned){
-					ret = m_moveSpeed * speedFactor * freezeFactor;;
-				}
+				ret = m_moveSpeed * speedFactor * freezeFactor;
 				return  ret;
 			} 
 		}
@@ -75,9 +73,7 @@ namespace AI {
 		public float boostSpeed { 
 			get { 
 				float ret = 0;
-				if (!m_stunned){
-					ret = m_boostSpeed * speedFactor * freezeFactor;
-				}
+				ret = m_boostSpeed * speedFactor * freezeFactor;
 				return  ret;
 			} 
 		}
@@ -86,9 +82,7 @@ namespace AI {
 		public float speed { 
 			get { 
 				float ret = 0;
-				if (!m_stunned){
-					ret = m_currentSpeed * speedFactor * freezeFactor; 
-				}
+				ret = m_currentSpeed * speedFactor * freezeFactor; 
 				return ret;
 			} 
 		}
@@ -111,12 +105,16 @@ namespace AI {
 		protected Quaternion m_targetRotation;
 		public Quaternion targetRotation{ get { return m_targetRotation; } }
 
-		public virtual Vector3 target { get { return transform.position; } }
+		public virtual Vector3 target { get { return m_transform.position; } }
+
+        protected Transform m_transform;
 
 		//----------------------------------------------------------------------------------------------------------------
 
 		protected virtual void Awake() {
-			m_moveSpeed = 0;
+            m_transform = transform;
+
+            m_moveSpeed = 0;
 			m_boostSpeed = 0;
 
 			m_currentSpeed = 0;
@@ -146,7 +144,7 @@ namespace AI {
 			m_actions &= ~_action;
 		}
 
-		public virtual void OnDie() {}
+		public virtual void BrainExit() {}
 
 		public virtual void OnTrigger(string _trigger, object[] _param = null) {}
 
@@ -183,14 +181,14 @@ namespace AI {
 			m_stunned = _stunned;
 		}
 
-
 		public void Stop() {
 			m_moveSpeed = 0f;
 			m_currentSpeed = 0f;
 			m_boostSpeed = 0f;
 			m_impulse = Vector3.zero;
 			m_externalImpulse = Vector3.zero;
-			PressAction(Action.Stop);
+
+            PressAction(Action.Stop);
 		}
 
 		public void SetDirection(Vector3 _dir, bool _force = false) {
@@ -220,6 +218,7 @@ namespace AI {
 		public virtual void Spawn(ISpawner _spawner) {}
 
 		public virtual void CustomUpdate() {
+        
 			if (m_boostAvailable && IsActionPressed(Action.Boost)) {
 				m_currentSpeed = Mathf.Lerp(m_currentSpeed, m_boostSpeed, Time.deltaTime * m_blendSpeedFactor);
 				m_currentEnergy = Mathf.Lerp(m_currentEnergy, 0f, Time.deltaTime * m_energyDrainSec);

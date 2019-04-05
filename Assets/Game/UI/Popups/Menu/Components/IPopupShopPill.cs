@@ -5,6 +5,11 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+#define LOG_ENABLED
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -43,27 +48,26 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	protected UserProfile.Currency m_currency = UserProfile.Currency.REAL;
 	protected float m_price = 0f;
 
-	private FGOL.Server.Error m_checkConnectionError;
 	private PopupController m_loadingPopupController;
 	private bool m_awaitingPurchaseConfirmation = false;
 
 	private bool m_transactionInProgress = false;
 
 	//------------------------------------------------------------------------//
-	// ABSTRACT METHODS														  //
+	// ABSTRACT AND VIRTUAL METHODS											  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Obtain the IAP sku as defined in the App Stores.
 	/// </summary>
 	/// <returns>The IAP sku corresponding to this shop pack. Empty if not an IAP.</returns>
 	public abstract string GetIAPSku();
-	
+
 	/// <summary>
 	/// Get the tracking id for transactions performed by this shop pill
 	/// </summary>
 	/// <returns>The tracking identifier.</returns>
 	protected abstract HDTrackingManager.EEconomyGroup GetTrackingId();
-	
+
 	/// <summary>
 	/// Apply the shop pack to the current user!
 	/// Invoked after a successful purchase.
@@ -74,6 +78,21 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// Shows the purchase success feedback.
 	/// </summary>
 	protected abstract void ShowPurchaseSuccessFeedback();
+
+	/// <summary>
+	/// A purchase has been started.
+	/// </summary>
+	protected virtual void OnPurchaseStarted() {
+		// To be implemented by heirs if needed
+	}
+
+	/// <summary>
+	/// A purchase has finished.
+	/// </summary>
+	/// <param name="_success">Has it been successful?</param>
+	protected virtual void OnPurchaseFinished(bool _success) {
+		// To be implemented by heirs if needed
+	}
 
 	//------------------------------------------------------------------------//
 	// INTERNAL METHODS														  //
@@ -94,27 +113,94 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Tell the pill whether to track purchases or not.
+	/// Internal logic to start purchase.
 	/// </summary>
-	/// <param name="_track">Track purchases?.</param>
-	private void TrackPurchaseResult(bool _track) {
+	private void StartPurchase() {
+		// Track
+		m_transactionInProgress = true;
+
+        // Track
+        HDTrackingManager.Instance.Notify_StoreItemView(m_def.sku);
+
+		// Notify heirs
+		OnPurchaseStarted();
+	}
+
+	/// <summary>
+	/// Internal logic to finalize a purchase.
+	/// </summary>
+	/// <param name="_success">Has it been successful?</param>
+	private void EndPurchase(bool _success) {
+		Log("EndPurchase. Success? " + _success);
+
+		// Stop tracking
+		m_transactionInProgress = false;
+
+		// Successful?
+		if(_success) {
+			// Apply rewards
+			ApplyShopPack();
+
+			// Show feedback!
+			ShowPurchaseSuccessFeedback();
+
+			// Notify external listeners
+			OnPurchaseSuccess.Invoke(this);
+		} else {
+			// Notify external listeners
+			OnPurchaseError.Invoke(this);
+		}
+
+		// If real money, properly finalize IAP
+		if(m_currency == UserProfile.Currency.REAL) {
+			FinalizeIAP(_success);
+		}
+
+		// Notifiy heirs
+		OnPurchaseFinished(_success);
+	}
+
+	/// <summary>
+	/// Tell the pill whether to listen to GameStoreManager events or not.
+	/// </summary>
+	/// <param name="_track">Track purchases?</param>
+	private void TrackIAPEvents(bool _track) {
 		// Skip if same state
-		if(_track == m_awaitingPurchaseConfirmation) return;
+		if(_track == m_awaitingPurchaseConfirmation) {
+			Log("Already watiting (or not)(" + m_awaitingPurchaseConfirmation + ") for purchase confirmation, skip subscribing to IAP events");
+			return;
+		}
 
 		// Store new state
 		m_awaitingPurchaseConfirmation = _track;
 
 		// Update listeners
 		if(_track) {
+			Log("Subscribing to IAP events");
 			Messenger.AddListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
 			Messenger.AddListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
 		} else {
+			Log("Unsubscribing from IAP events");
 			Messenger.RemoveListener<string, string, SimpleJSON.JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, OnIAPSuccess);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_ERROR, OnIAPFailed);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_FAILED, OnIAPFailed);
 			Messenger.RemoveListener<string>(MessengerEvents.PURCHASE_CANCELLED, OnIAPFailed);
+		}
+	}
+
+	/// <summary>
+	/// Perform all required logic when the IAP flow has finished.
+	/// </summary>
+	/// <param name="_success">Has the IAP been successful?</param>
+	private void FinalizeIAP(bool _success) {
+		Log("Finalize IAP: Success? " + _success);
+
+		// Close loading popup
+		if(m_loadingPopupController != null) {
+			Log("Closing loading popup!!");
+			m_loadingPopupController.Close(true);
 		}
 	}
 
@@ -132,95 +218,132 @@ public abstract class IPopupShopPill : MonoBehaviour {
 		// Resolves issue HDK-2589 and others
 		if(m_transactionInProgress) return;
 
+		// Start internal logic
+		StartPurchase();
+
 		// Depends on currency
 		switch(m_currency) {
 			case UserProfile.Currency.HARD: {
-				m_transactionInProgress = true;
-
 				// Make sure we have enough and adjust new balance
 				// Resources flow makes it easy for us!
 				ResourcesFlow purchaseFlow = new ResourcesFlow(this.GetType().Name);
-				purchaseFlow.forceConfirmation = true;	// [AOC] For currency packs always request confirmation (UMR compliance)
-				purchaseFlow.OnSuccess.AddListener(OnResourcesFlowSuccess);
+				purchaseFlow.forceConfirmation = true;  // [AOC] For currency packs always request confirmation (UMR compliance)
 				purchaseFlow.OnFinished.AddListener(OnResourcesFlowFinished);
 				purchaseFlow.Begin((long)m_price, UserProfile.Currency.HARD, GetTrackingId(), def);
 			} break;
 
 			case UserProfile.Currency.REAL: {
-                    // HACK to fix HDK-524 quickly:
-                    // There's an issue with PopupController that prevents OnClosePostAnimation listener from being called when a popup is closed immediately after being opened
-                    // So far we just avoid that situation
-                    if (Application.internetReachability == NetworkReachability.NotReachable) {
-                        OnPurchaseError.Invoke(this);
-                        UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
-                    } else {
-						// Start real money transaction flow
-						m_transactionInProgress = true;
-                        m_loadingPopupController = PopupManager.PopupLoading_Open();
-						m_loadingPopupController.OnClosePostAnimation.AddListener(OnConnectionCheck);
-						GameServerManager.SharedInstance.CheckConnection(delegate (FGOL.Server.Error connectionError)
-                        {
-                            m_checkConnectionError = connectionError;
-                    #if UNITY_EDITOR
-                            m_checkConnectionError = null;
-                    #endif
-                            m_loadingPopupController.Close(true);
-                        });
-                    }
+				// Do a first quick check on Internet connectivity
+				Log("Quick connectivity check");
+				if(Application.internetReachability == NetworkReachability.NotReachable) {
+					// We have no internet connectivity, finalize the IAP
+					Log("No internet connectivity, finalize the IAP");
+					EndPurchase(false);
+					UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+				} else {
+					// Start real money transaction flow!
+					Log("Internet connectivity OK, start real money transaction flow!");
+
+					// Open loading popup to block all the UI while the transaction is in progress
+					Log("Opening Loading Popup!");
+					m_loadingPopupController = PopupManager.PopupLoading_Open();
+
+					// Check connection to the store
+#if UNITY_EDITOR
+					// [AOC] Editor override
+					// Simulate some delay
+					UbiBCN.CoroutineManager.DelayedCall(() => {
+						OnConnectionCheckFinished(null);
+					}, 3f);
+#else
+					GameServerManager.SharedInstance.CheckConnection(OnConnectionCheckFinished);
+#endif
+                }
+			} break;
+
+			default: {
+				EndPurchase(false);
 			} break;
 		}
 	}
     
 	/// <summary>
-	/// 
+	/// Connection to the store has been checked.
 	/// </summary>
-	void OnConnectionCheck() {
-		if(m_checkConnectionError == null) {
-			if(GameStoreManager.SharedInstance.CanMakePayment()) {
-				TrackPurchaseResult(true);
-				GameStoreManager.SharedInstance.Buy(GetIAPSku());
-			} else {
-				m_transactionInProgress = false;
-				OnPurchaseError.Invoke(this);
+	void OnConnectionCheckFinished(FGOL.Server.Error _connectionError) {
+		Log("OnConnectionCheckFinished: Error " + (_connectionError == null ? "NULL" : _connectionError.ToString()));
 
-#if UNITY_ANDROID
-                string msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));
-                UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
-                // Longer time is given to this feedback because the text is long
-                feedbackText.duration = 4f;
-#else
-                UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);           
-#endif
-
-            }
+		if(_connectionError == null) {
+			// No error! Proceed with the IAP flow
+			Log("OnConnectionCheckFinished: No Error! Proceed with IAP flow");
+            if(GameStoreManager.SharedInstance.IsInitializing()) {
+				Log("Store not yet initialized. Waiting...");
+                GameStoreManager.SharedInstance.WaitForInitialization(RequestIAP);
+            } else {
+                RequestIAP();
+            }			
         } else {
-			m_transactionInProgress = false;
-			OnPurchaseError.Invoke(this);
+			// There was a connection error with the store, finalize the IAP
+			Log("There was a connection error with the store, finalize the IAP");
+			EndPurchase(false);
 			UIFeedbackText.CreateAndLaunch(LocalizationManager.SharedInstance.Localize("TID_GEN_NO_CONNECTION"), new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
 		}
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+    private void RequestIAP()
+    {                
+        if (GameStoreManager.SharedInstance.CanMakePayment())
+        {
+            // Player can perform the payment, continue with the IAP flow
+            Log("Player can perform the payment, continue with the IAP flow");
+            TrackIAPEvents(true);  // Start listening to GameStoreManager events
+            GameStoreManager.SharedInstance.Buy(GetIAPSku());
+        }        
+        else
+        {
+            // Player can't make payment, finalize the IAP
+            Log("Player can't make payment, finalize the IAP");
+			EndPurchase(false);
+
+            string msg = null;
+            float duration = -1f;
+
+            {               
+#if UNITY_ANDROID
+                msg = LocalizationManager.SharedInstance.Localize("TID_CHECK_PAYMENT_METHOD", LocalizationManager.SharedInstance.Localize("TID_PAYMENT_METHOD_GOOGLE"));                
+                // Longer time is given to this feedback because the text is long
+                duration = 4f;
+#else
+                msg = LocalizationManager.SharedInstance.Localize("TID_CANNOT_PAY");                
+#endif
+            }
+
+            UIFeedbackText feedbackText = UIFeedbackText.CreateAndLaunch(msg, new Vector2(0.5f, 0.5f), this.GetComponentInParent<Canvas>().transform as RectTransform);
+            if (duration > 0)
+            {
+                feedbackText.duration = duration;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Real money transaction has succeeded.
 	/// </summary>
 	/// <param name="_sku">Sku of the purchased item.</param>
 	private void OnIAPSuccess(string _sku, string _storeTransactionID, SimpleJSON.JSONNode _receipt) {
+		Log("OnIAPSuccess! " + _sku);
+
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
-			// Update control vars
-			m_transactionInProgress = false;
+			Log("Applying shop pack and finalizing IAP flow");
+			// Stop listening to GameStoreManager events
+			TrackIAPEvents(false);
 
-			// Apply rewards
-			ApplyShopPack();
-
-			// Stop tracking
-			TrackPurchaseResult(false);
-
-			// Notify external listeners
-			OnPurchaseSuccess.Invoke(this);
-
-			// Show feedback!
-			ShowPurchaseSuccessFeedback();
+			// Finalize IAP flow
+			EndPurchase(true);
 		}
 	}
 
@@ -229,34 +352,15 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_sku">Sku of the item to be purchased.</param>
 	private void OnIAPFailed(string _sku) {
+		Log("OnIAPFailed! " + _sku);
+
 		// Is it this one?
 		if(_sku == GetIAPSku()) {
-			// Update control vars
-			m_transactionInProgress = false;
-
 			// Stop tracking
-			TrackPurchaseResult(false);
+			TrackIAPEvents(false);
 
-			// Notify external listeners
-			OnPurchaseError.Invoke(this);
-		}
-	}
-
-	/// <summary>
-	/// PC Transaction has succeeded.
-	/// </summary>
-	/// <param name="_flow">Flow.</param>
-	private void OnResourcesFlowSuccess(ResourcesFlow _flow) {
-		// Is it this one?
-		if(_flow.itemDef.sku == def.sku) {
-			// Apply rewards
-			ApplyShopPack();
-
-			// Notify external listeners
-			OnPurchaseSuccess.Invoke(this);
-
-			// Show feedback!
-			ShowPurchaseSuccessFeedback();
+			// Finalize IAP flow
+			EndPurchase(false);
 		}
 	}
 
@@ -265,10 +369,28 @@ public abstract class IPopupShopPill : MonoBehaviour {
 	/// </summary>
 	/// <param name="_flow">Flow.</param>
 	private void OnResourcesFlowFinished(ResourcesFlow _flow) {
+		Log("OnResourcesFlowFinished! " + _flow.name);
+
 		// Is it this one?
 		if(_flow.itemDef.sku == def.sku) {
-			// Update control vars
-			m_transactionInProgress = false;
+			// Use internal method to finalize the transaction
+			Log("Finishing resources flow transaction " + _flow.name);
+			EndPurchase(_flow.successful);
 		}
+	}    
+
+	//------------------------------------------------------------------------//
+	// DEBUG METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Print something on the console / control panel log.
+	/// </summary>
+	/// <param name="_message">Message to be printed.</param>
+	private void Log(string _message) {
+#if LOG_ENABLED
+		// Debug enabled?
+		if(!FeatureSettingsManager.IsDebugEnabled) return;
+		ControlPanel.Log("[ShopPill]" + _message, ControlPanel.ELogChannel.Store);
+#endif
 	}
 }

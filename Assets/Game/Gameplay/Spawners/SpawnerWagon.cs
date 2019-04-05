@@ -128,7 +128,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 	public void Initialize() {
 		m_poolHandlers = new PoolHandler[m_entityPrefabList.Length];
 		for (int i = 0; i < m_entityPrefabList.Length; i++) {
-			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, IEntity.EntityPrefabsPath, 1);
+			m_poolHandlers[i] = PoolManager.RequestPool(m_entityPrefabList[i].name, 1);
 		}
 		m_wagonList = new List<IEntity>();
 		m_poolHandlerIndex = new List<int>();
@@ -148,7 +148,15 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		gameObject.SetActive(false);
 	}
 
-	public bool IsRespawing() { return (m_state == State.Respawning); }
+    public List<string> GetPrefabList() {
+        List<string> list = new List<string>();
+        for (int j = 0; j < m_entityPrefabList.Length; ++j) {
+            list.Add(m_entityPrefabList[j].name);
+        }
+        return list;
+    }
+
+    public bool IsRespawing() { return (m_state == State.Respawning); }
 
 	// this spawner will kill its entities if it is outside camera disable area
 	public bool MustCheckCameraBounds() 	{ return false; }
@@ -257,7 +265,7 @@ public class SpawnerWagon : MonoBehaviour, ISpawner {
 		return i;
 	}
 
-	public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 		int index = -1;
 		for (int i = 0; i < m_wagonList.Count && index == -1; ++i) {
 			if (m_wagonList[i].gameObject == _entity) {

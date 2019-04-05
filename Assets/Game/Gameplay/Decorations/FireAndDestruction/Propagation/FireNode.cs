@@ -38,6 +38,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	private IEntity.Type m_sourceType = IEntity.Type.OTHER;
 	private IEntity.Type sourceType { get { return m_sourceType; }}
 	private DragonBreathBehaviour.Type m_breathType;
+    private FireColorSetupManager.FireColorType m_colorType;
+    public FireColorSetupManager.FireColorType colorType { get { return m_colorType; }}
 
 	private List<FireNode> m_neighbours;
 	private List<float> m_neihboursFireResistance;
@@ -111,12 +113,13 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	public bool IsExtinguished() 	{ return m_state == State.Extinguished;		}
 
 
-	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType, IEntity.Type _source) {
+	public void Burn(Vector2 _direction, bool _dragonBreath, DragonTier _tier, DragonBreathBehaviour.Type _breathType, IEntity.Type _source, FireColorSetupManager.FireColorType _fireColorType =  FireColorSetupManager.FireColorType.RED ) {
 		if (m_state == State.Idle) {
 			ZoneManager.ZoneEffect effect = ZoneManager.ZoneEffect.None; 
 			m_breathTier = _tier;
 			m_breathType = _breathType;
 			m_sourceType = _source;
+            m_colorType = _fireColorType;
 
 			if (_breathType == DragonBreathBehaviour.Type.Mega) {
 				effect = InstanceManager.zoneManager.GetSuperFireEffectCode(m_decoration, _tier);
@@ -129,10 +132,10 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 
 				if (effect == ZoneManager.ZoneEffect.L) {
 					m_nextState = State.GoingToExplode;
-					m_parent.LetsBurn(true, m_sourceType);
+					m_parent.LetsBurn(true, m_sourceType, _fireColorType);
 				} else {
 					m_nextState = State.Spreading;
-					m_parent.LetsBurn(false, m_sourceType);
+					m_parent.LetsBurn(false, m_sourceType, _fireColorType);
 				}
 			} else {
 				// Dragon can't burn this thing, so lets put a few feedback particles
@@ -190,7 +193,7 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 						if (m_neihboursFireResistance[i] > 0.1f) {
 							m_neihboursFireResistance[i] *= 0.5f;						
 						} else {
-							m_neighbours[i].Burn(Vector2.zero, false, m_breathTier, m_breathType, m_sourceType);
+							m_neighbours[i].Burn(Vector2.zero, false, m_breathTier, m_breathType, m_sourceType, m_colorType);
 						}
 					}
 				}
@@ -313,10 +316,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 			m_transform = transform;
 		}
 
-		if (m_neighbours == null || m_neighbours.Count == 0) {
-			FindNeighbours();
-		}
-
+		FindNeighbours();
+		
 		for (int i = 0; i < m_neighbours.Count; i++) {
 			Gizmos.color = Colors.WithAlpha(Colors.magenta, 0.15f);
 			Gizmos.DrawSphere(m_neighbours[i].transform.position, 0.5f);

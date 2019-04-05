@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 224080845499604400}
   - component: {fileID: 114289871427893264}
   - component: {fileID: 114701303253861372}
-  - component: {fileID: 114167654500926872}
   m_Layer: 5
   m_Name: PF_ResultsStepIntro
   m_TagString: Untagged
@@ -128,18 +127,6 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
---- !u!114 &114167654500926872
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1441781782755414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28e0bbef12e224ce7835342046d82316, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_audioId: hd_results_music
 --- !u!114 &114280724533592162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -436,13 +423,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 835513619b1d043b3996091fae1c93e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_totalDuration: 4
+  m_totalDuration: 2
   m_elements:
   - name: Dragon Anim
     type: 0
     target: {fileID: 0}
-    startTime: 0.5
-    endTime: 4
+    startTime: 0
+    endTime: 2
     from: 1
     ease: 1
     floatValue: 0
@@ -453,17 +440,6 @@ MonoBehaviour:
         - m_Target: {fileID: 114289871427893264}
           m_MethodName: LaunchDragonAnim
           m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-        - m_Target: {fileID: 114167654500926872}
-          m_MethodName: Play
-          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

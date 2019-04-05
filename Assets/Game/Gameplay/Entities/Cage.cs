@@ -61,7 +61,7 @@ public class Cage : IEntity {
 		if (m_timer > 0f) {
 			m_timer -= Time.deltaTime;
 			if (m_timer <= 0f) {	
-				m_spawner.RemoveEntity(gameObject, m_wasDestroyed);
+				m_spawner.RemoveEntity(this, m_wasDestroyed);
 				base.Disable(m_wasDestroyed);
 			}
 		}

@@ -59,10 +59,7 @@ public class Chest {
 						type = RewardType.SC;
 
 						// [AOC] Scale the SC reward based on maxed dragon owned using same scaling factor as mission rewards
-						DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
-						if(rewardScaleFactorDef != null) {
-							amount = Mathf.RoundToInt(((float)amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
-						}
+						amount = (int)Metagame.RewardSoftCurrency.ScaleByMaxDragonOwned(amount);
 
 						amount += Mathf.FloorToInt((amount * sm_powerUpSCMultiplier) / 100.0f);
 					} break;

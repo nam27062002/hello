@@ -17,7 +17,7 @@ public class DragonTint : MonoBehaviour
 	List<Material> m_materials = new List<Material>();
 	List<Color> m_materialsMultiplyColors = new List<Color>();
 	List<Color> m_materialsAddColors = new List<Color>();
-    List<Shader> m_originalShaders = new List<Shader>();
+    List<Material> m_originalMaterial = new List<Material>();
 	List<Color> m_fresnelColors = new List<Color>();
 	List<float> m_innerLightAddValue = new List<float>();
 	List<Color> m_innerLightColors = new List<Color>();
@@ -154,6 +154,7 @@ public class DragonTint : MonoBehaviour
             {
                 rends[i].material = pair1.Value;
             }
+            AddMaterialInfo(pair1.Value);
         }
             
         
@@ -169,7 +170,9 @@ public class DragonTint : MonoBehaviour
         m_fresnelColors.Add(mat.GetColor( GameConstants.Material.FRESNEL_COLOR ));
 		m_innerLightAddValue.Add( mat.GetFloat( GameConstants.Material.INNER_LIGHT_ADD ));
 		m_innerLightColors.Add(mat.GetColor( GameConstants.Material.INNER_LIGHT_COLOR));
-        m_originalShaders.Add(mat.shader);
+
+        Material original = new Material(mat);
+        m_originalMaterial.Add( original );
 	}
 
 	void OnEnable() 
@@ -360,9 +363,9 @@ public class DragonTint : MonoBehaviour
 
 	private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
 	{
-		// Switch back body materials
-		for( int i = 0; i< m_materialsCount; ++i )
-            m_materials[i].shader = m_originalShaders[i];
+        // Switch back body materials
+        for (int i = 0; i < m_materialsCount; ++i)
+            m_materials[i].CopyPropertiesFromMaterial( m_originalMaterial[i] );
 
 		m_deathAlpha = 1;
 		for( int i = 0; i<m_dragonRenderers.Count; i++ )

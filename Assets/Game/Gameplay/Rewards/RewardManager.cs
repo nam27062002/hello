@@ -1,4 +1,4 @@
-// ScoreManager.cs
+﻿// ScoreManager.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 22/10/2015.
@@ -90,6 +90,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	public static float xp {
 		get { return instance.m_xp; }
 	}
+
+
 
 	// Score multiplier
 	[SerializeField] private int m_currentScoreMultiplierIndex = 0;
@@ -192,7 +194,14 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	public static Dictionary<string, int> categoryKillCount{
 		get{ return instance.m_categoryKillCount; }
 	}
-	/*
+
+    private Dictionary<string, int> m_npcPremiumCount = new Dictionary<string, int>();
+    public static Dictionary<string, int> npcPremiumCount {
+        get { return instance.m_npcPremiumCount; }
+    }
+
+
+    /*
 	// Distance moved by the player
 	private Vector3 m_distance;
 	public static Vector3 distance{
@@ -205,8 +214,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	}
 	*/
 
-	// Revive tracking
-	private int m_freeReviveCount = 0;
+    // Revive tracking
+    private int m_freeReviveCount = 0;
 	public static int freeReviveCount {
 		get { return instance.m_freeReviveCount; }
 		set { instance.m_freeReviveCount = value; }
@@ -254,6 +263,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     }
 
     private bool m_switchingArea = false;
+    private bool m_canLoseMultiplier = true;
+    public bool canLoseMultiplier
+    {
+        get{ return m_canLoseMultiplier; }
+        set{ m_canLoseMultiplier = value; }
+    }
 
     // Shortcuts
     private GameSceneControllerBase m_sceneController;
@@ -273,11 +288,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnEnable() {
 		// Subscribe to external events
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.AddListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.AddListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.AddListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.AddListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -290,6 +305,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.AddListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.AddListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.AddListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
 
 	/// <summary>
@@ -297,11 +313,11 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	public void OnDisable() {
 		// Unsubscribe from external events
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
-		Messenger.RemoveListener<Transform, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_EATEN, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, OnBurned);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, OnKill);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.FLOCK_EATEN, OnFlockEaten);
+		Messenger.RemoveListener<Transform, IEntity, Reward>(MessengerEvents.STAR_COMBO, OnFlockEaten);
 		Messenger.RemoveListener<Reward>(MessengerEvents.LETTER_COLLECTED, OnLetterCollected);
 		Messenger.RemoveListener<float, DamageType, Transform>(MessengerEvents.PLAYER_DAMAGE_RECEIVED, OnDamageReceived);
 		Broadcaster.RemoveListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -314,6 +330,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         
         Messenger.RemoveListener(MessengerEvents.PLAYER_ENTERING_AREA, OnEnteringArea);
         Messenger.RemoveListener<float>(MessengerEvents.PLAYER_LEAVING_AREA, OnLeavingArea);
+        Messenger.RemoveListener(MessengerEvents.SCORE_MULTIPLIER_FORCE_UP, OnForceUp);
     }
     
     
@@ -347,7 +364,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 			m_scoreMultiplierTimer -= Time.deltaTime;
 			
 			// If timer has ended, end multiplier streak
-			if(m_scoreMultiplierTimer <= 0) 
+			if(m_scoreMultiplierTimer <= 0 && canLoseMultiplier) 
 			{
 				if (m_currentScoreMultiplierIndex != 0)
 				{
@@ -453,7 +470,8 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		// Tracking vars
 		instance.m_killCount.Clear();
 		instance.m_categoryKillCount.Clear();
-		instance.m_freeReviveCount = 0;
+        instance.m_npcPremiumCount.Clear();
+        instance.m_freeReviveCount = 0;
 		instance.m_paidReviveCount = 0;
 		instance.m_deathSource = "";
 		instance.m_deathType = DamageType.NORMAL;
@@ -497,6 +515,10 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 			return m_sceneController.elapsedSeconds;
 		return 0;
 	}
+
+    public void OnApplyCheatsReward(Reward _reward) {
+        ApplyReward(_reward, null);
+    }
 
 	/// <summary>
 	/// Apply the given rewards package.
@@ -675,7 +697,7 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 	/// </summary>
 	/// <param name="_entity">The entity that has been killed.</param>
 	/// <param name="_reward">The reward linked to this event.</param>
-	private void OnKill(Transform _entity, Reward _reward) {
+	private void OnKill(Transform _t, IEntity _e, Reward _reward) {
 
 		if (!string.IsNullOrEmpty(_reward.origin))
 		{
@@ -706,20 +728,20 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 		}
 
 		// Add the reward
-		ApplyReward(_reward, _entity);
+		ApplyReward(_reward, _t);
 
 		// Update multiplier
 		UpdateScoreMultiplier();
 	}
 
-	private void OnBurned( Transform _entity, Reward _reward){
+	private void OnBurned(Transform _t, IEntity _e, Reward _reward) {
 		_reward.coins = (int)(_reward.coins * m_burnCoinsMultiplier);
-		OnKill( _entity, _reward );
+		OnKill(_t, _e, _reward );
 	}
 
-	private void OnFlockEaten(Transform _entity, Reward _reward) {
+	private void OnFlockEaten(Transform _t, IEntity _e, Reward _reward) {
 		// Add the reward
-		ApplyReward(_reward, _entity);
+		ApplyReward(_reward, _t);
 	}
 
 	private void OnLetterCollected(Reward _reward){
@@ -778,6 +800,13 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
 				instance.m_deathSource = entity.sku;
 			}
 		}
+        
+        // Lose score multiplier
+        if (m_currentScoreMultiplierIndex != 0)
+        {
+            SetScoreMultiplier(0);
+            Messenger.Broadcast(MessengerEvents.SCORE_MULTIPLIER_LOST);
+        }
 	}
 
 	/// <summary>
@@ -830,9 +859,37 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
     {
         m_switchingArea = true;
     }
+    
+    private void OnForceUp()
+    {
+        // Check if we've reached next threshold
+        if(m_currentScoreMultiplierIndex < m_scoreMultipliers.Length - 1 ) 
+        {
+            // Change current multiplier
+            SetScoreMultiplier(m_currentScoreMultiplierIndex + 1);
+        }
+    }
 
     public static int GetReviveCost()
     {
     	return freeReviveCount + paidReviveCount + 1;
+    }
+
+
+    // Cheats
+    public void SetCategoryKill(string _category, int amount) {
+        if (m_categoryKillCount.ContainsKey(_category)) {
+            m_categoryKillCount[_category] += amount;
+        } else {
+            m_categoryKillCount.Add(_category, amount);
+        }
+    }
+
+    public void SetNPCKill(string _sku, int amount) {
+        if (m_killCount.ContainsKey(_sku)) {
+            m_killCount[_sku] += amount;
+        } else {
+            m_killCount.Add(_sku, amount);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿// MenuDragonSceneController.cs
+// MenuDragonSceneController.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 11/05/2016.
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Main controller of the dragon selection screen.
 /// </summary>
-public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
+public class MenuDragonScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -36,13 +36,26 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	[Space]
 	[SerializeField] private NavigationShowHideAnimator[] m_toHideOnUnlockAnim = null;
     [SerializeField] private NavigationShowHideAnimator[] m_toHideOnTeaseAnim = null;
+	[Space]
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+	public AssetsDownloadFlow assetsDownloadFlow {
+		get { return m_assetsDownloadFlow; }
+	}
 
+	// Public properties
 	private bool m_isAnimating = false;
 	private bool isAnimating {
 		get { return m_isAnimating; }
-		set { m_isAnimating = value; }
 	}
 
+	// Use it to automatically select a specific dragon upon entering this screen
+	// If the screen is already the active one, the selection will be applied the next time the screen is entered from a different screen
+	private string m_pendingToSelectDragon = string.Empty;
+	public string pendingToSelectDragon {
+		set { m_pendingToSelectDragon = value; }
+	}
+
+	// Internal vars
 	private MenuScreen m_goToScreen = MenuScreen.NONE;
 	private IDragonData m_dragonToTease = null;
 	private IDragonData m_dragonToReveal = null;
@@ -53,10 +66,16 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 
+	private void Awake() {
+		// Subscribe to external events.
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
+	}
+
 	void Start(){
-		if ( HDLiveEventsManager.instance.ShouldRequestMyEvents() )
+		if ( HDLiveDataManager.instance.ShouldRequestMyLiveData() )
 		{
-			HDLiveEventsManager.instance.RequestMyEvents();
+			HDLiveDataManager.instance.RequestMyLiveData();
 		}
 	}
 
@@ -65,9 +84,6 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	private void OnEnable() {
         m_showPendingTransactions = false;
-
-        // Subscribe to external events.
-        Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
 
         // Check whether we need to move to another screen
         // Check order is relevant!
@@ -78,31 +94,23 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}
-		/*
-		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_GLOBAL_EVENTS_AT_RUN ) 
-		{
-			// Check quest rewards
-			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
-			if (quest.EventExists())
-			{
-				quest.UpdateStateFromTimers();
-				if ( quest.data.m_state == HDLiveEventData.State.REWARD_AVAILABLE )	
-				{
-					m_goToScreen = MenuScreen.EVENT_REWARD;
-					return;
-				}
-			}
-		}
-		*/        
-    }
+	}
 
 	/// <summary>
 	/// Raises the disable event.
 	/// </summary>
 	private void OnDisable() {
+
+	}
+
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	private void OnDestroy() {
 		// Unsubscribe to external events.
-		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);    
-    }
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnTransitionStarted);
+		Messenger.RemoveListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_END, OnTransitionEnd);
+	}
 
 	/// <summary>
 	/// Called every frame
@@ -115,15 +123,17 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 				case MenuScreen.EVENT_REWARD: {
 					EventRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.EVENT_REWARD).ui.GetComponent<EventRewardScreen>();
 					scr.StartFlow();
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.EVENT_REWARD);
 				} break;
 
 				case MenuScreen.PENDING_REWARD: {
 					PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 					scr.StartFlow(true);
-					InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
 				} break;
 			}
+
+			// Clear open and queued popups and go to target screen!
+			PopupManager.Clear(true);
+			InstanceManager.menuSceneController.GoToScreen(m_goToScreen);
 
 			// Clear var
 			m_goToScreen = MenuScreen.NONE;
@@ -175,8 +185,8 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 		// Program lock animation sequence
 		DOTween.Sequence()
 			.AppendCallback(() => {
-				// Lock all input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+				// Toggle animating mode
+				SetAnimationFlag(true, true);
 
 				// Disable normal behaviour
 				m_lockIcon.GetComponent<MenuShowConditionally>().enabled = false;
@@ -184,9 +194,6 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					// Target dragon is already selected, make sure lock icon is visible!
 					m_lockIcon.GetComponent<ShowHideAnimator>().ForceShow();
 				}
-
-				// Toggle flag
-				isAnimating = true;
 			})
 			.AppendInterval(Mathf.Max(0.1f, _initialDelay))	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -254,19 +261,10 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_UNLOCK);
 				}
 			})
-			.AppendInterval(0.5f)		// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
+			.AppendInterval(0.5f)	// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
-				// Unlock input
-				// Add some delay to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
-
-                // Toggle flag
-				isAnimating = false;
-
-				// Particular case when the first M dragon has been acquired in the Results Screen!
-				if(!_gotoDragonUnlockScreen) {
-					PopupLabUnlocked.CheckAndOpen();
-				}
+				// Toggle animating mode
+				SetAnimationFlag(false, !_gotoDragonUnlockScreen);  // Particular case when the first M dragon has been acquired in the Results Screen!
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -280,11 +278,8 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 		// Program animation
 		DOTween.Sequence()
 			.AppendCallback(() => {
-				// Lock all input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
-
-				// Toggle flag
-				isAnimating = true;
+				// Toggle animating mode
+				SetAnimationFlag(true, true);
 
 				// Throw out some fireworks!
 				InstanceManager.menuSceneController.dragonScroller.LaunchDragonPurchasedFX();
@@ -294,19 +289,15 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 			})
 			.AppendInterval(1f)		// Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
-				// Unlock input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
-
-				// Toggle flag
-				isAnimating = false;
-
 				// Check for new tease/reveals
-				CheckPendingReveals();
+				bool pendingReveals = CheckPendingReveals();
 
-				// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
-				if(m_dragonToReveal == null && m_dragonToTease == null) {
-					PopupLabUnlocked.CheckAndOpen();
-				}
+				// Toggle animating mode
+				SetAnimationFlag(false, !pendingReveals);   // Only allow post actions if there are no pending reveals
+
+				// If there are no pending reveals, check for download popups
+				// Otherwise the check will be performed after the reveal animation (via the OnDragonSelected event)
+				CheckDownloadFlowForDragon(_acquiredDragonSku, true);
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -323,8 +314,8 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 		DOTween.Sequence()
 			.AppendCallback(() => {
-				// Lock all input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+				// Toggle animating mode
+				SetAnimationFlag(true, true);
 
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
@@ -337,9 +328,6 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 				// Do not desactivate to allow async loading
 				slot.animator.ForceHide(false, false);
-
-				// Toggle flag
-				isAnimating = true;
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -359,11 +347,9 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
-
-				CheckPendingReveals();
-
-				if (m_dragonToTease == null && m_dragonToReveal == null) {
+				// Are there more reveals to perform?
+				bool pendingReveals = CheckPendingReveals();
+				if(!pendingReveals) {
 					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
@@ -374,16 +360,10 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
-
-					// Check the lab unlocked popup!
-					// [AOC] After some delay to wait for the scroll anim to return
-					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.CheckAndOpen();
-					}, 0.5f);
 				}
 
-				// Toggle flag
-				isAnimating = false;
+				// Toggle animating mode
+				SetAnimationFlag(false, !pendingReveals, 0.5f); // [AOC] After some delay to wait for the scroll anim to return
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -400,9 +380,6 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 		DOTween.Sequence()
 			.AppendCallback(() => {
-				// Lock all input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
-
 				InstanceManager.menuSceneController.hud.animator.ForceHide(true, false);
 				for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 					m_toHideOnUnlockAnim[i].ForceHide(true, false);
@@ -415,8 +392,8 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					slot.animator.ForceHide(false, false);
 				}
 
-				// Toggle flag
-				isAnimating = true;
+				// Toggle animating mode
+				SetAnimationFlag(true, true);
 			})
 			.AppendInterval(0.1f)	// Avoid 0 duration
 			.AppendCallback(() => {
@@ -440,13 +417,12 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 			})
 			.AppendInterval(2f)
 			.AppendCallback(() => {			
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
-			
 				dragonData.Reveal();
-				CheckPendingReveals();
 
-				// No more dragons to reveal! Go back to current dragon
-				if(m_dragonToTease == null && m_dragonToReveal == null) {
+				// Are there more dragons to reveal?
+				bool pendingReveals = CheckPendingReveals();
+				if(!pendingReveals) {
+					// No more dragons to reveal! Go back to current dragon
 					InstanceManager.menuSceneController.hud.animator.ForceShow(true);
 					for(int i = 0; i < m_toHideOnUnlockAnim.Length; i++) {
 						m_toHideOnUnlockAnim[i].ForceShow(true);
@@ -456,16 +432,10 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 					}
 					InstanceManager.menuSceneController.dragonSelector.OnSelectedDragonChanged(DragonManager.currentDragon, DragonManager.currentDragon);
 					InstanceManager.menuSceneController.dragonScroller.FocusDragon(DragonManager.currentDragon.def.sku, true);
-
-					// Check the lab unlocked popup!
-					// [AOC] After some delay to wait for the scroll anim to return
-					UbiBCN.CoroutineManager.DelayedCall(() => {
-						PopupLabUnlocked.CheckAndOpen();
-					}, 0.5f);
 				}
 
-				// Toggle flag
-				isAnimating = false;
+				// Toggle animating mode
+				SetAnimationFlag(false, !pendingReveals, 0.5f); // [AOC] After some delay to wait for the scroll anim to return
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -476,7 +446,8 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// dragons pending to be TEASED/REVEALED.
 	/// Initializes the <c>m_dragonToTease</c> and <c>m_dragonToReveal</c> vars.
 	/// </summary>
-	private void CheckPendingReveals() {
+	/// <returns>Whether there are pending reveals or not.</returns>
+	private bool CheckPendingReveals() {
 		// Check dragons to tease
 		// [AOC] Special case: if dragon scroll tutorial hasn't been yet completed, 
 		//		 mark target dragons as already teased to prevent conflict with the tutorial scroll animation
@@ -501,6 +472,58 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 				toTease[i].Reveal();
 			}
 		}
+
+		return m_dragonToTease != null || m_dragonToReveal != null;
+	}
+
+	/// <summary>
+	/// Toggles the "animating" flag on or off and performs several actions.
+	/// </summary>
+	/// <param name="_animating">The animating state of the screen.</param>
+	/// <param name="_triggerActions">Trigger actions when starting/finishing the animation?</param>
+	/// <param name="_actionsDelay">Delay before performing pre/post animation actions.</param>
+	private void SetAnimationFlag(bool _animating, bool _triggerActions, float _actionsDelay = 0f) {
+		// Store flag
+		m_isAnimating = _animating;
+
+		// Lock/Unlock all UI input
+		Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, _animating);
+
+		// Delayed actions
+		if(_triggerActions) {
+			UbiBCN.CoroutineManager.DelayedCall(() => {
+				// Toggle OTA flow
+				if(m_assetsDownloadFlow != null) {
+					m_assetsDownloadFlow.Toggle(!m_isAnimating);   // Don't allow while animating
+				}
+			}, _actionsDelay);    // Don't delay when starting the animation
+		}
+	}
+
+	/// <summary>
+	/// Check downloadable group status for a target dragon.
+	/// </summary>
+	/// <param name="_sku">The sku of the dragon we want to check.</param>
+	/// <param name="_checkPopups">Open popups if needed?</param>
+	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
+		// Just in case don't do anything if disabled
+		if(!this.isActiveAndEnabled) return;
+
+		// Get handler for this dragon
+		Downloadables.Handle handle = null;
+
+		// We don't want to show anything if the dragon is not owned
+		if(DragonManager.IsDragonOwned(_sku)) {
+			handle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_sku);
+		}
+
+		// Trigger flow!
+		m_assetsDownloadFlow.InitWithHandle(handle);
+
+		// Check for popups?
+		if(_checkPopups) {
+			m_assetsDownloadFlow.OpenPopupIfNeeded();
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -510,6 +533,9 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// The screen is about to open.
 	/// </summary>
 	public void OnOpenPreAnimation() {
+		// Reset animating flag
+		SetAnimationFlag(false, true);
+
 		// If a dragon was just unlocked, prepare a nice unlock animation sequence!
 		if(!string.IsNullOrEmpty(GameVars.unlockedDragonSku)) {
 			// Do anim!
@@ -517,25 +543,10 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 			// Reset flag
 			GameVars.unlockedDragonSku = string.Empty;
-		} else {
-			// Check whether we need to launch any other animation
-			CheckPendingReveals();
-
-			// If there are no pending reveals, check whether the Lab Unlocked Popup must be displayed
-			if(m_dragonToReveal == null && m_dragonToTease == null) {
-				// [AOC] After some delay to wait for the scroll anim to return
-				UbiBCN.CoroutineManager.DelayedCall(() => {
-					if(PopupLabUnlocked.Check()) {
-						// If some other popup is open, wait for it to be closed before opening the lab unlocked one
-						if(PopupManager.openPopupsCount > 0) {
-							Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
-						} else {
-							PopupLabUnlocked.CheckAndOpen();
-						}
-					}
-				}, 0.25f);
-			}
 		}
+
+		// Initialize the assets download flow with currently selected dragon
+		CheckDownloadFlowForDragon(InstanceManager.menuSceneController.selectedDragon, false);	// Don't show popups, the menu interstitial popups controller will take care of it
 	}
 
 	/// <summary>
@@ -545,11 +556,13 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	/// <param name="_to">Target screen.</param>
 	private void OnTransitionStarted(MenuScreen _from, MenuScreen _to) {
 		// Hide all dragons that are not meant to be displayed
-		List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
-		foreach (IDragonData data in dragonsByOrder) {
-			if (data.lockState == IDragonData.LockState.HIDDEN || data.lockState == IDragonData.LockState.TEASE) {
-				MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
-				slot.animator.Hide(true, false);	// Do not desactivate to allow async loading
+		if(this.enabled) {	// [AOC] To replicate previous logic where the event was subscribed on the Enable/Disable scope
+			List<IDragonData> dragonsByOrder = DragonManager.GetDragonsByOrder(IDragonData.Type.CLASSIC);
+			foreach(IDragonData data in dragonsByOrder) {
+				if(data.lockState == IDragonData.LockState.HIDDEN || data.lockState == IDragonData.LockState.TEASE) {
+					MenuDragonSlot slot = InstanceManager.menuSceneController.dragonScroller.GetDragonSlot(data.def.sku);
+					slot.animator.Hide(true, false);    // Do not desactivate to allow async loading
+				}
 			}
 		}
 
@@ -564,6 +577,28 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 
 			// Save persistence to store current dragon
 			PersistenceFacade.instance.Save_Request(true);
+
+			// Unsubscribe to external events
+			Messenger.RemoveListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+		}
+	}
+
+	/// <summary>
+	/// The current menu screen has changed (animation ends now).
+	/// </summary>
+	/// <param name="_from">Source screen.</param>
+	/// <param name="_to">Target screen.</param>
+	private void OnTransitionEnd(MenuScreen _from, MenuScreen _to) {
+		// If entering this screen
+		if(_to == MenuScreen.DRAGON_SELECTION) {
+			// Subscribe to external events
+			Messenger.AddListener<string>(MessengerEvents.MENU_DRAGON_SELECTED, OnDragonSelected);
+
+			// If we have a dragon selection pending, do it now!
+			if(!string.IsNullOrEmpty(m_pendingToSelectDragon)) {
+				InstanceManager.menuSceneController.SetSelectedDragon(m_pendingToSelectDragon);
+				m_pendingToSelectDragon = string.Empty;
+			}
 		}
 	}    
 
@@ -573,6 +608,10 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
     public void OnPlayButton() {
         if ( InstanceManager.menuSceneController.transitionManager.transitionAllowed )
         {
+			// If needed, show assets download popup and don't continue
+			PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+			if(popup != null) return;
+
     		// Select target screen
     		MenuScreen nextScreen = MenuScreen.MISSIONS;
     
@@ -580,7 +619,7 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
     		// Do it as well if the event is pending reward collection
     		if ( UsersManager.currentUser.gamesPlayed >= GameSettings.ENABLE_QUESTS_AT_RUN )
     		{
-    			HDQuestManager quest = HDLiveEventsManager.instance.m_quest;
+    			HDQuestManager quest = HDLiveDataManager.quest;
     			if ( quest.EventExists() )	
     			{
     				if (quest.IsTeasing() || quest.IsRunning() || quest.IsRewardPending())
@@ -601,33 +640,15 @@ public class MenuDragonScreenController : MonoBehaviour, IBroadcastListener {
 	}
 
 	/// <summary>
-	/// A popup has been closed.
+	/// A new dragon has been selected.
 	/// </summary>
-	/// <param name="_popup">Popup that triggered the event.</param>
-	private void OnPopupClosed(PopupController _popup) {
-		// If we're receiving this, means that the lab unlocked popup is pending to be displayed
-		// Check whether we can do it
-		// If there are still some opened popups, don't do anything
-		if(PopupManager.openPopupsCount > 0) return;
-
-		// We can!
-		// Unsubscribe from event
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
-
-		// Open the popup
-		PopupLabUnlocked.CheckAndOpen();
+	/// <param name="_sku">The sku of the selected dragon.</param>
+	private void OnDragonSelected(string _sku) {
+		// Make sure this is the active screen
+		// [AOC] Do this because the screen is still enabled when transitioning to the Lab, which also triggers the Dragon Selected event
+		if(InstanceManager.menuSceneController.currentScreen == MenuScreen.DRAGON_SELECTION) {
+			// Check OTA
+			CheckDownloadFlowForDragon(_sku, true);
+		}
 	}
-    
-    
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch(eventType)
-        {
-            case BroadcastEventType.POPUP_CLOSED:
-            {
-                PopupManagementInfo info = (PopupManagementInfo)broadcastEventInfo;
-                OnPopupClosed(info.popupController);
-            }break;
-        }
-    }
 }

@@ -30,17 +30,26 @@ public class HDTrackingManager
         }
     }
 
-    public virtual void Init() {}
-    public virtual void Destroy() {}
+    public virtual void Init()
+    {
+        Reset();
+    }
+
+    protected virtual void Reset()
+    {
+        Session_Reset();
+    }
+
+    public virtual void Destroy() { }
 
     public virtual string GetTrackingID() { return null; }
-    public virtual string GetDNAProfileID() { return null;  }
+    public virtual string GetDNAProfileID() { return null; }
 
     //////////////////////////////////////////////////////////////////////////
 
     public enum EEconomyGroup
     {
-		UNKNOWN = -1,
+        UNKNOWN = -1,
 
         REMOVE_MISSION,
         SKIP_MISSION,
@@ -61,10 +70,12 @@ public class HDTrackingManager
         REWARD_CHEST,
         REWARD_GLOBAL_EVENT,
 		REWARD_LIVE_EVENT,
+        REWARD_LEAGUE,
         REWARD_MISSION,                 
         REWARD_RUN,                     // Used when the user gets something such as soft currency during a run
 		REWARD_AD,						// Reward given by watching an ad
 		REWARD_PREREG,					// Reward given from pre-registration
+		REWARD_DAILY,					// Daily rewards system
         PET_DUPLICATED,                 // Used when the user gets some reward instead of a pet because the user already has that pet
         SHOP_EXCHANGE,                  // Used when the user exchanges a currency into any other currency such as HC into SC, HC into keys or real money into HC
 
@@ -237,8 +248,22 @@ public class HDTrackingManager
 
     /// <summary>
     /// Called when the user opens the app store
+    // <param name="origin">Where the store is open.</param>
     /// </summary>
-    public virtual void Notify_StoreVisited() {}
+    public virtual void Notify_StoreVisited( string origin) {}
+
+    /// <summary>
+    /// Notifies the store section. When player visits a section of the store, HC, SC ...
+    /// </summary>
+    /// <param name="section">Section.</param>
+    public virtual void Notify_StoreSection( string section) {}
+    
+    /// <summary>
+    /// Notifies the store item view. When the player clicks on a button to start buying something on the store
+    /// </summary>
+    /// <param name="id">Identifier.</param>
+    public virtual void Notify_StoreItemView( string id) {}
+    
 
     public virtual void Notify_IAPStarted() {}
 
@@ -407,12 +432,17 @@ public class HDTrackingManager
 	/// <summary>
 	/// Notifies the settings open. When settings popup opens
 	/// </summary>
-	public virtual void Notify_SettingsOpen(){}
+	public virtual void Notify_SettingsOpen( string zone ){}
 
 	/// <summary>
 	/// Notifies the settings close. When settings popup closed
 	/// </summary>
 	public virtual void Notify_SettingsClose(){}
+
+    /// <summary>
+    /// Notify the tracking when the pause popup appears, used to send custom.game.settings while in game
+    /// </summary>
+    public virtual void NotifyIngamePause() { }
 
     /// <summary>
     /// Notifies the start of performance track every X seconds
@@ -459,7 +489,9 @@ public class HDTrackingManager
     /// </summary>
     /// <param name="onDemand"><c>true</c> the user has requested to see the offer by clicking on UI.<c>false</c> the user is prompted with the offer automatically.</param>
     /// <param name="itemID">Id of the item offered to the user, typically the sku of the item in shopPacksDefinitions.</param>
-    public virtual void Notify_OfferShown(bool onDemand, string itemID) {}
+    /// <param name="offerName">Unique offer name.</param>
+    /// <param name="offerType">Offer type: progression, pushed, rotational.</param>
+    public virtual void Notify_OfferShown(bool onDemand, string itemID, string offerName, string offerType) {}
 
     public virtual void Notify_EggOpened() {}
 
@@ -490,6 +522,8 @@ public class HDTrackingManager
     };
 
     public virtual void Notify_RateThisApp(ERateThisAppResult result) {}
+    
+    public virtual void Notify_SocialClick(string net, string zone) { }
 
     /// <summary>
     /// Notifies an A/B experiment has just been applied.
@@ -532,7 +566,33 @@ public class HDTrackingManager
     /// <param name="labPower">Total number of Special Dragons unlock up to now</param>
     /// <param name="totalSpecialDragonsUnlocked"></param>
     /// <param name="currentLeague">Name of the league that user is participating</param>
-    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague) { }
+    /// <param name="pets">List with the track ids of the pets equipped to play the current round. Null if no pets are equipped.</param>    
+    public virtual void Notify_LabGameStart(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int totalSpecialDragonsUnlocked, string currentLeague, List<string> pets) { }
+
+    /// <summary>
+    /// Notifies the lab game end.
+    /// </summary>
+    /// <param name="dragonName">Dragon name.</param>
+    /// <param name="labHp">Lab hp.</param>
+    /// <param name="labSpeed">Lab speed.</param>
+    /// <param name="labBoost">Lab boost.</param>
+    /// <param name="labPower">Lab power.</param>
+    /// <param name="timePlayed">Time played.</param>
+    /// <param name="eggFound">Egg found.</param>
+    /// <param name="highestMultiplier">Highest multiplier.</param>
+    /// <param name="highestBaseMultiplier">Highest base multiplier.</param>
+    /// <param name="furyRushNb">Fury rush nb.</param>
+    /// <param name="superFireRushNb">Super fire rush nb.</param>
+    /// <param name="hcRevive">Hc revive.</param>
+    /// <param name="adRevive">Ad revive.</param>
+    /// <param name="scGained">Sc gained.</param>
+    /// <param name="hcGained">Hc gained.</param>
+    /// <param name="powerTime">Power time.</param>
+    /// <param name="mapUsage">Map usage.</param>
+    /// <param name="currentLeague">Current league.</param>
+    public virtual void Notify_LabGameEnd(string dragonName, int labHp, int labSpeed, int labBoost, string labPower, int timePlayed, int score,
+        int eggFound,float highestMultiplier, float highestBaseMultiplier, int furyRushNb, int superFireRushNb, int hcRevive, int adRevive, 
+        int scGained, int hcGained, float powerTime, int mapUsage, string currentLeague ) { }
 
     /// <summary>
     /// Called whenever the user receives the results from the League (at the same time than eco-source is sent for rewards, weekly). 
@@ -541,7 +601,67 @@ public class HDTrackingManager
     /// <param name="currentLeague">Name of the league that user have participated</param>
     /// <param name="upcomingLeague">Name of the league that user have been promoted/dropped in next week</param>
     public virtual void Notify_LabResult(int ranking, string currentLeague, string upcomingLeague) { }
+
+	/// <summary>
+	/// A daily reward has been collected.
+	/// </summary>
+	/// <param name="_rewardIdx">Reward index within the sequence [0..SEQUENCE_SIZE - 1].</param>
+	/// <param name="_totalRewardIdx">Cumulated reward index [0..N].</param>
+	/// <param name="_type">Reward type. For replaced pets, use pet-gf.</param>
+	/// <param name="_amount">Final given amount (after scaling and doubling).</param>
+	/// <param name="_sku">(Optional) Sku of the reward.</param>
+	/// <param name="_doubled">Was the reward doubled by watching an ad?</param>
+	public virtual void Notify_DailyReward(int _rewardIdx, int _totalRewardIdx, string _type, long _amount, string _sku, bool _doubled) { }
     #endregion
+
+    #region downloadables
+    public virtual void Notify_DownloadablesStart(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart) { }
+
+    public virtual void Notify_DownloadablesEnd(Downloadables.Tracker.EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+                                                string reachabilityAtStart, string reachabilityAtEnd, string result, bool maxAttemptsReached) { }
+
+    public virtual void Notify_PopupOTA(string _popupName, Downloadables.Popup.EAction _action) {  }
+    #endregion
+
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public enum ELocation
+    {
+        main_menu,
+        game_play
+    };
+
+    private string[] ELocationKeys = System.Enum.GetNames(typeof(ELocation));
+
+    private string UNDEFINED = "UNDEFINED";
+
+    // The names of the values of this enum match the ones that BI expect, so you shouldn't change them unless BI requires so
+    public string ELocationToKey(ELocation value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < ELocationKeys.Length) ? ELocationKeys[index] : UNDEFINED;
+    }
+
+    public enum EUnlockType
+    {
+        SC,
+        HC,
+        video_ads
+    };
+
+    private string[] EUnlockTypeKeys = System.Enum.GetNames(typeof(EUnlockType));
+
+    public string EUnlockTypeToKey(EUnlockType value)
+    {
+        int index = (int)value;
+        return (index > -1 && index < EUnlockTypeKeys.Length) ? EUnlockTypeKeys[index] : UNDEFINED;
+    }
+
+    /// <summary>
+    /// Sent when the user unlocks the map.
+    /// </summary>
+    /// <param name="location">Where the map has been unlocked from.</param>
+    /// <param name="unlockType">How the map has been unlocked.</param>
+    public virtual void Notify_UnlockMap(ELocation location, EUnlockType unlockType) { }
 
     #region log
     private const bool LOG_USE_COLOR = false;
@@ -564,6 +684,19 @@ public class HDTrackingManager
     {
         Debug.LogError(LOG_CHANNEL + msg);
     }
-	#endregion
+    #endregion
+
+    #region session
+
+    /// <summary>
+    /// Returns the ammount of runs since the user started the current session
+    /// </summary>
+    public int Session_GameRoundCount { get; set; }
+
+    protected virtual void Session_Reset()
+    {
+        Session_GameRoundCount = 0;
+    }
+    #endregion
 }
 

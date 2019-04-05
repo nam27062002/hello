@@ -61,7 +61,11 @@ public class UserMissions : IUserMissions {
     }
 
     protected override DragonTier GetMaxTierUnlocked() {
-        return DragonManager.biggestOwnedDragon.tier;
+        if (DragonManager.biggestOwnedDragon != null) {
+            return DragonManager.biggestOwnedDragon.tier;
+        }
+
+        return DragonTier.TIER_0;
     }
 
     protected override bool IsMissionLocked(Mission.Difficulty _difficulty) {
@@ -81,11 +85,10 @@ public class UserMissions : IUserMissions {
     }
 
 	protected override Metagame.Reward BuildReward(Mission.Difficulty _difficulty, DefinitionNode _dragonModifierDef) {
-		// Scale the reward based on max owned dragon
-		float rewardScaleFactor = _dragonModifierDef != null ? _dragonModifierDef.GetAsFloat("missionSCRewardMultiplier") : 1f;
-
-		long amount = (long)(MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.DEFAULT, _difficulty) * rewardScaleFactor);
-        Metagame.Reward reward = new Metagame.RewardSoftCurrency(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
+		long amount = MissionManager.GetMaxRewardPerDifficulty(SceneController.Mode.DEFAULT, _difficulty);
+		amount = Metagame.RewardSoftCurrency.ScaleByMaxDragonOwned(amount);	// Scale the reward based on max owned dragon
+        
+		Metagame.Reward reward = new Metagame.RewardSoftCurrency(amount, Metagame.Reward.Rarity.COMMON, HDTrackingManager.EEconomyGroup.REWARD_MISSION, "");
         reward.bonusPercentage = MissionManager.powerUpSCMultiplier;
 
         return reward;

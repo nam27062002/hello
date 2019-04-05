@@ -67,6 +67,7 @@ public class DefinitionsCategory
 	public const string DECORATIONS 		= "DECORATIONS";
 	public const string ENTITY_CATEGORIES 	= "ENTITY_CATEGORIES";
 	public const string FREEZE_CONSTANTS	= "FREEZE_CONSTANTS";
+    public const string EQUIPABLE           = "EQUIPABLE";
 
 	// Game
 	public const string SCORE_MULTIPLIERS = "SCORE_MULTIPLIERS";
@@ -79,10 +80,12 @@ public class DefinitionsCategory
 	public const string PREREG_REWARDS = "PREREG_REWARDS";
 	public const string RARITIES = "RARITIES";
 	public const string HUNGRY_LETTERS = "HUNGRY_LETTERS";
-    public const string INTERSTITIALS_PROFILES = "INTERSTITIALS_PROFILES";
+    // public const string INTERSTITIALS_PROFILES = "INTERSTITIALS_PROFILES";
     public const string INTERSTITIALS_SETUP = "INTERSTITIALS_SETUP";
 	public const string DYNAMIC_GATCHA = "DYNAMIC_GATCHA";
 	public const string LIVE_EVENTS_MODIFIERS = "LIVE_EVENTS_MODIFIERS";
+    public const string LEAGUES = "LEAGUES";
+	public const string DAILY_REWARDS = "DAILY_REWARDS";
 
 	// Disguises
 	public const string DISGUISES = "DISGUISES";

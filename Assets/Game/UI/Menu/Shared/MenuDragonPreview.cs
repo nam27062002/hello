@@ -25,10 +25,9 @@ public class MenuDragonPreview : MonoBehaviour {
 		NONE = -1,
 		IDLE,
 		UNLOCKED,
-		RESULTS_IN,
+		RESULTS,
 		POSE_FLY,
 		FLY,
-        RESULTS_LOOP,
 
 		COUNT
 	};
@@ -36,10 +35,9 @@ public class MenuDragonPreview : MonoBehaviour {
 	public static readonly string[] ANIM_TRIGGERS  = {
 		"idle",
 		"unlocked",
-		"results_in",
+		"results",
 		"pose_fly",
-		"fly",
-        "results_loop"
+		"fly"
 	};
 
 

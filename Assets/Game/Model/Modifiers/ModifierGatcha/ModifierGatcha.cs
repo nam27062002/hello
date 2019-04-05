@@ -34,10 +34,6 @@ public abstract class ModifierGatcha : Modifier {
 	//------------------------------------------------------------------------//
 	// METHODS																  //
 	//------------------------------------------------------------------------//
-	public ModifierGatcha(DefinitionNode _def) {
-		base.Init(TYPE_CODE);
-
-		m_def = _def;
-	}
+    protected ModifierGatcha(string _target, DefinitionNode _def) : base(TYPE_CODE, _target, _def) { }
 
 }

@@ -162,6 +162,8 @@ namespace AI {
 		public bool IsDying() { return false; }
 
 		public bool IsFreezing() { return false; }
+        public bool IsStunned() { return false; }
+        public bool IsInLove() { return false; }
 
 		public void Drown() { }
 
@@ -185,7 +187,7 @@ namespace AI {
 			return Quaternion.identity;
 		}
 
-		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			return false;
 		}
 

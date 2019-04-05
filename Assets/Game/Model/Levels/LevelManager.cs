@@ -23,10 +23,30 @@ public class LevelManager : Singleton<LevelManager> {
 	//------------------------------------------------------------------//
 	private const string LEVEL_DATA_PATH = "Game/Levels/";
 
-	//------------------------------------------------------------------//
-	// PROPERTIES														//
-	//------------------------------------------------------------------//
-	private static string m_currentArea = "";
+    //------------------------------------------------------------------//
+    // PROPERTIES														//
+    //------------------------------------------------------------------//
+    private static Dictionary<string, HashSet<string>> m_scenesToInclude = new Dictionary<string, HashSet<string>>();
+    public static void AddSceneToInclude(string _area, string _scene) { 
+        if (!m_scenesToInclude.ContainsKey(_area)) { m_scenesToInclude[_area] = new HashSet<string>(); }
+        m_scenesToInclude[_area].Add(_scene);
+    }
+    public static void RemoveSceneToInclude(string _area, string _scene) {
+        m_scenesToInclude[_area].Remove(_scene);
+    }
+
+    private static Dictionary<string, HashSet<string>> m_scenesToExclude = new Dictionary<string, HashSet<string>>();
+    public static void AddSceneToExclude(string _area, string _scene) {
+        if (!m_scenesToExclude.ContainsKey(_area)) { m_scenesToExclude[_area] = new HashSet<string>(); }
+        m_scenesToExclude[_area].Add(_scene);
+    }
+    public static void RemoveSceneToExclude(string _area, string _scene) {
+        m_scenesToExclude[_area].Remove(_scene);
+    }
+
+
+    //-------------------------------------------------------------------
+    private static string m_currentArea = "";
 	public static string currentArea{
 		get{ return m_currentArea; }
 	}
@@ -39,6 +59,8 @@ public class LevelManager : Singleton<LevelManager> {
 	}
 
 	private static List<string> m_toSplitScenes = new List<string>();
+
+    private static Dictionary<string, int> m_scenesLoaded = new Dictionary<string, int>();
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -101,76 +123,39 @@ public class LevelManager : Singleton<LevelManager> {
 			m_toSplitScenes.Clear();
 		}
 
-	}
+	}        
 
-	/// <summary>
-	/// Starts loading the scenes of the current level (as defined via the <see cref="SetCurrentLevel"/> method).
-	/// Deletes any level in the current scene.
-	/// Loading is asynchronous, use the returned objects to check when the level has finished loading.
-	/// </summary>
-	/// <returns>The loading requests, where you can check the loading progress.</returns>
-	public static AsyncOperation[] LoadLevel() {
-		// Destroy any existing level in the game scene
-		LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
-		for(int i = 0; i < activeLevels.Length; i++) {
-			GameObject.DestroyImmediate(activeLevels[i].gameObject);
-		}
-
-		// Has the current level data been loaded?
-		DebugUtils.SoftAssert(m_currentLevelData != null, "Current level has not been set!");
-		DefinitionNode def = m_currentLevelData.def;
-
-		// Load additively all the scenes of the current level
-		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
-		AsyncOperation loadingTask = null;
-
-		// Common Scenes
-		List<string> commonScenes = def.GetAsList<string>("common");
-		for( int i = 0; i<commonScenes.Count; i++ )
-		{
-			// TODO: Check if is splitted to use different name
-			string sceneName = GetRealSceneName(commonScenes[i]);
-			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The common scene " + commonScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTasks.Add(loadingTask);
-			}	
-		}
-
-		if (FeatureSettingsManager.IsWIPScenesEnabled)
-		{
-			List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-			for( int i = 0; i<gameplayWip.Count; i++ )
-			{
-				// TODO: Check if is splitted to use different name
-				string sceneName = GetRealSceneName(gameplayWip[i]);
-				loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-				if(DebugUtils.SoftAssert(loadingTask != null, "The common gameplay scene " + gameplayWip[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-					loadingTasks.Add(loadingTask);
-				}	
-			}
-		}
-
-
-		// Load area by dragon
-		m_currentArea = def.GetAsString(DragonManager.currentDragon.sku, "area1");	// [AOC] Adding default value in case dragon's initial area is not defined in content
-		List<AsyncOperation> areaOperations = LoadArea( m_currentArea );
-		if ( areaOperations != null )
-			loadingTasks.AddRange( areaOperations );
-
-		// Disable auto-scene activation: activating the scenes abuses the CPU, causing fps drops. Since we want the loading screen to be fluid, we will activate all the scene at once when the loading is finished.
-		for(int i = 0; i < loadingTasks.Count; i++) {
-			loadingTasks[i].allowSceneActivation = false;
-		}
-		
-		return loadingTasks.ToArray();
-	}
-
-
-    public static void LoadLevelSync()
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-    // Destroy any existing level in the game scene
+        if (!m_scenesLoaded.ContainsKey(scene.name))
+        {
+            m_scenesLoaded.Add(scene.name, 1);
+        }
+
+        Debug.Log("OnSceneLoaded: " + scene.name);        
+    }
+
+    private static void OnSceneUnloaded(Scene scene)
+    {
+        if (m_scenesLoaded.ContainsKey(scene.name))
+        {
+            m_scenesLoaded.Remove(scene.name);
+        }
+
+        Debug.Log("OnSceneUnloaded: " + scene.name);        
+    }
+
+    public static LevelLoader LoadLevel()
+    {
+        m_scenesLoaded.Clear();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+        // Destroy any existing level in the game scene
         LevelEditor.Level[] activeLevels = Component.FindObjectsOfType<LevelEditor.Level>();
-        for(int i = 0; i < activeLevels.Length; i++) {
+        for (int i = 0; i < activeLevels.Length; i++)
+        {
             GameObject.DestroyImmediate(activeLevels[i].gameObject);
         }
 
@@ -178,104 +163,95 @@ public class LevelManager : Singleton<LevelManager> {
         DebugUtils.SoftAssert(m_currentLevelData != null, "Current level has not been set!");
         DefinitionNode def = m_currentLevelData.def;
 
+        string areaName = "area1"; // [AOC] Adding default value in case dragon's initial area is not defined in content        
+        LevelLoader returnValue = new LevelLoader(null, areaName);
 
         // Common Scenes
         List<string> commonScenes = def.GetAsList<string>("common");
-        for( int i = 0; i<commonScenes.Count; i++ )
+        for (int i = 0; i < commonScenes.Count; i++)
         {
             // TODO: Check if is splitted to use different name
             string sceneName = GetRealSceneName(commonScenes[i]);
-            SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+            returnValue.AddRealSceneNameToLoad(sceneName);            
         }
 
         if (FeatureSettingsManager.IsWIPScenesEnabled)
         {
             List<string> gameplayWip = def.GetAsList<string>("gameplayWip");
-            for( int i = 0; i<gameplayWip.Count; i++ )
+            for (int i = 0; i < gameplayWip.Count; i++)
             {
                 // TODO: Check if is splitted to use different name
                 string sceneName = GetRealSceneName(gameplayWip[i]);
-                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                returnValue.AddRealSceneNameToLoad(sceneName);
             }
         }
 
-        // Load area by dragon
-        m_currentArea = def.GetAsString(DragonManager.currentDragon.sku, "area1");  // [AOC] Adding default value in case dragon's initial area is not defined in content
-        LoadArea( m_currentArea );
+
+        // Load area by dragon        
+        m_currentArea = areaName;
+        List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(areaName);
+        returnValue.AddRealSceneNameListToLoad(realSceneNamesPerArea);
+
+        return returnValue;
     }
 
-
-	public static List<AsyncOperation> LoadArea( string area )
-	{
-		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
-		AsyncOperation loadingTask = null;
-		DefinitionNode def = m_currentLevelData.def;
-		m_currentArea = area;
-		m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
-		for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
-		{
-			string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
-			loadingTask = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-			if(DebugUtils.SoftAssert(loadingTask != null, "The scene " + m_currentAreaScenes[i] + " for level " + def.sku + " couldn't be found (probably mispelled or not added to Build Settings)")) {
-				loadingTasks.Add(loadingTask);
-			}	
-		}
-		return loadingTasks;
-	}   
-
-    public static void LoadAreaSync(string area)
+    public static void UnloadLevel()
     {
-        DefinitionNode def = m_currentLevelData.def;
-        m_currentArea = area;
-        m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
-        for( int i = 0; i<m_currentAreaScenes.Count && !string.IsNullOrEmpty( m_currentAreaScenes[i] ); i++ )
-        {
-            string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
-            SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-        }
+        m_scenesLoaded.Clear();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
     }
+
+    public static LevelLoader SwitchArea( string area )
+    {                
+        // Load additively all the scenes of the current level
+        LevelLoader returnValue = new LevelLoader(m_currentArea, area);
+
+        // Current area scenes need to be unloaded
+        List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(m_currentArea);
+
+        if (realSceneNamesPerArea != null)
+        {
+            int count = realSceneNamesPerArea.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (IsSceneLoaded(realSceneNamesPerArea[i]))
+                {
+                    returnValue.AddRealSceneNameToUnload(realSceneNamesPerArea[i]);
+                }
+            }
+        }
+
+        // Load area
+        m_currentArea = area;
+        realSceneNamesPerArea = GetOnlyAreaScenesList(area); 
+        returnValue.AddRealSceneNameListToLoad(realSceneNamesPerArea);
+
+        return returnValue;
+    }   
+    
+    public static bool IsSceneLoaded(string sceneName)
+    {
+        return m_scenesLoaded.ContainsKey(sceneName);
+    } 
 
 	public static void DisableCurrentArea()
 	{
-		
+        Scene s;
 		for( int i = 0;i< m_currentAreaScenes.Count; i++ )
 		{
-			Scene s = SceneManager.GetSceneByName(m_currentAreaScenes[i]);
-			if (s != null)
-			{
-				GameObject[] gos = s.GetRootGameObjects();
-				for( int j = 0; j<gos.Length; ++j )
-					gos[j].SetActive(false);
-			}
+            if (IsSceneLoaded(m_currentAreaScenes[i]))
+            {
+                s = SceneManager.GetSceneByName(m_currentAreaScenes[i]);
+                if (s != null)
+                {
+                    GameObject[] gos = s.GetRootGameObjects();
+                    for (int j = 0; j < gos.Length; ++j)
+                        gos[j].SetActive(false);
+                }
+            }
 		}
-
-	}
-
-    public static List<AsyncOperation> UnloadCurrentArea()
-	{
-		List<AsyncOperation> loadingTasks = new List<AsyncOperation>();
-		AsyncOperation loadingTask = null;
-		for( int i = 0;i< m_currentAreaScenes.Count; i++ )
-		{
-			loadingTask = SceneManager.UnloadSceneAsync(m_currentAreaScenes[i]);
-			if ( loadingTask != null )
-				loadingTasks.Add(loadingTask);
-		}
-		m_currentAreaScenes.Clear();
-		m_currentArea = "";
-		return loadingTasks;
-	}
-    
-    public static void UnloadCurrentAreaSync()
-    {
-        for( int i = 0;i< m_currentAreaScenes.Count; i++ )
-        {
-            SceneManager.UnloadScene(m_currentAreaScenes[i]);
-        }
-        m_currentAreaScenes.Clear();
-        m_currentArea = "";
-    }
-
+	}   
 
 	/// <summary>
 	/// Make sure the active scene is the one marked as "activeScene" in the current level definition.
@@ -289,36 +265,7 @@ public class LevelManager : Singleton<LevelManager> {
 		Scene scene = SceneManager.GetSceneByName(m_currentLevelData.def.GetAsString(m_currentArea + "Active"));
 		SceneManager.SetActiveScene(scene);
 		// #endif
-	}
-
-	public static AsyncOperation[] SwitchArea( string nextArea )
-	{
-		AsyncOperation[] ret = null;
-		if ( m_currentArea != nextArea )
-		{
-			// Unload current area scenes
-			UnloadCurrentArea();
-
-			// Load new area scenes
-			ret = LoadArea( nextArea ).ToArray();
-
-		}
-		return ret;
-	}
-    
-    public static void SwitchAreaSync(string nextArea)
-    {
-        if ( m_currentArea != nextArea )
-        {
-            // Unload current area scenes
-            UnloadCurrentAreaSync();
-
-            // Load new area scenes
-            LoadAreaSync(nextArea);
-
-        }
-    }
-
+	}	        
 
 	private static string GetRealSceneName( string sceneName )
 	{
@@ -356,11 +303,28 @@ public class LevelManager : Singleton<LevelManager> {
     {
         List<string> returnValue = new List<string>();
 
+        HashSet<string> includeScenes = null; 
+        if (m_scenesToInclude.ContainsKey(area)) { includeScenes = m_scenesToInclude[area]; }
+
+        HashSet<string> excludeScenes = null;
+        if (m_scenesToExclude.ContainsKey(area)) { excludeScenes = m_scenesToExclude[area]; }
+
         DefinitionNode def = m_currentLevelData.def;
+
         m_currentArea = area;
         m_currentAreaScenes = def.GetAsList<string>(m_currentArea);
-        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++)
-        {
+
+        if (excludeScenes != null) {
+            foreach (string scene in excludeScenes) {
+                m_currentAreaScenes.Remove(scene);
+            }
+        }
+
+        if (includeScenes != null) {
+            m_currentAreaScenes.AddRange(includeScenes);
+        }
+
+        for (int i = 0; i < m_currentAreaScenes.Count && !string.IsNullOrEmpty(m_currentAreaScenes[i]); i++) {
             string sceneName = GetRealSceneName(m_currentAreaScenes[i]);
             returnValue.Add(sceneName);
         }

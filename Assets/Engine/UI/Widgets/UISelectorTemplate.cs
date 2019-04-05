@@ -184,7 +184,7 @@ public class UISelectorTemplate<T> : MonoBehaviour, IBeginDragHandler, IDragHand
 	/// </summary>
 	/// <param name="_idx">Index of the item to be selected.</param>
 	/// <param name="_looped">Did we looped when selecting this item?</param>
-	private void SelectItemInternal(int _idx, bool _looped) {
+	protected virtual void SelectItemInternal(int _idx, bool _looped) {
 		// Component must be enabled!
 		if(!this.enabled) return;
 

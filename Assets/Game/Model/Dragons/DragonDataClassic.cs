@@ -140,14 +140,7 @@ public class DragonDataClassic : IDragonData {
         get { return m_def.GetAsFloat("energyRefillRate"); } 
     }
     
-    // Alcohol
-    public override float maxAlcohol{ 
-        get { return m_def.GetAsFloat("maxAlcohol"); } 
-    }
-    public override float alcoholDrain{ 
-        get { return m_def.GetAsFloat("alcoholDrain", 1); } 
-    }
-    
+
     // Misc
     public override float statsBarRatio{ 
         get { return m_def.GetAsFloat("statsBarRatio"); } 
@@ -316,6 +309,10 @@ public class DragonDataClassic : IDragonData {
 	public float GetMaxEnergyBaseAtLevel(int _level) {
 		float levelDelta = Mathf.InverseLerp(0, progression.maxLevel, _level);
 		return m_energyBaseRange.Lerp(levelDelta);
+	}
+
+	public float GetMaxSpeedAtLevel(int _level) {
+		return (GetMaxForceAtLevel(_level) / friction) / mass;	// Copied from DragonMotion to show stats on the menu
 	}
 
 	/// <summary>

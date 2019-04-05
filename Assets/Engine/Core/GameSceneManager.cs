@@ -56,7 +56,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 
 	// Loading tech
 	private AsyncOperation m_unloadTask;
-	private AsyncOperation m_loadTask;
+	private UbiAsyncOperation m_loadTask;
 
 	//------------------------------------------------------------------//
 	// PROPERTIES														//
@@ -168,19 +168,13 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 
 			// Start loading the scene asynchronously. Run here any process you need to run before loading. 1-Frame state.
 			case ESceneState.PRELOAD: {
-                bool rulesReloaded = HDCustomizerManager.instance.Apply();
-
-                // If rules have been reloaded then cached data have to be updated
-                if (rulesReloaded)
-                {
-                    OnRulesUpdated();
-                }
+                    HDCustomizerManager.instance.CheckAndApply();
 			} break;
 
 			// Loading the intermediate loading screen
 			case ESceneState.LOADING_LOADING_SCENE: {
-				// Trigger the load of the loading scene - this will unload all active scenes
-				m_loadTask = SceneManager.LoadSceneAsync(loadingScene);
+                // Trigger the load of the loading scene - this will unload all active scenes                
+                m_loadTask = HDAddressablesManager.Instance.LoadSceneAsync(loadingScene);                
 			} break;
 
 			// Unload unused resources from the scene we're leaving.
@@ -192,7 +186,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			// Stay here until the loading is done.
 			case ESceneState.LOADING: {
 				// Trigger the load of the new scene - this will unload all active scenes (including loading scene if any)
-				m_loadTask = SceneManager.LoadSceneAsync(nextScene);
+				m_loadTask = HDAddressablesManager.Instance.LoadSceneAsync(nextScene);
 			} break;
 
 			// Unload the intermediate loading screen
@@ -320,14 +314,5 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			} break;
 		}
 	}
-
-    /// <summary>
-    /// This method is called when rules have changed
-    /// </summary>
-    private void OnRulesUpdated()
-    {
-        // Cached data need to be reloaded
-        OffersManager.InitFromDefinitions(true);
-    }
 }
 

@@ -96,14 +96,14 @@ namespace Metagame {
 
 			rewardData.typeCode = _data["type"];
 			rewardData.typeCode = rewardData.typeCode.ToLower();
-			if ( rewardData.typeCode == "hc" )
+			if (rewardData.typeCode == "hc")
 				rewardData.typeCode = "pc";
 
-			if(_data.ContainsKey("sku")) {
+			if (_data.ContainsKey("sku")) {
 				rewardData.sku = _data["sku"];
 			}
 
-			if(_data.ContainsKey("amount")) {
+			if (_data.ContainsKey("amount")) {
 				rewardData.amount = _data["amount"].AsLong;
 			}
 

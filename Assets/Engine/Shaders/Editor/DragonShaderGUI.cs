@@ -70,9 +70,12 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string fresnelColorText = "Fresnel Color";
         readonly public static string fresnelAdditiveInfoText = "By default fresnel light is applied by additive. You can change it to alpha blend with the below option.";
 
+        readonly public static string reflectionTypeText = "Reflection Type";
+
         readonly public static string additionalFXLayerText = "Additional FX layer";
         readonly public static string reflectionMapText = "Reflection Texture";
         readonly public static string reflectionAmountText = "Reflection amount";
+        readonly public static string reflectionColorText = "Reflection Color";
         readonly public static string noiseMapText = "Noise Texture";
         readonly public static string fireAmountText = "Fire amount";
         readonly public static string fireSpeedText = "Fire speed";
@@ -125,6 +128,9 @@ internal class DragonShaderGUI : ShaderGUI
 
     MaterialProperty mp_reflectionMap;
     MaterialProperty mp_reflectionAmount;
+
+    MaterialProperty mp_reflectionColor;
+
     MaterialProperty mp_fireMap;
     MaterialProperty mp_fireAmount;
     MaterialProperty mp_fireSpeed;
@@ -176,6 +182,7 @@ internal class DragonShaderGUI : ShaderGUI
 
     MaterialProperty mp_FxLayer;
     MaterialProperty mp_SelfIlluminate;
+    MaterialProperty mp_ReflectionType;
 
     MaterialEditor m_materialEditor;
     ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
@@ -233,6 +240,8 @@ internal class DragonShaderGUI : ShaderGUI
 
         mp_reflectionMap = FindProperty("_ReflectionMap", props);
         mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+        mp_reflectionColor = FindProperty("_ReflectionColor", props);
+
         mp_fireMap = FindProperty("_FireMap", props);
         mp_fireAmount = FindProperty("_FireAmount", props);
         mp_fireSpeed = FindProperty("_FireSpeed", props);
@@ -273,6 +282,8 @@ internal class DragonShaderGUI : ShaderGUI
 
         mp_FxLayer = FindProperty("FXLayer", props);
         mp_SelfIlluminate = FindProperty("SelfIlluminate", props);
+        mp_ReflectionType = FindProperty("ReflectionType", props);
+
         mp_cullMode = FindProperty("_Cull", props);
     }
 
@@ -353,6 +364,17 @@ internal class DragonShaderGUI : ShaderGUI
                 EditorGUILayout.HelpBox(Styles.reflectionLayerText, MessageType.Info);
                 materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText, false);
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+                materialEditor.ShaderProperty(mp_ReflectionType, Styles.reflectionTypeText);
+                int fxRefType = (int)mp_ReflectionType.floatValue;
+                if (fxRefType == 1)
+                {
+                    materialEditor.ShaderProperty(mp_reflectionColor, Styles.reflectionColorText);
+                }
+                else if (fxRefType == 2)
+                {
+                    materialEditor.TextureProperty(mp_fireMap, Styles.colorRampMapText, false);
+                }
+
                 break;
 
             case 2:     //FXLayer_Fire

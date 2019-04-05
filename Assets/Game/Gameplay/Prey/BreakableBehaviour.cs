@@ -5,8 +5,13 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 {	
 	[SerializeField] private bool m_isBlocker = false;
 	[SerializeField] private bool m_unbreakableBlocker = false;
+    public bool unbreakableBlocker
+    {
+        get{ return m_unbreakableBlocker; }
+    }
 
 	[SerializeField] private DragonTier m_tierWithTurboBreak = 0;
+    public DragonTier tierWithTurboBreak{ get{ return m_tierWithTurboBreak; } }
 	[SerializeField] private DragonTier m_tierNoTurboBreak = 0;
 
 	[SerializeField] private int m_hitCount = 1;
@@ -21,6 +26,10 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 	[SerializeField] private GameObject m_activateOnDestroy;
 
 	//----------------------------------------------------------------------
+    public delegate void OnBreakDelegate();
+    public OnBreakDelegate onBreak;
+
+    //----------------------------------------------------------------------
 
 	private int m_remainingHits;
 
@@ -64,17 +73,18 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 		}
 	}
 
-	void Start() {		
-		CreatePool();			
-		m_initialViewPos = m_view.localPosition;
-	}
+    void Start() {
+        CreatePool();
+        m_initialViewPos = m_view.localPosition;
+    }
 
 	void OnEnable() {
 		m_remainingHits = m_hitCount;
 
 		if (m_wobbler == null)
 			m_wobbler = GetComponent<Wobbler>();		
-		m_wobbler.enabled = false;
+        if (m_wobbler != null)
+            m_wobbler.enabled = false;
 
 		if (m_collider == null)
 			m_collider = GetComponent<Collider>();
@@ -183,6 +193,10 @@ public class BreakableBehaviour : MonoBehaviour, IBroadcastListener
 
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 1f, 1f);
 		}
+        InstanceManager.timeScaleController.HitStop();
+
+        if (onBreak != null)
+            onBreak();
 
 		// Destroy
 		StartCoroutine(DestroyCountdown(0.15f));

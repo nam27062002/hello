@@ -34,7 +34,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
         get { return m_motionType; }
         set { m_motionType = value; } 
     }
-	[SerializeField] private float m_chargeTime = 0f;
+    [SerializeField] private float m_mass = 15f;
+    [SerializeField] private float m_chargeTime = 0f;
 	[SerializeField] private float m_speed = 0f;
     public float speed 
     { 
@@ -45,6 +46,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 	[SerializeField] private RotationAxis m_rotationAxis = RotationAxis.Up;
 	[SerializeField] private float m_maxTime = 0f; // 0 infinite
 	[SerializeField] private float m_scaleTime = 1f;
+    [Comment("Stop at targetPosition if target is null")]
 	[SerializeField] private bool m_stopAtTarget = false;
 	[SerializeField] private bool m_dieOutsideFrustum = true;
     [SerializeField] private bool m_dieOnHit = true;
@@ -365,7 +367,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 							if (m_homingTimer <= 0f ) {
 								m_homingTimer = 0f;
 								Vector3 impulse = (m_targetPosition - m_position).normalized * m_speed;
-								impulse = (impulse - m_velocity) / 15f; //mass
+								impulse = (impulse - m_velocity) / m_mass; //mass
 								m_velocity = Vector3.ClampMagnitude(m_velocity + impulse, m_speed);
 							}
 						} break;
@@ -381,7 +383,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 				m_transform.position = m_position;
 
 				// impact checks
-				if (m_stopAtTarget) {
+				if (m_stopAtTarget || ( m_target == null && m_motionType == MotionType.Homing )) {
 					float distanceToTarget = (m_targetPosition - m_position).sqrMagnitude;
 					if (distanceToTarget > m_distanceToTarget) {
 						Explode(false);
@@ -399,7 +401,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 				m_hitCollider = _other;
 				if (_other.CompareTag("Player"))  {
 					Explode(true);
-				} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
+                } else if ((((1 << _other.gameObject.layer) & GameConstants.Layers.GROUND) > 0)) {
 					Explode(false);
 				}
 			}
@@ -412,6 +414,8 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
     public override void OnTriggerExit(Collider _other) { }
 
     public void OnBite() {
+        m_state = State.Idle;
+
         GameObject go = m_onEatParticle.Spawn(m_position + m_onEatParticle.offset);
 
         if (go != null) {

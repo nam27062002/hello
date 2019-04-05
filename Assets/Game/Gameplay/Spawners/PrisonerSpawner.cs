@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
@@ -52,7 +52,11 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 		base.OnDestroy();
 	}
-    
+
+    public override List<string> GetPrefabList() {
+        return null;
+    }
+
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
@@ -82,7 +86,7 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
 		for (int g = 0; g < m_groups.Length; g++) {			
 			for (int e = 0; e < m_groups[g].m_entityPrefabsStr.Length; e++) {
 				prefabName = m_groups[g].m_entityPrefabsStr[e];
-				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, IEntity.EntityPrefabsPath, 1);                
+				m_poolHandlers[g, e] = PoolManager.RequestPool(prefabName, 1);                
 			}
 		}
 	}
@@ -127,11 +131,11 @@ public class PrisonerSpawner : AbstractSpawner, IBroadcastListener {
         machine.EnterDevice(true);
     }
 
-	protected override void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {        
+	protected override void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {        
         m_parents[index] = null;
     }
     
-	protected override void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {
+	protected override void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {
 		m_allKilledByPlayer = _allKilledByPlayer;
 	}
 

@@ -149,11 +149,11 @@ namespace AI {
 			m_sensor.Disable(_seconds);
 		}
 
-		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false) {
+		public bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
 			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
-					m_inflammable.Burn(_transform, _source, instant);
+					m_inflammable.Burn(_transform, _source, instant, fireColorType);
 				}
 				return true;
 			}
@@ -167,7 +167,7 @@ namespace AI {
 				m_entity.onDieStatus.source = _source;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
 				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
-				Messenger.Broadcast<Transform, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, reward);
+				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
 				return true;
 			}
 			return false;
@@ -221,23 +221,21 @@ namespace AI {
                 m_hasHit[i] = false;
             }
 
-			int groundMask = LayerMask.GetMask("Ground", "GroundVisible", "Obstacle", "PreyOnlyCollisions");
-
             //down
             ray.direction = GameConstants.Vector3.down;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[0] = m_raycastHits[0]; m_hasHit[0] = true; }
 
             //up
             ray.direction = GameConstants.Vector3.up;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[1] = m_raycastHits[0]; m_hasHit[1] = true; }
 
             //right
             ray.direction = GameConstants.Vector3.right;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[2] = m_raycastHits[0]; m_hasHit[2] = true; }
 
             //left
             ray.direction = GameConstants.Vector3.left;
-            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, groundMask) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
+            if (Physics.RaycastNonAlloc(ray, m_raycastHits, 10f, GameConstants.Layers.GROUND_PREYCOL_OBSTACLE) > 0) { m_hitResults[3] = m_raycastHits[0]; m_hasHit[3] = true; }
 
 			float d = 99999f;
 			for (int i = 0; i < 4; i++) {
@@ -296,7 +294,10 @@ namespace AI {
 		public virtual bool IsFacingDirection() { return false; }
 		public virtual bool IsInFreeFall() { return false; }
 		public bool IsFreezing(){ return false; }
-		public void CustomFixedUpdate(){}
+        public bool IsStunned() { return false; }        
+        public bool IsInLove() { return false; }
+
+        public void CustomFixedUpdate(){}
 
 		public void AddExternalForce(Vector3 force) {}
 		public Quaternion GetDyingFixRot() { return Quaternion.identity; }

@@ -30,13 +30,15 @@ namespace AI {
 			}
 
 			protected override void OnInitialise() {
-				m_data = m_pilot.GetComponentData<AttackRangedData>();
+                if ( m_data == null )
+                    m_data = m_pilot.GetComponentData<AttackRangedData>();
 
 				m_projectileSpawnPoint = m_pilot.FindTransformRecursive(((AttackRangedData)m_data).projectileSpawnTransformName);
 			
 				CreatePool();
 
-				// create a projectile from resources (by name) and save it into pool
+                // create a projectile from resources (by name) and save it into pool
+                Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
 				Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
 
 				m_viewControl = m_pilot.GetComponent<ViewControl>();
@@ -45,18 +47,20 @@ namespace AI {
 			}
 
 			void CreatePool() {
-				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, "Game/Projectiles/", 4, true);
+				m_poolHandler = PoolManager.CreatePool(((AttackRangedData)m_data).projectileName, 4, true);
 			}
 
 			protected override void OnRemove() {
                 base.OnRemove();
-				Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
 			}
 
             public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
             {
                 switch( eventType )
                 {
+                    case BroadcastEventType.GAME_LEVEL_LOADED:
                     case BroadcastEventType.GAME_AREA_ENTER:
                     {
                         CreatePool();
@@ -108,10 +112,10 @@ namespace AI {
 			protected override void OnAnimDealDamageExtended() {
 				if (m_projectile != null) {					
 					IProjectile projectile = m_projectile.GetComponent<IProjectile>();
-					if (m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) {
+					if ((m_data.forceFaceToShoot && !((AttackRangedData)m_data).canFollowTarget) || (m_machine.enemy == null)) {
 						projectile.ShootAtPosition(m_facingTarget, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
-					} else {
-						projectile.Shoot(InstanceManager.player.dragonMotion.head, m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
+					} else {    
+                        projectile.Shoot(m_machine.enemy , m_machine.transform.forward, ((AttackRangedData)m_data).damage, m_machine.transform);
 					}
 					m_projectile = null;
 				}

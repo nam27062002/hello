@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// This class is responsible for giving an implementation for the ISpawner interface that different subclasses can share. These are some of this class responsabilities:
@@ -147,8 +148,14 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
 
             if (EntitiesAlive == EntitiesToSpawn) {
-                EntitiesSpawned = 0;
-                State = EState.Activating_Instances;
+                if (EntitiesToSpawn == 0) {
+                    // This spawner can't spawn anything this time, so we'll disable it and restart the respawn timer
+                    OnAllEntitiesRemoved(null, true);
+                    return true;
+                } else {
+                    EntitiesSpawned = 0;
+                    State = EState.Activating_Instances;
+                }
             }
 
             if (UseProgressiveRespawn) {
@@ -213,9 +220,18 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
                 pilot.Spawn(this);
             }
 
-            ISpawnable[] components = spawning.GetComponents<ISpawnable>();
-            foreach (ISpawnable component in components) {
-				if (component != entity && component != pilot && component != machine && component != view) {
+            ISpawnable[] components;
+            if (entity != null) {
+                components = entity.m_otherSpawnables;
+            }
+            else {
+                components = spawning.GetComponents<ISpawnable>();
+            }
+
+            foreach (ISpawnable component in components)
+            {
+                if (component != entity && component != pilot && component != machine && component != view)
+                {
                     component.Spawn(this);
                 }
             }
@@ -229,7 +245,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
     public void ForceRemoveEntities() {
         for (int i = 0; i < EntitiesToSpawn; i++) {
             if (m_entities[i] != null) {
-                RemoveEntity(m_entities[i].gameObject, false);
+                RemoveEntity(m_entities[i], false);
             }
         }
 
@@ -251,10 +267,10 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 			entity.SetGolden(Spawner.EntityGoldMode.Gold);
     }
 
-    public void RemoveEntity(GameObject _entity, bool _killedByPlayer) {
+    public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
         int index = -1;
         for (int i = 0; i < EntitiesToSpawn && index == -1; i++) {
-            if (m_entities[i] != null && m_entities[i].gameObject == _entity) {
+            if (m_entities[i] != null && m_entities[i] == _entity) {
                 index = i;                                                
             }
         }
@@ -278,7 +294,7 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
             }
 
             // Returns the entity to the pool
-			ReturnEntityToPool(handler, _entity);
+			ReturnEntityToPool(handler, _entity.gameObject);
 
 			OnRemoveEntity(_entity, index, _killedByPlayer);
 
@@ -331,10 +347,12 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 
     private void Entities_Create(uint amount) {
         m_entities = new IEntity[amount];        
-    }    
+    }
     #endregion
 
     #region interface_for_subclasses
+    public abstract List<string> GetPrefabList();
+
     public virtual AreaBounds area { get; set; }
 	public Quaternion rotation { get { return transform.rotation; } }
 
@@ -369,8 +387,8 @@ public abstract class AbstractSpawner : MonoBehaviour, ISpawner
 	protected virtual void OnMachineSpawned(AI.IMachine machine) {}
     protected virtual void OnPilotSpawned(AI.Pilot pilot) {}
     protected virtual void OnAllEntitiesRespawned() {}    
-	protected virtual void OnRemoveEntity(GameObject _entity, int index, bool _killedByPlayer) {}
-    protected virtual void OnAllEntitiesRemoved(GameObject _lastEntity, bool _allKilledByPlayer) {}
+	protected virtual void OnRemoveEntity(IEntity _entity, int index, bool _killedByPlayer) {}
+    protected virtual void OnAllEntitiesRemoved(IEntity _lastEntity, bool _allKilledByPlayer) {}
     protected virtual void OnForceRemoveEntities() {}
     public virtual void DrawStateGizmos() {}
     #endregion

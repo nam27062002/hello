@@ -111,7 +111,7 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 	/// <summary>
 	/// Interrupts current flow and restarts the application.
 	/// </summary>
-	public static void Restart() {        
+	public static void Restart() {
         // Delete key singletons that must be reloaded		
         GameVars.DestroyInstance();
 
@@ -124,11 +124,13 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
         PersistenceFacade.instance.Reset();
 
         TransactionManager.instance.Reset();
-        HDCustomizerManager.instance.Reset();
-
-        HDCustomizerManager.instance.Reset();
+        HDCustomizerManager.instance.Reset();              
 
         SocialPlatformManager.SharedInstance.Reset();
+
+        ContentManager.Reset();
+
+        HDAddressablesManager.Instance.Reset();
 
         // Change to the loading scene. This change might be needed from the LoadingSceneController itself because of the save game flow (for exaple when clicking of update the game version
         // from the editor)

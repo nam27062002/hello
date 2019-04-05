@@ -63,7 +63,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		UnityEngine.Debug.Log("Generating XCode project at path: " + stagePath);
 
 		// Do the build!
-		BuildPipeline.BuildPlayer( GetBuildingScenes(), stagePath, BuildTarget.iOS, BuildOptions.None);
+		BuildPlayer( stagePath, BuildTarget.iOS);
 
 		// Restore
 		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
@@ -73,6 +73,25 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
         }
 		PlayerSettings.bundleVersion = oldBundleVersion;
 	}
+
+    private static void BuildPlayer(string locationPathName, BuildTarget buildTarget)
+    {
+        string[] levels = GetBuildingScenes();
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = levels;
+        buildPlayerOptions.locationPathName = locationPathName;
+        buildPlayerOptions.target = buildTarget;
+        buildPlayerOptions.options = BuildOptions.None;
+
+        string buildTargetAsString = buildTarget.ToString();
+        string assetBundlesManifestPath = "AssetBundles/" + buildTargetAsString + "/" + buildTargetAsString + ".manifest";
+        if (File.Exists(assetBundlesManifestPath))
+        {
+            buildPlayerOptions.assetBundleManifestPath = assetBundlesManifestPath;
+        }
+
+        BuildPipeline.BuildPlayer(buildPlayerOptions);
+    }
 
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
@@ -123,12 +142,12 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		PlayerSettings.Android.keystorePass = "android";
 		PlayerSettings.Android.keyaliasName = "androidreleasekey";
 		PlayerSettings.Android.keyaliasPass = "android";
+        
+        // Do the build!
+        BuildPlayer(stagePath, BuildTarget.Android);
 
-		// Do the build!
-		BuildPipeline.BuildPlayer(GetBuildingScenes(), stagePath, BuildTarget.Android, BuildOptions.None);
-
-		// Restore Player Settings
-		PlayerSettings.applicationIdentifier = oldBundleIdentifier;
+        // Restore Player Settings
+        PlayerSettings.applicationIdentifier = oldBundleIdentifier;
         if (OVERRIDE_SYMBOLS)
         {
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, oldSymbols);
@@ -456,7 +475,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		List<string> levels = def.GetAsList<string>("common");
 
 		int areaIndex = 1;
-		List<string> areaList = def.GetAsList<string>("area"+areaIndex);
+		List<string> areaList = LevelManager.GetOnlyAreaScenesList("area"+areaIndex);
 		while(areaList.Count > 0 && !string.IsNullOrEmpty(areaList[0]) )
 		{
 			for(int i = 0; i<areaList.Count; i++)
@@ -467,7 +486,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				}
 			}
 			areaIndex++;
-			areaList = def.GetAsList<string>("area"+areaIndex);
+			areaList = LevelManager.GetOnlyAreaScenesList("area"+areaIndex);
 		}
 
 		for( int i = 0; i<levels.Count; i++ )

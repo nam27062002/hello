@@ -92,6 +92,9 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 			// SFX
 			AudioController.Play("hd_lab_power_upgraded");
 
+			// Lock input (to prevent any other stat upgrade while the popup is opened)
+			Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, true);
+
 			// Open info popup (after some delay)
 			UbiBCN.CoroutineManager.DelayedCall(
 				() => {
@@ -101,6 +104,9 @@ public class LabDragonBarSkillElement : LabDragonBarLockedElement {
 						skillUnlockedPopup.Init(m_def);
 						popup.Open();
 					}
+
+					// Unlock input
+					Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 				}, 0.5f
 			);
 		}

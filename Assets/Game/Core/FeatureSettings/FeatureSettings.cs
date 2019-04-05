@@ -138,7 +138,13 @@ public class FeatureSettings
     public const string KEY_CP2_INTERSTITIAL = "cp2Interstital";
 
     // Min time in seconds between two consecutive interstitial
-    public const string KEY_CP2_INTERSTITIAL_FREQUENCY = "cp2InterstitialFrequency";    
+    public const string KEY_CP2_INTERSTITIAL_FREQUENCY = "cp2InterstitialFrequency";
+
+    // Min amount of rounds the user has to play in a session before she's eligible for a cp2 interstitial
+    public const string KEY_CP2_INTERSTITIAL_MIN_ROUNDS = "cp2InterstitialMinRounds";
+
+    // Whether or not Fabric Crashlytics is enabled
+    public const string KEY_CRASHLYTICS = "crashlytics";
 
     // Max time to wait for log in social platform to finish
     public const string KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT = "socialPlatformLoginTimeout";
@@ -349,6 +355,14 @@ public class FeatureSettings
 
             key = KEY_CP2_INTERSTITIAL_FREQUENCY;
             data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            key = KEY_CP2_INTERSTITIAL_MIN_ROUNDS;
+            data = new DataInt(key, EValueType.Int, 0);
+            Datas.Add(key, data);
+
+            key = KEY_CRASHLYTICS;
+            data = new DataInt(key, EValueType.Bool, (int)EBoolValues.FALSE);
             Datas.Add(key, data);
 
             key = KEY_SOCIAL_PLAFTORM_LOGIN_TIMEOUT;

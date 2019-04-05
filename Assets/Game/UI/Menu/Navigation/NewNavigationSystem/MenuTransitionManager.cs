@@ -165,7 +165,7 @@ public class MenuTransitionManager : MonoBehaviour {
 
 		// Block if transitions are not allowed at this moment
         if(!m_transitionAllowed && !_forceTransition) {
-			Debug.Log("BLOCKED");
+			Debug.Log(Color.red.Tag("BLOCKED"));
 			return;
 		}
 

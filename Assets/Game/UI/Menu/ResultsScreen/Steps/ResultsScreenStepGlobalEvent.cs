@@ -1,4 +1,4 @@
-// ResultsScreenStepGlobalEvent.cs
+﻿// ResultsScreenStepGlobalEvent.cs
 // Hungry Dragon
 // 
 // Created by Alger Ortín Castellví on 05/09/2017.
@@ -77,11 +77,11 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 			return false;
 		}
 
-		HDQuestManager questManager = HDLiveEventsManager.instance.m_quest;
+		HDQuestManager questManager = HDLiveDataManager.quest;
 
 		if (	questManager.EventExists() &&
 				questManager.IsRunning() && 
-				questManager.m_isActive &&
+				questManager.isActive &&
 				questManager.m_questData.remainingTime.TotalSeconds > 0 &&
 				Application.internetReachability != NetworkReachability.NotReachable
 		)
@@ -97,7 +97,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoInit() {
 		// Get event data!
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Make sure the number animator respect the event's formatting
 		m_runScoreText.CustomTextSetter = OnSetScoreText;
@@ -111,10 +111,10 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	override protected void DoLaunch() {
 		// Make sure we have the latest event data
-		m_questManager = HDLiveEventsManager.instance.m_quest;
+		m_questManager = HDLiveDataManager.quest;
 
 		// Subscribe to external events
-		// Messenger.AddListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
+		// Messenger.AddListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
 
 		// Do a first refresh
 		InitPanel(false, true);
@@ -305,7 +305,7 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	private void OnHidePostAnimation() {
 		// Unsubscribe from external events
-		// Messenger.RemoveListener<HDLiveEventsManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
+		// Messenger.RemoveListener<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.QUEST_SCORE_SENT, OnContributionConfirmed);
 
 		// Clear sequence
 		if(m_activePanelSequence != null) {
@@ -352,12 +352,12 @@ public class ResultsScreenStepGlobalEvent : ResultsScreenStep {
 	/// </summary>
 	/// <param name="_success">Was the contribute operation successful?</param>
 	/*
-	private void OnContributionConfirmed(HDLiveEventsManager.ComunicationErrorCodes _error) {
+	private void OnContributionConfirmed(HDLiveDataManager.ComunicationErrorCodes _error) {
 		// Hide busy screen
 		BusyScreen.Hide(this);
 
 		// Successful?
-		if(_error != HDLiveEventsManager.ComunicationErrorCodes.NO_ERROR) {
+		if(_error != HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// Continue sequence to close the popup
 			m_sequence.Play();
 		} else {

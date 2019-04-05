@@ -7,7 +7,6 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	[SerializeField] private ParticleData m_explosionParticle;
 
 	private Transform m_oldParent = null;
-	private LayerMask m_colliderMask;
 	private ProjectileMotion m_pMotion;
 	private bool m_hasBeenShot;
 
@@ -18,8 +17,6 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	void Start () 
 	{		
 		m_explosionParticle.CreatePool();
-
-		m_colliderMask = LayerMask.GetMask("Ground", "Water", "GroundVisible", "WaterPreys", "GroundPreys", "AirPreys");
 
 		m_pMotion = GetComponent<ProjectileMotion>();	
 		if (m_pMotion) m_pMotion.enabled = false;
@@ -92,13 +89,13 @@ public class PetMagneticField :  MonoBehaviour, IProjectile {
 	void OnCollisionEnter( Collision _collision )
 	{
 		// if the collision is ground -> Explode!!
-		if(((1 << _collision.gameObject.layer) & m_colliderMask) > 0)
+		if(((1 << _collision.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0)
 			Explode(false);
 	}
 
 	void OnTriggerEnter( Collider _other)
 	{
-		if(((1 << _other.gameObject.layer) & m_colliderMask) > 0)
+		if(((1 << _other.gameObject.layer) & GameConstants.Layers.GROUND_WATER_APREYS_GPREYS_WPREYS) > 0)
 			Explode(false);
 	}
 

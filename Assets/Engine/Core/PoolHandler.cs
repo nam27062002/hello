@@ -37,17 +37,22 @@ public class PoolHandler {
 		if (m_isValid) {
 			return m_pool.Get(_activate);
 		}
-		Debug.LogError("[Pool] invalid pool handler");
-		return null;
+#if DEBUG
+        Debug.LogError("[Pool] invalid pool handler");
+#endif
+        return null;
 	}
 
 	public void ReturnInstance(GameObject _go) {
 		if (m_isValid) {
 			m_pool.Return(_go);
-		} else {
-			Debug.LogError("[Pool] invalid pool handler");
 		}
-	}
+#if DEBUG
+        else {
+			Debug.LogError("[Pool] invalid pool handler");
+        }
+#endif
+    }
 
 	public bool HasAvailableInstances()	{
 		if ( m_isValid )

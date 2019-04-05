@@ -83,7 +83,7 @@ public class HUDRevive : MonoBehaviour {
 		Messenger.RemoveListener(MessengerEvents.PLAYER_PET_PRE_FREE_REVIVE, OnPlayerPreFreeRevive);
 
 		// Restore timescale
-		Time.timeScale = 1f;
+		// Time.timeScale = 1f;
 	}
 
 	/// <summary>
@@ -211,7 +211,7 @@ public class HUDRevive : MonoBehaviour {
 			}
 
 			// Free revive available?
-			m_freeReviveButton.SetActive(m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
+            m_freeReviveButton.SetActive(FeatureSettingsManager.AreAdsEnabled && m_minGamesBeforeFreeReviveAvailable <= UsersManager.currentUser.gamesPlayed && RewardManager.freeReviveCount < m_freeRevivesPerGame);
 
 			// Show!
 			if(m_animator != null) m_animator.Show();
@@ -226,12 +226,13 @@ public class HUDRevive : MonoBehaviour {
 		// Reset revive flag
 		m_revived = false;
 
-		// Slow motion
-		Time.timeScale = 0.25f;
+        // Slow motion
+        // Time.timeScale = 0.25f;
+        InstanceManager.timeScaleController.Dead();
 	}
 
     private void OnPlayerStartRevie() {
-        Time.timeScale = 0.25f;
+        InstanceManager.timeScaleController.ReviveStart();
     }
 
     private void OnPlayerRevive( DragonPlayer.ReviveReason reason )
@@ -242,8 +243,9 @@ public class HUDRevive : MonoBehaviour {
 		// Hide
 		m_animator.Hide();
 
-		// Restore timescale
-		Time.timeScale = 1f;
+        // Restore timescale
+        // Time.timeScale = 1f;
+        InstanceManager.timeScaleController.Revived();
 	}
 
 	private void OnPlayerPreFreeRevive()

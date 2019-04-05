@@ -28,7 +28,8 @@ public enum DamageType {
 	FLOUR,
 	DRAIN,
 	BIG_DAMAGE,
-	LIGHTNING
+	LIGHTNING,
+    CURSE
 }
 
 public class DamageTypeComparer : IEqualityComparer<DamageType>

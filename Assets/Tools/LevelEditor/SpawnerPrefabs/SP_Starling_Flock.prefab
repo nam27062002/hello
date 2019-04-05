@@ -72,6 +72,7 @@ MonoBehaviour:
     width: 2
     height: 2
   m_mixEntities: 0
+  m_forceHeterogeneityMix: 0
   m_entityPrefabList:
   - name: Air/PF_Starling_Flock
     chance: 100
@@ -86,6 +87,7 @@ MonoBehaviour:
     max: 1
   m_rails: 3
   m_hasGroupBonus: 1
+  m_eventOnly: 0
   m_minTier: 0
   m_maxTier: 4
   m_checkMaxTier: 0
@@ -93,6 +95,7 @@ MonoBehaviour:
   m_activationTriggers: []
   m_activationKillTriggers: []
   m_deactivationTriggers: []
+  m_deactivationKillTriggers: []
   m_spawnTime:
     min: 180
     max: 180
@@ -101,8 +104,8 @@ MonoBehaviour:
   m_homePosDistance:
     min: 1
     max: 2
+  m_homePosLineRotation: 0
   m_maxSpawns: 0
-  m_checkCurrents: 0
 --- !u!114 &114000013242502822
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,6 +126,6 @@ MonoBehaviour:
   m_scale: {x: 1, y: 1, z: 1}
   m_rotation: {x: 0, y: 0, z: 0}
   m_boundsScale: {x: 0, y: 0, z: 0}
-  m_forcePreview: 0
+  m_drawPreview: 0
   m_previewStep: 0.1
   m_previewMaxTime: 60

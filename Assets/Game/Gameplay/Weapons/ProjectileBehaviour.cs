@@ -122,7 +122,7 @@ public class ProjectileBehaviour : MonoBehaviour, IProjectile {
 		if (m_hasBeenShot) {
 			if (_other.CompareTag("Player"))  {
 					Explode(true);
-			} else if ((((1 << _other.gameObject.layer) & LayerMask.GetMask("Ground", "GroundVisible")) > 0)) {
+            } else if ((((1 << _other.gameObject.layer) & GameConstants.Layers.GROUND) > 0)) {
 				Explode(false);
 			}
 		}

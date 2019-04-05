@@ -6,6 +6,7 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
 	
 	public Color m_fireColor = Color.black;
 	public Color m_superFireColor = Color.black;
+    public Color m_iceFireColor = Color.black;
 	public Color m_starvingColor = Color.black;
 
 	private float m_value = 0.5f;
@@ -14,6 +15,7 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
 
 	private bool m_furyOn = false;
 	DragonBreathBehaviour.Type m_furyType = DragonBreathBehaviour.Type.None;
+    protected Color m_currentColor = Color.black;
 	private bool m_starvingOn = false;
 	private bool m_criticalOn = false;
 	private bool m_ko = false;
@@ -44,7 +46,7 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
             case BroadcastEventType.FURY_RUSH_TOGGLED:
             {
                 FuryRushToggled furyRushToggled = (FuryRushToggled)broadcastEventInfo;
-                OnFury( furyRushToggled.activated, furyRushToggled.type );
+                OnFury( furyRushToggled.activated, furyRushToggled.type, furyRushToggled.color );
             }break;
         }
     }
@@ -59,12 +61,12 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
 				case DragonBreathBehaviour.Type.Standard:
 				{
 					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 10);
-					m_color = Color.Lerp( m_color, m_fireColor, Time.deltaTime * 10 );
+					m_color = Color.Lerp( m_color, m_currentColor, Time.deltaTime * 10 );
 				}break;
 				case DragonBreathBehaviour.Type.Mega:
 				{
 					m_value = Mathf.Lerp( m_value, 0.69f, Time.deltaTime * 15);
-					m_color = Color.Lerp( m_color, m_superFireColor, Time.deltaTime * 15 );
+					m_color = Color.Lerp( m_color, m_currentColor, Time.deltaTime * 15 );
 				}break;
 			}
 
@@ -102,10 +104,25 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
 		}
     }
 
-	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type) {
+	private void OnFury(bool _enabled, DragonBreathBehaviour.Type _type, FireColorSetupManager.FireColorType _color) {
 		m_furyOn = _enabled;
 		m_furyType = _type;
-	}
+        switch(_color)
+        {
+            case FireColorSetupManager.FireColorType.RED:
+                {
+                    m_currentColor = m_fireColor;
+                }break;
+            case FireColorSetupManager.FireColorType.BLUE:
+                {
+                    m_currentColor = m_superFireColor;
+                }break;
+            case FireColorSetupManager.FireColorType.ICE:
+                {
+                    m_currentColor = m_iceFireColor;
+                }break;
+        }
+    }
 
 	private void OnHealthModifierChanged( DragonHealthModifier _oldModifier, DragonHealthModifier _newModifier )
 	{

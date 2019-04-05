@@ -23,12 +23,14 @@ public class CountrySetupDictionaryEditor : SerializableDictionaryEditor {
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
 	// Field ids
+	public const string HAS_AGE_PROPERTY = "hasAgeRestriction";
 	public const string AGE_PROPERTY = "ageRestriction";
 	public const string CONSENT_PROPERTY = "requiresConsent";
 	public const string GROUP_PROPERTY = "group";
 
 	// Field labels
 	public const string COUNTRY_LABEL = "Country";
+	public const string HAS_AGE_LABEL = "Has\nAge";
 	public const string AGE_LABEL = "Age";
 	public const string CONSENT_LABEL = "Requires\nConsent";
 	public const string GROUP_LABEL = "Group";
@@ -45,6 +47,18 @@ public class CountrySetupDictionaryEditor : SerializableDictionaryEditor {
 				s_countryCodeWidth = Mathf.Max(headerWidth, valueWidth);
 			}
 			return s_countryCodeWidth;
+		}
+	}
+
+	private static float s_hasAgeWidth = -1f;
+	public static float HAS_AGE_WIDTH {
+		get {
+			if(s_hasAgeWidth < 0f) {
+				float headerWidth = EditorStyles.label.CalcSize(new GUIContent(HAS_AGE_LABEL)).x;
+				float valueWidth = 20f; // Approx the width of a checkbox
+				s_hasAgeWidth = Mathf.Max(headerWidth, valueWidth);
+			}
+			return s_hasAgeWidth;
 		}
 	}
 
@@ -122,6 +136,11 @@ public class CountrySetupDictionaryEditor : SerializableDictionaryEditor {
 		// Space
 		pos.x += SPACE_WIDTH;
 
+		// Has Age Restriction?
+		pos.width = HAS_AGE_WIDTH;
+		EditorGUI.LabelField(pos, HAS_AGE_LABEL, headerLabelStyle);
+		pos.x += pos.width;
+
 		// Age Restriction
 		pos.width = AGE_WIDTH;
 		EditorGUI.LabelField(pos, AGE_LABEL, headerLabelStyle);
@@ -167,6 +186,7 @@ public class CountrySetupDictionaryEditor : SerializableDictionaryEditor {
 	/// <param name="_p">Property to be reset.</param>
 	protected override void ResetElementValues(SerializedProperty _p) {
 		// Reset to default values
+		_p.FindPropertyRelative(HAS_AGE_PROPERTY).boolValue = false;
 		_p.FindPropertyRelative(AGE_PROPERTY).intValue = -1;
 		_p.FindPropertyRelative(CONSENT_PROPERTY).boolValue = false;
 		_p.FindPropertyRelative(GROUP_PROPERTY).enumValueIndex = 0;
@@ -200,11 +220,24 @@ public class CountrySetupEditor : ExtendedPropertyDrawer {
 		// Space
 		pos.x += CountrySetupDictionaryEditor.SPACE_WIDTH;
 
-		// Age Restriction
-		pos.width = CountrySetupDictionaryEditor.AGE_WIDTH;
-		p = _property.FindPropertyRelative(CountrySetupDictionaryEditor.AGE_PROPERTY);
+		// Has Age Restriction?
+		pos.width = CountrySetupDictionaryEditor.HAS_AGE_WIDTH;
+		p = _property.FindPropertyRelative(CountrySetupDictionaryEditor.HAS_AGE_PROPERTY);
 		EditorGUI.PropertyField(pos, p, GUIContent.none);
 		pos.x += pos.width;
+
+		// Age Restriction
+		// Disable and set default value if age restriction not enabled
+		bool hasAgeRequirement = p.boolValue;
+		EditorGUI.BeginDisabledGroup(!hasAgeRequirement); {
+			pos.width = CountrySetupDictionaryEditor.AGE_WIDTH;
+			p = _property.FindPropertyRelative(CountrySetupDictionaryEditor.AGE_PROPERTY);
+			if(!hasAgeRequirement && p.intValue != -1) {
+				p.intValue = -1;
+			}
+			EditorGUI.PropertyField(pos, p, GUIContent.none);
+			pos.x += pos.width;
+		} EditorGUI.EndDisabledGroup();
 
 		// Space
 		pos.x += CountrySetupDictionaryEditor.SPACE_WIDTH;

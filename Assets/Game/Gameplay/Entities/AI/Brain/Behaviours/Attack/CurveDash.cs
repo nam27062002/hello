@@ -16,8 +16,6 @@ namespace AI {
 			[StateTransitionTrigger]
 			private static string OnDashEnd = "onDashEnd";
 
-			private static int m_groundMask;
-
 
 			protected CurveDashData m_data;
 
@@ -45,8 +43,6 @@ namespace AI {
 
 
 			protected override void OnInitialise() {
-				m_groundMask = LayerMask.GetMask("Ground", "GroundVisible", "PreyOnlyCollisions");
-
 				m_data = m_pilot.GetComponentData<CurveDashData>();
 				m_machine.SetSignal(Signals.Type.Alert, true);
 			}
@@ -81,8 +77,7 @@ namespace AI {
 				UpdateTarget(m_timer);
 				m_pilot.GoTo(m_target);
 
-
-				if (m_timer == 1f) {
+				if (System.Math.Abs(m_timer - 1f) < Mathf.Epsilon) {
 					float m = (m_machine.position - m_target).sqrMagnitude;
 					float d = m_pilot.speed * Time.deltaTime;
 					if (m < d * d) {
@@ -117,7 +112,7 @@ namespace AI {
 
 					//lets check if there is any collision in our way
 					RaycastHit groundHit;
-					if (Physics.Linecast(m_machine.position, m_pointB, out groundHit, m_groundMask)) {
+                    if (Physics.Linecast(m_machine.position, m_pointB, out groundHit, GameConstants.Layers.GROUND_PREYCOL)) {
 						m_pointB = groundHit.point + groundHit.normal * 2f;
 					}
 				} else {

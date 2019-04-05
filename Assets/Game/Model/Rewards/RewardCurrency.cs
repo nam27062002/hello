@@ -5,6 +5,11 @@
 // Copyright (c) 2017 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// INCLUDES																	  //
+//----------------------------------------------------------------------------//
+using UnityEngine;
+
+//----------------------------------------------------------------------------//
 // CLASSES																	  //
 //----------------------------------------------------------------------------//
 namespace Metagame {
@@ -57,6 +62,19 @@ namespace Metagame {
 			}
 			return tid;
 		}
+
+		/// <summary>
+		/// Scale the given SC amount using the biggest owned dragon of the current user as a reference.
+		/// </summary>
+		/// <returns>The scaled SC amount.</returns>
+		/// <param name="_amount">Base SC amount to be scaled.</param>
+		public static long ScaleByMaxDragonOwned(long _amount) {
+			DefinitionNode rewardScaleFactorDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_MODIFIERS, DragonManager.biggestOwnedDragon.def.sku);
+			if(rewardScaleFactorDef != null) {
+				return Mathf.RoundToInt(((float)_amount) * rewardScaleFactorDef.GetAsFloat("missionSCRewardMultiplier"));
+			}
+			return _amount;
+		}
 	}
 
 	/// <summary>
@@ -86,7 +104,12 @@ namespace Metagame {
 		public const string TYPE_CODE = "gf";
 
 		public RewardGoldenFragments(long _amount, Rarity _rarity, HDTrackingManager.EEconomyGroup _economyGroup, string _source) : base(_source) {
-			base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
+            //[AOC] Mini-hack: if reward is gold fragments, tweak its rarity so displayed reward looks cooler
+            if (_amount >= 5)       _rarity = Metagame.Reward.Rarity.EPIC;
+            else if (_amount >= 3)  _rarity = Metagame.Reward.Rarity.RARE;
+            else                    _rarity = Metagame.Reward.Rarity.COMMON;
+
+            base.Init(TYPE_CODE, _amount, _rarity, _economyGroup);
 			m_currency = UserProfile.Currency.GOLDEN_FRAGMENTS;
 		}
 

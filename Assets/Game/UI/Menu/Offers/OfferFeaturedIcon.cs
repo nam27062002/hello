@@ -109,7 +109,7 @@ public class OfferFeaturedIcon : MonoBehaviour {
 				m_timerText.text = TimeUtils.FormatTime(
 					System.Math.Max(0, m_targetOffer.remainingTime.TotalSeconds), // Just in case, never go negative
 					TimeUtils.EFormat.ABBREVIATIONS,
-					4
+					2
 				);
 			} else {
 				m_timerText.text = string.Empty;
@@ -168,8 +168,9 @@ public class OfferFeaturedIcon : MonoBehaviour {
 		popup.GetComponent<PopupFeaturedOffer>().InitFromOfferPack(m_targetOffer);
 		popup.Open();
 
-		// Tracking
-		HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"));
+        // Tracking
+        // The experiment name is used as offer name        
+        HDTrackingManager.Instance.Notify_OfferShown(true, m_targetOffer.def.GetAsString("iapSku"), HDCustomizerManager.instance.GetExperimentNameForDef(m_targetOffer.def), m_targetOffer.def.GetAsString("type"));
 	}
 
 	/// <summary>
