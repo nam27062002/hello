@@ -58,6 +58,8 @@ namespace Downloadables
         {
             if (IsInitialized())
             {
+                IsFillingUp = false;
+
                 Error error;
                 if (m_disk.Directory_Exists(Disk.EDirectoryId.Dump, out error))
                 {
@@ -75,8 +77,6 @@ namespace Downloadables
                 }
 
                 UpdateLatestIndexAccordingToFiles();
-
-                IsFillingUp = false;
             }
         }
 
@@ -104,7 +104,7 @@ namespace Downloadables
                         {
                             if (m_stuffBuffer == null)
                             {
-                                m_stuffBuffer = new byte[40960000];
+                                m_stuffBuffer = new byte[20971520];
                             }
 
                             m_disk.DiskDriver.File_Write(saveFileStream, m_stuffBuffer, 0, m_stuffBuffer.Length);
