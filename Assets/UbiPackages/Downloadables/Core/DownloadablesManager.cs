@@ -583,9 +583,12 @@ namespace Downloadables
                 CatalogEntryStatus entryToSimulateDownload = null;
                 for (int i = 0; i < count; i++)
                 {
-                    if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                    if (m_downloader.IsDownloadAllowed(Groups_GetPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
                     {
-                        break;
+                        if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                        {
+                            break;
+                        }
                     }
                 }
 
