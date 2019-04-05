@@ -16,8 +16,7 @@ namespace Downloadables
         public static string REMOTE_FOLDER = (USE_REMOTE_SERVER) ? "AssetBundles/" : "";
 #else
         public static string REMOTE_FOLDER = "AssetBundles/";
-#endif
-
+#endif        
         public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson)
         {
             JSONNode returnValue = null;
@@ -127,7 +126,7 @@ namespace Downloadables
         public static readonly string GROUPS_FOLDER_NAME = Path.Combine(MANIFESTS_FOLDER_NAME, "Groups");
         public static readonly string GROUPS_ROOT_PATH = FileUtils.GetDeviceStoragePath(GROUPS_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
 
-        public static readonly string DUMP_FOLDER_NAME = Path.Combine(MANIFESTS_FOLDER_NAME, "Dump");
+        public static readonly string DUMP_FOLDER_NAME = Path.Combine(DOWNLOADABLES_FOLDER_NAME, "Dump");
         public static readonly string DUMP_ROOT_PATH = FileUtils.GetDeviceStoragePath(DUMP_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
 
         public static readonly string DOWNLOADABLES_CONFIG_FILENAME_NO_EXTENSION = "downloadablesConfig";
@@ -139,7 +138,11 @@ namespace Downloadables
         private Disk m_disk;
         private Cleaner m_cleaner;
         private Downloader m_downloader;
-        private Tracker m_tracker;        
+        private Tracker m_tracker;
+
+#if USE_DUMPER
+        private Dumper m_dumper;
+#endif
 
         /// <summary>
         /// When <c>true</c> all downloads will be downloaded automatically. Otherwise a downloadable will be downloaded only on demand (by calling Request)
@@ -183,7 +186,7 @@ namespace Downloadables
             sm_logger = logger;
 
             m_network = network;
-            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, GROUPS_ROOT_PATH, DUMP_FOLDER_NAME, 180, onDiskIssueCallbak);
+            m_disk = new Disk(diskDriver, MANIFESTS_ROOT_PATH, DOWNLOADS_ROOT_PATH, GROUPS_ROOT_PATH, DUMP_ROOT_PATH, 180, onDiskIssueCallbak);
             m_tracker = tracker;
 
             CatalogEntryStatus.StaticSetup(config, m_disk, tracker);
@@ -191,6 +194,9 @@ namespace Downloadables
             m_downloader = new Downloader(this, network, m_disk, logger);
             CatalogGroup.StaticSetup(m_disk);
 
+#if USE_DUMPER
+            m_dumper = new Dumper();
+#endif
             IsEnabled = true;
 
             Handle.StaticSetup(this, diskDriver);
@@ -221,8 +227,11 @@ namespace Downloadables
             ProcessCatalog(catalogJSON, groups);
 
             // Groups need to be initialized after catalog has been loaded
-            Groups_Init(groups);            
+            Groups_Init(groups);
 
+#if USE_DUMPER
+            m_dumper.Initialize(m_disk, sm_logger);
+#endif
             IsInitialized = true;            
 
             if (catalogJSON != null)
@@ -280,10 +289,10 @@ namespace Downloadables
                 
                 if (track)
                 {
-                    float existingSize = GetIdMbDownloadedSoFar(id);
+                    long existingSize = GetIdBytesDownloadedSoFar(id);
                     NetworkReachability reachability = m_network.CurrentNetworkReachability;
                     Error.EType result = (returnValue) ? Error.EType.None : Error.EType.Internal_NotAvailable;
-                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalMb(id), 0, reachability, reachability, result, false);
+                    m_tracker.TrackActionEnd(Tracker.EAction.Load, id, existingSize, existingSize, GetIdTotalBytes(id), 0, reachability, reachability, result, false);
                 }
             }
 
@@ -484,6 +493,13 @@ namespace Downloadables
             return returnValue;
         }
 
+#if USE_DUMPER
+        public Dumper GetDumper()
+        {
+            return m_dumper;
+        }
+#endif
+
         public void Update()
         {
             if (IsInitialized && IsEnabled)
@@ -493,6 +509,10 @@ namespace Downloadables
                 m_cleaner.Update();
                 Catalog_Update();
                 Groups_Update();
+
+#if USE_DUMPER
+                m_dumper.Update();
+#endif           
             }
         }               
 
@@ -753,7 +773,7 @@ namespace Downloadables
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
-                returnValue = group.PermissionOverCarrierRequested;
+                returnValue = group.PermissionRequested;
             }
 
 			return returnValue;
@@ -764,7 +784,7 @@ namespace Downloadables
             CatalogGroup group = Groups_GetGroup(groupId);
             if (group != null)
             {
-                group.PermissionOverCarrierRequested = value;                
+                group.PermissionRequested = value;                
             }
 		}
 
@@ -895,9 +915,9 @@ namespace Downloadables
         {
             return m_groupsSortedByPriority;
         }
-        #endregion
+#endregion
 
-        #region logger
+#region logger
         private static Logger sm_logger;
 
         public bool CanLog()

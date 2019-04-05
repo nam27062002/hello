@@ -666,7 +666,7 @@ namespace Downloadables
         {
             if (sm_tracker != null)
             {
-                sm_tracker.NotifyDownloadStart(sm_realtimeSinceStartup, Id, DataInfo.Size, sm_currentNetworkReachability, HasBeenDownloadedBefore());
+                sm_tracker.NotifyDownloadStart(sm_realtimeSinceStartup, Id, DataInfo.Size, m_manifest.Size, sm_currentNetworkReachability, HasBeenDownloadedBefore());
             }
         }
 
@@ -734,6 +734,21 @@ namespace Downloadables
         public bool BelongsToAnyGroup()
         {
             return Groups == null || Groups.Count > 0;
+        }
+
+        public bool GetPermissionRequested()
+        {
+            if (Groups != null)
+            {
+                // If the permission has been requested for any groups then it's requested
+                foreach (CatalogGroup group in Groups)
+                {
+                    if (group.PermissionRequested)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         public bool GetPermissionOverCarrierGranted()

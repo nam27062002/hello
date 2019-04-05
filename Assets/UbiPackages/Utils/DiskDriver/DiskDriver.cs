@@ -8,6 +8,7 @@ public interface DiskDriver
 {
     bool Directory_Exists(string path);
     DirectoryInfo Directory_CreateDirectory(string path);
+    void Directory_Delete(string path);
     List<string> Directory_GetFiles(string path);
 
     string File_ReadAllText(string path);
@@ -17,7 +18,5 @@ public interface DiskDriver
     bool File_Exists(string path);
     FileInfo File_GetInfo(string path);
     FileStream File_Open(FileInfo info, FileMode mode, FileAccess access, FileShare share);
-    void File_Delete(string path);
-
-    long GetFreeSpaceBytes();
+    void File_Delete(string path);        
 }

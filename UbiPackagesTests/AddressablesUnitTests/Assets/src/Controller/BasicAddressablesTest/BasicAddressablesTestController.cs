@@ -35,13 +35,7 @@ public class BasicAddressablesTestController : MonoBehaviour
             Object ubiCube = ab.LoadAsset("UbiCube");
             Instantiate(ubiCube);
             m_request = null;
-        }
-
-        if (m_uiDiskFreeSpace != null)
-        {
-            long freeSpace = DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
-            m_uiDiskFreeSpace.text = (freeSpace / 1024f) + " bytes free";
-        }
+        }        
 
         m_addressablesManager.Update();
 
@@ -57,7 +51,25 @@ public class BasicAddressablesTestController : MonoBehaviour
 #if UNITY_EDITOR
             //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = !AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled;
 #endif       
-            AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+            //AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+
+#if USE_DUMPER
+            Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+            if (dumper != null)
+            {
+                dumper.IsFillingUp = !dumper.IsFillingUp;
+            }
+#endif
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+#if USE_DUMPER
+            Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+            if (dumper != null)
+            {
+                dumper.CleanUp();
+            }
+#endif
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {

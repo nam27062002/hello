@@ -457,20 +457,36 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
         }
         return null;
     }
+    
+    public static string GenerateTrackingOfferName(DefinitionNode def)
+    {
+        string offerName = def.sku;
+        string experimentName = HDCustomizerManager.instance.GetExperimentNameForDef(def);
+        if ( !string.IsNullOrEmpty( experimentName ) )
+        {
+            offerName += "." + experimentName;
+        }
+        else if ( def.customizationCode > 0 )
+        {
+            offerName += "." + def.customizationCode;
+        }
+        return offerName;
+    }
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// DEBUG																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Log into the console (if enabled).
-	/// </summary>
-	/// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
-	/// <param name="_replacements">Replacements, to be used as string.Format method.</param>
-	private static void Log(string _msg, params object[] _replacements) {
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+
+    //------------------------------------------------------------------------//
+    // DEBUG																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Log into the console (if enabled).
+    /// </summary>
+    /// <param name="_msg">Message to be logged. Can have replacements like string.Format method would have.</param>
+    /// <param name="_replacements">Replacements, to be used as string.Format method.</param>
+    private static void Log(string _msg, params object[] _replacements) {
 #if LOG
 		if(!FeatureSettingsManager.IsDebugEnabled) return;
 		ControlPanel.Log(string.Format(_msg, _replacements), ControlPanel.ELogChannel.Offers);

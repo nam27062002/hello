@@ -9,21 +9,21 @@ namespace Downloadables
         {
         }
 
-        public override void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart)
+        public override void TrackActionStart(EAction action, string downloadableId, long existingSizeAtStart, long totalSize)
         {
             if (CanLog())
             {
-                m_logger.Log("ActionStart " + action.ToString() + " abName = " + downloadableId + " existingSizeMbAtStart = " + existingSizeMbAtStart);
+                m_logger.Log("ActionStart " + action.ToString() + " abName = " + downloadableId + " existingSizeAtStart = " + existingSizeAtStart + " totalSize = " + totalSize);
             }
         }
 
-        public override void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+        public override void TrackActionEnd(EAction action, string downloadableId, long existingSizeAtStart, long existingSizeAtEnd, long totalSize, int timeSpent,
                                               NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached)
         { 
             if (CanLog())
             {
-                m_logger.Log("ActionStart " + action.ToString() + " abName = " + downloadableId + " existingSizeMbAtStart = " + existingSizeMbAtStart + " existingSizeMbAtEnd = " + existingSizeMbAtEnd + 
-                    " totalSizeMb = " + totalSizeMb + " timeSpent = " + timeSpent + " reachabilityAtStart = " + reachabilityAtStart.ToString() + " reachabilityAtEnd = " + reachabilityAtEnd.ToString() + 
+                m_logger.Log("ActionStart " + action.ToString() + " abName = " + downloadableId + " existingSizeAtStart = " + existingSizeAtStart + " existingSizeAtEnd = " + existingSizeAtEnd + 
+                    " totalSize = " + totalSize + " timeSpent = " + timeSpent + " reachabilityAtStart = " + reachabilityAtStart.ToString() + " reachabilityAtEnd = " + reachabilityAtEnd.ToString() + 
                     " result = " + error.ToString() + " maxAttemptsReached = " + maxAttemptsReached);
             }
         }        

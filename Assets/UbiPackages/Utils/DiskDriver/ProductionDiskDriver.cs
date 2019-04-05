@@ -13,6 +13,11 @@ public class ProductionDiskDriver : DiskDriver
         return Directory.CreateDirectory(path);
     }
 
+    public void Directory_Delete(string path)
+    {
+        Directory.Delete(path);
+    }
+
     public List<string> Directory_GetFiles(string path)
     {
         return new List<string>(Directory.GetFiles(path));        
@@ -56,10 +61,5 @@ public class ProductionDiskDriver : DiskDriver
     public void File_Delete(string path)
     {
         File.Delete(path);
-    }
-
-    public long GetFreeSpaceBytes()
-    {
-		return long.MaxValue;// DeviceUtilsManager.SharedInstance.GetDeviceFreeDiskSpace();
-    }
+    }    
 }

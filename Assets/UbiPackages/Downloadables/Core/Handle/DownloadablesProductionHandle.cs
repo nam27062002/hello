@@ -146,14 +146,8 @@ namespace Downloadables
             {
                 return Error.EType.Internal_Automatic_Download_Disabled;
             }
-
-            // 5. No free space in storage to complete the download
-            if (GetDiskOverflowBytes() > 0)
-            {
-                return Error.EType.Disk_IOException;
-            }
-
-            // 1., 2., 3., 4. and 5. can be detected without looping through every downloadable. 
+            
+            // 1., 2., 3. and 4. can be detected without looping through every downloadable. 
             // Now we need to go through every downloadable error and process the most severe one            
             return GetMostSevereErrorTypeInDownloadables();
         }
