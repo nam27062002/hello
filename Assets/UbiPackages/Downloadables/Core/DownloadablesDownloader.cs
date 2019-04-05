@@ -32,6 +32,8 @@ namespace Downloadables
         private NetworkReachability CurrentNetworkReachability { get; set; }
         private int ThrottleSleepTime { get; set; }
 
+        private CatalogEntryStatus m_currentEntryStatus;
+
         public Downloader(Manager manager, NetworkDriver networkDriver, Disk disk, Logger logger)
         {
             m_manager = manager;
@@ -54,14 +56,24 @@ namespace Downloadables
 
         public void Reset()
         {
-            if (IsDownloading)
-            {
-                m_downloadThread.Abort();
-            }
-
-            m_downloadThread = null;
+            AbortDownload();             
             m_urlBase = null;
         }        
+
+        public void AbortDownload()
+        {
+            if (IsDownloading)
+            {
+                if (m_currentEntryStatus != null)
+                {
+                    m_currentEntryStatus.OnDownloadFinish(new Error(Error.EType.Internal_Download_Disabled));
+                    m_currentEntryStatus = null;
+                }
+
+                m_downloadThread.Abort();
+                m_downloadThread = null;
+            }
+        }
 
         public bool IsDownloading { get { return m_downloadThread != null && m_downloadThread.IsAlive; } }
 
@@ -138,11 +150,13 @@ namespace Downloadables
                 if (CanLog())
                 {
                     Log("Downloader Starting Download: " + entryStatus.Id);
-                }                
+                }
 
+                m_currentEntryStatus = entryStatus;
                 entryStatus.OnDownloadStart();
                 m_downloadThread = new Thread(() => DoDownload(entryStatus));
-                m_downloadThread.Start();                
+                m_downloadThread.Start();
+                m_currentEntryStatus = null;
             }
         }
 
