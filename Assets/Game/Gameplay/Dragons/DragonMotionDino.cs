@@ -11,13 +11,16 @@ public class DragonMotionDino : DragonMotion {
     public float m_walkSpeed = 2.0f;
 
     protected float m_adaptHeight = 2.0f;
-    protected float m_snapHeight = 0.5f;
+    protected float m_snapHeight = 0.6f;
+    protected float m_snapHisteresis = 0.1f;
+    protected bool m_grounded = false;
     
 
 	override protected void Start() {
 		base.Start();
         m_adaptHeight = m_adaptHeight * m_transform.localScale.y;
         m_snapHeight = m_snapHeight * m_transform.localScale.y;
+        m_snapHisteresis = m_snapHisteresis * m_transform.localScale.y;
     }
 
 
@@ -36,6 +39,11 @@ public class DragonMotionDino : DragonMotion {
             {
                 if ( m_boost.IsBoostActive() )
                 {
+                    if ( m_grounded )
+                    {
+                        m_grounded = false;
+                        m_rbody.ResetCenterOfMass();
+                    }
                     UpdateMovement(Time.fixedDeltaTime);
                 }
                 else
@@ -49,6 +57,26 @@ public class DragonMotionDino : DragonMotion {
                 base.FixedUpdate();
             }break;
         }
+        
+        // Make sure feet dont get inside collision
+        
+        if ( m_state != State.Intro)
+        {
+            Vector3 pos = m_transform.position;
+            pos.z = 0f;
+            Vector3 bottomPos = m_sensor.bottom.position + Vector3.down * m_snapHeight;
+            bottomPos.z = 0;
+            if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_transform.position, m_sensor.bottom.position, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
+            {
+                float dist = (pos - bottomPos).magnitude;
+                float dot = Vector3.Dot(Vector3.up, m_raycastHit.normal);
+                Vector3 up = Vector3.up * ( dist - m_raycastHit.distance ) * dot;
+                pos += up;
+            }
+            
+            m_transform.position = pos;
+        }
+
 
 	}
     
@@ -61,7 +89,7 @@ public class DragonMotionDino : DragonMotion {
             if ( m_height < m_snapHeight )
             {
                 Vector3 dir = m_lastGroundHitNormal;
-                dir.z = 0;
+                dir.NormalizedXY();
                 if ( m_direction.x < 0 )
                 {
                     dir = dir.RotateXYDegrees(90);
@@ -72,6 +100,11 @@ public class DragonMotionDino : DragonMotion {
                 }
                 m_direction = dir;
                 m_impulse = GameConstants.Vector3.zero;
+                if (!m_grounded)
+                {
+                    // STOMP!!
+                    GroundStomp();
+                }
                 SnapToGround();
             }
             else
@@ -89,7 +122,7 @@ public class DragonMotionDino : DragonMotion {
             FreeFall(delta, m_direction);
         }
         
-        RotateToDirection(m_direction, true);
+        RotateToDirection(m_direction, false);
         m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
         m_rbody.velocity = m_impulse;
@@ -104,6 +137,7 @@ public class DragonMotionDino : DragonMotion {
         if (impulse == GameConstants.Vector3.zero)
         {
             ChangeState(State.Idle);
+            impulse = m_direction;
         }
         
         CheckGround( out m_raycastHit );
@@ -111,9 +145,8 @@ public class DragonMotionDino : DragonMotion {
         {
             if ( m_height < m_snapHeight )
             {
-                // TODO: Get proper gorund normal
                 Vector3 dir = m_lastGroundHitNormal;
-                dir.z = 0;
+                dir.NormalizedXY();
                 if ( impulse.x < 0 )
                 {
                     dir = dir.RotateXYDegrees(90);
@@ -122,13 +155,19 @@ public class DragonMotionDino : DragonMotion {
                 {
                     dir = dir.RotateXYDegrees(-90);
                 }
-                m_direction = dir;
+                m_direction = dir;   
+                if (!m_grounded)
+                {
+                    // STOMP!!
+                    GroundStomp();
+                }
                 // Snap? Move right left
                 SnapToGround();
                 m_impulse = m_direction * m_walkSpeed;
             }
             else
             {
+                // Adapt to angle?
                 FreeFall(delta, impulse);
             }
         }
@@ -137,7 +176,7 @@ public class DragonMotionDino : DragonMotion {
             FreeFall(delta, impulse);
         }
         
-        RotateToDirection(m_direction, true);
+        RotateToDirection(m_direction, false);
         m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
         m_rbody.velocity = m_impulse;
@@ -147,26 +186,38 @@ public class DragonMotionDino : DragonMotion {
     protected void SnapToGround()
     {
         Vector3 diff = m_transform.position - m_sensor.bottom.position;
-        m_transform.position = m_lastGroundHit + diff + Vector3.up * (m_snapHeight - 0.1f);
+        m_transform.position = m_lastGroundHit + diff + Vector3.up * (m_snapHeight - m_snapHisteresis);
+        if (!m_grounded)
+        {
+            m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_lastGroundHit + Vector3.up * (m_snapHeight - m_snapHisteresis));
+            m_grounded = true;
+        }
     }
 
     protected void FreeFall( float _deltaTime, Vector3 direction )
-    {
-        Vector3 gravityAcceleration;
-        gravityAcceleration.x = 0;
-        gravityAcceleration.y = -9.81f * m_freeFallGravityMultiplier;
-        gravityAcceleration.z = 0;
-            
+    {       
         // stroke's Drag
         m_impulse = m_rbody.velocity;
         float impulseMag = m_impulse.magnitude;
-        m_impulse += (gravityAcceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime);
+        m_impulse.y += -9.81f * m_freeFallGravityMultiplier * _deltaTime;
+        m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.37f);
             
         if ( direction.x > 0 ){
             m_direction = GameConstants.Vector3.right;
         }else{
             m_direction = GameConstants.Vector3.left;
         }
+        
+        if (m_grounded)
+        {
+            m_rbody.ResetCenterOfMass();
+            m_grounded = false;
+        }
+        
+    }
+
+    protected void GroundStomp()
+    {
         
     }
 

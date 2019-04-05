@@ -1586,7 +1586,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 
 
-	protected bool CheckGround(out RaycastHit _bottomHit) {
+	protected virtual bool CheckGround(out RaycastHit _bottomHit) {
 		Vector3 distance = GameConstants.Vector3.down * 10f;
 		bool hit_Bottom = false;
 
