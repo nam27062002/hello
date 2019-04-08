@@ -16,14 +16,6 @@ public class DragonMotionDino : DragonMotion {
     protected bool m_grounded = false;
     
 
-	override protected void Start() {
-		base.Start();
-        m_adaptHeight = m_adaptHeight * m_transform.localScale.y;
-        m_snapHeight = m_snapHeight * m_transform.localScale.y;
-        m_snapHisteresis = m_snapHisteresis * m_transform.localScale.y;
-    }
-
-
 	override protected void FixedUpdate() {
         m_closeToGround = false;
         
@@ -41,9 +33,7 @@ public class DragonMotionDino : DragonMotion {
                 {
                     if ( m_grounded )
                     {
-                        m_grounded = false;
-                        m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
-                        m_rbody.ResetCenterOfMass();
+                        SetGrounded(false);
                     }
                     UpdateMovement(Time.fixedDeltaTime);
                     CheckFeet();
@@ -69,7 +59,7 @@ public class DragonMotionDino : DragonMotion {
         {
             Vector3 pos = m_transform.position;
             pos.z = 0f;
-            Vector3 bottomPos = m_sensor.bottom.position + Vector3.down * m_snapHeight;
+            Vector3 bottomPos = m_sensor.bottom.position + Vector3.down * m_snapHeight / m_transform.localScale.y;
             bottomPos.z = 0;
             if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_transform.position, bottomPos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
             {
@@ -194,12 +184,10 @@ public class DragonMotionDino : DragonMotion {
     protected void SnapToGround()
     {
         Vector3 diff = m_transform.position - m_sensor.bottom.position;
-        m_transform.position = m_lastGroundHit + diff + Vector3.up * (m_snapHeight - m_snapHisteresis);
+        m_transform.position = m_lastGroundHit + diff + Vector3.up * (m_snapHeight - m_snapHisteresis) / m_transform.localScale.y;
         if (!m_grounded)
         {
-            m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_lastGroundHit + Vector3.up * (m_snapHeight - m_snapHisteresis));
-            m_grounded = true;
-            m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
+            SetGrounded(true);
         }
     }
 
@@ -219,11 +207,26 @@ public class DragonMotionDino : DragonMotion {
         
         if (m_grounded)
         {
-            m_rbody.ResetCenterOfMass();
-            m_grounded = false;
-            m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
+            SetGrounded(false);
         }
         
+    }
+    
+    public void SetGrounded(bool _grounded)
+    {
+        m_grounded = _grounded;
+        m_capVerticalRotation = !_grounded;
+        m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
+        
+        if (!m_grounded)
+        {
+            m_rbody.ResetCenterOfMass();
+        }
+        else
+        {
+            m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_lastGroundHit + Vector3.up * (m_snapHeight - m_snapHisteresis));
+        }
+
     }
 
     protected void GroundStomp()

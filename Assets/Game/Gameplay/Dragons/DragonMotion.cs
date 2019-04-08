@@ -61,7 +61,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	[SerializeField] private float m_velocityBlendRate = 256.0f;
 	[SerializeField] private float m_rotBlendRate = 350.0f;
 
-	[SerializeField] private bool m_capVerticalRotation = true;
+	[SerializeField] protected bool m_capVerticalRotation = true;
 	[SerializeField] private float m_capUpRotationAngle = 40.0f;
 	[SerializeField] private float m_capDownRotationAngle = 60.0f;
 	[SerializeField] private float m_noGlideAngle = 50.0f;
