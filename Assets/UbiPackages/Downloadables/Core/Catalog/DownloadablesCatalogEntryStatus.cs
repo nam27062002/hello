@@ -736,6 +736,21 @@ namespace Downloadables
             return Groups == null || Groups.Count > 0;
         }
 
+        public bool GetPermissionRequested()
+        {
+            if (Groups != null)
+            {
+                // If the permission has been requested for any groups then it's requested
+                foreach (CatalogGroup group in Groups)
+                {
+                    if (group.PermissionRequested)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool GetPermissionOverCarrierGranted()
         {            
             if (Groups != null)

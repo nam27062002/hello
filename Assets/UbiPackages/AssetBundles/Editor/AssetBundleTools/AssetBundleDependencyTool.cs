@@ -76,7 +76,11 @@ public class AssetBundleDependencyTool : EditorWindow {
 
             assetDictionary.Add(assetPath, asset);
 
-            EditorUtility.DisplayProgressBar("Building asset dependency database", assetPath, (count++) / assetCount);
+            if (EditorUtility.DisplayCancelableProgressBar("Building asset dependency database", assetPath, (count++) / assetCount))
+            {
+                assetDictionary.Clear();
+                break;
+            }
 
         }
         EditorUtility.ClearProgressBar();
@@ -185,6 +189,11 @@ public class AssetBundleDependencyTool : EditorWindow {
         else
         {
             GUILayout.Label("There are no relationship among both assets");
+        }
+
+        if (assetDictionary.Count == 0)
+        {
+            GUILayout.Label("Asset dependency database must be built");
         }
         GUILayout.EndVertical();
 

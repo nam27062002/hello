@@ -83,8 +83,10 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		// Unsubscribe from external events.
 		if(m_loaders != null) {
 			for(int i = 0; i < m_loaders.Length; i++) {
-                HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
-                m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
+				if(InstanceManager.menuSceneController != null) {
+                	HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
+				}                
+				m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
 			}
 		}
 	}

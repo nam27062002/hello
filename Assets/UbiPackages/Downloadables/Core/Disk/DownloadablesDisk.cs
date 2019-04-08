@@ -117,6 +117,24 @@ namespace Downloadables
             }
         }
 
+        public void Directory_Delete(EDirectoryId id, out Error error)
+        {
+            error = null;
+
+            try
+            {
+                DiskDriver.Directory_Delete(GetRootPath(id));
+            }
+            catch (Exception e)
+            {
+                error = new Error(e);                
+            }
+            finally
+            {
+                ProcessError(error, false);
+            }
+        }
+
         public List<string> Directory_GetFiles(EDirectoryId id, out Error error)
         {
             error = null;
@@ -327,9 +345,7 @@ namespace Downloadables
         }
     
         public void Update()
-        {
-            DiskDriver.Update();
-
+        {         
             float timePassed;
             float now = Time.realtimeSinceStartup;
             for (int i = 0; i < IssueTypesCount; i++)
