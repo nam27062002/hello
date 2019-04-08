@@ -15,6 +15,26 @@ public class DragonMotionDino : DragonMotion {
     protected float m_snapHisteresis = 0.1f;
     protected bool m_grounded = false;
 
+    
+    [Range(0,100.0f)]
+    public float m_speedPercentageToKill = 1;
+    [Header("Kill Area")]
+    public float m_killArea = 2;
+    public float m_level2KillArea = 3;
+    [Header("Stun Area")]
+    public float m_stunArea = 4;
+    public float m_level2StunArea = 3;
+    public float m_stunDuration = 2;
+    
+    [Header("Modified on run")]
+    public float m_currentKillArea = 2;
+    public float m_currentStunArea = 2;
+    protected int m_powerLevel = 1;
+    protected float m_speedToKill;
+    
+    private Entity[] m_checkEntities = new Entity[50];
+    private int m_numCheckEntities = 0;
+    private DragonTier m_tier = DragonTier.TIER_4;
 
     protected override void Start()
     {
@@ -22,6 +42,13 @@ public class DragonMotionDino : DragonMotion {
         m_adaptHeight = m_adaptHeight * m_transform.localScale.y;
         m_snapHeight = m_snapHeight * m_transform.localScale.y;
         m_snapHisteresis = m_snapHisteresis * m_transform.localScale.y;
+        
+        DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
+        m_powerLevel = dataSpecial.powerLevel;
+        m_tier = dataSpecial.tier;
+
+        UpdatePowerAreas();
+        UpdateSpeedToKill();
     }
 
 
@@ -94,6 +121,12 @@ public class DragonMotionDino : DragonMotion {
         {
             if ( m_height < m_snapHeight /*&& !AngleIsTooMuch( m_lastGroundHitNormal )*/)
             {
+                if (!m_grounded)
+                {
+                    // STOMP!!
+                    GroundStomp();
+                }
+                
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
                 if ( m_direction.x < 0 )
@@ -107,11 +140,7 @@ public class DragonMotionDino : DragonMotion {
                 m_direction = dir;
                 m_impulse = GameConstants.Vector3.zero;
                 m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
-                if (!m_grounded)
-                {
-                    // STOMP!!
-                    GroundStomp();
-                }
+                
                 SnapToGround();
             }
             else
@@ -242,9 +271,59 @@ public class DragonMotionDino : DragonMotion {
 
     protected void GroundStomp()
     {
-        
+        if ( m_impulse.sqrMagnitude > m_speedToKill)
+        {
+            float area = Mathf.Max(m_currentStunArea, m_currentKillArea);
+            Vector3 center = m_sensor.bottom.position;
+            float sqrKill = m_currentKillArea * m_currentKillArea;
+            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
+            for (int i = 0; i < m_numCheckEntities; i++) 
+            {
+                Entity prey = m_checkEntities[i];
+                AI.Machine machine =  prey.machine as AI.Machine;
+                if ( machine != null )
+                {
+                    Vector3 diff = machine.position - center;
+                    diff.z = 0;
+                    if (prey.CanBeSmashed(m_tier) && diff.sqrMagnitude < sqrKill)
+                    {
+                        machine.Smash( IEntity.Type.PLAYER );
+                    }
+                    else
+                    {
+                        machine.Stun( m_stunDuration );
+                    }
+                }
+            }
+        }
     }
     
+    
+    override protected void CustomOnCollisionEnter(Collider _collider, Vector3 _normal, Vector3 _point)
+    {
+        base.CustomOnCollisionEnter( _collider, _normal, _point );
+        OnDinoCollision( _collider, _normal, _point );
+    }
+
+    protected void OnDinoCollision(Collider _collider, Vector3 _normal, Vector3 _point)
+    {
+        // Check speed and head stomp!
+        if ( m_powerLevel >= 3 && m_impulse.sqrMagnitude > m_speedToKill)
+        {
+            float area = m_currentStunArea;
+            Vector3 center = m_sensor.bottom.position;
+            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
+            for (int i = 0; i < m_numCheckEntities; i++) 
+            {
+                Entity prey = m_checkEntities[i];
+                AI.Machine machine =  prey.machine as AI.Machine;
+                if ( machine != null )
+                {
+                    machine.Stun( m_stunDuration );
+                }
+            }
+        }
+    }
     
     protected bool CustomCheckGround(out RaycastHit _bottomHit) 
     {
@@ -276,6 +355,45 @@ public class DragonMotionDino : DragonMotion {
         float maxAngle = 45.0f;
         return angle > (180 - maxAngle) || angle < maxAngle;
     }
+    
+    public void UpdatePowerAreas()
+    {
+        m_currentKillArea = m_killArea;
+        m_currentStunArea = m_stunArea;
+        if ( m_powerLevel >= 2 )
+        {
+            m_currentKillArea = m_level2KillArea;
+            m_currentStunArea = m_level2StunArea;
+        }
+        
+        float scale = transform.localScale.y;
+        m_currentKillArea = m_currentKillArea * scale;
+        m_currentStunArea = m_currentStunArea * scale;
+    }
+    
+    public void UpdateSpeedToKill()
+    {
+        m_speedToKill = absoluteMaxSpeed * m_speedPercentageToKill / 100.0f;
+        m_speedToKill = m_speedToKill * m_speedToKill;
+    }
+
+    private void OnDrawGizmos() {
+        UpdatePowerAreas();
+        UpdateSpeedToKill();
+    
+        Gizmos.color = new Color(1, 0, 0, 0.1f);
+
+        Transform center = m_sensor.bottom;
+        if ( center == null )
+        {
+            Transform sensors   = transform.Find("sensors").transform;
+            center     = sensors.Find("BottomSensor").transform;
+        }
+        Gizmos.DrawSphere( center.position, m_currentKillArea);
+        Gizmos.color = new Color(0, 0, 1, 0.1f);
+        Gizmos.DrawSphere( center.position, m_stunArea);
+    }
+    
 
 
 }
