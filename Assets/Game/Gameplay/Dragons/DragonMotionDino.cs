@@ -11,8 +11,8 @@ public class DragonMotionDino : DragonMotion {
     public float m_walkSpeed = 2.0f;
 
     protected float m_adaptHeight = 2.0f;
-    protected float m_snapHeight = 0.6f;
-    protected float m_snapHisteresis = 0.1f;
+    protected float m_snapHeight = 0.8f;
+    protected float m_snapHisteresis = 0.2f;
     protected bool m_grounded = false;
 
     
@@ -104,8 +104,12 @@ public class DragonMotionDino : DragonMotion {
                 float dot1 = Vector3.Dot(m_raycastHit.normal, diff.normalized);
                 float c1 = (dist - m_raycastHit.distance) * dot1;
                 float angle = Vector3.Angle(m_raycastHit.normal, Vector3.up);
-                float upDistance = Mathf.Acos(Mathf.Deg2Rad * angle) * c1;
+                float cos = Mathf.Cos(Mathf.Deg2Rad * angle);
+                float h = c1 / cos;
+                float upDistance = h;
                 pos.y += upDistance;
+                if (float.IsNaN(pos.y))
+                    Debug.Log("NAN!!!!!");
                 m_impulse.y = 0;
             }
             
@@ -207,11 +211,13 @@ public class DragonMotionDino : DragonMotion {
             {
                 // Adapt to angle?
                 FreeFall(delta, impulse);
+                CheckFeet();
             }
         }
         else
         {
             FreeFall(delta, impulse);
+            CheckFeet();
         }
         
         RotateToDirection(m_direction, false);
@@ -273,28 +279,7 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_speedToKill)
         {
-            float area = Mathf.Max(m_currentStunArea, m_currentKillArea);
-            Vector3 center = m_sensor.bottom.position;
-            float sqrKill = m_currentKillArea * m_currentKillArea;
-            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
-            for (int i = 0; i < m_numCheckEntities; i++) 
-            {
-                Entity prey = m_checkEntities[i];
-                AI.Machine machine =  prey.machine as AI.Machine;
-                if ( machine != null )
-                {
-                    Vector3 diff = machine.position - center;
-                    diff.z = 0;
-                    if (prey.CanBeSmashed(m_tier) && diff.sqrMagnitude < sqrKill)
-                    {
-                        machine.Smash( IEntity.Type.PLAYER );
-                    }
-                    else
-                    {
-                        machine.Stun( m_stunDuration );
-                    }
-                }
-            }
+            StunAndKill(m_sensor.bottom.position);
         }
     }
     
@@ -310,21 +295,36 @@ public class DragonMotionDino : DragonMotion {
         // Check speed and head stomp!
         if ( m_powerLevel >= 3 && m_impulse.sqrMagnitude > m_speedToKill)
         {
-            float area = m_currentStunArea;
-            Vector3 center = m_sensor.bottom.position;
-            m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
-            for (int i = 0; i < m_numCheckEntities; i++) 
+            StunAndKill(_point);
+        }
+    }
+    
+    protected void StunAndKill(Vector3 center)
+    {
+        Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.5f, 0f);
+        float area = Mathf.Max(m_currentStunArea, m_currentKillArea);
+        float sqrKill = m_currentKillArea * m_currentKillArea;
+        m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
+        for (int i = 0; i < m_numCheckEntities; i++) 
+        {
+            Entity prey = m_checkEntities[i];
+            AI.Machine machine =  prey.machine as AI.Machine;
+            if ( machine != null )
             {
-                Entity prey = m_checkEntities[i];
-                AI.Machine machine =  prey.machine as AI.Machine;
-                if ( machine != null )
+                Vector3 diff = machine.position - center;
+                diff.z = 0;
+                if (prey.CanBeSmashed(m_tier) && diff.sqrMagnitude < sqrKill)
+                {
+                    machine.Smash( IEntity.Type.PLAYER );
+                }
+                else
                 {
                     machine.Stun( m_stunDuration );
                 }
             }
         }
     }
-    
+
     protected bool CustomCheckGround(out RaycastHit _bottomHit) 
     {
         Vector3 distance = -m_transform.up ;
