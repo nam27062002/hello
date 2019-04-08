@@ -14,9 +14,18 @@ public class DragonMotionDino : DragonMotion {
     protected float m_snapHeight = 0.6f;
     protected float m_snapHisteresis = 0.1f;
     protected bool m_grounded = false;
-    
 
-	override protected void FixedUpdate() {
+
+    protected override void Start()
+    {
+        base.Start();
+        m_adaptHeight = m_adaptHeight * m_transform.localScale.y;
+        m_snapHeight = m_snapHeight * m_transform.localScale.y;
+        m_snapHisteresis = m_snapHisteresis * m_transform.localScale.y;
+    }
+
+
+    override protected void FixedUpdate() {
         m_closeToGround = false;
         
         switch(m_state)
@@ -70,6 +79,7 @@ public class DragonMotionDino : DragonMotion {
                 float angle = Vector3.Angle(m_raycastHit.normal, Vector3.up);
                 float upDistance = Mathf.Acos(Mathf.Deg2Rad * angle) * c1;
                 pos.y += upDistance;
+                m_impulse.y = 0;
             }
             
             m_transform.position = pos;
@@ -79,10 +89,10 @@ public class DragonMotionDino : DragonMotion {
     protected void CustomIdleMovement( float delta )
     {
     
-        CheckGround( out m_raycastHit );
+        CustomCheckGround( out m_raycastHit );
         if ( m_height < m_adaptHeight )
         {
-            if ( m_height < m_snapHeight )
+            if ( m_height < m_snapHeight /*&& !AngleIsTooMuch( m_lastGroundHitNormal )*/)
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -96,6 +106,7 @@ public class DragonMotionDino : DragonMotion {
                 }
                 m_direction = dir;
                 m_impulse = GameConstants.Vector3.zero;
+                m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
                 if (!m_grounded)
                 {
                     // STOMP!!
@@ -138,10 +149,10 @@ public class DragonMotionDino : DragonMotion {
             impulse = m_direction;
         }
         
-        CheckGround( out m_raycastHit );
+        CustomCheckGround( out m_raycastHit );
         if ( m_height < m_adaptHeight )
         {
-            if ( m_height < m_snapHeight )
+            if ( m_height < m_snapHeight /*&& !AngleIsTooMuch( m_lastGroundHitNormal )*/)
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -159,9 +170,9 @@ public class DragonMotionDino : DragonMotion {
                     // STOMP!!
                     GroundStomp();
                 }
-                // Snap? Move right left
-                SnapToGround();
                 m_impulse = m_direction * m_walkSpeed;
+                m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                SnapToGround();
             }
             else
             {
@@ -184,7 +195,7 @@ public class DragonMotionDino : DragonMotion {
     protected void SnapToGround()
     {
         Vector3 diff = m_transform.position - m_sensor.bottom.position;
-        m_transform.position = m_lastGroundHit + diff + Vector3.up * (m_snapHeight - m_snapHisteresis) / m_transform.localScale.y;
+        m_transform.position = m_lastGroundHit + diff + m_lastGroundHitNormal * (m_snapHeight - m_snapHisteresis) / m_transform.localScale.y;
         if (!m_grounded)
         {
             SetGrounded(true);
@@ -233,5 +244,38 @@ public class DragonMotionDino : DragonMotion {
     {
         
     }
+    
+    
+    protected bool CustomCheckGround(out RaycastHit _bottomHit) 
+    {
+        Vector3 distance = -m_transform.up ;
+        distance.z = 0;
+        distance.Normalize();
+        distance = distance * 10;
+        
+        bool hit_Bottom = false;
+
+        Vector3 bottomSensor  = m_sensor.bottom.position;
+        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL);
+
+        if (hit_Bottom) {
+            m_height = _bottomHit.distance * m_transform.localScale.y;
+            m_closeToGround = m_height < 1f;
+            m_lastGroundHit = _bottomHit.point;
+            m_lastGroundHitNormal = _bottomHit.normal;
+        } else {
+            m_height = 100f;
+            m_closeToGround = false;
+        }
+        return m_closeToGround;
+    }
+    
+    public bool AngleIsTooMuch( Vector3 _normal )
+    {
+        float angle = _normal.ToAngleDegreesXY();
+        float maxAngle = 45.0f;
+        return angle > (180 - maxAngle) || angle < maxAngle;
+    }
+
 
 }
