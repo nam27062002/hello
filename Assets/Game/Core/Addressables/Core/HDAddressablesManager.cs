@@ -203,13 +203,19 @@ public class HDAddressablesManager : AddressablesManager
 
     public bool IsAutomaticDownloaderAllowed()
     {
-        //return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        if (FeatureSettingsManager.AreCheatsEnabled && !DebugSettings.isAutomaticDownloaderEnabled)
+            return false;
+
+        // If permission has already been requested for any downloadable handle then automatic downloader should be enabled so that request can be served
+        if (HasPermissionRequestedForAnyDownloadableHandle())
+            return true;
 
 		// Automatic downloader gets unlocked when the user buys a dragon or when the user unlocks the second dragon. This is done to save up on traffic since many user won't made it to the second dragon.
         if (UsersManager.currentUser.GetNumOwnedDragons() > 1) {
 			return true;
 		}
 
+        // Second progression dragon is unlocked
         IDragonData dragonData = DragonManager.GetClassicDragonsByOrder(1);
         return dragonData != null && !dragonData.isLocked;
     }
@@ -426,7 +432,7 @@ public class HDAddressablesManager : AddressablesManager
         handle = CreateDownloadablesHandle(groupIds);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3, handle);
     }
-
+    
     /// <summary>
     /// Returns the downloadables handle corresponding to the id passed as a parameter
     /// </summary>
@@ -542,6 +548,22 @@ public class HDAddressablesManager : AddressablesManager
             return GetDownloadablesHandle(handleId);
         }
 	}
+
+    private bool HasPermissionRequestedForAnyDownloadableHandle()
+    {
+        if (m_downloadableHandles != null)
+        {
+            foreach (KeyValuePair<string, Downloadables.Handle> pair in m_downloadableHandles)
+            {
+                if (!pair.Value.NeedsToRequestPermission())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 	/// <summary>
 	/// Given a skin and a list of pets, create a list with all the powers derived from such equipment.

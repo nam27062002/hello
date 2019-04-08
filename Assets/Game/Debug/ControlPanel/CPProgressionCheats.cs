@@ -88,6 +88,9 @@ public class CPProgressionCheats : MonoBehaviour {
 		// Initialize debug settings, they have been reset when reseting the preferences
 		DebugSettings.Init();
 
+        // Downloadables folder is deleted
+        AssetBundlesManager.Instance.DeleteAllDownloadables();
+
 		// Restart game
 		FlowManager.Restart();
 	}
