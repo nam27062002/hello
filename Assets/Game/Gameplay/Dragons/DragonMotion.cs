@@ -1675,6 +1675,11 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		get { return m_transform.position; }
 		set { m_transform.position = value; }
 	}
+
+    public Vector3 forward {
+        get { return m_transform.forward; }
+    }
+
 	/// <summary>
 	/// Obtain the current direction of the dragon.
 	/// </summary>
