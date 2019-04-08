@@ -145,7 +145,10 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnInvulnerable);
 			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnVulnerable);
 
-			m_collisionParams = new object[1];
+            m_signals.SetOnEnableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterEnter);
+            m_signals.SetOnDisableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterExit);
+
+            m_collisionParams = new object[1];
 			m_triggerParams = new object[1];
 
 			m_externalForces = Vector3.zero;
