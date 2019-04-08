@@ -173,7 +173,7 @@ namespace Downloadables
         /// Current downloading speed 
         /// </summary>
         private float m_speed;
-
+        
         public Manager(Config config, NetworkDriver network, DiskDriver diskDriver, Disk.OnIssue onDiskIssueCallbak, Tracker tracker, Logger logger)
         {
             if (config == null)
@@ -446,20 +446,25 @@ namespace Downloadables
         public NetworkReachability GetCurrentNetworkReachability()
         {
             return m_network.CurrentNetworkReachability;
-        }
+        }        
 
         /// <summary>
         /// Deletes all downloadables currently cached.
         /// </summary>
         public void ClearCache()
-        {                     
+        {            
+            m_downloader.AbortDownload();
             if (m_catalog != null)
             {
                 foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
                 {
-                    pair.Value.DeleteDownload();
+                    pair.Value.DeleteDownload();                    
                 }
             }
+
+            FileUtils.RemoveDirectoryInDeviceStorage(DOWNLOADABLES_FOLDER_NAME, DESKTOP_DEVICE_STORAGE_PATH_SIMULATED);
+
+            Groups_ResetPermissions();
         }
 
         /// <summary>
@@ -501,7 +506,7 @@ namespace Downloadables
 #endif
 
         public void Update()
-        {
+        {         
             if (IsInitialized && IsEnabled)
             {
                 m_downloader.Update();
@@ -583,9 +588,12 @@ namespace Downloadables
                 CatalogEntryStatus entryToSimulateDownload = null;
                 for (int i = 0; i < count; i++)
                 {
-                    if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                    if (m_downloader.IsDownloadAllowed(Groups_GetPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
                     {
-                        break;
+                        if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -691,6 +699,14 @@ namespace Downloadables
 
             m_groupsLastUpdateAt = -1;
             Groups_PrioritiesDirty = false;
+        }
+
+        private void Groups_ResetPermissions()
+        {
+            foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+            {
+                pair.Value.ResetPermissions();
+            }
         }
 
         private void Groups_Init(Dictionary<string, CatalogGroup> groups)
@@ -878,7 +894,7 @@ namespace Downloadables
         {
             m_groupsSortedByPriority.Sort(Groups_SortByPriority);
             Groups_PrioritiesDirty = false;
-        }
+        }        
 
         private int Groups_SortByPriority(CatalogGroup x, CatalogGroup y)
         {
