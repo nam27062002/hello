@@ -42,9 +42,11 @@ public class DragonMotionDino : DragonMotion {
                     if ( m_grounded )
                     {
                         m_grounded = false;
+                        m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
                         m_rbody.ResetCenterOfMass();
                     }
                     UpdateMovement(Time.fixedDeltaTime);
+                    CheckFeet();
                 }
                 else
                 {
@@ -57,29 +59,33 @@ public class DragonMotionDino : DragonMotion {
                 base.FixedUpdate();
             }break;
         }
-        
-        // Make sure feet dont get inside collision
-        
+
+	}
+    
+    // Make sure feet dont get inside collision
+    protected void CheckFeet()
+    {
         if ( m_state != State.Intro)
         {
             Vector3 pos = m_transform.position;
             pos.z = 0f;
             Vector3 bottomPos = m_sensor.bottom.position + Vector3.down * m_snapHeight;
             bottomPos.z = 0;
-            if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_transform.position, m_sensor.bottom.position, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
+            if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_transform.position, bottomPos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
             {
-                float dist = (pos - bottomPos).magnitude;
-                float dot = Vector3.Dot(Vector3.up, m_raycastHit.normal);
-                Vector3 up = Vector3.up * ( dist - m_raycastHit.distance ) * dot;
-                pos += up;
+                Vector3 diff = pos - bottomPos;
+                float dist = diff.magnitude;
+                float dot1 = Vector3.Dot(m_raycastHit.normal, diff.normalized);
+                float c1 = (dist - m_raycastHit.distance) * dot1;
+                float angle = Vector3.Angle(m_raycastHit.normal, Vector3.up);
+                float upDistance = Mathf.Acos(Mathf.Deg2Rad * angle) * c1;
+                pos.y += upDistance;
             }
             
             m_transform.position = pos;
         }
+    }
 
-
-	}
-    
     protected void CustomIdleMovement( float delta )
     {
     
@@ -113,6 +119,7 @@ public class DragonMotionDino : DragonMotion {
                 // else just fall
                 ComputeImpulseToZero(delta);
                 FreeFall(delta, m_direction);
+                CheckFeet();
             }
         }
         // Free fall
@@ -120,6 +127,7 @@ public class DragonMotionDino : DragonMotion {
         {
             ComputeImpulseToZero(delta);
             FreeFall(delta, m_direction);
+            CheckFeet();
         }
         
         RotateToDirection(m_direction, false);
@@ -191,6 +199,7 @@ public class DragonMotionDino : DragonMotion {
         {
             m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_lastGroundHit + Vector3.up * (m_snapHeight - m_snapHisteresis));
             m_grounded = true;
+            m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
         }
     }
 
@@ -212,6 +221,7 @@ public class DragonMotionDino : DragonMotion {
         {
             m_rbody.ResetCenterOfMass();
             m_grounded = false;
+            m_animator.SetBool( GameConstants.Animator.GROUNDED , m_grounded);
         }
         
     }
