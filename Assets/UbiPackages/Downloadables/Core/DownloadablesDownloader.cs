@@ -32,6 +32,8 @@ namespace Downloadables
         private NetworkReachability CurrentNetworkReachability { get; set; }
         private int ThrottleSleepTime { get; set; }
 
+        private CatalogEntryStatus m_currentEntryStatus;
+
         public Downloader(Manager manager, NetworkDriver networkDriver, Disk disk, Logger logger)
         {
             m_manager = manager;
@@ -54,14 +56,24 @@ namespace Downloadables
 
         public void Reset()
         {
-            if (IsDownloading)
-            {
-                m_downloadThread.Abort();
-            }
-
-            m_downloadThread = null;
+            AbortDownload();             
             m_urlBase = null;
         }        
+
+        public void AbortDownload()
+        {
+            if (IsDownloading)
+            {
+                if (m_currentEntryStatus != null)
+                {
+                    m_currentEntryStatus.OnDownloadFinish(new Error(Error.EType.Internal_Download_Disabled));
+                    m_currentEntryStatus = null;
+                }
+
+                m_downloadThread.Abort();
+                m_downloadThread = null;
+            }
+        }
 
         public bool IsDownloading { get { return m_downloadThread != null && m_downloadThread.IsAlive; } }
 
@@ -69,7 +81,7 @@ namespace Downloadables
         {
             return GetErrorTypeIfDownloadWithCurrentConnection(entryStatus) == Error.EType.None;
         }
-
+        
         private Error.EType GetErrorTypeWhileDownloading(CatalogEntryStatus entryStatus)
         {
             //if connection has downgraded to a non-allowed network, 
@@ -86,35 +98,48 @@ namespace Downloadables
             return returnValue;
         }
 
-        public Error.EType GetErrorTypeIfDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
+        public bool IsDownloadAllowed(bool permissionRequested, bool permissionOverCarrierGranted)        
         {
-            Error.EType returnValue = Error.EType.None;
+            bool returnValue = true; ;
             switch (CurrentNetworkReachability)
             {
                 case NetworkReachability.ReachableViaLocalAreaNetwork:
                     if (REQUEST_PERMISSION_OVER_WIFI_ENABLED)
                     {
-                        if (!entryStatus.GetPermissionRequested())
+                        if (!permissionRequested)
                         {
-                            returnValue = Error.EType.Network_Unauthorized_Reachability;
+                            returnValue = false;
                         }
-                    }                    
-
+                    }
                     break;
 
                 case NetworkReachability.ReachableViaCarrierDataNetwork:
                     // Over the carrier only if the user has granted permission
-                    if (!entryStatus.GetPermissionOverCarrierGranted())
+                    if (!permissionOverCarrierGranted)
                     {
-                        returnValue = Error.EType.Network_Unauthorized_Reachability;
+                        returnValue = false;
                     }
-                    break;
-
-                default:
-                    returnValue = Error.EType.Network_No_Reachability;
-                    break;
+                    break;                
             }
 
+            return returnValue;
+        }
+
+        public Error.EType GetErrorTypeIfDownloadWithCurrentConnection(CatalogEntryStatus entryStatus)
+        {
+            Error.EType returnValue = Error.EType.None;
+            if (CurrentNetworkReachability == NetworkReachability.NotReachable)
+            {
+                returnValue = Error.EType.Network_Unauthorized_Reachability;
+            }
+            else
+            {
+                if (!IsDownloadAllowed(entryStatus.GetPermissionRequested(), entryStatus.GetPermissionOverCarrierGranted()))
+                {
+                    returnValue = Error.EType.Network_Unauthorized_Reachability;
+                }
+            }
+           
             return returnValue;                        
         }
 
@@ -125,11 +150,13 @@ namespace Downloadables
                 if (CanLog())
                 {
                     Log("Downloader Starting Download: " + entryStatus.Id);
-                }                
+                }
 
+                m_currentEntryStatus = entryStatus;
                 entryStatus.OnDownloadStart();
                 m_downloadThread = new Thread(() => DoDownload(entryStatus));
-                m_downloadThread.Start();                
+                m_downloadThread.Start();
+                m_currentEntryStatus = null;
             }
         }
 

@@ -73,12 +73,17 @@ namespace Downloadables
         public void Reset()
         {
             EntryIds = null;
-            PermissionRequested = false;
-            PermissionOverCarrierGranted = false;
+            ResetPermissions();            
             NeedsToSave = false;
             Priority = MIN_PRIORITY;
             m_latestSaveAt = -1;
             Index = -1;
+        }
+
+        public void ResetPermissions()
+        {
+            PermissionRequested = false;
+            PermissionOverCarrierGranted = false;
         }
 
         public void Setup(string id, List<string> entryIds)
