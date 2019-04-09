@@ -59,7 +59,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     // Exposed members
     [SerializeField] private float m_stunnedTime;
 	[SerializeField] private float m_velocityBlendRate = 256.0f;
-	[SerializeField] private float m_rotBlendRate = 350.0f;
+	[SerializeField] protected float m_rotBlendRate = 350.0f;
 
 	[SerializeField] protected bool m_capVerticalRotation = true;
 	[SerializeField] private float m_capUpRotationAngle = 40.0f;
@@ -1128,8 +1128,6 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         if ( m_state != State.Intro)
         {
             Vector3 pos = m_transform.position;
-            pos.z = 0f;
-
             // check pos
             m_limitsCheck++;
             if ( m_limitsCheck > 2 )
@@ -1268,7 +1266,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_externalForce = GameConstants.Vector3.zero;
 	}
 
-	float GetTargetForceMultiplier( bool includeBoost = true )
+	protected float GetTargetForceMultiplier( bool includeBoost = true )
 	{
 		if ( includeBoost )
 			return m_boostSpeedMultiplier * m_holdSpeedMultiplier * m_latchedOnSpeedMultiplier * m_superSizeSpeedMultiplier;

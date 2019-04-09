@@ -9,11 +9,12 @@ public class DragonMotionDino : DragonMotion {
     public float m_fallingAngle = -45.0f;
     public float m_freeFallGravityMultiplier = 1;
     public float m_freeFallFriction = 0.5f;
-    public float m_walkSpeed = 2.0f;
+    public float[] m_walkSpeedByTier = new float[(int)DragonTier.COUNT];
+    protected float m_walkSpeed = 2.0f;
+    public float m_walkRotationSpeed = 10.0f;
 
-    public float m_adaptHeight = 2.0f;
-    public float m_snapHeight = 1.6f;
-    public float m_snapHisteresis = 0.8f;
+    Transform m_groundSensor;
+    Transform m_magnetSensor;
     public bool m_grounded = false;
     public float m_maxWalkAngle = 20;
 
@@ -43,14 +44,15 @@ public class DragonMotionDino : DragonMotion {
     protected override void Start()
     {
         base.Start();
-        m_adaptHeight = m_adaptHeight * m_transform.localScale.y;
-        m_snapHeight = m_snapHeight * m_transform.localScale.y;
-        m_snapHisteresis = m_snapHisteresis * m_transform.localScale.y;
+        
+        Transform sensors   = m_transform.Find("sensors").transform;
+        m_groundSensor = sensors.Find("GroundSensor");
+        m_magnetSensor = sensors.Find("MagnetSensor");
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
         m_tier = dataSpecial.tier;
-
+        m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
         UpdatePowerAreas();
         UpdateSpeedToKill();
     }
@@ -130,9 +132,9 @@ public class DragonMotionDino : DragonMotion {
     {
     
         CustomCheckGround( out m_raycastHit );
-        if ( m_height < m_adaptHeight )
+        if ( m_height < 90 )
         {
-            if ( m_height < m_snapHeight && !AngleIsTooMuch( m_lastGroundHitNormal ))
+            if ( !AngleIsTooMuch( m_lastGroundHitNormal ))
             {
                 if (!m_grounded)
                 {
@@ -153,8 +155,9 @@ public class DragonMotionDino : DragonMotion {
                 m_direction = dir;
                 m_impulse = GameConstants.Vector3.zero;
                 m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
-                
+                RotateToGround( m_direction );
                 SnapToGround();
+                
             }
             else
             {
@@ -162,6 +165,7 @@ public class DragonMotionDino : DragonMotion {
                 // else just fall
                 ComputeImpulseToZero(delta);
                 FreeFall(delta, m_direction);
+                RotateToDirection(m_direction, false);
             }
         }
         // Free fall
@@ -169,10 +173,10 @@ public class DragonMotionDino : DragonMotion {
         {
             ComputeImpulseToZero(delta);
             FreeFall(delta, m_direction);
+            RotateToDirection(m_direction, false);
         }
         
-        RotateToDirection(m_direction, false);
-        m_desiredRotation = m_transform.rotation;
+        // m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
         m_rbody.velocity = m_impulse;
     }
@@ -190,9 +194,9 @@ public class DragonMotionDino : DragonMotion {
         }
         
         CustomCheckGround( out m_raycastHit );
-        if ( m_height < m_adaptHeight )
+        if ( m_height < 90 )
         {
-            if ( m_height < m_snapHeight && !AngleIsTooMuch( m_lastGroundHitNormal ))
+            if ( !AngleIsTooMuch( m_lastGroundHitNormal ))
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -212,34 +216,45 @@ public class DragonMotionDino : DragonMotion {
                 }
                 m_impulse = m_direction * m_walkSpeed;
                 m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                RotateToGround( m_direction );
                 SnapToGround();
             }
             else
             {
                 // Adapt to angle?
                 FreeFall(delta, impulse);
+                RotateToDirection(m_direction, false);
             }
         }
         else
         {
             FreeFall(delta, impulse);
+            RotateToDirection(m_direction, false);
         }
         
-        RotateToDirection(m_direction, false);
-        m_desiredRotation = m_transform.rotation;
+        // m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
         m_rbody.velocity = m_impulse;
         
     }
     
+    protected void RotateToGround( Vector3 direction )
+    {
+        m_desiredRotation = Quaternion.LookRotation(direction, Vector3.up);
+        m_transform.rotation = Quaternion.Lerp(m_transform.rotation, m_desiredRotation, m_walkRotationSpeed * Time.deltaTime);
+        m_angularVelocity = GameConstants.Vector3.zero;
+        if ( m_spinning != false )
+            m_animator.SetBool(GameConstants.Animator.SPIN, false);
+        m_spinning = false;
+    }
+
     protected void SnapToGround()
     {
-        Vector3 bPos = m_sensor.bottom.position;
-        bPos.z = 0;
-        Vector3 tPos = m_transform.position;
-        tPos.z = 0;
-        Vector3 diff = tPos - bPos;
-        m_transform.position = m_lastGroundHit + diff + m_lastGroundHitNormal * (m_snapHeight - m_snapHisteresis) / m_transform.localScale.y;
+        Vector3 snapPoint = m_lastGroundHit;
+        snapPoint.z = 0;
+        Vector3 diff = m_transform.position - m_groundSensor.position;
+        m_transform.position = snapPoint + diff;
+        
         if (!m_grounded)
         {
             SetGrounded(true);
@@ -279,7 +294,7 @@ public class DragonMotionDino : DragonMotion {
         }
         else
         {
-            m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_lastGroundHit + Vector3.up * (m_snapHeight - m_snapHisteresis));
+            m_rbody.centerOfMass = m_transform.InverseTransformPoint( m_groundSensor.position );
         }
 
     }
@@ -336,16 +351,11 @@ public class DragonMotionDino : DragonMotion {
 
     protected bool CustomCheckGround(out RaycastHit _bottomHit) 
     {
-        Vector3 distance = -m_transform.up ;
-        distance.z = 0;
-        distance.Normalize();
-        distance = distance * 10;
-        
-        bool hit_Bottom = false;
-
         Vector3 bottomSensor  = m_sensor.bottom.position;
         bottomSensor.z = 0;
-        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
+        Vector3 magnetSensorPos = m_magnetSensor.position;
+        magnetSensorPos.z = 0;
+        bool hit_Bottom = Physics.Linecast(bottomSensor, magnetSensorPos, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
 
         if (hit_Bottom) {
             m_height = _bottomHit.distance * m_transform.localScale.y;
