@@ -20,26 +20,13 @@ public class HDLogo : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	[System.Serializable]
-	private class LogoData {
-		[SkuList(DefinitionsCategory.LOCALIZATION, false)]
-		public string languageSku = "";
 
-		[FileList("Resources/UI/Common/Logo", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.png", false)]
-		public string logoPath = "";
-	}
-	
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Image m_image = null;
 
-	[FileList("Resources/UI/Common/Logo", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.png", false)]
-	[SerializeField] private string m_defaultPath = "";
-
-	[SerializeField] private LogoData[] m_paths = new LogoData[0];
-	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
@@ -65,16 +52,13 @@ public class HDLogo : MonoBehaviour, IBroadcastListener {
     /// <summary>
     /// Ons the broadcast signal.
     /// </summary>
-    /// <param name="eventType">Event type.</param>
-    /// <param name="broadcastEventInfo">Broadcast event info.</param>
-    public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
-    {
-        switch( eventType )
-        {
-            case BroadcastEventType.LANGUAGE_CHANGED:
-            {
+    /// <param name="_eventType">Event type.</param>
+    /// <param name="_broadcastEventInfo">Broadcast event info.</param>
+    public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+        switch(_eventType) {
+            case BroadcastEventType.LANGUAGE_CHANGED: {
                 OnLanguageChanged();
-            }break;
+            } break;
         }
     }
 
@@ -85,22 +69,19 @@ public class HDLogo : MonoBehaviour, IBroadcastListener {
 	/// Refresh logo.
 	/// </summary>
 	private void Refresh() {
-		// Find logo path for the current language
+		// Get new language definition
 		string langSku = LocalizationManager.SharedInstance.GetCurrentLanguageSKU();
-		string path = m_defaultPath;
-		for(int i = 0; i < m_paths.Length; ++i) {
-			if(m_paths[i].languageSku == langSku) {
-				path = m_paths[i].logoPath;
-				break;
-			}
-		}
+		DefinitionNode langDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LOCALIZATION, langSku);
+		if(langDef == null) return;
+
+		// Find logo path for the current language
+		string logoName = langDef.GetAsString("logo");
 
 		// Check that the logo is no the same as already loaded
-		string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
-		if(m_image.sprite.name == fileName) return;
+		if(m_image.sprite.name == logoName) return;
 
 		// Load new image
-		m_image.sprite = Resources.Load<Sprite>(path);
+		m_image.sprite = Resources.Load<Sprite>(UIConstants.HD_LOGO_PATH + logoName);
 	}
 
 	//------------------------------------------------------------------------//

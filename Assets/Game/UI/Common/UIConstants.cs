@@ -168,6 +168,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string LEAGUE_ICONS_PATH {
 		get { return instance.m_leagueIconsPath; }
 	}
+
+	[SerializeField] private string m_hdLogoPath = "UI/Common/Logo/";
+	public static string HD_LOGO_PATH {
+		get { return instance.m_hdLogoPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------
