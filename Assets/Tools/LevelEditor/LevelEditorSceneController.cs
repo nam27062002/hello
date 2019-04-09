@@ -47,6 +47,8 @@ namespace LevelEditor {
             ApplicationManager.CreateInstance();
 			ControlPanel.CreateInstance();
 
+			HDAddressablesManager.Instance.Initialise();
+
             // Initialize some required managers
 			ContentManager.InitContent(true, false);
 			SpawnerManager.CreateInstance();
