@@ -22,7 +22,11 @@ For Each CurrentSpawner In SpawnersFolder.Files
 	blackList1 = "SP_Seasonal.prefab"
 	blacklist2 = "SP_FlyingTicket.prefab"
 	blacklist3 = "SP_Seasonal_xmasPresent.prefab"
-	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false AND foundStrMatch(CurrentSpawner.Path, blackList2) = false AND foundStrMatch(CurrentSpawner.Path, blackList3) = false Then
+	blacklist4 = "SP_DrunkenMan.prefab"
+	blacklist5 = "SP_ButterflyEgg_Root.prefab"
+	blacklist6 = "SP_Easter_Bunny.prefab"
+	blacklist7 = "SP_Seasonal"
+	If Right(CurrentSpawner.Path,7) = ".prefab"  And foundStrMatch(CurrentSpawner.Path, blackList1) = false AND foundStrMatch(CurrentSpawner.Path, blackList2) = false AND foundStrMatch(CurrentSpawner.Path, blackList3) = false AND foundStrMatch(CurrentSpawner.Path, blackList4) = false AND foundStrMatch(CurrentSpawner.Path, blackList5) = false AND foundStrMatch(CurrentSpawner.Path, blackList6) = false AND foundStrMatch(CurrentSpawner.Path, blackList7) = false Then
 		Set objInputFile = objFSO.OpenTextFile(CurrentSpawner)
 		Dim substrToFind
 		Do until objInputFile.AtEndOfStream
@@ -48,7 +52,7 @@ Function spawnerInfo()
 	substrToFind2 = "m_entityPrefab:"
 	substrToFind3 = "m_entityPrefabStr:"
 	If foundStrMatch(tmpStr,substrToFind) = true Or foundStrMatch(tmpStr,substrToFind2) = true Or foundStrMatch(tmpStr,substrToFind3) = true Then
-		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\client\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
+		spawner = Replace(CurrentSpawner.Path,"D:\Projects\dragon\Assets\Tools\LevelEditor\SpawnerPrefabs\","")										   
 		spawner = Replace(spawner,".prefab","")
 		If foundStrMatch(tmpStr,substrToFind) = true Then
 			prefabFolder = Replace(objInputFile.ReadLine,"- name: ","")
@@ -59,7 +63,7 @@ Function spawnerInfo()
 			End If
 		End If
 		aux = Replace(Replace(prefabFolder,"/","\")," ","")
-		prefabFile = "..\..\Assets\Resources\Game\Entities\NewEntites\"+ aux + ".prefab"
+		prefabFile = "..\..\Assets\Art\3D\Gameplay\Entities\Prefabs\"+ aux + ".prefab"
 		prefab  = Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(Replace(prefabFolder,"Surface/",""),"Junk/",""),"Air/",""),"Goblin/",""),"Water/",""),"Monster/",""),"Cage/",""),"Vehicles/",""),"Magic/",""),"Dragon/",""),"Seasonal/","")
 	End If			
 	substrToFind4 = "m_spawnTime:"

@@ -24,6 +24,7 @@ public class DragonIcePowers : MonoBehaviour {
     DragonBreathBehaviour m_breath;
     private int m_powerLevel = 0;
     private bool m_active = false;
+    ToggleParam m_toggleParam = new ToggleParam();
 
     public void Start()
     {
@@ -82,11 +83,18 @@ public class DragonIcePowers : MonoBehaviour {
         {
             FreezingObjectsRegistry.instance.AddRegister( m_frozenRegistry );
             m_active = true;
+            
+            m_toggleParam.value = m_active;
+            Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
+                
         }
         else if ( !m_boost.IsBoostActive() && m_active)
         {
             FreezingObjectsRegistry.instance.RemoveRegister( m_frozenRegistry );
             m_active = false;
+            
+            m_toggleParam.value = m_active;
+            Broadcaster.Broadcast(BroadcastEventType.SPECIAL_POWER_TOGGLED, m_toggleParam);
         }
     }
     
