@@ -28,12 +28,19 @@ public class DragonMotionDino : DragonMotion {
     public float m_stunArea = 4;
     public float m_level2StunArea = 3;
     public float m_stunDuration = 2;
+    [Header("Step killing")]
+    public float m_stepKillArea = 1;
+    public float m_stepStunArea = 1;
+    public float m_stepStunDuration = 2;
+    
     
     [Header("Modified on run")]
     public float m_currentKillArea = 2;
     public float m_currentStunArea = 2;
     protected int m_powerLevel = 1;
     protected float m_speedToKill;
+    public float m_currentStepKillArea = 2;
+    public float m_currentStepStunArea = 2;
     
     private Entity[] m_checkEntities = new Entity[50];
     private int m_numCheckEntities = 0;
@@ -303,7 +310,7 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_speedToKill)
         {
-            StunAndKill(m_sensor.bottom.position);
+            StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
     }
     
@@ -319,15 +326,20 @@ public class DragonMotionDino : DragonMotion {
         // Check speed and head stomp!
         if ( m_powerLevel >= 3 && m_impulse.sqrMagnitude > m_speedToKill)
         {
-            StunAndKill(_point);
+            StunAndKill(_point, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
     }
     
-    protected void StunAndKill(Vector3 center)
+    public void OnStep()
+    {
+        StunAndKill(m_lastGroundHit, m_currentStepKillArea, m_currentStunArea, m_stepStunDuration);
+    }
+
+    protected void StunAndKill(Vector3 center, float killArea, float stunArea, float stunDuration)
     {
         Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.5f, 0f);
-        float area = Mathf.Max(m_currentStunArea, m_currentKillArea);
-        float sqrKill = m_currentKillArea * m_currentKillArea;
+        float area = Mathf.Max(stunArea, killArea);
+        float sqrKill = killArea * killArea;
         m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
         for (int i = 0; i < m_numCheckEntities; i++) 
         {
@@ -343,7 +355,7 @@ public class DragonMotionDino : DragonMotion {
                 }
                 else
                 {
-                    machine.Stun( m_stunDuration );
+                    machine.Stun( stunDuration );
                 }
             }
         }
@@ -388,6 +400,9 @@ public class DragonMotionDino : DragonMotion {
         float scale = transform.localScale.y;
         m_currentKillArea = m_currentKillArea * scale;
         m_currentStunArea = m_currentStunArea * scale;
+
+        m_currentStepKillArea = m_stepKillArea * scale;
+        m_currentStunArea = m_stepStunArea * scale;
     }
     
     public void UpdateSpeedToKill()

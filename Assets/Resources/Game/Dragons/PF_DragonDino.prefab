@@ -2274,7 +2274,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4230752323777046}
   - component: {fileID: 95872425518201242}
-  - component: {fileID: 114954336001280512}
+  - component: {fileID: 114643725961450464}
   m_Layer: 12
   m_Name: view
   m_TagString: Untagged
@@ -5726,6 +5726,82 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 14
+--- !u!114 &114643725961450464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1924315993893924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa26a9272a39d447aa4758a488fe0717, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_wingsIdleSound: Dragon_Idle_Flaps
+  m_wingsFlyingSound: Dragon_Flaps
+  m_eatSound: Dragon_Eat_2
+  m_eatHoldSound: 
+  m_wingsWindSound: Dragon_wind_boost
+  m_wingsStrongFlap: Dragon_Strong_Flap
+  m_levelUpSound: Level_Up
+  m_starvingSound: Dragon_hungry
+  m_hitSound: Dragon_Impact
+  m_poisonHitSound: 
+  m_enterWaterSound: Dragon_Water_In_Soft
+  m_enterWaterWithSplashSound: Dragon_Water_In_Hard
+  m_exitWaterSound: Dragon_Water_Out_Soft
+  m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
+  m_skimmingSound: Dragon_Surfing
+  m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
+    type: 2}
+  m_waterDeepToSnapshot: 0
+  m_hiccupSound: 
+  m_gruntSound: Dragon_Grunt
+  m_gruntToEatProbability: 5
+  m_onDeadSound: hd_dragon_dead
+  m_onCorpseSound: hd_dragon_dead
+  m_onReviveSound: hd_dragon_revive
+  m_onPreMegaFire: hd_megafire_charge
+  m_stepSound: 
+  m_stepParticle:
+    name: 
+    path: 
+    changeStartColor: 0
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
+    changeColorOvertime: 0
+    colorOvertime:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    orientate: 0
 --- !u!114 &114658234838054272
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5906,8 +5982,13 @@ MonoBehaviour:
   m_stunArea: 16
   m_level2StunArea: 18
   m_stunDuration: 8
+  m_stepKillArea: 1
+  m_stepStunArea: 1
+  m_stepStunDuration: 2
   m_currentKillArea: 9
   m_currentStunArea: 16
+  m_currentStepKillArea: 2
+  m_currentStepStunArea: 2
 --- !u!114 &114853433848217224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5979,42 +6060,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 2
---- !u!114 &114954336001280512
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1924315993893924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 335a9949851dd400f8a7643e754bcae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_wingsIdleSound: Dragon_Idle_Flaps
-  m_wingsFlyingSound: Dragon_Flaps
-  m_eatSound: Dragon_Eat_2
-  m_eatHoldSound: 
-  m_wingsWindSound: Dragon_wind_boost
-  m_wingsStrongFlap: Dragon_Strong_Flap
-  m_levelUpSound: Level_Up
-  m_starvingSound: Dragon_hungry
-  m_hitSound: Dragon_Impact
-  m_poisonHitSound: 
-  m_enterWaterSound: Dragon_Water_In_Soft
-  m_enterWaterWithSplashSound: Dragon_Water_In_Hard
-  m_exitWaterSound: Dragon_Water_Out_Soft
-  m_exitWaterWithSplashSound: Dragon_Water_Out_Hard
-  m_skimmingSound: Dragon_Surfing
-  m_insideWaterSnapshot: {fileID: 245688877317836546, guid: f9c941808b0b54fa79ff7aae4e1db556,
-    type: 2}
-  m_waterDeepToSnapshot: 4
-  m_hiccupSound: 
-  m_gruntSound: Dragon_Grunt
-  m_gruntToEatProbability: 25
-  m_onDeadSound: hd_dragon_dead
-  m_onCorpseSound: hd_dragon_dead
-  m_onReviveSound: hd_dragon_revive
-  m_onPreMegaFire: hd_megafire_charge
 --- !u!114 &114988125153512114
 MonoBehaviour:
   m_ObjectHideFlags: 1
