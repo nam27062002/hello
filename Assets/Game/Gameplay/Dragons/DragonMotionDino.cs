@@ -10,10 +10,10 @@ public class DragonMotionDino : DragonMotion {
     public float m_freeFallGravityMultiplier = 1;
     public float m_walkSpeed = 2.0f;
 
-    protected float m_adaptHeight = 2.0f;
-    protected float m_snapHeight = 0.8f;
-    protected float m_snapHisteresis = 0.2f;
-    protected bool m_grounded = false;
+    public float m_adaptHeight = 2.0f;
+    public float m_snapHeight = 1.6f;
+    public float m_snapHisteresis = 0.8f;
+    public bool m_grounded = false;
 
     
     [Range(0,100.0f)]
@@ -35,6 +35,8 @@ public class DragonMotionDino : DragonMotion {
     private Entity[] m_checkEntities = new Entity[50];
     private int m_numCheckEntities = 0;
     private DragonTier m_tier = DragonTier.TIER_4;
+
+    protected Vector3 m_lastFeetValidPosition;
 
     protected override void Start()
     {
@@ -72,7 +74,6 @@ public class DragonMotionDino : DragonMotion {
                         SetGrounded(false);
                     }
                     UpdateMovement(Time.fixedDeltaTime);
-                    CheckFeet();
                 }
                 else
                 {
@@ -86,11 +87,43 @@ public class DragonMotionDino : DragonMotion {
             }break;
         }
 
+        CheckFeet();
+
 	}
     
     // Make sure feet dont get inside collision
     protected void CheckFeet()
     {
+        Vector3 pos = m_sensor.bottom.position;
+        pos.z = 0f;
+        
+        if ( m_state != State.Intro)
+        {
+            // check pos           
+            if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_lastFeetValidPosition, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
+            {
+                Vector3 diff = m_lastFeetValidPosition - pos;
+                Vector3 dir = diff.normalized;
+                float magnitude = diff.magnitude;
+                float dot =  Vector3.Dot(m_raycastHit.normal, dir);
+                if ( dot > 0 )
+                { 
+                    Vector3 add = m_raycastHit.normal * magnitude * dot * 1.2f;
+                    m_transform.position += add;
+                }
+            }
+            else
+            {
+                m_lastFeetValidPosition = pos;
+            }
+            
+        }
+        else
+        {
+             m_lastFeetValidPosition = pos;
+        }
+
+        /*
         if ( m_state != State.Intro)
         {
             Vector3 pos = m_transform.position;
@@ -115,6 +148,7 @@ public class DragonMotionDino : DragonMotion {
             
             m_transform.position = pos;
         }
+        */
     }
 
     protected void CustomIdleMovement( float delta )
@@ -153,7 +187,6 @@ public class DragonMotionDino : DragonMotion {
                 // else just fall
                 ComputeImpulseToZero(delta);
                 FreeFall(delta, m_direction);
-                CheckFeet();
             }
         }
         // Free fall
@@ -161,7 +194,6 @@ public class DragonMotionDino : DragonMotion {
         {
             ComputeImpulseToZero(delta);
             FreeFall(delta, m_direction);
-            CheckFeet();
         }
         
         RotateToDirection(m_direction, false);
@@ -211,13 +243,11 @@ public class DragonMotionDino : DragonMotion {
             {
                 // Adapt to angle?
                 FreeFall(delta, impulse);
-                CheckFeet();
             }
         }
         else
         {
             FreeFall(delta, impulse);
-            CheckFeet();
         }
         
         RotateToDirection(m_direction, false);
@@ -229,7 +259,11 @@ public class DragonMotionDino : DragonMotion {
     
     protected void SnapToGround()
     {
-        Vector3 diff = m_transform.position - m_sensor.bottom.position;
+        Vector3 bPos = m_sensor.bottom.position;
+        bPos.z = 0;
+        Vector3 tPos = m_transform.position;
+        tPos.z = 0;
+        Vector3 diff = tPos - bPos;
         m_transform.position = m_lastGroundHit + diff + m_lastGroundHitNormal * (m_snapHeight - m_snapHisteresis) / m_transform.localScale.y;
         if (!m_grounded)
         {
