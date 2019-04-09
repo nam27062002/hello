@@ -98,7 +98,7 @@ public class DragonMotionDino : DragonMotion {
         Vector3 pos = m_sensor.bottom.position;
         pos.z = 0f;
         
-        if ( m_state != State.Intro)
+        if ( m_state != State.Intro && m_state != State.Dead && m_state != State.Reviving)
         {
             // check pos           
             if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_lastFeetValidPosition, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
