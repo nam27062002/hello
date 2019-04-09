@@ -8,6 +8,7 @@ public class DragonMotionDino : DragonMotion {
     public float m_maxUpAngle = 45.0f;
     public float m_fallingAngle = -45.0f;
     public float m_freeFallGravityMultiplier = 1;
+    public float m_freeFallFriction = 0.5f;
     public float m_walkSpeed = 2.0f;
 
     public float m_adaptHeight = 2.0f;
@@ -277,7 +278,7 @@ public class DragonMotionDino : DragonMotion {
         m_impulse = m_rbody.velocity;
         float impulseMag = m_impulse.magnitude;
         m_impulse.y += -9.81f * m_freeFallGravityMultiplier * _deltaTime;
-        m_impulse += -(m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime * 0.37f);
+        m_impulse += -(m_impulse.normalized * m_freeFallFriction * impulseMag * _deltaTime);
             
         if ( direction.x > 0 ){
             m_direction = GameConstants.Vector3.right;
