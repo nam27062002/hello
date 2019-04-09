@@ -34,6 +34,14 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         OneColor
     }
 
+    public enum PostEffect
+    {
+        None,
+        Noise,
+        FlowMap
+    }
+
+
     private static class Styles
     {
         readonly public static string basicColorText = "Basic color";
@@ -65,12 +73,18 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string zTestText = "Z Test";
         readonly public static string zCullMode = "Cull Mode";
         readonly public static string dissolveTipText = "Alpha dissolve receives custom data from particle system in TEXCOORD0.zw and MainTex.gb.";
+        readonly public static string postEffectText = "PostEffect";
         readonly public static string enableNoiseTextureText = "Enable noise texture";
         readonly public static string noiseTextureText = "Noise texture";
         readonly public static string enableNoiseUVchannelText = "Enable noise UV channel";
         readonly public static string noiseTextureEmissionText = "R: Emission";
         readonly public static string noiseTextureAlphaText = "G: Alpha";
         readonly public static string noiseTextureDissolveText = "B: Dissolve";
+
+        readonly public static string enableFlowMapUVchannelText = "Enable flowmap UV channel";
+        readonly public static string flowMapTextureText = "Flowmap texture";
+        readonly public static string flowMapSpeedText = "Speed";
+        readonly public static string flowMapIntensityText = "Intensity";
     }
 
     //------------------------------------------------------------------------//
@@ -383,6 +397,48 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         }
     }
 
+    private static string[] postEffectKeywords =
+    {
+        "NOISE_TEXTURE",
+        "FLOWMAP"
+    };
+
+
+    private static PostEffect getPostEffect(Material mat)
+    {
+        if (mat.IsKeywordEnabled(postEffectKeywords[0]))
+        {
+            return PostEffect.Noise;
+        }
+        else if (mat.IsKeywordEnabled(postEffectKeywords[1]))
+        {
+            return PostEffect.FlowMap;
+        }
+        return PostEffect.None;
+    }
+
+    private static void setPostEffect(Material mat, PostEffect col)
+    {
+        foreach (string kw in postEffectKeywords)
+        {
+            mat.DisableKeyword(kw);
+        }
+
+        switch (col)
+        {
+            case PostEffect.None:
+                break;
+            case PostEffect.Noise:
+                mat.EnableKeyword(postEffectKeywords[0]);
+                break;
+            case PostEffect.FlowMap:
+                mat.EnableKeyword(postEffectKeywords[1]);
+                break;
+        }
+    }
+
+
+
     private static bool getDissolve(Material mat)
     {
         return mat.IsKeywordEnabled(dissolveKeywords[1]);
@@ -516,7 +572,19 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             materialEditor.ShaderProperty(mp_emissionSaturation, Styles.emissionSaturationText);
             materialEditor.ShaderProperty(mp_opacitySaturation, Styles.opacitySaturationText);
 
-            if (featureSet(mp_enableNoiseTexture, Styles.enableNoiseTextureText))
+
+            EditorGUILayout.BeginVertical(editorSkin.customStyles[2]);
+            PostEffect post = getPostEffect(material);
+            PostEffect npost = (PostEffect)EditorGUILayout.EnumPopup(Styles.postEffectText, post);
+            EditorGUILayout.EndVertical();
+
+            if (post != npost)
+            {
+                setPostEffect(material, npost);
+            }
+
+
+            if (npost == PostEffect.Noise)
             {
                 //                if (featureSet(mp_enableNoiseUVChannel, Styles.enableNoiseUVchannelText))
                 materialEditor.ShaderProperty(mp_enableNoiseUVChannel, Styles.enableNoiseUVchannelText);
@@ -541,6 +609,24 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
                 materialEditor.ShaderProperty(mp_enableNoiseTextureEmission, Styles.noiseTextureEmissionText);
                 materialEditor.ShaderProperty(mp_enableNoiseTextureAlpha, Styles.noiseTextureAlphaText);
                 materialEditor.ShaderProperty(mp_enableNoiseTextureDissolve, Styles.noiseTextureDissolveText);
+            }
+            else if (npost == PostEffect.FlowMap)
+            {
+                materialEditor.ShaderProperty(mp_enableNoiseUVChannel, Styles.enableFlowMapUVchannelText);
+                if (mp_enableNoiseUVChannel.floatValue > 0.0f)
+                {
+                    materialEditor.TextureProperty(mp_noiseTex, Styles.flowMapTextureText, true);
+                }
+                else
+                {
+                    materialEditor.TextureProperty(mp_noiseTex, Styles.flowMapTextureText, false);
+                }
+
+                Vector4 tem = mp_noisePanning.vectorValue;
+                tem.x = EditorGUILayout.FloatField(Styles.flowMapSpeedText, tem.x);
+                tem.y = EditorGUILayout.FloatField(Styles.flowMapIntensityText, tem.y);
+                //            materialEditor.ShaderProperty(mp_panning, Styles.panningText);
+                mp_noisePanning.vectorValue = tem;
             }
         }
         else
