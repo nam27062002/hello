@@ -1591,7 +1591,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		bool hit_Bottom = false;
 
 		Vector3 bottomSensor  = m_sensor.bottom.position;
-        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL);
+        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
 
 		if (hit_Bottom) {
 			m_height = _bottomHit.distance * m_transform.localScale.y;

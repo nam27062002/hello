@@ -344,6 +344,7 @@ public class DragonMotionDino : DragonMotion {
         bool hit_Bottom = false;
 
         Vector3 bottomSensor  = m_sensor.bottom.position;
+        bottomSensor.z = 0;
         hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
 
         if (hit_Bottom) {
