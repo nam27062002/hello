@@ -15,6 +15,7 @@ public class DragonMotionDino : DragonMotion {
     public float m_snapHeight = 1.6f;
     public float m_snapHisteresis = 0.8f;
     public bool m_grounded = false;
+    public float m_maxWalkAngle = 20;
 
     
     [Range(0,100.0f)]
@@ -123,33 +124,6 @@ public class DragonMotionDino : DragonMotion {
         {
              m_lastFeetValidPosition = pos;
         }
-
-        /*
-        if ( m_state != State.Intro)
-        {
-            Vector3 pos = m_transform.position;
-            pos.z = 0f;
-            Vector3 bottomPos = m_sensor.bottom.position + Vector3.down * m_snapHeight / m_transform.localScale.y;
-            bottomPos.z = 0;
-            if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_transform.position, bottomPos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
-            {
-                Vector3 diff = pos - bottomPos;
-                float dist = diff.magnitude;
-                float dot1 = Vector3.Dot(m_raycastHit.normal, diff.normalized);
-                float c1 = (dist - m_raycastHit.distance) * dot1;
-                float angle = Vector3.Angle(m_raycastHit.normal, Vector3.up);
-                float cos = Mathf.Cos(Mathf.Deg2Rad * angle);
-                float h = c1 / cos;
-                float upDistance = h;
-                pos.y += upDistance;
-                if (float.IsNaN(pos.y))
-                    Debug.Log("NAN!!!!!");
-                m_impulse.y = 0;
-            }
-            
-            m_transform.position = pos;
-        }
-        */
     }
 
     protected void CustomIdleMovement( float delta )
@@ -158,7 +132,7 @@ public class DragonMotionDino : DragonMotion {
         CustomCheckGround( out m_raycastHit );
         if ( m_height < m_adaptHeight )
         {
-            if ( m_height < m_snapHeight /*&& !AngleIsTooMuch( m_lastGroundHitNormal )*/)
+            if ( m_height < m_snapHeight && !AngleIsTooMuch( m_lastGroundHitNormal ))
             {
                 if (!m_grounded)
                 {
@@ -218,7 +192,7 @@ public class DragonMotionDino : DragonMotion {
         CustomCheckGround( out m_raycastHit );
         if ( m_height < m_adaptHeight )
         {
-            if ( m_height < m_snapHeight /*&& !AngleIsTooMuch( m_lastGroundHitNormal )*/)
+            if ( m_height < m_snapHeight && !AngleIsTooMuch( m_lastGroundHitNormal ))
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -370,7 +344,7 @@ public class DragonMotionDino : DragonMotion {
         bool hit_Bottom = false;
 
         Vector3 bottomSensor  = m_sensor.bottom.position;
-        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL);
+        hit_Bottom = Physics.Linecast(bottomSensor, bottomSensor + distance, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
 
         if (hit_Bottom) {
             m_height = _bottomHit.distance * m_transform.localScale.y;
@@ -387,8 +361,7 @@ public class DragonMotionDino : DragonMotion {
     public bool AngleIsTooMuch( Vector3 _normal )
     {
         float angle = _normal.ToAngleDegreesXY();
-        float maxAngle = 45.0f;
-        return angle > (180 - maxAngle) || angle < maxAngle;
+        return (angle > 180 - m_maxWalkAngle) || (angle < m_maxWalkAngle);
     }
     
     public void UpdatePowerAreas()
