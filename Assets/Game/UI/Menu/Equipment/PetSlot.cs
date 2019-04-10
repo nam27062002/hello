@@ -198,8 +198,7 @@ public class PetSlot : MonoBehaviour {
 					// Animate?
 					if(_animate) {
 						// Toggle the OUT anim
-						MenuPetPreview pet = m_petLoader.petInstance.GetComponent<MenuPetPreview>();
-						pet.SetAnim(MenuPetPreview.Anim.OUT);
+						m_petLoader.petInstance.SetAnim(MenuPetPreview.Anim.OUT);
 						// Program a delayed destruction of the pet preview (to give some time to see the anim)
 						m_unloadPetCoroutine = UbiBCN.CoroutineManager.DelayedCall(m_petLoader.Unload, 0.3f, true); // [AOC] MAGIC NUMBERS!! More or less synced with the animation
 					} else {

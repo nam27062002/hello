@@ -4,7 +4,7 @@
 // Created by Alger Ortín Castellví on 09/04/2019.
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
-//#define RENDER_TEXTURE
+#define RENDER_TEXTURE
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -12,6 +12,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -20,7 +21,7 @@ using System.Collections;
 /// Individual layout for a specific share screen.
 /// Can be inherited for setups requiring special initializations.
 /// </summary>
-public abstract class IShareScreenSetup : MonoBehaviour {
+public abstract class IShareScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -36,6 +37,7 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 	[SerializeField] private Camera m_camera = null;
 	[SerializeField] private RawImage m_qrCodeHolder = null;
 	[SerializeField] private Localizer m_callToActionText = null;
+	[SerializeField] private DOTweenAnimation m_flashFX = null;
 	[Space]
 	[SerializeField] private Texture2D m_qrLogoTex = null;
 
@@ -44,6 +46,9 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 	protected string m_url = null;
 	protected Texture2D m_qrCodeTex = null;
 	protected Texture2D m_pictureTex = null;
+#if RENDER_TEXTURE
+	private RenderTexture m_renderTex = null;
+#endif
 
 	// Internal logic
 	protected Coroutine m_coroutine = null;
@@ -62,16 +67,31 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 		m_coroutine = StartCoroutine(TakePictureInternal());
 	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	protected virtual void OnDestroy() {
+		// Remove ourselves from the manager
+		ShareScreensManager.RemoveScreen(this);
+
+#if RENDER_TEXTURE
+		// Clear render texture
+		DestroyImmediate(m_renderTex);
+		m_renderTex = null;
+#endif
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize using a specific location definition.
 	/// </summary>
-	/// <param name="_shareLocationDef">The location where the setup has been triggered.</param>
-	protected void SetDefinition(DefinitionNode _shareLocationDef) {
-		// Store location
-		m_shareLocationDef = _shareLocationDef;
+	/// <param name="_shareLocationSku">The location where the setup has been triggered.</param>
+	protected void SetLocation(string _shareLocationSku) {
+		// Get location definition
+		m_shareLocationDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHARE_LOCATIONS, _shareLocationSku);
+		Debug.Assert(m_shareLocationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!"); 
 
 		// Figure out URL to use
 		if(PlatformUtils.Instance.IsChina()) {
@@ -86,7 +106,7 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 				m_url, QR_SIZE,
 				Color.black, Color.white,
 				QRGenerator.ErrorTolerance.PERCENT_30,
-				m_qrLogoTex, QR_SIZE * 0.3f
+				m_qrLogoTex, 0.3f
 			);
 			m_qrCodeHolder.texture = m_qrCodeTex;
 			m_qrCodeHolder.color = Color.white; // Remove any placeholder tint
@@ -138,21 +158,24 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
 		// [AOC] We have 2 options here Texture.ReadPixels() or RenderTexture
 #if RENDER_TEXTURE
+		// If texture is not created, do it now
+		if(m_renderTex == null) {
+			m_renderTex = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
+		}
+
 		// Create a temporal render texture and render the camera viewport to it
-		RenderTexture rt = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
-		//m_camera.forceIntoRenderTexture = true;	// Needed?
-		m_camera.targetTexture = rt;
+		m_camera.forceIntoRenderTexture = true;	// Needed?
+		m_camera.targetTexture = m_renderTex;
 		m_camera.Render();
-		RenderTexture.active = rt;
+		RenderTexture.active = m_renderTex;
 
 		// Read pixels from the render texture to our saved texture 2D
-		m_pictureTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+		m_pictureTex.ReadPixels(new Rect(0, 0, m_renderTex.width, m_renderTex.height), 0, 0);
 		m_pictureTex.Apply();
 
 		// Clean up
 		m_camera.targetTexture = null;
 		RenderTexture.active = null; // added to avoid errors 
-		DestroyImmediate(rt);
 #else
 		// Compute which area of the screen to read
 		// Fit photo size into screen size
@@ -193,8 +216,8 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 		for(int x = 0; x < targetTex.width; ++x) {
 			for(int y = 0; y < targetTex.height; ++y) {
 				// Figure out matching position in source texture
-				sourcePos.y = Mathf.InverseLerp(0, targetTex.width, x) * sourceTex.width;
-				sourcePos.x = Mathf.InverseLerp(0, targetTex.height, y) * sourceTex.height;
+				sourcePos.y = Mathf.InverseLerp(0, targetTex.width, x) * (sourceTex.width - 1);
+				sourcePos.x = Mathf.InverseLerp(0, targetTex.height, y) * (sourceTex.height - 1);
 
 				// Get matching color in the source texture
 				pixel = sourceTexData[(int)((sourcePos.y * sourceTex.width) + sourcePos.x)];
@@ -210,11 +233,19 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 #endif
 
 		// Launch Flash FX! (AFTER the screenshot, of course! :D)
-		//m_flashFX.gameObject.SetActive(true);
-		//m_flashFX.DORestart();
+		if(m_flashFX != null) {
+			m_flashFX.gameObject.SetActive(true);
+			m_flashFX.DORestart();
+		}
 
 		// Give it some time
 		yield return new WaitForSeconds(0.25f);
+
+		// Clear coroutine reference
+		m_coroutine = null;
+
+		// Disable ourselves
+		this.gameObject.SetActive(false);
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();

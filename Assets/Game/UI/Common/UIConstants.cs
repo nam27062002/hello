@@ -173,6 +173,11 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 	public static string HD_LOGO_PATH {
 		get { return instance.m_hdLogoPath; }
 	}
+
+	[SerializeField] private string m_shareScreensPath = "UI/Social/";
+	public static string SHARE_SCREENS_PATH {
+		get { return instance.m_shareScreensPath; }
+	}
 	#endregion
 
 	// -------------------------------------------------------------------------

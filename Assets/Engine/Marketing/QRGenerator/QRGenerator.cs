@@ -204,6 +204,9 @@ public class QRGenerator {
 			// Some aux vars
 			Vector2 sourceLogoSize = new Vector2(_logo.width, _logo.height);
 
+			// Make sure provided logo size is valid!
+			_logoSize = Mathf.Clamp01(_logoSize);
+
 			// Find out final logo size adapted to our QR code texture
 			// Keep aspect ratio (if logo is not squared)
 			float logoAR = (float)_logo.width / (float)_logo.height;

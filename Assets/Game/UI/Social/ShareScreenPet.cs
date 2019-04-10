@@ -19,7 +19,7 @@ using System.Collections;
 /// <summary>
 /// Individual layout for a pet share screen.
 /// </summary>
-public class ShareScreenSetupPet : IShareScreenSetup {
+public class ShareScreenPet : IShareScreen {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -33,6 +33,8 @@ public class ShareScreenSetupPet : IShareScreenSetup {
 	[SerializeField] private Localizer m_petNameText = null;
 	[SerializeField] private MenuPetLoader m_petLoader = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
+	[Space]
+	[SerializeField] private RenderQueueSetter m_renderQueueSetter = null;
 
 	// Internal references
 	protected DefinitionNode m_petDef = null;
@@ -40,9 +42,16 @@ public class ShareScreenSetupPet : IShareScreenSetup {
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
-	public void Init(DefinitionNode _locationDef, Camera _refCamera, string _petSku, Transform _refTransform) {
-		// Set definition and camera
-		SetDefinition(_locationDef);
+	/// <summary>
+	/// Initialize this screen with given data.
+	/// </summary>
+	/// <param name="_shareLocationSku">Location where this screen is triggered.</param>
+	/// <param name="_refCamera">Reference camera. Its properties will be copied to the scene's camera.</param>
+	/// <param name="_petSku">Pet to display.</param>
+	/// <param name="_refTransform">Reference transform for the pet preview.</param>
+	public void Init(string _shareLocationSku, Camera _refCamera, string _petSku, Transform _refTransform) {
+		// Set location and camera
+		SetLocation(_shareLocationSku);
 		SetRefCamera(_refCamera);
 
 		// Store pet definition and some other data
@@ -61,6 +70,7 @@ public class ShareScreenSetupPet : IShareScreenSetup {
 			}
 
 			// Tint by rarity?
+			/*
 #if RARITY_GRADIENT
 			Gradient4 rarityGradient = UIConstants.GetRarityTextGradient(rarity);
 			m_titleText.text.colorGradient = new TMPro.VertexGradient(
@@ -72,9 +82,10 @@ public class ShareScreenSetupPet : IShareScreenSetup {
 			m_titleText.text.enableVertexGradient = true;
 			m_titleText.text.color = Color.white;
 #else
-			m_rarityText.text.enableVertexGradient = false;
-			m_rarityText.text.color = UIConstants.GetRarityColor(rarity);
+			m_titleText.text.enableVertexGradient = false;
+			m_titleText.text.color = UIConstants.GetRarityColor(rarity);
 #endif
+			*/
 		}
 
 		// Pet name
@@ -87,8 +98,16 @@ public class ShareScreenSetupPet : IShareScreenSetup {
 			// Load target pet
 			m_petLoader.Load(_petSku);
 
+			// Reapply render queues
+			m_renderQueueSetter.Apply();
+
 			// Rotate pet preview to replicate the reference transform
-			m_petLoader.transform.localRotation = _refTransform.localRotation;
+			// m_petLoader.transform.localRotation = _refTransform.localRotation;
+
+			// Start the animation at a random frame (usually first frame looks shitty :s)
+			Animator anim = m_petLoader.petInstance.animator;
+			AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);	//could replace 0 by any other animation layer index
+			anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
 		}
 
 		// Power Info
