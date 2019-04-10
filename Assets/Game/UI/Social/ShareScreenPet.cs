@@ -19,7 +19,7 @@ using System.Collections;
 /// <summary>
 /// Individual layout for a pet share screen.
 /// </summary>
-public class ShareScreenSetupPet : IShareScreenSetup {
+public class ShareScreenPet : IShareScreen {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//

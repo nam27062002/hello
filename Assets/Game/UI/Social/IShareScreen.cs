@@ -12,6 +12,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using DG.Tweening;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -20,7 +21,7 @@ using System.Collections;
 /// Individual layout for a specific share screen.
 /// Can be inherited for setups requiring special initializations.
 /// </summary>
-public abstract class IShareScreenSetup : MonoBehaviour {
+public abstract class IShareScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -36,6 +37,7 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 	[SerializeField] private Camera m_camera = null;
 	[SerializeField] private RawImage m_qrCodeHolder = null;
 	[SerializeField] private Localizer m_callToActionText = null;
+	[SerializeField] private DOTweenAnimation m_flashFX = null;
 	[Space]
 	[SerializeField] private Texture2D m_qrLogoTex = null;
 
@@ -232,5 +234,32 @@ public abstract class IShareScreenSetup : MonoBehaviour {
 	virtual protected string GetPrewrittenCaption() {
 		if(m_shareLocationDef == null) return string.Empty;
 		return m_shareLocationDef.GetLocalized("tidPrewrittenCaption", m_url);	// URL is always a parameter
+	}
+
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Create a new instance of the share screen setup for the given location.
+	/// </summary>
+	/// <returns>The newly created instance.</returns>
+	/// <param name="_shareLocationSku">Share location sku.</param>
+	public static IShareScreen InstantiateShareSetup(string _shareLocationSku) {
+		// Get location definition
+		DefinitionNode locationDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHARE_LOCATIONS, _shareLocationSku);
+		Debug.Assert(locationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!");
+
+		// Load prefab
+		GameObject prefab = Resources.Load<GameObject>(UIConstants.SHARE_SCREENS_PATH + locationDef.GetAsString("prefab"));
+		Debug.Assert(prefab != null, "Share Setup Prefab for " + _shareLocationSku + " couldn't be found!");
+
+		// Create a new instance
+		// Put it on the root of the scene, since the setups have their own camera and will be positioned later during the setup
+		GameObject newInstance = Instantiate<GameObject>(prefab);
+
+		// Grab the share screen setup component and return it!
+		IShareScreen setup = newInstance.GetComponent<IShareScreen>();
+		Debug.Assert(setup != null, "Share Scren Setup component couldn't be found in the prefab " + prefab.name);
+		return setup;
 	}
 }
