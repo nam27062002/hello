@@ -42,8 +42,13 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 				if(kServerConfig != null) {
 					sm_areCheatsEnabled = kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION;
 				}
-			}
-
+            }
+#if UNITY_EDITOR            
+            else
+            {
+                sm_areCheatsEnabled = true;
+            }
+#endif
             sm_initialized = true;
         }
     }    
