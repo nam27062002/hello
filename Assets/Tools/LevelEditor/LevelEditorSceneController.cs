@@ -49,7 +49,10 @@ namespace LevelEditor {
 
             // Initialize some required managers
 			ContentManager.InitContent(true, false);
-			SpawnerManager.CreateInstance();
+
+            FirePropagationManager.CreateInstance();
+            BubbledEntitySystem.CreateInstance();
+            SpawnerManager.CreateInstance();
 
             UsersManager.CreateInstance();
 

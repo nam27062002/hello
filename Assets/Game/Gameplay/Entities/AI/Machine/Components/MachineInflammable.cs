@@ -75,18 +75,24 @@ namespace AI {
 		}
 
 		public void Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
-			// raise flags
-			m_machine.SetSignal(Signals.Type.Burning, true);
+            if (m_machine.IsBubbled()) {
+                BubbledEntitySystem.RemoveEntity(m_entity);
+            }
+
+            // raise flags
+            m_machine.SetSignal(Signals.Type.Burning, true);
 			m_machine.SetSignal(Signals.Type.Panic, true);
 
 			for (int i = 0; i < m_disableOnBurn.Count; i++)
 				m_disableOnBurn[i].SetActive(false);
+
 			// Initialize some death info
 			m_entity.onDieStatus.source = _source;
 			m_entity.onDieStatus.reason = IEntity.DyingReason.BURNED;
             
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
             m_burnedColor = fireColorType;
+
 			if (m_pilot != null) {
 				m_entity.onDieStatus.isPressed_ActionA = m_pilot.IsActionPressed(Pilot.Action.Button_A);
 				m_entity.onDieStatus.isPressed_ActionB = m_pilot.IsActionPressed(Pilot.Action.Button_B);

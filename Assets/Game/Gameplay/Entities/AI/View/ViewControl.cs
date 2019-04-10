@@ -68,6 +68,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     [SeparatorAttribute("Freeze Particle")]
     [SerializeField] private bool m_useFreezeParticle = false;
     [SerializeField] private float m_freezeParticleScale = 1.0f;
+    public float freezeParticleScale { get { return m_freezeParticleScale; } }
 
     [SeparatorAttribute("In Love")]
     [SerializeField] private bool m_useMoveAnimInLove = false;
