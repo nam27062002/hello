@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Specialization of the map marker for the dragon icon.
 /// </summary>
-public class DragonMapMarker : MapMarker {
+public class DragonMapMarker : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -53,7 +53,7 @@ public class DragonMapMarker : MapMarker {
 
 		// Snap to viewport bounds!
 		// Reset marker rotation to properly compute bounds
-		Transform markerTransform = GetMarkerTransform();
+		Transform markerTransform = this.transform;//GetMarkerTransform();
 		Vector3 targetPos = markerTransform.position;
 		Quaternion rotationBackup = markerTransform.rotation;
 		markerTransform.rotation = Quaternion.identity;
