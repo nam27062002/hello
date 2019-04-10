@@ -106,8 +106,15 @@ public class ShareScreenPet : IShareScreen {
 
 			// Start the animation at a random frame (usually first frame looks shitty :s)
 			Animator anim = m_petLoader.petInstance.animator;
-			AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);	//could replace 0 by any other animation layer index
-			anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
+			/*
+			AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);  //could replace 0 by any other animation layer index
+			//anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
+			AnimatorClipInfo clipInfo = anim.GetCurrentAnimatorClipInfo(0)[0];
+			int numFrames = (int)(clipInfo.clip.length * clipInfo.clip.frameRate);
+			Debug.Log(Color.yellow.Tag(numFrames.ToString()));
+			anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, 2));	// Go to frame #2
+			*/
+			anim.enabled = false;		
 		}
 
 		// Power Info
