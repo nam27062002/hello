@@ -4,7 +4,7 @@
 // Created by Alger Ortín Castellví on 09/04/2019.
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
-//#define RENDER_TEXTURE
+#define RENDER_TEXTURE
 
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
@@ -46,6 +46,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected string m_url = null;
 	protected Texture2D m_qrCodeTex = null;
 	protected Texture2D m_pictureTex = null;
+#if RENDER_TEXTURE
+	private RenderTexture m_renderTex = null;
+#endif
 
 	// Internal logic
 	protected Coroutine m_coroutine = null;
@@ -64,16 +67,31 @@ public abstract class IShareScreen : MonoBehaviour {
 		m_coroutine = StartCoroutine(TakePictureInternal());
 	}
 
+	/// <summary>
+	/// Destructor.
+	/// </summary>
+	protected virtual void OnDestroy() {
+		// Remove ourselves from the manager
+		ShareScreensManager.RemoveScreen(this);
+
+#if RENDER_TEXTURE
+		// Clear render texture
+		DestroyImmediate(m_renderTex);
+		m_renderTex = null;
+#endif
+	}
+
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize using a specific location definition.
 	/// </summary>
-	/// <param name="_shareLocationDef">The location where the setup has been triggered.</param>
-	protected void SetDefinition(DefinitionNode _shareLocationDef) {
-		// Store location
-		m_shareLocationDef = _shareLocationDef;
+	/// <param name="_shareLocationSku">The location where the setup has been triggered.</param>
+	protected void SetLocation(string _shareLocationSku) {
+		// Get location definition
+		m_shareLocationDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHARE_LOCATIONS, _shareLocationSku);
+		Debug.Assert(m_shareLocationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!"); 
 
 		// Figure out URL to use
 		if(PlatformUtils.Instance.IsChina()) {
@@ -88,7 +106,7 @@ public abstract class IShareScreen : MonoBehaviour {
 				m_url, QR_SIZE,
 				Color.black, Color.white,
 				QRGenerator.ErrorTolerance.PERCENT_30,
-				m_qrLogoTex, QR_SIZE * 0.3f
+				m_qrLogoTex, 0.3f
 			);
 			m_qrCodeHolder.texture = m_qrCodeTex;
 			m_qrCodeHolder.color = Color.white; // Remove any placeholder tint
@@ -140,21 +158,24 @@ public abstract class IShareScreen : MonoBehaviour {
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
 		// [AOC] We have 2 options here Texture.ReadPixels() or RenderTexture
 #if RENDER_TEXTURE
+		// If texture is not created, do it now
+		if(m_renderTex == null) {
+			m_renderTex = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
+		}
+
 		// Create a temporal render texture and render the camera viewport to it
-		RenderTexture rt = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
-		//m_camera.forceIntoRenderTexture = true;	// Needed?
-		m_camera.targetTexture = rt;
+		m_camera.forceIntoRenderTexture = true;	// Needed?
+		m_camera.targetTexture = m_renderTex;
 		m_camera.Render();
-		RenderTexture.active = rt;
+		RenderTexture.active = m_renderTex;
 
 		// Read pixels from the render texture to our saved texture 2D
-		m_pictureTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+		m_pictureTex.ReadPixels(new Rect(0, 0, m_renderTex.width, m_renderTex.height), 0, 0);
 		m_pictureTex.Apply();
 
 		// Clean up
 		m_camera.targetTexture = null;
 		RenderTexture.active = null; // added to avoid errors 
-		DestroyImmediate(rt);
 #else
 		// Compute which area of the screen to read
 		// Fit photo size into screen size
@@ -195,8 +216,8 @@ public abstract class IShareScreen : MonoBehaviour {
 		for(int x = 0; x < targetTex.width; ++x) {
 			for(int y = 0; y < targetTex.height; ++y) {
 				// Figure out matching position in source texture
-				sourcePos.y = Mathf.InverseLerp(0, targetTex.width, x) * sourceTex.width;
-				sourcePos.x = Mathf.InverseLerp(0, targetTex.height, y) * sourceTex.height;
+				sourcePos.y = Mathf.InverseLerp(0, targetTex.width, x) * (sourceTex.width - 1);
+				sourcePos.x = Mathf.InverseLerp(0, targetTex.height, y) * (sourceTex.height - 1);
 
 				// Get matching color in the source texture
 				pixel = sourceTexData[(int)((sourcePos.y * sourceTex.width) + sourcePos.x)];
@@ -212,11 +233,19 @@ public abstract class IShareScreen : MonoBehaviour {
 #endif
 
 		// Launch Flash FX! (AFTER the screenshot, of course! :D)
-		//m_flashFX.gameObject.SetActive(true);
-		//m_flashFX.DORestart();
+		if(m_flashFX != null) {
+			m_flashFX.gameObject.SetActive(true);
+			m_flashFX.DORestart();
+		}
 
 		// Give it some time
 		yield return new WaitForSeconds(0.25f);
+
+		// Clear coroutine reference
+		m_coroutine = null;
+
+		// Disable ourselves
+		this.gameObject.SetActive(false);
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
@@ -234,32 +263,5 @@ public abstract class IShareScreen : MonoBehaviour {
 	virtual protected string GetPrewrittenCaption() {
 		if(m_shareLocationDef == null) return string.Empty;
 		return m_shareLocationDef.GetLocalized("tidPrewrittenCaption", m_url);	// URL is always a parameter
-	}
-
-	//------------------------------------------------------------------------//
-	// STATIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Create a new instance of the share screen setup for the given location.
-	/// </summary>
-	/// <returns>The newly created instance.</returns>
-	/// <param name="_shareLocationSku">Share location sku.</param>
-	public static IShareScreen InstantiateShareSetup(string _shareLocationSku) {
-		// Get location definition
-		DefinitionNode locationDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.SHARE_LOCATIONS, _shareLocationSku);
-		Debug.Assert(locationDef != null, "Share Location Definition for " + _shareLocationSku + " couldn't be found!");
-
-		// Load prefab
-		GameObject prefab = Resources.Load<GameObject>(UIConstants.SHARE_SCREENS_PATH + locationDef.GetAsString("prefab"));
-		Debug.Assert(prefab != null, "Share Setup Prefab for " + _shareLocationSku + " couldn't be found!");
-
-		// Create a new instance
-		// Put it on the root of the scene, since the setups have their own camera and will be positioned later during the setup
-		GameObject newInstance = Instantiate<GameObject>(prefab);
-
-		// Grab the share screen setup component and return it!
-		IShareScreen setup = newInstance.GetComponent<IShareScreen>();
-		Debug.Assert(setup != null, "Share Scren Setup component couldn't be found in the prefab " + prefab.name);
-		return setup;
 	}
 }

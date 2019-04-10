@@ -42,9 +42,9 @@ public class FlowManager : UbiBCN.SingletonMonoBehaviour<FlowManager> {
 		// Skip if target scene has already been set
 		if(GameSceneManager.nextScene == _nextScene) return;
 
-		// Make sure we don't carry any cached popup into the game scene
+		// Make sure we don't carry any cached stuff into the game scene
 		PopupManager.Clear(false);
-
+		ShareScreensManager.Clear();
 		FrozenMaterialManager.CleanFrozenMaterials();
 
 		// Change scene
