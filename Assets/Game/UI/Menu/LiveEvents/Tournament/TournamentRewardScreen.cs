@@ -311,8 +311,10 @@ public class TournamentRewardScreen : MonoBehaviour {
 
 				m_state = State.FLOW_NOT_STARTED;
 
-				// Go back to main screen
-				InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
+                // Go back to main screen
+                SceneController.SetMode(SceneController.Mode.DEFAULT);
+                HDLiveDataManager.instance.SwitchToQuest();
+                InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION);
 			} break;
 		}
 
