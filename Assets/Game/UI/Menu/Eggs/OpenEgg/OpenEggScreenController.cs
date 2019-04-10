@@ -284,6 +284,24 @@ public class OpenEggScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Share button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		// Only care if reward is a pet (shouldn't happen)
+		if(m_scene.currentReward.type != Metagame.RewardPet.TYPE_CODE) return;
+
+		// Get the share screen instance and initialize it with current data
+		ShareScreenPet shareScreen = ShareScreensManager.GetShareScreen("pet_acquired") as ShareScreenPet;
+		shareScreen.Init(
+			"pet_acquired", 
+			InstanceManager.menuSceneController.mainCamera, 
+			m_scene.currentReward.sku,
+			m_rewardDragController.target
+		);
+		shareScreen.TakePicture();
+	}
+
+	/// <summary>
 	/// The menu screen change animation is about to start.
 	/// </summary>
 	/// <param name="_from">Screen we come from.</param>
