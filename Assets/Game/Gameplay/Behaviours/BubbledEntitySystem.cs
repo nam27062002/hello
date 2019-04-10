@@ -47,6 +47,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
         private List<Transform> m_bubbles = new List<Transform>();
         private List<float> m_bubblesScale = new List<float>();
+        private List<float> m_bubblesSpeed = new List<float>();
         private List<float> m_bubblesTimer = new List<float>();
 
 
@@ -82,6 +83,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
                 m_bubbles.Insert(0, bubble);
                 m_bubblesScale.Insert(0, bubbleScale);
+                m_bubblesSpeed.Insert(0, bubbleScale);
                 m_bubblesTimer.Insert(0, 0f);
 
                 m_count++;
@@ -110,6 +112,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
                     m_bubbles.RemoveAt(i);
                     m_bubblesScale.RemoveAt(i);
+                    m_bubblesSpeed.RemoveAt(i);
                     m_bubblesTimer.RemoveAt(i);
 
                     m_count--;
@@ -119,7 +122,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
 
             for (int i = 0; i < m_count; i++) {
-                m_bubblesTimer[i] += dt * 2f; //speed up things a little
+                m_bubblesTimer[i] += dt * 4f * m_bubblesSpeed[i]; //speed up things a little
             }
 
             for (int i = 0; i < m_count; i++) {
@@ -139,6 +142,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
         private List<Transform> m_bubbles = new List<Transform>();
         private List<float> m_bubblesScale = new List<float>();
+        private List<float> m_bubblesSpeed = new List<float>();
         private List<float> m_bubblesTimer = new List<float>();
 
         public EndSystem() {
@@ -156,6 +160,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
             m_bubbles.Insert(0, _bubble);
             m_bubblesScale.Insert(0, _bubble.localScale.x);
+            m_bubblesSpeed.Insert(0, _bubble.localScale.x);
             m_bubblesTimer.Insert(0, 0f);
 
             m_count++;
@@ -173,6 +178,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
                     m_bubbles.RemoveAt(i);
                     m_bubblesScale.RemoveAt(i);
+                    m_bubblesSpeed.RemoveAt(i);
                     m_bubblesTimer.RemoveAt(i);
 
                     m_count--;
@@ -182,7 +188,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
             float dt = Time.deltaTime;
 
             for (int i = 0; i < m_count; i++) {
-                m_bubblesTimer[i] += dt * 3f; //speed up things a little bit more
+                m_bubblesTimer[i] += dt * 5f * m_bubblesSpeed[i]; //speed up things a little bit more
             }
 
             for (int i = 0; i < m_count; i++) {

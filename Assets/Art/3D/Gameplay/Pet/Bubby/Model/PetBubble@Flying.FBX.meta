@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6840e008525f642f2b3d2b871152b11a
+guid: 0d1d62ba8ff5941e7889cd3e9b1fcd3e
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -35,7 +35,7 @@ ModelImporter:
     400026: Pet_Tail4
     400028: Pet_Tail5
     400030: //RootNode
-    7400000: Take 001
+    7400000: Flying
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -63,7 +63,35 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Flying
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -93,7 +121,7 @@ ModelImporter:
     tangentImportMode: 3
     normalCalculationMode: 4
   importAnimation: 1
-  copyAvatar: 0
+  copyAvatar: 1
   humanDescription:
     serializedVersion: 2
     human: []
@@ -110,7 +138,8 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 9b6e67a398d8d4430a2c73b4c4524e07,
+    type: 3}
   animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
