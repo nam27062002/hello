@@ -160,13 +160,20 @@ public abstract class IShareScreen : MonoBehaviour {
 		RenderTexture renderTex = ShareScreensManager.renderTex;
 		Texture2D pictureTex = ShareScreensManager.captureTex;
 
-		// Create a temporal render texture and make it the active one so the camera renders to it
-		//m_camera.forceIntoRenderTexture = true;	// Needed?
+		// Use a temporal render texture and make the camera render to it
 		m_camera.targetTexture = renderTex;
 		RenderTexture currentRT = RenderTexture.active; // Backup
 		RenderTexture.active = renderTex;
 
-		// Render the camera viewport to the render texture
+		// [AOC] Because we want the UI to render on top of the 3D background, we'll do 2 render passes changing the camera layer mask
+		// 1st pass: Background
+		m_camera.clearFlags = CameraClearFlags.Color;
+		m_camera.cullingMask = LayerMask.GetMask("Ground");
+		m_camera.Render();
+
+		// 2nd pass: UI
+		m_camera.clearFlags = CameraClearFlags.Depth;
+		m_camera.cullingMask = LayerMask.GetMask("UI");
 		m_camera.Render();
 
 		// Read pixels from the render texture to our saved texture 2D
