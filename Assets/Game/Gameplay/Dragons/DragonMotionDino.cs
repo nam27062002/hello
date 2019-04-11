@@ -38,6 +38,7 @@ public class DragonMotionDino : DragonMotion {
     public float m_currentKillArea = 2;
     public float m_currentStunArea = 2;
     protected int m_powerLevel = 1;
+    public int powerLevel { get { return m_powerLevel; } }
     protected float m_speedToKill;
     public float m_currentStepKillArea = 2;
     public float m_currentStepStunArea = 2;
@@ -47,6 +48,8 @@ public class DragonMotionDino : DragonMotion {
     private DragonTier m_tier = DragonTier.TIER_4;
 
     protected Vector3 m_lastFeetValidPosition;
+
+    protected DragonDinoAnimationEvents m_animEvents;
 
     protected override void Start()
     {
@@ -62,6 +65,8 @@ public class DragonMotionDino : DragonMotion {
         m_walkSpeed = m_walkSpeedByTier[(int)m_tier];
         UpdatePowerAreas();
         UpdateSpeedToKill();
+        
+        m_animEvents = GetComponentInChildren<DragonDinoAnimationEvents>();
     }
 
 
@@ -310,6 +315,7 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_speedToKill)
         {
+            m_animEvents.OnGroundStomp();
             StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
     }
@@ -326,6 +332,7 @@ public class DragonMotionDino : DragonMotion {
         // Check speed and head stomp!
         if ( m_powerLevel >= 3 && m_impulse.sqrMagnitude > m_speedToKill)
         {
+            m_animEvents.OnHeadButt(_point, _normal);
             StunAndKill(_point, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
     }
