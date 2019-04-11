@@ -12,7 +12,7 @@ namespace AI {
 
 
         [CreateAssetMenu(menuName = "Behaviour/Pet/Bubby Power")]
-		public class PetBubbyPower : StateComponent {
+		public class PetBubbyPower : StateComponent, IBroadcastListener {
 
 			[StateTransitionTrigger]
 			public const string onBubbyPowerEnd = "onBubbyPowerEnd";
@@ -21,6 +21,7 @@ namespace AI {
             private Entity[] m_entities;
             private float m_timer;
 
+            private ParticleHandler m_effectHandler;
 
             //------------------------------------------------------------------------
 
@@ -35,11 +36,39 @@ namespace AI {
             protected override void OnInitialise() {
                 m_data = m_pilot.GetComponentData<PetBubbyPowerData>();
                 m_entities = new Entity[255];
+
+                CreatePool();
+
+                // create a projectile from resources (by name) and save it into pool
+                Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+                Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+            }
+
+            void CreatePool() {
+                m_effectHandler = ParticleManager.CreatePool("FX_SeaHorsePower");
+            }
+
+            protected override void OnRemove() {
+                base.OnRemove();
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+                Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+            }
+
+            public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo) {
+                switch (eventType) {
+                    case BroadcastEventType.GAME_LEVEL_LOADED:
+                    case BroadcastEventType.GAME_AREA_ENTER: {
+                            CreatePool();
+                        }
+                        break;
+                }
             }
 
             protected override void OnEnter(State _oldState, object[] _param) {
                 m_pilot.PressAction(Pilot.Action.Button_A);
                 m_timer = m_data.powerDelay;
+
+                m_effectHandler.Spawn(null, m_machine.transform);   
             }
 
             protected override void OnExit(State _newState) {

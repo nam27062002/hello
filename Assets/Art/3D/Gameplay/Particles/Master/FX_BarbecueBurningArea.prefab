@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 4399095213670136}
   - component: {fileID: 198378779389360082}
   - component: {fileID: 199795628871785796}
+  - component: {fileID: 114433671500977190}
   m_Layer: 0
   m_Name: FX_BarbecueBurningArea
   m_TagString: Untagged
@@ -112,7 +113,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1225504615374342}
-  m_LocalRotation: {x: 0.30550084, y: 0.6744311, z: 0.6144201, w: 0.27258003}
+  m_LocalRotation: {x: -0.62379175, y: -0.31903827, z: -0.34648907, w: -0.62373376}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5176624, y: 1.5176624, z: 1.517663}
   m_Children: []
@@ -126,8 +127,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1755881932826678}
   m_LocalRotation: {x: 0.36169174, y: -0.6087755, z: -0.61901027, w: -0.33970276}
-  m_LocalPosition: {x: -0.2375071, y: 2.5480518, z: -4.143276}
-  m_LocalScale: {x: 1.0228087, y: 0.9480985, z: 0.9772113}
+  m_LocalPosition: {x: -206.53, y: 106.51, z: 0.0037947}
+  m_LocalScale: {x: 0.6659209, y: 0.6172793, z: 0.63623375}
   m_Children:
   - {fileID: 4075222028234696}
   - {fileID: 4390868861291282}
@@ -176,6 +177,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1225504615374342}
   m_Mesh: {fileID: 4300008, guid: 2731c97d78ead1743b2791fab5eda628, type: 3}
+--- !u!114 &114433671500977190
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1755881932826678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438cf31a59dc645398073c030faafc6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_scaleOrigin: 2
+  m_scale: 1
+  m_transform: {fileID: 0}
+  m_resetFirst: 0
+  m_scaleLifetime: 0
+  m_scaleAllChildren: 1
+  m_whenScale: 1
 --- !u!114 &114986183947097508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -248,7 +267,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 282735825
+  randomSeed: -991167198
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3609,7 +3628,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 2005027878
+  randomSeed: 1165665908
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6970,7 +6989,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1920377139
+  randomSeed: 813774926
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -188,7 +188,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
             float dt = Time.deltaTime;
 
             for (int i = 0; i < m_count; i++) {
-                m_bubblesTimer[i] += dt * 5f * m_bubblesSpeed[i]; //speed up things a little bit more
+                m_bubblesTimer[i] += dt * 6f * m_bubblesSpeed[i]; //speed up things a little bit more
             }
 
             for (int i = 0; i < m_count; i++) {
