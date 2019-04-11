@@ -182,8 +182,8 @@ public class AssetFinder : EditorWindow {
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
     /// </summary>
-    [MenuItem("Hungry Dragon/Tools/Material keyword reset")]
-    public static void MaterialkeywordReset()
+    [MenuItem("Hungry Dragon/Tools/Material keyword finder")]
+    public static void MaterialKeywordFinder()
     {
         Debug.Log("Obtaining material list");
 
@@ -191,19 +191,26 @@ public class AssetFinder : EditorWindow {
 
         Material[] materialList;
         FindAssetInContent<Material>(Directory.GetCurrentDirectory() + "\\Assets", out materialList);
+        int count = 0;
 
 //        AssetDatabase.StartAssetEditing();
         for (int c = 0; c <materialList.Length; c++)
         {
-            materialList[c].shaderKeywords = null;
-            EditorUtility.SetDirty(materialList[c]);
+            foreach (string keyword in materialList[c].shaderKeywords)
+            {
+                if (keyword == keywordToFind)
+                {
+                    count++;
+                    Debug.Log("Material: " + materialList[c].name + " Shader: " + materialList[c].shader.name);
+                }
+            }
         }
 
-        AssetDatabase.SaveAssets();
-
-        Debug.Log("list length: " + materialList.Length);
+        Debug.Log("Materials with keyword: " + keywordToFind + " : Found " + count + " materials");
 
     }
+
+    readonly public static string keywordToFind = "NOISE_TEXTURE";
 
     /// <summary>
     /// Resets all shader keywords stored in materials or material selection
