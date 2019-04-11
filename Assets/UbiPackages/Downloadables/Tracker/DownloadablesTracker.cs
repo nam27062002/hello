@@ -67,7 +67,8 @@ namespace Downloadables
             m_currentDownloadReachabilityAtStart = reachabilityAtStart;
             m_currentDownloadIsUpdate = isUpdate;
 
-            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, existingSizeAtStart, totalSize);
+            // The event is not tracked here because the end event might not be tracked if an error happens if that error type max limit was met. That's why we need to track
+            // the start event along with the end event in order to avoid a start event without the corresponding end event.            
         }
 
         public void NotifyDownloadEnd(float currentTime, string downloadableId, long existingSizeAtEnd,  long totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
@@ -128,10 +129,14 @@ namespace Downloadables
 
                 canLog = info[error] <= maxAttempts;
                 maxReached = info[error] >= maxAttempts;
-            }            
-
+            }
+            
             if (canLog)
             {
+                // The start event is tracked here in order to make sure there won't be any start event without its end eventnt.            
+                TrackActionStart((m_currentDownloadIsUpdate) ? EAction.Update : EAction.Download, downloadableId, m_currentDownloadExistingSizeAtStart, totalSize);
+                  
+               // End event          
                 EAction action = (m_currentDownloadIsUpdate) ? EAction.Update : EAction.Download;
                 int timeSpent = (int)(currentTime - m_currentDownloadTimeAtStart);                
                 TrackActionEnd(action, downloadableId, m_currentDownloadExistingSizeAtStart, existingSizeAtEnd, totalSize, timeSpent, 
@@ -139,7 +144,7 @@ namespace Downloadables
             }
 
             m_currentDownloadTimeAtStart = -1f;
-        }
+        }      
 
         public abstract void TrackActionStart(EAction action, string downloadableId, long existingSize, long totalSize);
 

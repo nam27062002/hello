@@ -19,6 +19,7 @@ public class MockDriver
         // Disk
         Directory_Exists,
         Directory_CreateDirectory,
+        Directory_DeleteDirectory,
         Directory_GetFiles,
         File_ReadAllText,
         File_ReadAllBytes,
