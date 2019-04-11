@@ -409,7 +409,7 @@ public class DragonMotionDino : DragonMotion {
         m_currentStunArea = m_currentStunArea * scale;
 
         m_currentStepKillArea = m_stepKillArea * scale;
-        m_currentStunArea = m_stepStunArea * scale;
+        m_currentStepStunArea = m_stepStunArea * scale;
     }
     
     public void UpdateSpeedToKill()
@@ -432,8 +432,18 @@ public class DragonMotionDino : DragonMotion {
         }
         Gizmos.DrawSphere( center.position, m_currentKillArea);
         Gizmos.color = new Color(0, 0, 1, 0.1f);
-        Gizmos.DrawSphere( center.position, m_stunArea);
+        Gizmos.DrawSphere( center.position, m_currentStunArea);
+        
+        
+        Gizmos.color = new Color(0, 1, 1, 0.1f);
+        Gizmos.DrawSphere( center.position, m_currentStepKillArea);
+        
+        Gizmos.color = new Color(1, 0, 1, 0.1f);
+        Gizmos.DrawSphere( center.position, m_currentStepStunArea);
+        
     }
+    
+        
     
 
 
