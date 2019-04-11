@@ -196,20 +196,13 @@ public class OpenEggScreenController : MonoBehaviour {
 			Metagame.Reward finalReward = m_scene.eggData.rewardData.reward;
 			
 			// Special initializations when reward is duplicated
-			ShowHideAnimator photoAnimator = InstanceManager.menuSceneController.hud.photoButton.GetComponent<ShowHideAnimator>();
 			if(finalReward.WillBeReplaced()) {
-				// Photo button only enabled if reward is not a duplicate!
-				photoAnimator.ForceHide(false);
-
 				// Show golden fragments tutorial popup?
 				m_goldenFragmentsTutorial = PopupInfoGoldenFragments.Check(finalReward);
 
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionButton.SetActive(false);				
 			} else {
-				// Photo button only enabled if reward is not a duplicate!
-				photoAnimator.Show();	// Only animate if showing
-
 				// Don't show call to action button if the reward is a duplicate
 				m_callToActionText.Localize("TID_EGG_SHOW_REWARD");
                 m_callToActionButton.SetActive(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS || DragonManager.maxSpecialDragonTierUnlocked > DragonTier.TIER_0);
