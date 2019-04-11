@@ -37,7 +37,6 @@ public abstract class IShareScreen : MonoBehaviour {
 	[SerializeField] private Camera m_camera = null;
 	[SerializeField] private RawImage m_qrCodeHolder = null;
 	[SerializeField] private Localizer m_callToActionText = null;
-	[SerializeField] private DOTweenAnimation m_flashFX = null;
 	[Space]
 	[SerializeField] private Texture2D m_qrLogoTex = null;
 
@@ -146,6 +145,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// </summary>
 	/// <returns>The coroutine.</returns>
 	private IEnumerator TakePictureInternal() {
+		// Trigger Flash FX!
+		PopupManager.OpenPopupInstant(PopupFlashFX.PATH);
+
 		// Wait until the end of the frame so everything is refreshed
 		yield return new WaitForEndOfFrame();
 
@@ -231,12 +233,6 @@ public abstract class IShareScreen : MonoBehaviour {
 		targetTex.SetPixels(targetTexData);
 		targetTex.Apply();
 #endif
-
-		// Launch Flash FX! (AFTER the screenshot, of course! :D)
-		if(m_flashFX != null) {
-			m_flashFX.gameObject.SetActive(true);
-			m_flashFX.DORestart();
-		}
 
 		// Give it some time
 		yield return new WaitForSeconds(0.25f);
