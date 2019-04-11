@@ -21,10 +21,35 @@ public class ShareScreensManager : UbiBCN.SingletonMonoBehaviour<ShareScreensMan
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public static readonly Vector2Int CAPTURE_SIZE = new Vector2Int(512, 512);
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	// Re-use the same textures for all captures (since we're not gonna be doing more than one simultaneous capture)
+	private Texture2D m_captureTex = null;
+	public static Texture2D captureTex {
+		get {
+			// If texture is not created, do it now
+			if(m_instance.m_captureTex == null) {
+				instance.m_captureTex = new Texture2D(CAPTURE_SIZE.x, CAPTURE_SIZE.y, TextureFormat.RGB24, false);   // We don't need alpha :)
+			}
+			return m_instance.m_captureTex;
+		}
+	}
+
+	private RenderTexture m_renderTex = null;
+	public static RenderTexture renderTex {
+		get {
+			// If texture is not created, do it now
+			if(m_instance.m_renderTex == null) {
+				m_instance.m_renderTex = new RenderTexture(CAPTURE_SIZE.x, CAPTURE_SIZE.y, 32, RenderTextureFormat.ARGB32);
+			}
+			return m_instance.m_renderTex;
+		}
+	}
+
+	// Internal references
 	private Dictionary<string, IShareScreen> m_pool = new Dictionary<string, IShareScreen>();
 	
 	//------------------------------------------------------------------------//
@@ -99,6 +124,17 @@ public class ShareScreensManager : UbiBCN.SingletonMonoBehaviour<ShareScreensMan
 
 		// Clear the collection
 		instance.m_pool.Clear();
+
+		// Clear cached textures
+		if(instance.m_captureTex != null) {
+			DestroyImmediate(instance.m_captureTex);
+			instance.m_captureTex = null;
+		}
+
+		if(instance.m_renderTex != null) {
+			DestroyImmediate(instance.m_renderTex);
+			instance.m_renderTex = null;
+		}
 	}
 
 	/// <summary>

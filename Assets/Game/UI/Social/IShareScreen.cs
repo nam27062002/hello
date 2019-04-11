@@ -25,8 +25,6 @@ public abstract class IShareScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public static readonly Vector2Int PHOTO_SIZE = new Vector2Int(512, 512);
-
 	protected const int QR_SIZE = 128;
 	protected const int CAMERA_DEPTH = 20;  // [AOC] This will hide UI and other elements we don't want to capture
 
@@ -44,10 +42,6 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected DefinitionNode m_shareLocationDef = null;
 	protected string m_url = null;
 	protected Texture2D m_qrCodeTex = null;
-	protected Texture2D m_pictureTex = null;
-#if RENDER_TEXTURE
-	private RenderTexture m_renderTex = null;
-#endif
 
 	// Internal logic
 	protected Coroutine m_coroutine = null;
@@ -79,12 +73,6 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected virtual void OnDestroy() {
 		// Remove ourselves from the manager
 		ShareScreensManager.RemoveScreen(this);
-
-#if RENDER_TEXTURE
-		// Clear render texture
-		DestroyImmediate(m_renderTex);
-		m_renderTex = null;
-#endif
 	}
 
 	//------------------------------------------------------------------------//
@@ -162,53 +150,50 @@ public abstract class IShareScreen : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 
-		// If texture is not created, do it now
-		if(m_pictureTex == null) {
-			m_pictureTex = new Texture2D(PHOTO_SIZE.x, PHOTO_SIZE.y, TextureFormat.RGB24, false);	// We don't need alpha :)
-		}
-
 		// Take the screenshot!
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
 		// [AOC] We have 2 options here Texture.ReadPixels() or RenderTexture
 #if RENDER_TEXTURE
 		// Process is explained here: https://docs.unity3d.com/ScriptReference/Camera.Render.html
 
-		// If texture is not created, do it now
-		if(m_renderTex == null) {
-			m_renderTex = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
-		}
+		// Re-use manager's textures
+		RenderTexture renderTex = ShareScreensManager.renderTex;
+		Texture2D pictureTex = ShareScreensManager.captureTex;
 
 		// Create a temporal render texture and make it the active one so the camera renders to it
 		//m_camera.forceIntoRenderTexture = true;	// Needed?
-		m_camera.targetTexture = m_renderTex;
-		RenderTexture currentRT = RenderTexture.active;	// Backup
-		RenderTexture.active = m_renderTex;
+		m_camera.targetTexture = renderTex;
+		RenderTexture currentRT = RenderTexture.active; // Backup
+		RenderTexture.active = renderTex;
 
 		// Render the camera viewport to the render texture
 		m_camera.Render();
 
 		// Read pixels from the render texture to our saved texture 2D
-		m_pictureTex.ReadPixels(new Rect(0, 0, m_renderTex.width, m_renderTex.height), 0, 0);
-		m_pictureTex.Apply();
+		pictureTex.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
+		pictureTex.Apply();
 
 		// Clean up
 		m_camera.targetTexture = null;
 		RenderTexture.active = currentRT; // Restore
 #else
+		// Re-use manager's textures
+		Texture2D pictureTex = ShareScreensManager.captureTex;
+
 		// Compute which area of the screen to read
 		// Fit photo size into screen size
 		Vector2 scaleRatio = new Vector2(
-			(float)Screen.width / (float)PHOTO_SIZE.x,
-			(float)Screen.height / (float)PHOTO_SIZE.y
+			(float)Screen.width / (float)ShareScreensManager.CAPTURE_SIZE.x,
+			(float)Screen.height / (float)ShareScreensManager.CAPTURE_SIZE.y
 		);
 
 		Vector2 captureSize = new Vector2();
 		if(scaleRatio.x < scaleRatio.y) {
-			captureSize.x = scaleRatio.x * PHOTO_SIZE.x;
-			captureSize.y = scaleRatio.x * PHOTO_SIZE.y;
+			captureSize.x = scaleRatio.x * ShareScreensManager.CAPTURE_SIZE.x;
+			captureSize.y = scaleRatio.x * ShareScreensManager.CAPTURE_SIZE.y;
 		} else {
-			captureSize.x = scaleRatio.y * PHOTO_SIZE.x;
-			captureSize.y = scaleRatio.y * PHOTO_SIZE.y;
+			captureSize.x = scaleRatio.y * ShareScreensManager.CAPTURE_SIZE.x;
+			captureSize.y = scaleRatio.y * ShareScreensManager.CAPTURE_SIZE.y;
 		}
 
 		Rect captureRect = new Rect(
@@ -226,7 +211,7 @@ public abstract class IShareScreen : MonoBehaviour {
 		// Resize image to the target size
 		// [AOC] TODO!! Use a nicer algorithm (http://blog.collectivemass.com/2014/03/resizing-textures-in-unity/)
 		Texture2D sourceTex = captureTex;
-		Texture2D targetTex = m_pictureTex;
+		Texture2D targetTex = pictureTex;
 		Color[] sourceTexData = sourceTex.GetPixels();
 		Color[] targetTexData = targetTex.GetPixels();
 		Vector2 sourcePos = new Vector2();
@@ -261,7 +246,7 @@ public abstract class IShareScreen : MonoBehaviour {
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(m_pictureTex, GetPrewrittenCaption(), string.Empty);	// Don't care about the popup's title
+		popup.Init(pictureTex, GetPrewrittenCaption(), string.Empty);	// Don't care about the popup's title
 	}
 
 	//------------------------------------------------------------------------//
