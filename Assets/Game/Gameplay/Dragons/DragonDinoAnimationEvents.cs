@@ -62,8 +62,8 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         PlaySound(m_stepSound);
         if (m_stepParticleInstance)
         {
-            Vector3 disp = transform.rotation * m_stepParticle.offset;
-            m_stepParticleInstance.transform.position = m_dragonMotion.lastGroundHit + disp;
+            m_stepParticleInstance.transform.position = m_dragonMotion.lastGroundHit;
+            m_stompParticleInstance.transform.rotation = Quaternion.LookRotation(m_dragonMotion.lastGroundHitNormal);
             m_stepParticleInstance.gameObject.SetActive(true);
             m_stepParticleInstance.Play();
         }
@@ -76,7 +76,7 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         if (m_stompParticleInstance)
         {
             m_stompParticleInstance.transform.position = m_dragonMotion.lastGroundHit;
-            // Rotation
+            m_stompParticleInstance.transform.rotation = Quaternion.LookRotation(m_dragonMotion.lastGroundHitNormal);
             m_stompParticleInstance.gameObject.SetActive(true);
             m_stompParticleInstance.Play();
         }
@@ -88,6 +88,7 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         if ( m_headbuttParticleInstance )
         {
             m_headbuttParticleInstance.transform.position = point;
+            m_headbuttParticleInstance.transform.rotation = Quaternion.LookRotation(normal);
             // Rotation
             m_headbuttParticleInstance.gameObject.SetActive(true);
             m_headbuttParticleInstance.Play();

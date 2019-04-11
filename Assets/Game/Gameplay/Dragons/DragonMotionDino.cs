@@ -339,12 +339,12 @@ public class DragonMotionDino : DragonMotion {
     
     public void OnStep()
     {
-        StunAndKill(m_lastGroundHit, m_currentStepKillArea, m_currentStunArea, m_stepStunDuration);
+        StunAndKill(m_lastGroundHit, m_currentStepKillArea, m_currentStunArea, m_stepStunDuration, 0.1f);
     }
 
-    protected void StunAndKill(Vector3 center, float killArea, float stunArea, float stunDuration)
+    protected void StunAndKill(Vector3 center, float killArea, float stunArea, float stunDuration, float shake = 0.5f)
     {
-        Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, 0.5f, 0f);
+        Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, shake, 0f);
         float area = Mathf.Max(stunArea, killArea);
         float sqrKill = killArea * killArea;
         m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)center, area, m_checkEntities);
