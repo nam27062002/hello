@@ -56,6 +56,13 @@ public abstract class IShareScreen : MonoBehaviour {
 	// GENERIC METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
+	/// Initialization.
+	/// </summary>
+	protected virtual void Awake() {
+		m_camera.enabled = false;
+	}
+
+	/// <summary>
 	/// Take a picture!
 	/// </summary>
 	public void TakePicture() {
@@ -149,7 +156,11 @@ public abstract class IShareScreen : MonoBehaviour {
 		PopupManager.OpenPopupInstant(PopupFlashFX.PATH);
 
 		// Wait until the end of the frame so everything is refreshed
-		yield return new WaitForEndOfFrame();
+		//yield return new WaitForEndOfFrame();
+		// [AOC] For some reason, waiting just one frame doesn't give enough time for everything to get properly setup. Wait a couple of frames instead.
+		for(int i = 0; i < 2; ++i) {
+			yield return new WaitForEndOfFrame();
+		}
 
 		// If texture is not created, do it now
 		if(m_pictureTex == null) {
@@ -160,16 +171,21 @@ public abstract class IShareScreen : MonoBehaviour {
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
 		// [AOC] We have 2 options here Texture.ReadPixels() or RenderTexture
 #if RENDER_TEXTURE
+		// Process is explained here: https://docs.unity3d.com/ScriptReference/Camera.Render.html
+
 		// If texture is not created, do it now
 		if(m_renderTex == null) {
 			m_renderTex = new RenderTexture(PHOTO_SIZE.x, PHOTO_SIZE.y, 32, RenderTextureFormat.ARGB32);
 		}
 
-		// Create a temporal render texture and render the camera viewport to it
-		m_camera.forceIntoRenderTexture = true;	// Needed?
+		// Create a temporal render texture and make it the active one so the camera renders to it
+		//m_camera.forceIntoRenderTexture = true;	// Needed?
 		m_camera.targetTexture = m_renderTex;
-		m_camera.Render();
+		RenderTexture currentRT = RenderTexture.active;	// Backup
 		RenderTexture.active = m_renderTex;
+
+		// Render the camera viewport to the render texture
+		m_camera.Render();
 
 		// Read pixels from the render texture to our saved texture 2D
 		m_pictureTex.ReadPixels(new Rect(0, 0, m_renderTex.width, m_renderTex.height), 0, 0);
@@ -177,7 +193,7 @@ public abstract class IShareScreen : MonoBehaviour {
 
 		// Clean up
 		m_camera.targetTexture = null;
-		RenderTexture.active = null; // added to avoid errors 
+		RenderTexture.active = currentRT; // Restore
 #else
 		// Compute which area of the screen to read
 		// Fit photo size into screen size
