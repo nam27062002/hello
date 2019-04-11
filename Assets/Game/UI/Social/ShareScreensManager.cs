@@ -135,7 +135,7 @@ public class ShareScreensManager : UbiBCN.SingletonMonoBehaviour<ShareScreensMan
 
 		// Create a new instance
 		// Put it on the root of the main scene, since the setups have their own camera and will be positioned later during the setup
-		GameObject newInstance = Instantiate<GameObject>(prefab);
+		GameObject newInstance = Instantiate<GameObject>(prefab, GameConstants.Vector3.zero, Quaternion.identity);
 
 		// We will be using the name as key for the pool, so make sure it's consistent with the definition
 		newInstance.name = prefab.name;
