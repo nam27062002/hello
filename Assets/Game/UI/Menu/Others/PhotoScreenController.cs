@@ -407,9 +407,21 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnTakePictureButton() {
         if (!ButtonExtended.checkMultitouchAvailability())
             return;
-        // Do it in a coroutine to wait until the end of the frame
-        StartCoroutine(TakePicture());
-    }
+		// Do it in a coroutine to wait until the end of the frame
+		//StartCoroutine(TakePicture());
+
+		// [AOC] New System
+		// Get the share screen instance and initialize it with current data
+		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon") as ShareScreenDragon;
+		shareScreen.Init(
+			"dragon",
+			InstanceManager.menuSceneController.mainCamera,
+			dragonData,
+			currentMode.dragControl.target
+		);
+		shareScreen.TakePicture();
+	}
 
     /// <summary>
     /// The back button has been pressed.
