@@ -61,15 +61,14 @@ public class PhotoScreenController : MonoBehaviour {
 		set { SetMode(value); }
 	}
 
-	// Internal
-	private Texture2D m_picture = null;
-	private List<GameObject> m_objectsToRestore = new List<GameObject>();
-	private string m_targetName = "";   // Localized name of the target of the picture: Dragon name, pet name, etc.
-
 	// AR Internal
 	private bool m_isARAvailable = false;
 	private bool m_isAnimojiAvailable = false;
 
+	// Internal references
+	private Canvas m_rootUICanvas = null;
+
+	// Internal properties
 	private ModeSetup currentMode {
 		get { return m_modes[(int)m_mode]; }
 	}
@@ -81,6 +80,9 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
+		// Store reference to root UI canvas to disable it when taking a screen capture
+		m_rootUICanvas = this.GetComponentInParent<Canvas>();
+
 		// Is AR available?
 		m_isARAvailable = false;
 #if(UNITY_IOS || UNITY_ANDROID || UNITY_EDITOR_OSX)
@@ -138,9 +140,6 @@ public class PhotoScreenController : MonoBehaviour {
 	private void OnDestroy() {
 		// Unsubscribe to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
-
-		// Clear refs
-		m_picture = null;
 	}
 
 	//------------------------------------------------------------------------//
@@ -177,35 +176,6 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnShowPreAnimation(ShowHideAnimator _animator) {
 		// Aux vars
 		MenuSceneController menuController = InstanceManager.menuSceneController;
-
-		// Initialize elements based on current mode
-		switch(m_mode) {
-			case Mode.DRAGON: {
-				// Initialize dragon info
-				IDragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
-				m_targetName = dragonData.def.GetLocalized("tidName");
-			} break;
-
-			case Mode.EGG_REWARD: {
-				// Depends on reward type
-				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
-				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
-				switch(currentReward.type) {
-					case Metagame.RewardPet.TYPE_CODE: {
-						// Aux vars
-						DefinitionNode rarityDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.RARITIES, currentReward.def.Get("rarity"));
-						DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, currentReward.def.GetAsString("powerup"));
-
-						// Pet name
-						m_targetName = currentReward.def.GetLocalized("tidName");
-					} break;
-
-					default: {
-						m_targetName = "";
-					} break;
-				}
-			} break;
-		}
 
 		// Disable drag controller
 		currentMode.dragControl.gameObject.SetActive(false);
@@ -293,7 +263,7 @@ public class PhotoScreenController : MonoBehaviour {
 			false,
 			null
 		);
-		shareScreen.TakePicture();
+		shareScreen.TakePicture(IShareScreen.CaptureMode.RENDER_TEXTURE);
 	}
 
     /// <summary>
@@ -302,6 +272,7 @@ public class PhotoScreenController : MonoBehaviour {
     public void OnBackButton() {
 		if (!ButtonExtended.checkMultitouchAvailability ())
 			return;				
+
         // Ignore if we are in AR
         if (!m_arFlow.isActiveAndEnabled) {
 			// Go back to previous menu screen
@@ -318,6 +289,7 @@ public class PhotoScreenController : MonoBehaviour {
     public void OnARButton() {
 		if (!ButtonExtended.checkMultitouchAvailability ())
 			return;		
+
         // Start AR flow
         if (!m_arFlow.isActiveAndEnabled) {
 			// Hide bottom bar
@@ -343,32 +315,30 @@ public class PhotoScreenController : MonoBehaviour {
     /// AR flow wants to take a picture.
     /// </summary>
     private void OnARTakePicture() {
-		//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
-		//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
-		//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
-		//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
-		//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
-		//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
-		//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
-		//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
-		//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
-
-		// Use the same picture functionality as in normal mode
-		//OnTakePictureButton();
-
 		// Get the share screen instance and initialize it with current data
-		// Use AR camera as reference to take the picture
 		ControlPanel.Log(Color.yellow.Tag("AR TAKE PICTURE"));
 		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon") as ShareScreenDragon;
 		shareScreen.Init(
 			"dragon",
-			ARKitManager.SharedInstance.GetSceneContentCamera(),
+			null,   // We are gonna be using the SCREEN_CAPTURE method, so we don't need to provide a reference camera
 			dragonData,
 			false,
 			null
 		);
-		shareScreen.TakePicture();
+
+		// Disable UI camera so we don't capture any UI whatsoever
+		m_rootUICanvas.worldCamera.enabled = false;
+
+		// Take the picture!
+		shareScreen.TakePicture(IShareScreen.CaptureMode.SCREEN_CAPTURE);
+
+		// Restore UI camera
+		UbiBCN.CoroutineManager.DelayedCallByFrames(
+			() => { 
+				m_rootUICanvas.worldCamera.enabled = true; 
+			}, 5    // Give enough time to take the screenshot
+		);   
 	}
 
     /// <summary>
@@ -394,12 +364,10 @@ public class PhotoScreenController : MonoBehaviour {
 	/// <param name="_to">Screen we're going to.</param>
 	private void OnMenuScreenTransitionStart(MenuScreen _from, MenuScreen _to) {
 		// Check params
-//		if(_from == MenuScreen.NONE || _to == MenuScreen.NONE) return;
         if (_to == MenuScreen.NONE) return;
 
         // Aux vars
         MenuSceneController menuSceneController = InstanceManager.menuSceneController;
-//		MenuScreenScene fromScene = menuSceneController.GetScreenData(_from).scene3d;
 		MenuScreenScene toScene = menuSceneController.GetScreenData(_to).scene3d;
 
 		// If the scene we are entering has a photo snap point to override, do it now
@@ -432,52 +400,5 @@ public class PhotoScreenController : MonoBehaviour {
 				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
 			}
 		}
-
-		// Leaving a screen that has override the photo snap point
-		/*else if(fromScene != null) {
-			// Aux vars
-			CameraSnapPoint newSnapPoint = null;
-
-			// a) Reward Scene
-			if(fromScene is RewardSceneController) {
-				newSnapPoint = (fromScene as RewardSceneController).photoCameraSnapPoint;
-			}
-
-			// b) Lab Scene
-			else if(fromScene is LabDragonSelectionScene) {
-				newSnapPoint = (fromScene as LabDragonSelectionScene).photoCameraSnapPoint;
-			}
-
-			// c) Dragon Selection Scene
-			else if(fromScene is DragonSelectionScene) {
-				newSnapPoint = (fromScene as DragonSelectionScene).photoCameraSnapPoint;
-			}
-
-			// Apply
-			if(newSnapPoint != null) {
-				Debug.Log(Colors.paleGreen.Tag(
-					"Setting snap point from " +
-					menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
-					" to " + newSnapPoint.name
-				));
-				menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = newSnapPoint;
-			}
-		}
-		*/
-		/*
-		// Leaving a screen using this scene
-		else if(fromScene != null && fromScene.gameObject == this.gameObject) {
-			// Do some stuff if not going to take a picture of the reward
-			if(_to != MenuScreen.PHOTO) {
-				// Restore default camera snap point for the photo screen
-				Debug.Log(Colors.paleGreen.Tag(
-					"Restoring snap point from " +
-					InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup.name +
-					" to " + m_originalPhotoCameraSnapPoint.name
-				));
-				InstanceManager.menuSceneController.GetScreenData(MenuScreen.PHOTO).cameraSetup = m_originalPhotoCameraSnapPoint;
-			}
-		}
-		*/
 	}
 }
