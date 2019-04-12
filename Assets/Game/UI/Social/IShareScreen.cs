@@ -168,7 +168,7 @@ public abstract class IShareScreen : MonoBehaviour {
 		// [AOC] Because we want the UI to render on top of the 3D background, we'll do 2 render passes changing the camera layer mask
 		// 1st pass: Background
 		m_camera.clearFlags = CameraClearFlags.Color;
-		m_camera.cullingMask = LayerMask.GetMask("Ground");
+		m_camera.cullingMask = GetBackgroundCullingMask();
 		m_camera.Render();
 
 		// 2nd pass: UI
@@ -269,8 +269,16 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// Override for custom formatting.
 	/// </summary>
 	/// <returns>The prewritten caption, already localized.</returns>
-	virtual protected string GetPrewrittenCaption() {
+	protected virtual string GetPrewrittenCaption() {
 		if(m_shareLocationDef == null) return string.Empty;
 		return m_shareLocationDef.GetLocalized("tidPrewrittenCaption", m_url);	// URL is always a parameter
+	}
+
+	/// <summary>
+	/// Layer mask for the background render.
+	/// </summary>
+	/// <returns>The culling mask to be assigned to the camera for the background render.</returns>
+	protected virtual int GetBackgroundCullingMask() {
+		return LayerMask.GetMask("Ground");
 	}
 }
