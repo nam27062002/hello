@@ -117,13 +117,15 @@ public class ShareScreensManager : UbiBCN.SingletonMonoBehaviour<ShareScreensMan
 	/// </summary>
 	public static void Clear() {
 		// Iterate all pooled instances and destroy them
+		List<IShareScreen> toDestroy = new List<IShareScreen>(instance.m_pool.Count);
 		foreach(KeyValuePair<string, IShareScreen> kvp in instance.m_pool) {
-			Destroy(kvp.Value.gameObject);
-			instance.m_pool[kvp.Key] = null;
+			toDestroy.Add(kvp.Value);
 		}
-
-		// Clear the collection
 		instance.m_pool.Clear();
+
+		for(int i = 0; i < toDestroy.Count; ++i) {
+			Destroy(toDestroy[i]);
+		}
 
 		// Clear cached textures
 		if(instance.m_captureTex != null) {
