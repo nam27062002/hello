@@ -248,6 +248,11 @@ public abstract class IShareScreen : MonoBehaviour {
 		// Clear coroutine reference
 		m_coroutine = null;
 
+		// Clean up memory
+		m_qrCodeHolder.texture = null;
+		DestroyImmediate(m_qrCodeTex);
+		m_qrCodeTex = null;
+
 		// Disable ourselves
 		this.gameObject.SetActive(false);
 
