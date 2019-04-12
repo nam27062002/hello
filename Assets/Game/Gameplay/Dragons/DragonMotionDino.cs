@@ -187,19 +187,13 @@ public class DragonMotionDino : DragonMotion {
             }
             else
             {
-                // if angle < falling angle and angle < max up angle rotate towards this
-                // else just fall
-                ComputeImpulseToZero(delta);
-                FreeFall(delta, m_direction);
-                RotateToDirection(m_direction, false);
+                FreeFall(delta, GameConstants.Vector3.zero);
             }
         }
         // Free fall
         else
         {
-            ComputeImpulseToZero(delta);
-            FreeFall(delta, m_direction);
-            RotateToDirection(m_direction, false);
+            FreeFall(delta, GameConstants.Vector3.zero);
         }
         
         // m_desiredRotation = m_transform.rotation;
@@ -248,20 +242,30 @@ public class DragonMotionDino : DragonMotion {
             else
             {
                 // Adapt to angle?
+                impulse.y = 0;
+                impulse.Normalize();
                 FreeFall(delta, impulse);
-                RotateToDirection(m_direction, false);
             }
         }
         else
         {
+            impulse.y = 0;
+            impulse.Normalize();
             FreeFall(delta, impulse);
-            RotateToDirection(m_direction, false);
         }
         
         // m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
         m_rbody.velocity = m_impulse;
-        
+    }
+    
+    protected void ComputeFreeFallImpulse(float delta)
+    {
+        // stroke's Drag
+        m_impulse = m_rbody.velocity;
+        float impulseMag = m_impulse.magnitude;
+        m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+        m_impulse += -(m_impulse.normalized * m_freeFallFriction * impulseMag * delta);
     }
     
     protected void RotateToGround( Vector3 direction )
@@ -287,25 +291,39 @@ public class DragonMotionDino : DragonMotion {
         }
     }
 
-    protected void FreeFall( float _deltaTime, Vector3 direction )
+    protected void FreeFall( float delta, Vector3 inputVector )
     {       
-        // stroke's Drag
-        m_impulse = m_rbody.velocity;
-        float impulseMag = m_impulse.magnitude;
-        m_impulse.y += -9.81f * m_freeFallGravityMultiplier * _deltaTime;
-        m_impulse += -(m_impulse.normalized * m_freeFallFriction * impulseMag * _deltaTime);
-            
-        if ( direction.x > 0 ){
-            m_direction = GameConstants.Vector3.right;
-        }else{
-            m_direction = GameConstants.Vector3.left;
-        }
-        
         if (m_grounded)
         {
             SetGrounded(false);
-        }
+        }    
+            // Input
+        Vector3 acceleration = (inputVector * m_dragonForce * 0.1f) / m_dragonMass;
+            // Gravity
+        acceleration.y += -9.81f * m_freeFallGravityMultiplier;
         
+        // stroke's Drag
+        m_impulse = m_rbody.velocity;
+        float impulseMag = m_impulse.magnitude;
+        m_impulse += (acceleration-(m_impulse.normalized * m_freeFallFriction * impulseMag)) * delta;
+        
+        if ( inputVector != GameConstants.Vector3.zero )
+        { 
+            if ( inputVector.x > 0 ){
+                m_direction = GameConstants.Vector3.right;
+            }else{
+                m_direction = GameConstants.Vector3.left;
+            }
+        }
+        else
+        {
+            if ( m_direction.x > 0 ){
+                m_direction = GameConstants.Vector3.right;
+            }else{
+                m_direction = GameConstants.Vector3.left;
+            }
+        }
+        RotateToDirection(m_direction, false);    
     }
     
     public void SetGrounded(bool _grounded)
