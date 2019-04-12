@@ -35,14 +35,14 @@ public class ShareScreenDragon : IShareScreen {
 	[Space]
 	[SerializeField] private GameObject m_powerGroup = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
-	[Space]
-	[SerializeField] private RenderQueueSetter m_renderQueueSetter = null;
 
 	// Internal references
+	private bool m_renderDragon = false;
 	protected IDragonData m_dragonData = null;
 
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
+	//------------------------------------------------------------------------//
 	//------------------------------------------------------------------------//
 	/// <summary>
 	/// Initialize this screen with given data.
@@ -50,14 +50,16 @@ public class ShareScreenDragon : IShareScreen {
 	/// <param name="_shareLocationSku">Location where this screen is triggered.</param>
 	/// <param name="_refCamera">Reference camera. Its properties will be copied to the scene's camera.</param>
 	/// <param name="_dragonData">Dragon to display.</param>
+	/// <param name="_renderDragon">Whether to render the dragon preview or not (dragon captured in the background).</param>
 	/// <param name="_refTransform">Reference transform for the dragon preview.</param>
-	public void Init(string _shareLocationSku, Camera _refCamera, IDragonData _dragonData, Transform _refTransform) {
+	public void Init(string _shareLocationSku, Camera _refCamera, IDragonData _dragonData, bool _renderDragon, Transform _refTransform) {
 		// Set location and camera
 		SetLocation(_shareLocationSku);
 		SetRefCamera(_refCamera);
 
 		// Store data
 		m_dragonData = _dragonData;
+		m_renderDragon = _renderDragon;
 
 		// Aux vars
 		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_dragonData.disguise);
@@ -79,28 +81,36 @@ public class ShareScreenDragon : IShareScreen {
 
 		// Dragon preview
 		if(m_dragonLoader != null) {
-			// Load target dragon
-			m_dragonLoader.LoadDragon(m_dragonData.sku, m_dragonData.disguise);
+			// Load preview?
+			if(m_renderDragon) {
+				// Make sure it's active
+				m_dragonLoader.gameObject.SetActive(true);
 
-			// Reapply render queues
-			m_renderQueueSetter.Apply();
+				// Load target dragon
+				m_dragonLoader.LoadDragon(m_dragonData.sku, m_dragonData.disguise);
 
-			// Rotate preview to replicate the reference transform
-			m_dragonLoader.transform.localRotation = _refTransform.localRotation;
+				// Rotate preview to replicate the reference transform
+				if(_refTransform != null) {
+					m_dragonLoader.transform.localRotation = _refTransform.localRotation;
+				}
 
-			// Start the animation at a random frame (usually first frame looks shitty :s)
-			Animator anim = m_dragonLoader.dragonInstance.animator;
-			AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);  //could replace 0 by any other animation layer index
+				// Start the animation at a random frame (usually first frame looks shitty :s)
+				Animator anim = m_dragonLoader.dragonInstance.animator;
+				AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);  //could replace 0 by any other animation layer index
 #if true
-			// Random frame
-			anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
+				// Random frame
+				anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
 #else
-			// Specific frame
-			AnimatorClipInfo clipInfo = anim.GetCurrentAnimatorClipInfo(0)[0];
-			int numFrames = (int)(clipInfo.clip.length * clipInfo.clip.frameRate);
-			Debug.Log(Color.yellow.Tag(numFrames.ToString()));
-			anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, 2));	// Go to frame #2		
+				// Specific frame
+				AnimatorClipInfo clipInfo = anim.GetCurrentAnimatorClipInfo(0)[0];
+				int numFrames = (int)(clipInfo.clip.length * clipInfo.clip.frameRate);
+				Debug.Log(Color.yellow.Tag(numFrames.ToString()));
+				anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, 2));	// Go to frame #2		
 #endif
+			} else {
+				// Disable dragon preview
+				m_dragonLoader.gameObject.SetActive(false);
+			}
 		}
 
 		// Tier Icon - only for classic dragons
@@ -131,6 +141,21 @@ public class ShareScreenDragon : IShareScreen {
 				// Don't show power info
 				m_powerGroup.SetActive(false);
 			}
+		}
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDE METHODS												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Layer mask for the background render.
+	/// </summary>
+	/// <returns>The culling mask to be assigned to the camera for the background render.</returns>
+	protected override int GetBackgroundCullingMask() {
+		if(m_renderDragon) {
+			return LayerMask.GetMask("Ground");
+		} else {
+			return LayerMask.GetMask("Ground", "Default", "Player");    // Include dragon preview
 		}
 	}
 }
