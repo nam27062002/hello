@@ -3,6 +3,10 @@ using UnityEngine.Audio;
 
 public class DragonDinoAnimationEvents : DragonAnimationEvents {
 
+    [Header("Jetpack Sounds")]
+    public string m_jetpack1Sound;
+    public string m_jetpack2Sound;
+
     [Header("Step")]
     public string m_stepSound;
     public ParticleData m_stepParticle;
@@ -34,6 +38,15 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
             m_stepParticleInstance.gameObject.SetActive(false);
         }
         m_dragonMotion = InstanceManager.player.dragonMotion as DragonMotionDino;
+        
+        if ( m_dragonMotion.powerLevel >= 1 )
+        {
+            m_wingsWindSound = m_jetpack2Sound;
+        }
+        else
+        {
+            m_wingsWindSound = m_jetpack1Sound;
+        }
         
         if (m_dragonMotion.powerLevel >= 2)
         {
