@@ -40,6 +40,7 @@ public class DragonMotionDino : DragonMotion {
     protected int m_powerLevel = 1;
     public int powerLevel { get { return m_powerLevel; } }
     protected float m_speedToKill;
+    protected float m_fallSpeedToKill;
     public float m_currentStepKillArea = 2;
     public float m_currentStepStunArea = 2;
     
@@ -313,7 +314,7 @@ public class DragonMotionDino : DragonMotion {
 
     protected void GroundStomp()
     {
-        if ( m_impulse.sqrMagnitude > m_speedToKill)
+        if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
         {
             m_animEvents.OnGroundStomp();
             StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
@@ -416,6 +417,10 @@ public class DragonMotionDino : DragonMotion {
     {
         m_speedToKill = absoluteMaxSpeed * m_speedPercentageToKill / 100.0f;
         m_speedToKill = m_speedToKill * m_speedToKill;
+
+        float terminalFallSpeed = (9.81f * m_freeFallGravityMultiplier) / m_freeFallFriction;
+        m_fallSpeedToKill = terminalFallSpeed * m_speedPercentageToKill / 100.0f;
+        m_fallSpeedToKill = m_fallSpeedToKill * m_fallSpeedToKill;
     }
 
     private void OnDrawGizmos() {
