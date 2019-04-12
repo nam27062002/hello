@@ -323,7 +323,6 @@ public class PhotoScreenController : MonoBehaviour {
 			// Hide bottom bar
 			m_bottomBar.gameObject.SetActive(false);
 
-
             currentMode.dragControl.gameObject.SetActive(false);
             currentMode.zoomControl.gameObject.SetActive(false);
 
@@ -356,7 +355,20 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Use the same picture functionality as in normal mode
 		//OnTakePictureButton();
-    }
+
+		// Get the share screen instance and initialize it with current data
+		// Use AR camera as reference to take the picture
+		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon") as ShareScreenDragon;
+		shareScreen.Init(
+			"dragon",
+			ARKitManager.SharedInstance.GetSceneContentCamera(),
+			dragonData,
+			false,
+			null
+		);
+		shareScreen.TakePicture();
+	}
 
     /// <summary>
     /// AR flow has changed its state.

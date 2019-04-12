@@ -144,6 +144,18 @@ public class ShareScreenDragon : IShareScreen {
 		}
 	}
 
+	/// <summary>
+	/// Define the AR camera, which will replace the reference camera used in Init().
+	/// </summary>
+	/// <param name="_arCamera">Camera being used by the AR system.</param>
+	public void SetARCamera(Camera _arCamera) {
+		// Copy camera parameters
+		SetRefCamera(_arCamera);
+
+		// Copy some extra parameters?
+
+	}
+
 	//------------------------------------------------------------------------//
 	// PARENT OVERRIDE METHODS												  //
 	//------------------------------------------------------------------------//
