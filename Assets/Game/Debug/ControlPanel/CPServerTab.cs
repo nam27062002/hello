@@ -37,9 +37,10 @@ public class CPServerTab : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_DNAProfileIdText = null;
     [SerializeField] private TextMeshProUGUI m_AdUnitInfoText = null;
     [SerializeField] private Toggle m_debugServerToggle = null;
+    [SerializeField] private Toggle m_adsEnabledToggle = null;
 
-	// Internal
-	private DateTime m_startTimestamp;
+    // Internal
+    private DateTime m_startTimestamp;
 	private StringBuilder m_outputSb = new StringBuilder();
 
 	//private RequestNetwork requestNetwork;
@@ -75,7 +76,9 @@ public class CPServerTab : MonoBehaviour {
 
         m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
-	}
+
+        m_adsEnabledToggle.isOn = DebugSettings.AreAdsEnabled;        
+    }
 
 	private void OnDisable() {
 		m_debugServerToggle.onValueChanged.RemoveListener(OnToggleDebugServer);
