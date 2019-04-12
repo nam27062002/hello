@@ -53,7 +53,7 @@ public class MockDiskDriver : MockDriver, DiskDriver
 
     private bool RequiresDiskWriteAccess(EOp op)
     {
-        return op == EOp.Directory_CreateDirectory || op == EOp.File_Write || op == EOp.File_WriteAllText;
+        return op == EOp.Directory_CreateDirectory || op == EOp.Directory_DeleteDirectory || op == EOp.File_Write || op == EOp.File_WriteAllText;
     }
 
     public override EExceptionType GetExceptionTypeToThrow(EOp op, string path)
@@ -63,16 +63,12 @@ public class MockDiskDriver : MockDriver, DiskDriver
         {
             return EExceptionType.UnauthorizedAccess;
         }
-        else
-#endif
-        if (GetFreeSpaceBytes() == 0 && RequiresDiskWriteAccess(op))
+        else if (RequiresDiskWriteAccess(op) && IsNoFreeSpaceEnabled)
         {
             return EExceptionType.IOException;
         }
-        else
-        {
-            return base.GetExceptionTypeToThrow(op, path);
-        }
+#endif        
+        return base.GetExceptionTypeToThrow(op, path);      
     }
 
     public bool Directory_Exists(string path)
@@ -101,6 +97,19 @@ public class MockDiskDriver : MockDriver, DiskDriver
             ThrowException(exceptionType);
             return null;
         }        
+    }
+
+    public void Directory_Delete(string path)
+    {
+        EExceptionType exceptionType = GetExceptionTypeToThrow(EOp.Directory_DeleteDirectory, path);
+        if (exceptionType == EExceptionType.None)
+        {
+            m_prodDriver.Directory_Delete(path);
+        }
+        else
+        {
+            ThrowException(exceptionType);            
+        }
     }
 
     public List<string> Directory_GetFiles(string path)
@@ -224,14 +233,5 @@ public class MockDiskDriver : MockDriver, DiskDriver
         {
             ThrowException(exceptionType);     
         }
-    }
-
-    public long GetFreeSpaceBytes()
-    {
-#if UNITY_EDITOR
-        return (IsNoFreeSpaceEnabled) ? 0 : m_prodDriver.GetFreeSpaceBytes();
-#else
-        return m_prodDriver.GetFreeSpaceBytes();
-#endif
-    }
+    }    
 }

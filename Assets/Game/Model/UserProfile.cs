@@ -1375,7 +1375,7 @@ public class UserProfile : UserPersistenceSystem
 	public string GetEquipedDisguise( string _dragonSku )
 	{
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
-			return m_dragonsBySku[ _dragonSku ].diguise;
+			return m_dragonsBySku[ _dragonSku ].disguise;
 		return "";
 	}
 
@@ -1392,10 +1392,10 @@ public class UserProfile : UserPersistenceSystem
 		bool ret = false;
 		if ( m_dragonsBySku.ContainsKey( _dragonSku ) )
 		{
-			if ( m_dragonsBySku[_dragonSku].diguise != _disguiseSku )
+			if ( m_dragonsBySku[_dragonSku].disguise != _disguiseSku )
 			{
 				ret = true;
-				m_dragonsBySku[_dragonSku].diguise = _disguiseSku;
+				m_dragonsBySku[_dragonSku].disguise = _disguiseSku;
 			}
 
 			// Persist?

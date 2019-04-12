@@ -63,10 +63,15 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 		get { return GetDragonData(instance.m_user.currentSpecialDragon) as DragonDataSpecial; }
 	}
 
-	// Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)
-	// Null if there are no dragons owned (should never happen)
-	// [AOC] CLASSIC ONLY
-	public static IDragonData biggestOwnedDragon {
+    public static IDragonData GetClassicDragonsByOrder(int order)
+    {
+        return (m_instance.m_classicDragonsByOrder != null && order > -1 && order < m_instance.m_classicDragonsByOrder.Count) ? m_instance.m_classicDragonsByOrder[order] : null;
+    }
+
+    // Shortcut to get the data of the biggest owned dragon (classic ones) (following progression order)
+    // Null if there are no dragons owned (should never happen)
+    // [AOC] CLASSIC ONLY
+    public static IDragonData biggestOwnedDragon {
 		get {
 			// Reverse-iterate all the dragons by order and find the biggest one owned
 			for(int i = instance.m_classicDragonsByOrder.Count - 1; i >= 0; i--) {
@@ -298,7 +303,7 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
     /// Load the dragon from its dragon data
     /// </summary>
     /// <param name="_data">Data of the dragon to be loaded.</param>
-    private static void LoadDragon(IDragonData _data) {
+    public static void LoadDragon(IDragonData _data) {
 		// Destroy any previously created player
 		GameObject playerObj = GameObject.Find(GameSettings.playerName);
 		if(playerObj != null) {

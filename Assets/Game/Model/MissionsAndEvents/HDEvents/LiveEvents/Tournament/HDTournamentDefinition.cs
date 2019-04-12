@@ -45,7 +45,11 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 
 	public LeaderboardData m_leaderboard = new LeaderboardData();
 
-	public HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
+	protected HDLiveData.DragonBuild m_build = new HDLiveData.DragonBuild();
+	protected IDragonData m_dragonData = new DragonDataClassic();
+	public IDragonData dragonData {
+		get { return m_dragonData; }
+	}
 
 	public class TournamentGoal : GoalCommon
 	{
@@ -228,6 +232,7 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		m_entrance.Clean();
 		m_leaderboard.Clean();
 		m_build.Clean();
+		m_dragonData = new DragonDataClassic();
 		m_rewards.Clear();
 	}
 
@@ -266,6 +271,10 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		if ( _data.ContainsKey("build") )
 		{
 			m_build.LoadData( _data["build"] );
+
+			// Create and initialize a new dragon data object with given build
+			m_dragonData = IDragonData.CreateFromBuild(m_build);
+			m_dragonData.Acquire(false);
 		}
 
 		if ( _data.ContainsKey("rewards") )

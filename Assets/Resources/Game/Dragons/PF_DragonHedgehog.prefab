@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -516.2266, y: -503.66412, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -345,8 +345,6 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonHedgehogCorpse
-  m_hiccupParticle: PS_hiccups
-  m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
     name: PS_BreakingShield
     path: 
@@ -2118,7 +2116,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.026091058, y: -0.61783713, z: 0.020519245, w: 0.78560525}
+  m_LocalRotation: {x: -0.020005511, y: 0.62574834, z: 0.016057422, w: 0.779603}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5760,8 +5758,8 @@ MonoBehaviour:
   m_rollUpSound: hd_hedgehog_roll
   m_shootSound: hd_hedgehog_shoot
   m_bounceSound: hd_hedgehog_bounce_2
-  m_fireParticleImpact: FireCircle/PS_SonicDragonFireImpact
-  m_megaFireParticleImpact: FireCircle/PS_SonicDragonMegaFireImpact
+  m_fireParticleImpact: PS_SonicDragonFireImpact
+  m_megaFireParticleImpact: PS_SonicDragonMegaFireImpact
   m_sonicControlSpeed: 1
 --- !u!114 &114228706375277902
 MonoBehaviour:
@@ -6041,6 +6039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_colors: 0000000001000000
   m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
@@ -6238,17 +6237,16 @@ MonoBehaviour:
   m_spikesNumber: 8
   m_spikesOperture: 75
   m_shootingRatio: 1
-  m_disguiseOnLevelUp: dragon_hedgehog_1
   m_spikesLvl1: {fileID: 1379098458773584}
   m_spikesLvl2: {fileID: 1750963521827538}
   m_particleCenter: {fileID: 4891536648766866}
-  m_fireParticle: FireCircle/PS_SonicFireRush
-  m_fireParticleStart: FireCircle/PS_SonicFireRushBoost
-  m_megaFireParticle: FireCircle/PS_SonicMegaFireRush
-  m_megaFireParticleStart: FireCircle/PS_SonicMegaFireRushBoost
+  m_fireParticle: PS_SonicFireRush
+  m_fireParticleStart: PS_SonicFireRushBoost
+  m_megaFireParticle: PS_SonicMegaFireRush
+  m_megaFireParticleStart: PS_SonicMegaFireRushBoost
   m_trailPosition: {fileID: 4468906690164964}
-  m_trailParticle: FireCircle/PS_SonicDragonFireTrail
-  m_megaTrailParticle: FireCircle/PS_SonicDragonMegaFireTrail
+  m_trailParticle: PS_SonicDragonFireTrail
+  m_megaTrailParticle: PS_SonicDragonMegaFireTrail
 --- !u!114 &114998690069533076
 MonoBehaviour:
   m_ObjectHideFlags: 1

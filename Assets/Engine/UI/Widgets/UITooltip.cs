@@ -100,7 +100,7 @@ public class UITooltip : MonoBehaviour {
 		switch(m_arrowDir) {
 			case ArrowDirection.HORIZONTAL: {
 				RectTransform parentRT = m_arrow.parent as RectTransform;
-				float size = parentRT.rect.height;
+				float size = parentRT.rect.width;
 				float relativeOffset = _offset / size;
 				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x + relativeOffset, m_arrow.anchorMin.y);
 				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x + relativeOffset, m_arrow.anchorMax.y);
@@ -108,7 +108,7 @@ public class UITooltip : MonoBehaviour {
 
 			case ArrowDirection.VERTICAL: {
 				RectTransform parentRT = m_arrow.parent as RectTransform;
-				float size = parentRT.rect.width;
+				float size = parentRT.rect.height;
 				float relativeOffset = _offset / size;
 				m_arrow.anchorMin = new Vector2(m_arrow.anchorMin.x, m_arrow.anchorMin.y + relativeOffset);
 				m_arrow.anchorMax = new Vector2(m_arrow.anchorMax.x, m_arrow.anchorMax.y + relativeOffset);

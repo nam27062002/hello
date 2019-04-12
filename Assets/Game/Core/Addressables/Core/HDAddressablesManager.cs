@@ -103,7 +103,12 @@ public class HDAddressablesManager : AddressablesManager
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
                             //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-                            urlBase = "http://hdragon-assets-s3.akamaized.net/qc/";
+
+                            // Link to CDN (it uses cache)
+                            urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+
+                            // Direct link to the bucket (no cache involved, which might make downloads more expensive)
+                            //urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
                             break;
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
@@ -115,11 +120,11 @@ public class HDAddressablesManager : AddressablesManager
                             break;
                     }
 
-                    //http://10.44.4.69:7888/            
-
-                    urlBase += assetsLUT.m_iReleaseVersion + "/";
+                    //http://10.44.4.69:7888/                                
                 }                
             }
+
+            urlBase += assetsLUT.m_iReleaseVersion + "/";
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
@@ -192,13 +197,27 @@ public class HDAddressablesManager : AddressablesManager
         // We don't want the downloader to interfere with the ingame experience
         IsDownloaderEnabled = !FlowManager.IsInGameScene();
 
-        // We don't want downloadables to interfere with the first user experience, so the user must have played at least two runs for the automatic downloading to be enabled                    
-        IsAutomaticDownloaderEnabled = IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+		// Downloader is disabled while the app is loading in order to let it load faster and smoother
+		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
     }
 
     public bool IsAutomaticDownloaderAllowed()
     {
-        return UsersManager.currentUser != null && UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.SECOND_RUN);
+        if (FeatureSettingsManager.AreCheatsEnabled && !DebugSettings.isAutomaticDownloaderEnabled)
+            return false;
+
+        // If permission has already been requested for any downloadable handle then automatic downloader should be enabled so that request can be served
+        if (HasPermissionRequestedForAnyDownloadableHandle())
+            return true;
+
+		// Automatic downloader gets unlocked when the user buys a dragon or when the user unlocks the second dragon. This is done to save up on traffic since many user won't made it to the second dragon.
+        if (UsersManager.currentUser.GetNumOwnedDragons() > 1) {
+			return true;
+		}
+
+        // Second progression dragon is unlocked
+        IDragonData dragonData = DragonManager.GetClassicDragonsByOrder(1);
+        return dragonData != null && !dragonData.isLocked;
     }
 
 #region ingame
@@ -413,7 +432,7 @@ public class HDAddressablesManager : AddressablesManager
         handle = CreateDownloadablesHandle(groupIds);
         m_downloadableHandles.Add(DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3, handle);
     }
-
+    
     /// <summary>
     /// Returns the downloadables handle corresponding to the id passed as a parameter
     /// </summary>
@@ -463,15 +482,15 @@ public class HDAddressablesManager : AddressablesManager
 	/// Same as <see cref="GetHandleForClassicDragon(string)"/> but for a dragon in a tournament.
 	/// </summary>
 	/// <returns>The handle for all downloadables required for that dragon.</returns>
-	/// <param name="_tournamentData">Tournament data.</param>
-	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournamentData) {
+	/// <param name="_tournament">Tournament data.</param>
+	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
 		// Get target dragon info
-		IDragonData dragonData = DragonManager.GetDragonData(_tournamentData.GetToUseDragon());
+		IDragonData dragonData = _tournament.tournamentData.tournamentDef.dragonData;
 
 		// Figure out group dependencies for this dragon
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
-		List<string> equippedPowers = GetPowersList(_tournamentData.GetToUseSkin(), _tournamentData.GetToUsePets());
+		List<string> equippedPowers = GetPowersList(dragonData.disguise, dragonData.pets);
 
 		// No more dependencies to be checked: return handler!
 		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
@@ -529,6 +548,22 @@ public class HDAddressablesManager : AddressablesManager
             return GetDownloadablesHandle(handleId);
         }
 	}
+
+    private bool HasPermissionRequestedForAnyDownloadableHandle()
+    {
+        if (m_downloadableHandles != null)
+        {
+            foreach (KeyValuePair<string, Downloadables.Handle> pair in m_downloadableHandles)
+            {
+                if (!pair.Value.NeedsToRequestPermission())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 	/// <summary>
 	/// Given a skin and a list of pets, create a list with all the powers derived from such equipment.

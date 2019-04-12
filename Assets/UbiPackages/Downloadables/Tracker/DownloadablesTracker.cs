@@ -16,9 +16,7 @@ namespace Downloadables
     /// This class is responsible for defining the interface of the class that will be notified every time a relevant action related to downloadables happens
     /// </summary>
     public abstract class Tracker
-    {
-        private const float BYTES_TO_MB = 1f / (1024 * 1024);
-
+    {        
         public enum EAction
         {
             Download,
@@ -38,7 +36,7 @@ namespace Downloadables
         private bool m_currentDownloadIsUpdate;
         private float m_currentDownloadTimeAtStart;
         private string m_currentDownloadId;
-        private float m_currentDownloadExistingSizeAtStart;
+        private long m_currentDownloadExistingSizeAtStart;
         private NetworkReachability m_currentDownloadReachabilityAtStart;
 
         /// <summary>
@@ -50,24 +48,30 @@ namespace Downloadables
         {
             Config = config; 
             m_currentDownloadTimeAtStart = -1;
-        }        
+        }                
 
-        private float GetSizeInMb(float sizeInBytes)
-        {
-            return sizeInBytes * BYTES_TO_MB;
-        }
-        public void NotifyDownloadStart(float currentTime, string downloadableId, float existingSizeMbAtStart, NetworkReachability reachabilityAtStart, bool isUpdate)
+        /// <summary>
+        /// Notifies a download has started
+        /// </summary>
+        /// <param name="currentTime"></param>
+        /// <param name="downloadableId"></param>
+        /// <param name="existingSizeAtStart">Size in bytes right before starting to download.</param>
+        /// <param name="totalSize">Total size in bytes.</param>
+        /// <param name="reachabilityAtStart"></param>
+        /// <param name="isUpdate"></param>
+        public void NotifyDownloadStart(float currentTime, string downloadableId, long existingSizeAtStart, long totalSize, NetworkReachability reachabilityAtStart, bool isUpdate)
         {
             m_currentDownloadTimeAtStart = currentTime;
             m_currentDownloadId = downloadableId;
-            m_currentDownloadExistingSizeAtStart = existingSizeMbAtStart;
+            m_currentDownloadExistingSizeAtStart = existingSizeAtStart;
             m_currentDownloadReachabilityAtStart = reachabilityAtStart;
             m_currentDownloadIsUpdate = isUpdate;
 
-            TrackActionStart((isUpdate) ? EAction.Update : EAction.Download, downloadableId, existingSizeMbAtStart);
+            // The event is not tracked here because the end event might not be tracked if an error happens if that error type max limit was met. That's why we need to track
+            // the start event along with the end event in order to avoid a start event without the corresponding end event.            
         }
 
-        public void NotifyDownloadEnd(float currentTime, string downloadableId, float existingSizeAtEnd,  float totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
+        public void NotifyDownloadEnd(float currentTime, string downloadableId, long existingSizeAtEnd,  long totalSize, NetworkReachability reachabilityAtEnd, Error.EType error)
         {
             if (m_currentDownloadTimeAtStart < 0f)
             {
@@ -125,22 +129,26 @@ namespace Downloadables
 
                 canLog = info[error] <= maxAttempts;
                 maxReached = info[error] >= maxAttempts;
-            }            
-
+            }
+            
             if (canLog)
             {
+                // The start event is tracked here in order to make sure there won't be any start event without its end eventnt.            
+                TrackActionStart((m_currentDownloadIsUpdate) ? EAction.Update : EAction.Download, downloadableId, m_currentDownloadExistingSizeAtStart, totalSize);
+                  
+               // End event          
                 EAction action = (m_currentDownloadIsUpdate) ? EAction.Update : EAction.Download;
                 int timeSpent = (int)(currentTime - m_currentDownloadTimeAtStart);                
-                TrackActionEnd(action, downloadableId, GetSizeInMb(m_currentDownloadExistingSizeAtStart), GetSizeInMb(existingSizeAtEnd),
-                               GetSizeInMb(totalSize), timeSpent, m_currentDownloadReachabilityAtStart, reachabilityAtEnd, error, maxReached);
+                TrackActionEnd(action, downloadableId, m_currentDownloadExistingSizeAtStart, existingSizeAtEnd, totalSize, timeSpent, 
+                    m_currentDownloadReachabilityAtStart, reachabilityAtEnd, error, maxReached);
             }
 
             m_currentDownloadTimeAtStart = -1f;
-        }
+        }      
 
-        public abstract void TrackActionStart(EAction action, string downloadableId, float existingSizeMbAtStart);
+        public abstract void TrackActionStart(EAction action, string downloadableId, long existingSize, long totalSize);
 
-        public abstract void TrackActionEnd(EAction action, string downloadableId, float existingSizeMbAtStart, float existingSizeMbAtEnd, float totalSizeMb, int timeSpent,
+        public abstract void TrackActionEnd(EAction action, string downloadableId, long existingSize, long existingSizeAtEnd, long totalSize, int timeSpent,
                                              NetworkReachability reachabilityAtStart, NetworkReachability reachabilityAtEnd, Error.EType error, bool maxAttemptsReached);                
 
         protected bool CanLog()

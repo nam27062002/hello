@@ -20,38 +20,12 @@ namespace AI {
 		protected override void Awake() {
 			base.Awake();
 
-			string version = "";
-			switch(FeatureSettingsManager.instance.Particles)
-			{
-				default:
-				case FeatureSettings.ELevel5Values.very_low:							
-				case FeatureSettings.ELevel5Values.low:
-						version = "Low/";
-					break;
-				case FeatureSettings.ELevel5Values.mid:
-						version = "Master/";
-					break;
-				case FeatureSettings.ELevel5Values.very_high:
-				case FeatureSettings.ELevel5Values.high:
-						version = "High/";
-					break;
-			}
+            Transform p = transform.FindTransformRecursive(m_fireAnchorName);
+            ParticleSystem ps = ParticleManager.InitLeveledParticle(m_fireParticleName, p);
 
-			string path = "Particles/" + version + m_fireParticleName;
-
-			GameObject prefab = Resources.Load<GameObject>(path);
-			if ( prefab )
-			{
-				m_fireView = Instantiate<GameObject>(prefab);
-				if ( m_fireView )
-				{
-					// Anchor
-					Transform p = transform.FindTransformRecursive(m_fireAnchorName);
-					m_fireView.transform.SetParent(p, true);
-					m_fireView.transform.localPosition = GameConstants.Vector3.zero;
-					m_fireView.transform.localRotation = GameConstants.Quaternion.identity;
-				}
-			}
+            if (ps != null) {
+                m_fireView = ps.gameObject;
+            }
 
 			DeactivateFire();
 		}

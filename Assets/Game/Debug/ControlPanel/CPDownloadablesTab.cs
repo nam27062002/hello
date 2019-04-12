@@ -19,16 +19,21 @@ public class CPDownloadablesTab : MonoBehaviour
 	[Separator("Other References")]
 	[SerializeField] private Toggle m_automaticDownloaderAllowedToggle = null;
     [SerializeField] private TMP_Dropdown m_networkSpeedDropdown = null;
-
+	
 	// Internal
     private List<Downloadables.CatalogGroup> m_groupsSortedByPriority;
 	private List<CPDownloadablesGroupView> m_views = new List<CPDownloadablesGroupView>();
 	private List<CPDownloadablesGroupView> m_viewsTemp = new List<CPDownloadablesGroupView>();
 
-	/// <summary>
-	/// 
-	/// </summary>
-	private void Start() { 
+    [SerializeField] private GameObject m_dumperRoot;
+    [SerializeField] private TMP_Text m_dumperFillUpProgress;
+    [SerializeField] private Button m_dumperFillUpDisk;
+    [SerializeField] private Button m_dumperCancelFillUpDisk;    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void Start() { 
 		// Create group views     
         CPDownloadablesGroupView groupView = null;
         GameObject newInstance = null;
@@ -61,6 +66,8 @@ public class CPDownloadablesTab : MonoBehaviour
 
 		// Hide prefab instance
 		m_groupViewPrefab.SetActive(false);
+
+        Dumper_Init();
     }    
 
 	/// <summary>
@@ -95,7 +102,7 @@ public class CPDownloadablesTab : MonoBehaviour
         {
             m_groupsSortedByPriority = groupsSortedByPriority.GetRange(0, groupsSortedByPriority.Count);
             UpdateGroupsOrder();
-        }
+        }		
 
 #if UNITY_EDITOR
         m_networkSpeedDropdown.value = NETWORK_SPEED_SLEEP_TIME_BY_MODE.IndexOf(MockNetworkDriver.MockThrottleSleepTime);
@@ -138,4 +145,80 @@ public class CPDownloadablesTab : MonoBehaviour
     {
         MockNetworkDriver.MockThrottleSleepTime = NETWORK_SPEED_SLEEP_TIME_BY_MODE[optionId];
     }
+
+    #region dumper
+    private float m_dumperTimeAtFillUp;
+
+    private void Dumper_Init()
+    {
+#if USE_DUMPER
+        Dumper_RefreshUI();
+#else
+        m_dumperRoot.SetActive(false);
+#endif
+    }
+
+#if USE_DUMPER    
+    private void Dumper_RefreshUI()
+    {
+        Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+        if (dumper != null)
+        {
+            if (dumper.IsFillingUp)
+            {                                
+                m_dumperFillUpDisk.interactable = false;
+                m_dumperCancelFillUpDisk.interactable = true;
+                m_dumperFillUpProgress.enabled = true;
+            }
+            else
+            {                
+                m_dumperFillUpDisk.interactable = true;
+                m_dumperCancelFillUpDisk.interactable = false;
+                m_dumperFillUpProgress.enabled = false;
+            }
+        }
+    }   
+#endif
+
+    public void Dumper_FillUpDisk()
+    {
+#if USE_DUMPER
+        Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+        if (dumper != null)
+        {
+            dumper.IsFillingUp = true;
+        }
+
+        m_dumperTimeAtFillUp = Time.realtimeSinceStartup;        
+
+        Dumper_RefreshUI();
+#endif
+    }
+
+    public void Dumper_CancelFillUpDisk()
+    {
+#if USE_DUMPER
+        Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+        if (dumper != null)
+        {
+            dumper.IsFillingUp = false;
+        }
+
+        Dumper_RefreshUI();
+#endif
+    }
+
+    public void Dumper_CleanUpDisk()
+    {
+#if USE_DUMPER
+        Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+        if (dumper != null)
+        {
+            dumper.CleanUp();
+        }
+
+        Dumper_RefreshUI();
+#endif
+    }   
+#endregion
 }

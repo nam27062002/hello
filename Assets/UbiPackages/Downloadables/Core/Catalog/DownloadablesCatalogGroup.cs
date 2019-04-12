@@ -25,17 +25,20 @@ namespace Downloadables
 
         private bool NeedsToSave { get; set; }
 
-        private bool m_permissionOverCarrierRequested;
-        public bool PermissionOverCarrierRequested
+        /// <summary>
+        /// Whether or not the user has been notified about the download. According to Apple Store compliance guidelines the user needs to be notified for both over carrier and wifi downloads
+        /// </summary>
+        private bool m_permissionRequested;
+        public bool PermissionRequested
         {
             get
             {
-                return m_permissionOverCarrierRequested;
+                return m_permissionRequested;
             }
 
             set
             {
-                m_permissionOverCarrierRequested = value;
+                m_permissionRequested = value;
                 NeedsToSave = true;
             }
         }
@@ -70,12 +73,17 @@ namespace Downloadables
         public void Reset()
         {
             EntryIds = null;
-            PermissionOverCarrierRequested = false;
-            PermissionOverCarrierGranted = false;
+            ResetPermissions();            
             NeedsToSave = false;
             Priority = MIN_PRIORITY;
             m_latestSaveAt = -1;
             Index = -1;
+        }
+
+        public void ResetPermissions()
+        {
+            PermissionRequested = false;
+            PermissionOverCarrierGranted = false;
         }
 
         public void Setup(string id, List<string> entryIds)
@@ -106,7 +114,7 @@ namespace Downloadables
         {
             if (data != null)
             {
-                m_permissionOverCarrierRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
+                m_permissionRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
                 m_permissionOverCarrierGranted = GetAttAsBool(data, ATT_PERMISSION_GRANTED); 
             }
         }
@@ -115,7 +123,7 @@ namespace Downloadables
         {
             JSONClass data = new JSONClass();
 
-            AddAttAsInt(data, ATT_PERMISSION_REQUESTED, PermissionOverCarrierRequested);
+            AddAttAsInt(data, ATT_PERMISSION_REQUESTED, PermissionRequested);
             AddAttAsInt(data, ATT_PERMISSION_GRANTED, PermissionOverCarrierGranted);
             
             return data;            

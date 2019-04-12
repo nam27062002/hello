@@ -41,7 +41,7 @@ public class DragonProgression : SerializableClass {
 		
 	// Level
 	private int m_level = 0;
-	public int level { get { return m_level; }}	// [0..N-1]
+	public int level { get { return m_level; }}	// [0..maxLevel]
 
 	public int maxLevel { get { return m_levelsXp.Length - 1; }}
 	public int nextLevel { get { return Mathf.Min(m_level + 1, maxLevel); }}
@@ -230,9 +230,30 @@ public class DragonProgression : SerializableClass {
 		return levelUpCount;
 	}
 
-	public void SetToMaxLevel()
-	{
-		m_level = maxLevel;
+	/// <summary>
+	/// Force a specific level.
+	/// Use only in specific cases where level needs to be forced! (i.e. Tournament).
+	/// Won't trigger DRAGON_LEVEL_UP event.
+	/// </summary>
+	/// <param name="_level">Target level.</param>
+	public void SetLevel(int _level) {
+		// Clamp given level
+		_level = Mathf.Clamp(_level, 0, maxLevel);
+
+		// Store new level
+		m_level = _level;
+
+		// Make XP match the new level
+		m_xp = levelsXP[m_level];
+	}
+
+	/// <summary>
+	/// Set the dragon to max level.
+	/// Use only in specific cases where level needs to be forced! (i.e. Tournament)
+	/// Won't trigger DRAGON_LEVEL_UP event.
+	/// </summary>
+	public void SetToMaxLevel() {
+		SetLevel(maxLevel);
 	}
 
 	//------------------------------------------------------------------//

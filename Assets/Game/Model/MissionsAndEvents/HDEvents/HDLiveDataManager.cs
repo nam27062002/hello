@@ -448,6 +448,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.Deactivate();
         m_quest.Deactivate();
         m_league.Deactivate();
+        m_dragonDiscounts.Deactivate();
     }
 
     public void SwitchToQuest() {
@@ -455,6 +456,7 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.Activate();
         m_quest.Activate();
         m_league.Deactivate();
+        m_dragonDiscounts.Activate();
     }
 
     public void SwitchToLeague() {
@@ -462,5 +464,6 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
         m_passive.Deactivate();
         m_quest.Deactivate();
         m_league.Activate();
+        m_dragonDiscounts.Activate();
     }
 }

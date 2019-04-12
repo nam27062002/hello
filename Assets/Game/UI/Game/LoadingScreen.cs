@@ -77,82 +77,21 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	public static void InitWithCurrentData() {
 		// Aux vars
 		IDragonData currentDragon = null;
-		DefinitionNode skinDef = null;
-		List<string> pets = null;
-
 		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveDataManager.tournament;
-			currentDragon = DragonManager.GetDragonData(tournament.GetToUseDragon());
-			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, tournament.GetToUseSkin());
-			pets = tournament.GetToUsePets();
+			currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
 		} else {
 			currentDragon = DragonManager.currentDragon;
-			skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.diguise);
-			pets = currentDragon.pets;
 		}
 
+		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
+		List<string> pets = currentDragon.pets;
 
 		// Dragon image
 		instance.m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + currentDragon.def.sku + "/" + skinDef.Get("icon"));
         instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
 
-
 		// Powers: skin + pets
-		List<DefinitionNode> powerDefs = new List<DefinitionNode>();
-        List<PowerIcon.Mode> powerMode = new List<PowerIcon.Mode>();
-		// Skin
-		if(skinDef == null) {
-			powerDefs.Add(null);
-		} else {
-			powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup")));	// Can be null
-		}
-        powerMode.Add(PowerIcon.Mode.SKIN);
-
-        // Special Dragon Powers
-        if (SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-            DragonDataSpecial dataSpecial = (DragonDataSpecial)currentDragon;
-            for (int i = 1; i <= dataSpecial.powerLevel; ++i) {
-                powerDefs.Add(dataSpecial.specialPowerDefsByOrder[i - 1]);
-                powerMode.Add(PowerIcon.Mode.SPECIAL_DRAGON);
-            }
-        }
-
-		// Pets
-		for(int i = 0; i < pets.Count; i++) {
-			DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pets[i]);
-			if(petDef == null) {
-				powerDefs.Add(null);
-			} else {
-				powerDefs.Add(DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup")));
-			}
-            powerMode.Add(PowerIcon.Mode.PET);
-		}
-
-		// Initialize power icons
-		for(int i = 0; i < instance.m_powerIcons.Length; i++) {
-			// Get icon ref
-			PowerIcon powerIcon = instance.m_powerIcons[i];
-
-			// Hide if there are not enough powers defined
-			if(i >= powerDefs.Count) {
-				powerIcon.gameObject.SetActive(false);
-				continue;
-			}
-
-			// Hide if there is no power associated
-			if(powerDefs[i] == null) {
-                if (i > 0 || SceneController.mode == SceneController.Mode.SPECIAL_DRAGONS) {
-					powerIcon.gameObject.SetActive(false);
-				} else {
-					powerIcon.InitFromDefinition(null, false, false);
-				}
-				continue;
-			}
-
-			// Everything ok! Initialize
-			powerIcon.gameObject.SetActive(true);
-
-            powerIcon.InitFromDefinition(powerDefs[i], false, false, powerMode[i]);
-		}
+		// [AOC] PowerIcon does all the job for us!
+		PowerIcon.InitPowerIconsWithDragonData(ref instance.m_powerIcons, currentDragon);
 	}
 }

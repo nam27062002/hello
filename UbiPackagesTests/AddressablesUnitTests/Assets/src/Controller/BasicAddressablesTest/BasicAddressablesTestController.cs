@@ -34,7 +34,8 @@ public class BasicAddressablesTestController : MonoBehaviour
             AssetBundle ab = m_request.assetBundle;
             Object ubiCube = ab.LoadAsset("UbiCube");
             Instantiate(ubiCube);
-        }
+            m_request = null;
+        }        
 
         m_addressablesManager.Update();
 
@@ -50,7 +51,25 @@ public class BasicAddressablesTestController : MonoBehaviour
 #if UNITY_EDITOR
             //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = !AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled;
 #endif       
-            AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+            //AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled = !AssetBundlesManager.Instance.IsAutomaticDownloaderEnabled;
+
+#if USE_DUMPER
+            Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+            if (dumper != null)
+            {
+                dumper.IsFillingUp = !dumper.IsFillingUp;
+            }
+#endif
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+#if USE_DUMPER
+            Downloadables.Dumper dumper = AssetBundlesManager.Instance.GetDownloadablesDumper();
+            if (dumper != null)
+            {
+                dumper.CleanUp();
+            }
+#endif
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
@@ -367,7 +386,8 @@ public class BasicAddressablesTestController : MonoBehaviour
     public Dropdown m_uiAssetCubesDropdown;
     public Dropdown m_uiAssetCubesAddressableIds;
     public Dropdown m_uiAssetCubesResolutionDropdown;
-    public Text m_uiOperationResult;    
+    public Text m_uiOperationResult;
+    public Text m_uiDiskFreeSpace;
 
     private void Ui_Init()
     {

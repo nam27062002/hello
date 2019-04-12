@@ -71,19 +71,14 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     
     private void Awake()
     {
-        if (!string.IsNullOrEmpty(m_machineGunParticleName)){
-            m_machinegunParticle = ParticleManager.InitLeveledParticle( m_machineGunParticleName, m_machineGunParticleTransform );
-            m_machinegunParticle.gameObject.SetActive( true );
-        }
         destroys = FeatureSettingsManager.instance.IsHelicopterDestroying;
         if ( destroys )
         {
             results = new RaycastHit[3];
             layerMask = 1 << LayerMask.NameToLayer("Triggers") | 1 << LayerMask.NameToLayer("Obstacle");
         }
-        
-        
     }
+
     // Use this for initialization
     void Start () {
 		m_playerBoost = InstanceManager.player.dragonBoostBehaviour;
@@ -103,8 +98,12 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
         float scale = InstanceManager.player.data.scale;
         m_missilesRange = m_missilesRange * scale;
         m_machinegunDistance = m_machinegunDistance * scale;
-        
-        
+
+        if (!string.IsNullOrEmpty(m_machineGunParticleName)) {
+            m_machinegunParticle = ParticleManager.InitLeveledParticle(m_machineGunParticleName, m_machineGunParticleTransform);
+            m_machinegunParticle.gameObject.SetActive(true);
+        }
+
         // Check if we need to spawn the drone!
         if ( m_powerLevel >= 3 )
         {

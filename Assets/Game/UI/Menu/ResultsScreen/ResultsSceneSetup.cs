@@ -158,12 +158,13 @@ public class ResultsSceneSetup : MonoBehaviour {
 
 		// Show and trigger dragon animation
 		m_dragonSlot.gameObject.SetActive(true);
+		IDragonData dragonData = null;
 		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			HDTournamentManager tournament = HDLiveDataManager.tournament;
-			m_dragonSlot.LoadDragon(tournament.GetToUseDragon(), tournament.GetToUseSkin());
+			dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
 		} else {
-			m_dragonSlot.LoadDragon(DragonManager.currentDragon.sku, DragonManager.currentDragon.diguise);
+			dragonData = DragonManager.currentDragon;
 		}
+		m_dragonSlot.LoadDragon(dragonData.sku, dragonData.disguise);
 		m_dragonSlot.dragonInstance.SetAnim(MenuDragonPreview.Anim.RESULTS);
 		m_dragonSlot.dragonInstance.DisableMovesOnResults();
 		m_dragonSlot.dragonInstance.animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;

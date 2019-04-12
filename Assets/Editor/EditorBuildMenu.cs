@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 // Output the build size or a failure depending on BuildPlayer.
@@ -12,15 +13,17 @@ public class EditorBuildMenu : MonoBehaviour
     private static void InternalBuildPlayer()
     {
 		Debug.Log("Building player...");
-        string[] sceneNames = null;
+        List<string> sceneNames = new List<string>();
         EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
         if (scenes != null)
         {
-            int count = scenes.Length;
-            sceneNames = new string[count];
+            int count = scenes.Length;            
             for (int i = 0; i < count; i++)
             {
-                sceneNames[i] = scenes[i].path;
+                if (EditorBuildSettings.scenes[i].enabled)
+                {
+					sceneNames.Add(scenes[i].path);
+                }
             }
         }
 
@@ -29,7 +32,7 @@ public class EditorBuildMenu : MonoBehaviour
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = sceneNames;
+        buildPlayerOptions.scenes = sceneNames.ToArray();
         buildPlayerOptions.locationPathName = path;
         buildPlayerOptions.target = buildTarget;
         buildPlayerOptions.options = BuildOptions.None;
