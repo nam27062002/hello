@@ -4,8 +4,6 @@
 // Created by Alger Ortín Castellví on 09/04/2019.
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
-#define RENDER_TEXTURE
-
 //----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
@@ -27,6 +25,11 @@ public abstract class IShareScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	protected const int QR_SIZE = 128;
 	protected const int CAMERA_DEPTH = 20;  // [AOC] This will hide UI and other elements we don't want to capture
+
+	public enum CaptureMode {
+		RENDER_TEXTURE,	// Capture using only the prefab camera. Less memory usage, but requires more setup
+		SCREEN_CAPTURE	// Capture background with a snapshot of the current screen content, UI using prefab camera. Requires one temp texture of the size of the screen, and objects that shouldn't be rendered must be hidden manually.
+	};
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -59,12 +62,13 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// <summary>
 	/// Take a picture!
 	/// </summary>
-	public void TakePicture() {
+	/// <param name="_captureMode">Technique use to take the screenshot.</param>
+	public void TakePicture(CaptureMode _captureMode = CaptureMode.RENDER_TEXTURE) {
 		// Ignore if a capture is ongoing
 		if(m_coroutine != null) return;
 
 		// Do it in a coroutine to wait until the end of the frame
-		m_coroutine = StartCoroutine(TakePictureInternal());
+		m_coroutine = StartCoroutine(TakePictureInternal(_captureMode));
 	}
 
 	/// <summary>
@@ -117,6 +121,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// </summary>
 	/// <param name="_camera">Camera to be used as reference.</param>
 	protected void SetRefCamera(Camera _camera) {
+		// Ignore if null
+		if(_camera == null) return;
+
 		// Copy camera's position and rotation
 		this.transform.CopyFrom(_camera.transform);
 
@@ -139,10 +146,8 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// Does a screenshot and saves it into the picture texture, overriding its previous content.
 	/// </summary>
 	/// <returns>The coroutine.</returns>
-	private IEnumerator TakePictureInternal() {
-		// Trigger Flash FX!
-		PopupManager.OpenPopupInstant(PopupFlashFX.PATH);
-
+	/// <param name="_captureMode">Technique use to take the screenshot.</param>
+	private IEnumerator TakePictureInternal(CaptureMode _captureMode) {
 		// Wait until the end of the frame so everything is refreshed
 		//yield return new WaitForEndOfFrame();
 		// [AOC] For some reason, waiting just one frame doesn't give enough time for everything to get properly setup. Wait a couple of frames instead.
@@ -152,8 +157,39 @@ public abstract class IShareScreen : MonoBehaviour {
 
 		// Take the screenshot!
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
-		// [AOC] We have 2 options here Texture.ReadPixels() or RenderTexture
-#if RENDER_TEXTURE
+		Texture2D pictureTex = null;
+		switch(_captureMode) {
+			case CaptureMode.RENDER_TEXTURE: pictureTex = TakeRenderTexture(); break;
+			case CaptureMode.SCREEN_CAPTURE: pictureTex = TakeScreenCapture(); break;
+		}
+
+		// Trigger Flash FX!
+		PopupManager.OpenPopupInstant(PopupFlashFX.PATH);
+
+		// Give it some time
+		yield return new WaitForSeconds(0.25f);
+
+		// Clear coroutine reference
+		m_coroutine = null;
+
+		// Clean up memory
+		m_qrCodeHolder.texture = null;
+		DestroyImmediate(m_qrCodeTex);
+		m_qrCodeTex = null;
+
+		// Disable ourselves
+		this.gameObject.SetActive(false);
+
+		// Open "Share" popup
+		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
+		popup.Init(pictureTex, GetPrewrittenCaption(), string.Empty);	// Don't care about the popup's title
+	}
+
+	/// <summary>
+	/// Take a screen capture using a render texture to render the contents of the camera.
+	/// </summary>
+	/// <returns>The capture.</returns>
+	private Texture2D TakeRenderTexture() {
 		// Process is explained here: https://docs.unity3d.com/ScriptReference/Camera.Render.html
 
 		// Re-use manager's textures
@@ -183,10 +219,54 @@ public abstract class IShareScreen : MonoBehaviour {
 		// Clean up
 		m_camera.targetTexture = null;
 		RenderTexture.active = currentRT; // Restore
-#else
-		// Re-use manager's textures
-		Texture2D pictureTex = ShareScreensManager.captureTex;
 
+		return pictureTex;
+	}
+
+	/// <summary>
+	/// Take a screen capture doing a full screen capture and automatically resampling it.
+	/// </summary>
+	/// <returns>The capture.</returns>
+	private Texture2D TakeScreenCapture() {
+		// Capture central area of the screen
+		Texture2D sourceTex = CaptureScreen();
+
+		// Dump capture into a render texture of the target size
+		sourceTex.filterMode = FilterMode.Point;
+		RenderTexture renderTex = ShareScreensManager.renderTex;	// Re-use manager's textures
+		renderTex.filterMode = FilterMode.Point;
+		RenderTexture.active = renderTex;
+		Graphics.Blit(sourceTex, renderTex);
+
+		// Now render UI on top, using this share screen's camera
+		m_camera.targetTexture = renderTex;
+		RenderTexture activeRTBackup = RenderTexture.active; // Backup
+		RenderTexture.active = renderTex;
+
+		m_camera.clearFlags = CameraClearFlags.Depth;
+		m_camera.cullingMask = LayerMask.GetMask("UI");
+		m_camera.Render();
+
+		// Dump render texture's content into a Texture2D
+		Texture2D targetTex = ShareScreensManager.captureTex;	// Reuse manager's textures
+		targetTex.ReadPixels(new Rect(0, 0, ShareScreensManager.CAPTURE_SIZE.x, ShareScreensManager.CAPTURE_SIZE.y), 0, 0);
+		targetTex.Apply();
+
+		// Clean up
+		// Clean up
+		m_camera.targetTexture = null;
+		RenderTexture.active = activeRTBackup; // Restore
+		DestroyImmediate(sourceTex);
+		sourceTex = null;
+
+		return targetTex;
+	}
+
+	/// <summary>
+	/// Capture the central area of the screen and store it into a texture.
+	/// </summary>
+	/// <returns>The capture.</returns>
+	private Texture2D CaptureScreen() {
 		// Compute which area of the screen to read
 		// Fit photo size into screen size
 		Vector2 scaleRatio = new Vector2(
@@ -204,8 +284,8 @@ public abstract class IShareScreen : MonoBehaviour {
 		}
 
 		Rect captureRect = new Rect(
-			Screen.width - captureSize.x / 2f,	// Centered to the screen
-			Screen.height - captureSize.y / 2f, // Centered to the screen
+			Screen.width / 2f - captureSize.x / 2f,  // Centered to the screen
+			Screen.height / 2f - captureSize.y / 2f, // Centered to the screen
 			captureSize.x,
 			captureSize.y
 		);
@@ -214,51 +294,9 @@ public abstract class IShareScreen : MonoBehaviour {
 		// [AOC] We can't read directly into our texture cause they have different sizes!
 		Texture2D captureTex = new Texture2D((int)captureSize.x, (int)captureSize.y, TextureFormat.RGB24, false);
 		captureTex.ReadPixels(captureRect, 0, 0);
+		captureTex.Apply();
 
-		// Resize image to the target size
-		// [AOC] TODO!! Use a nicer algorithm (http://blog.collectivemass.com/2014/03/resizing-textures-in-unity/)
-		Texture2D sourceTex = captureTex;
-		Texture2D targetTex = pictureTex;
-		Color[] sourceTexData = sourceTex.GetPixels();
-		Color[] targetTexData = targetTex.GetPixels();
-		Vector2 sourcePos = new Vector2();
-		Color pixel = new Color();
-		for(int x = 0; x < targetTex.width; ++x) {
-			for(int y = 0; y < targetTex.height; ++y) {
-				// Figure out matching position in source texture
-				sourcePos.y = Mathf.InverseLerp(0, targetTex.width, x) * (sourceTex.width - 1);
-				sourcePos.x = Mathf.InverseLerp(0, targetTex.height, y) * (sourceTex.height - 1);
-
-				// Get matching color in the source texture
-				pixel = sourceTexData[(int)((sourcePos.y * sourceTex.width) + sourcePos.x)];
-
-				// Copy pixel
-				targetTexData[(y * targetTex.width) + x] = pixel;
-			}
-		}
-
-		// Upload to the GPU
-		targetTex.SetPixels(targetTexData);
-		targetTex.Apply();
-#endif
-
-		// Give it some time
-		yield return new WaitForSeconds(0.25f);
-
-		// Clear coroutine reference
-		m_coroutine = null;
-
-		// Clean up memory
-		m_qrCodeHolder.texture = null;
-		DestroyImmediate(m_qrCodeTex);
-		m_qrCodeTex = null;
-
-		// Disable ourselves
-		this.gameObject.SetActive(false);
-
-		// Open "Share" popup
-		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(pictureTex, GetPrewrittenCaption(), string.Empty);	// Don't care about the popup's title
+		return captureTex;
 	}
 
 	//------------------------------------------------------------------------//
