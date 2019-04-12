@@ -17,6 +17,7 @@ public class DragonMotionDino : DragonMotion {
     Transform m_magnetSensor;
     public bool m_grounded = false;
     public float m_maxWalkAngle = 20;
+    public float m_maxStationaryAngle = 45;
 
     
     [Range(0,100.0f)]
@@ -147,7 +148,7 @@ public class DragonMotionDino : DragonMotion {
         CustomCheckGround( out m_raycastHit );
         if ( m_height < 90 )
         {
-            if ( !AngleIsTooMuch( m_lastGroundHitNormal ))
+            if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
             {
                 if (!m_grounded)
                 {
@@ -167,7 +168,8 @@ public class DragonMotionDino : DragonMotion {
                 }
                 m_direction = dir;
                 m_impulse = GameConstants.Vector3.zero;
-                m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
+                if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
+                    m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
                 RotateToGround( m_direction );
                 SnapToGround();
                 
@@ -209,7 +211,7 @@ public class DragonMotionDino : DragonMotion {
         CustomCheckGround( out m_raycastHit );
         if ( m_height < 90 )
         {
-            if ( !AngleIsTooMuch( m_lastGroundHitNormal ))
+            if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -389,10 +391,10 @@ public class DragonMotionDino : DragonMotion {
         return m_closeToGround;
     }
     
-    public bool AngleIsTooMuch( Vector3 _normal )
+    public bool GroundAngleBiggerThan( Vector3 _normal, float maxAngle)
     {
         float angle = _normal.ToAngleDegreesXY();
-        return (angle > 180 - m_maxWalkAngle) || (angle < m_maxWalkAngle);
+        return (angle > 180 - maxAngle) || (angle < maxAngle);
     }
     
     public void UpdatePowerAreas()
