@@ -48,21 +48,6 @@ public class PhotoScreenController : MonoBehaviour {
 
 	[Separator("Shared Objects")]
 	[SerializeField] private GameObject m_bottomBar = null;
-	[SerializeField] private DOTweenAnimation m_flashFX = null;
-	[SerializeField] private List<GameObject> m_objectsToHide = new List<GameObject>();
-
-	[Separator("Dragon Mode")]
-	[SerializeField] private Localizer m_dragonName = null;
-	[SerializeField] private Localizer m_dragonDesc = null;
-	[SerializeField] private Image m_dragonTierIcon = null;
-
-	[Separator("Egg Reward Mode")]
-	[SerializeField] private Localizer m_eggRewardName = null;
-	[SerializeField] private TextMeshProUGUI m_eggRewardDesc = null;
-	[SerializeField] private Image m_eggRewardIcon = null;
-
-	[Separator("Share Data")]
-	[SerializeField] private Image m_qrContainer = null;
 
 	[Separator("AR and Animoji")]
 	[SerializeField] private GameObject m_arButton = null;
@@ -115,9 +100,6 @@ public class PhotoScreenController : MonoBehaviour {
 		// Apply initial mode
 		SetMode(m_mode);
 
-		// Load qr code
-		m_qrContainer.sprite = Resources.Load<Sprite>(GameSettings.shareData.qrCodePath);
-
 		// Subscribe to external events
 		Messenger.AddListener<MenuScreen, MenuScreen>(MessengerEvents.MENU_SCREEN_TRANSITION_START, OnMenuScreenTransitionStart);
 	}
@@ -133,8 +115,7 @@ public class PhotoScreenController : MonoBehaviour {
 	/// Component has been enabled.
 	/// </summary>
 	private void OnEnable() {
-		// Hide QR code container
-		m_qrContainer.gameObject.SetActive(false);
+
     }
 
 	/// <summary>
@@ -165,92 +146,6 @@ public class PhotoScreenController : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Does a screenshot and saves it into the picture texture, overriding its previous content.
-	/// </summary>
-	/// <returns>The coroutine.</returns>
-	private IEnumerator TakePicture() {
-		// Hide all UI elements
-		m_objectsToRestore.Clear();	// Only those that were actually active will be restored
-		for(int i = 0; i < m_objectsToHide.Count; i++) {
-			if(m_objectsToHide[i].activeSelf) {
-				m_objectsToHide[i].SetActive(false);
-				m_objectsToRestore.Add(m_objectsToHide[i]);
-			}
-		}
-
-		// Hide HUD as well
-		InstanceManager.menuSceneController.hud.gameObject.SetActive(false);
-
-		// If we are in AR, hide AR UI as well
-		if(m_isARAvailable && m_arFlow.isActiveAndEnabled) {
-			if(m_arFlow.currentScreen != null) {
-				m_arFlow.currentScreen.gameObject.SetActive(false);
-				m_objectsToRestore.Add(m_arFlow.currentScreen.gameObject);
-			}
-		}
-
-		// Display QR code
-		m_qrContainer.gameObject.SetActive(true);
-		m_objectsToRestore.Add(m_qrContainer.gameObject);	// Hide it again once capture is done
-
-		// Wait until the end of the frame so the "hide" is actually applied
-		yield return new WaitForEndOfFrame();
-
-		// Take the screenshot!
-		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it
-		//		 From FGOL
-		// Aux vars
-		int width = Screen.width;
-		int height = Screen.height;
-
-		// If texture is not created, do it now
-		if(m_picture == null) {
-			m_picture = new Texture2D(width, height, TextureFormat.RGB24, false);
-		}
-
-		// Read screen contents into the texture
-		m_picture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-		m_picture.Apply();
-
-		// Launch Flash FX! (AFTER the screenshot, of course! :D)
-		m_flashFX.gameObject.SetActive(true);
-		m_flashFX.DORestart();
-
-		// Give it some time
-		yield return new WaitForSeconds(0.25f);
-
-		// Restore disabled objects
-		for(int i = 0; i < m_objectsToRestore.Count; i++) {
-			m_objectsToRestore[i].SetActive(!m_objectsToRestore[i].activeSelf);
-		}
-
-		// Restore HUD as well
-		InstanceManager.menuSceneController.hud.gameObject.SetActive(true);
-
-		// Figure out default message depending on mode
-		string caption = "";
-		switch(m_mode) {
-			case Mode.DRAGON: {
-				caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION", GameSettings.shareData.url);
-			} break;
-
-			case Mode.EGG_REWARD: {
-				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
-				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
-				switch(currentReward.type) {
-					case Metagame.RewardPet.TYPE_CODE: {
-						caption = LocalizationManager.SharedInstance.Localize("TID_IMAGE_CAPTION_PET", GameSettings.shareData.url);
-					} break;
-				}
-			} break;
-		}
-
-		// Open "Share" popup
-		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(m_picture, caption, m_targetName);
-	}
-
 	/// <summary>
 	/// Change screen mode.
 	/// </summary>
@@ -289,17 +184,9 @@ public class PhotoScreenController : MonoBehaviour {
 				// Initialize dragon info
 				IDragonData dragonData = DragonManager.GetDragonData(menuController.selectedDragon);
 				m_targetName = dragonData.def.GetLocalized("tidName");
-				if(m_dragonName != null) m_dragonName.Localize(dragonData.def.GetAsString("tidName"));
-				if(m_dragonDesc != null) m_dragonDesc.Localize(dragonData.def.GetAsString("tidDesc"));
-				if(m_dragonTierIcon != null) m_dragonTierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, dragonData.tierDef.GetAsString("icon"));
 			} break;
 
 			case Mode.EGG_REWARD: {
-				// Defaults
-				m_eggRewardName.gameObject.SetActive(true);
-				m_eggRewardDesc.gameObject.SetActive(true);
-				m_eggRewardIcon.gameObject.SetActive(true);
-
 				// Depends on reward type
 				MenuScreenScene scene3D = InstanceManager.menuSceneController.GetScreenData(MenuScreen.OPEN_EGG).scene3d;
 				Metagame.Reward currentReward = scene3D.GetComponent<RewardSceneController>().currentReward;
@@ -311,23 +198,10 @@ public class PhotoScreenController : MonoBehaviour {
 
 						// Pet name
 						m_targetName = currentReward.def.GetLocalized("tidName");
-						m_eggRewardName.Localize(
-							m_eggRewardName.tid,
-							m_targetName,
-							UIConstants.GetRarityColor(currentReward.rarity).ToHexString("#", false),
-							currentReward.rarity == Metagame.Reward.Rarity.COMMON ? "" : "(" + rarityDef.GetLocalized("tidName") + ")"	// Don't show for common
-						);
-
-						// Power description and icon
-						m_eggRewardDesc.text = DragonPowerUp.GetDescription(powerDef, false, true);	// Custom formatting depending on powerup type, already localized
-						m_eggRewardIcon.sprite = Resources.Load<Sprite>(UIConstants.POWER_ICONS_PATH + powerDef.GetAsString("icon"));
 					} break;
 
 					default: {
 						m_targetName = "";
-						m_eggRewardName.gameObject.SetActive(false);
-						m_eggRewardDesc.gameObject.SetActive(false);
-						m_eggRewardIcon.gameObject.SetActive(false);
 					} break;
 				}
 			} break;
@@ -407,8 +281,6 @@ public class PhotoScreenController : MonoBehaviour {
 	public void OnTakePictureButton() {
         if (!ButtonExtended.checkMultitouchAvailability())
             return;
-		// Do it in a coroutine to wait until the end of the frame
-		//StartCoroutine(TakePicture());
 
 		// [AOC] New System
 		// Get the share screen instance and initialize it with current data
@@ -418,7 +290,8 @@ public class PhotoScreenController : MonoBehaviour {
 			"dragon",
 			InstanceManager.menuSceneController.mainCamera,
 			dragonData,
-			currentMode.dragControl.target
+			false,
+			null
 		);
 		shareScreen.TakePicture();
 	}
@@ -471,8 +344,18 @@ public class PhotoScreenController : MonoBehaviour {
     /// AR flow wants to take a picture.
     /// </summary>
     private void OnARTakePicture() {
-        // Use the same picture functionality as in normal mode
-        OnTakePictureButton();
+		//		__/\\\\\\\\\\\\\\\________/\\\\\________/\\\\\\\\\\\\___________/\\\\\___________/\\\_________/\\\____
+		//		 _\///////\\\/////_______/\\\///\\\_____\/\\\////////\\\_______/\\\///\\\_______/\\\\\\\_____/\\\\\\\__
+		//		  _______\/\\\__________/\\\/__\///\\\___\/\\\______\//\\\____/\\\/__\///\\\____/\\\\\\\\\___/\\\\\\\\\_
+		//		   _______\/\\\_________/\\\______\//\\\__\/\\\_______\/\\\___/\\\______\//\\\__\//\\\\\\\___\//\\\\\\\__
+		//		    _______\/\\\________\/\\\_______\/\\\__\/\\\_______\/\\\__\/\\\_______\/\\\___\//\\\\\_____\//\\\\\___
+		//		     _______\/\\\________\//\\\______/\\\___\/\\\_______\/\\\__\//\\\______/\\\_____\//\\\_______\//\\\____
+		//		      _______\/\\\_________\///\\\__/\\\_____\/\\\_______/\\\____\///\\\__/\\\________\///_________\///_____
+		//		       _______\/\\\___________\///\\\\\/______\/\\\\\\\\\\\\/_______\///\\\\\/__________/\\\_________/\\\____
+		//		        _______\///______________\/////________\////////////___________\/////___________\///_________\///_____
+
+		// Use the same picture functionality as in normal mode
+		//OnTakePictureButton();
     }
 
     /// <summary>
