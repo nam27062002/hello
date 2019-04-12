@@ -32,11 +32,11 @@ public abstract class IShareScreen : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Camera m_camera = null;
-	[SerializeField] private RawImage m_qrCodeHolder = null;
-	[SerializeField] private Localizer m_callToActionText = null;
+	[SerializeField] protected Camera m_camera = null;
+	[SerializeField] protected RawImage m_qrCodeHolder = null;
+	[SerializeField] protected Localizer m_callToActionText = null;
 	[Space]
-	[SerializeField] private Texture2D m_qrLogoTex = null;
+	[SerializeField] protected Texture2D m_qrLogoTex = null;
 
 	// Internal references
 	protected DefinitionNode m_shareLocationDef = null;
