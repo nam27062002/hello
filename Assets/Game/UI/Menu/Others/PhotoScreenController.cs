@@ -358,6 +358,7 @@ public class PhotoScreenController : MonoBehaviour {
 
 		// Get the share screen instance and initialize it with current data
 		// Use AR camera as reference to take the picture
+		ControlPanel.Log(Color.yellow.Tag("AR TAKE PICTURE"));
 		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
 		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon") as ShareScreenDragon;
 		shareScreen.Init(
