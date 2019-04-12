@@ -77,7 +77,7 @@ public class CPServerTab : MonoBehaviour {
         m_debugServerToggle.isOn = DebugSettings.useDebugServer;
 		m_debugServerToggle.onValueChanged.AddListener(OnToggleDebugServer);
 
-        m_adsEnabledToggle.isOn = DebugSettings.AreAdsEnabled;        
+        m_adsEnabledToggle.isOn = true; // DebugSettings.AreAdsEnabled;        
     }
 
 	private void OnDisable() {
