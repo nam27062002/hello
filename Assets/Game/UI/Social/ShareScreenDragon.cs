@@ -83,9 +83,6 @@ public class ShareScreenDragon : IShareScreen {
 		if(m_dragonLoader != null) {
 			// Load preview?
 			if(m_renderDragon) {
-				// Make sure it's active
-				m_dragonLoader.gameObject.SetActive(true);
-
 				// Load target dragon
 				m_dragonLoader.LoadDragon(m_dragonData.sku, m_dragonData.disguise);
 
@@ -109,7 +106,7 @@ public class ShareScreenDragon : IShareScreen {
 #endif
 			} else {
 				// Disable dragon preview
-				m_dragonLoader.gameObject.SetActive(false);
+				m_dragonLoader.UnloadDragon();
 			}
 		}
 
