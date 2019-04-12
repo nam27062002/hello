@@ -1045,8 +1045,7 @@ AnimatorState:
   - {fileID: 1101000010238656644}
   - {fileID: 1101919651991143456}
   - {fileID: 1101597501178849634}
-  m_StateMachineBehaviours:
-  - {fileID: 114859666692876664}
+  m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1339,7 +1338,8 @@ AnimatorStateMachine:
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 114967344535803790}
   m_AnyStatePosition: {x: -744, y: -120, z: 0}
   m_EntryPosition: {x: -468, y: -120, z: 0}
   m_ExitPosition: {x: -228, y: 84, z: 0}
@@ -1882,7 +1882,7 @@ MonoBehaviour:
   m_timeToGlide:
     min: 100
     max: 100
---- !u!114 &114859666692876664
+--- !u!114 &114967344535803790
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1890,7 +1890,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 250b7783a83b1480d92aecc3b4a80466, type: 3}
+  m_Script: {fileID: 11500000, guid: 41c05bd50427b401f9f1e59af7331c71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_message: TurboLoop
