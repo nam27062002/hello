@@ -8,6 +8,7 @@ namespace AI {
             public float powerDelay = 0.5f;
             public float bubbleStunTime = 2f;
             public IEntity.Tag ignoreTag = 0;
+            public string onBubbleExplodeAudio;
         }
 
 
@@ -20,6 +21,8 @@ namespace AI {
             protected PetBubbyPowerData m_data;
             private Entity[] m_entities;
             private float m_timer;
+
+            private bool m_audioAvailable;
 
             private ParticleHandler m_effectHandler;
 
@@ -36,6 +39,8 @@ namespace AI {
             protected override void OnInitialise() {
                 m_data = m_pilot.GetComponentData<PetBubbyPowerData>();
                 m_entities = new Entity[255];
+
+                m_audioAvailable = !string.IsNullOrEmpty(m_data.onBubbleExplodeAudio);
 
                 CreatePool();
 
@@ -81,13 +86,19 @@ namespace AI {
 
                 m_timer -= Time.deltaTime;
                 if (m_timer <= 0f) {
+                    bool playSound = false;
                     int entityCount = EntityManager.instance.GetOnScreenEntities(m_entities);
 
                     for (int i = 0; i < entityCount; ++i) {
                         if (!m_entities[i].HasTag(m_data.ignoreTag)) {
+                            playSound = true;
                             BubbledEntitySystem.AddEntity(m_entities[i], m_data.bubbleStunTime);
                         }
                         m_entities[i] = null; // we don't want to keep this reference
+                    }
+
+                    if (playSound && m_audioAvailable) {
+                        AudioController.Play(m_data.onBubbleExplodeAudio, m_machine.position);
                     }
 
                     Transition(onBubbyPowerEnd);

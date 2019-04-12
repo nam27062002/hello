@@ -14,6 +14,7 @@ public class FireArea : MonoBehaviour {
     [SerializeField] [EnumMask] protected IEntity.Tag m_ignoreEntityTags = 0;
     [SerializeField] private bool m_burnDecorations = false;
     [SerializeField] private IEntity.Type m_type = IEntity.Type.PET;
+    [SerializeField] private string m_onBurnAudio;
 
 
     private CircleArea2D m_circle;
@@ -24,14 +25,17 @@ public class FireArea : MonoBehaviour {
 
     private float m_entityCheckTimer = 0;
     private float m_fireNodeCheckTimer = 0;
-	
+
+    private bool m_burnAudioAvailable;
 
 
 	// Use this for initialization
 	private void Start () {
 		m_circle = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
-	}
+
+        m_burnAudioAvailable = !string.IsNullOrEmpty(m_onBurnAudio);
+    }
 	
 	// Update is called once per frame
 	private void Update () {
@@ -40,6 +44,7 @@ public class FireArea : MonoBehaviour {
             m_entityCheckTimer = ENTITY_CHECK_TIME;
 
             // Search for entities
+            bool playBurnSound = false;
             m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
             for (int i = 0; i < m_numCheckEntities; i++) {
                 Entity prey = m_checkEntities[i];
@@ -67,10 +72,15 @@ public class FireArea : MonoBehaviour {
                             AI.IMachine machine = prey.machine;
                             if (machine != null) {
                                 machine.Burn(transform, m_type);
+                                playBurnSound = true;
                             }
                         }
                     }
                 }
+            }
+
+            if (playBurnSound && m_burnAudioAvailable) {
+                AudioController.Play(m_onBurnAudio, m_circle.center);
             }
         }
 
