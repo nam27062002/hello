@@ -33,7 +33,11 @@ public class DragonMotionDino : DragonMotion {
     public float m_stepKillArea = 1;
     public float m_stepStunArea = 1;
     public float m_stepStunDuration = 2;
-    
+    [Header("Enery Lvl1 Multipliers")]
+    [Range(0,1)]
+    public float m_energyDrainReduction;
+    [Range(0,100)]
+    public float m_energyRefillBonus;
     
     [Header("Modified on run")]
     public float m_currentKillArea = 2;
@@ -69,6 +73,13 @@ public class DragonMotionDino : DragonMotion {
         UpdateSpeedToKill();
         
         m_animEvents = GetComponentInChildren<DragonDinoAnimationEvents>();
+        
+        if ( powerLevel >= 1 )
+        {
+            DragonBoostBehaviour boostBehaviour = InstanceManager.player.dragonBoostBehaviour;
+            boostBehaviour.energyDrain = boostBehaviour.energyDrain * m_energyDrainReduction;
+            boostBehaviour.AddRefillBonus( m_energyRefillBonus );
+        }
     }
 
 
