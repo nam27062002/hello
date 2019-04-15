@@ -416,9 +416,15 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
         {
-            m_animEvents.OnGroundStomp();
-            StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
+            m_animator.SetTrigger(GameConstants.Animator.GROUND_STOMP);
+            // m_animEvents.OnGroundStomp();
+            // StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
+    }
+    
+    public void OnGroundStomp()
+    {
+        StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
     }
     
     

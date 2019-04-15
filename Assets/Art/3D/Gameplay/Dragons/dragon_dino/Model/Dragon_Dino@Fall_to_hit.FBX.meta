@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3301ccad5c662407ea6579e4380b424c
+guid: 191bf18098855448d82e8f76d080b954
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -123,8 +123,8 @@ ModelImporter:
     400114: Point001
     400116: SuctionPoint
     400118: SwallowPoint
-    7400000: Death_flying_start
-    7400002: Death_flying_loop
+    7400000: Fall_to_hit
+    7400002: Fall_to_hit_loop
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -154,10 +154,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Death_flying_start
+      name: Fall_to_hit
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 11
+      firstFrame: 28
+      lastFrame: 59
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -176,16 +176,23 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.29270676
+        functionName: GroundHit
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Death_flying_loop
+      name: Fall_to_hit_loop
       takeName: Take 001
-      firstFrame: 11
-      lastFrame: 31
+      firstFrame: 10
+      lastFrame: 28
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

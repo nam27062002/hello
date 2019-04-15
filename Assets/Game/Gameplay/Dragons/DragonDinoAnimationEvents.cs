@@ -83,6 +83,12 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         m_dragonMotion.OnStep();
     }
 
+    private void GroundHit()
+    {
+        m_dragonMotion.OnGroundStomp();
+        OnGroundStomp();
+    }
+
     public void OnGroundStomp()
     {
         PlaySound(m_realGroundStompSound);
