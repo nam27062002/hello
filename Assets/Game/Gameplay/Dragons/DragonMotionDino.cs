@@ -11,6 +11,7 @@ public class DragonMotionDino : DragonMotion {
     public float m_freeFallFriction = 0.5f;
     public float[] m_walkSpeedByTier = new float[(int)DragonTier.COUNT];
     protected float m_walkSpeed = 2.0f;
+    public float m_walkBoostMultiplier = 1.5f;
     public float m_walkRotationSpeed = 10.0f;
 
     Transform m_groundSensor;
@@ -296,7 +297,7 @@ public class DragonMotionDino : DragonMotion {
                     }
                     if ( m_boost.IsBoostActive() )
                     {
-                        m_impulse = m_direction * m_walkSpeed * 1.5f;
+                        m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
                     }
                     else
                     {
