@@ -11,6 +11,7 @@ public class DragonMotionDino : DragonMotion {
     public float m_freeFallFriction = 0.5f;
     public float[] m_walkSpeedByTier = new float[(int)DragonTier.COUNT];
     protected float m_walkSpeed = 2.0f;
+    public float m_walkBoostMultiplier = 1.5f;
     public float m_walkRotationSpeed = 10.0f;
 
     Transform m_groundSensor;
@@ -96,20 +97,41 @@ public class DragonMotionDino : DragonMotion {
             case State.Fly:
             case State.Fly_Down:
             {
-                if ( m_boost.IsBoostActive() )
-                {
-                    if ( m_grounded )
-                    {
-                        SetGrounded(false);
-                    }
-                    UpdateMovement(Time.fixedDeltaTime);
-                }
-                else
+                if ( m_grounded || !m_boost.IsBoostActive() )
                 {
                     CustomUpdateMovement(Time.fixedDeltaTime);
                 }
+                else
+                {
+                    UpdateMovement(Time.fixedDeltaTime);
+                    CustomCheckGround(out m_raycastHit);
+                    if ( m_height < 90 )
+                    {
+                        // Ground it
+                        SetGrounded(true);
+                    }
+                }
                 AfterFixedUpdate();
             }break;
+            case State.Dead:
+                {
+                    if ( m_previousState == State.InsideWater || m_insideWater)
+                    {
+                        DeadDrowning( Time.fixedDeltaTime );
+                    }
+                    else
+                    {
+                        if (m_grounded)
+                        {
+                            GroundDead( Time.fixedDeltaTime );
+                        }
+                        else
+                        {
+                            DeadFall(Time.fixedDeltaTime);
+                        }
+                    }
+                    AfterFixedUpdate();
+                }break;
             default:
             {
                 base.FixedUpdate();
@@ -119,6 +141,37 @@ public class DragonMotionDino : DragonMotion {
         CheckFeet();
 
 	}
+    
+    protected void GroundDead(float delta)
+    {
+        CustomCheckGround(out m_raycastHit);
+        if ( m_height <= 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
+        {
+            Vector3 dir = m_lastGroundHitNormal;
+            dir.NormalizedXY();
+            if ( m_direction.x < 0 )
+            {
+                dir = dir.RotateXYDegrees(90);
+            }
+            else
+            {
+                dir = dir.RotateXYDegrees(-90);
+            }
+            m_direction = dir;
+            m_impulse = GameConstants.Vector3.zero;
+            if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
+                m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
+            RotateToGround( m_direction );
+            SnapToGround();
+        }
+        else
+        {
+            SetGrounded(false);
+        }
+        
+        ApplyExternalForce();
+        m_rbody.velocity = m_impulse;
+    }
     
     // Make sure feet dont get inside collision
     protected void CheckFeet()
@@ -212,51 +265,67 @@ public class DragonMotionDino : DragonMotion {
             ChangeState(State.Idle);
             impulse = m_direction;
         }
-        
         CustomCheckGround( out m_raycastHit );
-        if ( m_height < 90 )
+        
+        if ( m_boost.IsBoostActive() && Vector3.Dot( m_lastGroundHitNormal, impulse) > 0 )
         {
-            if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+            // Despegar
+            SetGrounded(false);
+            UpdateMovement(Time.fixedDeltaTime);
+        }
+        else
+        {
+            if ( m_height < 90 )
             {
-                Vector3 dir = m_lastGroundHitNormal;
-                dir.NormalizedXY();
-                if ( impulse.x < 0 )
+                if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
                 {
-                    dir = dir.RotateXYDegrees(90);
+                    Vector3 dir = m_lastGroundHitNormal;
+                    dir.NormalizedXY();
+                    if ( impulse.x < 0 )
+                    {
+                        dir = dir.RotateXYDegrees(90);
+                    }
+                    else
+                    {
+                        dir = dir.RotateXYDegrees(-90);
+                    }
+                    m_direction = dir;   
+                    if (!m_grounded)
+                    {
+                        // STOMP!!
+                        GroundStomp();
+                    }
+                    if ( m_boost.IsBoostActive() )
+                    {
+                        m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
+                    }
+                    else
+                    {
+                        m_impulse = m_direction * m_walkSpeed;
+                    }
+                    m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                    RotateToGround( m_direction );
+                    SnapToGround();
                 }
                 else
                 {
-                    dir = dir.RotateXYDegrees(-90);
+                    // Adapt to angle?
+                    impulse.y = 0;
+                    impulse.Normalize();
+                    FreeFall(delta, impulse);
                 }
-                m_direction = dir;   
-                if (!m_grounded)
-                {
-                    // STOMP!!
-                    GroundStomp();
-                }
-                m_impulse = m_direction * m_walkSpeed;
-                m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
-                RotateToGround( m_direction );
-                SnapToGround();
             }
             else
             {
-                // Adapt to angle?
                 impulse.y = 0;
                 impulse.Normalize();
                 FreeFall(delta, impulse);
             }
+            
+            // m_desiredRotation = m_transform.rotation;
+            ApplyExternalForce();
+            m_rbody.velocity = m_impulse;
         }
-        else
-        {
-            impulse.y = 0;
-            impulse.Normalize();
-            FreeFall(delta, impulse);
-        }
-        
-        // m_desiredRotation = m_transform.rotation;
-        ApplyExternalForce();
-        m_rbody.velocity = m_impulse;
     }
     
     protected void ComputeFreeFallImpulse(float delta)
@@ -347,9 +416,15 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
         {
-            m_animEvents.OnGroundStomp();
-            StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
+            m_animator.SetTrigger(GameConstants.Animator.GROUND_STOMP);
+            // m_animEvents.OnGroundStomp();
+            // StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
         }
+    }
+    
+    public void OnGroundStomp()
+    {
+        StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
     }
     
     

@@ -184,7 +184,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		}
 	}
 
-	private State m_previousState = State.Idle;
+	protected State m_previousState = State.Idle;
 
 	// private Transform m_tongue;
 	private Transform m_head;
@@ -304,7 +304,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	private Vector3 m_revivePosition;
 	private float m_reviveTimer;
 	private const float m_reviveDuration = 1.3f;
-	private float m_deadTimer = 0;
+	protected float m_deadTimer = 0;
 	private const float m_deadGravityMultiplier = 5;
 
 	private float m_latchingTimer;
@@ -1441,7 +1441,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 		m_rbody.velocity = m_impulse;
 	}
 
-	private void DeadFall(float _deltaTime){
+	protected void DeadFall(float _deltaTime){
 
 		Vector3 oldDirection = m_direction;
 		CheckGround( out m_raycastHit);
@@ -1482,7 +1482,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	}
 
 
-	private void DeadDrowning(float _deltaTime){
+	protected void DeadDrowning(float _deltaTime){
 
 		Vector3 oldDirection = m_direction;
 		m_deadTimer += Time.deltaTime;
