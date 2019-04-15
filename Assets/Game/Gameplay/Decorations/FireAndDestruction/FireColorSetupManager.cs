@@ -16,6 +16,7 @@ public class FireColorSetupManager : MonoBehaviour {
         RED,
         BLUE,
         ICE,
+        LAVA,
         COUNT
     };
 
@@ -91,6 +92,16 @@ public class FireColorSetupManager : MonoBehaviour {
                     m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/IceBurnToAshes") as Material));
                     m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/Ice_burnt_texture") as Material));
                 }break;
+                case FireColorType.LAVA:
+                    {
+                        loadColors.Add(FireColorVariants.DEFAULT, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLava"));
+                        loadColors.Add(FireColorVariants.EXPLOSION, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaExplosion"));
+                        loadColors.Add(FireColorVariants.TOON, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaToon"));
+                        loadColors.Add(FireColorVariants.UNDERWATER, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaUnderwater"));
+                        m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/LavaBurnToAshes") as Material));
+                        m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/burnt_texture") as Material));
+                    }
+                    break;
             }
             m_loadedColors.Add( fireColorType, loadColors );
         }
