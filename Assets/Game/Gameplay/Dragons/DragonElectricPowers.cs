@@ -12,7 +12,7 @@ public class DragonElectricPowers : MonoBehaviour {
     public float m_waterMultiplier = 2;
     public float m_chainRadiusCheck = 2;
     public float m_blastRadius = 2;
-    public string m_blastParticle = "Dragon/PS_ElectricExplosion";
+    public string m_blastParticle = "PS_ElectricExplosion";
     public ParticleSystem m_blastParticleSystem;
     
 	private Entity[] m_checkEntities = new Entity[50];
