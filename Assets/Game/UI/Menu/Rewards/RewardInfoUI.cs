@@ -42,6 +42,7 @@ public class RewardInfoUI : MonoBehaviour {
 	// Exposed
 	[Separator("Shared")]
 	[SerializeField] private TextMeshProUGUI m_extraInfoText = null;
+	[SerializeField] private GameObject m_shareButton = null;
 	[SerializeField] private RewardTypeSetupDictionary m_typeSetups = new RewardTypeSetupDictionary();
 
 	[Separator("Pet Reward")]
@@ -140,7 +141,8 @@ public class RewardInfoUI : MonoBehaviour {
 		SetRewardType(_rewardData.type);
 
 		// Aux vars
-		float totalAnimDuration = m_typeSetups.Get(_rewardData.type).animDuration;	// Used to dispatch the OnAnimFinished event. Depends on reward type.
+		float totalAnimDuration = m_typeSetups.Get(_rewardData.type).animDuration;  // Used to dispatch the OnAnimFinished event. Depends on reward type.
+		bool showShareButton = false;
 
 		// Different initializations based on reward type
 		switch(_rewardData.type) {
@@ -173,6 +175,9 @@ public class RewardInfoUI : MonoBehaviour {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
 					m_petPower.InitFromDefinition(powerDef, false);
 				}
+
+				// Show share button!
+				showShareButton = !_rewardData.WillBeReplaced();
 			} break;
 
 			// Skin
@@ -188,6 +193,9 @@ public class RewardInfoUI : MonoBehaviour {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, _rewardData.def.GetAsString("powerup"));
 					m_skinPower.InitFromDefinition(powerDef, false);
 				}
+
+				// Show share button!
+				showShareButton = !_rewardData.WillBeReplaced();
 			} break;
 
 			// Dragon
@@ -214,6 +222,9 @@ public class RewardInfoUI : MonoBehaviour {
 						m_newPreysAnimator.ForceHide(false);
 					}
 				}
+
+				// Show share button!
+				showShareButton = !_rewardData.WillBeReplaced();
 			} break;
 
 			// Golden Fragments
@@ -246,8 +257,13 @@ public class RewardInfoUI : MonoBehaviour {
 		SetRewardType(m_reward.type);
 
 		// Aux text
-		m_extraInfoText.gameObject.SetActive(!string.IsNullOrEmpty(_extraInfo));
-		m_extraInfoText.text = _extraInfo;
+		if(m_extraInfoText != null) {
+			m_extraInfoText.gameObject.SetActive(!string.IsNullOrEmpty(_extraInfo));
+			m_extraInfoText.text = _extraInfo;
+		}
+
+		// Share button
+		if(m_shareButton != null) m_shareButton.SetActive(showShareButton);
 
 		// Program finish callback
 		UbiBCN.CoroutineManager.DelayedCall(OnAnimationFinished, totalAnimDuration, false);
@@ -259,7 +275,7 @@ public class RewardInfoUI : MonoBehaviour {
 	/// <param name="_rewardType">Type of reward whose info we want to show. Use empty string to hide everything.</param>
 	public void SetRewardType(string _rewardType) {
 		// Hide extra info, will be activated if needed
-		m_extraInfoText.gameObject.SetActive(false);
+		if(m_extraInfoText != null) m_extraInfoText.gameObject.SetActive(false);
 
 		/// Toggle everything off except the target type!
 		foreach(KeyValuePair<string, RewardTypeSetup> kvp in m_typeSetups.dict) {
@@ -323,5 +339,72 @@ public class RewardInfoUI : MonoBehaviour {
 
 		// Notify listeners
 		OnAnimFinished.Invoke();
+	}
+
+	/// <summary>
+	/// Share button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		// Ignore if unknown reward
+		if(m_reward == null) return;
+
+		// Grab some shared vars
+		// [AOC] TODO!! Results?
+		Camera mainCamera = null;
+		if(InstanceManager.menuSceneController != null) {
+			mainCamera = InstanceManager.menuSceneController.mainCamera;
+		}
+
+		// Get the share screen instance and initialize it with current data
+		// Different share screens based on reward type
+		switch(m_reward.type) {
+			case Metagame.RewardPet.TYPE_CODE: {
+				ShareScreenPet shareScreen = ShareScreensManager.GetShareScreen("pet_acquired") as ShareScreenPet;
+				shareScreen.Init(
+					"pet_acquired",
+					mainCamera,
+					m_reward.sku,
+					null
+				);
+				shareScreen.TakePicture();
+			} break;
+
+			case Metagame.RewardSkin.TYPE_CODE: {
+				// Create a sample dragon data object to initialize the share screen
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.def.GetAsString("dragonSku"));
+				IDragonData sampleData = IDragonData.CreateFromDef(dragonDef);
+
+				// Equip with the target skin
+				sampleData.disguise = m_reward.sku;
+				sampleData.persistentDisguise = m_reward.sku;
+
+				// Initialize and open share screen
+				ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("skin_acquired") as ShareScreenDragon;
+				shareScreen.Init(
+					"skin_acquired",
+					mainCamera,
+					sampleData,
+					true,
+					null
+				);
+				shareScreen.TakePicture();
+			} break;
+
+			case Metagame.RewardDragon.TYPE_CODE: {
+				// Create a sample dragon data object to initialize the share screen
+				IDragonData sampleData = IDragonData.CreateFromDef(m_reward.def);
+
+				// Initialize and open share screen
+				ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon_acquired") as ShareScreenDragon;
+				shareScreen.Init(
+					"dragon_acquired",
+					mainCamera,
+					sampleData,
+					true,
+					null
+				);
+				shareScreen.TakePicture();
+			} break;
+		}
 	}
 }
