@@ -253,11 +253,17 @@ public class PhotoScreenController : MonoBehaviour {
             return;
 
 		// [AOC] New System
+		// A bit hacky: check previous screen to figure out which share data to use
+		string shareLocationSku = "dragon";
+		if(InstanceManager.menuSceneController.transitionManager.prevScreen == MenuScreen.DRAGON_UNLOCK) {
+			shareLocationSku = "dragon_acquired";
+		}
+
 		// Get the share screen instance and initialize it with current data
 		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
-		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon") as ShareScreenDragon;
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen(shareLocationSku) as ShareScreenDragon;
 		shareScreen.Init(
-			"dragon",
+			shareLocationSku,
 			InstanceManager.menuSceneController.mainCamera,
 			dragonData,
 			false,
