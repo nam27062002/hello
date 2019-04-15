@@ -110,6 +110,25 @@ public class DragonMotionDino : DragonMotion {
                 }
                 AfterFixedUpdate();
             }break;
+            case State.Dead:
+                {
+                    if ( m_previousState == State.InsideWater || m_insideWater)
+                    {
+                        DeadDrowning( Time.fixedDeltaTime );
+                    }
+                    else
+                    {
+                        if (m_grounded)
+                        {
+                            GroundDead( Time.fixedDeltaTime );
+                        }
+                        else
+                        {
+                            DeadFall(Time.fixedDeltaTime);
+                        }
+                    }
+                    AfterFixedUpdate();
+                }break;
             default:
             {
                 base.FixedUpdate();
@@ -119,6 +138,37 @@ public class DragonMotionDino : DragonMotion {
         CheckFeet();
 
 	}
+    
+    protected void GroundDead(float delta)
+    {
+        CustomCheckGround(out m_raycastHit);
+        if ( m_height <= 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
+        {
+            Vector3 dir = m_lastGroundHitNormal;
+            dir.NormalizedXY();
+            if ( m_direction.x < 0 )
+            {
+                dir = dir.RotateXYDegrees(90);
+            }
+            else
+            {
+                dir = dir.RotateXYDegrees(-90);
+            }
+            m_direction = dir;
+            m_impulse = GameConstants.Vector3.zero;
+            if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
+                m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
+            RotateToGround( m_direction );
+            SnapToGround();
+        }
+        else
+        {
+            SetGrounded(false);
+        }
+        
+        ApplyExternalForce();
+        m_rbody.velocity = m_impulse;
+    }
     
     // Make sure feet dont get inside collision
     protected void CheckFeet()
