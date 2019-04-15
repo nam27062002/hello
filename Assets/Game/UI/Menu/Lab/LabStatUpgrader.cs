@@ -319,7 +319,7 @@ public class LabStatUpgrader : MonoBehaviour {
 		purchaseFlow.Begin(
 			m_dragonData.GetStatUpgradePrice(m_stat),
 			UserProfile.Currency.GOLDEN_FRAGMENTS,
-			HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UPGRADE,
+            HDTrackingManager.EEconomyGroup.UNKNOWN, //HDTrackingManager.EEconomyGroup.SPECIAL_DRAGON_UPGRADE,
 			null
 		);
 	}
