@@ -57,6 +57,7 @@ public class DragonMotionDino : DragonMotion {
     protected Vector3 m_lastFeetValidPosition;
 
     protected DragonDinoAnimationEvents m_animEvents;
+    protected bool m_waitStomp = false;
 
     protected override void Start()
     {
@@ -295,13 +296,20 @@ public class DragonMotionDino : DragonMotion {
                         // STOMP!!
                         GroundStomp();
                     }
-                    if ( m_boost.IsBoostActive() )
+                    if (!m_waitStomp)
                     {
-                        m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
+                        if ( m_boost.IsBoostActive() )
+                        {
+                            m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
+                        }
+                        else
+                        {
+                            m_impulse = m_direction * m_walkSpeed;
+                        }
                     }
                     else
                     {
-                        m_impulse = m_direction * m_walkSpeed;
+                        m_impulse = GameConstants.Vector3.zero;
                     }
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
@@ -403,6 +411,7 @@ public class DragonMotionDino : DragonMotion {
         
         if (!m_grounded)
         {
+            m_waitStomp = false;
             m_rbody.ResetCenterOfMass();
         }
         else
@@ -417,13 +426,13 @@ public class DragonMotionDino : DragonMotion {
         if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
         {
             m_animator.SetTrigger(GameConstants.Animator.GROUND_STOMP);
-            // m_animEvents.OnGroundStomp();
-            // StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
+            m_waitStomp = true;
         }
     }
     
     public void OnGroundStomp()
     {
+        m_waitStomp = false;
         StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
     }
     
