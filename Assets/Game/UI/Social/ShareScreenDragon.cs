@@ -35,6 +35,7 @@ public class ShareScreenDragon : IShareScreen {
 	[Space]
 	[SerializeField] private GameObject m_powerGroup = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
+	[SerializeField] private Localizer m_skinNameText = null;
 
 	// Internal references
 	private bool m_renderDragon = false;
@@ -133,6 +134,11 @@ public class ShareScreenDragon : IShareScreen {
 				if(m_powerIcon != null) {
 					DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.GetAsString("powerup"));
 					m_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.SKIN);
+				}
+
+				// Skin name
+				if(m_skinNameText) {
+					m_skinNameText.Localize(skinDef.GetAsString("tidName"));
 				}
 			} else {
 				// Don't show power info
