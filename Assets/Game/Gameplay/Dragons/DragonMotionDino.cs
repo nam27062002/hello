@@ -96,17 +96,19 @@ public class DragonMotionDino : DragonMotion {
             case State.Fly:
             case State.Fly_Down:
             {
-                if ( m_boost.IsBoostActive() )
+                if ( m_grounded || !m_boost.IsBoostActive() )
                 {
-                    if ( m_grounded )
-                    {
-                        SetGrounded(false);
-                    }
-                    UpdateMovement(Time.fixedDeltaTime);
+                    CustomUpdateMovement(Time.fixedDeltaTime);
                 }
                 else
                 {
-                    CustomUpdateMovement(Time.fixedDeltaTime);
+                    UpdateMovement(Time.fixedDeltaTime);
+                    CustomCheckGround(out m_raycastHit);
+                    if ( m_height < 90 )
+                    {
+                        // Ground it
+                        SetGrounded(true);
+                    }
                 }
                 AfterFixedUpdate();
             }break;
@@ -262,51 +264,67 @@ public class DragonMotionDino : DragonMotion {
             ChangeState(State.Idle);
             impulse = m_direction;
         }
-        
         CustomCheckGround( out m_raycastHit );
-        if ( m_height < 90 )
+        
+        if ( m_boost.IsBoostActive() && Vector3.Dot( m_lastGroundHitNormal, impulse) > 0 )
         {
-            if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+            // Despegar
+            SetGrounded(false);
+            UpdateMovement(Time.fixedDeltaTime);
+        }
+        else
+        {
+            if ( m_height < 90 )
             {
-                Vector3 dir = m_lastGroundHitNormal;
-                dir.NormalizedXY();
-                if ( impulse.x < 0 )
+                if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
                 {
-                    dir = dir.RotateXYDegrees(90);
+                    Vector3 dir = m_lastGroundHitNormal;
+                    dir.NormalizedXY();
+                    if ( impulse.x < 0 )
+                    {
+                        dir = dir.RotateXYDegrees(90);
+                    }
+                    else
+                    {
+                        dir = dir.RotateXYDegrees(-90);
+                    }
+                    m_direction = dir;   
+                    if (!m_grounded)
+                    {
+                        // STOMP!!
+                        GroundStomp();
+                    }
+                    if ( m_boost.IsBoostActive() )
+                    {
+                        m_impulse = m_direction * m_walkSpeed * 1.5f;
+                    }
+                    else
+                    {
+                        m_impulse = m_direction * m_walkSpeed;
+                    }
+                    m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
+                    RotateToGround( m_direction );
+                    SnapToGround();
                 }
                 else
                 {
-                    dir = dir.RotateXYDegrees(-90);
+                    // Adapt to angle?
+                    impulse.y = 0;
+                    impulse.Normalize();
+                    FreeFall(delta, impulse);
                 }
-                m_direction = dir;   
-                if (!m_grounded)
-                {
-                    // STOMP!!
-                    GroundStomp();
-                }
-                m_impulse = m_direction * m_walkSpeed;
-                m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
-                RotateToGround( m_direction );
-                SnapToGround();
             }
             else
             {
-                // Adapt to angle?
                 impulse.y = 0;
                 impulse.Normalize();
                 FreeFall(delta, impulse);
             }
+            
+            // m_desiredRotation = m_transform.rotation;
+            ApplyExternalForce();
+            m_rbody.velocity = m_impulse;
         }
-        else
-        {
-            impulse.y = 0;
-            impulse.Normalize();
-            FreeFall(delta, impulse);
-        }
-        
-        // m_desiredRotation = m_transform.rotation;
-        ApplyExternalForce();
-        m_rbody.velocity = m_impulse;
     }
     
     protected void ComputeFreeFallImpulse(float delta)
