@@ -373,7 +373,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: -22.71197, y: 114.345566, z: -6.264427}
+  m_LocalPosition: {x: 58.735046, y: 21.940258, z: -10.161875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 429346}
@@ -2922,7 +2922,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1970556544219656}
-  m_LocalRotation: {x: 0.013863399, y: 0.7365944, z: -0.015105535, w: 0.6760239}
+  m_LocalRotation: {x: -0.0065536425, y: -0.99272704, z: 0.06389702, w: -0.101819664}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3818,12 +3818,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_colors: 0000000001000000
+  m_colors: 0300000003000000
   m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
   m_length: 6
-  m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
+  m_dragonFlameStandard: {fileID: 1678805013563780, guid: bb2b61ac38dc203459cd060b337e0c0c,
     type: 2}
   m_dragonFlameSuper: {fileID: 1000013828432286, guid: 381cc7087b9ec7e4f97a52941d03341c,
     type: 2}
@@ -6348,8 +6348,8 @@ MonoBehaviour:
   m_jetpack2Sound: hd_dino_jetpack_2
   m_stepSound: hd_dragon_dino_walk
   m_stepParticle:
-    name: 
-    path: 
+    name: FX_DinoStep
+    path: Dragon/
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -6388,8 +6388,8 @@ MonoBehaviour:
     orientate: 0
   m_groundStompSound: hd_dragon_dino_land
   m_groundStompParticle:
-    name: 
-    path: 
+    name: FX_DinoLanding
+    path: Dragon/
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -6425,11 +6425,11 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     offset: {x: 0, y: 0, z: 0}
     scale: 1
-    orientate: 0
+    orientate: 1
   m_groundStompLevel2Sound: hd_dragon_dino_land_upgrade
   m_groundStompParticleLevel2:
-    name: 
-    path: 
+    name: FX_DinoLanding
+    path: Dragon/
     changeStartColor: 0
     startColor: {r: 1, g: 1, b: 1, a: 1}
     startColorTwo: {r: 1, g: 1, b: 1, a: 1}
@@ -6692,8 +6692,8 @@ MonoBehaviour:
   m_stepStunDuration: 2
   m_energyDrainReduction: 0.5
   m_energyRefillBonus: 50
-  m_currentKillArea: 9
-  m_currentStunArea: 16
+  m_currentKillArea: 8
+  m_currentStunArea: 15
   m_currentStepKillArea: 1
   m_currentStepStunArea: 1
 --- !u!114 &114853433848217224
