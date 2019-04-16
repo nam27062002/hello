@@ -16,6 +16,8 @@ public class DragonMotionDino : DragonMotion {
 
     Transform m_groundSensor;
     Transform m_magnetSensor;
+    Transform m_snapSensor;
+    public bool m_belowSnapSensor = false;
     public bool m_grounded = false;
     public float m_maxWalkAngle = 20;
     public float m_maxStationaryAngle = 45;
@@ -57,9 +59,9 @@ public class DragonMotionDino : DragonMotion {
     protected Vector3 m_lastFeetValidPosition;
 
     protected DragonDinoAnimationEvents m_animEvents;
-    
-    public float m_snapHeight = 2.4f;
+  
     private bool m_stomping = false;
+    
     
     
     protected override void Start()
@@ -68,6 +70,7 @@ public class DragonMotionDino : DragonMotion {
         Transform sensors   = m_transform.Find("sensors").transform;
         m_groundSensor = sensors.Find("GroundSensor");
         m_magnetSensor = sensors.Find("MagnetSensor");
+        m_snapSensor = sensors.Find("SnapSensor");
         
         DragonDataSpecial dataSpecial = InstanceManager.player.data as DragonDataSpecial;
         m_powerLevel = dataSpecial.powerLevel;
@@ -84,7 +87,6 @@ public class DragonMotionDino : DragonMotion {
             boostBehaviour.energyDrain = boostBehaviour.energyDrain * m_energyDrainReduction;
             boostBehaviour.AddRefillBonus( m_energyRefillBonus );
         }
-        m_snapHeight = m_snapHeight * m_transform.localScale.y;
     }
 
 
@@ -114,7 +116,7 @@ public class DragonMotionDino : DragonMotion {
                     
                     UpdateMovement(Time.fixedDeltaTime);
                     CustomCheckGround(out m_raycastHit);
-                    if ( m_height < m_snapHeight && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+                    if ( m_belowSnapSensor && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
                     {
                         // Ground it
                         SetGrounded(true);
@@ -174,7 +176,7 @@ public class DragonMotionDino : DragonMotion {
     protected void GroundDead(float delta)
     {
         CustomCheckGround(out m_raycastHit);
-        if ( m_height <= m_snapHeight && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
+        if ( m_belowSnapSensor && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
         {
             Vector3 dir = m_lastGroundHitNormal;
             dir.NormalizedXY();
@@ -242,7 +244,7 @@ public class DragonMotionDino : DragonMotion {
         
         if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
         {
-            if ( m_height < m_snapHeight )
+            if (m_belowSnapSensor )
             {
                 Vector3 dir = m_lastGroundHitNormal;
                 dir.NormalizedXY();
@@ -306,7 +308,7 @@ public class DragonMotionDino : DragonMotion {
         {
             if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
             {
-                if ( m_height < m_snapHeight )
+                if ( m_belowSnapSensor )
                 { 
                     Vector3 dir = m_lastGroundHitNormal;
                     dir.NormalizedXY();
@@ -455,7 +457,7 @@ public class DragonMotionDino : DragonMotion {
         // using velvet integration to know the future positoin and velocity
         float futureY = realHeight + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
         // Check fall speed and distance?
-        if ( futureY <= (m_snapHeight / m_transform.localScale.y))
+        if ( futureY <= 0.5f )
         {
             float futureSpeed = m_impulse.y + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
             if (futureSpeed * futureSpeed > m_fallSpeedToKill)
@@ -476,7 +478,7 @@ public class DragonMotionDino : DragonMotion {
     public bool OnGroundStomp()
     {
         bool ret = true;
-        if ( m_grounded || m_height < m_snapHeight )
+        if ( m_grounded || m_belowSnapSensor )
         {
             m_stomping = false;
             m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
@@ -499,6 +501,7 @@ public class DragonMotionDino : DragonMotion {
         {
             m_animEvents.OnHeadButt(_point, _normal);
             StunAndKill(_point, m_currentKillArea, m_currentStunArea, m_stunDuration);
+            m_animator.SetTrigger(GameConstants.Animator.IMPACT);
         }
     }
     
@@ -540,8 +543,11 @@ public class DragonMotionDino : DragonMotion {
         Vector3 magnetSensorPos = m_magnetSensor.position;
         magnetSensorPos.z = 0;
         bool hit_Bottom = Physics.Linecast(bottomSensor, magnetSensorPos, out _bottomHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore );
-
+        m_belowSnapSensor = false;
         if (hit_Bottom) {
+            Vector3 snapPos = m_snapSensor.position;
+            snapPos.z = 0;
+            m_belowSnapSensor = (_bottomHit.distance * _bottomHit.distance <= (snapPos - bottomSensor).sqrMagnitude);
             m_height = _bottomHit.distance * m_transform.localScale.y;
             m_closeToGround = m_height < 1f;
             m_lastGroundHit = _bottomHit.point;
