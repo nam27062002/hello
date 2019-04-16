@@ -57,7 +57,7 @@ public class DragonMotionDino : DragonMotion {
     protected Vector3 m_lastFeetValidPosition;
 
     protected DragonDinoAnimationEvents m_animEvents;
-    protected bool m_waitStomp = false;
+    // protected bool m_waitStomp = false;
 
     protected override void Start()
     {
@@ -215,28 +215,45 @@ public class DragonMotionDino : DragonMotion {
         {
             if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
             {
-                if (!m_grounded)
+                if ( m_height < 1.2f )
                 {
-                    // STOMP!!
-                    GroundStomp();
-                }
-                
-                Vector3 dir = m_lastGroundHitNormal;
-                dir.NormalizedXY();
-                if ( m_direction.x < 0 )
-                {
-                    dir = dir.RotateXYDegrees(90);
+                    /*
+                    if (!m_grounded)
+                    {
+                        // STOMP!!
+                        GroundStomp();
+                    }
+                    */
+                    Vector3 dir = m_lastGroundHitNormal;
+                    dir.NormalizedXY();
+                    if ( m_direction.x < 0 )
+                    {
+                        dir = dir.RotateXYDegrees(90);
+                    }
+                    else
+                    {
+                        dir = dir.RotateXYDegrees(-90);
+                    }
+                    m_direction = dir;
+                    m_impulse = GameConstants.Vector3.zero;
+                    if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
+                        m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
+                    RotateToGround( m_direction );
+                    SnapToGround();
                 }
                 else
                 {
-                    dir = dir.RotateXYDegrees(-90);
+                    
+                    // Check fall speed and distance?
+                    if ( m_height < 2.1f )
+                    { 
+                        if (m_impulse.sqrMagnitude > m_fallSpeedToKill)
+                        {
+                            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, true);
+                        }
+                    }
                 }
-                m_direction = dir;
-                m_impulse = GameConstants.Vector3.zero;
-                if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
-                    m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
-                RotateToGround( m_direction );
-                SnapToGround();
+                
                 
             }
             else
@@ -296,7 +313,7 @@ public class DragonMotionDino : DragonMotion {
                         // STOMP!!
                         GroundStomp();
                     }
-                    if (!m_waitStomp)
+                    // if (!m_waitStomp)
                     {
                         if ( m_boost.IsBoostActive() )
                         {
@@ -307,10 +324,12 @@ public class DragonMotionDino : DragonMotion {
                             m_impulse = m_direction * m_walkSpeed;
                         }
                     }
+                    /*
                     else
                     {
                         m_impulse = GameConstants.Vector3.zero;
                     }
+                    */
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
                     SnapToGround();
@@ -411,7 +430,7 @@ public class DragonMotionDino : DragonMotion {
         
         if (!m_grounded)
         {
-            m_waitStomp = false;
+            // m_waitStomp = false;
             m_rbody.ResetCenterOfMass();
         }
         else
@@ -425,14 +444,15 @@ public class DragonMotionDino : DragonMotion {
     {
         if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
         {
-            m_animator.SetTrigger(GameConstants.Animator.GROUND_STOMP);
-            m_waitStomp = true;
+            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, true);
+            // m_waitStomp = true;
         }
     }
     
     public void OnGroundStomp()
     {
-        m_waitStomp = false;
+        // m_waitStomp = false;
+        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, false);
         StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
     }
     
