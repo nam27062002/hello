@@ -264,7 +264,7 @@ public class PhotoScreenController : MonoBehaviour {
 		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen(shareLocationSku) as ShareScreenDragon;
 		shareScreen.Init(
 			shareLocationSku,
-			InstanceManager.menuSceneController.mainCamera,
+			SceneController.GetMainCameraForCurrentScene(),
 			dragonData,
 			false,
 			null

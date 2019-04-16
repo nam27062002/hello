@@ -349,12 +349,6 @@ public class RewardInfoUI : MonoBehaviour {
 		if(m_reward == null) return;
 
 		// Grab some shared vars
-		// [AOC] TODO!! Results?
-		Camera mainCamera = null;
-		if(InstanceManager.menuSceneController != null) {
-			mainCamera = InstanceManager.menuSceneController.mainCamera;
-		}
-
 		// Get the share screen instance and initialize it with current data
 		// Different share screens based on reward type
 		switch(m_reward.type) {
@@ -362,7 +356,7 @@ public class RewardInfoUI : MonoBehaviour {
 				ShareScreenPet shareScreen = ShareScreensManager.GetShareScreen("pet_acquired") as ShareScreenPet;
 				shareScreen.Init(
 					"pet_acquired",
-					mainCamera,
+					SceneController.GetMainCameraForCurrentScene(),
 					m_reward.sku,
 					null
 				);
@@ -382,7 +376,7 @@ public class RewardInfoUI : MonoBehaviour {
 				ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("skin_acquired") as ShareScreenDragon;
 				shareScreen.Init(
 					"skin_acquired",
-					mainCamera,
+					SceneController.GetMainCameraForCurrentScene(),
 					sampleData,
 					true,
 					null
@@ -398,7 +392,7 @@ public class RewardInfoUI : MonoBehaviour {
 				ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon_acquired") as ShareScreenDragon;
 				shareScreen.Init(
 					"dragon_acquired",
-					mainCamera,
+					SceneController.GetMainCameraForCurrentScene(),
 					sampleData,
 					true,
 					null
