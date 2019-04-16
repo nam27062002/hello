@@ -60,11 +60,13 @@ public class DragonMotionDino : DragonMotion {
     
     private const float m_snapHeight = 2.4f;
     private bool m_stomping = false;
-
+    
+    Vector3 m_sphereLocalPosition;
+    
     protected override void Start()
     {
         base.Start();
-        
+        m_sphereLocalPosition = m_mainGroundCollider.transform.localPosition;
         Transform sensors   = m_transform.Find("sensors").transform;
         m_groundSensor = sensors.Find("GroundSensor");
         m_magnetSensor = sensors.Find("MagnetSensor");
@@ -89,7 +91,7 @@ public class DragonMotionDino : DragonMotion {
 
     override protected void FixedUpdate() {
         m_closeToGround = false;
-        
+        m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
         switch(m_state)
         {
             case State.Idle:
@@ -156,7 +158,7 @@ public class DragonMotionDino : DragonMotion {
         if ( m_state != _nextState )
         {
             if ( m_state == State.Fly || m_state == State.Idle || m_state == State.Fly_Down )
-            {
+            {   
                 if ( m_grounded )
                 {
                     SetGrounded(false);
@@ -174,7 +176,7 @@ public class DragonMotionDino : DragonMotion {
     protected void GroundDead(float delta)
     {
         CustomCheckGround(out m_raycastHit);
-        if ( m_height <= 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
+        if ( m_height <= m_snapHeight && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ) ) 
         {
             Vector3 dir = m_lastGroundHitNormal;
             dir.NormalizedXY();
@@ -385,7 +387,11 @@ public class DragonMotionDino : DragonMotion {
     }
 
     protected void FreeFall( float delta, Vector3 inputVector )
-    {       
+    {
+        m_mainGroundCollider.transform.position = m_sensor.bottom.position;
+        m_mainGroundCollider.transform.localPosition += Vector3.up * m_mainGroundCollider.radius;
+        
+        
         if (m_grounded)
         {
             SetGrounded(false);
@@ -575,6 +581,7 @@ public class DragonMotionDino : DragonMotion {
         m_fallSpeedToKill = terminalFallSpeed * m_speedPercentageToKill / 100.0f;
         m_fallSpeedToKill = m_fallSpeedToKill * m_fallSpeedToKill;
     }
+    
 
     private void OnDrawGizmos() {
         UpdatePowerAreas();

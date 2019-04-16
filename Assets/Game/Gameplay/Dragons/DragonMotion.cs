@@ -323,6 +323,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 	public const float SpaceStart = 171f;
     public int m_limitsCheck = 0;
     public Vector3 m_lastPhysicsValidPos = Vector3.zero;
+    public Vector3 m_lastValidPos = Vector3.zero;
 
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
@@ -437,7 +438,8 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         RegionManager.Init();
         m_regionManager = RegionManager.Instance;
 
-        m_lastPhysicsValidPos = m_transform.position;
+        m_lastPhysicsValidPos = m_mainGroundCollider.transform.position;
+        m_lastValidPos = m_transform.position;
 
 		if (m_state == State.None)
 			ChangeState(State.Fly);
@@ -1127,27 +1129,36 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
         if ( m_state != State.Intro)
         {
+            Vector3 newPhysicsPos = m_mainGroundCollider.transform.position;
+            newPhysicsPos.z = 0;
+            
             Vector3 pos = m_transform.position;
             pos.z = 0;
+                
             // check pos
             m_limitsCheck++;
             if ( m_limitsCheck > 2 )
             {                
-                if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_lastPhysicsValidPos, pos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
+                if (DebugSettings.ingameDragonMotionSafe && Physics.Linecast( m_lastPhysicsValidPos, newPhysicsPos, out m_raycastHit, GameConstants.Layers.GROUND_PLAYER_COLL, QueryTriggerInteraction.Ignore ))
                 {
-                    pos = m_lastPhysicsValidPos;
+                    // Return to previous position
+                    pos = m_lastValidPos;
                     CustomOnCollisionEnter( m_raycastHit.collider, m_raycastHit.normal, m_raycastHit.point );
                 }
                 else
                 {
-                    m_lastPhysicsValidPos = pos;
+                    m_lastPhysicsValidPos = newPhysicsPos;
+                    m_lastValidPos = pos;
                 }
             }
             m_transform.position = pos;
+            
+            
         }
         else
         {
-            m_lastPhysicsValidPos = m_transform.position;
+            m_lastPhysicsValidPos = m_mainGroundCollider.transform.position;
+            m_lastValidPos = m_transform.position;
         }
 
         
@@ -1922,6 +1933,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
     public void MoveToSpawnPosition(Vector3 _pos) {
         m_lastPosition = _pos;
         m_lastPhysicsValidPos = _pos;
+        m_lastValidPos = _pos;
         m_transform.position = _pos;
     }
 
