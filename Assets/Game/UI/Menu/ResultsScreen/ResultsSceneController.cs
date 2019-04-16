@@ -29,6 +29,11 @@ public class ResultsSceneController : MonoBehaviour {
 	[Tooltip("Scene setup where the user's dragon has to be set")]
 	[SerializeField] private ResultsSceneSetup m_resultsSceneSetup = null;
 
+	// Public properties
+	public Camera mainCamera {
+		get { return m_resultsSceneSetup != null ? m_resultsSceneSetup.camera : null; }
+	}
+
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
