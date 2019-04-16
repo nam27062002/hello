@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+
 public class Pool {
 	//-----------------------------------------------
 	// Attributes
@@ -200,10 +201,16 @@ public class Pool {
 	}
 
 	private GameObject Instantiate() {
-		GameObject inst = Object.Instantiate(m_prefab);					
-		inst.name = m_prefab.name;
-		inst.transform.SetParent(m_containerObj.transform, false);
-		inst.SetActive(false);
-		return inst;
+        try {
+            GameObject inst = Object.Instantiate(m_prefab);
+            inst.name = m_prefab.name;
+            inst.transform.SetParent(m_containerObj.transform, false);
+            inst.SetActive(false);
+            return inst;
+        } catch(System.Exception e) {
+            string msg = "[Pool][Instantiate][" + m_containerObj.name + "]" + " m_prefab:" + m_prefab;
+            Debug.LogError(msg);
+            throw new System.Exception(msg + "\n" + e);
+        }
 	}
 };
