@@ -436,17 +436,36 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     }
 
     private void LoadParticles() {
-        GameObject go = m_poisonParticle.Spawn();
-        if (go != null) {
-            m_particlesObj = go.GetComponent<ParticleControl>();
+        if (m_poisonParticle == null)
+        {
+            throw new System.Exception("AmbientHazard.LoadParticles: m_poisonParticle == null on GameObject: " + gameObject.name);
+        }
+        else
+        {
+            GameObject go = m_poisonParticle.Spawn();
+            if (go != null)
+            {
+                m_particlesObj = go.GetComponent<ParticleControl>();
 
-            // As children of ourselves
-            // Particle system should already be created to match the zero position
-            m_particlesObj.transform.SetParentAndReset(this.transform);
-            m_particlesObj.transform.localPosition = m_poisonParticle.offset;
-            m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
+                if (m_particlesObj == null)
+                {
+                    throw new System.Exception("AmbientHazard.LoadParticles: particle prefab does not have a ParticleControl component on GameObject: " + gameObject.name);
+                }
+                else
+                {
+                    // As children of ourselves
+                    // Particle system should already be created to match the zero position
+                    m_particlesObj.transform.SetParentAndReset(this.transform);
+                    m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+                    m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
 
-            m_particlesObj.Play();
+                    m_particlesObj.Play();
+                }
+            }
+            else
+            {
+                throw new System.Exception("AmbientHazard.LoadParticles: unable to spawn poison particles on GameObject: " + gameObject.name);
+            }
         }
     }
 
