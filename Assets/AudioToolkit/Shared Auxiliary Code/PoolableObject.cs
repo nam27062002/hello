@@ -605,6 +605,11 @@ static public class ObjectPoolController
         {
             this._prefab = prefab;
             this._poolableObjectComponent = prefab.GetComponent<PoolableObject>();
+
+            if (_poolableObjectComponent == null)
+            {
+                throw new System.Exception("ObjectPool Exception: prefab " + prefab.name + " has no PoolableObject component asociated.");
+            }
         }
 
         private void _ValidatePooledObjectDataContainer()
@@ -618,22 +623,26 @@ static public class ObjectPoolController
 
         private void _ValidatePoolParentDummy()
         {
-            if ( !_poolParent )
+            if ( _poolParent == null || !_poolParent )
             {
-                var poolParentDummyGameObject = new GameObject( "POOL:" + _poolableObjectComponent.name );
-                _poolParent = poolParentDummyGameObject.transform;
-                poolParentDummyGameObject._SetActive( false );
+                if (_poolableObjectComponent != null)
+                {
+                    GameObject poolParentDummyGameObject = new GameObject("POOL:" + _poolableObjectComponent.name);
+                    _poolParent = poolParentDummyGameObject.transform;
+                    poolParentDummyGameObject._SetActive(false);
 
-                if ( _poolableObjectComponent.doNotDestroyOnLoad )
-                {
-                    GameObject.DontDestroyOnLoad( poolParentDummyGameObject );
-                }
-                else if ( ObjectPoolController.defaultInstantiateSceme.isLoaded )
-                {
-                    SceneManager.MoveGameObjectToScene(poolParentDummyGameObject, ObjectPoolController.defaultInstantiateSceme);
+                    if (_poolableObjectComponent.doNotDestroyOnLoad)
+                    {
+                        GameObject.DontDestroyOnLoad(poolParentDummyGameObject);
+                    }
+                    else if (ObjectPoolController.defaultInstantiateSceme != null && ObjectPoolController.defaultInstantiateSceme.isLoaded)
+                    {
+                        SceneManager.MoveGameObjectToScene(poolParentDummyGameObject, ObjectPoolController.defaultInstantiateSceme);
+                    }
                 }
                 
             }
+
         }
 
         internal void Remove( PoolableObject poolObj )
