@@ -58,7 +58,7 @@ public class DragonMotionDino : DragonMotion {
 
     protected DragonDinoAnimationEvents m_animEvents;
     
-    private const float m_snapHeight = 2.4f;
+    public float m_snapHeight = 2.4f;
     private bool m_stomping = false;
     
     
@@ -84,6 +84,7 @@ public class DragonMotionDino : DragonMotion {
             boostBehaviour.energyDrain = boostBehaviour.energyDrain * m_energyDrainReduction;
             boostBehaviour.AddRefillBonus( m_energyRefillBonus );
         }
+        m_snapHeight = m_snapHeight * m_transform.localScale.y;
     }
 
 
@@ -450,10 +451,11 @@ public class DragonMotionDino : DragonMotion {
     {
         bool toStomp = false;
         float animAnticipation = 0.4f;
+        float realHeight = m_height / m_transform.localScale.y;
         // using velvet integration to know the future positoin and velocity
-        float futureY = m_height + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
+        float futureY = realHeight + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
         // Check fall speed and distance?
-        if ( futureY <= m_snapHeight )
+        if ( futureY <= (m_snapHeight / m_transform.localScale.y))
         {
             float futureSpeed = m_impulse.y + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
             if (futureSpeed * futureSpeed > m_fallSpeedToKill)
