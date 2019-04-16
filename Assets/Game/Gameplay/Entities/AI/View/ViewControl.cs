@@ -352,7 +352,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
         
         
         if (m_stunParticle == null) {
-        	m_stunParticle = new ParticleData("PS_Stun","", GameConstants.Vector3.zero );
+        	m_stunParticle = new ParticleData("FX_Stun","", GameConstants.Vector3.zero );
         }
 		m_stunParticle.CreatePool();
 
