@@ -608,7 +608,7 @@ static public class ObjectPoolController
 
             if (_poolableObjectComponent == null)
             {
-                throw new System.Exception("ObjectPool Exception: prefab " + prefab.name + " has no PoolableObject component asociated.");
+                throw new System.Exception("ObjectPool Exception: prefab " + prefab.name + " does not have a PoolableObject component asociated.");
             }
         }
 
