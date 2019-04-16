@@ -1831,8 +1831,16 @@ public class UserProfile : UserPersistenceSystem
                             // Keep all but we will clean all pushed offers that do not belong to the customizer we are using
                             // Extract customizer from key
                             string offerKey = kvp.Key;
-                            string customizerId = offerKey.Substring( 0, offerKey.Length - sku.Length - 1); // remove _sku from XX_sku
-                            jSONClass.Add("customizerId", customizerId);
+                            int substringIndex = offerKey.Length - sku.Length - 1;
+                            if ( substringIndex > 0 )
+                            { 
+                                string customizerId = offerKey.Substring( 0, substringIndex); // remove _sku from XX_sku
+                                jSONClass.Add("customizerId", customizerId);
+                            }
+                            else
+                            {
+                                jSONClass.Add("customizerId", "0");
+                            }
                         m_newOfferPersistanceData[OfferPack.Type.PUSHED].Add(jSONClass);
                     }break;
                     case OfferPack.Type.ROTATIONAL:{

@@ -82,7 +82,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Only if allowed
 		if(m_autoRefreshEnabled) {
 			if(m_timer <= 0) {
-				m_timer = settings.refreshFrequency;
+				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
 			}
 			m_timer -= Time.deltaTime;
