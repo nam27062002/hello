@@ -61,12 +61,10 @@ public class DragonMotionDino : DragonMotion {
     private const float m_snapHeight = 2.4f;
     private bool m_stomping = false;
     
-    Vector3 m_sphereLocalPosition;
     
     protected override void Start()
     {
         base.Start();
-        m_sphereLocalPosition = m_mainGroundCollider.transform.localPosition;
         Transform sensors   = m_transform.Find("sensors").transform;
         m_groundSensor = sensors.Find("GroundSensor");
         m_magnetSensor = sensors.Find("MagnetSensor");
@@ -91,7 +89,6 @@ public class DragonMotionDino : DragonMotion {
 
     override protected void FixedUpdate() {
         m_closeToGround = false;
-        m_mainGroundCollider.transform.localPosition = m_sphereLocalPosition;
         switch(m_state)
         {
             case State.Idle:
@@ -272,6 +269,11 @@ public class DragonMotionDino : DragonMotion {
         else
         {
             FreeFall(delta, GameConstants.Vector3.zero);
+            if ( m_stomping )
+            {
+                m_stomping = false;
+                m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+            }
         }
        
         
@@ -346,6 +348,11 @@ public class DragonMotionDino : DragonMotion {
                 impulse.y = 0;
                 impulse.Normalize();
                 FreeFall(delta, impulse);
+                if ( m_stomping )
+                {
+                    m_stomping = false;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
             }
             
             // m_desiredRotation = m_transform.rotation;
@@ -388,10 +395,6 @@ public class DragonMotionDino : DragonMotion {
 
     protected void FreeFall( float delta, Vector3 inputVector )
     {
-        m_mainGroundCollider.transform.position = m_sensor.bottom.position;
-        m_mainGroundCollider.transform.localPosition += Vector3.up * m_mainGroundCollider.radius;
-        
-        
         if (m_grounded)
         {
             SetGrounded(false);
