@@ -98,7 +98,7 @@ public class FireColorSetupManager : MonoBehaviour {
                         loadColors.Add(FireColorVariants.EXPLOSION, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaExplosion"));
                         loadColors.Add(FireColorVariants.TOON, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaToon"));
                         loadColors.Add(FireColorVariants.UNDERWATER, Resources.Load<FireColorConfig>("Game/Fire/ColorConfigs/FireLavaUnderwater"));
-                        m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/LavaBurnToAshes") as Material));
+                        m_originalBurnMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/RedBurnToAshes") as Material));
                         m_burnedViewMaterial.Add(fireColorType, new Material(Resources.Load("Game/Materials/InflammableDestructible/burnt_texture") as Material));
                     }
                     break;
