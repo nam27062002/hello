@@ -57,7 +57,9 @@ public class DragonMotionDino : DragonMotion {
     protected Vector3 m_lastFeetValidPosition;
 
     protected DragonDinoAnimationEvents m_animEvents;
-    // protected bool m_waitStomp = false;
+    
+    private const float m_snapHeight = 2.4f;
+    private bool m_stomping = false;
 
     protected override void Start()
     {
@@ -104,6 +106,12 @@ public class DragonMotionDino : DragonMotion {
                 }
                 else
                 {
+                    if (m_stomping)
+                    { 
+                        m_stomping = false;
+                        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                    }
+                    
                     UpdateMovement(Time.fixedDeltaTime);
                     CustomCheckGround(out m_raycastHit);
                     if ( m_height < 90 )
@@ -211,61 +219,39 @@ public class DragonMotionDino : DragonMotion {
     {
     
         CustomCheckGround( out m_raycastHit );
-        if ( m_height < 90 )
+        
+        if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
         {
-            if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
+            if ( m_height < m_snapHeight )
             {
-                if ( m_height < 1.2f )
+                Vector3 dir = m_lastGroundHitNormal;
+                dir.NormalizedXY();
+                if ( m_direction.x < 0 )
                 {
-                    /*
-                    if (!m_grounded)
-                    {
-                        // STOMP!!
-                        GroundStomp();
-                    }
-                    */
-                    Vector3 dir = m_lastGroundHitNormal;
-                    dir.NormalizedXY();
-                    if ( m_direction.x < 0 )
-                    {
-                        dir = dir.RotateXYDegrees(90);
-                    }
-                    else
-                    {
-                        dir = dir.RotateXYDegrees(-90);
-                    }
-                    m_direction = dir;
-                    m_impulse = GameConstants.Vector3.zero;
-                    if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
-                        m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
-                    RotateToGround( m_direction );
-                    SnapToGround();
+                    dir = dir.RotateXYDegrees(90);
                 }
                 else
                 {
-                    
-                    // Check fall speed and distance?
-                    if ( m_height < 2.1f )
-                    { 
-                        if (m_impulse.sqrMagnitude > m_fallSpeedToKill)
-                        {
-                            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, true);
-                        }
-                    }
+                    dir = dir.RotateXYDegrees(-90);
                 }
-                
-                
+                m_direction = dir;
+                m_impulse = GameConstants.Vector3.zero;
+                if (GroundAngleBiggerThan(m_lastGroundHitNormal, m_maxStationaryAngle))
+                    m_impulse.y = -9.81f * m_freeFallGravityMultiplier * delta;
+                RotateToGround( m_direction );
+                SnapToGround();
             }
             else
             {
                 FreeFall(delta, GameConstants.Vector3.zero);
+                CheckGroundStomp();
             }
         }
-        // Free fall
         else
         {
             FreeFall(delta, GameConstants.Vector3.zero);
         }
+       
         
         // m_desiredRotation = m_transform.rotation;
         ApplyExternalForce();
@@ -293,10 +279,10 @@ public class DragonMotionDino : DragonMotion {
         }
         else
         {
-            if ( m_height < 90 )
+            if ( m_height < 90 && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
             {
-                if ( !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
-                {
+                if ( m_height < m_snapHeight )
+                { 
                     Vector3 dir = m_lastGroundHitNormal;
                     dir.NormalizedXY();
                     if ( impulse.x < 0 )
@@ -308,28 +294,16 @@ public class DragonMotionDino : DragonMotion {
                         dir = dir.RotateXYDegrees(-90);
                     }
                     m_direction = dir;   
-                    if (!m_grounded)
+                    
+                    if ( m_boost.IsBoostActive() )
                     {
-                        // STOMP!!
-                        GroundStomp();
+                        m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
                     }
-                    // if (!m_waitStomp)
-                    {
-                        if ( m_boost.IsBoostActive() )
-                        {
-                            m_impulse = m_direction * m_walkSpeed * m_walkBoostMultiplier;
-                        }
-                        else
-                        {
-                            m_impulse = m_direction * m_walkSpeed;
-                        }
-                    }
-                    /*
                     else
                     {
-                        m_impulse = GameConstants.Vector3.zero;
+                        m_impulse = m_direction * m_walkSpeed;
                     }
-                    */
+                    
                     m_impulse.y += -9.81f * m_freeFallGravityMultiplier * delta;
                     RotateToGround( m_direction );
                     SnapToGround();
@@ -340,6 +314,9 @@ public class DragonMotionDino : DragonMotion {
                     impulse.y = 0;
                     impulse.Normalize();
                     FreeFall(delta, impulse);
+
+                    // Check if it will ground stomp
+                    CheckGroundStomp();
                 }
             }
             else
@@ -440,20 +417,36 @@ public class DragonMotionDino : DragonMotion {
 
     }
 
-    protected void GroundStomp()
+    protected void CheckGroundStomp()
     {
-        if ( m_impulse.sqrMagnitude > m_fallSpeedToKill)
-        {
-            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, true);
-            // m_waitStomp = true;
+        if (!m_stomping)
+        { 
+            float animAnticipation = 0.375f;
+            // using velvet integration to know the future positoin and velocity
+            float futureY = m_height + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
+            // Check fall speed and distance?
+            if ( futureY <= m_snapHeight )
+            {
+                float futureSpeed = m_impulse.y + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
+                if (futureSpeed * futureSpeed > m_fallSpeedToKill)
+                {
+                    m_stomping = true;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
+            }
         }
     }
     
-    public void OnGroundStomp()
+    public bool OnGroundStomp()
     {
-        // m_waitStomp = false;
-        m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, false);
-        StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
+        bool ret = true;
+        if ( m_grounded || m_height < m_snapHeight )
+        {
+            m_stomping = false;
+            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+            StunAndKill(m_sensor.bottom.position, m_currentKillArea, m_currentStunArea, m_stunDuration);
+        }
+        return ret;
     }
     
     

@@ -83,10 +83,12 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         m_dragonMotion.OnStep();
     }
 
-    private void GroundHit()
+    public void GroundHit()
     {
-        m_dragonMotion.OnGroundStomp();
-        OnGroundStomp();
+        if (m_dragonMotion.OnGroundStomp())
+        {
+            OnGroundStomp();
+        }
     }
 
     public void OnGroundStomp()
