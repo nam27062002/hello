@@ -360,19 +360,19 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
     }
     
     public void OnLaunchBomb()
-    {
-    
+    {    
         // Fire!!
         Transform originTransform = m_bombFirePosition;
 
         GameObject go = m_bombsPoolHandler.GetInstance();
-        PetProjectile projectile = go.GetComponent<PetProjectile>();
-        projectile.tier = m_tier;
-        projectile.transform.position = originTransform.position;
-        projectile.transform.rotation = originTransform.rotation;
-        projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);
-        projectile.velocity = GameConstants.Vector3.up * Mathf.Min(m_playerMotion.velocity.y, -projectile.speed);
-        
+        if (go != null) {
+            PetProjectile projectile = go.GetComponent<PetProjectile>();
+            projectile.tier = m_tier;
+            projectile.transform.position = originTransform.position;
+            projectile.transform.rotation = originTransform.rotation;
+            projectile.ShootAtPosition(transform.position, Vector3.down, 9999, originTransform);
+            projectile.velocity = GameConstants.Vector3.up * Mathf.Min(m_playerMotion.velocity.y, -projectile.speed);
+        }
     }
 
     protected virtual void OnDrawGizmos()

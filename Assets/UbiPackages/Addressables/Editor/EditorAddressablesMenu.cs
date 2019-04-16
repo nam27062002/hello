@@ -31,12 +31,12 @@ public class EditorAddressablesMenu : MonoBehaviour
         {
             if (m_manager == null)
             {
-                object o = Activator.CreateInstance(Type.GetType("HDEditorAddressablesManager"));
+                /*object o = Activator.CreateInstance(Type.GetType("HDEditorAddressablesManager"));
                 if (o != null && o is EditorAddressablesManager)
                 {
                     m_manager = (EditorAddressablesManager)o;
                 }
-                else                
+                else*/                
                 {
                     m_manager = new EditorAddressablesManager();
                 }                
