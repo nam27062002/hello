@@ -42,8 +42,9 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	//-- Static Methods ---------------------------------------------//
 	//---------------------------------------------------------------//
 
-	public static void PreBuild() { 
-		instance.__PreBuild();
+	public static void PreBuild() {
+        Clear();
+        instance.__PreBuild();
 	}
 
 	public static void Rebuild(){
@@ -210,8 +211,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	/// Rebuild. When changin area, this funcion makes the proper changes to adapt to the area
 	/// </summary>
 	private void __Rebuild() {
-        m_useBlood = FeatureSettingsManager.instance.IsBloodEnabled();
-		if (m_poolLimits != PoolLimits.Unlimited) {
+        if (m_poolLimits != PoolLimits.Unlimited) {
 			if (LevelManager.currentLevelData != null) {
 				Dictionary<string, PoolContainer> toDelete = new Dictionary<string, PoolContainer>( m_pools );
 				List<DefinitionNode> poolSizes = GetPoolSizesForCurrentArea();
@@ -237,7 +237,7 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 				toDelete.Clear();
 			}
 		}
-	}
+    }
 
 	private ParticleHandler __CreatePool(string _prefabName, string _folderPath) {        
         if (string.IsNullOrEmpty(_prefabName)) {
