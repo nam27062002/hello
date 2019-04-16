@@ -150,6 +150,26 @@ public class DragonMotionDino : DragonMotion {
         CheckFeet();
 
 	}
+
+    protected override void ChangeState(State _nextState)
+    {
+        if ( m_state != _nextState )
+        {
+            if ( m_state == State.Fly || m_state == State.Idle || m_state == State.Fly_Down )
+            {
+                if ( m_grounded )
+                {
+                    SetGrounded(false);
+                }
+                if ( m_stomping )
+                {
+                    m_stomping = false;
+                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+                }
+            }
+        }
+        base.ChangeState( _nextState );
+    }
     
     protected void GroundDead(float delta)
     {
@@ -421,7 +441,7 @@ public class DragonMotionDino : DragonMotion {
     {
         if (!m_stomping)
         { 
-            float animAnticipation = 0.375f;
+            float animAnticipation = 0.4f;
             // using velvet integration to know the future positoin and velocity
             float futureY = m_height + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
             // Check fall speed and distance?
