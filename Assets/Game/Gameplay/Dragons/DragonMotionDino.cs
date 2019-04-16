@@ -439,22 +439,27 @@ public class DragonMotionDino : DragonMotion {
 
     protected void CheckGroundStomp()
     {
-        if (!m_stomping)
-        { 
-            float animAnticipation = 0.4f;
-            // using velvet integration to know the future positoin and velocity
-            float futureY = m_height + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
-            // Check fall speed and distance?
-            if ( futureY <= m_snapHeight )
+        bool toStomp = false;
+        float animAnticipation = 0.4f;
+        // using velvet integration to know the future positoin and velocity
+        float futureY = m_height + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
+        // Check fall speed and distance?
+        if ( futureY <= m_snapHeight )
+        {
+            float futureSpeed = m_impulse.y + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
+            if (futureSpeed * futureSpeed > m_fallSpeedToKill)
             {
-                float futureSpeed = m_impulse.y + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;
-                if (futureSpeed * futureSpeed > m_fallSpeedToKill)
-                {
-                    m_stomping = true;
-                    m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
-                }
+                toStomp = true;
+                
             }
         }
+        
+        if ( m_stomping != toStomp )
+        {
+            m_stomping = toStomp;
+            m_animator.SetBool(GameConstants.Animator.GROUND_STOMP, m_stomping);
+        }
+        
     }
     
     public bool OnGroundStomp()
