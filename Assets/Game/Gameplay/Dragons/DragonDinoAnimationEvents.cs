@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class DragonDinoAnimationEvents : DragonAnimationEvents {
 
@@ -36,6 +37,7 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
             GameObject go = m_stepParticle.CreateInstance();
             m_stepParticleInstance = go.GetComponent<ParticleSystem>();
             m_stepParticleInstance.gameObject.SetActive(false);
+            SceneManager.MoveGameObjectToScene(m_stepParticleInstance.gameObject, gameObject.scene);
         }
         m_dragonMotion = InstanceManager.player.dragonMotion as DragonMotionDino;
         
@@ -56,6 +58,7 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
                 GameObject go = m_groundStompParticle.CreateInstance();
                 m_stompParticleInstance = go.GetComponent<ParticleSystem>();
                 m_stompParticleInstance.gameObject.SetActive(false);
+                SceneManager.MoveGameObjectToScene(m_stompParticleInstance.gameObject, gameObject.scene);
             }
         }
         else
@@ -66,7 +69,16 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
                 GameObject go = m_groundStompParticleLevel2.CreateInstance();
                 m_stompParticleInstance = go.GetComponent<ParticleSystem>();
                 m_stompParticleInstance.gameObject.SetActive(false);
+                SceneManager.MoveGameObjectToScene(m_stompParticleInstance.gameObject, gameObject.scene);
             }
+        }
+        
+        if ( m_headbutt.IsValid() )
+        {
+            GameObject go = m_headbutt.CreateInstance();
+            m_headbuttParticleInstance = go.GetComponent<ParticleSystem>();
+            m_headbuttParticleInstance.gameObject.SetActive(false);
+            SceneManager.MoveGameObjectToScene(m_headbuttParticleInstance.gameObject, gameObject.scene);
         }
     }
 
