@@ -16,9 +16,9 @@ struct v2f {
 	float2 particledata : TEXCOORD1;
 #endif	//EXTENDED_PARTICLES
 
-#if defined(NOISE_TEXTURE)
+#if defined(NOISE_TEXTURE) || defined(FLOWMAP)
 	float2 noiseuv : TEXCOORD2;
-#endif
+#endif	//NOISE_TEXTURE || FLOWMAP
 };
 
 sampler2D _MainTex;
@@ -45,12 +45,11 @@ float4 _SaturatedColor;
 float4 _DissolveStep;
 #endif //DISSOLVE_ENABLED
 
-#if defined(NOISE_TEXTURE)
+#if defined(NOISE_TEXTURE) || defined(FLOWMAP)
 sampler2D _NoiseTex;
 float4 _NoiseTex_ST;
-
 float4 _NoisePanning;
-#endif	//NOISE_TEXTURE
+#endif	//NOISE_TEXTURE || FLOWMAP
 
 #else	//EXTENDED_PARTICLES
 float4 _TintColor;
@@ -80,6 +79,8 @@ v2f vert(appdata_t v)
 //	o.texcoord = TRANSFORM_TEX(v.texcoord + _Panning.xy * _Time.yy, _MainTex);
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Panning.xy * _Time.yy);
 
+#if defined(NOISE_TEXTURE) || defined(FLOWMAP)
+
 #if defined(NOISE_TEXTURE)
 
 #if defined(NOISEUV)
@@ -88,7 +89,17 @@ v2f vert(appdata_t v)
 	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex) + (_NoisePanning.xy * _Time.yy);
 #endif
 
+#else	//FLOWMAP
+
+#if defined(NOISEUV)
+	o.noiseuv = TRANSFORM_TEX(v.texcoord, _NoiseTex);
+#else
+	o.noiseuv = TRANSFORM_TEX(v.texcoord, _MainTex);
+#endif
+
 #endif	//NOISE_TEXTURE
+
+#endif 	//NOISE_TEXTURE || FLOWMAP
 
 #ifdef EXTENDED_PARTICLES
 	o.particledata = v.texcoord.zw;
@@ -99,7 +110,7 @@ v2f vert(appdata_t v)
 
 fixed4 frag(v2f i) : COLOR
 {
-	fixed4 tex = tex2D(_MainTex, i.texcoord);
+	fixed4 tex;
 	//fixed4 tex = fixed4(1.0, 1.0, 1.0, 1.0);// tex2D(_MainTex, i.texcoord);
 	fixed4 col;
 
@@ -111,35 +122,49 @@ fixed4 frag(v2f i) : COLOR
 	float4 vcolor = float4(1.0, 1.0, 1.0, i.color.w);
 #endif	//APPLY_RGB_COLOR_VERTEX
 
-#if defined(NOISE_TEXTURE)
+	float nEmission = 1.0;
+	float nAlpha = 1.0;
+	float nDissolve = 1.0;
 
+
+#if defined(NOISE_TEXTURE)
+	tex = tex2D(_MainTex, i.texcoord);
 	float3 noise = tex2D(_NoiseTex, i.noiseuv);
 
 #if defined(NOISE_TEXTURE_EMISSION)
-//	return fixed4(1.0, 1.0, 0.0, 1.0);
-	float nEmission = noise.x;
-#else	//NOISE_TEXTURE_EMISSION
-	float nEmission = 1.0;
+	nEmission = noise.x;
 #endif	//NOISE_TEXTURE_EMISSION
 
 #if defined(NOISE_TEXTURE_ALPHA)
-	float nAlpha = noise.y;
-#else	//NOISE_TEXTURE_ALPHA
-	float nAlpha = 1.0;
+	nAlpha = noise.y;
 #endif	//NOISE_TEXTURE_ALPHA
 
 #if defined(NOISE_TEXTURE_DISSOLVE)
-	float nDissolve = noise.z;
-#else	//NOISE_TEXTURE_DISSOLVE
-	float nDissolve = 1.0;
+	nDissolve = noise.z;
 #endif	//NOISE_TEXTURE_DISSOLVE
 
-#else	//NOISE_TEXTURE
-	float nEmission = 1.0;
-	float nAlpha = 1.0;
-	float nDissolve = 1.0;
+//	tex = fixed4(0.0, 1.0, 0.0, 1.0);
+	
+//#endif	//NOISE_TEXTURE
+#elif defined(FLOWMAP)
+	float2 off = (tex2D(_NoiseTex, i.noiseuv).xy * 2.0f - 1.0f) * _NoisePanning.y;
+//	float2 off = float2(1.0, 0.0);
+	float time = _Time.y * _NoisePanning.x;
+	float phase0 = frac(time * 0.5f + 0.5f);
+	float phase1 = frac(time * 0.5f + 1.0f);
 
-#endif	//NOISE_TEXTURE
+	tex = tex2D(_MainTex, i.texcoord + off * phase0);
+	fixed4 tex2 = tex2D(_MainTex, i.texcoord + off * phase1);
+
+	float flowLerp = abs((0.5f - phase0) / 0.5f);
+
+	tex = lerp(tex, tex2, flowLerp);
+//	tex = fixed4(1.0, 0.0, 0.0, 1.0);
+
+#else
+	tex = tex2D(_MainTex, i.texcoord);
+
+#endif
 
 #if defined(DISSOLVE_ENABLED)
 	float ramp = -1.0 + (i.particledata.x * 2.0);
@@ -185,6 +210,7 @@ fixed4 frag(v2f i) : COLOR
 #endif
 */
 #else	//EXTENDED_PARTICLES
+	tex = tex2D(_MainTex, i.texcoord);
 
 #ifdef BLENDMODE_ADDITIVEALPHABLEND
 	tex *= _TintColor;

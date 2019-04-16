@@ -631,8 +631,6 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonElectricCorpse
-  m_hiccupParticle: PS_hiccups
-  m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
     name: PS_BreakingShield
     path: 
@@ -5521,9 +5519,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b72f5c215f044411a28ab59c5dd7cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 4
-  m_rotateWithObject: 1
-  m_zoomCompensation: 1
   m_iconRoot: {fileID: 4570620880707486}
   m_arrowPivot: {fileID: 4989489807634138}
   m_bounds:
@@ -5542,6 +5537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_colors: 0000000001000000
   m_prewarmDuration: 1
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
@@ -6172,7 +6168,7 @@ MonoBehaviour:
   m_waterMultiplier: 2
   m_chainRadiusCheck: 8
   m_blastRadius: 6.5
-  m_blastParticle: Dragon/PS_ElectricExplosion
+  m_blastParticle: PS_ElectricExplosion
   m_blastParticleSystem: {fileID: 0}
   m_minTimerBetweenKills: 0.4
   m_tailUp: {fileID: 1583495631182300}
