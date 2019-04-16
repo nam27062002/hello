@@ -1128,6 +1128,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
         if ( m_state != State.Intro)
         {
             Vector3 pos = m_transform.position;
+            pos.z = 0;
             // check pos
             m_limitsCheck++;
             if ( m_limitsCheck > 2 )
@@ -1298,7 +1299,7 @@ public class DragonMotion : MonoBehaviour, IMotion, IBroadcastListener {
 
 		float impulseMag = m_impulse.magnitude;
 		m_impulse += (acceleration * _deltaTime) - ( m_impulse.normalized * m_dragonFricction * impulseMag * _deltaTime); // velocity = acceleration - friction * velocity
-		m_direction = m_impulse.normalized;
+		m_direction = Vector3.Lerp(m_direction, m_impulse.normalized, Time.deltaTime * 10 );
 		RotateToDirection(m_direction);
 
         if ( !m_canMoveInsideWater )

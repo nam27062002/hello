@@ -114,7 +114,7 @@ public class DragonMotionDino : DragonMotion {
                     
                     UpdateMovement(Time.fixedDeltaTime);
                     CustomCheckGround(out m_raycastHit);
-                    if ( m_height < 90 )
+                    if ( m_height < m_snapHeight && !GroundAngleBiggerThan( m_lastGroundHitNormal, m_maxWalkAngle ))
                     {
                         // Ground it
                         SetGrounded(true);
