@@ -22,7 +22,7 @@ public class PopupAdPlaceholder : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/InGame/PF_PopupAdPlaceholder";
+	public const string PATH = "UI/Popups/Misc/PF_PopupAdPlaceholder";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

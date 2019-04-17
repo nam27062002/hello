@@ -513,6 +513,11 @@ public abstract class IDragonData : IUISelectorItem {
 		return newData;
 	}
 
+	/// <summary>
+	/// Factory method given a live data build.
+	/// </summary>
+	/// <returns>New dragon data object initialized with data from the build.</returns>
+	/// <param name="_build">Build.</param>
     public static IDragonData CreateFromBuild(HDLiveData.DragonBuild _build) {
 		// Get definition
         DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _build.dragon);
@@ -563,6 +568,29 @@ public abstract class IDragonData : IUISelectorItem {
 
 		return newData;
     }
+
+	/// <summary>
+	/// Factory method given a specific skin.
+	/// </summary>
+	/// <returns>A new dragon data for the dragon owner of the skin and with the skin equipped.</returns>
+	/// <param name="_skinSku">Skin sku.</param>
+	public static IDragonData CreateFromSkin(string _skinSku) {
+		// Get skin definition
+		DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _skinSku);
+
+		// Get corresponding dragon definition
+		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, skinDef.GetAsString("dragonSku"));
+
+		// Create dragon data object
+		IDragonData newData = IDragonData.CreateFromDef(dragonDef);
+
+		// Equip with the target skin
+		newData.disguise = skinDef.sku;
+		newData.persistentDisguise = skinDef.sku;
+
+		// Done!
+		return newData;
+	}
 
     /// <summary>
     /// Gets the default disguise for the given dragon def.
