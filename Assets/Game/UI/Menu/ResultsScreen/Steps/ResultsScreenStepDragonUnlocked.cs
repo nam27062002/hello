@@ -38,6 +38,7 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private TextMeshProUGUI m_energyText = null;
 	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
+	[SerializeField] private ShowHideAnimator m_shareButtonAnim = null;
 	[SerializeField] private ShowHideAnimator m_purchaseButtonsAnim = null;
 	[SerializeField] private UIDragonPriceSetup m_scPriceSetup = null;
 	[SerializeField] private UIDragonPriceSetup m_hcPriceSetup = null;
@@ -139,6 +140,10 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 		if(m_purchaseButtonsAnim != null) {
 			m_purchaseButtonsAnim.ForceHide(false);
 		}
+
+		if(m_shareButtonAnim != null) {
+			m_shareButtonAnim.ForceHide(false);
+		}
 	}
 
 	//------------------------------------------------------------------------//
@@ -229,13 +234,26 @@ public class ResultsScreenStepDragonUnlocked : ResultsScreenSequenceStep {
 			m_purchaseButtonsAnim.ForceHide();
 		}
 
-		// Same with tap to continue
-		m_tapToContinue.ForceHide();
+		// Show share button
+		if(m_shareButtonAnim != null) {
+			m_shareButtonAnim.ForceShow();
+		}
+	}
 
-		// Continue with the animation after some delay
-		UbiBCN.CoroutineManager.DelayedCall(() => {
-			m_sequence.Play();
-		}, 1f);
+	/// <summary>
+	/// The share button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		// Initialize and open share screen
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon_acquired") as ShareScreenDragon;
+		shareScreen.Init(
+			"dragon_acquired",
+			SceneController.GetMainCameraForCurrentScene(),
+			m_dragonData,
+			true,
+			null
+		);
+		shareScreen.TakePicture();
 	}
 
 	/// <summary>
