@@ -10,7 +10,7 @@ namespace Downloadables
     /// </summary>
     public class CatalogEntryStatus
     {
-        public static float TIME_TO_WAIT_AFTER_ERROR = 3f;
+        public static float TIME_TO_WAIT_AFTER_ERROR = 10f;
         public static float TIME_TO_WAIT_BETWEEN_SAVES = 3f;
         public static float TIME_TO_WAIT_BETWEEN_ACTUAL_UPDATES = 180f;
         private static float BYTES_TO_MB = 1024 * 1024;

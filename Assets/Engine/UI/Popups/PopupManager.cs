@@ -266,10 +266,15 @@ public class PopupManager : UbiBCN.SingletonMonoBehaviour<PopupManager>, IBroadc
 	public static PopupController LoadPopup(string _resourcesPath) {
 		// Load the popup's prefab
 		GameObject prefab = Resources.Load<GameObject>(_resourcesPath);
-		Debug.Assert(prefab != null, "The prefab defined to popup " + _resourcesPath + " couldn't be found");	// [AOC] TODO!! Check path
 
-		// Instantiate it and return reference
-		return instance.InstantiatePopup(prefab);
+        if (prefab == null)
+        {
+            throw new System.Exception("The prefab defined to popup " + _resourcesPath + " couldn't be found");
+//            Debug.Assert(prefab != null, "The prefab defined to popup " + _resourcesPath + " couldn't be found");	// [AOC] TODO!! Check path
+        }
+
+        // Instantiate it and return reference
+        return instance.InstantiatePopup(prefab);
 	}
 
 	/// <summary>

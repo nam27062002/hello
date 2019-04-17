@@ -82,7 +82,7 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		// Only if allowed
 		if(m_autoRefreshEnabled) {
 			if(m_timer <= 0) {
-				m_timer = settings.refreshFrequency;
+				m_timer = settings != null ? settings.refreshFrequency : 1f;	// Crashlytics was reporting a Null reference, protect it just in case
 				Refresh(false);
 			}
 			m_timer -= Time.deltaTime;
@@ -115,7 +115,9 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		List<DefinitionNode> offerDefs = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.OFFER_PACKS);
 		DefinitionsManager.SharedInstance.SortByProperty(ref offerDefs, "order", DefinitionsManager.SortType.NUMERIC);
 
-        HashSet<long> customizationIds = new HashSet<long>();
+        bool needsCleaning = HDCustomizerManager.instance.hasBeenApplied;
+
+        List<string> validCustomIds = new List<string>();
 		// Create data for each known offer pack definition
 		for(int i = 0; i < offerDefs.Count; ++i) {
 			// Create and initialize new pack
@@ -135,10 +137,12 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
                     instance.m_allEnabledRotationalOffers.Add(newPack as OfferPackRotational);
                 }break;
                 case OfferPack.Type.PUSHED:{
-                    if (offerDefs[i].customizationCode != -1 )
+                    // Only if there is a customization on experiment
+                    if (needsCleaning)
                     {
-                        customizationIds.Add(offerDefs[i].customizationCode);
+                        validCustomIds.Add( OffersManager.GenerateTrackingOfferName( offerDefs[i] ) );
                     }
+                    
                 }break;
             }
 		}
@@ -147,8 +151,8 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		instance.Refresh(true);
 
         // Only clean if we have a new customization/s
-        if ( customizationIds.Count > 0 ){
-            UsersManager.currentUser.CleanOldPushedOffers(customizationIds);
+        if ( needsCleaning ){
+            UsersManager.currentUser.CleanOldPushedOffers(validCustomIds);
         }
 
 		// Notiy game

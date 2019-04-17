@@ -119,7 +119,7 @@ namespace AI {
                     object[] param = m_machine.GetSignalParams(Signals.Type.Collision);
                     if (param != null && param.Length > 0) {
                         Collision collision = param[0] as Collision;
-                        if (collision != null) {
+                        if (collision != null && collision.collider != null && collision.collider.gameObject != null) {
                             if (collision.collider.gameObject.layer == LayerMask.NameToLayer("ground")) {
                                 // We go back
                                 m_transitionParam[0] = m_cooldown.GetRandom();

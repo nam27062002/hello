@@ -9,7 +9,7 @@ using System.IO;
 
 public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	
-	private class PoolContaier {
+	private class PoolContainer {
 		public Pool 		pool;
 		public PoolHandler 	handler;
 		public int          size;
@@ -23,7 +23,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
     public static bool sm_printPools = false;
 
 	// Entity Pools requests (delayed pool manager)
-	private SortedDictionary<string, PoolContaier> m_pools = new SortedDictionary<string, PoolContaier>();
+	private SortedDictionary<string, PoolContainer> m_pools = new SortedDictionary<string, PoolContainer>();
 	private List<Pool> m_iterator = new List<Pool>();
 
 	private SortedDictionary<string, int> m_poolSizes = new SortedDictionary<string, int>();
@@ -62,6 +62,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 	public static void PreBuild() {
+        Clear(true);
 		instance.GetPoolSizesForCurrentArea();
 	}
 
@@ -70,7 +71,8 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 	public static void Rebuild() {
-		instance.__Rebuild();
+        Build();
+        //instance.__Rebuild();
 	}
 
 	/// <summary>
@@ -81,7 +83,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	/// <param name="_canGrow">If set to <c>true</c> can grow.</param>
 	public static PoolHandler CreatePool(string _prefabName, int _initSize = 10, bool _canGrow = true, bool _temporay = true) {
 		PoolHandler handler 	= instance.__RequestPool(_prefabName, _initSize);
-		PoolContaier container 	= instance.m_pools[_prefabName];
+		PoolContainer container 	= instance.m_pools[_prefabName];
 
 		instance.__CreatePool(container, _prefabName, _canGrow, _temporay);
 
@@ -117,7 +119,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 					string fileName = "NPC_Pools_" + LevelManager.currentLevelData.def.sku + "_" + LevelManager.currentArea + ".xml";
 					using (StreamWriter sw = new StreamWriter(fileName, false)) {
 						sw.WriteLine("<Definitions>");
-						foreach (KeyValuePair<string, PoolContaier> pair in m_pools) {
+						foreach (KeyValuePair<string, PoolContainer> pair in m_pools) {
 							if (pair.Value.pool != null) {
 								sw.WriteLine("<Definition sku=\"" + pair.Key + "\" poolSize=\"" + pair.Value.pool.Size() + "\"/>");
 							}
@@ -147,7 +149,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 
 
 	private PoolHandler __RequestPool(string _prefabName, int _size) {
-		PoolContaier container;
+		PoolContainer container;
 
 		if (m_poolSizes.ContainsKey(_prefabName)) {
 			_size = m_poolSizes[_prefabName];
@@ -158,7 +160,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 			if (container.size < _size)
                 container.size = _size;			
 		} else {
-			container = new PoolContaier();
+			container = new PoolContainer();
 			container.size = _size;
 			container.handler = new PoolHandler();
 
@@ -177,8 +179,9 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 	}
 
 	private void __Rebuild() {
+        /*
 		List<string> keys;
-		List<string> toDelete = new List<string>();
+		List<string> toDelete = new List<string>Resources.UnloadUnusedAssets();();
 
 		// First eliminate non using prefabs and reduce bigger than need pools
 		keys = new List<string>(m_pools.Keys);
@@ -224,10 +227,10 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
 				// Create pool
                 __CreatePool(container, keys[i], m_poolLimits == PoolLimits.Unlimited, true);
 			}
-		}
-	}
+		}*/
+    }
 
-	private void __CreatePool(PoolContaier _container, string _prefabName, bool _canGrow, bool _temporay) {
+    private void __CreatePool(PoolContainer _container, string _prefabName, bool _canGrow, bool _temporay) {
         if (_container.pool == null) {
             GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_prefabName);
 
@@ -253,21 +256,19 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
             List<string> keys = new List<string>(m_pools.Keys);
             if (_all) {
                 for (int i = 0; i < keys.Count; i++) {
-                    PoolContaier container = m_pools[keys[i]];
+                    PoolContainer container = m_pools[keys[i]];
                     if (container.pool != null) {
-                        if (container.pool.isTemporary) {
-                            m_pools.Remove(keys[i]);
-                        }
                         container.pool.Clear();
                         container.pool = null;
                         container.handler.Invalidate();
 					}
 				}
-				m_iterator.Clear();
+                m_pools.Clear();
+                m_iterator.Clear();
 			} else {
 				// we'll clear only temporary pools (those that don't have to exist between levels)				
 				for (int i = 0; i < keys.Count; i++) {
-					PoolContaier container = m_pools[keys[i]];
+					PoolContainer container = m_pools[keys[i]];
 					Pool p = container.pool;
 					if (p.isTemporary) {
 						p.Clear();
@@ -279,6 +280,7 @@ public class PoolManager : UbiBCN.SingletonMonoBehaviour<PoolManager> {
                     }
 				}
 			}
-		}
+            Resources.UnloadUnusedAssets();
+        }
 	}    
 }
