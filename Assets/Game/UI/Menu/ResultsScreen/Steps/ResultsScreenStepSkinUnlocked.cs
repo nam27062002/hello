@@ -34,6 +34,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 	[SerializeField] private TextMeshProUGUI m_skinNameText = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
 	[SerializeField] private MultiCurrencyButton m_purchaseButton = null;
+	[SerializeField] private ShowHideAnimator m_shareButtonGroup = null;
 
 	// Internal
 	private List<DefinitionNode> m_skinsToProcess = new List<DefinitionNode>();
@@ -141,8 +142,11 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 			m_purchaseButton.SetAmount(priceSC, UserProfile.Currency.SOFT);
 		}
 
-		// Start with button hidden
+		// Start with purchase button hidden
 		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide(false);
+
+		// Start with share button hidden
+		m_shareButtonGroup.ForceHide(false);
 	}
 
 	//------------------------------------------------------------------------//
@@ -181,33 +185,7 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		// Perform transaction
 		// Get price and start purchase flow
 		ResourcesFlow purchaseFlow = new ResourcesFlow("ACQUIRE_DISGUISE");
-		purchaseFlow.OnSuccess.AddListener(
-			(ResourcesFlow _flow) => {
-				// Acquire and equip the skin!
-				// [AOC] Unless testing!
-				if(!CPResultsScreenTest.testEnabled) {
-					// Acquire it!
-					UsersManager.currentUser.wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
-
-					// Immediately equip it!
-					UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, def.sku, true);
-				}
-
-				// Throw out some fireworks!
-				m_controller.scene.LaunchConfettiFX(true);
-
-				// Hide the button to prevent spamming
-				m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();
-
-				// Same with tap to continue
-				m_tapToContinue.ForceHide();
-
-				// Continue with the animation after some delay
-				UbiBCN.CoroutineManager.DelayedCall(() => {
-					m_sequence.Play();
-				}, 1f);
-			}
-		);
+		purchaseFlow.OnSuccess.AddListener(OnPurchaseSuccess);
 		if(isPC) {
 			purchaseFlow.Begin(pricePC, UserProfile.Currency.HARD, HDTrackingManager.EEconomyGroup.ACQUIRE_DISGUISE, def);
 		} else {
@@ -215,7 +193,51 @@ public class ResultsScreenStepSkinUnlocked : ResultsScreenSequenceStep {
 		}
 	}
 
-	// Callback to rescale particles
+	/// <summary>
+	/// The purchase resources flow has finished successfully.
+	/// </summary>
+	/// <param name="_flow">The flow that triggered the callback.</param>
+	private void OnPurchaseSuccess(ResourcesFlow _flow) {
+		// Acquire and equip the skin!
+		// [AOC] Unless testing!
+		if(!CPResultsScreenTest.testEnabled) {
+			// Acquire it!
+			UsersManager.currentUser.wardrobe.SetSkinState(_flow.itemDef.sku, Wardrobe.SkinState.OWNED);
+
+			// Immediately equip it!
+			UsersManager.currentUser.EquipDisguise(DragonManager.currentDragon.def.sku, _flow.itemDef.sku, true);
+		}
+
+		// Throw out some fireworks!
+		m_controller.scene.LaunchConfettiFX(true);
+
+		// Hide the button to prevent spamming
+		m_purchaseButton.GetComponent<ShowHideAnimator>().ForceHide();
+
+		// Show share button
+		m_shareButtonGroup.ForceShow();
+	}
+
+	/// <summary>
+	/// The share button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		// Initialize and open share screen
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("skin_acquired") as ShareScreenDragon;
+		shareScreen.Init(
+			"skin_acquired",
+			SceneController.GetMainCameraForCurrentScene(),
+			IDragonData.CreateFromSkin(m_skinsToProcess[m_processedSkins].sku),    // Create a sample dragon data object to initialize the share screen
+			true,
+			null
+		);
+
+		shareScreen.TakePicture();
+	}
+
+	/// <summary>
+	/// Callback to rescale particles from the animation sequence.
+	/// </summary>
 	public void PreviewScaledFinished()
 	{
 		ParticleScaler[] scalers = m_preview.GetComponentsInChildren<ParticleScaler>();
