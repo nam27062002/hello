@@ -35,6 +35,7 @@ public class PopupPhotoShare : MonoBehaviour {
 	// Internal
 	private Texture2D m_photo = null;
 	private string m_caption = "";
+	private string m_trackingZone = "";
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -64,7 +65,8 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// <param name="_photo">The photo that has been taken.</param>
 	/// <param name="_caption">The caption to be posted.</param>
 	/// <param name="_popupTitle">The title to be displayed on the popup, already localized.</param>
-	public void Init(Texture2D _photo, string _caption, string _popupTitle) {
+	/// <param name="_trackingZone">The id to be tracked when sharing.</param>
+	public void Init(Texture2D _photo, string _caption, string _popupTitle, string _trackingZone) {
 		// Skip if given photo is not valid
 		if(_photo == null) return;
 
@@ -83,6 +85,9 @@ public class PopupPhotoShare : MonoBehaviour {
 
 		// Match photo's aspect ratio
 		m_aspectRatioFitter.aspectRatio = (float)_photo.width/(float)_photo.height;
+
+		// Store tracking zone for future use
+		m_trackingZone = _trackingZone;
 	}
 
 	private void CreateScreenshotFile() {
@@ -102,6 +107,9 @@ public class PopupPhotoShare : MonoBehaviour {
 	/// Share button has been pressed.
 	/// </summary>
 	public void OnShareButton() {
+		// Tracking
+		HDTrackingManager.Instance.Notify_ShareScreen(m_trackingZone);
+
 		// Share Flow - DO NOT REMOVE!
 		string filePath = Application.temporaryCachePath + "/Screenshot.png";
 	    PlatformUtils.Instance.ShareImage( 
