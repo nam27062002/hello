@@ -9,9 +9,11 @@ public class HDNotificationsManager : UbiBCN.SingletonMonoBehaviour<HDNotificati
     public static bool CanBeUsed()  // This function is here to protect old android not to initialize because of the trilladora
     {
         bool ret = true;
+        /*
 #if !UNITY_EDITOR && UNITY_ANDROID
             ret = PlatformUtilsAndroidImpl.GetSDKLevel() >= 21;
 #endif
+        */
         return ret;
     } 
 

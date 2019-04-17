@@ -4,7 +4,7 @@ using UnityEngine.Audio;
 public class DragonAnimationEvents : MonoBehaviour {
 
 	private DragonAttackBehaviour m_attackBehaviour;
-	private DragonParticleController m_particleController;
+	protected DragonParticleController m_particleController;
 	public string m_wingsIdleSound;
 	private AudioObject m_wingsIdleSoundAO;
 
@@ -83,7 +83,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
     protected bool m_mutedWindSounds = false;
 
-	void Start() {
+	protected virtual void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();
 		m_particleController = transform.parent.GetComponentInChildren<DragonParticleController>();
 		m_animator = GetComponent<Animator>();
@@ -485,7 +485,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 		}
 	}
 
-	private void PlaySound( string audioId )
+	protected void PlaySound( string audioId )
 	{
 		if ( !string.IsNullOrEmpty(audioId) )
 			AudioController.Play( audioId, transform );
