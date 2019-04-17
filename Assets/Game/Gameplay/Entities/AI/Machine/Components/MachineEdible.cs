@@ -78,7 +78,11 @@ namespace AI {
 		}
 
 		public void Bite() {
-			m_machine.SetSignal(Signals.Type.Panic, true);
+            if (m_machine.IsBubbled()) {
+                BubbledEntitySystem.RemoveEntity(m_entity);
+            }
+
+            m_machine.SetSignal(Signals.Type.Panic, true);
 			m_machine.SetSignal(Signals.Type.Chewing, true);
 
 			m_entity.onDieStatus.isInFreeFall = m_machine.IsInFreeFall();
@@ -118,12 +122,16 @@ namespace AI {
 			m_machine.SetSignal(Signals.Type.Destroyed, true);
 		}
 
-		public void BiteAndHold() {
-			m_machine.SetSignal(Signals.Type.Panic, true);
-			m_machine.SetSignal(Signals.Type.Latched, true);
-		}
+        public void BiteAndHold() {
+            m_machine.SetSignal(Signals.Type.Panic, true);
+            m_machine.SetSignal(Signals.Type.Latched, true);
 
-		public void ReleaseHold() {
+            if (m_machine.IsBubbled()) {
+                BubbledEntitySystem.RemoveEntity(m_entity);
+            }
+        }
+
+        public void ReleaseHold() {
 			m_machine.SetSignal(Signals.Type.Panic, false);
 			m_machine.SetSignal(Signals.Type.Latched, false);
 		}

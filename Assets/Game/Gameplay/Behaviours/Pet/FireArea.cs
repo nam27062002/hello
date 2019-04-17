@@ -4,58 +4,106 @@ using UnityEngine;
 
 [RequireComponent(typeof(CircleArea2D))]
 public class FireArea : MonoBehaviour {
+    private const float ENTITY_CHECK_TIME = 0.3f;
+    private const float FIRE_NODE_CHECK_TIME = 0.3f;
 
-	private CircleArea2D m_circle;
+    [SerializeField] private bool m_usePlayerTier = false;
+    [SerializeField] private DragonTier m_tier = DragonTier.TIER_4;
+    [SerializeField] private bool m_megaFireIgnoresTier = false;
+    [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
+    [SerializeField] [EnumMask] protected IEntity.Tag m_ignoreEntityTags = 0;
+    [SerializeField] private bool m_burnDecorations = false;
+    [SerializeField] private IEntity.Type m_type = IEntity.Type.PET;
+    [SerializeField] private string m_onBurnAudio;
+
+
+    private CircleArea2D m_circle;
 	private Rect m_rect;
+
 	private Entity[] m_checkEntities = new Entity[50];
 	private int m_numCheckEntities = 0;
-	public DragonTier m_tier = DragonTier.TIER_4;
-	public IEntity.Type m_type = IEntity.Type.PET;
 
-	private float m_checkNodeFireTime = 0.25f;
-	private float m_fireNodeTimer = 0;
+    private float m_entityCheckTimer = 0;
+    private float m_fireNodeCheckTimer = 0;
+
+    private bool m_burnAudioAvailable;
+
 
 	// Use this for initialization
-	void Start () {
+	private void Start () {
 		m_circle = GetComponent<CircleArea2D>();
 		m_rect = new Rect();
-	}
+
+        m_burnAudioAvailable = !string.IsNullOrEmpty(m_onBurnAudio);
+
+        if (m_usePlayerTier) {
+            m_tier = InstanceManager.player.data.tier;
+        }
+    }
 	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
+        m_entityCheckTimer -= Time.deltaTime;
+        if (m_entityCheckTimer <= 0) {
+            m_entityCheckTimer = ENTITY_CHECK_TIME;
 
-		if ( InstanceManager.player.breathBehaviour.IsFuryOn() )
-		{
-			m_numCheckEntities =  EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
-			for (int i = 0; i < m_numCheckEntities; i++) 
-			{
-				Entity prey = m_checkEntities[i];
-				if ( prey.IsBurnable() && (prey.IsBurnable(m_tier) || InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Mega))
-				{
-					AI.IMachine machine =  prey.machine;
-					if (machine != null) {
-						machine.Burn(transform, m_type);
-					}
-				}
-			}
+            // Search for entities
+            bool playBurnSound = false;
+            m_numCheckEntities = EntityManager.instance.GetOverlapingEntities((Vector2)m_circle.center, m_circle.radius, m_checkEntities);
+            for (int i = 0; i < m_numCheckEntities; i++) {
+                Entity prey = m_checkEntities[i];
 
+                if (prey.IsBurnable()) {
+                    bool tagMatch = true;
 
-			m_fireNodeTimer -= Time.deltaTime;
-			if (m_fireNodeTimer <= 0) {
-				
-				m_fireNodeTimer += m_checkNodeFireTime;
+                    if (m_entityTags > 0) { 
+                        tagMatch = tagMatch && prey.HasTag(m_entityTags);
+                    }
+                    if (m_ignoreEntityTags > 0) {
+                        tagMatch = tagMatch && !prey.HasTag(m_ignoreEntityTags);
+                    }
 
-				// Update rect
-				m_rect.center = m_circle.center;
-				m_rect.height = m_rect.width = m_circle.radius;
+                    if (tagMatch) {
+                        bool burnableByTier = false;
 
-				FirePropagationManager.instance.FireUpNodes( m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero, m_type);
-			}
-		}
+                        if (m_megaFireIgnoresTier && InstanceManager.player.breathBehaviour.type == DragonBreathBehaviour.Type.Mega) {
+                            burnableByTier = true;
+                        } else {
+                            burnableByTier = prey.IsBurnable(m_tier);
+                        }
+
+                        if (burnableByTier) {
+                            AI.IMachine machine = prey.machine;
+                            if (machine != null) {
+                                machine.Burn(transform, m_type);
+                                playBurnSound = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (playBurnSound && m_burnAudioAvailable) {
+                AudioController.Play(m_onBurnAudio, m_circle.center);
+            }
+        }
+
+        if (m_burnDecorations) {
+            m_fireNodeCheckTimer -= Time.deltaTime;
+            if (m_fireNodeCheckTimer <= 0) {
+                m_fireNodeCheckTimer = FIRE_NODE_CHECK_TIME;
+
+                // Update rect
+                m_rect.center = m_circle.center;
+                m_rect.height = m_rect.width = m_circle.radius;
+
+                //
+                FirePropagationManager.instance.FireUpNodes(m_rect, Overlaps, m_tier, DragonBreathBehaviour.Type.None, Vector3.zero, m_type);
+            }
+        }
 	}
 
-	bool Overlaps( CircleAreaBounds _fireNodeBounds )
-	{
+	private bool Overlaps(CircleAreaBounds _fireNodeBounds) {
 		return m_circle.Overlaps( _fireNodeBounds.center, _fireNodeBounds.radius);
 	}
 }

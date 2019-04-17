@@ -21,7 +21,10 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	private int m_rendererCount;
 	public int rendererCount { get { return m_rendererCount; } }
 
-	private Transform m_view;
+    public float freezeParticleScale { get { return 1f; } }
+
+
+    private Transform m_view;
 
 	protected Renderer[] m_renderers;
 	protected List<Material> m_materialList;

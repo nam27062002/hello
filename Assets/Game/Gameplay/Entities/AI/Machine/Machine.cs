@@ -75,8 +75,9 @@ namespace AI {
 
 		protected float m_stunned = 0;
         protected float m_inLove = 0;
+        protected bool m_bubbled = false;
 
-		private object[] m_collisionParams;
+        private object[] m_collisionParams;
 		private object[] m_triggerParams;
 
 		// Activating
@@ -145,7 +146,10 @@ namespace AI {
 			m_signals.SetOnEnableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnInvulnerable);
 			m_signals.SetOnDisableTrigger(Signals.Type.InvulnerableFire, SignalTriggers.OnVulnerable);
 
-			m_collisionParams = new object[1];
+            m_signals.SetOnEnableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterEnter);
+            m_signals.SetOnDisableTrigger(Signals.Type.InWater, SignalTriggers.OnWaterExit);
+
+            m_collisionParams = new object[1];
 			m_triggerParams = new object[1];
 
 			m_externalForces = Vector3.zero;
@@ -314,7 +318,7 @@ namespace AI {
                 CheckStun();
                 CheckInLove();
 
-                if (m_stunned <= 0 ) {
+                if (m_stunned <= 0 && !m_bubbled) {
                     if (m_willPlaySpawnSound) {
                         if (m_entity.isOnScreen) {
                             PlaySound(m_onSpawnSound);
@@ -348,7 +352,7 @@ namespace AI {
 					m_motion.externalVelocity = m_externalForces;
 					m_externalForces = Vector3.zero;
 
-                    if (m_stunned <= 0) {
+                    if (m_stunned <= 0 && !m_bubbled) {
                         m_motion.FixedUpdate();
                     }
 				}
@@ -391,7 +395,16 @@ namespace AI {
                 if (m_motion != null) m_motion.Stop();
             }
 		}
-        
+
+        public void Bubbled(bool _active) {
+            m_bubbled = _active;
+            if (m_bubbled) {
+                if (m_pilot != null) m_pilot.Stop();
+                if (m_motion != null) m_motion.Stop();
+            }
+            m_viewControl.SetBubbled(m_bubbled);
+        }
+
         public virtual void CheckInLove() {
             if (m_inLove > 0) {
                 m_inLove -= Time.deltaTime;
@@ -528,6 +541,10 @@ namespace AI {
             return m_inLove > 0;
         }
 
+        public bool IsBubbled() {
+            return m_bubbled;
+        }
+
 		public virtual bool CanBeBitten() {
 			if (!enabled)
 				return false;
@@ -548,18 +565,26 @@ namespace AI {
 		public bool Smash( IEntity.Type _source ) {
 			if ( !IsDead() && !IsDying() )
 			{
+                if (m_bubbled) {
+                    BubbledEntitySystem.RemoveEntity(m_entity);
+                }
+
 				SetSignal(Signals.Type.Destroyed, true);
 				if ( !m_viewControl.HasCorpseAsset() )
 					m_viewControl.SpawnEatenParticlesAt( m_transform );
 
 				m_entity.onDieStatus.source = _source;
 				m_entity.onDieStatus.reason = IEntity.DyingReason.DESTROYED;
-				Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
+				
+                Reward reward = m_entity.GetOnKillReward(IEntity.DyingReason.DESTROYED);
 				Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, reward);
+
                 if ( _source == IEntity.Type.PLAYER )
                     InstanceManager.timeScaleController.HitStop();
-				return true;
+				
+                return true;
 			}
+
 			return false;
 		}
 
@@ -567,7 +592,7 @@ namespace AI {
 
 		public void Bite() {
 			if (!IsDead()) {
-				m_edible.Bite();
+                m_edible.Bite();
 				m_viewControl.Bite(m_transform);
 			}
 		}
@@ -584,7 +609,7 @@ namespace AI {
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
-			m_isHolded = true;
+            m_isHolded = true;
 			m_edible.BiteAndHold();
 		}
 

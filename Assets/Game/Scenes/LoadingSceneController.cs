@@ -663,6 +663,7 @@ public class LoadingSceneController : SceneController {
                 SpawnerManager.CreateInstance(true);
                 EntityManager.CreateInstance(true);
                 ViewManager.CreateInstance(true);
+                BubbledEntitySystem.CreateInstance(true);
                 InstanceManager.CreateInstance(true);
 
                 GameAds.CreateInstance(true);

@@ -77,6 +77,7 @@ namespace AI {
 		bool IsDying();
         bool IsStunned();
         bool IsInLove();
+        bool IsBubbled();
 
 		void CustomFixedUpdate();
 
