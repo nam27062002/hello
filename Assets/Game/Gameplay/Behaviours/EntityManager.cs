@@ -361,6 +361,22 @@ public class EntityManager : UbiBCN.SingletonMonoBehaviour<EntityManager>, IBroa
         return numEntities;
     }
 
+    public int GetOnScreenEntities(Entity[] results) {
+        int numResults = 0;
+        int maxResults = results.Length;
+        int count = m_entities.Count;
+
+        for (int i = 0; i < count && numResults < maxResults; ++i) {
+            Entity e = m_entities[i];
+            if (e != null && e.isOnScreen) {
+                results[numResults] = e;
+                numResults++;
+            }
+        }
+
+        return numResults;
+    }
+
     void Update()
 	{
         if (m_updateEnabled) {

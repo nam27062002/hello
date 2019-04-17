@@ -103,6 +103,12 @@ public class GameSceneController : GameSceneControllerBase {
 		set { m_startWhenLoaded = value; }
 	}
 
+	// Results
+	private ResultsSceneController m_resultsScene = null;
+	public ResultsSceneController resultsScene {
+		get { return m_resultsScene; }
+	}
+
 	// Internal
 	private float m_timer = -1;	// Misc use
 	private float m_loadingTimer = 0;
@@ -711,9 +717,9 @@ public class GameSceneController : GameSceneControllerBase {
             Destroy(mainCamera.gameObject);
         }
 
-        ResultsSceneController resultsSceneController = FindObjectOfType<ResultsSceneController>();
-        if (resultsSceneController != null) {
-            resultsSceneController.Show();
+        m_resultsScene = FindObjectOfType<ResultsSceneController>();
+        if (m_resultsScene != null) {
+			m_resultsScene.Show();
 		} else {
 			Debug.LogError("<color=red>RESULTS SCENE CONTROLLER NOT FOUND!</color>");
 		}

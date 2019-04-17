@@ -24,7 +24,7 @@ public class PopupAdBlocker : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string PATH = "UI/Popups/InGame/PF_PopupAdBlocker";
+	public const string PATH = "UI/Popups/Misc/PF_PopupAdBlocker";
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //

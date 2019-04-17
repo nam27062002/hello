@@ -19,7 +19,9 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	private int m_rendererCount;
 	public int rendererCount { get { return m_rendererCount; } }
 
-	[SerializeField] protected string m_onAttackAudio;
+    public float freezeParticleScale { get { return 1f; } }
+
+    [SerializeField] protected string m_onAttackAudio;
 	private AudioObject m_onAttackAudioAO;
 	[SerializeField] private string m_onBurnAudio;
 

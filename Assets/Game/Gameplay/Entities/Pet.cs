@@ -65,7 +65,9 @@ public class Pet : IEntity, IBroadcastListener {
 	}
 
     private void OnDestroy() {
-        EntityManager.instance.UnregisterPet(this);
+        if (EntityManager.instance != null) {
+            EntityManager.instance.UnregisterPet(this);
+        }
     }
 
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)

@@ -250,6 +250,10 @@ public class Entity : IEntity, IBroadcastListener {
 			newReward.pc = 0;
 		}
 
+        if (m_machine.IsBubbled()) {
+            newReward.energy *= 2f;
+        }
+
 		return newReward;
 	}
 
