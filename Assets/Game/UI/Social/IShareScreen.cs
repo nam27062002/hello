@@ -31,6 +31,27 @@ public abstract class IShareScreen : MonoBehaviour {
 		SCREEN_CAPTURE	// Capture background with a snapshot of the current screen content, UI using prefab camera. Requires one temp texture of the size of the screen, and objects that shouldn't be rendered must be hidden manually.
 	};
 
+	protected class CameraData {
+		public bool ortographic = false;
+		public float ortographicSize = 10f;
+		public float near = 1f;
+		public float far = 1000f;
+
+		public void InitFromCamera(Camera _camera) {
+			ortographic = _camera.orthographic;
+			ortographicSize = _camera.orthographicSize;
+			near = _camera.nearClipPlane;
+			far = _camera.farClipPlane;
+		}
+
+		public void ApplyToCamera(Camera _camera) {
+			_camera.orthographic = ortographic;
+			_camera.orthographicSize = ortographicSize;
+			_camera.nearClipPlane = near;
+			_camera.farClipPlane = far;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -45,6 +66,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected DefinitionNode m_shareLocationDef = null;
 	protected string m_url = null;
 	protected Texture2D m_qrCodeTex = null;
+
+	protected Camera m_refCamera = null;
+	protected CameraData m_cameraDataBackup = new CameraData();
 
 	// Internal logic
 	protected Coroutine m_coroutine = null;
@@ -75,6 +99,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// Destructor.
 	/// </summary>
 	protected virtual void OnDestroy() {
+		// Clear external references
+		m_refCamera = null;
+
 		// Remove ourselves from the manager
 		ShareScreensManager.RemoveScreen(this);
 	}
@@ -117,25 +144,39 @@ public abstract class IShareScreen : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Initialize by cloning the position and camera parameters of the given camera.
+	/// Define the camera used as reference to capture the background.
 	/// </summary>
 	/// <param name="_camera">Camera to be used as reference.</param>
 	protected void SetRefCamera(Camera _camera) {
+		// Just store it for now
+		m_refCamera = _camera;
+	}
+
+	/// <summary>
+	/// Clone the position and camera parameters of the reference.
+	/// </summary>
+	protected void ApplyRefCamera() {
 		// Ignore if null
-		if(_camera == null) return;
+		if(m_refCamera == null) return;
 
 		// Copy camera's position and rotation
-		this.transform.CopyFrom(_camera.transform);
+		this.transform.CopyFrom(m_refCamera.transform);
 
 		// Copy background color
-		m_camera.backgroundColor = _camera.backgroundColor;
+		m_camera.backgroundColor = m_refCamera.backgroundColor;
 
 		// Copy FOV
-		m_camera.fieldOfView = _camera.fieldOfView;
+		m_camera.fieldOfView = m_refCamera.fieldOfView;
 
 		// Copy planes
-		m_camera.nearClipPlane = _camera.nearClipPlane;
-		m_camera.farClipPlane = _camera.farClipPlane;
+		m_camera.nearClipPlane = m_refCamera.nearClipPlane;
+		m_camera.farClipPlane = m_refCamera.farClipPlane;
+
+		// Copy camera type
+		m_camera.orthographic = m_refCamera.orthographic;
+		if(m_refCamera.orthographic) {
+			m_camera.orthographicSize = m_refCamera.orthographicSize;
+		}
 
 		// Render camera on top of any other camera
 		// [AOC] This will hide UI and other elements we don't want to capture
@@ -202,15 +243,32 @@ public abstract class IShareScreen : MonoBehaviour {
 		RenderTexture.active = renderTex;
 
 		// [AOC] Because we want the UI to render on top of the 3D background, we'll do 2 render passes changing the camera layer mask
-		// 1st pass: Background
+		// 1st pass: Background ------------------------------------------------
+		// Backup original camera values
+		m_cameraDataBackup.InitFromCamera(m_camera);
+
+		// Apply reference camera
+		ApplyRefCamera();
+
+		// Change some extra camera params
 		m_camera.clearFlags = CameraClearFlags.Color;
 		m_camera.cullingMask = GetBackgroundCullingMask();
+
+		// Capture!
 		m_camera.Render();
 
-		// 2nd pass: UI
+		// 2nd pass: UI --------------------------------------------------------
+		// Restore camera params
+		m_cameraDataBackup.ApplyToCamera(m_camera);
+
+		// Change some extra camera params
 		m_camera.clearFlags = CameraClearFlags.Depth;
 		m_camera.cullingMask = LayerMask.GetMask("UI");
+
+		// Capture!
 		m_camera.Render();
+
+		// ---------------------------------------------------------------------
 
 		// Read pixels from the render texture to our saved texture 2D
 		pictureTex.ReadPixels(new Rect(0, 0, renderTex.width, renderTex.height), 0, 0);
@@ -252,7 +310,6 @@ public abstract class IShareScreen : MonoBehaviour {
 		targetTex.ReadPixels(new Rect(0, 0, ShareScreensManager.CAPTURE_SIZE.x, ShareScreensManager.CAPTURE_SIZE.y), 0, 0);
 		targetTex.Apply();
 
-		// Clean up
 		// Clean up
 		m_camera.targetTexture = null;
 		RenderTexture.active = activeRTBackup; // Restore
