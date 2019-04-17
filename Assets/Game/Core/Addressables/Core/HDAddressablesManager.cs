@@ -105,10 +105,10 @@ public class HDAddressablesManager : AddressablesManager
                             //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Link to CDN (it uses cache)
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
+                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
 
                             // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            //urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
+                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
                             break;
 
                         case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
