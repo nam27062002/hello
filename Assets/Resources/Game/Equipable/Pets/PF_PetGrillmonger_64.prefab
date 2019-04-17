@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 114243062159839862}
   - component: {fileID: 54013411175026080}
   - component: {fileID: 135278271651265566}
+  - component: {fileID: 114602342505870108}
   m_Layer: 0
   m_Name: PF_PetGrillmonger_64
   m_TagString: Pet
@@ -487,6 +488,129 @@ MonoBehaviour:
     offset: {x: 0, y: 0, z: 0}
     scale: 1
     orientate: 0
+--- !u!114 &114602342505870108
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1217511313517060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1669b0a062dc66842ab1bca41a93ebe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioObjectPrefab: {fileID: 100000, guid: da33f6e5087024c7fa342d3a7c14fa3a, type: 2}
+  Persistent: 0
+  UnloadAudioClipsOnDestroy: 0
+  UsePooledAudioObjects: 1
+  PlayWithZeroVolume: 0
+  EqualPowerCrossfade: 0
+  musicCrossFadeTime: 0
+  ambienceSoundCrossFadeTime: 0
+  specifyCrossFadeInAndOutSeperately: 0
+  _musicCrossFadeTime_In: 0
+  _musicCrossFadeTime_Out: 0
+  _ambienceSoundCrossFadeTime_In: 0
+  _ambienceSoundCrossFadeTime_Out: 0
+  AudioCategories:
+  - Name: SFX
+    _parentCategoryName: 
+    AudioObjectPrefab: {fileID: 0}
+    AudioItems:
+    - Name: hd_pet_grillmonger
+      Loop: 0
+      loopSequenceCount: 0
+      loopSequenceOverlap: 0
+      loopSequenceRandomDelay: 0
+      loopSequenceRandomPitch: 0
+      loopSequenceRandomVolume: 0
+      DestroyOnLoad: 1
+      Volume: 1
+      SubItemPickMode: 2
+      MinTimeBetweenPlayCalls: 0.1
+      MaxInstanceCount: 0
+      Delay: 0
+      RandomVolume: 0
+      RandomPitch: 0
+      RandomDelay: 0
+      overrideAudioSourceSettings: 0
+      audioSource_MinDistance: 1
+      audioSource_MaxDistance: 500
+      spatialBlend: 0
+      subItems:
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: f7a78b1d506f48e42a3d372e1b76d0cc, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: e62682b38671d2e41aae472f466b1979, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+      - SubItemType: 0
+        Probability: 1
+        DisableOtherSubitems: 0
+        ItemModeAudioID: 
+        Clip: {fileID: 8300000, guid: b97da26b45444a641be27c21568732f3, type: 3}
+        Volume: 1
+        PitchShift: 0
+        Pan2D: 0
+        Delay: 0
+        RandomPitch: 0
+        RandomVolume: 0
+        RandomDelay: 0
+        ClipStopTime: 0
+        ClipStartTime: 0
+        FadeIn: 0
+        FadeOut: 0
+        RandomStartPosition: 0
+        individualSettings: []
+    _volume: 1
+    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+  musicPlaylists:
+  - name: Default
+    playlistItems: []
+  musicPlaylist: []
+  loopPlaylist: 0
+  shufflePlaylist: 0
+  crossfadePlaylist: 0
+  delayBetweenPlaylistTracks: 1
+  _isAdditionalAudioController: 1
+  _audioDisabled: 0
+  _volume: 1
+  _currentInspectorSelection:
+    currentCategoryIndex: 0
+    currentItemIndex: 0
+    currentSubitemIndex: 0
+    currentPlaylistEntryIndex: 0
+    currentPlaylistIndex: 0
 --- !u!114 &114705946863357614
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -568,7 +692,7 @@ MonoBehaviour:
   m_ignoreEntityTags: 1352
   m_burnDecorations: 0
   m_type: 1
-  m_onBurnAudio: hd_goodjunk_bottle
+  m_onBurnAudio: hd_pet_grillmonger
 --- !u!114 &114831078634976046
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -589,7 +713,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","baseSpeed":6,"speedWhen":2,"speedMultiplier":1.5,"dataType":"AI.Behaviour.PetOrbitPlayerData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","baseSpeed":10,"speedWhen":2,"speedMultiplier":1.8,"dataType":"AI.Behaviour.PetOrbitPlayerData","editorFolded":false}]'
   m_databaseKey: PF_PetGrillmonger_64
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
