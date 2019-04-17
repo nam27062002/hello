@@ -433,12 +433,7 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     }
 
     private void LoadParticles() {
-        if (m_poisonParticle == null)
-        {
-            throw new System.Exception("AmbientHazard.LoadParticles: m_poisonParticle == null on GameObject: " + gameObject.name);
-        }
-        else
-        {
+        if (m_poisonParticle != null) {
             GameObject go = m_poisonParticle.Spawn();
             if (go != null)
             {
