@@ -7,7 +7,7 @@ public class FireArea : MonoBehaviour {
     private const float ENTITY_CHECK_TIME = 0.3f;
     private const float FIRE_NODE_CHECK_TIME = 0.3f;
 
-
+    [SerializeField] private bool m_usePlayerTier = false;
     [SerializeField] private DragonTier m_tier = DragonTier.TIER_4;
     [SerializeField] private bool m_megaFireIgnoresTier = false;
     [SerializeField] [EnumMask] private IEntity.Tag m_entityTags = 0;
@@ -35,6 +35,10 @@ public class FireArea : MonoBehaviour {
 		m_rect = new Rect();
 
         m_burnAudioAvailable = !string.IsNullOrEmpty(m_onBurnAudio);
+
+        if (m_usePlayerTier) {
+            m_tier = InstanceManager.player.data.tier;
+        }
     }
 	
 	// Update is called once per frame
