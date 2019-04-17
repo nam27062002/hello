@@ -60,7 +60,7 @@ namespace AI {
 
                 float magnitude = (targetPos - m_machine.position).sqrMagnitude;
 				m_pilot.SetMoveSpeed(Mathf.Min( m_speed, magnitude));					
-				if (m_pilot.speed <= 0.1f) 				{
+				if (m_pilot.speed <= 0.1f) {
 					m_pilot.SlowDown(true);
 					m_pilot.SetDirection( m_target.forward );
 				}

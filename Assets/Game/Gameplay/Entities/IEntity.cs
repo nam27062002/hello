@@ -77,6 +77,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 	public AI.IMachine machine { get { return m_machine; } }
 
 	protected IViewControl m_viewControl;
+    public IViewControl viewControl { get { return m_viewControl; } }
 
     protected EntityEquip m_equip;
     public EntityEquip equip { get { return m_equip; } }
@@ -146,6 +147,11 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual void Disable(bool _destroyed) {
 		m_health = 0f;
+
+        if (m_machine != null && m_machine.IsBubbled()) {
+            BubbledEntitySystem.RemoveEntity(this);
+        }
+
 		gameObject.SetActive(false);
 	}
 

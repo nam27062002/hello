@@ -109,8 +109,9 @@ namespace AI {
 		public bool IsFreezing() { return false; }
         public bool IsStunned() { return false; }
         public bool IsInLove() { return false; }
+        public bool IsBubbled() { return false; }
 
-		public void Drown() {}
+        public void Drown() {}
 
 		// Being eaten
 		public bool CanBeBitten() {
