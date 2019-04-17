@@ -147,23 +147,10 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
 
         if ( m_visualActivationRadius < 0 )
             m_visualActivationRadius = 40;
-        
-        // Always start with the initial delay state, provided there is some initial delay. Otherwise go straight to the initial state.
-        if(m_initialDelay > 0f) {
-            SetState(State.INITIAL_DELAY);
-        } else {
-            SetState(m_initialState);
-        }
 
         if ( m_animEvents != null )
         {
             m_animEvents.onOpenEvent += OnAnimOpenEvent;
-        }
-
-        // Visibility logic
-        if(m_visualActivationRadius <= 0f) {
-            // Always visible
-            SetVisible(true);
         }
     }
 
@@ -197,6 +184,20 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
                     m_poisonParticle.CreatePool();
+
+                    // Always start with the initial delay state, provided there is some initial delay. Otherwise go straight to the initial state.
+                    if (m_initialDelay > 0f) {
+                        SetState(State.INITIAL_DELAY);
+                    } else {
+                        SetState(m_initialState);
+                    }
+
+                    // Visibility logic
+                    if (m_visualActivationRadius <= 0f) {
+                        // Always visible
+                        SetVisible(true);
+                    }
+
                     m_levelLoaded = true;
             }
             break;

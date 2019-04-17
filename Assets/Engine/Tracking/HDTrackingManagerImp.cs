@@ -1416,8 +1416,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
         // "" is sent because Calety doesn't support this yet
         Track_AddParamString(e, TRACK_PARAM_TYPE_NOTIF, typeNotif);
-        Track_AddParamLanguage(e);
-        Track_AddParamUserTimezone(e);
+        Track_AddParamLanguage(e);        
         Track_AddParamBoolAsInt(e, TRACK_PARAM_STORE_INSTALLED, DeviceUtilsManager.SharedInstance.CheckIsAppFromStore());
 
         Track_AddParamBoolAsInt(e, TRACK_PARAM_IS_HACKER, UsersManager.currentUser.isHacker);
@@ -2769,8 +2768,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 	private const string TRACK_PARAM_TYPE = "type";
     private const string TRACK_PARAM_TYPE_BUILD_VERSION = "type_buildversion";
     private const string TRACK_PARAM_TYPE_NOTIF = "typeNotif";
-    private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";
-    private const string TRACK_PARAM_USER_TIMEZONE = "userTime<one";
+    private const string TRACK_PARAM_UNLOCK_TYPE = "unlockType";    
     private const string TRACK_PARAM_UPCOMING_LEAGUE = "upcomingLeague";
     private const string TRACK_PARAM_VERSION_QUALITY_FORMULA = "versionQualityFormula";
     private const string TRACK_PARAM_VERSION_REVISION = "versionRevision";
@@ -3070,17 +3068,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
         }
 
         Track_AddParamString(_e, TRACK_PARAM_LANGUAGE, language);
-    }
-
-    private void Track_AddParamUserTimezone(HDTrackingEvent _e) {
-        string value = "ERROR";
-
-        TimeZone localZone = TimeZone.CurrentTimeZone;
-        if (localZone != null)
-            value = localZone.StandardName;
-
-        Track_AddParamString(_e, TRACK_PARAM_USER_TIMEZONE, value);
-    }
+    }    
 
     private void Track_AddParamTrackingID(HDTrackingEvent _e) {
         Track_AddParamString(_e, TRACK_PARAM_TRACKING_ID, TrackingPersistenceSystem.UserID);
