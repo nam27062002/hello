@@ -1830,17 +1830,15 @@ public class UserProfile : UserPersistenceSystem
                     case OfferPack.Type.PUSHED:{
                             // Keep all but we will clean all pushed offers that do not belong to the customizer we are using
                             // Extract customizer from key
+                            string customId = kvp.Key;
                             string offerKey = kvp.Key;
                             int substringIndex = offerKey.Length - sku.Length - 1;
                             if ( substringIndex > 0 )
                             { 
                                 string customizerId = offerKey.Substring( 0, substringIndex); // remove _sku from XX_sku
-                                jSONClass.Add("customizerId", customizerId);
+                                customId = customId + "." + customizerId;
                             }
-                            else
-                            {
-                                jSONClass.Add("customizerId", "0");
-                            }
+                            jSONClass.Add("customId", customId);
                         m_newOfferPersistanceData[OfferPack.Type.PUSHED].Add(jSONClass);
                     }break;
                     case OfferPack.Type.ROTATIONAL:{
@@ -1858,28 +1856,22 @@ public class UserProfile : UserPersistenceSystem
     /// <summary>
     /// Cleans old pushed offers. Removes all push offer packs that are not in the current customizer id
     /// </summary>
-    /// <param name="currentCustomizerIds">Current customizer identifier.</param>
-    public void CleanOldPushedOffers( HashSet<long> currentCustomizerIds ) {
+    /// <param name="currentPushIds">Current customizer identifier.</param>
+    public void CleanOldPushedOffers( List<string> currentPushIds ) {
         int max = m_newOfferPersistanceData[OfferPack.Type.PUSHED].Count;
         DateTime serverTime = GameServerManager.SharedInstance.GetEstimatedServerTime();
         List<JSONClass> offers = m_newOfferPersistanceData[OfferPack.Type.PUSHED];
-        string customizerStr = currentCustomizerIds.ToString();
+        string customizerStr = currentPushIds.ToString();
         
         for (int i = max-1; i >= 0; i--) {
-            if ( !currentCustomizerIds.Contains(offers[i]["customizerId"].AsLong)) {
+            string customId = "";
+            if ( offers[i].ContainsKey("customId") )
+            {
+                customId = offers[i]["customId"];
+            }
+        
+            if ( !currentPushIds.Contains( customId )) {
                 offers.RemoveAt(i);
-                // No need to check expired because enabled goes to false
-                /*
-                // Check if expired!
-                string key = "endTimestamp";
-                if(offers[i].ContainsKey(key)) {
-                    DateTime endTimestamp = DateTime.Parse(offers[i][key], PersistenceFacade.JSON_FORMATTING_CULTURE);
-                    if ( endTimestamp < serverTime){
-                        // Remove it
-                        offers.RemoveAt(i);
-                    }
-                }
-                */
             }
         }
         m_newOfferPersistanceData[OfferPack.Type.PUSHED] = offers;
@@ -1901,9 +1893,23 @@ public class UserProfile : UserPersistenceSystem
         for (int i = 0; i < max && !found; i++){
             if ( offers[i].ContainsKey("sku") && offers[i]["sku"] == _pack.def.sku ){
                 // if not a pushed offer or is pushed and same customization code, so it's exactly the same
-                if ( _pack.type != OfferPack.Type.PUSHED || _pack.def.customizationCode == offers[i]["customizerId"] ){
+                if ( _pack.type != OfferPack.Type.PUSHED /*|| _pack.def.customizationCode == offers[i]["customizerId"]*/ ){
                     found = true;
                     m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+                }
+                else
+                {
+                    string customId = OffersManager.GenerateTrackingOfferName( _pack.def );
+                    string storeCustomId = "";
+                    if ( offers[i].ContainsKey("customId") )
+                    {
+                        storeCustomId = offers[i]["customId"];
+                    }
+                    if ( customId == storeCustomId )
+                    {
+                        found = true;
+                        m_newOfferPersistanceData[_pack.type][i] = _pack.Save();
+                    }
                 }
             }
         }
