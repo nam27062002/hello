@@ -364,20 +364,12 @@ public class RewardInfoUI : MonoBehaviour {
 			} break;
 
 			case Metagame.RewardSkin.TYPE_CODE: {
-				// Create a sample dragon data object to initialize the share screen
-				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.def.GetAsString("dragonSku"));
-				IDragonData sampleData = IDragonData.CreateFromDef(dragonDef);
-
-				// Equip with the target skin
-				sampleData.disguise = m_reward.sku;
-				sampleData.persistentDisguise = m_reward.sku;
-
 				// Initialize and open share screen
 				ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("skin_acquired") as ShareScreenDragon;
 				shareScreen.Init(
 					"skin_acquired",
 					SceneController.GetMainCameraForCurrentScene(),
-					sampleData,
+					IDragonData.CreateFromSkin(m_reward.sku),   // Create a sample dragon data object to initialize the share screen
 					true,
 					null
 				);
