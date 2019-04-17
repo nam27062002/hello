@@ -34,7 +34,7 @@ public class ResultsSceneSetup : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// Exposed references, all required
 	[SerializeField] private Camera m_camera = null;
-	public Camera camera {
+	new public Camera camera {
 		get { return m_camera; }
 	}
 

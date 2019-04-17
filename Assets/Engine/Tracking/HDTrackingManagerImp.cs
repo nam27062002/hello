@@ -1203,6 +1203,19 @@ public class HDTrackingManagerImp : HDTrackingManager {
         m_eventQueue.Enqueue(e);
     }
     
+    public override void Notify_ShareScreen(string zone)
+    {
+      if (FeatureSettingsManager.IsDebugEnabled)
+          Log("Track_ShareScreen zone = " + zone);
+
+      HDTrackingEvent e = new HDTrackingEvent("custom.game.sharescreen");
+      {
+          Track_AddParamString(e, TRACK_PARAM_ZONE, zone);
+          Track_AddParamPlayerProgress(e);
+      }
+      m_eventQueue.Enqueue(e);
+    }
+    
 
     public override void Notify_ExperimentApplied(string experimentName, string experimentGroup)
     {

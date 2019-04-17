@@ -73,8 +73,8 @@ public class MenuPetLoader : MonoBehaviour {
 	}
 
 	// Internal
-	private GameObject m_petInstance = null;
-	public GameObject petInstance {
+	private MenuPetPreview m_petInstance = null;
+	public MenuPetPreview petInstance {
 		get { return m_petInstance; }
 	}
 
@@ -115,12 +115,13 @@ public class MenuPetLoader : MonoBehaviour {
 		// Try to find out already instantiated previews of the pet
 		MenuPetPreview preview = this.GetComponentInChildren<MenuPetPreview>();
 		if(preview != null) {
-			m_petInstance = preview.gameObject;
+			m_petInstance = preview;
 		}
 
 		// If this object has any children, consider first one the pet preview placeholder
 		else if(transform.childCount > 0) {
-			m_petInstance = transform.GetChild(0).gameObject;
+			GameObject firstChildren = transform.GetChild(0).gameObject;
+			m_petInstance = firstChildren.ForceGetComponent<MenuPetPreview>();
 		}
 	}
 
@@ -171,27 +172,26 @@ public class MenuPetLoader : MonoBehaviour {
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
 		if(def != null) {
 			// Instantiate the prefab and add it as child of this object
-			// [AOC] TODO!! Content not ready yet
 			GameObject petPrefab = Resources.Load<GameObject>(Pet.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
 			if(petPrefab != null) {
-				m_petInstance = GameObject.Instantiate<GameObject>(petPrefab);
-				m_petInstance.transform.SetParent(this.transform);
-				m_petInstance.transform.localPosition = Vector3.zero;
-				m_petInstance.transform.localRotation = Quaternion.identity;
+				GameObject newInstance = GameObject.Instantiate<GameObject>(petPrefab);
+				newInstance.transform.SetParent(this.transform);
+				newInstance.transform.localPosition = Vector3.zero;
+				newInstance.transform.localRotation = Quaternion.identity;
 
 				// Keep layers?
 				if(!m_keepLayers) {
-					m_petInstance.SetLayerRecursively(this.gameObject.layer);
+					newInstance.SetLayerRecursively(this.gameObject.layer);
 				}
 
 				// Initialize preview and launch the default animation
-				MenuPetPreview petPreview = m_petInstance.GetComponent<MenuPetPreview>();
-				petPreview.sku = _sku;
-				petPreview.SetAnim(MenuPetPreview.Anim.IN);
+				m_petInstance = newInstance.GetComponent<MenuPetPreview>();
+				m_petInstance.sku = _sku;
+				m_petInstance.SetAnim(m_anim);
 
 				// Some pets need look at at the ui camera instead of main camera (3D)
 				if (m_uiCamera != null){
-					LookAtMainCamera[] lookAt = m_petInstance.GetComponentsInChildren<LookAtMainCamera>();
+					LookAtMainCamera[] lookAt = newInstance.GetComponentsInChildren<LookAtMainCamera>();
 					for (int x = 0; x < lookAt.Length ; x++) {
 						lookAt[x].overrideCamera = m_uiCamera;
 					}
@@ -206,7 +206,7 @@ public class MenuPetLoader : MonoBehaviour {
 
 				// Reset scale if required
 				if(m_resetScale) {
-					m_petInstance.transform.localScale = Vector3.one;
+					newInstance.transform.localScale = Vector3.one;
 				}
 
 				// Make sure particles are properly scaled as well
