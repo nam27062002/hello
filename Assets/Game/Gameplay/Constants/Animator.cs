@@ -39,6 +39,8 @@ namespace GameConstants
 		public static readonly int BEND = UnityEngine.Animator.StringToHash("Bend");
 		public static readonly int HEDGEHOG_FORM = UnityEngine.Animator.StringToHash("HedgehogForm");
         public static readonly int SHOOTING = UnityEngine.Animator.StringToHash("shooting");
+        public static readonly int GROUNDED = UnityEngine.Animator.StringToHash("grounded");
+        public static readonly int GROUND_STOMP = UnityEngine.Animator.StringToHash("ground_stomp");
 
 		public static readonly int ROTATE_LEFT = UnityEngine.Animator.StringToHash("rotate left");
 		public static readonly int ROTATE_RIGHT = UnityEngine.Animator.StringToHash("rotate right");

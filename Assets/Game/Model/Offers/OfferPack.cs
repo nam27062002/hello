@@ -1170,7 +1170,7 @@ public class OfferPack {
 		}
 
         if ( m_type == Type.PUSHED ){
-            data.Add("customizerId", m_def.customizationCode);
+            data.Add("customId",  OffersManager.GenerateTrackingOfferName(m_def));
         }
         
 

@@ -135,9 +135,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         // Initialize internal references
         m_transform = transform;
         m_collider = GetComponent<Collider>();
-
-        m_poisonParticle.CreatePool();
-
         m_levelLoaded = false;
     }
 
@@ -192,9 +189,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    private void OnLevelLoaded() { m_levelLoaded = true;  }
-    private void OnGameEnded()      { m_levelLoaded = false; }
-
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
@@ -202,13 +196,16 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.GAME_AREA_ENTER:
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
-                OnLevelLoaded();
-            }break;
+                    m_poisonParticle.CreatePool();
+                    m_levelLoaded = true;
+            }
+            break;
             case BroadcastEventType.GAME_AREA_EXIT:
             case BroadcastEventType.GAME_ENDED:
             {
-                OnGameEnded();
-            }break;
+                    m_levelLoaded = false;
+                }
+                break;
             
         }
     }

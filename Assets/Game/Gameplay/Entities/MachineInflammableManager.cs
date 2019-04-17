@@ -42,6 +42,7 @@ public class MachineInflammableManager : UbiBCN.SingletonMonoBehaviour<MachineIn
             Material sharedAshesMaterial = null;
             switch( _type )
             {
+                case FireColorSetupManager.FireColorType.LAVA:
                 case FireColorSetupManager.FireColorType.RED:
                     {
                         sharedAshesMaterial = Resources.Load("Game/Materials/BurnToAshes") as Material;
