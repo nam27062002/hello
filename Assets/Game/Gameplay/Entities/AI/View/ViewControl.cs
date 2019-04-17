@@ -201,11 +201,12 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
     private ParticleData m_inLoveParticle;
     private GameObject m_inLoveParticleInstance;
     protected bool m_inLove = false;
+    protected bool m_bubbled = false;
 
-    
 
 
-	private Transform m_transform;
+
+    private Transform m_transform;
 
 	private ulong m_id;
 	private Transform m_viewManagerTransform;
@@ -484,8 +485,9 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		m_hitAnimOn = false;
 		m_isExclamationMarkOn = false;
         m_inLove = false;
+        m_bubbled = false;
 
-		m_aim = 0f;
+        m_aim = 0f;
 		m_damageFeedbackTimer = 0f;
 
 		m_disableAnimatorTimer = 0f;
@@ -733,7 +735,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 				}
 			}
 
-			if (m_animator.enabled) {
+			if (m_animator.enabled && !m_bubbled) {
 
 				m_animator.speed = m_animatorSpeed *  Mathf.Max(0.25f,  1f-m_freezingLevel);
 				
@@ -1354,6 +1356,10 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
                 m_moving = false;
             }
         }
+    }
+
+    public void SetBubbled(bool _bubbled) {
+        m_bubbled = _bubbled;
     }
 
 }

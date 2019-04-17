@@ -402,6 +402,7 @@ namespace AI {
                 if (m_pilot != null) m_pilot.Stop();
                 if (m_motion != null) m_motion.Stop();
             }
+            m_viewControl.SetBubbled(m_bubbled);
         }
 
         public virtual void CheckInLove() {

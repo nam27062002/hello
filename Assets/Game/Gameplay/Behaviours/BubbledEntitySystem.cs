@@ -71,7 +71,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
                 m_splashHandler.Spawn(null, center);
 
-                GameObject bubbleGO = m_bubbleHandler.Spawn(null, center);
+                GameObject bubbleGO = m_bubbleHandler.Spawn(null, machine.transform);//, center - machine.position);
                 Transform bubble = null;
                 if (bubbleGO != null) {
                     bubble = bubbleGO.transform;
@@ -158,9 +158,14 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
 
             m_entities.Insert(0, _entity);
 
+
+            float bubbleScale = 1f;
+            if (_bubble != null) {
+                bubbleScale = _bubble.localScale.x;
+            }
             m_bubbles.Insert(0, _bubble);
-            m_bubblesScale.Insert(0, _bubble.localScale.x);
-            m_bubblesSpeed.Insert(0, _bubble.localScale.x);
+            m_bubblesScale.Insert(0, bubbleScale);
+            m_bubblesSpeed.Insert(0, bubbleScale);
             m_bubblesTimer.Insert(0, 0f);
 
             m_count++;
@@ -172,7 +177,9 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
                     AI.Machine machine = m_entities[i].machine as AI.Machine;
                     machine.Bubbled(false);
 
-                    m_bubbleHandler.ReturnInstance(m_bubbles[i].gameObject);
+                    if (m_bubbles[i] != null) {
+                        m_bubbleHandler.ReturnInstance(m_bubbles[i].gameObject);
+                    }
 
                     m_entities.RemoveAt(i);
 
