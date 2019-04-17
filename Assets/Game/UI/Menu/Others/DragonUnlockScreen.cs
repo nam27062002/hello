@@ -40,6 +40,7 @@ public class DragonUnlockScreen : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_speedText = null;
 	[Space]
 	[SerializeField] private DragControlRotation m_dragController = null;
+	[SerializeField] private GameObject m_shareButton = null;
 
 	// Internal
 
@@ -95,6 +96,9 @@ public class DragonUnlockScreen : MonoBehaviour {
 			}
 		}
 
+		// Only show photo button if the dragon is owned
+		m_shareButton.SetActive(dragonData.isOwned);
+
 		// Hide HUD
 		ToggleHUD(false);
 	}
@@ -125,5 +129,28 @@ public class DragonUnlockScreen : MonoBehaviour {
 		if(m_newPreysAnimator != null) {
 			m_newPreysAnimator.Hide();
 		}
+	}
+
+	/// <summary>
+	/// The share button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		// [AOC] New System
+		/*
+		// Get the share screen instance and initialize it with current data
+		IDragonData dragonData = DragonManager.GetDragonData(InstanceManager.menuSceneController.selectedDragon);
+		ShareScreenDragon shareScreen = ShareScreensManager.GetShareScreen("dragon_acquired") as ShareScreenDragon;
+		shareScreen.Init(
+			"dragon_acquired",
+			InstanceManager.menuSceneController.mainCamera,
+			dragonData,
+			false,
+			null
+		);
+		shareScreen.TakePicture(IShareScreen.CaptureMode.RENDER_TEXTURE);
+		*/
+
+		// [AOC] Not being able to position the dragon feels weird, keep the old flow
+		InstanceManager.menuSceneController.GoToScreen(MenuScreen.PHOTO);
 	}
 }

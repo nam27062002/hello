@@ -393,7 +393,7 @@ public class ResourcesFlow : IBroadcastListener {
         // Tracking actual transaction. It's important to track this event here (after an eventual extra pc cost transaction was performed) because tracking event of 
         // an extra pc cost transaction has to be sent before the actual transaction is tracked
         //
-        if (m_finalAmount > 0) {
+        if (m_finalAmount > 0 && economyGroup > HDTrackingManager.EEconomyGroup.UNKNOWN) {
             int amountBalance = (int)UsersManager.currentUser.GetCurrency(m_currency);
             string trackingItemId = (m_itemDef != null) ? m_itemDef.Get("trackingSku") : null;
             HDTrackingManager.Instance.Notify_PurchaseWithResourcesCompleted(economyGroup, trackingItemId, null, m_currency, (int)m_originalAmount, amountBalance);            

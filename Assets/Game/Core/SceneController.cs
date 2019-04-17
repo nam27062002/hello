@@ -175,5 +175,35 @@ public class SceneController : MonoBehaviour {
 		}
 		return IDragonData.Type.CLASSIC;
 	}
+
+	//------------------------------------------------------------------------//
+	// STATIC METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Returns the main camera for the current active scene.
+	/// </summary>
+	/// <returns>The default camera for current scene. Can be <c>null</c> when no scene is loaded.</returns>
+	public static Camera GetMainCameraForCurrentScene() {
+		// If there is no active scene, just return null
+		if(InstanceManager.sceneController == null) return null;
+
+		// Are we in the menu?
+		if(InstanceManager.sceneController is MenuSceneController) {
+			// Yes! Return menu camera
+			return InstanceManager.menuSceneController.mainCamera;
+		} else if(InstanceManager.sceneController is GameSceneController) {
+			// No! Are we in-game or in the results?
+			if(InstanceManager.gameSceneController.resultsScene == null) {
+				// Ingame, return game camera
+				return InstanceManager.gameSceneController.mainCamera;
+			} else {
+				// Results screen, return results scene camera
+				return InstanceManager.gameSceneController.resultsScene.mainCamera;
+			}
+		}
+
+		// Rest of cases (shouldn't get here)
+		return null;
+	}
 }
 

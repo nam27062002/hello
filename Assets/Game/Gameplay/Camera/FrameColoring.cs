@@ -109,6 +109,7 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
 		m_furyType = _type;
         switch(_color)
         {
+            case FireColorSetupManager.FireColorType.LAVA:
             case FireColorSetupManager.FireColorType.RED:
                 {
                     m_currentColor = m_fireColor;
@@ -121,6 +122,7 @@ public class FrameColoring : MonoBehaviour , IBroadcastListener
                 {
                     m_currentColor = m_iceFireColor;
                 }break;
+
         }
     }
 

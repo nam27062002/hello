@@ -128,6 +128,9 @@ public class MenuDragonLoaderEditor : Editor {
 
 						// Load disguises list for the new dragon
 						GetDisguiseSkus(m_dragonSkus[newIdx]);
+
+						// Select default disguise
+						m_disguiseSkuProp.stringValue = IDragonData.GetDefaultDisguise(m_dragonSkuProp.stringValue).sku;
 					}
 
 					// Skins list (for the selected dragon)

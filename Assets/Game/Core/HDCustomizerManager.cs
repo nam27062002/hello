@@ -130,6 +130,7 @@ public class HDCustomizerManager
     /// Whether or not the changes defined by the current customizer have been applied by the client
     /// </summary>
     private bool m_hasBeenApplied = false;
+    public bool hasBeenApplied { get { return m_hasBeenApplied; } }
 
     /// <summary>
     /// To not recreate the object Customiser every time, losing temp data, we store it

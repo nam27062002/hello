@@ -22,8 +22,8 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;	// Seconds
-	
+	private const float EVENT_COUNTDOWN_UPDATE_INTERVAL = 1f;   // Seconds
+
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
@@ -76,7 +76,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	/// </summary>
 	private void UpdatePeriodic() {
 		// Just in case
-		if ( !HDLiveDataManager.quest.EventExists() ) return;
+		if(!HDLiveDataManager.quest.EventExists()) return;
 
 		double remainingTime = System.Math.Max(0, HDLiveDataManager.quest.m_questData.remainingTime.TotalSeconds);
 
@@ -91,13 +91,11 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 		// If enabled, update quest state
 		if(m_updateEventState) {
-			if ( remainingTime <= 0 )
-			{
+			if(remainingTime <= 0) {
 				HDLiveDataManager.quest.UpdateStateFromTimers();
 			}
 
-			if ( !HDLiveDataManager.quest.IsRunning() )
-			{
+			if(!HDLiveDataManager.quest.IsRunning()) {
 				Messenger.Broadcast(MessengerEvents.LIVE_EVENT_STATES_UPDATED);
 			}
 		}
@@ -125,9 +123,9 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		if(m_objectiveIcon != null) m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
 
 		// Progress
-		if (m_progressBar != null) {
-			m_progressBar.RefreshRewards( def, questManager.m_questData.m_globalScore );
-			m_progressBar.RefreshProgress( questManager.m_questData.m_globalScore );
+		if(m_progressBar != null) {
+			m_progressBar.RefreshRewards(def, questManager.m_questData.m_globalScore);
+			m_progressBar.RefreshProgress(questManager.m_questData.m_globalScore);
 		}
 
 		// Force a first update on the timer
@@ -167,8 +165,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		MoveScoreTo(currentValue, _to, _duration);
 	}
 
-	public void MoveScoreTo( long _from, long _to, float _duration )
-	{
+	public void MoveScoreTo(long _from, long _to, float _duration) {
 		// If not animating, just set the final value directly
 		if(_duration <= 0f) {
 			// Set initial value
@@ -177,28 +174,25 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 				HDQuestData data = questManager.data as HDQuestData;
 				HDQuestDefinition def = data.definition as HDQuestDefinition;
 				if(m_progressBar != null) {
-					m_progressBar.RefreshRewards( def, _to );
-					m_progressBar.RefreshProgress( _to );
+					m_progressBar.RefreshRewards(def, _to);
+					m_progressBar.RefreshProgress(_to);
 				}
 			}
 		} else {
-			StartCoroutine( GoingUp( _from, _to, _duration ) );
+			StartCoroutine(GoingUp(_from, _to, _duration));
 		}
 	}
 
-	IEnumerator GoingUp( long _from, long _to, float _duration )
-	{
+	IEnumerator GoingUp(long _from, long _to, float _duration) {
 		HDQuestManager questManager = HDLiveDataManager.quest;
-		if(questManager.EventExists())
-		{
+		if(questManager.EventExists()) {
 			HDQuestData data = questManager.data as HDQuestData;
 			HDQuestDefinition def = data.definition as HDQuestDefinition;
 
 			// Start
-			if (m_progressBar != null) 
-			{
-				m_progressBar.RefreshRewards( def, _from );
-				m_progressBar.RefreshProgress( _from );
+			if(m_progressBar != null) {
+				m_progressBar.RefreshRewards(def, _from);
+				m_progressBar.RefreshProgress(_from);
 			}
 
 			if(m_receiveContributionFX != null) {
@@ -208,28 +202,42 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 
 			// Running
 			float t = 0;
-			while( t < _duration)
-			{
+			while(t < _duration) {
 				t += Time.deltaTime;
 				long v = _from + (long)((_to - _from) * (t / _duration));
-				if (m_progressBar != null) 
-				{
-					m_progressBar.RefreshProgress( v , -1f, false );
-					m_progressBar.RefreshAchieved( true );
+				if(m_progressBar != null) {
+					m_progressBar.RefreshProgress(v, -1f, false);
+					m_progressBar.RefreshAchieved(true);
 				}
 				yield return null;
 			}
 
 			// Finished!
-			if (m_progressBar != null) 
-			{
+			if(m_progressBar != null) {
 				//m_progressBar.RefreshAchieved( def, _to );
-				m_progressBar.RefreshProgress( _to );
+				m_progressBar.RefreshProgress(_to);
 			}
 
 			if(m_receiveContributionFX != null) {
 				m_receiveContributionFX.Stop();
 			}
 		}
+	}
+
+	/// <summary>
+	/// Share button has been pressed.
+	/// </summary>
+	/// <param name="_showContribution">Whether to show or hide the contribution field.</param>
+	public void OnShareButton(bool _showContribution) {
+		// Use different location sku if showing the contribution or not
+		// [AOC] HARDCODED!! This is a bit dirty, but for now it's enough
+		string locationSku = _showContribution ? "quest_contribution" : "quest";
+		ShareScreenQuest shareScreen = ShareScreensManager.GetShareScreen(locationSku) as ShareScreenQuest;
+		shareScreen.Init(
+			locationSku,
+			SceneController.GetMainCameraForCurrentScene(),
+			_showContribution
+		);
+		shareScreen.TakePicture();
 	}
 }

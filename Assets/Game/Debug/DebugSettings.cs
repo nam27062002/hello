@@ -91,6 +91,7 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
     private const string SPECIAL_DATES                           = "SHOW_SPECIAL_DATES";
 
     public const string AB_AUTOMATIC_DOWNLOADER                 = "AB_AUTOMATIC_DOWNLOADER";
+    public const string ADS_ENABLED                             = "ADS_ENABLED";
 
     //------------------------------------------------------------------//
     // PROPERTIES														//
@@ -150,6 +151,11 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 
     private static void Prefs_ForceSetFloatPlayer(string key, float value) {
         Prefs.SetFloatPlayer(key, value);
+    }
+
+    public static bool areAdsEnabled {
+        get { return Prefs_GetBoolPlayer(ADS_ENABLED, true); }
+        set { Prefs_SetBoolPlayer(ADS_ENABLED, value); }
     }
 
     // Gameplay

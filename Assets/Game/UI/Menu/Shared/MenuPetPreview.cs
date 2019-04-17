@@ -55,6 +55,10 @@ public class MenuPetPreview : MonoBehaviour {
 
 	// Internal
 	private Animator m_animator = null;
+	public Animator animator {
+		get { return m_animator; }
+	}
+
 	private GameObject m_rarityGlow = null;
 	private Tween m_rarityGlowShowHideTween = null;
     private Renderer[] m_renderers;

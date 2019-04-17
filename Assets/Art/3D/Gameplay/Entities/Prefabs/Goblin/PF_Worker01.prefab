@@ -280,7 +280,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1341144563950862}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.007, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4503113317179708}
@@ -714,6 +714,15 @@ MonoBehaviour:
     - {fileID: 1416473837642006}
     probability: 1
     season: patricks
+  - equipablePrefabName: PF_Tinfoilhat_goblin
+    toDisableOnEquip:
+    - {fileID: 1416473837642006}
+    probability: 1
+    season: ufoDay
+  - equipablePrefabName: PF_AlienMask_goblin
+    toDisableOnEquip: []
+    probability: 0
+    season: ufoDay
 --- !u!114 &114421048350009022
 MonoBehaviour:
   m_ObjectHideFlags: 1

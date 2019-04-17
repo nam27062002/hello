@@ -135,9 +135,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         // Initialize internal references
         m_transform = transform;
         m_collider = GetComponent<Collider>();
-
-        m_poisonParticle.CreatePool();
-
         m_levelLoaded = false;
     }
 
@@ -192,9 +189,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
         Broadcaster.RemoveListener(BroadcastEventType.GAME_ENDED, this);
     }
 
-    private void OnLevelLoaded() { m_levelLoaded = true;  }
-    private void OnGameEnded()      { m_levelLoaded = false; }
-
     public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
@@ -202,13 +196,16 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
             case BroadcastEventType.GAME_AREA_ENTER:
             case BroadcastEventType.GAME_LEVEL_LOADED:
             {
-                OnLevelLoaded();
-            }break;
+                    m_poisonParticle.CreatePool();
+                    m_levelLoaded = true;
+            }
+            break;
             case BroadcastEventType.GAME_AREA_EXIT:
             case BroadcastEventType.GAME_ENDED:
             {
-                OnGameEnded();
-            }break;
+                    m_levelLoaded = false;
+                }
+                break;
             
         }
     }
@@ -436,17 +433,31 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
     }
 
     private void LoadParticles() {
-        GameObject go = m_poisonParticle.Spawn();
-        if (go != null) {
-            m_particlesObj = go.GetComponent<ParticleControl>();
+        if (m_poisonParticle != null) {
+            GameObject go = m_poisonParticle.Spawn();
+            if (go != null)
+            {
+                m_particlesObj = go.GetComponent<ParticleControl>();
 
-            // As children of ourselves
-            // Particle system should already be created to match the zero position
-            m_particlesObj.transform.SetParentAndReset(this.transform);
-            m_particlesObj.transform.localPosition = m_poisonParticle.offset;
-            m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
+                if (m_particlesObj == null)
+                {
+                    throw new System.Exception("AmbientHazard.LoadParticles: particle prefab does not have a ParticleControl component on GameObject: " + gameObject.name);
+                }
+                else
+                {
+                    // As children of ourselves
+                    // Particle system should already be created to match the zero position
+                    m_particlesObj.transform.SetParentAndReset(this.transform);
+                    m_particlesObj.transform.localPosition = m_poisonParticle.offset;
+                    m_particlesObj.transform.localEulerAngles = m_poisonParticleRotation;
 
-            m_particlesObj.Play();
+                    m_particlesObj.Play();
+                }
+            }
+            else
+            {
+                throw new System.Exception("AmbientHazard.LoadParticles: unable to spawn poison particles on GameObject: " + gameObject.name);
+            }
         }
     }
 
