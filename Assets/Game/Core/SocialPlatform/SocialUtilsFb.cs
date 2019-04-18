@@ -47,11 +47,12 @@ public class SocialUtilsFb : SocialUtils
         {
             Debug.TaggedLog(TAG, "onPublishFailed");
         }
-
+/*
         public override void onFriendsReceived()
         {
             Debug.TaggedLog(TAG, "onFriendsReceived");
         }
+*/        
         public override void onLikesReceived(bool bIsLiked)
         {
             Debug.TaggedLog(TAG, "onLikesReceived");
