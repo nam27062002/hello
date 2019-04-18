@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Text;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -20,6 +22,14 @@ public class ShareScreenDragon : IShareScreen {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	[System.Serializable]
+	public class DragonPoseData {
+		[SkuList(DefinitionsCategory.DRAGONS, false)]
+		public string sku = "";
+		public Vector3 offset = GameConstants.Vector3.zero;
+		public float scale = 1f;
+		public uint animationFrame = 1;
+	}
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -29,6 +39,7 @@ public class ShareScreenDragon : IShareScreen {
 	[SerializeField] private Localizer m_nameText = null;
 	[SerializeField] private Localizer m_descText = null;
 	[SerializeField] private MenuDragonLoader m_dragonLoader = null;
+	public MenuDragonLoader dragonLoader { get { return m_dragonLoader; } }
 	[Space]
 	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private GameObject m_labIcon = null;
@@ -36,6 +47,8 @@ public class ShareScreenDragon : IShareScreen {
 	[SerializeField] private GameObject m_powerGroup = null;
 	[SerializeField] private PowerIcon m_powerIcon = null;
 	[SerializeField] private Localizer m_skinNameText = null;
+	[Space]
+	[SerializeField] private List<DragonPoseData> m_dragonPoses = new List<DragonPoseData>();
 
 	// Internal references
 	private bool m_renderDragon = false;
@@ -91,18 +104,34 @@ public class ShareScreenDragon : IShareScreen {
 					m_dragonLoader.transform.localRotation = _refTransform.localRotation;
 				}
 
+				// Grab pose setup for this dragon (if defined)
+				DragonPoseData pose = null;
+				for(int i = 0; i < m_dragonPoses.Count; ++i) {
+					if(m_dragonPoses[i].sku == m_dragonData.sku) {
+						pose = m_dragonPoses[i];
+					}
+				}
+
+				// If no pose was defined, use default parameters
+				if(pose == null) pose = new DragonPoseData();
+
+				// Apply position offset and scale
+				Transform t = m_dragonLoader.transform;
+				t.localPosition = pose.offset;
+				t.SetLocalScale(pose.scale);
+
 				// Start the animation at a random frame (usually first frame looks shitty :s)
 				Animator anim = m_dragonLoader.dragonInstance.animator;
 				AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);  //could replace 0 by any other animation layer index
-#if true
+#if false
 				// Random frame
 				anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
 #else
 				// Specific frame
 				AnimatorClipInfo clipInfo = anim.GetCurrentAnimatorClipInfo(0)[0];
 				int numFrames = (int)(clipInfo.clip.length * clipInfo.clip.frameRate);
-				Debug.Log(Color.yellow.Tag(numFrames.ToString()));
-				anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, 2));	// Go to frame #2		
+				anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, pose.animationFrame));
+				//anim.speed = 0;	// Serpent dragons look weird with the animation paused
 #endif
 			} else {
 				// Disable dragon preview
@@ -159,5 +188,35 @@ public class ShareScreenDragon : IShareScreen {
 		} else {
 			return LayerMask.GetMask("Ground", "Default", "Player");    // Include dragon preview
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// EDITOR HELPER METHODS												  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Dark trick to initialize new array elements with the proper default values.
+	/// From https://forum.unity.com/threads/default-values-for-serializable-class-not-supported.42499/
+	/// </summary>
+	private void Reset() {
+		m_dragonPoses = new List<DragonPoseData>() { new DragonPoseData() };
+	}
+
+	/// <summary>
+	/// Log the current poses into the console.
+	/// </summary>
+	public void LogPoses() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < m_dragonPoses.Count; ++i) {
+			DragonPoseData p = m_dragonPoses[i];
+			sb.Append(p.sku).AppendLine(" {");
+			sb.Append("   offset: ").AppendLine(p.offset.ToString());
+			sb.Append("   scale: ").AppendLine(p.scale.ToString());
+			sb.Append("   animFrame: ").AppendLine(p.animationFrame.ToString());
+			sb.Append("}");
+			if(i < m_dragonPoses.Count - 2) sb.Append(",");
+			sb.AppendLine();
+		}
+
+		Debug.Log(sb.ToString());
 	}
 }
