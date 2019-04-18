@@ -715,7 +715,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1684268987846478}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.4226183, z: 0, w: 0.9063078}
   m_LocalPosition: {x: 0, y: 0, z: 2000}
   m_LocalScale: {x: 150, y: 150, z: 150}
   m_Children:
@@ -730,8 +730,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1828060470245958}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -1.1, y: 1.1, z: 0}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 4820767799208092}
   m_RootOrder: 0
@@ -1320,6 +1320,75 @@ MonoBehaviour:
   m_powerGroup: {fileID: 1895186504975316}
   m_powerIcon: {fileID: 114966153372182008}
   m_skinNameText: {fileID: 114102110705490288}
+  m_dragonPoses:
+  - sku: dragon_baby
+    offset: {x: 0, y: 0, z: 0}
+    scale: 1
+    animationFrame: 0
+  - sku: dragon_crocodile
+    offset: {x: 0.3, y: -0.3, z: 0}
+    scale: 1.1
+    animationFrame: 30
+  - sku: dragon_reptile
+    offset: {x: -2.5, y: -0.6, z: 0}
+    scale: 1.4
+    animationFrame: 3
+  - sku: dragon_fat
+    offset: {x: 0.1, y: -0.4, z: 0}
+    scale: 1.4
+    animationFrame: 0
+  - sku: dragon_bug
+    offset: {x: -0.6, y: 1.2, z: 0}
+    scale: 1.5
+    animationFrame: 22
+  - sku: dragon_chinese
+    offset: {x: -1.5, y: -0.5, z: 0}
+    scale: 1.6
+    animationFrame: 22
+  - sku: dragon_classic
+    offset: {x: -0.1, y: -0.4, z: 0}
+    scale: 1.8
+    animationFrame: 15
+  - sku: dragon_devil
+    offset: {x: 0.5, y: 0.3, z: 0}
+    scale: 1.8
+    animationFrame: 16
+  - sku: dragon_jawfrey
+    offset: {x: 0, y: 0.5, z: 0}
+    scale: 1.6
+    animationFrame: 30
+  - sku: dragon_balrog
+    offset: {x: 0, y: -0.2, z: 0}
+    scale: 1.8
+    animationFrame: 22
+  - sku: dragon_titan
+    offset: {x: 1.3, y: -1, z: 0}
+    scale: 1.9
+    animationFrame: 0
+  - sku: dragon_goldheist
+    offset: {x: -1.1, y: 1.1, z: 0}
+    scale: 3
+    animationFrame: 0
+  - sku: dragon_helicopter
+    offset: {x: 0.5, y: 0, z: 0}
+    scale: 1.2
+    animationFrame: 0
+  - sku: dragon_electric
+    offset: {x: 0.9, y: -0.5, z: 0}
+    scale: 1.5
+    animationFrame: 0
+  - sku: dragon_hedgehog
+    offset: {x: 1, y: 0.3, z: 0}
+    scale: 1.5
+    animationFrame: 14
+  - sku: dragon_ice
+    offset: {x: 1, y: -0.4, z: 0}
+    scale: 1.5
+    animationFrame: 8
+  - sku: dragon_dino
+    offset: {x: -0.4, y: -1.5, z: 0}
+    scale: 1.5
+    animationFrame: 18
 --- !u!114 &114369603640136786
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1813,8 +1882,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mode: 2
-  m_dragonSku: dragon_reptile
-  m_disguiseSku: dragon_reptile_0
+  m_dragonSku: dragon_baby
+  m_disguiseSku: dragon_baby_0
   m_anim: 0
   m_resetDragonScale: 1
   m_showPets: 0
@@ -2748,7 +2817,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1005.53, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!224 &224338979019795732
