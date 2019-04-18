@@ -91,7 +91,12 @@ public class MenuDragonPreview : MonoBehaviour {
 	// Internal
 	private Animator m_animator = null;
 	public Animator animator{
-		get{return m_animator;}	
+		get{
+			if(m_animator == null) {
+				m_animator = GetComponentInChildren<Animator>();
+			} 
+			return m_animator;
+		}	
 	}
 
 	private Renderer[] m_renderers;
