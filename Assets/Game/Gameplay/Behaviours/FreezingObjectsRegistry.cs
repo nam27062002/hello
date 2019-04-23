@@ -249,7 +249,10 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
     public void RegisterMachine(AI.Machine _machine)
     {
         if ( _machine.entity != null && _machine.entity.circleArea != null )
+        { 
+            _machine.SetFreezingLevel(0);
             m_machines.Add( _machine );
+        }
     }
     
     public void UnregisterMachine(AI.Machine _machine)
@@ -258,9 +261,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             m_machines.Remove( _machine );
         if ( m_freezingMachines.Contains( _machine ) )
         {
-            _machine.SetFreezingLevel(0);
             int index = m_freezingMachines.IndexOf( _machine );
-            
             m_freezingMachines.RemoveAt( index );
             m_freezingLevels.RemoveAt(index);
             m_freezingKills.RemoveAt(index);
