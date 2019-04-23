@@ -19,7 +19,8 @@ public class PopupAskFeedback : MonoBehaviour {
 
 	public void OnYes()
 	{
-        HDTrackingManager.Instance.Notify_RateThisApp(HDTrackingManager.ERateThisAppResult.Yes);
+        // "No" is sent as a parameter because the user is saying yes to send feedback about why she doesn't like the game
+        HDTrackingManager.Instance.Notify_RateThisApp(HDTrackingManager.ERateThisAppResult.No);
 
         // Set to never ask again
         Prefs.SetBoolPlayer( Prefs.RATE_CHECK, false );
