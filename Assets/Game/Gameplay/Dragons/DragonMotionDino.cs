@@ -507,7 +507,7 @@ public class DragonMotionDino : DragonMotion {
     
     public void OnStep()
     {
-        StunAndKill(m_lastGroundHit, m_currentStepKillArea, m_currentStunArea, m_stepStunDuration, 0.1f);
+        StunAndKill(m_lastGroundHit, m_currentStepKillArea, m_currentStepStunArea, m_stepStunDuration, 0.1f);
     }
 
     protected void StunAndKill(Vector3 center, float killArea, float stunArea, float stunDuration, float shake = 0.5f)
