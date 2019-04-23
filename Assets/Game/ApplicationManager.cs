@@ -551,8 +551,11 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
 				}
 				if (missingChests) 
 				{
-					int moreSeconds = 9 * 60 * 60;  // 9 AM
-					HDNotificationsManager.instance.ScheduleNewChestsNotification ((int)ChestManager.timeToReset.TotalSeconds + moreSeconds);
+                    int moreSeconds = 9 * 60 * 60;  // 9 AM
+                    int timeToNotification = (int)ChestManager.timeToReset.TotalSeconds + moreSeconds;
+                    if ( timeToNotification > 0) {
+					    HDNotificationsManager.instance.ScheduleNewChestsNotification (timeToNotification);
+                    }
 				}
 			}
 
