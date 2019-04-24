@@ -374,6 +374,8 @@ public class UserProfile : UserPersistenceSystem
 
     public ESocialState SocialState { get; set; }
 
+    public string GivenTransactions { get; set; }
+
     //
     // New variables here: Remember to initialize them in Reset()
     //
@@ -496,6 +498,8 @@ public class UserProfile : UserPersistenceSystem
         m_visitedZones = new HashSet<string>();
 
         SocialState = ESocialState.NeverLoggedIn;
+
+        GivenTransactions = null;
     }
 
     private void Destroy()
@@ -1091,7 +1095,13 @@ public class UserProfile : UserPersistenceSystem
                 m_visitedZones.Add(zonesArray[i]);
             }
         }
-	}
+
+        key = "givenTransactions";
+        if (_data.ContainsKey(key))
+        {
+            GivenTransactions = _data[key];
+        }
+    }
 
 	/// <summary>
 	/// Loads the data related to eggs.
@@ -1294,6 +1304,11 @@ public class UserProfile : UserPersistenceSystem
             zonesArray.Add( str );
         }
         data.Add("visitedZones", zonesArray);
+
+        if (!string.IsNullOrEmpty(GivenTransactions))
+        {
+            data.Add("givenTransactions", GivenTransactions);
+        }
 
         // Return it
 		return data;

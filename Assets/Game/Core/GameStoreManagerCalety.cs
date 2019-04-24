@@ -89,6 +89,8 @@ public class GameStoreManagerCalety : GameStoreManager
                 bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
                 System.Action onDone = delegate ()
                 {
+                    TransactionManager.instance.Given_AddTransactionId(strTransactionID, true);
+
 					// string gameSku = PlatformSkuToGameSku( sku );
 					Log("PURCHASE_SUCCESSFUL Broadcast " + sku);
                     Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
