@@ -68,7 +68,7 @@ public class EmojiManager : SingletonScriptableObject<EmojiManager> {
 		int endIdx = 0;
 		HashSet<string> foundKeys = new HashSet<string>();
 		do {
-			// Find first opening tag
+			// Find first opening tag after the last closing tag
 			startIdx = _str.IndexOf(':', endIdx);
 			if(startIdx >= 0) {
 				// Find closing tag
@@ -77,7 +77,8 @@ public class EmojiManager : SingletonScriptableObject<EmojiManager> {
 					// Check whehter it's a known key (could be a genuine ':' in the text)
 					key = _str.Substring(startIdx, endIdx + 1 - startIdx);  // Include closing tag
 					if(instance.dictionary.ContainsKey(key)) {
-						// Valid key! Advance index to include closing tag
+						// Valid key!
+						// Advance index to include closing tag
 						endIdx += 1;
 
 						// Store to found keys collection
@@ -85,7 +86,7 @@ public class EmojiManager : SingletonScriptableObject<EmojiManager> {
 					}
 				}
 			}
-		} while(startIdx >= 0);
+		} while(startIdx >= 0 && endIdx >= 0);
 
 		// Replace all found keys by their emoji string
 		foreach(string k in foundKeys) {
