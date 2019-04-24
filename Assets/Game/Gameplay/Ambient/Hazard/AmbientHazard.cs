@@ -455,10 +455,6 @@ public class AmbientHazard : MonoBehaviour, IBroadcastListener {
                     m_particlesObj.Play();
                 }
             }
-            else
-            {
-                throw new System.Exception("AmbientHazard.LoadParticles: unable to spawn poison particles on GameObject: " + gameObject.name);
-            }
         }
     }
 
