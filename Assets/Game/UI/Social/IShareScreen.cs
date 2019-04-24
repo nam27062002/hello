@@ -223,7 +223,12 @@ public abstract class IShareScreen : MonoBehaviour {
 
 		// Open "Share" popup
 		PopupPhotoShare popup = PopupManager.OpenPopupInstant(PopupPhotoShare.PATH).GetComponent<PopupPhotoShare>();
-		popup.Init(pictureTex, GetPrewrittenCaption(), string.Empty, m_shareLocationDef.sku);	// Don't care about the popup's title
+		popup.Init(
+			pictureTex, 
+			EmojiManager.ReplaceEmojis(GetPrewrittenCaption()),		// Replace emoji tags! 
+			string.Empty, 
+			m_shareLocationDef.sku
+		);	// Don't care about the popup's title
 	}
 
 	/// <summary>

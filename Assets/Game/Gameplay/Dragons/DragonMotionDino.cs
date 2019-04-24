@@ -159,7 +159,7 @@ public class DragonMotionDino : DragonMotion {
         {
             if ( m_state == State.Fly || m_state == State.Idle || m_state == State.Fly_Down )
             {   
-                if ( m_grounded )
+                if ( m_grounded && _nextState != State.Dead)
                 {
                     SetGrounded(false);
                 }
@@ -452,7 +452,7 @@ public class DragonMotionDino : DragonMotion {
     protected void CheckGroundStomp()
     {
         bool toStomp = false;
-        float animAnticipation = 0.4f;
+        float animAnticipation = 0.55f;
         float realHeight = m_height / m_transform.localScale.y;
         // using velvet integration to know the future positoin and velocity
         float futureY = realHeight + m_impulse.y * animAnticipation + -9.81f * m_freeFallGravityMultiplier * 0.5f * animAnticipation * animAnticipation;

@@ -520,6 +520,10 @@ namespace AI {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
+                    if ( FreezingObjectsRegistry.instance != null )
+                    {
+                        FreezingObjectsRegistry.instance.UnregisterMachine( this );
+                    }
 					if (m_motion != null) m_motion.Stop();
 				}
 			}
