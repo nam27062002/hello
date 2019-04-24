@@ -161,7 +161,6 @@ public class GlobalEventsScreenController : MonoBehaviour {
 	/// Based on current event state, select which panel should be active.
 	/// </summary>
 	private void SelectPanel() {
-
 		Panel targetPanel = Panel.NO_EVENT;
 		HDQuestManager quest = HDLiveDataManager.quest;
 		if ( quest.EventExists() )
@@ -170,25 +169,35 @@ public class GlobalEventsScreenController : MonoBehaviour {
 			{
 				targetPanel = Panel.OFFLINE;
 			}
-			else
-			{
-				switch(quest.data.m_state) {
-					case HDLiveEventData.State.TEASING: {
-						targetPanel = Panel.EVENT_TEASER;
-					} break;
+            else 
+            { 
+                if (quest.ShouldRequestDefinition()) {
+                    quest.RequestDefinition();
+                }
 
-					case HDLiveEventData.State.NOT_JOINED:
-					case HDLiveEventData.State.JOINED: {
-						targetPanel = Panel.EVENT_ACTIVE;
-					} break;
-                    case HDLiveEventData.State.REQUIRES_UPDATE:
-                    {
-                        targetPanel = Panel.REQUIRES_UPDATE;
-                    }break;
-					default: {
-						targetPanel = Panel.NO_EVENT;
-					} break;
-				}
+                if (quest.isWaitingForNewDefinition) {
+                    targetPanel = Panel.LOADING;
+                } else {
+                    switch (quest.data.m_state) {
+                        case HDLiveEventData.State.TEASING: {
+                                targetPanel = Panel.EVENT_TEASER;
+                            }
+                            break;
+                        case HDLiveEventData.State.NOT_JOINED:
+                        case HDLiveEventData.State.JOINED: {
+                                targetPanel = Panel.EVENT_ACTIVE;
+                            }
+                            break;
+                        case HDLiveEventData.State.REQUIRES_UPDATE: {
+                                targetPanel = Panel.REQUIRES_UPDATE;
+                            }
+                            break;
+                        default: {
+                                targetPanel = Panel.NO_EVENT;
+                            }
+                            break;
+                    }
+                }
 			}
 		}
 
