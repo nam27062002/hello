@@ -11,11 +11,13 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
     public void Initialise()
     {
         Reset();
+        Given_Load();
     }
 
     public void Reset()
     {
-        Pending_Reset();        
+        Pending_Reset();
+        Given_Reset();
     }
 
     public void Update()
@@ -221,7 +223,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                 int count = m_pendingTransactions.Count;
                 for (int i = 0; i < count; i++)                                
                 {
-                    m_pendingTransactions[i].Perform(Transaction.EPerformType.AddToUserProfile);
+                    Pending_PerformTransaction(m_pendingTransactions[i]);                    
                 }
 
                 m_pendingTransactions.Clear();
@@ -287,10 +289,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                                     for (int i = 0; i < count; i++)
                                     {
                                         transaction.FromJSON(transactions[i]);
-                                        if (transaction.CanPerform())
-                                        {
-                                            transaction.Perform(Transaction.EPerformType.AddToUserProfile);
-                                        }
+                                        Pending_PerformTransaction(transaction);                                        
                                     }
                                 }
                             }
@@ -305,6 +304,22 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (m_pendingTransactions != null)
         {
             m_pendingTransactions.Clear();
+        }
+    }
+
+    private void Pending_PerformTransaction(Transaction transaction)
+    {
+        if (transaction != null)
+        {
+            // Makes sure that the transaction hasn't already been given            
+            if (Given_ContainsTransactionId(transaction.GetId()))
+            {
+                Given_RemoveTransactionId(transaction.GetId());
+            }
+            else if (transaction.CanPerform())
+            {
+                transaction.Perform(Transaction.EPerformType.AddToUserProfile);
+            }
         }
     }
 
@@ -358,6 +373,112 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
                     );
                }
          }
+    }
+    #endregion
+
+    #region given
+    // This region is responsible for storing the transactions already given. These transactions are stored to prevent a pending transaction from being given more than once. In particular when
+    // the user purchases something in the shop the reward is given as soon as the purchase is verified by the server, but if the flow gets interrupted then the user will get the reward through
+    // a pending transaction. This given system is designed to prevent a user from getting the direct reward and the one because of a pending transaction (https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-3888)
+
+    private static char GIVEN_TRANSACTIONS_SEPARATOR = ':';
+    private Dictionary<string, bool> Given_TransactionIds;
+
+    private void Given_Reset()
+    {
+        if (Given_TransactionIds != null)
+        {
+            Given_TransactionIds.Clear();
+        }
+    }
+
+    private void Given_Load()
+    {        
+        if (UsersManager.currentUser != null)
+        {
+            string raw = UsersManager.currentUser.GivenTransactions;
+            if (string.IsNullOrEmpty(raw))
+            {
+                string[] tokens = raw.Split(GIVEN_TRANSACTIONS_SEPARATOR);
+                int count = tokens.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    Given_AddTransactionId(tokens[i], false);
+                }
+            }
+        }
+    }
+
+    private bool Given_ContainsTransactionId(string transactionId)
+    {
+        return Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId);
+    }
+
+    public void Given_AddTransactionId(string transactionId, bool save)
+    {
+        if (!string.IsNullOrEmpty(transactionId))
+        {
+            if (Given_TransactionIds == null)
+            {
+                Given_TransactionIds = new Dictionary<string, bool>();
+            }
+
+            if (!Given_TransactionIds.ContainsKey(transactionId))
+            {
+                Given_TransactionIds.Add(transactionId, true);
+
+                if (save)
+                {
+                    Given_Save();
+                }
+            }
+        }
+    }
+
+    private void Given_RemoveTransactionId(string transactionId)
+    {
+        if (!string.IsNullOrEmpty(transactionId))
+        {
+            if (Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId))
+            {
+                Given_TransactionIds.Remove(transactionId);
+                Given_Save();
+            }
+        }
+    }
+
+    private string Given_TransactionIdsAsString()
+    {
+        string returnValue = null;
+        if (Given_TransactionIds != null)        
+        {            
+            int count = 0;
+            foreach (KeyValuePair<string, bool> pair in Given_TransactionIds)
+            {
+                if (count == 0)
+                {
+                    returnValue = "";
+                }
+                else
+                {
+                    returnValue += GIVEN_TRANSACTIONS_SEPARATOR;
+                }
+
+                returnValue += pair.Key;
+                count++;
+            }
+        }
+
+        return returnValue;
+    }
+
+    private void Given_Save()
+    {
+        if (UsersManager.currentUser != null)
+        {
+            UsersManager.currentUser.GivenTransactions = Given_TransactionIdsAsString();
+            PersistenceFacade.instance.Save_Request(false);
+        }
     }
     #endregion
 
