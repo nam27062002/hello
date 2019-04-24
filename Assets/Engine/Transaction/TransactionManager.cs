@@ -416,28 +416,34 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
     public void Given_AddTransactionId(string transactionId, bool save)
     {
-        if (Given_TransactionIds == null)
+        if (!string.IsNullOrEmpty(transactionId))
         {
-            Given_TransactionIds = new Dictionary<string, bool>();
-        }
-
-        if (!Given_TransactionIds.ContainsKey(transactionId))
-        {
-            Given_TransactionIds.Add(transactionId, true);
-
-            if (save)
+            if (Given_TransactionIds == null)
             {
-                Given_Save();
+                Given_TransactionIds = new Dictionary<string, bool>();
+            }
+
+            if (!Given_TransactionIds.ContainsKey(transactionId))
+            {
+                Given_TransactionIds.Add(transactionId, true);
+
+                if (save)
+                {
+                    Given_Save();
+                }
             }
         }
     }
 
     private void Given_RemoveTransactionId(string transactionId)
     {
-        if (Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId))
+        if (!string.IsNullOrEmpty(transactionId))
         {
-            Given_TransactionIds.Remove(transactionId);            
-            Given_Save();            
+            if (Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId))
+            {
+                Given_TransactionIds.Remove(transactionId);
+                Given_Save();
+            }
         }
     }
 
