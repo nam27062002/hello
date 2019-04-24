@@ -397,7 +397,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (UsersManager.currentUser != null)
         {
             string raw = UsersManager.currentUser.GivenTransactions;
-            if (string.IsNullOrEmpty(raw))
+            if (!string.IsNullOrEmpty(raw))
             {
                 string[] tokens = raw.Split(GIVEN_TRANSACTIONS_SEPARATOR);
                 int count = tokens.Length;
