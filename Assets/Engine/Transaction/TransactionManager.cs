@@ -445,7 +445,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         }
     }
 
-    private void Given_RemoveTransactionId(string transactionId)
+    public void Given_RemoveTransactionId(string transactionId)
     {
         if (!string.IsNullOrEmpty(transactionId))
         {
