@@ -314,6 +314,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
             // Makes sure that the transaction hasn't already been given            
             if (Given_ContainsTransactionId(transaction.GetId()))
             {
+				if (FeatureSettingsManager.IsDebugEnabled)
+					Log("Transaction with id " + transaction.GetId () + " is not performed because it had already been performed");
+				
                 Given_RemoveTransactionId(transaction.GetId());
             }
             else if (transaction.CanPerform())
@@ -397,6 +400,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (UsersManager.currentUser != null)
         {
             string raw = UsersManager.currentUser.GivenTransactions;
+
+			if (FeatureSettingsManager.IsDebugEnabled)
+				Log("GIVEN load raw: " + raw);
+			
             if (!string.IsNullOrEmpty(raw))
             {
                 string[] tokens = raw.Split(GIVEN_TRANSACTIONS_SEPARATOR);
@@ -429,6 +436,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 
                 if (save)
                 {
+					if (FeatureSettingsManager.IsDebugEnabled)
+						Log("Transaction with id " + transactionId + " added to GIVEN");
+					
                     Given_Save();
                 }
             }
@@ -441,6 +451,9 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         {
             if (Given_TransactionIds != null && Given_TransactionIds.ContainsKey(transactionId))
             {
+				if (FeatureSettingsManager.IsDebugEnabled)
+					Log ("Transaction with id " + transactionId + " removed from GIVEN");
+				
                 Given_TransactionIds.Remove(transactionId);
                 Given_Save();
             }
@@ -477,6 +490,10 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         if (UsersManager.currentUser != null)
         {
             UsersManager.currentUser.GivenTransactions = Given_TransactionIdsAsString();
+
+			if (FeatureSettingsManager.IsDebugEnabled)
+				Log ("GIVEN transactions: " + UsersManager.currentUser.GivenTransactions + " saved");
+			
             PersistenceFacade.instance.Save_Request(false);
         }
     }

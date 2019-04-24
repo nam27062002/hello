@@ -45,6 +45,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	private HDTournamentDefinition m_definition;
 	private bool m_waitingRewardsData = false;
     private bool m_waitingDefinition = false;
+    private bool m_waitingNetwork = false;
 
 
 	//----------------------------------------------------------------//
@@ -85,6 +86,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
                 m_waitingDefinition = !m_tournament.data.definition.initialized;
                 Refresh();
             } else {
+                m_waitingNetwork = _error == HDLiveDataManager.ComunicationErrorCodes.NET_ERROR;
                 m_waitingDefinition = true;
             }
         }
@@ -170,6 +172,13 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// Update timers periodically.
 	/// </summary>
 	void UpdatePeriodic() {
+        if (m_waitingNetwork) {
+            if (Application.internetReachability != NetworkReachability.NotReachable) {
+                m_tournament.RequestDefinition();
+                m_waitingNetwork = false;
+            }
+        }
+
 		if (m_definition != null && !m_definition.m_refund) {
 			double seconds = m_definition.timeToEnd.TotalSeconds;
 			if (seconds <= 0f) {
@@ -230,14 +239,20 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	public void OnShowPreAnimation() {
         m_tournament = HDLiveDataManager.tournament;
+
+        if (m_tournament.ShouldRequestDefinition()) {
+            m_tournament.RequestDefinition();
+        }
+
         m_waitingDefinition = m_tournament.isWaitingForNewDefinition || !m_tournament.data.definition.initialized;
 
-		Refresh();
+        Refresh();
 
 		m_waitingRewardsData = false;
+        m_waitingNetwork = false;
 
-		// Program a periodic update
-		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
+        // Program a periodic update
+        InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}
 
 	public void OnHidePreAnimation() {
