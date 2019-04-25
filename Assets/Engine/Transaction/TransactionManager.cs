@@ -10,8 +10,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
 {    
     public void Initialise()
     {
-        Reset();
-        Given_Load();
+        Reset();        
     }
 
     public void Reset()
@@ -395,7 +394,7 @@ public class TransactionManager : UbiBCN.SingletonMonoBehaviour<TransactionManag
         }
     }
 
-    private void Given_Load()
+    public void Given_Load()
     {        
         if (UsersManager.currentUser != null)
         {
