@@ -839,7 +839,7 @@ public class AssetBundlesManager
     }   
 
     public void UnloadAssetBundle(string assetBundleId, AssetBundlesOp.OnDoneCallback onDone)
-    {
+    {        
         AssetBundlesOp.EResult result = AssetBundlesOp.EResult.Success;        
         AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
         if (handle == null)
@@ -847,36 +847,32 @@ public class AssetBundlesManager
             result = AssetBundlesOp.EResult.Error_AB_Handle_Not_Found;            
         }
         else if (handle.IsLoaded() || handle.IsLoading())
-        {                        
+        {     
             handle.Unload();                               
         }        
+        else if (m_loaderRequests.Contains(assetBundleId))
+        {         
+            m_loaderRequests.Remove(assetBundleId);
+        }
         else
-        {
+        {         
             result = AssetBundlesOp.EResult.Error_AB_Is_Not_Loaded;
         }
-
+        
         if (onDone != null)
         {
             onDone(result, null);
         }
-    }
+    }    
 
-    public void UnloadAssetBundleList(List<string> assetBundleIds, AssetBundlesOp.OnDoneCallback onDone)
+    public void UnloadAssetBundleList(List<string> assetBundleIds)
     {
         if (assetBundleIds != null)
         {
-            int count = assetBundleIds.Count;
-            AssetBundleHandle handle;
+            int count = assetBundleIds.Count;            
             for (int i = 0; i < count; i++)
             {
-                handle = GetAssetBundleHandle(assetBundleIds[i]);
-                if (handle != null)
-                {
-                    if (handle.IsLoaded())
-                    {
-                        handle.Unload();
-                    }                    
-                }
+                UnloadAssetBundle(assetBundleIds[i], null);                
             }
         }
     }
@@ -1178,9 +1174,9 @@ public class AssetBundlesManager
 
 #region loader    
     /// <summary>
-    /// Queue containing the asset bundle ids to load
+    /// List containing the asset bundle ids to load
     /// </summary>
-    private Queue<string> m_loaderRequests;
+    private List<string> m_loaderRequests;
 
     /// <summary>
     /// Operation resused to load an asset bundle. Only one asset bundle can be loaded simultaneously
@@ -1191,7 +1187,7 @@ public class AssetBundlesManager
     {
         if (m_loaderRequests == null)
         {
-            m_loaderRequests = new Queue<string>();
+            m_loaderRequests = new List<string>();
         }        
 
         if (m_loaderLoadAssetBundleOp == null)
@@ -1237,7 +1233,7 @@ public class AssetBundlesManager
                 if (handle != null && handle.NeedsToRequestToLoad())
                 {
                     handle.OnPendingToRequestToLoad();
-                    m_loaderRequests.Enqueue(id);
+                    m_loaderRequests.Add(id);
                 }                
             }
         }
@@ -1308,18 +1304,27 @@ public class AssetBundlesManager
         {
             if (m_loaderRequests.Count > 0)
             {
-                string id = m_loaderRequests.Dequeue();
+                string id = m_loaderRequests[0];
+                m_loaderRequests.RemoveAt(0);
                 AssetBundleHandle handle = GetAssetBundleHandle(id);
                 if (handle != null)
                 {
-                    handle.OnLoadRequested();
-                    
-                    m_loaderLoadAssetBundleOp.Setup(handle, null);
+                    handle.OnLoadRequested();                    
+
+                    m_loaderLoadAssetBundleOp.Setup(handle, Loader_OnDone);
                     m_loaderLoadAssetBundleOp.Perform();
                 }                 
-            }
+            }           
         }
-    }        
+    }  
+    
+    private void Loader_OnDone(AssetBundlesOp.EResult result, object data)
+    {        
+        if (m_loaderLoadAssetBundleOp != null)
+        {            
+            m_loaderLoadAssetBundleOp.Reset();
+        }
+    }      
 #endregion
 
 #region logger

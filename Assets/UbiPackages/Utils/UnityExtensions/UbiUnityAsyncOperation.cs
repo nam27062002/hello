@@ -39,5 +39,9 @@ public class UbiUnityAsyncOperation : UbiAsyncOperation
         {
             return (m_asyncOperation == null) ? 1f : m_asyncOperation.progress;            
         }
-    }    
+    }
+
+    public void Cancel()
+    {        
+    }
 }

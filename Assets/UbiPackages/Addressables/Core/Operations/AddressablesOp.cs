@@ -80,4 +80,6 @@
             }
         }
     }
+
+    public virtual void Cancel() {}
 }

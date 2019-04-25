@@ -45,14 +45,26 @@ public class LoadAssetBundleOp : AssetBundlesOp
         if (m_request!= null && m_request.isDone)
         {
             AssetBundle ab = m_request.assetBundle;
-            m_handle.OnLoaded(ab);
-            if (ab == null)
-            {
-                NotifyError(AssetBundlesOp.EResult.Error_AB_Couldnt_Be_Loaded);
+
+            if (m_handle.LoadState == AssetBundlesTypes.ELoadState.Loading)
+            {                
+                m_handle.OnLoaded(ab);
+                if (ab == null)
+                {
+                    NotifyError(EResult.Error_AB_Couldnt_Be_Loaded);
+                }
+                else
+                {
+                    NotifySuccess(ab);
+                }
             }
             else
             {
-                NotifySuccess(ab);
+                if (ab != null)
+                {
+                    ab.Unload(true);
+                    NotifyError(EResult.Canceled);
+                }
             }
         }        
     }
