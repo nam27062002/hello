@@ -533,7 +533,7 @@ public class ApplicationManager : UbiBCN.SingletonMonoBehaviour<ApplicationManag
                 }
             }
 
-			if ( waiting )
+			if ( waiting && seconds > 0)
 			{
                 HDNotificationsManager.instance.ScheduleNewMissionsNotification((int)seconds);
 			}
