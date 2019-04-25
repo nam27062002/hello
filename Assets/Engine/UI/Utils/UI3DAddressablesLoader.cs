@@ -151,8 +151,7 @@ public class UI3DAddressablesLoader : MonoBehaviour {
     private void OnAssetLoaded(AddressablesOp op)
     {
         if (op != null && op.Error == null)
-        {
-            PopupTierPreyInfo.Log("Instantiate " + m_assetId);
+        {         
             InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());            
         }
     }
