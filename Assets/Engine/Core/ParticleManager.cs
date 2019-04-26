@@ -301,38 +301,14 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	public static ParticleSystem InitLeveledParticle(string _particle, Transform _anchor)
 	{
 		ParticleSystem ret = null;
-		for(FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
-			level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
-			level = level - 1)
-		{
-			string variant = "";
-			switch(level) {
-					//	path = "Particles/VeryLow/";
-					// break;
-				case FeatureSettings.ELevel5Values.very_low:
-				case FeatureSettings.ELevel5Values.low:
-                    variant = "Low";
-					break;
-				case FeatureSettings.ELevel5Values.mid:
-                    variant = "Master";
-					break;
-				case FeatureSettings.ELevel5Values.high:
-                    variant = "High";
-					break;
-				case FeatureSettings.ELevel5Values.very_high:
-                    variant = "VeryHigh";
-					break;
-			}
-
-			if (!string.IsNullOrEmpty(variant)) {
-                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
-
-				if (go != null) {
-					 ret = InitParticle(go,  _anchor);
-				}
-			}
-		}
-		return ret;
+        string variant = GetVariant(_particle);
+        if (!string.IsNullOrEmpty(variant)) {
+            GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
+            if (go != null) {
+                 ret = InitParticle(go,  _anchor);
+            }
+        }
+        return ret;
 	}
 
     /// <summary>
