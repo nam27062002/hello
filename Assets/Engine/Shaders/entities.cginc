@@ -112,6 +112,15 @@ uniform samplerCUBE _ReflectionMap;
 uniform float _ReflectionAmount;
 #endif
 
+#if defined(COLORMODE_TINT)
+uniform float4 _Tint1;
+#elif defined(COLORMODE_GRADIENT)
+uniform float4 _Tint1;
+uniform float4 _Tint2;
+#elif defined(COLORMODE_COLORRAMP)
+uniform sampler2D _RampTex;
+#endif
+
 
 v2f vert(appdata_t v)
 {
@@ -190,7 +199,15 @@ v2f vert(appdata_t v)
 fixed4 frag(v2f i) : SV_Target
 {
 	// sample the texture
+#if defined(COLORMODE_TINT)
+	fixed4 col = tex2D(_MainTex, i.uv).x * _Tint1;
+#elif defined(COLORMODE_GRADIENT)
+	fixed4 col = lerp(_Tint1, _Tint2, tex2D(_MainTex, i.uv).x);
+#elif defined(COLORMODE_COLORRAMP)
+	fixed4 col = tex2D(_RampTex, float2(tex2D(_MainTex, i.uv).x, 0.0));
+#else
 	fixed4 col = tex2D(_MainTex, i.uv);
+#endif
 
 #if defined(SPECMASK)
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
