@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 public class Entity : IEntity, IBroadcastListener {
 	private static readonly string RESOURCES_DIR = "Game/Entities";
@@ -284,7 +282,7 @@ public class Entity : IEntity, IBroadcastListener {
 	}
 
 	public bool IsBurnable() {
-		return allowBurnable && m_isBurnable;
+		return m_isBurnable;
 	}
 
 	public bool IsBurnable(DragonTier _tier) {
@@ -292,23 +290,23 @@ public class Entity : IEntity, IBroadcastListener {
 	}
 
 	public bool IsEdible() {
-		return allowEdible && m_isEdibleByZ && m_isEdible;
+		return m_isEdibleByZ && m_isEdible;
 	}
 
 	public bool IsEdible(DragonTier _tier) {
-		return allowEdible && m_isEdibleByZ && m_isEdible && (m_edibleFromTier <= _tier);
+		return m_isEdibleByZ && m_isEdible && (m_edibleFromTier <= _tier);
 	}
 
 	public bool CanBeHolded(DragonTier _tier) {
-		return allowEdible && m_isEdibleByZ && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
+		return m_isEdibleByZ && (CanBeGrabbed(_tier) || CanBeLatchedOn(_tier));
 	}
 
 	public bool CanBeGrabbed( DragonTier _tier ){
-		return allowEdible && m_isEdibleByZ && m_canBeGrabbed && m_grabFromTier <= _tier;
+		return m_isEdibleByZ && m_canBeGrabbed && m_grabFromTier <= _tier;
 	}
 
 	public bool CanBeLatchedOn( DragonTier _tier){
-		return allowEdible && m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
+		return m_isEdibleByZ && m_canBeLatchedOn && m_latchFromTier <= _tier;
 	}
 
 	public bool hasToShowTierNeeded(DragonTier _tier) {

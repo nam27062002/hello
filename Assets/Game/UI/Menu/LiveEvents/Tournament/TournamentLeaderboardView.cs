@@ -165,4 +165,24 @@ public class TournamentLeaderboardView : MonoBehaviour {
 		m_loadingIcon.SetActive(_toggle);
 		m_scrollGroup.SetActive(!_toggle);
 	}
+
+	//------------------------------------------------------------------------//
+	// CALLBACKS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Share button has been pressed.
+	/// </summary>
+	/// <param name="_shareLocationSku">The sku of the location where this share screen is triggered.</param>
+	public void OnShareButton(string _shareLocationSku) {
+		// Initialize and show the corresponding share screen
+		ShareScreenTournament shareScreen = ShareScreensManager.GetShareScreen(_shareLocationSku) as ShareScreenTournament;
+		if(shareScreen != null) {
+			shareScreen.Init(
+				_shareLocationSku,
+				SceneController.GetMainCameraForCurrentScene()
+			);
+
+			shareScreen.TakePicture();
+		}
+	}
 }
