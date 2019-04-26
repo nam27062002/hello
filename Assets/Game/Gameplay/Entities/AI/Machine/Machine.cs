@@ -33,8 +33,20 @@ namespace AI {
 		protected Collider m_collider = null;
 
 		private Signals m_signals;
+        private int m_allowEdible;
+        private bool allowEdible { 
+                        get { return m_allowEdible == 0 || !IsStunned() || !IsInLove() || !IsBubbled(); } 
+                        set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } 
+                    }
 
-		private Group m_group; // this will be a reference
+        private int m_allowBurnable;
+        private bool allowBurnable { 
+                        get { return m_allowBurnable == 0 || !IsStunned() || !IsInLove() || !IsBubbled(); } 
+                        set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } 
+                    }
+
+
+        private Group m_group; // this will be a reference
 
 		public MachineEdible.RotateToMouthType rotateToMouth {
 			get { return m_edible.rotateToMouth; }
@@ -183,7 +195,10 @@ namespace AI {
 			m_edible.Init();
 			m_inflammable.Init();
 
-			if (m_collider != null)
+            m_allowEdible = 0;
+            m_allowBurnable = 0;
+
+            if (m_collider != null)
 				m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound);
@@ -218,8 +233,8 @@ namespace AI {
 				if (m_motion != null) m_motion.Stop();
 				if (m_collider != null) m_collider.enabled = false;
 			} else if (_trigger == SignalTriggers.OnInvulnerable || _trigger == SignalTriggers.OnVulnerable) {
-				m_entity.allowEdible = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableBite));
-				m_entity.allowBurnable = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableFire));
+				allowEdible = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableBite));
+				allowBurnable = !(m_signals.GetValue(Signals.Type.Invulnerable) || m_signals.GetValue(Signals.Type.InvulnerableFire));
 			}
 		}
 
@@ -503,12 +518,12 @@ namespace AI {
 
 		// External interactions
 		public void EnterDevice(bool _isCage) {
-			m_entity.allowEdible = !_isCage;
+			allowEdible = !_isCage;
 			SetSignal(Signals.Type.LockedInCage, true);
 		}
 
 		public void LeaveDevice(bool _isCage) {
-			m_entity.allowEdible = true;
+			allowEdible = true;
 			SetSignal(Signals.Type.LockedInCage, false);
 		}
 
@@ -520,6 +535,10 @@ namespace AI {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
+                    if ( FreezingObjectsRegistry.instance != null )
+                    {
+                        FreezingObjectsRegistry.instance.UnregisterMachine( this );
+                    }
 					if (m_motion != null) m_motion.Stop();
 				}
 			}
@@ -550,6 +569,8 @@ namespace AI {
 				return false;
 			if ( IsDead() || IsDying() )
 				return false;
+            if (!allowEdible)
+                return false;
 			if (m_isHolded)
 				return false;
 			if (m_pilot != null && m_pilot.IsActionPressed(Pilot.Action.Latching))
@@ -563,7 +584,7 @@ namespace AI {
 		}
 
 		public bool Smash( IEntity.Type _source ) {
-			if ( !IsDead() && !IsDying() )
+			if ( !IsDead() && !IsDying() && allowEdible)
 			{
                 if (m_bubbled) {
                     BubbledEntitySystem.RemoveEntity(m_entity);
@@ -591,15 +612,17 @@ namespace AI {
 		public float biteResistance { get { return m_edible.biteResistance; } }
 
 		public void Bite() {
-			if (!IsDead()) {
+			if (!IsDead() && allowEdible) {
                 m_edible.Bite();
 				m_viewControl.Bite(m_transform);
 			}
 		}
 
 		public void BeginSwallowed(Transform _transform, bool _rewardsPlayer, IEntity.Type _source) {
-			m_viewControl.BeginSwallowed(_transform);
-			m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+            if (allowEdible) {
+                m_viewControl.BeginSwallowed(_transform);
+                m_edible.BeingSwallowed(_transform, _rewardsPlayer, _source);
+            }
 		}
 
 		public void EndSwallowed(Transform _transform){
@@ -609,8 +632,10 @@ namespace AI {
 		public HoldPreyPoint[] holdPreyPoints { get{ return m_edible.holdPreyPoints; } }
 
 		public void BiteAndHold() {
-            m_isHolded = true;
-			m_edible.BiteAndHold();
+            if (allowEdible) {
+                m_isHolded = true;
+                m_edible.BiteAndHold();
+            }
 		}
 
 		public void ReleaseHold() {
@@ -649,7 +674,7 @@ namespace AI {
 		}
 
 		public virtual bool Burn(Transform _transform, IEntity.Type _source, bool instant = false, FireColorSetupManager.FireColorType fireColorType = FireColorSetupManager.FireColorType.RED) {
-			if (m_entity.allowBurnable && m_inflammable != null && !IsDead()) {
+			if (allowBurnable && m_inflammable != null && !IsDead()) {
 				if (!GetSignal(Signals.Type.Burning)) {
 					ReceiveDamage(9999f);
 					m_inflammable.Burn(_transform, _source, instant, fireColorType);

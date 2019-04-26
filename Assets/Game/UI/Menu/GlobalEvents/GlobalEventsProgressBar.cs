@@ -37,13 +37,28 @@ public class GlobalEventsProgressBar : MonoBehaviour {
 			m_progressBar.maxValue = (float)_evt.m_goal.m_amount;
 		}
 
-		// Rewards
-		for(int i = 0; i < _evt.m_rewards.Count; ++i) {
+        if (_evt.m_rewards == null)
+        {
+            throw new System.Exception("HDQuestDefinition name: " + _evt.m_name + " has a null m_rewards array.");
+            return;
+        }
+
+
+        // Rewards
+        for (int i = 0; i < _evt.m_rewards.Count; ++i) {
 			// Break the loop if we don't have more reward info slots
 			if(i >= m_rewardInfos.Length) break;
 
-			// Initialize the reward info corresponding to this reward
-			m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
+            // Initialize the reward info corresponding to this reward
+            if (_evt.m_rewards[i] != null)
+            {
+                m_rewardInfos[i].InitFromReward(_evt.m_rewards[i]);
+            }
+            else
+            {
+                throw new System.Exception("HDQuestDefinition name: " + _evt.m_name + " has a null m_reward at index: " + i);
+                continue;
+            }
 			m_rewardInfos[i].ShowAchieved( currentValue >= _evt.m_rewards[i].target, false );
 
 			// Put into position (except last reward, which has a fixed position)

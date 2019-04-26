@@ -258,6 +258,18 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public bool ExistsResource(string id, string variant)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            returnValue = m_catalog.GetEntry(id, variant) != null;
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
     /// </summary>
@@ -424,6 +436,24 @@ public class AddressablesManager
             {
                 // Dependencies are only handled by provider from Asset Bundles
                 m_providerFromAB.UnloadDependencyIdsList(dependencyIds);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public void UnloadAllDependencies()
+    {
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadAllDependencies();
             }
         }
         else

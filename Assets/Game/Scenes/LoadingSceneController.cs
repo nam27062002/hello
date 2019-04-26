@@ -761,6 +761,9 @@ public class LoadingSceneController : SceneController {
                 }
 
                 HDTrackingManager.Instance.Notify_Razolytics_Funnel_Load(FunnelData_LoadRazolytics.Steps._01_02_persistance_ready);
+
+                // Given stuff is stored in USerProfile, that's why we need to wait for persistence to be loaded to load given stuff
+                TransactionManager.instance.Given_Load();
             };            
 
             // Automatic connection check disabled during loading because network is already being used

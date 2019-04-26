@@ -78,13 +78,17 @@ public class ShareScreenQuest : IShareScreen {
 
 		// Remaining text
 		if(m_remainingTimeText != null) {
-			m_remainingTimeText.Localize(
-				m_remainingTimeText.tid,
-				TimeUtils.FormatTime(
-					System.Math.Max(0, quest.m_questData.remainingTime.TotalSeconds),	// Don't go below 0!
-					TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 1
-				)
-			);
+			double remainingSeconds = quest.m_questData.remainingTime.TotalSeconds;
+			m_remainingTimeText.gameObject.SetActive(remainingSeconds > 0);
+			if(remainingSeconds > 0) {
+				m_remainingTimeText.Localize(
+					m_remainingTimeText.tid,
+					TimeUtils.FormatTime(
+						System.Math.Max(0, remainingSeconds),   // Don't go below 0!
+						TimeUtils.EFormat.WORDS_WITHOUT_0_VALUES, 1
+					)
+				);
+			}
 		}
 	}
 }

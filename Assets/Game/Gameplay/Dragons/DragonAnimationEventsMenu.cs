@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragonAnimationEventsMenu : MonoBehaviour {
+
+    ParticleSystem m_particleInstance;
+    public ParticleData m_particleData;
 
 	public void WingsSound(){}	// To be deleted
 
@@ -79,6 +83,20 @@ public class DragonAnimationEventsMenu : MonoBehaviour {
     public void StopExtraParticle( int index )
     {
         transform.parent.GetComponent<MenuDragonPreview>().StopExtraParticle( index );
+    }
+    
+    public void GroundHit()
+    {
+        if (m_particleInstance == null)
+        {
+            GameObject go = m_particleData.CreateInstance();
+            m_particleInstance = go.GetComponent<ParticleSystem>();
+            SceneManager.MoveGameObjectToScene(m_particleInstance.gameObject, gameObject.scene);
+            m_particleInstance.transform.parent = transform;
+            m_particleInstance.transform.localPosition = Vector3.zero;
+            m_particleInstance.transform.rotation = Quaternion.LookRotation(Vector3.up);
+        }
+        m_particleInstance.Play();
     }
 
 }

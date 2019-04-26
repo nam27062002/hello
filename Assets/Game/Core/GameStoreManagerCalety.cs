@@ -89,6 +89,11 @@ public class GameStoreManagerCalety : GameStoreManager
                 bool needsServerConfirmation = FeatureSettingsManager.instance.NeedPendingTransactionsServerConfirm();
                 System.Action onDone = delegate ()
                 {
+                    if (!needsServerConfirmation)
+                    {
+                        TransactionManager.instance.Given_AddTransactionId(strTransactionID, true);
+                    }
+
 					// string gameSku = PlatformSkuToGameSku( sku );
 					Log("PURCHASE_SUCCESSFUL Broadcast " + sku);
                     Messenger.Broadcast<string, string, JSONNode>(MessengerEvents.PURCHASE_SUCCESSFUL, sku, strTransactionID, kReceiptJSON);
@@ -104,6 +109,10 @@ public class GameStoreManagerCalety : GameStoreManager
                     if (needsServerConfirmation)
                     {
                         onDone();
+                    }
+                    else
+                    {
+                        TransactionManager.instance.Given_RemoveTransactionId(strTransactionID);
                     }
                 };
 
