@@ -9,6 +9,7 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	private Renderer[] m_renderers;
     private List<Material[]> m_rendererMaterials;
     private Dictionary<int, List<Material>> m_materials;
+    private Dictionary<int, List<Material>> m_materialsFrozen;
 	private List<Material> m_materialList;
 
     private ViewControl.MaterialType m_materialType = ViewControl.MaterialType.NONE;
@@ -31,16 +32,20 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 	protected PreyAnimationEvents m_animEvents;
 	public PreyAnimationEvents animationEvents { get { return m_animEvents; } }
 
+    Transform m_transform;
+    private float m_freezingLevel = 0;
+
     //-----------------------------------------------
     // Use this for initialization
     //-----------------------------------------------
     protected virtual void Awake() {
         m_entity = GetComponent<Entity>();
-
+        m_transform = transform;
         m_animator = transform.FindComponentRecursive<Animator>();
 		m_animator.logWarnings = false;
 
 		m_materials = new Dictionary<int, List<Material>>();
+        m_materialsFrozen = new Dictionary<int, List<Material>>();
 		m_materialList = new List<Material>();
 		m_renderers = GetComponentsInChildren<Renderer>();
         m_rendererMaterials = new List<Material[]>();
@@ -68,12 +73,18 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 				// Stores the materials of this renderer in a dictionary for direct access//
 				int renderID = renderer.GetInstanceID();
 				m_materials[renderID] = new List<Material>();
+                m_materialsFrozen[renderID] = new List<Material>();
 
 				for (int m = 0; m < materials.Length; ++m) {
 					Material mat = materials[m];
 
 					m_materialList.Add(mat);
 					m_materials[renderID].Add(mat);
+                    if ( mat != null ){
+                        m_materialsFrozen[renderID].Add(FrozenMaterialManager.GetFrozenMaterialFor(mat));
+                    }else{
+                        m_materialsFrozen[renderID].Add(null);
+                    }
 
 					materials[m] = null; // remove all materials to avoid instantiation.
 				}
@@ -140,14 +151,34 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
         }
         return false;
     }
-
-    private void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+    
+    ViewControl.MaterialType GetMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
         ViewControl.MaterialType matType = ViewControl.MaterialType.NORMAL;
         if (_isGolden || _furyActive) {
-            if (IsBurnableByPlayer(_type)) {
+            if (IsBurnableByPlayer(_type)) {    
                 matType = ViewControl.MaterialType.GOLD;
             }
         }
+
+        // Check Freezing. It Has priority over inlove
+        if (m_freezingLevel > 0) {
+            if ( matType == ViewControl.MaterialType.GOLD ){
+                matType = ViewControl.MaterialType.GOLD_FREEZE;
+            }else{
+                matType = ViewControl.MaterialType.FREEZE;
+            }
+        }
+        return matType;
+    }
+    
+    
+    public void RefreshMaterialType(){
+        DragonBreathBehaviour dragonBreath = InstanceManager.player.breathBehaviour;
+        CheckMaterialType(false, dragonBreath.IsFuryOn(), dragonBreath.type);
+    }
+
+    private void CheckMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
+        ViewControl.MaterialType matType = GetMaterialType(_isGolden, _furyActive, _type);
         if (matType != m_materialType) {
             SetMaterialType(matType);
         }
@@ -165,6 +196,8 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
                     switch (_type) {
                         case ViewControl.MaterialType.GOLD:     materials[m] = ViewControl.sm_goldenMaterial;   break;
                         case ViewControl.MaterialType.NORMAL:   materials[m] = m_materials[id][m];              break;
+                        case ViewControl.MaterialType.GOLD_FREEZE: materials[m] = ViewControl.sm_goldenFreezeMaterial; break;
+                        case ViewControl.MaterialType.FREEZE: materials[m] = m_materialsFrozen[id][m]; break;
                     }
                 }
                 m_renderers[i].materials = materials;
@@ -201,11 +234,23 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 			AudioController.Play(m_onBurnAudio, transform.position);
 		}
 	}
+    
+     public void Freezing( float freezeLevel ){
+        if ((m_freezingLevel <= 0 && freezeLevel > 0) || (m_freezingLevel > 0 && freezeLevel <= 0)) {
+            m_freezingLevel = freezeLevel;
+            RefreshMaterialType();
+            if ( m_freezingLevel > 0 )
+            {
+                AudioController.Play("freeze", m_transform.position);
+            }
+        }   
+        m_freezingLevel = freezeLevel;  
+    }
+    
 
 	public void Aim(float _blendFactor) { m_animator.SetFloat(GameConstants.Animator.AIM, _blendFactor); }
 
 	public void ForceGolden(){}
-
 
 
 	// Queries
@@ -223,4 +268,5 @@ public class ViewControlCarnivorousPlant : MonoBehaviour, IViewControl, ISpawnab
 			}
 		}
 	}
+    
 }

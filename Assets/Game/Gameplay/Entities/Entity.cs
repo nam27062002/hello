@@ -104,6 +104,14 @@ public class Entity : IEntity, IBroadcastListener {
 		}
 	}
     
+    void OnDisable()
+    {
+        if ( Application.isPlaying && FreezingObjectsRegistry.instance != null )
+        {
+            FreezingObjectsRegistry.instance.UnregisterEntity( this );
+        }
+    }
+
     public virtual void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
     {
         switch( eventType )
@@ -190,10 +198,22 @@ public class Entity : IEntity, IBroadcastListener {
 		m_isEdibleByZ = true;
 
 		m_newCamera = InstanceManager.gameCamera;
+        
+        // Register to freeze
+        FreezingObjectsRegistry.instance.RegisterEntity(this);
 
         m_spawned = true;
     }
 
+    public void SetFreezingLevel(float freezingMultiplier) 
+    {
+        if ( m_pilot )
+            m_pilot.SetFreezeFactor(1.0f - freezingMultiplier);
+        // float freezingLevel = (freezingMultiplier - 1.0f) / (FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
+        if ( m_viewControl != null)
+            m_viewControl.Freezing(freezingMultiplier);
+    }
+        
 	public override void SetGolden(Spawner.EntityGoldMode _mode) {
 		switch (_mode) {
 			case Spawner.EntityGoldMode.Normal:
@@ -216,6 +236,12 @@ public class Entity : IEntity, IBroadcastListener {
 	}
 
     public override void Disable(bool _destroyed) {		
+        // Remove from freeze
+        if ( FreezingObjectsRegistry.instance != null )
+        {
+            FreezingObjectsRegistry.instance.UnregisterEntity( this );
+        }
+        
 		if (m_viewControl != null)
 			m_viewControl.PreDisable();
 		
