@@ -282,7 +282,10 @@ public class AssetBundlesManager
                 catalog.GetAllDependencies(id, dependencies);
 
                 // id is also included because it makes downloading logic easier
-                dependencies.Add(id);
+                if (!dependencies.Contains(id))
+                {
+                    dependencies.Add(id);
+                }
 
                 handle = new AssetBundleHandle();
 
@@ -874,6 +877,17 @@ public class AssetBundlesManager
             {
                 UnloadAssetBundle(assetBundleIds[i], null);                
             }
+        }
+    }
+
+    public void UnloadAllAssetBundles()
+    {
+        if (m_assetBundleHandles != null)
+        {            
+            foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
+            {
+                UnloadAssetBundle(pair.Key, null);
+            }            
         }
     }
 

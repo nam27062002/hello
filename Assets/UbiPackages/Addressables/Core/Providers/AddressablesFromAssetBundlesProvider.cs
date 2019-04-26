@@ -84,6 +84,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.UnloadAssetBundleList(dependencyIds);
     }
 
+    public void UnloadAllDependencies()
+    {
+        AssetBundlesManager.Instance.UnloadAllAssetBundles();
+    }
+
     public override bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)
     {
         AssetBundlesOp.EResult result = AssetBundlesManager.Instance.LoadScene(entry.AssetBundleName, entry.AssetName, mode);
