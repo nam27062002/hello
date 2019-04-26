@@ -8,14 +8,14 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_DragonEvil_Wings_1
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: CUTOFF DOUBLESIDED FXLAYER_NONE REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL
+    _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3020
+  m_CustomRenderQueue: -1
   stringTagMap:
     QUEUE: AlphaTest
-    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -25,7 +25,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 9215bd0c2662a42ea84f59a94db2a360, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -41,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 19020747fa6ab4858b9b1219aba0c215, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -80,6 +80,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SpecMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
     - ReflectionType: 0
@@ -103,12 +107,12 @@ Material:
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
     - _EnableDoublesided: 1
-    - _EnableFresnel: 1
-    - _EnableNormalMap: 1
+    - _EnableFresnel: 0
+    - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _EnableVertexOffset: 0
     - _EnableVertexOffsetX: 0
     - _EnableVertexOffsetY: 0
@@ -117,7 +121,7 @@ Material:
     - _FireSpeed: 1
     - _Fresnel: 7.3
     - _FresnelFactor: 0
-    - _FresnelPower: 0.27
+    - _FresnelPower: 0
     - _Glossiness: 0.5
     - _InnerLightAdd: 0
     - _InnerLightWavePhase: 1
@@ -128,6 +132,7 @@ Material:
     - _NormalStrength: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Period: 1
     - _ReflectionAmount: 0
     - _RimFactor: 0.27
     - _SpecExponent: 1
@@ -135,6 +140,7 @@ Material:
     - _SpecularPower: 1
     - _SrcBlend: 5
     - _StencilMask: 10
+    - _TimePhase: 1
     - _UVSec: 0
     - _VOAmplitude: 0.3
     - _VOSpeed: 3
@@ -143,6 +149,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
+    - _AmbientColor: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.588, g: 0.588, b: 0.588, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
@@ -160,3 +167,4 @@ Material:
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: 0, g: 0, b: -1, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _VertexAnimation: {r: 1, g: 1, b: 1, a: 1}
