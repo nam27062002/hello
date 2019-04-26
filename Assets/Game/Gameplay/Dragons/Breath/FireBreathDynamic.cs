@@ -244,19 +244,22 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
         
         
         // Instantiate all particles
-        int max;
         List<AddressablesOp> loadingFlames = new List<AddressablesOp>();
-        
-        max = m_fireParticles.Count;
+
+        /*
+        int max = m_fireParticles.Count;
         for (int i = 0; i < max; i++) {
-            loadingFlames.Add(HDAddressablesManager.Instance.LoadDependenciesAsync(m_fireParticles[i].name));
-            
+            loadingFlames.Add(HDAddressablesManager.Instance. LoadDependenciesAsync(m_fireParticles[i].name));                        
         }
 
         max = m_underWaterParticles.Count;
         for (int i = 0; i < max; i++) {
-            loadingFlames.Add(HDAddressablesManager.Instance.LoadDependenciesAsync(m_underWaterParticles[i].name));
+            //loadingFlames.Add(HDAddressablesManager.Instance.LoadDependenciesAsync(m_underWaterParticles[i].name));
+            loadingFlames.Add(HDAddressablesManager.Instance.LoadDependencyIdAsync("particles_shared"));
         }
+        */
+        loadingFlames.Add(HDAddressablesManager.Instance.LoadDependencyIdAsync("particles_shared"));
+
         if ( loadingFlames.Count > 0 )
         {
             m_loadingParticles = true;

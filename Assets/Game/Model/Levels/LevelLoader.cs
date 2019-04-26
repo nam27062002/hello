@@ -193,7 +193,11 @@ public class LevelLoader
     {        
         m_loadSync = loadSync;
         OnChangeState = onChangeState;
-            
+
+        // We're coming from menu which might have loaded some asset bundles. We need to unload them before going to the game in order to make sure that 
+        // asset bundles required by menu don't stay in memory
+        HDAddressablesManager.Instance.UnloadAllDependencies();
+
         m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad);        
         State = EState.UnloadingPrevAreaScenes;        
     }

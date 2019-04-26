@@ -432,6 +432,24 @@ public class AddressablesManager
         }
     }
 
+    public void UnloadAllDependencies()
+    {
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (!EditorMode)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.UnloadAllDependencies();
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
     public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
     {
         List<string> returnValue = null;
