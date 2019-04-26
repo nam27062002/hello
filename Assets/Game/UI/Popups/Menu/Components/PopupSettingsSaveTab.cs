@@ -34,20 +34,21 @@ public class PopupSettingsSaveTab : MonoBehaviour
     private const string TID_LOGIN_ERROR = "";
 #endif
 
+    private bool Shown { get; set; }
+
     void Awake()
     {            
 		Model_Init();
 		Social_Init();
 		Resync_Init();
 		User_Init();  
-		GameCenter_Init(); 
+		GameCenter_Init();
+        Shown = false;
     }
-
-	private void OnDestroy() {
-		GameCenter_Destroy();
-	}
-
+	
 	public void OnShow(){
+        Shown = true;
+
 		#if UNITY_ANDROID
 		RefreshGooglePlayView();
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
@@ -56,13 +57,23 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
 	}
 
-	public void OnHide(){
-		#if UNITY_ANDROID
-		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
-		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
-		#endif
-		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-	}
+    public void OnHide(){
+        if (Shown){
+            Shown = false;
+
+#if UNITY_ANDROID
+            Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_CANCELLED, GooglePlayAuthCancelled);
+            Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_AUTH_FAILED, GooglePlayAuthFailed);
+#endif
+            Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+        }
+    }    
+
+    void OnDestroy() {
+        if (Shown) {
+            OnHide();
+        }
+    }
 
     void OnEnable()
     {        
@@ -106,8 +117,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		// Disable google play group if not available
 		#if UNITY_ANDROID
 		m_googlePlayGroup.SetActive(true);
-		m_gameCenterGroup.SetActive(false);
-		Messenger.AddListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
+		m_gameCenterGroup.SetActive(false);	
 		#elif UNITY_IOS
 		m_googlePlayGroup.SetActive(false);
 		m_gameCenterGroup.SetActive(true);
@@ -115,13 +125,7 @@ public class PopupSettingsSaveTab : MonoBehaviour
 		m_googlePlayGroup.SetActive(false);
 		m_gameCenterGroup.SetActive(false);
 		#endif
-	}
-
-	private void GameCenter_Destroy() {
-		#if UNITY_ANDROID
-		Messenger.RemoveListener(MessengerEvents.GOOGLE_PLAY_STATE_UPDATE, RefreshGooglePlayView);
-		#endif
-	}
+	}	
 
 	public void RefreshGooglePlayView(){
 
