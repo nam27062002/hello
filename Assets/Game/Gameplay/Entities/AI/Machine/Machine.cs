@@ -157,12 +157,6 @@ namespace AI {
 
 		void OnDisable() {
 			LeaveGroup();
-
-            if ( ApplicationManager.IsAlive && FreezingObjectsRegistry.instance != null )
-            {
-                FreezingObjectsRegistry.instance.UnregisterMachine( this );
-            }
-            
 		}
 
 		public virtual void Spawn(ISpawner _spawner) {
@@ -187,8 +181,6 @@ namespace AI {
 				m_collider.enabled = true;
 
 			m_willPlaySpawnSound = !string.IsNullOrEmpty(m_onSpawnSound);
-
-            FreezingObjectsRegistry.instance.RegisterMachine( this );
 		}
 
 		public void Deactivate( float duration, UnityEngine.Events.UnityAction _action) {
@@ -370,14 +362,6 @@ namespace AI {
 		public void AddExternalForce(Vector3 force) {
 			m_externalForces += force;
 		}
-        
-        public void SetFreezingLevel( float freezingMultiplier)
-        {
-            if ( m_pilot )
-                m_pilot.SetFreezeFactor(1.0f - freezingMultiplier);
-            // float freezingLevel = (freezingMultiplier - 1.0f) / (FreezingObjectsRegistry.m_minFreezeSpeedMultiplier);
-            m_viewControl.Freezing(freezingMultiplier);
-        }
 
 		public void CheckStun() {
 			if (m_stunned > 0) {
@@ -520,10 +504,6 @@ namespace AI {
 			if (!IsDead()) {
 				m_entity.Damage(_damage);
 				if (IsDead()) {
-                    if ( FreezingObjectsRegistry.instance != null )
-                    {
-                        FreezingObjectsRegistry.instance.UnregisterMachine( this );
-                    }
 					if (m_motion != null) m_motion.Stop();
 				}
 			}

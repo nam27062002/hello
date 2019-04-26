@@ -85,7 +85,7 @@ public class TrackerKillFrozen : TrackerBase {
 	private void OnDestroy(Transform _t, IEntity _e, Reward _reward) {		
 		if (_e != null && (_e.onDieStatus.source == IEntity.Type.PLAYER || _e.onDieStatus.source == IEntity.Type.PET)){
             // Check if in love
-            if (_e.machine != null && FreezingObjectsRegistry.instance.IsFreezing( _e.machine )) {
+            if (FreezingObjectsRegistry.instance.IsFreezing( _e )) {
     			// Count automatically if we don't have any type filter
     			if(m_targetSkus.Count == 0) {
     				currentValue++;

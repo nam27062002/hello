@@ -152,9 +152,6 @@ public class CollectibleViewControl : MonoBehaviour, IViewControl, ISpawnable {
 	}
 
 	public void ForceGolden(){}
-
-
-	public virtual void CustomUpdate() {
-
-	}
+    public void Freezing(float freezeLevel) { }
+	public virtual void CustomUpdate() {}
 }
