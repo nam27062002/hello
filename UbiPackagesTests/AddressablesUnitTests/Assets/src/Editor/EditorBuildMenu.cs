@@ -81,11 +81,7 @@ public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild
 
     public void OnPreprocessBuild(BuildTarget target, string path)
     {
-        if (AddressablesManager.Mode_NeedsAssetBundles())
-        {
-            EditorAddressablesMenu.CopyLocalAssetBundlesToPlayerDestination(target);
-            AssetDatabase.Refresh();
-        }
+        EditorAddressablesMenu.OnPreBuild(target);        
     }
 
     public class BuildPostProcessor : UnityEditor.Build.IPostprocessBuild
@@ -94,11 +90,7 @@ public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild
 
         public void OnPostprocessBuild(BuildTarget target, string path)
         {
-            if (AddressablesManager.Mode == AddressablesManager.EMode.Editor)
-            {
-                // Local asset bundles are deleted since they were needed only during the building process to make them be in the build
-                EditorAddressablesMenu.DeleteLocalAssetBundlesInPlayerDestination();
-            }
+            EditorAddressablesMenu.OnPostBuild();
         }
     }
 }
