@@ -23,8 +23,12 @@ public class OTA_NPCSceneControllerEditor : Editor {
     public override void OnInspectorGUI() {
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Build NPCs")) {
-            m_component.Build();
+        if (GUILayout.Button("Print single file")) {
+            m_component.Build(OTA_NPCSceneController.Log.Assets);
+        }
+
+        if (GUILayout.Button("Print multiple files")) {
+            m_component.Build(OTA_NPCSceneController.Log.Subsets);
         }
     }
 }
