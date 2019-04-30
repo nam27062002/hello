@@ -102,7 +102,7 @@ public class EditorAddressablesMenu : MonoBehaviour
 
     // 5. Process Asset Bundles
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES)]
-    static void ProcessAssetBundles()
+    public static void ProcessAssetBundles()
     {
         Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES);
