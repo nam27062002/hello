@@ -7,13 +7,18 @@ using System.Linq;
 
 
 public class OTA_NPCSceneController : MonoBehaviour {
+    public enum Log {
+        Subsets = 0,
+        Assets
+    }
 
     [SerializeField] private string m_areaPrefix = "";
     [SerializeField] private GameObject[] m_area;
 
     AssetBundleSubsets assetBundleSubsets;
 
-    public void Build() {
+
+    public void Build(Log _logType) {
         if (m_area.Length > 0) {
             assetBundleSubsets = new AssetBundleSubsets(m_area.Length);
             assetBundleSubsets.ChangeSubsetPrefix(m_areaPrefix);
@@ -36,7 +41,12 @@ public class OTA_NPCSceneController : MonoBehaviour {
                 }
             }
 
-            assetBundleSubsets.BuildSubsets(false, true);
+            assetBundleSubsets.BuildSubsets();
+
+            switch(_logType) {
+                case Log.Subsets: assetBundleSubsets.LogSubsets(false, true); break;
+                case Log.Assets: assetBundleSubsets.LogAssets(false, true); break;
+            }
         }
     }
 
