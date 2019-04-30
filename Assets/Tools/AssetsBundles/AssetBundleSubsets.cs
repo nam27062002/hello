@@ -61,7 +61,7 @@ public class AssetBundleSubsets {
         }
     }
 
-    public void BuildSubsets() {
+    public void BuildSubsets(bool _logConsole = false, bool _logFile = false) {
         for (int set = 0; set < m_sets.Length; ++set) {
             foreach (string asset in m_sets[set]) {
                 bool storeInSet = true;
@@ -78,23 +78,42 @@ public class AssetBundleSubsets {
             }
         }
 
+
+        StreamWriter sw = null;
+
         int assetCount = 0;
         for (int subset = 0; subset < m_subsets.Length; subset++) {
             List<string> sorted = m_subsets[subset].ToList();
-            sorted.Sort();
 
-            string output = "-++[" + GetSubSetName(subset) + "]++++-----------------------\n";
-            foreach (string asset in sorted) {
-                output += "    " + asset;
-                if (m_assetLODsMap.ContainsKey(asset)) {
-                    output += " [" + m_assetLODsMap[asset] + "]";
+            if (sorted.Count > 0) {
+                sorted.Sort();
+
+                if (_logConsole) {
+                    Debug.LogWarning("-++[" + GetSubSetName(subset) + "]++++-----------------------");
                 }
-                output += "\n";
-                assetCount++;
-            }
-            output += "-++----";
+                if (_logFile) {
+                    sw = new StreamWriter(GetSubSetName(subset) + ".txt", false);
+                }
 
-            Debug.LogWarning(output);
+                string output = "";
+                foreach (string asset in sorted) {
+                    output += "    " + asset;
+                    if (m_assetLODsMap.ContainsKey(asset)) {
+                        output += " [" + m_assetLODsMap[asset] + "]";
+                    }
+                    output += "\n";
+                    assetCount++;
+                }
+
+                if (_logConsole) {
+                    Debug.LogWarning(output);
+                    Debug.LogWarning("-++----");
+                }
+                if (_logFile) {
+                    sw.Write(output);
+                    sw.Close();
+                }
+            }
         }
     }
 
