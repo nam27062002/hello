@@ -234,11 +234,14 @@ public class EditorAddressablesManager
             return;
         }
 
-        JSONNode json;
+		string path = Path.Combine(m_localDestinationPath, AssetBundlesManager.ASSET_BUNDLES_CATALOG_FILENAME); 		       
         if (AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
         {
             // No catalog is required
-            json = new JSONClass();
+			if (File.Exists(path)) 
+			{
+				EditorFileUtils.DeleteFileOrDirectory(path);
+			}
         }
         else
         {
@@ -275,17 +278,15 @@ public class EditorAddressablesManager
             abCatalog.SetGroups(editorCatalog.GetGroups());
             abCatalog.SetExplicitLocalAssetBundlesList(editorCatalog.GetLocalABList());
 
-            json = abCatalog.ToJSON();
+			JSONNode json = abCatalog.ToJSON();
+			EditorFileUtils.CreateDirectory(m_localDestinationPath);
+			EditorFileUtils.WriteToFile(path, json.ToString());     
 
             if (manifestBundle != null)
             {
                 manifestBundle.Unload(true);
             }
-        }
-
-        EditorFileUtils.CreateDirectory(m_localDestinationPath);
-        string path = Path.Combine(m_localDestinationPath, AssetBundlesManager.ASSET_BUNDLES_CATALOG_FILENAME);        
-        EditorFileUtils.WriteToFile(path, json.ToString());                    
+        }			                   
     }    
 
     /// <summary>
