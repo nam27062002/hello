@@ -211,14 +211,14 @@ public class AssetBundleSubsets {
 
     private string GetComplexSubSetName(int _set) {
         string name = "";
-        int j = 0;
-        for (int i = 0; i < m_combinations[_set].Count; ++i) {
-            while (j < m_combinations[_set][i]) {
+
+        for (int i = 0; i < m_sets.Count(); ++i) {
+            if (m_combinations[_set].Contains(i)) {
+                name += "-";
+                name += m_setNames[i];
+            } else {
                 name += "-x";
-                j++;
             }
-            name += "-";
-            name += m_setNames[m_combinations[_set][i]];
         }
 
         return name;
