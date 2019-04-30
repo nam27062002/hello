@@ -74,6 +74,17 @@ public class SocialUtilsWeibo : SocialUtils
         return WeiboManager.SharedInstance.IsLoggedIn();
     }
 
+	public override bool IsLogInTimeoutEnabled()
+	{		
+		// Timeout is enabled to address HDK-2590
+		return true;	
+	}
+
+	public override void OnLogInTimeout() 
+	{		
+		WeiboManager.SharedInstance.LogOut();
+	}
+
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
     {		
 		ProfileInfo profileInfo = new ProfileInfo();
