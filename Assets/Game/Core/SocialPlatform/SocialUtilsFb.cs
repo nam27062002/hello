@@ -96,6 +96,15 @@ public class SocialUtilsFb : SocialUtils
         return FacebookManager.SharedInstance.IsLoggedIn();
     }
 
+	public override bool IsLogInTimeoutEnabled()
+	{
+		#if UNITY_ANDROID
+		return true;
+		#else
+		return false;
+		#endif
+	}
+
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
     {
         if (FB.IsInitialized && FB.IsLoggedIn)

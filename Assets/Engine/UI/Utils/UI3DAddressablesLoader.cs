@@ -141,25 +141,32 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 		Unload();
 
         // We don't care if we're already loading another asset, it will be ignored once done loading
-        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
-        m_loadingRequest.OnDone = OnAssetLoaded;
+        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);        
         ShowLoading(true);
 
 		return m_loadingRequest;
 	}
 
-    private void OnAssetLoaded(AddressablesOp op)
+    /// <summary>
+    /// Update loop.
+    /// </summary>
+    private void Update()
     {
-        if (op != null && op.Error == null)
-        {         
-            InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());            
+        if (m_loadingRequest != null)
+        {
+            if (m_loadingRequest.isDone)
+            {
+                InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());
+                m_loadingRequest = null;
+            }
         }
     }
 
-	/// <summary>
-	/// Unload existing instance. Nothing will happen if there is no instance.
-	/// </summary>
-	public void Unload() {
+
+    /// <summary>
+    /// Unload existing instance. Nothing will happen if there is no instance.
+    /// </summary>
+    public void Unload() {
 		// Just do it :)
 		if(m_loadedInstance != null) {
 			SafeDestroy(m_loadedInstance);
