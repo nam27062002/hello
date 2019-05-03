@@ -56,9 +56,10 @@ public class LabDragonBar : MonoBehaviour {
 
 		// Refresh visuals
 		if(m_levelText != null) {
+			int level = m_currentLevel; //Mathf.Min(m_currentLevel, m_maxLevel - 1);	// Cap level?
 			m_levelText.Localize(
 				m_levelText.tid,
-				StringUtils.FormatNumber(Mathf.Min(m_currentLevel, m_maxLevel - 1)),	// Don't go more than max!
+				StringUtils.FormatNumber(level),
 				StringUtils.FormatNumber(m_maxLevel)		// If using "Level 14" format, this parameter will just be ignored
 			);
 		}
