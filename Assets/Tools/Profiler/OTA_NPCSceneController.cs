@@ -14,9 +14,9 @@ public class OTA_NPCSceneController : MonoBehaviour {
 
     [SerializeField] private string m_areaPrefix = "";
     [SerializeField] private GameObject[] m_area;
-
+	#if UNITY_EDITOR
     AssetBundleSubsets assetBundleSubsets;
-
+	#endif
 
     public void Build(Log _logType) {
 #if UNITY_EDITOR
