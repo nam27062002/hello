@@ -19,6 +19,7 @@ public class OTA_NPCSceneController : MonoBehaviour {
 
 
     public void Build(Log _logType) {
+#if UNITY_EDITOR
         if (m_area.Length > 0) {
             assetBundleSubsets = new AssetBundleSubsets(m_area.Length);
             assetBundleSubsets.ChangeSubsetPrefix(m_areaPrefix);
@@ -48,6 +49,7 @@ public class OTA_NPCSceneController : MonoBehaviour {
                 case Log.Assets: assetBundleSubsets.LogAssets(false, true); break;
             }
         }
+#endif
     }
 
     private static void FindISpawner(Transform _t, ref List<ISpawner> _list) {
