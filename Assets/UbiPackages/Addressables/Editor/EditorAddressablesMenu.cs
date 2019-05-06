@@ -131,6 +131,11 @@ public class EditorAddressablesMenu : MonoBehaviour
 
         AddressablesManager.Mode = value;
 
+        if (AddressablesManager.Mode_NeedsAssetBundles())
+        {
+            Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
+        }
+
         Manager.GeneratePlayerCatalog();
         Manager.GenerateAssetBundlesCatalog();        
 
@@ -139,8 +144,7 @@ public class EditorAddressablesMenu : MonoBehaviour
             DeleteLocalAssetBundlesInPlayerDestination();
         }
         else if (AddressablesManager.Mode_NeedsAssetBundles())
-        {
-            //CopyLocalAssetBundlesToPlayerDestination(EditorUserBuildSettings.activeBuildTarget);
+        {         
             Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         }
     }

@@ -287,7 +287,7 @@ public class EditorAddressablesManager
                 manifestBundle.Unload(true);
             }
         }			                   
-    }    
+    }   
 
     /// <summary>
     /// Processes asset bundles along with the addressables catalog in order to determine which bundles are local and which ones are remote.
@@ -350,7 +350,7 @@ public class EditorAddressablesManager
                 }
 
                 // Deletes original files that were moved to local
-                //EditorAssetBundlesManager.DeleteAssetBundles(output.m_LocalABList);
+                EditorAssetBundlesManager.DeleteAssetBundles(output.m_LocalABList);
             }
 
             string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
@@ -376,36 +376,25 @@ public class EditorAddressablesManager
                 //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
 
                 // Deletes original files that were moved to local
-                //EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
+                EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
 
                 GenerateDownloadablesConfig(m_localDestinationPath);
             }
         }
     }    
 
-    public void CopyLocalAssetBundlesToPlayerDestination(BuildTarget target)
+    public void CopyLocalAndRemoteAssetBundlesToSource(BuildTarget target)
     {        
-        string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, target.ToString());
+        string sourcePath = EditorAssetBundlesManager.GetAssetBundlesDirectory();        
 
-        DeleteLocalAssetBundlesInPlayerDestination();
-
-        Directory.CreateDirectory(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH);
-
-        if (Directory.Exists(localAssetBundlesPath))
+        if (Directory.Exists(sourcePath))
         {
-            string[] files = Directory.GetFiles(localAssetBundlesPath);
-            int count = files.Length;
-            string dstFileName;
-            for (int i = 0; i < count; i++)
-            {             
-                dstFileName = EditorFileUtils.PathCombine(ADDRESSABLES_PLAYER_ASSET_BUNDLES_PATH, Path.GetFileName(files[i]));
-                if (!AssetBundlesManager.LOCAL_IN_STREAMING_ASSETS)
-                {
-                    dstFileName += ".txt";
-                }
+            string targetAsString = target.ToString();
+            string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, targetAsString);
+            EditorFileUtils.CopyFiles(localAssetBundlesPath, sourcePath);
 
-                File.Copy(files[i], dstFileName);
-            }            
+            string remoteAssetBundlesPath = EditorFileUtils.PathCombine(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, targetAsString);
+            EditorFileUtils.CopyFiles(remoteAssetBundlesPath, sourcePath);
         }        
     }
     
