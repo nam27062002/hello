@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -14,11 +15,12 @@ public class OTA_NPCSceneController : MonoBehaviour {
 
     [SerializeField] private string m_areaPrefix = "";
     [SerializeField] private GameObject[] m_area;
-
+	#if UNITY_EDITOR
     AssetBundleSubsets assetBundleSubsets;
-
+	#endif
 
     public void Build(Log _logType) {
+#if UNITY_EDITOR
         if (m_area.Length > 0) {
             assetBundleSubsets = new AssetBundleSubsets(m_area.Length);
             assetBundleSubsets.ChangeSubsetPrefix(m_areaPrefix);
@@ -48,6 +50,7 @@ public class OTA_NPCSceneController : MonoBehaviour {
                 case Log.Assets: assetBundleSubsets.LogAssets(false, true); break;
             }
         }
+#endif
     }
 
     private static void FindISpawner(Transform _t, ref List<ISpawner> _list) {
@@ -61,3 +64,4 @@ public class OTA_NPCSceneController : MonoBehaviour {
         }
     }
 }
+#endif
