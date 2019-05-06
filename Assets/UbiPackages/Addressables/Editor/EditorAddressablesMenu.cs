@@ -202,22 +202,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     public static void OnPreBuild(BuildTarget target)
     {
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.Mode == AddressablesManager.EMode.Editor ? AddressablesManager.DefaultMode : AddressablesManager.Mode);
-        /*
-        // Delete resources generated
-        Manager.ClearResourcesGenerated();
-        DeleteLocalAssetBundlesInPlayerDestination();
-
-        if (AddressablesManager.Mode_NeedsAssetBundles())
-        {
-            Manager.CopyLocalAssetBundlesToPlayerDestination(target);
-            AssetDatabase.Refresh();
-        }
-        else if (AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
-        {
-
-        }
-        */
+        SetMode(AddressablesManager.Mode == AddressablesManager.EMode.Editor ? AddressablesManager.DefaultMode : AddressablesManager.Mode);        
     }
 
     public static void OnPostBuild()
