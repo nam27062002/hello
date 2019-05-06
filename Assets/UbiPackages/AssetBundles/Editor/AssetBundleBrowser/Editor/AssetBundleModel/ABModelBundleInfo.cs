@@ -502,8 +502,7 @@ namespace AssetBundleBrowser.AssetBundleModel
                 }
             }
 
-            var buildinDeps = asset.GetBuiltInDependencies();
-            
+            //var buildinDeps = asset.GetBuiltInDependencies();            
         }
 
         internal override bool RefreshDupeAssetWarning()
