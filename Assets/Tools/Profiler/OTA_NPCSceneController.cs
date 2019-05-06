@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -63,3 +64,4 @@ public class OTA_NPCSceneController : MonoBehaviour {
         }
     }
 }
+#endif
