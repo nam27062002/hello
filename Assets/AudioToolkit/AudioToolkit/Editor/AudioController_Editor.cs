@@ -1716,6 +1716,42 @@ public class AudioController_Editor : EditorEx
        
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
+        
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Clean All Unsets"))
+        {
+            int maxi = AC.AudioCategories.Length;
+            for (int i = maxi -1 ; i >= 0; --i)
+            {
+                AudioCategory audioCategory = AC.AudioCategories[i];
+                int maxj = audioCategory.AudioItems.Length;
+                for (int j = maxj - 1; j >= 0; --j)
+                {
+                    AudioItem audioItem = audioCategory.AudioItems[j];
+                    int maxk = audioItem.subItems.Length;
+                    for (int k = maxk-1; k >= 0; --k)
+                    {
+                        AudioSubItem audioSubItem = audioItem.subItems[k];
+                        if ( audioSubItem != null && audioSubItem.Clip == null )
+                        {
+                            // Remove!
+                            audioItem.subItems[k] = null;
+                            ArrayHelper.DeleteArrayElement( ref audioItem.subItems, k );
+                        }
+                    }
+
+                    if ( audioItem.subItems.Length <= 0 )
+                    {
+                        // Remove subitem
+                        ArrayHelper.DeleteArrayElement( ref audioCategory.AudioItems, j );
+                    }
+                }
+            }
+
+            KeepChanges();
+        }    
+        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space();
 
         if ( EditorApplication.isPlaying )
         {
