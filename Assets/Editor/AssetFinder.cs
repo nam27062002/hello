@@ -567,7 +567,7 @@ public class AssetFinder : EditorWindow {
                 EditorUtility.ClearProgressBar();
                 break;
             }
-            if (meshImporter != null && meshImporter.isReadable)
+			if (meshImporter != null && (meshImporter.isReadable || meshImporter.meshCompression != ModelImporterMeshCompression.High) )
             {
                 meshImporter.isReadable = false;
                 meshImporter.meshCompression = ModelImporterMeshCompression.High;
