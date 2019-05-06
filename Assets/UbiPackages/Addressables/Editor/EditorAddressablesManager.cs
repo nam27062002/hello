@@ -456,7 +456,7 @@ public class EditorAddressablesManager
             }
             else            
             {
-                if (AddressablesManager.Mode == AddressablesManager.EMode.Catalog)
+				if (AddressablesManager.Mode_NeedsAssetBundles())
                 {
                     string assetBundleNameFromCatalog = "";
                     switch (entry.LocationType)
