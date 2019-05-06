@@ -25,6 +25,10 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string IMAGE_REFERENCE_MATERIAL_PATH = "UI/UIImageHolder";
+	public const string TEXT_REFERENCE_MATERIAL_PATH = "UI/UIFontHolder";
+	public const string COLOR_RAMP_MATERIAL_SUFFIX = "_Ramp";
+
 	// Auxiliar class
 	[System.Serializable]
 	public class Setup {
@@ -68,6 +72,25 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	public Color colorAdd {
 		get { return m_colorAdd; }
 		set { m_colorAdd = value; SetDirty(); }
+	}
+
+	[Space]
+	[SerializeField] private bool m_colorRampEnabled = false;
+	public bool colorRampEnabled {
+		get { return m_colorRampEnabled; }
+		set { m_colorRampEnabled = value; SetDirty(); }
+	}
+
+	[SerializeField] private Texture2D m_colorRamp = null;
+	public Texture2D colorRamp {
+		get { return m_colorRamp; }
+		set { m_colorRamp = value;  SetDirty(); }
+	}
+
+	[SerializeField] [Range(0f, 1f)] private float m_colorRampIntensity = 0f;
+	public float colorRampIntensity {
+		get { return m_colorRampIntensity; }
+		set { m_colorRampIntensity = value; SetDirty(); }
 	}
 
 	[Space]
@@ -162,7 +185,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// </summary>
 	private void Update() {
 		// Detect hierarchy changes
-        // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potencially every tick,
+        // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potentially every tick,
         // however we want to apply the materials in edit time (hierarchy in edit time might change in order to check how a new widget would look like in the hierarchy)
 		#if UNITY_EDITOR
 		if(!Application.isPlaying && transform.hasChanged) {
@@ -307,10 +330,17 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		if(_mat != null) {
 			_mat.SetColor("_ColorMultiply", colorMultiply);
 			_mat.SetColor("_ColorAdd", colorAdd);
+
+			_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
+			_mat.SetTexture("_ColorRamp", colorRamp);
+			_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+
 			_mat.SetFloat("_Alpha", alpha);
+
 			_mat.SetFloat("_BrightnessAmount", brightness);
 			_mat.SetFloat("_SaturationAmount", saturation);
 			_mat.SetFloat("_ContrastAmount", contrast);
+
 			_mat.SetFloat("_LateMultiply", lateMultiply ? 1f : 0f);
 		}
 	}
@@ -319,17 +349,23 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// Make sure materials are created and apply them to all subchildren.
 	/// </summary>
 	private void ApplyMaterials() {
+		// Choose material based on setup
+		string suffix = "";
+		if(m_colorRampEnabled) {
+			suffix = COLOR_RAMP_MATERIAL_SUFFIX;
+		}
+
 		// Create all materials if not already done
-        Material mBase = Resources.Load<Material>("UI/UIImageHolder");
 		if(m_imageMaterial == null) {
-			m_imageMaterial = new Material(mBase);
+			Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH);
+			m_imageMaterial = new Material(matBase);
 			m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
 			m_imageMaterial.name = "MT_UIColorFX_" + this.name;
 		}
 
-        mBase = Resources.Load<Material>("UI/UIFontHolder");
         if (m_fontMaterial == null) {
-			m_fontMaterial = new Material(mBase);
+			Material matBase = Resources.Load<Material>(TEXT_REFERENCE_MATERIAL_PATH);
+			m_fontMaterial = new Material(matBase);
 			m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
 			m_fontMaterial.name = "MT_UIColorFX_" + this.name;
 		}
