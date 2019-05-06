@@ -25,19 +25,26 @@ struct v2f {
 	UNITY_VERTEX_OUTPUT_STEREO
 
 	// Soft Mask Support
-        // The number in braces determines what TEXCOORDn Soft Mask may use
-        // (it required only one TEXCOORD).
-        SOFTMASK_COORDS(2)
+    // The number in braces determines what TEXCOORDn Soft Mask may use
+    // (it required only one TEXCOORD).
+    SOFTMASK_COORDS(2)
 };
 
 // PROPERTIES //////////////////////////////////////////////////////////////////////////////////////////////
 sampler2D _MainTex;
+
 uniform fixed4 _ColorMultiply;
 uniform fixed4 _ColorAdd;
+
+sampler2D _ColorRamp;
+uniform fixed _ColorRampIntensity;
+
 uniform fixed _Alpha;
+
 uniform fixed _SaturationAmount;
 uniform fixed _BrightnessAmount;
 uniform fixed _ContrastAmount;
+
 uniform fixed _LateMultiply;
 
 fixed4 _TextureSampleAdd;
@@ -45,7 +52,7 @@ float4 _ClipRect;
 
 // AUX METHODS /////////////////////////////////////////////////////////////////////////////////////////////
 // Aux method to apply brightness/saturation/contrast factors to a given color
-fixed3 ContrastSaturationBrightness(fixed3 _color, fixed _b, fixed _s, fixed _c) {
+void ContrastSaturationBrightness(inout fixed3 _color, fixed _b, fixed _s, fixed _c) {
 	// Refs:
 	// http://armedunity.com/topic/4950-brightnesscontrastsaturation-shader/
 	// https://accessibility.kde.org/hsl-adjusted.php
@@ -78,9 +85,17 @@ fixed3 ContrastSaturationBrightness(fixed3 _color, fixed _b, fixed _s, fixed _c)
 	fixed3 maxContrastColor = lerp(minContrastColor, _color, 2);	// Arbitrary interpolation factor
 	delta = (_c - (-1)) * (1 - 0) / (1 - (-1)) + 0;	// Convert from input [-1..1] to lerp [0..1] (http://stackoverflow.com/questions/1456000/rescaling-ranges)
 	_color = lerp(minContrastColor, maxContrastColor, delta);
+}
 
-	// Done!
-	return _color;
+// Aux method to apply color ramp to the output pixel color.
+// To be called during the fragment shader.
+void ApplyColorRamp(inout fixed3 _color) {
+	// From https://stackoverflow.com/questions/46771162/color-ramp-shader-cg-shaderlab
+	// Figure out luminosity for this pixel
+	half lum = dot(_color, fixed3(0.2126, 0.7152, 0.0722));
+	
+	// Get value from color ramp and interpolate it with source color using the intensity factor
+	_color = lerp(_color, tex2D(_ColorRamp, float2(lum, 0)).rgb, _ColorRampIntensity);
 }
 
 // Aux method to apply color changes to the output vertex color.
@@ -98,9 +113,14 @@ void ApplyVertexColorModifiers(inout fixed4 _color) {
 // Aux method to apply color changes to the output pixel color.
 // To be called right before the fragment shader return.
 void ApplyFragmentColorModifiers(inout fixed4 _color) {
+	// Apply color ramp
+#ifdef COLOR_RAMP_ENABLED
+	ApplyColorRamp(_color.rgb);
+#endif
+	
 	// Apply contrast/saturation/brightness
-	_color.rgb = ContrastSaturationBrightness(_color.rgb, _BrightnessAmount, _SaturationAmount, _ContrastAmount);
-
+	ContrastSaturationBrightness(_color.rgb, _BrightnessAmount, _SaturationAmount, _ContrastAmount);
+	
 	// If the _LateMultiply property is on, do the multiply now
 	// Use max to choose which color to multiply by (if _LateMultiply is not enabled, the color will be multiplied by 1 -> no effect)
 	fixed invLateMultiply = 1.0 - _LateMultiply;
