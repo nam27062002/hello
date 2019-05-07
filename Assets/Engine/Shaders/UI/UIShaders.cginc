@@ -36,8 +36,10 @@ sampler2D _MainTex;
 uniform fixed4 _ColorMultiply;
 uniform fixed4 _ColorAdd;
 
-sampler2D _ColorRamp;
+#ifdef COLOR_RAMP_ENABLED
+sampler2D _ColorRampTex;
 uniform fixed _ColorRampIntensity;
+#endif
 
 uniform fixed _Alpha;
 
@@ -90,12 +92,14 @@ void ContrastSaturationBrightness(inout fixed3 _color, fixed _b, fixed _s, fixed
 // Aux method to apply color ramp to the output pixel color.
 // To be called during the fragment shader.
 void ApplyColorRamp(inout fixed3 _color) {
+#ifdef COLOR_RAMP_ENABLED
 	// From https://stackoverflow.com/questions/46771162/color-ramp-shader-cg-shaderlab
 	// Figure out luminosity for this pixel
 	half lum = dot(_color, fixed3(0.2126, 0.7152, 0.0722));
 	
 	// Get value from color ramp and interpolate it with source color using the intensity factor
-	_color = lerp(_color, tex2D(_ColorRamp, float2(lum, 0)).rgb, _ColorRampIntensity);
+	_color = lerp(_color, tex2D(_ColorRampTex, float2(lum, 0)).rgb, _ColorRampIntensity);
+#endif
 }
 
 // Aux method to apply color changes to the output vertex color.

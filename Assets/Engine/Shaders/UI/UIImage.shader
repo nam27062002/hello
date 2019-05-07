@@ -10,7 +10,7 @@ Shader "Custom/UI/UIImage" {
 		_ColorAdd ("Color Add", Color) = (0,0,0,0)
 		
 		[Toggle(COLOR_RAMP_ENABLED)] _ColorRampEnabled("Color Ramp Enabled", Float) = 0
-		_ColorRamp("Color Ramp", 2D) = "white" {}
+		_ColorRampTex("Color Ramp", 2D) = "white" {}
 		_ColorRampIntensity("Color Ramp Intensity", Range(0, 1)) = 0
 		
 		_Alpha ("Alpha", Float) = 1	// [AOC] Will be multiplied to the source and tint alpha components

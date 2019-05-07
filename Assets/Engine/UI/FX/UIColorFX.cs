@@ -346,8 +346,10 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 			_mat.SetColor("_ColorAdd", colorAdd);
 
 			_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
-			_mat.SetTexture("_ColorRamp", colorRamp);
-			_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+			if(m_colorRampEnabled) {
+				_mat.SetTexture("_ColorRampTex", colorRamp);
+				_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+			}
 
 			_mat.SetFloat("_Alpha", alpha);
 
