@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -205,8 +206,46 @@ public class EditorAddressablesMenu : MonoBehaviour
 
     public static void OnPreBuild(BuildTarget target)
     {
+        // Copy the platform assetsLUT to Resources
+        CopyPlatformAssetsLUTToResources(target);
+
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.EffectiveMode);        
+        SetMode(AddressablesManager.EffectiveMode);                        
+    }
+
+    public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
+    {
+        string directoryInResources = "Assets/Resources/AssetsLUT/";
+        string assetsLUTInResources = directoryInResources + "assetsLUT.json";
+        if (Directory.Exists(directoryInResources))
+        {
+            if (File.Exists(assetsLUTInResources))
+            {
+                File.Delete(assetsLUTInResources);
+            }
+        }
+        else
+        {
+            // Makes sure that the destination folder exists        
+            Directory.CreateDirectory(directoryInResources);
+        }
+
+        string assetsLUTSource = "AssetsLUT/assetsLUT_";
+        switch (target)
+        {
+            case BuildTarget.Android:
+                assetsLUTSource += "Android";
+                break;
+
+            case BuildTarget.iOS:
+                assetsLUTSource += "iOS";
+                break;
+        }
+
+        assetsLUTSource += ".json";
+        
+        File.Copy(assetsLUTSource, assetsLUTInResources);
+        AssetDatabase.Refresh();
     }
 
     public static void OnPostBuild()
@@ -221,4 +260,6 @@ public class EditorAddressablesMenu : MonoBehaviour
     {
         Manager.DeleteLocalAssetBundlesInPlayerDestination();
     }
+
+
 }

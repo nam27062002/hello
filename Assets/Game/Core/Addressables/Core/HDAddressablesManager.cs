@@ -8,9 +8,7 @@ using UnityEngine.SceneManagement;
 /// This class is responsible for tayloring Addressables UbiPackage to meet Hungry Dragon needs
 /// </summary>
 public class HDAddressablesManager : AddressablesManager
-{
-    private static bool USE_ASSETS_LUT_V2 = Downloadables.Manager.USE_CRC_IN_URL;
-
+{    
     private static HDAddressablesManager sm_instance;
 
     public static HDAddressablesManager Instance
@@ -163,15 +161,26 @@ public class HDAddressablesManager : AddressablesManager
             {
                 urlBase = GetEnvironmentUrlBase();
 
-                if (!USE_ASSETS_LUT_V2)
+                if (!ContentManager.USE_ASSETS_LUT_V2)
                 {
                     urlBase += GetUrlEnvironmentSuffix() + "/";
                 }  
             }
 
-            if (USE_ASSETS_LUT_V2)
+            if (ContentManager.USE_ASSETS_LUT_V2)
             {
                 urlBase += GetUrlEnvironmentSuffix() + "/";
+                    
+                if (!string.IsNullOrEmpty(assetsLUT.m_strBundlesBase))
+                {
+                    urlBase += assetsLUT.m_strBundlesBase + "/";
+                }
+
+                string platform = ContentManager.GetAssetsLUTPlatform();
+                if (!string.IsNullOrEmpty(platform))
+                {
+                    urlBase += platform + "/";
+                }
             }
             else
             {
@@ -184,14 +193,25 @@ public class HDAddressablesManager : AddressablesManager
             Downloadables.CatalogEntry entry;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
             {
-                entry = new Downloadables.CatalogEntry();
-                entry.CRC = pair.Value;
-                entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+                // Only bundles are considered
+                if (!ContentManager.USE_ASSETS_LUT_V2 || assetsLUT.m_kAssetTypes[pair.Key] == ContentDeltaManager.ContentDeltaData.EAssetType.Bundle)
+                {
+                    entry = new Downloadables.CatalogEntry();
+                    entry.CRC = pair.Value;
+                    entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
 
-                catalog.AddEntry(pair.Key, entry);
+                    catalog.AddEntry(pair.Key, entry);
+                }
             }
 
-            return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+            if (ContentManager.USE_ASSETS_LUT_V2)
+            {
+                return catalog.ToJSON();
+            }
+            else
+            {
+                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+            }
         }
         else
         {
