@@ -27,7 +27,10 @@ public class UIColorFXEditor : Editor {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Casted target object
-	UIColorFX m_targetUIColorFX = null;
+	private UIColorFX m_targetUIColorFX = null;
+
+	// Important properties
+	private SerializedProperty m_colorRampEnabledProp = null;
 
 	//------------------------------------------------------------------------//
 	// METHODS																  //
@@ -38,6 +41,9 @@ public class UIColorFXEditor : Editor {
 	private void OnEnable() {
 		// Get target object
 		m_targetUIColorFX = target as UIColorFX;
+
+		// Get important properties
+		m_colorRampEnabledProp = serializedObject.FindProperty("m_colorRampEnabled");
 	}
 
 	/// <summary>
@@ -72,13 +78,37 @@ public class UIColorFXEditor : Editor {
 				EditorGUI.EndDisabledGroup();
 			}
 
-			// Color Ramp
-			else if(p.name == "m_colorRamp---") {
+			// Color Ramp group
+			else if(p.name == m_colorRampEnabledProp.name) {
+				// Enabled toggle
+				EditorGUI.BeginChangeCheck();
+				EditorGUILayout.PropertyField(p);
+				if(EditorGUI.EndChangeCheck()) {
+					// Toggle changed, force a reload of the material to the one using the right shader variant
+					m_targetUIColorFX.DestroyMaterials();
+				}
 
+				// Disabled if ramp is not enabled
+				EditorGUI.BeginDisabledGroup(!m_colorRampEnabledProp.boolValue);
+
+				// Ramp texture
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_colorRamp"));
+
+				// Intensity
+				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_colorRampIntensity"));
+
+				// Open ramps editor
+				if(GUILayout.Button("Color Ramps Editor")) {
+					// TODO!!
+				}
+
+				EditorGUI.EndDisabledGroup();
 			}
 
-			// Properties we don't want to show
-			else if(p.name == "m_ObjectHideFlags") {
+			// Properties to be ignored
+			else if(p.name == "m_ObjectHideFlags"
+				 || p.name == "m_colorRamp"
+				 || p.name == "m_colorRampIntensity") {
 				// Do nothing
 			}
 

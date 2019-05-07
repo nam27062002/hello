@@ -60,6 +60,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[Comment("For memory optimization, don't toggle if not needed!")]
+	[SerializeField] private bool m_applyToFonts = false;
+	[SerializeField] private bool m_applyToImages = true;
+
+	[Space]
 	[FormerlySerializedAs("colorMultiply")]
 	[SerializeField] private Color m_colorMultiply = new Color(1, 1, 1, 1);
 	public Color colorMultiply {
@@ -78,7 +83,12 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	[SerializeField] private bool m_colorRampEnabled = false;
 	public bool colorRampEnabled {
 		get { return m_colorRampEnabled; }
-		set { m_colorRampEnabled = value; SetDirty(); }
+		set {
+			// If value changes, force a reload of the materials
+			if(m_colorRampEnabled != value) DestroyMaterials();
+			m_colorRampEnabled = value;
+			SetDirty(); 
+		}
 	}
 
 	[SerializeField] private Texture2D m_colorRamp = null;
@@ -314,12 +324,16 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// </summary>
 	private void UpdateValues() {
 		// Images
-		UpdateMaterial(m_imageMaterial);
-		UpdateMaterial(m_imageMaterialReplacement);
+		if(m_applyToImages) {
+			UpdateMaterial(m_imageMaterial);
+			UpdateMaterial(m_imageMaterialReplacement);
+		}
 
 		// Fonts
-		UpdateMaterial(m_fontMaterial);
-		UpdateMaterial(m_fontMaterialReplacement);
+		if(m_applyToFonts) {
+			UpdateMaterial(m_fontMaterial);
+			UpdateMaterial(m_fontMaterialReplacement);
+		}
 	}
 
 	/// <summary>
@@ -356,33 +370,41 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		}
 
 		// Create all materials if not already done
-		if(m_imageMaterial == null) {
-			Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH);
-			m_imageMaterial = new Material(matBase);
-			m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
-			m_imageMaterial.name = "MT_UIColorFX_" + this.name;
+		if(m_applyToImages) {
+			if(m_imageMaterial == null) {
+				Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH + suffix);
+				m_imageMaterial = new Material(matBase);
+				m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
+				m_imageMaterial.name = "MT_UIColorFX_" + this.name;
+			}
 		}
 
-        if (m_fontMaterial == null) {
-			Material matBase = Resources.Load<Material>(TEXT_REFERENCE_MATERIAL_PATH);
-			m_fontMaterial = new Material(matBase);
-			m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
-			m_fontMaterial.name = "MT_UIColorFX_" + this.name;
+		if(m_applyToFonts) {
+			if(m_fontMaterial == null) {
+				Material matBase = Resources.Load<Material>(TEXT_REFERENCE_MATERIAL_PATH);
+				m_fontMaterial = new Material(matBase);
+				m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
+				m_fontMaterial.name = "MT_UIColorFX_" + this.name;
+			}
 		}
 
 		// Get all image components and replace their material
-		if(m_imageMaterial != null) {
-			Image[] images = GetComponentsInChildren<Image>();
-			foreach(Image img in images) {
-				img.material = m_imageMaterial;
+		if(m_applyToImages) {
+			if(m_imageMaterial != null) {
+				Image[] images = GetComponentsInChildren<Image>();
+				foreach(Image img in images) {
+					img.material = m_imageMaterial;
+				}
 			}
 		}
 
 		// Do the same with textfields
-		if(m_fontMaterial != null) {
-			Text[] texts = GetComponentsInChildren<Text>();
-			foreach(Text txt in texts) {
-				txt.material = m_fontMaterial;
+		if(m_applyToFonts) {
+			if(m_fontMaterial != null) {
+				Text[] texts = GetComponentsInChildren<Text>();
+				foreach(Text txt in texts) {
+					txt.material = m_fontMaterial;
+				}
 			}
 		}
 	}
@@ -390,7 +412,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// <summary>
 	/// Destroy the custom materials.
 	/// </summary>
-	private void DestroyMaterials() {
+	public void DestroyMaterials() {
 		if(m_imageMaterial != null) {
 			DestroyImmediate(m_imageMaterial);
 			m_imageMaterial = null;
