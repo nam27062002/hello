@@ -71,7 +71,7 @@ public class AddressablesManager
         }
     }
 
-    public static EMode DefaultMode = EMode.Catalog;
+	public static EMode DefaultMode = EMode.AllInResources;
 
 	public static EMode EffectiveMode
 	{
