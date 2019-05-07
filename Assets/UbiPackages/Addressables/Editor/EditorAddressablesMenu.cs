@@ -206,7 +206,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     public static void OnPreBuild(BuildTarget target)
     {
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.Mode == AddressablesManager.EMode.Editor ? AddressablesManager.DefaultMode : AddressablesManager.Mode);        
+        SetMode(AddressablesManager.EffectiveMode);        
     }
 
     public static void OnPostBuild()

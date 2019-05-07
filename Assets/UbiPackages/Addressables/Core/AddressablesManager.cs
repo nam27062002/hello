@@ -73,9 +73,17 @@ public class AddressablesManager
 
     public static EMode DefaultMode = EMode.Catalog;
 
+	public static EMode EffectiveMode
+	{
+		get 
+		{
+			return (Mode == EMode.Editor) ? DefaultMode : Mode;
+		}
+	}
+
     public static bool Mode_NeedsAssetBundles()
     {        
-		EMode mode = (Mode == EMode.Editor) ? DefaultMode : Mode;
+		EMode mode = EffectiveMode;
         return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles;
     }    
 #endif

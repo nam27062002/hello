@@ -235,7 +235,7 @@ public class EditorAddressablesManager
         }
 
 		string path = Path.Combine(m_localDestinationPath, AssetBundlesManager.ASSET_BUNDLES_CATALOG_FILENAME); 		       
-        if (AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
+        if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
         {
             // No catalog is required
 			if (File.Exists(path)) 
@@ -354,7 +354,7 @@ public class EditorAddressablesManager
             }
 
             string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
-            if (AddressablesManager.Mode == AddressablesManager.EMode.AllInLocalAssetBundles)
+            if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
             {
                 if (EditorFileUtils.Exists(remoteFolder))
                 {
