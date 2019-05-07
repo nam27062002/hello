@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class HDAddressablesManager : AddressablesManager
 {
+    private static bool USE_ASSETS_LUT_V2 = Downloadables.Manager.USE_CRC_IN_URL;
+
     private static HDAddressablesManager sm_instance;
 
     public static HDAddressablesManager Instance
@@ -83,6 +85,74 @@ public class HDAddressablesManager : AddressablesManager
         InitDownloadableHandles();
     }
 
+    private string GetEnvironmentUrlBase()
+    {
+        string urlBase = "";
+
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://hdragon-assets-s3.akamaized.net/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Link to CDN (it uses cache)
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Direct link to the bucket (no cache involved, which might make downloads more expensive)
+                    urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    break;
+            }
+
+            //http://10.44.4.69:7888/                                
+        }
+
+        return urlBase;
+    }
+
+    private string GetUrlEnvironmentSuffix()
+    {
+        string returnValue = "";
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:                    
+                    returnValue = "prod";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    returnValue = "qc";                    
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    returnValue = "stage";                    
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    returnValue = "dev";
+                    break;
+            }                                      
+        }
+
+        return returnValue;
+    }
+
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
     {
         if (assetsLUT != null)
@@ -91,40 +161,22 @@ public class HDAddressablesManager : AddressablesManager
             string urlBase = assetsLUT.m_strURLBase;
             if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
             {
-                Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-                if (kServerConfig != null)
+                urlBase = GetEnvironmentUrlBase();
+
+                if (!USE_ASSETS_LUT_V2)
                 {
-                    switch (kServerConfig.m_eBuildEnvironment)
-                    {
-                        case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
-                            urlBase = "http://hdragon-assets-s3.akamaized.net/prod/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Link to CDN (it uses cache)
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
-                            break;
-                    }
-
-                    //http://10.44.4.69:7888/                                
-                }                
+                    urlBase += GetUrlEnvironmentSuffix() + "/";
+                }  
             }
 
-            urlBase += assetsLUT.m_iReleaseVersion + "/";
+            if (USE_ASSETS_LUT_V2)
+            {
+                urlBase += GetUrlEnvironmentSuffix() + "/";
+            }
+            else
+            {
+                urlBase += assetsLUT.m_iReleaseVersion + "/";
+            }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;

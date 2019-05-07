@@ -11,6 +11,8 @@ namespace Downloadables
     /// </summary>
     public class Manager
     {
+        public static bool USE_CRC_IN_URL = false;
+
 #if UNITY_EDITOR
         private static bool USE_REMOTE_SERVER = true;
         public static string REMOTE_FOLDER = (USE_REMOTE_SERVER) ? "AssetBundles/" : "";
