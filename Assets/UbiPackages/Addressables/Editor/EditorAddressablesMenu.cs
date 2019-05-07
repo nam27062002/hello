@@ -207,10 +207,13 @@ public class EditorAddressablesMenu : MonoBehaviour
     public static void OnPreBuild(BuildTarget target)
     {
         // Copy the platform assetsLUT to Resources
-        CopyPlatformAssetsLUTToResources(target);
+		if (Downloadables.Manager.USE_CRC_IN_URL) 
+		{
+			CopyPlatformAssetsLUTToResources (target);
+		}
 
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.EffectiveMode);                        
+        SetMode(AddressablesManager.EffectiveMode);     
     }
 
     public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
