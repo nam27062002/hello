@@ -79,17 +79,12 @@ public class EditorBuildMenu : MonoBehaviour
 
     public static void OnPreBuild(BuildTarget target)
     {
-        EditorAddressablesMenu.CopyLocalAssetBundlesToPlayerDestination(target);
-        AssetDatabase.Refresh();
+        EditorAddressablesMenu.OnPreBuild(target);
     }
 
     public static void OnPostBuild()
     {
-        if (AddressablesManager.EditorMode)
-        {
-            // Local asset bundles are deleted since they were needed only during the building process to make them be in the build
-            EditorAddressablesMenu.DeleteLocalAssetBundlesInPlayerDestination();
-        }
+        EditorAddressablesMenu.OnPostBuild();        
     }
 
     public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild

@@ -48,13 +48,7 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
         return (m_tags & _tag) != 0;
     }
     //----------------------------------------------//
-
-	private int m_allowEdible;
-	public bool allowEdible { get { return m_allowEdible == 0; } set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } }
-
-	private int m_allowBurnable;
-	public bool allowBurnable { get { return m_allowBurnable == 0; } set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } }
-
+    	
 	public virtual DragonTier edibleFromTier { get { return DragonTier.COUNT; } set { } }
 
 	protected DefinitionNode m_def;
@@ -107,9 +101,6 @@ abstract public class IEntity :  MonoBehaviour, ISpawnable {
 
 	public virtual void Spawn(ISpawner _spawner) {
 		m_health = m_maxHealth;
-
-		m_allowEdible = 0;
-		m_allowBurnable = 0;
 
 		onDieStatus.isInFreeFall = false;
 		onDieStatus.isPressed_ActionA = false;

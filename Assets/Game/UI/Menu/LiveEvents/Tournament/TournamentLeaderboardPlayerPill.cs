@@ -56,43 +56,80 @@ public class TournamentLeaderboardPlayerPill : TournamentLeaderboardPillBase {
 		TournamentLeaderboardPlayerPillData data = _data as TournamentLeaderboardPlayerPillData;
 		Debug.Assert(data != null, Color.red.Tag("UNKNOWN PILL DATA FORMAT!"));
 
+		// Use internal initializer
+		InitWithDataInternal(
+			data,
+			HDLiveDataManager.tournament.FormatScore(data.leaderboardLine.m_score),
+			HDLiveDataManager.tournament.IsTimeBasedScore()
+		);
+	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_index"></param>
+	public override void Animate(int _index) {}
+
+	//------------------------------------------------------------------------//
+	// INTERNAL METHODS														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the pill with the given data, without any external dependency.
+	/// </summary>
+	/// <param name="_data">Leaderboard entry data.</param>
+	/// <param name="_formattedScore">Formatted score.</param>
+	/// <param name="_isTimedTournament">Is it a timed tournament?</param>
+	protected virtual void InitWithDataInternal(TournamentLeaderboardPlayerPillData _data, string _formattedScore, bool _isTimedTournament) {
 		// Set position
 		// We might not get a valid position if the player hasn't yet participated in the event
-		if(data.leaderboardLine.m_rank >= 0) {
-			m_positionText.text = StringUtils.FormatNumber(data.leaderboardLine.m_rank + 1);
+		if(_data.leaderboardLine.m_rank >= 0) {
+			m_positionText.text = StringUtils.FormatNumber(_data.leaderboardLine.m_rank + 1);
 		} else {
 			m_positionText.text = "?";
 		}
 
 		// Apply special colors
-		if(data.leaderboardLine.m_rank >= 0 && m_positionTextColors.Length > 0) {
-			if(data.leaderboardLine.m_rank < m_positionTextColors.Length) {
-				m_positionText.color = m_positionTextColors[data.leaderboardLine.m_rank];
+		if(_data.leaderboardLine.m_rank >= 0 && m_positionTextColors.Length > 0) {
+			if(_data.leaderboardLine.m_rank < m_positionTextColors.Length) {
+				m_positionText.color = m_positionTextColors[_data.leaderboardLine.m_rank];
 			} else {
 				m_positionText.color = m_positionTextColors.Last();
 			}
-			m_nameText.color = m_positionText.color;
+			if(m_nameText != null) m_nameText.color = m_positionText.color;
 		}
 
 		// Get social info
 		// Set name
-		if(m_nameText != null) m_nameText.text = data.leaderboardLine.m_name;   // [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
+		if(m_nameText != null) m_nameText.text = _data.leaderboardLine.m_name;   // [AOC] Name text uses a dynamic font, so any special character should be properly displayed. On the other hand, instantiation time is increased for each pill containing non-cached characters.
 
+		// Set score
+		if(m_scoreText != null) m_scoreText.text = _formattedScore;
 
-        // Set score
-        HDTournamentManager tournament = HDLiveDataManager.tournament;
-        m_scoreText.text = tournament.FormatScore(data.leaderboardLine.m_score);
-
-        if (tournament.IsTimeBasedScore()) {
-            m_iconImage.sprite = m_iconClock; 
-        } else {
-            m_iconImage.sprite = m_iconScore;
-        }
+		if(_isTimedTournament) {
+			m_iconImage.sprite = m_iconClock;
+		} else {
+			m_iconImage.sprite = m_iconScore;
+		}
 	}
 
-	public override void Animate(int _index) {}
+	//------------------------------------------------------------------------//
+	// TEST METHODS															  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Initialize the pill with given test data.
+	/// </summary>
+	/// <param name="_data">Data to be used.</param>
+	/// <param name="_isTimedTournament">Simulate timed tournament?</param>
+	public void TEST_InitWithData(TournamentLeaderboardPlayerPillData _data, bool _isTimedTournament) {
+		// Different score format
+		string formattedScore = "";
+		if(_isTimedTournament) {
+			formattedScore = TimeUtils.FormatTime((double)_data.leaderboardLine.m_score, TimeUtils.EFormat.DIGITS, 2, TimeUtils.EPrecision.MINUTES, true);
+		} else {
+			formattedScore = StringUtils.FormatNumber(_data.leaderboardLine.m_score);
+		}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
+		// Use internal initializer
+		InitWithDataInternal(_data, formattedScore, _isTimedTournament);
+	}
 }

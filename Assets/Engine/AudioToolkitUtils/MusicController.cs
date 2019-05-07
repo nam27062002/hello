@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 
 public class MusicController : MonoBehaviour, IBroadcastListener
 {
+    List<AudioObject> m_delayedReturnObjects = new List<AudioObject>();
     #region monobehaviour
     // Use this for initialization
     void Awake ()
@@ -50,7 +51,18 @@ public class MusicController : MonoBehaviour, IBroadcastListener
         {
             Music_Update();
         }
-    }    
+
+        int max = m_delayedReturnObjects.Count - 1;
+        for (int i = max; i >= 0; --i)
+        {
+            AudioObject ao = m_delayedReturnObjects[i];
+            ao.transform.parent = null;
+            ao.completelyPlayedDelegate = null;
+            if (ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
+                ao.Stop();
+        }
+        m_delayedReturnObjects.Clear();
+    }
 
     private void Reset()
     {
@@ -540,6 +552,13 @@ public class MusicController : MonoBehaviour, IBroadcastListener
                 m_usingSnapshot.TransitionTo(m_transitionDuration);
             }
         }
+    }
+    #endregion
+
+    #region AudioObjectTools
+    public void DelayedRemoveAudioParent( AudioObject ao)
+    {
+        m_delayedReturnObjects.Add(ao);
     }
     #endregion
 

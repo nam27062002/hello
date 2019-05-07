@@ -7,10 +7,12 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	
-//		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
-//		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
-//		_FresnelColor2("Fresnel color 2 (RGB)", Color) = (0, 0, 0, 0)
-//		_GoldColor("Gold color (RGB)", Color) = (0, 0, 0, 0)
+		[KeywordEnum(None, Tint, Gradient, ColorRamp)] ColorMode("Color mode", Float) = 0.0
+
+		_Tint1("Tint Color 1", Color) = (1,1,1,1)
+		_Tint2("Tint Color 2", Color) = (1,1,1,1)
+		_RampTex ("Ramp Texture", 2D) = "white" {}
+
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
@@ -34,19 +36,20 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 			#pragma vertex vert
 			#pragma fragment frag
 
-//			#pragma multi_compile __ OPAQUEALPHA
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
+			#pragma multi_compile COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
-//			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
 			#include "entities.cginc"
 			ENDCG
 		}
 	}
+
+	CustomEditor "NPCDiffuseShaderGUI"
 }

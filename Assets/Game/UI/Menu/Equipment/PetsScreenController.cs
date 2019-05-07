@@ -21,7 +21,7 @@ using TMPro;
 /// <summary>
 /// Main controller for the pets menu screen.
 /// </summary>
-public class PetsScreenController : MonoBehaviour {
+public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -95,6 +95,7 @@ public class PetsScreenController : MonoBehaviour {
 	private void OnEnable() {
 		// Subscribe to external events
 		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -103,6 +104,7 @@ public class PetsScreenController : MonoBehaviour {
 	private void OnDisable() {		
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -380,6 +382,22 @@ public class PetsScreenController : MonoBehaviour {
 		if(_id == DebugSettings.SHOW_HIDDEN_PETS) {
 			// Force a reload of the pets list the next time we enter the screen
 			Initialize();
+		}
+	}
+
+	/// <summary>
+	/// A global event has been sent.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			// Language has changed
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				// Refresh visuals
+				Refresh(false);
+				OnFilterChanged(m_petScrollRect);
+			} break;
 		}
 	}
 }

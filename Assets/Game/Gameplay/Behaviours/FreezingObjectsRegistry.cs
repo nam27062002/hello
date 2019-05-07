@@ -23,23 +23,25 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             m_dragonTier = DragonTier.TIER_0;
         }
 	};
-    
+
     public bool m_killOnFrozen;
     public float[] m_killTiers;
 
     // Added registrys
 	List<Registry> m_registry;
     // Machines to check if start feezing
-    List<AI.Machine> m_machines = new List<AI.Machine>();   // to froze machines
+    List<Entity> m_entities = new List<Entity>();   // to froze machines
+    
     // Machines with freezint level
-    List<AI.Machine> m_freezingMachines = new List<AI.Machine>();   // already freezing
+    List<Entity> m_freezingEntities = new List<Entity>();   // already freezing
+    
     // Freezing levels of the machines
     List<float> m_freezingLevels = new List<float>();
     // If the freezing level has to be killed
     List<bool> m_freezingKills = new List<bool>();
 
     // Machines going from check to freezing level
-    List<AI.Machine> m_toFreeze = new List<AI.Machine>();
+    List<Entity> m_toFreeze = new List<Entity>();
     // if kill a Machines going from check to freezing level
     List<bool> m_toKill = new List<bool>();
     
@@ -162,25 +164,25 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         float defrostSpeed = Time.deltaTime * m_defrostSpeed;
         int max;
        
-        max = m_machines.Count;
+        max = m_entities.Count;
         m_toFreeze.Clear();
         m_toKill.Clear();
         for (int i = max-1; i >=0 ; i--)
         {
-            Registry freezing = Overlaps((CircleAreaBounds)m_machines[i].entity.circleArea.bounds);
+            Registry freezing = Overlaps((CircleAreaBounds)m_entities[i].circleArea.bounds);
             if ( freezing != null )
             {
                 // Check if tier pass
-                Entity entity = m_machines[i].entity as Entity;
+                Entity entity = m_entities[i];
                 if (!freezing.m_checkTier || ( entity != null && (entity.IsEdible( freezing.m_dragonTier)|| entity.CanBeHolded( freezing.m_dragonTier ))))
                 {
-                    m_toFreeze.Add( m_machines[i] );
+                    m_toFreeze.Add( m_entities[i] );
                     if ( m_killOnFrozen )
                     {
                         // Check random
-                        if (m_machines[i].entity.edibleFromTier < DragonTier.COUNT)
+                        if (m_entities[i].edibleFromTier < DragonTier.COUNT)
                         {
-                            m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_machines[i].entity.edibleFromTier ] );
+                            m_toKill.Add( Random.Range(0, 100) < m_killTiers[ (int)m_entities[i].edibleFromTier ] );
                         }else{
                             m_toKill.Add(false);
                         }
@@ -189,7 +191,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
                     {
                         m_toKill.Add(false);
                     }
-                    m_machines.RemoveAt( i );
+                    m_entities.RemoveAt( i );
                 }
 
 
@@ -197,27 +199,27 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             }   
         }
         
-        max = m_freezingMachines.Count;
+        max = m_freezingEntities.Count;
         for (int i = max-1; i >=0 ; i--)
         {
-            Registry freezing = Overlaps((CircleAreaBounds)m_freezingMachines[i].entity.circleArea.bounds);
+            Registry freezing = Overlaps((CircleAreaBounds)m_freezingEntities[i].circleArea.bounds);
             if ( freezing == null)
             {
                 m_freezingLevels[i] -= defrostSpeed;
                 if ( m_freezingLevels[i] <= 0 )
                 {
-                    m_freezingMachines[i].SetFreezingLevel(0);
+                    m_freezingEntities[i].SetFreezingLevel(0);
                         // Add to non freezing
-                    m_machines.Add( m_freezingMachines[i] );
+                    m_entities.Add( m_freezingEntities[i] );
                         // Remove from freezing
-                    m_freezingMachines.RemoveAt(i);
+                    m_freezingEntities.RemoveAt(i);
                     m_freezingLevels.RemoveAt(i);
                     m_freezingKills.RemoveAt(i);
                         
                 }
                 else
                 {
-                    m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                    m_freezingEntities[i].SetFreezingLevel(m_freezingLevels[i]);
                 }
             }
             else
@@ -227,10 +229,10 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
                 {
                     m_freezingLevels[i] = 1.0f;
                 }
-                m_freezingMachines[i].SetFreezingLevel(m_freezingLevels[i]);
+                m_freezingEntities[i].SetFreezingLevel(m_freezingLevels[i]);
                 if ( m_freezingKills[i] && m_freezingLevels[i] >= 1.0f )
                 {
-                    m_freezingMachines[i].Smash(IEntity.Type.PLAYER);
+                    m_freezingEntities[i].machine.Smash(IEntity.Type.PLAYER);
                 }
             }
         }
@@ -239,39 +241,64 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
         for (int i = 0; i < max; i++)
         {
             m_freezingLevels.Add( freezingChange );
-            m_freezingMachines.Add( m_toFreeze[i] );
+            m_freezingEntities.Add( m_toFreeze[i] );
             m_freezingKills.Add( m_toKill[i] );
             
             m_toFreeze[i].SetFreezingLevel( freezingChange );
         }
     }
     
-    public void RegisterMachine(AI.Machine _machine)
+    public void RegisterEntity( Entity _entity)
     {
-        if ( _machine.entity != null && _machine.entity.circleArea != null )
-            m_machines.Add( _machine );
+        if ( _entity.circleArea != null && _entity is Entity)
+        { 
+            _entity.SetFreezingLevel(0);
+            m_entities.Add( _entity as Entity);
+        }
     }
     
-    public void UnregisterMachine(AI.Machine _machine)
+    public void UnregisterEntity(Entity _entity)
     {
-        if (m_machines.Contains(_machine))
-            m_machines.Remove( _machine );
-        if ( m_freezingMachines.Contains( _machine ) )
+        int max = m_entities.Count;
+        for (int i = 0; i < max; i++)
         {
-            _machine.SetFreezingLevel(0);
-            int index = m_freezingMachines.IndexOf( _machine );
-            
-            m_freezingMachines.RemoveAt( index );
-            m_freezingLevels.RemoveAt(index);
-            m_freezingKills.RemoveAt(index);
+            if ( m_entities[i] == _entity )
+            {
+                m_entities.RemoveAt(i);
+                break;
+            }
         }
+
+        max = m_freezingEntities.Count;
+        for (int i = 0; i < max; i++)
+        {
+            if ( m_freezingEntities[i] == _entity )
+            {
+                m_freezingEntities.RemoveAt(i);
+                m_freezingLevels.RemoveAt(i);
+                m_freezingKills.RemoveAt(i);
+                break;
+            }
+        }
+    }
+    
+    public bool IsFreezing(IEntity _entity){
+        bool ret = false;
+
+        int max = m_freezingEntities.Count;
+        for (int i = 0; i < max && !ret; i++)
+        {
+            ret = m_freezingEntities[i] == _entity;
+        }
+        return ret;
     }
     
     public bool IsFreezing(AI.IMachine _machine){
         bool ret = false;
-        if ( _machine is AI.Machine )
+        int max = m_freezingEntities.Count;
+        for (int i = 0; i < max && !ret; i++)
         {
-            ret = m_freezingMachines.Contains( _machine as AI.Machine );
+            ret = m_freezingEntities[i].machine == _machine;
         }
         return ret;
     }
@@ -331,6 +358,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
     public void ScaleDownParticle( GameObject instance, ScaleDownDone _callbacks )
     {
         RemoveScaleUpParticle( instance );
+        Debug.Log( "ScaleDownParticle" );
         m_scaleDownParticles.Add(instance);
         m_scaleDownParticlesTimers.Add(m_scaleUpDuration);
         m_scaleDownStartScale.Add( instance.transform.localScale.x );
@@ -356,6 +384,7 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
     
     public void RemoveScaleDownParticle( GameObject instance )
     {
+        Debug.Log( "RemoveScaleDownParticle" );
         if ( m_scaleDownParticles.Contains( instance ) )
         {
             int index = m_scaleDownParticles.IndexOf( instance );
@@ -364,6 +393,29 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             m_scaleDownStartScale.RemoveAt(index);
             m_scaleDownCallbacks.RemoveAt(index);
         }
+    }
+    
+    public void ClearEntities()
+    {
+        m_entities.Clear();
+        m_freezingEntities.Clear();
+        m_freezingLevels.Clear();
+        m_freezingKills.Clear();
+        m_toFreeze.Clear();
+        m_toKill.Clear();
+    }
+    
+    public void ClearScalings()
+    {
+        m_scaleUpParticles.Clear();
+        m_scaleUpParticlesTimers.Clear();
+        m_scaleUpTargetScale.Clear();
+        
+        // Paticle Scaling down
+        m_scaleDownParticles.Clear();
+        m_scaleDownParticlesTimers.Clear();
+        m_scaleDownStartScale.Clear();
+        m_scaleDownCallbacks.Clear();
     }
 
 }

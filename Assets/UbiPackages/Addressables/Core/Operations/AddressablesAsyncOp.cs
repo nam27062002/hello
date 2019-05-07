@@ -31,5 +31,13 @@ public class AddressablesAsyncOp : AddressablesOp
                 return (Operation == null) ? 1f : Operation.progress;
             }            
         }
-    }    
+    }
+
+    public override void Cancel()
+    {
+        if (Operation != null)
+        {
+            Operation.Cancel();
+        }
+    }
 }

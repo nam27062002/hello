@@ -17,7 +17,6 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
     public string m_groundStompSound;
     public ParticleData m_groundStompParticle;
     public string m_groundStompLevel2Sound;
-    public ParticleData m_groundStompParticleLevel2;
     
     ParticleSystem m_stompParticleInstance;
     string m_realGroundStompSound;
@@ -53,24 +52,18 @@ public class DragonDinoAnimationEvents : DragonAnimationEvents {
         if (m_dragonMotion.powerLevel >= 2)
         {
             m_realGroundStompSound = m_groundStompLevel2Sound;
-            if ( m_groundStompParticle.IsValid() )
-            {
-                GameObject go = m_groundStompParticle.CreateInstance();
-                m_stompParticleInstance = go.GetComponent<ParticleSystem>();
-                m_stompParticleInstance.gameObject.SetActive(false);
-                SceneManager.MoveGameObjectToScene(m_stompParticleInstance.gameObject, gameObject.scene);
-            }
         }
         else
         {
             m_realGroundStompSound = m_groundStompSound;
-            if ( m_groundStompParticleLevel2.IsValid() )
-            {
-                GameObject go = m_groundStompParticleLevel2.CreateInstance();
-                m_stompParticleInstance = go.GetComponent<ParticleSystem>();
-                m_stompParticleInstance.gameObject.SetActive(false);
-                SceneManager.MoveGameObjectToScene(m_stompParticleInstance.gameObject, gameObject.scene);
-            }
+        }
+        
+        if ( m_groundStompParticle.IsValid() )
+        {
+            GameObject go = m_groundStompParticle.CreateInstance();
+            m_stompParticleInstance = go.GetComponent<ParticleSystem>();
+            m_stompParticleInstance.gameObject.SetActive(false);
+            SceneManager.MoveGameObjectToScene(m_stompParticleInstance.gameObject, gameObject.scene);
         }
         
         if ( m_headbutt.IsValid() )

@@ -222,7 +222,7 @@ public class BubbledEntitySystem : UbiBCN.SingletonMonoBehaviour<BubbledEntitySy
     //--[Static methods]-----------------------------------------------------------------------------------
     public static void AddEntity(IEntity _entity, float _time) {
         if (_entity.machine != null) {
-            if (!_entity.machine.IsBubbled() && !_entity.machine.IsDying() && !FreezingObjectsRegistry.instance.IsFreezing(_entity.machine)) {
+            if (!_entity.machine.IsBubbled() && !_entity.machine.IsDying() && !FreezingObjectsRegistry.instance.IsFreezing(_entity)) {
                 m_instance.EnqueueEntity(_entity, _time);
             }
         }

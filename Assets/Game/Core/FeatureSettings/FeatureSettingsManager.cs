@@ -649,7 +649,11 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
     {
         System.Text.StringBuilder strBuilder = new System.Text.StringBuilder();
         strBuilder.AppendLine("");
-        strBuilder.AppendLine("MODEL : " + FeatureSettingsManager.instance.Device_Model);
+        if (instance != null)
+        {
+            strBuilder.AppendLine("MODEL : " + instance.Device_Model);
+        }
+
         strBuilder.AppendLine("GPU ID : " + SystemInfo.graphicsDeviceID.ToString());
         strBuilder.AppendLine("GPU VENDOR : " + SystemInfo.graphicsDeviceVendor);
         strBuilder.AppendLine("GPU VENDOR ID : " + SystemInfo.graphicsDeviceVendorID.ToString());

@@ -324,21 +324,23 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
 			target = alternateTarget;
 
         GameObject go = m_missilesPoolHandler.GetInstance();
-        PetProjectile projectile = go.GetComponent<PetProjectile>();
-        projectile.tier = m_tier;
-        projectile.transform.position = originTransform.position;
-        projectile.transform.rotation = originTransform.rotation;   
-		if ( target != null )
-		{
-            projectile.explodeIfHomingtargetNull = true;
-			projectile.Shoot(target, originTransform.forward, 9999, originTransform);
+        if ( go != null)
+        { 
+            PetProjectile projectile = go.GetComponent<PetProjectile>();
+            projectile.tier = m_tier;
+            projectile.transform.position = originTransform.position;
+            projectile.transform.rotation = originTransform.rotation;   
+    		if ( target != null )
+    		{
+                projectile.explodeIfHomingtargetNull = true;
+    			projectile.Shoot(target, originTransform.forward, 9999, originTransform);
+    		}
+            else 
+            {
+                projectile.explodeIfHomingtargetNull = false;
+                projectile.ShootAtPosition( originTransform.position + transform.forward * 1000, originTransform.forward, 9999, originTransform);
+            }
 		}
-        else 
-        {
-            projectile.explodeIfHomingtargetNull = false;
-            projectile.ShootAtPosition( originTransform.position + transform.forward * 1000, originTransform.forward, 9999, originTransform);
-        }
-		
 	}
 
 	void CreatePool() {

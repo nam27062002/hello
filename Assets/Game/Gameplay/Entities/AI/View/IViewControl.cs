@@ -10,4 +10,6 @@ public interface IViewControl {
 	void Spawn(ISpawner _spawner);
 
 	void ForceGolden();
+
+    void Freezing(float freezeLevel);
 }

@@ -201,7 +201,6 @@ GameObject:
   m_Component:
   - component: {fileID: 224779197607574050}
   - component: {fileID: 222079292785376664}
-  - component: {fileID: 114771100626725742}
   - component: {fileID: 114712306786600280}
   m_Layer: 5
   m_Name: EquippedFrame
@@ -662,14 +661,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_Color: {r: 1, g: 0.82024777, b: 0.30900002, a: 1}
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 124a9e97ea29b674aa3ded5e113c3cce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 88191c64722847541aa38424eacdbd9b, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1284,8 +1283,8 @@ MonoBehaviour:
   isIndependentUpdate: 0
   autoKill: 1
   isActive: 1
-  isValid: 1
-  target: {fileID: 114771100626725742}
+  isValid: 0
+  target: {fileID: 0}
   animationType: 7
   targetType: 3
   forcedTargetType: 0
@@ -1394,33 +1393,6 @@ MonoBehaviour:
   m_colors:
   - {r: 0.5147059, g: 0.9486161, b: 1, a: 1}
   - {r: 0.72794116, g: 1, b: 0.97748476, a: 1}
---- !u!114 &114771100626725742
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1307112836724820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.89575, b: 0.625, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a22ed48f709306849802a018e5959b60, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114777621129965444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1633,6 +1605,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114986962217883310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1650,6 +1623,7 @@ MonoBehaviour:
   m_brightness: 0
   m_saturation: 0
   m_contrast: 0
+  m_lateMultiply: 0
 --- !u!114 &114989279565007930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1845,7 +1819,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224779197607574050}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -2287,9 +2261,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 224978356784575206}
   - {fileID: 224795820794048402}
   - {fileID: 224077717515918734}
-  - {fileID: 224978356784575206}
   m_Father: {fileID: 224164525686689280}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2327,7 +2301,7 @@ RectTransform:
   m_LocalScale: {x: -1.0000002, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224779197607574050}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -2396,13 +2370,13 @@ RectTransform:
   m_GameObject: {fileID: 1473678935191458}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.998795, y: 0.998795, z: 0.998795}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224779197607574050}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 3.5}
-  m_SizeDelta: {x: 40, y: 27}
+  m_AnchoredPosition: {x: 2.699998, y: -9.399992}
+  m_SizeDelta: {x: 24.900002, y: 33.399998}
   m_Pivot: {x: 0.5, y: 0.5}

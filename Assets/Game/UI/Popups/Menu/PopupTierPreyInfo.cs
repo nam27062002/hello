@@ -82,19 +82,16 @@ public class PopupTierPreyInfo : MonoBehaviour {
 
 		// Unsubscribe from external events.
 		if(m_loaders != null) {
-			for(int i = 0; i < m_loaders.Length; i++) {
-				if(InstanceManager.menuSceneController != null) {
-                	HDAddressablesManager.Instance.UnloadDependencies(m_loaders[i].assetId, null);
-				}                
-				m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);
+			for(int i = 0; i < m_loaders.Length; i++) {                                
+				m_loaders[i].OnLoadingComplete.RemoveListener(OnLoaderCompleted);                                
 			}
 		}
-	}
+    }    
 
-	/// <summary>
-	/// Something has changed on the inspector.
-	/// </summary>
-	protected void OnValidate() {
+    /// <summary>
+    /// Something has changed on the inspector.
+    /// </summary>
+    protected void OnValidate() {
 		// Layouts array has fixed size
 		m_layoutPrefabs.Resize((int)DragonTier.COUNT);
 
