@@ -148,6 +148,8 @@ public class EditorAddressablesMenu : MonoBehaviour
         {         
             Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         }
+
+		AssetDatabase.Refresh ();
     }
 
     [MenuItem(ADDRESSABLES_EDITOR_MODE)]
