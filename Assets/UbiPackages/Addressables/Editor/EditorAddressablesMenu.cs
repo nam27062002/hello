@@ -250,6 +250,7 @@ public class EditorAddressablesMenu : MonoBehaviour
         assetsLUTSource += ".json";
         
         File.Copy(assetsLUTSource, assetsLUTInResources);
+        }
         AssetDatabase.Refresh();
     }
 
