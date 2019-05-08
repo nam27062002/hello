@@ -8,6 +8,7 @@ public class BasicAddressablesTestController : MonoBehaviour
 {
     public Transform m_cubesRoot;
     private int m_cubesLoadedCount;
+    public GameObject m_cube;
 
     private enum ELoadResourceMode
     {
@@ -25,9 +26,21 @@ public class BasicAddressablesTestController : MonoBehaviour
     {
         Ui_Init();
         //LoadUbiCubeFromtxtAsync();
+
+        // From Resources
+        //Cube_AddMaterialFromResources();
+        //Cube_AddTextureFromResources();
+
+        // From Addressables Async
+        //Cube_AddMaterialAsyncFromAddressables();
+        //Cube_AddTextureAsyncFromAddressables();
+
+        // From Addressables Sync
+        //Cube_AddMaterialFromAddressables();
+        Cube_AddTextureFromAddressables();
     }
-	
-	void Update ()
+
+    void Update ()
     {
         if (m_request != null && m_request.isDone)
         {
@@ -147,6 +160,126 @@ public class BasicAddressablesTestController : MonoBehaviour
     public void Addressables_Reset()
     {
         m_addressablesManager.Reset();     
+    }            
+    #endregion
+
+    #region cube
+    private static string CUBE_ADDRESSABLES_MATERIAL = "unknownMaterial";
+    private static string CUBE_ADDRESSABLES_TEXTURE = "HDLogo";
+
+    private void Cube_AddMaterial(Material material)
+    {
+        Renderer renderer = m_cube.GetComponent<Renderer>();
+        renderer.material = material;
+    }
+
+    private void Cube_AddTexture(Texture texture)
+    {
+        Renderer renderer = m_cube.GetComponent<Renderer>();
+        renderer.material.mainTexture = texture;
+    }    
+
+    private void Cube_AddMaterialFromResources()
+    {
+        Renderer renderer = m_cube.GetComponent<Renderer>();
+        Material material = Resources.Load<Material>("Materials/UnityLogoMaterial");
+        Cube_AddMaterial(material);
+    }
+
+    private void Cube_AddTextureFromResources()
+    {        
+        Renderer renderer = m_cube.GetComponent<Renderer>();
+        Material material = renderer.material;
+
+        Texture texture = Resources.Load<Texture>("Textures/HDLogo");
+        material.mainTexture = texture;        
+    }
+
+    private void Cube_AddMaterialAsyncFromAddressables()
+    {
+        Addressables_Init();
+
+        AddressablesOp op = m_addressablesManager.LoadAssetAsync(CUBE_ADDRESSABLES_MATERIAL);
+        op.OnDone = Cube_OnAddMaterialAsyncFromAddressables;        
+    }
+
+    private void Cube_OnAddMaterialAsyncFromAddressables(AddressablesOp op)
+    {
+        if (op.Error == null)
+        {
+            Material material = op.GetAsset<Material>();
+            Cube_AddMaterial(material);
+        }
+        else
+        {
+            Debug.Log("Error " + op.Error.ToString());
+        }
+    }
+
+    private void Cube_AddTextureAsyncFromAddressables()
+    {
+        // We need the cube to have a material before changing its texture to the one loaded from addressables
+        Cube_AddMaterialFromResources();
+
+        Addressables_Init();
+
+        AddressablesOp op = m_addressablesManager.LoadAssetAsync(CUBE_ADDRESSABLES_TEXTURE);
+        op.OnDone = Cube_OnAddTextureAsyncFromAddressables;
+    }
+
+    private void Cube_OnAddTextureAsyncFromAddressables(AddressablesOp op)
+    {
+        if (op.Error == null)
+        {
+            Texture texture = op.GetAsset<Texture>();
+            Cube_AddTexture(texture);
+        }
+        else
+        {
+            Debug.Log("Error " + op.Error.ToString());
+        }
+    }
+
+    private void Cube_AddMaterialFromAddressables()
+    {
+        Addressables_Init();
+
+        AddressablesOp op = m_addressablesManager.LoadDependenciesAsync(CUBE_ADDRESSABLES_MATERIAL);
+        op.OnDone = Cube_OnAddMaterialFromAddressables;
+    }
+
+    private void Cube_OnAddMaterialFromAddressables(AddressablesOp op)
+    {
+        if (op.Error == null)
+        {
+            Material material = m_addressablesManager.LoadAsset<Material>(CUBE_ADDRESSABLES_MATERIAL);
+            Cube_AddMaterial(material);
+        }
+        else
+        {
+            Debug.Log("Error " + op.Error.ToString());
+        }
+    }
+
+    private void Cube_AddTextureFromAddressables()
+    {
+        Addressables_Init();
+
+        AddressablesOp op = m_addressablesManager.LoadDependenciesAsync(CUBE_ADDRESSABLES_TEXTURE);
+        op.OnDone = Cube_OnAddTextureFromAddressables;
+    }
+
+    private void Cube_OnAddTextureFromAddressables(AddressablesOp op)
+    {
+        if (op.Error == null)
+        {
+            Texture texture = m_addressablesManager.LoadAsset<Texture2D>(CUBE_ADDRESSABLES_TEXTURE);
+            Cube_AddTexture(texture);
+        }
+        else
+        {
+            Debug.Log("Error " + op.Error.ToString());
+        }
     }
     #endregion
 
@@ -538,5 +671,5 @@ public class BasicAddressablesTestController : MonoBehaviour
             m_uiOperationResult.color = color;
         }
     }
-    #endregion
+    #endregion        
 }

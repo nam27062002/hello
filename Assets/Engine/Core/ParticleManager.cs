@@ -301,39 +301,56 @@ public class ParticleManager : UbiBCN.SingletonMonoBehaviour<ParticleManager> {
 	public static ParticleSystem InitLeveledParticle(string _particle, Transform _anchor)
 	{
 		ParticleSystem ret = null;
-		for(FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles; 
-			level >= FeatureSettings.ELevel5Values.very_low && ret == null; 
-			level = level - 1)
-		{
-			string variant = "";
-			switch(level) {
-					//	path = "Particles/VeryLow/";
-					// break;
-				case FeatureSettings.ELevel5Values.very_low:
-				case FeatureSettings.ELevel5Values.low:
-                    variant = "Low";
-					break;
-				case FeatureSettings.ELevel5Values.mid:
-                    variant = "Master";
-					break;
-				case FeatureSettings.ELevel5Values.high:
-                    variant = "High";
-					break;
-				case FeatureSettings.ELevel5Values.very_high:
-                    variant = "VeryHigh";
-					break;
-			}
-
-			if (!string.IsNullOrEmpty(variant)) {
-                GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
-
-				if (go != null) {
-					 ret = InitParticle(go,  _anchor);
-				}
-			}
-		}
-		return ret;
+        string variant = GetVariant(_particle);
+        if (!string.IsNullOrEmpty(variant)) {
+            GameObject go = HDAddressablesManager.Instance.LoadAsset<GameObject>(_particle, variant);
+            if (go != null) {
+                 ret = InitParticle(go,  _anchor);
+            }
+        }
+        return ret;
 	}
+
+    /// <summary>
+    /// Returns the variant to use for the particle passed as a parameter
+    /// </summary>
+    /// <param name="_particle">Particle id which variant is requested. This id is defined in addressables catalog.</param>
+    /// <returns>Returns the variant to use for the particle passed as a parameter</returns>
+    public static string GetVariant(string _particle)
+    {
+        string ret = null;
+        for (FeatureSettings.ELevel5Values level = FeatureSettingsManager.instance.Particles;
+            level >= FeatureSettings.ELevel5Values.very_low && ret == null;
+            level = level - 1)
+        {
+            string variant = "";
+            switch (level)
+            {
+                //	path = "Particles/VeryLow/";
+                // break;
+                case FeatureSettings.ELevel5Values.very_low:
+                case FeatureSettings.ELevel5Values.low:
+                    variant = "Low";
+                    break;
+                case FeatureSettings.ELevel5Values.mid:
+                    variant = "Master";
+                    break;
+                case FeatureSettings.ELevel5Values.high:
+                    variant = "High";
+                    break;
+                case FeatureSettings.ELevel5Values.very_high:
+                    variant = "VeryHigh";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(variant) && HDAddressablesManager.Instance.ExistsResource(_particle, variant))
+            {
+                ret = variant;                    
+            }
+        }
+
+        return ret;
+    }
 
     public static GameObject InitLeveledParticleObject(string _particle, Transform _anchor) {
         GameObject ret = null;

@@ -311,7 +311,7 @@ public class DestructibleDecoration : MonoBehaviour, ISpawnable, IBroadcastListe
 		m_entity.onDieStatus.source = IEntity.Type.PLAYER;
 
 		// [AOC] Notify game!
-		Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_BURNED, m_transform, m_entity, m_entity.reward);
+		Messenger.Broadcast<Transform, IEntity, Reward>(MessengerEvents.ENTITY_DESTROYED, m_transform, m_entity, m_entity.reward);
 
 		if (m_cameraShake > 0) {
 			Messenger.Broadcast<float, float>(MessengerEvents.CAMERA_SHAKE, m_cameraShake, 1f);

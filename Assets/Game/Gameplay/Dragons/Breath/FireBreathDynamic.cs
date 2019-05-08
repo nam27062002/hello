@@ -98,6 +98,8 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
     private ParticleSystem[] m_particleList;
 
     public float m_reflectionScale = 5.0f;
+    bool m_loadingParticles = false;
+   
 
     void OnEnable()
     {
@@ -156,28 +158,54 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
 
     }
 
-
-    void Awake()
+    
+    IEnumerator WaitToLoadParticles( List<AddressablesOp> loadingFlames)
     {
-		// Instantiate all particles
-		int max;
-		max = m_fireParticles.Count;
-		for (int i = 0; i < max; i++) {
-			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_fireParticles[i].name, m_fireParticles[i].anchor);
-			if ( ps != null ){
-				m_fireParticlesInstances.Add( ps );
-			}
-		}
+        bool done = false;
+        while(!done)
+        {
+            yield return null;
+            done = true;
+            for (int i = 0; i < loadingFlames.Count && done; i++)
+            {
+                done = done && loadingFlames[i].isDone;
+            }
+        }
 
-		max = m_underWaterParticles.Count;
-		for (int i = 0; i < max; i++) {
-			ParticleSystem ps = ParticleManager.InitLeveledParticle( m_underWaterParticles[i].name, m_underWaterParticles[i].anchor);
-			if ( ps != null )
-				m_underWaterParticlesInstances.Add( ps );
-		}
+        ParticleSystem ps;
+        int max;
+
+        max = m_fireParticles.Count;
+        for (int i = 0; i < max; i++)
+        {
+            ps = ParticleManager.InitLeveledParticle(m_fireParticles[i].name, m_fireParticles[i].anchor);
+            if (ps != null)
+            {
+                m_fireParticlesInstances.Add(ps);
+            }
+        }
+        
+        max = m_underWaterParticles.Count;
+        for (int i = 0; i < max; i++)
+        {
+            ps = ParticleManager.InitLeveledParticle( m_underWaterParticles[i].name, m_underWaterParticles[i].anchor);
+            if ( ps != null) { 
+                m_underWaterParticlesInstances.Add( ps );
+            }
+        }    
+        yield return null;
+        m_loadingParticles = false;
+        if (enableState)
+        {
+            EnableFlame(enableState, !m_showFlame);
+        }
+        setEffectScale(m_collisionMaxDistance / 2.0f, 1);
     }
+    
+
+            
     // Use this for initialization
-    void Start () 
+    IEnumerator Start()
 	{
 		m_WaterLayerMask = 1 << LayerMask.NameToLayer("Water");
         m_AllLayerMask = 0;
@@ -213,8 +241,31 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
         m_whipEnd = transform.Find("WhipEnd").gameObject;
         m_collisionPlane = transform.Find("WhipEnd/collisionPlane").gameObject;
         m_particleList = GetComponentsInChildren<ParticleSystem>();
-    }
+        
+        
+        // Instantiate all particles
+        List<AddressablesOp> loadingFlames = new List<AddressablesOp>();
+        
+        int max = m_fireParticles.Count;
+        string particleId;
+        for (int i = 0; i < max; i++) {
+            particleId = m_fireParticles[i].name;
+            loadingFlames.Add(HDAddressablesManager.Instance.LoadDependenciesAsync(particleId, ParticleManager.GetVariant(particleId)));                
+        }
 
+        max = m_underWaterParticles.Count;
+        for (int i = 0; i < max; i++) {
+            particleId = m_underWaterParticles[i].name;
+            loadingFlames.Add(HDAddressablesManager.Instance.LoadDependenciesAsync(particleId, ParticleManager.GetVariant(particleId)));
+        }                
+
+        if ( loadingFlames.Count > 0 )
+        {
+            m_loadingParticles = true;
+            yield return StartCoroutine( WaitToLoadParticles(loadingFlames));
+        }
+        yield return null;
+    }
 
 	
 	// Update is called once per frame
@@ -251,7 +302,7 @@ public class FireBreathDynamic : MonoBehaviour , IBroadcastListener
         float flameAnim = m_FlameAnimation.Evaluate( m_showFlameTimer );
         if (!enableState && m_showFlameTimer <= 0)
         {
-        	if (!HasParticleAlive())
+        	if (!HasParticleAlive() && !m_loadingParticles)
             	gameObject.active = false;
         }
 		float xStep = (flameAnim * m_distance * m_effectScale) / (m_splits + 1);

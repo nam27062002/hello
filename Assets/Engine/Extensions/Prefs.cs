@@ -265,7 +265,11 @@ public static class Prefs {
 	public static DateTime Get(string _key, DateTime _defaultValue, Mode _mode) {
 		DateTime dt = _defaultValue;    // It's a struct, so this creates a new copy
 		try {
-			dt = DateTime.Parse(Get(_key, string.Empty, _mode), System.Globalization.CultureInfo.InvariantCulture);
+            string _dateAsString = Get(_key, string.Empty, _mode);
+            if (!string.IsNullOrEmpty(_dateAsString))
+            {
+                dt = DateTime.Parse(Get(_key, string.Empty, _mode), System.Globalization.CultureInfo.InvariantCulture);
+            }
 		} catch(Exception _e) {
 			Debug.LogError("CATCHED EXCEPTION\n" + _e.ToString());
 		}

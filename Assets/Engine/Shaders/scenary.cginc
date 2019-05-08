@@ -75,7 +75,7 @@ float _LightmapIntensity;
 
 #ifdef NORMALMAP
 uniform sampler2D _NormalTex;
-//uniform float4 _NormalTex_ST;
+uniform float4 _NormalTex_ST;
 uniform float _NormalStrength;
 #endif
 
@@ -154,8 +154,10 @@ v2f vert (appdata_t v)
 	o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 
-#ifdef MAINCOLOR_TEXTURE
+#if defined(MAINCOLOR_TEXTURE)
 	o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex) + (_Time.y * _Panning.xy);
+#elif defined(NORMALMAP)
+	o.texcoord = TRANSFORM_TEX(v.texcoord, _NormalTex) + (_Time.y * _Panning.xy);
 #endif
 
 #ifdef BLEND_TEXTURE	
@@ -180,16 +182,7 @@ v2f vert (appdata_t v)
 #ifdef FOG	
 	HG_TRANSFER_FOG(o, worldPos);	// Fog
 #endif
-/*
-#ifdef EMISSIVE_REFLECTIVE
-//	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
-//	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
-//	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
-	float s = sin(_Time.y * 3.0 + o.vertex.x * 24.0 * o.vertex.y * 32.0);
-	float c = cos(_Time.y * 2.0 + o.vertex.y * 24.0 + o.vertex.x * 32.0);
-	o.cap = v.texcoord;//normalize(float2(s, c));
-#endif
-*/
+
 
 #if defined(LIGHTMAP_ON) && defined(FORCE_LIGHTMAP) //&& !defined(EMISSIVE_BLINK)
 	o.lmap = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;	// Lightmap

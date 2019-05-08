@@ -39,7 +39,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 9.27888e-40, b: 2.5596883, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 1.091627e-39, b: 2.5596883, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -11576,6 +11576,10 @@ Prefab:
     - target: {fileID: 100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_ScaleInLightmap
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
@@ -36394,6 +36398,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1138764991}
     m_Modifications:
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
       propertyPath: m_LocalPosition.x
       value: -76.58
@@ -36462,6 +36470,10 @@ Prefab:
       propertyPath: m_StaticEditorFlags
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: e2904fedb237545488a28e3d9b4c1c4a, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 000ef3b35fd57bc46a3420d6ba9d8e36, type: 3}
   m_IsPrefabParent: 0
@@ -36548,15 +36560,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 34.909992
+      value: 34.853
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -12.900299
+      value: -14.79
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.748415
+      value: 8.64
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalRotation.x
@@ -36580,15 +36592,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalScale.x
-      value: 17.740772
+      value: 21.575441
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalScale.y
-      value: 17.740778
+      value: 21.575455
       objectReference: {fileID: 0}
     - target: {fileID: 400004, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_LocalScale.z
-      value: 17.740778
+      value: 21.575455
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 1831ac0cde570364bba434a426460517, type: 3}
       propertyPath: m_Materials.Array.data[0]

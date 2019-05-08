@@ -883,16 +883,20 @@ public class PersistenceCloudDriver
 	{     
         switch (mSyncerStep)
         {
-            case ESyncSetp.LoggingInSocial:
-           // Checks for timeout after calling the social network so we don't depend on the social network, in particular this approach lets us address HDK-1574           
-#if UNITY_ANDROID                
-                Syncer_Timer -= Math.Min(UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
-                if (Syncer_Timer <= 0f)
-                {
-                    Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
-                }
-#endif
-                break;
+		case ESyncSetp.LoggingInSocial:
+
+			// Checks for timeout after calling the social network so we don't depend on the social network, 
+			// in particular this approach lets us address HDK-1574 and HDK-2590          
+			if (SocialPlatformManager.SharedInstance.IsLogInTimeoutEnabled()) 
+			{				
+				Syncer_Timer -= Math.Min (UnityEngine.Time.deltaTime, UnityEngine.Time.maximumDeltaTime);
+				if (Syncer_Timer <= 0f) 
+				{
+					SocialPlatformManager.SharedInstance.OnLogInTimeout();
+					Syncer_OnLogInSocialDone(SocialPlatformManager.ELoginResult.Error, null);
+				}					
+			}
+            break;
         }   
 
 		// Upload local to cloud

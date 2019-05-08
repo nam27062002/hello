@@ -32,6 +32,8 @@ public class SocialUtilsDummy : SocialUtils
 
     public override bool IsLoggedIn() { return GetIsEnabled() && m_mockLoggedIn; }
 
+	public override bool IsLogInTimeoutEnabled() { return false; }
+
     public override void GetProfileInfoFromPlatform(Action<ProfileInfo> onGetProfileInfo)
     {
         if (onGetProfileInfo != null)
