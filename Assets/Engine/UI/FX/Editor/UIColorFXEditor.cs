@@ -99,7 +99,7 @@ public class UIColorFXEditor : Editor {
 
 				// Open ramps editor
 				if(GUILayout.Button("Color Ramps Editor")) {
-					// TODO!!
+					HungryDragonEditorMenu.MenuColorRampEditor();
 				}
 
 				EditorGUI.EndDisabledGroup();
