@@ -47,7 +47,7 @@ public class ColorRampEditorData : ScriptableObject {
 			}
 			tex.SetPixels(pixels);
 			tex.Apply();
-		}
+        }
 	}
 
 	//------------------------------------------------------------------//

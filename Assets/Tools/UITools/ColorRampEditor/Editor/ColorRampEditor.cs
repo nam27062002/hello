@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -219,9 +220,9 @@ public class ColorRampEditor : EditorWindow {
 	/// The editor has been disabled - target object unselected.
 	/// </summary>
 	private void OnDisable() {
-		// Make sure textures are properly saved
-		AssetDatabase.SaveAssets();
-	}
+        // Make sure textures are properly saved
+        SaveTextures();
+    }
 
 	/// <summary>
 	/// Called 100 times per second on all visible windows.
@@ -262,8 +263,8 @@ public class ColorRampEditor : EditorWindow {
 			// Save assets button
 			GUI.color = Colors.paleGreen;
 			if(GUILayout.Button("Save Assets", GUILayout.Width(100f), GUILayout.Height(buttonHeight))) {
-				AssetDatabase.SaveAssets();
-			}
+                SaveTextures();
+            }
 			GUI.color = Color.white;
 		} EditorGUILayout.EndHorizontal();
 
@@ -274,6 +275,21 @@ public class ColorRampEditor : EditorWindow {
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
+
+    private void SaveTextures() {
+        int count = m_data.ramps.Length;
+
+        for (int i = 0; i < count; ++i) {
+            Texture2D texture = m_data.ramps[i].tex;
+            if (texture != null) {
+                string path = AssetDatabase.GetAssetPath(texture);
+                File.WriteAllBytes(path, texture.EncodeToPNG());
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+    }
+
 	/// <summary>
 	/// Loads persistence data if not already loaded.
 	/// If no data object exists at the target path, creates a new one.
