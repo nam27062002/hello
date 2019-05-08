@@ -22,19 +22,58 @@ public class EditorAssetBundlesManager
         return ASSET_BUNDLES_PATH + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();        
     }
 
-    public static void BuildAssetBundles(BuildTarget platform)
+    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
     {
         Debug.Log("Building asset bundles...");
         string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
-        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
-        if (!Directory.Exists(assetBundleDirectory))
+        // LZ4 algorithm is used to reduce memory footprint
+        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+
+        // LZMA algorithm, it gives the smallest possible size
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;
+
+        // If we're rebuilding all asset bundles then we need to clean up first
+        if (abNames == null)
         {
-            Directory.CreateDirectory(assetBundleDirectory);
+            EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
+
+            if (!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, compression, platform);
+        }
+        else
+        {
+            if (!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+
+            // Rebuilds only the selected ones        
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, GetBuildsForPaths(abNames).ToArray(), compression, platform);
+        }
+    }    
+
+    private static List<AssetBundleBuild> GetBuildsForPaths(List<string> abNames)
+    {
+        List<AssetBundleBuild> assetBundleBuilds = new List<AssetBundleBuild>();
+
+        // Get asset bundle names from selection
+        foreach (var o in abNames)
+        {
+            AssetBundleBuild build = new AssetBundleBuild();
+
+            build.assetBundleName = o;
+            build.assetBundleVariant = null;
+            build.assetNames = AssetDatabase.GetAssetPathsFromAssetBundle(o);
+
+            assetBundleBuilds.Add(build);
         }
 
-        // LZ4 algorithm is used to reduce memory footprint
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.ChunkBasedCompression, platform);
+        return assetBundleBuilds;
     }
 
     public static AssetBundleManifest LoadAssetBundleManifest(out AssetBundle manifestBundle)

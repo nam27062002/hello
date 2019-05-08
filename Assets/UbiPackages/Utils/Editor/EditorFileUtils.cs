@@ -127,4 +127,24 @@ public class EditorFileUtils
         string[] files = Directory.GetFiles(path);
         return (files == null) ? 0 : files.Length;
     } 
+
+    public static void CopyFiles(string sourceDirectory, string destDirectory)
+    {
+        if (Directory.Exists(sourceDirectory) && Directory.Exists(destDirectory))
+        {
+            string[] files = Directory.GetFiles(sourceDirectory);
+            int count = files.Length;
+            string dstFileName;
+            for (int i = 0; i < count; i++)
+            {
+                dstFileName = EditorFileUtils.PathCombine(destDirectory, Path.GetFileName(files[i]));     
+                if (File.Exists(dstFileName))
+                {
+                    File.Delete(dstFileName);
+                }           
+
+                File.Copy(files[i], dstFileName);
+            }
+        }
+    }
 }

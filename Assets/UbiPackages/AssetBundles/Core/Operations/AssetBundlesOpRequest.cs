@@ -81,4 +81,12 @@
             OnDone(result, data);
         }
     }
+
+    public virtual void Cancel()
+    {
+        if (Op != null)
+        {
+            Op.Cancel();
+        }
+    }
 }

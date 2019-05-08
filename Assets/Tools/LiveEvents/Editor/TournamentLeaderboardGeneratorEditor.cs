@@ -64,9 +64,11 @@ public class TournamentLeaderboardGeneratorEditor : EditorWindow {
 		maxScore = EditorGUILayout.IntField("Max Score", maxScore);
 		EditorPrefs.SetInt("TournamentLeaderboardGeneratorEditor.TournamentLeaderboardMaxScore", maxScore);
 
+		if(GUILayout.Button("RELOAD NAME POOLS", GUILayout.Height(50))) {
+			LeaderboardGenerator.ReloadPools();
+		}
+
 		if(GUILayout.Button("GENERATE TOURNAMENT LEADERBOARD JSON", GUILayout.Height(50))) {
-			string[] firstNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/first_names.txt"));
-			string[] lastNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/last_names.txt"));
 			int picRandomSeed = UnityEngine.Random.Range(1, 500);
 			int score = maxScore;
 			JSONClass playerData = null;
@@ -74,12 +76,10 @@ public class TournamentLeaderboardGeneratorEditor : EditorWindow {
 			JSONClass data = new JSONClass();
 			JSONArray array = new JSONArray();
 			for(int i = 0; i < leaderboardSize; ++i) {
-				string name = firstNames.GetRandomValue() + " " + lastNames.GetRandomValue();
-
 				score = UnityEngine.Random.Range((int)(score * 0.9f), score);
 
 				playerData = new JSONClass();
-				playerData.Add("name", name);
+				playerData.Add("name", LeaderboardGenerator.GenerateRandomName());
 				playerData.Add("pic", "https://picsum.photos/200/200/?image=" + (picRandomSeed + i).ToString());
 				playerData.Add("score", score);
 				array.Add(playerData);

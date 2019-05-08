@@ -192,8 +192,8 @@ public class LevelLoader
     public void Perform(bool loadSync, OnChangeStateCallback onChangeState = null)
     {        
         m_loadSync = loadSync;
-        OnChangeState = onChangeState;
-            
+        OnChangeState = onChangeState;        
+
         m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad);        
         State = EState.UnloadingPrevAreaScenes;        
     }
