@@ -248,9 +248,16 @@ public class EditorAddressablesMenu : MonoBehaviour
         }
 
         assetsLUTSource += ".json";
-        
-        File.Copy(assetsLUTSource, assetsLUTInResources);
+
+        if (File.Exists(assetsLUTSource))
+        {
+            File.Copy(assetsLUTSource, assetsLUTInResources);
         }
+        else
+        {
+            Debug.LogWarning("No assetsLUT found for platform " + target.ToString() + ": " + assetsLUTSource);
+        }
+
         AssetDatabase.Refresh();
     }
 
