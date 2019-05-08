@@ -196,17 +196,26 @@ public class EditorAddressablesManager
                 EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
                 count = scenes.Length;
                 string scenePath;
+				bool enabled;
                 for (int i = 0; i < count; i++)
                 {
                     scenePath = scenes[i].path;
-                    scenes[i].enabled = !scenesToRemove.Contains(scenePath);                    
-                    
-                    newSceneList.Add(scenes[i]);                                            
-                    
-                    if (scenesToAdd.Contains(scenePath))
-                    {
-                        scenesToAdd.Remove(scenePath);
-                    }
+					if (scenesToAdd.Contains(scenePath)) 
+					{
+						enabled = true;
+						scenesToAdd.Remove(scenePath);
+					} 
+					else if (scenesToRemove.Contains(scenePath)) 
+					{
+						enabled = false;
+					} 
+					else 
+					{
+						enabled = scenes [i].enabled;
+					}
+
+					scenes[i].enabled = enabled;                                        
+                    newSceneList.Add(scenes[i]);                                                                                   
                 }                
 
                 if (scenesToAdd.Count > 0)
