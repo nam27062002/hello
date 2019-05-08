@@ -28,7 +28,7 @@ public class EditorAssetBundlesManager
         string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
         // LZ4 algorithm is used to reduce memory footprint
-        BuildAssetBundleOptions compression = BuildAssetBundleOptions.BuildAssetBundleOptions.ChunkBasedCompression;
+        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
 
         // LZMA algorithm, it gives the smallest possible size
         //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;
