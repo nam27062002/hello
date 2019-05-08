@@ -30,6 +30,9 @@ public class EditorAssetBundlesManager
         // LZ4 algorithm is used to reduce memory footprint
         BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
 
+        // LZMA algorithm, it gives the smallest possible size
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;
+
         // If we're rebuilding all asset bundles then we need to clean up first
         if (abNames == null)
         {
