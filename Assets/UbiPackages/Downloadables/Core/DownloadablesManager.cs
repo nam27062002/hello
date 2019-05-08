@@ -11,7 +11,7 @@ namespace Downloadables
     /// </summary>
     public class Manager
     {
-        public static bool USE_CRC_IN_URL = false;
+        public static bool USE_CRC_IN_URL = true;
 
 #if UNITY_EDITOR
         private static bool USE_REMOTE_SERVER = true;
