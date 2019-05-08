@@ -400,10 +400,10 @@ public class EditorAddressablesManager
         {
             string targetAsString = target.ToString();
             string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, targetAsString);
-            EditorFileUtils.CopyFiles(localAssetBundlesPath, sourcePath);
+            EditorFileUtils.CopyFilesInDirectory(localAssetBundlesPath, sourcePath);
 
             string remoteAssetBundlesPath = EditorFileUtils.PathCombine(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, targetAsString);
-            EditorFileUtils.CopyFiles(remoteAssetBundlesPath, sourcePath);
+            EditorFileUtils.CopyFilesInDirectory(remoteAssetBundlesPath, sourcePath);
         }        
     }
     
@@ -490,10 +490,18 @@ public class EditorAddressablesManager
                         if (path.StartsWith(token))
                         {
                             string pathFromResources = path.Substring(token.Length);                            
-                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;
+                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;                            
 
-                            EditorFileUtils.CreateDirectory(Path.GetDirectoryName(resourcesPath));
-                            File.Copy(path, resourcesPath, true);
+                            // Moves the file
+                            EditorFileUtils.Move(path, resourcesPath);
+
+                            // Moves the meta
+                            path += ".meta";
+                            resourcesPath += ".meta";
+
+                            EditorFileUtils.Move(path, resourcesPath);
+
+                            // Moves the meta
                             entry.AssetName = GENERATED_FOLDER + "/" + EditorFileUtils.GetPathWithoutExtension(pathFromResources);
                         }
                         else
@@ -506,6 +514,37 @@ public class EditorAddressablesManager
         }
 
         return success;
+    }
+
+    public void MoveGeneratedResourcesToOriginalUbication()
+    {
+        string directory = EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER);
+        if (Directory.Exists(directory))
+        {
+            InternalMoveResourcesToOriginalUbication(directory);
+            ClearResourcesGenerated();
+
+            AssetDatabase.Refresh();
+        }
+    }
+
+    private void InternalMoveResourcesToOriginalUbication(string directory)
+    {
+        string[] files = Directory.GetFiles(directory);
+        int count = files.Length;
+        string destPath;
+        for (int i = 0; i < count; i++)
+        {
+            destPath = files[i].Replace(RESOURCES_GENERATED_FOLDER, "");
+            EditorFileUtils.Move(files[i], destPath);
+        }
+
+        string[] directories = Directory.GetDirectories(directory);
+        count = directories.Length;
+        for (int i = 0; i < count; i++)
+        {
+            InternalMoveResourcesToOriginalUbication(directories[i]);
+        }
     }
 
     private static bool IsScene(string path)
