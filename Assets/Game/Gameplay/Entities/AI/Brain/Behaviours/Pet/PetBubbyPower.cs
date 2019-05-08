@@ -26,6 +26,8 @@ namespace AI {
 
             private ParticleHandler m_effectHandler;
 
+            DragonTier m_tierCheck;
+
             //------------------------------------------------------------------------
 
             public override StateComponentData CreateData() {
@@ -47,6 +49,8 @@ namespace AI {
                 // create a projectile from resources (by name) and save it into pool
                 Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
                 Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
+
+                m_tierCheck = InstanceManager.player.data.tier;
             }
 
             void CreatePool() {
@@ -90,8 +94,9 @@ namespace AI {
                     int entityCount = EntityManager.instance.GetOnScreenEntities(m_entities);
 
                     for (int i = 0; i < entityCount; ++i) {
-                        if (!m_entities[i].HasTag(m_data.ignoreTag)) {
-                            playSound = true;
+                            // Check if it can be eaten by the player
+                        if (!m_entities[i].HasTag(m_data.ignoreTag) && ( m_entities[i].IsEdible(m_tierCheck) || m_entities[i].CanBeHolded(m_tierCheck))) {
+                            playSound = true; 
                             BubbledEntitySystem.AddEntity(m_entities[i], m_data.bubbleStunTime);
                         }
                         m_entities[i] = null; // we don't want to keep this reference
