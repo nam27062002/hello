@@ -74,7 +74,7 @@ public class AddressablesCatalog
                 LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
 
-                if (AddressablesManager.Mode == AddressablesManager.EMode.AllInLocalAssetBundles)
+                if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
                 {
                     SetAllAssetBundlesAsLocal();
                 }
