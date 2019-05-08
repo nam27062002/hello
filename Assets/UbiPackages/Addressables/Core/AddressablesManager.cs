@@ -48,30 +48,44 @@ public class AddressablesManager
     public const string ADDRESSABLES_EDITOR_GENERATED_PATH = ADDRESSABLES_EDITOR_PATH + "generated/";
     public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = ADDRESSABLES_EDITOR_GENERATED_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
-    private const string EDITOR_MODE_KEY = "EditorMode";
+    public enum EMode
+    {
+        Editor,
+        Catalog,
+        AllInLocalAssetBundles,    
+        AllInResources    
+    };
 
-    /// Flag to indicate if we want to simulate assetBundles in Editor without building them actually.
-    private static int sm_editorMode = -1;
-    public static bool EditorMode
+    private static string MODE_KEY = "mode";
+    public static EMode Mode
     {
         get
-        {
-            if (sm_editorMode == -1)
-                sm_editorMode = UnityEditor.EditorPrefs.GetBool(EDITOR_MODE_KEY, true) ? 1 : 0;
-
-            return sm_editorMode != 0;
+        {            
+            int index = UnityEditor.EditorPrefs.GetInt(MODE_KEY, 0);
+            return (EMode)index;
         }
 
         set
         {
-            int newValue = value ? 1 : 0;
-            if (newValue != sm_editorMode)
-            {
-                sm_editorMode = newValue;
-                UnityEditor.EditorPrefs.SetBool(EDITOR_MODE_KEY, value);
-            }
+            UnityEditor.EditorPrefs.SetInt(MODE_KEY, (int)value);            
         }
     }
+
+	public static EMode DefaultMode = EMode.AllInResources;
+
+	public static EMode EffectiveMode
+	{
+		get 
+		{
+			return (Mode == EMode.Editor) ? DefaultMode : Mode;
+		}
+	}
+
+    public static bool Mode_NeedsAssetBundles()
+    {        
+		EMode mode = EffectiveMode;
+        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles;
+    }    
 #endif
 
     private AddressablesCatalog m_catalog;
@@ -86,7 +100,7 @@ public class AddressablesManager
 
 #if UNITY_EDITOR
         // editor catalog is used instead in editor mode
-        if (EditorMode)
+        if (Mode == EMode.Editor)
         {
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
@@ -334,7 +348,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 returnValue = new AddressablesOpResult();
                 returnValue.Setup(null, null);
@@ -367,7 +381,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 returnValue = new AddressablesOpResult();
                 returnValue.Setup(null, null);
@@ -413,7 +427,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -431,7 +445,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -449,7 +463,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -469,7 +483,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
@@ -493,7 +507,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
@@ -513,7 +527,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 groupId = null;
             }
@@ -535,7 +549,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 groupIds = null;
             }
@@ -846,7 +860,7 @@ public class AddressablesManager
 
 #if UNITY_EDITOR
         // Editor mode must be used only when there's an entry defined for the addressable requested, otherwise we need to use the default provider (fromResources)
-        if (EditorMode && entryWasFound)
+        if (Mode == EMode.Editor && entryWasFound)
         {
             returnValue = m_providerFromEditor;
         }

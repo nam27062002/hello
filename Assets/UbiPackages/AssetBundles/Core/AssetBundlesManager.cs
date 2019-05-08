@@ -119,10 +119,17 @@ public class AssetBundlesManager
 
         ProcessCatalog(localAssetBundlesPath, catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
+        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
+
+        bool containsAnyRemoteAB = ContainsCatalogAnyRemoteAssetBundle();
+        if (!containsAnyRemoteAB)
+        {
+            downloadablesCatalog = null;
+        }        
+
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
 
-        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
-        if (m_groups != null)
+        if (m_groups != null && containsAnyRemoteAB)
         {
             Downloadables.CatalogGroup downloadablesGroup;
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
@@ -135,7 +142,7 @@ public class AssetBundlesManager
                 }
             }
         }
-        
+
         m_downloadablesManager.Initialize(downloadablesCatalog, downloadablesGroups);        
 
         if (CanLog())
@@ -305,6 +312,19 @@ public class AssetBundlesManager
             m_groups = catalog.GetGroups();         
         }       
     }    
+
+    private bool ContainsCatalogAnyRemoteAssetBundle()
+    {
+        foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
+        {
+            if (pair.Value.IsRemote())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public void Reset()
     {
