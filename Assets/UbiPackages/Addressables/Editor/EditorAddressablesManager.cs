@@ -196,17 +196,26 @@ public class EditorAddressablesManager
                 EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
                 count = scenes.Length;
                 string scenePath;
+				bool enabled;
                 for (int i = 0; i < count; i++)
                 {
                     scenePath = scenes[i].path;
-                    scenes[i].enabled = !scenesToRemove.Contains(scenePath);                    
-                    
-                    newSceneList.Add(scenes[i]);                                            
-                    
-                    if (scenesToAdd.Contains(scenePath))
-                    {
-                        scenesToAdd.Remove(scenePath);
-                    }
+					if (scenesToAdd.Contains(scenePath)) 
+					{
+						enabled = true;
+						scenesToAdd.Remove(scenePath);
+					} 
+					else if (scenesToRemove.Contains(scenePath)) 
+					{
+						enabled = false;
+					} 
+					else 
+					{
+						enabled = scenes [i].enabled;
+					}
+
+					scenes[i].enabled = enabled;                                        
+                    newSceneList.Add(scenes[i]);                                                                                   
                 }                
 
                 if (scenesToAdd.Count > 0)
@@ -235,7 +244,7 @@ public class EditorAddressablesManager
         }
 
 		string path = Path.Combine(m_localDestinationPath, AssetBundlesManager.ASSET_BUNDLES_CATALOG_FILENAME); 		       
-        if (AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
+        if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
         {
             // No catalog is required
 			if (File.Exists(path)) 
@@ -354,7 +363,7 @@ public class EditorAddressablesManager
             }
 
             string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
-            if (AddressablesManager.Mode == AddressablesManager.EMode.AllInLocalAssetBundles)
+            if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
             {
                 if (EditorFileUtils.Exists(remoteFolder))
                 {
@@ -391,10 +400,10 @@ public class EditorAddressablesManager
         {
             string targetAsString = target.ToString();
             string localAssetBundlesPath = EditorFileUtils.PathCombine(m_assetBundlesLocalDestinationPath, targetAsString);
-            EditorFileUtils.CopyFiles(localAssetBundlesPath, sourcePath);
+            EditorFileUtils.CopyFilesInDirectory(localAssetBundlesPath, sourcePath);
 
             string remoteAssetBundlesPath = EditorFileUtils.PathCombine(EditorAssetBundlesManager.DOWNLOADABLES_FOLDER, targetAsString);
-            EditorFileUtils.CopyFiles(remoteAssetBundlesPath, sourcePath);
+            EditorFileUtils.CopyFilesInDirectory(remoteAssetBundlesPath, sourcePath);
         }        
     }
     
@@ -481,10 +490,18 @@ public class EditorAddressablesManager
                         if (path.StartsWith(token))
                         {
                             string pathFromResources = path.Substring(token.Length);                            
-                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;
+                            string resourcesPath = token + RESOURCES_GENERATED_FOLDER + "/" + pathFromResources;                            
 
-                            EditorFileUtils.CreateDirectory(Path.GetDirectoryName(resourcesPath));
-                            File.Copy(path, resourcesPath, true);
+                            // Moves the file
+                            EditorFileUtils.Move(path, resourcesPath);
+
+                            // Moves the meta
+                            path += ".meta";
+                            resourcesPath += ".meta";
+
+                            EditorFileUtils.Move(path, resourcesPath);
+
+                            // Moves the meta
                             entry.AssetName = GENERATED_FOLDER + "/" + EditorFileUtils.GetPathWithoutExtension(pathFromResources);
                         }
                         else
@@ -497,6 +514,37 @@ public class EditorAddressablesManager
         }
 
         return success;
+    }
+
+    public void MoveGeneratedResourcesToOriginalUbication()
+    {
+        string directory = EditorFileUtils.PathCombine("Assets", RESOURCES_GENERATED_FOLDER);
+        if (Directory.Exists(directory))
+        {
+            InternalMoveResourcesToOriginalUbication(directory);
+            ClearResourcesGenerated();
+
+            AssetDatabase.Refresh();
+        }
+    }
+
+    private void InternalMoveResourcesToOriginalUbication(string directory)
+    {
+        string[] files = Directory.GetFiles(directory);
+        int count = files.Length;
+        string destPath;
+        for (int i = 0; i < count; i++)
+        {
+            destPath = files[i].Replace(RESOURCES_GENERATED_FOLDER, "");
+            EditorFileUtils.Move(files[i], destPath);
+        }
+
+        string[] directories = Directory.GetDirectories(directory);
+        count = directories.Length;
+        for (int i = 0; i < count; i++)
+        {
+            InternalMoveResourcesToOriginalUbication(directories[i]);
+        }
     }
 
     private static bool IsScene(string path)

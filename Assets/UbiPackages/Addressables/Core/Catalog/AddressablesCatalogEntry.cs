@@ -158,7 +158,7 @@ public class AddressablesCatalogEntry
             AssetName = data[att];
 
 #if UNITY_EDITOR
-            if (m_editorMode && AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
+            if (m_editorMode && AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
             {
                 SetupAsEntryInResources(Id);
             }
