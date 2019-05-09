@@ -130,11 +130,8 @@ public class EditorAddressablesMenu : MonoBehaviour
             return;
         }
 
-        // Generated assets need to be moved to their original location again when leaving AllInResources mode
-        if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources && value != AddressablesManager.EMode.AllInResources)
-        {
-            Manager.MoveGeneratedResourcesToOriginalUbication();
-        }
+        // Generated assets need to be moved to their original location again
+        Manager.MoveGeneratedResourcesToOriginalUbication();        
 
         AddressablesManager.Mode = value;
 
