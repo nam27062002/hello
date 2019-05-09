@@ -113,6 +113,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
                 break;
 
             case 3:
+            case 4:
                 materialEditor.ShaderProperty(mp_RampColor, Styles.rampColorText);
                 break;
 
