@@ -27,7 +27,6 @@ public class Editor_AB_Menu : MonoBehaviour
             GetEntriesFromDirectory(directory);
         }
 
-
         string output = "";
         FileInfo[] files = _directory.GetFiles();
         foreach (FileInfo file in files) {
@@ -51,12 +50,15 @@ public class Editor_AB_Menu : MonoBehaviour
                     AssetBundleName = assetBundle
                 };
 
-
                 output += entry.ToJSON().ToString() + ",\n";
             }
         }
 
-        Debug.Log(output);
+        StreamWriter writer = new StreamWriter("Assets/entries.txt", false) {
+            AutoFlush = true
+        };
+        writer.Write(output);
+        writer.Close();
     }
 
     private static void OnDone(string taskName)
