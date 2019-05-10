@@ -198,6 +198,7 @@ public class ColorRampEditor : EditorWindow {
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		if(m_serializedCollection != null) m_serializedCollection.ApplyModifiedProperties();
 
+		// Did selected collection change?
 		if(reloadCollection) LoadCollectionIfNeeded();
 	}
 
