@@ -248,9 +248,19 @@ public class SocialPlatformManager : MonoBehaviour
         return m_socialUtils.IsLoggedIn();
     }
 
+	public bool IsLogInTimeoutEnabled()
+	{
+		return m_socialUtils.IsLogInTimeoutEnabled();
+	}
+
+	public void OnLogInTimeout()
+	{
+		m_socialUtils.OnLogInTimeout();
+	}
+
     public void Logout()
     {
-        GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
+		GameSessionManager.SharedInstance.LogOutFromSocialPlatform();
     }
 
     public void Login(bool isSilent, bool isAppInit, Action<ELoginResult, string> onDone)

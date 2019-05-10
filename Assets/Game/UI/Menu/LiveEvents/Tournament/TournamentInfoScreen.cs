@@ -285,7 +285,8 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 				this.GetComponentInParent<Canvas>().transform as RectTransform
 			);
 			text.text.color = UIConstants.ERROR_MESSAGE_COLOR;
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
+            HDLiveDataManager.instance.SwitchToQuest();
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622
             if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||
