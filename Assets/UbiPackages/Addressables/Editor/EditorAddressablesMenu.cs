@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -129,7 +130,15 @@ public class EditorAddressablesMenu : MonoBehaviour
             return;
         }
 
+        // Generated assets need to be moved to their original location again
+        Manager.MoveGeneratedResourcesToOriginalUbication();        
+
         AddressablesManager.Mode = value;
+
+        if (AddressablesManager.Mode_NeedsAssetBundles())
+        {
+            Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
+        }
 
         Manager.GeneratePlayerCatalog();
         Manager.GenerateAssetBundlesCatalog();        
@@ -139,10 +148,11 @@ public class EditorAddressablesMenu : MonoBehaviour
             DeleteLocalAssetBundlesInPlayerDestination();
         }
         else if (AddressablesManager.Mode_NeedsAssetBundles())
-        {
-            //CopyLocalAssetBundlesToPlayerDestination(EditorUserBuildSettings.activeBuildTarget);
+        {         
             Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         }
+
+		AssetDatabase.Refresh ();
     }
 
     [MenuItem(ADDRESSABLES_EDITOR_MODE)]
@@ -201,8 +211,57 @@ public class EditorAddressablesMenu : MonoBehaviour
 
     public static void OnPreBuild(BuildTarget target)
     {
+        // Copy the platform assetsLUT to Resources
+		if (Downloadables.Manager.USE_CRC_IN_URL) 
+		{
+			CopyPlatformAssetsLUTToResources (target);
+		}
+
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.Mode == AddressablesManager.EMode.Editor ? AddressablesManager.DefaultMode : AddressablesManager.Mode);        
+        SetMode(AddressablesManager.EffectiveMode);     
+    }
+
+    public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
+    {
+        string directoryInResources = "Assets/Resources/AssetsLUT/";
+        string assetsLUTInResources = directoryInResources + "assetsLUT.json";
+        if (Directory.Exists(directoryInResources))
+        {
+            if (File.Exists(assetsLUTInResources))
+            {
+                File.Delete(assetsLUTInResources);
+            }
+        }
+        else
+        {
+            // Makes sure that the destination folder exists        
+            Directory.CreateDirectory(directoryInResources);
+        }
+
+        string assetsLUTSource = "AssetsLUT/assetsLUT_";
+        switch (target)
+        {
+            case BuildTarget.Android:
+                assetsLUTSource += "Android";
+                break;
+
+            case BuildTarget.iOS:
+                assetsLUTSource += "iOS";
+                break;
+        }
+
+        assetsLUTSource += ".json";
+
+        if (File.Exists(assetsLUTSource))
+        {
+            File.Copy(assetsLUTSource, assetsLUTInResources);
+        }
+        else
+        {
+            Debug.LogWarning("No assetsLUT found for platform " + target.ToString() + ": " + assetsLUTSource);
+        }
+
+        AssetDatabase.Refresh();
     }
 
     public static void OnPostBuild()
@@ -217,4 +276,6 @@ public class EditorAddressablesMenu : MonoBehaviour
     {
         Manager.DeleteLocalAssetBundlesInPlayerDestination();
     }
+
+
 }

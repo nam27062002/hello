@@ -7,7 +7,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	
-		[KeywordEnum(None, Tint, Gradient, ColorRamp)] ColorMode("Color mode", Float) = 0.0
+		[KeywordEnum(None, Tint, Gradient, ColorRamp, ColorRampMasked)] ColorMode("Color mode", Float) = 0.0
 
 		_Tint1("Tint Color 1", Color) = (1,1,1,1)
 		_Tint2("Tint Color 2", Color) = (1,1,1,1)
@@ -38,7 +38,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
-			#pragma multi_compile COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP
+			#pragma multi_compile COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"

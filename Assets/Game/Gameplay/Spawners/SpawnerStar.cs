@@ -10,6 +10,7 @@ public class SpawnerStar : AbstractSpawner {
 	[SerializeField] private string m_entityPrefab = "";
     public string entityPrefab { get { return m_entityPrefab; } }
 
+    [DelayedAttribute]
     [SerializeField] private uint m_quantity = 5;
 
 	[Separator("Coin Bonus")]
@@ -27,8 +28,8 @@ public class SpawnerStar : AbstractSpawner {
 	private SpawnerConditions m_respawnConditions; 
 	private GameSceneControllerBase m_gameSceneController;
 
-	[SerializeField][HideInInspector] private Vector3[] m_points = new Vector3[0];
-	public Vector3[] points { get { return m_points; } set { m_points = value; } }
+	[SerializeField][HideInInspector] private List<Vector3> m_points = new List<Vector3>();
+	public List<Vector3> points { get { return m_points; } set { m_points = value; } }
 
 	private bool[] m_pointsAlive;
 	private int[] m_pointToEntityIndex;
@@ -202,7 +203,7 @@ public class SpawnerStar : AbstractSpawner {
 	public void UpdateBounds() {
 		m_rect.min = Vector3.zero;
 		m_rect.max = Vector3.zero;
-		for (int i = 0; i < m_points.Length; ++i) {			
+		for (int i = 0; i < m_points.Count; ++i) {			
 			m_rect.min = Vector3.Min(m_rect.min, m_points[i]);
 			m_rect.max = Vector3.Max(m_rect.max, m_points[i]);
 		}
@@ -221,7 +222,7 @@ public class SpawnerStar : AbstractSpawner {
 		// Draw icon! - only in editor!
 		#if UNITY_EDITOR
 		// Icons are stored in the Gizmos folder in the project root (Unity rules), and have the same name as the entities
-		for (int i = 0; i < m_points.Length; ++i) {
+		for (int i = 0; i < m_points.Count; ++i) {
 			Gizmos.DrawIcon(transform.position + m_points[i], IEntity.ENTITY_PREFABS_PATH + m_entityPrefab, true);
 		}
 		#endif

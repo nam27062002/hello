@@ -127,4 +127,46 @@ public class EditorFileUtils
         string[] files = Directory.GetFiles(path);
         return (files == null) ? 0 : files.Length;
     } 
+
+    /// <summary>
+    /// Copy all files in <c>sourceDirectory</c> to <c>destDirectory</c>
+    /// </summary>
+    /// <param name="sourceDirectory">Directory where the files to move are stored in</param>
+    /// <param name="destDirectory">Directory to move the files to</param>
+    public static void CopyFilesInDirectory(string sourceDirectory, string destDirectory)
+    {
+        if (Directory.Exists(sourceDirectory) && Directory.Exists(destDirectory))
+        {
+            string[] files = Directory.GetFiles(sourceDirectory);
+            int count = files.Length;
+            string destFileName;
+            for (int i = 0; i < count; i++)
+            {
+                destFileName = EditorFileUtils.PathCombine(destDirectory, Path.GetFileName(files[i]));     
+
+                // If the destDirectory already contains a file with the same name then this file is deleted before copying the one in sourceDirectory
+                if (File.Exists(destFileName))
+                {
+                    File.Delete(destFileName);
+                }           
+
+                File.Copy(files[i], destFileName);
+            }
+        }
+    }
+
+    public static void Move(string sourcePath, string destPath)
+    {
+        if (File.Exists(sourcePath))
+        {
+            CreateDirectory(Path.GetDirectoryName(destPath));
+
+            if (File.Exists(destPath))
+            {
+                File.Delete(destPath);
+            }
+
+            File.Move(sourcePath, destPath);
+        }
+    }
 }

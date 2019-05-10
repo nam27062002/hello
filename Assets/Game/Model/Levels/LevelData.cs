@@ -15,7 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Scriptable object meant to store all kind of data related to a game level.
 /// </summary>
-[CreateAssetMenu]
+[CreateAssetMenu(fileName = "NewLevelData", menuName = "HungryDragon/Level Data")]
 public class LevelData : ScriptableObject {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
