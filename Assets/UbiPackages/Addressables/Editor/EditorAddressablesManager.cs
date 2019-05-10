@@ -528,15 +528,34 @@ public class EditorAddressablesManager
         }
     }
 
+    private static string META_EXTENSION = ".meta";
+
     private void InternalMoveResourcesToOriginalUbication(string directory)
     {
         string[] files = Directory.GetFiles(directory);
         int count = files.Length;
         string destPath;
+        bool needsToMove;
         for (int i = 0; i < count; i++)
         {
             destPath = files[i].Replace(RESOURCES_GENERATED_FOLDER, "");
-            EditorFileUtils.Move(files[i], destPath);
+
+            needsToMove = true;
+
+            // metas of directories don't need to be moved in order to prevent many files from being reimported when changing addressables mode
+            if (Path.GetExtension(files[i]) == META_EXTENSION)
+            {
+                string fileWithoutExtension = destPath.Replace(META_EXTENSION, "");                
+                if (Directory.Exists(fileWithoutExtension))
+                {
+                    needsToMove = false;
+                }
+            }
+
+            if (needsToMove)
+            {
+                EditorFileUtils.Move(files[i], destPath);
+            }
         }
 
         string[] directories = Directory.GetDirectories(directory);

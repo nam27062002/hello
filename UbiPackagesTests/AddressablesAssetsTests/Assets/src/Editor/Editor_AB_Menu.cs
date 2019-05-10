@@ -38,6 +38,12 @@ public class Editor_AB_Menu : MonoBehaviour
             AssetImporter ai = AssetImporter.GetAtPath(filePath);
             if (ai != null) {
                 string assetBundle = "dragon_skins";
+
+                System.Type t = AssetDatabase.GetMainAssetTypeAtPath(filePath);
+                if (t == typeof(UnityEngine.Material)) {
+                    assetBundle = "dragon_objects";
+                }
+
                 string assetName = Path.GetFileNameWithoutExtension(file.Name);
                 string assetPath = Path.GetDirectoryName(filePath);
                 string id = assetName;

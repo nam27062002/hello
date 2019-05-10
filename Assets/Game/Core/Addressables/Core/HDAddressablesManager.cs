@@ -120,35 +120,18 @@ public class HDAddressablesManager : AddressablesManager
         }
 
         return urlBase;
+    }    
+
+    private static string GetUrlWithEnvironment(string urlBase)
+    {
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        return CaletyConstants.GetUrlWithEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
     }
 
-    private string GetUrlEnvironmentSuffix()
+    private static string GetUrlWithoutEnvironment(string urlBase)
     {
-        string returnValue = "";
         Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-        if (kServerConfig != null)
-        {
-            switch (kServerConfig.m_eBuildEnvironment)
-            {
-                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:                    
-                    returnValue = "prod";
-                    break;
-
-                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
-                    returnValue = "qc";                    
-                    break;
-
-                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                    returnValue = "stage";                    
-                    break;
-
-                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                    returnValue = "dev";
-                    break;
-            }                                      
-        }
-
-        return returnValue;
+        return CaletyConstants.GetUrlWithoutEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -157,40 +140,33 @@ public class HDAddressablesManager : AddressablesManager
         {
             // urlBase is taken from assetLUT unless it's empty or "localhost", which means that assetsLUT is the one in the build, which must be adapted to the environment
             string urlBase = assetsLUT.m_strURLBase;
-            if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
-            {
-                urlBase = GetEnvironmentUrlBase();
 
-                if (!ContentManager.USE_ASSETS_LUT_V2)
-                {
-                    urlBase += GetUrlEnvironmentSuffix() + "/";
-                }  
+            bool calculateProdUrl = true;
+
+#if UNITY_EDITOR
+            // We don't need to use prod url when using the local server 
+            calculateProdUrl = !urlBase.Contains(":7888");            
+            if (!calculateProdUrl)            
+            {
+                urlBase = GetUrlWithoutEnvironment(urlBase);
+                Downloadables.Downloader.USE_CRC_IN_URL = false;
             }
-
-            if (ContentManager.USE_ASSETS_LUT_V2)
+#endif
+            if (calculateProdUrl)
             {
-                urlBase += GetUrlEnvironmentSuffix() + "/";
-                    
-                if (!string.IsNullOrEmpty(assetsLUT.m_strBundlesBase))
+                if (string.IsNullOrEmpty(urlBase) || urlBase.Contains("localhost"))
                 {
-                    urlBase += assetsLUT.m_strBundlesBase + "/";
+                    assetsLUT.m_strURLBase = GetUrlWithEnvironment(GetEnvironmentUrlBase());
                 }
 
-                string platform = ContentManager.GetAssetsLUTPlatform();
-                if (!string.IsNullOrEmpty(platform))
-                {
-                    urlBase += platform + "/";
-                }
-            }
-            else
-            {
-                urlBase += assetsLUT.m_iReleaseVersion + "/";
+                urlBase = assetsLUT.GetAssetsBundleUrlBase();
             }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
+            string key;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
             {
                 // Only bundles are considered
@@ -199,18 +175,18 @@ public class HDAddressablesManager : AddressablesManager
                     entry = new Downloadables.CatalogEntry();
                     entry.CRC = pair.Value;
                     entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
-
+                    key = pair.Key;
                     catalog.AddEntry(pair.Key, entry);
                 }
             }
 
-            if (ContentManager.USE_ASSETS_LUT_V2)
+            if (!ContentManager.USE_ASSETS_LUT_V2 || !calculateProdUrl)
             {
-                return catalog.ToJSON();
+                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON(), calculateProdUrl);
             }
             else
             {
-                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+                return catalog.ToJSON();
             }
         }
         else
