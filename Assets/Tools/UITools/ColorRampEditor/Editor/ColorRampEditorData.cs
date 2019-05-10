@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -30,6 +31,19 @@ public class ColorRampEditorData : ScriptableObject {
 		public Gradient gradient = new Gradient();
 		public Texture2D tex = null;
 
+		// Control vars
+		[NonSerialized] public bool dirty = false;
+		[NonSerialized] public Gradient gradientBackup = new Gradient();
+
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public ColorRampData() {
+			// Backup gradient
+			gradientBackup.SetKeys(gradient.colorKeys, gradient.alphaKeys);
+			gradientBackup.mode = gradient.mode;
+		}
+
 		/// <summary>
 		/// Updates texture content with data from the gradient.
 		/// </summary>
@@ -47,7 +61,45 @@ public class ColorRampEditorData : ScriptableObject {
 			}
 			tex.SetPixels(pixels);
 			tex.Apply();
+
+			// Mark it as dirty
+			dirty = true;
         }
+
+		/// <summary>
+		/// Save texture file to disk.
+		/// </summary>
+		public void SaveTexture() {
+			// Is texture initialized?
+			if(tex == null) return;
+
+			// Do it!
+			string path = AssetDatabase.GetAssetPath(tex);
+			File.WriteAllBytes(path, tex.EncodeToPNG());
+			AssetDatabase.SaveAssets();
+
+			// Update gradient backup
+			gradientBackup.SetKeys(gradient.colorKeys, gradient.alphaKeys);
+			gradientBackup.mode = gradient.mode;
+
+			// Not dirty anymore!
+			dirty = false;
+		}
+
+		/// <summary>
+		/// Discard current gradient to the backup, if backup properly initialized.
+		/// Reloads texture from disk as well.
+		/// </summary>
+		public void DiscardGradient() {
+			// Restore gradient
+			if(gradientBackup != null) {
+				gradient.SetKeys(gradientBackup.colorKeys, gradientBackup.alphaKeys);
+				gradient.mode = gradientBackup.mode;
+
+				// Gradient changed, refresh texture
+				RefreshTexture();
+			}
+		}
 	}
 
 	//------------------------------------------------------------------//

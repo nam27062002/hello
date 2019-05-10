@@ -11,7 +11,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System;
-using System.IO;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -25,6 +24,7 @@ public class ColorRampEditor : EditorWindow {
 	//------------------------------------------------------------------//
 	private const string DATA_PATH = "Assets/Resources/Editor/ColorRampEditorData.asset";
 	private const float MARGIN = 2f;
+	private const float INFO_BOX_MARGIN = 5f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -42,30 +42,17 @@ public class ColorRampEditor : EditorWindow {
 	}
 
 	// Custom styles
-	private static GUIStyle s_infoLabelStyle = null;
-	private static GUIStyle INFO_LABEL_STYLE {
+	private static GUIStyle s_helpBoxTextStyle = null;
+	private static GUIStyle HELP_BOX_TEXT_STYLE {
 		get {
-			if(s_infoLabelStyle == null) {
-				s_infoLabelStyle = new GUIStyle(GUI.skin.label);
-				s_infoLabelStyle.wordWrap = true;
+			if(s_helpBoxTextStyle == null) {
+				s_helpBoxTextStyle = new GUIStyle(GUI.skin.label);
+				s_helpBoxTextStyle.alignment = TextAnchor.MiddleLeft;
+				s_helpBoxTextStyle.richText = true;
 			}
-			return s_infoLabelStyle;
+			return s_helpBoxTextStyle;
 		}
 	}
-
-	private static GUIStyle s_warningLabelStyle = null;
-	private static GUIStyle WARNING_LABEL_STYLE {
-		get {
-			if(s_warningLabelStyle == null) {
-				s_warningLabelStyle = new GUIStyle(GUI.skin.label);
-				s_warningLabelStyle.wordWrap = true;
-				s_warningLabelStyle.normal.textColor = Color.yellow;
-				s_warningLabelStyle.alignment = TextAnchor.UpperCenter;
-			}
-			return s_warningLabelStyle;
-		}
-	}
-
 
 	// Data
 	private ColorRampEditorData m_data = null;
@@ -115,11 +102,13 @@ public class ColorRampEditor : EditorWindow {
 
 			// Element
 			m_rampsList.drawElementCallback = (Rect _rect, int _idx, bool _isActive, bool _isFocused) => {
-				// Element's foldout arrow is drawn OUTSIDE the rectangle, so try to compensate it here.
-				// Do some hardcoded adjusting before drawing the property
-				_rect.x += 10f;
-				_rect.width -= 10f;
+				// Margins
+				_rect.x += MARGIN;
+				_rect.width -= MARGIN;
 				_rect.y += MARGIN;
+
+				// Aux vars
+				float currentLineY = _rect.y;
 
 				// Get target data
 				ColorRampEditorData.ColorRampData rampData = m_data.ramps[_idx];
@@ -128,22 +117,41 @@ public class ColorRampEditor : EditorWindow {
 				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 
 				// Adjust prefix label size
-				EditorGUIUtility.labelWidth = 80f;
+				EditorGUIUtility.labelWidth = 90f;
 
 				// Display texture
-				_rect.height = EditorGUI.GetPropertyHeight(texProp);
-				EditorGUI.PropertyField(_rect, texProp, new GUIContent("Texture File"), true);
+				Rect texRect = new Rect(
+					_rect.x,
+					currentLineY,
+					_rect.width,
+					EditorGUI.GetPropertyHeight(texProp)
+				);
+				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Texture File"), true);
 
 				// Advance pos
-				_rect.y += _rect.height + MARGIN;
+				currentLineY += texRect.height + MARGIN;
 
 				// Display gradient
 				// Disabled if no texture is assigned
 				if(rampData.tex == null) {
 					// Draw warning text
-					Rect warningRect = new Rect(_rect);
-					warningRect.height *= 2f;
-					GUI.Label(warningRect, "Assign a texture to edit", WARNING_LABEL_STYLE);
+					Rect warningRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						30f
+					);
+					EditorGUI.HelpBox(warningRect, "", MessageType.Info);
+
+					Rect boxTextRect = new Rect(warningRect);
+					boxTextRect.xMin += INFO_BOX_MARGIN + 20f;	// Leave room for the info box icon
+					boxTextRect.yMin += INFO_BOX_MARGIN;
+					boxTextRect.xMax -= INFO_BOX_MARGIN;
+					boxTextRect.yMax -= INFO_BOX_MARGIN;
+					GUI.Label(boxTextRect, "Assign a texture to edit", HELP_BOX_TEXT_STYLE);
+
+					// Advance pos
+					currentLineY += warningRect.height + MARGIN;
 				} else { 
 					// [AOC] EditorGUILayout.GradientField is not public before Unity 2018, 
 					// so we're forced to use the serialized property.
@@ -155,35 +163,77 @@ public class ColorRampEditor : EditorWindow {
 					// Detect changes
 					EditorGUI.BeginChangeCheck();
 
-					// Some constants
-					float infoWidth = 90f;
-
-					// Define height
-					_rect.height = EditorGUI.GetPropertyHeight(gradientProp);
-
-					// Get the rect without the prefix label
-					Rect contentRect = EditorGUI.IndentedRect(_rect);
-					contentRect.x += EditorGUIUtility.labelWidth;
-					contentRect.width -= EditorGUIUtility.labelWidth;
-
 					// Draw Gradient field
-					Rect gradientRect = new Rect(_rect);
-					gradientRect.width -= infoWidth - MARGIN;
-					EditorGUI.PropertyField(gradientRect, gradientProp, new GUIContent("Preview"), true);
+					Rect gradientRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						EditorGUI.GetPropertyHeight(gradientProp)
+					);
+					EditorGUI.PropertyField(gradientRect, gradientProp, new GUIContent("Click to edit -->"), true);
 
-					// Draw info text
-					Rect infoRect = new Rect(contentRect);
-					infoRect.x = gradientRect.xMax + MARGIN;
-					infoRect.width = infoWidth;
-					infoRect.height *= 2f;
-					GUI.Label(infoRect, "<-- Click to edit texture", INFO_LABEL_STYLE);
+					// Advance pos
+					currentLineY += gradientRect.height + MARGIN;
 
-					//EditorGUI.PropertyField(_rect, gradientProp, true);
-					//EditorGUI.LabelField(_rect, ".", "Edit Gradient", EditorStyles.miniButton);
-
+					// Did the gradient change?
 					if(EditorGUI.EndChangeCheck()) {
-						// Gradient has changed! Generate texture
+						// Yes! Generate texture
 						rampData.RefreshTexture();
+					}
+
+					// If texture has been modified, show Save and Discard buttons
+					if(rampData.dirty) {
+						// Aux vars
+						float buttonW = 80f;
+
+						// Box
+						Rect errorBoxRect = new Rect(
+							_rect.x,
+							currentLineY,
+							_rect.width,
+							30f
+						);
+						EditorGUI.HelpBox(errorBoxRect, "", MessageType.Warning);
+
+						// Message
+						Rect boxContentRect = new Rect(errorBoxRect);
+						boxContentRect.xMin += INFO_BOX_MARGIN + 20f;	// Leave room for the info box icon
+						boxContentRect.yMin += INFO_BOX_MARGIN;
+						boxContentRect.xMax -= INFO_BOX_MARGIN + buttonW + MARGIN + buttonW;
+						boxContentRect.yMax -= INFO_BOX_MARGIN;
+						GUI.Label(boxContentRect, Colors.yellow.Tag("Texture not saved!"), HELP_BOX_TEXT_STYLE);
+
+						// Save button
+						boxContentRect.xMin = boxContentRect.xMax;
+						boxContentRect.width = buttonW;
+						GUI.color = Colors.paleGreen;
+						if(GUI.Button(boxContentRect, "Save")) {
+							// Save to disk
+							rampData.SaveTexture();
+						}
+
+						// Discard button
+						boxContentRect.xMin = boxContentRect.xMax + MARGIN;
+						boxContentRect.width = buttonW;
+						GUI.color = Colors.coral;
+						if(GUI.Button(boxContentRect, "Discard")) {
+							// Reload texture from disk
+							rampData.DiscardGradient();
+							rampData.SaveTexture();
+
+							// [AOC] TODO!! Somehow the gradient preview doesn't get refreshed when restoring the gradient by script -___-
+							// 		 Figure out a solution for it.
+							/*
+							EditorUtility.SetDirty(m_data);
+							m_serializedData.Update();  // Otherwise the gradient preview will not refresh properly
+							m_serializedData.ApplyModifiedProperties();
+							Repaint();
+							*/						
+						}
+						GUI.color = Color.white;
+
+						// Advance pos
+						currentLineY += errorBoxRect.height + MARGIN;
 					}
 				}
 
@@ -193,7 +243,14 @@ public class ColorRampEditor : EditorWindow {
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
 				// Hardcoded xD
-				return 50f;
+				ColorRampEditorData.ColorRampData rampData = m_data.ramps[_idx];
+				if(rampData.tex == null) {
+					return 60f; // Extra space for warning message
+				} else if(rampData.dirty) {
+					return 80f;	// Extra space for buttons
+				} else {
+					return 45f;
+				}
 			};
 
 			m_rampsList.drawElementBackgroundCallback = (Rect _rect, int _idx, bool _active, bool _focused) => {
@@ -202,14 +259,24 @@ public class ColorRampEditor : EditorWindow {
 				_rect.x += margin;
 				_rect.width -= margin * MARGIN;
 
-				// Different colors based on state
+				// Different colors based on GUI state
+				ColorRampEditorData.ColorRampData rampData = m_data.ramps[_idx];
 				if(_active) {
-					GUI.color = new Color(0.24f, 0.38f, 0.54f);     // Unity default (blue-ish)
+					GUI.color = new Color(0.35f, 0.35f, 0.35f);     // Bright gray
 				} else if(_focused) {
-					GUI.color = new Color(0.36f, 0.36f, 0.36f);     // Unity default (brighter gray)
+					GUI.color = new Color(0.32f, 0.32f, 0.32f);    // Medium gray
 				} else {
-					GUI.color = new Color(0.30f, 0.30f, 0.30f);     // Unity default (dark gray)
+					GUI.color = new Color(0.25f, 0.25f, 0.25f);     // Dark gray
 				}
+
+				// Blend with color by error state
+				if(rampData.dirty) {
+					GUI.color = Color.Lerp(GUI.color, Colors.gold, 0.25f);
+				} else if(rampData.tex == null) {
+					GUI.color = Color.Lerp(GUI.color, Colors.maroon, 0.25f);
+				}
+
+				// Draw background
 				GUI.DrawTexture(_rect, Texture2D.whiteTexture);
 				GUI.color = Color.white;
 			};
@@ -221,7 +288,7 @@ public class ColorRampEditor : EditorWindow {
 	/// </summary>
 	private void OnDisable() {
         // Make sure textures are properly saved
-        SaveTextures();
+        //SaveTextures();
     }
 
 	/// <summary>
@@ -247,26 +314,9 @@ public class ColorRampEditor : EditorWindow {
 		m_serializedData.Update();
 
 		// Entries list
-		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos, GUILayout.Height(Screen.height - 60f)); {
+		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos); {
 			m_rampsList.DoLayoutList();
 		} EditorGUILayout.EndScrollView();
-
-		// Buttons bar
-		float buttonHeight = 30f;
-		EditorGUILayout.BeginHorizontal(); {
-			// Flexible space to align buttons to the right
-			GUILayout.FlexibleSpace();
-
-			// Space
-			EditorGUILayout.Space();
-
-			// Save assets button
-			GUI.color = Colors.paleGreen;
-			if(GUILayout.Button("Save Assets", GUILayout.Width(100f), GUILayout.Height(buttonHeight))) {
-                SaveTextures();
-            }
-			GUI.color = Color.white;
-		} EditorGUILayout.EndHorizontal();
 
 		// Apply changes to the serialized object - always do this in the end of OnInspectorGUI.
 		m_serializedData.ApplyModifiedProperties();
@@ -275,18 +325,14 @@ public class ColorRampEditor : EditorWindow {
 	//------------------------------------------------------------------//
 	// INTERNAL METHODS													//
 	//------------------------------------------------------------------//
-
+	/// <summary>
+	/// Save all textures to disk.
+	/// </summary>
     private void SaveTextures() {
         int count = m_data.ramps.Length;
-
         for (int i = 0; i < count; ++i) {
-            Texture2D texture = m_data.ramps[i].tex;
-            if (texture != null) {
-                string path = AssetDatabase.GetAssetPath(texture);
-                File.WriteAllBytes(path, texture.EncodeToPNG());
-            }
-        }
-
+			m_data.ramps[i].SaveTexture();
+		}
         AssetDatabase.SaveAssets();
     }
 
