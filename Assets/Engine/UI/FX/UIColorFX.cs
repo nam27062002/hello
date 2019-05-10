@@ -4,6 +4,11 @@
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+//#define ALLOW_RAMP_INTENSITY   // [AOC] Disable to make it more optimal by just getting the full value from the gradient
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -97,11 +102,13 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		set { m_colorRamp = value;  SetDirty(); }
 	}
 
+#if ALLOW_RAMP_INTENSITY
 	[SerializeField] [Range(0f, 1f)] private float m_colorRampIntensity = 0f;
 	public float colorRampIntensity {
 		get { return m_colorRampIntensity; }
 		set { m_colorRampIntensity = value; SetDirty(); }
 	}
+#endif
 
 	[Space]
 	[FormerlySerializedAs("alpha")]
@@ -197,13 +204,13 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		// Detect hierarchy changes
         // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potentially every tick,
         // however we want to apply the materials in edit time (hierarchy in edit time might change in order to check how a new widget would look like in the hierarchy)
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying && transform.hasChanged) {
 			// Make sure materials are valid
 			m_materialDirty = true;
 			m_dirty = true;
 		}
-		#endif
+#endif
 
 		// Keep materials updated
 		if(m_materialDirty) {
@@ -268,12 +275,12 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		this.contrast = _setup.contrast;
 
 		// If in edit mode, force an update
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			SetDirty();
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	/// <summary>
@@ -293,11 +300,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		m_dirty = true;
 
 		// If in edit mode, force an update so new values are applied
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	/// <summary>
@@ -309,11 +316,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		m_materialDirty = true;
 
 		// If in edit mode, force an update so new values are applied
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	//------------------------------------------------------------------------//
@@ -348,7 +355,9 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 			_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
 			if(m_colorRampEnabled) {
 				_mat.SetTexture("_ColorRampTex", colorRamp);
+#if ALLOW_RAMP_INTENSITY
 				_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+#endif
 			}
 
 			_mat.SetFloat("_Alpha", alpha);

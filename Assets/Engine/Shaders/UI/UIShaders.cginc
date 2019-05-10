@@ -38,7 +38,7 @@ uniform fixed4 _ColorAdd;
 
 #ifdef COLOR_RAMP_ENABLED
 sampler2D _ColorRampTex;
-uniform fixed _ColorRampIntensity;
+//uniform fixed _ColorRampIntensity;	// [AOC] Make it more optimal by just getting the full value from the gradient
 #endif
 
 uniform fixed _Alpha;
@@ -94,11 +94,19 @@ void ContrastSaturationBrightness(inout fixed3 _color, fixed _b, fixed _s, fixed
 void ApplyColorRamp(inout fixed3 _color) {
 #ifdef COLOR_RAMP_ENABLED
 	// From https://stackoverflow.com/questions/46771162/color-ramp-shader-cg-shaderlab
+	
+	// A) For non-grayscale textures, figure out luminosity. More expensive, only for testing purposes.
+	/*
 	// Figure out luminosity for this pixel
 	half lum = dot(_color, fixed3(0.2126, 0.7152, 0.0722));
 	
 	// Get value from color ramp and interpolate it with source color using the intensity factor
 	_color = lerp(_color, tex2D(_ColorRampTex, float2(lum, 0)).rgb, _ColorRampIntensity);
+	*/
+	
+	// B) Use R component to figure out luminosity value (could be G or B, since it's grayscale all values are the same)
+	//    Don't tune ramp intensity, we want full gradient value
+	_color = tex2D(_ColorRampTex, float2(_color.r, 0)).rgb;
 #endif
 }
 

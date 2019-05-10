@@ -15,7 +15,7 @@ Shader "Custom/UI/UIFont" {
 		// [AOC] Doesn't make much sense in fonts, but adding it for compatibility with UIColorFX
 		[Toggle(COLOR_RAMP_ENABLED)] _ColorRampEnabled("Color Ramp Enabled", Float) = 0
 		_ColorRampTex("Color Ramp", 2D) = "white" {}
-		_ColorRampIntensity("Color Ramp Intensity", Range(0, 1)) = 0
+		// _ColorRampIntensity("Color Ramp Intensity", Range(0, 1)) = 0	// [AOC] Make it more optimal by just getting the full value from the gradient
 		
 		_Alpha ("Alpha", Float) = 1	// [AOC] NEW!! Will be multiplied to the source and tint alpha components
 		

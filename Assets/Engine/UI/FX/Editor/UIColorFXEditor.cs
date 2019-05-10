@@ -5,6 +5,11 @@
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+//#define ALLOW_RAMP_INTENSITY   // [AOC] Disable to make it more optimal by just getting the full value from the gradient
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -95,7 +100,9 @@ public class UIColorFXEditor : Editor {
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_colorRamp"));
 
 				// Intensity
+#if ALLOW_RAMP_INTENSITY
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_colorRampIntensity"));
+#endif
 
 				// Open ramps editor
 				if(GUILayout.Button("Color Ramps Editor")) {
