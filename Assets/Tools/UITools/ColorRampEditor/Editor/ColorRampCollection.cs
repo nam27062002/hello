@@ -18,7 +18,8 @@ using System.IO;
 /// <summary>
 /// Persistence data for the Editor.
 /// </summary>
-public class ColorRampEditorData : ScriptableObject {
+[CreateAssetMenu(fileName = "NewColorRampCollection", menuName = "HungryDragon/Color Ramp Collection")]
+public class ColorRampCollection : ScriptableObject {
 	//------------------------------------------------------------------//
 	// NESTED CLASSES													//
 	//------------------------------------------------------------------//
