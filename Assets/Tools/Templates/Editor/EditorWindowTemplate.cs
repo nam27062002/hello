@@ -20,6 +20,7 @@ public class TemplateEditorWindow : EditorWindow {
 	//------------------------------------------------------------------//
 	// CONSTANTS														//
 	//------------------------------------------------------------------//
+	private const float WINDOW_MARGIN = 10f;
 
 	//------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES											//
@@ -35,6 +36,9 @@ public class TemplateEditorWindow : EditorWindow {
 		}
 	}
 
+	// Internal
+	private Vector2 m_scrollPos = Vector2.zero;
+
 	//------------------------------------------------------------------//
 	// METHODS															//
 	//------------------------------------------------------------------//
@@ -44,6 +48,10 @@ public class TemplateEditorWindow : EditorWindow {
 	//[MenuItem("Hungry Dragon/Tools/TemplateEditorWindow")]	// UNCOMMENT TO ADD MENU ENTRY!!!
 	public static void OpenWindow() {
 		instance.Show();
+		//instance.ShowTab();
+		//instance.ShowPopup();
+		//instance.ShowUtility();
+		//instance.ShowAuxWindow();
 	}
 
 	/// <summary>
@@ -79,6 +87,28 @@ public class TemplateEditorWindow : EditorWindow {
 	/// Update the inspector window.
 	/// </summary>
 	public void OnGUI() {
+		// Scroll Rect
+		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
+		{
+			// Left Margin
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.Space(WINDOW_MARGIN);
 
+			// Top margin
+			EditorGUILayout.BeginVertical();
+			GUILayout.Space(WINDOW_MARGIN);
+
+			// Window Content!
+			// <-------- WINDOW CONTENT GOES HERE
+
+			// Bottom margin
+			GUILayout.Space(WINDOW_MARGIN);
+			EditorGUILayout.EndVertical();
+
+			// Right margin
+			GUILayout.Space(WINDOW_MARGIN);
+			EditorGUILayout.EndHorizontal();
+		}
+		EditorGUILayout.EndScrollView();
 	}
 }
