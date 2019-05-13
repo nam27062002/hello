@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 114914241137125846}
   - component: {fileID: 114784987956888336}
   m_Layer: 0
-  m_Name: PF_PetFroggyMenu_v4_23
+  m_Name: PF_PetFroggyMenu_v4
   m_TagString: Pet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 4913324833745150}
   - component: {fileID: 33954760916538234}
   - component: {fileID: 23511564526285632}
+  - component: {fileID: 114224407242737092}
   m_Layer: 12
   m_Name: PetFroggyNeron
   m_TagString: Untagged
@@ -1254,6 +1255,22 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114224407242737092
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1451937889576304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9aae6699537414c7ab185eeaef226fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_parentName: Pet_Head
+  m_parentRoot: {fileID: 424588}
+  m_worldPositionStays: 1
+  m_resetScale: 0
+  m_when: 0
 --- !u!114 &114711808252611858
 MonoBehaviour:
   m_ObjectHideFlags: 1
