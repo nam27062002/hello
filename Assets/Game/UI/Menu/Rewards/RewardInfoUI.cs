@@ -118,6 +118,8 @@ public class RewardInfoUI : MonoBehaviour {
 	private void Awake() {
 		// Start with everything hidden
 		SetRewardType(string.Empty);
+
+		if(m_shareButton != null) m_shareButton.SetActive(false);
 	}
 
 	//------------------------------------------------------------------------//

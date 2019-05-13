@@ -32,7 +32,7 @@ public class LoadAssetFromAssetBundleOp : AssetBundlesOp
         }
         else
         {            
-            m_request = m_assetBundle.LoadAssetAsync<GameObject>(m_assetName);
+            m_request = m_assetBundle.LoadAssetAsync<object>(m_assetName);
             if (m_request == null)
             {
                 NotifyError(EResult.Error_Asset_Not_Found_In_AB);

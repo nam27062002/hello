@@ -156,6 +156,10 @@ public abstract class SocialUtils
 
     public abstract bool IsLoggedIn();
 
+	public abstract bool IsLogInTimeoutEnabled();
+
+	public virtual void OnLogInTimeout() {}
+
     public static string PROFILE_IMAGE_STORAGE_PATH = "ProfileImg.bytes";
 
     public class ProfileInfo

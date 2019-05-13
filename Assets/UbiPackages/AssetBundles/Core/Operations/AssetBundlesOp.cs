@@ -7,6 +7,7 @@ public abstract class AssetBundlesOp
     {      
         None,  
         Success,
+        Canceled,
         Error_Internal,
         Error_AB_Handle_Not_Found,          // No asset bundle handle found for an id
         Error_AB_Couldnt_Be_Loaded,         // There was a problem when loading an asset bundle from disk
@@ -148,4 +149,9 @@ public abstract class AssetBundlesOp
             OnDone(result, data);            
         }
     }
+    
+    public void Cancel()
+    {
+        NotifyError(EResult.Canceled);
+    }    
 }

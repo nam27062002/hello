@@ -141,7 +141,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1750074587442070}
-  m_LocalRotation: {x: -0, y: -0, z: 1.1641531e-10, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: -0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -154,7 +154,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1749390191731818}
-  m_LocalRotation: {x: 0.22530511, y: -0.007596313, z: 0.0017566902, w: 0.97425705}
+  m_LocalRotation: {x: 0.22694263, y: -0.083250135, z: 0.019474357, w: 0.9701481}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -198,7 +198,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1950599130966282}
-  m_LocalRotation: {x: 0.22530511, y: -0.007596313, z: 0.0017566902, w: 0.97425705}
+  m_LocalRotation: {x: 0.22694263, y: -0.083250135, z: 0.019474357, w: 0.9701481}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1, z: 1}
   m_Children:
@@ -212,7 +212,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1446677279386794}
-  m_LocalRotation: {x: 0.22530511, y: -0.007596313, z: 0.0017566902, w: 0.97425705}
+  m_LocalRotation: {x: 0.22694263, y: -0.083250135, z: 0.019474357, w: 0.9701481}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3769,7 +3769,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 675187198
+  randomSeed: -1195925926
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7130,7 +7130,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 906849094
+  randomSeed: -2102750748
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7219,8 +7219,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 1, g: 0.9576065, b: 0.7205882, a: 1}
-      maxColor: {r: 1, g: 0.9155173, b: 0.6397059, a: 1}
+      minColor: {r: 0.99264705, g: 0.22047637, b: 0.043793235, a: 0.347}
+      maxColor: {r: 1, g: 0.39259636, b: 0.16911763, a: 0.422}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -8173,7 +8173,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    tilesX: 4
+    tilesX: 2
     tilesY: 2
     animationType: 0
     rowIndex: 0
@@ -10073,27 +10073,27 @@ ParticleSystem:
     vectorLabel0_0: X
     vector0_1:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 1
+      minMaxState: 1
+      scalar: 0.74
       minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 2
           time: 0
-          value: 0
+          value: 1
           inSlope: 0
           outSlope: 0
           tangentMode: 0
         - serializedVersion: 2
           time: 1
           value: 0
-          inSlope: 0
-          outSlope: 0
+          inSlope: -2
+          outSlope: -2
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
-        m_RotationOrder: 4
+        m_RotationOrder: 0
       minCurve:
         serializedVersion: 2
         m_Curve:
@@ -17213,7 +17213,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 915614220
+  randomSeed: -1669052944
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -20619,7 +20619,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1855689056
+  randomSeed: -1828623603
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -24043,8 +24043,8 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 841a89142eaa67b42abf91db07e2ea2f, type: 2}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 0006a9896c9c8124e8cc24d4736291cb, type: 2}
+  - {fileID: 2100000, guid: 0006a9896c9c8124e8cc24d4736291cb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

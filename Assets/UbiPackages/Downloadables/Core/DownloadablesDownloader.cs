@@ -165,7 +165,9 @@ namespace Downloadables
             FileStream saveFileStream = null;
             Error error = null;            
 
-            string fileName = entryStatus.Id;            
+            string fileName = entryStatus.Id;
+            string downloadURL = m_urlBase;
+
             try
             {
                 // Checks if the downloads directory has to be created                
@@ -192,8 +194,12 @@ namespace Downloadables
                     {
                         existingLength = fileInfo.Length;
                     }
-
-                    string downloadURL = m_urlBase + fileName;
+                    
+                    if (Manager.USE_CRC_IN_URL)
+                    {
+                        downloadURL += entryStatus.GetManifest().CRC + "/";
+                    }
+                    downloadURL += fileName;
 
                     if (CanLog())
                     {
@@ -388,7 +394,7 @@ namespace Downloadables
                 {                    
                     if (CanLog())
                     {
-                        LogError("AssetBundler DoDownload: Exception caused assetbundle download failure. Performing full file/CRC to work out file status: " + we.ToString());
+                        LogError("AssetBundler DoDownload: Exception caused assetbundle download failure url = " + downloadURL + ". Performing full file/CRC to work out file status: " + we.ToString());
                     }
                     error = new Error(we);                    
                 }

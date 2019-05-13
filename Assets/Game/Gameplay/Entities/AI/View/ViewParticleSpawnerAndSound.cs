@@ -30,10 +30,13 @@ public class ViewParticleSpawnerAndSound : ViewParticleSpawner {
 	{
 		if ( ao != null && ao.transform.parent == transform )
 		{
-			ao.transform.parent = null;	
+            InstanceManager.musicController.DelayedRemoveAudioParent( ao );
+            /*
+			ao.transform.parent = null;	// delay this?
 			ao.completelyPlayedDelegate = null;
 			if (ao.IsPlaying() && ao.audioItem.Loop != AudioItem.LoopMode.DoNotLoop)
 				ao.Stop();
+                */
 		}
 		ao = null;
 	}

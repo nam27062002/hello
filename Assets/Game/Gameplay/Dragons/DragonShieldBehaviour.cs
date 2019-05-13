@@ -49,7 +49,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
     
     void OnEntityEaten(Transform t, IEntity entity, Reward reward) {
         if (reward.health >= 0) {
-            if ( FreezingObjectsRegistry.instance.IsFreezing(entity.machine) )
+            if ( FreezingObjectsRegistry.instance.IsFreezing(entity) )
             {
                 float h = m_dragonHealth.GetBoostedHp(reward.origin, reward.health) * m_healthShieldRewardFactor;
                 if ( h<0 )
@@ -68,7 +68,7 @@ public class DragonShieldBehaviour : MonoBehaviour {
 
     private void OnEntityDestroyed(Transform _entity,  IEntity _e, Reward _reward) {
         if (_reward.health >= 0) {
-            if (FreezingObjectsRegistry.instance.IsFreezing(_e.machine))
+            if (FreezingObjectsRegistry.instance.IsFreezing(_e))
             {
                 AddShield(_reward.health * m_healthShieldRewardFactor);
             }

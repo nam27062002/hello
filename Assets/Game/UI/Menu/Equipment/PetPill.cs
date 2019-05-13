@@ -30,7 +30,7 @@ public class PetPillData {
 /// <summary>
 /// Single pill representing a pet.
 /// </summary>
-public class PetPill : ScrollRectItem<PetPillData> {
+public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -152,6 +152,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 
 		// Subscribe to external events
 		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
 		// Make sure pill is updated
 		Refresh();
@@ -163,6 +164,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 	private void OnDisable() {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
+		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 	}
 
 	/// <summary>
@@ -243,11 +245,6 @@ public class PetPill : ScrollRectItem<PetPillData> {
 					m_powerIcon.enabled = true;
 				}
 			}
-
-			// Power short description
-			if(m_shortDescriptionText != null) {
-				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true, true);	// Custom formatting depending on powerup type, already localized
-			}
 		} else {
 			if(m_powerIcon != null) {
 				m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
@@ -293,6 +290,7 @@ public class PetPill : ScrollRectItem<PetPillData> {
 
 		// Refresh contextual elements
 		Refresh();
+		RefreshTexts();
 	}
 
 
@@ -316,8 +314,6 @@ public class PetPill : ScrollRectItem<PetPillData> {
 			}
 		}
 	}
-
-
 
 	/// <summary>
 	/// Refresh pill's contextual elements based on assigned pet's state.
@@ -352,6 +348,19 @@ public class PetPill : ScrollRectItem<PetPillData> {
 			m_colorFX.brightness = 0f;
 			m_colorFX.saturation = 0f; 
 			m_colorFX.contrast   = 0f;
+		}
+	}
+
+	/// <summary>
+	/// Refresh all textfields of the pill.
+	/// </summary>
+	public void RefreshTexts() {
+		// Power short description
+		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
+		if(powerDef != null) {
+			if(m_shortDescriptionText != null) {
+				m_shortDescriptionText.text = DragonPowerUp.GetDescription(powerDef, true, true);   // Custom formatting depending on powerup type, already localized
+			}
 		}
 	}
 
@@ -453,6 +462,21 @@ public class PetPill : ScrollRectItem<PetPillData> {
 				// Mark pet equip tutorial as completed
 				UsersManager.currentUser.SetTutorialStepCompleted(TutorialStep.PETS_EQUIP, true);
 			}
+		}
+	}
+
+	/// <summary>
+	/// A global event has been sent.
+	/// </summary>
+	/// <param name="_eventType">Event type.</param>
+	/// <param name="_broadcastEventInfo">Broadcast event info.</param>
+	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
+		switch(_eventType) {
+			// Language has changed
+			case BroadcastEventType.LANGUAGE_CHANGED: {
+				// Refresh textfields
+				RefreshTexts();
+			} break;
 		}
 	}
 }

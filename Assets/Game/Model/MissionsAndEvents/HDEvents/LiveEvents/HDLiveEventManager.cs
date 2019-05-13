@@ -314,7 +314,9 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 	                }
 				}
             }
-		}
+		} else {
+            m_shouldRequestDefinition = true;
+        }
         m_waitingForNewDefinition = false;
 		Messenger.Broadcast<int, HDLiveDataManager.ComunicationErrorCodes> (MessengerEvents.LIVE_EVENT_NEW_DEFINITION, data.m_eventId, outErr);
     }

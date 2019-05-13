@@ -63,7 +63,7 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     public override void UnloadDependencies(AddressablesCatalogEntry entry)
     {
         List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(entry.AssetBundleName);
-        AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);        
+        AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList);        
     }
 
     public void UnloadDependencyId(string dependencyId, bool unloadItsDependenciesToo)
@@ -71,7 +71,7 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         if (unloadItsDependenciesToo)
         {
             List<string> dependenciesList = AssetBundlesManager.Instance.GetDependenciesIncludingSelf(dependencyId);
-            AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList, null);
+            AssetBundlesManager.Instance.UnloadAssetBundleList(dependenciesList);
         }
         else
         {
@@ -81,7 +81,12 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
 
     public void UnloadDependencyIdsList(List<string> dependencyIds)
     {
-        AssetBundlesManager.Instance.UnloadAssetBundleList(dependencyIds, null);
+        AssetBundlesManager.Instance.UnloadAssetBundleList(dependencyIds);
+    }
+
+    public void UnloadAllDependencies()
+    {
+        AssetBundlesManager.Instance.UnloadAllAssetBundles();
     }
 
     public override bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)
