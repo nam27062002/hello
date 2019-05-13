@@ -73,17 +73,16 @@ public class EmojiManagerEditor : Editor {
 			_rect.x += margin;
 			_rect.width -= margin * 2f;
 
-			// Create texture (different colors based on state)
-			Texture2D tex = new Texture2D(1, 1);
+			// Different colors based on state
 			if(_active) {
-				tex.SetPixel(0, 0, new Color(0.24f, 0.38f, 0.54f));     // Unity default (blue-ish)
+				GUI.color = new Color(0.24f, 0.38f, 0.54f);     // Unity default (blue-ish)
 			} else if(_focused) {
-				tex.SetPixel(0, 0, new Color(0.36f, 0.36f, 0.36f));     // Unity default (brighter gray)
+				GUI.color = new Color(0.36f, 0.36f, 0.36f);     // Unity default (brighter gray)
 			} else {
-				tex.SetPixel(0, 0, new Color(0.30f, 0.30f, 0.30f));     // Unity default (dark gray)
+				GUI.color = new Color(0.30f, 0.30f, 0.30f);     // Unity default (dark gray)
 			}
-			tex.Apply();
-			GUI.DrawTexture(_rect, tex as Texture);
+			GUI.DrawTexture(_rect, Texture2D.whiteTexture);
+			GUI.color = Color.white;
 		};
 	}
 

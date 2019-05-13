@@ -546,6 +546,41 @@ public class AssetFinder : EditorWindow {
     }
 
 
+    [MenuItem("Hungry Dragon/Tmp/Remove Read Write And Change Mesh Compression")]
+    public static void RemoveMeshesReadWrite()
+    {
+        Debug.Log("Obtaining Meshes list");
+
+        Mesh[] meshList;
+        FindAssetInContent<Mesh>(Directory.GetCurrentDirectory() + "\\Assets", out meshList);
+
+        float c = 0;
+
+        Debug.Log("Remove Read Write From Mesht :");
+        foreach (Mesh mesh in meshList)
+        {
+            string path = AssetDatabase.GetAssetPath(mesh);
+            ModelImporter meshImporter = AssetImporter.GetAtPath(path) as ModelImporter;
+                       
+            if (EditorUtility.DisplayCancelableProgressBar( "Reimporting mesh", path, c / (float)meshList.Length))
+            {
+                EditorUtility.ClearProgressBar();
+                break;
+            }
+			if (meshImporter != null && (meshImporter.isReadable || meshImporter.meshCompression != ModelImporterMeshCompression.High) )
+            {
+                meshImporter.isReadable = false;
+                meshImporter.meshCompression = ModelImporterMeshCompression.High;
+                AssetDatabase.ImportAsset(path);
+                Debug.Log(">>> " + path);
+                c++;                   
+            }
+        }
+
+        EditorUtility.ClearProgressBar();
+        Debug.Log("list length: " + meshList.Length + " meshes:" + c);
+    }
+
     //------------------------------------------------------------------//
     // METHODS															//
     //------------------------------------------------------------------//

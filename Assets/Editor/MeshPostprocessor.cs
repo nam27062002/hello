@@ -19,6 +19,8 @@ public class MeshPostprocessor : AssetPostprocessor {
         importer.importLights = false;
         importer.importCameras = false;
         importer.isReadable = false;    // Disble Read/Write to avoid multiple instances on memory
+
+        importer.meshCompression = ModelImporterMeshCompression.High;
     }
     
     public Material OnAssignMaterialModel(Material material, Renderer renderer)
