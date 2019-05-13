@@ -38,15 +38,18 @@ namespace Downloadables
             
                 downloadablesCatalog.UrlBase = assetsLUTCatalog.UrlBase;
 
-                string  key = "release";
-                if (assetsLUTJson.ContainsKey(key))
+                if (!USE_CRC_IN_URL)
                 {
-                    downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
-                }
+                    string key = "release";
+                    if (assetsLUTJson.ContainsKey(key))
+                    {
+                        downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
+                    }
 
-                if (useProdUrl)
-                {
-                    downloadablesCatalog.UrlBase += prefix;
+                    if (useProdUrl)
+                    {
+                        downloadablesCatalog.UrlBase += prefix;
+                    }
                 }
 
                 // Deletes all asset bundle entries because we are going to reenter them

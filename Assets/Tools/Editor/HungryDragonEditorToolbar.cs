@@ -39,6 +39,7 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		PETS_CAPTURE_TOOL,
 		SPAWNERS_CAPTURE_TOOL,
 		UI_TOOLS_SCENE,
+		COLOR_RAMP_EDITOR,
 
 		COUNT
 	}
@@ -88,10 +89,11 @@ public class HungryDragonEditorToolbar : EditorWindow {
 		// Reload all icons
 		m_icons.Clear();
 		string[] iconPaths = new string[] {
-			"Assets/Tools/UITools/icon_camera_disguises.png",
-			"Assets/Tools/UITools/icon_camera_pets.png",
-			"Assets/Tools/UITools/icon_camera_yellow.png",
-			"Assets/Tools/UITools/grid.png"
+			"Assets/Tools/UITools/CaptureTool/icon_camera_disguises.png",
+			"Assets/Tools/UITools/CaptureTool/icon_camera_pets.png",
+			"Assets/Tools/UITools/CaptureTool/icon_camera_yellow.png",
+			"Assets/Tools/UITools/grid.png",
+			"Assets/Tools/UITools/ColorRampEditor/icon_color_ramp_editor.png"
 		};
 
 		for(int i = 0; i < (int)Icons.COUNT; i++) {
@@ -249,6 +251,9 @@ public class HungryDragonEditorToolbar : EditorWindow {
 				}
 			}
 
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
 			// Multipurpose button
 			if(GUILayout.Button(new GUIContent("MR", "Find missing and/or null references in the scene"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				FindMissingReferencesTool.FindMissingReferences(false, 
@@ -261,6 +266,14 @@ public class HungryDragonEditorToolbar : EditorWindow {
 			// Ease Preview Tool
 			if(GUILayout.Button(new GUIContent("EZ", "Ease Preview Tool"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
 				HungryDragonEditorMenu.EasePreviewToolWindow();
+			}
+
+			// Add a separator
+			GUILayout.Space(SEPARATOR_SIZE);
+
+			// Color Ramp Editor
+			if(GUILayout.Button(new GUIContent(m_icons[(int)Icons.COLOR_RAMP_EDITOR], "Color Ramp Editor"), EditorStyles.toolbarButton, GUILayout.Width(BUTTON_SIZE))) {
+				HungryDragonEditorMenu.MenuColorRampEditor();
 			}
 
 			// Right margin

@@ -284,10 +284,28 @@ public class EditorAssetBundlesManager
 
             json = assetsLUTCatalog.ToJSON();
 
+            if (json != null)
+            {                
+                JSONClass assets = (JSONClass)json[Downloadables.Catalog.CATALOG_ATT_ENTRIES];
+                if (assets != null)
+                {
+                    string id;
+                    System.Collections.ArrayList keys = assets.GetKeys();
+                    int count = keys.Count;
+                    string type;
+                    for (int i = 0; i < count; i++)
+                    {
+                        id = (string)keys[i];
+                        type = (id.Contains("iOS/") || id.Contains("Android/")) ? "bundle" : "content";                            
+                        assets[id].Add("type", type);                        
+                    }
+                }
+            }
+
             if (assetsLUTJson != null)
             {
-                string key = "urlBase";
-                json.Add(key, assetsLUTJson[key]);
+                string key = "urlBase";                
+                json.Add(key, AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/");
 
                 key = "release";
                 json.Add(key, assetsLUTJson[key]);

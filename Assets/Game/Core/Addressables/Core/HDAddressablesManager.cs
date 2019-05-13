@@ -146,9 +146,10 @@ public class HDAddressablesManager : AddressablesManager
 #if UNITY_EDITOR
             // We don't need to use prod url when using the local server 
             calculateProdUrl = !urlBase.Contains(":7888");            
-            if (!calculateProdUrl)
+            if (!calculateProdUrl)            
             {
                 urlBase = GetUrlWithoutEnvironment(urlBase);
+                Downloadables.Downloader.USE_CRC_IN_URL = false;
             }
 #endif
             if (calculateProdUrl)
@@ -165,6 +166,7 @@ public class HDAddressablesManager : AddressablesManager
             catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
+            string key;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
             {
                 // Only bundles are considered
@@ -173,18 +175,18 @@ public class HDAddressablesManager : AddressablesManager
                     entry = new Downloadables.CatalogEntry();
                     entry.CRC = pair.Value;
                     entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
-
+                    key = pair.Key;
                     catalog.AddEntry(pair.Key, entry);
                 }
             }
 
-            if (ContentManager.USE_ASSETS_LUT_V2)
+            if (!ContentManager.USE_ASSETS_LUT_V2 || !calculateProdUrl)
             {
-                return catalog.ToJSON();
+                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON(), calculateProdUrl);
             }
             else
             {
-                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON(), calculateProdUrl);
+                return catalog.ToJSON();
             }
         }
         else
