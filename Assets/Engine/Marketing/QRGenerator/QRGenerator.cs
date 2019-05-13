@@ -129,8 +129,7 @@ public class QRGenerator {
 		}
 
 		// Create new texture
-		Texture2D qrTex = new Texture2D(tgtSize, tgtSize);
-		qrTex.GetRawTextureData();
+		Texture2D qrTex = new Texture2D(tgtSize, tgtSize, TextureFormat.RGBA32, false, false);
 		Color32[] qrTexData = qrTex.GetPixels32();
 
 		// Populate the texture
