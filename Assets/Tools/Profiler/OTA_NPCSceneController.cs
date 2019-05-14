@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -7,149 +8,60 @@ using System.Linq;
 
 
 public class OTA_NPCSceneController : MonoBehaviour {
+    public enum Log {
+        Subsets = 0,
+        Assets
+    }
 
-	public string area1Scene;
-    public string area2Scene;
-    public string area3Scene;
+    [SerializeField] private string m_areaPrefix = "";
+    [SerializeField] private GameObject[] m_area;
+	#if UNITY_EDITOR
+    AssetBundleSubsets assetBundleSubsets;
+	#endif
 
-    private HashSet<string> m_area1_NPCs = new HashSet<string>();
-    private HashSet<string> m_area2_NPCs = new HashSet<string>();
-    private HashSet<string> m_area3_NPCs = new HashSet<string>();
+    public void Build(Log _logType) {
+#if UNITY_EDITOR
+        if (m_area.Length > 0) {
+            assetBundleSubsets = new AssetBundleSubsets(m_area.Length);
+            assetBundleSubsets.ChangeSubsetPrefix(m_areaPrefix);
 
-    private HashSet<string> m_npcs_area1 = new HashSet<string>();
-    private HashSet<string> m_npcs_area2 = new HashSet<string>();
-    private HashSet<string> m_npcs_area3 = new HashSet<string>();
-    private HashSet<string> m_npcs_area1_area2 = new HashSet<string>();
-    private HashSet<string> m_npcs_area1_area3 = new HashSet<string>();
-    private HashSet<string> m_npcs_area2_area3 = new HashSet<string>();
-    private HashSet<string> m_npcs_area1_area2_area3 = new HashSet<string>();
+            for (int a = 0; a < m_area.Length; ++a) {
+                GameObject go = m_area[a];
 
-    StreamWriter m_sw;
+                assetBundleSubsets.ChangeSubsetName(a, go.name);
 
+                List<ISpawner> spawners = new List<ISpawner>();
+                FindISpawner(go.transform, ref spawners);
 
-
-
-    public void Build(int _area, List<ISpawner> _spawners) {
-        HashSet<string> targetSet = m_area1_NPCs;
-
-        switch(_area) {
-            case 0: targetSet = m_area1_NPCs; break;
-            case 1: targetSet = m_area2_NPCs; break;
-            case 2: targetSet = m_area3_NPCs; break;
-        }
-
-        targetSet.Clear();
-
-        //lets instantiate one of each NPC			 
-        for (int i = 0; i < _spawners.Count; ++i) {
-            ISpawner sp = _spawners[i];
-
-            if (sp.GetType() == typeof(Spawner) || sp.GetType() == typeof(SpawnerCage)) {
-                Spawner.EntityPrefab[] prefabs = (sp as Spawner).m_entityPrefabList;
-                for (int j = 0; j < prefabs.Length; ++j) {
-                    targetSet.Add(prefabs[j].name);
-                }
-            } else if (sp.GetType() == typeof(SeasonalSpawner)) {
-                List<SeasonalSpawner.SeasonalConfig> seasonals = (sp as SeasonalSpawner).m_spawnConfigs;
-                for (int s = 0; s < seasonals.Count; ++s) {
-                    for (int j = 0; j < seasonals[s].m_spawners.Length; ++j) {
-                        targetSet.Add(seasonals[s].m_spawners[j]);
+                for (int s = 0; s < spawners.Count; ++s) {
+                    List<string> prefabs = spawners[s].GetPrefabList();
+                    if (prefabs != null) {
+                        for (int j = 0; j < prefabs.Count; ++j) {
+                            assetBundleSubsets.AddAssetName(a, prefabs[j]);
+                        }
                     }
                 }
-            } else if (sp.GetType() == typeof(SpawnerRoulette)) {
-                SpawnerRoulette.EntityPrefab[] prefabs = (sp as SpawnerRoulette).m_entityPrefabList;
-                for (int j = 0; j < prefabs.Length; ++j) {
-                    targetSet.Add(prefabs[j].name);
-                }
-            } else if (sp.GetType() == typeof(SpawnerWagon)) {
-                SpawnerWagon.EntityPrefab[] prefabs = (sp as SpawnerWagon).m_entityPrefabList;
-                for (int j = 0; j < prefabs.Length; ++j) {
-                    targetSet.Add(prefabs[j].name);
-                }
-            } else if (sp.GetType() == typeof(SpawnerStar)) {
-                targetSet.Add((sp as SpawnerStar).entityPrefab);
-            } else if (sp.GetType() == typeof(SpawnerBg)) {
-                targetSet.Add((sp as SpawnerBg).m_entityPrefabStr);
+            }
+
+            assetBundleSubsets.BuildSubsets();
+
+            switch(_logType) {
+                case Log.Subsets: assetBundleSubsets.LogSubsets(false, true); break;
+                case Log.Assets: assetBundleSubsets.LogAssets(false, true); break;
             }
         }
+#endif
     }
 
-    public void CompareSets() {
-        m_npcs_area1.Clear();
-        m_npcs_area2.Clear();
-        m_npcs_area3.Clear();
-
-        m_npcs_area1_area2.Clear();
-        m_npcs_area1_area3.Clear();
-        m_npcs_area2_area3.Clear();
-
-        m_npcs_area1_area2_area3.Clear();
-
-
-        CompareSets(m_area1_NPCs, m_area2_NPCs, m_area3_NPCs,
-                    m_npcs_area1, m_npcs_area1_area2, m_npcs_area1_area3,
-                    m_npcs_area1_area2_area3);
-
-        CompareSets(m_area2_NPCs, m_area1_NPCs, m_area3_NPCs,
-                    m_npcs_area2, m_npcs_area1_area2, m_npcs_area2_area3,
-                    m_npcs_area1_area2_area3);
-
-        CompareSets(m_area3_NPCs, m_area1_NPCs, m_area2_NPCs,
-                    m_npcs_area3, m_npcs_area1_area3, m_npcs_area2_area3,
-                    m_npcs_area1_area2_area3);
-
-
-        WriteHashSet("npc_medieval_village", m_npcs_area1);
-        WriteHashSet("npc_medieval_castle", m_npcs_area2);
-        WriteHashSet("npc_medieval_dark", m_npcs_area3);
-
-        WriteHashSet("npc_medieval_village_castle", m_npcs_area1_area2);
-        WriteHashSet("npc_medieval_village_dark", m_npcs_area1_area3);
-        WriteHashSet("npc_medieval_castle_dark", m_npcs_area2_area3);
-
-        WriteHashSet("npc_medieval_common", m_npcs_area1_area2_area3);
-    }
-
-    private void CompareSets(HashSet<string> _sourceA, HashSet<string> _sourceB, HashSet<string> _sourceC, 
-                             HashSet<string> _destA, HashSet<string> _destB, HashSet<string> _destC,
-                             HashSet<string> _destAll) {
-
-        foreach (string npc in _sourceA) {
-            bool dupInB = _sourceB.Contains(npc);
-            bool dupInC = _sourceC.Contains(npc);
-
-            if (dupInB && dupInC)   _destAll.Add(npc);
-            else if (dupInC)        _destC.Add(npc);
-            else if (dupInB)        _destB.Add(npc);
-            else                    _destA.Add(npc);
+    private static void FindISpawner(Transform _t, ref List<ISpawner> _list) {
+        ISpawner c = _t.GetComponent<ISpawner>();
+        if (c != null) {
+            _list.Add(c);
         }
-    }
-
-    private void WriteHashSet(string _fileName, HashSet<string> _set) {
-        List<string> sorted = _set.ToList();
-        sorted.Sort();
-        /*
-        foreach (string npc in sorted) {
-            string path = "Assets/Resources/" + IEntity.ENTITY_PREFABS_PATH + npc + ".prefab";
-            AssetImporter ai = AssetImporter.GetAtPath(path);
-            ai.SetAssetBundleNameAndVariant(_fileName, "");
+        // Not found, iterate children transforms
+        foreach (Transform t in _t) {
+            FindISpawner(t, ref _list);
         }
-        /*
-        m_sw = new StreamWriter(_fileName+".txt", false);
-        m_sw.AutoFlush = true;
-
-
-
-        foreach (string npc in sorted) {
-            m_sw.WriteLine(npc);
-        }
-        m_sw.Close();*/
-    }
-
-
-    [SerializeField] private string m_guid = "";
-    public void FindGUI() {
-       // string path = AssetDatabase.GUIDToAssetPath(m_guid);
-       // Debug.Log(path);
     }
 }
+#endif

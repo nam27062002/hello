@@ -180,7 +180,7 @@ public class MenuDragonPreview : MonoBehaviour {
 			m_dragonFlameStandardInstance.setEffectScale(furyBaseLength / 2.0f, transform.localScale.x);
 
 			m_dragonFlameStandardInstance.EnableFlame(false);
-			m_dragonFlameStandardInstance.gameObject.SetActive(false);
+			// m_dragonFlameStandardInstance.gameObject.SetActive(false);
 
 		}
 

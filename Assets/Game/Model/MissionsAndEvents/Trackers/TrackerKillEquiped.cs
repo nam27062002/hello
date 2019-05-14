@@ -90,10 +90,10 @@ public class TrackerKillEquipped : TrackerBase {
     			if (m_targetSkus.Count == 0) {
     				currentValue++;
     			} else {
-                    bool found = true;
+                    bool found = false;
 
-                    for (int i = 0; i < m_targetSkus.Count && found; ++i) {
-                        found &= _e.equip.HasEquipped(m_targetSkus[i]);
+                    for (int i = 0; i < m_targetSkus.Count && !found; ++i) {
+                        found = _e.equip.HasEquipped(m_targetSkus[i]);
                     }
 
                     // Is it one of the target types?

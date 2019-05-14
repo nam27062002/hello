@@ -123,6 +123,10 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 			dragonLevelRange = tmpRange;
 		}
 
+		if(GUILayout.Button("RELOAD NAME POOLS", GUILayout.Height(50))) {
+			LeaderboardGenerator.ReloadPools();
+		}
+
 		GUI.color = Color.green;
 		if(GUILayout.Button("GENERATE LEADERBOARD JSON", GUILayout.Height(50))) {
 			GenerateLeaderboard();
@@ -152,10 +156,6 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 	/// Do it!
 	/// </summary>
 	private void GenerateLeaderboard() {
-		// Read names files
-		string[] firstNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/first_names.txt"));
-		string[] lastNames = File.ReadAllLines(StringUtils.SafePath(Application.dataPath + "/HDLiveEventsTest/last_names.txt"));
-
 		// Cache setup params to avoid constant reading/writing from prefs
 		int size = leaderboardSize;
 		RangeInt score = scoreRange;
@@ -175,7 +175,7 @@ public class LeagueLeaderboardGeneratorEditor : EditorWindow {
 			HDLiveData.Leaderboard.Record newRecord = new HDLiveData.Leaderboard.Record();
 
 			// Player name
-			newRecord.name = firstNames.GetRandomValue() + " " + lastNames.GetRandomValue();
+			newRecord.name = LeaderboardGenerator.GenerateRandomName();
 
 			// Score
 			newRecord.score = (long)score.GetRandom();

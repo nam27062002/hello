@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// This class is responsible for tayloring Addressables UbiPackage to meet Hungry Dragon needs
 /// </summary>
 public class HDAddressablesManager : AddressablesManager
-{
+{    
     private static HDAddressablesManager sm_instance;
 
     public static HDAddressablesManager Instance
@@ -83,63 +83,111 @@ public class HDAddressablesManager : AddressablesManager
         InitDownloadableHandles();
     }
 
+    private string GetEnvironmentUrlBase()
+    {
+        string urlBase = "";
+
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://hdragon-assets-s3.akamaized.net/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Link to CDN (it uses cache)
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Direct link to the bucket (no cache involved, which might make downloads more expensive)
+                    urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    break;
+            }
+
+            //http://10.44.4.69:7888/                                
+        }
+
+        return urlBase;
+    }    
+
+    private static string GetUrlWithEnvironment(string urlBase)
+    {
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        return CaletyConstants.GetUrlWithEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
+    }
+
+    private static string GetUrlWithoutEnvironment(string urlBase)
+    {
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        return CaletyConstants.GetUrlWithoutEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
+    }
+
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
     {
         if (assetsLUT != null)
         {
             // urlBase is taken from assetLUT unless it's empty or "localhost", which means that assetsLUT is the one in the build, which must be adapted to the environment
             string urlBase = assetsLUT.m_strURLBase;
-            if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
+
+            bool calculateProdUrl = true;
+
+#if UNITY_EDITOR
+            // We don't need to use prod url when using the local server 
+            calculateProdUrl = !urlBase.Contains(":7888");            
+            if (!calculateProdUrl)            
             {
-                Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-                if (kServerConfig != null)
-                {
-                    switch (kServerConfig.m_eBuildEnvironment)
-                    {
-                        case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
-                            urlBase = "http://hdragon-assets-s3.akamaized.net/prod/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Link to CDN (it uses cache)
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
-                            break;
-                    }
-
-                    //http://10.44.4.69:7888/                                
-                }                
+                urlBase = GetUrlWithoutEnvironment(urlBase);
+                Downloadables.Downloader.USE_CRC_IN_URL = false;
             }
+#endif
+            if (calculateProdUrl)
+            {
+                if (string.IsNullOrEmpty(urlBase) || urlBase.Contains("localhost"))
+                {
+                    assetsLUT.m_strURLBase = GetUrlWithEnvironment(GetEnvironmentUrlBase());
+                }
 
-            urlBase += assetsLUT.m_iReleaseVersion + "/";
+                urlBase = assetsLUT.GetAssetsBundleUrlBase();
+            }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
+            string key;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
             {
-                entry = new Downloadables.CatalogEntry();
-                entry.CRC = pair.Value;
-                entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
-
-                catalog.AddEntry(pair.Key, entry);
+                // Only bundles are considered
+                if (!ContentManager.USE_ASSETS_LUT_V2 || assetsLUT.m_kAssetTypes[pair.Key] == ContentDeltaManager.ContentDeltaData.EAssetType.Bundle)
+                {
+                    entry = new Downloadables.CatalogEntry();
+                    entry.CRC = pair.Value;
+                    entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+                    key = pair.Key;
+                    catalog.AddEntry(pair.Key, entry);
+                }
             }
 
-            return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+            if (!ContentManager.USE_ASSETS_LUT_V2 || !calculateProdUrl)
+            {
+                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON(), calculateProdUrl);
+            }
+            else
+            {
+                return catalog.ToJSON();
+            }
         }
         else
         {

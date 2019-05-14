@@ -5,7 +5,11 @@ public class EquipableParticleSetViewMesh : MonoBehaviour {
 	public void Start()
 	{
 		DragonEquip dragonEquip = GetComponentInParent<DragonEquip>();
-		Setup( dragonEquip );
+        if ( dragonEquip != null )
+        {
+            Setup( dragonEquip ); 
+        }
+        
 	}
 
 	public void Setup( DragonEquip dragon )

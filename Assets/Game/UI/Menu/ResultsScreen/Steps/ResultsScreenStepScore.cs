@@ -62,6 +62,9 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 
 		// Hide new high score widget
 		m_newHighScoreAnim.gameObject.SetActive(false);
+
+		// Only allow skipping if it's not a high score
+		m_skipAllowed = !m_controller.isHighScore;
 	}
 
 	/// <summary>
@@ -83,6 +86,23 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 			// Show widget and launch animation!
 			m_newHighScoreAnim.gameObject.SetActive(true);
 			m_newHighScoreAnim.Launch();
+		} else {
+			// No high score, show "tap to skip" message
+			m_tapToContinue.ForceShow();
+		}
+	}
+
+	/// <summary>
+	/// Pause sequence if we got a new high score!
+	/// </summary>
+	public void OnPauseIfHighScore() {
+		// Pause the sequence if we got a new high score
+		if(m_controller.isHighScore) {
+			// Pause sequence
+			m_sequence.Pause();
+
+			// Show "tap to continue" message
+			m_tapToContinue.ForceShow();
 		}
 	}
 
@@ -102,5 +122,28 @@ public class ResultsScreenStepScore : ResultsScreenSequenceStep {
 
 		// Call parent
 		base.ShowSummary();
+	}
+
+	/// <summary>
+	/// Share high score button has been pressed.
+	/// </summary>
+	public void OnShareButton() {
+		IDragonData dragonData = null;
+		if(SceneController.mode == SceneController.Mode.TOURNAMENT) {
+			dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+		} else {
+			dragonData = DragonManager.currentDragon;
+		}
+
+		// Initialize and show the corresponding share screen
+		ShareScreenHighScore shareScreen = ShareScreensManager.GetShareScreen("high_score") as ShareScreenHighScore;
+		shareScreen.Init(
+			"high_score",
+			SceneController.GetMainCameraForCurrentScene(),
+			m_controller.score,
+			dragonData
+		);
+
+		shareScreen.TakePicture();
 	}
 }

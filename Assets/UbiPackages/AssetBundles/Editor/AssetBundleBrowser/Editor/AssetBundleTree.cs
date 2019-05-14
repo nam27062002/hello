@@ -184,13 +184,15 @@ namespace AssetBundleBrowser
                     menu.AddItem(new GUIContent("Move duplicates to new bundle"), false, DedupeAllBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Rename"), false, RenameBundle, selectedNodes);
                 menu.AddItem(new GUIContent("Delete " + selectedNodes[0].displayName), false, DeleteBundles, selectedNodes);
-                
+                menu.AddItem(new GUIContent("Build " + selectedNodes[0].displayName), false, BuildBundles, selectedNodes);
+
             }
             else if (selectedNodes.Count > 1)
             { 
                 menu.AddItem(new GUIContent("Move duplicates shared by selected"), false, DedupeOverlappedBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Move duplicates existing in any selected"), false, DedupeAllBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Delete " + selectedNodes.Count + " selected bundles"), false, DeleteBundles, selectedNodes);
+                menu.AddItem(new GUIContent("Build " + selectedNodes.Count + " selected bundles"), false, BuildBundles, selectedNodes);
             }
             menu.ShowAsContext();
         }
@@ -342,9 +344,28 @@ namespace AssetBundleBrowser
             var selectedNodes = b as List<AssetBundleModel.BundleTreeItem>;
             AssetBundleModel.Model.HandleBundleDelete(selectedNodes.Select(item => item.bundle));
             ReloadAndSelect(new List<int>());
-
-
         }
+
+        void BuildBundles(object b)
+        {
+            List<AssetBundleModel.BundleTreeItem> selectedNodes = b as List<AssetBundleModel.BundleTreeItem>;
+
+            int count = selectedNodes.Count;
+            string abName;
+            List<string> abNames = new List<string>();
+            for (int i = 0; i < count; i++)
+            {
+                abName = selectedNodes[i].bundle.m_Name.bundleName;
+                if (!abNames.Contains(abName))
+                {
+                    abNames.Add(abName);
+                }                
+            }
+
+            EditorAssetBundlesManager.BuildAssetBundles(EditorUserBuildSettings.activeBuildTarget, abNames);
+            EditorAddressablesMenu.ProcessAssetBundles();
+        }        
+
         protected override void KeyEvent()
         {
             if (Event.current.keyCode == KeyCode.Delete && GetSelection().Count > 0)
