@@ -19,6 +19,8 @@ namespace Downloadables
         private static bool REQUEST_PERMISSION_OVER_WIFI_ENABLED = false;
 #endif    
 
+        public static bool USE_CRC_IN_URL = true;
+
         private static int TIMEOUT = 10000;
 
         private Manager m_manager;
@@ -195,7 +197,7 @@ namespace Downloadables
                         existingLength = fileInfo.Length;
                     }
                     
-                    if (Manager.USE_CRC_IN_URL)
+                    if (Manager.USE_CRC_IN_URL && USE_CRC_IN_URL)
                     {
                         downloadURL += entryStatus.GetManifest().CRC + "/";
                     }

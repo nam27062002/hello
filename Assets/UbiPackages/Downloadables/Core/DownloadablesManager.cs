@@ -19,7 +19,7 @@ namespace Downloadables
 #else
         public static string REMOTE_FOLDER = "AssetBundles/";
 #endif        
-        public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson)
+        public static JSONNode GetCatalogFromAssetsLUT(JSONNode assetsLUTJson, bool useProdUrl)
         {
             JSONNode returnValue = null;
             if (assetsLUTJson != null)
@@ -38,13 +38,19 @@ namespace Downloadables
             
                 downloadablesCatalog.UrlBase = assetsLUTCatalog.UrlBase;
 
-                string  key = "release";
-                if (assetsLUTJson.ContainsKey(key))
+                if (!USE_CRC_IN_URL)
                 {
-                    downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
-                }
+                    string key = "release";
+                    if (assetsLUTJson.ContainsKey(key))
+                    {
+                        downloadablesCatalog.UrlBase += assetsLUTJson[key] + "/";
+                    }
 
-                downloadablesCatalog.UrlBase += prefix;
+                    if (useProdUrl)
+                    {
+                        downloadablesCatalog.UrlBase += prefix;
+                    }
+                }
 
                 // Deletes all asset bundle entries because we are going to reenter them
                 Dictionary<string, CatalogEntry> entries = assetsLUTCatalog.GetEntries();
