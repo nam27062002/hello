@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -28,21 +29,47 @@ public class ColorRampCollection : ScriptableObject {
 	/// </summary>
 	[Serializable]
 	public class ColorRampData {
+		//--------------------------------------------------------------//
+		// CONSTANTS													//
+		//--------------------------------------------------------------//
+		public const int RAMP_WIDTH = 256;   // Matching 1 pixel per Grayscale index
+		public const int RAMP_HEIGHT = 1;
+
+		public enum GradientSequenceType {
+			HORIZONTAL,
+			VERTICAL
+		}
+
+		//--------------------------------------------------------------//
+		// MEMBERS AND PROPERTIES										//
+		//--------------------------------------------------------------//
 		// Data
-		public Gradient gradient = new Gradient();
 		public Texture2D tex = null;
+		public GradientSequenceType type = GradientSequenceType.VERTICAL;
+		public Gradient[] gradients = new Gradient[0];
+		//public RangeInt[] indices = new RangeInt[0];	// Only used for horizontal sequences
 
 		// Control vars
 		[NonSerialized] public bool dirty = false;
-		[NonSerialized] public Gradient gradientBackup = new Gradient();
+		[NonSerialized] private ColorRampData m_editBackup = null;	// Temp object to backup original values while editing so changes can be discarded
 
+		//--------------------------------------------------------------//
+		// METHODS														//
+		//--------------------------------------------------------------//
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public ColorRampData() {
-			// Backup gradient
-			gradientBackup.SetKeys(gradient.colorKeys, gradient.alphaKeys);
-			gradientBackup.mode = gradient.mode;
+			// Create backup
+			Backup();
+		}
+
+		/// <summary>
+		/// Parametrized constructor.
+		/// </summary>
+		public ColorRampData(bool _createBackup) {
+			// Backup only if required
+			if(_createBackup) Backup();
 		}
 
 		/// <summary>
@@ -52,16 +79,71 @@ public class ColorRampCollection : ScriptableObject {
 			// Is texture initialized?
 			if(tex == null) return;
 
-			// Do it :)
-			float fWidth = (float)tex.width;
-			Color[] pixels = tex.GetPixels();
-			for(int y = 0; y < tex.height; ++y) {
-				for(int x = 0; x < tex.width; ++x) {
-					pixels[y * tex.width + x] = gradient.Evaluate((float)x / fWidth);
-				}
+			// Aux vars
+			Color[] pixels = null;
+			int pixelIdx = 0;
+			Vector2Int targetSize = new Vector2Int();
+
+			// Different techniques depending on mode
+			switch(type) {
+				case GradientSequenceType.HORIZONTAL: {
+					// One gradient after another
+					// [AOC] TODO!! Add different weights!
+					// Resize texture if needed and get pixels array
+					targetSize.Set(RAMP_WIDTH, RAMP_HEIGHT);
+					if(tex.width != targetSize.x || tex.height != targetSize.y) {
+						tex.Resize(targetSize.x, targetSize.y);
+					}
+					pixels = tex.GetPixels();
+
+					// Sort indices
+					/*List<Vector2Int> sortedInidices = new List<Vector2Int>(indices.Length);
+						for(int i = 0; i < indices.Length; ++i) {
+							sortedInidices.Add(new Vector2Int(indices[i], ))
+						}*/
+
+					// Write pixels
+					float pixelsPerGradient = Mathf.Max(Mathf.Floor((float)tex.width / (float)gradients.Length), 1f);	// At least 1px
+					for(int i = 0; i < gradients.Length; ++i) {
+						for(int y = 0; y < tex.height; ++y) {
+								// Find out target indices for this 
+							for(int x = 0; x < pixelsPerGradient; ++x) {
+								pixelIdx = y * tex.width + (i * (int)pixelsPerGradient + x);
+								if(pixelIdx < pixels.Length) {
+									pixels[pixelIdx] = gradients[i].Evaluate((float)x / pixelsPerGradient);
+								}
+							}
+						}
+					}
+				} break;
+
+				case GradientSequenceType.VERTICAL: {
+					// One gradient on top of another
+					// Resize texture if needed and get pixels array
+					targetSize.Set(RAMP_WIDTH, gradients.Length * RAMP_HEIGHT);
+					if(tex.width != targetSize.x || tex.height != targetSize.y) {
+						tex.Resize(targetSize.x, targetSize.y);
+					}
+					pixels = tex.GetPixels();
+
+					// Write pixels
+					for(int y = 0; y < tex.height; ++y) {
+						int gradientIdx = gradients.Length - y - 1;	// Reverse order to match editor view
+						for(int x = 0; x < tex.width; ++x) {
+							pixelIdx = y * tex.width + x;
+							if(pixelIdx < pixels.Length) {
+								pixels[pixelIdx] = gradients[gradientIdx].Evaluate((float)x / (float)tex.width);
+							}
+						}
+					}
+				} break;
 			}
-			tex.SetPixels(pixels);
-			tex.Apply();
+
+			// Upload to texture
+			if(pixels != null) {
+				tex.SetPixels(pixels);
+				tex.Apply();
+			}
 
 			// Mark it as dirty
 			dirty = true;
@@ -79,27 +161,63 @@ public class ColorRampCollection : ScriptableObject {
 			File.WriteAllBytes(path, tex.EncodeToPNG());
 			AssetDatabase.SaveAssets();
 
-			// Update gradient backup
-			gradientBackup.SetKeys(gradient.colorKeys, gradient.alphaKeys);
-			gradientBackup.mode = gradient.mode;
+			// Update gradients backup
+			Backup();
 
 			// Not dirty anymore!
 			dirty = false;
 		}
 
 		/// <summary>
-		/// Discard current gradient to the backup, if backup properly initialized.
+		/// Discard current values to the backup, if backup properly initialized.
 		/// Reloads texture from disk as well.
 		/// </summary>
-		public void DiscardGradient() {
-			// Restore gradient
-			if(gradientBackup != null) {
-				gradient.SetKeys(gradientBackup.colorKeys, gradientBackup.alphaKeys);
-				gradient.mode = gradientBackup.mode;
+		public void Discard() {
+			// Restore gradients from the backup copy
+			if(m_editBackup != null) {
+				// Restore values from the backup
+				this.CopyValuesFrom(m_editBackup);
 
 				// Gradient changed, refresh texture
 				RefreshTexture();
 			}
+		}
+
+		/// <summary>
+		/// Store current gradients into the backup array.
+		/// </summary>
+		private void Backup() {
+			// If backup object is not created, do it now
+			if(m_editBackup == null) {
+				m_editBackup = new ColorRampData(false);	// Dont create backup for the backup! :D
+			}
+
+			// Perform the backup
+			m_editBackup.CopyValuesFrom(this);
+		}
+
+		/// <summary>
+		/// Copy ramp data values from another ramp data object.
+		/// </summary>
+		/// <param name="_source">Source color ramp.</param>
+		public void CopyValuesFrom(ColorRampData _source) {
+			// Skip if source not valid
+			if(_source == null) return;
+
+			// Copy gradients
+			// Make sure the gradients array has the same length as the backup
+			if(this.gradients == null || this.gradients.Length != _source.gradients.Length) {
+				this.gradients = new Gradient[_source.gradients.Length];
+			}
+
+			// Restore gradients one by one
+			for(int i = 0; i < this.gradients.Length; ++i) {
+				this.gradients[i] = new Gradient();
+				this.gradients[i].SetKeys(_source.gradients[i].colorKeys, _source.gradients[i].alphaKeys);
+				this.gradients[i].mode = _source.gradients[i].mode;
+			}
+
+			// Copy inidices
 		}
 	}
 

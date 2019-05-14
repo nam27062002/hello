@@ -78,6 +78,7 @@ public class ColorRampEditor : EditorWindow {
 
 	// GUI widgets
 	private ReorderableList m_rampsList = null;
+	private float[] m_elementHeights = new float[0];
 
 	// Internal
 	private SerializedObject m_serializedCollection = null;
@@ -177,7 +178,6 @@ public class ColorRampEditor : EditorWindow {
 
 					// Reload collection if required
 					reloadCollection = true;
-					//LoadCollectionIfNeeded();
 				}
 			}
 
@@ -247,6 +247,9 @@ public class ColorRampEditor : EditorWindow {
 		// Initialize list widget
 		m_rampsList = new ReorderableList(m_serializedCollection, m_serializedCollection.FindProperty("ramps"));
 		if(m_rampsList != null) {
+			// Aux vars
+			m_elementHeights = new float[m_currentCollection.ramps.Length];
+
 			// Header
 			m_rampsList.drawHeaderCallback = (Rect _rect) => {
 				// Show title
@@ -266,7 +269,7 @@ public class ColorRampEditor : EditorWindow {
 				// Get target data
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
 				SerializedProperty rampDataProp = m_rampsList.serializedProperty.GetArrayElementAtIndex(_idx);
-				SerializedProperty gradientProp = rampDataProp.FindPropertyRelative("gradient");
+				SerializedProperty gradientsProp = rampDataProp.FindPropertyRelative("gradients");
 				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 
 				// Adjust prefix label size
@@ -279,7 +282,7 @@ public class ColorRampEditor : EditorWindow {
 					_rect.width,
 					EditorGUI.GetPropertyHeight(texProp)
 				);
-				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Texture File"), true);
+				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Ramp Texture"), true);
 
 				// Advance pos
 				currentLineY += texRect.height + SPACING;
@@ -310,20 +313,46 @@ public class ColorRampEditor : EditorWindow {
 					// so we're forced to use the serialized property.
 					// We want to open the gradient editor through a button, to emphasize
 					// the fact that the user will be modifying the texture as well.
-					// Unfortunately, Unity doesn't give access to the gradient editor until
-					// version 2018, so we will drop the idea for now.4
+					// Unfortunately, Unity doesn't give access to the gradient editor either, 
+					// so we will drop the idea for now.
 
 					// Detect changes
 					EditorGUI.BeginChangeCheck();
+
+					// Texture Preview
+					Rect previewRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						// EditorGUIUtility.singleLineHeight
+						rampData.tex.height * 10
+					);
+					GUI.DrawTexture(previewRect, rampData.tex);
+
+					// Advance pos
+					currentLineY += previewRect.height + SPACING;
+
+					// Sequence type
+					SerializedProperty sequenceTypeProp = rampDataProp.FindPropertyRelative("type");
+					Rect sequenceTypeRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						EditorGUI.GetPropertyHeight(sequenceTypeProp)
+					);
+					EditorGUI.PropertyField(sequenceTypeRect, sequenceTypeProp, true);
+
+					// Advance pos
+					currentLineY += sequenceTypeRect.height + SPACING;
 
 					// Draw Gradient field
 					Rect gradientRect = new Rect(
 						_rect.x,
 						currentLineY,
 						_rect.width,
-						EditorGUI.GetPropertyHeight(gradientProp)
+						EditorGUI.GetPropertyHeight(gradientsProp)
 					);
-					EditorGUI.PropertyField(gradientRect, gradientProp, new GUIContent("Click to edit -->"), true);
+					EditorGUI.PropertyField(gradientRect, gradientsProp, true);
 
 					// Advance pos
 					currentLineY += gradientRect.height + SPACING;
@@ -371,7 +400,7 @@ public class ColorRampEditor : EditorWindow {
 						GUI.color = Colors.coral;
 						if(GUI.Button(boxContentRect, "Discard")) {
 							// Reload texture from disk
-							rampData.DiscardGradient();
+							rampData.Discard();
 							rampData.SaveTexture();
 
 							// [AOC] TODO!! Somehow the gradient preview doesn't get refreshed when restoring the gradient by script -___-
@@ -392,18 +421,16 @@ public class ColorRampEditor : EditorWindow {
 
 				// Restore prefix label size
 				EditorGUIUtility.labelWidth = 0f;
+
+				// Store element height
+				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING;    // Extra spacing
 			};
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
-				// Hardcoded xD
-				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
-				if(rampData.tex == null) {
-					return 60f; // Extra space for warning message
-				} else if(rampData.dirty) {
-					return 80f; // Extra space for buttons
-				} else {
-					return 45f;
+				if(_idx >= m_elementHeights.Length) {
+					m_elementHeights = new float[m_currentCollection.ramps.Length];
 				}
+				return m_elementHeights[_idx];
 			};
 
 			m_rampsList.drawElementBackgroundCallback = (Rect _rect, int _idx, bool _active, bool _focused) => {
@@ -414,6 +441,7 @@ public class ColorRampEditor : EditorWindow {
 				float margin = SPACING;
 				_rect.x += margin;
 				_rect.width -= margin * SPACING;
+				_rect.height -= SPACING;	// Leave some space without painting
 
 				// Different colors based on GUI state
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
@@ -436,6 +464,8 @@ public class ColorRampEditor : EditorWindow {
 				GUI.DrawTexture(_rect, Texture2D.whiteTexture);
 				GUI.color = Color.white;
 			};
+
+			m_rampsList.onChangedCallback = OnListSizeChanged;
 		}
 	}
 
@@ -455,4 +485,12 @@ public class ColorRampEditor : EditorWindow {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Reorderable list size has changed.
+	/// </summary>
+	/// <param name="_list">The list that triggered the event.</param>
+	private void OnListSizeChanged(ReorderableList _list) {
+		// Re-generate heights array
+		m_elementHeights = new float[m_currentCollection.ramps.Length];
+	}
 }
