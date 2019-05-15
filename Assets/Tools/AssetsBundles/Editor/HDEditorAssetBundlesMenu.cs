@@ -159,6 +159,10 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 // Assign dragon stuff to a bundle
                 if ( dragonDef.Get("type") == "normal" )
                 {
+                    string menuPrefab = dragonDef.Get("menuPrefab");
+                    if (!string.IsNullOrEmpty(menuPrefab))
+                        prefabs.Add(menuPrefab);
+
                     string gamePrefab = dragonDef.Get("gamePrefab");
                     if ( !string.IsNullOrEmpty( gamePrefab ) )
                         prefabs.Add(gamePrefab);
@@ -179,7 +183,11 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                     for (int i = 0; i < specialTierDefs.Count; i++)
                     {
                         DefinitionNode def = specialTierDefs[i];
-                        
+
+                        string menuPrefab = dragonDef.Get("menuPrefab");
+                        if (!string.IsNullOrEmpty(menuPrefab) && !prefabs.Contains(menuPrefab))
+                            prefabs.Add(menuPrefab);
+
                         string gamePrefab = def.Get("gamePrefab");
                         if ( !string.IsNullOrEmpty( gamePrefab ) && !prefabs.Contains(gamePrefab) )
                             prefabs.Add(gamePrefab);
@@ -193,10 +201,14 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 List<DefinitionNode> skins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", pair.Key);
                 for (int i = 0; i < skins.Count; i++)
                 {
-                    string skin = skins[i].Get("skin") + "_ingame";
+                    string skin = skins[i].Get("skin");
                     materials.Add(  skin + "_body");
                     materials.Add(  skin + "_wings");
-                    
+
+                    string skin_ingame = skins[i].Get("skin") + "_ingame";
+                    materials.Add(skin_ingame + "_body");
+                    materials.Add(skin_ingame + "_wings");
+
                     // Search body parts
                     List<string> bodyParts = skins[i].GetAsList<string>("body_parts");
                     for (int j = 0; j < bodyParts.Count; j++)
