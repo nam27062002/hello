@@ -61,7 +61,7 @@ public static class EditorAutomaticAddressables {
                     }
                 } else {
                     foreach (string bundle in bundleList) {
-                        if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
+                        if (bundle.Contains(AREAS[0]) || bundle.Contains("shared") || bundle.EndsWith("_local", System.StringComparison.InvariantCulture)) {
                             localAssetBundles.Add(bundle);
                         }
                         else

@@ -154,14 +154,16 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             // if ( pair.Key != "dragon_baby" && pair.Key != "dragon_crocodile" && pair.Key != "dragon_reptile" )
             {    
                 List<string> prefabs = new List<string>();
+                List<string> local_prefabs = new List<string>();
                 List<string> materials = new List<string>();
+                List<string> local_materials = new List<string>();
                 
                 // Assign dragon stuff to a bundle
                 if ( dragonDef.Get("type") == "normal" )
                 {
                     string menuPrefab = dragonDef.Get("menuPrefab");
                     if (!string.IsNullOrEmpty(menuPrefab))
-                        prefabs.Add(menuPrefab);
+                        local_prefabs.Add(menuPrefab);
 
                     string gamePrefab = dragonDef.Get("gamePrefab");
                     if ( !string.IsNullOrEmpty( gamePrefab ) )
@@ -185,8 +187,8 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                         DefinitionNode def = specialTierDefs[i];
 
                         string menuPrefab = dragonDef.Get("menuPrefab");
-                        if (!string.IsNullOrEmpty(menuPrefab) && !prefabs.Contains(menuPrefab))
-                            prefabs.Add(menuPrefab);
+                        if (!string.IsNullOrEmpty(menuPrefab) && !local_prefabs.Contains(menuPrefab))
+                            local_prefabs.Add(menuPrefab);
 
                         string gamePrefab = def.Get("gamePrefab");
                         if ( !string.IsNullOrEmpty( gamePrefab ) && !prefabs.Contains(gamePrefab) )
@@ -201,9 +203,18 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 List<DefinitionNode> skins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", pair.Key);
                 for (int i = 0; i < skins.Count; i++)
                 {
+                    bool local = skins[i].GetAsInt("unlockLevel") == 0;
                     string skin = skins[i].Get("skin");
-                    materials.Add(  skin + "_body");
-                    materials.Add(  skin + "_wings");
+                    if (local)   // Default skin
+                    {
+                        local_materials.Add(skin + "_body");
+                        local_materials.Add(skin + "_wings");
+                    }
+                    else
+                    {
+                        materials.Add(skin + "_body");
+                        materials.Add(skin + "_wings");
+                    }
 
                     string skin_ingame = skins[i].Get("skin") + "_ingame";
                     materials.Add(skin_ingame + "_body");
@@ -213,39 +224,37 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                     List<string> bodyParts = skins[i].GetAsList<string>("body_parts");
                     for (int j = 0; j < bodyParts.Count; j++)
                     {
-                        prefabs.Add( bodyParts[j] );
+                        if (local)
+                        {
+                            local_prefabs.Add(bodyParts[j]);
+                        }
+                        else
+                        {
+                            prefabs.Add(bodyParts[j]);
+                        }
                     }
                 }
 
 
                 // Assign prefabs to bundle
-                for (int i = 0; i < prefabs.Count; i++)
-                {
-                     string[] guids = AssetDatabase.FindAssets("t:prefab " + prefabs[i]);
-                     for (int j = 0; j < guids.Length; ++j) {
-                        string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
-                        if ( Path.GetFileNameWithoutExtension(assetPath) == prefabs[i])  // if it is exactly this one
-                        {
-                            AssetImporter ai = AssetImporter.GetAtPath(assetPath);
-                            ai.SetAssetBundleNameAndVariant( pair.Key , "");
-                        }
-                    }
+                for (int i = 0; i < prefabs.Count; i++) {
+                    AssignPrefab( prefabs[i], pair.Key, "" );
+                }
+
+                for (int i = 0; i < local_prefabs.Count; i++){
+                    AssignPrefab(local_prefabs[i], pair.Key + "_local", "");
                 }
 
                 // Assign materials to bundle
-                for (int i = 0; i < materials.Count; i++)
-                {
-                     string[] guids = AssetDatabase.FindAssets("t:material " + materials[i]);
-                     for (int j = 0; j < guids.Length; ++j) {
-                        string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
-                        if ( Path.GetFileNameWithoutExtension(assetPath) == materials[i])  // if it is exactly this one
-                        {    
-                            AssetImporter ai = AssetImporter.GetAtPath(assetPath);
-                            ai.SetAssetBundleNameAndVariant( pair.Key , "");
-                        }
-                    }
+                for (int i = 0; i < materials.Count; i++) {
+                    AssignMaterial(materials[i], pair.Key, "");
                 }
-                
+
+                for (int i = 0; i < local_materials.Count; i++) {
+                    AssignMaterial(local_materials[i], pair.Key + "_local", "");
+                }
+
+
             }
             /*
             else
@@ -260,4 +269,33 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             */
         }
     }
+
+    static void AssignPrefab(string prefabName, string bundleName, string variant)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:prefab " + prefabName);
+        for (int j = 0; j < guids.Length; ++j)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
+            if (Path.GetFileNameWithoutExtension(assetPath) == prefabName)  // if it is exactly this one
+            {
+                AssetImporter ai = AssetImporter.GetAtPath(assetPath);
+                ai.SetAssetBundleNameAndVariant(bundleName, variant);
+            }
+        }
+    }
+
+    static void AssignMaterial(string materialName, string bundleName, string variant)
+    {
+        string[] guids = AssetDatabase.FindAssets("t:material " + materialName);
+        for (int j = 0; j < guids.Length; ++j)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
+            if (Path.GetFileNameWithoutExtension(assetPath) == materialName)  // if it is exactly this one
+            {
+                AssetImporter ai = AssetImporter.GetAtPath(assetPath);
+                ai.SetAssetBundleNameAndVariant(bundleName, variant);
+            }
+        }
+    }
+
 }
