@@ -119,6 +119,7 @@ uniform float4 _Tint1;
 uniform float4 _Tint2;
 #elif defined(COLORMODE_COLORRAMP) || defined(COLORMODE_COLORRAMPMASKED)
 uniform sampler2D _RampTex;
+uniform float4 _RampTex_TexelSize;
 #endif
 
 
@@ -209,7 +210,8 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined(COLORMODE_COLORRAMPMASKED)
 	fixed3 diff = tex2D(_MainTex, i.uv);
-	fixed2 offset = fixed2(diff.x, (diff.y * 2.0) + diff.z);
+	fixed vy = (diff.y * 2.0) + diff.z + 0.5;
+	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = tex2D(_RampTex, offset);
 
 #else
