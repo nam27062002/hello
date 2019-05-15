@@ -47,7 +47,7 @@ public class ColorRampCollection : ScriptableObject {
 		public Texture2D tex = null;
 		public GradientSequenceType type = GradientSequenceType.VERTICAL;
 		public Gradient[] gradients = new Gradient[0];
-		//public RangeInt[] indices = new RangeInt[0];	// Only used for horizontal sequences
+		public RangeInt[] indices = new RangeInt[0];	// Only used for horizontal sequences
 
 		// Control vars
 		[NonSerialized] public bool dirty = false;
@@ -88,7 +88,6 @@ public class ColorRampCollection : ScriptableObject {
 			switch(type) {
 				case GradientSequenceType.HORIZONTAL: {
 					// One gradient after another
-					// [AOC] TODO!! Add different weights!
 					// Resize texture if needed and get pixels array
 					targetSize.Set(RAMP_WIDTH, RAMP_HEIGHT);
 					if(tex.width != targetSize.x || tex.height != targetSize.y) {
@@ -96,21 +95,14 @@ public class ColorRampCollection : ScriptableObject {
 					}
 					pixels = tex.GetPixels();
 
-					// Sort indices
-					/*List<Vector2Int> sortedInidices = new List<Vector2Int>(indices.Length);
-						for(int i = 0; i < indices.Length; ++i) {
-							sortedInidices.Add(new Vector2Int(indices[i], ))
-						}*/
-
 					// Write pixels
-					float pixelsPerGradient = Mathf.Max(Mathf.Floor((float)tex.width / (float)gradients.Length), 1f);	// At least 1px
 					for(int i = 0; i < gradients.Length; ++i) {
 						for(int y = 0; y < tex.height; ++y) {
-								// Find out target indices for this 
-							for(int x = 0; x < pixelsPerGradient; ++x) {
-								pixelIdx = y * tex.width + (i * (int)pixelsPerGradient + x);
+							// Find out target indices for this 
+							for(int x = indices[i].min; x <= indices[i].max; ++x) {
+								pixelIdx = y * tex.width + x;
 								if(pixelIdx < pixels.Length) {
-									pixels[pixelIdx] = gradients[i].Evaluate((float)x / pixelsPerGradient);
+									pixels[pixelIdx] = gradients[i].Evaluate(indices[i].InverseLerp(x));
 								}
 							}
 						}
