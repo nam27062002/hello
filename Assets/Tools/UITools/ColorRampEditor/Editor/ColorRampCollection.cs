@@ -102,7 +102,11 @@ public class ColorRampCollection : ScriptableObject {
 							for(int x = indices[i].min; x <= indices[i].max; ++x) {
 								pixelIdx = y * tex.width + x;
 								if(pixelIdx < pixels.Length) {
-									pixels[pixelIdx] = gradients[i].Evaluate(indices[i].InverseLerp(x));
+									pixels[pixelIdx] = gradients[i].Evaluate(
+										// [AOC] InverseLerp() for RangeInt is broken, fixing it requires a new Calety version, so for now let's manually do the inverse lerp
+										// indices[i].InverseLerp(x)
+										Mathf.InverseLerp((float)indices[i].min, (float)indices[i].max, (float)x)
+									);
 								}
 							}
 						}
