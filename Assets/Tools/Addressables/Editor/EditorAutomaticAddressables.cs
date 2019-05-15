@@ -14,6 +14,8 @@ public static class EditorAutomaticAddressables {
 
     private static string[] AREAS = { "village", "castle", "dark" };
 
+    private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_fat" };
+
 
     public static JSONClass BuildRestoreCatalog() {
         List<AddressablesCatalogEntry> entryList = new List<AddressablesCatalogEntry>();
@@ -62,6 +64,17 @@ public static class EditorAutomaticAddressables {
                         if (bundle.Contains(AREAS[0]) || bundle.Contains("shared")) {
                             localAssetBundles.Add(bundle);
                         }
+                        else
+                        {
+                            for (int i = 0; i < LOCAL_DRAGONS.Length; i++)
+                            {
+                                if ( bundle.Contains( LOCAL_DRAGONS[i] ) )
+                                {
+                                    localAssetBundles.Add(bundle);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -87,6 +100,10 @@ public static class EditorAutomaticAddressables {
 
             }
             catalog.Add("groups", groups);
+            
+            
+            
+            
         }
 
         return catalog;
@@ -128,6 +145,16 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet, true);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet, true);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet, true);
+
+        // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
+        ContentManager.InitContent(true, false);
+        Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
+        foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
+        {
+            bundlesSet.Add( pair.Key );
+            AssetDatabase.GetAssetPathsFromAssetBundle(pair.Key);
+            
+        }
 
         _entries = entries;
         _bundles = bundlesSet.ToList();

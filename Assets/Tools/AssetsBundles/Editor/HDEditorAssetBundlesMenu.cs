@@ -13,6 +13,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
     private const string MENU_AUTO_GENERATE_NPCS = MENU_AUTO_GENERATE + "Auto Generate NPCs Asset Bundles";
     private const string MENU_AUTO_GENERATE_PARTICLES = MENU_AUTO_GENERATE + "Auto Generate Particles Asset Bundles";
 
+    private const string MENU_DRAGONS_ASSIGN_BUNDLES =ROOT_MENU + "Dragons/Auto Assign Dragon Bundles";
 
    
     [MenuItem(MENU_EXPORT_ASSET_BUNDLES_NPCS, false, 50)]
@@ -137,6 +138,114 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         // Not found, iterate children transforms
         foreach (Transform t in _t) {
             FindISpawner(t, ref _list);
+        }
+    }
+
+    [MenuItem(MENU_DRAGONS_ASSIGN_BUNDLES, false, 54)]
+    public static void AssgignDragonBundles()
+    {
+        ContentManager.InitContent(true, false);
+    
+        Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
+        
+        foreach(KeyValuePair<string, DefinitionNode> pair in dragons)
+        {
+            DefinitionNode dragonDef = pair.Value;
+            // if ( pair.Key != "dragon_baby" && pair.Key != "dragon_crocodile" && pair.Key != "dragon_reptile" )
+            {    
+                List<string> prefabs = new List<string>();
+                List<string> materials = new List<string>();
+                
+                // Assign dragon stuff to a bundle
+                if ( dragonDef.Get("type") == "normal" )
+                {
+                    string gamePrefab = dragonDef.Get("gamePrefab");
+                    if ( !string.IsNullOrEmpty( gamePrefab ) )
+                        prefabs.Add(gamePrefab);
+                    
+                    string resultsPrefab = dragonDef.Get("resultsPrefab");
+                    if ( !string.IsNullOrEmpty(resultsPrefab) )
+                        prefabs.Add( resultsPrefab );
+                        
+                    string animojiPrefab = dragonDef.Get("animojiPrefab");
+                    if (!string.IsNullOrEmpty(animojiPrefab))
+                    {
+                        // Set animoji direclty
+                    }
+                }
+                else
+                {
+                    List<DefinitionNode> specialTierDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", pair.Key);
+                    for (int i = 0; i < specialTierDefs.Count; i++)
+                    {
+                        DefinitionNode def = specialTierDefs[i];
+                        
+                        string gamePrefab = def.Get("gamePrefab");
+                        if ( !string.IsNullOrEmpty( gamePrefab ) && !prefabs.Contains(gamePrefab) )
+                            prefabs.Add(gamePrefab);
+                        
+                        string resultsPrefab = def.Get("resultsPrefab");
+                        if ( !string.IsNullOrEmpty(resultsPrefab) && !prefabs.Contains(resultsPrefab))
+                            prefabs.Add( resultsPrefab );
+                    }
+                }
+                
+                List<DefinitionNode> skins = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.DISGUISES, "dragonSku", pair.Key);
+                for (int i = 0; i < skins.Count; i++)
+                {
+                    string skin = skins[i].Get("skin") + "_ingame";
+                    materials.Add(  skin + "_body");
+                    materials.Add(  skin + "_wings");
+                    
+                    // Search body parts
+                    List<string> bodyParts = skins[i].GetAsList<string>("body_parts");
+                    for (int j = 0; j < bodyParts.Count; j++)
+                    {
+                        prefabs.Add( bodyParts[j] );
+                    }
+                }
+
+
+                // Assign prefabs to bundle
+                for (int i = 0; i < prefabs.Count; i++)
+                {
+                     string[] guids = AssetDatabase.FindAssets("t:prefab " + prefabs[i]);
+                     for (int j = 0; j < guids.Length; ++j) {
+                        string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
+                        if ( Path.GetFileNameWithoutExtension(assetPath) == prefabs[i])  // if it is exactly this one
+                        {
+                            AssetImporter ai = AssetImporter.GetAtPath(assetPath);
+                            ai.SetAssetBundleNameAndVariant( pair.Key , "");
+                        }
+                    }
+                }
+
+                // Assign materials to bundle
+                for (int i = 0; i < materials.Count; i++)
+                {
+                     string[] guids = AssetDatabase.FindAssets("t:material " + materials[i]);
+                     for (int j = 0; j < guids.Length; ++j) {
+                        string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
+                        if ( Path.GetFileNameWithoutExtension(assetPath) == materials[i])  // if it is exactly this one
+                        {    
+                            AssetImporter ai = AssetImporter.GetAtPath(assetPath);
+                            ai.SetAssetBundleNameAndVariant( pair.Key , "");
+                        }
+                    }
+                }
+                
+            }
+            /*
+            else
+            {
+                // Check animoji only
+                string animojiPrefab = dragonDef.Get("animojiPrefab");
+                if (!string.IsNullOrEmpty(animojiPrefab))
+                {
+                    // Set animoji direclty
+                }
+            }
+            */
         }
     }
 }
