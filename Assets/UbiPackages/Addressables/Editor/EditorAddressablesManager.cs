@@ -499,7 +499,7 @@ public class EditorAddressablesManager
                             path += ".meta";
                             resourcesPath += ".meta";
 
-                            AssetDatabase.MoveAsset(path, resourcesPath);                            
+                            EditorFileUtils.Move(path, resourcesPath);                           
 
                             // Moves the meta
                             entry.AssetName = GENERATED_FOLDER + "/" + EditorFileUtils.GetPathWithoutExtension(pathFromResources);
