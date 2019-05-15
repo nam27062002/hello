@@ -31,6 +31,7 @@ public class ColorRampEditor : EditorWindow {
 	private const float SPACING = 2f;
 	private const float WINDOW_MARGIN = 10f;
 	private const float INFO_BOX_MARGIN = 5f;
+	private const float FOLDOUT_INDENT_SIZE = 15f;
 
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
@@ -78,6 +79,7 @@ public class ColorRampEditor : EditorWindow {
 
 	// GUI widgets
 	private ReorderableList m_rampsList = null;
+	private float[] m_elementHeights = new float[0];
 
 	// Internal
 	private SerializedObject m_serializedCollection = null;
@@ -177,7 +179,6 @@ public class ColorRampEditor : EditorWindow {
 
 					// Reload collection if required
 					reloadCollection = true;
-					//LoadCollectionIfNeeded();
 				}
 			}
 
@@ -247,6 +248,9 @@ public class ColorRampEditor : EditorWindow {
 		// Initialize list widget
 		m_rampsList = new ReorderableList(m_serializedCollection, m_serializedCollection.FindProperty("ramps"));
 		if(m_rampsList != null) {
+			// Aux vars
+			m_elementHeights = new float[m_currentCollection.ramps.Length];
+
 			// Header
 			m_rampsList.drawHeaderCallback = (Rect _rect) => {
 				// Show title
@@ -266,20 +270,19 @@ public class ColorRampEditor : EditorWindow {
 				// Get target data
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
 				SerializedProperty rampDataProp = m_rampsList.serializedProperty.GetArrayElementAtIndex(_idx);
-				SerializedProperty gradientProp = rampDataProp.FindPropertyRelative("gradient");
-				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 
 				// Adjust prefix label size
 				EditorGUIUtility.labelWidth = 90f;
 
 				// Display texture
+				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 				Rect texRect = new Rect(
 					_rect.x,
 					currentLineY,
 					_rect.width,
 					EditorGUI.GetPropertyHeight(texProp)
 				);
-				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Texture File"), true);
+				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Ramp Texture"), true);
 
 				// Advance pos
 				currentLineY += texRect.height + SPACING;
@@ -310,23 +313,144 @@ public class ColorRampEditor : EditorWindow {
 					// so we're forced to use the serialized property.
 					// We want to open the gradient editor through a button, to emphasize
 					// the fact that the user will be modifying the texture as well.
-					// Unfortunately, Unity doesn't give access to the gradient editor until
-					// version 2018, so we will drop the idea for now.4
+					// Unfortunately, Unity doesn't give access to the gradient editor either, 
+					// so we will drop the idea for now.
 
 					// Detect changes
 					EditorGUI.BeginChangeCheck();
 
-					// Draw Gradient field
+					// Texture Preview
+					Rect previewRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						// EditorGUIUtility.singleLineHeight
+						rampData.tex.height * 10
+					);
+					GUI.DrawTexture(previewRect, rampData.tex);
+
+					// Advance pos
+					currentLineY += previewRect.height + SPACING;
+
+					// Sequence type
+					SerializedProperty sequenceTypeProp = rampDataProp.FindPropertyRelative("type");
+					Rect sequenceTypeRect = new Rect(
+						_rect.x,
+						currentLineY,
+						_rect.width,
+						EditorGUI.GetPropertyHeight(sequenceTypeProp)
+					);
+					EditorGUI.PropertyField(sequenceTypeRect, sequenceTypeProp, true);
+
+					// Advance pos
+					currentLineY += sequenceTypeRect.height + SPACING;
+
+					// Draw Gradient fields
+					SerializedProperty gradientsProp = rampDataProp.FindPropertyRelative("gradients");
 					Rect gradientRect = new Rect(
 						_rect.x,
 						currentLineY,
 						_rect.width,
-						EditorGUI.GetPropertyHeight(gradientProp)
+						EditorGUI.GetPropertyHeight(gradientsProp)
 					);
-					EditorGUI.PropertyField(gradientRect, gradientProp, new GUIContent("Click to edit -->"), true);
+					EditorGUI.PropertyField(gradientRect, gradientsProp, true);
 
 					// Advance pos
 					currentLineY += gradientRect.height + SPACING;
+
+					// Draw Indices - only for horizontal gradients
+					if(rampData.type == ColorRampCollection.ColorRampData.GradientSequenceType.HORIZONTAL) {
+						// Get Data
+						SerializedProperty indicesProp = rampDataProp.FindPropertyRelative("indices");
+						Rect indicesRect = new Rect(
+							_rect.x,
+							currentLineY,
+							_rect.width,
+							EditorGUIUtility.singleLineHeight
+						);
+
+						// Fixed length array matching the amount of gradients
+						if(indicesProp.arraySize != gradientsProp.arraySize) {
+							indicesProp.arraySize = gradientsProp.arraySize;
+						}
+
+						// Foldable
+						indicesProp.isExpanded = EditorGUI.Foldout(indicesRect, indicesProp.isExpanded, "Indices", true);
+						currentLineY += indicesRect.height + SPACING;   // Advance pos
+						if(indicesProp.isExpanded) {
+							// Do elements!
+							// Aux vars
+							SerializedProperty indexProp = null;
+							SerializedProperty minProp = null;
+							SerializedProperty maxProp = null;
+							float min = 0f;
+							float max = 0f;
+							float previousMax = 0f;
+							float labelWidth = 60f; // Fixed width
+
+							// Aux rects
+							Rect prefixLabelRect = new Rect(
+								_rect.x + FOLDOUT_INDENT_SIZE,  // Extra indent space to align with foldout
+								currentLineY,
+								_rect.width,
+								EditorGUIUtility.singleLineHeight
+							);
+
+							// Draw all elements
+							for(int i = 0; i < indicesProp.arraySize; ++i) {
+								// Prefix label
+								Rect indentedRect = EditorGUI.PrefixLabel(
+									prefixLabelRect,
+									new GUIContent(gradientsProp.GetArrayElementAtIndex(i).displayName) // Show same label as Gradients array
+								);
+
+								// Get data
+								indexProp = indicesProp.GetArrayElementAtIndex(i);
+
+								minProp = indexProp.FindPropertyRelative("min");
+								min = (float)minProp.intValue;
+
+								maxProp = indexProp.FindPropertyRelative("max");
+								max = (float)maxProp.intValue;
+
+								// Slider
+								// Disable for last item, since its value is fixed between previous max and 255f
+								EditorGUI.BeginDisabledGroup(i == indicesProp.arraySize - 1);
+
+								// Use a min-max slider where the min will be fixed to the previous index end
+								indentedRect.x -= FOLDOUT_INDENT_SIZE;
+								indentedRect.xMax = _rect.xMax - labelWidth - SPACING * 4;
+								EditorGUI.MinMaxSlider(indentedRect, ref min, ref max, 0f, 255f);
+
+								// End disabled group
+								EditorGUI.EndDisabledGroup();
+
+								// Force min to previous item's max
+								min = previousMax;
+
+								// Force max to 255 for last item
+								if(i == indicesProp.arraySize - 1) {
+									max = 255f;
+								}
+
+								// Cache max
+								previousMax = max;
+
+								// Store values to property (only if changed to avoid refreshing the texture all the time
+								minProp.intValue = (int)min;
+								maxProp.intValue = (int)max;
+
+								// Draw label - give it a textfield style, but we don't want to make it editable so it's a label
+								indentedRect.xMin = indentedRect.xMax + SPACING * 4;
+								indentedRect.width = labelWidth;
+								EditorGUI.SelectableLabel(indentedRect, minProp.intValue + " - " + maxProp.intValue, EditorStyles.textField);
+
+								// Advance pos
+								currentLineY += indentedRect.height + SPACING;
+								prefixLabelRect.y = currentLineY;
+							}
+						}
+					}
 
 					// Did the gradient change?
 					if(EditorGUI.EndChangeCheck()) {
@@ -371,7 +495,7 @@ public class ColorRampEditor : EditorWindow {
 						GUI.color = Colors.coral;
 						if(GUI.Button(boxContentRect, "Discard")) {
 							// Reload texture from disk
-							rampData.DiscardGradient();
+							rampData.Discard();
 							rampData.SaveTexture();
 
 							// [AOC] TODO!! Somehow the gradient preview doesn't get refreshed when restoring the gradient by script -___-
@@ -392,18 +516,16 @@ public class ColorRampEditor : EditorWindow {
 
 				// Restore prefix label size
 				EditorGUIUtility.labelWidth = 0f;
+
+				// Store element height
+				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING;    // Extra spacing
 			};
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
-				// Hardcoded xD
-				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
-				if(rampData.tex == null) {
-					return 60f; // Extra space for warning message
-				} else if(rampData.dirty) {
-					return 80f; // Extra space for buttons
-				} else {
-					return 45f;
+				if(_idx >= m_elementHeights.Length) {
+					m_elementHeights = new float[m_currentCollection.ramps.Length];
 				}
+				return m_elementHeights[_idx];
 			};
 
 			m_rampsList.drawElementBackgroundCallback = (Rect _rect, int _idx, bool _active, bool _focused) => {
@@ -414,6 +536,7 @@ public class ColorRampEditor : EditorWindow {
 				float margin = SPACING;
 				_rect.x += margin;
 				_rect.width -= margin * SPACING;
+				_rect.height -= SPACING;	// Leave some space without painting
 
 				// Different colors based on GUI state
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
@@ -436,6 +559,8 @@ public class ColorRampEditor : EditorWindow {
 				GUI.DrawTexture(_rect, Texture2D.whiteTexture);
 				GUI.color = Color.white;
 			};
+
+			m_rampsList.onChangedCallback = OnListSizeChanged;
 		}
 	}
 
@@ -455,4 +580,12 @@ public class ColorRampEditor : EditorWindow {
 	//------------------------------------------------------------------//
 	// CALLBACKS														//
 	//------------------------------------------------------------------//
+	/// <summary>
+	/// Reorderable list size has changed.
+	/// </summary>
+	/// <param name="_list">The list that triggered the event.</param>
+	private void OnListSizeChanged(ReorderableList _list) {
+		// Re-generate heights array
+		m_elementHeights = new float[m_currentCollection.ramps.Length];
+	}
 }
