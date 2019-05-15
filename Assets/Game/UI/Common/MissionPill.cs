@@ -41,7 +41,8 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_activeObj = null;
 	[Space]
 	[SerializeField] private Image m_missionIcon = null;
-	[SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
+    [SerializeField] private GameObject m_mission3dIcon = null;
+    [SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private GameObject m_missionCompletedObj = null;
 	[Space]
@@ -229,8 +230,30 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Check if this mission is complete
 		if(m_missionCompletedObj != null) m_missionCompletedObj.SetActive(m_mission.objective.isCompleted);
 
-		// Change Icon
-		m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
+        // Check if the icon is an image or a 3d model
+        if (m_mission.def.GetAsBool("is3dIcon"))
+        {
+
+            // Icon is a 3d Model
+            m_mission3dIcon.gameObject.SetActive(true);
+            m_mission3dIcon.transform.DestroyAllChildren(true);
+
+            GameObject model = Instantiate (Resources.Load<GameObject>(UIConstants.MISSION_3D_ICONS_PATH + m_mission.def.GetAsString("icon")));
+            model.transform.SetParent(m_mission3dIcon.transform,false);
+
+            m_missionIcon.gameObject.SetActive(false);
+
+        } else
+        {
+
+            // Icon is a sprite
+            m_missionIcon.gameObject.SetActive(true);
+            m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
+
+            m_mission3dIcon.gameObject.SetActive(false);
+
+        }
+
 
 		// Where
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
