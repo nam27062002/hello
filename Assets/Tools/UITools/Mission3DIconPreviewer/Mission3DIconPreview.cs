@@ -43,6 +43,11 @@ public class Mission3DIconPreview  : MonoBehaviour {
     // GENERIC METHODS														  //
     //------------------------------------------------------------------------//
 
+	public void Awake()
+	{
+		HDAddressablesManager.Instance.Initialise();
+	}
+
     public void Start()
     {
 
@@ -79,7 +84,20 @@ public class Mission3DIconPreview  : MonoBehaviour {
         dropDown.ClearOptions();
         dropDown.AddOptions(options);
 
+		AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync("Air/PF_Canary01_Flock");
+		op.OnDone = OnAssetLoaded;
     }
+
+	private void OnAssetLoaded(AddressablesOp op)
+	{
+		Object o = op.GetAsset<Object>();
+		Debug.Log ("Dentro");
+	}
+
+	public void Update()
+	{
+		HDAddressablesManager.Instance.Update ();
+	}
 
     //------------------------------------------------------------------------//
     // OTHER METHODS														  //
