@@ -225,6 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224700468819808812}
   - component: {fileID: 222017314721095476}
+  - component: {fileID: 114688650306808722}
   m_Layer: 5
   m_Name: 3dModel
   m_TagString: Untagged
@@ -547,6 +548,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224147826075297422}
   - component: {fileID: 222170860942911414}
+  - component: {fileID: 114489254278634462}
   m_Layer: 5
   m_Name: 3dModel
   m_TagString: Untagged
@@ -1184,6 +1186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224897782219836568}
   - component: {fileID: 222476877919868978}
+  - component: {fileID: 114705515368628670}
   m_Layer: 5
   m_Name: 3dModel
   m_TagString: Untagged
@@ -1932,7 +1935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animator: {fileID: 114196399509669894}
   m_missionIcon: {fileID: 114755592982846424}
-  m_mission3dIcon: {fileID: 1261962584640394}
+  m_mission3dIcon: {fileID: 114489254278634462}
   m_missionText: {fileID: 114651381514996310}
   m_rewardText: {fileID: 114711588232952082}
 --- !u!114 &114072203988937404
@@ -3718,6 +3721,25 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   m_currency: 1
   m_alignment: 2
+--- !u!114 &114489254278634462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1261962584640394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9649da4a9db14f11878dd01de4afba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_resourcePath: 
+  m_useFolderLevelInID: 0
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_container: {fileID: 224147826075297422}
+  m_loadingPrefab: {fileID: 1502732228289458, guid: bacf67b45f7948247a4c93de35480f2a,
+    type: 2}
+  m_loadedInstance: {fileID: 0}
 --- !u!114 &114494057259142864
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4478,7 +4500,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animator: {fileID: 114299075859606554}
   m_missionIcon: {fileID: 114151974009542588}
-  m_mission3dIcon: {fileID: 1738542565725024}
+  m_mission3dIcon: {fileID: 114705515368628670}
   m_missionText: {fileID: 114372548053986776}
   m_rewardText: {fileID: 114960216268593742}
 --- !u!114 &114668362286830734
@@ -4533,6 +4555,25 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114688650306808722
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1109054549725930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9649da4a9db14f11878dd01de4afba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_resourcePath: 
+  m_useFolderLevelInID: 0
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_container: {fileID: 224700468819808812}
+  m_loadingPrefab: {fileID: 1502732228289458, guid: bacf67b45f7948247a4c93de35480f2a,
+    type: 2}
+  m_loadedInstance: {fileID: 0}
 --- !u!114 &114695707331612994
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4587,6 +4628,25 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114705515368628670
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1738542565725024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9649da4a9db14f11878dd01de4afba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_resourcePath: 
+  m_useFolderLevelInID: 0
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_container: {fileID: 224897782219836568}
+  m_loadingPrefab: {fileID: 1502732228289458, guid: bacf67b45f7948247a4c93de35480f2a,
+    type: 2}
+  m_loadedInstance: {fileID: 0}
 --- !u!114 &114707549786980948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4600,7 +4660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_animator: {fileID: 114045543177762508}
   m_missionIcon: {fileID: 114657685529136244}
-  m_mission3dIcon: {fileID: 1109054549725930}
+  m_mission3dIcon: {fileID: 114688650306808722}
   m_missionText: {fileID: 114931816051926824}
   m_rewardText: {fileID: 114958955571144826}
 --- !u!114 &114711577212399490

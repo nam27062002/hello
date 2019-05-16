@@ -41,7 +41,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private GameObject m_activeObj = null;
 	[Space]
 	[SerializeField] private Image m_missionIcon = null;
-    [SerializeField] private GameObject m_mission3dIcon = null;
+    [SerializeField] private UI3DAddressablesLoader m_mission3dIcon = null;
     [SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private GameObject m_missionCompletedObj = null;
@@ -236,10 +236,10 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 
             // Icon is a 3d Model
             m_mission3dIcon.gameObject.SetActive(true);
-            m_mission3dIcon.transform.DestroyAllChildren(true);
 
-            GameObject model = Instantiate (Resources.Load<GameObject>(UIConstants.MISSION_3D_ICONS_PATH + m_mission.def.GetAsString("icon")));
-            model.transform.SetParent(m_mission3dIcon.transform,false);
+            // Load the 3d model. DefinitionNode "icon" should be the assetId of the addressable
+            m_mission3dIcon.LoadAsync ( m_mission.def.GetAsString("icon") );
+            
 
             m_missionIcon.gameObject.SetActive(false);
 

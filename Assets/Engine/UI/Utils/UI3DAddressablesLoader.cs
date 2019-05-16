@@ -30,12 +30,18 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 	// Exposed
 	[FileListAttribute("", StringUtils.PathFormat.RESOURCES_ROOT_WITHOUT_EXTENSION, "*.prefab")]
 	[SerializeField] private string m_resourcePath = "";
-    public string resourcePath { get { return m_resourcePath; } }
+    public string resourcePath
+    {
+        get { return m_resourcePath; }
+    }
     [SerializeField] private int m_useFolderLevelInID = 0;
     public int useFolderLevelInID { get { return m_useFolderLevelInID; } }
     // this will be stored in the editor
     [SerializeField] private string m_assetId = "";
-    public string assetId { get { return m_assetId; } }
+    public string assetId
+    {
+        get { return m_assetId; }
+    }
 
     [SerializeField] private bool m_loadOnAwake = false;
 
@@ -129,6 +135,20 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 		// Return newly instantiated instance
 		return m_loadedInstance;
 	}
+
+    /// <summary>
+	/// Start loading a prefab asynchronously. The OnLoadComplete event will be
+	/// triggered when the loading has finished and the object has been instantiated.
+	/// If an instance was already loaded, it will be replaced.
+    /// </summary>
+    /// <param name="_assetId">The assetId of the addressable item</param>
+    public AddressablesOp LoadAsync(string _assetId)
+    {
+        m_assetId = _assetId;
+
+        return LoadAsync();
+    }
+
 
 	/// <summary>
 	/// Start loading the prefab asynchronously. The OnLoadComplete event will be
