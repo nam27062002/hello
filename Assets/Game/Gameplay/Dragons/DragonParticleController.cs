@@ -396,10 +396,12 @@ public class DragonParticleController : MonoBehaviour, IBroadcastListener
 
 	void OnPreRevive()
 	{
-		// Instantiate particle
-		GameObject instance = m_petRevive.CreateInstance();
+        // Instantiate particle
+        GameObject instance = m_petRevive.CreateInstance();
 		instance.transform.position = m_reviveAnchor.position + m_petRevive.offset;
-	}
+        ParticleSystem ps = instance.GetComponent<ParticleSystem>();
+        ps.Play();
+    }
 
     public void CastMummyPower() {
         ParticleSystem ps = ParticleManager.InitLeveledParticle(m_mummyPower, null);
