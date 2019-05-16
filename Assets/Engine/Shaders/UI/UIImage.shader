@@ -8,6 +8,11 @@ Shader "Custom/UI/UIImage" {
 		
 		_ColorMultiply ("Color Multiply", Color) = (1,1,1,1)
 		_ColorAdd ("Color Add", Color) = (0,0,0,0)
+		
+		[Toggle(COLOR_RAMP_ENABLED)] _ColorRampEnabled("Color Ramp Enabled", Float) = 0
+		_ColorRampTex("Color Ramp", 2D) = "red" {}
+		//_ColorRampIntensity("Color Ramp Intensity", Range(0, 1)) = 0	// [AOC] Make it more optimal by just getting the full value from the gradient
+		
 		_Alpha ("Alpha", Float) = 1	// [AOC] Will be multiplied to the source and tint alpha components
 		
 		_SaturationAmount ("Saturation", Float) = 1
@@ -26,11 +31,11 @@ Shader "Custom/UI/UIImage" {
 
 		[Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
 
-		 // Soft Mask support
-	        // Soft Mask determines that shader supports soft masking by presence of this
-	        // property. All other properties listed in SoftMask.shader aren't required
-	        // to include here. 
-	        _SoftMask("Mask", 2D) = "white" {}
+		// Soft Mask support
+        // Soft Mask determines that shader supports soft masking by presence of this
+        // property. All other properties listed in SoftMask.shader aren't required
+        // to include here. 
+        _SoftMask("Mask", 2D) = "white" {}
 	}
 
 	SubShader {
@@ -64,12 +69,15 @@ Shader "Custom/UI/UIImage" {
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 2.0
-			#include "UIShaders.cginc"
-
+			
+			// Flags
+			#pragma shader_feature __ COLOR_RAMP_ENABLED
 			#pragma multi_compile __ UNITY_UI_ALPHACLIP
 
 			// Soft Mask Support
-            		#pragma multi_compile __ SOFTMASK_SIMPLE SOFTMASK_SLICED SOFTMASK_TILED
+            #pragma multi_compile __ SOFTMASK_SIMPLE SOFTMASK_SLICED SOFTMASK_TILED
+            
+            #include "UIShaders.cginc"
 			
 			// VERTEX SHADER ///////////////////////////////////////////////////////////////////////////////////////////
 			v2f vert(appdata_t IN) {

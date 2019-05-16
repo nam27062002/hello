@@ -8,7 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: VFX_FireSmoke_Additive_01
   m_Shader: {fileID: 4800000, guid: 02891335b31643f408fed70e86224f83, type: 3}
-  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX COLOR_TINT DISSOLVE_ENABLED EXTENDED_PARTICLES
+  m_ShaderKeywords: APPLY_RGB_COLOR_VERTEX BLENDMODE_PREMULTIPLY DISSOLVE_ENABLED
+    EXTENDED_PARTICLES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -23,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 16ddf40114333264a84aaa922874e748, type: 3}
+        m_Texture: {fileID: 2800000, guid: 045bba569558ddf46885cd49283869d9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
@@ -31,11 +32,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - BlendMode: 0
+    - BlendMode: 5
     - _ABOffset: 0
-    - _ColorMultiplier: 0.1
-    - _DstBlend: 1
-    - _EmissionSaturation: 4
+    - _ColorMultiplier: 0
+    - _Cull: 0
+    - _DstBlend: 10
+    - _EmissionSaturation: 6.4
     - _EmissivePower: 1
     - _EnableAlphaDissolve: 1
     - _EnableAutomaticPanning: 0
@@ -44,17 +46,20 @@ Material:
     - _EnableColorVertex: 1
     - _EnableEmissivePower: 0
     - _EnableExtendedParticles: 1
+    - _EnableFlowMap: 0
     - _EnableNoiseTexture: 0
     - _EnableNoiseTextureAlpha: 0
     - _EnableNoiseTextureDissolve: 0
     - _EnableNoiseTextureEmission: 0
-    - _OpacitySaturation: 1
-    - _SrcBlend: 5
+    - _EnableNoiseUV: 0
+    - _GlobalAlpha: 1
+    - _OpacitySaturation: 0.3
+    - _SrcBlend: 1
     - _ZTest: 2
     m_Colors:
     - _BasicColor: {r: 1, g: 1, b: 1, a: 0.5}
-    - _DissolveStep: {r: 0, g: 1, b: 0, a: 0}
-    - _NoisePanning: {r: 0, g: 0, b: 0, a: 0}
+    - _DissolveStep: {r: 0.2, g: 0.9, b: 0, a: 0}
+    - _NoisePanning: {r: 0.3, g: 0.3, b: 0, a: 0}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
-    - _SaturatedColor: {r: 0.9852941, g: 0.87657195, b: 0.7389706, a: 0.5}
+    - _SaturatedColor: {r: 0.7389706, g: 0.9241379, b: 0.9852941, a: 0.5}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

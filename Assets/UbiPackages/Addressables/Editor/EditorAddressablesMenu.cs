@@ -130,6 +130,9 @@ public class EditorAddressablesMenu : MonoBehaviour
             return;
         }
 
+        // Generated assets need to be moved to their original location again
+        Manager.MoveGeneratedResourcesToOriginalUbication();        
+
         AddressablesManager.Mode = value;
 
         if (AddressablesManager.Mode_NeedsAssetBundles())

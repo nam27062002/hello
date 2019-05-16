@@ -52,4 +52,4 @@ project()
 }
 
 project AddressablesUnitTests
-project AddressablesUssetsTests
+project AddressablesAssetsTests
