@@ -268,8 +268,8 @@ public class DragonEquip : MonoBehaviour {
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-				GameObject prefabObj = Resources.Load<GameObject>("Game/Equipable/Items/" + m_dragonSku + "/" + bodyParts[i]);
-				if ( prefabObj != null )
+                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset(bodyParts[i]) as GameObject;
+                if ( prefabObj != null )
 				{
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);
 					Equipable equipable = objInstance.GetComponent<Equipable>();
@@ -462,10 +462,10 @@ public class DragonEquip : MonoBehaviour {
 			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
 
-		m_bodyMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_body");
-		m_wingsMaterial = Resources.Load<Material>(SKIN_PATH + m_dragonSku + "/" + _name + "_wings");
+        m_bodyMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_body") as Material;
+        m_wingsMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_wings") as Material;
 
-		bool lockEffect = false;
+        bool lockEffect = false;
 		if ( Application.isPlaying )
 		{
 			lockEffect = FeatureSettingsManager.instance.IsLockEffectEnabled;
@@ -515,8 +515,8 @@ public class DragonEquip : MonoBehaviour {
 	{
 		string _name = "dragon_empty";
 
-		Material wingsMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_wings");
-		Material bodyMaterial = Resources.Load<Material>(DragonEquip.SKIN_PATH + _name + "_body");
+        Material bodyMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_body") as Material;
+        Material wingsMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_wings") as Material;
 
 		for (int i = 0; i < m_renderers.Count; i++) {
 			int id = m_renderers[i].GetInstanceID();
