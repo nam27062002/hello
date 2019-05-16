@@ -16,6 +16,9 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 
 		_Tint("Tint", color) = (1, 1, 1, 1)
 
+		[Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull mode", Float) = 0.0
+		[Toggle(OPAQUEALPHA)] _OpaqueAlpha("Opaque alpha", Float) = 1.0
+
 	}
 	SubShader
 	{
@@ -25,7 +28,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 		{
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
-			Cull back
+			Cull [_Cull]
 			ColorMask RGBA
 
 			CGPROGRAM
@@ -34,6 +37,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED
+			#pragma multi_compile __ OPAQUEALPHA
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
@@ -43,7 +47,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 //			#define MATCAP
 			#define TINT
 //			#define DYNAMIC_LIGHT
-			#define OPAQUEALPHA
+//			#define OPAQUEALPHA
 
 			#include "entities.cginc"
 
