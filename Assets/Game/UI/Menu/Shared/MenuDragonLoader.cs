@@ -245,7 +245,7 @@ public class MenuDragonLoader : MonoBehaviour {
             }
             else{
 				// Instantiate the prefab and add it as child of this object
-				GameObject dragonPrefab = HDAddressablesManager.Instance.LoadAsset(prefab) as GameObject;
+				GameObject dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(prefab);
                 if (dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 					ConfigureInstance( newInstance );

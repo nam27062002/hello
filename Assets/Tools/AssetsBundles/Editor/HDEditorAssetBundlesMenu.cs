@@ -157,7 +157,10 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 List<string> local_prefabs = new List<string>();
                 List<string> materials = new List<string>();
                 List<string> local_materials = new List<string>();
-                
+                List<string> icons = new List<string>();
+                List<string> local_icons = new List<string>();
+
+
                 // Assign dragon stuff to a bundle
                 if ( dragonDef.Get("type") == "normal" )
                 {
@@ -186,7 +189,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                     {
                         DefinitionNode def = specialTierDefs[i];
 
-                        string menuPrefab = dragonDef.Get("menuPrefab");
+                        string menuPrefab = def.Get("menuPrefab");
                         if (!string.IsNullOrEmpty(menuPrefab) && !local_prefabs.Contains(menuPrefab))
                             local_prefabs.Add(menuPrefab);
 
@@ -205,15 +208,18 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 {
                     bool local = skins[i].GetAsInt("unlockLevel") == 0;
                     string skin = skins[i].Get("skin");
+                    string icon = skins[i].Get("icon");
                     if (local)   // Default skin
                     {
                         local_materials.Add(skin + "_body");
                         local_materials.Add(skin + "_wings");
+                        local_icons.Add( icon );
                     }
                     else
                     {
                         materials.Add(skin + "_body");
                         materials.Add(skin + "_wings");
+                        icons.Add(icon);
                     }
 
                     string skin_ingame = skins[i].Get("skin") + "_ingame";
@@ -238,22 +244,29 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
 
                 // Assign prefabs to bundle
                 for (int i = 0; i < prefabs.Count; i++) {
-                    AssignPrefab( prefabs[i], pair.Key, "" );
+                    AssignItem("prefab", prefabs[i], pair.Key, "" );
                 }
 
                 for (int i = 0; i < local_prefabs.Count; i++){
-                    AssignPrefab(local_prefabs[i], pair.Key + "_local", "");
+                    AssignItem("prefab", local_prefabs[i], pair.Key + "_local", "");
                 }
 
                 // Assign materials to bundle
                 for (int i = 0; i < materials.Count; i++) {
-                    AssignMaterial(materials[i], pair.Key, "");
+                    AssignItem("material", materials[i], pair.Key, "");
                 }
 
                 for (int i = 0; i < local_materials.Count; i++) {
-                    AssignMaterial(local_materials[i], pair.Key + "_local", "");
+                    AssignItem("material", local_materials[i], pair.Key + "_local", "");
                 }
 
+                for (int i = 0; i < icons.Count; i++){
+                    AssignItem("texture", icons[i], pair.Key, "");
+                }
+
+                for (int i = 0; i < local_icons.Count; i++){
+                    AssignItem("texture", local_icons[i], pair.Key + "_local", "");
+                }
 
             }
             /*
@@ -284,9 +297,9 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         }
     }
 
-    static void AssignMaterial(string materialName, string bundleName, string variant)
+    static void AssignItem( string item_type,  string materialName, string bundleName, string variant)
     {
-        string[] guids = AssetDatabase.FindAssets("t:material " + materialName);
+        string[] guids = AssetDatabase.FindAssets("t:" + item_type + " " + materialName);
         for (int j = 0; j < guids.Length; ++j)
         {
             string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);

@@ -150,8 +150,12 @@ public static class EditorAutomaticAddressables {
         // Add all dragon bundles to bundleSet and (prefabs and materials) to entries
         System.Type[] instanciableTypesAndMaterials = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset), typeof( UnityEngine.Material ) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins"), false, entries, bundlesSet, instanciableTypesAndMaterials);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet, instanciableTypesAndMaterials);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet, instanciableTypes);
+
+        // Disguise icons
+        System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet, instanciableTypesTextures);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();

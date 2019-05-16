@@ -268,7 +268,7 @@ public class DragonEquip : MonoBehaviour {
 		{
 			if ( !string.IsNullOrEmpty(bodyParts[i]) )
 			{
-                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset(bodyParts[i]) as GameObject;
+                GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(bodyParts[i]);
                 if ( prefabObj != null )
 				{
 					GameObject objInstance = Instantiate<GameObject>(prefabObj);
@@ -462,8 +462,8 @@ public class DragonEquip : MonoBehaviour {
 			_name = m_dragonSku + "_0";		// Default skin, all dragons should have it
 		}
 
-        m_bodyMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_body") as Material;
-        m_wingsMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_wings") as Material;
+        m_bodyMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_body");
+        m_wingsMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_wings");
 
         bool lockEffect = false;
 		if ( Application.isPlaying )
@@ -515,8 +515,8 @@ public class DragonEquip : MonoBehaviour {
 	{
 		string _name = "dragon_empty";
 
-        Material bodyMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_body") as Material;
-        Material wingsMaterial = HDAddressablesManager.Instance.LoadAsset(_name + "_wings") as Material;
+        Material bodyMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_body");
+        Material wingsMaterial = HDAddressablesManager.Instance.LoadAsset<Material>(_name + "_wings");
 
 		for (int i = 0; i < m_renderers.Count; i++) {
 			int id = m_renderers[i].GetInstanceID();
