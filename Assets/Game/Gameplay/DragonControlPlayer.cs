@@ -131,16 +131,14 @@ public class DragonControlPlayer : MonoBehaviour {
 			moving = moving || tiltMoving;
 			action = action || tiltControls.getAction();
 		}
-
-		#if UNITY_EDITOR
+        		
 		if(joystickControls != null) {
 			joystickControls.UpdateJoystickControls();
 			joystickMoving = joystickControls.isMoving();
 			moving = moving || joystickMoving;
 			action = action || joystickControls.getAction();
 		}
-        #endif
-        
+
         // Check action tap
         // On action just pressed
         if (action && !wasAction)
@@ -202,8 +200,7 @@ public class DragonControlPlayer : MonoBehaviour {
 			impulse = move.normalized * desiredVelocity;
 			return;
 		}	
-
-		#if UNITY_EDITOR
+        		
 		if(joystickControls != null && joystickMoving) {
 			joystickControls.CalcSharkDesiredVelocity(desiredVelocity);
 			impulse.x = joystickControls.SharkDesiredVel.x;
@@ -211,7 +208,7 @@ public class DragonControlPlayer : MonoBehaviour {
 			impulse.z = 0;
 			return;
 		}
-		#endif
+		
 		if(!m_useTiltControl) {
 			if(touchControls != null && moving) {
 				touchControls.CalcSharkDesiredVelocity(desiredVelocity);
@@ -242,11 +239,9 @@ public class DragonControlPlayer : MonoBehaviour {
 
 		if(tiltControls != null)
 			tiltControls.enabled = m_useTiltControl;
-
-#if UNITY_EDITOR
+            
 		if(joystickControls != null)
 			joystickControls.enabled = true;
-#endif
 	}
 
 	void OnDisable() {
@@ -259,10 +254,8 @@ public class DragonControlPlayer : MonoBehaviour {
 		if(tiltControls != null)
 			tiltControls.enabled = false;
 
-#if UNITY_EDITOR
 		if(joystickControls != null)
 			joystickControls.enabled = false;
-#endif
 
 		moving = false;
 		action = false;

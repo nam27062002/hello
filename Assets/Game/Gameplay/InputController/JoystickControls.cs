@@ -34,9 +34,6 @@ public class JoystickControls : MonoBehaviour
 
     public void CalcSharkDesiredVelocity(float speed)
     {
-        // normalize the distance of the click in world units away from the shark, by the max click distance
-        // m_sharkDesiredVel.x = m_diffVecNorm.x * speed * m_speedDampenMult * m_decelerationMult;
-        // m_sharkDesiredVel.y = m_diffVecNorm.y * speed * m_speedDampenMult * m_decelerationMult;
         m_sharkDesiredVel.x = vX * speed;
         m_sharkDesiredVel.y = vY * speed;
     }
