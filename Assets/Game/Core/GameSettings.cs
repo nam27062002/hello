@@ -189,13 +189,22 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	}
 
 	[Space]
-	[SerializeField] private string m_privacyPolicyURL = "https://legal.ubi.com/privacypolicy/";
-	public static string PRIVACY_POLICY_URL {
+	[SerializeField] private string m_privacyPolicyIOS_URL = "https://hungrydragon.ubi.com/legal/";
+	public static string PRIVACY_POLICY_IOS_URL {
 		// Attach standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
-		get { return instance.m_privacyPolicyURL + LocalizationManager.SharedInstance.Culture.Name; }
+		get { return instance.m_privacyPolicyIOS_URL + LocalizationManager.SharedInstance.Culture.Name; }
 	}
 
-	[SerializeField] private string m_eulaURL = "https://legal.ubi.com/eula/";
+    [SerializeField]
+    private string m_privacyPolicyANDROID_URL = "https://legal.ubi.com/privacypolicy/";
+    public static string PRIVACY_POLICY_ANDROID_URL
+    {
+        // Attach standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
+        get { return instance.m_privacyPolicyANDROID_URL + LocalizationManager.SharedInstance.Culture.Name; }
+    }
+
+
+    [SerializeField] private string m_eulaURL = "https://legal.ubi.com/eula/";
 	public static string EULA_URL {
 		// Attach standard iso name: "en-US", "en-GB", "es-ES", "pt-BR", "zh-CN", etc.
 		get { return instance.m_eulaURL + LocalizationManager.SharedInstance.Culture.Name; }
