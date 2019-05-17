@@ -569,11 +569,7 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
-
-                // We're coming from menu which might have loaded some asset bundles. We need to unload them before going to the game in order to make sure that 
-                // asset bundles required by menu don't stay in memory
-                HDAddressablesManager.Instance.UnloadAllDependencies();
-
+                
                 m_levelLoader = LevelManager.LoadLevel();
                 m_levelLoader.Perform(m_useSyncLoading);
 

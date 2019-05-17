@@ -186,7 +186,7 @@ public class GameSceneManager : UbiBCN.SingletonMonoBehaviour<GameSceneManager> 
 			// Stay here until the loading is done.
 			case ESceneState.LOADING: {
 				// Trigger the load of the new scene - this will unload all active scenes (including loading scene if any)
-				m_loadTask = HDAddressablesManager.Instance.LoadSceneAsync(nextScene);
+				m_loadTask = HDAddressablesManager.Instance.LoadDependenciesAndSceneAsync(nextScene);
 			} break;
 
 			// Unload the intermediate loading screen
