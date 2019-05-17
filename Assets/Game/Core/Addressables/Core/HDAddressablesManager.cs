@@ -730,7 +730,17 @@ public class Ingame_SwitchAreaHandle
     {
         if (handle != null)
         {
+            // Menu group
             handle.AddGroup(GROUP_MENU);
+
+            // All menu prefabs dependencies
+            Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
+
+            foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
+            {
+                DefinitionNode dragonDef = pair.Value;
+                handle.AddAddressable(pair.Value.Get("menuPrefab"));
+            }
         }
     }
      
