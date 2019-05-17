@@ -180,6 +180,7 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                     if (!string.IsNullOrEmpty(animojiPrefab))
                     {
                         // Set animoji direclty
+                        AssignItem("prefab", animojiPrefab, pair.Key + "_animoji", "" );
                     }
                 }
                 else
@@ -254,10 +255,12 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
                 // Assign materials to bundle
                 for (int i = 0; i < materials.Count; i++) {
                     AssignItem("material", materials[i], pair.Key, "");
+                    AssignMaterialTextures(materials[i], pair.Key, "");
                 }
 
                 for (int i = 0; i < local_materials.Count; i++) {
                     AssignItem("material", local_materials[i], pair.Key + "_local", "");
+                    AssignMaterialTextures(local_materials[i], pair.Key + "_local", "");
                 }
 
                 for (int i = 0; i < icons.Count; i++){
@@ -283,20 +286,6 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
         }
     }
 
-    static void AssignPrefab(string prefabName, string bundleName, string variant)
-    {
-        string[] guids = AssetDatabase.FindAssets("t:prefab " + prefabName);
-        for (int j = 0; j < guids.Length; ++j)
-        {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
-            if (Path.GetFileNameWithoutExtension(assetPath) == prefabName)  // if it is exactly this one
-            {
-                AssetImporter ai = AssetImporter.GetAtPath(assetPath);
-                ai.SetAssetBundleNameAndVariant(bundleName, variant);
-            }
-        }
-    }
-
     static void AssignItem( string item_type,  string materialName, string bundleName, string variant)
     {
         string[] guids = AssetDatabase.FindAssets("t:" + item_type + " " + materialName);
@@ -310,5 +299,34 @@ public class HDEditorAssetBundlesMenu : MonoBehaviour
             }
         }
     }
+
+    static void AssignMaterialTextures( string materialName, string bundleName, string variant )
+    {
+        string[] guids = AssetDatabase.FindAssets("t: material " + materialName);
+        for (int j = 0; j < guids.Length; ++j)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[j]);
+            if (Path.GetFileNameWithoutExtension(assetPath) == materialName)  // if it is exactly this one
+            {
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(assetPath);
+                Shader shader = mat.shader;
+                for(int i=0; i<ShaderUtil.GetPropertyCount(shader); i++) 
+                {
+                    if(ShaderUtil.GetPropertyType(shader, i) == ShaderUtil.ShaderPropertyType.TexEnv) 
+                    {
+                        Texture texture = mat.GetTexture(ShaderUtil.GetPropertyName(shader, i));
+                        if ( texture != null )
+                        {
+                            AssetImporter ai = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));
+                            ai.SetAssetBundleNameAndVariant(bundleName, variant);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+     
+
 
 }
