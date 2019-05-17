@@ -84,14 +84,9 @@ public class Mission3DIconPreview  : MonoBehaviour {
         dropDown.ClearOptions();
         dropDown.AddOptions(options);
 
-		//AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync("Air/PF_Canary01_Flock");
-		//op.OnDone = OnAssetLoaded;
     }
 
-	private void OnAssetLoaded(AddressablesOp op)
-	{
-		GameObject prefab = op.GetAsset<GameObject>();
-	}
+
 
 	public void Update()
 	{
@@ -113,16 +108,22 @@ public class Mission3DIconPreview  : MonoBehaviour {
         if (dropDown.value != 0)
         {
 
-            // Put the selected prefab in the horizontal mission pill (lab missions)
-            labMission3DIcon.LoadAsync(prefabs[dropDown.value - 1]);
+            AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync(prefabs[dropDown.value - 1]);
+            op.OnDone = OnAssetLoaded;
 
-
-            // Put the selected prefab in the vertical mission pill
-            mission3DIcon.LoadAsync(prefabs[dropDown.value - 1]);
 
         }
 
-        
+    }
+
+    private void OnAssetLoaded(AddressablesOp op)
+    {
+
+        // Put the selected prefab in the horizontal mission pill (lab missions)
+        labMission3DIcon.LoadAsync(prefabs[dropDown.value - 1]);
+
+        // Put the selected prefab in the vertical mission pill
+        mission3DIcon.LoadAsync(prefabs[dropDown.value - 1]);
 
     }
 }
