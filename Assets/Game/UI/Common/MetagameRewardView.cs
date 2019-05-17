@@ -126,7 +126,7 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			case Metagame.RewardSkin.TYPE_CODE: {
 				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_reward.sku);
 				if(skinDef != null) {
-					iconSprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + skinDef.Get("dragonSku")  + "/" + skinDef.Get("icon"));
+					iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
 					rewardText = skinDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
 				} else {
@@ -138,7 +138,8 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			case Metagame.RewardDragon.TYPE_CODE: {
 				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.sku);
 				if(dragonDef != null) {
-					iconSprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + dragonDef.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
+                    string defaultIcon = IDragonData.GetDefaultDisguise(dragonDef.sku).Get("icon");
+                    iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>( defaultIcon );
 					rewardText = dragonDef.GetLocalized("tidName");
 					powerDef = null;
 				} else {

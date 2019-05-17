@@ -44,7 +44,7 @@ public class OfferItemPreviewSkin2d : IOfferItemPreview {
 		if(m_def == null) {
 			m_image.sprite = null;
 		} else {
-			m_image.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_def.GetAsString("dragonSku") + "/" + m_def.Get("icon"));
+			m_image.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>( m_def.Get("icon"));
 		}
 	}
 

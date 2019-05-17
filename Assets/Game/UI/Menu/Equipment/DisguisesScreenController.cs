@@ -228,11 +228,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		m_equippedPill = null;
 		m_selectedPill = null;
 		DisguisePill initialPill = null;
-		string disguisesIconPath = UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/";
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
 				// Load icon sprite for this skin
-				Sprite spr = Resources.Load<Sprite>(disguisesIconPath + defList[i].Get("icon"));
+                Sprite spr = HDAddressablesManager.Instance.LoadAsset<Sprite>(defList[i].Get("icon"));
 
 				// Init pill
 				DefinitionNode def = defList[i];

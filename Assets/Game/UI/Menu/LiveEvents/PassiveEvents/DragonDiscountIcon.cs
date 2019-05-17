@@ -110,8 +110,9 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 			bool show = false;
 			if(targetDragonData != null) {
 				show = true;
-				m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + targetDragonData.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
-			}
+                string iconName = IDragonData.GetDefaultDisguise(targetDragonData.sku).Get("icon");
+                m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(iconName);
+            }
 			m_dragonIcon.gameObject.SetActive(show);
 		}
 

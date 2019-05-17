@@ -77,7 +77,7 @@ public class LeaguesPlayerInfoTooltip : UITooltip {
 			if(skinDef != null) {
 				icon = skinDef.Get("icon");
 			}
-			m_dragonImage.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + dragonDef.sku + "/" + icon);
+            m_dragonImage.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(icon);
 		}
 
 		// Stats

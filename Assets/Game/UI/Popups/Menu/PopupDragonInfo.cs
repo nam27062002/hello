@@ -88,7 +88,8 @@ public class PopupDragonInfo : PopupTierPreyInfo {
 
 		// Dragon icon
 		if(m_dragonIcon != null) {
-			m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_dragonData.def.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
+            string defaultIcon = IDragonData.GetDefaultDisguise(m_dragonData.def.sku).Get("icon");
+            m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>( defaultIcon );
 		}
 
 		// HP

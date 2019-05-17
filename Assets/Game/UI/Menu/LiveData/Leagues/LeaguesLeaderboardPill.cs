@@ -142,7 +142,7 @@ LeaguesLeaderboardPill : ScrollRectItem<LeaguesLeaderboardPillData> {
         if (skinDef != null) {
             icon = skinDef.Get("icon");
         }
-        m_dragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _data.record.build.dragon + "/" + icon);
+        m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(icon);
 
         m_levelText.text = StringUtils.FormatNumber(_data.record.build.level);
 
