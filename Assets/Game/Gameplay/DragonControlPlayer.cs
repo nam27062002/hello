@@ -202,10 +202,7 @@ public class DragonControlPlayer : MonoBehaviour {
 		}	
         		
 		if(joystickControls != null && joystickMoving) {
-			joystickControls.CalcSharkDesiredVelocity(desiredVelocity);
-			impulse.x = joystickControls.SharkDesiredVel.x;
-			impulse.y = joystickControls.SharkDesiredVel.y;
-			impulse.z = 0;
+            impulse = joystickControls.direction * desiredVelocity;
 			return;
 		}
 		
