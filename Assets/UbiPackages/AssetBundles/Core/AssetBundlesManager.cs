@@ -810,6 +810,34 @@ public class AssetBundlesManager
         return returnValue;
     }    
 
+
+    /// <summary>
+    /// Loads synchronously an asset called <c>assetName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle has already been downloaded and loaded.
+    /// This method makes it easier to migrate from loading an asset from Resources to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle before calling this method.    
+    /// </summary>    
+    /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
+    /// <param name="assetName">Name of the asset to load.</param>
+    /// <returns>The asset required if everything went ok, otherwise <c>null</c> is returned.</returns>
+    public T LoadAsset<T>(string assetBundleId, string assetName) where T : Object
+    {
+        T returnValue = null;
+        AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
+        if (handle != null)
+        {
+            if (handle.IsLoaded())
+            {
+                AssetBundle assetBundle = handle.AssetBundle;
+                if (assetBundle != null)
+                {
+                    returnValue = assetBundle.LoadAsset<T>(assetName);
+                }
+            }
+        }
+
+        return returnValue;                    
+    }
+
+
     /// <summary>
     /// Loads synchronously an asset called <c>assetName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle has already been downloaded and loaded.
     /// This method makes it easier to migrate from loading an asset from Resources to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle before calling this method.    

@@ -112,6 +112,15 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return ProcessAssetBundlesOpRequest(request);        
     }    
 
+    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    {
+        if (CanLog())
+        {
+            Log("LoadAsset by Editor provider");
+        }
+        return AssetBundlesManager.Instance.LoadAsset<T>(entry.AssetBundleName, entry.AssetName);   
+    }
+
     public override object LoadAsset(AddressablesCatalogEntry entry)
     {
         if (CanLog())
