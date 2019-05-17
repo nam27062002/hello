@@ -42,13 +42,18 @@ public class IPopupConsentTermsAndConditions {
 	/// Link to the Privacy Policy page.
 	/// </summary>
 	public static void OpenPrivacyPolicy() {
-		GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_URL);
-	}
+#if UNITY_IOS
+	    GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_IOS_URL);
+#else
+        GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_ANDROID_URL);
+#endif
 
-	/// <summary>
-	/// Link to the End User License Agreement page.
-	/// </summary>
-	public static void OpenEULA() {
+    }
+
+    /// <summary>
+    /// Link to the End User License Agreement page.
+    /// </summary>
+    public static void OpenEULA() {
 		GameSettings.OpenUrl(GameSettings.EULA_URL);
 	}
 
