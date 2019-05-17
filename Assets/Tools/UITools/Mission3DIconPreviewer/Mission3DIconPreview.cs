@@ -116,7 +116,7 @@ public class Mission3DIconPreview  : MonoBehaviour {
 
     }
 
-    private void OnAssetLoaded(AddressablesOp op)
+    private void OnAssetLoaded(AddressablesOp _op)
     {
 
         // Put the selected prefab in the horizontal mission pill (lab missions)
@@ -124,6 +124,10 @@ public class Mission3DIconPreview  : MonoBehaviour {
 
         // Put the selected prefab in the vertical mission pill
         mission3DIcon.LoadAsync(prefabs[dropDown.value - 1]);
+
+        // Force the 3d icons to the UI layer, just in case 
+        labMission3DIcon.gameObject.SetLayerRecursively(labMission3DIcon.gameObject.layer);
+        mission3DIcon.gameObject.SetLayerRecursively(mission3DIcon.gameObject.layer);
 
     }
 }
