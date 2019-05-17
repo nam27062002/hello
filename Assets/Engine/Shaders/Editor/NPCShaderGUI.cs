@@ -33,6 +33,8 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string rampColorText = "Ramp Texture";
         readonly public static string renderQueueText = "Render queue";
         readonly public static string stencilMaskText = "Stencil mask";
+        readonly public static string cullModeText = "Cull Mode";
+        readonly public static string opaqueAlphaText = "Opaque alpha";
 
     }
 
@@ -42,6 +44,8 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     MaterialProperty mp_RampColor;
     MaterialProperty mp_ColorMode;
     MaterialProperty mp_stencilMask;
+    MaterialProperty mp_cullMode;
+    MaterialProperty mp_opaqueAlpha;
 
     MaterialEditor m_materialEditor;
     
@@ -69,9 +73,9 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         mp_RampColor = FindProperty("_RampTex", props);
         mp_ColorMode = FindProperty("ColorMode", props);
 
-
         mp_stencilMask = FindProperty("_StencilMask", props);
-
+        mp_cullMode = FindProperty("_Cull", props);
+        mp_opaqueAlpha = FindProperty("_OpaqueAlpha", props);
     }
 
     /// <summary>
@@ -129,8 +133,11 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
-//        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+        materialEditor.ShaderProperty(mp_opaqueAlpha, Styles.opaqueAlphaText);
+
+        //        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
         materialEditor.ShaderProperty(mp_stencilMask, Styles.stencilMaskText);
+        materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
 
         EditorGUILayout.EndVertical();
 
