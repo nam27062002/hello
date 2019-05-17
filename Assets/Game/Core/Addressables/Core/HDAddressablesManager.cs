@@ -323,10 +323,13 @@ public class HDAddressablesManager : AddressablesManager
         }
         else if (sceneId == GameSceneController.NAME)
         {
-            // Dependecies because of area_1 level            
-            AddLevelArea1DependenciesToAddressablesBatchHandle(returnValue);
-
-            // Dependencies because of the current dragon (ingame version)
+            // Game
+            AddGameDependenciesToAddressablesBatchHandle(returnValue);            
+        }
+        else if (sceneId == ResultsScreenController.NAME)
+        {
+            // Results
+            AddResultsDependenciesToAddressablesBatchHandle(returnValue);
         }
 
         return returnValue;
@@ -742,14 +745,34 @@ public class Ingame_SwitchAreaHandle
                 handle.AddAddressable(pair.Value.Get("menuPrefab"));
             }
         }
-    }
+    }    
      
-    private void AddLevelArea1DependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    private void AddGameDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     { 
         if (handle != null)
         {
+            // Area 1 level dependencies
             handle.AddGroup(GROUP_LEVEL_AREA_1);
+
+            // Current dragon ingame dependencies
+            AddCurrentDragonDependenciesToBatchHandle(handle, "gamePrefab");                        
         }        
+    }
+
+    private void AddResultsDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    {
+        // Current dragon results dependencies 
+        AddCurrentDragonDependenciesToBatchHandle(handle, "resultsPrefab");        
+    }
+
+    private void AddCurrentDragonDependenciesToBatchHandle(AddressablesBatchHandle handle, string attribute)
+    {
+        string dragonSku = InstanceManager.menuSceneController.selectedDragon;
+        DefinitionNode dragon = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonSku);
+        if (dragon != null)
+        {
+            handle.AddAddressable(dragon.Get(attribute));
+        }
     }
 #endregion
 }
