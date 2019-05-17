@@ -53,7 +53,7 @@ public abstract class AddressablesProvider
     public abstract AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode);
     public abstract AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry);
 
-    public T LoadAsset<T>(AddressablesCatalogEntry entry)
+    public virtual T LoadAsset<T>(AddressablesCatalogEntry entry) where T : Object
     {
         return (T)System.Convert.ChangeType(LoadAsset(entry), typeof(T));
     }

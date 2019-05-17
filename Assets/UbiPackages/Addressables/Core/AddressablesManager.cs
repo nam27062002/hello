@@ -653,7 +653,7 @@ public class AddressablesManager
         return returnValue;
     }   
     
-    public T LoadAsset<T>(string id, string variant = null)
+    public T LoadAsset<T>(string id, string variant = null) where T : UnityEngine.Object
     {        
         T returnValue = default(T);
 
