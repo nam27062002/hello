@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using InControl;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------//
@@ -61,15 +62,35 @@ public class TabSystem : NavigationScreenSystem {
 		}
 	}
 
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Casted GetScreen().
-	/// </summary>
-	/// <returns>The tab at the given index. Null if index out of bounds.</returns>
-	/// <param name="_tabIdx">Target tab index.</param>
-	public Tab GetTab(int _tabIdx) {
+    private void Update() {
+        InputDevice device = InputManager.ActiveDevice;
+
+        if (device != null) {
+            if (device.RightBumper.WasPressed) {
+                if (m_currentScreenIdx < 0) {
+                    GoToScreen(0);
+                } else {
+                    GoToScreen((m_currentScreenIdx + 1) % m_tabButtons.Count);
+                }
+            } else if (device.LeftBumper.WasPressed) {
+                if (m_currentScreenIdx < 0) {
+                    GoToScreen(0);
+                } else {
+                    GoToScreen((m_currentScreenIdx + m_tabButtons.Count - 1) % m_tabButtons.Count);
+                }
+            }
+        }
+    }
+
+    //------------------------------------------------------------------//
+    // OTHER METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Casted GetScreen().
+    /// </summary>
+    /// <returns>The tab at the given index. Null if index out of bounds.</returns>
+    /// <param name="_tabIdx">Target tab index.</param>
+    public Tab GetTab(int _tabIdx) {
 		return GetScreen(_tabIdx) as Tab;
 	}
 
