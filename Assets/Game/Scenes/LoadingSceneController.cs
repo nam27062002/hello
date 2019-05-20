@@ -196,6 +196,7 @@ public class LoadingSceneController : SceneController {
         CREATING_SINGLETONS,
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
+        DOWNLOADING_MISSING_BUNDLES,
         COUNT
     }
     private State m_state = State.NONE;
@@ -493,6 +494,14 @@ public class LoadingSceneController : SceneController {
             case State.SHOWING_COUNTRY_BLACKLISTED_POPUP:
             {}
             break;
+            case State.DOWNLOADING_MISSING_BUNDLES:
+            {
+                if(m_loadingTxt != null) {
+					m_loadingTxt.text = LocalizationManager.SharedInstance.Localize("TID_OTA_PROGRESS_BAR_DOWNLOADING");
+				}
+                
+
+            }break;
             default:
     		{
 				// Update load progress
@@ -517,11 +526,46 @@ public class LoadingSceneController : SceneController {
                     // is important because it might decide which offers the user will see
                     HDCustomizerManager.instance.CheckAndApply();
 
-                    // Loads main menu scene
-                    FlowManager.GoToMenu();
+                    // Check if all equiped stuff is available or wait
+                    if ( AllEquipedIsDownloaded() )
+                    {
+                        // Loads main menu scene
+                        FlowManager.GoToMenu();
+                    }
+                    else
+                    {
+                        SetState( State.DOWNLOADING_MISSING_BUNDLES );                        
+                    }
+                    
 		        }
     		}break;
     	}		
+    }
+
+
+    private bool AllEquipedIsDownloaded()
+    {
+        bool ret = true;
+        // Check if all quiped skins or pets are downloaded+
+        List<string> toCheck = new List<string>();
+        Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
+        foreach( KeyValuePair<string, IDragonData> pair in dragons )
+        {
+            if ( pair.Value.isOwned )
+            {
+                // Check skin
+                toCheck.Add(pair.Value.disguise);
+
+                if ( pair.Value.pets.Count > 0 )
+                    toCheck.AddRange( pair.Value.pets );
+
+            }
+        }
+
+        if ( toCheck.Count > 0 )
+            ret = HDAddressablesManager.Instance.IsResourceListAvailable(toCheck);
+
+        return ret;
     }
 
 	/// <summary>
