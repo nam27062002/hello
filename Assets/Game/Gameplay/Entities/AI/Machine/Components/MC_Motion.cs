@@ -31,16 +31,17 @@ namespace AI {
 		[SeparatorAttribute("Motion")]
 		[SerializeField] protected float m_mass = 1f;
 		[SerializeField] private UpVector m_defaultUpVector = UpVector.Up;
-		[SerializeField] private float m_orientationSpeed = 120f;
+		[SerializeField] protected float m_orientationSpeed = 120f;
+        [SerializeField] private bool m_useAngularVelocity = false;
 
 
-		//--------------------------------------------------		
-		protected const float GRAVITY = 9.8f;
+        //--------------------------------------------------		
+        protected const float GRAVITY = 9.8f;
 		private const float AIR_DENSITY = 1.293f;
 		private const float DRAG = 1.3f;//human //0.47f;//sphere
-		//--------------------------------------------------
+                                        //--------------------------------------------------
 
-		private Transform m_machineTransform;
+        protected Transform m_machineTransform;
 		private Transform m_eye; // for aiming purpose
 		private Transform m_mouth;
 		private Transform m_groundSensor;
@@ -105,7 +106,7 @@ namespace AI {
 
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			if (m_rbody != null) { // entities should not interpolate
-				m_rbody.interpolation = RigidbodyInterpolation.None;
+				m_rbody.interpolation = RigidbodyInterpolation.Interpolate;
 			}
 
 			m_viewControl = m_machine.GetComponent<ViewControl>();
@@ -248,11 +249,15 @@ namespace AI {
                     break;
 			}
 
-			m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
-			m_machineTransform.rotation = m_rotation;
+            if (m_useAngularVelocity) {
+                m_rbody.angularVelocity = Util.GetAngularVelocityForRotationBlend(m_machineTransform.rotation, m_targetRotation, m_orientationSpeed);
+            } else {
+                m_rotation = Quaternion.RotateTowards(m_rotation, m_targetRotation, Time.deltaTime * m_orientationSpeed);
+                m_machineTransform.rotation = m_rotation;
+            }
 
-			// Check if targeting to bend through that direction
-			if (m_attackTarget) {
+            // Check if targeting to bend through that direction
+            if (m_attackTarget) {
 				Vector3 dir = m_attackTarget.position - position;
 				dir.Normalize();
 				m_viewControl.NavigationLayer(dir + GameConstants.Vector3.back * 0.1f);	
@@ -276,7 +281,7 @@ namespace AI {
 			CheckState();
 		}
 
-		public sealed override void FixedUpdate() {			
+        public sealed override void FixedUpdate() {			
 			switch (m_state) {
 				case State.Free:
 					ExtendedFixedUpdate();

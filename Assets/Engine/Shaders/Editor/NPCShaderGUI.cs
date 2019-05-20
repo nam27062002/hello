@@ -35,7 +35,6 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string stencilMaskText = "Stencil mask";
         readonly public static string cullModeText = "Cull Mode";
         readonly public static string opaqueAlphaText = "Opaque alpha";
-
     }
 
     MaterialProperty mp_mainTexture;
@@ -53,6 +52,8 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
+
+    private bool m_npcDiffuseTransparent = false;
 
     //------------------------------------------------------------------------//
     // METHODS																  //
@@ -74,8 +75,11 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         mp_ColorMode = FindProperty("ColorMode", props);
 
         mp_stencilMask = FindProperty("_StencilMask", props);
-        mp_cullMode = FindProperty("_Cull", props);
-        mp_opaqueAlpha = FindProperty("_OpaqueAlpha", props);
+        if (m_npcDiffuseTransparent)
+        {
+            mp_cullMode = FindProperty("_Cull", props);
+            mp_opaqueAlpha = FindProperty("_OpaqueAlpha", props);
+        }
     }
 
     /// <summary>
@@ -84,10 +88,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     /// 
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
     {
-        IniEditorSkin();
-        FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
         m_materialEditor = materialEditor;
         Material material = materialEditor.target as Material;
+        m_npcDiffuseTransparent = material.shader.name.Contains("Transparent");
+
+        IniEditorSkin();
+        FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
 
         GUILayout.BeginHorizontal(editorSkin.customStyles[3]);
         GUILayout.FlexibleSpace();
@@ -133,12 +139,14 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
-        materialEditor.ShaderProperty(mp_opaqueAlpha, Styles.opaqueAlphaText);
 
-        //        EditorGUILayout.BeginHorizontal(editorSkin.customStyles[1]);
+        if (m_npcDiffuseTransparent)
+        {
+            materialEditor.ShaderProperty(mp_opaqueAlpha, Styles.opaqueAlphaText);
+            materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
+        }
+
         materialEditor.ShaderProperty(mp_stencilMask, Styles.stencilMaskText);
-        materialEditor.ShaderProperty(mp_cullMode, Styles.cullModeText);
-
         EditorGUILayout.EndVertical();
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[3]))
