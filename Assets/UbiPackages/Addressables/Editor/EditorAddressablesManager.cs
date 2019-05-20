@@ -423,7 +423,7 @@ public class EditorAddressablesManager
     public void GenerateDownloadablesConfig(string playerFolder)
     {
         string sourceFileName = "editor_" + Downloadables.Manager.DOWNLOADABLES_CONFIG_FILENAME;
-        string sourcePath = "Assets/Editor/Downloadables/" + sourceFileName;
+		string sourcePath = "Assets/Editor/Downloadables/" + sourceFileName;
 
         string destPath = playerFolder + "/" + Downloadables.Manager.DOWNLOADABLES_CONFIG_FILENAME;
 
@@ -437,6 +437,8 @@ public class EditorAddressablesManager
         {
             File.Copy(sourcePath, destPath);
         }
+
+		AssetDatabase.Refresh ();
     }
 
     private bool ProcessEntry(AddressablesCatalogEntry entry, List<string> scenesToAdd, List<string> scenesToRemove)
@@ -499,7 +501,7 @@ public class EditorAddressablesManager
                             path += ".meta";
                             resourcesPath += ".meta";
 
-                            EditorFileUtils.Move(path, resourcesPath);                           
+							EditorFileUtils.Move(path, resourcesPath);                           
 
                             // Moves the meta
                             entry.AssetName = GENERATED_FOLDER + "/" + EditorFileUtils.GetPathWithoutExtension(pathFromResources);
@@ -515,6 +517,50 @@ public class EditorAddressablesManager
 
         return success;
     }
+
+	private static void CreateDirectory(string path)
+	{
+		char separator = '/';
+		string separatorAsString = "" + separator;
+		string[] directories = path.Split (separator);
+		string currentPath = "";
+		string newPath = "";
+		for (int i = 0; i < directories.Length; i++) 
+		{			
+			if (i > 0) 
+			{
+				newPath += separatorAsString;
+			}
+
+			newPath += directories[i];
+
+			if (!AssetDatabase.IsValidFolder(newPath)) 
+			{
+				if (directories [i] == "Resources")
+					Debug.Log ("Dentro");
+				
+				Debug.Log ("Create directory " + directories[i] + " in " + currentPath);
+				AssetDatabase.CreateFolder(currentPath, directories[i]);
+			}
+
+			if (i > 0) 
+			{
+				currentPath += separatorAsString;
+			}
+
+			currentPath += directories[i];
+		}
+	}
+
+	private static void Move(string srcPath, string dstPath)
+	{				
+		string dstFolder = Path.GetDirectoryName(dstPath);
+		//string str = "Move from " + srcPath + " to " + dstPath + " valid dst = " + AssetDatabase.IsValidFolder(dstFolder) + " dstFolder = " + dstFolder;
+		CreateDirectory(dstFolder);
+		string error = AssetDatabase.MoveAsset (srcPath, dstPath);
+		//str += " moving: " + error; 
+		//Debug.Log (str);
+	}
 
     public void MoveGeneratedResourcesToOriginalUbication()
     {

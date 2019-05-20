@@ -8,6 +8,7 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
 using System.Text;
 using TMPro;
 
@@ -254,15 +255,18 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <summary>
 	/// Unlocks and acquires the given dragon using PC.
 	/// Will check that the given dragon can actually be acquired using PC.
-	/// Will perform all needed post actions such as tracking, menu animations, etc.
+	/// Will perform all needed post actions such as tracking, saving persistence, etc, but not visual feedback.
+	/// Use the <paramref name="_onSuccess"/> parameter to do so.
 	/// </summary>
 	/// <param name="_data">Data of the dragon to be unlocked.</param>
-	public static void UnlockWithPC(IDragonData _data) {
+	/// <param name="_onSuccess">Callback to be invoked when unlock was successful. </param>
+	public static void UnlockWithPC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess) {
 		// Make sure the dragon we unlock is the currently selected one and that we can actually do it
 		if(CheckUnlockWithPC(_data)) {
 			// Get price and start purchase flow
 			ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_HC_RESOURCES_FLOW_NAME);
 			purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
+			if(_onSuccess != null) purchaseFlow.OnSuccess.AddListener(_onSuccess);
 			purchaseFlow.Begin(
 				_data.GetPriceModified(UserProfile.Currency.HARD),
 				UserProfile.Currency.HARD,
@@ -275,10 +279,12 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// <summary>
 	/// Unlocks and acquires the given dragon using SC.
 	/// Will check that the given dragon can actually be acquired using SC.
-	/// Will perform all needed post actions such as tracking, menu animations, etc.
+	/// Will perform all needed post actions such as tracking, saving persistence, etc, but not visual feedback.
+	/// Use the <paramref name="_onSuccess"/> parameter to do so.
 	/// </summary>
 	/// <param name="_data">Data of the dragon to be unlocked.</param>
-	public static void UnlockWithSC(IDragonData _data) {
+	/// <param name="_onSuccess">Callback to be invoked when unlock was successful. </param>
+	public static void UnlockWithSC(IDragonData _data, UnityAction<ResourcesFlow> _onSuccess) {
 		// Make sure the dragon we unlock is the currently selected one and that we can actually do it
 		if(CheckUnlockWithSC(_data)) {
 			// [AOC] From 1.18 on, don't trigger the missing SC flow for dragon
@@ -298,6 +304,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 				// it via a ResourcesFlow to avoid duplicating code / missing steps
 				ResourcesFlow purchaseFlow = new ResourcesFlow(UNLOCK_WITH_SC_RESOURCES_FLOW_NAME);
 				purchaseFlow.OnSuccess.AddListener(OnUnlockSuccess);
+				if(_onSuccess != null) purchaseFlow.OnSuccess.AddListener(_onSuccess);
 				purchaseFlow.Begin(
 					priceSC,
 					UserProfile.Currency.SOFT,
@@ -354,7 +361,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// </summary>
 	public void OnUnlockWithPC() {
 		// Use static method to unlock currently selected dragon
-		UnlockWithPC(InstanceManager.menuSceneController.selectedDragonData);
+		UnlockWithPC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
 	}
 
 	/// <summary>
@@ -362,7 +369,7 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 	/// </summary>
 	public void OnUnlockWithSC() {
 		// Use static method to unlock currently selected dragon
-		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData);
+		UnlockWithSC(InstanceManager.menuSceneController.selectedDragonData, OnUnlockSuccessMenuFeedback);
 	}
 
 	/// <summary>
@@ -378,6 +385,18 @@ public class MenuDragonUnlockClassicDragon : MonoBehaviour {
 
 		// Track
 		HDTrackingManager.Instance.Notify_DragonUnlocked(dragonData.def.sku, dragonData.GetOrder());
+
+		// Save persistence!
+		PersistenceFacade.instance.Save_Request();
+	}
+
+	/// <summary>
+	/// The unlock resources flow has been successful.
+	/// </summary>
+	/// <param name="_flow">The flow that triggered the event.</param>
+	private static void OnUnlockSuccessMenuFeedback(ResourcesFlow _flow) {
+		// Aux vars
+		IDragonData dragonData = DragonManager.GetDragonData(_flow.itemDef.sku);
 
 		// Show a nice animation!
 		// Different animations depending on whether the unlock was done via PC or SC
