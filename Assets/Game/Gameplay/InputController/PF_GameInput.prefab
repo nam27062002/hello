@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 11460204}
   - component: {fileID: 114000012863333618}
   - component: {fileID: 114432848181361590}
+  - component: {fileID: 114418161850831486}
   m_Layer: 5
   m_Name: PF_GameInput
   m_TagString: Untagged
@@ -64,6 +65,7 @@ MonoBehaviour:
   touchAction: 0
   m_dpadObj: {fileID: 0}
   m_dpadDotObj: {fileID: 0}
+  m_dpadBoost: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -86,6 +88,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33e18b5a18ff5f149b0ddf5c59366a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114418161850831486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7b5e8de77c5b4597ae7fbfb49a95e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logDebugInfo: 1
+  invertYAxis: 0
+  useFixedUpdate: 0
+  dontDestroyOnLoad: 0
+  suspendInBackground: 0
+  enableICade: 0
+  enableXInput: 0
+  xInputOverrideUpdateRate: 0
+  xInputUpdateRate: 0
+  xInputOverrideBufferSize: 0
+  xInputBufferSize: 0
+  enableNativeInput: 0
+  nativeInputEnableXInput: 1
+  nativeInputPreventSleep: 0
+  nativeInputOverrideUpdateRate: 0
+  nativeInputUpdateRate: 0
+  customProfiles: []
 --- !u!114 &114432848181361590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -97,8 +127,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6800246bc7440d483eea1e61297791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_defaultTiltSensitivity: 0.5
   m_tiltSensitivityScaleMin: 5
   m_tiltSensitivityScaleMax: 100
+  m_dodgyCalibratePosition: 0.475
+  m_tiltFilter: 0.1
   m_touchAction: 0
   m_debugUI: {fileID: 0}
   m_debugClampedLine: {fileID: 0}

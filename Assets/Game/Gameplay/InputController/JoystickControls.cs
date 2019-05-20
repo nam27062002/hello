@@ -1,43 +1,31 @@
-﻿
+﻿using UnityEngine;
+using InControl;
 
 
-using UnityEngine;
-using System.Collections;
+public class JoystickControls : MonoBehaviour {
+    protected Vector3 m_direction = GameConstants.Vector3.zero;
+    public Vector3 direction { get { return m_direction; } }
 
+    bool stickPressed = false;
+    bool actionPressed = false;
 
-public class JoystickControls : MonoBehaviour
-{
-    protected Vector2 m_sharkDesiredVel = Vector2.zero;
-    public Vector2 SharkDesiredVel { get { return m_sharkDesiredVel; } }
-    float vX;
-    float vY;
-    bool moving = false;
+    public void UpdateJoystickControls() {
+        InputDevice device = InputManager.ActiveDevice;
 
-    public void UpdateJoystickControls()
-    {
-        vX = Input.GetAxis("Horizontal");
-        vY = Input.GetAxis("Vertical");
-		moving = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
+        if (device != null && device.IsActive && device.DeviceClass == InputDeviceClass.Controller) {
+            TwoAxisInputControl leftStick = device.LeftStick;
+            m_direction.x = leftStick.X;
+            m_direction.y = leftStick.Y;
+            m_direction.z = 0f;
+            stickPressed = m_direction.sqrMagnitude > Mathf.Epsilon;
+            actionPressed = device.Action1.IsPressed;
+        } else {
+            stickPressed = false;
+            actionPressed = false;
+        }
     }
 
 
-    public bool isMoving()
-	{
-		return moving;
-	}
-
-    public bool getAction()
-    {
-        return Input.GetKey(KeyCode.JoystickButton0);
-    }
-
-
-    public void CalcSharkDesiredVelocity(float speed)
-    {
-        // normalize the distance of the click in world units away from the shark, by the max click distance
-        // m_sharkDesiredVel.x = m_diffVecNorm.x * speed * m_speedDampenMult * m_decelerationMult;
-        // m_sharkDesiredVel.y = m_diffVecNorm.y * speed * m_speedDampenMult * m_decelerationMult;
-        m_sharkDesiredVel.x = vX * speed;
-        m_sharkDesiredVel.y = vY * speed;
-    }
+    public bool isMoving()  { return stickPressed; }
+    public bool getAction() { return actionPressed; }
 }

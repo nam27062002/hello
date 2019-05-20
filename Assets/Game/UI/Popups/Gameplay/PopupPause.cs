@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using InControl;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -88,8 +89,13 @@ public class PopupPause : PopupPauseBase {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-
-	}
+        if (m_popup.isReady) {
+            InputDevice device = InputManager.ActiveDevice;
+            if (device != null && device.Command.WasReleased) {
+                m_popup.Close(false);
+            }
+        }
+    }
 
 	private bool CanReturn(){
 		return PopupManager.IsLastOpenPopup( m_popup ) && m_popup.isReady;
