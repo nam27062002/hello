@@ -190,6 +190,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.CreateDownloadablesHandle(groupIds);
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        return AssetBundlesManager.Instance.CreateAllDownloadablesHandle();
+    }
+
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
