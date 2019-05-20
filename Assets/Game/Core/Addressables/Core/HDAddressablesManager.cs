@@ -739,14 +739,19 @@ public class Ingame_SwitchAreaHandle
             // All menu prefabs dependencies
             Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
 
+            List<string> mandatoryBundles = new List<string>();
+            List<string> optionalBundles = new List<string>();
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
-                DefinitionNode dragonDef = pair.Value;
-                handle.AddAddressable(pair.Value.Get("menuPrefab"));
+                mandatoryBundles.Add( pair.Key + "_local" );
+                optionalBundles.Add( pair.Key ); // for disguises
             }
+            handle.AddDependencyIds( mandatoryBundles );
+            handle.AddDependencyIds( optionalBundles );
+            
         }
-    }    
-     
+    }
+
     private void AddGameDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     { 
         if (handle != null)
@@ -755,24 +760,72 @@ public class Ingame_SwitchAreaHandle
             handle.AddGroup(GROUP_LEVEL_AREA_1);
 
             // Current dragon ingame dependencies
-            AddCurrentDragonDependenciesToBatchHandle(handle, "gamePrefab");                        
+            IDragonData data = GetCurrentDragonData();
+            handle.AddAddressable(data.gamePrefab);
+
+            AddDisguiseDependencies( handle, data, true );
         }        
     }
 
     private void AddResultsDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     {
         // Current dragon results dependencies 
-        AddCurrentDragonDependenciesToBatchHandle(handle, "resultsPrefab");        
+        IDragonData dragon = GetCurrentDragonData(); 
+        string resultPrefab = "";
+        if ( dragon.type == IDragonData.Type.SPECIAL )
+        {
+            DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(dragon.sku, dragon.tier);
+            resultPrefab = specialTierDef.GetAsString("resultsPrefab");
+        }
+        else
+        {
+            resultPrefab = dragon.def.GetAsString("resultsPrefab");
+        }
+        handle.AddAddressable( resultPrefab );
+        AddDisguiseDependencies( handle, dragon, false );
     }
 
-    private void AddCurrentDragonDependenciesToBatchHandle(AddressablesBatchHandle handle, string attribute)
+    private IDragonData GetCurrentDragonData()
     {
-        string dragonSku = InstanceManager.menuSceneController.selectedDragon;
-        DefinitionNode dragon = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonSku);
-        if (dragon != null)
+        IDragonData dragon = null;
+        if ( HDLiveDataManager.tournament.isActive)
         {
-            handle.AddAddressable(dragon.Get(attribute));
+            dragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
         }
+        else
+        {
+            dragon = DragonManager.currentDragon;
+        }
+        return dragon;
+    }
+
+    private void AddDisguiseDependencies( AddressablesBatchHandle handle, IDragonData data, bool ingame = true )
+    {
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, data.disguise);
+        // Materials
+        string skin = def.Get("skin");
+        if ( ingame )
+        {
+            handle.AddAddressable( skin + "_ingame_body" );
+            handle.AddAddressable( skin + "_ingame_wings" );
+        }
+        else
+        {
+            handle.AddAddressable( skin + "_body" );
+            handle.AddAddressable( skin + "_wings" );
+        }
+
+        // Body Parts
+        List<string> bodyParts = def.GetAsList<string>("body_parts");
+        for (int j = 0; j < bodyParts.Count; j++)
+        {
+            handle.AddAddressable(bodyParts[j]);
+        }
+
+        // Icon
+        handle.AddAddressable( def.Get("icon") );
+
+
     }
 #endregion
 }
