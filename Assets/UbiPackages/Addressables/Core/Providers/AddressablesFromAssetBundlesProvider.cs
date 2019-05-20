@@ -12,7 +12,7 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     public void Reset()
     {
         AssetBundlesManager.Instance.Reset();
-    }
+    }    
 
     public override bool IsResourceAvailable(AddressablesCatalogEntry entry, bool track = false)
     {
@@ -87,6 +87,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     public void UnloadAllDependencies()
     {
         AssetBundlesManager.Instance.UnloadAllAssetBundles();
+    }
+
+    public void FillWithLoadedAssetBundleIdList(List<string> ids)
+    {
+        AssetBundlesManager.Instance.FillWithLoadedAssetBundleIdList(ids);
     }
 
     public override bool LoadScene(AddressablesCatalogEntry entry, LoadSceneMode mode)
@@ -179,6 +184,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
+    }
+
+    public bool IsAssetBundleRemote(string id)
+    {
+        return AssetBundlesManager.Instance.IsAssetBundleRemote(id);
     }
 
     public void Update()
