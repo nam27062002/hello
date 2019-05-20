@@ -608,6 +608,21 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.CreateAllDownloadablesHandle();
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
     /// </summary>

@@ -615,6 +615,11 @@ public class AssetBundlesManager
         return DownloadablesManager.Groups_CreateHandle(groupIds);
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        return DownloadablesManager.Groups_CreateAllGroupsHandle();
+    }
+
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         DownloadablesManager.Groups_SetPriority(groupId, priority);
