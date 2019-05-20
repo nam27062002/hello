@@ -83,6 +83,7 @@ public class ShaderCacheTool : EditorWindow {
 
     private static Dictionary<string, ShaderContent> m_shaderValidKeywords = new Dictionary<string, ShaderContent>();
 
+/*
     private static bool addVariantRecursive(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords, List<string> currentVariant, int level)
     {
         if (level >= keywords.Count) return false;
@@ -129,6 +130,8 @@ public class ShaderCacheTool : EditorWindow {
         }
         return true;
     }
+
+*/
 
     private static bool addVariant(ShaderVariantCollection svc, Shader shader, PassType type, List<string> keywords)
     {
@@ -243,7 +246,7 @@ public class ShaderCacheTool : EditorWindow {
         if (!m_shaderValidKeywords.ContainsKey(shader.name))
         {
             string shaderPath = AssetDatabase.GetAssetPath(shader);
-            Log("Shader path: " + shaderPath);
+            Log("Shader name: " + shader.name + "Shader path: " + shaderPath);
 
             string[] shlines = null;
 

@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: treeGirl
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: DIFFUSE_AS_SPECULARMASK FRESNEL SPECULAR
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 16a3d5ad4a953476ca297f6b742d8c53, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 78dfa1cd97ee44418adcf7fd8f5e15a6, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -70,27 +70,39 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _Alpha_as_depth: 0
     - _BlendMode: 0
     - _BumpScale: 1
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
+    - _EnableDiffuseAsSpecMask: 1
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 1
+    - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 3.06
+    - _Fresnel: 3.33
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -106,11 +118,13 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 6.68
+    - _SpecExponent: 80
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0.021969333, g: 0.04411763, b: 0.01492214, a: 0}
@@ -118,9 +132,10 @@ Material:
     - _ColorAdd: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.1878028, g: 0.21323532, b: 0.14738324, a: 1}
+    - _FresnelColor: {r: 0.7877417, g: 0.8897059, b: 0.15046495, a: 1}
     - _InnerLightColor: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
     - _OutlineColor: {r: 0.809, g: 1, b: 0.072, a: 1}
-    - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
-    - _SecondLightDir: {r: -0.1350704, g: -0.506514, b: -0.8515865, a: 0}
-    - _Tint: {r: 0.7567116, g: 0.77205884, b: 0.73232055, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.24264707, g: 0.41409743, b: 0.75, a: 0}
+    - _SecondLightDir: {r: 0.15893853, g: -0.22113182, b: -0.9622054, a: 0}
+    - _Tint: {r: 0.7293938, g: 0.75735295, b: 0.68495893, a: 1}
