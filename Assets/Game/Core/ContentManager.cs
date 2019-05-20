@@ -248,8 +248,9 @@ public class ContentManager
 
 		// UI
 		kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
-        
-        
+        kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
+
+
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 

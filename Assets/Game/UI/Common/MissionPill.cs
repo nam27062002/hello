@@ -40,8 +40,7 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[Separator("Active State")]
 	[SerializeField] private GameObject m_activeObj = null;
 	[Space]
-	[SerializeField] private Image m_missionIcon = null;
-    [SerializeField] private UI3DAddressablesLoader m_mission3dIcon = null;
+	[SerializeField] private BaseIcon m_missionIcon = null;
     [SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private GameObject m_missionCompletedObj = null;
@@ -230,31 +229,15 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Check if this mission is complete
 		if(m_missionCompletedObj != null) m_missionCompletedObj.SetActive(m_mission.objective.isCompleted);
 
-        // Check if the icon is an image or a 3d model
-        if (m_mission.def.GetAsBool("is3dIcon"))
-        {
+        // Get the icon definition
+        string iconSku = m_mission.def.GetAsString("icon");
 
-            // Icon is a 3d Model
-            m_mission3dIcon.gameObject.SetActive(true);
-
-            // Load the 3d model. DefinitionNode "icon" should be the assetId of the addressable
-            m_mission3dIcon.LoadAsync ( m_mission.def.GetAsString("icon") );
-            
-
-            m_missionIcon.gameObject.SetActive(false);
-
-        } else
-        {
-
-            // Icon is a sprite
-            m_missionIcon.gameObject.SetActive(true);
-            m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
-
-            m_mission3dIcon.gameObject.SetActive(false);
-
-        }
+        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+        m_missionIcon.LoadIcon(iconSku);
+        m_missionIcon.gameObject.SetActive(true);
 
 
+               
 		// Where
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
 		if(m_targetAreaText != null) {

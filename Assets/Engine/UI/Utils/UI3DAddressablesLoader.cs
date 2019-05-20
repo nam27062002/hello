@@ -54,6 +54,10 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 
 	[Space]
 	[SerializeField] private GameObject m_loadingPrefab = null;
+    public GameObject loadingPrefab {
+        get { return m_loadingPrefab; }
+        set { m_loadingPrefab = value; }
+    }
 
     // Internal
     private AddressablesOp m_loadingRequest = null;
@@ -67,7 +71,9 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 		get { return m_loadedInstance; }
 	}
 
-	private GameObject m_loadingSymbol = null;
+
+
+    private GameObject m_loadingSymbol = null;
 
 	// Events
 	public UI3DAddressablesLoaderEvent OnLoadingComplete = new UI3DAddressablesLoaderEvent();

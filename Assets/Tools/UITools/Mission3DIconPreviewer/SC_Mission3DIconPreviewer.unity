@@ -316,7 +316,6 @@ MonoBehaviour:
   m_showProgressForSingleRunMissions: 1
   m_activeObj: {fileID: 251703184}
   m_missionIcon: {fileID: 0}
-  m_mission3dIcon: {fileID: 746061356}
   m_missionDescriptionText: {fileID: 1438592099}
   m_rewardText: {fileID: 978799736}
   m_missionCompletedObj: {fileID: 0}
@@ -1460,6 +1459,69 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &243830623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1369234192592828, guid: 6d913ea5f5b164dd494109f89836bf55,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 243830625}
+  - component: {fileID: 243830626}
+  - component: {fileID: 243830624}
+  m_Layer: 5
+  m_Name: 3dModel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &243830624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 243830623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9649da4a9db14f11878dd01de4afba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_resourcePath: 
+  m_useFolderLevelInID: 0
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_container: {fileID: 243830625}
+  m_loadingPrefab: {fileID: 1502732228289458, guid: bacf67b45f7948247a4c93de35480f2a,
+    type: 2}
+  m_loadedInstance: {fileID: 0}
+--- !u!224 &243830625
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 224290390712803396, guid: 6d913ea5f5b164dd494109f89836bf55,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 243830623}
+  m_LocalRotation: {x: -0, y: -0, z: -0.01745245, w: 0.99984777}
+  m_LocalPosition: {x: 0, y: 0, z: -300}
+  m_LocalScale: {x: 80, y: 80, z: 80}
+  m_Children: []
+  m_Father: {fileID: 359616760}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &243830626
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 222569042185644142, guid: 6d913ea5f5b164dd494109f89836bf55,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 243830623}
 --- !u!1 &243953524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1767,6 +1829,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 243953527}
+  - {fileID: 243830625}
   m_Father: {fileID: 1895634616}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4752,8 +4815,7 @@ MonoBehaviour:
   m_missionDifficulty: 0
   m_showProgressForSingleRunMissions: 0
   m_activeObj: {fileID: 1895634615}
-  m_missionIcon: {fileID: 243953525}
-  m_mission3dIcon: {fileID: 0}
+  m_missionIcon: {fileID: 0}
   m_missionDescriptionText: {fileID: 983492484}
   m_rewardText: {fileID: 852180408}
   m_missionCompletedObj: {fileID: 0}
@@ -7484,7 +7546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropDown: {fileID: 1311606120}
   labMission3DIcon: {fileID: 746061356}
-  mission3DIcon: {fileID: 0}
+  mission3DIcon: {fileID: 243830624}
   prefabs: []
 --- !u!4 &1523622814
 Transform:
