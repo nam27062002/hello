@@ -748,7 +748,13 @@ public class Ingame_SwitchAreaHandle
             }
             handle.AddDependencyIds( mandatoryBundles );
             handle.AddDependencyIds( optionalBundles );
-            
+
+            Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
+            foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
+                if (pair.Value.isOwned) {
+                    AddPetDependencies(handle, pair.Value);
+                }
+            }
         }
     }
 
@@ -764,6 +770,8 @@ public class Ingame_SwitchAreaHandle
             handle.AddAddressable(data.gamePrefab);
 
             AddDisguiseDependencies( handle, data, true );
+
+            AddPetDependencies(handle, data);
         }        
     }
 
@@ -826,6 +834,18 @@ public class Ingame_SwitchAreaHandle
         handle.AddAddressable( def.Get("icon") );
 
 
+    }
+
+    private void AddPetDependencies( AddressablesBatchHandle handle, IDragonData data )
+    {
+        foreach (string pet in data.pets)
+        {
+            DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, pet);
+            if (petDef != null) {
+                string id = petDef.Get("gamePrefab");
+                handle.AddAddressable(id);
+            }
+        }
     }
 #endregion
 }
