@@ -14,7 +14,7 @@ public static class EditorAutomaticAddressables {
 
     private static string[] AREAS = { "village", "castle", "dark" };
 
-    private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_fat" };
+    private static string[] LOCAL_DRAGONS = { "dragon_baby", "dragon_crocodile", "dragon_reptile" };
 
 
     public static JSONClass BuildRestoreCatalog() {
