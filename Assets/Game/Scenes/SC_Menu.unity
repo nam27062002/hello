@@ -11380,17 +11380,17 @@ Prefab:
     - target: {fileID: 224264961881254764, guid: bf6d3c2814a074c1a9658efa232e674d,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224264961881254764, guid: bf6d3c2814a074c1a9658efa232e674d,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224264961881254764, guid: bf6d3c2814a074c1a9658efa232e674d,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 1365.3333
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224264961881254764, guid: bf6d3c2814a074c1a9658efa232e674d,
         type: 2}
@@ -11645,6 +11645,16 @@ Prefab:
     - target: {fileID: 224575132910515856, guid: bf6d3c2814a074c1a9658efa232e674d,
         type: 2}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224233386961127208, guid: bf6d3c2814a074c1a9658efa232e674d,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224233386961127208, guid: bf6d3c2814a074c1a9658efa232e674d,
+        type: 2}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -12357,7 +12367,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22454288, guid: eda141ec57e5478458fa1efb4c52acba, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 23.00003
+      value: 22.99997
       objectReference: {fileID: 0}
     - target: {fileID: 224954225644649186, guid: eda141ec57e5478458fa1efb4c52acba,
         type: 2}
@@ -17720,9 +17730,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1602931162}
   - component: {fileID: 1602931161}
+  - component: {fileID: 1602931163}
   - component: {fileID: 1602931160}
   - component: {fileID: 1602931159}
-  - component: {fileID: 1602931163}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -17738,10 +17748,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1602931158}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1997211142, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Script: {fileID: 11500000, guid: c7b5e8de77c5b4597ae7fbfb49a95e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ForceModuleActive: 0
+  logDebugInfo: 1
+  invertYAxis: 0
+  useFixedUpdate: 0
+  dontDestroyOnLoad: 0
+  suspendInBackground: 0
+  enableICade: 0
+  enableXInput: 0
+  xInputOverrideUpdateRate: 0
+  xInputUpdateRate: 0
+  xInputOverrideBufferSize: 0
+  xInputBufferSize: 0
+  enableNativeInput: 0
+  nativeInputEnableXInput: 1
+  nativeInputPreventSleep: 0
+  nativeInputOverrideUpdateRate: 0
+  nativeInputUpdateRate: 0
+  customProfiles: []
 --- !u!114 &1602931160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17750,16 +17776,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1602931158}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1077351063, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Script: {fileID: 11500000, guid: b24994c7bab8d436a8b302ce62dfa856, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  submitButton: 19
+  cancelButton: 20
+  analogMoveThreshold: 0.5
+  moveRepeatFirstDuration: 0.5
+  moveRepeatDelayDuration: 0.1
+  forceModuleActive: 0
+  allowMouseInput: 1
+  focusOnMouseHover: 0
+  allowTouchInput: 1
 --- !u!114 &1602931161
 MonoBehaviour:
   m_ObjectHideFlags: 0

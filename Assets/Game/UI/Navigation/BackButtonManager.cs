@@ -8,6 +8,7 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using InControl;
 using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
@@ -68,7 +69,10 @@ public class BackButtonManager : UbiBCN.SingletonMonoBehaviour<BackButtonManager
     /// </summary>
     private void Update() {
         // Back button pressed?
-        if (Input.GetKeyDown(KeyCode.Escape) && FeatureSettingsManager.IsBackButtonEnabled()) {	// On Android Escape is the same as Back Button
+        InputDevice device = InputManager.ActiveDevice;
+
+        if (((device != null && device.Action2.WasReleased) || Input.GetKeyDown(KeyCode.Escape)) 
+        && FeatureSettingsManager.IsBackButtonEnabled()) {	// On Android Escape is the same as Back Button
 			if (!InputLocker.locked) {
 				if (m_handlers.Count > 0) {
 					m_handlers.Last().Trigger();
