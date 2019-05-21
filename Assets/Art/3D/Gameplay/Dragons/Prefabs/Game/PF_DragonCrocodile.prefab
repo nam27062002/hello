@@ -83,8 +83,6 @@ GameObject:
   - component: {fileID: 114000010816463694}
   - component: {fileID: 114258700555348566}
   - component: {fileID: 114000012705948140}
-  - component: {fileID: 114730087366958304}
-  - component: {fileID: 114741804896727982}
   - component: {fileID: 11487054}
   m_Layer: 12
   m_Name: PF_DragonCrocodile
@@ -6266,74 +6264,6 @@ MonoBehaviour:
   m_onCorpseSound: hd_dragon_dead
   m_onReviveSound: hd_dragon_revive
   m_onPreMegaFire: hd_megafire_charge
---- !u!114 &114730087366958304
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48f0dabda9d774437bbff41bb90ad77d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_colors: 0000000001000000
-  m_prewarmDuration: 0.5
-  m_breathSound: 
-  m_superBreathSound: 
-  m_segmentLength: 0.5
-  m_maxAmplitude: 0
-  m_widthCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_widthMultiplier: 1
-  m_offsetRays: 2
-  m_rayMaterial: {fileID: 2100000, guid: b9b6ff8aa13cc56479ce02cd514ba4cd, type: 2}
-  m_numRays: 1
-  m_maxAmplitude2: 0.4
-  m_widthCurve2:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0
-      inSlope: -1.7027029
-      outSlope: -1.7027029
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  m_widthMultiplier2: 1.3
-  m_offsetRays2: 0.5
-  m_rayMaterial2: {fileID: 2100000, guid: adc2e2b7b4c93384fa7832413a25dfaa, type: 2}
-  m_logicDetectionSize: 1
-  m_numRays2: 2
-  m_length: 25
-  m_particleStartPrefab: {fileID: 1640325906173098, guid: 7eb001a62292aff43b15c99ff7130d4f,
-    type: 2}
-  m_particleEndPrefab: {fileID: 1212766883835268, guid: dda51534af76ce745a66d49feaa56263,
-    type: 2}
 --- !u!114 &114735237819701946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6350,24 +6280,6 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
---- !u!114 &114741804896727982
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 120086}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abfdff7c0ca724eac918dbab82ee87d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_colors: 0000000001000000
-  m_prewarmDuration: 0.5
-  m_breathSound: 
-  m_superBreathSound: 
-  m_fireBallPrefab: {fileID: 107994, guid: da447faeac9384d1387a7629de42640c, type: 2}
-  m_timeBetweenFires: 1
-  m_speedBall: 20
 --- !u!114 &114771975389375840
 MonoBehaviour:
   m_ObjectHideFlags: 1
