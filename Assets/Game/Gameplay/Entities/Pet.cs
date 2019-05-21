@@ -45,12 +45,6 @@ public class Pet : IEntity, IBroadcastListener {
 
 	void Start()
 	{
-		Rigidbody _rigidbody = GetComponent<Rigidbody>();
-		if ( _rigidbody )
-		{
-			_rigidbody.interpolation = RigidbodyInterpolation.None;
-		}
-
         EntityManager.instance.RegisterPet(this);
 	}
 

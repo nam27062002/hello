@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------//
 using UnityEngine;
 using UnityEngine.UI;
+using InControl;
 using System;
 
 //----------------------------------------------------------------------//
@@ -68,9 +69,24 @@ public class GameHUD : MonoBehaviour {
     	return false;
     }
 
+    private void Update() {
+        if (!m_paused) {
+            InputDevice device = InputManager.ActiveDevice;
+
+            if (device != null && device.IsActive) {
+                if (device.CommandIsPressed) {
+                    OnPauseButton();
+                } else if (device.Action4.WasPressed) {
+                    OnMapButton();
+                }
+            }
+        }
+    }
+
     //------------------------------------------------------------------//
     // CALLBACKS														//
     //------------------------------------------------------------------//
+
 
     void OnApplicationPause( bool pauseStatus){
     	if ( pauseStatus && CanPause() )
