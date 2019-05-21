@@ -10,6 +10,8 @@ public class BasicAddressablesTestController : MonoBehaviour
     private int m_cubesLoadedCount;
     public GameObject m_cube;
 
+    public SpriteRenderer m_spriteRenderer;
+
     private enum ELoadResourceMode
     {
         Sync,
@@ -37,7 +39,44 @@ public class BasicAddressablesTestController : MonoBehaviour
 
         // From Addressables Sync
         //Cube_AddMaterialFromAddressables();
-        Cube_AddTextureFromAddressables();
+        Cube_AddTextureFromAddressables();        
+    }
+
+    void OnAddressablesInit()
+    {
+        Debug.Log("OnAddressablesInit");
+        //LoadSpriteSync();
+        LoadSpriteAsync();
+    }
+
+    private void LoadSpriteSync()
+    {
+        Sprite sprite = m_addressablesManager.LoadAsset<Sprite>("UbiLogoSprite");
+        OnSpriteLoaded(sprite);
+    }
+
+    private void LoadSpriteAsync()
+    {
+        AddressablesOp op = m_addressablesManager.LoadAssetAsync("UbiLogoSprite");
+        op.OnDone = OnSpriteAsyncLoaded;
+    }
+
+    private void OnSpriteAsyncLoaded(AddressablesOp op)
+    {
+        Sprite sprite = op.GetAsset<Sprite>();
+        OnSpriteLoaded(sprite);
+    }
+
+    private void OnSpriteLoaded(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            Debug.Log("Sprite is null");
+        }
+        else
+        {
+            m_spriteRenderer.sprite = sprite;
+        }
     }
 
     void Update ()
@@ -155,6 +194,7 @@ public class BasicAddressablesTestController : MonoBehaviour
         Ui_UpdateResolutionDropdown();
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;
         //AssetBundlesManager.Instance.GetMockNetworkDriver().MockNetworkReachability = NetworkReachability.NotReachable;
+        OnAddressablesInit();
     }
 
     public void Addressables_Reset()
@@ -180,8 +220,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     }    
 
     private void Cube_AddMaterialFromResources()
-    {
-        Renderer renderer = m_cube.GetComponent<Renderer>();
+    {     
         Material material = Resources.Load<Material>("Materials/UnityLogoMaterial");
         Cube_AddMaterial(material);
     }
@@ -485,7 +524,7 @@ public class BasicAddressablesTestController : MonoBehaviour
     {        
         if (op.Error == null)
         {
-            AssetCubes_InstantiateCube(op.GetAsset<Object>());                                    
+            AssetCubes_InstantiateCube(op.GetAsset<GameObject>());                                    
         }
 
         AssetCubes_OnDone(op.Error);
