@@ -31,7 +31,7 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private bool m_updateEventState = false;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
-	[SerializeField] private Image m_objectiveIcon = null;
+	[SerializeField] private BaseIcon m_objectiveIcon = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
@@ -119,11 +119,15 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Event description
 		if(m_objectiveText != null) m_objectiveText.text = questManager.GetGoalDescription();
 
-		// Target icon
-		if(m_objectiveIcon != null) m_objectiveIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + def.m_goal.m_icon);
+        // Get the icon definition
+        string iconSku = def.m_goal.m_icon;
 
-		// Progress
-		if(m_progressBar != null) {
+        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+        m_objectiveIcon.LoadIcon(iconSku);
+        m_objectiveIcon.gameObject.SetActive(true);
+
+        // Progress
+        if (m_progressBar != null) {
 			m_progressBar.RefreshRewards(def, questManager.m_questData.m_globalScore);
 			m_progressBar.RefreshProgress(questManager.m_questData.m_globalScore);
 		}

@@ -29,10 +29,17 @@ public class BaseIcon : MonoBehaviour {
     // MEMBERS AND PROPERTIES												  //
     //------------------------------------------------------------------------//
     [Tooltip("The image shown in case of 2d icon")]
-    [SerializeField] private Image m_image;
+    [SerializeField] private Image m_2dIcon;
 
     [Tooltip("The model shown in case of 3d icon")]
-    [SerializeField] private UI3DAddressablesLoader m_3dModel;
+    [SerializeField] private UI3DAddressablesLoader m_3dIcon;
+
+    [Space(10)]
+
+    [Tooltip("Image shown when no icon 2d/3d is found")]
+    [SerializeField] private Image m_defaultImage;
+
+    [Space(10)]
 
     [SerializeField] private string m_iconSKU;
 
@@ -47,16 +54,11 @@ public class BaseIcon : MonoBehaviour {
     private void Awake() {
 
         // Just in case
-        if (m_image == null)
+        if (m_2dIcon == null && m_3dIcon == null)
         {
-            Debug.LogWarning("2d icon entity not defined. Trying to find it in children.");
-            m_image = GetComponentInChildren<Image>();
-        }
 
-        if (m_3dModel == null)
-        {
-            Debug.LogWarning("3d icon entity not defined explicitely. Trying to find it in children.");
-            m_3dModel = GetComponentInChildren<UI3DAddressablesLoader>();
+            Debug.LogError("The BaseIcon has no 2d or 3d icon field defined");
+            
         }
 
     }
@@ -72,40 +74,83 @@ public class BaseIcon : MonoBehaviour {
         if (iconDef == null)
         {
             // SKU not found in IconDefinitions.xml
-            Debug.LogError("Icon definition not found for sku " + _iconSku + " in IconDefinitions.xml");
+            Debug.LogError("Icon definition not found for sku " + _iconSku + " in IconDefinitions.xml.");
 
-            m_image.gameObject.SetActive(false);
-            m_3dModel.gameObject.SetActive(false);
+            // Not showing anything
+            if (m_2dIcon != null) { m_2dIcon.gameObject.SetActive(false); }
+            if (m_3dIcon != null) { m_3dIcon.gameObject.SetActive(false); }
+            if (m_defaultImage != null) { m_defaultImage.gameObject.SetActive(false); }
 
             return;
-        }
+        } 
 
         // Check if the icon is an image or a 3d model
-        if (iconDef.GetAsBool("icon3d"))
+        if ( !iconDef.GetAsBool("icon3d") )
+        {
+
+            // Icon is a sprite
+            if (m_3dIcon != null) { m_3dIcon.gameObject.SetActive(false); }
+            if (m_defaultImage != null) { m_defaultImage.gameObject.SetActive(false); }
+
+            if (m_2dIcon != null)
+            {
+                m_2dIcon.gameObject.SetActive(true);
+
+                // Load the sprite. The sprite name is the icon definition sku
+                m_2dIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + iconDef.GetAsString("asset"));
+
+            }
+            else
+            {
+                Debug.LogError("The 2d icon is needed here, but it wasn't defined. ");
+                return;
+            }
+
+        }
+        else
         {
             // Would be nice to use nested prefabs instead
             // but until Unity v.2018 this is what we have
 
             // Icon is a 3d Model
-            m_image.gameObject.SetActive(false);
-            m_3dModel.gameObject.SetActive(true);
+            if (m_3dIcon == null)
+            {
+                Debug.LogError("The 3d icon is needed here, but it wasn't defined. ");
+                return;
+            }
+            m_3dIcon.gameObject.SetActive(true);
 
-            // Load the 3d model asynchronously
-            m_3dModel.LoadAsync(iconDef.GetAsString("asset"));
+            if (m_2dIcon != null) { m_2dIcon.gameObject.SetActive(false); }
+            if (m_defaultImage != null) { m_defaultImage.gameObject.SetActive(false); }
+                                 
+            
+            string assetId = iconDef.GetAsString("asset");
 
+            // Check if the asset is available
+            if (HDAddressablesManager.Instance.IsResourceAvailable(assetId) )
+            {
+
+                // Load the 3d model asynchronously
+                AddressablesOp op = m_3dIcon.LoadAsync(iconDef.GetAsString("asset"));
+
+            }
+            else
+            {
+
+                // Asset not available. Show the default icon
+                if (m_defaultImage == null)
+                {
+                    Debug.LogError("The default icon is needed here, but it wasn't defined. Not showing any icon then.");
+                }
+                else
+                {
+                    m_defaultImage.gameObject.SetActive(true);
+                }
+
+            }
+                       
         }
-        else
-        {
 
-            // Icon is a sprite
-            m_image.gameObject.SetActive(true);
-            m_3dModel.gameObject.SetActive(false);
-
-            // Load the sprite. The sprite name is the icon definicion sku
-            m_image.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + iconDef.GetAsString("asset"));
-
-        }
     }
-
 
 }

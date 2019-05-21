@@ -39,7 +39,7 @@ public class ShareScreenTournament : IShareScreen {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private Image m_tournamentIcon = null;
+	[SerializeField] private BaseIcon m_tournamentIcon = null;
 	[SerializeField] private TextMeshProUGUI m_tournamentDescriptionText = null;
 	[SerializeField] private Localizer m_remainingTimeText = null;
 	[Space]
@@ -69,11 +69,15 @@ public class ShareScreenTournament : IShareScreen {
 		// Aux vars
 		HDTournamentManager tournament = HDLiveDataManager.tournament;
 
-		// Initialize UI elements
-		// Tournament icon
-		if(m_tournamentIcon != null) {
-			m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + tournament.tournamentData.tournamentDef.m_goal.m_icon);
-		}
+        // Initialize UI elements
+
+        // Get the icon definition
+        string iconSku = tournament.tournamentData.tournamentDef.m_goal.m_icon;
+
+        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+        m_tournamentIcon.LoadIcon(iconSku);
+        m_tournamentIcon.gameObject.SetActive(true);
+
 
 		// Tournament description
 		if(m_tournamentDescriptionText != null) {

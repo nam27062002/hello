@@ -33,8 +33,7 @@ public class ResultsScreenMissionPill : MonoBehaviour {
 	}
 
 	[Space]
-	[SerializeField] private Image m_missionIcon = null;
-    [SerializeField] private UI3DAddressablesLoader m_mission3dIcon = null;
+	[SerializeField] private BaseIcon m_missionIcon = null;
     [SerializeField] private TextMeshProUGUI m_missionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	public TextMeshProUGUI rewardText {
@@ -93,31 +92,14 @@ public class ResultsScreenMissionPill : MonoBehaviour {
         m_rewardText.text = UIConstants.GetIconString(m_mission.reward.amount, icon, UIConstants.IconAlignment.LEFT);
 
 
-        // Check if the icon is an image or a 3d model
-        if (m_mission.def.GetAsBool("is3dIcon"))
-        {
+        // Get the icon definition
+        string iconSku = m_mission.def.GetAsString("icon");
 
-            // Icon is a 3d Model
-            m_mission3dIcon.gameObject.SetActive(true);
+        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+        m_missionIcon.LoadIcon(iconSku);
+        m_missionIcon.gameObject.SetActive(true);
 
-            // Load the 3d model. DefinitionNode "icon" should be the assetId of the addressable
-            m_mission3dIcon.LoadAsync(m_mission.def.GetAsString("icon"));
-
-            m_missionIcon.gameObject.SetActive(false);
-
-        }
-        else
-        {
-
-            // Icon is a sprite
-            m_missionIcon.gameObject.SetActive(true);
-            m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
-
-            m_mission3dIcon.gameObject.SetActive(false);
-
-        }
-
-	}
+    }
 
 	/// <summary>
 	/// Check whether this pill must be displayed on the carousel or not.
