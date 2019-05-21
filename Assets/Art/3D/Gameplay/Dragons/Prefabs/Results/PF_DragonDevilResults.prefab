@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5410560}
   - component: {fileID: 11441044}
   - component: {fileID: 11482966}
-  - component: {fileID: 114083724565270096}
   m_Layer: 0
   m_Name: PF_DragonDevilResults
   m_TagString: Untagged
@@ -62,30 +61,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_sku: dragon_devil
-  m_altAnimConfigs:
-  - m_range:
-      min: 3
-      max: 6
-    m_allowFaceDetails: 1
-    m_loopsMin: 3
-    m_loopsMax: 4
-    m_special: 0
-    m_timeToNext: 0
-    m_isPreferedAnimation: 0
-    m_animationLevel: 0
-  - m_range:
-      min: 10
-      max: 20
-    m_allowFaceDetails: 0
-    m_loopsMin: 1
-    m_loopsMax: 1
-    m_special: 1
-    m_timeToNext: 0
-    m_isPreferedAnimation: 0
-    m_animationLevel: 4
-  m_hasFire: 1
-  m_dragonFlameStandard: {fileID: 197018, guid: c14795ad74862da47a6176c0deacb83b,
-    type: 2}
+  m_altAnimConfigs: []
+  m_hasFire: 0
+  m_dragonFlameStandard: {fileID: 0}
   m_bloodParticle: {fileID: 0}
   m_extraParticles: []
 --- !u!114 &11482966
@@ -1247,20 +1225,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_point: 14
---- !u!114 &114083724565270096
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5079a9557e28740cba2dc15aa05422d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_prefab: {fileID: 1927669451800062, guid: 85b33e1c0f5d247848920c8877c98f02, type: 2}
-  m_materials: []
-  m_AnimationName: MenuAlt1
 --- !u!114 &114139874500642696
 MonoBehaviour:
   m_ObjectHideFlags: 1

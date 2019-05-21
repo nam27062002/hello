@@ -766,6 +766,7 @@ public class Ingame_SwitchAreaHandle
             Dictionary<string, DefinitionNode> dragons = DefinitionsManager.SharedInstance.GetDefinitions(DefinitionsCategory.DRAGONS);
 
             List<string> mandatoryBundles = new List<string>();
+            mandatoryBundles.Add("shared"); // We need animations
             List<string> optionalBundles = new List<string>();
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
