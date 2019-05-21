@@ -135,7 +135,8 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	// Internal logic
 	private bool m_tapAllowed = true;
 
-	ResourceRequest m_previewRequest = null;
+    private AddressablesOp m_previewRequest = null;
+
 	ResourceRequest m_powerIconRequest = null;
 
 	private static bool m_useAsycLoading = true;
@@ -165,7 +166,13 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		// Unsubscribe from external events
 		Messenger.RemoveListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
-	}
+
+        // Delete pending requests
+        if (m_previewRequest != null) {
+            m_previewRequest.Cancel();
+            m_previewRequest = null;
+        }
+    }
 
 	/// <summary>
 	/// A change has been done in the inspector.
@@ -219,11 +226,11 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 			{
 				m_preview.sprite = null;
 				m_preview.enabled = false;
-				m_previewRequest = Resources.LoadAsync<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
-			}
+				m_previewRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_def.Get("icon"));
+            }
 			else
 			{
-				m_preview.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));	
+				m_preview.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(m_def.Get("icon"));	
 			}
 
 		}
@@ -233,7 +240,7 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		if(powerDef != null) {
 			// Power icon
 			if(m_powerIcon != null) {
-				if ( m_useAsycLoading )
+				if (m_useAsycLoading)
 				{
 					m_powerIcon.sprite = null;	// If null it will look ugly, that way we know we have a miniIcon missing
 					m_powerIcon.enabled = false;
@@ -299,7 +306,7 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		{
 			if ( m_previewRequest != null ){
 				if ( m_previewRequest.isDone ){
-					m_preview.sprite = m_previewRequest.asset as Sprite;
+					m_preview.sprite = m_previewRequest.GetAsset<Sprite>();
 					m_preview.enabled = true;
 					m_previewRequest = null;
 				}

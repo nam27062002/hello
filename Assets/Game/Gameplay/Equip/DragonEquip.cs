@@ -579,55 +579,55 @@ public class DragonEquip : MonoBehaviour {
 			// Load prefab and instantiate
 			string pet = null;
 			if(m_menuMode) {
-				pet = PET_PREFAB_PATH_MENU + petDef.Get("menuPrefab");
+				pet = petDef.Get("menuPrefab");
 			} else {
-				pet = PET_PREFAB_PATH_GAME + petDef.Get("gamePrefab");
+				pet = petDef.Get("gamePrefab");
 			}
-			GameObject prefabObj = Resources.Load<GameObject>(pet);
-			GameObject newInstance = Instantiate<GameObject>(prefabObj);
+			GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(pet);
 
-			// Adjust scale and parenting
-			if(m_menuMode) {
-				// In menu mode, make it a child of the dragon so it inherits scale factor
-				newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, false);
-				newInstance.transform.localPosition = Vector3.zero;
-				newInstance.transform.localRotation = Quaternion.identity;
+            if (prefabObj != null) {
+                GameObject newInstance = Instantiate<GameObject>(prefabObj);
 
-				// Different scale factor depending on dragon
-				MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
-				if(dragonPreview) {
-					DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
-					if ( def.Get("type") == "special" ) 
-                    {
-                        List<DefinitionNode> specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", def.sku);
-                        DefinitionsManager.SharedInstance.SortByProperty(ref specialTierDefsByOrder, "scale", DefinitionsManager.SortType.NUMERIC);
-                        newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / specialTierDefsByOrder[0].GetAsFloat("scale"));
+                // Adjust scale and parenting
+                if (m_menuMode) {
+                    // In menu mode, make it a child of the dragon so it inherits scale factor
+                    newInstance.transform.SetParent(m_attachPoints[attachPointIdx].transform, false);
+                    newInstance.transform.localPosition = Vector3.zero;
+                    newInstance.transform.localRotation = Quaternion.identity;
+
+                    // Different scale factor depending on dragon
+                    MenuDragonPreview dragonPreview = GetComponent<MenuDragonPreview>();
+                    if (dragonPreview) {
+                        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonPreview.sku);
+                        if (def.Get("type") == "special") {
+                            List<DefinitionNode> specialTierDefsByOrder = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", def.sku);
+                            DefinitionsManager.SharedInstance.SortByProperty(ref specialTierDefsByOrder, "scale", DefinitionsManager.SortType.NUMERIC);
+                            newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / specialTierDefsByOrder[0].GetAsFloat("scale"));
+                        } else {
+                            newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / def.GetAsFloat("scaleMin"));
+                        }
+
                     }
-                    else
-                    {
-                        newInstance.transform.localScale = Vector3.one * (def.GetAsFloat("petScaleMenu") / def.GetAsFloat("scaleMin"));
-                    }
-					
-				}
 
-				// Initialize preview and launch intro animation
-				MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
-				petPreview.sku = _petSku;
-				petPreview.SetAnim(MenuPetPreview.Anim.IN);
-			} else {
-				// In game mode, adjust to dragon's scale factor
-				DragonPlayer player = GetComponent<DragonPlayer>();
-				newInstance.transform.localScale = Vector3.one * player.data.petScale;
-				newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
-                SceneManager.MoveGameObjectToScene(newInstance, gameObject.scene);
-				// newInstance.transform.localScale = Vector3.one * player.data.scale;
-			}
+                    // Initialize preview and launch intro animation
+                    MenuPetPreview petPreview = newInstance.GetComponent<MenuPetPreview>();
+                    petPreview.sku = _petSku;
+                    petPreview.SetAnim(MenuPetPreview.Anim.IN);
+                } else {
+                    // In game mode, adjust to dragon's scale factor
+                    DragonPlayer player = GetComponent<DragonPlayer>();
+                    newInstance.transform.localScale = Vector3.one * player.data.petScale;
+                    newInstance.transform.position = m_attachPoints[attachPointIdx].transform.position;
+                    SceneManager.MoveGameObjectToScene(newInstance, gameObject.scene);
+                    // newInstance.transform.localScale = Vector3.one * player.data.scale;
+                }
 
-			// Get equipable object!
-			m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
+                // Get equipable object!
+                m_attachPoints[attachPointIdx].EquipPet(newInstance.GetComponent<Equipable>());
 
-			// Apply current pets visibility
-			m_attachPoints[attachPointIdx].gameObject.SetActive(m_showPets);
+                // Apply current pets visibility
+                m_attachPoints[attachPointIdx].gameObject.SetActive(m_showPets);
+            }
 		}
 	}
 

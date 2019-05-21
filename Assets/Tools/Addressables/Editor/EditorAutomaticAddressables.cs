@@ -126,6 +126,12 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Equipable/items/NPC/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Particles/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Projectiles/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Prefabs/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Skins/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Dragons/Items/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
@@ -156,6 +162,10 @@ public static class EditorAutomaticAddressables {
         // Disguise icons
         System.Type[] instanciableTypesTextures = new System.Type[] { typeof(UnityEngine.Texture2D) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Dragons/Disguises/"), false, entries, bundlesSet, instanciableTypesTextures);
+
+        // Add all pets bundles
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet, instanciableTypesTextures);
 
         _entries = entries;
         _bundles = bundlesSet.ToList();
