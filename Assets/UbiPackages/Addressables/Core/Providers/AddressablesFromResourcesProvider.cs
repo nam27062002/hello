@@ -27,11 +27,9 @@ public class AddressablesFromResourcesProvider : AddressablesProvider
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
-    {
-        Object data = LoadAssetObject(entry);
-        AddressablesOp returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, data);
-
+    {        
+        AddressablesLoadFromResourcesOp returnValue = new AddressablesLoadFromResourcesOp();
+        returnValue.Setup(entry.AssetName);     
         return returnValue;
     }
 

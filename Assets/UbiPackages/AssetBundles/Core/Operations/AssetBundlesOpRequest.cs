@@ -1,16 +1,21 @@
-﻿public class AssetBundlesOpRequest : UbiAsyncOperation
+﻿using UnityEngine;
+
+public class AssetBundlesOpRequest : UbiAsyncOperation
 {    
     public AssetBundlesOp Op { get; set; }
 
-    private AssetBundlesOp.OnDoneCallback OnDone;
+    private AssetBundlesOp.OnDoneCallback OnDone;    
 
     private bool m_isDone;
     
     public AssetBundlesOp.EResult Result { get; set; }
-    public object Data { get; set; }
-    public T GetData<T>() 
+
+    public string AssetBundleId { get; set; }
+    public string AssetName { get; set; }
+    
+    public T GetData<T>() where T : Object
     {
-        return (Data == null) ? default(T): (T)Data;
+        return (AssetBundleId != null && AssetName != null) ? AssetBundlesManager.Instance.LoadAsset<T>(AssetBundleId, AssetName) : null;
     }
 
     public bool isDone
@@ -59,8 +64,7 @@
 
     public void Setup(AssetBundlesOp.OnDoneCallback onDone)
     {
-        Result = AssetBundlesOp.EResult.None;
-        Data = null;
+        Result = AssetBundlesOp.EResult.None;        
         OnDone = onDone;
     }
 
@@ -70,15 +74,14 @@
         Op = op;        
     }    
 
-    public void NotifyResult(AssetBundlesOp.EResult result, object data)
+    public void NotifyResult(AssetBundlesOp.EResult result,  object data)
     {
-        Result = result;
-        Data = data;
+        Result = result;        
 
         isDone = true;   
         if (OnDone != null)
         {
-            OnDone(result, data);
+            OnDone(result, GetData<Object>());
         }
     }
 

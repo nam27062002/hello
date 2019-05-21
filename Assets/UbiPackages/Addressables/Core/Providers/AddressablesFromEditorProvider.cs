@@ -66,15 +66,14 @@ public class AddressablesFromEditorProvider : AddressablesProvider
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
-    {
-        Object data = LoadAssetObject(entry);
-        AddressablesOp returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, data);
+    {        
+        AddressablesLoadFromEditorOp returnValue = new AddressablesLoadFromEditorOp();
+        returnValue.Setup(GetPath(entry));
 
         return returnValue;
     }
 
-    private Object LoadAssetObject(AddressablesCatalogEntry entry)
+    private object LoadAssetObject(AddressablesCatalogEntry entry)
     {
         if (CanLog())
         {

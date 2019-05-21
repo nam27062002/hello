@@ -429,7 +429,7 @@ public class AssetBundlesManager
         return returnValue;
     }
 
-    private AssetBundlesOpRequest PreprocessRequest(bool buildRequest, ref AssetBundlesOp.OnDoneCallback onDone)
+    private AssetBundlesOpRequest PreprocessRequest(bool buildRequest, ref AssetBundlesOp.OnDoneCallback  onDone)
     {
         AssetBundlesOpRequest returnValue = null;
         if (buildRequest)
@@ -613,6 +613,11 @@ public class AssetBundlesManager
     public Downloadables.Handle CreateDownloadablesHandle(HashSet<string> groupIds)
     {
         return DownloadablesManager.Groups_CreateHandle(groupIds);
+    }
+
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        return DownloadablesManager.Groups_CreateAllGroupsHandle();
     }
 
     public void SetDownloadablesGroupPriority(string groupId, int priority)
@@ -874,6 +879,9 @@ public class AssetBundlesManager
     public AssetBundlesOpRequest LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {        
         AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
+        returnValue.AssetBundleId = assetBundleId;
+        returnValue.AssetName = assetName;
 
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
         {

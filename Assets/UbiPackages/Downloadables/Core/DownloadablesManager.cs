@@ -668,7 +668,7 @@ namespace Downloadables
                     }
                 }
             }
-        }
+        }        
 #endregion
 
         // Region responsible for handling downloadable groups
@@ -885,6 +885,11 @@ namespace Downloadables
             return returnValue;
         }
 
+        public Handle Groups_CreateAllGroupsHandle()
+        {
+            return Groups_CreateHandle(Groups_GetAllGroupIds());
+        }
+
         public void Groups_SetPriority(string groupId, int priority)
         {
             CatalogGroup group = Groups_GetGroup(groupId);
@@ -938,6 +943,20 @@ namespace Downloadables
         public List<CatalogGroup> Groups_GetSortedByPriority()
         {
             return m_groupsSortedByPriority;
+        }
+
+        public HashSet<string> Groups_GetAllGroupIds()
+        {
+            HashSet<string> returnValue = new HashSet<string>();
+            if (m_groups != null)
+            {
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    returnValue.Add(pair.Key);
+                }
+            }
+
+            return returnValue;
         }
 #endregion
 

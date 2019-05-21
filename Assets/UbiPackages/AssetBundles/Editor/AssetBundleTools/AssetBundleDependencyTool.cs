@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Text;
 
 //----------------------------------------------------------------------//
@@ -222,9 +223,9 @@ public class AssetBundleDependencyTool : EditorWindow {
     /// Find all reference tree of an asset
     /// 
 
-    void startFindingReferences()
+    void startFindingReferences(string initialAssetPath, bool rich = true)
     {
-        initialAssetPath = AssetDatabase.GetAssetPath(initialAsset);
+//        initialAssetPath = AssetDatabase.GetAssetPath(initialAsset);
         unchecking();
 
         assetReferencesTree = findReferences(initialAssetPath);
@@ -234,11 +235,58 @@ public class AssetBundleDependencyTool : EditorWindow {
 
         List<string> referenceList = new List<string>();
 
-        while (createReferenceLists(assetReferencesTree, referenceList))
+        while (createReferenceLists(assetReferencesTree, referenceList, rich))
         {
             assetReferencesLists.Add(referenceList);
             referenceList = new List<string>();
         }
+    }
+
+
+    void getSoundsDependencyLog()
+    {
+        string[] allSounds = AssetDatabase.FindAssets("t:AudioClip");
+
+        float assetCount = (float)allSounds.Length;
+        float count = 0.0f;
+
+        using (StreamWriter sw = new StreamWriter("soundDependency.log"))
+        {
+            sw.WriteLine("Sound dependency log");
+            sw.WriteLine("----------------------------------------------------------------------------------------------");
+            foreach (string assetGUID in allSounds)
+            {
+
+                string assetPath = AssetDatabase.GUIDToAssetPath(assetGUID);
+
+                if (EditorUtility.DisplayCancelableProgressBar("Finding sound references: ", assetPath, (count++) / assetCount))
+                {
+                    //                assetDictionary.Clear();
+                    break;
+                }
+                startFindingReferences(assetPath, false);
+
+                if (assetReferencesLists.Count > 0)
+                {
+                    sw.WriteLine("====================================================================================================");
+                    sw.WriteLine("Dependencies for asset: " + assetPath);
+                    sw.WriteLine("====================================================================================================");
+                    for (int c = 0; c < assetReferencesLists.Count; c++)
+                    {
+                        List<string> referenceList = assetReferencesLists[c];
+
+                        foreach (string reference in referenceList)
+                            sw.WriteLine(reference, guiStyle);
+
+                        if (c != assetReferencesLists.Count - 1)
+                            sw.WriteLine("-------------------------------------------------------------------------------------------------");
+                    }
+                }
+
+            }
+        }
+        EditorUtility.ClearProgressBar();
+
     }
 
     string getRichName(NTree<AssetInfo> node)
@@ -267,24 +315,24 @@ public class AssetBundleDependencyTool : EditorWindow {
         return sb.ToString();
     }
 
-    bool createReferenceLists(NTree<AssetInfo> node, List<string> referenceList)
+    bool createReferenceLists(NTree<AssetInfo> node, List<string> referenceList, bool rich = true)
     {
         if (node.data.checking) return false;
 
         if (node.children.Count == 0)
         {
 //          referenceList.Add(node.data.assetpath);
-            referenceList.Add(getRichName(node));
+            referenceList.Add(rich ? getRichName(node): node.data.assetpath);
             node.data.checking = true;
             return true;
         }
 
         for (int c = 0; c < node.children.Count; c++)
         {
-            if (createReferenceLists(node.children[c], referenceList))
+            if (createReferenceLists(node.children[c], referenceList, rich))
             {
-//              referenceList.Add(node.data.assetpath);
-                referenceList.Add(getRichName(node));
+                //              referenceList.Add(node.data.assetpath);
+                referenceList.Add(rich ? getRichName(node): node.data.assetpath);
                 return true;
             }
         }
@@ -394,10 +442,16 @@ public class AssetBundleDependencyTool : EditorWindow {
             resetLists();
             if (initialAsset != null)
             {
-                startFindingReferences();
+                startFindingReferences(AssetDatabase.GetAssetPath(initialAsset));
             }
             mode = FindMode.References;
         }
+
+        if (GUILayout.Button("Get sounds references log"))
+        {
+            getSoundsDependencyLog();
+        }
+
 
         GUILayout.BeginVertical();
 
@@ -451,4 +505,5 @@ public class AssetBundleDependencyTool : EditorWindow {
         }
 
     }
+
 }

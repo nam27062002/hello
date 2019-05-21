@@ -352,8 +352,8 @@ public class AddressablesManager
 #if UNITY_EDITOR
             if (Mode == EMode.Editor)
             {
-                returnValue = new AddressablesOpResult();
-                returnValue.Setup(null, null);
+                returnValue = new AddressablesResultOp();
+                returnValue.Setup(null);
             }
             else
 #endif
@@ -385,8 +385,8 @@ public class AddressablesManager
 #if UNITY_EDITOR
             if (Mode == EMode.Editor)
             {
-                returnValue = new AddressablesOpResult();
-                returnValue.Setup(null, null);
+                returnValue = new AddressablesResultOp();
+                returnValue.Setup(null);
             }
             else
 #endif
@@ -599,6 +599,21 @@ public class AddressablesManager
 #endif
 
             returnValue = m_providerFromAB.CreateDownloadablesHandle(groupIds);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.CreateAllDownloadablesHandle();
         }
         else
         {
@@ -857,8 +872,8 @@ public class AddressablesManager
         if (returnOp)
         {
             AddressablesError error = new AddressablesError(AddressablesError.EType.Error_Manager_Not_initialized);
-            returnValue = new AddressablesOpResult();
-            returnValue.Setup(error, null);        
+            returnValue = new AddressablesResultOp();
+            returnValue.Setup(error);        
         }
 
         return returnValue;
