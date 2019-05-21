@@ -268,7 +268,7 @@ public class AssetBundleDependencyTool : EditorWindow {
 
                 if (assetReferencesLists.Count > 0)
                 {
-                    sw.WriteLine("====================================================================================================");
+                    sw.WriteLine("\n\n====================================================================================================");
                     sw.WriteLine("Dependencies for asset: " + assetPath);
                     sw.WriteLine("====================================================================================================");
                     for (int c = 0; c < assetReferencesLists.Count; c++)
