@@ -520,13 +520,16 @@ public class Ingame_SwitchAreaHandle
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = GROUP_LEVEL_AREA_1;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = GROUP_LEVEL_AREA_2;
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = GROUP_LEVEL_AREA_3;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1        = GROUP_LEVEL_AREA_1;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2        = GROUP_LEVEL_AREA_2;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3        = GROUP_LEVEL_AREA_3;
     
     // Combined    
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3 = "areas1_2_3";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2     = "areas1_2";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2_3   = "areas1_2_3";
+
+    // All downloadables
+    private const string DOWNLOADABLE_GROUP_ALL                 = "all";
 
     /// <summary>
     /// Downloadable.Handle objects are cached because they're going to be requested ofter and generating them often may trigger garbage collector often
@@ -570,7 +573,7 @@ public class Ingame_SwitchAreaHandle
     /// </summary>
     /// <param name="handleId">Id of the handle requested. This id is the one used in <c>InitDownloadableHandles()</c> when the handles were created.</param>
     /// <returns>Returns a <c>Downloadables.Handle</c> object which handles the downloading of all downloadables associated to the groups used when <c>handleId</c> was created.</returns>
-    public Downloadables.Handle GetDownloadablesHandle(string handleId)
+    private Downloadables.Handle GetDownloadablesHandle(string handleId)
     {
         Downloadables.Handle returnValue = null;
         if (m_downloadableHandles != null && !string.IsNullOrEmpty(handleId))
@@ -588,6 +591,7 @@ public class Ingame_SwitchAreaHandle
     /// <returns>The handle for all downloadables required for that dragon.</returns>
     /// <param name="_dragonSku">Classic dragon sku.</param>
     public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
+        
 		// Get target dragon info
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
 
@@ -680,6 +684,28 @@ public class Ingame_SwitchAreaHandle
             return GetDownloadablesHandle(handleId);
         }
 	}
+
+    public Downloadables.Handle GetHandleForAllDownloadables()
+    {
+        Downloadables.Handle returnValue = null;
+        if (m_downloadableHandles == null)
+        {
+            if (FeatureSettingsManager.IsDebugEnabled)
+            {
+                LogError("You need to call HDADdressablesManager.Instance.Initialise() before calling this method");
+            }
+        }
+        else
+        {
+            if (!m_downloadableHandles.TryGetValue(DOWNLOADABLE_GROUP_ALL, out returnValue))
+            {
+                returnValue = CreateAllDownloadablesHandle();
+                m_downloadableHandles.Add(DOWNLOADABLE_GROUP_ALL, returnValue);
+            }            
+        }
+
+        return returnValue;
+    }
 
     private bool HasPermissionRequestedForAnyDownloadableHandle()
     {
