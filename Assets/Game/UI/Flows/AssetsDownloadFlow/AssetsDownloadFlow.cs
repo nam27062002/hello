@@ -29,7 +29,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
-	[SerializeField] private Localizer m_statusText = null;
+	[Space]
+	[SerializeField] private GameObject m_downloadingGroup = null;
+	[SerializeField] private GameObject m_errorGroup = null;
 	[SerializeField] private Localizer m_errorText = null;
 
 	// Internal logic
@@ -229,18 +231,21 @@ public class AssetsDownloadFlow : MonoBehaviour {
 			m_progressBar.Refresh(m_handle);
 		}
 
-		// Status text
+		// Downloading group
 		bool hasError = m_handle.GetError() != Downloadables.Handle.EError.NONE;
-		if(m_statusText != null) {
+		if(m_downloadingGroup != null) {
 			// Just show/hide, no custom text for now
-			m_statusText.gameObject.SetActive(!hasError);
+			m_downloadingGroup.SetActive(!hasError);
+		}
+
+		// Error group
+		if(m_errorGroup != null) {
+			// Show/hide
+			m_errorGroup.SetActive(hasError);
 		}
 
 		// Error text
 		if(m_errorText != null) {
-			// Show/hide
-			m_errorText.gameObject.SetActive(hasError);
-
 			// Set text based on error type
 			if(hasError) {
 				string errorTid = "TID_OTA_ERROR_GENERIC_TITLE";
