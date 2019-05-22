@@ -28,6 +28,7 @@ BUILD_ANDROID=false
 GENERATE_OBB=false
 BUILD_IOS=false
 ENVIRONMENT=false
+ADDRESSABLES_MODE=false
   # versioning
 FORCE_VERSION=false
 INCREASE_VERSION_NUMBER=false
@@ -62,7 +63,7 @@ USAGE="Usage: generate_build.command [-path project_path=script_path] [-code pro
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-increase_VCodes] [-iosVCode ios_version_code] [-ggpVCode google_play_version_code] [-amzVCode amazon_version_code]  \
       [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=] \
-      [-env environment] [-calety_branch branch]"
+      [-env environment] [-addressablesMode addressablesMode] [-calety_branch branch]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++));
@@ -142,6 +143,9 @@ do
     elif [ "$PARAM_NAME" == "-env" ] ; then
         ((i++))
         ENVIRONMENT=${!i}
+    elif [ "$PARAM_NAME" == "-addressablesMode" ] ; then
+        ((i++))
+        ADDRESSABLES_MODE=${!i}
     elif [ "$PARAM_NAME" == "-calety_branch" ] ; then
         ((i++))
         CALETY_BRANCH=${!i}
@@ -166,6 +170,9 @@ if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if [ "$ENVIRONMENT" != false ]; then
+  TOTAL_STEPS=$((TOTAL_STEPS+1));
+fi
+if [ "$ADDRESSABLES_MODE" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
 if [ "$FORCE_VERSION" != false ]; then
@@ -259,6 +266,11 @@ eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputEnvironment"
 ENVIRONMENT="$(cat environment.txt)"
 echo "Environment: ${ENVIRONMENT}"
 rm -f "environment.txt"
+
+if [ "$ADDRESSABLES_MODE" != false ]; then
+    print_builder "Setting addressables mode";
+    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetAddressablesMode -addressablesMode ${ADDRESSABLES_MODE}"
+fi
 
 if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"

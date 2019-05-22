@@ -442,6 +442,16 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		}
 	}
 
+	private static AddressablesManager.EMode sm_addressablesMode = AddressablesManager.EMode.Editor;
+	private static bool sm_hasAddressablesModeBeenSet = false;
+	private static void SetAddressablesMode()
+	{
+		sm_hasAddressablesModeBeenSet = true;
+		string addressablesMode = GetArg("-addressablesMode");
+		sm_addressablesMode = AddressablesManager.KeyToMode(addressablesMode);
+		UnityEngine.Debug.Log("Addressables mode set to " + addressablesMode + " with EMode " + sm_addressablesMode);
+	}
+
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes
 	public static void CustomAction()
 	{
