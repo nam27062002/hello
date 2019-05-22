@@ -168,10 +168,10 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		Broadcaster.RemoveListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
         // Delete pending requests
-        if (m_previewRequest != null) {
+       /* if (m_previewRequest != null) {
             m_previewRequest.Cancel();
             m_previewRequest = null;
-        }
+        }*/
     }
 
 	/// <summary>
