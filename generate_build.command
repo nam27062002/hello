@@ -172,9 +172,6 @@ fi
 if [ "$ENVIRONMENT" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
-if [ "$ADDRESSABLES_MODE" != false ]; then
-  TOTAL_STEPS=$((TOTAL_STEPS+1));
-fi
 if [ "$FORCE_VERSION" != false ]; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
@@ -267,11 +264,6 @@ ENVIRONMENT="$(cat environment.txt)"
 echo "Environment: ${ENVIRONMENT}"
 rm -f "environment.txt"
 
-if [ "$ADDRESSABLES_MODE" != false ]; then
-    print_builder "Setting addressables mode";
-    eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetAddressablesMode -addressablesMode ${ADDRESSABLES_MODE}"
-fi
-
 if [ "$FORCE_VERSION" != false ]; then
   print_builder "Force Version ${FORCE_VERSION}"
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetInternalVersion -version ${FORCE_VERSION}"
@@ -357,7 +349,7 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME} -addressablesMode \"Catalog\""
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";

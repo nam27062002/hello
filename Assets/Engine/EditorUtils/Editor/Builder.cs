@@ -95,8 +95,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{
-		PrintArgs();
+	{		
 		string addressablesModeStr = GetArg("-addressablesMode");											  
 
 
@@ -184,7 +183,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 	private static void PrintArgs() {		
 		var args = System.Environment.GetCommandLineArgs();
-		string msg = " Args: count = " + args.Length + " args: ";
+		string msg = "Args: count = " + args.Length + " args: ";
 		for (int i = 0; i < args.Length; i++) {
 			if (i > 0)
 				msg += ", ";
@@ -465,17 +464,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
 		}
-	}
-
-	private static AddressablesManager.EMode sm_addressablesMode = AddressablesManager.EMode.Editor;
-	private static bool sm_hasAddressablesModeBeenSet = false;
-	private static void SetAddressablesMode()
-	{
-		sm_hasAddressablesModeBeenSet = true;
-		string addressablesMode = GetArg("-addressablesMode");
-		sm_addressablesMode = AddressablesManager.KeyToMode(addressablesMode);
-		UnityEngine.Debug.Log("Addressables mode set to " + addressablesMode + " with EMode " + sm_addressablesMode);
-	}
+	}		
 
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes
 	public static void CustomAction()
