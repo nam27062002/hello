@@ -197,6 +197,7 @@ public class LoadingSceneController : SceneController {
         SHOWING_UPGRADE_POPUP,
         SHOWING_COUNTRY_BLACKLISTED_POPUP,
         DOWNLOADING_MISSING_BUNDLES,
+        DONE,
         COUNT
     }
     private State m_state = State.NONE;
@@ -210,6 +211,8 @@ public class LoadingSceneController : SceneController {
 	/// server request doesn't receive a response. 
 	/// </summary>
 	private float m_stateTimeoutAt = 0;
+    
+    private Downloadables.Handle m_downloadablesHandle;
 
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
@@ -496,12 +499,28 @@ public class LoadingSceneController : SceneController {
             break;
             case State.DOWNLOADING_MISSING_BUNDLES:
             {
-                if(m_loadingTxt != null) {
-					m_loadingTxt.text = LocalizationManager.SharedInstance.Localize("TID_OTA_PROGRESS_BAR_DOWNLOADING");
-				}
-                
+                string txt = "Downloading asset bundles... ";
 
+                if (m_downloadablesHandle != null)
+                {
+                    m_downloadablesHandle.Update();
+                    if (m_downloadablesHandle.IsAvailable())
+                    {						
+                        SetState(State.DONE);
+                    }
+
+                    txt += (int)(m_downloadablesHandle.Progress * 100f) + "%";                
+                }
+
+                // TODO: Remove when the ultimate flow is implemented
+                if (m_loadingTxt != null)
+                {
+                    m_loadingTxt.text = txt;
+                }
             }break;
+            case State.DONE:
+            {
+            }break;        
             default:
     		{
 				// Update load progress
@@ -529,10 +548,9 @@ public class LoadingSceneController : SceneController {
                     // Check if all equiped stuff is available or wait
                     if ( AllEquipedIsDownloaded() )
                     {
-                        // Loads main menu scene
-                        FlowManager.GoToMenu();
+                        SetState( State.DONE );
                     }
-                    else
+                    else 
                     {
                         SetState( State.DOWNLOADING_MISSING_BUNDLES );                        
                     }
@@ -584,23 +602,34 @@ public class LoadingSceneController : SceneController {
             Log(m_state + " -> " + state + " time = " + deltaTime);
         }
 
-		// Actions to perform when leaving a specific state
-		switch(m_state) {
-			case State.LOADING_RULES: {
-				// Initialize fonts before showing any other popup
-				// Do it here because we need the Android permissions to be given and the rules to be loaded
-				FontManager.instance.Init();
+        // Actions to perform when leaving a specific state
+        switch (m_state)
+        {
+            case State.LOADING_RULES:
+            {
+                // Initialize fonts before showing any other popup
+                // Do it here because we need the Android permissions to be given and the rules to be loaded
+                FontManager.instance.Init();
 
-				// This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
-				// The stuff that this manager handles has to be done only once, regardless the game reboots
-				FeatureSettingsManager.CreateInstance(false);                
+                // This manager is initialised as soon as rules are loaded because it's used for configuration, which requires to read rules
+                // The stuff that this manager handles has to be done only once, regardless the game reboots
+                FeatureSettingsManager.CreateInstance(false);
 
-				// Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
-				HDTrackingManager.Instance.Init();                
-			} break;
-		}
+                // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
+                HDTrackingManager.Instance.Init();
+            } break;
 
-		m_stateTimeoutAt = 0;
+            case State.DOWNLOADING_MISSING_BUNDLES:
+            {
+                // TODO: Remove when the ultimate flow is implemented
+                if (m_loadingTxt != null)
+                {
+                    m_loadingTxt.gameObject.SetActive(false);
+                }
+            } break;
+        }
+
+        m_stateTimeoutAt = 0;
 
 		// Switch state
         m_state = state;
@@ -739,6 +768,23 @@ public class LoadingSceneController : SceneController {
            {
                 StartLoadFlow();	            	                                
            }break;
+
+            case State.DOWNLOADING_MISSING_BUNDLES:
+            {
+               // TODO: Remove when the ultimate flow is implemented
+               if (m_loadingTxt != null)
+                {
+                   m_loadingTxt.gameObject.SetActive(true);
+                }
+
+                m_downloadablesHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();				
+            }break;
+
+            case State.DONE:
+            {
+                // Loads main menu scene
+                FlowManager.GoToMenu();
+            }break;
         }
     }
 
