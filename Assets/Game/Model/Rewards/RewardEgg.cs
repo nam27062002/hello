@@ -155,8 +155,11 @@ namespace Metagame {
 							string targetSeason = _petDef.GetAsString("associatedSeason", SeasonManager.NO_SEASON_SKU);
 							if(targetSeason != SeasonManager.NO_SEASON_SKU && targetSeason != SeasonManager.activeSeason) return true;
 
-							// Pet is valid! Don't remove it from the list
-							return false;
+                            // d) Pets in remote bundles that aren't donwloaded yet
+                            if (!HDAddressablesManager.Instance.IsResourceAvailable(_petDef.Get("menuPrefab"))) return true;
+
+                            // Pet is valid! Don't remove it from the list
+                            return false;
 						}
 					);
 
