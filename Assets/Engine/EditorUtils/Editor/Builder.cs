@@ -96,7 +96,10 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
 	{
-		string addressablesModeStr = GetArg("-addressablesMode");
+		PrintArgs();
+		string addressablesModeStr = GetArg("-addressablesMode");											  
+
+
 		UnityEngine.Debug.Log ("Addressables mode str: " + addressablesModeStr);
 		if (!string.IsNullOrEmpty(addressablesModeStr)) 
 		{						
@@ -177,6 +180,17 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 			}
 		}
 		return null;
+	}
+
+	private static string PrintArgs() {		
+		var args = System.Environment.GetCommandLineArgs();
+		string msg = " Args: count = " + args.Length + " args: ";
+		for (int i = 0; i < args.Length; i++) {
+			if (i > 0)
+				msg += ", ";
+			
+			msg += args[i];
+		}
 	}
 
 	public static string[] GetBuildingScenes()
