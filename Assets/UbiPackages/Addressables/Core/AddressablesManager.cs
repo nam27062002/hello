@@ -65,6 +65,8 @@ public class AddressablesManager
         {
             returnValue = (EMode)index;
         }
+
+		return returnValue;
     }
 
     private static string MODE_KEY = "mode";
