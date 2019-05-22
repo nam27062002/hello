@@ -96,6 +96,9 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
 	{
+		UnityEngine.Debug.Log("Addressables mode: " + sm_addressablesMode);
+		AddressablesManager.mode = sm_addressablesMode;
+
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
