@@ -553,8 +553,7 @@ public class LoadingSceneController : SceneController {
                     else 
                     {
                         SetState( State.DOWNLOADING_MISSING_BUNDLES );                        
-                    }
-                    
+                    }                    
 		        }
     		}break;
     	}		
