@@ -774,7 +774,7 @@ public class Ingame_SwitchAreaHandle
                 optionalBundles.Add( pair.Key ); // for disguises
             }
             handle.AddDependencyIds( mandatoryBundles );
-            handle.AddDependencyIds( optionalBundles );
+            handle.AddDependencyIds( optionalBundles, false );
 
             Dictionary<string, IDragonData> dragonDatas = DragonManager.dragonsBySku;
             foreach (KeyValuePair<string, IDragonData> pair in dragonDatas) {
