@@ -75,6 +75,7 @@ public class CircularLayout : MonoBehaviour {
 		// Check for transform changes
 		if(transform.hasChanged) {
 			Refresh();
+			transform.hasChanged = false;
 		}
 	}
 
