@@ -182,7 +182,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		return null;
 	}
 
-	private static string PrintArgs() {		
+	private static void PrintArgs() {		
 		var args = System.Environment.GetCommandLineArgs();
 		string msg = " Args: count = " + args.Length + " args: ";
 		for (int i = 0; i < args.Length; i++) {
@@ -191,6 +191,8 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 			
 			msg += args[i];
 		}
+
+		UnityEngine.Debug.Log(msg);
 	}
 
 	public static string[] GetBuildingScenes()
