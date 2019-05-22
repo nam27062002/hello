@@ -9,8 +9,9 @@ public class AddressablesBatchHandle
 
     private List<string> GroupIds;
     public List<string> DependencyIds { get; set; }
+    public List<string> MandatoryDependencyIds { get; set; }
 
-    public void AddGroup(string groupId)
+    public void AddGroup(string groupId, bool mandatory=true)
     {
         if (!string.IsNullOrEmpty(groupId))
         {
@@ -24,20 +25,26 @@ public class AddressablesBatchHandle
                 GroupIds.Add(groupId);
 
                 List<string> ids = sm_manager.GetAssetBundlesGroupDependencyIds(groupId);
-                DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, ids, DependencyIds == null, true);
+
+                AddDependencyIds(ids, mandatory);                
             }
         }
     }
 
-    public void AddAddressable(string addressableId, string variant=null)
+    public void AddAddressable(string addressableId, string variant=null, bool mandatory=true)
     {        
         List<string> ids = sm_manager.GetDependencyIds(addressableId, variant);
-        DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, ids, DependencyIds == null, true);
+        AddDependencyIds(ids, mandatory);        
     }
 
-    public void AddDependencyIds(List<string> dependencyIds)
-    {
+    public void AddDependencyIds(List<string> dependencyIds, bool mandatory=true)
+    {        
         DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, dependencyIds, DependencyIds == null, true);
+
+        if (mandatory)
+        {
+            MandatoryDependencyIds = UbiListUtils.AddRange<string>(MandatoryDependencyIds, dependencyIds, MandatoryDependencyIds == null, true);
+        }
     }
 
     public List<string> RemoteDependencyIds

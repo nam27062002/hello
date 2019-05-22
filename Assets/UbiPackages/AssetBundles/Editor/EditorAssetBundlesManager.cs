@@ -8,18 +8,32 @@ public class EditorAssetBundlesManager
 {
     public static string ASSET_BUNDLES_PATH = "AssetBundles";
     public static string DOWNLOADABLES_FOLDER = "AssetBundles/Remote";
+    public static string ASSET_BUNDLES_LOCAL_FOLDER = "AssetBundles/Local";
     public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";
     public static string DOWNLOADABLES_CATALOG_PATH = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
 
     public static void Clear()
     {
-        string assetBundleDirectory = GetAssetBundlesDirectory();
-        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
+        string directory = GetAssetBundlesDirectory();
+        EditorFileUtils.DeleteFileOrDirectory(directory);
+
+        directory = GetPlatformDirectory(DOWNLOADABLES_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(directory);
+
+        directory = GetPlatformDirectory(ASSET_BUNDLES_LOCAL_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(directory);
+
+        EditorFileUtils.DeleteFileOrDirectory(DOWNLOADABLES_CATALOG_PATH);
     }
 
     public static string GetAssetBundlesDirectory()
     {
-        return ASSET_BUNDLES_PATH + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();        
+        return GetPlatformDirectory(ASSET_BUNDLES_PATH);
+    }
+
+    private static string GetPlatformDirectory(string directory)
+    {
+        return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
     }
 
     public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
@@ -206,12 +220,14 @@ public class EditorAssetBundlesManager
         JSONClass json = catalog.ToJSON();       
         EditorFileUtils.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
 
+        // AssetsLUT is generated so remote asset bundles can work
+        GenerateAssetsLUTFromDownloadablesCatalog();
         // It copies it to the player's folder too
-        if (!string.IsNullOrEmpty(playerFolder))
+        /*if (!string.IsNullOrEmpty(playerFolder))
         {
             string path = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
             EditorFileUtils.WriteToFile(path, json.ToString());
-        }
+        }*/
     }
 
     private static string ASSETS_LUT_PATH = "Assets/Resources/AssetsLUT";
