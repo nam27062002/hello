@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 // Mission3DIconPreview.cs
 // Hungry Dragon
 // 
@@ -131,3 +132,4 @@ public class Mission3DIconPreview  : MonoBehaviour {
 
     }
 }
+#endif
