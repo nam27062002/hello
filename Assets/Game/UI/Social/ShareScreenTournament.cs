@@ -104,7 +104,7 @@ public class ShareScreenTournament : IShareScreen {
 			int finalRank = Mathf.Min(playerRank + setup.pillsAfter, 99);    // Max 100, 0-indexed
 			List<HDTournamentData.LeaderboardLine> tournamentLeaderboard = tournament.tournamentData.m_leaderboard;
 			List<HDTournamentData.LeaderboardLine> lines = new List<HDTournamentData.LeaderboardLine>();
-			for(int i = startRank; i < finalRank; ++i) {
+			for(int i = startRank; i < finalRank && i < tournamentLeaderboard.Count; ++i) {
 				lines.Add(tournamentLeaderboard[i]);
 			}
 

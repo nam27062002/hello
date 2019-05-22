@@ -150,7 +150,7 @@ namespace AI {
 			if (m_subState >= SubState.Jump_Start && m_subState <= SubState.Jump_Down) {
 				// ----------------------------- gravity :3
 				m_velocity += gv;
-				m_rbody.angularVelocity = GameConstants.Vector3.zero;
+				//m_rbody.angularVelocity = GameConstants.Vector3.zero;
 				m_rbody.velocity = m_velocity;
 			} else {
 				if (m_groundDirection.y < -0.25f && m_direction.x > 0f

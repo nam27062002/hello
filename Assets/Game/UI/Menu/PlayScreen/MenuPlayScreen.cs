@@ -125,6 +125,10 @@ public class MenuPlayScreen : MonoBehaviour {
 	/// The Privacy Policy button has been pressed.
 	/// </summary>
 	public void OnPrivacyPolicyButton() {
-		GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_URL, 0.25f);
-	}
+        #if UNITY_IOS
+		    GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_IOS_URL, 0.25f);
+        #else
+		    GameSettings.OpenUrl(GameSettings.PRIVACY_POLICY_ANDROID_URL, 0.25f);
+        #endif
+    }
 }
