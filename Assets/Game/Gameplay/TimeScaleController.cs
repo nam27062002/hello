@@ -112,7 +112,7 @@ public class TimeScaleController : MonoBehaviour {
     
     public void HitStop( int frames = 1 )
     {
-        if (!m_ignoreHitStops)
+        if (!m_ignoreHitStops && DebugSettings.hitStopEnabled)
         {
             if ( m_hitStopTimer <= 0)
             {
