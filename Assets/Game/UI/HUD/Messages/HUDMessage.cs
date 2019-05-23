@@ -634,15 +634,22 @@ public class HUDMessage : MonoBehaviour, IBroadcastListener {
 
 	private void ShowObjCompleted()
 	{
-		Transform tr = transform.Find("Icon");
-		if ( tr != null )
+
+        // Not very efficient, but only called once after the mission.
+        BaseIcon objectiveIcon = gameObject.GetComponentInChildren<BaseIcon>();
+        
+		if (objectiveIcon != null )
 		{
-			Image goalIcon = tr.GetComponent<Image>();
-			if ( goalIcon != null )
-			{
-				HDTournamentDefinition def = HDLiveDataManager.tournament.data.definition as HDTournamentDefinition;
-				goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
-			}
+
+            // Get the icon definition
+            HDTournamentDefinition def = HDLiveDataManager.tournament.data.definition as HDTournamentDefinition;
+            string iconSku = def.m_goal.m_icon;
+
+            // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+            objectiveIcon.LoadIcon(iconSku);
+            objectiveIcon.gameObject.SetActive(true);
+
+
 		}
 		Show();
 	}

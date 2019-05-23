@@ -41,7 +41,7 @@ public class TournamentRewardScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] private Localizer m_titleText;
 	[SerializeField] private TextMeshProUGUI m_goalText = null;
-	[SerializeField] private Image m_tournamentIcon = null;
+	[SerializeField] private BaseIcon m_tournamentIcon = null;
 	[SerializeField] private TournamentLeaderboardView m_leaderboard = null;
 
 	// Internal references
@@ -116,16 +116,21 @@ public class TournamentRewardScreen : MonoBehaviour {
 			m_tournamentData = m_tournamentManager.data as HDTournamentData;
 			m_tournamentDef = m_tournamentData.definition as HDTournamentDefinition;
 
-			// Initialize Leaderboard - before we mark the event as finished
-			/*if(m_leaderboard != null) {
+            // Initialize Leaderboard - before we mark the event as finished
+            /*if(m_leaderboard != null) {
 				m_leaderboard.Refresh();
 			}*/
-			// [AOC] No need! Leaderboard is self managed!
+            // [AOC] No need! Leaderboard is self managed!
 
-			// Initialize visual info
-			if(m_tournamentIcon != null) {
-				m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_tournamentDef.m_goal.m_icon);
-			}
+            
+            // Get the icon definition
+            string iconSku = m_tournamentDef.m_goal.m_icon;
+
+            // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+            m_tournamentIcon.LoadIcon(iconSku);
+            m_tournamentIcon.gameObject.SetActive(true);
+            
+            // Initialize goal text
 			if(m_goalText != null) {
 				m_goalText.text = m_tournamentManager.GetDescription();
 			}

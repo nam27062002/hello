@@ -76,21 +76,32 @@ public class UI3DAddressablesLoaderEditor : Editor {
 				GUI.enabled = wasEnabled;
 			}
             else if (p.name == "m_assetId") {
-                string id = Path.GetFileNameWithoutExtension(m_targetUI3DLoader.resourcePath);
-                string path = Path.GetDirectoryName(m_targetUI3DLoader.resourcePath);
-                int i = m_targetUI3DLoader.useFolderLevelInID;
-                while (i > 0) {
-                    int index = path.LastIndexOf(Path.DirectorySeparatorChar);
-                    if (index > 0) {
-                        id = path.Substring(index + 1) + Path.DirectorySeparatorChar + id;
-                        path = path.Substring(0, index);
-                        i--;
-                    } else {
-                        i = 0;
+                
+                // The resource path could be empty in case we want to select the assetId in runtime
+                if (m_targetUI3DLoader.resourcePath != "")
+                {
+                    string id = Path.GetFileNameWithoutExtension(m_targetUI3DLoader.resourcePath);
+                    string path = Path.GetDirectoryName(m_targetUI3DLoader.resourcePath);
+                    int i = m_targetUI3DLoader.useFolderLevelInID;
+                    while (i > 0)
+                    {
+                        int index = path.LastIndexOf(Path.DirectorySeparatorChar);
+                        if (index > 0)
+                        {
+                            id = path.Substring(index + 1) + Path.DirectorySeparatorChar + id;
+                            path = path.Substring(0, index);
+                            i--;
+                        }
+                        else
+                        {
+                            i = 0;
+                        }
                     }
+
+                    p.stringValue = id;
+                    
                 }
 
-                p.stringValue = id;
                 EditorGUILayout.LabelField("    Addressable ID: " + p.stringValue);
             }
             // Properties we don't want to show
