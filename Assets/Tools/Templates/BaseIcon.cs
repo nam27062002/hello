@@ -43,7 +43,15 @@ public class BaseIcon : MonoBehaviour {
 
     [SerializeField] private string m_iconSKU;
 
+    // Keep a record of the icon type
+    private bool is3DIcon;
+    public bool Is3DIcon
+    { get { return is3DIcon; } }
 
+    // Keep a record of the load state
+    private bool isLoadFinished;
+    public bool IsLoadFinished
+    { get { return isLoadFinished; } }
 
     //------------------------------------------------------------------------//
     // GENERIC METHODS														  //
@@ -82,10 +90,12 @@ public class BaseIcon : MonoBehaviour {
             if (m_defaultImage != null) { m_defaultImage.gameObject.SetActive(false); }
 
             return;
-        } 
+        }
+
+        is3DIcon = iconDef.GetAsBool("icon3d");
 
         // Check if the icon is an image or a 3d model
-        if ( !iconDef.GetAsBool("icon3d") )
+        if ( ! is3DIcon )
         {
 
             // Icon is a sprite
@@ -132,6 +142,7 @@ public class BaseIcon : MonoBehaviour {
 
                 // Load the 3d model asynchronously
                 AddressablesOp op = m_3dIcon.LoadAsync(iconDef.GetAsString("asset"));
+                op.OnDone = OnLoadFinished;
 
             }
             else
@@ -150,6 +161,37 @@ public class BaseIcon : MonoBehaviour {
             }
                        
         }
+
+    }
+
+
+    /// <summary>
+    /// Hide 2d and 3d elements, and just enable the default image
+    /// We can use this function if we reach a timeout, but the icon is not 
+    /// ready and we need to show something in the screen.
+    /// </summary>
+    public void ForceShowDefaultIcon ()
+    {
+
+        if (m_defaultImage == null)
+        {
+            Debug.LogError("Trying to show the default icon, but it is not defined");
+            return;
+        }
+
+        m_defaultImage.gameObject.SetActive(true);
+
+        // Hide everything else
+        if (m_2dIcon != null) { m_2dIcon.gameObject.SetActive(false); }
+        if (m_3dIcon != null) { m_3dIcon.gameObject.SetActive(false); }
+        
+    }
+
+    // Asynchronous load callback when the asset is successfully loaded
+    private void OnLoadFinished(AddressablesOp op)
+    {
+
+        isLoadFinished = true;
 
     }
 

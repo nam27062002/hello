@@ -91,4 +91,34 @@ public class ShareScreenQuest : IShareScreen {
 			}
 		}
 	}
+
+
+    /// <summary>
+    /// Do some stuff before screen capture
+    /// </summary>
+    protected override void CapturePreprocess()
+    {
+        
+        // Check if the base icon loaded is a 3d model
+        if  ( m_questDataPanel.ObjectiveIcon.Is3DIcon )
+        {
+
+            // In that case check if the load is complete
+            if (m_questDataPanel.ObjectiveIcon.IsLoadFinished)
+            {
+
+                 // Icon 3d loaded. Nothing to do, just go on with the capture.
+
+            } else
+            {
+
+                // The 3d icon not ready yet. Force baseIcon to show the default 2d Icon
+                m_questDataPanel.ObjectiveIcon.ForceShowDefaultIcon();
+
+            }
+
+        }     
+        
+    }
+
 }

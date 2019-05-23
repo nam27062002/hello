@@ -38,13 +38,19 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
 	[SerializeField] private ParticleSystem m_receiveContributionFX = null;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	protected override void OnEnable() {
+
+    // Properties
+    public BaseIcon ObjectiveIcon
+    { get { return m_objectiveIcon; }  }
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    protected override void OnEnable() {
 		// Call parent
 		base.OnEnable();
 
