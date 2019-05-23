@@ -32,6 +32,8 @@ public class ColorRampEditor : EditorWindow {
 	private const float WINDOW_MARGIN = 10f;
 	private const float INFO_BOX_MARGIN = 5f;
 	private const float FOLDOUT_INDENT_SIZE = 15f;
+	private const float SPACE_BETWEEN_ITEMS = 10f;
+	private const float DIVISION_SIZE = 5f;
 
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
@@ -138,8 +140,49 @@ public class ColorRampEditor : EditorWindow {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		if(m_serializedCollection != null) m_serializedCollection.Update();
 
-		// Scroll Rect
+		// Toolbar
+		EditorGUILayout.BeginHorizontal();
+		{
+			GUILayout.Button("New Ramp Texture");
+			GUILayout.Button("New Collection");
+			GUILayout.Button("Show Collections Folder");
+		}
+		EditorGUILayout.EndHorizontal();
+
+		// Collection Chooser
 		bool reloadCollection = false;
+		{
+			EditorGUI.BeginChangeCheck();
+
+			// Refresh files list
+			// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
+			DirectoryInfo dirInfo = new DirectoryInfo(DATA_PATH);
+			FileInfo[] files = dirInfo.GetFiles();
+
+			// Strip filename from full file path
+			List<string> fileNames = new List<string>();
+			for(int i = 0; i < files.Length; i++) {
+				if(files[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
+					fileNames.Add(Path.GetFileNameWithoutExtension(files[i].Name));
+				}
+			}
+
+			// Find index of our current collection
+			int selectedIdx = fileNames.IndexOf(selectedCollectionName);
+
+			// Show dropdown field
+			selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, fileNames.ToArray());
+
+			if(EditorGUI.EndChangeCheck()) {
+				// Store new collection
+				selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
+
+				// Reload collection if required
+				reloadCollection = true;
+			}
+		}
+
+		// Scroll Rect
 		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos); {
 			// Left Margin
 			EditorGUILayout.BeginHorizontal();
@@ -149,39 +192,7 @@ public class ColorRampEditor : EditorWindow {
 			EditorGUILayout.BeginVertical();
 			GUILayout.Space(WINDOW_MARGIN);
 
-			// Window Content!
-			// Collection Chooser
-			EditorGUI.BeginChangeCheck();
-
-			// Refresh files list
-			{
-				// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
-				DirectoryInfo dirInfo = new DirectoryInfo(DATA_PATH);
-				FileInfo[] files = dirInfo.GetFiles();
-
-				// Strip filename from full file path
-				List<string> fileNames = new List<string>();
-				for(int i = 0; i < files.Length; i++) {
-					if(files[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
-						fileNames.Add(Path.GetFileNameWithoutExtension(files[i].Name));
-					}
-				}
-
-				// Find index of our current collection
-				int selectedIdx = fileNames.IndexOf(selectedCollectionName);
-
-				// Show dropdown field
-				selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, fileNames.ToArray());
-
-				if(EditorGUI.EndChangeCheck()) {
-					// Store new collection
-					selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
-
-					// Reload collection if required
-					reloadCollection = true;
-				}
-			}
-
+			// Scroll Content!
 			// Color Ramps List
 			if(m_rampsList != null) {
 				m_rampsList.DoLayoutList();
@@ -518,7 +529,7 @@ public class ColorRampEditor : EditorWindow {
 				EditorGUIUtility.labelWidth = 0f;
 
 				// Store element height
-				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING;    // Extra spacing
+				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING + SPACE_BETWEEN_ITEMS;    // Extra spacing
 			};
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
@@ -536,7 +547,7 @@ public class ColorRampEditor : EditorWindow {
 				float margin = SPACING;
 				_rect.x += margin;
 				_rect.width -= margin * SPACING;
-				_rect.height -= SPACING;	// Leave some space without painting
+				_rect.height -= SPACE_BETWEEN_ITEMS;	// Leave some space without painting
 
 				// Different colors based on GUI state
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
@@ -558,6 +569,15 @@ public class ColorRampEditor : EditorWindow {
 				// Draw background
 				GUI.DrawTexture(_rect, Texture2D.whiteTexture);
 				GUI.color = Color.white;
+
+				// Draw division - after the background to render on top
+				Rect divisionRect = new Rect(
+					_rect.x,
+					_rect.y - DIVISION_SIZE,
+					_rect.width,
+					DIVISION_SIZE
+				);
+				GUI.DrawTexture(divisionRect, Texture2D.whiteTexture);
 			};
 
 			m_rampsList.onChangedCallback = OnListSizeChanged;
