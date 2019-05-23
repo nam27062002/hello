@@ -470,7 +470,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		return returnValue;
 	}
 
-	private void SetAddressablesMode()
+	private static void SetAddressablesMode()
 	{
 		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
 		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);

@@ -165,7 +165,7 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=5;
+TOTAL_STEPS=6;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
@@ -253,6 +253,9 @@ git pull origin "${BRANCH}"
 
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
+
+print_builder "Setting addressables mode"
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetAddressablesMode -addressablesMode ${ADDRESSABLES_MODE}"
 
 if [ "$ENVIRONMENT" != false ]; then
     print_builder "Setting environment";
