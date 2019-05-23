@@ -39,7 +39,6 @@ public class ShareScreenTournament : IShareScreen {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private BaseIcon m_tournamentIcon = null;
 	[SerializeField] private TextMeshProUGUI m_tournamentDescriptionText = null;
 	[SerializeField] private Localizer m_remainingTimeText = null;
 	[Space]
@@ -70,14 +69,6 @@ public class ShareScreenTournament : IShareScreen {
 		HDTournamentManager tournament = HDLiveDataManager.tournament;
 
         // Initialize UI elements
-
-        // Get the icon definition
-        string iconSku = tournament.tournamentData.tournamentDef.m_goal.m_icon;
-
-        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
-        m_tournamentIcon.LoadIcon(iconSku);
-        m_tournamentIcon.gameObject.SetActive(true);
-
 
 		// Tournament description
 		if(m_tournamentDescriptionText != null) {
@@ -266,33 +257,4 @@ public class ShareScreenTournament : IShareScreen {
 		);
 	}
 
-
-    /// <summary>
-    /// Do some stuff before screen capture
-    /// </summary>
-    protected override void CapturePreprocess()
-    {
-
-        // Check if the base icon loaded is a 3d model
-        if (m_tournamentIcon.Is3DIcon)
-        {
-
-            // In that case check if the load is complete
-            if (m_tournamentIcon.IsLoadFinished)
-            {
-
-                // Icon 3d loaded. Nothing to do, just go on with the capture.
-
-            }
-            else
-            {
-
-                // The 3d icon not ready yet. Force baseIcon to show the default 2d Icon
-                m_tournamentIcon.ForceShowDefaultIcon();
-
-            }
-
-        }
-
-    }
 }

@@ -31,17 +31,12 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 	[SerializeField] private bool m_updateEventState = false;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
-	[SerializeField] private BaseIcon m_objectiveIcon = null;
 	[Space]
 	[SerializeField] private TextMeshProUGUI m_timerText = null;
 	[Space]
 	[SerializeField] private GlobalEventsProgressBar m_progressBar = null;
 	[SerializeField] private ParticleSystem m_receiveContributionFX = null;
 
-
-    // Properties
-    public BaseIcon ObjectiveIcon
-    { get { return m_objectiveIcon; }  }
 
 
     //------------------------------------------------------------------------//
@@ -124,13 +119,6 @@ public class GlobalEventsPanelActive : GlobalEventsPanel {
 		// Initialize visuals
 		// Event description
 		if(m_objectiveText != null) m_objectiveText.text = questManager.GetGoalDescription();
-
-        // Get the icon definition
-        string iconSku = def.m_goal.m_icon;
-
-        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
-        m_objectiveIcon.LoadIcon(iconSku);
-        m_objectiveIcon.gameObject.SetActive(true);
 
         // Progress
         if (m_progressBar != null) {
