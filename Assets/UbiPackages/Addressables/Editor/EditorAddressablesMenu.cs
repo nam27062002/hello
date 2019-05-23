@@ -122,7 +122,7 @@ public class EditorAddressablesMenu : MonoBehaviour
         Debug.Log(taskName + " done.");
     }    
 
-    private static void SetMode(AddressablesManager.EMode value)
+    public static void SetMode(AddressablesManager.EMode value)
     {
         if (Application.isPlaying)
         {
@@ -218,7 +218,12 @@ public class EditorAddressablesMenu : MonoBehaviour
 		}
 
         sm_modePreBuild = AddressablesManager.Mode;
-        SetMode(AddressablesManager.EffectiveMode);     
+
+		Debug.Log("OnPrebuild Mode " + AddressablesManager.EffectiveMode);
+		if (AddressablesManager.EffectiveMode != AddressablesManager.EMode.AllInResources)
+		{
+        	SetMode(AddressablesManager.EffectiveMode);     
+		}
     }
 
     public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
