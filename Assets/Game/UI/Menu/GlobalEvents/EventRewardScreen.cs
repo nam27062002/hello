@@ -40,7 +40,7 @@ public class EventRewardScreen : MonoBehaviour {
 	// Individual elements references
 	[Space]
 	[SerializeField] private GlobalEventsPanelActive m_questPanel = null;
-	[SerializeField] private Image m_eventIcon = null;
+	[SerializeField] private BaseIcon m_eventIcon = null;
 	[SerializeField] private TextMeshProUGUI m_objectiveText = null;
 
 	// Internal references
@@ -276,8 +276,14 @@ public class EventRewardScreen : MonoBehaviour {
 		// Perform different stuff depending on new step
 		switch(nextStep) {
 			case Step.INTRO: {
-				// Set event icon
-				m_eventIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_questManager.m_questDefinition.m_goal.m_icon);
+
+                // Get the icon definition
+                string iconSku = m_questManager.m_questDefinition.m_goal.m_icon;
+
+                // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+                m_eventIcon.LoadIcon(iconSku);
+                m_eventIcon.gameObject.SetActive(true);
+
 
 				// Event description
 				if(m_objectiveText != null) m_objectiveText.text = m_questManager.GetGoalDescription();

@@ -122,14 +122,27 @@ public class RewardInfoUI : MonoBehaviour {
 		if(m_shareButton != null) m_shareButton.SetActive(false);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the title with the given Egg Reward Data and launch the animation.
-	/// </summary>
-	/// <param name="_rewardData">Egg reward data to be used for initialization.</param>
-	public void InitAndAnimate(Metagame.Reward _rewardData, string _extraInfo = "") {
+    /// <summary>
+    /// Called when the entity is activated
+    /// </summary>
+    private void OnEnable()
+    {
+
+        // Hide the share button when we open the reward screen, so if the
+        // share button is enabled, it wont flash in the first frame before update
+        // This fixes the bug [HDK-4805]
+        if (m_shareButton != null) m_shareButton.SetActive(false);
+
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the title with the given Egg Reward Data and launch the animation.
+    /// </summary>
+    /// <param name="_rewardData">Egg reward data to be used for initialization.</param>
+    public void InitAndAnimate(Metagame.Reward _rewardData, string _extraInfo = "") {
 		// Ignore if given data is not valid or is not initialized
 		if(_rewardData == null) return;
 

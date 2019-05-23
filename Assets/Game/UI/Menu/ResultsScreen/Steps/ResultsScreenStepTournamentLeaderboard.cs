@@ -27,7 +27,6 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
-	[SerializeField] private Image m_runScoreIcon = null;
 	[SerializeField] private TextMeshProUGUI m_runScoreText = null;
 
 	//------------------------------------------------------------------------//
@@ -54,9 +53,9 @@ public class ResultsScreenStepTournamentLeaderboard : ResultsScreenSequenceStep 
 		HDTournamentManager tournament = HDLiveDataManager.tournament;
 		m_runScoreText.text = tournament.FormatScore(tournament.GetRunScore());
 
-		// Each tournament has a different score item
-		HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
-		m_runScoreIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+		// We used to have different icons for different misssions. 
+        // Since OTA, we use the generic score icon.
+
 	}
 
 	/// <summary>
