@@ -33,7 +33,7 @@ public class ColorRampEditor : EditorWindow {
 	private const float INFO_BOX_MARGIN = 5f;
 	private const float FOLDOUT_INDENT_SIZE = 15f;
 	private const float SPACE_BETWEEN_ITEMS = 10f;
-	private const float DIVISION_SIZE = 5f;
+	private const float DIVISION_SIZE = 0f;
 
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
@@ -285,7 +285,29 @@ public class ColorRampEditor : EditorWindow {
 				// Adjust prefix label size
 				EditorGUIUtility.labelWidth = 90f;
 
-				// Display texture
+				// Texture Preview
+				currentLineY += SPACING;	// Add some extra spacing for breathing
+				Rect previewRect = new Rect(
+					_rect.x,
+					currentLineY,
+					_rect.width,
+					10f
+				);
+				if(rampData.tex != null) {
+					// Actual texture
+					previewRect.height = rampData.tex.height * 10f; // 10 units per gradient
+					GUI.DrawTexture(previewRect, rampData.tex);
+				} else {
+					// Placeholder texture
+					GUI.color = Colors.WithAlpha(Color.white, 0.1f);
+					GUI.DrawTexture(previewRect, Texture2D.whiteTexture);
+					GUI.color = Color.white;
+				}
+
+				// Advance pos
+				currentLineY += previewRect.height + SPACING;
+
+				// Texture field
 				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 				Rect texRect = new Rect(
 					_rect.x,
@@ -329,19 +351,6 @@ public class ColorRampEditor : EditorWindow {
 
 					// Detect changes
 					EditorGUI.BeginChangeCheck();
-
-					// Texture Preview
-					Rect previewRect = new Rect(
-						_rect.x,
-						currentLineY,
-						_rect.width,
-						// EditorGUIUtility.singleLineHeight
-						rampData.tex.height * 10
-					);
-					GUI.DrawTexture(previewRect, rampData.tex);
-
-					// Advance pos
-					currentLineY += previewRect.height + SPACING;
 
 					// Sequence type
 					SerializedProperty sequenceTypeProp = rampDataProp.FindPropertyRelative("type");
