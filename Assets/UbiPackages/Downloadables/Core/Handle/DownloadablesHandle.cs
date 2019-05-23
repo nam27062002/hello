@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Downloadables
@@ -59,6 +59,12 @@ namespace Downloadables
         //------------------------------------------------------------------------//
         // METHODS																  //
         //------------------------------------------------------------------------//        
+
+        /// <summary>
+        /// Add a list of downloadable ids to the handle.
+        /// </summary>
+        /// <param name="downloadableIds">List of downloadable ids to add to the list of downloadables handled by this handle.</param>
+        public virtual void AddDownloadableIds(List<string> downloadableIds) {}
 
         /// <summary>
         /// Returns whether or not the list of downloadables handled by this class are available.

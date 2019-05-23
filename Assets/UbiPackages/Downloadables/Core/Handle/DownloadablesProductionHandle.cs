@@ -26,6 +26,11 @@ namespace Downloadables
             DownloadableIds = downloadableIds;
         }
 
+        public override void AddDownloadableIds(List<string> downloadableIds)
+        {
+            DownloadableIds = UbiListUtils.AddRange<string>(DownloadableIds, downloadableIds, (DownloadableIds == null), true);
+        }
+
         public override bool IsAvailable()
         {
             // It's available if all downloadables are available
