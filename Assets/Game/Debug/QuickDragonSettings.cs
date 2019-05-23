@@ -83,4 +83,24 @@ public class QuickDragonSettings : MonoBehaviour {
 	{
 		DebugSettings.spawnChance100 = _value;
 	}
+
+
+	public void Toggle60FPS( bool _value )
+	{
+		if ( _value )
+		{
+			Application.targetFrameRate = 60;
+			Time.captureFramerate = 60;
+		}
+		else
+		{
+			Application.targetFrameRate = 30;
+			Time.captureFramerate = 30;
+		}
+	}
+
+	public void ToggleHitStop( bool _value )
+	{
+		DebugSettings.hitStopEnabled = _value;
+	}
 }
