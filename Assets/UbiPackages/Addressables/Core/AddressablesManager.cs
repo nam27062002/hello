@@ -215,6 +215,32 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public List<string> GetDownloadableDependencyIds(List<string> dependencyIds)
+    {
+        List<string> returnValue = null;
+        if (IsInitialized())
+        {
+            if (dependencyIds != null)
+            {
+                returnValue = new List<string>();
+                int count = dependencyIds.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (isDependencyIdDownloadable(dependencyIds[i]))
+                    {
+                        returnValue.Add(dependencyIds[i]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
     /// </summary>
@@ -621,6 +647,37 @@ public class AddressablesManager
         }
 
         return returnValue;
+    }
+
+    /// <summary>
+    /// Adds the downloadable dependencies of the addressable passed as a parameter.
+    /// </summary>
+    /// <param name="addressableId">Addressable id which downloadable dependencies </param>
+    public void AddResourceDownloadableIdsToHandle(Downloadables.Handle handle, string addressableId, string variant = null)
+    {
+        if (handle != null)
+        {
+            List<string> ids = GetDependencyIds(addressableId, variant);
+            List<string> downloadableIds = GetDownloadableDependencyIds(ids);
+
+            handle.AddDownloadableIds(downloadableIds);
+        }
+    }
+
+    /// <summary>
+    /// Adds the downloadable dependencies of the addressable passed as a parameter.
+    /// </summary>
+    /// <param name="addressableId">Addressable id which downloadable dependencies </param>
+    public void AddResourceListDownloadableIdsToHandle(Downloadables.Handle handle, List<string> addressableIds, string variant = null)
+    {
+        if (handle != null && addressableIds != null)
+        {            
+            int count = addressableIds.Count;
+            for (int i = 0; i < count; i++)
+            {
+                AddResourceDownloadableIdsToHandle(handle, addressableIds[i], variant);
+            }            
+        }
     }
 
     /// <summary>
