@@ -28,6 +28,22 @@ public class EditorBuildMenu : MonoBehaviour
         string buildTargetAsString = buildTarget.ToString();
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
+        if (buildTarget == BuildTarget.Android)
+        {
+            string extension = ".apk";
+            if (!path.EndsWith(extension))
+            {
+                path += extension;
+            }
+        }
+
+        /*
+        PlayerSettings.Android.keystoreName = "AndroidKeys/releaseKey.keystore";
+        PlayerSettings.Android.keystorePass = "android";
+        PlayerSettings.Android.keyaliasName = "androidreleasekey";
+        PlayerSettings.Android.keyaliasPass = "android";
+        */
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = sceneNames;
         buildPlayerOptions.locationPathName = path;

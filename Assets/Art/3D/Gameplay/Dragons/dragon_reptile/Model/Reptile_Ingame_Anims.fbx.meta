@@ -44,6 +44,9 @@ ModelImporter:
     100076: //RootNode
     100078: SuctionPoint
     100080: SwallowPoint
+    100082: Dragon_L_Down_EyeLead
+    100084: Dragon_L_Up_EyeLead
+    100086: Dragon_Tail_L6
     400000: Dragon_Chest
     400002: Dragon_Head
     400004: Dragon_Head_Ctrl
@@ -85,6 +88,9 @@ ModelImporter:
     400076: //RootNode
     400078: SuctionPoint
     400080: SwallowPoint
+    400082: Dragon_L_Down_EyeLead
+    400084: Dragon_L_Up_EyeLead
+    400086: Dragon_Tail_L6
     2300000: Dragon_Reptilius_LOW
     3300000: Dragon_Reptilius_LOW
     4300000: Dragon_Reptilius_LOW
@@ -96,7 +102,7 @@ ModelImporter:
     7400010: Eat_Big
     7400012: Eat_Shake
     7400014: Eaten
-    7400016: Idle
+    7400016: Flying
     7400018: Impact
     7400020: Turbo_Start
     7400022: Turbo_Loop
@@ -178,8 +184,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Damage
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 21
-      lastFrame: 34
+      firstFrame: 22
+      lastFrame: 36
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -213,8 +219,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Death_Start
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 35
-      lastFrame: 75
+      firstFrame: 37
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -241,7 +247,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Death_Loop
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 35
+      firstFrame: 60
       lastFrame: 75
       wrapMode: 0
       orientationOffsetY: 0
@@ -269,8 +275,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Eat
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 76
-      lastFrame: 85
+      firstFrame: 78
+      lastFrame: 87
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -318,8 +324,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Eat_Big
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 86
-      lastFrame: 98
+      firstFrame: 102
+      lastFrame: 114
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -367,8 +373,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Eat_Shake
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 99
-      lastFrame: 111
+      firstFrame: 88
+      lastFrame: 101
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -395,8 +401,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Eaten
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 112
-      lastFrame: 132
+      firstFrame: 115
+      lastFrame: 136
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -421,9 +427,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Idle
+      name: Flying
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 148
+      firstFrame: 153
       lastFrame: 168
       wrapMode: 0
       orientationOffsetY: 0
@@ -759,8 +765,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Fire_Start
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 133
-      lastFrame: 140
+      firstFrame: 137
+      lastFrame: 146
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -787,8 +793,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Fire_Loop
       takeName: OTA_Reptile_Timeline_separated.fbx
-      firstFrame: 141
-      lastFrame: 147
+      firstFrame: 147
+      lastFrame: 152
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -811,7 +817,7 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 133
+      additiveReferencePoseFrame: 137
     isReadable: 0
   meshes:
     lODScreenPercentages: []
