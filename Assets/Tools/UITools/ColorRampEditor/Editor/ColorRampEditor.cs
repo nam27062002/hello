@@ -699,7 +699,23 @@ public class ColorRampEditor : EditorWindow {
 	/// "Delete Collection" button has been pressed.
 	/// </summary>
 	private void OnDeleteCollection() {
-		this.ShowNotification(new GUIContent("Coming Soon!"));
+		// Nothing to do if no collection is selected
+		if(m_currentCollection == null) return;
+
+		// Show confirmation dialog
+		if(EditorUtility.DisplayDialog(
+			"Delete " + m_currentCollection.name + "?",
+			"The collection " + m_currentCollection.name + " will be permanently deleted. Are you sure?",
+			"Yes", "No"
+			)) {
+			// Do it!
+			if(AssetDatabase.DeleteAsset(DATA_PATH + s_selectedCollectionName + ".asset")) {
+				// Clear selection
+				s_selectedCollectionName = string.Empty;
+				m_currentCollection = null;
+				InitWithCurrentCollection();
+			}
+		}
 	}
 
 	/// <summary>
