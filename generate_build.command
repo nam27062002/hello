@@ -359,7 +359,7 @@ if $BUILD_ANDROID; then
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-  APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}"
+  APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
   APK_FILE="${APK_NAME}.apk"
   APK_OUTPUT_DIR="${OUTPUT_DIR}/apks/${APK_NAME}"
   mkdir -p "${APK_OUTPUT_DIR}"
@@ -384,7 +384,7 @@ if $BUILD_IOS; then
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${ENVIRONMENT}.xcarchive"
-    IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}"
+    IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
     IPA_FILE="${IPA_NAME}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 
