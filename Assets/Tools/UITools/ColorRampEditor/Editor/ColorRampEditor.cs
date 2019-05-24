@@ -664,14 +664,7 @@ public class ColorRampEditor : EditorWindow {
 
 		// Change import properties
 		TextureImporter texImporter = TextureImporter.GetAtPath(path) as TextureImporter;
-		texImporter.textureType = TextureImporterType.Default;
-		texImporter.mipmapEnabled = false;
-		texImporter.textureCompression = TextureImporterCompression.Uncompressed;
-		texImporter.wrapMode = TextureWrapMode.Clamp;
-		texImporter.alphaIsTransparency = false;
-		texImporter.alphaSource = TextureImporterAlphaSource.None;
-		texImporter.filterMode = FilterMode.Point;
-		texImporter.isReadable = true;
+		ColorRampCollection.ColorRampData.ApplyTextureImportSettings(ref texImporter);
 		texImporter.SaveAndReimport();
 
 		// Reload texture and assign it to the color ramp
