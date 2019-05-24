@@ -145,7 +145,7 @@ public static class EditorAutomaticAddressables {
         System.Type[] instanciableTypes = new System.Type[] { typeof(UnityEngine.GameObject), typeof(UnityEditor.SceneAsset) };
         GetEntriesFromDirectory(new DirectoryInfo("Assets/AI"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities"), false, null, bundlesSet);
-        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet, true);
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Entities/PrefabsMenu/"), false, entries, bundlesSet, instanciableTypes);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/Particles/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/VFX/"), false, null, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Game/Scenes/Levels/"), false, entries, bundlesSet, instanciableTypes);
