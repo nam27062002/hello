@@ -133,7 +133,7 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string code = GetArg("-code");
 		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" +
-			GetEnvironmentString() + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + ".apk";
+			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + ".apk";
 
 		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
