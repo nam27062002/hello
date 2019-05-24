@@ -501,6 +501,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 0
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0
@@ -531,7 +532,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1.5,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"isMine":true,"damage":150,"radius":0,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"isMine":true,"damage":150,"radius":0,"cameraShakeDuration":1,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false},{"speed":1,"timeToIdle":{"min":0,"max":0},"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderPathData","editorFolded":false}]'
   m_databaseKey: PF_MineMedium
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 2

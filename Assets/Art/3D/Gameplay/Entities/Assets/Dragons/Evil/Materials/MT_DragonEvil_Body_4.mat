@@ -7,21 +7,20 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_DragonEvil_Body_4
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
+  m_Shader: {fileID: 4800000, guid: 2792aaa8ace564651ba7198784ab33a8, type: 3}
+  m_ShaderKeywords: COLORMODE_COLORRAMPMASKED FRESNEL SPECULAR
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2010
+  m_CustomRenderQueue: -1
   stringTagMap:
     QUEUE: Geometry
-    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 9215bd0c2662a42ea84f59a94db2a360, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 19020747fa6ab4858b9b1219aba0c215, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: e0b060db809724675be84bcc358acffa, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1c7126735cf2cb8449e10fc9cf77ccf1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,11 +63,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 2800000, guid: a50a4828674327b47ac275e161011994, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - ColorMode: 4
     - FXLayer: 0
     - ReflectionType: 0
     - SelfIlluminate: 0
@@ -90,7 +94,7 @@ Material:
     - _EnableCutoff: 0
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 1
+    - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
@@ -132,3 +136,5 @@ Material:
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 59.91, g: 79.6, b: 5.56, a: 0.45}
     - _Tint: {r: 0.88235295, g: 0.88235295, b: 0.88235295, a: 1}
+    - _Tint1: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint2: {r: 1, g: 1, b: 1, a: 1}

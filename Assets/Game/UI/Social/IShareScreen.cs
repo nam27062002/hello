@@ -26,6 +26,9 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected const int QR_SIZE = 128;
 	protected const int CAMERA_DEPTH = 20;  // [AOC] This will hide UI and other elements we don't want to capture
 
+
+
+
 	public enum CaptureMode {
 		RENDER_TEXTURE,	// Capture using only the prefab camera. Less memory usage, but requires more setup
 		SCREEN_CAPTURE	// Capture background with a snapshot of the current screen content, UI using prefab camera. Requires one temp texture of the size of the screen, and objects that shouldn't be rendered must be hidden manually.
@@ -62,8 +65,11 @@ public abstract class IShareScreen : MonoBehaviour {
 	[Space]
 	[SerializeField] protected Texture2D m_qrLogoTex = null;
 
-	// Internal references
-	protected DefinitionNode m_shareLocationDef = null;
+    // Amount of frames to wait before taking the screenshot
+    protected int captureDelayInFrames = 10; // 330 ms aprox.
+
+    // Internal references
+    protected DefinitionNode m_shareLocationDef = null;
 	protected string m_url = null;
 	protected Texture2D m_qrCodeTex = null;
 
@@ -82,6 +88,11 @@ public abstract class IShareScreen : MonoBehaviour {
 	protected virtual void Awake() {
 		m_camera.enabled = false;
 	}
+
+    /// <summary>
+    /// Operations that need to be made before taking the screenshot
+    /// </summary>
+    protected virtual void CapturePreprocess() { }
 
 	/// <summary>
 	/// Take a picture!
@@ -189,12 +200,14 @@ public abstract class IShareScreen : MonoBehaviour {
 	/// <returns>The coroutine.</returns>
 	/// <param name="_captureMode">Technique use to take the screenshot.</param>
 	private IEnumerator TakePictureInternal(CaptureMode _captureMode) {
-		// Wait until the end of the frame so everything is refreshed
-		//yield return new WaitForEndOfFrame();
-		// [AOC] For some reason, waiting just one frame doesn't give enough time for everything to get properly setup. Wait a couple of frames instead.
-		for(int i = 0; i < 2; ++i) {
+
+		// With the new OTA features, we have to wait until the 3d icon is loaded.
+		for(int i = 0; i < captureDelayInFrames; ++i) {
 			yield return new WaitForEndOfFrame();
 		}
+
+        // Do some stuff if needed before the screenshot
+        CapturePreprocess();
 
 		// Take the screenshot!
 		// [AOC] We're not using Application.Screenshot() since we want to have the screenshot in a texture rather than on an image in disk, for sharing and previewing it

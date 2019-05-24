@@ -29,7 +29,6 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 	[Space]
 	[SerializeField] private NumberTextAnimator m_scoreText = null;
 	[SerializeField] private Localizer m_highScoreText = null;
-	[SerializeField] private Image m_scoreIcon = null;
 	[Space]
 	[SerializeField] private TweenSequence m_newHighScoreAnim = null;
 
@@ -76,12 +75,11 @@ public class ResultsScreenStepTournamentScore : ResultsScreenSequenceStep {
 			);
 		}
 
-		// Each tournament has a different score item
-		HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
-		m_scoreIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
+        // We used to have different icons for different misssions. 
+        // Since OTA, we use the generic score icon.
 
-		// Hide new high score widget
-		m_newHighScoreAnim.gameObject.SetActive(false);
+        // Hide new high score widget
+        m_newHighScoreAnim.gameObject.SetActive(false);
 	}
 
 	/// <summary>

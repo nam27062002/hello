@@ -112,5 +112,6 @@ public class DefinitionsCategory
 
 	// UI
 	public const string SHARE_LOCATIONS = "SHARE_LOCATIONS";
+    public const string ICONS = "ICONS";
 };
     

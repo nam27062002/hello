@@ -22,6 +22,7 @@ using UnityEngine.iOS;
 /// <summary>
 /// Static class for some global UI constants and utils.
 /// </summary>
+[CreateAssetMenu]
 public class UIConstants : SingletonScriptableObject<UIConstants> {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
@@ -134,12 +135,12 @@ public class UIConstants : SingletonScriptableObject<UIConstants> {
 		get { return instance.m_languageIconsPath; }
 	}
 
-	[SerializeField] private string m_missionIconsPath = "UI/Metagame/Missions/";
+	[SerializeField] private string m_missionIconsPath = "UI/Metagame/Missions/Icons/";
 	public static string MISSION_ICONS_PATH {
 		get { return instance.m_missionIconsPath; }
 	}
 
-	[SerializeField] private string m_eggIconsPath = "UI/Metagame/Eggs/";
+    [SerializeField] private string m_eggIconsPath = "UI/Metagame/Eggs/";
 	public static string EGG_ICONS_PATH {
 		get { return instance.m_eggIconsPath; }
 	}
