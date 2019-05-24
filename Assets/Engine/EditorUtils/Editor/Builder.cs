@@ -92,10 +92,15 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
         BuildPipeline.BuildPlayer(buildPlayerOptions);
     }
-
+		
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{
+	{		
+		AddressablesManager.Mode = GetAddressablesMode();
+
+		// SetMode() shouldn't be called again because it was called in a previous step so the editor will have time to leave the assets as they need to be
+		EditorAddressablesMenu.NeedsToSetModeOnPreBuild = false;
+
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
@@ -168,6 +173,19 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 			}
 		}
 		return null;
+	}
+
+	private static void PrintArgs() {		
+		var args = System.Environment.GetCommandLineArgs();
+		string msg = "Args: count = " + args.Length + " args: ";
+		for (int i = 0; i < args.Length; i++) {
+			if (i > 0)
+				msg += ", ";
+			
+			msg += args[i];
+		}
+
+		UnityEngine.Debug.Log(msg);
 	}
 
 	public static string[] GetBuildingScenes()
@@ -439,7 +457,26 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				// Generate Manifest
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
+		}			
+	}				
+
+	private static AddressablesManager.EMode GetAddressablesMode()
+	{
+		AddressablesManager.EMode returnValue = AddressablesManager.EMode.Editor;
+
+		string addressablesModeStr = GetArg("-addressablesMode");											  
+		if (!string.IsNullOrEmpty(addressablesModeStr)) 
+		{						
+			returnValue = AddressablesManager.KeyToMode(addressablesModeStr);
 		}
+
+		return returnValue;
+	}
+
+	private static void SetAddressablesMode()
+	{
+		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
+		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);
 	}
 
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes

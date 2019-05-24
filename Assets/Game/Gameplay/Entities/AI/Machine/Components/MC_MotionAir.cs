@@ -56,7 +56,7 @@ namespace AI {
 				m_velocity = m_pilot.impulse;
 			}
 
-			m_rbody.angularVelocity = GameConstants.Vector3.zero;
+			//m_rbody.angularVelocity = GameConstants.Vector3.zero;
 			m_rbody.velocity = m_velocity + m_externalVelocity;
 		}
 
@@ -127,10 +127,10 @@ namespace AI {
             m_direction = m_dragon.position - m_machine.position;
             m_direction.Normalize();
         }
-        
-		//--------------------------------------------------
-		//--------------------------------------------------
-		protected override void ExtendedAttach() {}
+
+        //--------------------------------------------------
+        //--------------------------------------------------
+        protected override void ExtendedAttach() {}
 		protected override void ExtendedInit() {}
 
 		protected override void OnFreeFall() {}

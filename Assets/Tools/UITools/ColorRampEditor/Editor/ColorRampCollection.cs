@@ -152,9 +152,18 @@ public class ColorRampCollection : ScriptableObject {
 			// Is texture initialized?
 			if(tex == null) return;
 
-			// Do it!
+			// Aux vars
 			string path = AssetDatabase.GetAssetPath(tex);
+
+			// Save in disk
 			File.WriteAllBytes(path, tex.EncodeToPNG());
+
+			// Make sure import settings are as they should
+			TextureImporter texImporter = TextureImporter.GetAtPath(path) as TextureImporter;
+			ColorRampCollection.ColorRampData.ApplyTextureImportSettings(ref texImporter);
+			texImporter.SaveAndReimport();
+
+			// Make sure assets are saved
 			AssetDatabase.SaveAssets();
 
 			// Update gradients backup
@@ -214,6 +223,22 @@ public class ColorRampCollection : ScriptableObject {
 			}
 
 			// Copy inidices
+		}
+
+		/// <summary>
+		/// Apply texture import settings suitable for color ramps to th given importer.
+		/// </summary>
+		/// <param name="_texImporter">Texture importer that will be modified.</param>
+		public static void ApplyTextureImportSettings(ref TextureImporter _texImporter) {
+			_texImporter.textureType = TextureImporterType.Default;
+			_texImporter.sRGBTexture = true;
+			_texImporter.mipmapEnabled = false;
+			_texImporter.wrapMode = TextureWrapMode.Clamp;
+			_texImporter.alphaIsTransparency = false;
+			_texImporter.alphaSource = TextureImporterAlphaSource.None;
+			_texImporter.filterMode = FilterMode.Point;
+			_texImporter.isReadable = true;
+			_texImporter.textureCompression = TextureImporterCompression.Uncompressed;
 		}
 	}
 

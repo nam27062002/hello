@@ -56,6 +56,19 @@ public class AddressablesManager
         AllInResources    
     };
 
+    private static List<string> EModeKeys = new List<string>(System.Enum.GetNames(typeof(EMode)));
+    public static EMode KeyToMode(string key)
+    {
+        EMode returnValue = EMode.Editor;
+        int index = EModeKeys.IndexOf(key);
+        if (index > -1) 
+        {
+            returnValue = (EMode)index;
+        }
+
+		return returnValue;
+    }
+
     private static string MODE_KEY = "mode";
     public static EMode Mode
     {

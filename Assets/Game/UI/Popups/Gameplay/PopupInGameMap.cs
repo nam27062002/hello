@@ -8,6 +8,8 @@
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
+using InControl;
+
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -61,8 +63,13 @@ public class PopupInGameMap : PopupPauseBase {
 	/// Called every frame
 	/// </summary>
 	private void Update() {
-
-	}
+        if (m_popup.isReady) {
+            InputDevice device = InputManager.ActiveDevice;
+            if (device != null && device.Action4.WasReleased) {
+                m_popup.Close(false);
+            }
+        }
+    }
 
 	/// <summary>
 	/// Destructor.
