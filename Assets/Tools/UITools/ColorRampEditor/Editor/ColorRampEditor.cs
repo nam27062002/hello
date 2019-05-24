@@ -4,9 +4,9 @@
 // Created by Alger Ortín Castellví on 07/05/2019.
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																		  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -14,16 +14,16 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																			  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Custom editor window for the color ramp editor tool.
 /// </summary>
 public class ColorRampEditor : EditorWindow {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// CONSTANTS																	  //
+	//-------------------------------------------------------------------------//
 	// Data constants
 	public const string DATA_PATH = "Assets/Resources/Editor/ColorRampCollections/";
 
@@ -37,14 +37,20 @@ public class ColorRampEditor : EditorWindow {
 
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
-	private string selectedCollectionName {
+	private static string s_selectedCollectionName {
 		get { return EditorPrefs.GetString(SELECTION_COLLECTION_NAME_KEY, ""); }
 		set { EditorPrefs.SetString(SELECTION_COLLECTION_NAME_KEY, value); }
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
+	private const string LAST_NEW_RAMP_PATH_KEY = "ColorRampEditor.LAST_NEW_RAMP_KEY";
+	private static string s_lastNewRampPath {
+		get { return EditorPrefs.GetString(LAST_NEW_RAMP_PATH_KEY, Application.dataPath); }
+		set { EditorPrefs.SetString(LAST_NEW_RAMP_PATH_KEY, value); }
+	}
+
+	//-------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES														  //
+	//-------------------------------------------------------------------------//
 	// Window instance
 	private static ColorRampEditor s_instance = null;
 	public static ColorRampEditor instance {
@@ -87,9 +93,9 @@ public class ColorRampEditor : EditorWindow {
 	private SerializedObject m_serializedCollection = null;
 	private Vector2 m_scrollPos = Vector2.zero;
 
-	//------------------------------------------------------------------//
-	// METHODS															//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// METHODS																		  //
+	//-------------------------------------------------------------------------//
 	/// <summary>
 	/// Opens the window.
 	/// </summary>
@@ -168,14 +174,14 @@ public class ColorRampEditor : EditorWindow {
 			}
 
 			// Find index of our current collection
-			int selectedIdx = fileNames.IndexOf(selectedCollectionName);
+			int selectedIdx = fileNames.IndexOf(s_selectedCollectionName);
 
 			// Show dropdown field
 			selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, fileNames.ToArray());
 
 			if(EditorGUI.EndChangeCheck()) {
 				// Store new collection
-				selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
+				s_selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
 
 				// Reload collection if required
 				reloadCollection = true;
@@ -225,14 +231,14 @@ public class ColorRampEditor : EditorWindow {
 		// Is there a loaded collection?
 		if(m_currentCollection != null) {
 			// Is it the current collection?
-			if(m_currentCollection.name == selectedCollectionName) {
+			if(m_currentCollection.name == s_selectedCollectionName) {
 				// Nothing to do ^^
 				return;
 			}
 		}
 
 		// Try to load existing data
-		string path = DATA_PATH + selectedCollectionName + ".asset";
+		string path = DATA_PATH + s_selectedCollectionName + ".asset";
 		m_currentCollection = AssetDatabase.LoadAssetAtPath(path, typeof(ColorRampCollection)) as ColorRampCollection;
 
 		// Initialize reorderable list
@@ -308,14 +314,29 @@ public class ColorRampEditor : EditorWindow {
 				currentLineY += previewRect.height + SPACING;
 
 				// Texture field
+				// Add a "new" button to the right
+				float newButtonWidth = 50f;
 				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 				Rect texRect = new Rect(
 					_rect.x,
 					currentLineY,
-					_rect.width,
+					_rect.width - newButtonWidth,
 					EditorGUI.GetPropertyHeight(texProp)
 				);
 				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Ramp Texture"), true);
+
+				// "New" Button
+				Rect newButtonRect = new Rect(
+					texRect.xMax + SPACING,
+					currentLineY,
+					newButtonWidth - SPACING,
+					texRect.height
+				);
+				GUI.color = Colors.paleGreen;
+				if(GUI.Button(newButtonRect, "NEW")) {
+					OnCreateRampTexture(ref rampData);
+				}
+				GUI.color = Colors.white;
 
 				// Advance pos
 				currentLineY += texRect.height + SPACING;
@@ -538,7 +559,7 @@ public class ColorRampEditor : EditorWindow {
 				EditorGUIUtility.labelWidth = 0f;
 
 				// Store element height
-				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING + SPACE_BETWEEN_ITEMS;    // Extra spacing
+				m_elementHeights[_idx] = (currentLineY - _rect.y) + 3 * SPACING + SPACE_BETWEEN_ITEMS;    // Extra spacing
 			};
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
@@ -606,9 +627,9 @@ public class ColorRampEditor : EditorWindow {
 		AssetDatabase.SaveAssets();
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// CALLBACKS																	  //
+	//-------------------------------------------------------------------------//
 	/// <summary>
 	/// Reorderable list size has changed.
 	/// </summary>
@@ -616,5 +637,48 @@ public class ColorRampEditor : EditorWindow {
 	private void OnListSizeChanged(ReorderableList _list) {
 		// Re-generate heights array
 		m_elementHeights = new float[m_currentCollection.ramps.Length];
+	}
+
+	/// <summary>
+	/// Create a new ramp texture and assign it to the given ramp data object.
+	/// </summary>
+	/// <param name="_rampData">Ramp data where the new texture will be assigned.</param>
+	private void OnCreateRampTexture(ref ColorRampCollection.ColorRampData _rampData) {
+		// Open file browser
+		string path = EditorUtility.SaveFilePanelInProject("", "new_color_ramp", "png", "", s_lastNewRampPath);
+		if(string.IsNullOrEmpty(path)) return;
+
+		// Create the new texture
+		Texture2D newTex = new Texture2D(256, 1, TextureFormat.RGB24, false);
+		newTex.alphaIsTransparency = false;
+		newTex.filterMode = FilterMode.Point;
+		newTex.wrapMode = TextureWrapMode.Clamp;
+
+		// Save in disk
+		File.WriteAllBytes(path, newTex.EncodeToPNG());
+		AssetDatabase.ImportAsset(path);
+
+		// Destroy texture data
+		DestroyImmediate(newTex);
+		newTex = null;
+
+		// Change import properties
+		TextureImporter texImporter = TextureImporter.GetAtPath(path) as TextureImporter;
+		texImporter.textureType = TextureImporterType.Default;
+		texImporter.mipmapEnabled = false;
+		texImporter.textureCompression = TextureImporterCompression.Uncompressed;
+		texImporter.wrapMode = TextureWrapMode.Clamp;
+		texImporter.alphaIsTransparency = false;
+		texImporter.alphaSource = TextureImporterAlphaSource.None;
+		texImporter.filterMode = FilterMode.Point;
+		texImporter.isReadable = true;
+		texImporter.SaveAndReimport();
+
+		// Reload texture and assign it to the color ramp
+		newTex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+		_rampData.tex = newTex;
+
+		// Store directory path
+		s_lastNewRampPath = Path.GetDirectoryName(path);
 	}
 }
