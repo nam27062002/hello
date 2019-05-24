@@ -209,6 +209,13 @@ public class EditorAddressablesMenu : MonoBehaviour
 
     private static AddressablesManager.EMode sm_modePreBuild;
 
+	private static bool sm_needsToSetModeOnPrebuild = true;
+	public static bool NeedsToSetModeOnPreBuild 
+	{ 
+		get { return sm_needsToSetModeOnPrebuild; } 
+		set { sm_needsToSetModeOnPrebuild = value; }
+	}
+
     public static void OnPreBuild(BuildTarget target)
     {
         // Copy the platform assetsLUT to Resources
@@ -220,9 +227,12 @@ public class EditorAddressablesMenu : MonoBehaviour
         sm_modePreBuild = AddressablesManager.Mode;
 
 		Debug.Log("OnPrebuild Mode " + AddressablesManager.EffectiveMode);
-		if (AddressablesManager.EffectiveMode != AddressablesManager.EMode.AllInResources)
+		if (sm_needsToSetModeOnPrebuild)
 		{
-        	SetMode(AddressablesManager.EffectiveMode);     
+        	SetMode(AddressablesManager.EffectiveMode);  
+
+			// Default value is set for the next time
+			sm_needsToSetModeOnPrebuild = true;
 		}
     }
 

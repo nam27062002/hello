@@ -98,6 +98,9 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 	{		
 		AddressablesManager.Mode = GetAddressablesMode();
 
+		// SetMode() shouldn't be called again because it was called in a previous step so the editor will have time to leave the assets as they need to be
+		EditorAddressablesMenu.NeedsToSetModeOnPreBuild = false;
+
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
