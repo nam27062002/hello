@@ -692,14 +692,14 @@ public class ColorRampEditor : EditorWindow {
 	/// "New Collection" button has been pressed.
 	/// </summary>
 	private void OnNewCollection() {
-
+		this.ShowNotification(new GUIContent("Coming Soon!"));
 	}
 
 	/// <summary>
 	/// "Delete Collection" button has been pressed.
 	/// </summary>
 	private void OnDeleteCollection() {
-
+		this.ShowNotification(new GUIContent("Coming Soon!"));
 	}
 
 	/// <summary>
