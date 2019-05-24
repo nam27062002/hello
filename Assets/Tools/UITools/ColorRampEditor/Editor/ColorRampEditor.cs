@@ -146,12 +146,38 @@ public class ColorRampEditor : EditorWindow {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		if(m_serializedCollection != null) m_serializedCollection.Update();
 
+		// Refresh collection files list
+		// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
+		DirectoryInfo collectionsDirInfo = new DirectoryInfo(DATA_PATH);
+		FileInfo[] collectionFiles = collectionsDirInfo.GetFiles();
+
+		// Strip filename from full file path
+		List<string> collectionFilenames = new List<string>();
+		for(int i = 0; i < collectionFiles.Length; i++) {
+			if(collectionFiles[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
+				collectionFilenames.Add(Path.GetFileNameWithoutExtension(collectionFiles[i].Name));
+			}
+		}
+
 		// Toolbar
 		EditorGUILayout.BeginHorizontal();
 		{
-			GUILayout.Button("New Ramp Texture");
-			GUILayout.Button("New Collection");
-			GUILayout.Button("Show Collections Folder");
+			// New collection
+			if(GUILayout.Button("New Collection")) {
+				OnNewCollection();
+			}
+
+			// Delete selected collection - disabled if there are no collections
+			EditorGUI.BeginDisabledGroup(collectionFiles.Length == 0);
+			if(GUILayout.Button("Delete Collection")) {
+				OnDeleteCollection();
+			}
+			EditorGUI.EndDisabledGroup();
+
+			// Show collections folder
+			if(GUILayout.Button("Show Collections Folder")) {
+				OnShowCollectionsFolder();
+			}
 		}
 		EditorGUILayout.EndHorizontal();
 
@@ -160,28 +186,15 @@ public class ColorRampEditor : EditorWindow {
 		{
 			EditorGUI.BeginChangeCheck();
 
-			// Refresh files list
-			// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
-			DirectoryInfo dirInfo = new DirectoryInfo(DATA_PATH);
-			FileInfo[] files = dirInfo.GetFiles();
-
-			// Strip filename from full file path
-			List<string> fileNames = new List<string>();
-			for(int i = 0; i < files.Length; i++) {
-				if(files[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
-					fileNames.Add(Path.GetFileNameWithoutExtension(files[i].Name));
-				}
-			}
-
 			// Find index of our current collection
-			int selectedIdx = fileNames.IndexOf(s_selectedCollectionName);
+			int selectedIdx = collectionFilenames.IndexOf(s_selectedCollectionName);
 
 			// Show dropdown field
-			selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, fileNames.ToArray());
+			selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, collectionFilenames.ToArray());
 
 			if(EditorGUI.EndChangeCheck()) {
 				// Store new collection
-				s_selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
+				s_selectedCollectionName = selectedIdx >= 0 ? collectionFilenames[selectedIdx] : "";
 
 				// Reload collection if required
 				reloadCollection = true;
@@ -645,7 +658,7 @@ public class ColorRampEditor : EditorWindow {
 	/// <param name="_rampData">Ramp data where the new texture will be assigned.</param>
 	private void OnCreateRampTexture(ref ColorRampCollection.ColorRampData _rampData) {
 		// Open file browser
-		string path = EditorUtility.SaveFilePanelInProject("", "new_color_ramp", "png", "", s_lastNewRampPath);
+		string path = EditorUtility.SaveFilePanelInProject("New Color Ramp Texture", "new_color_ramp", "png", "", s_lastNewRampPath);
 		if(string.IsNullOrEmpty(path)) return;
 
 		// Create the new texture
@@ -673,5 +686,46 @@ public class ColorRampEditor : EditorWindow {
 
 		// Store directory path
 		s_lastNewRampPath = Path.GetDirectoryName(path);
+	}
+
+	/// <summary>
+	/// "New Collection" button has been pressed.
+	/// </summary>
+	private void OnNewCollection() {
+
+	}
+
+	/// <summary>
+	/// "Delete Collection" button has been pressed.
+	/// </summary>
+	private void OnDeleteCollection() {
+
+	}
+
+	/// <summary>
+	/// "Show Collections Folder" button has been pressed.
+	/// </summary>
+	private void OnShowCollectionsFolder() {
+		// Aux vars
+		UnityEngine.Object toSelect = null;
+
+		// Do we have a valid collection loaded?
+		if(m_currentCollection != null) {
+			// Yes! Select it
+			toSelect = m_currentCollection;
+		} else {
+			// No! Select the folder object instead
+			// Check the path has no '/' at the end, if it does remove it
+			string path = Path.GetDirectoryName(DATA_PATH);
+
+			// Load object
+			toSelect = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+		}
+
+		// Select the object in the project folder
+		Selection.activeObject = toSelect;
+
+		// Also flash the folder yellow to highlight it
+		EditorGUIUtility.PingObject(toSelect);
 	}
 }
