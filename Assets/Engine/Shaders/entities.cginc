@@ -211,7 +211,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #elif defined(COLORMODE_COLORRAMPMASKED)
 	fixed4 diff = tex2D(_MainTex, i.uv);
-	fixed vy = (diff.y * 2.0) + diff.z + 0.5;
+	fixed vy = (floor(diff.y + 0.5) * 2.0) + floor(diff.z + 0.5) + 0.5;
 	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
 
