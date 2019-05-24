@@ -51,6 +51,7 @@ namespace AI {
 
 		protected ViewControl 	m_viewControl;
 		protected Rigidbody		m_rbody;
+        private RigidbodyConstraints m_rbodyConstraints;
 
 		public Quaternion orientation { 
 			get { return m_rotation; }
@@ -107,7 +108,8 @@ namespace AI {
 			m_rbody = m_machine.GetComponent<Rigidbody>();
 			if (m_rbody != null) { // entities should not interpolate
 				m_rbody.interpolation = RigidbodyInterpolation.Interpolate;
-			}
+                m_rbodyConstraints = m_rbody.constraints;
+            }
 
 			m_viewControl = m_machine.GetComponent<ViewControl>();
 
@@ -426,8 +428,10 @@ namespace AI {
 
 				case State.Locked:
 					m_rbody.isKinematic = false;
-					m_rbody.detectCollisions = true;	
-					m_viewControl.Scared(false);
+                    m_rbody.detectCollisions = true;
+                    m_rbody.constraints = m_rbodyConstraints;
+                    m_rbody.interpolation = RigidbodyInterpolation.Interpolate;
+                    m_viewControl.Scared(false);
 					OnCollisionGroundExit(null);
 					break;
 
@@ -458,10 +462,12 @@ namespace AI {
 
 				case State.Locked:
 					m_rbody.isKinematic = true;
-					m_rbody.detectCollisions = false;
-					Stop();
-					m_viewControl.Scared(true);
-					break;
+                    m_rbody.detectCollisions = false;
+                    m_rbody.constraints = RigidbodyConstraints.None;
+                    m_rbody.interpolation = RigidbodyInterpolation.None;
+                    m_viewControl.Scared(true);
+                    Stop();
+                    break;
 
 				case State.Panic:
 					m_viewControl.Panic(true, m_machine.GetSignal(Signals.Type.Burning));
