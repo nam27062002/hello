@@ -65,13 +65,13 @@ namespace AI {
 
 				m_timer -= Time.deltaTime;
 
-				if (m_timer <= 0f) {
+				if (m_data.timeToIdle.max > 0f && m_timer <= 0f) {
 					Transition(OnRest);
 				} else {
 					float m = (m_machine.position - m_target).sqrMagnitude;
-					float d = Mathf.Min(2f, m_pilot.speed);
+                    float d = m_path.radius;
 
-					if (m < d * d) {
+                    if (m < d * d) {
 						m_path.SetDirection(m_pathDirection);
 						m_target = m_path.GetNextFrom(m_currentNode);
 						m_currentNode = m_path.GetCurrentIndex();

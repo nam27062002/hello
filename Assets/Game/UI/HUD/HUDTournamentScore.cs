@@ -50,7 +50,10 @@ public class HUDTournamentScore : HudWidget {
 				m_lastScorePrinted = 0;	
 				m_targetScore = _def.m_goal.m_targetAmount;
 				m_tracker = HDLiveDataManager.tournament.m_tracker;
-				UpdateIcon();
+
+                // We used to update the icon here depending on the quest objective
+                // but since OTA the icon will be always the gold badge plain 2d icon. 
+
 			}
 		}
 		else
@@ -59,20 +62,6 @@ public class HUDTournamentScore : HudWidget {
 		}
 	}
 
-	private void UpdateIcon()
-	{
-		Transform tr = transform.Find("Icon_score");
-		if ( tr != null )
-		{
-			Image img = tr.GetComponent<Image>();
-			if ( img != null )
-			{
-				HDTournamentManager tournament = HDLiveDataManager.tournament;
-				HDTournamentDefinition def = tournament.data.definition as HDTournamentDefinition;
-				img.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + def.m_goal.m_icon);
-			}
-		}
-	}
 
 	/// <summary>
 	/// First update call.

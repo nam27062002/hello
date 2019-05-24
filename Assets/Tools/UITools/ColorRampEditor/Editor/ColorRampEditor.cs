@@ -4,9 +4,9 @@
 // Created by Alger Ortín Castellví on 07/05/2019.
 // Copyright (c) 2019 Ubisoft. All rights reserved.
 
-//----------------------------------------------------------------------//
-// INCLUDES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// INCLUDES																		  //
+//----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -14,16 +14,16 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-//----------------------------------------------------------------------//
-// CLASSES																//
-//----------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// CLASSES																			  //
+//----------------------------------------------------------------------------//
 /// <summary>
 /// Custom editor window for the color ramp editor tool.
 /// </summary>
 public class ColorRampEditor : EditorWindow {
-	//------------------------------------------------------------------//
-	// CONSTANTS														//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// CONSTANTS																	  //
+	//-------------------------------------------------------------------------//
 	// Data constants
 	public const string DATA_PATH = "Assets/Resources/Editor/ColorRampCollections/";
 
@@ -32,17 +32,25 @@ public class ColorRampEditor : EditorWindow {
 	private const float WINDOW_MARGIN = 10f;
 	private const float INFO_BOX_MARGIN = 5f;
 	private const float FOLDOUT_INDENT_SIZE = 15f;
+	private const float SPACE_BETWEEN_ITEMS = 10f;
+	private const float DIVISION_SIZE = 0f;
 
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
-	private string selectedCollectionName {
+	private static string s_selectedCollectionName {
 		get { return EditorPrefs.GetString(SELECTION_COLLECTION_NAME_KEY, ""); }
 		set { EditorPrefs.SetString(SELECTION_COLLECTION_NAME_KEY, value); }
 	}
 
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
+	private const string LAST_NEW_RAMP_PATH_KEY = "ColorRampEditor.LAST_NEW_RAMP_KEY";
+	private static string s_lastNewRampPath {
+		get { return EditorPrefs.GetString(LAST_NEW_RAMP_PATH_KEY, Application.dataPath); }
+		set { EditorPrefs.SetString(LAST_NEW_RAMP_PATH_KEY, value); }
+	}
+
+	//-------------------------------------------------------------------------//
+	// MEMBERS AND PROPERTIES														  //
+	//-------------------------------------------------------------------------//
 	// Window instance
 	private static ColorRampEditor s_instance = null;
 	public static ColorRampEditor instance {
@@ -85,9 +93,9 @@ public class ColorRampEditor : EditorWindow {
 	private SerializedObject m_serializedCollection = null;
 	private Vector2 m_scrollPos = Vector2.zero;
 
-	//------------------------------------------------------------------//
-	// METHODS															//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// METHODS																		  //
+	//-------------------------------------------------------------------------//
 	/// <summary>
 	/// Opens the window.
 	/// </summary>
@@ -138,8 +146,62 @@ public class ColorRampEditor : EditorWindow {
 		// Update the serialized object - always do this in the beginning of OnInspectorGUI.
 		if(m_serializedCollection != null) m_serializedCollection.Update();
 
-		// Scroll Rect
+		// Refresh collection files list
+		// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
+		DirectoryInfo collectionsDirInfo = new DirectoryInfo(DATA_PATH);
+		FileInfo[] collectionFiles = collectionsDirInfo.GetFiles();
+
+		// Strip filename from full file path
+		List<string> collectionFilenames = new List<string>();
+		for(int i = 0; i < collectionFiles.Length; i++) {
+			if(collectionFiles[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
+				collectionFilenames.Add(Path.GetFileNameWithoutExtension(collectionFiles[i].Name));
+			}
+		}
+
+		// Toolbar
+		EditorGUILayout.BeginHorizontal();
+		{
+			// New collection
+			if(GUILayout.Button("New Collection")) {
+				OnNewCollection();
+			}
+
+			// Delete selected collection - disabled if there are no collections
+			EditorGUI.BeginDisabledGroup(collectionFiles.Length == 0);
+			if(GUILayout.Button("Delete Collection")) {
+				OnDeleteCollection();
+			}
+			EditorGUI.EndDisabledGroup();
+
+			// Show collections folder
+			if(GUILayout.Button("Show Collections Folder")) {
+				OnShowCollectionsFolder();
+			}
+		}
+		EditorGUILayout.EndHorizontal();
+
+		// Collection Chooser
 		bool reloadCollection = false;
+		{
+			EditorGUI.BeginChangeCheck();
+
+			// Find index of our current collection
+			int selectedIdx = collectionFilenames.IndexOf(s_selectedCollectionName);
+
+			// Show dropdown field
+			selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, collectionFilenames.ToArray());
+
+			if(EditorGUI.EndChangeCheck()) {
+				// Store new collection
+				s_selectedCollectionName = selectedIdx >= 0 ? collectionFilenames[selectedIdx] : "";
+
+				// Reload collection if required
+				reloadCollection = true;
+			}
+		}
+
+		// Scroll Rect
 		m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos); {
 			// Left Margin
 			EditorGUILayout.BeginHorizontal();
@@ -149,39 +211,7 @@ public class ColorRampEditor : EditorWindow {
 			EditorGUILayout.BeginVertical();
 			GUILayout.Space(WINDOW_MARGIN);
 
-			// Window Content!
-			// Collection Chooser
-			EditorGUI.BeginChangeCheck();
-
-			// Refresh files list
-			{
-				// [AOC] Would be nice to not having to do this always (performance), but so far is the only way to make sure the list is accurate
-				DirectoryInfo dirInfo = new DirectoryInfo(DATA_PATH);
-				FileInfo[] files = dirInfo.GetFiles();
-
-				// Strip filename from full file path
-				List<string> fileNames = new List<string>();
-				for(int i = 0; i < files.Length; i++) {
-					if(files[i].Name.EndsWith("asset", true, System.Globalization.CultureInfo.InvariantCulture)) {
-						fileNames.Add(Path.GetFileNameWithoutExtension(files[i].Name));
-					}
-				}
-
-				// Find index of our current collection
-				int selectedIdx = fileNames.IndexOf(selectedCollectionName);
-
-				// Show dropdown field
-				selectedIdx = EditorGUILayout.Popup("Select Collection ", selectedIdx, fileNames.ToArray());
-
-				if(EditorGUI.EndChangeCheck()) {
-					// Store new collection
-					selectedCollectionName = selectedIdx >= 0 ? fileNames[selectedIdx] : "";
-
-					// Reload collection if required
-					reloadCollection = true;
-				}
-			}
-
+			// Scroll Content!
 			// Color Ramps List
 			if(m_rampsList != null) {
 				m_rampsList.DoLayoutList();
@@ -214,14 +244,14 @@ public class ColorRampEditor : EditorWindow {
 		// Is there a loaded collection?
 		if(m_currentCollection != null) {
 			// Is it the current collection?
-			if(m_currentCollection.name == selectedCollectionName) {
+			if(m_currentCollection.name == s_selectedCollectionName) {
 				// Nothing to do ^^
 				return;
 			}
 		}
 
 		// Try to load existing data
-		string path = DATA_PATH + selectedCollectionName + ".asset";
+		string path = DATA_PATH + s_selectedCollectionName + ".asset";
 		m_currentCollection = AssetDatabase.LoadAssetAtPath(path, typeof(ColorRampCollection)) as ColorRampCollection;
 
 		// Initialize reorderable list
@@ -274,15 +304,52 @@ public class ColorRampEditor : EditorWindow {
 				// Adjust prefix label size
 				EditorGUIUtility.labelWidth = 90f;
 
-				// Display texture
+				// Texture Preview
+				currentLineY += SPACING;	// Add some extra spacing for breathing
+				Rect previewRect = new Rect(
+					_rect.x,
+					currentLineY,
+					_rect.width,
+					10f
+				);
+				if(rampData.tex != null) {
+					// Actual texture
+					previewRect.height = rampData.tex.height * 10f; // 10 units per gradient
+					GUI.DrawTexture(previewRect, rampData.tex);
+				} else {
+					// Placeholder texture
+					GUI.color = Colors.WithAlpha(Color.white, 0.1f);
+					GUI.DrawTexture(previewRect, Texture2D.whiteTexture);
+					GUI.color = Color.white;
+				}
+
+				// Advance pos
+				currentLineY += previewRect.height + SPACING;
+
+				// Texture field
+				// Add a "new" button to the right
+				float newButtonWidth = 50f;
 				SerializedProperty texProp = rampDataProp.FindPropertyRelative("tex");
 				Rect texRect = new Rect(
 					_rect.x,
 					currentLineY,
-					_rect.width,
+					_rect.width - newButtonWidth,
 					EditorGUI.GetPropertyHeight(texProp)
 				);
 				EditorGUI.PropertyField(texRect, texProp, new GUIContent("Ramp Texture"), true);
+
+				// "New" Button
+				Rect newButtonRect = new Rect(
+					texRect.xMax + SPACING,
+					currentLineY,
+					newButtonWidth - SPACING,
+					texRect.height
+				);
+				GUI.color = Colors.paleGreen;
+				if(GUI.Button(newButtonRect, "NEW")) {
+					OnCreateRampTexture(ref rampData);
+				}
+				GUI.color = Colors.white;
 
 				// Advance pos
 				currentLineY += texRect.height + SPACING;
@@ -318,19 +385,6 @@ public class ColorRampEditor : EditorWindow {
 
 					// Detect changes
 					EditorGUI.BeginChangeCheck();
-
-					// Texture Preview
-					Rect previewRect = new Rect(
-						_rect.x,
-						currentLineY,
-						_rect.width,
-						// EditorGUIUtility.singleLineHeight
-						rampData.tex.height * 10
-					);
-					GUI.DrawTexture(previewRect, rampData.tex);
-
-					// Advance pos
-					currentLineY += previewRect.height + SPACING;
 
 					// Sequence type
 					SerializedProperty sequenceTypeProp = rampDataProp.FindPropertyRelative("type");
@@ -518,7 +572,7 @@ public class ColorRampEditor : EditorWindow {
 				EditorGUIUtility.labelWidth = 0f;
 
 				// Store element height
-				m_elementHeights[_idx] = currentLineY - _rect.y + 3 * SPACING;    // Extra spacing
+				m_elementHeights[_idx] = (currentLineY - _rect.y) + 3 * SPACING + SPACE_BETWEEN_ITEMS;    // Extra spacing
 			};
 
 			m_rampsList.elementHeightCallback = (int _idx) => {
@@ -536,7 +590,7 @@ public class ColorRampEditor : EditorWindow {
 				float margin = SPACING;
 				_rect.x += margin;
 				_rect.width -= margin * SPACING;
-				_rect.height -= SPACING;	// Leave some space without painting
+				_rect.height -= SPACE_BETWEEN_ITEMS;	// Leave some space without painting
 
 				// Different colors based on GUI state
 				ColorRampCollection.ColorRampData rampData = m_currentCollection.ramps[_idx];
@@ -558,6 +612,15 @@ public class ColorRampEditor : EditorWindow {
 				// Draw background
 				GUI.DrawTexture(_rect, Texture2D.whiteTexture);
 				GUI.color = Color.white;
+
+				// Draw division - after the background to render on top
+				Rect divisionRect = new Rect(
+					_rect.x,
+					_rect.y - DIVISION_SIZE,
+					_rect.width,
+					DIVISION_SIZE
+				);
+				GUI.DrawTexture(divisionRect, Texture2D.whiteTexture);
 			};
 
 			m_rampsList.onChangedCallback = OnListSizeChanged;
@@ -577,9 +640,9 @@ public class ColorRampEditor : EditorWindow {
 		AssetDatabase.SaveAssets();
 	}
 
-	//------------------------------------------------------------------//
-	// CALLBACKS														//
-	//------------------------------------------------------------------//
+	//-------------------------------------------------------------------------//
+	// CALLBACKS																	  //
+	//-------------------------------------------------------------------------//
 	/// <summary>
 	/// Reorderable list size has changed.
 	/// </summary>
@@ -587,5 +650,82 @@ public class ColorRampEditor : EditorWindow {
 	private void OnListSizeChanged(ReorderableList _list) {
 		// Re-generate heights array
 		m_elementHeights = new float[m_currentCollection.ramps.Length];
+	}
+
+	/// <summary>
+	/// Create a new ramp texture and assign it to the given ramp data object.
+	/// </summary>
+	/// <param name="_rampData">Ramp data where the new texture will be assigned.</param>
+	private void OnCreateRampTexture(ref ColorRampCollection.ColorRampData _rampData) {
+		// Open file browser
+		string path = EditorUtility.SaveFilePanelInProject("New Color Ramp Texture", "new_color_ramp", "png", "", s_lastNewRampPath);
+		if(string.IsNullOrEmpty(path)) return;
+
+		// Create the new texture
+		Texture2D newTex = new Texture2D(256, 1, TextureFormat.RGB24, false);
+		newTex.alphaIsTransparency = false;
+		newTex.filterMode = FilterMode.Point;
+		newTex.wrapMode = TextureWrapMode.Clamp;
+
+		// Save in disk
+		File.WriteAllBytes(path, newTex.EncodeToPNG());
+		AssetDatabase.ImportAsset(path);
+
+		// Destroy texture data
+		DestroyImmediate(newTex);
+		newTex = null;
+
+		// Change import properties
+		TextureImporter texImporter = TextureImporter.GetAtPath(path) as TextureImporter;
+		ColorRampCollection.ColorRampData.ApplyTextureImportSettings(ref texImporter);
+		texImporter.SaveAndReimport();
+
+		// Reload texture and assign it to the color ramp
+		newTex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+		_rampData.tex = newTex;
+
+		// Store directory path
+		s_lastNewRampPath = Path.GetDirectoryName(path);
+	}
+
+	/// <summary>
+	/// "New Collection" button has been pressed.
+	/// </summary>
+	private void OnNewCollection() {
+		this.ShowNotification(new GUIContent("Coming Soon!"));
+	}
+
+	/// <summary>
+	/// "Delete Collection" button has been pressed.
+	/// </summary>
+	private void OnDeleteCollection() {
+		this.ShowNotification(new GUIContent("Coming Soon!"));
+	}
+
+	/// <summary>
+	/// "Show Collections Folder" button has been pressed.
+	/// </summary>
+	private void OnShowCollectionsFolder() {
+		// Aux vars
+		UnityEngine.Object toSelect = null;
+
+		// Do we have a valid collection loaded?
+		if(m_currentCollection != null) {
+			// Yes! Select it
+			toSelect = m_currentCollection;
+		} else {
+			// No! Select the folder object instead
+			// Check the path has no '/' at the end, if it does remove it
+			string path = Path.GetDirectoryName(DATA_PATH);
+
+			// Load object
+			toSelect = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
+		}
+
+		// Select the object in the project folder
+		Selection.activeObject = toSelect;
+
+		// Also flash the folder yellow to highlight it
+		EditorGUIUtility.PingObject(toSelect);
 	}
 }
