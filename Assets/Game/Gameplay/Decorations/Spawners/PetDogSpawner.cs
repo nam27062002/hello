@@ -55,7 +55,8 @@ public class PetDogSpawner : AbstractSpawner {
         m_operatorPilot = null;
     }
 
-	void OnDestroy() {
+	override protected void OnDestroy() {
+		base.OnDestroy();
 		if ( ApplicationManager.IsAlive )
 		{
 			ForceRemoveEntities();
