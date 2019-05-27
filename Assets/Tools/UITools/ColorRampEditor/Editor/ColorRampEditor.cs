@@ -160,11 +160,18 @@ public class ColorRampEditor : EditorWindow {
 		}
 
 		// Toolbar
-		EditorGUILayout.BeginHorizontal();
+		Rect toolbarRect = EditorGUILayout.BeginHorizontal();
 		{
 			// New collection
 			if(GUILayout.Button("New Collection")) {
-				OnNewCollection();
+				PopupWindow.Show(toolbarRect, new ColorRampNewCollectionWindow(
+					(string _newCollectionName) => {
+						// Select new collection
+						s_selectedCollectionName = _newCollectionName;
+						LoadCollectionIfNeeded();
+					}
+				));
+				EditorGUIUtility.ExitGUI();
 			}
 
 			// Delete selected collection - disabled if there are no collections
@@ -686,13 +693,6 @@ public class ColorRampEditor : EditorWindow {
 
 		// Store directory path
 		s_lastNewRampPath = Path.GetDirectoryName(path);
-	}
-
-	/// <summary>
-	/// "New Collection" button has been pressed.
-	/// </summary>
-	private void OnNewCollection() {
-		this.ShowNotification(new GUIContent("Coming Soon!"));
 	}
 
 	/// <summary>
