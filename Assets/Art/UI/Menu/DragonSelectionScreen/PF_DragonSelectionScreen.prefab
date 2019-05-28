@@ -2355,7 +2355,6 @@ GameObject:
   - component: {fileID: 224140373012029224}
   - component: {fileID: 222580362135247438}
   - component: {fileID: 114478030786172530}
-  - component: {fileID: 114207511902318630}
   - component: {fileID: 114736789675535072}
   - component: {fileID: 95204251217205100}
   - component: {fileID: 114835309627099138}
@@ -8344,18 +8343,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114207511902318630
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1334403941782048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b14aa7aba6897447d947373a65bfb333, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_targetScreen: 6
 --- !u!114 &114209472258169060
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -14880,8 +14867,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114207511902318630}
-        m_MethodName: OnNavigationButton
+      - m_Target: {fileID: 11498108}
+        m_MethodName: OnSkinsButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
