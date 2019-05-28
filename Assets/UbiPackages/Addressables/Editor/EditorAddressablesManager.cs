@@ -53,7 +53,7 @@ public class EditorAddressablesManager
     {
         m_localDestinationPath = EditorFileUtils.PathCombine(RESOURCES_ROOT_PATH, ADDRESSABLES_LOCAL_FOLDER_NAME);                
         m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPath, ADDRESSSABLES_CATALOG_FILENAME);        
-		m_assetBundlesLocalDestinationPath = "AssetBundles/Local";
+		m_assetBundlesLocalDestinationPath = EditorAssetBundlesManager.ASSET_BUNDLES_LOCAL_FOLDER;
     }
 
     public void ClearBuild(BuildTarget target)
@@ -382,7 +382,7 @@ public class EditorAddressablesManager
                 }
 
                 // Generates remote AB list file            
-                //GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
+                GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
 
                 // Deletes original files that were moved to local
                 EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
@@ -554,12 +554,9 @@ public class EditorAddressablesManager
 
 	private static void Move(string srcPath, string dstPath)
 	{				
-		string dstFolder = Path.GetDirectoryName(dstPath);
-		//string str = "Move from " + srcPath + " to " + dstPath + " valid dst = " + AssetDatabase.IsValidFolder(dstFolder) + " dstFolder = " + dstFolder;
+		string dstFolder = Path.GetDirectoryName(dstPath);		
 		CreateDirectory(dstFolder);
-		string error = AssetDatabase.MoveAsset (srcPath, dstPath);
-		//str += " moving: " + error; 
-		//Debug.Log (str);
+		AssetDatabase.MoveAsset (srcPath, dstPath);		
 	}
 
     public void MoveGeneratedResourcesToOriginalUbication()
