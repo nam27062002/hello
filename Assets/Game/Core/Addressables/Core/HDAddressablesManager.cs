@@ -591,7 +591,10 @@ public class Ingame_SwitchAreaHandle
     /// <returns>The handle for all downloadables required for that dragon.</returns>
     /// <param name="_dragonSku">Classic dragon sku.</param>
     public Downloadables.Handle GetHandleForClassicDragon(string _dragonSku) {
-        
+		// Create new handle. We will fill it with downloadable Ids based on target dragon status
+		Downloadables.Handle handle = CreateDownloadablesHandle();
+		List<string> resourceIDs = new List<string>();
+
 		// Get target dragon info
 		IDragonData dragonData = DragonManager.GetDragonData(_dragonSku);
 
@@ -599,9 +602,20 @@ public class Ingame_SwitchAreaHandle
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
 		List<string> equippedPowers = GetPowersList(dragonData.persistentDisguise, dragonData.pets);
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
-		// No more dependencies to be checked: return handler!
-		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+		// 2. Dragon bundles
+		resourceIDs.AddRange(GetResourceIDsForDragon(_dragonSku));
+
+		// 3. Equipped pets bundles
+		for(int i = 0; i < dragonData.pets.Count; ++i) {
+			resourceIDs.AddRange(GetResourceIDsForPet(dragonData.pets[i]));
+		}
+
+		// No more dependencies to be checked: Add resource IDs and return!
+		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
+		return handle;
 	}
 
 	/// <summary>
@@ -620,6 +634,10 @@ public class Ingame_SwitchAreaHandle
 	/// <returns>The handle for all downloadables required for that dragon.</returns>
 	/// <param name="_tournament">Tournament data.</param>
 	public Downloadables.Handle GetHandleForTournamentDragon(HDTournamentManager _tournament) {
+		// Create new handle. We will fill it with downloadable Ids based on target dragon status
+		Downloadables.Handle handle = CreateDownloadablesHandle();
+		List<string> resourceIDs = new List<string>();
+
 		// Get target dragon info
 		IDragonData dragonData = _tournament.tournamentData.tournamentDef.dragonData;
 
@@ -627,18 +645,31 @@ public class Ingame_SwitchAreaHandle
 		// 1. Level area dependencies: will depend basically on the dragon's tier
 		//    Some powers allow dragons to go to areas above their tier, check for those cases as well
 		List<string> equippedPowers = GetPowersList(dragonData.disguise, dragonData.pets);
+		Downloadables.Handle levelHandle = GetLevelHandle(dragonData.tier, equippedPowers);
+		handle.AddDownloadableIds(levelHandle.GetDownloadableIds());
 
-		// No more dependencies to be checked: return handler!
-		return GetHandleForDragonTier(dragonData.tier, equippedPowers);
+		// 2. Dragon bundles
+		resourceIDs.AddRange(GetResourceIDsForDragon(dragonData.sku));
+
+		// 3. Equipped pets bundles
+		for(int i = 0; i < dragonData.pets.Count; ++i) {
+			resourceIDs.AddRange(GetResourceIDsForPet(dragonData.pets[i]));
+		}
+
+		// 4. [AOC] TODO!! Level bundles for target spawn point. Feature not yet implemented.
+
+		// No more dependencies to be checked: Add resource IDs and return!
+		HDAddressablesManager.Instance.AddResourceListDownloadableIdsToHandle(handle, resourceIDs);
+		return handle;
 	}
 
 	/// <summary>
-	/// Get the handle for all dowloadables required for a dragon tier and a list of equipped powers.
+	/// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
 	/// </summary>
 	/// <returns>The handle for all downloadables required for the given setup.</returns>
 	/// <param name="_tier">Tier.</param>
 	/// <param name="_powers">Powers sku list.</param>
-	private Downloadables.Handle GetHandleForDragonTier(DragonTier _tier, List<string> _powers) {
+	private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
 		// Check equipped powers to detect those that might modify the target tier
 		for(int i = 0; i < _powers.Count; ++i) {
 			// Is it one of the tier-modifying powers?
