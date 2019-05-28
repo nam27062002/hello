@@ -9,8 +9,7 @@ public class EditorAssetBundlesManager
     public static string ASSET_BUNDLES_PATH = "AssetBundles";
     public static string DOWNLOADABLES_FOLDER = "AssetBundles/Remote";
     public static string ASSET_BUNDLES_LOCAL_FOLDER = "AssetBundles/Local";
-    public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";
-    public static string DOWNLOADABLES_CATALOG_PATH = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
+    public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";    
 
     public static void Clear()
     {
@@ -21,9 +20,7 @@ public class EditorAssetBundlesManager
         EditorFileUtils.DeleteFileOrDirectory(directory);
 
         directory = GetPlatformDirectory(ASSET_BUNDLES_LOCAL_FOLDER);
-        EditorFileUtils.DeleteFileOrDirectory(directory);
-
-        EditorFileUtils.DeleteFileOrDirectory(DOWNLOADABLES_CATALOG_PATH);
+        EditorFileUtils.DeleteFileOrDirectory(directory);        
     }
 
     public static string GetAssetBundlesDirectory()
@@ -34,6 +31,13 @@ public class EditorAssetBundlesManager
     private static string GetPlatformDirectory(string directory)
     {
         return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
+    }
+
+    private static bool sm_needsToGenerateAssetsLUT = false;
+    public static bool NeedsToGenerateAssetsLUT
+    {
+        get { return sm_needsToGenerateAssetsLUT; }
+        set { sm_needsToGenerateAssetsLUT = value; }
     }
 
     public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
@@ -217,33 +221,32 @@ public class EditorAssetBundlesManager
         }
 
         catalog.UrlBase = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-        JSONClass json = catalog.ToJSON();       
-        EditorFileUtils.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
+        JSONClass json = catalog.ToJSON();
+
+        string downloadablesCatalogFileName = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
+        EditorFileUtils.WriteToFile(downloadablesCatalogFileName, json.ToString());
 
         // AssetsLUT is generated so remote asset bundles can work
-        GenerateAssetsLUTFromDownloadablesCatalog();
-        // It copies it to the player's folder too
-        /*if (!string.IsNullOrEmpty(playerFolder))
+        if (NeedsToGenerateAssetsLUT)
         {
-            string path = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
-            EditorFileUtils.WriteToFile(path, json.ToString());
-        }*/
+            GenerateAssetsLUTFromDownloadablesCatalog();
+        }        
     }
 
-    private static string ASSETS_LUT_PATH = "Assets/Resources/AssetsLUT";
-    private static string ASSETS_LUT_FILENAME = "assetsLUT.json";
+    private static string ASSETS_LUT_PATH = "AssetsLUT/";
+    private static string ASSETS_LUT_FILENAME_WITHOUT_EXTENSION = "assetsLUT";
+    private static string ASSETS_LUT_FILENAME = ASSETS_LUT_FILENAME_WITHOUT_EXTENSION + ".json";
     private static string ASSETS_LUT_FULL_PATH = ASSETS_LUT_PATH + "/" + ASSETS_LUT_FILENAME;
 
-    private static string ASSETS_LUT_AB_PREFIX = Downloadables.Manager.REMOTE_FOLDER;
-    private static string ASSETS_LUT_AB_PREFIX_IOS = ASSETS_LUT_AB_PREFIX + "iOS/";
-    private static string ASSETS_LUT_AB_PREFIX_ANDROID = ASSETS_LUT_AB_PREFIX + "Android/";    
+    private static string ASSETS_LUT_AB_PREFIX = Downloadables.Manager.REMOTE_FOLDER;    
 
     public static void GenerateAssetsLUTFromDownloadablesCatalog()
     {
         Downloadables.Catalog assetsLUTCatalog = new Downloadables.Catalog();
-        
+
+        string targetPlatformString = EditorUserBuildSettings.activeBuildTarget.ToString();
         string assetsLUTPath = ASSETS_LUT_PATH;        
-        string assetsLUTFullPath = ASSETS_LUT_FULL_PATH;
+        string assetsLUTFullPath = ASSETS_LUT_PATH + "/" + ASSETS_LUT_FILENAME_WITHOUT_EXTENSION + "_" + targetPlatformString + ".json";
         JSONNode assetsLUTJson = null;
         if (File.Exists(assetsLUTFullPath))
         {
@@ -254,10 +257,17 @@ public class EditorAssetBundlesManager
             Dictionary<string, Downloadables.CatalogEntry> entries = assetsLUTCatalog.GetEntries();
             if (entries != null)
             {
+                JSONNode assetsList = null;
+                if (assetsLUTJson[Downloadables.Catalog.CATALOG_ATT_ENTRIES] != null)
+                {
+                    assetsList = assetsLUTJson[Downloadables.Catalog.CATALOG_ATT_ENTRIES];
+                }
+
                 List<string> keysToDelete = new List<string>();
                 foreach (KeyValuePair<string, Downloadables.CatalogEntry> pair in entries)
                 {                    
-                    if (pair.Key.Contains("iOS/") || pair.Key.Contains("Android/"))
+                    if (pair.Key.Contains("iOS/") || pair.Key.Contains("Android/") || 
+                       (assetsList != null && assetsList[pair.Key] != null && assetsList[pair.Key]["type"] == "bundle"))
                     {
                         keysToDelete.Add(pair.Key);
                     }
@@ -271,7 +281,8 @@ public class EditorAssetBundlesManager
             }
         }
 
-        string fileName = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
+        string downloadablesFolder = Path.Combine(DOWNLOADABLES_FOLDER, targetPlatformString);
+        string fileName = Path.Combine(downloadablesFolder, DOWNLOADABLES_CATALOG_NAME);
         if (File.Exists(fileName))
         {
             JSONNode json = JSON.Parse(File.ReadAllText(fileName));
@@ -285,12 +296,7 @@ public class EditorAssetBundlesManager
                 entry = new Downloadables.CatalogEntry();
                 entry.CRC = pair.Value.CRC;
                 entry.Size = pair.Value.Size;
-                assetsLUTCatalog.AddEntry(ASSETS_LUT_AB_PREFIX_IOS + pair.Key, entry);
-
-                entry = new Downloadables.CatalogEntry();
-                entry.CRC = pair.Value.CRC;
-                entry.Size = pair.Value.Size;
-                assetsLUTCatalog.AddEntry(ASSETS_LUT_AB_PREFIX_ANDROID + pair.Key, entry);
+                assetsLUTCatalog.AddEntry(pair.Key, entry);                
             }
 
             if (!Directory.Exists(assetsLUTPath))
@@ -312,7 +318,7 @@ public class EditorAssetBundlesManager
                     for (int i = 0; i < count; i++)
                     {
                         id = (string)keys[i];
-                        type = (id.Contains("iOS/") || id.Contains("Android/")) ? "bundle" : "content";                            
+                        type = (catalog.GetEntry(id) != null) ? "bundle" : "content";                            
                         assets[id].Add("type", type);                        
                     }
                 }
@@ -320,8 +326,13 @@ public class EditorAssetBundlesManager
 
             if (assetsLUTJson != null)
             {
-                string key = "urlBase";                
-                json.Add(key, AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/");
+                string key = "urlBase";
+                string url = assetsLUTJson[key];
+                if (AssetBundles.LaunchAssetBundleServer.IsRunning())
+                {
+                    url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+                }            
+                json.Add(key, url);
 
                 key = "release";
                 json.Add(key, assetsLUTJson[key]);
