@@ -342,6 +342,9 @@ public class EditorAssetBundlesManager
 
                 key = "revision";
                 json.Add(key, assetsLUTJson[key]);
+
+                key = "bundlesBase";
+                json.Add(key, assetsLUTJson[key]);
             }
 
             File.WriteAllText(assetsLUTFullPath, json.ToString());            
