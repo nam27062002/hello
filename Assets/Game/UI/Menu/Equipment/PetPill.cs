@@ -509,7 +509,6 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
         if (!m_petHandle.IsAvailable())
         {
 
-
             // If needed, show assets download popup and don't continue
             m_assetsDownloadFlow.InitWithHandle(m_petHandle);
             PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);

@@ -746,8 +746,9 @@ public class Ingame_SwitchAreaHandle
                 Downloadables.AllDownloadablesMockHandle.Instance.Initialize (
                 0f, // Bytes
                 50f * 1024f * 1024f,    // Bytes
-                5f * 60f,   // Seconds
+                1f * 60f,   // Seconds
                 false, false
+                //,new List<Downloadables.AllDownloadablesMockHandle.Action> { new Downloadables.AllDownloadablesMockHandle.Action (10, Downloadables.Handle.EError.NO_CONNECTION)}
                 );
             }
 
