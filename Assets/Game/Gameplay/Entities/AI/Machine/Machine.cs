@@ -563,7 +563,7 @@ namespace AI {
 			SetSignal(Signals.Type.Destroyed, true);
 		}
 
-		public bool Smash( IEntity.Type _source ) {
+        public virtual bool Smash( IEntity.Type _source ) {
 			if ( !IsDead() && !IsDying() && allowEdible)
 			{
                 if (m_bubbled) {
