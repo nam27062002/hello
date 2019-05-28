@@ -31,7 +31,8 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[Space]
 	[SerializeField] private GameObject m_downloadingGroup = null;
-	[SerializeField] private GameObject m_errorGroup = null;
+    [SerializeField] private GameObject m_downloadCompletedGroup = null;
+    [SerializeField] private GameObject m_errorGroup = null;
 	[SerializeField] private Localizer m_errorText = null;
 
 	// Internal logic
@@ -229,6 +230,12 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		// Progress Bar
 		if(m_progressBar != null) {
 			m_progressBar.Refresh(m_handle);
+            
+            if (m_downloadCompletedGroup != null)
+            {
+                // Hide the download complete icon
+                m_downloadCompletedGroup.SetActive(m_handle.Progress == 1);
+            }
 		}
 
 		// Downloading group

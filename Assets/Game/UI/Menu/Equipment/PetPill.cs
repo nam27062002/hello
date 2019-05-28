@@ -31,10 +31,12 @@ public class PetPillData {
 /// Single pill representing a pet.
 /// </summary>
 public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
+
+
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
+    private const string TUTORIAL_HIGHLIGHT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPillTutorialFX";
 	private const string UNLOCK_EFFECT_PREFAB_PATH = "UI/Metagame/Pets/PF_PetPill_FX";
 
 	public class PetPillEvent : UnityEvent<PetPill> { }
@@ -56,7 +58,11 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	[Space]
 	[SerializeField] private GameObject m_equippedFrame = null;
 	[SerializeField] private GameObject m_equippedPowerFrame = null;
-	[Space]
+    [Space]
+    [SerializeField] private GameObject m_downloadPetGroup = null;
+    [SerializeField] private GameObject m_downloadButton = null;
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+    [Space]
 	[SerializeField] private Image m_seasonalIcon = null;
 	[SerializeField] private GameObject m_seasonalIconRoot = null;
 	[Space]
@@ -141,13 +147,18 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 
 	private static bool m_useAsycLoading = true;
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
+    private Downloadables.Handle m_petHandle;
+
+    private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Component has been enabled.
+    /// </summary>
+    private void OnEnable() {
 		// Reset internal logic
 		m_tapAllowed = true;
 
@@ -155,8 +166,9 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		Messenger.AddListener<string, int, string>(MessengerEvents.MENU_DRAGON_PET_CHANGE, OnPetChanged);
 		Broadcaster.AddListener(BroadcastEventType.LANGUAGE_CHANGED, this);
 
-		// Make sure pill is updated
-		Refresh();
+
+        // Make sure pill is updated
+        Refresh();
 	}
 
 	/// <summary>
@@ -182,10 +194,50 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		m_rarityDecorations.Resize((int)Metagame.Reward.Rarity.COUNT);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	public override void InitWithData(PetPillData _data) {
+
+    void Update()
+    {
+        if (m_useAsycLoading)
+        {
+            if (m_previewRequest != null)
+            {
+                if (m_previewRequest.isDone)
+                {
+                    m_preview.sprite = m_previewRequest.GetAsset<Sprite>();
+                    m_preview.enabled = true;
+                    m_previewRequest = null;
+                }
+            }
+
+            if (m_powerIconRequest != null)
+            {
+                if (m_powerIconRequest.isDone)
+                {
+                    m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
+                    m_powerIcon.enabled = true;
+                    m_powerIconRequest = null;
+                }
+            }
+        }
+
+        // Check if the download state has changed
+        Downloadables.Handle.DownloadState newState = m_petHandle.GetState();
+        if (m_downloadState != newState)
+        {
+
+            // Update the view
+            m_downloadState = newState;
+            Refresh();
+
+        }
+
+    }
+
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    public override void InitWithData(PetPillData _data) {
 		Init(_data.def, _data.dragon);
 		animator.ForceShow(false);
 	}
@@ -219,9 +271,17 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		// Store definition and some data
 		m_def = _petDef;
 		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(_petDef.Get("rarity"));
-		
-		// Load preview
-		if(m_preview != null) {
+
+
+        // Handle 
+        // OTA: Check if the pet is downloaded
+        // In the future we can use an handle for the pets bundle
+        // but for now we just the general downloadables bundle.
+        m_petHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+
+
+        // Load preview
+        if (m_preview != null) {
 			if (m_useAsycLoading)
 			{
 				m_preview.sprite = null;
@@ -301,26 +361,7 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	}
 
 
-	void Update(){
-		if (m_useAsycLoading)
-		{
-			if ( m_previewRequest != null ){
-				if ( m_previewRequest.isDone ){
-					m_preview.sprite = m_previewRequest.GetAsset<Sprite>();
-					m_preview.enabled = true;
-					m_previewRequest = null;
-				}
-			}
-
-			if ( m_powerIconRequest != null ){
-				if ( m_powerIconRequest.isDone ){
-					m_powerIcon.sprite = m_powerIconRequest.asset as Sprite;
-					m_powerIcon.enabled = true;
-					m_powerIconRequest = null;
-				}
-			}
-		}
-	}
+	
 
 	/// <summary>
 	/// Refresh pill's contextual elements based on assigned pet's state.
@@ -331,9 +372,10 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		if(petCollection == null) return;
 		if(m_dragonData == null) return;
 		if(m_def == null) return;
+        
 
-		// Status flags
-		m_locked = !petCollection.IsPetUnlocked(m_def.sku);
+        // Status flags
+        m_locked = !petCollection.IsPetUnlocked(m_def.sku);
 		m_slot = UsersManager.currentUser.GetPetSlot(m_dragonData.def.sku, m_def.sku);
 
 		// Color highlight when equipped
@@ -356,12 +398,51 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 			m_colorFX.saturation = 0f; 
 			m_colorFX.contrast   = 0f;
 		}
-	}
 
-	/// <summary>
-	/// Refresh all textfields of the pill.
-	/// </summary>
-	public void RefreshTexts() {
+
+        // OTA: Check if the pet is downloaded 
+        
+        if (!m_petHandle.IsAvailable())
+        {
+            // Hide pet icon
+            m_preview.gameObject.SetActive(false);
+            m_equippedFrame.gameObject.SetActive(false);
+
+            // Check if the user has started the download
+            if (m_petHandle.NeedsToRequestPermission())
+            {
+                // Download not started yet. Show download button.
+                m_downloadPetGroup.SetActive(true);
+                m_downloadButton.SetActive(true);
+
+
+                return;
+            }
+            else
+            {
+
+                // Download already in course. Show progress
+                m_downloadPetGroup.SetActive(true);
+                m_downloadButton.SetActive(false);
+                m_assetsDownloadFlow.gameObject.SetActive(true);
+                m_assetsDownloadFlow.InitWithHandle(m_petHandle);
+
+                return;
+
+            }
+
+        }
+
+        // Pet bundle already downloaded. Hide download buttons
+        m_downloadPetGroup.SetActive(false);
+        m_preview.gameObject.SetActive(true);
+        
+    }
+
+    /// <summary>
+    /// Refresh all textfields of the pill.
+    /// </summary>
+    public void RefreshTexts() {
 		// Power short description
 		DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_def.Get("powerup"));
 		if(powerDef != null) {
@@ -412,18 +493,32 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		this.transform.DOScale(1.25f, 0.25f).SetEase(Ease.OutCubic).SetLoops(2, LoopType.Yoyo);
 	}
 
-	//------------------------------------------------------------------------//
-	// CALLBACKS															  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// The pill has been tapped.
-	/// </summary>
-	public void OnTap() {
+
+
+    //------------------------------------------------------------------------//
+    // CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The pill has been tapped.
+    /// </summary>
+    public void OnTap() {
 		// Ignore if tap is not allowed
 		if(!m_tapAllowed) return;
 
-		// Propagate the event
-		OnPillTapped.Invoke(this);
+
+        if (!m_petHandle.IsAvailable())
+        {
+
+
+            // If needed, show assets download popup and don't continue
+            m_assetsDownloadFlow.InitWithHandle(m_petHandle);
+            PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+            if (popup != null) return;
+
+        }
+
+        // Propagate the event
+        OnPillTapped.Invoke(this);
 
 		// Ignore tap for a while to prevent spamming
 		m_tapAllowed = false;
