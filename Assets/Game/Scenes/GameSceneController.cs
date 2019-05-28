@@ -569,8 +569,13 @@ public class GameSceneController : GameSceneControllerBase {
 			case EStates.LOADING_LEVEL: {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
+
+                if (HDLiveDataManager.tournament.isActive) {
+                    m_levelLoader = LevelManager.LoadLevelForDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.sku);
+                } else {
+                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
+                }
                 
-                m_levelLoader = LevelManager.LoadLevel();
                 m_levelLoader.Perform(m_useSyncLoading);
 
                 PoolManager.PreBuild();
