@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198623979700215286}
   - component: {fileID: 199439794327528626}
   - component: {fileID: 114955577970756282}
-  - component: {fileID: 114108945079812372}
+  - component: {fileID: 114650834496231498}
   - component: {fileID: 135906201609365174}
   - component: {fileID: 114931849313744566}
   m_Layer: 16
@@ -80,78 +80,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -167.259, y: -0.000015258789, z: -0.000015258789}
---- !u!114 &114108945079812372
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1465478137569916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e2da9da15dc24ca0bd249578326624f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_damageBase: 5
-  m_damageMultiplier: 1
-  m_damageDuration: 0.25
-  m_damageType: 1
-  m_knockBackIntensity: 0
-  m_visualActivationRadius: 0
-  m_initialState: 2
-  m_initialDelay: 0
-  m_idleDuration: 5
-  m_activationDuration: 1
-  m_activeDuration: -1
-  m_poisonParticle:
-    name: 
-    path: 
-    changeStartColor: 0
-    startColor: {r: 1, g: 1, b: 1, a: 1}
-    startColorTwo: {r: 1, g: 1, b: 1, a: 1}
-    changeColorOvertime: 0
-    colorOvertime:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    offset: {x: 0, y: 0, z: 0}
-    scale: 1
-    orientate: 0
-  m_poisonParticleRotation: {x: 0, y: 0, z: 0}
-  m_view: {fileID: 0}
-  m_animator: {fileID: 0}
-  m_onActiveSound: 
-  m_collisionShape: 0
-  m_coneOrigin: {x: 0, y: 0, z: 0}
-  m_coneRotation: {x: 0, y: 0, z: 0}
-  m_coneLength: 2
-  m_coneArc: 45
-  m_animEvents: {fileID: 0}
-  m_visualActivationRadiusSqr: 0
 --- !u!114 &114189167010166634
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -178,6 +106,22 @@ MonoBehaviour:
   m_returnTo: 1
   m_disableOnInvisible: 1
   m_alwaysActive: 1
+--- !u!114 &114650834496231498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1465478137569916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5210f5095e3ce47719842ee94948a84a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_activation: 1
+  m_damage: 5
+  m_timeBetweenHits: 0.25
+  m_damageType: 1
+  m_duration: 0.25
 --- !u!114 &114853780412772868
 MonoBehaviour:
   m_ObjectHideFlags: 1
