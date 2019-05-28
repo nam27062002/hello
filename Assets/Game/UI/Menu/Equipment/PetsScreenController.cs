@@ -44,9 +44,12 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 	// Animation setup
 	[SerializeField] private float m_initialScrollAnimDelay = 0.5f;
 
+    [Space]
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
 
-	// Internal references
-	private NavigationShowHideAnimator m_animator = null;
+
+    // Internal references
+    private NavigationShowHideAnimator m_animator = null;
 	public NavigationShowHideAnimator animator {
 		get { 
 			if(m_animator == null) {
@@ -81,7 +84,12 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 
 		// Subscribe to external events
 		Messenger.AddListener<string, bool>(MessengerEvents.CP_BOOL_CHANGED, OnCPBoolChanged);
-	}
+
+        // OTA: Show the general download progress bar
+        Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+        m_assetsDownloadFlow.InitWithHandle(allContentHandle);
+
+    }
 
 	/// <summary>
 	/// First update call.
