@@ -28,7 +28,7 @@ public class EditorAssetBundlesManager
         return GetPlatformDirectory(ASSET_BUNDLES_PATH);
     }
 
-    private static string GetPlatformDirectory(string directory)
+    public static string GetPlatformDirectory(string directory)
     {
         return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
     }
@@ -281,8 +281,8 @@ public class EditorAssetBundlesManager
             }
         }
 
-        string downloadablesFolder = Path.Combine(DOWNLOADABLES_FOLDER, targetPlatformString);
-        string fileName = Path.Combine(downloadablesFolder, DOWNLOADABLES_CATALOG_NAME);
+        string assetBundlesPlatformFolder = GetPlatformDirectory(ASSET_BUNDLES_PATH);
+        string fileName = Path.Combine(assetBundlesPlatformFolder, DOWNLOADABLES_CATALOG_NAME);
         if (File.Exists(fileName))
         {
             JSONNode json = JSON.Parse(File.ReadAllText(fileName));
