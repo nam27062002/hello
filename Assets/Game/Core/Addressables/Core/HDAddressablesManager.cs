@@ -704,7 +704,30 @@ public class Ingame_SwitchAreaHandle
             }            
         }
 
-        return returnValue;
+        // Are we debugging?
+        if (DebugSettings.useDownloadablesMockHandlers)
+        {
+
+            // Use the singleton all downloadables mock handle
+            if (! Downloadables.AllDownloadablesMockHandle.Instance.MockupInitialized)
+            {
+                // Initialize mock
+                Downloadables.AllDownloadablesMockHandle.Instance.Initialize (
+                0f, // Bytes
+                50f * 1024f * 1024f,    // Bytes
+                5f * 60f,   // Seconds
+                false, false
+                );
+            }
+
+            return Downloadables.AllDownloadablesMockHandle.Instance;
+        }
+        else
+        {
+            // The real deal
+            return returnValue;
+        }
+        
     }
 
     private bool HasPermissionRequestedForAnyDownloadableHandle()
