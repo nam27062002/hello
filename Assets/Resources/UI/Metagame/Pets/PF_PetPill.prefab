@@ -667,7 +667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1609901529517718
 GameObject:
   m_ObjectHideFlags: 1
@@ -1777,6 +1777,9 @@ MonoBehaviour:
   m_shortDescriptionText: {fileID: 114641146630545688}
   m_equippedFrame: {fileID: 1307112836724820}
   m_equippedPowerFrame: {fileID: 0}
+  m_downloadPetGroup: {fileID: 1303949336147464}
+  m_downloadButton: {fileID: 1717006133269104}
+  m_assetsDownloadFlow: {fileID: 114621241760267986}
   m_seasonalIcon: {fileID: 114609048108076918}
   m_seasonalIconRoot: {fileID: 1658271988976828}
   m_rarityDecorations:
@@ -2151,6 +2154,7 @@ MonoBehaviour:
   m_root: {fileID: 114699142542879808}
   m_progressBar: {fileID: 114532279952135116}
   m_downloadingGroup: {fileID: 1592609094352626}
+  m_downloadCompletedGroup: {fileID: 1805838934039808}
   m_errorGroup: {fileID: 1273933278144772}
   m_errorText: {fileID: 0}
 --- !u!114 &114627459568600352
@@ -2255,7 +2259,7 @@ MonoBehaviour:
   id: 
   isRelative: 0
   isFrom: 0
-  isIndependentUpdate: 1
+  isIndependentUpdate: 0
   autoKill: 1
   isActive: 1
   isValid: 1
@@ -2266,7 +2270,7 @@ MonoBehaviour:
   autoPlay: 1
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 60, y: 0, z: 0}
+  endValueV3: {x: 0, y: -75, z: 0}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -2977,7 +2981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.427451, g: 0.90196085, b: 0.08235294, a: 1}
+  m_Color: {r: 1, g: 0.7686275, b: 0.18823531, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3998,7 +4002,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -9.529999}
+  m_AnchoredPosition: {x: 0, y: 30}
   m_SizeDelta: {x: 50, y: 55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224436130566525974

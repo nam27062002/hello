@@ -29,15 +29,37 @@ namespace Downloadables
     ///  be done at t=45s
     ///  handle.AddAction(30, Downloadables.Handle.EError.NONE);             
     /// </summary>
-    public class MockHandle : Handle
+    public class AllDownloadablesMockHandle : Handle
     {
+
+        //------------------------------------------------------------------------//
+        // SINGLETON                    										  //
+        //------------------------------------------------------------------------//
+        // Use a singleton to mock the allDownloadablesHandle
+        private static AllDownloadablesMockHandle m_instance;
+
+        public static AllDownloadablesMockHandle Instance
+        {
+            get {
+
+                if (m_instance == null)
+                {
+                    m_instance = new AllDownloadablesMockHandle();
+                }
+                return m_instance;
+            }
+        }
+
+        //------------------------------------------------------------------------//
+        // INNER CLASSES                  										  //
+        //------------------------------------------------------------------------//
 
         public class Action
         {
             public float TimeAt { get; set; }
             public EError Error { get; set; }
-			public bool isError { get { return Error != EError.NONE; } }
-			public int Index { get; set; }
+            public bool isError { get { return Error != EError.NONE; } }
+            public int Index { get; set; }
 
             public Action(float timeAt, EError error)
             {
@@ -57,26 +79,39 @@ namespace Downloadables
 
         private float TimeToDownload { get; set; }
         private float DownloadingTime { get; set; }
-		private float DownloadingTimeDelta { get; set; }	// Time downloading during the last "frame"
+        private float DownloadingTimeDelta { get; set; }    // Time downloading during the last "frame"
 
-		private float TimeAtStart { get; set; }
-		private float LastUpdateTime { get; set; }
+        private float TimeAtStart { get; set; }
+        private float LastUpdateTime { get; set; }
 
-		private float DownloadSpeed { get; set; }
+        private float DownloadSpeed { get; set; }
 
-		private EError Error { get; set; }
+        private EError Error { get; set; }
 
         private List<Action> Actions { get; set; }
 
-        public MockHandle(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted,
-                          List<Action> actions = null)
-        {
-            Setup(downloadedBytesAtStart, totalBytes, timeToDownload, permissionRequested, permissionGranted, actions);
-        }
+
+        // Internal
+        private bool m_mockupInitialized = false;
+
+        public bool MockupInitialized { get { return m_mockupInitialized; } }
+
+
 
         //------------------------------------------------------------------------//
         // METHODS																  //
         //------------------------------------------------------------------------//
+
+        public void Initialize(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted,
+              List<Action> actions = null)
+        {
+
+            m_mockupInitialized = true;
+            Setup(downloadedBytesAtStart, totalBytes, timeToDownload, permissionRequested, permissionGranted, actions);
+
+        }
+
+
         public void Setup(float downloadedBytesAtStart, float totalBytes, float timeToDownload, bool permissionRequested, bool permissionGranted, List<Action> actions)
         {
             DownloadedBytesAtStart = downloadedBytesAtStart;
@@ -207,7 +242,8 @@ namespace Downloadables
 
         public override void Update()
         {
-            if (!IsAvailable())
+            // Wait until permission is requested (user has accepted the download popup)
+            if (!IsAvailable() && PermissionRequested)
             {
 				// Store some vars
 				long downloadedBytesAtStart = GetDownloadedBytes();

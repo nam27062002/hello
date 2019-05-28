@@ -33,8 +33,8 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private TextMeshProUGUI m_progressText = null;
 	[SerializeField] private UIGradient m_progressBarGradient = null;
 
-	// Internal
-	private StringBuilder m_sb = new StringBuilder();
+    // Internal
+    private StringBuilder m_sb = new StringBuilder();
 	private string m_localizedSeconds = "";
 
 	//------------------------------------------------------------------------//
@@ -98,7 +98,8 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 				AssetsDownloadFlowSettings.GetProgressBarColor(_handle)
 			);
 		}
-	}
+
+    }
 
 	//------------------------------------------------------------------------//
 	// DEBUG_METHODS														  //
