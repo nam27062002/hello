@@ -37,7 +37,8 @@
 @property (nonatomic, strong)   NSString            *categorizeType;
 @property (nonatomic, strong)   NSDictionary        *rvServerParams;
 @property (nonatomic, assign)   NSInteger           consent;
-
+@property (nonatomic, strong)   NSDictionary        *batchGenricParams;
+@property (nonatomic, strong)   NSDictionary        *eventGenricParams;
 
 /*!
  @deprecated This method has been deprecated and will be removed in a future version
