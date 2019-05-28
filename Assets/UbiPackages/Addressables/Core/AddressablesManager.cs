@@ -606,9 +606,9 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }        
+    }            
 
-    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId = null)
     {
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
