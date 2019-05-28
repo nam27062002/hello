@@ -113,7 +113,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
 
