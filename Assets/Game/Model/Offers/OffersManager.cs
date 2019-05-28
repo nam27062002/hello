@@ -339,15 +339,18 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
             OfferPackItem item = items[i];
 
             DefinitionNode def = null;
+			List<string> resourceIDs = null;
             if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
-                def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, item.sku);
+				resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(item.sku);
             } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
                 def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
-                def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, def.Get("dragonSku"));
+				if(def != null) {
+					resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForDragon(def.Get("dragonSku"));
+				}
             }
 
-            if (def != null) {
-                if (!HDAddressablesManager.Instance.IsResourceAvailable(def.Get("gamePrefab"))) {
+            if (resourceIDs != null) {
+                if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) {
                     return false;
                 }
             }
