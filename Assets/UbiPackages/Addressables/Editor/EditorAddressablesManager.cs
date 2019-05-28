@@ -382,7 +382,7 @@ public class EditorAddressablesManager
                 }
 
                 // Generates remote AB list file            
-                GenerateDownloadablesCatalog(output.m_RemoteABList, m_localDestinationPath);
+                GenerateDownloadablesCatalog(output.m_RemoteABList, remoteFolder);
 
                 // Deletes original files that were moved to local
                 EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);

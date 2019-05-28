@@ -104,9 +104,11 @@ public class UIColorFXEditor : Editor {
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("m_colorRampIntensity"));
 #endif
 
-				// Open ramps editor
+				// Shortcut to ramps editor
+				// Uncomment only if you have the ColorRampEditor tool imported in your project
+				// You can download it at https://bcn-mb-git/tools/color_ramp_editor
 				if(GUILayout.Button("Color Ramps Editor")) {
-					HungryDragonEditorMenu.MenuColorRampEditor();
+					ColorRampEditor.OpenWindow();
 				}
 
 				EditorGUI.EndDisabledGroup();
