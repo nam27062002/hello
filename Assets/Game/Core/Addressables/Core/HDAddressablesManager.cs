@@ -113,7 +113,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
 
@@ -775,10 +775,63 @@ public class Ingame_SwitchAreaHandle
 		return powers;
 	}
 
-    #endregion
+	#endregion
 
-    #region ADDRESSABLES_BATCH_HANDLERS            
-    private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+	#region Asset Ids Getters
+	/// <summary>
+	/// Obtain a list of all the resources needed for a dragon.
+	/// Doesn't include equipped pets.
+	/// </summary>
+	/// <returns>The list of all the resources needed for a dragon.</returns>
+	/// <param name="_dragonSku">Dragon sku.</param>
+	public List<string> GetResourceIDsForDragon(string _dragonSku) {
+		// Aux vars
+		List<string> ids = new List<string>();
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
+
+		// [AOC] In theory all assets go in the same bundle, but just in case add them all
+		if(def != null) {
+			// Dragon prefabs
+			ids.Add(def.GetAsString("gamePrefab"));
+			ids.Add(def.GetAsString("menuPrefab"));
+			ids.Add(def.GetAsString("resultsPrefab"));
+
+			// Skin assets
+			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
+
+			// Icons
+			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
+		}
+
+		return ids;
+	}
+
+	/// <summary>
+	/// Obtain a list of all the resources needed for a pet.
+	/// </summary>
+	/// <returns>The list of all the resources needed for a pet.</returns>
+	/// <param name="_petSku">Pet sku.</param>
+	public List<string> GetResourceIDsForPet(string _petSku) {
+		// Aux vars
+		List<string> ids = new List<string>();
+		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _petSku);
+
+		// [AOC] In theory all assets go in the same bundle, but just in case add them all
+		if(def != null) {
+			// Pet prefabs
+			ids.Add(def.GetAsString("gamePrefab"));
+			ids.Add(def.GetAsString("menuPrefab"));
+
+			// Icon
+			ids.Add(def.GetAsString("icon"));
+		}
+
+		return ids;
+	}
+	#endregion
+
+	#region ADDRESSABLES_BATCH_HANDLERS            
+	private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
     {
         if (handle != null)
         {
