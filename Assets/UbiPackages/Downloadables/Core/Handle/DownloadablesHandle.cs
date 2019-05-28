@@ -101,12 +101,10 @@ namespace Downloadables
 
         public abstract void SetIsPermissionGranted(bool value);
 
-        public virtual List<string> GetDownloadableIds() { return null; }
-
         /// <summary>
         /// Returns the size in bytes of this list of downloadables that have been downloaded so far.
         /// </summary>        
-        public abstract long GetDownloadedBytes();        
+        public abstract long GetDownloadedBytes();
 
         /// <summary>
         /// Returns the total size in bytes of this list of downloadables.

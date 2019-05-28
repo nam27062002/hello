@@ -64,11 +64,6 @@ namespace Downloadables
             }            
         }
 
-        public override List<string> GetDownloadableIds()
-        {
-            return DownloadableIds;
-        }
-
         /// <summary>
         /// Returns the size in bytes of this list of downloadables that have been downloaded so far.
         /// </summary>        
