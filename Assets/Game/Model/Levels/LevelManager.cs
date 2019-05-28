@@ -145,7 +145,11 @@ public class LevelManager : Singleton<LevelManager> {
         Debug.Log("OnSceneUnloaded: " + scene.name);        
     }
 
-    public static LevelLoader LoadLevel()
+    public static LevelLoader LoadLevelForDragon(string _dragonSku) {
+       return LoadLevel(m_currentLevelData.def.GetAsString(_dragonSku, "area1"));
+    }
+
+    public static LevelLoader LoadLevel(string _startingAreaName)
     {
         m_scenesLoaded.Clear();
 
@@ -163,8 +167,7 @@ public class LevelManager : Singleton<LevelManager> {
         DebugUtils.SoftAssert(m_currentLevelData != null, "Current level has not been set!");
         DefinitionNode def = m_currentLevelData.def;
 
-        string areaName = "area1"; // [AOC] Adding default value in case dragon's initial area is not defined in content        
-        LevelLoader returnValue = new LevelLoader(null, areaName);
+        LevelLoader returnValue = new LevelLoader(null, _startingAreaName);
 
         // Common Scenes
         List<string> commonScenes = def.GetAsList<string>("common");
@@ -188,8 +191,8 @@ public class LevelManager : Singleton<LevelManager> {
 
 
         // Load area by dragon        
-        m_currentArea = areaName;
-        List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(areaName);
+        m_currentArea = _startingAreaName;
+        List<string> realSceneNamesPerArea = GetOnlyAreaScenesList(_startingAreaName);
         returnValue.AddRealSceneNameListToLoad(realSceneNamesPerArea);
 
         return returnValue;

@@ -194,6 +194,12 @@ public class DebugSettings : SingletonScriptableObject<DebugSettings> {
 		set { Prefs_SetBoolPlayer(PLAY_TEST, value); }
 	}
 
+    static bool m_hitStopEnabled = true;
+	public static bool hitStopEnabled{
+		get { return m_hitStopEnabled; }
+		set { m_hitStopEnabled = value;}
+	}
+
 	// Spawners cheats
 	static bool m_ignoreSpawnTime = false;
 	public static bool ignoreSpawnTime{

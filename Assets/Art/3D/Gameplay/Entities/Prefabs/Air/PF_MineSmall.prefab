@@ -481,7 +481,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"speed":1,"idleChance":0,"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderData","editorFolded":false},{"isMine":true,"damage":25,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false}]'
+  m_serializedJson: '[{"isMine":true,"damage":25,"radius":0,"cameraShakeDuration":0.75,"dataType":"AI.Behaviour.ExplodeData","editorFolded":false},{"speed":1,"timeToIdle":{"min":0,"max":0},"alwaysSlowdown":false,"dataType":"AI.Behaviour.WanderPathData","editorFolded":false}]'
   m_databaseKey: PF_MineSmall
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 5
@@ -542,6 +542,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 0
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 0
     m_rollRotation: 0

@@ -28,6 +28,7 @@ BUILD_ANDROID=false
 GENERATE_OBB=false
 BUILD_IOS=false
 ENVIRONMENT=false
+ADDRESSABLES_MODE=Editor
   # versioning
 FORCE_VERSION=false
 INCREASE_VERSION_NUMBER=false
@@ -62,7 +63,7 @@ USAGE="Usage: generate_build.command [-path project_path=script_path] [-code pro
       [-iosPublic iosPublicVersion] [-ggpPublic google_play_public_version] [-amzPublic amazonPublicVersion]  \
       [-increase_VCodes] [-iosVCode ios_version_code] [-ggpVCode google_play_version_code] [-amzVCode amazon_version_code]  \
       [-output dirpath=Desktop/builds] [-upload] [-smbOutput server_folder=] \
-      [-env environment] [-calety_branch branch]"
+      [-env environment] [-addressablesMode addressablesMode] [-calety_branch branch]"
 
 # Parse parameters
 for ((i=1;i<=$#;i++));
@@ -142,6 +143,9 @@ do
     elif [ "$PARAM_NAME" == "-env" ] ; then
         ((i++))
         ENVIRONMENT=${!i}
+    elif [ "$PARAM_NAME" == "-addressablesMode" ] ; then
+        ((i++))
+        ADDRESSABLES_MODE=${!i}
     elif [ "$PARAM_NAME" == "-calety_branch" ] ; then
         ((i++))
         CALETY_BRANCH=${!i}
@@ -161,7 +165,7 @@ print_builder() {
 }
 
 # Calculate num of stps
-TOTAL_STEPS=5;
+TOTAL_STEPS=6;
 if $RESET_GIT; then
   TOTAL_STEPS=$((TOTAL_STEPS+1));
 fi
@@ -249,6 +253,9 @@ git pull origin "${BRANCH}"
 
 print_builder "Custom Builder Action"
 eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.CustomAction"
+
+print_builder "Setting addressables mode"
+eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.SetAddressablesMode -addressablesMode ${ADDRESSABLES_MODE}"
 
 if [ "$ENVIRONMENT" != false ]; then
     print_builder "Setting environment";
@@ -345,14 +352,14 @@ if $BUILD_ANDROID; then
   mkdir -p "${OUTPUT_DIR}/apks/"
 
   # Do it!
-  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME}"
+  eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.GenerateAPK -buildTarget android -outputDir \"${OUTPUT_DIR}/apks/\" -obb ${GENERATE_OBB} -code ${PROJECT_CODE_NAME} -addressablesMode ${ADDRESSABLES_MODE}"
 
   # Unity creates a tmp file androidBuildVersion.txt with the android build version number in it. Read from it and remove it.
 	print_builder "BUILDER: Reading internal android build version number";
   eval "${UNITY_APP} ${UNITY_PARAMS} -executeMethod Builder.OutputAndroidBuildVersion"
 	ANDROID_BUILD_VERSION="$(cat androidBuildVersion.txt)"
 	rm -f "androidBuildVersion.txt";
-  APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}"
+  APK_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_b${ANDROID_BUILD_VERSION}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
   APK_FILE="${APK_NAME}.apk"
   APK_OUTPUT_DIR="${OUTPUT_DIR}/apks/${APK_NAME}"
   mkdir -p "${APK_OUTPUT_DIR}"
@@ -377,7 +384,7 @@ if $BUILD_IOS; then
     # Stage target files
     # BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$SCRIPT_PATH/xcode/Info.plist")
     ARCHIVE_FILE="${PROJECT_CODE_NAME}_${VERSION_ID}_${ENVIRONMENT}.xcarchive"
-    IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}"
+    IPA_NAME="${PROJECT_CODE_NAME}_${VERSION_ID}_${DATE}_${ENVIRONMENT}_${ADDRESSABLES_MODE}"
     IPA_FILE="${IPA_NAME}.ipa"
     PROJECT_NAME="${OUTPUT_DIR}/xcode/Unity-iPhone.xcodeproj"
 

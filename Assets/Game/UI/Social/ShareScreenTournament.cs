@@ -39,7 +39,6 @@ public class ShareScreenTournament : IShareScreen {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private Image m_tournamentIcon = null;
 	[SerializeField] private TextMeshProUGUI m_tournamentDescriptionText = null;
 	[SerializeField] private Localizer m_remainingTimeText = null;
 	[Space]
@@ -69,11 +68,7 @@ public class ShareScreenTournament : IShareScreen {
 		// Aux vars
 		HDTournamentManager tournament = HDLiveDataManager.tournament;
 
-		// Initialize UI elements
-		// Tournament icon
-		if(m_tournamentIcon != null) {
-			m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + tournament.tournamentData.tournamentDef.m_goal.m_icon);
-		}
+        // Initialize UI elements
 
 		// Tournament description
 		if(m_tournamentDescriptionText != null) {
@@ -261,4 +256,5 @@ public class ShareScreenTournament : IShareScreen {
 			}
 		);
 	}
+
 }
