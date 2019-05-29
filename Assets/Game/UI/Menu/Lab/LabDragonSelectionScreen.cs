@@ -308,7 +308,7 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
 		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
 		if(popup != null) return;
 
 		// Go to the special missions screen

@@ -255,7 +255,7 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 	public void OnStartPaying() {
 		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
+		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
 		if(popup != null) return;
 
 		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
