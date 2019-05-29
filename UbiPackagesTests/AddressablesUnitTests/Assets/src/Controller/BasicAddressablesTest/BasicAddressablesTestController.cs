@@ -164,32 +164,26 @@ public class BasicAddressablesTestController : MonoBehaviour
     {            
         Logger logger = new ConsoleLogger("Addressables");
 
-        string addressablesPath = "Addressables";
-        string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");
-
-        // Addressables catalog 
-        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
-        string catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Addressables catalog         
+        string catalogAsText = GetAddressablesFileText("addressablesCatalog", true);
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
-        // Downloadables catalog
-        string downloadablesPath = addressablesPath;
-        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog");        
-        targetFile = Resources.Load<TextAsset>(downloadablesCatalogPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;        
+        // Downloadables catalog        
+        catalogAsText = GetAddressablesFileText("downloadablesCatalog", true);        
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         
-        // Downloadables config
-        string downloadablesConfigPath = Path.Combine(downloadablesPath, "downloadablesConfig");        
-        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Downloadables config        
+        catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
         JSONNode downloadablesConfigASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);        
 
+        // AssetBundles catalog
+        catalogAsText = GetAddressablesFileText("assetBundlesCatalog", true);
+        JSONNode abCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);
+        m_addressablesManager.Initialize(catalogASJSON, abCatalogASJSON, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);
 
         Ui_UpdateResolutionDropdown();
         //AssetBundlesManager.Instance.GetMockNetworkDriver().IsMockNetworkReachabilityEnabled = true;
@@ -197,13 +191,31 @@ public class BasicAddressablesTestController : MonoBehaviour
         OnAddressablesInit();
     }
 
+    private string GetAddressablesFileText(string fileName, bool platformDependent)
+    {
+#if UNITY_EDITOR
+        string path = "Assets/Editor/Addressables/generated/";
+        if (platformDependent)
+        {
+            path += UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        }
+
+        path += fileName + ".json";
+        return File.ReadAllText(path);
+#else
+        string path = "Addressables/" + fileName;                        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        return (targetFile == null) ? null : targetFile.text;
+#endif
+    }
+
     public void Addressables_Reset()
     {
         m_addressablesManager.Reset();     
     }            
-    #endregion
+#endregion
 
-    #region cube
+#region cube
     private static string CUBE_ADDRESSABLES_MATERIAL = "unknownMaterial";
     private static string CUBE_ADDRESSABLES_TEXTURE = "HDLogo";
 
@@ -320,9 +332,9 @@ public class BasicAddressablesTestController : MonoBehaviour
             Debug.Log("Error " + op.Error.ToString());
         }
     }
-    #endregion
+#endregion
 
-    #region scene_cubes    
+#region scene_cubes    
     private static string SCENE_CUBES_SCENE_NAME = "SC_Cubes";
 
     public void SceneCubes_Init()
@@ -435,9 +447,9 @@ public class BasicAddressablesTestController : MonoBehaviour
             op.OnDone = SceneCubes_OnDoneByOp;                        
         }
     }
-    #endregion
+#endregion
 
-    #region asset_cubes        
+#region asset_cubes        
 
     public void AssetCubes_Init()
     {        
@@ -547,10 +559,10 @@ public class BasicAddressablesTestController : MonoBehaviour
         Ui_SetEnabled(true);
         Ui_SetOperationResult(error);
     }  
-    #endregion
+#endregion
 
 
-    #region ui
+#region ui
     public List<UIButton> m_uiButtons;    
     public Dropdown m_uiSceneCubesDropdown;
     public Dropdown m_uiSceneCubesResolutionDropdown;
@@ -710,5 +722,5 @@ public class BasicAddressablesTestController : MonoBehaviour
             m_uiOperationResult.color = color;
         }
     }
-    #endregion        
+#endregion
 }

@@ -6,6 +6,11 @@ public class EditorFileUtils
 {
     private static bool VERBOSE = false;
 
+    public static string GetPlatformDirectory(string directory)
+    {
+        return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
+    }
+
     public static bool Exists(string path)
     {
         return Directory.Exists(path);
