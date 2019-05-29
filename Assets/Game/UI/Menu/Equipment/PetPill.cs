@@ -148,9 +148,9 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 	private static bool m_useAsycLoading = true;
 
     private Downloadables.Handle m_petHandle;
-    [SerializeField] private bool m_petHandleCreated = false;
 
-    private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
+    [Space]
+    [SerializeField] private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
 
 
     //------------------------------------------------------------------------//
@@ -287,7 +287,6 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
             // Pet not downloaded, so get a handle for all the downloadable content
             m_petHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
 
-            m_petHandleCreated = true;
         }
 
 
