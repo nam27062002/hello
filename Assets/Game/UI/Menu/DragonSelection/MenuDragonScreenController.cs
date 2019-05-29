@@ -599,7 +599,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
 			// If needed, show assets download popup
-			m_assetsDownloadFlow.OpenPopupByState(false);
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
 
 			// Don't move to next screen
 			return;
@@ -647,7 +647,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
 			// If needed, show assets download popup
-			m_assetsDownloadFlow.OpenPopupByState(false);
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
 
 			// Don't move to next screen
 			return;

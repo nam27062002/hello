@@ -26,14 +26,23 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed references
+	[Header("References")]
 	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[Space]
 	[SerializeField] private GameObject m_downloadingGroup = null;
+	[Space]
     [SerializeField] private GameObject m_downloadCompletedGroup = null;
+	[Space]
     [SerializeField] private GameObject m_errorGroup = null;
 	[SerializeField] private Localizer m_errorText = null;
+
+	[Space]
+	[Header("Setup")]
+	[SerializeField] private bool m_hideOnPopup = false;
+	[SerializeField] private float m_popupCurtainAlpha = 0.75f;
+	[SerializeField] private bool m_popupShowTeasingInfo = false;
 
 	// Internal logic
 	private bool m_enabled = true;
@@ -68,9 +77,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		CancelInvoke("PeriodicUpdate");
 
 		// Clear linked popup (if any)
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
+		ClearPopup();
 	}
 
 	//------------------------------------------------------------------------//
@@ -117,16 +124,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		if(!m_enabled) return null;
 
 		// Open popup based on handle's state
-		return OpenPopupByState(true);
+		return OpenPopupByState(PopupAssetsDownloadFlow.PopupType.MANDATORY);
 	}
 
 	/// <summary>
 	/// Checks whether a popup needs to be opened with the current handle.
 	/// If so, puts it in the queue and replaces any popup previously queued by this component.
 	/// </summary>
-	/// <param name="_onlyMandatoryPopups">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
+	/// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
 	/// <returns>The opened popup if any was needed.</returns>
-	public PopupAssetsDownloadFlow OpenPopupByState(bool _onlyMandatoryPopups) {
+	public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask) {
 		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
 		//				For now we'll just replace the old popup by a new clone.
 
@@ -134,15 +141,19 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		if(!m_enabled) return null;
 
 		// Whatever the result, if we already queued a popup, remove it now from the queue
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
+		ClearPopup();
 
 		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyMandatoryPopups);
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask);
 		if(downloadPopup != null) {
 			// Yes! Store its controller
 			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
+			m_queuedPopup.OnClose.AddListener(OnPopupClosed);
+			m_queuedPopup.OnDestroyed.AddListener(OnPopupClosed);   // In case the popup is destroyed while queued
+
+			// Setup popup
+			downloadPopup.curtainAlpha = m_popupCurtainAlpha;
+			downloadPopup.showTeasingInfo = m_popupShowTeasingInfo;
 		}
 
 		// Return newly opened popup
@@ -185,6 +196,12 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
 			//Debug.Log(Color.magenta.Tag("m_enabled false!"));
+			show = false;
+		}
+
+		// Depending on the setup, don't show if a popup is open
+		else if(m_hideOnPopup && m_queuedPopup != null && m_queuedPopup.isOpen) {
+			//Debug.Log(Color.magenta.Tag("Popup open"));
 			show = false;
 		}
 
@@ -234,7 +251,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
             if (m_downloadCompletedGroup != null)
             {
                 // Hide the download complete icon
-                m_downloadCompletedGroup.SetActive(m_handle.Progress == 1);
+                m_downloadCompletedGroup.SetActive(m_handle.Progress >= 1f);
             }
 		}
 
@@ -278,6 +295,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Close opened popup and nullify it.
+	/// </summary>
+	private void ClearPopup() {
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+			m_queuedPopup = null;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -286,6 +313,21 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		OpenPopupByState(false);
+		OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+	}
+
+	/// <summary>
+	/// The queued popup has been closed.
+	/// </summary>
+	/// <param name="_popup">The popup that triggered the event.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// Is it the tracked popup?
+		if(_popup == m_queuedPopup) {
+			// Stop tracking
+			m_queuedPopup = null;
+		}
+
+		// Refresh visibility
+		RefreshVisibility();
 	}
 }

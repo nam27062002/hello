@@ -172,6 +172,11 @@ public class LoadingSceneController : SceneController {
     // References
 	[SerializeField] private TextMeshProUGUI m_loadingTxt = null;
 	[SerializeField] private Slider m_loadingBar = null;
+
+	[Space]
+	[SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+
+	[Space]
 	public InitRefObject m_savingReferences;	// this will point to an asset that points to lozalication and rules to make sure they get into the apk and not in the obb file
 	public GameObject m_messagePopup;
 
@@ -250,6 +255,10 @@ public class LoadingSceneController : SceneController {
 
         // Always start in DEFAULT mode
         SceneController.SetMode(Mode.DEFAULT);
+
+		// Init download assets flow with no handler (should hide it)
+		m_downloadablesHandle = null;
+		m_assetsDownloadFlow.InitWithHandle(null);
     }
 
 	/// <summary>
@@ -379,7 +388,10 @@ public class LoadingSceneController : SceneController {
 		if(!DebugSettings.showMissingTids) {
 			LocalizationManager.SharedInstance.FillEmptyTids("lang_english");
 		}
-    }    
+
+		// Notify the rest of the game!
+		Broadcaster.Broadcast(BroadcastEventType.LANGUAGE_CHANGED);
+	}    
 
     /// <summary>
     /// Called every frame.
@@ -499,23 +511,14 @@ public class LoadingSceneController : SceneController {
             break;
             case State.DOWNLOADING_MISSING_BUNDLES:
             {
-                string txt = "Downloading asset bundles... ";
-
+				// Wait for download to finish
                 if (m_downloadablesHandle != null)
                 {
                     m_downloadablesHandle.Update();
                     if (m_downloadablesHandle.IsAvailable())
                     {						
                         SetState(State.DONE);
-                    }
-
-                    txt += (int)(m_downloadablesHandle.Progress * 100f) + "%";                
-                }
-
-                // TODO: Remove when the ultimate flow is implemented
-                if (m_loadingTxt != null)
-                {
-                    m_loadingTxt.text = txt;
+                    }           
                 }
             }break;
             case State.DONE:
@@ -568,14 +571,18 @@ public class LoadingSceneController : SceneController {
         Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
         foreach( KeyValuePair<string, IDragonData> pair in dragons )
         {
+			// Only owned dragons
             if ( pair.Value.isOwned )
             {
-                // Check skin
-                toCheck.Add(pair.Value.disguise);
+				// Dragon bundle: menu and ingame prefabs, skins, portraits...
+				toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
 
-                if ( pair.Value.pets.Count > 0 )
-                    toCheck.AddRange( pair.Value.pets );
-
+				// Equipped pets bundles: menu and ingame prefabs, portraits...
+				if(pair.Value.pets.Count > 0) {
+					for(int i = 0; i < pair.Value.pets.Count; ++i) {
+						toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForPet(pair.Value.pets[i]));
+					}
+				}
             }
         }
 
@@ -616,15 +623,6 @@ public class LoadingSceneController : SceneController {
 
                 // Tracking is initialised as soon as possible so very early events can be tracked. We need to wait for rules to be loaded because it could be disabled by configuration
                 HDTrackingManager.Instance.Init();
-            } break;
-
-            case State.DOWNLOADING_MISSING_BUNDLES:
-            {
-                // TODO: Remove when the ultimate flow is implemented
-                if (m_loadingTxt != null)
-                {
-                    m_loadingTxt.gameObject.SetActive(false);
-                }
             } break;
         }
 
@@ -770,14 +768,16 @@ public class LoadingSceneController : SceneController {
 
             case State.DOWNLOADING_MISSING_BUNDLES:
             {
-               // TODO: Remove when the ultimate flow is implemented
-               if (m_loadingTxt != null)
-                {
-                   m_loadingTxt.gameObject.SetActive(true);
-                }
+				// Initialize download flow with ALL downloadables handler
+				m_downloadablesHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+				m_assetsDownloadFlow.InitWithHandle(m_downloadablesHandle);
 
-                m_downloadablesHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();				
-            }break;
+					// Trigger any required popup
+					// Only mandatory and error popups
+					m_assetsDownloadFlow.OpenPopupByState(
+						PopupAssetsDownloadFlow.PopupType.MANDATORY | PopupAssetsDownloadFlow.PopupType.ERROR
+					);
+			}break;
 
             case State.DONE:
             {
