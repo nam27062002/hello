@@ -45,7 +45,7 @@ public class PetsScreenController : MonoBehaviour, IBroadcastListener {
 	[SerializeField] private float m_initialScrollAnimDelay = 0.5f;
 
     [Space]
-    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow;
 
 
     // Internal references
