@@ -140,6 +140,10 @@ public class FontManager : UbiBCN.SingletonMonoBehaviour<FontManager>, IBroadcas
 
 		// Done!
 		m_ready = true;
+
+		// Simulate font load events to properly initialize any existing FontReplacer component
+		Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_STARTED);
+		Broadcaster.Broadcast(BroadcastEventType.FONT_CHANGE_FINISHED);
 	}
 
 	/// <summary>
