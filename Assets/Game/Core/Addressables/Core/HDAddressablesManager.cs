@@ -47,9 +47,9 @@ public class HDAddressablesManager : AddressablesManager
 
         // Downloadables config        
         catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
-        JSONNode downloadablesConfigASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        JSONNode downloadablesConfigAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
-        downloadablesConfig.Load(downloadablesConfigASJSON, logger);
+        downloadablesConfig.Load(downloadablesConfigAsJSON, logger);
 
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
