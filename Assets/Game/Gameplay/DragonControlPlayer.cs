@@ -30,7 +30,7 @@ public class DragonControlPlayer : MonoBehaviour {
 
 	TouchControlsDPad	touchControls = null;
 
-	JoystickControls joystickControls = null;
+    PadKeyControls joystickControls = null;
 	bool joystickMoving = false;
 
 	TiltControls tiltControls = null;
@@ -64,7 +64,7 @@ public class DragonControlPlayer : MonoBehaviour {
 				tiltControls.Calibrate();
 				tiltControls.SetSensitivity(GameSettings.tiltControlSensitivity);
 			}
-			joystickControls = gameInputObj.GetComponent<JoystickControls>();
+			joystickControls = gameInputObj.GetComponent<PadKeyControls>();
 		}
 
 		if(ApplicationManager.instance.appMode == ApplicationManager.Mode.TEST) {           
