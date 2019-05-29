@@ -45,9 +45,7 @@ public class AssetBundlesManager
 
     public static string ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION = "assetBundlesCatalog";
     public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
-    public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
-
-    public static bool LOCAL_IN_STREAMING_ASSETS = true;    
+    public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";    
 
     private Downloadables.Manager m_downloadablesManager;  
     public Downloadables.Manager DownloadablesManager
@@ -63,13 +61,13 @@ public class AssetBundlesManager
     /// <summary>
     /// Initialize the system.
     /// </summary>
-    /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
+    /// <param name="catalogJSON">JSON containing the asset bundles catalog</param>    
     /// <param name="downloadablesConfig">Downloadables configuration</param>        
     /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
     /// <param name="useMockDrivers">When <c>true</c> mock drivers are used, which is useful when testing. Otherwise production drivers are used.</param>
     /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -108,7 +106,7 @@ public class AssetBundlesManager
 
         Logger downloadablesLogger = logger;
 
-        AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
+        AssetBundlesCatalog catalog = LoadCatalog(catalogJSON);
 
         // Deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
         List<string> idsRemoved = Downloadables.Manager.RemoveEntryIds(downloadablesCatalog, catalog.GetLocalAssetBundlesList());        
@@ -117,7 +115,7 @@ public class AssetBundlesManager
             Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
         }
 
-        ProcessCatalog(localAssetBundlesPath, catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
+        ProcessCatalog(catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
         Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
 
@@ -234,13 +232,10 @@ public class AssetBundlesManager
         return returnValue;
     }
 
-    private AssetBundlesCatalog LoadCatalog(string directory)
+    private AssetBundlesCatalog LoadCatalog(JSONNode json)
     {
         AssetBundlesCatalog returnValue = new AssetBundlesCatalog();
-
-        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);
-        TextAsset targetFile = Resources.Load<TextAsset>(path);
-        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;
+        
         if (json != null)
         {            
             returnValue.Load(json, sm_logger);
@@ -257,23 +252,15 @@ public class AssetBundlesManager
         return returnValue;
     }  
 
-    private void ProcessCatalog(string localPath, AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
+    private void ProcessCatalog(AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
     {                
         if (catalog != null)
         {            
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
-            string localDirectory;
-            if (LOCAL_IN_STREAMING_ASSETS)
-            {
-                // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
-                localDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);
-                localDirectory = Path.Combine(localDirectory, ASSET_BUNDLES_PATH_RELATIVE);
-            }
-            else
-            {
-                localDirectory = Path.Combine(localPath, ASSET_BUNDLES_PATH_RELATIVE);
-            }
+            // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
+            string localDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);            
+            localDirectory = Path.Combine(localDirectory, ASSET_BUNDLES_PATH_RELATIVE);            
 
             List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
 
