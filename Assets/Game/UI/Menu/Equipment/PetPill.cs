@@ -149,7 +149,8 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 
     private Downloadables.Handle m_petHandle;
 
-    private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
+    [Space]
+    [SerializeField] private Downloadables.Handle.DownloadState m_downloadState = Downloadables.Handle.DownloadState.NOT_STARTED;
 
 
     //------------------------------------------------------------------------//
@@ -220,14 +221,19 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
             }
         }
 
-        // Check if the download state has changed
-        Downloadables.Handle.DownloadState newState = m_petHandle.GetState();
-        if (m_downloadState != newState)
-        {
 
-            // Update the view
-            m_downloadState = newState;
-            Refresh();
+        if (m_petHandle != null)
+        {
+            // Check if the download state has changed
+            Downloadables.Handle.DownloadState newState = m_petHandle.GetState();
+            if (m_downloadState != newState)
+            {
+
+                // Update the view
+                m_downloadState = newState;
+                Refresh();
+
+            }
 
         }
 
@@ -273,11 +279,16 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		Metagame.Reward.Rarity rarity = Metagame.Reward.SkuToRarity(_petDef.Get("rarity"));
 
 
-        // Handle 
+        
         // OTA: Check if the pet is downloaded
-        // In the future we can use an handle for the pets bundle
-        // but for now we just the general downloadables bundle.
-        m_petHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+        List<string> resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(_petDef.sku);
+        if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs))
+        {
+            // Pet not downloaded, so get a handle for all the downloadable content
+            m_petHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+
+        }
+
 
 
         // Load preview
@@ -400,11 +411,22 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		}
 
 
-        // OTA: Check if the pet is downloaded 
-        
-        if (!m_petHandle.IsAvailable())
+        // Pet bundle available
+        if (m_petHandle == null || m_petHandle.IsAvailable())
         {
-            // Hide pet icon
+
+            // Show pet. Hide download buttons
+            m_downloadPetGroup.SetActive(false);
+            m_preview.gameObject.SetActive(true);
+
+            return;
+
+        }
+        else {
+            
+            // Content not downloaded yet
+            
+            // Hide pet icon and FX
             m_preview.gameObject.SetActive(false);
             m_equippedFrame.gameObject.SetActive(false);
 
@@ -421,9 +443,11 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
             else
             {
 
-                // Download already in course. Show progress
+                // Download already in course
                 m_downloadPetGroup.SetActive(true);
                 m_downloadButton.SetActive(false);
+
+                // Show progress bar
                 m_assetsDownloadFlow.gameObject.SetActive(true);
                 m_assetsDownloadFlow.InitWithHandle(m_petHandle);
 
@@ -432,12 +456,9 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
             }
 
         }
-
-        // Pet bundle already downloaded. Hide download buttons
-        m_downloadPetGroup.SetActive(false);
-        m_preview.gameObject.SetActive(true);
         
     }
+
 
     /// <summary>
     /// Refresh all textfields of the pill.
@@ -506,7 +527,7 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 		if(!m_tapAllowed) return;
 
 
-        if (!m_petHandle.IsAvailable())
+        if (m_petHandle != null && !m_petHandle.IsAvailable())
         {
 
             // If needed, show assets download popup and don't continue
