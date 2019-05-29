@@ -760,7 +760,7 @@ public class LoadingSceneController : SceneController {
                 TransactionManager.instance.Initialise();
 
                 HDCustomizerManager.instance.Initialise();   
-                HDAddressablesManager.Instance.Initialise();                                
+                HDAddressablesManager.Instance.Initialize();                                
             } break;
 
            case State.WAITING_SAVE_FACADE:
