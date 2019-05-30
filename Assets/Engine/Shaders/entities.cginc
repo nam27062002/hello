@@ -16,7 +16,12 @@ struct v2f
 	float4 vertex : SV_POSITION;
 	float4 color : COLOR;
 
+
 	float3 normalWorld : NORMAL;
+
+#if defined(LITMODE_LIT)
+
+
 #if defined(NORMALMAP)
 	float3 tangentWorld : TANGENT;
 	float3 binormalWorld : TEXCOORD5;
@@ -30,13 +35,16 @@ struct v2f
 	float3 halfDir : TEXCOORD7;
 #endif
 
+#endif //defined(LITMODE_LIT)
+
+
 #if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP)
 	float3 viewDir : VECTOR;
 #endif
 
 	float2 uv : TEXCOORD0;
 
-#if defined(MATCAP) || defined(FREEZE)
+#if defined(MATCAP) || defined(FREEZE) || defined(COLORMODE_BLENDTEX)
 	float2 cap : TEXCOORD1;
 #endif
 
@@ -51,6 +59,9 @@ uniform sampler2D _MatCap;
 uniform float4 _GoldColor;
 #endif
 
+
+#if defined(LITMODE_LIT)
+
 #if defined(NORMALMAP)
 uniform sampler2D _NormalTex;
 uniform float4 _NormalTex_ST;
@@ -61,6 +72,15 @@ uniform float _NormalStrength;
 uniform float _SpecularPower;
 uniform float4 _SpecularColor;
 #endif
+
+#if defined(SPECMASK)
+uniform sampler2D _SpecMask;
+uniform float _SpecExponent;
+uniform float4 _SecondLightDir;
+
+#endif
+
+#endif //defined(LITMODE_LIT)
 
 #if defined(FRESNEL) || defined(FREEZE)
 uniform float _FresnelPower;
@@ -96,13 +116,6 @@ uniform float4 _VertexAnimation3;
 
 #endif
 
-#if defined(SPECMASK)
-uniform sampler2D _SpecMask;
-uniform float _SpecExponent;
-uniform float4 _SecondLightDir;
-
-#endif
-
 #if defined(AMBIENTCOLOR)
 uniform float4 _AmbientColor;
 #endif
@@ -117,9 +130,16 @@ uniform float4 _Tint1;
 #elif defined(COLORMODE_GRADIENT)
 uniform float4 _Tint1;
 uniform float4 _Tint2;
-#elif defined(COLORMODE_COLORRAMP) || defined(COLORMODE_COLORRAMPMASKED)
+#elif defined(COLORMODE_COLORRAMP) || defined(COLORMODE_COLORRAMPMASKED) || defined(COLORMODE_BLENDTEX)
 uniform sampler2D _RampTex;
 uniform float4 _RampTex_TexelSize;
+
+#if defined(COLORMODE_BLENDTEX)
+uniform float _BlendUVScale;
+uniform float _BlendUVOffset;
+uniform float _BlendAlpha;
+#endif
+
 #endif
 
 
@@ -150,11 +170,11 @@ v2f vert(appdata_t v)
 
 	float3 normal = UnityObjectToWorldNormal(v.normal);
 
-#if defined(DYNAMIC_LIGHT)
+#if defined(DYNAMIC_LIGHT) && defined(LITMODE_LIT)
 	o.vLight = ShadeSH9(float4(normal, 1.0));
 #endif
 	// To calculate tangent world
-#if defined(NORMALMAP)
+#if defined(NORMALMAP) && defined(LITMODE_LIT)
 	o.tangentWorld = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
 //	o.normalWorld = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
 	o.normalWorld = normal;
@@ -166,17 +186,17 @@ v2f vert(appdata_t v)
 
 	float3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 
-#if defined(FRESNEL) || defined(FREEZE) || defined(SPECULAR) || defined(SPECMASK)
+#if defined(FRESNEL) || defined(FREEZE) || defined(REFLECTIONMAP) || (defined(LITMODE_LIT) && (defined(SPECULAR) || defined(SPECMASK)))
 	float3 viewDirection = normalize(_WorldSpaceCameraPos - worldPos.xyz);
 #endif
 
-#if defined(SPECULAR)
+#if defined(SPECULAR) && defined(LITMODE_LIT)
 	// Half View - See: Blinn-Phong
 	//	fixed3 worldPos = mul(unity_ObjectToWorld, v.vertex);
 	float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
-#elif defined(SPECMASK)
+#elif defined(SPECMASK) && defined(LITMODE_LIT)
 	float3 lightDirection = normalize(_SecondLightDir.xyz);
 	o.halfDir = normalize(lightDirection + viewDirection);
 
@@ -186,14 +206,25 @@ v2f vert(appdata_t v)
 	o.viewDir = viewDirection;
 #endif
 
+
+
 	o.color = v.color;
 
 #if defined(MATCAP) || defined(FREEZE)
 	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
 	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
 	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
+#elif defined(COLORMODE_BLENDTEX)
+
+#if defined(BLENDAXIS_X)
+	o.cap.xy = (v.vertex.xy + _BlendUVOffset) * _BlendUVScale;
+#elif defined(BLENDAXIS_Y)
+	o.cap.xy = (v.vertex.yx + _BlendUVOffset) * _BlendUVScale;
+#elif defined(BLENDAXIS_Z)
+	o.cap.xy = (v.vertex.zy + _BlendUVOffset) * _BlendUVScale;
 #endif
 
+#endif
 	return o;
 }
 
@@ -214,10 +245,17 @@ fixed4 frag(v2f i) : SV_Target
 	fixed vy = (floor(diff.y + 0.5) * 2.0) + floor(diff.z + 0.5) + 0.5;
 	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
-
+/*
+#elif defined(COLORMODE_BLENDTEX)
+	fixed4 diff = tex2D(_MainTex, i.uv);
+	fixed4 col = tex2D(_RampTex, i.cap);
+	col = fixed4(lerp(diff.xyz, col.xyz, col.w * _BlendAlpha), diff.w);
+*/
 #else
 	fixed4 col = tex2D(_MainTex, i.uv);
 #endif
+
+#if defined(LITMODE_LIT)
 
 #if defined(SPECMASK)
 	fixed4 colspec = tex2D(_SpecMask, i.uv);
@@ -228,6 +266,10 @@ fixed4 frag(v2f i) : SV_Target
 	half specMask = 0.2126 * col.r + 0.7152 * col.g + 0.0722 * col.b;
 #endif
 
+#endif //(LITMODE_LIT)
+
+
+
 #if defined(EMISSIVE)
 	float anim = (((sin(_Time.y * _EmissiveBlink) + 1.0) * 0.5 * _EmissiveIntensity) + _EmissiveOffset) * col.a;
 	col.xyz *= 1.0 + anim;
@@ -237,7 +279,7 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz *= _Tint.xyz;
 #endif
 
-#if defined(NORMALMAP)
+#if defined(NORMALMAP) && defined(LITMODE_LIT)
 	// Calc normal from detail texture normal and tangent world
 	float4 encodedNormal = tex2D(_NormalTex, i.uv);
 	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
@@ -258,7 +300,7 @@ fixed4 frag(v2f i) : SV_Target
 	col = (1.0 - ref) * col + ref * reflection;
 #endif
 
-
+#if defined(LITMODE_LIT)
 
 	fixed3 diffuse = max(0, dot(normalDirection, normalize(_WorldSpaceLightPos0.xyz))) * _LightColor0.xyz;
 #if defined(DYNAMIC_LIGHT)
@@ -288,6 +330,9 @@ fixed4 frag(v2f i) : SV_Target
 	col.xyz = lerp(col.xyz, colspec.xyz, specular);
 	col.a = max(col.a, specular);
 #endif
+
+#endif //defined(LITMODE_LIT)
+
 
 #if defined(AMBIENTCOLOR)
 	col.xyz += _AmbientColor.xyz;
@@ -320,6 +365,13 @@ fixed4 frag(v2f i) : SV_Target
 #elif defined(FRESNEL) && defined(OPAQUESPECULAR)
 	col.a = max(fresnel, col.a);
 #endif
+
+#if defined(COLORMODE_BLENDTEX)
+	fixed4 ramp = tex2D(_RampTex, i.cap);
+	col = fixed4(lerp(col.xyz, ramp.xyz, ramp.w * _BlendAlpha), col.w);
+#endif
+
+
 
 #if defined(TINT)
 	col.a *= _Tint.a;

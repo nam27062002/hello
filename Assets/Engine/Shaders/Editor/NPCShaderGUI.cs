@@ -35,6 +35,14 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string stencilMaskText = "Stencil mask";
         readonly public static string cullModeText = "Cull Mode";
         readonly public static string opaqueAlphaText = "Opaque alpha";
+        readonly public static string litModeText = "Lit Mode";
+        readonly public static string blendAxisText = "Blend Axis";
+        readonly public static string blendUVScaleText = "uv scale";
+        readonly public static string blendUVOffsetText = "uv offset";
+        readonly public static string blendAlphaText = "Blend Alpha";
+        readonly public static string enableReflectionMapText = "Enable Reflection Map";
+        readonly public static string reflectionMapText = "Reflection map";
+        readonly public static string reflectionAmountText = "Reflection amount";
     }
 
     MaterialProperty mp_mainTexture;
@@ -45,6 +53,14 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     MaterialProperty mp_stencilMask;
     MaterialProperty mp_cullMode;
     MaterialProperty mp_opaqueAlpha;
+    MaterialProperty mp_litMode;
+    MaterialProperty mp_blendAxis;
+    MaterialProperty mp_blendUvScale;
+    MaterialProperty mp_blendUvOffset;
+    MaterialProperty mp_blendAlpha;
+    MaterialProperty mp_enableReflectionMap;
+    MaterialProperty mp_reflectionMap;
+    MaterialProperty mp_reflectionAmount;
 
     MaterialEditor m_materialEditor;
     
@@ -54,6 +70,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
 
     private bool m_npcDiffuseTransparent = false;
+    private bool m_npcDiffuseUnlit = false;
 
     //------------------------------------------------------------------------//
     // METHODS																  //
@@ -80,6 +97,19 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             mp_cullMode = FindProperty("_Cull", props);
             mp_opaqueAlpha = FindProperty("_OpaqueAlpha", props);
         }
+        mp_litMode = FindProperty("LitMode", props);
+
+        if (m_npcDiffuseUnlit)
+        {
+            mp_blendAxis = FindProperty("BlendAxis", props);
+            mp_blendUvScale = FindProperty("_BlendUVScale", props);
+            mp_blendUvOffset = FindProperty("_BlendUVOffset", props);
+            mp_blendAlpha = FindProperty("_BlendAlpha", props);
+            mp_enableReflectionMap = FindProperty("_EnableReflectionMap", props);
+            mp_reflectionMap = FindProperty("_ReflectionMap", props);
+            mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+        }
+
     }
 
     /// <summary>
@@ -91,6 +121,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         m_materialEditor = materialEditor;
         Material material = materialEditor.target as Material;
         m_npcDiffuseTransparent = material.shader.name.Contains("Transparent");
+        m_npcDiffuseUnlit = material.shader.name.Contains("Lit-Unlit");
 
         IniEditorSkin();
         FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
@@ -101,8 +132,24 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
+        if (m_npcDiffuseUnlit)
+        {
+//            materialEditor.ShaderProperty(mp_litMode, Styles.litModeText);
+            featureSet(mp_litMode, Styles.litModeText);
+        }
+
 
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
+
+
+        if (m_npcDiffuseUnlit)
+        {
+            if (featureSet(mp_enableReflectionMap, Styles.enableReflectionMapText))
+            {
+                materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText);
+                materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+            }
+        }
 
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.BeginVertical(editorSkin.customStyles[3]);
@@ -125,6 +172,17 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             case 3:
             case 4:
                 materialEditor.TextureProperty(mp_RampColor, Styles.rampColorText, false);
+                break;
+
+            case 5:
+                if (m_npcDiffuseUnlit)
+                {
+                    materialEditor.TextureProperty(mp_RampColor, Styles.rampColorText, false);
+                    materialEditor.ShaderProperty(mp_blendAxis, Styles.blendAxisText);
+                    materialEditor.ShaderProperty(mp_blendUvScale, Styles.blendUVScaleText);
+                    materialEditor.ShaderProperty(mp_blendUvOffset, Styles.blendUVOffsetText);
+                    materialEditor.ShaderProperty(mp_blendAlpha, Styles.blendAlphaText);
+                }
                 break;
 
         }
@@ -173,7 +231,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
     private bool featureSet(MaterialProperty feature, string label)
     {
-        EditorGUILayout.BeginVertical(editorSkin.customStyles[1]);
+        EditorGUILayout.BeginVertical(editorSkin.customStyles[3]);
         m_materialEditor.ShaderProperty(feature, label);
         EditorGUILayout.EndVertical();
 
