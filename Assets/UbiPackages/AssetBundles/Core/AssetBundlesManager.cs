@@ -288,9 +288,13 @@ public class AssetBundlesManager
                 {
                     handle.Setup(id, Downloadables.Manager.GetPathToDownload(id), dependencies, true);
                 }
-                else
+                else if (catalog.IsAssetBundleLocal(id))
                 {
                     handle.Setup(id, Path.Combine(localDirectory, id), dependencies, false);
+                }
+                else if (CanLog())
+                {
+                    Logger.LogError("Asset bundle <" + id + "> has been defined as remote in asset bundles catalog but it's not defined in the downloadables catalog.");
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
