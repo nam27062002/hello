@@ -1026,6 +1026,18 @@ public class AddressablesManager
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)
         {
+            if (CanLog())
+            {
+                string str = "Addressable id <" + id + "> ";
+                if (!string.IsNullOrEmpty(variant))
+                {
+                    str += "and variant <" + variant + "> "; 
+                }
+
+                str += " not found in addressables catalog so <" + id + "> will be used as relative path from Resources folder to the asset.";
+                LogWarning(str);
+            }
+
             entry = m_entryHelper;
             entry.SetupAsEntryInResources(id);
         }        
