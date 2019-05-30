@@ -715,6 +715,56 @@ public class AddressablesManager
         }
     }
 
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionRequested(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionRequested(groupId, value);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionGranted(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionGranted(groupId, value);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    

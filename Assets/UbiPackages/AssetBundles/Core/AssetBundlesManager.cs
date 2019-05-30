@@ -612,6 +612,26 @@ public class AssetBundlesManager
         DownloadablesManager.Groups_SetPriority(groupId, priority);
     }
 
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionRequested(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionRequested(groupId, value);
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionGranted(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionGranted(groupId, value);
+    }
+
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {
         AssetBundlesOpRequest returnValue;
@@ -1165,6 +1185,11 @@ public class AssetBundlesManager
     public List<Downloadables.CatalogGroup> GetDownloadablesGroupsSortedByPriority()
     {
         return m_downloadablesManager.Groups_GetSortedByPriority();
+    }
+
+    public Downloadables.CatalogGroup Groups_GetGroupAll()
+    {
+        return m_downloadablesManager.Groups_GetGroupAll();
     }
 
     public void DeleteAllDownloadables()

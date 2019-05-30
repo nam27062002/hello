@@ -200,6 +200,26 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         AssetBundlesManager.Instance.SetDownloadablesGroupPriority(groupId, priority);
     }
 
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetDownloadableGroupPermissionRequested(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        AssetBundlesManager.Instance.SetDownloadableGroupPermissionRequested(groupId, value);
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        return AssetBundlesManager.Instance.GetDownloadableGroupPermissionGranted(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        AssetBundlesManager.Instance.SetDownloadableGroupPermissionGranted(groupId, value);
+    }
+
     public bool IsAssetBundleRemote(string id)
     {
         return AssetBundlesManager.Instance.IsAssetBundleRemote(id);
