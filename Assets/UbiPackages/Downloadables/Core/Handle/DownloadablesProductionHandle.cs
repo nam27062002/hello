@@ -169,7 +169,7 @@ namespace Downloadables
             {
                 foreach (string groupId in GroupIds)
                 {
-					if (!sm_manager.Groups_GetPermissionRequested(groupId))
+					if (!sm_manager.Groups_GetIsPermissionRequested(groupId))
                     {
                         return true;
                     }
