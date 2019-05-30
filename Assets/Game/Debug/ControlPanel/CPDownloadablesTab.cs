@@ -28,7 +28,9 @@ public class CPDownloadablesTab : MonoBehaviour
     [SerializeField] private GameObject m_dumperRoot;
     [SerializeField] private TMP_Text m_dumperFillUpProgress;
     [SerializeField] private Button m_dumperFillUpDisk;
-    [SerializeField] private Button m_dumperCancelFillUpDisk;    
+    [SerializeField] private Button m_dumperCancelFillUpDisk;
+
+    private List<Downloadables.CatalogGroup> m_groupsSortedByPriorityFromManager;
 
     /// <summary>
     /// 
@@ -37,23 +39,28 @@ public class CPDownloadablesTab : MonoBehaviour
 		// Create group views     
         CPDownloadablesGroupView groupView = null;
         GameObject newInstance = null;
-        List<Downloadables.CatalogGroup> groupsSortedByPriority = AssetBundlesManager.Instance.GetDownloadablesGroupsSortedByPriority();        
-        if(groupsSortedByPriority != null) {
+
+        // Only one handle for all downloadables is used. 
+        m_groupsSortedByPriorityFromManager = new List<Downloadables.CatalogGroup>();
+        m_groupsSortedByPriorityFromManager.Add(AssetBundlesManager.Instance.Groups_GetGroupAll());
+        //m_groupsFromManager = AssetBundlesManager.Instance.GetDownloadablesGroupsSortedByPriority();                                
+                
+        if (m_groupsSortedByPriorityFromManager != null) {
 			// Cache data for further use
-            m_groupsSortedByPriority = groupsSortedByPriority.GetRange(0, groupsSortedByPriority.Count);
+            m_groupsSortedByPriority = m_groupsSortedByPriorityFromManager.GetRange(0, m_groupsSortedByPriorityFromManager.Count);
 
 			// Create a new view for each group
-            int count = groupsSortedByPriority.Count;
+            int count = m_groupsSortedByPriorityFromManager.Count;
             for(int i = 0; i < count; ++i) {
 				// Skip if the group doesn't have any bundle assinged
-                if(groupsSortedByPriority[i].EntryIds != null && groupsSortedByPriority[i].EntryIds.Count > 0) {
+                if(m_groupsSortedByPriorityFromManager[i].EntryIds != null && m_groupsSortedByPriorityFromManager[i].EntryIds.Count > 0) {
 					// Create instacne
                     newInstance = Instantiate(m_groupViewPrefab, m_groupViewsRoot);
                     newInstance.SetActive(true);
 
 					// Initialize group view
 					groupView = newInstance.GetComponent<CPDownloadablesGroupView>();
-					groupView.InitWithGroup(groupsSortedByPriority[i]);
+					groupView.InitWithGroup(m_groupsSortedByPriorityFromManager[i]);
 
 					// Set alternate row colors
 					groupView.SetBackgroundColor(m_groupBgColors[i % m_groupBgColors.Length]);
@@ -68,7 +75,7 @@ public class CPDownloadablesTab : MonoBehaviour
 		m_groupViewPrefab.SetActive(false);
 
         Dumper_Init();
-    }    
+    }       
 
 	/// <summary>
 	/// 
@@ -79,15 +86,16 @@ public class CPDownloadablesTab : MonoBehaviour
         {
             m_automaticDownloaderAllowedToggle.isOn = HDAddressablesManager.Instance.IsAutomaticDownloaderAllowed();
         }        
-    }
+    }    
 
 	/// <summary>
 	/// 
 	/// </summary>
     private void Update()
-    {                        
-		// Do groups need to be reordered?
-        List<Downloadables.CatalogGroup> groupsSortedByPriority = AssetBundlesManager.Instance.GetDownloadablesGroupsSortedByPriority();
+    {
+        // Do groups need to be reordered?
+        List<Downloadables.CatalogGroup> groupsSortedByPriority = m_groupsSortedByPriorityFromManager;
+
         int count = groupsSortedByPriority.Count;
         bool needsToUpdateGroupsOrder = count != m_groupsSortedByPriority.Count;
         if (!needsToUpdateGroupsOrder)
@@ -102,7 +110,7 @@ public class CPDownloadablesTab : MonoBehaviour
         {
             m_groupsSortedByPriority = groupsSortedByPriority.GetRange(0, groupsSortedByPriority.Count);
             UpdateGroupsOrder();
-        }		
+        }        		
 
 #if UNITY_EDITOR
         m_networkSpeedDropdown.value = NETWORK_SPEED_SLEEP_TIME_BY_MODE.IndexOf(MockNetworkDriver.MockThrottleSleepTime);

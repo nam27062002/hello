@@ -110,7 +110,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, JSONNode assetBundlesCatalogJSON, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         AddressablesBatchHandle.sm_manager = this;
 
@@ -144,7 +144,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
+        m_providerFromAB.Initialize(assetBundlesCatalogJSON, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -715,6 +715,56 @@ public class AddressablesManager
         }
     }
 
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionRequested(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionRequested(groupId, value);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionGranted(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionGranted(groupId, value);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
     /// <summary>
     /// Loads synchronously the scene corresponding to the addressable id <c>id</c>. This method assumes that all possible dependencies such as asset bundles needed to load the scene have already been downloaded and loaded.    
     /// </summary>    
@@ -976,6 +1026,18 @@ public class AddressablesManager
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)
         {
+            if (CanLog())
+            {
+                string str = "Addressable id <" + id + "> ";
+                if (!string.IsNullOrEmpty(variant))
+                {
+                    str += "and variant <" + variant + "> "; 
+                }
+
+                str += " not found in addressables catalog so <" + id + "> will be used as relative path from Resources folder to the asset.";
+                LogWarning(str);
+            }
+
             entry = m_entryHelper;
             entry.SetupAsEntryInResources(id);
         }        

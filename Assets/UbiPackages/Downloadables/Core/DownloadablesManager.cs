@@ -600,7 +600,7 @@ namespace Downloadables
                 CatalogEntryStatus entryToSimulateDownload = null;
                 for (int i = 0; i < count; i++)
                 {
-                    if (m_downloader.IsDownloadAllowed(Groups_GetPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
+                    if (m_downloader.IsDownloadAllowed(Groups_GetIsPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
                     {
                         if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
                         {
@@ -763,25 +763,16 @@ namespace Downloadables
             defaultGroup.Index = index;
             m_groupsSortedByPriority.Add(defaultGroup);
 
-                           
+
+            List<CatalogGroup> allOtherGroups = new List<CatalogGroup>();
+            foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+            {
+                allOtherGroups.Add(pair.Value);
+            }
+
             // A group containing all entries is created. It's not added the groups sorted by priority list because it contains all asset bundles
             CatalogGroup allGroup = new CatalogGroup();
-            allGroup.Setup(GROUPS_ALL_ID, allEntryIds);
-
-            bool allRequested = allGroup.PermissionRequested;
-            bool allGranted = allGroup.PermissionOverCarrierGranted;
-            if (allRequested)
-            {
-                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
-                {
-                    if (allRequested)
-                    {
-                        pair.Value.PermissionRequested = true;                    
-                        pair.Value.PermissionOverCarrierGranted = allGranted;
-                    }
-                }
-            }            
-
+            allGroup.Setup(GROUPS_ALL_ID, allEntryIds, allOtherGroups);            
             m_groups.Add(GROUPS_ALL_ID, allGroup);
 
             // We make sure that groups will be sorted by priority as they've just been created
@@ -824,7 +815,7 @@ namespace Downloadables
             return returnValue;
         }
 
-        public bool Groups_GetPermissionRequested(string groupId)
+        public bool Groups_GetIsPermissionRequested(string groupId)
         {
             bool returnValue = true;
 
@@ -1035,6 +1026,17 @@ namespace Downloadables
                 {
                     returnValue.Add(pair.Key);
                 }
+            }
+
+            return returnValue;
+        }
+
+        public CatalogGroup Groups_GetGroupAll()
+        {
+            CatalogGroup returnValue = null;
+            if (m_groups != null)
+            {
+                m_groups.TryGetValue(GROUPS_ALL_ID, out returnValue);
             }
 
             return returnValue;

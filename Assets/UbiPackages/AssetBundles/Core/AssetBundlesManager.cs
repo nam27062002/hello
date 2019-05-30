@@ -288,9 +288,13 @@ public class AssetBundlesManager
                 {
                     handle.Setup(id, Downloadables.Manager.GetPathToDownload(id), dependencies, true);
                 }
-                else
+                else if (catalog.IsAssetBundleLocal(id))
                 {
                     handle.Setup(id, Path.Combine(localDirectory, id), dependencies, false);
+                }
+                else if (CanLog())
+                {
+                    Logger.LogError("Asset bundle <" + id + "> has been defined as remote in asset bundles catalog but it's not defined in the downloadables catalog.");
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
@@ -610,6 +614,26 @@ public class AssetBundlesManager
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         DownloadablesManager.Groups_SetPriority(groupId, priority);
+    }
+
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionRequested(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionRequested(groupId, value);
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionGranted(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionGranted(groupId, value);
     }
 
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
@@ -1165,6 +1189,11 @@ public class AssetBundlesManager
     public List<Downloadables.CatalogGroup> GetDownloadablesGroupsSortedByPriority()
     {
         return m_downloadablesManager.Groups_GetSortedByPriority();
+    }
+
+    public Downloadables.CatalogGroup Groups_GetGroupAll()
+    {
+        return m_downloadablesManager.Groups_GetGroupAll();
     }
 
     public void DeleteAllDownloadables()

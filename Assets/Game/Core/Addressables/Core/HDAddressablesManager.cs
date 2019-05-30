@@ -29,38 +29,27 @@ public class HDAddressablesManager : AddressablesManager
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
-    public void Initialise()
+    public void Initialize()
     {
         Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
-        
-        string addressablesPath = "Addressables";
-        string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");        
 
-        // Addressables catalog 
-        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
-        string catalogAsText = (targetFile == null) ? null : targetFile.text;        
-        JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        // Addressables catalog     
+        string catalogAsText = GetAddressablesFileText("addressablesCatalog", true);
+        JSONNode catalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
         // Retrieves downloadables catalog
         // TODO: Retrieve this information from the assetsLUT cached
+        // Downloadables catalog        
         /*
-        string downloadablesPath = addressablesPath;
-        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog.json");
-        if (BetterStreamingAssets.FileExists(downloadablesCatalogPath))
-        {
-            catalogAsText = BetterStreamingAssets.ReadAllText(downloadablesCatalogPath);
-        }
-        JSONNode downloadablesCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        catalogAsText = GetAddressablesFileText("downloadablesCatalog", true);
+        JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         */
 
-        // Downloadables config
-        string downloadablesConfigPath = Path.Combine(addressablesPath, "downloadablesConfig");
-        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
-        JSONNode downloadablesConfigJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+        // Downloadables config        
+        catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
+        JSONNode downloadablesConfigAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
-        downloadablesConfig.Load(downloadablesConfigJSON, logger);
+        downloadablesConfig.Load(downloadablesConfigAsJSON, logger);
 
         // downloadablesCatalog is created out of latest assetsLUT
         ContentDeltaManager.ContentDeltaData assetsLUT = ContentDeltaManager.SharedInstance.m_kServerDeltaData;
@@ -72,16 +61,38 @@ public class HDAddressablesManager : AddressablesManager
         m_tracker = new HDDownloadablesTracker(downloadablesConfig, logger);
         JSONNode downloadablesCatalogAsJSON = AssetsLUTToDownloadablesCatalog(assetsLUT);
 
+        // AssetBundles catalog
+        catalogAsText = GetAddressablesFileText("assetBundlesCatalog", true);
+        JSONNode abCatalogAsJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
 #if UNITY_EDITOR && false
         bool useMockDrivers = true;
 #else
         Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
 	    bool useMockDrivers = (kServerConfig != null && kServerConfig.m_eBuildEnvironment != CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION);                       
 #endif
-        Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
+        Initialize(catalogAsJSON, abCatalogAsJSON, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
         InitDownloadableHandles();        
         InitAddressablesAreas();
+    }
+
+    private string GetAddressablesFileText(string fileName, bool platformDependent)
+    {
+#if UNITY_EDITOR
+        string path = "Assets/Editor/Addressables/generated/";
+        if (platformDependent)
+        {
+            path += UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        }
+
+        path += fileName + ".json";
+        return File.ReadAllText(path);
+#else
+        string path = "Addressables/" + fileName;                        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        return (targetFile == null) ? null : targetFile.text;
+#endif
     }
 
     private string GetEnvironmentUrlBase()
