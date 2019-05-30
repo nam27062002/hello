@@ -102,6 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224116699413527940}
   - component: {fileID: 114775040250494846}
+  - component: {fileID: 114776433868972630}
   m_Layer: 5
   m_Name: Loader
   m_TagString: Untagged
@@ -327,6 +328,11 @@ MonoBehaviour:
   m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
     type: 2}
   m_loadedInstance: {fileID: 0}
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114512290748788418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -619,14 +625,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9649da4a9db14f11878dd01de4afba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_resourcePath: /Users/msana/Workspace/Dragon/client_ios/Assets/Art/3D/Gameplay/Entities/Prefabs/Surface/PF_Shieldman
+  m_resourcePath: C:/Projects/dragon/client/Assets/Art/3D/Gameplay/Entities/Prefabs/Surface/PF_SpiderRed
   m_useFolderLevelInID: 1
-  m_assetId: Surface/PF_Shieldman
+  m_assetId: Surface/PF_SpiderRed
   m_loadOnAwake: 0
   m_container: {fileID: 224247421871104450}
   m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
     type: 2}
   m_loadedInstance: {fileID: 0}
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114776433868972630}
+        m_MethodName: Run
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+--- !u!114 &114776433868972630
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1413422861975094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b635a2879537c4409600d977afe763f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_childrenNames:
+  - FastLineRenderer
 --- !u!114 &114852880511023798
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -660,6 +695,11 @@ MonoBehaviour:
   m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
     type: 2}
   m_loadedInstance: {fileID: 0}
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114975969817457940
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -839,7 +879,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -10.431641, y: 48.15332}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224057262592008498
@@ -878,7 +918,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 900, y: -385}
+  m_AnchoredPosition: {x: 880, y: -385}
   m_SizeDelta: {x: 420, y: 630}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224186460995482744
@@ -906,17 +946,17 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1668267457052054}
-  m_LocalRotation: {x: 0, y: 0.9961947, z: 0, w: -0.08715589}
+  m_LocalRotation: {x: 0, y: 0.9396927, z: -0, w: -0.3420201}
   m_LocalPosition: {x: 0, y: 0, z: 0.00024414062}
   m_LocalScale: {x: 137.63077, y: 137.63077, z: 137.63077}
   m_Children: []
   m_Father: {fileID: 224116699413527940}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 220, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.237793, y: 6.941345}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -56.618896, y: -161.52933}
+  m_SizeDelta: {x: -106.76221, y: 336.94135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224413400612382132
 RectTransform:
