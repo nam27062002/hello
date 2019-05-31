@@ -83,8 +83,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
     static void GeneratePlayerCatalog()
     {
-        BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-        Manager.GeneratePlayerCatalog(target);
+        Manager.GeneratePlayerCatalogForAllPlatforms();
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG);
     }
     
@@ -147,7 +146,7 @@ public class EditorAddressablesMenu : MonoBehaviour
         }
 
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
-        Manager.GeneratePlayerCatalog(target);
+        Manager.GeneratePlayerCatalogForAllPlatforms();
         Manager.GenerateAssetBundlesCatalog(target);        
 
         if (AddressablesManager.Mode == AddressablesManager.EMode.Editor || AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)

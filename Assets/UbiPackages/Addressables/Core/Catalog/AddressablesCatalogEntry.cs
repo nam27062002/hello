@@ -67,7 +67,7 @@ public class AddressablesCatalogEntry
     public string Platform
     {
         get { return m_platform; }
-        private set { m_platform = value; }
+        set { m_platform = value; }
     }
 
     public bool IsAvailableForPlatform(UnityEditor.BuildTarget target)
@@ -86,7 +86,7 @@ public class AddressablesCatalogEntry
         Id = id;
         Variant = variant;
         GUID = gui;
-        m_editorMode = editorMode;
+        m_editorMode = editorMode;        
     }
 #endif
 

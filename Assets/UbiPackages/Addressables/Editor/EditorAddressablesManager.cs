@@ -48,18 +48,12 @@ public class EditorAddressablesManager
 
     private const string ADDRESSABLES_LOCAL_FOLDER_NAME = "Addressables";
 
-    private string m_localDestinationPath;
-    private string m_localDestinationPlatformPath;
-    private string m_editorCatalogFolderParent;    
-    private string m_playerCatalogPath;
+    private string m_localDestinationPath;        
     private string m_assetBundlesLocalDestinationPath;        
 
     public EditorAddressablesManager()
     {        
-        m_localDestinationPath = ADDRESSABLES_EDITOR_GENERATED_PATH;
-        m_localDestinationPlatformPath = EditorFileUtils.GetPlatformDirectory(m_localDestinationPath);
-
-        m_playerCatalogPath = EditorFileUtils.PathCombine(m_localDestinationPlatformPath, ADDRESSSABLES_CATALOG_FILENAME);        
+        m_localDestinationPath = ADDRESSABLES_EDITOR_GENERATED_PATH;        
 		m_assetBundlesLocalDestinationPath = EditorAssetBundlesManager.ASSET_BUNDLES_LOCAL_FOLDER;
     }
 
@@ -88,19 +82,28 @@ public class EditorAddressablesManager
         Debug.Log("Customizing editor catalog...");
     }
 
+    public void GeneratePlayerCatalogForAllPlatforms()
+    {
+        // Player addressables catalog is generated for both platforms so the game will work on both platforms in Editor and AllInResources modes, which are the modes that can work without generating 
+        // asset bundles, which makes development easier.        
+        GeneratePlayerCatalog(BuildTarget.iOS);
+        GeneratePlayerCatalog(BuildTarget.Android);
+    }
+    
     public void GeneratePlayerCatalog(BuildTarget target)
     {
-        Debug.Log("Generating player catalog...");
+        Debug.Log("Generating player catalog for " + target.ToString() + "...");
 
-        if (EditorFileUtils.Exists(m_playerCatalogPath))
+        string filePath = GetGeneratedAddressablesCatalogPath(target);
+        if (EditorFileUtils.Exists(filePath))
         {
-            EditorFileUtils.DeleteFileOrDirectory(m_playerCatalogPath);            
+            EditorFileUtils.DeleteFileOrDirectory(filePath);            
         }
         
-        EditorFileUtils.CreateDirectory(m_localDestinationPath);
-        EditorFileUtils.CreateDirectory(m_localDestinationPlatformPath);        
+        EditorFileUtils.CreateDirectory(m_localDestinationPath);                
+        EditorFileUtils.CreateDirectory(GetGeneratedAddressablesCatalogFolder(target));        
 
-        BuildCatalog(m_playerCatalogPath, AddressablesTypes.EProviderMode.AsCatalog, target);
+        BuildCatalog(filePath, AddressablesTypes.EProviderMode.AsCatalog, target);
     }
 
     private static string GENERATED_IN_PLAYER_ASSETS_LUT_FOLDER = "Assets/Resources/AssetsLUT/";
@@ -211,7 +214,7 @@ public class EditorAddressablesManager
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         ClearBuild(target);
         CustomizeEditorCatalog();
-        GeneratePlayerCatalog(target);
+        GeneratePlayerCatalogForAllPlatforms();        
 
         if (AddressablesManager.Mode_NeedsAssetBundles())
         {
@@ -342,19 +345,29 @@ public class EditorAddressablesManager
         }
     }
 
-    private string GetGeneratedAddressablesCatalogFolder()
+    private string GetGeneratedAddressablesCatalogFolder(BuildTarget target = BuildTarget.NoTarget)
     {
-        return m_localDestinationPlatformPath;
+        if (target == BuildTarget.NoTarget)
+        {
+            target = EditorUserBuildSettings.activeBuildTarget;
+        }
+
+        return Path.Combine(m_localDestinationPath, target.ToString());
     }
 
-    private string GetGeneratedAddressablesCatalogPath()
+    private string GetGeneratedAddressablesCatalogPath(BuildTarget target = BuildTarget.NoTarget)
     {
-        return Path.Combine(GetGeneratedAddressablesCatalogFolder(), AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME);
-    }
+        if (target == BuildTarget.NoTarget)
+        {
+            target = EditorUserBuildSettings.activeBuildTarget;
+        }
+
+        return Path.Combine(GetGeneratedAddressablesCatalogFolder(target), AddressablesManager.ADDRESSSABLES_CATALOG_FILENAME);
+    }    
 
     private string GetGeneratedAssetBundlesCatalogFolder()
     {
-        return m_localDestinationPlatformPath;        
+        return EditorFileUtils.GetPlatformDirectory(m_localDestinationPath);
     }
 
     private string GetGeneratedAssetBundlesCatalogPath()
@@ -420,7 +433,7 @@ public class EditorAddressablesManager
             abCatalog.SetExplicitLocalAssetBundlesList(editorCatalog.GetLocalABList());
 
 			JSONNode json = abCatalog.ToJSON();
-			EditorFileUtils.CreateDirectory(m_localDestinationPlatformPath);
+			EditorFileUtils.CreateDirectory(GetGeneratedAssetBundlesCatalogFolder());
 			EditorFileUtils.WriteToFile(path, json.ToString());     
 
             if (manifestBundle != null)
