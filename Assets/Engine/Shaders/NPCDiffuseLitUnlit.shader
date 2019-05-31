@@ -7,7 +7,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 	
-		[KeywordEnum(None, Tint, Gradient, ColorRamp, ColorRampMasked, BlendTex)] ColorMode("Color mode", Float) = 0.0
+		[KeywordEnum(None, Tint, Gradient, ColorRamp, ColorRampMasked)] ColorMode("Color mode", Float) = 0.0
 		[KeywordEnum(Unlit, Lit)] LitMode("Lit mode", Float) = 0.0
 
 		_Tint1("Tint Color 1", Color) = (1,1,1,1)

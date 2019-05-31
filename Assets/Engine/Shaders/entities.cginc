@@ -44,7 +44,7 @@ struct v2f
 
 	float2 uv : TEXCOORD0;
 
-#if defined(MATCAP) || defined(FREEZE) || defined(COLORMODE_BLENDTEX)
+#if defined(MATCAP) || defined(FREEZE)
 	float2 cap : TEXCOORD1;
 #endif
 
@@ -130,15 +130,9 @@ uniform float4 _Tint1;
 #elif defined(COLORMODE_GRADIENT)
 uniform float4 _Tint1;
 uniform float4 _Tint2;
-#elif defined(COLORMODE_COLORRAMP) || defined(COLORMODE_COLORRAMPMASKED) || defined(COLORMODE_BLENDTEX)
+#elif defined(COLORMODE_COLORRAMP) || defined(COLORMODE_COLORRAMPMASKED)
 uniform sampler2D _RampTex;
 uniform float4 _RampTex_TexelSize;
-
-#if defined(COLORMODE_BLENDTEX)
-uniform float _BlendUVScale;
-uniform float _BlendUVOffset;
-uniform float _BlendAlpha;
-#endif
 
 #endif
 
@@ -214,17 +208,8 @@ v2f vert(appdata_t v)
 	float3 worldNorm = normalize(unity_WorldToObject[0].xyz * v.normal.x + unity_WorldToObject[1].xyz * v.normal.y + unity_WorldToObject[2].xyz * v.normal.z);
 	worldNorm = mul((float3x3)UNITY_MATRIX_V, worldNorm);
 	o.cap.xy = worldNorm.xy * 0.5 + 0.5;
-#elif defined(COLORMODE_BLENDTEX)
-
-#if defined(BLENDAXIS_X)
-	o.cap.xy = (v.vertex.xy + _BlendUVOffset) * _BlendUVScale;
-#elif defined(BLENDAXIS_Y)
-	o.cap.xy = (v.vertex.yx + _BlendUVOffset) * _BlendUVScale;
-#elif defined(BLENDAXIS_Z)
-	o.cap.xy = (v.vertex.zy + _BlendUVOffset) * _BlendUVScale;
 #endif
 
-#endif
 	return o;
 }
 
@@ -245,12 +230,6 @@ fixed4 frag(v2f i) : SV_Target
 	fixed vy = (floor(diff.y + 0.5) * 2.0) + floor(diff.z + 0.5) + 0.5;
 	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
-/*
-#elif defined(COLORMODE_BLENDTEX)
-	fixed4 diff = tex2D(_MainTex, i.uv);
-	fixed4 col = tex2D(_RampTex, i.cap);
-	col = fixed4(lerp(diff.xyz, col.xyz, col.w * _BlendAlpha), diff.w);
-*/
 #else
 	fixed4 col = tex2D(_MainTex, i.uv);
 #endif
@@ -365,13 +344,6 @@ fixed4 frag(v2f i) : SV_Target
 #elif defined(FRESNEL) && defined(OPAQUESPECULAR)
 	col.a = max(fresnel, col.a);
 #endif
-
-#if defined(COLORMODE_BLENDTEX)
-	fixed4 ramp = tex2D(_RampTex, i.cap);
-	col = fixed4(lerp(col.xyz, ramp.xyz, ramp.w * _BlendAlpha), col.w);
-#endif
-
-
 
 #if defined(TINT)
 	col.a *= _Tint.a;

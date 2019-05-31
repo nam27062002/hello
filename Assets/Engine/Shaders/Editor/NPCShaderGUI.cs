@@ -54,10 +54,6 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     MaterialProperty mp_cullMode;
     MaterialProperty mp_opaqueAlpha;
     MaterialProperty mp_litMode;
-    MaterialProperty mp_blendAxis;
-    MaterialProperty mp_blendUvScale;
-    MaterialProperty mp_blendUvOffset;
-    MaterialProperty mp_blendAlpha;
     MaterialProperty mp_enableReflectionMap;
     MaterialProperty mp_reflectionMap;
     MaterialProperty mp_reflectionAmount;
@@ -101,10 +97,6 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
         if (m_npcDiffuseUnlit)
         {
-            mp_blendAxis = FindProperty("BlendAxis", props);
-            mp_blendUvScale = FindProperty("_BlendUVScale", props);
-            mp_blendUvOffset = FindProperty("_BlendUVOffset", props);
-            mp_blendAlpha = FindProperty("_BlendAlpha", props);
             mp_enableReflectionMap = FindProperty("_EnableReflectionMap", props);
             mp_reflectionMap = FindProperty("_ReflectionMap", props);
             mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
@@ -173,18 +165,6 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             case 4:
                 materialEditor.TextureProperty(mp_RampColor, Styles.rampColorText, false);
                 break;
-
-            case 5:
-                if (m_npcDiffuseUnlit)
-                {
-                    materialEditor.TextureProperty(mp_RampColor, Styles.rampColorText, false);
-                    materialEditor.ShaderProperty(mp_blendAxis, Styles.blendAxisText);
-                    materialEditor.ShaderProperty(mp_blendUvScale, Styles.blendUVScaleText);
-                    materialEditor.ShaderProperty(mp_blendUvOffset, Styles.blendUVOffsetText);
-                    materialEditor.ShaderProperty(mp_blendAlpha, Styles.blendAlphaText);
-                }
-                break;
-
         }
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[3]);
