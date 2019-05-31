@@ -54,12 +54,25 @@ public class AddressablesCatalogEntry
 
 #if UNITY_EDITOR
     private const string ATT_GUID = "guid";
+    private const string ATT_PLATFORM = "platform";
 
     private string m_guid;
     public string GUID
     {
         get { return m_guid; }
         private set { m_guid = value; }
+    }
+
+    private string m_platform;
+    public string Platform
+    {
+        get { return m_platform; }
+        private set { m_platform = value; }
+    }
+
+    public bool IsAvailableForPlatform(UnityEditor.BuildTarget target)
+    {
+        return m_platform == null || m_platform == target.ToString();
     }
 
     private bool m_editorMode;
@@ -143,6 +156,9 @@ public class AddressablesCatalogEntry
             {
                 LogLoadAttributeError(att, value);
             }
+
+            att = ATT_PLATFORM;
+            Platform = data[att];
 #endif
 
             // Asset Bundle name            
@@ -192,6 +208,11 @@ public class AddressablesCatalogEntry
         {
             AddToJSON(data, ATT_GUID, GUID);            
             needsToAddAssetBundleName = true;
+
+            if (!string.IsNullOrEmpty(Platform))
+            {
+                AddToJSON(data, ATT_PLATFORM, Platform);
+            }
         }
 #endif
         if (needsToAddAssetBundleName)
