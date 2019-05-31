@@ -83,7 +83,8 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG)]
     static void GeneratePlayerCatalog()
     {
-        Manager.GeneratePlayerCatalog();
+        BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+        Manager.GeneratePlayerCatalog(target);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_PLAYER_CATALOG);
     }
     
@@ -101,7 +102,8 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG)]
     static void GenerateAssetBundlesCatalog()
     {
-        Manager.GenerateAssetBundlesCatalog();
+        BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+        Manager.GenerateAssetBundlesCatalog(target);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG);
     }    
 
@@ -144,8 +146,9 @@ public class EditorAddressablesMenu : MonoBehaviour
             Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
         }
 
-        Manager.GeneratePlayerCatalog();
-        Manager.GenerateAssetBundlesCatalog();        
+        BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
+        Manager.GeneratePlayerCatalog(target);
+        Manager.GenerateAssetBundlesCatalog(target);        
 
         if (AddressablesManager.Mode == AddressablesManager.EMode.Editor || AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
         {
