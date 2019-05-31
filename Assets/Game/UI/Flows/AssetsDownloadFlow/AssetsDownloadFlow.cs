@@ -47,6 +47,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	// Internal logic
 	private bool m_enabled = true;
 	private Downloadables.Handle m_handle = null;
+	public Downloadables.Handle handle {
+		get { return m_handle; }
+	}
 	private PopupController m_queuedPopup = null;   // We'll only allow one popup per flow
 	private bool m_restartAnim = false;
 
