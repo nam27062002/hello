@@ -114,42 +114,46 @@ namespace LevelEditor {
 					if(!levelLoaded) {
 						EditorGUILayout.HelpBox("A Spawners scene is required", MessageType.Error);
 					} else {
-						// Show/Create spawn point
-						GameObject spawnPointObj = null;
-						if(levelLoaded) spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false);
-						if(spawnPointObj == null) {
-							GUI.enabled = levelLoaded && !playing;
-							if(GUILayout.Button("Create Spawn for " + newDragon)) {
-								spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, true);
-								EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);
-								EditorUtils.FocusObject(spawnPointObj);
-								Tools.current = Tool.Move;
-							}
-						} else {
-							GUI.enabled = levelLoaded;
-							if(GUILayout.Button("Show Spawn for " + newDragon)) {
-								EditorUtils.FocusObject(spawnPointObj);
-								Tools.current = Tool.Move;
-							}
-						}
+                        // Show/Create spawn point
+                        GameObject spawnPointObj = null;
 
-						// Focus default spawn point
-						GUI.enabled = levelLoaded;
-						if(GUILayout.Button("Show Default Spawn")) {
-							spawnPointObj = spawnersLevel.GetDragonSpawnPoint("", true);
-							EditorUtils.FocusObject(spawnPointObj);
-							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
-							Tools.current = Tool.Move;
-						}
+                        // Focus default spawn point
+                        GUI.enabled = levelLoaded;
+                        spawnPointObj = spawnersLevel.GetDragonSpawnPoint("", false, false);
+                        if (spawnPointObj == null && !playing) {
+                            if (GUILayout.Button("Create Default Spawn")) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint("", true));
+                            }
+                        } else {
+                            if (GUILayout.Button("Show Default Spawn")) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint("", false));
+                            }
+                        }
+
+                        GUI.enabled = levelLoaded;
+                        spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false, false);
+                        if (spawnPointObj == null && !playing) {
+                            if (GUILayout.Button("Create Spawn for " + newDragon)) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(newDragon, true));
+                            }
+                        } else {
+                            if (GUILayout.Button("Show Spawn for " + newDragon)) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(newDragon, false));
+                            }
+                        }
 
 						// Focus Level Editor spawn point
 						GUI.enabled = levelLoaded;
-						if(GUILayout.Button("Show Level Editor Spawn")) {
-							spawnPointObj = spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, true);
-							EditorUtils.FocusObject(spawnPointObj);
-							EditorUtils.SetObjectIcon(spawnPointObj, EditorUtils.ObjectIcon.LABEL_ORANGE);	// Make sure we can see something :P
-							Tools.current = Tool.Move;
-						}
+                        spawnPointObj = spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, false, false);
+                        if (spawnPointObj == null && !playing) {
+                            if (GUILayout.Button("Create Level Editor Spawn")) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, true));
+                            }
+                        } else {
+                            if (GUILayout.Button("Show Level Editor Spawn")) {
+                                ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, false));
+                            }
+                        }
 
 						GUI.enabled = true;
 					}
@@ -160,6 +164,14 @@ namespace LevelEditor {
 		//--------------------------------------------------------------------//
 		// INTERNAL METHODS													  //
 		//--------------------------------------------------------------------//
+
+        private void ConfigureSpawnObj(GameObject _go) {
+            if (_go != null) {
+                EditorUtils.FocusObject(_go);
+                EditorUtils.SetObjectIcon(_go, EditorUtils.ObjectIcon.LABEL_ORANGE);  // Make sure we can see something :P
+                Tools.current = Tool.Move;
+            }
+        }
 
 		//--------------------------------------------------------------------//
 		// CALLBACKS														  //
