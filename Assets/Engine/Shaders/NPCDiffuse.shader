@@ -8,6 +8,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 		_MainTex ("Texture", 2D) = "white" {}
 	
 		[KeywordEnum(None, Tint, Gradient, ColorRamp, ColorRampMasked)] ColorMode("Color mode", Float) = 0.0
+		[KeywordEnum(Unlit, Lit)] LitMode("Lit mode", Float) = 1.0
 
 		_Tint1("Tint Color 1", Color) = (1,1,1,1)
 		_Tint2("Tint Color 2", Color) = (1,1,1,1)
@@ -38,13 +39,16 @@ Shader "Hungry Dragon/NPC/NPC Diffuse"
 
 			#pragma multi_compile __ FREEZE
 			#pragma multi_compile __ TINT
-			#pragma multi_compile COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED
+			#pragma shader_feature COLORMODE_NONE COLORMODE_TINT COLORMODE_GRADIENT COLORMODE_COLORRAMP COLORMODE_COLORRAMPMASKED COLORMODE_BLENDTEX
+			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
 
 			#define OPAQUEALPHA
+
+			#define LITMODE_LIT
 
 			#include "entities.cginc"
 			ENDCG

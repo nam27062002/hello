@@ -22,7 +22,8 @@ public class MenuDragonLoader : MonoBehaviour {
 	public enum Mode {
 		CURRENT_DRAGON,		// Automatically loads and updates CURRENT dragon (DragonManager.currentDragon)
 		SELECTED_DRAGON,	// Automatically loads and updates SELECTED dragon (MenuSceneController.selectedDragon)
-		MANUAL				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
+		MANUAL,				// Manual control via the LoadDragon() method and the exposed m_dragonSku parameter
+        TOURNAMENT
 	}
 
 	//------------------------------------------------------------------//
@@ -290,8 +291,8 @@ public class MenuDragonLoader : MonoBehaviour {
 		m_dragonInstance = newInstance.GetComponent<MenuDragonPreview>();
 		m_dragonInstance.SetAnim(m_anim);
 
-		// Reset scale if required
-		if(m_resetDragonScale) {
+        // Reset scale if requiredDragonData
+        if (m_resetDragonScale) {
 			m_dragonInstance.transform.localScale = Vector3.one;
 		}
 
@@ -380,7 +381,12 @@ public class MenuDragonLoader : MonoBehaviour {
 			case Mode.MANUAL: {
 				LoadDragon(currentDragonSku, currentDisguiseSku);
 			} break;
-		}
+
+            case Mode.TOURNAMENT: {
+                    IDragonData dragonData = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+                    LoadDragon(dragonData.sku);
+                } break;
+        }
 	}
 
 	/// <summary>

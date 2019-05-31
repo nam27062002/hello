@@ -571,7 +571,12 @@ public class GameSceneController : GameSceneControllerBase {
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 
                 if (HDLiveDataManager.tournament.isActive) {
-                    m_levelLoader = LevelManager.LoadLevelForDragon(HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.sku);
+                    HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+                    if (string.IsNullOrEmpty(tournamentDef.m_goal.m_area)) {
+                        m_levelLoader = LevelManager.LoadLevelForDragon(tournamentDef.dragonData.sku);
+                    } else {
+                        m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);  
+                    }
                 } else {
                     m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
                 }
