@@ -134,6 +134,9 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet);
 
+        // AR (only for iOS)
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, null, BuildTarget.iOS);
+
         _entries = entries;
         _bundles = bundlesSet.ToList();
     }
@@ -169,11 +172,16 @@ public static class EditorAutomaticAddressables {
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/3D/Gameplay/Pets/Prefabs/"), false, entries, bundlesSet, instanciableTypes);
         GetEntriesFromDirectory(new DirectoryInfo("Assets/Art/UI/Metagame/Pets/"), false, entries, bundlesSet, instanciableTypesTextures);
 
+        // AR (only for iOS)
+        GetEntriesFromDirectory(new DirectoryInfo("Assets/PlatformResources/iOS/AR/Animojis/"), false, entries, bundlesSet, instanciableTypes, BuildTarget.iOS);
+
         _entries = entries;
         _bundles = bundlesSet.ToList();
     }
 
-    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null) {
+    private static void GetEntriesFromDirectory(DirectoryInfo _directory, bool _addLastFolder,  List<AddressablesCatalogEntry> _entries, HashSet<string> _bundles, System.Type[] _allowedTypes = null, BuildTarget platform = BuildTarget.NoTarget) {
+        string platformAsString = (platform == BuildTarget.NoTarget) ? null : platform.ToString();
+
         DirectoryInfo[] directories = _directory.GetDirectories();
         foreach (DirectoryInfo directory in directories) {
             GetEntriesFromDirectory(directory, _addLastFolder, _entries, _bundles, _allowedTypes);
@@ -221,7 +229,8 @@ public static class EditorAutomaticAddressables {
                         AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true) {
                             LocationType = AddressablesTypes.ELocationType.AssetBundles,
                             AssetName = assetName,
-                            AssetBundleName = assetBundle
+                            AssetBundleName = assetBundle,
+                            Platform = platformAsString                                                        
                         };
 
 
