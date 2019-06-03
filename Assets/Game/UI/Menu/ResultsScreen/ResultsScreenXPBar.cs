@@ -133,7 +133,7 @@ public class ResultsScreenXPBar : DragonXPBar {
 		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
 		if(m_nextDragonData != null) {
             string defaultIcon = IDragonData.GetDefaultDisguise(m_nextDragonData.def.sku).Get("icon");
-			m_nextDragonIcon.sprite = Resources.Load<Sprite>(defaultIcon);
+			m_nextDragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
 			m_nextDragonRoot.SetActive(true);
 		} else {
 			m_nextDragonRoot.SetActive(false);
