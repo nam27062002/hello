@@ -8,6 +8,7 @@ public class ModifierIcon : MonoBehaviour {
 	[SerializeField] private TextMeshProUGUI m_text;
 
 	[Space]
+	[SerializeField] private bool m_shortText = true;
 	[SerializeField][Range(0, 1)] private float m_tooltipArrowOffset = 0.5f;
 
 
@@ -31,7 +32,11 @@ public class ModifierIcon : MonoBehaviour {
 		}
 
 		if (m_text != null) {
-			m_text.text = m_def.GetDescriptionShort();
+			if(m_shortText) {
+				m_text.text = m_def.GetDescriptionShort();
+			} else {
+				m_text.text = m_def.GetDescription();
+			}
 		}
 	}
 
