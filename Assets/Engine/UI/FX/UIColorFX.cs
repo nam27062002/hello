@@ -209,6 +209,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 			// Make sure materials are valid
 			m_materialDirty = true;
 			m_dirty = true;
+			transform.hasChanged = false;
 		}
 #endif
 

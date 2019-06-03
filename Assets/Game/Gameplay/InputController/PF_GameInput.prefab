@@ -64,6 +64,7 @@ MonoBehaviour:
   touchAction: 0
   m_dpadObj: {fileID: 0}
   m_dpadDotObj: {fileID: 0}
+  m_dpadBoost: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -86,6 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33e18b5a18ff5f149b0ddf5c59366a73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_inputModule: {fileID: 0}
 --- !u!114 &114432848181361590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -97,8 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6800246bc7440d483eea1e61297791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_defaultTiltSensitivity: 0.5
   m_tiltSensitivityScaleMin: 5
   m_tiltSensitivityScaleMax: 100
+  m_dodgyCalibratePosition: 0.475
+  m_tiltFilter: 0.1
   m_touchAction: 0
   m_debugUI: {fileID: 0}
   m_debugClampedLine: {fileID: 0}

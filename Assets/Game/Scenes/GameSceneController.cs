@@ -570,11 +570,17 @@ public class GameSceneController : GameSceneControllerBase {
 				// Start loading current level
 				LevelManager.SetCurrentLevel(UsersManager.currentUser.currentLevel);
 
-                // We're coming from menu which might have loaded some asset bundles. We need to unload them before going to the game in order to make sure that 
-                // asset bundles required by menu don't stay in memory
-                HDAddressablesManager.Instance.UnloadAllDependencies();
-
-                m_levelLoader = LevelManager.LoadLevel();
+                if (HDLiveDataManager.tournament.isActive) {
+                    HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+                    if (string.IsNullOrEmpty(tournamentDef.m_goal.m_area)) {
+                        m_levelLoader = LevelManager.LoadLevelForDragon(tournamentDef.dragonData.sku);
+                    } else {
+                        m_levelLoader = LevelManager.LoadLevel(tournamentDef.m_goal.m_area);  
+                    }
+                } else {
+                    m_levelLoader = LevelManager.LoadLevelForDragon(DragonManager.currentDragon.sku);
+                }
+                
                 m_levelLoader.Perform(m_useSyncLoading);
 
                 PoolManager.PreBuild();

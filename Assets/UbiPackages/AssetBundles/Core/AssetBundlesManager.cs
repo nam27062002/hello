@@ -451,6 +451,22 @@ public class AssetBundlesManager
     }
 
     /// <summary>
+    /// Returns whether or not the asset bundle is remote    
+    /// </summary>  
+    public bool IsAssetBundleRemote(string id)
+    {
+        bool returnValue = IsAssetBundleValid(id);
+        if (returnValue)
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            returnValue = handle.IsRemote();            
+        }
+
+        return returnValue;
+    }
+
+
+    /// <summary>
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
     /// which means that either the asset bundle is local or it's remote and it has already been downloaded.
     /// </summary>  

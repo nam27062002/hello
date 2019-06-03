@@ -39,7 +39,6 @@ public class ShareScreenTournament : IShareScreen {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private Image m_tournamentIcon = null;
 	[SerializeField] private TextMeshProUGUI m_tournamentDescriptionText = null;
 	[SerializeField] private Localizer m_remainingTimeText = null;
 	[Space]
@@ -69,11 +68,7 @@ public class ShareScreenTournament : IShareScreen {
 		// Aux vars
 		HDTournamentManager tournament = HDLiveDataManager.tournament;
 
-		// Initialize UI elements
-		// Tournament icon
-		if(m_tournamentIcon != null) {
-			m_tournamentIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + tournament.tournamentData.tournamentDef.m_goal.m_icon);
-		}
+        // Initialize UI elements
 
 		// Tournament description
 		if(m_tournamentDescriptionText != null) {
@@ -104,7 +99,7 @@ public class ShareScreenTournament : IShareScreen {
 			int finalRank = Mathf.Min(playerRank + setup.pillsAfter, 99);    // Max 100, 0-indexed
 			List<HDTournamentData.LeaderboardLine> tournamentLeaderboard = tournament.tournamentData.m_leaderboard;
 			List<HDTournamentData.LeaderboardLine> lines = new List<HDTournamentData.LeaderboardLine>();
-			for(int i = startRank; i < finalRank; ++i) {
+			for(int i = startRank; i < finalRank && i < tournamentLeaderboard.Count; ++i) {
 				lines.Add(tournamentLeaderboard[i]);
 			}
 
@@ -117,6 +112,29 @@ public class ShareScreenTournament : IShareScreen {
 				}
 			);
 		}
+	}
+
+	//------------------------------------------------------------------------//
+	// PARENT OVERRIDES														  //
+	//------------------------------------------------------------------------//
+	/// <summary>
+	/// Get the prewritten caption for the current setup.
+	/// Override for custom formatting.
+	/// </summary>
+	/// <returns>The prewritten caption, already localized.</returns>
+	protected override string GetPrewrittenCaption() {
+		// Check location
+		if(m_shareLocationDef == null) return string.Empty;
+
+		// Use different TIDs based on leaderboard position
+		long playerRank = HDLiveDataManager.tournament.tournamentData.m_rank;
+		string tid = m_shareLocationDef.GetAsString("tidPrewrittenCaption");
+		if(playerRank < 3) {	// Top 3
+			tid += "01";    // No way :open_mouth: - I'm in the top 3 of the Tournament in #HungryDragon ! :trophy: %U0
+		} else {
+			tid += "02";    // Check out my ranking in #HungryDragon ! :blush: :trophy: %U0
+		}
+		return m_shareLocationDef.GetLocalized(tid, m_url);  // URL is always a parameter
 	}
 
 	//------------------------------------------------------------------------//
@@ -261,4 +279,5 @@ public class ShareScreenTournament : IShareScreen {
 			}
 		);
 	}
+
 }

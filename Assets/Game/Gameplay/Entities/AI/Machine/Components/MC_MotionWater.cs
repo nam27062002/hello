@@ -44,7 +44,7 @@ namespace AI {
 				m_velocity = m_pilot.impulse;
 			}
 
-			m_rbody.angularVelocity = GameConstants.Vector3.zero;
+			///m_rbody.angularVelocity = GameConstants.Vector3.zero;
 			m_rbody.velocity = m_velocity + m_externalVelocity;
 		}
 

@@ -18,7 +18,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 
 	[SeparatorAttribute("Goal")]
     [SerializeField] private TextMeshProUGUI m_goalText = null;
-    [SerializeField] private Image m_goalIcon = null;
+    [SerializeField] private BaseIcon m_goalIcon = null;
 
 	[SeparatorAttribute("Modifiers")]
     [SerializeField] private ModifierIcon[] m_modifier = null;
@@ -112,9 +112,17 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
             m_playButton.interactable = true;
 
             if (m_definition != null) {
+
                 //GOALS
                 m_goalText.text = m_tournament.GetDescription();
-                m_goalIcon.sprite = Resources.Load<Sprite>(UIConstants.LIVE_EVENTS_ICONS_PATH + m_definition.m_goal.m_icon);
+
+                // Get the icon definition
+                string iconSku = m_definition.m_goal.m_icon;
+
+                // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+                m_goalIcon.LoadIcon(iconSku);
+                m_goalIcon.gameObject.SetActive(true);
+
 
                 //MODIFIERS
                 List<IModifierDefinition> mods = new List<IModifierDefinition>();

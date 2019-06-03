@@ -55,6 +55,24 @@ public class AddressablesManager
         AllInLocalAssetBundles,    
         AllInResources    
     };
+		
+	private static List<string> EModeKeys = new List<string>(System.Enum.GetNames(typeof(EMode)));
+    public static EMode KeyToMode(string key)
+    {
+        EMode returnValue = EMode.Editor;
+        int index = EModeKeys.IndexOf(key);
+        if (index > -1) 
+        {
+            returnValue = (EMode)index;
+        }
+
+		return returnValue;
+    }
+
+	public static string ModeToKey(EMode mode)
+	{
+		return EModeKeys [(int)mode];
+	}
 
     private static string MODE_KEY = "mode";
     public static EMode Mode
@@ -94,6 +112,8 @@ public class AddressablesManager
         
     public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
+        AddressablesBatchHandle.sm_manager = this;
+
         sm_logger = logger;
 
         bool buildCatalog = true;
@@ -476,6 +496,47 @@ public class AddressablesManager
         }
     }
 
+    /// <summary>
+    /// Fills a list with the ids of the asset bundles currently loaded.
+    /// </summary>    
+    public void FillWithLoadedAssetBundleIdList(List<string> ids)
+    {        
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (Mode != EMode.Editor)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.FillWithLoadedAssetBundleIdList(ids);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }        
+    }
+
+    public bool isDependencyIdDownloadable(string dependencyId)
+    {
+        bool returnValue = false;
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (Mode != EMode.Editor)
+#endif
+            {
+                returnValue = m_providerFromAB.IsAssetBundleRemote(dependencyId);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
     {
         List<string> returnValue = null;
@@ -519,7 +580,7 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }    
+    }        
 
     public Downloadables.Handle CreateDownloadablesHandle(string groupId)
     {

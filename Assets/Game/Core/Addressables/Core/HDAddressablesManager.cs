@@ -80,7 +80,8 @@ public class HDAddressablesManager : AddressablesManager
 #endif
         Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
-        InitDownloadableHandles();
+        InitDownloadableHandles();        
+        InitAddressablesAreas();
     }
 
     private string GetEnvironmentUrlBase()
@@ -112,7 +113,7 @@ public class HDAddressablesManager : AddressablesManager
                     break;
 
                 case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
                     break;
             }
 
@@ -195,13 +196,25 @@ public class HDAddressablesManager : AddressablesManager
         }
     }
 
+    public UbiAsyncOperation LoadDependenciesAndSceneAsync(string id, string variant = null)
+    {
+        if (IsInitialized())
+        {
+            return LoadAddressablesBatchAsynch(id);            
+        }
+        else
+        {
+            return LoadSceneAsync(id, variant, LoadSceneMode.Single);
+        }
+    }
+
     // This method has been overridden in order to let the game load a scene before AddressablesManager has been initialized, typically the first loading scene, 
     // which may be called when rebooting the game
     public override bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
-        {
-            return base.LoadScene(id, variant, mode);
+        {            
+            return base.LoadScene(id, variant, mode);           
         }
         else
         {
@@ -215,8 +228,8 @@ public class HDAddressablesManager : AddressablesManager
     public override AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
-        {
-            return base.LoadSceneAsync(id, variant, mode);
+        {            
+            return base.LoadSceneAsync(id, variant, mode);                        
         }
         else
         {
@@ -247,6 +260,8 @@ public class HDAddressablesManager : AddressablesManager
 
 		// Downloader is disabled while the app is loading in order to let it load faster and smoother
 		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+
+        UpdateAddressablesAreas();
     }
 
     public bool IsAutomaticDownloaderAllowed()
@@ -268,8 +283,67 @@ public class HDAddressablesManager : AddressablesManager
         return dragonData != null && !dragonData.isLocked;
     }
 
+    #region addressables_areas
+    private HDAddressablesAreaLoader m_addressablesAreaLoader;
+
+    private void InitAddressablesAreas()
+    {
+        m_addressablesAreaLoader = new HDAddressablesAreaLoader();       
+    }
+
+    private void ResetAddressablesAreas()
+    {
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader.Reset();
+        }
+    }    
+    
+    private HDAddressablesAreaLoader LoadAddressablesBatchAsynch(string sceneId)
+    {
+        AddressablesBatchHandle handle = GetAddressablesAreaBatchHandle(sceneId);
+
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader = new HDAddressablesAreaLoader();
+        }
+
+        m_addressablesAreaLoader.Setup(handle, sceneId);
+
+        return m_addressablesAreaLoader;
+    }
+    
+    private AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
+    {
+        AddressablesBatchHandle returnValue = new AddressablesBatchHandle();        
+        if (sceneId == MenuSceneController.NAME)
+        {
+            // Menu            
+            AddMenuDependenciesToAddressablesBatchHandle(returnValue);
+        }
+        else if (sceneId == GameSceneController.NAME)
+        {
+            // Dependecies because of area_1 level            
+            AddLevelArea1DependenciesToAddressablesBatchHandle(returnValue);
+
+            // Dependencies because of the current dragon (ingame version)
+        }
+
+        return returnValue;
+    }
+
+    public void UpdateAddressablesAreas()
+    {
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader.Update();
+        }
+    }
+#endregion
+
+
 #region ingame
-    public class Ingame_SwitchAreaHandle
+public class Ingame_SwitchAreaHandle
     {        
         private List<string> PrevAreaRealSceneNames { get; set; }
         private List<string> NextAreaRealSceneNames { get; set; }
@@ -430,15 +504,22 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-#endregion
+    #endregion
 
-#region DOWNLOADABLE GROUPS HANDLERS
+    #region groups
+    private const string GROUP_MENU = "menu";
+    private const string GROUP_LEVEL_AREA_1 = "area1";
+    private const string GROUP_LEVEL_AREA_2 = "area2";
+    private const string GROUP_LEVEL_AREA_3 = "area3";
+    #endregion
+
+    #region DOWNLOADABLE_GROUPS_HANDLERS
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = "area1";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = "area2";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = "area3";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = GROUP_LEVEL_AREA_1;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = GROUP_LEVEL_AREA_2;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = GROUP_LEVEL_AREA_3;
     
     // Combined    
     private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
@@ -642,5 +723,23 @@ public class HDAddressablesManager : AddressablesManager
 		return powers;
 	}
 
+    #endregion
+
+    #region ADDRESSABLES_BATCH_HANDLERS            
+    private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    {
+        if (handle != null)
+        {
+            handle.AddGroup(GROUP_MENU);
+        }
+    }
+     
+    private void AddLevelArea1DependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    { 
+        if (handle != null)
+        {
+            handle.AddGroup(GROUP_LEVEL_AREA_1);
+        }        
+    }
 #endregion
 }
