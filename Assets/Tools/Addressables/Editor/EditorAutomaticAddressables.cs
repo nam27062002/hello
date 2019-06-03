@@ -68,7 +68,7 @@ public static class EditorAutomaticAddressables {
                         {
                             for (int i = 0; i < LOCAL_DRAGONS.Length; i++)
                             {
-                                if ( bundle.Contains( LOCAL_DRAGONS[i] ) )
+                                if ( bundle.Contains( LOCAL_DRAGONS[i]) && !bundle.Contains( "animoji" )) 
                                 {
                                     localAssetBundles.Add(bundle);
                                     break;
