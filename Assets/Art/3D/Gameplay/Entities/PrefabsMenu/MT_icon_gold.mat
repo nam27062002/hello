@@ -7,9 +7,9 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_icon_gold
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL FXLAYER_REFLECTION REFLECTIONTYPE_COLORRAMP SELFILLUMINATE_NORMAL
-    SPECULAR _ZWRITE_ON
+  m_Shader: {fileID: 4800000, guid: 2f120649b10d5f342b99e1d1ad51261f, type: 3}
+  m_ShaderKeywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL FXLAYER_REFLECTION LITMODE_UNLIT
+    REFLECTIONMAP REFLECTIONTYPE_COLORRAMP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -67,15 +67,25 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 2800000, guid: d6371b2308a9e714381714e43e2a61c2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
         m_Texture: {fileID: 8900000, guid: 526eef17382f158429f2491abb96d089, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BlendAxis: 0
+    - ColorMode: 3
     - FXLayer: 1
+    - LitMode: 0
     - ReflectionType: 2
     - SelfIlluminate: 0
+    - _BlendAlpha: 1
     - _BlendMode: 0
+    - _BlendUVOffset: 0
+    - _BlendUVScale: 1
     - _BumpScale: 1
     - _ColorRampAmount: 0
     - _ColorRampID0: 0
@@ -96,6 +106,7 @@ Material:
     - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
+    - _EnableReflectionMap: 1
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
@@ -137,3 +148,5 @@ Material:
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
     - _Tint: {r: 0.9338235, g: 0.785321, b: 0.16479237, a: 1}
+    - _Tint1: {r: 0.8088235, g: 0.06541956, b: 0.06541956, a: 1}
+    - _Tint2: {r: 1, g: 1, b: 1, a: 1}
