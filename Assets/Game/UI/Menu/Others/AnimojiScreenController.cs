@@ -38,9 +38,10 @@ public class AnimojiScreenController : MonoBehaviour {
 		INIT,
 		CAMERA_PERMISSIONS_REQUEST,
 		MICROPHONE_PERMISSIONS_REQUEST,
-		PERMISSIONS_OK,
-		PERMISSIONS_ERROR,
-		PREVIEW,
+		PERMISSIONS_OK,        
+        PERMISSIONS_ERROR,
+        INITIALIZING_CONTROLLER,
+        PREVIEW,
 		COUNTDOWN,
 		RECORDING,
 		SHARING,
@@ -233,7 +234,13 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Wait until permission is granted/denied
 			} break;
 
-			case State.PREVIEW: {
+            case State.INITIALIZING_CONTROLLER: {                
+                if (m_animojiSceneController.IsReady) {
+                    ChangeStateOnNextFrame(State.PREVIEW);
+                }
+            } break;
+
+            case State.PREVIEW: {
 				// Update tongue reminder timer
 				if(m_tongueReminderTimer > 0f) {
 					m_tongueReminderTimer -= Time.deltaTime;
@@ -399,8 +406,11 @@ public class AnimojiScreenController : MonoBehaviour {
 			} break;
 
 			case State.PREVIEW: {
-				// Toggle views
-				SelectUI(true);
+                m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
+                m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
+
+                // Toggle views
+                SelectUI(true);
 
 				// Reset tongue reminder
 				m_tongueReminderTimer = TONGUE_REMINDER_TIME;
@@ -592,22 +602,21 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				m_unityARFaceAnchorManager = m_animojiSceneInstance.GetComponentInChildren<UnityARFaceAnchorManager>();
 				Debug.Assert(m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
+				
+                // Go to next state after a frame                
+                ChangeStateOnNextFrame(State.INITIALIZING_CONTROLLER);
+            } break;
 
-				// Initialize controller
-				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
-				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
-				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
+            case State.INITIALIZING_CONTROLLER: {
+                m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);                
+            } break;            
 
-				// Go to next state after a frame
-				ChangeStateOnNextFrame(State.PREVIEW);
-			} break;
-
-			case State.PERMISSIONS_ERROR: {
+            case State.PERMISSIONS_ERROR: {
 				// Toggle views
 				SelectUI(true);
 			} break;
 		}
-	}
+	}    
 
 	/// <summary>
 	/// Change the logic state on the next frame.
