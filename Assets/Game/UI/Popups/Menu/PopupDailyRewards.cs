@@ -153,7 +153,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 				case Metagame.RewardEgg.TYPE_CODE:
 				case Metagame.RewardPet.TYPE_CODE: {
 					// Program the reward flow, will be triggered once the popup is closed
-					//m_rewardsFlowPending = true;
+					m_rewardsFlowPending = true;
 				} break;
 
 				default: {
@@ -242,7 +242,7 @@ public class PopupDailyRewards : MonoBehaviour, IBroadcastListener {
 	/// </summary>
 	public void OnClosePostAnimation() {
 		// If Rewards flow was pending, launch it now
-		if(m_rewardsFlowPending && false) {
+		if(m_rewardsFlowPending) {
 			PendingRewardScreen scr = InstanceManager.menuSceneController.GetScreenData(MenuScreen.PENDING_REWARD).ui.GetComponent<PendingRewardScreen>();
 			scr.StartFlow(false);
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.PENDING_REWARD);
