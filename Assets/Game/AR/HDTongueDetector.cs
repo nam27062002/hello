@@ -29,8 +29,7 @@ public class HDTongueDetector : MonoBehaviour
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
-	public const string SCENE_PREFAB_PATH = "AR/Animojis/PF_AnimojiSceneSetup";
-	private const string ANIMOJI_PREFABS_DIR = "AR/Animojis/";
+	public const string SCENE_PREFAB_PATH = "AR/Animojis/PF_AnimojiSceneSetup";	
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
@@ -117,13 +116,13 @@ public class HDTongueDetector : MonoBehaviour
 		// Load dragon head prefab
 		DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
 		string prefabPath = dragonDef.GetAsString("animojiPrefab");
-		GameObject prefab = Resources.Load<GameObject>(ANIMOJI_PREFABS_DIR + prefabPath);
-		Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + ANIMOJI_PREFABS_DIR + prefabPath, this);
+		GameObject prefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(prefabPath);
+		Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + prefabPath, this);
 
 		// Instantiate it and get controller reference
 		GameObject dragonInstance = GameObject.Instantiate<GameObject>(prefab, m_dragonAnimojiAnchor, false);
 		m_dragonAnimojiInstance = dragonInstance.GetComponentInChildren<DragonAnimoji>();
-		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + ANIMOJI_PREFABS_DIR + prefabPath + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
+		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + prefabPath + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
 
 		m_dragonAnimojiInstance.gameObject.SetActive (false);
 	}

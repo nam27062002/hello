@@ -40,6 +40,7 @@ Shader "Hungry Dragon/NPC/NPC worm"
 			#define FRESNEL
 //			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
+			#define LITMODE_LIT
 
 			#include "entities.cginc"
 			ENDCG

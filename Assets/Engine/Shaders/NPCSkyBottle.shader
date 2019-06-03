@@ -59,6 +59,8 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle"
 			#define REFLECTIONMAP
 			#define NOAMBIENT
 			#define FRESNEL
+			#define LITMODE_LIT
+
 
 //			#define GHOST
 //			#define TINT

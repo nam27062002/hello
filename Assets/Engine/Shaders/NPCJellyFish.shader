@@ -75,6 +75,7 @@ Shader "Hungry Dragon/NPC/NPC Jelly fish"
 //			#define DYNAMIC_LIGHT
 			#define AMBIENTCOLOR
 
+			#define LITMODE_LIT
 
 			#include "entities.cginc"
 

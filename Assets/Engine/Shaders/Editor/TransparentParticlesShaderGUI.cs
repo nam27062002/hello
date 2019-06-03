@@ -85,6 +85,10 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         readonly public static string flowMapTextureText = "Flowmap texture";
         readonly public static string flowMapSpeedText = "Speed";
         readonly public static string flowMapIntensityText = "Intensity";
+
+        readonly public static string stencilMaskText = "Stencil mask";
+        readonly public static string stencilCompareText = "Stencil compare";
+
     }
 
     //------------------------------------------------------------------------//
@@ -137,6 +141,9 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     MaterialProperty mp_zTest;
     MaterialProperty mp_cullMode;
 
+    MaterialProperty mp_stencilMask;
+    MaterialProperty mp_stencilCompare;
+
     MaterialEditor m_materialEditor;
 
     readonly static string kw_blendTexture = "BLEND_TEXTURE";
@@ -149,6 +156,8 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
 
     private GUISkin editorSkin;
     private readonly static string editorSkinPath = "Assets/Engine/Shaders/Editor/GUISkin/MaterialEditorSkin.guiskin";
+
+    private bool m_stencilParticles = false;
 
     //------------------------------------------------------------------------//
     // METHODS																  //
@@ -201,6 +210,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
         mp_zTest = FindProperty("_ZTest", props);
         mp_cullMode = FindProperty("_Cull", props);
 
+
+        if (m_stencilParticles)
+        {
+            mp_stencilMask = FindProperty("_StencilMask", props);
+            mp_stencilCompare = FindProperty("_Comp", props);
+        }
     }
 
     private bool featureSet(MaterialProperty feature, string label)
@@ -450,11 +465,13 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
     /// 
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
     {
-        IniEditorSkin();
-        FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
+        m_materialEditor = materialEditor;
         Material material = materialEditor.target as Material;
 
-        m_materialEditor = materialEditor;
+        m_stencilParticles = material.shader.name.Contains("(Stencil)");
+
+        IniEditorSkin();
+        FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
 
         GUILayout.BeginHorizontal(editorSkin.customStyles[2]);
         GUILayout.FlexibleSpace();
@@ -662,6 +679,12 @@ internal class TransparentParticlesShaderGUI : ShaderGUI {
             material.renderQueue = renderQueue;
         }
         EditorGUILayout.EndHorizontal();
+
+        if (m_stencilParticles)
+        {
+            featureSet(mp_stencilMask, Styles.stencilMaskText);
+            featureSet(mp_stencilCompare, Styles.stencilCompareText);
+        }
 
         if (GUILayout.Button("Log keywords", editorSkin.customStyles[2]))
         {

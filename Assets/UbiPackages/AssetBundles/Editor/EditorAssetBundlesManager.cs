@@ -35,13 +35,31 @@ public class EditorAssetBundlesManager
         set { sm_needsToGenerateAssetsLUT = value; }
     }
 
-    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
+    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames = null)
+    {        
+        // LZ4 algorithm is used to reduce memory footprint
+        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+
+        // Uncompressed mode is used to reduce loading times
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.UncompressedAssetBundle;
+        /*switch (AddressablesManager.EffectiveMode)
+        {
+            case AddressablesManager.EMode.AllInLocalAssetBundles:
+                // LZMA algorithm, it gives the smallest possible size
+                compression = BuildAssetBundleOptions.None;
+                break;
+        }*/
+
+        BuildAssetBundles(platform, compression, abNames);
+    }
+
+    public static void BuildAssetBundles(BuildTarget platform, BuildAssetBundleOptions compression, List<string> abNames=null)
     {
         Debug.Log("Building asset bundles...");
         string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
         // LZ4 algorithm is used to reduce memory footprint
-        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
 
         // LZMA algorithm, it gives the smallest possible size
         //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;

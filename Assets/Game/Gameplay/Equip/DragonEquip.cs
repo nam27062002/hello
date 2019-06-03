@@ -166,14 +166,12 @@ public class DragonEquip : MonoBehaviour {
 		// Equip current pets loadout
 		if (m_equipPets) {
 			List<string> pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
-			if ( !m_menuMode )
-			{
-				// Check if tournament
-				if ( HDLiveDataManager.tournament.isActive)
-				{
-					pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
-				}
-			}
+
+            if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
+                pets = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData.pets;
+            } else {
+                pets = UsersManager.currentUser.GetEquipedPets(m_dragonSku);
+            }
 
 			for(int i = 0; i < pets.Count; i++) {
 				EquipPet(pets[i], i);

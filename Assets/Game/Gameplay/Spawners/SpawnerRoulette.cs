@@ -247,7 +247,7 @@ public class SpawnerRoulette : MonoBehaviour, ISpawner {
 
 	public void RemoveEntity(IEntity _entity, bool _killedByPlayer) {
 
-		if (m_currentEntity != null && m_currentEntity.gameObject == _entity) {			
+		if (m_currentEntity != null && m_currentEntity == _entity) {			
 			if (ProfilerSettingsManager.ENABLED) {               
 				SpawnerManager.RemoveFromTotalLogicUnits(1, m_entityPrefabList[m_currentPoolHandlerIndex].name);
 			}
