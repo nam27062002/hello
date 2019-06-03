@@ -680,13 +680,13 @@ public class GameSceneController : GameSceneControllerBase {
                         i++;
 					}
                 }
-                                                     
+                                                                     
                 List<string> scenesToLoad = new List<string>();
                 scenesToLoad.Add(ResultsScreenController.NAME);
-                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, OnResultsSceneLoaded, OnScenesUnloaded);
 
-                List<string> dependencyIds = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
-                HDAddressablesManager.Instance.UnloadDependencyIdsList(dependencyIds);
+                List<string> dependencyIdsToUnload = HDAddressablesManager.Instance.GetAssetBundlesGroupDependencyIds((LevelManager.currentArea));
+                AddressablesBatchHandle batchHandle = HDAddressablesManager.Instance.GetAddressablesAreaBatchHandle(ResultsScreenController.NAME);                
+                m_switchAsyncScenes.Perform(scenesToUnload, scenesToLoad, true, dependencyIdsToUnload, batchHandle.DependencyIds, OnResultsSceneLoaded, OnScenesUnloaded);                                               
 
                 HDAddressablesManager.Instance.Ingame_NotifyLevelUnloaded();
             } break;
