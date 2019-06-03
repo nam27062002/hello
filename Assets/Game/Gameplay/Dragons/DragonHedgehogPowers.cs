@@ -67,6 +67,7 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     protected float m_fireNodeTimer = 0;
     Rect m_bounds2D;
     ToggleParam m_toggleParam = new ToggleParam();
+    float m_biggerDragonCheck = 0;
     
     
 	// Use this for initialization
@@ -230,7 +231,12 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     							machine.Burn(transform, IEntity.Type.PLAYER);
     						}
     					}
-    
+                        else if ( (Time.time - m_biggerDragonCheck) > 1.0f && prey.IsBurnable( DragonTierGlobals.LAST_TIER ) )
+                        {
+                            m_biggerDragonCheck = Time.time;
+                            // Show message saying I cannot burn it
+					        Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, DragonTier.COUNT, prey.sku);
+                        }
     				}else{
     					if ( prey.CanBeSmashed( m_tier ) )
     					{
@@ -243,6 +249,11 @@ public class DragonHedgehogPowers : MonoBehaviour, IBroadcastListener {
     							// machine.EndSwallowed(m_transform);
     						}
     					}
+                        else if ((Time.time - m_biggerDragonCheck) > 1.0f && prey.CanBeSmashed( DragonTierGlobals.LAST_TIER ) )
+                        {
+                            m_biggerDragonCheck = Time.time;
+                            Messenger.Broadcast<DragonTier, string>(MessengerEvents.BIGGER_DRAGON_NEEDED, prey.MinSmashTier(), prey.sku);
+                        }
     				}
     			}
                 

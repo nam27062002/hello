@@ -302,10 +302,13 @@ public class Mission {
 		DefinitionNode missionDef = MissionManager.GetDef(_data["sku"]);
 		if(missionDef == null) return false;
 
-		// Initialize with sotred data
-		InitWithParams(
+        DefinitionNode typeDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type"));
+        if (typeDef == null) return false;
+
+        // Initialize with sotred data
+        InitWithParams(
 			missionDef,
-			DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.MISSION_TYPES, missionDef.Get("type")),
+            typeDef,
 			_data["targetValue"].AsLong, 
 			_data["singleRun"].AsBool,
             _removePCCost
