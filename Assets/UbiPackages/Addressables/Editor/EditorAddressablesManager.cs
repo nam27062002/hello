@@ -634,7 +634,7 @@ public class EditorAddressablesManager
                 else if (entry.LocationType == AddressablesTypes.ELocationType.Resources)
                 {
                     // if the asset is not already in Resources folder then it's copied to Resources folder
-                    if (path.Contains("Resources"))
+                    if (path.Contains("/Resources/"))
                     {
                         string resourcesPath = path.Replace("Assets/Resources/", "");
                         entry.AssetName = EditorFileUtils.GetPathWithoutExtension(resourcesPath);
