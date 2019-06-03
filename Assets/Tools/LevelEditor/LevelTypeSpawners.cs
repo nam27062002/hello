@@ -127,7 +127,7 @@ namespace LevelEditor {
 		/// <returns>The dragon spawn point.</returns>
 		/// <param name="_sku">Sku of the dragon whose spawn point we're looking for.</param>
 		/// <param name="_createItIfNotFound">If set to <c>true</c> _create it if not found.</param>
-		public GameObject GetDragonSpawnPoint(string _sku = "", bool _createItIfNotFound = false) {
+		public GameObject GetDragonSpawnPoint(string _sku = "", bool _createItIfNotFound = false, bool _returnDefaultIfNotFound = true) {
 			// Generate game object name for this dragon
 			string name = DRAGON_SPAWN_POINT_NAME;
 			if(!string.IsNullOrEmpty(_sku)) name += "_" + _sku.ToString();
@@ -150,7 +150,7 @@ namespace LevelEditor {
 					spawnPointObj.transform.position = new Vector3(0, 20, 0);
 					spawnPointObj.transform.SetParent(spawnContainerObj.transform, true);
 				}
-				else
+				else if (_returnDefaultIfNotFound)
 				{
 					spawnPointObj = gameObject.FindObjectRecursive(DRAGON_SPAWN_POINT_NAME);
 				}

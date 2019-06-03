@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 
 public abstract class IMeleeWeapon : MonoBehaviour {
+    public enum Activation {
+        Manual = 0,
+        OnEnable
+    }
 
-	[SerializeField] private float m_timeBetweenHits = 0.5f;
+    [SerializeField] private Activation m_activation = Activation.Manual;
+
+    [SerializeField] protected float m_damage = 1f;
+    public float damage { set { m_damage = value; } }
+
+    [SerializeField] private float m_timeBetweenHits = 0.5f;
 	[SerializeField] protected DamageType m_damageType = DamageType.NORMAL;
 
     protected Transform m_transform;
 	private Collider[] m_weapon;
-
-	protected float m_damage;
-	public float damage { set { m_damage = value; } }
 
     protected IEntity m_entity;
     public IEntity entity { set { m_entity = value; } }
@@ -32,7 +38,19 @@ public abstract class IMeleeWeapon : MonoBehaviour {
         OnAwake();
 	}
 
-	public void EnableWeapon() {
+    private void OnEnable() {
+        if (m_activation == Activation.OnEnable) {
+            EnableWeapon();
+        }
+    }
+
+    private void OnDisable() {
+        if (m_activation == Activation.OnEnable) {
+            DisableWeapon();
+        }
+    }
+
+    public void EnableWeapon() {
 		for (int i = 0; i < m_weapon.Length; ++i) {
 			m_weapon[i].enabled = true;
 		}

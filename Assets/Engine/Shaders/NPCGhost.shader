@@ -48,6 +48,7 @@ Shader "Hungry Dragon/NPC/NPC Ghost (Spawners)"
 			#define FRESNEL
 			#define GHOST
 			#define TINT
+			#define LITMODE_LIT
 
 			#include "entities.cginc"
 

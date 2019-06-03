@@ -33,9 +33,19 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 		}
 	}
 
+	static void PrepareAddressablesMode()
+	{
+		AddressablesManager.Mode = GetAddressablesMode();
+
+		// SetMode() shouldn't be called again because it was called in a previous step so the editor will have time to leave the assets as they need to be
+		EditorAddressablesMenu.NeedsToSetModeOnPreBuild = false;
+	}
+
 	//[MenuItem ("Build/IOs")]
 	static void GenerateXcode()
 	{
+		PrepareAddressablesMode();
+
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.iOS);
@@ -92,10 +102,12 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
         BuildPipeline.BuildPlayer(buildPlayerOptions);
     }
-
+		
 	//[MenuItem ("Build/Android")]
 	static void GenerateAPK()
-	{
+	{		
+		PrepareAddressablesMode();
+
 		// Save Player Settings
 		string oldBundleIdentifier = PlayerSettings.applicationIdentifier;
 		string oldSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup( BuildTargetGroup.Android);
@@ -127,7 +139,9 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 
 		string date = System.DateTime.Now.ToString("yyyyMMdd");
 		string code = GetArg("-code");
-		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" + GetEnvironmentString() + ".apk";
+		string finalApkName = code + "_" + GameSettings.internalVersion + "_" + date + "_b" + PlayerSettings.Android.bundleVersionCode + "_" +
+			GetEnvironmentString() + "_" + AddressablesManager.ModeToKey(AddressablesManager.EffectiveMode) + ".apk";
+
 		string stagePath = System.IO.Path.Combine(outputDir, finalApkName);	// Should be something like ouputDir/hd_2.4.3_20160826_b12421.apk
 
 		// Some feedback
@@ -168,6 +182,19 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 			}
 		}
 		return null;
+	}
+
+	private static void PrintArgs() {		
+		var args = System.Environment.GetCommandLineArgs();
+		string msg = "Args: count = " + args.Length + " args: ";
+		for (int i = 0; i < args.Length; i++) {
+			if (i > 0)
+				msg += ", ";
+			
+			msg += args[i];
+		}
+
+		UnityEngine.Debug.Log(msg);
 	}
 
 	public static string[] GetBuildingScenes()
@@ -439,7 +466,26 @@ public class Builder : MonoBehaviour, UnityEditor.Build.IPreprocessBuild
 				// Generate Manifest
 				CaletySettingsEditor.UpdateManifest( settingsInstance, currentModularSettings );
 			}
+		}			
+	}				
+
+	private static AddressablesManager.EMode GetAddressablesMode()
+	{
+		AddressablesManager.EMode returnValue = AddressablesManager.EMode.Editor;
+
+		string addressablesModeStr = GetArg("-addressablesMode");											  
+		if (!string.IsNullOrEmpty(addressablesModeStr)) 
+		{						
+			returnValue = AddressablesManager.KeyToMode(addressablesModeStr);
 		}
+
+		return returnValue;
+	}
+
+	private static void SetAddressablesMode()
+	{
+		EditorAddressablesMenu.SetMode(GetAddressablesMode());	
+		UnityEngine.Debug.Log ("Addressables mode: " + AddressablesManager.Mode);
 	}
 
 	// This action will be used to make custom project stuff. Like generating lightmaps or splitting scenes
