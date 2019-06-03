@@ -35,6 +35,13 @@ public class ColorRampEditor : EditorWindow {
 	private const float SPACE_BETWEEN_ITEMS = 10f;
 	private const float DIVISION_SIZE = 0f;
 
+	// Colors
+	private static readonly Color TEXTURE_PLACEHOLDER_COLOR = new Color(1f, 0f, 1f, 0.5f);	// Transparent magenta
+	private static readonly Color POSITIVE_BUTTON_COLOR = new Color(0.5f, 1f, 0.5f);    // Pale green
+	private static readonly Color NEGATIVE_BUTTON_COLOR = new Color(1f, 0.5f, 0.5f);    // Color
+	private static readonly Color WARNING_BACKGROUND_COLOR = new Color(1f, 0.8f, 0f);   // Gold
+	private static readonly Color ERROR_BACKGROUND_COLOR = new Color(0.5f, 0f, 0f);		// Dark red
+
 	// Prefs constants
 	private const string SELECTION_COLLECTION_NAME_KEY = "ColorRampEditor.SELECTION_COLLECTION_NAME";
 	private static string s_selectedCollectionName {
@@ -99,7 +106,7 @@ public class ColorRampEditor : EditorWindow {
 	/// <summary>
 	/// Opens the window.
 	/// </summary>
-	//[MenuItem("Hungry Dragon/Tools/ColorRampEditor")]	// UNCOMMENT TO ADD MENU ENTRY!!!
+	[MenuItem("Tools/Color Ramp Editor", false, 301)]
 	public static void OpenWindow() {
 		instance.Show();
 		//instance.ShowUtility();
@@ -160,11 +167,18 @@ public class ColorRampEditor : EditorWindow {
 		}
 
 		// Toolbar
-		EditorGUILayout.BeginHorizontal();
+		Rect toolbarRect = EditorGUILayout.BeginHorizontal();
 		{
 			// New collection
 			if(GUILayout.Button("New Collection")) {
-				OnNewCollection();
+				PopupWindow.Show(toolbarRect, new ColorRampNewCollectionWindow(
+					(string _newCollectionName) => {
+						// Select new collection
+						s_selectedCollectionName = _newCollectionName;
+						LoadCollectionIfNeeded();
+					}
+				));
+				EditorGUIUtility.ExitGUI();
 			}
 
 			// Delete selected collection - disabled if there are no collections
@@ -318,7 +332,7 @@ public class ColorRampEditor : EditorWindow {
 					GUI.DrawTexture(previewRect, rampData.tex);
 				} else {
 					// Placeholder texture
-					GUI.color = Colors.WithAlpha(Color.white, 0.1f);
+					GUI.color = new Color(1f, 1f, 1f, 0.1f);
 					GUI.DrawTexture(previewRect, Texture2D.whiteTexture);
 					GUI.color = Color.white;
 				}
@@ -345,11 +359,11 @@ public class ColorRampEditor : EditorWindow {
 					newButtonWidth - SPACING,
 					texRect.height
 				);
-				GUI.color = Colors.paleGreen;
+				GUI.color = POSITIVE_BUTTON_COLOR;
 				if(GUI.Button(newButtonRect, "NEW")) {
 					OnCreateRampTexture(ref rampData);
 				}
-				GUI.color = Colors.white;
+				GUI.color = Color.white;
 
 				// Advance pos
 				currentLineY += texRect.height + SPACING;
@@ -532,12 +546,12 @@ public class ColorRampEditor : EditorWindow {
 						boxContentRect.yMin += INFO_BOX_MARGIN;
 						boxContentRect.xMax -= INFO_BOX_MARGIN + buttonW + SPACING + buttonW;
 						boxContentRect.yMax -= INFO_BOX_MARGIN;
-						GUI.Label(boxContentRect, Colors.yellow.Tag("Texture not saved!"), HELP_BOX_TEXT_STYLE);
+						GUI.Label(boxContentRect, Color.yellow.Tag("Texture not saved!"), HELP_BOX_TEXT_STYLE);
 
 						// Save button
 						boxContentRect.xMin = boxContentRect.xMax;
 						boxContentRect.width = buttonW;
-						GUI.color = Colors.paleGreen;
+						GUI.color = POSITIVE_BUTTON_COLOR;
 						if(GUI.Button(boxContentRect, "Save")) {
 							// Save to disk
 							rampData.SaveTexture();
@@ -546,7 +560,7 @@ public class ColorRampEditor : EditorWindow {
 						// Discard button
 						boxContentRect.xMin = boxContentRect.xMax + SPACING;
 						boxContentRect.width = buttonW;
-						GUI.color = Colors.coral;
+						GUI.color = NEGATIVE_BUTTON_COLOR;
 						if(GUI.Button(boxContentRect, "Discard")) {
 							// Reload texture from disk
 							rampData.Discard();
@@ -604,9 +618,9 @@ public class ColorRampEditor : EditorWindow {
 
 				// Blend with color by error state
 				if(rampData.dirty) {
-					GUI.color = Color.Lerp(GUI.color, Colors.gold, 0.25f);
+					GUI.color = Color.Lerp(GUI.color, WARNING_BACKGROUND_COLOR, 0.25f);
 				} else if(rampData.tex == null) {
-					GUI.color = Color.Lerp(GUI.color, Colors.maroon, 0.25f);
+					GUI.color = Color.Lerp(GUI.color, ERROR_BACKGROUND_COLOR, 0.25f);
 				}
 
 				// Draw background
@@ -689,17 +703,26 @@ public class ColorRampEditor : EditorWindow {
 	}
 
 	/// <summary>
-	/// "New Collection" button has been pressed.
-	/// </summary>
-	private void OnNewCollection() {
-		this.ShowNotification(new GUIContent("Coming Soon!"));
-	}
-
-	/// <summary>
 	/// "Delete Collection" button has been pressed.
 	/// </summary>
 	private void OnDeleteCollection() {
-		this.ShowNotification(new GUIContent("Coming Soon!"));
+		// Nothing to do if no collection is selected
+		if(m_currentCollection == null) return;
+
+		// Show confirmation dialog
+		if(EditorUtility.DisplayDialog(
+			"Delete " + m_currentCollection.name + "?",
+			"The collection " + m_currentCollection.name + " will be permanently deleted. Are you sure?",
+			"Yes", "No"
+			)) {
+			// Do it!
+			if(AssetDatabase.DeleteAsset(DATA_PATH + s_selectedCollectionName + ".asset")) {
+				// Clear selection
+				s_selectedCollectionName = string.Empty;
+				m_currentCollection = null;
+				InitWithCurrentCollection();
+			}
+		}
 	}
 
 	/// <summary>

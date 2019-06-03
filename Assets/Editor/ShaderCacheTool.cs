@@ -245,8 +245,9 @@ public class ShaderCacheTool : EditorWindow {
         ShaderContent sc = new ShaderContent();
         if (!m_shaderValidKeywords.ContainsKey(shader.name))
         {
+            Log("Shader name: " + shader.name);
             string shaderPath = AssetDatabase.GetAssetPath(shader);
-            Log("Shader name: " + shader.name + "Shader path: " + shaderPath);
+            Log("Shader path: " + shaderPath);
 
             string[] shlines = null;
 
