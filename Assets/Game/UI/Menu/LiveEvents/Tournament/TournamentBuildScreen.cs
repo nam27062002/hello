@@ -214,23 +214,6 @@ public class TournamentBuildScreen : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Check downloadable group status for this tournament's dragon.
-	/// </summary>
-	/// <param name="_checkPopups">Open popups if needed?</param>
-	private void CheckDownloadFlow(bool _checkPopups = false) {
-		// Get handler for this tournament's dragon
-		Downloadables.Handle handle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
-
-		// Trigger flow!
-		m_assetsDownloadFlow.InitWithHandle(handle);
-
-		// Check for popups?
-		if(_checkPopups) {
-			m_assetsDownloadFlow.OpenPopupIfNeeded();
-		}
-	}
-
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -242,8 +225,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 		m_waitingRewardsData = false;
 
-		// Check OTA for this dragon
-		CheckDownloadFlow(false);   // Don't trigger popups, the menu interstitial popups controller will take care of it
+		// OTA: Show download progress if the download is active
+		m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
 		// Program a periodic update
 		InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
@@ -254,9 +237,15 @@ public class TournamentBuildScreen : MonoBehaviour {
 	}
 
 	public void OnStartPaying() {
-		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
-		if(popup != null) return;
+		// Check for assets for this specific tournament
+		Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+		if(!tournamentHandle.IsAvailable()) {
+			// Initialize download flow with handle for ALL assets
+			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+
+			return;
+		}
 
 		if (Application.internetReachability == NetworkReachability.NotReachable || !GameServerManager.SharedInstance.IsLoggedIn()) {
 			SendFeedback("TID_GEN_NO_CONNECTION");
