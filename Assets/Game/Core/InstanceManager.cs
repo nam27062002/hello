@@ -95,9 +95,42 @@ public class InstanceManager : UbiBCN.SingletonMonoBehaviour<InstanceManager> {
         set { if(instance != null) instance.m_timeScaleController = value; }
     }
 
+	private UnityEngine.Audio.AudioMixer m_masterMixer = null;
+    public static UnityEngine.Audio.AudioMixer masterMixer{
+        get { return instance.m_masterMixer; }
+    }
+
+	public UnityEngine.Audio.AudioMixerGroup[] m_masterMixerGroups;
+	public static UnityEngine.Audio.AudioMixerGroup[] masterMixerGroups{
+        get { return instance.m_masterMixerGroups; }
+    }
+
+	public enum MIXER_GROUP
+	{
+		MASTER = 0,
+		MUSIC = 1,
+		SFX = 2,
+		SFX_2D = 3,
+
+		COUNT = 4
+	};
+
 	//------------------------------------------------------------------//
 	// GENERIC METHODS													//
 	//------------------------------------------------------------------//
+
+	void Awake(){
+		m_masterMixer = Resources.Load<UnityEngine.Audio.AudioMixer>("audio/MasterMixer");
+
+		// Save Groups!
+		m_masterMixerGroups = new UnityEngine.Audio.AudioMixerGroup[ (int)MIXER_GROUP.COUNT ];
+		m_masterMixerGroups[ (int)MIXER_GROUP.MASTER ] = m_masterMixer.FindMatchingGroups( "Master" )[0];
+		m_masterMixerGroups[ (int)MIXER_GROUP.MUSIC ] = m_masterMixer.FindMatchingGroups( "Music" )[0];
+		m_masterMixerGroups[ (int)MIXER_GROUP.SFX ] = m_masterMixer.FindMatchingGroups( "Sfx" )[0];
+		m_masterMixerGroups[ (int)MIXER_GROUP.SFX_2D ] = m_masterMixer.FindMatchingGroups( "Sfx 2D" )[0];
+
+	}
+
 	/// <summary>
 	/// Destructor.
 	/// </summary>

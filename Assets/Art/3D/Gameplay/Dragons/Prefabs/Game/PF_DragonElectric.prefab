@@ -67,6 +67,7 @@ GameObject:
   - component: {fileID: 114716062075415202}
   - component: {fileID: 114085871297933036}
   - component: {fileID: 11487054}
+  - component: {fileID: 114137399611131676}
   m_Layer: 12
   m_Name: PF_DragonElectric
   m_TagString: Player
@@ -5371,7 +5372,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+    audioMixerGroup: {fileID: 0}
   musicPlaylists:
   - name: Default
     playlistItems: []
@@ -5578,6 +5579,18 @@ MonoBehaviour:
   m_worldPositionStays: 1
   m_resetScale: 0
   m_when: 0
+--- !u!114 &114137399611131676
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 120086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c77f84975844ddb9c992ef9d965e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_controller: {fileID: 114000011697174064}
 --- !u!114 &114137789129551314
 MonoBehaviour:
   m_ObjectHideFlags: 1
