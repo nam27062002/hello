@@ -32,6 +32,7 @@ extern "C" {
 {
     ISBannerView* _bannerView;
     NSInteger _position;
+    UIViewController* _bannerViewController;
 }
 
 @end
@@ -62,6 +63,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
         [IronSource setBannerDelegate:self];
         
         _bannerView = nil;
+        _bannerViewController = nil;
         _position = BANNER_POSITION_BOTTOM;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:)
@@ -227,6 +229,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)rewardedVideoDidClose {
+    [self centerBanner];
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdClosed", "");
 }
 
@@ -283,7 +286,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)rewardedVideoDidClose:(NSString *)instanceId {
-
+    [self centerBanner];
     UnitySendMessage(IRONSOURCE_EVENTS, "onRewardedVideoAdClosedDemandOnly", MakeStringCopy(instanceId));
 }
 
@@ -356,6 +359,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)interstitialDidClose {
+    [self centerBanner];
     UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdClosed", "");
 }
 
@@ -394,6 +398,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)interstitialDidClose:(NSString *)instanceId {
+    [self centerBanner];
     UnitySendMessage(IRONSOURCE_EVENTS, "onInterstitialAdClosedDemandOnly", MakeStringCopy(instanceId));
 }
 
@@ -457,6 +462,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
 }
 
 - (void)offerwallDidClose {
+    [self centerBanner];
     UnitySendMessage(IRONSOURCE_EVENTS, "onOfferwallClosed", "");
 }
 
@@ -488,8 +494,8 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
             size = [[ISBannerSize alloc] initWithDescription:description];
         }
         
-        UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
-        [IronSource loadBannerWithViewController:vc size:size placement:placement];
+        _bannerViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+        [IronSource loadBannerWithViewController:_bannerViewController size:size placement:placement];
     }
 }
 
@@ -499,6 +505,7 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
             if (_bannerView != nil) {
                 [IronSource destroyBanner:_bannerView];
                 _bannerView = nil;
+                _bannerViewController = nil;
             }
         }
     });
@@ -552,12 +559,10 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
             _bannerView = bannerView;
-            _bannerView.translatesAutoresizingMaskIntoConstraints = NO;
             [_bannerView setAccessibilityLabel:@"bannerContainer"];
             
-            UIView* rootView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-            _bannerView.center = [self getBannerCenter:_position rootView:rootView];
-            [rootView addSubview:_bannerView];
+            _bannerView.center = [self getBannerCenter:_position rootView:_bannerViewController.view];
+            [_bannerViewController.view addSubview:_bannerView];
             
             UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLoaded", "");
         }
@@ -587,15 +592,18 @@ char *const IRONSOURCE_EVENTS = "IronSourceEvents";
     UnitySendMessage(IRONSOURCE_EVENTS, "onBannerAdLeftApplication", "");
 }
 
-- (void)orientationChanged:(NSNotification *)notification {
+- (void)centerBanner {
     dispatch_async(dispatch_get_main_queue(), ^{
         @synchronized(self) {
-            if (_bannerView) {
-                UIView* rootView = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-                _bannerView.center = [self getBannerCenter:_position rootView:rootView];
+            if (_bannerView != nil && _bannerViewController != nil) {
+                _bannerView.center = [self getBannerCenter:_position rootView:_bannerViewController.view];
             }
         }
     });
+}
+
+- (void)orientationChanged:(NSNotification *)notification {
+    [self centerBanner];
 }
 
 #pragma mark Helper methods
