@@ -113,7 +113,7 @@ public class LabDragonSelectionScreen : MonoBehaviour {
                 {
                     // Initialize download flow with handle for ALL and check for popups
                     m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-                    m_assetsDownloadFlow.OpenPopupIfNeeded();
+                    m_assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_SPECIAL_DRAGON);
                 }
 
                 // Unlock input
@@ -279,8 +279,6 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Prevent spamming
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
-        // Check whether all assets required for the current dragon are available or not
-        // [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
         // Get assets download handle for current dragon
         string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
         Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(currentDragonSku);

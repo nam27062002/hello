@@ -30,7 +30,11 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	public const string PATH_ERROR_STORAGE_PERMISSION = "UI/Popups/AssetsDownloadFlow/PF_PopupAssetsDownloadErrorStoragePermission";
 	public const string PATH_ERROR_GENERIC = 			"UI/Popups/AssetsDownloadFlow/PF_PopupAssetsDownloadErrorGeneric";
 
-	[System.Flags]
+    //------------------------------------------------------------------------//
+    // ENUMS    															  //
+    //------------------------------------------------------------------------//
+
+    [System.Flags]
 	public enum PopupType {
 		NONE			= 1 << 0,
 
@@ -43,22 +47,26 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		ANY				= ~(0)      // http://stackoverflow.com/questions/7467722/how-to-set-all-bits-of-enum-flag
 	}
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed members
-	[SerializeField] protected bool m_update = false;
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed members
+    [SerializeField] protected bool m_update = false;
 	[Comment("Optional depending on layout")]
-	[SerializeField] protected Localizer m_messageText = null;
+    [SerializeField] protected Localizer m_titleText = null;
+    [SerializeField] protected Localizer m_messageText = null;
 	[SerializeField] protected AssetsDownloadFlowProgressBar m_progressBar = null;
 	[SerializeField] protected Image m_curtain = null;
 	[SerializeField] protected GameObject m_teaseInfoGroup = null;
 
 	// Internal
 	protected Downloadables.Handle m_handle = null;
+    protected AssetsDownloadFlow.Context m_context = AssetsDownloadFlow.Context.NOT_SPECIFIED;
+    protected string m_path;
 
-	// Public properties
-	public float curtainAlpha {
+    // Public properties
+    public float curtainAlpha {
 		get { return m_curtain != null ? m_curtain.color.a : 0f; }
 		set { if(m_curtain != null) m_curtain.color = Colors.WithAlpha(m_curtain.color, value); }
 	}
@@ -96,9 +104,16 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// Initialize the popup with the given data.
 	/// </summary>
 	/// <param name="_handle">The assets group used for initialization.</param>
-	public virtual void Init(Downloadables.Handle _handle) {
+	public virtual void Init(Downloadables.Handle _handle, string _path, AssetsDownloadFlow.Context _context) {
+
 		// Store group
 		m_handle = _handle;
+
+        // Keep a record of the prefab we are opening
+        m_path = _path;
+
+        // Keep a record of the action that triggered the popup 
+        m_context = _context;        
 
 		// Perform a first refresh
 		Refresh();
@@ -108,6 +123,105 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	/// Refresh popup's visulas.
 	/// </summary>
 	public virtual void Refresh() {
+
+        switch (m_path)
+        {
+            // We are showing a download permission popup
+            case PATH_PERMISSION: 
+                {
+                    
+                    if (m_titleText == null || m_messageText == null)
+                    {
+                        // This shouldnt happen
+                        Debug.LogError("The popup must have a title and a body element defined");
+                        return;
+                    }
+
+                    // Use specific text for each situation
+                    switch (m_context)
+                    {
+                        case AssetsDownloadFlow.Context.PLAYER_BUYS_TRIGGER_DRAGON:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SMALL_DRAGONS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SMALL_DRAGONS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_BIG_DRAGONS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BIG_DRAGONS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_PET:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_PETS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_PETS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_TOURNAMENTS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_TOURNAMENTS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.LOADING_SCREEN:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_MAIN_LOADING_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_MAIN_LOADING_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_SKINS:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SKINS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SKINS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_ANIMOJIS:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_ANIMOJIS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_ANIMOJIS_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_AR:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_AR_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_AR_BODY");
+                                break;
+                            }
+
+                        case AssetsDownloadFlow.Context.PLAYER_BUYS_SPECIAL_DRAGON:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SPECIAL_DRAGONS_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SPECIAL_DRAGONS_BODY");
+                                break;
+                            }
+
+                        default:
+                            {
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BODY");
+                                break;
+                            }
+                    }
+
+                    break;
+                }
+
+            // The rest of the popups
+            default:
+                {
+                    m_messageText.Localize(m_messageText.tid);	// No replacements
+                    break;
+                }
+        }
+
+        /*
 		// Message
 		if(m_messageText != null) {
 			// Depends on text to be localized (which is defined in the prefab)
@@ -135,7 +249,7 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 					m_messageText.Localize(m_messageText.tid);	// No replacements
 				} break;
 			}
-		}
+		}*/
 
 		// Progress Bar
 		if(m_progressBar != null) {
@@ -143,16 +257,17 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
-	//------------------------------------------------------------------------//
-	// STATIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Opens the right popup according to given handle's state.
-	/// </summary>
-	/// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
-	/// <param name="_handle">The download handle whose information we will be using.</param>
-	/// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
-	public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, PopupType _typeFilterMask) {
+    //------------------------------------------------------------------------//
+    // STATIC METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Opens the right popup according to given handle's state.
+    /// </summary>
+    /// <returns>The opened popup, if any. <c>null</c> if no popup was opened.</returns>
+    /// <param name="_handle">The download handle whose information we will be using.</param>
+    /// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
+    /// <param name="_context">The situation that triggered the download popup. It will show an adapted message in each case.</param>
+    public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, PopupType _typeFilterMask, AssetsDownloadFlow.Context _context) {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
@@ -208,10 +323,10 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 
 			// Initialize it
 			PopupAssetsDownloadFlow flowPopup = popup.GetComponent<PopupAssetsDownloadFlow>();
-			flowPopup.Init(_handle);
+			flowPopup.Init(_handle, popupPath, _context);
 
-			// Enqueue popup!
-			PopupManager.EnqueuePopup(popup);
+            // Enqueue popup!
+            PopupManager.EnqueuePopup(popup);
 			return flowPopup;
 		}
 

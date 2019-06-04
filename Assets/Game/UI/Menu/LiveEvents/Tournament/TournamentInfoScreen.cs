@@ -239,7 +239,7 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
         {
             // Initialize download flow with handle for ALL assets
             m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT);
 
             return;
         }

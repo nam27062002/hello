@@ -175,7 +175,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	// OTHER METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Launch the unlock animation!
+	/// Launch the unlock animation! Dragon acquired via HC
 	/// </summary>
 	/// <param name="_unlockedDragonSku">Unlocked dragon sku.</param>
 	/// <param name="_initialDelay">Initial delay before launching the unlock animation.</param>
@@ -271,7 +271,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Launch the acquire animation!
+	/// Launch the acquire animation! Dragon acquired via XP+SC
 	/// </summary>
 	/// <param name="_acquiredDragonSku">Acquired dragon sku.</param>
 	public void LaunchAcquireAnim(string _acquiredDragonSku) {
@@ -295,12 +295,15 @@ public class MenuDragonScreenController : MonoBehaviour {
 				// Toggle animating mode
 				SetAnimationFlag(false, !pendingReveals);   // Only allow post actions if there are no pending reveals
 
-				// Check for assets download
+				// OTA: Check if the dragon is downloaded
 				Downloadables.Handle acquiredDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_acquiredDragonSku);
 				if(!acquiredDragonHandle.IsAvailable()) {
 					// Initialize download flow with handle for ALL and check for popups
 					m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-					m_assetsDownloadFlow.OpenPopupIfNeeded();
+
+                    // this case will never be triggered by the Sparks acquisition, so we know
+                    // that if we reach this case, its because the player acquired a medium (or bigger) dragon
+                    m_assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
 				}
 			})
 			.SetAutoKill(true)
@@ -598,7 +601,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Resources not available, which means we need to download ALL
 			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
-			// If needed, show assets download popup
+			// If needed, show assets download popup. Download will be already in progress at this point.
 			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
 
 			// Don't move to next screen
@@ -647,7 +650,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
 			// If needed, show assets download popup
-			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_SKINS);
 
 			// Don't move to next screen
 			return;

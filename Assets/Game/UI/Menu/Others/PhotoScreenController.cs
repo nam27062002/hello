@@ -311,7 +311,7 @@ public class PhotoScreenController : MonoBehaviour {
         {
             // Initialize download flow with handle for ALL assets
             m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_AR);
 
             return;
         }
@@ -451,7 +451,7 @@ public class PhotoScreenController : MonoBehaviour {
         {
             // Initialize download flow with handle for ALL assets
             m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ANIMOJIS);
         }
 
         else

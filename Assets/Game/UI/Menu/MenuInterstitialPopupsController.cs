@@ -540,15 +540,26 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		switch(m_currentScreen) {
 			case MenuScreen.DRAGON_SELECTION: {
 				MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<MenuDragonScreenController>();
-				if(screenController != null) {
-					// If the download flow doesn't have any handle assigned already, check whether we must do it
-					if(screenController.assetsDownloadFlow.handle == null) {
-						// If the target progression point has been reached, trigger download for all if needed
-						if(UsersManager.currentUser.GetHighestDragon().GetOrder() >= AssetsDownloadFlowSettings.autoTriggerAfterDragon) {
-							screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
-						}
-					}
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
+
+                if (screenController != null &&
+                    screenController.assetsDownloadFlow != null) {
+
+                        // If the target progression point has been reached (usually Sparks), trigger download for ALL
+                        if (UsersManager.currentUser.GetHighestDragon().GetOrder() == AssetsDownloadFlowSettings.autoTriggerAfterDragon)
+                        {
+
+                            screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+                            downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_TRIGGER_DRAGON);
+
+					    }
+                        // The player bought a Medium or bigger tier dragon, trigger download for ALL
+                        else if (UsersManager.currentUser.GetHighestDragon().GetOrder() > AssetsDownloadFlowSettings.autoTriggerAfterDragon)
+                        {
+                            
+                            screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+                            downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
+                        }
+
 				}
 			} break;
 		}

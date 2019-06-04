@@ -535,7 +535,8 @@ public class PetPill : ScrollRectItem<PetPillData>, IBroadcastListener {
 
             // If needed, show assets download popup and don't continue
             m_assetsDownloadFlow.InitWithHandle(m_petHandle);
-            PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+            PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, 
+                                                                                  AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_PET);
             if (popup != null) return;
 
         }

@@ -165,7 +165,8 @@ public class LabGoalsBar : MonoBehaviour {
 		Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
 		if(!currentDragonHandle.IsAvailable()) {
 			// If needed, show assets download popup
-			PopupAssetsDownloadFlow.OpenPopupByState(currentDragonHandle, PopupAssetsDownloadFlow.PopupType.ANY);
+
+			PopupAssetsDownloadFlow.OpenPopupByState(currentDragonHandle, PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.NOT_SPECIFIED);
 
 			// Go back to lab dragon selection screen
 			InstanceManager.menuSceneController.GoToScreen(MenuScreen.LAB_DRAGON_SELECTION);

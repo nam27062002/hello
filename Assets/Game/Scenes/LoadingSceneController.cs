@@ -781,8 +781,10 @@ public class LoadingSceneController : SceneController {
 					// Trigger any required popup
 					// Only mandatory and error popups
 					m_assetsDownloadFlow.OpenPopupByState(
-						PopupAssetsDownloadFlow.PopupType.MANDATORY | PopupAssetsDownloadFlow.PopupType.ERROR
-					);
+						PopupAssetsDownloadFlow.PopupType.MANDATORY | PopupAssetsDownloadFlow.PopupType.ERROR,
+                        AssetsDownloadFlow.Context.LOADING_SCREEN
+
+                    );
 			}break;
 
             case State.DONE:

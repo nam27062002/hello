@@ -18,15 +18,31 @@ using TMPro;
 /// Simple UI widget to show the progress of an addressable download.
 /// </summary>
 public class AssetsDownloadFlow : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
-	[Header("References")]
+    //----------------------------------------------------------------------------//
+    // ENUM 																	  //
+    //----------------------------------------------------------------------------//
+    public enum Context
+    {
+
+        NOT_SPECIFIED,
+        PLAYER_BUYS_TRIGGER_DRAGON,
+        PLAYER_BUYS_NOT_DOWNLOADED_DRAGON,
+        PLAYER_CLICKS_ON_PET,
+        PLAYER_CLICKS_ON_TOURNAMENT,
+        LOADING_SCREEN,
+        PLAYER_CLICKS_ON_SKINS,
+        PLAYER_CLICKS_ANIMOJIS,
+        PLAYER_CLICKS_AR,
+        PLAYER_BUYS_SPECIAL_DRAGON
+
+    }
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [Header("References")]
 	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
@@ -122,21 +138,22 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// Checks whether a popup needs to be opened with the current handle.
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
-	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
+	public PopupAssetsDownloadFlow OpenPopupIfNeeded(Context _context = Context.NOT_SPECIFIED) {
 		// Not if not enabled
 		if(!m_enabled) return null;
 
 		// Open popup based on handle's state
-		return OpenPopupByState(PopupAssetsDownloadFlow.PopupType.MANDATORY);
+		return OpenPopupByState(PopupAssetsDownloadFlow.PopupType.MANDATORY, _context);
 	}
 
-	/// <summary>
-	/// Checks whether a popup needs to be opened with the current handle.
-	/// If so, puts it in the queue and replaces any popup previously queued by this component.
-	/// </summary>
-	/// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
-	/// <returns>The opened popup if any was needed.</returns>
-	public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask) {
+    /// <summary>
+    /// Checks whether a popup needs to be opened with the current handle.
+    /// If so, puts it in the queue and replaces any popup previously queued by this component.
+    /// </summary>
+    /// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
+    /// <param name="_context">The situation that triggered the download popup. It will show an adapted message in each case.</param>
+    /// <returns>The opened popup if any was needed.</returns>
+    public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask, Context _context = Context.NOT_SPECIFIED) {
 		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
 		//				For now we'll just replace the old popup by a new clone.
 
@@ -147,7 +164,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		ClearPopup();
 
 		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask);
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask, _context);
 		if(downloadPopup != null) {
 			// Yes! Store its controller
 			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
