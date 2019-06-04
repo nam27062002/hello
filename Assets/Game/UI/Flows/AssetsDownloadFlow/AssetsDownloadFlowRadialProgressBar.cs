@@ -29,7 +29,7 @@ public class AssetsDownloadFlowRadialProgressBar : AssetsDownloadFlowProgressBar
 
     [Space(10)]
     [Header("Radial Progress bar elements")]
-    [SerializeField] private GameObject m_progressCircle;
+
     [SerializeField] private GameObject m_progressIcon;
 
     [SerializeField] private Transform m_inProgressGroup;
@@ -67,7 +67,7 @@ public class AssetsDownloadFlowRadialProgressBar : AssetsDownloadFlowProgressBar
                 case State.IN_PROGRESS:
                     {
 
-                        m_progressCircle.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarDownloadingColor);
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarDownloadingColor);
                         m_progressIcon.GetComponent<Image>().color = AssetsDownloadFlowSettings.iconDownloadingColor;
 
                         m_inProgressGroup.gameObject.SetActive(true);
@@ -83,7 +83,7 @@ public class AssetsDownloadFlowRadialProgressBar : AssetsDownloadFlowProgressBar
                 case State.COMPLETED:
                     {
 
-                        m_progressCircle.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarFinishedColor);
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarFinishedColor);
                         m_progressIcon.GetComponent<Image>().color = AssetsDownloadFlowSettings.iconFinishedColor;
 
                         m_inProgressGroup.gameObject.SetActive(false);
@@ -95,7 +95,7 @@ public class AssetsDownloadFlowRadialProgressBar : AssetsDownloadFlowProgressBar
                 default: // Error case
                     {
 
-                        m_progressCircle.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarErrorColor);
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarErrorColor);
                         m_progressIcon.GetComponent<Image>().color = AssetsDownloadFlowSettings.iconErrorColor;
 
                         m_inProgressGroup.gameObject.SetActive(false);
