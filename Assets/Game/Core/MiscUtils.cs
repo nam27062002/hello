@@ -55,6 +55,7 @@ public class MiscUtils {
     {
         switch (iso)
         {
+            /*
             case "zh-CN":
                 iso = "zh_cn";
                 break;
@@ -62,7 +63,7 @@ public class MiscUtils {
             case "zh-TW":
                 iso = "zh_tw";
                 break;
-
+            */
             default:
                 string[] tokens = iso.Split('-');
                 if (tokens.Length >= 1)
