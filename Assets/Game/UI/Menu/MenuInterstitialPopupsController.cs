@@ -551,20 +551,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
 				}
 			} break;
-
-			case MenuScreen.LAB_DRAGON_SELECTION: {
-				LabDragonSelectionScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<LabDragonSelectionScreen>();
-				if(screenController != null) {
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			} break;
-
-			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
-				TournamentBuildScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<TournamentBuildScreen>();
-				if(screenController != null) {
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			} break;
 		}
 
 		// Did we open any popup?
