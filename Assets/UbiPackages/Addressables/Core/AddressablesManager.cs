@@ -103,7 +103,7 @@ public class AddressablesManager
     public static bool Mode_NeedsAssetBundles()
     {        
 		EMode mode = EffectiveMode;
-        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles;
+        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles || mode == EMode.LocalAssetBundlesInResources;
     }    
 #endif
 

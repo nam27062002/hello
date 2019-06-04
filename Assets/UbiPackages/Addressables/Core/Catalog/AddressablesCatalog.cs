@@ -331,8 +331,28 @@ public class AddressablesCatalog
             }
         }
 
-        if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
+        if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources || mode == AddressablesManager.EMode.AllInResources)
         {
+            if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
+            {
+                int count = m_localABList.Count;
+                foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (pair.Value.AssetBundleIds != null && pair.Value.AssetBundleIds.Contains(m_localABList[i]))
+                        {
+                            pair.Value.AssetBundleIds.Remove(m_localABList[i]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                m_groups.Clear();
+            }
+
+
             m_localABList.Clear();
         }
     }
