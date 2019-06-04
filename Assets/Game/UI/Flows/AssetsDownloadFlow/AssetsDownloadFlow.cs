@@ -31,11 +31,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
 	[Space]
-	[SerializeField] private GameObject m_downloadingGroup = null;
-	[Space]
-    [SerializeField] private GameObject m_downloadCompletedGroup = null;
-	[Space]
-    [SerializeField] private GameObject m_errorGroup = null;
 	[SerializeField] private Localizer m_errorText = null;
 
 	[Space]
@@ -192,87 +187,81 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	/// <returns>Whether the widget must be displayed or not.</returns>
 	private bool RefreshVisibility() {
-		// Check several conditions
-		// Order is relevant!
-		bool show = true;
+        // Check several conditions
+        // Order is relevant!
+        bool show = true;
+        float delayInSecs = 0f;
 
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
-			//Debug.Log(Color.magenta.Tag("m_enabled false!"));
-			show = false;
+            //Debug.Log(Color.magenta.Tag("m_enabled false!"));
+            show = false;
 		}
 
 		// Depending on the setup, don't show if a popup is open
 		else if(m_hideOnPopup && m_queuedPopup != null && m_queuedPopup.isOpen) {
-			//Debug.Log(Color.magenta.Tag("Popup open"));
-			show = false;
+            //Debug.Log(Color.magenta.Tag("Popup open"));
+            show = false;
 		}
 
 		// Don't show if we don't have valid data
 		else if(m_handle == null) {
-			//Debug.Log(Color.magenta.Tag("m_handle is NULL"));
-			show = false;
+            //Debug.Log(Color.magenta.Tag("m_handle is NULL"));
+            show = false;
 		}
 
 		// Don't show if permission hasn't yet been requested (we will trigger the popup)
 		else if(m_handle.NeedsToRequestPermission()) {
-			//Debug.Log(Color.magenta.Tag("needs to request permission"));
-			show = false;
+            //Debug.Log(Color.magenta.Tag("needs to request permission"));
+            show = false;
 		}
 
 		// Don't show if download has already finished
 		else if(m_handle.IsAvailable()) {
-			//Debug.Log(Color.magenta.Tag("download finished"));
-			show = false;
+            //Debug.Log(Color.magenta.Tag("download finished"));
+
+            show = false;
+
 		}
 
 		else {
 			//Debug.Log(Color.green.Tag("flow needs displaying!"));
 		}
 
-		// Apply - Restart animation?
-		// Only restart when showing!
-		if(show && m_restartAnim) {
-			m_root.RestartSet(show);
-		} else {
-			m_root.Set(show);
-		}
-		m_restartAnim = false;  // Reset flag
+        // Apply - Restart animation?
+        // Only restart when showing!
+        if (show && m_restartAnim)
+        {
+            m_root.RestartSet(show);
+        }
+        else
+        {
+            m_root.Set(show);
+        }
+
+        m_restartAnim = false;  // Reset flag
 
 		// Done!
 		return show;
 	}
 
+    
 	/// <summary>
 	/// Update the visuals with latest data.
 	/// </summary>
 	private void RefreshData() {
-		// Progress Bar
-		if(m_progressBar != null) {
+        
+        // Update progress bar elements
+	    if(m_progressBar != null) {
 			m_progressBar.Refresh(m_handle);
-            
-            if (m_downloadCompletedGroup != null)
-            {
-                // Hide the download complete icon
-                m_downloadCompletedGroup.SetActive(m_handle.Progress >= 1f);
-            }
+
 		}
 
-		// Downloading group
-		bool hasError = m_handle.GetError() != Downloadables.Handle.EError.NONE;
-		if(m_downloadingGroup != null) {
-			// Just show/hide, no custom text for now
-			m_downloadingGroup.SetActive(!hasError);
-		}
+        bool hasError = m_handle.GetError() != Downloadables.Handle.EError.NONE;
 
-		// Error group
-		if(m_errorGroup != null) {
-			// Show/hide
-			m_errorGroup.SetActive(hasError);
-		}
-
-		// Error text
-		if(m_errorText != null) {
+        // Error text
+        if (m_errorText != null) {
+                       
 			// Set text based on error type
 			if(hasError) {
 				string errorTid = "TID_OTA_ERROR_GENERIC_TITLE";
