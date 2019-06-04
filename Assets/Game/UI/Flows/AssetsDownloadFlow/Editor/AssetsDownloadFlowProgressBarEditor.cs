@@ -24,12 +24,6 @@ public class AssetsDownloadFlowProgressBarEditor : Editor {
 	//----------------------------------------------------------------------//
 	private const float BUTTON_HEIGHT = 25f;
 
-	private enum TestStates {
-		ERROR,
-		IN_PROGRESS,
-		COMPLETED
-	}
-
 	//----------------------------------------------------------------------//
 	// METHODS																//
 	//----------------------------------------------------------------------//
@@ -46,17 +40,17 @@ public class AssetsDownloadFlowProgressBarEditor : Editor {
 		EditorGUILayout.BeginHorizontal(); {
 			GUI.color = Colors.coral;
 			if(GUILayout.Button("ERROR", GUILayout.Height(BUTTON_HEIGHT))) {
-				ApplyTestState(TestStates.ERROR);
+				ApplyTestState(AssetsDownloadFlowProgressBar.State.ERROR);
 			}
 
 			GUI.color = Colors.paleYellow;
 			if(GUILayout.Button("IN PROGRESS", GUILayout.Height(BUTTON_HEIGHT))) {
-				ApplyTestState(TestStates.IN_PROGRESS);
+				ApplyTestState(AssetsDownloadFlowProgressBar.State.IN_PROGRESS);
 			}
 
 			GUI.color = Colors.paleGreen;
 			if(GUILayout.Button("COMPLETED", GUILayout.Height(BUTTON_HEIGHT))) {
-				ApplyTestState(TestStates.COMPLETED);
+				ApplyTestState(AssetsDownloadFlowProgressBar.State.COMPLETED);
 			}
 
 			// Reset color
@@ -69,16 +63,10 @@ public class AssetsDownloadFlowProgressBarEditor : Editor {
 	/// Apply a test state to the target.
 	/// </summary>
 	/// <param name="_state">State used as test.</param>
-	private void ApplyTestState(TestStates _state) {
-		// Get target color based on test state
-		Gradient4 testColor = null;
-		switch(_state) {
-			case TestStates.ERROR: testColor = AssetsDownloadFlowSettings.progressBarErrorColor; break;
-			case TestStates.IN_PROGRESS: testColor = AssetsDownloadFlowSettings.progressBarDownloadingColor; break;
-			case TestStates.COMPLETED: testColor = AssetsDownloadFlowSettings.progressBarFinishedColor; break;
-		}
+	private void ApplyTestState(AssetsDownloadFlowProgressBar.State _state) {
 
 		// Apply!
-		(target as AssetsDownloadFlowProgressBar).DEBUG_SetColor(testColor);
+		(target as AssetsDownloadFlowProgressBar).DEBUG_SetState(_state);
+
 	}
 }

@@ -47,21 +47,41 @@ public class AssetsDownloadFlowSettings : SingletonScriptableObject<AssetsDownlo
 		get { return instance.m_progressBarFinishedColor; }
 	}
 
-	[Separator("Other Colors")]
+
+    [Separator("Icons colors")]
+    [SerializeField] private Color m_iconErrorColor = Color.red;
+    public static Color iconErrorColor {
+        get { return instance.m_iconErrorColor; }
+    }
+
+    [SerializeField] private Color m_iconDownloadingColor = Color.yellow;
+    public static Color iconDownloadingColor {
+        get { return instance.m_iconDownloadingColor; }
+    }
+
+    [SerializeField] private Color m_iconFinishedColor = Color.green;
+    public static Color iconFinishedColor {
+        get { return instance.m_iconFinishedColor; }
+    }
+
+
+    [Separator("Other Colors")]
 	[SerializeField] private Color m_filesizeTextHighlightColor = Colors.orange;
 	public static Color filesizeTextHighlightColor {
 		get { return instance.m_filesizeTextHighlightColor; }
 	}
 
-	//------------------------------------------------------------------------//
-	// METHODS																  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Select the right progress bar color based on handle's download state.
-	/// </summary>
-	/// <returns>The progress bar color.</returns>
-	/// <param name="_handle">Handle to be checked.</param>
-	public static Gradient4 GetProgressBarColor(Downloadables.Handle _handle) {
+
+
+    //------------------------------------------------------------------------//
+    // METHODS																  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Select the right progress bar color based on handle's download state.
+    /// </summary>
+    /// <returns>The progress bar color.</returns>
+    /// <param name="_handle">Handle to be checked.</param>
+    public static Gradient4 GetProgressBarColor(Downloadables.Handle _handle) {
 		// Just in case
 		if(_handle == null) return progressBarErrorColor;
 

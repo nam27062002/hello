@@ -54,8 +54,12 @@ public class PhotoScreenController : MonoBehaviour {
 	[SerializeField] private PhotoScreenARFlow m_arFlow = null;
 	[SerializeField] private GameObject m_animojiButton = null;
 
-	// Public properties
-	private Mode m_mode = Mode.DRAGON;
+    [Separator("Others")]
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+
+
+    // Public properties
+    private Mode m_mode = Mode.DRAGON;
 	public Mode mode {
 		get { return m_mode; }
 		set { SetMode(value); }
@@ -188,7 +192,11 @@ public class PhotoScreenController : MonoBehaviour {
 		// Allow animoji?
 		m_isAnimojiAvailable = (m_mode == Mode.DRAGON) && AnimojiScreenController.IsSupported(InstanceManager.menuSceneController.selectedDragon);
 		m_animojiButton.SetActive(m_isAnimojiAvailable);
-	}
+
+        //OTA: Initialize download flow with handle for ALL assets
+        m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+
+    }
 
 	/// <summary>
 	/// The screen has just finished the open animation.
@@ -294,19 +302,34 @@ public class PhotoScreenController : MonoBehaviour {
     /// </summary>
     public void OnARButton() {
 		if (!ButtonExtended.checkMultitouchAvailability ())
-			return;		
+			return;
+
+        // Check for assets download for this specific dragon
+        string dragonSKU = InstanceManager.menuSceneController.selectedDragon;
+        Downloadables.Handle dragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(dragonSKU);
+        if (!dragonHandle.IsAvailable())
+        {
+            // Initialize download flow with handle for ALL assets
+            m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+
+            return;
+        }
+
 
         // Start AR flow
-        if (!m_arFlow.isActiveAndEnabled) {
-			// Hide bottom bar
-			m_bottomBar.gameObject.SetActive(false);
+        if (!m_arFlow.isActiveAndEnabled)
+        {
+            // Hide bottom bar
+            m_bottomBar.gameObject.SetActive(false);
 
             currentMode.dragControl.gameObject.SetActive(false);
             currentMode.zoomControl.gameObject.SetActive(false);
 
-			// Do it!
-			m_arFlow.StartFlow();
-		}
+            // Do it!
+            m_arFlow.StartFlow();
+        }
+
     }
 
     /// <summary>
@@ -407,4 +430,39 @@ public class PhotoScreenController : MonoBehaviour {
 			}
 		}
 	}
+
+    //------------------------------------------------------------------------//
+    // Animoji CALLBACKS															  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// The Animoji button has been pressed.
+    /// </summary>
+    public void OnAnimojiButton()
+    {
+
+        if (!ButtonExtended.checkMultitouchAvailability())
+            return;
+
+        // Animoji requires the whole downloadable content
+
+        // Check for assets download for ALL content
+        Downloadables.Handle handle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+        if (!handle.IsAvailable())
+        {
+            // Initialize download flow with handle for ALL assets
+            m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+        }
+
+        else
+        {
+
+            // Navigate to the animoji screen
+            MenuTransitionManager m_transitionManager = InstanceManager.menuSceneController.transitionManager;
+            Debug.Assert(m_transitionManager != null, "Required component missing!");
+
+            m_transitionManager.GoToScreen(MenuScreen.ANIMOJI, true);
+
+        }
+    }
 }
