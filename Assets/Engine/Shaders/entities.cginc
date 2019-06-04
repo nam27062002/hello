@@ -215,23 +215,51 @@ v2f vert(appdata_t v)
 
 fixed4 frag(v2f i) : SV_Target
 {
+#if defined(NORMALMAP) && defined(LITMODE_LIT)
+	// Calc normal from detail texture normal and tangent world
+	float4 encodedNormal = tex2D(_NormalTex, i.uv);
+	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
+	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
+	float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
+#else
+	float3 normalDirection = i.normalWorld;
+#endif
+
+	fixed4 diff = tex2D(_MainTex, i.uv);
+
+#if defined (REFLECTIONMAP)
+	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
+
+	//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
+	//	float ref = specMask * _ReflectionAmount * detail.b;
+
+	float ref = _ReflectionAmount;
+
+#if defined(COLORMODE_COLORRAMPMASKED)
+	diff.x = (1.0 - ref) * diff.x + ref * reflection.x;
+#else
+	diff = (1.0 - ref) * diff + ref * reflection;
+#endif
+
+#endif
+
 	// sample the texture
 #if defined(COLORMODE_TINT)
-	fixed4 col = tex2D(_MainTex, i.uv).x * _Tint1;
+	fixed4 col = diff.x * _Tint1;
 #elif defined(COLORMODE_GRADIENT)
-	fixed4 col = lerp(_Tint1, _Tint2, tex2D(_MainTex, i.uv).x);
+	fixed4 col = lerp(_Tint1, _Tint2, diff.x);
 #elif defined(COLORMODE_COLORRAMP)
-	fixed4 diff = tex2D(_MainTex, i.uv);
-	fixed2 offset = fixed2(tex2D(_MainTex, i.uv).x, 0.0);
+//	fixed4 diff = tex2D(_MainTex, i.uv);
+	fixed2 offset = fixed2(diff.x, 0.0);
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
 
 #elif defined(COLORMODE_COLORRAMPMASKED)
-	fixed4 diff = tex2D(_MainTex, i.uv);
+//	fixed4 diff = tex2D(_MainTex, i.uv);
 	fixed vy = (floor(diff.y + 0.5) * 2.0) + floor(diff.z + 0.5) + 0.5;
 	fixed2 offset = fixed2(diff.x, vy * _RampTex_TexelSize.y );
 	fixed4 col = fixed4(tex2D(_RampTex, offset).xyz, diff.w);
 #else
-	fixed4 col = tex2D(_MainTex, i.uv);
+	fixed4 col = diff;
 #endif
 
 #if defined(LITMODE_LIT)
@@ -256,27 +284,6 @@ fixed4 frag(v2f i) : SV_Target
 
 #if defined(TINT)
 	col.xyz *= _Tint.xyz;
-#endif
-
-#if defined(NORMALMAP) && defined(LITMODE_LIT)
-	// Calc normal from detail texture normal and tangent world
-	float4 encodedNormal = tex2D(_NormalTex, i.uv);
-	float3 localCoords = float3(2.0 * encodedNormal.xy - float2(1.0, 1.0), 1.0 / _NormalStrength);
-	float3x3 local2WorldTranspose = float3x3(i.tangentWorld, i.binormalWorld, i.normalWorld);
-	float3 normalDirection = normalize(mul(localCoords, local2WorldTranspose));
-#else
-	float3 normalDirection = i.normalWorld;
-#endif
-
-#if defined (REFLECTIONMAP)
-	fixed4 reflection = texCUBE(_ReflectionMap, reflect(i.viewDir, normalDirection));
-
-	//	fixed specMask = 0.2126 * reflection.r + 0.7152 * reflection.g + 0.0722 * reflection.b;
-	//	float ref = specMask * _ReflectionAmount * detail.b;
-
-	float ref = _ReflectionAmount;
-
-	col = (1.0 - ref) * col + ref * reflection;
 #endif
 
 #if defined(LITMODE_LIT)
