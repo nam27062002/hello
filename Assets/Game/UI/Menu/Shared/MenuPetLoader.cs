@@ -8,6 +8,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
+
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,12 +24,15 @@ public class MenuPetLoader : MonoBehaviour {
 	public enum Mode {
 		MANUAL				// Manual control via the Load() method and the exposed m_petSku parameter
 	}
-	
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private Mode m_mode = Mode.MANUAL;
+
+    [System.Serializable]
+    public class MenuPetLoaderEvent : UnityEvent<MenuPetLoader> { }
+
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    // Exposed setup
+    [SerializeField] private Mode m_mode = Mode.MANUAL;
 	public Mode mode {
 		get { return m_mode; }
 		set {
@@ -102,6 +107,9 @@ public class MenuPetLoader : MonoBehaviour {
 	private Camera m_uiCamera;
     private AddressablesOp m_loadingRequest = null;
 
+    public MenuPetLoaderEvent OnLoadingComplete = new MenuPetLoaderEvent();
+
+
     //------------------------------------------------------------------//
     // GENERIC METHODS													//
     //------------------------------------------------------------------//
@@ -155,6 +163,9 @@ public class MenuPetLoader : MonoBehaviour {
         if (m_loadingRequest != null) {
             if (m_loadingRequest.isDone) {
                 InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());
+
+                OnLoadingComplete.Invoke(this);
+
                 m_loadingRequest = null;
             }
         }

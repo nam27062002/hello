@@ -75,14 +75,18 @@ public class PopupInfoPet : MonoBehaviour {
 		if(m_scroller != null) m_scroller.OnSelectionIndexChanged.RemoveListener(OnPetSelected);
 	}
 
-	//------------------------------------------------------------------------//
-	// OTHER METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize the popup with the given pet info.
-	/// </summary>
-	/// <param name="_petDef">Pet definition used for the initialization.</param>
-	public virtual void Init(DefinitionNode _petDef) {
+    protected void OnDestroy() {
+        m_preview.OnLoadingComplete.RemoveListener(OnLoadingComplete);
+    }
+
+    //------------------------------------------------------------------------//
+    // OTHER METHODS														  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize the popup with the given pet info.
+    /// </summary>
+    /// <param name="_petDef">Pet definition used for the initialization.</param>
+    public virtual void Init(DefinitionNode _petDef) {
 		List<DefinitionNode> defs = new List<DefinitionNode>();
 		defs.Add(_petDef);
 		Init(_petDef, defs);
@@ -146,12 +150,7 @@ public class PopupInfoPet : MonoBehaviour {
 
 			// Load target pet!
 			m_preview.Load(m_petDef.sku);
-
-			// Make sure billboards look at the right camera!
-			LookAtMainCamera[] billboards = m_preview.petInstance.GetComponentsInChildren<LookAtMainCamera>(true);
-			for(int i = 0; i < billboards.Length; ++i) {
-				billboards[i].overrideCamera = PopupManager.canvas.worldCamera;
-			}
+            m_preview.OnLoadingComplete.AddListener(OnLoadingComplete);
 		}
 
 		// Initialize name and description texts
@@ -323,4 +322,13 @@ public class PopupInfoPet : MonoBehaviour {
 			    petsScreen.ScrollToPet(m_scroller.selectedItem.def.sku, false, 0.15f);
 		}
 	}
+
+
+    // Make sure billboards look at the right camera!
+    private void OnLoadingComplete(MenuPetLoader _loader) {
+        LookAtMainCamera[] billboards = m_preview.petInstance.GetComponentsInChildren<LookAtMainCamera>(true);
+        for (int i = 0; i < billboards.Length; ++i) {
+            billboards[i].overrideCamera = PopupManager.canvas.worldCamera;
+        }
+    }
 }
