@@ -258,7 +258,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StartFireEffect() {
-		FirePropagationManager.PlayBurnAudio();
+		// Not used at the moment
+		// FirePropagationManager.PlayBurnAudio();
 		if (m_fireSprite == null) {
 			GameObject go = m_burnParticle.Spawn(m_transform.position);
 
@@ -276,7 +277,8 @@ public class FireNode : MonoBehaviour, IQuadTreeItem {
 	}
 
 	private void StopFireEffect() {
-		FirePropagationManager.StopBurnAudio();
+		// Not used at the moment
+		// FirePropagationManager.StopBurnAudio();
 		if (m_fireSprite != null) {
 			m_fireSprite.gameObject.SetActive(false);
 			m_burnParticle.ReturnInstance(m_fireSprite.gameObject);

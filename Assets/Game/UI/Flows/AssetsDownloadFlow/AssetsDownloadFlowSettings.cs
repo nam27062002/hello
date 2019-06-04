@@ -31,6 +31,11 @@ public class AssetsDownloadFlowSettings : SingletonScriptableObject<AssetsDownlo
 		get { return instance.m_updateInterval; }
 	}
 
+	[SerializeField] private int m_autoTriggerAfterDragon = 2;
+	public static int autoTriggerAfterDragon {
+		get { return instance.m_autoTriggerAfterDragon; }
+	}
+
 	[Separator("Download Progress Bar Colors")]
 	[SerializeField] private Gradient4 m_progressBarErrorColor = new Gradient4();
 	public static Gradient4 progressBarErrorColor { 

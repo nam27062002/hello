@@ -566,7 +566,7 @@ public class LoadingSceneController : SceneController {
     private bool AllEquipedIsDownloaded()
     {
         bool ret = true;
-        // Check if all quiped skins or pets are downloaded+
+        // Check if all eqquiped skins or pets are downloaded
         List<string> toCheck = new List<string>();
         Dictionary<string, IDragonData> dragons = DragonManager.dragonsBySku;
         foreach( KeyValuePair<string, IDragonData> pair in dragons )
@@ -574,8 +574,14 @@ public class LoadingSceneController : SceneController {
 			// Only owned dragons
             if ( pair.Value.isOwned )
             {
-				// Dragon bundle: menu and ingame prefabs, skins, portraits...
-				toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
+				// Dragon bundle: only check equipped skin, we can access the menu with the rest
+				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, pair.Value.disguise);
+				if(skinDef != null) {
+					toCheck.Add(skinDef.GetAsString("skin") + "_body");	// All dragon skins should have a _body material - this is enough to check whether we need to download the bundle
+				} else {
+					// Shouldn't get here, but just in case - if the equipped skin is not found, use the whole dragon bundle as reference
+					toCheck.AddRange(HDAddressablesManager.Instance.GetResourceIDsForDragon(pair.Key));
+				}
 
 				// Equipped pets bundles: menu and ingame prefabs, portraits...
 				if(pair.Value.pets.Count > 0) {

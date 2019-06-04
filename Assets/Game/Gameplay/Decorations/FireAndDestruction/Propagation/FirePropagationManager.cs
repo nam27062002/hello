@@ -68,14 +68,16 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// </summary>
 	private void OnLevelLoaded() {
 
+		/*
 		if ( m_fireNodeAudio == null )
 		{
 			m_fireNodeAudio = gameObject.AddComponent<AudioSource>();
 			m_fireNodeAudio.playOnAwake = false;
 			m_fireNodeAudio.loop = false;
 			m_fireNodeAudio.clip = Resources.Load("audio/sfx/Fire/EnvTrch") as AudioClip;
-			m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/SfxMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
+			m_fireNodeAudio.outputAudioMixerGroup = (Resources.Load("audio/MasterMixer") as UnityEngine.Audio.AudioMixer).FindMatchingGroups("Master")[0];
 		}
+		 */
 
 		// Create and populate QuadTree
 		// Get map bounds!
@@ -143,19 +145,23 @@ public class FirePropagationManager : UbiBCN.SingletonMonoBehaviour<FirePropagat
 	/// Inserts the burning. Registers a burning fire node while on fire
 	/// </summary>
 	public static void PlayBurnAudio() {
+		/*
 		if(instance.m_fireNodeAudio != null && !instance.m_fireNodeAudio.isPlaying)
 			instance.m_fireNodeAudio.Play();
+		*/
 	}
 
 	/// <summary>
 	/// Removes the burning fire node from the registered burning list
 	/// </summary>
 	public static void StopBurnAudio() {
+		/*
         if (instance != null && instance.m_burningFireNodes != null) {
 			if (instance.m_burningFireNodes.Count <= 0)
 				if (instance.m_fireNodeAudio != null && instance.m_fireNodeAudio != null)
 					instance.m_fireNodeAudio.Stop();
 		}
+		 */
 	}
 
 	void Update() {

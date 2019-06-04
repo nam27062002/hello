@@ -76,10 +76,7 @@ public class AddressablesCatalog
                 LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
 
-                if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
-                {
-                    SetAllAssetBundlesAsLocal();
-                }
+                SetAddressablesMode(AddressablesManager.EffectiveMode);
             }
 #endif
         }
@@ -319,30 +316,52 @@ public class AddressablesCatalog
         return m_localABList;
     }
 
-    private void SetAllAssetBundlesAsLocal()
-    {
-        string abName;
+    private void SetAddressablesMode(AddressablesManager.EMode mode)
+    {        
         foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in m_entriesNoVariants)
         {
-            abName = pair.Value.AssetBundleName;
-            if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
-            {
-                m_localABList.Add(abName);
-            }
+            SetAddressablesModeToEntry(mode, pair.Value);
         }
 
         foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> p in m_entriesWithVariants)
         {
             foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in p.Value)
             {
-                abName = pair.Value.AssetBundleName;
+                SetAddressablesModeToEntry(mode, pair.Value);
+            }
+        }
+
+        if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
+        {
+            m_localABList.Clear();
+        }
+    }
+
+    private void SetAddressablesModeToEntry(AddressablesManager.EMode mode, AddressablesCatalogEntry entry)
+    {
+        string abName = entry.AssetBundleName;
+
+        switch (mode)
+        {
+            case AddressablesManager.EMode.AllInResources:
+                entry.SetupAsEntryInResources(entry.Id);
+                break;
+
+            case AddressablesManager.EMode.AllInLocalAssetBundles:
                 if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
                 {
                     m_localABList.Add(abName);
                 }
-            }
+                break;
+
+            case AddressablesManager.EMode.LocalAssetBundlesInResources:
+                if (m_localABList.Contains(abName))
+                {
+                    entry.SetupAsEntryInResources(entry.Id);
+                }
+                break;
         }
-    }
+    }   
 
     public List<string> GetUsedABList()
     {

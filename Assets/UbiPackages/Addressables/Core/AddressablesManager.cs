@@ -53,7 +53,8 @@ public class AddressablesManager
         Editor,
         Catalog,
         AllInLocalAssetBundles,    
-        AllInResources    
+        AllInResources,
+        LocalAssetBundlesInResources
     };
 		
 	private static List<string> EModeKeys = new List<string>(System.Enum.GetNames(typeof(EMode)));

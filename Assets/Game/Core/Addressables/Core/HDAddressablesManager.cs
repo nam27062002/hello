@@ -324,7 +324,7 @@ public class HDAddressablesManager : AddressablesManager
         return m_addressablesAreaLoader;
     }
     
-    private AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
+    public AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
     {
         AddressablesBatchHandle returnValue = new AddressablesBatchHandle();        
         if (sceneId == MenuSceneController.NAME)
@@ -937,7 +937,14 @@ public class Ingame_SwitchAreaHandle
         }
         handle.AddAddressable( resultPrefab );
         AddDisguiseDependencies( handle, dragon, false );
-    }
+
+        // Add next dragon icon
+        IDragonData nextDragonData = DragonManager.GetNextDragonData(dragon.sku);
+		if(nextDragonData != null) {
+            string defaultIcon = IDragonData.GetDefaultDisguise(nextDragonData.def.sku).Get("icon");
+            handle.AddAddressable( defaultIcon );
+        }
+    }    
 
     private IDragonData GetCurrentDragonData()
     {

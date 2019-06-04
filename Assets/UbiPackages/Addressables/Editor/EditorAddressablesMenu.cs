@@ -26,6 +26,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_CATALOG_MODE = ADDRESSABLES_MODE + "/Catalog";
     private const string ADDRESSABLES_ALL_IN_LOCAL_AB_MODE = ADDRESSABLES_MODE + "/All In Local Asset Bundles";
     private const string ADDRESSABLES_ALL_IN_RESOURCES_MODE = ADDRESSABLES_MODE + "/All In Resources";
+    private const string ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE = ADDRESSABLES_MODE + "/Local Asset Bundles In Resources";
 
     private const string ADDRESSABLES_TOOLS = ADDRESSABLES_MENU + "/Tools";
     private const string ADDRESSABLES_TOOLS_COPY_GENERATED_TO_PLAYER = ADDRESSABLES_TOOLS + "/Copy Generated files to player";
@@ -149,7 +150,7 @@ public class EditorAddressablesMenu : MonoBehaviour
         Manager.GeneratePlayerCatalogForAllPlatforms();
         Manager.GenerateAssetBundlesCatalog(target);        
 
-        if (AddressablesManager.Mode == AddressablesManager.EMode.Editor || AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
+        if (AddressablesManager.Mode == AddressablesManager.EMode.Editor || AddressablesManager.Mode == AddressablesManager.EMode.AllInResources || AddressablesManager.Mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
         {
             DeleteLocalAssetBundlesInPlayerDestination();
         }
@@ -210,6 +211,19 @@ public class EditorAddressablesMenu : MonoBehaviour
     public static bool Mode_SetAllInResourcesValidate()
     {
         Menu.SetChecked(ADDRESSABLES_ALL_IN_RESOURCES_MODE, AddressablesManager.Mode == AddressablesManager.EMode.AllInResources);
+        return true;
+    }
+
+    [MenuItem(ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE)]
+    public static void Mode_SetLocalAssetBundlesInResources()
+    {
+        SetMode(AddressablesManager.EMode.AllInResources);
+    }
+
+    [MenuItem(ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE, true)]
+    public static bool Mode_SetLocalAssetBundlesInResourcesValidate()
+    {
+        Menu.SetChecked(ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE, AddressablesManager.Mode == AddressablesManager.EMode.LocalAssetBundlesInResources);
         return true;
     }
 

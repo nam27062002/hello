@@ -19,32 +19,36 @@ using TMPro;
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
 public class OfferItemPreviewPet2d : IOfferItemPreview {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Image m_image = null;
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// OfferItemPreview IMPLEMENTATION										  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize preview with current item (m_item)
-	/// </summary>
-	protected override void InitInternal() {
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private UISpriteAddressablesLoader m_loader = null;
+
+
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS                                                        //
+    //------------------------------------------------------------------------//
+
+
+    //------------------------------------------------------------------------//
+    // OfferItemPreview IMPLEMENTATION										  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize preview with current item (m_item)
+    /// </summary>
+    protected override void InitInternal() {
 		// Item must be a pet!
 		Debug.Assert(m_item.reward is Metagame.RewardPet, "ITEM OF THE WRONG TYPE!", this);
 
-		// Initialize image with the target pet icon
-		m_def = m_item.reward.def;
-		if(m_def == null) {
-			m_image.sprite = null;
-		} else {
-			m_image.sprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + m_def.Get("icon"));
+        // Initialize image with the target pet icon
+        m_def = m_item.reward.def;
+        if (m_def != null) {
+            m_loader.LoadAsync(m_def.Get("icon"));
 		}
 	}
 

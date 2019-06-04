@@ -172,13 +172,6 @@ public class AddressablesCatalogEntry
 
             att = ATT_ASSET_NAME;
             AssetName = data[att];
-
-#if UNITY_EDITOR
-            if (m_editorMode && AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
-            {
-                SetupAsEntryInResources(Id);
-            }
-#endif
         }
     }   
 

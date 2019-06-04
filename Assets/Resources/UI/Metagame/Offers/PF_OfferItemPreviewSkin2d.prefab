@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 222824593624032410}
   - component: {fileID: 114871004655086578}
   - component: {fileID: 114366245128044512}
+  - component: {fileID: 114402939982170118}
   m_Layer: 5
   m_Name: DragonIconImage
   m_TagString: Untagged
@@ -101,6 +102,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eddc1fbd4bd796345832996a9560b9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114402939982170118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1031131092143706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114871004655086578}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114533543521043464
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,7 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_showInfoButton: 0
   m_enableMask: 1
-  m_image: {fileID: 114871004655086578}
+  m_loader: {fileID: 114402939982170118}
 --- !u!114 &114871004655086578
 MonoBehaviour:
   m_ObjectHideFlags: 1

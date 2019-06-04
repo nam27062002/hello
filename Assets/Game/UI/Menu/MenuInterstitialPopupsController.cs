@@ -541,6 +541,13 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			case MenuScreen.DRAGON_SELECTION: {
 				MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<MenuDragonScreenController>();
 				if(screenController != null) {
+					// If the download flow doesn't have any handle assigned already, check whether we must do it
+					if(screenController.assetsDownloadFlow.handle == null) {
+						// If the target progression point has been reached, trigger download for all if needed
+						if(UsersManager.currentUser.GetHighestDragon().GetOrder() >= AssetsDownloadFlowSettings.autoTriggerAfterDragon) {
+							screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+						}
+					}
 					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
 				}
 			} break;
