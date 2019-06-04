@@ -28,7 +28,7 @@ namespace AI {
                     ReceiveHit();
                     m_armorDurability.count--;
                     if (m_armorDurability.count <= 0) {
-                        Smash(_source);
+                        base.Smash(_source);
                         /*
 						SetSignal(Signals.Type.Destroyed, true);
 
