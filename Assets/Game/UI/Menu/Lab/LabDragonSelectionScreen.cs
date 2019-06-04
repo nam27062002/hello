@@ -107,8 +107,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 			.AppendInterval(1f)     // Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
 
-                // Check for assets download
-                Downloadables.Handle acquiredDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(_acquiredDragonSku);
+				// Check for assets download
+                Downloadables.Handle acquiredDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(_acquiredDragonSku);
                 if (!acquiredDragonHandle.IsAvailable())
                 {
                     // Initialize download flow with handle for ALL and check for popups
@@ -220,8 +220,8 @@ public class LabDragonSelectionScreen : MonoBehaviour {
 		// Do a first refresh
 		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
 
-        // OTA: Show the general download progress bar
-        Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+		// OTA: Show the general download progress bar
+		Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
         m_assetsDownloadFlow.InitWithHandle(allContentHandle);
 
 	} 
@@ -282,13 +282,10 @@ public class LabDragonSelectionScreen : MonoBehaviour {
         // Check whether all assets required for the current dragon are available or not
         // [AOC] CAREFUL! Current dragon is not necessarily the selected one! Make sure we're checking the right set of assets.
         // Get assets download handle for current dragon
-        string currentDragonSku = UsersManager.currentUser.currentClassicDragon;
-        Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForClassicDragon(currentDragonSku);
+        string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
+        Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(currentDragonSku);
         if (!currentDragonHandle.IsAvailable())
         {
-            // Scroll back to current dragon
-            InstanceManager.menuSceneController.SetSelectedDragon(currentDragonSku);
-
             // Resources not available, which means we need to download ALL
             m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
