@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using SimpleJSON;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -829,15 +830,27 @@ public class Ingame_SwitchAreaHandle
 	/// <param name="_dragonSku">Dragon sku.</param>
 	public List<string> GetResourceIDsForDragon(string _dragonSku) {
 		// Aux vars
-		List<string> ids = new List<string>();
+		HashSet<string> ids = new HashSet<string>();
 		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
 
 		// [AOC] In theory all assets go in the same bundle, but just in case add them all
 		if(def != null) {
 			// Dragon prefabs
-			ids.Add(def.GetAsString("gamePrefab"));
-			ids.Add(def.GetAsString("menuPrefab"));
-			ids.Add(def.GetAsString("resultsPrefab"));
+			// A bit different for special dragons
+			if(def.GetAsString("type") == DragonDataSpecial.TYPE_CODE) {
+				// Get all special tier definitions linked to this dragon and add the resource ids for each of them
+				List<DefinitionNode> specialTierDefs = DefinitionsManager.SharedInstance.GetDefinitionsByVariable(DefinitionsCategory.SPECIAL_DRAGON_TIERS, "specialDragon", def.sku);
+				for(int i = 0; i < specialTierDefs.Count; ++i) {
+					// It is a hash set, so we're ensuring no duplicates
+					ids.Add(specialTierDefs[i].GetAsString("gamePrefab"));
+					ids.Add(specialTierDefs[i].GetAsString("menuPrefab"));
+					ids.Add(specialTierDefs[i].GetAsString("resultsPrefab"));
+				}
+			} else {
+				ids.Add(def.GetAsString("gamePrefab"));
+				ids.Add(def.GetAsString("menuPrefab"));
+				ids.Add(def.GetAsString("resultsPrefab"));
+			}
 
 			// Skin assets
 			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
@@ -846,7 +859,7 @@ public class Ingame_SwitchAreaHandle
 			// [AOC] Don't need to add them as they go with the same bundle as the dragon prefabs
 		}
 
-		return ids;
+		return ids.ToList();
 	}
 
 	/// <summary>

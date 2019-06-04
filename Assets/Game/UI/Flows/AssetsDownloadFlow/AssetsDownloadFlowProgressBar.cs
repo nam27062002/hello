@@ -35,7 +35,9 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private TextMeshProUGUI m_progressText = null;
+    [SerializeField] protected GameObject m_progressBarFill;
+
+    [SerializeField] private TextMeshProUGUI m_progressText = null;
     [SerializeField] protected State m_state;
 
 
@@ -131,7 +133,32 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
     public virtual void RefreshProgressBarElements (State _newState)
     {
         
-        // Not needed in the progress bar
+        // If state has changed
+        if (m_state != _newState || m_state == State.NOT_INITIALIZED)
+        {
+
+            // Set the proper colors according to the new state of the progress bar
+            switch (_newState)
+            {
+                case State.IN_PROGRESS:
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarDownloadingColor);
+                        break;
+                    }
+                case State.COMPLETED:
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarFinishedColor);
+                        break;
+                    }
+                default: // Error case
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarErrorColor);
+                        break;
+                    }
+            }
+
+        }
+
         m_state = _newState;
 
     }
