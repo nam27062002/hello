@@ -50,6 +50,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// </summary>
     private void Awake() {
         m_image.sprite = null;
+        m_image.enabled = false;
 
         // Show loading icon from start
         ShowLoading(true);
@@ -94,6 +95,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
 
         // Load and instantiate the prefab
         m_image.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(m_assetId);
+        m_image.enabled = true;
     }
 
     public AddressablesOp LoadAsync(string _assetId) {
@@ -119,6 +121,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         if (m_loadingRequest != null) {
             if (m_loadingRequest.isDone) {
                 m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
+                m_image.enabled = true;
                 m_loadingRequest = null;
             }
         }

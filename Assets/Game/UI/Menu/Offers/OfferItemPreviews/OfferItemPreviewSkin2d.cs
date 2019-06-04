@@ -19,32 +19,30 @@ using TMPro;
 /// Simple class to encapsulate the preview of an item.
 /// </summary>
 public class OfferItemPreviewSkin2d : IOfferItemPreview {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
-	
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Image m_image = null;
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// OfferItemPreview IMPLEMENTATION										  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialize preview with current item (m_item)
-	/// </summary>
-	protected override void InitInternal() {
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private UISpriteAddressablesLoader m_loader = null;
+
+    //------------------------------------------------------------------------//
+    // OfferItemPreview IMPLEMENTATION										  //
+    //------------------------------------------------------------------------//
+    /// <summary>
+    /// Initialize preview with current item (m_item)
+    /// </summary>
+    protected override void InitInternal() {
 		// Item must be a skin!
 		Debug.Assert(m_item.reward is Metagame.RewardSkin, "ITEM OF THE WRONG TYPE!", this);
 
 		// Initialize image with the target skin icon
 		m_def = m_item.reward.def;
-		if(m_def == null) {
-			m_image.sprite = null;
-		} else {
-			m_image.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>( m_def.Get("icon"));
+		if(m_def != null) {			
+            m_loader.LoadAsync(m_def.Get("icon"));
 		}
 	}
 
