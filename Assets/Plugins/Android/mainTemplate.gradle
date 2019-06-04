@@ -61,14 +61,14 @@ android {
 		debug {
  			minifyEnabled **MINIFY_DEBUG**
  			useProguard **PROGUARD_DEBUG**
-			multiDexKeepProguard file('D:/Dragon/Assets/Editor/Calety/gradle-multidex-config.txt')
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 		release {
  			minifyEnabled **MINIFY_RELEASE**
   			useProguard **PROGUARD_RELEASE**			
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', 'D:/Dragon/Assets/Editor/Calety/gradle-proguard.txt'
-			multiDexKeepProguard file('D:/Dragon/Assets/Editor/Calety/gradle-multidex-config.txt')
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-proguard.txt'
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 	}
