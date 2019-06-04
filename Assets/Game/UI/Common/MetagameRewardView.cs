@@ -28,7 +28,8 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
 	// Exposed references
 	[Tooltip("Optional")] [SerializeField] protected Image m_icon = null;
-	[Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_rewardText = null;
+    [Tooltip("Optional")] [SerializeField] protected UISpriteAddressablesLoader m_iconLoader = null;
+    [Tooltip("Optional")] [SerializeField] protected TextMeshProUGUI m_rewardText = null;
 	[Space]
 	[SerializeField] protected bool m_showNameForEggsAndPets = true;    // [AOC] In some cases, the egg/pets names are an inconvenience and shouldn't be displayed
 	[SerializeField] protected bool m_showNameForCurrencies = false;	// [AOC] Usually not needed, but in some cases looks better
@@ -111,7 +112,9 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				// Get the pet preview
 				DefinitionNode petDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, m_reward.sku);
 				if(petDef != null) {
-					iconSprite = Resources.Load<Sprite>(UIConstants.PET_ICONS_PATH + petDef.Get("icon"));
+                    if (m_iconLoader != null)   m_iconLoader.LoadAsync(petDef.Get("icon"));
+                    else                        iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(petDef.Get("icon"));
+
 					rewardText = petDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, petDef.Get("powerup"));
 				} else {
@@ -126,7 +129,8 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 			case Metagame.RewardSkin.TYPE_CODE: {
 				DefinitionNode skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, m_reward.sku);
 				if(skinDef != null) {
-					iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
+                    if (m_iconLoader != null)   m_iconLoader.LoadAsync(skinDef.Get("icon"));
+                    else                        iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
 					rewardText = skinDef.GetLocalized("tidName");
 					powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, skinDef.Get("powerup"));
 				} else {
@@ -139,7 +143,8 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, m_reward.sku);
 				if(dragonDef != null) {
                     string defaultIcon = IDragonData.GetDefaultDisguise(dragonDef.sku).Get("icon");
-                    iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>( defaultIcon );
+                    if (m_iconLoader != null) m_iconLoader.LoadAsync(defaultIcon);
+                    else iconSprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
 					rewardText = dragonDef.GetLocalized("tidName");
 					powerDef = null;
 				} else {
@@ -200,8 +205,9 @@ public class MetagameRewardView : MonoBehaviour, IBroadcastListener {
 
 		// Apply
 		// Icon
-		if(m_icon != null) {
+		if(m_icon != null && iconSprite != null) {
 			m_icon.sprite = iconSprite;
+            m_icon.enabled = true;
 		}
 
 		// Reward

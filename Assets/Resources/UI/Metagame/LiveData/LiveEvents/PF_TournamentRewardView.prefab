@@ -272,6 +272,7 @@ GameObject:
   - component: {fileID: 224539742143455410}
   - component: {fileID: 222509837884825724}
   - component: {fileID: 114977561601293822}
+  - component: {fileID: 114081719038551006}
   m_Layer: 5
   m_Name: RewardImage
   m_TagString: Untagged
@@ -315,6 +316,21 @@ MonoBehaviour:
   m_emptyAnim: {fileID: 0}
   m_equippedAnim: {fileID: 0}
   m_tooltipArrowOffset: 0.5
+--- !u!114 &114081719038551006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1939721228889414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114977561601293822}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114109642034451998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -701,7 +717,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 54.9
+  m_fontSize: 60
   m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -746,7 +762,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 1
@@ -858,7 +874,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 24
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -980,6 +996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114977561601293822}
+  m_iconLoader: {fileID: 114081719038551006}
   m_rewardText: {fileID: 114779220088783678}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -1173,7 +1190,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.34999847, y: 10.020004}
+  m_AnchoredPosition: {x: -0.34999847, y: 10.02002}
   m_SizeDelta: {x: -23.85, y: -20.03}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224187158553492870
@@ -1209,10 +1226,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 700, y: 200}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224234145229282056
 RectTransform:
