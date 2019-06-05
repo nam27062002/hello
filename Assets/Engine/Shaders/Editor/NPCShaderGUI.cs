@@ -43,6 +43,11 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         readonly public static string enableReflectionMapText = "Enable Reflection Map";
         readonly public static string reflectionMapText = "Reflection map";
         readonly public static string reflectionAmountText = "Reflection amount";
+        readonly public static string enableFresnelText = "Enable Fresnel";
+        readonly public static string fresnelPowerText = "Fresnel Power";
+        readonly public static string fresnelColorText = "Fresnel Color";
+        readonly public static string outlineWidthText = "Outline Width";
+        readonly public static string outlineColorText = "Outline Color";
     }
 
     MaterialProperty mp_mainTexture;
@@ -57,6 +62,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
     MaterialProperty mp_enableReflectionMap;
     MaterialProperty mp_reflectionMap;
     MaterialProperty mp_reflectionAmount;
+    MaterialProperty mp_enableFresnel;
+    MaterialProperty mp_fresnelPower;
+    MaterialProperty mp_fresnelColor;
+
+    MaterialProperty mp_outlineWidth;
+    MaterialProperty mp_outlineColor;
 
     MaterialEditor m_materialEditor;
 
@@ -67,6 +78,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
 
     private bool m_npcDiffuseTransparent = false;
     private bool m_npcDiffuseUnlit = false;
+    private bool m_npcDiffuseOutline = false;
 
     //------------------------------------------------------------------------//
     // METHODS																  //
@@ -100,6 +112,15 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             mp_enableReflectionMap = FindProperty("_EnableReflectionMap", props);
             mp_reflectionMap = FindProperty("_ReflectionMap", props);
             mp_reflectionAmount = FindProperty("_ReflectionAmount", props);
+            mp_enableFresnel = FindProperty("_EnableFresnel", props);
+            mp_fresnelPower = FindProperty("_FresnelPower", props);
+            mp_fresnelColor = FindProperty("_FresnelColor", props);
+        }
+
+        if (m_npcDiffuseOutline)
+        {
+            mp_outlineWidth = FindProperty("_OutlineWidth", props);
+            mp_outlineColor = FindProperty("_OutlineColor", props);
         }
 
     }
@@ -114,6 +135,7 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         Material material = materialEditor.target as Material;
         m_npcDiffuseTransparent = material.shader.name.Contains("Transparent");
         m_npcDiffuseUnlit = material.shader.name.Contains("Lit-Unlit");
+        m_npcDiffuseOutline = material.shader.name.Contains("Outline");
 
         IniEditorSkin();
         FindProperties(props); // MaterialProperties can be animated so we do not cache them but fetch them every event to ensure animated values are updated correctly
@@ -140,6 +162,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
             {
                 materialEditor.TextureProperty(mp_reflectionMap, Styles.reflectionMapText);
                 materialEditor.ShaderProperty(mp_reflectionAmount, Styles.reflectionAmountText);
+            }
+
+            if (featureSet(mp_enableFresnel, Styles.enableFresnelText))
+            {
+                materialEditor.ShaderProperty(mp_fresnelPower, Styles.fresnelPowerText);
+                materialEditor.ShaderProperty(mp_fresnelColor, Styles.fresnelColorText);
             }
         }
 
@@ -168,6 +196,12 @@ internal class NPCDiffuseShaderGUI : ShaderGUI
         }
 
         EditorGUILayout.BeginVertical(editorSkin.customStyles[3]);
+
+        if (m_npcDiffuseOutline)
+        {
+            materialEditor.ShaderProperty(mp_outlineWidth, Styles.outlineWidthText);
+            materialEditor.ShaderProperty(mp_outlineColor, Styles.outlineColorText);
+        }
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(Styles.renderQueueText);

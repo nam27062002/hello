@@ -1,4 +1,4 @@
-﻿Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
+﻿Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit Outline"
 {
 	Properties
 	{
@@ -24,11 +24,66 @@
 		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
 		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
+		_OutlineColor("Outline Color", Color) = (0.8, 0.0, 0.0, 1.0)
+		_OutlineWidth("Outline width", Range(0.0, 1.0)) = 0.08
+
 		_StencilMask("Stencil Mask", int) = 10
 	}
 	SubShader
 	{
 		Tags{ "Queue" = "Geometry" "RenderType" = "Opaque" "LightMode" = "ForwardBase" }
+		Pass
+		{
+
+			ZWrite off
+			Cull back
+
+			Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
+											//        BlendOp add, max // Traditional transparency
+
+			CGPROGRAM
+
+			#pragma vertex vertOutline
+			#pragma fragment fragOutline
+
+
+			struct appdata_t {
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
+			};
+
+			struct v2fo {
+				float4 vertex : POSITION;
+			};
+
+			float4 _OutlineColor;
+			float _OutlineWidth;
+
+			v2fo vertOutline(appdata_t v)
+			{
+				v2fo o;
+
+//				o.vertex = UnityObjectToClipPos(v.vertex);
+//				float3 normal = UnityObjectToWorldNormal(v.normal);
+
+//				float3 norm = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
+//				float2 offset = TransformViewToProjection(norm.xy);
+
+//				o.vertex.xy += offset * o.vertex.z * _OutlineWidth;
+
+				float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
+				o.vertex = UnityObjectToClipPos(nvert);
+				return o;
+			}
+
+			fixed4 fragOutline(v2fo i) : SV_Target
+			{
+				return _OutlineColor;
+			}
+
+			ENDCG
+		}
+
 		Pass
 		{
 			Cull Back
