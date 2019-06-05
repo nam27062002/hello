@@ -188,9 +188,8 @@ public class PopupConsentLoadingCoppaGdpr : PopupConsentLoading {
 
 		// Consent
 		if(m_consentEnabled) {
-			// Tell GDPR manager
-			// [AOC] Give consent only when both consents (tracking and ads) are given
-			GDPRManager.SharedInstance.SetUserConsentGiven(m_trackingConsent && m_adsConsent);
+			// Tell GDPR manager			
+			GDPRManager.SharedInstance.SetUserConsentGiven(m_trackingConsent, m_adsConsent);
 
 			// Store new value to user prefs
 			Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, m_trackingConsent);

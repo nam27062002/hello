@@ -103,9 +103,8 @@ public class PopupConsentSettings : IPopupConsentGDPR {
 			// Restart flow? Only in if some value has actually changed
 			if(m_initialTrackingConsent != trackingConsented
 			|| m_initialAdsConsent != adsConsented) {
-				// Tell GDPR manager
-				// [AOC] Give consent only when both consents (tracking and ads) are given
-				GDPRManager.SharedInstance.SetUserConsentGiven(trackingConsented && adsConsented);
+				// Tell GDPR manager				
+				GDPRManager.SharedInstance.SetUserConsentGiven(trackingConsented, adsConsented);
 
 				// Store new value to user prefs
 				Prefs.SetBoolPlayer(IPopupConsentGDPR.TRACKING_CONSENT_KEY, trackingConsented);
