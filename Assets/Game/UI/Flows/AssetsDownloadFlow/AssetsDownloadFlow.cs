@@ -201,6 +201,18 @@ public class AssetsDownloadFlow : MonoBehaviour {
 
 		// Refresh info (if visible)
 		if(show) RefreshData();
+
+        // Is the download completed?
+        if(m_progressBar.m_state == AssetsDownloadFlowProgressBar.State.COMPLETED)
+        {
+            // If we didnt show the "download completed" popup to the player yet
+            if (! Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false) )
+            {
+                // Open it now it now
+                OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);                
+
+            }
+        }
 	}
 
 	/// <summary>

@@ -53,11 +53,17 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
     //------------------------------------------------------------------------//
     // Exposed members
     [SerializeField] protected bool m_update = false;
-	[Comment("Optional depending on layout")]
+
+    [Separator("Popup elements")]
+    [Comment("Optional depending on layout")]
     [SerializeField] protected Localizer m_titleText = null;
     [SerializeField] protected Localizer m_messageText = null;
 	[SerializeField] protected AssetsDownloadFlowProgressBar m_progressBar = null;
-	[SerializeField] protected Image m_curtain = null;
+    [SerializeField] protected GameObject m_downloadInProgressGroup;
+    [SerializeField] protected GameObject m_downloadCompletedGroup;
+
+    [Space (10)]
+    [SerializeField] protected Image m_curtain = null;
 	[SerializeField] protected GameObject m_teaseInfoGroup = null;
 
 	// Internal
@@ -95,7 +101,8 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	protected void PeriodicUpdate() {
 		// Refresh popup's content
 		Refresh();
-	}
+
+    }
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -120,7 +127,7 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Refresh popup's visulas.
+	/// Refresh popup's visuals.
 	/// </summary>
 	public virtual void Refresh() {
 
@@ -208,6 +215,42 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
                                 m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BODY");
                                 break;
                             }
+                    }
+
+                    break;
+                }
+
+            case PATH_PROGRESS:
+                {
+
+                    
+                    if (this.m_progressBar.m_state == AssetsDownloadFlowProgressBar.State.COMPLETED)
+                    {
+                        // Download succesfully completed
+                        m_titleText.Localize("TID_OTA_COMPLETED_TITLE");
+                        m_messageText.Localize("TID_OTA_COMPLETED_BODY");
+
+                        // Show the proper buttons
+                        m_downloadInProgressGroup.gameObject.SetActive(false);
+                        m_downloadCompletedGroup.gameObject.SetActive(true);
+
+                        // If we didnt show the "download completed" popup to the player before
+                        if (!Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false))
+                        {
+                            // Mark it as shown, so the popup wont be launched again
+                            Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, true);
+
+                        }
+
+                    }
+                    else {
+                        // Download Still in progress
+                        m_titleText.Localize("TID_OTA_PERMISSION_POPUP_TITLE");
+                        m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BODY");
+
+                        // Show the proper buttons
+                        m_downloadInProgressGroup.gameObject.SetActive(true);
+                        m_downloadCompletedGroup.gameObject.SetActive(false);
                     }
 
                     break;

@@ -19,8 +19,9 @@ public class CPDownloadablesTab : MonoBehaviour
 	[Separator("Other References")]
 	[SerializeField] private Toggle m_automaticDownloaderAllowedToggle = null;
     [SerializeField] private TMP_Dropdown m_networkSpeedDropdown = null;
-	
-	// Internal
+    [SerializeField] private Toggle m_downloadCompletedPopupToggle = null;
+
+    // Internal
     private List<Downloadables.CatalogGroup> m_groupsSortedByPriority;
 	private List<CPDownloadablesGroupView> m_views = new List<CPDownloadablesGroupView>();
 	private List<CPDownloadablesGroupView> m_viewsTemp = new List<CPDownloadablesGroupView>();
@@ -85,7 +86,10 @@ public class CPDownloadablesTab : MonoBehaviour
         if (m_automaticDownloaderAllowedToggle != null)
         {
             m_automaticDownloaderAllowedToggle.isOn = HDAddressablesManager.Instance.IsAutomaticDownloaderAllowed();
-        }        
+        }
+
+
+
     }    
 
 	/// <summary>
@@ -110,7 +114,12 @@ public class CPDownloadablesTab : MonoBehaviour
         {
             m_groupsSortedByPriority = groupsSortedByPriority.GetRange(0, groupsSortedByPriority.Count);
             UpdateGroupsOrder();
-        }        		
+        }
+
+        if (m_downloadCompletedPopupToggle != null)
+        {
+            m_downloadCompletedPopupToggle.isOn = Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false);
+        }
 
 #if UNITY_EDITOR
         m_networkSpeedDropdown.value = NETWORK_SPEED_SLEEP_TIME_BY_MODE.IndexOf(MockNetworkDriver.MockThrottleSleepTime);
@@ -152,6 +161,15 @@ public class CPDownloadablesTab : MonoBehaviour
     public void NetworkSpeedSetOptionId(int optionId)
     {
         MockNetworkDriver.MockThrottleSleepTime = NETWORK_SPEED_SLEEP_TIME_BY_MODE[optionId];
+    }
+
+    /// <summary>
+    /// Sets the player pref value for "download completed popup already shown"
+    /// </summary>
+    public void OnDownloadCompletedPopupToggleChanged()
+    {
+        //bool newValue = m_downloadCompletedPopupToggle.isOn;
+        //Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, newValue);
     }
 
     #region dumper

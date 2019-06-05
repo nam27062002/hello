@@ -38,7 +38,7 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
     [SerializeField] protected GameObject m_progressBarFill;
 
     [SerializeField] private TextMeshProUGUI m_progressText = null;
-    [SerializeField] protected State m_state;
+    [SerializeField] public State m_state;
 
 
     // Internal

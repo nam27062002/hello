@@ -18,14 +18,18 @@ using System;
 /// </summary>
 //[CreateAssetMenu]
 public class AssetsDownloadFlowSettings : SingletonScriptableObject<AssetsDownloadFlowSettings> {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // CONSTANTS															  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	[Separator("General Settings")]
+
+    public const string OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN = "OTA_DOWNLOAD_COMPLETE_POPUP_ALREADY_SHOWN";
+
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    [Separator("General Settings")]
 	[SerializeField] private float m_updateInterval = 0.5f;
 	public static float updateInterval {
 		get { return instance.m_updateInterval; }
