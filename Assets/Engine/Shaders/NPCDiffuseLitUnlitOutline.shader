@@ -46,6 +46,9 @@
 			#pragma vertex vertOutline
 			#pragma fragment fragOutline
 
+			#include "UnityCG.cginc"
+			#include "Lighting.cginc"
+			#include "HungryDragon.cginc"
 
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -63,16 +66,9 @@
 			{
 				v2fo o;
 
-//				o.vertex = UnityObjectToClipPos(v.vertex);
-//				float3 normal = UnityObjectToWorldNormal(v.normal);
-
-//				float3 norm = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-//				float2 offset = TransformViewToProjection(norm.xy);
-
-//				o.vertex.xy += offset * o.vertex.z * _OutlineWidth;
-
-				float4 nvert = float4(v.vertex.xyz + v.normal * _OutlineWidth, 1.0);
-				o.vertex = UnityObjectToClipPos(nvert);
+				float4 nvert = mul(unity_ObjectToWorld, float4(v.vertex.xyz, 1.0));
+				float3 nnormal = mul((float3x3)unity_ObjectToWorld, v.normal);
+				o.vertex = mul(UNITY_MATRIX_VP, float4(nvert.xyz + nnormal * _OutlineWidth, nvert.w));
 				return o;
 			}
 
@@ -110,11 +106,11 @@
 			#pragma shader_feature __ REFLECTIONMAP
 			#pragma shader_feature __ FRESNEL
 
+			#define OPAQUEALPHA
+
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "HungryDragon.cginc"
-
-			#define OPAQUEALPHA
 
 			#include "entities.cginc"
 			ENDCG
