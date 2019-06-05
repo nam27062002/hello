@@ -1,7 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
+﻿Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
 {
 	Properties
 	{
@@ -22,6 +19,10 @@ Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
 		[Toggle(REFLECTIONMAP)] _EnableReflectionMap("Enable Reflection map", Float) = 0.0
 		_ReflectionMap("Texture", Cube) = "white" {}
 		_ReflectionAmount("Reflection amount", Range(0.0, 1.0)) = 0.5
+
+		[Toggle(FRESNEL)] _EnableFresnel("Enable fresnel", Float) = 0.0
+		_FresnelPower("Fresnel power", Range(0.0, 5.0)) = 0.27
+		_FresnelColor("Fresnel color (RGB)", Color) = (0, 0, 0, 0)
 
 		_StencilMask("Stencil Mask", int) = 10
 	}
@@ -52,6 +53,7 @@ Shader "Hungry Dragon/NPC/NPC Diffuse Lit-Unlit"
 			#pragma shader_feature LITMODE_UNLIT LITMODE_LIT
 			#pragma shader_feature BLENDAXIS_X BLENDAXIS_Y BLENDAXIS_Z
 			#pragma shader_feature __ REFLECTIONMAP
+			#pragma shader_feature __ FRESNEL
 
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
