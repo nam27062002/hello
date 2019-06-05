@@ -390,13 +390,12 @@ public class EditorAddressablesManager
         }
 
         string path = GetGeneratedAssetBundlesCatalogPath();
+        JSONNode json;
+
         if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
         {
-            // No catalog is required
-			if (File.Exists(path)) 
-			{
-				EditorFileUtils.DeleteFileOrDirectory(path);
-			}
+            // Empty catalog is generated
+            json = new JSONClass();
         }
         else
         {
@@ -433,15 +432,16 @@ public class EditorAddressablesManager
             abCatalog.SetGroups(editorCatalog.GetGroups());
             abCatalog.SetExplicitLocalAssetBundlesList(editorCatalog.GetLocalABList());
 
-			JSONNode json = abCatalog.ToJSON();
-			EditorFileUtils.CreateDirectory(GetGeneratedAssetBundlesCatalogFolder());
-			EditorFileUtils.WriteToFile(path, json.ToString());     
+            json = abCatalog.ToJSON();
 
             if (manifestBundle != null)
             {
                 manifestBundle.Unload(true);
             }
-        }			                   
+        }
+        
+        EditorFileUtils.CreateDirectory(GetGeneratedAssetBundlesCatalogFolder());
+        EditorFileUtils.WriteToFile(path, json.ToString());
     }   
 
     /// <summary>
@@ -515,33 +515,29 @@ public class EditorAddressablesManager
             }
 
             string remoteFolder = EditorAssetBundlesManager.DOWNLOADABLES_FOLDER + "/" + target.ToString();
-            if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
+
+            if (EditorFileUtils.Exists(remoteFolder))
             {
-                if (EditorFileUtils.Exists(remoteFolder))
-                {
-                    EditorFileUtils.DeleteFileOrDirectory(remoteFolder);
-                }
+                EditorFileUtils.DeleteFileOrDirectory(remoteFolder);
             }
-            else
+            
+            // Copy remote asset bundles                
+            EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_RemoteABList);
+
+            // Not used asset bundles are stored anyway just in case they haven't been defined in catalog but they are used
+            if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
             {
-                // Copy remote asset bundles                
-                EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_RemoteABList);
-
-                // Not used asset bundles are stored anyway just in case they haven't been defined in catalog but they are used
-                if (output.m_ABInManifestNotUsed != null && output.m_ABInManifestNotUsed.Count > 0)
-                {
-                    //EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_ABInManifestNotUsed);
-                }
-
-                // Generates remote AB list file            
-                string downloadablesCatalogFolder = EditorFileUtils.GetPlatformDirectory(EditorAssetBundlesManager.ASSET_BUNDLES_PATH);
-                GenerateDownloadablesCatalog(output.m_RemoteABList, downloadablesCatalogFolder);
-
-                // Deletes original files that were moved to local
-                EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
-
-                GenerateDownloadablesConfig(m_localDestinationPath);
+                //EditorAssetBundlesManager.CopyAssetBundles(remoteFolder, output.m_ABInManifestNotUsed);
             }
+
+            // Generates remote AB list file            
+            string downloadablesCatalogFolder = EditorFileUtils.GetPlatformDirectory(EditorAssetBundlesManager.ASSET_BUNDLES_PATH);
+            GenerateDownloadablesCatalog(output.m_RemoteABList, downloadablesCatalogFolder);
+
+            // Deletes original files that were moved to local
+            EditorAssetBundlesManager.DeleteAssetBundles(output.m_RemoteABList);
+
+            GenerateDownloadablesConfig(m_localDestinationPath);            
         }
     }    
 

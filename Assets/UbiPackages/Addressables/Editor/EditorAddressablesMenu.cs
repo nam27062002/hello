@@ -140,11 +140,8 @@ public class EditorAddressablesMenu : MonoBehaviour
         Manager.MoveGeneratedResourcesToOriginalUbication();        
 
         AddressablesManager.Mode = value;
-
-        if (AddressablesManager.Mode_NeedsAssetBundles())
-        {
-            Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
-        }
+        
+        Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
 
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         Manager.GeneratePlayerCatalogForAllPlatforms();
@@ -154,10 +151,8 @@ public class EditorAddressablesMenu : MonoBehaviour
         {
             DeleteLocalAssetBundlesInPlayerDestination();
         }
-        else if (AddressablesManager.Mode_NeedsAssetBundles())
-        {         
-            Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
-        }
+        
+        Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
 
 		AssetDatabase.Refresh ();
     }
@@ -217,7 +212,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     [MenuItem(ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE)]
     public static void Mode_SetLocalAssetBundlesInResources()
     {
-        SetMode(AddressablesManager.EMode.AllInResources);
+        SetMode(AddressablesManager.EMode.LocalAssetBundlesInResources);
     }
 
     [MenuItem(ADDRESSABLES_LOCAL_ASSET_BUNDLES_IN_RESOURCES_MODE, true)]
