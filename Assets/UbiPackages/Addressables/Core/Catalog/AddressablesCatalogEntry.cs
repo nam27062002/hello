@@ -55,6 +55,7 @@ public class AddressablesCatalogEntry
 #if UNITY_EDITOR
     private const string ATT_GUID = "guid";
     private const string ATT_PLATFORM = "platform";
+    private const string ATT_GENERATED_BY_SCRIPT = "generatedByScript";
 
     private string m_guid;
     public string GUID
@@ -77,16 +78,23 @@ public class AddressablesCatalogEntry
 
     private bool m_editorMode;
 
-    public AddressablesCatalogEntry(bool editorMode) : this()
+    private bool m_generatedByScript = false;
+    public bool GeneratedByScript
     {
-        m_editorMode = editorMode;
+        get { return m_generatedByScript; }
     }
 
-    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode) : this() {
+    public AddressablesCatalogEntry(bool editorMode) : this()
+    {
+        m_editorMode = editorMode;        
+    }
+
+    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode, bool generatedByScript) : this() {
         Id = id;
         Variant = variant;
         GUID = gui;
-        m_editorMode = editorMode;        
+        m_editorMode = editorMode;
+        m_generatedByScript = generatedByScript;      
     }
 #endif
 
@@ -104,6 +112,7 @@ public class AddressablesCatalogEntry
 
 #if UNITY_EDITOR
         GUID = null;
+        m_generatedByScript = false;
 #endif
     }
 
@@ -159,6 +168,16 @@ public class AddressablesCatalogEntry
 
             att = ATT_PLATFORM;
             Platform = data[att];
+
+            att = ATT_GENERATED_BY_SCRIPT;
+            if (data.ContainsKey(att))
+            {
+                m_generatedByScript = data[ATT_GENERATED_BY_SCRIPT].AsBool;
+            }
+            else
+            {
+                m_generatedByScript = false;
+            }
 #endif
 
             // Asset Bundle name            
@@ -206,6 +225,8 @@ public class AddressablesCatalogEntry
             {
                 AddToJSON(data, ATT_PLATFORM, Platform);
             }
+
+            AddToJSON(data, ATT_GENERATED_BY_SCRIPT, GeneratedByScript.ToString());
         }
 #endif
         if (needsToAddAssetBundleName)

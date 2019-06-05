@@ -226,7 +226,7 @@ public static class EditorAutomaticAddressables {
                             }
                         }
 
-                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true) {
+                        AddressablesCatalogEntry entry = new AddressablesCatalogEntry(id, variant, AssetDatabase.AssetPathToGUID(filePath), true, true) {
                             LocationType = AddressablesTypes.ELocationType.AssetBundles,
                             AssetName = assetName,
                             AssetBundleName = assetBundle,

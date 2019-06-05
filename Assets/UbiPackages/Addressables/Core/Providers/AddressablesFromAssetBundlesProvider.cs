@@ -225,6 +225,11 @@ public class AddressablesFromAssetBundlesProvider : AddressablesProvider
         return AssetBundlesManager.Instance.IsAssetBundleRemote(id);
     }
 
+    public bool ExistsDependencyId(string id)
+    {
+        return AssetBundlesManager.Instance.GetAssetBundleHandle(id) != null;
+    }
+
     public void Update()
     {
         AssetBundlesManager.Instance.Update();

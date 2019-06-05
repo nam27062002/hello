@@ -605,9 +605,9 @@ public class EditorAddressablesManager
             }
             else            
             {
-				if (AddressablesManager.Mode_NeedsAssetBundles())
+                if (AddressablesManager.Mode_NeedsAssetBundles() && !entry.GeneratedByScript)
                 {
-                    string assetBundleNameFromCatalog = "";
+                    string assetBundleNameFromCatalog = entry.AssetBundleName;
                     switch (entry.LocationType)
                     {
                         case AddressablesTypes.ELocationType.AssetBundles:
@@ -660,7 +660,7 @@ public class EditorAddressablesManager
                             Debug.Log("Wrong path for entry id " + entry.Id + ". It should start by " + token);
                         }                                                
                     }
-                }
+                }                
             }
         }
 

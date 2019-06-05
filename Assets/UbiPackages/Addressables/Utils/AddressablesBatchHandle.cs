@@ -38,12 +38,43 @@ public class AddressablesBatchHandle
     }
 
     public void AddDependencyIds(List<string> dependencyIds, bool mandatory=true)
-    {        
-        DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, dependencyIds, DependencyIds == null, true);
+    {
+        List<string> actualDependencyIds = dependencyIds;
+        List<string> inexistentDependencyIds = null;
+        if (dependencyIds != null)
+        {
+            int count = dependencyIds.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (!sm_manager.ExistsDependencyId(dependencyIds[i]))
+                {
+                    if (inexistentDependencyIds == null)
+                    {
+                        inexistentDependencyIds  = new List<string>();
+                    }
+
+                    inexistentDependencyIds.Add(dependencyIds[i]);
+                }
+            }
+
+            if (inexistentDependencyIds != null)
+            {
+                List<string> intersection;
+                UbiListUtils.SplitIntersectionAndDisjoint(dependencyIds, inexistentDependencyIds, out intersection, out actualDependencyIds);
+
+                if (AddressablesManager.CanLog())
+                {
+                    UbiListUtils.GetListAsString(inexistentDependencyIds);
+                    AddressablesManager.LogWarning("Inexistent dependency ids: " + UbiListUtils.GetListAsString(inexistentDependencyIds) + " have been requested to be loaded");
+                }
+            }
+        }
+
+        DependencyIds = UbiListUtils.AddRange<string>(DependencyIds, actualDependencyIds, DependencyIds == null, true);
 
         if (mandatory)
         {
-            MandatoryDependencyIds = UbiListUtils.AddRange<string>(MandatoryDependencyIds, dependencyIds, MandatoryDependencyIds == null, true);
+            MandatoryDependencyIds = UbiListUtils.AddRange<string>(MandatoryDependencyIds, actualDependencyIds, MandatoryDependencyIds == null, true);
         }
     }
 

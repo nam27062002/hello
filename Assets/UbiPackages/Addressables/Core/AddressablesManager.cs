@@ -331,6 +331,18 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public bool ExistsDependencyId(string dependencyId)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.ExistsDependencyId(dependencyId);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
     /// </summary>
@@ -1074,7 +1086,7 @@ public class AddressablesManager
         return sm_logger != null && sm_logger.CanLog();
     }
 
-    public void Log(string msg)
+    public static void Log(string msg)
     {
         if (CanLog())
         {
@@ -1082,7 +1094,7 @@ public class AddressablesManager
         }
     }
 
-    public void LogWarning(string msg)
+    public static void LogWarning(string msg)
     {
         if (CanLog())
         {
@@ -1090,7 +1102,7 @@ public class AddressablesManager
         }
     }
 
-    public void LogError(string msg)
+    public static void LogError(string msg)
     {
         if (CanLog())
         {
@@ -1098,7 +1110,7 @@ public class AddressablesManager
         }
     }
 
-    private void LogErrorManagerNotInitialized()
+    private static void LogErrorManagerNotInitialized()
     {
         if (CanLog())
         {
@@ -1106,7 +1118,7 @@ public class AddressablesManager
         }
     }
 
-    private void LogErrorIdNotFound(string id)
+    private static void LogErrorIdNotFound(string id)
     {
         if (CanLog())
         {
@@ -1114,7 +1126,7 @@ public class AddressablesManager
         }
     }
 
-    private void Errors_ProcessAddressablesOpError(AddressablesError error)
+    private static void Errors_ProcessAddressablesOpError(AddressablesError error)
     {
         if (CanLog())
         {
