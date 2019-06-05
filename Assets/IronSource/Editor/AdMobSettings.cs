@@ -35,6 +35,14 @@ namespace IronSource.Editor
 		public void updateProjectPlist (BuildTarget buildTarget, string plistPath)
 		{
 			Debug.Log ("IronSource - Update plist for AdMob");
+
+            PlistDocument plist = new PlistDocument();
+            plist.ReadFromFile(plistPath);
+
+            plist.root.SetString("GADApplicationIdentifier", "ca-app-pub-4182426806332048~4152388614");
+
+            plist.WriteToFile(plistPath);
+
 		}
 	}
 }

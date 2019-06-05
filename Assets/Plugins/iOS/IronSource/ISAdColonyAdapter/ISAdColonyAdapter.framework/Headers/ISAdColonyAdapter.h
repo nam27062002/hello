@@ -5,8 +5,9 @@
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
-//System Frameworks For Adcolony Adapter
+static NSString * const AdColonyAdapterVersion = @"4.1.4";
 
+//System Frameworks For Adcolony Adapter
 @import AdSupport;
 @import AudioToolbox;
 @import AVFoundation;
