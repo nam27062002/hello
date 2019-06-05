@@ -7,13 +7,13 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_icon_canary
-  m_Shader: {fileID: 4800000, guid: 2f120649b10d5f342b99e1d1ad51261f, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3880f73760fb52c4bba39b1167e234e7, type: 3}
   m_ShaderKeywords: BLENDAXIS_X COLORMODE_COLORRAMP FRESNEL FXLAYER_REFLECTION LITMODE_UNLIT
     REFLECTIONTYPE_COLORRAMP SELFILLUMINATE_NORMAL SPECULAR _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 4000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -116,6 +116,7 @@ Material:
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 2.11
+    - _FresnelPower: 5
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -126,6 +127,7 @@ Material:
     - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
+    - _OutlineWidth: 1
     - _Parallax: 0.02
     - _ReflectionAmount: 1
     - _SmoothnessTextureChannel: 0
@@ -141,9 +143,10 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 1, g: 0.80418706, b: 0.17647058, a: 1}
+    - _FresnelColor: {r: 0.70826125, g: 0.83662754, b: 0.9632353, a: 1}
     - _GoldColor: {r: 1, g: 0.627451, b: 0, a: 1}
     - _InnerLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _ReflectionColor: {r: 1, g: 0.6914807, b: 0.1397059, a: 1}
     - _SecondLightColor: {r: 0, g: 0, b: 0, a: 0}
     - _SecondLightDir: {r: 0, g: 0, b: -1, a: 0}
