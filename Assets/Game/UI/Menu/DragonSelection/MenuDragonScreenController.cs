@@ -602,7 +602,7 @@ public class MenuDragonScreenController : MonoBehaviour {
 			m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
 
 			// If needed, show assets download popup. Download will be already in progress at this point.
-			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+			m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
 
 			// Don't move to next screen
 			return;

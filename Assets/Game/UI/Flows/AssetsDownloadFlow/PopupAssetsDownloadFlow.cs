@@ -150,69 +150,90 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
                         case AssetsDownloadFlow.Context.PLAYER_BUYS_TRIGGER_DRAGON:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SMALL_DRAGONS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SMALL_DRAGONS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SMALL_DRAGONS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes() )));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_BIG_DRAGONS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BIG_DRAGONS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BIG_DRAGONS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_PET:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_PETS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_PETS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_PETS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_TOURNAMENTS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_TOURNAMENTS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_TOURNAMENTS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.LOADING_SCREEN:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_MAIN_LOADING_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_MAIN_LOADING_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_MAIN_LOADING_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_SKINS:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SKINS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SKINS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SKINS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_CLICKS_ANIMOJIS:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_ANIMOJIS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_ANIMOJIS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_ANIMOJIS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_CLICKS_AR:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_AR_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_AR_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_AR_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         case AssetsDownloadFlow.Context.PLAYER_BUYS_SPECIAL_DRAGON:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_SPECIAL_DRAGONS_TITLE");
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SPECIAL_DRAGONS_BODY");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_SPECIAL_DRAGONS_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
 
                         default:
                             {
-                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BODY");
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
                                 break;
                             }
                     }
