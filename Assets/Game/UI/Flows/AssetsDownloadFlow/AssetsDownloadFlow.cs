@@ -152,8 +152,9 @@ public class AssetsDownloadFlow : MonoBehaviour {
     /// </summary>
     /// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
     /// <param name="_context">The situation that triggered the download popup. It will show an adapted message in each case.</param>
+    /// <param name="_forcePopup">If true, shows the popup even if the content is already donwloaded</param>
     /// <returns>The opened popup if any was needed.</returns>
-    public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask, Context _context = Context.NOT_SPECIFIED) {
+    public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask, Context _context = Context.NOT_SPECIFIED, bool _forcePopup = false) {
 		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
 		//				For now we'll just replace the old popup by a new clone.
 
@@ -164,7 +165,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		ClearPopup();
 
 		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask, _context);
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask, _context, _forcePopup);
 		if(downloadPopup != null) {
 			// Yes! Store its controller
 			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
@@ -202,17 +203,6 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		// Refresh info (if visible)
 		if(show) RefreshData();
 
-        // Is the download completed?
-        if(m_progressBar.m_state == AssetsDownloadFlowProgressBar.State.COMPLETED)
-        {
-            // If we didnt show the "download completed" popup to the player yet
-            if (! Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false) )
-            {
-                // Open it now it now
-                OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);                
-
-            }
-        }
 	}
 
 	/// <summary>

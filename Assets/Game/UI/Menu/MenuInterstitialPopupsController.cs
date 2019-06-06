@@ -560,7 +560,20 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
                             downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
                         }
 
-				}
+
+                        // In case the download is completed, at this point we want to show a popup informing the player
+                        float downloadProgress = HDAddressablesManager.Instance.GetHandleForAllDownloadables().Progress;
+                        if (downloadProgress >= 1)
+                        {
+                            // Make sure the popup hasn't been launched previously
+                            if (!Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false))
+                            {
+                                // Force to show the popup
+                                screenController.assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.NOT_SPECIFIED, true);
+
+                            }
+                        }
+                    }
 			} break;
 		}
 
