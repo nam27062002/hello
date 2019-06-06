@@ -899,6 +899,8 @@ public class Ingame_SwitchAreaHandle
 
             List<string> mandatoryBundles = new List<string>();
             mandatoryBundles.Add("shared"); // We need animations
+            mandatoryBundles.Add("particles_shared");   // for the particles
+
             List<string> optionalBundles = new List<string>();
             foreach (KeyValuePair<string, DefinitionNode> pair in dragons)
             {
