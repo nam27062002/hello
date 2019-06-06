@@ -228,6 +228,15 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
                                 break;
                             }
 
+                        case AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_UPGRADE_SPECIAL:
+                            {
+                                m_titleText.Localize("TID_OTA_PERMISSION_POPUP_UPGRADE_SPECIAL_TITLE");
+                                m_messageText.Localize("TID_OTA_PERMISSION_POPUP_UPGRADE_SPECIAL_BODY",
+                                                        AssetsDownloadFlowSettings.filesizeTextHighlightColor.Tag(
+                                                        StringUtils.FormatFileSize(m_handle.GetTotalBytes())));
+                                break;
+                            }
+
                         default:
                             {
                                 m_titleText.Localize("TID_OTA_PERMISSION_POPUP_TITLE");
