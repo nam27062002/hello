@@ -291,6 +291,10 @@ public class ResultsScreenController : MonoBehaviour {
 		// Find out next step
 		m_stepIdx = CheckNextStep();
 
+        if (m_stepIdx == (int)Step.INIT) {
+            HDTrackingManager.Instance.Notify_LoadingResultsEnd();
+        }
+
 		// If we're at the last step, go back to menu!
 		if(m_stepIdx >= m_activeSequence.Length) {
 			GoToMenu();
