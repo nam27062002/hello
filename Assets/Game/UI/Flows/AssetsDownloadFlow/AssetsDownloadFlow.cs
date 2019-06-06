@@ -34,7 +34,8 @@ public class AssetsDownloadFlow : MonoBehaviour {
         PLAYER_CLICKS_ON_SKINS,
         PLAYER_CLICKS_ANIMOJIS,
         PLAYER_CLICKS_AR,
-        PLAYER_BUYS_SPECIAL_DRAGON
+        PLAYER_BUYS_SPECIAL_DRAGON,
+        PLAYER_CLICKS_ON_UPGRADE_SPECIAL
 
     }
 
