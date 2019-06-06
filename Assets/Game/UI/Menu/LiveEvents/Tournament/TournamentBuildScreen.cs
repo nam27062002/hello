@@ -378,7 +378,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 	private void OnNewDefinition(int _eventId, HDLiveDataManager.ComunicationErrorCodes _err) {
 		if (m_definition.m_refund) { // maybe we'll need some feedback
 			PopupManager.Clear(true);
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
+            HDLiveDataManager.instance.SwitchToQuest();
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 		}
 	}
 
@@ -412,7 +413,8 @@ public class TournamentBuildScreen : MonoBehaviour {
 
 			// Go back to dragon selection screen
 			PopupManager.Clear(true);
-			InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
+            HDLiveDataManager.instance.SwitchToQuest();
+            InstanceManager.menuSceneController.GoToScreen(MenuScreen.DRAGON_SELECTION, true);
 
              // Finish tournament if 607 / 608 / 622
             if ( (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND ||

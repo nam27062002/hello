@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// This class is responsible for tayloring Addressables UbiPackage to meet Hungry Dragon needs
 /// </summary>
 public class HDAddressablesManager : AddressablesManager
-{
+{    
     private static HDAddressablesManager sm_instance;
 
     public static HDAddressablesManager Instance
@@ -80,7 +80,59 @@ public class HDAddressablesManager : AddressablesManager
 #endif
         Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogAsJSON, useMockDrivers, m_tracker, logger);
 
-        InitDownloadableHandles();
+        InitDownloadableHandles();        
+        InitAddressablesAreas();
+    }
+
+    private string GetEnvironmentUrlBase()
+    {
+        string urlBase = "";
+
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        if (kServerConfig != null)
+        {
+            switch (kServerConfig.m_eBuildEnvironment)
+            {
+                case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    urlBase = "http://hdragon-assets-s3.akamaized.net/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Link to CDN (it uses cache)
+                    //urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+
+                    // Direct link to the bucket (no cache involved, which might make downloads more expensive)
+                    urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
+                    urlBase = "http://hdragon-assets.s3.amazonaws.com/";
+                    break;
+
+                case CaletyConstants.eBuildEnvironments.BUILD_DEV:
+                    urlBase = "http://bcn-mb-services1.ubisoft.org/hungrydragon";
+                    break;
+            }
+
+            //http://10.44.4.69:7888/                                
+        }
+
+        return urlBase;
+    }    
+
+    private static string GetUrlWithEnvironment(string urlBase)
+    {
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        return CaletyConstants.GetUrlWithEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
+    }
+
+    private static string GetUrlWithoutEnvironment(string urlBase)
+    {
+        Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
+        return CaletyConstants.GetUrlWithoutEnvironment(urlBase, kServerConfig.m_eBuildEnvironment);
     }
 
     private JSONNode AssetsLUTToDownloadablesCatalog(ContentDeltaManager.ContentDeltaData assetsLUT)
@@ -89,61 +141,70 @@ public class HDAddressablesManager : AddressablesManager
         {
             // urlBase is taken from assetLUT unless it's empty or "localhost", which means that assetsLUT is the one in the build, which must be adapted to the environment
             string urlBase = assetsLUT.m_strURLBase;
-            if (string.IsNullOrEmpty(urlBase) || urlBase == "localhost")
+
+            bool calculateProdUrl = true;
+
+#if UNITY_EDITOR
+            // We don't need to use prod url when using the local server 
+            calculateProdUrl = !urlBase.Contains(":7888");            
+            if (!calculateProdUrl)            
             {
-                Calety.Server.ServerConfig kServerConfig = ServerManager.SharedInstance.GetServerConfig();
-                if (kServerConfig != null)
-                {
-                    switch (kServerConfig.m_eBuildEnvironment)
-                    {
-                        case CaletyConstants.eBuildEnvironments.BUILD_PRODUCTION:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/prod/";
-                            urlBase = "http://hdragon-assets-s3.akamaized.net/prod/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE_QC:
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Link to CDN (it uses cache)
-                            //urlBase = "http://hdragon-assets.s3.amazonaws.com/qc/";
-
-                            // Direct link to the bucket (no cache involved, which might make downloads more expensive)
-                            urlBase = "https://s3.us-east-2.amazonaws.com/hdragon-assets/qc/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_STAGE:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/stage/";
-                            break;
-
-                        case CaletyConstants.eBuildEnvironments.BUILD_DEV:
-                            urlBase = "http://hdragon-assets.s3.amazonaws.com/dev/";
-                            break;
-                    }
-
-                    //http://10.44.4.69:7888/                                
-                }                
+                urlBase = GetUrlWithoutEnvironment(urlBase);
+                Downloadables.Downloader.USE_CRC_IN_URL = false;
             }
+#endif
+            if (calculateProdUrl)
+            {
+                if (string.IsNullOrEmpty(urlBase) || urlBase.Contains("localhost"))
+                {
+                    assetsLUT.m_strURLBase = GetUrlWithEnvironment(GetEnvironmentUrlBase());
+                }
 
-            urlBase += assetsLUT.m_iReleaseVersion + "/";
+                urlBase = assetsLUT.GetAssetsBundleUrlBase();
+            }
 
             Downloadables.Catalog catalog = new Downloadables.Catalog();
             catalog.UrlBase = urlBase;
 
             Downloadables.CatalogEntry entry;
+            string key;
             foreach (KeyValuePair<string, long> pair in assetsLUT.m_kAssetCRCs)
             {
-                entry = new Downloadables.CatalogEntry();
-                entry.CRC = pair.Value;
-                entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
-
-                catalog.AddEntry(pair.Key, entry);
+                // Only bundles are considered
+                if (!ContentManager.USE_ASSETS_LUT_V2 || assetsLUT.m_kAssetTypes[pair.Key] == ContentDeltaManager.ContentDeltaData.EAssetType.Bundle)
+                {
+                    entry = new Downloadables.CatalogEntry();
+                    entry.CRC = pair.Value;
+                    entry.Size = assetsLUT.m_kAssetSizes[pair.Key];
+                    key = pair.Key;
+                    catalog.AddEntry(pair.Key, entry);
+                }
             }
 
-            return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON());
+            if (!ContentManager.USE_ASSETS_LUT_V2 || !calculateProdUrl)
+            {
+                return Downloadables.Manager.GetCatalogFromAssetsLUT(catalog.ToJSON(), calculateProdUrl);
+            }
+            else
+            {
+                return catalog.ToJSON();
+            }
         }
         else
         {
             return null;
+        }
+    }
+
+    public UbiAsyncOperation LoadDependenciesAndSceneAsync(string id, string variant = null)
+    {
+        if (IsInitialized())
+        {
+            return LoadAddressablesBatchAsynch(id);            
+        }
+        else
+        {
+            return LoadSceneAsync(id, variant, LoadSceneMode.Single);
         }
     }
 
@@ -152,8 +213,8 @@ public class HDAddressablesManager : AddressablesManager
     public override bool LoadScene(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
-        {
-            return base.LoadScene(id, variant, mode);
+        {            
+            return base.LoadScene(id, variant, mode);           
         }
         else
         {
@@ -167,8 +228,8 @@ public class HDAddressablesManager : AddressablesManager
     public override AddressablesOp LoadSceneAsync(string id, string variant = null, LoadSceneMode mode = LoadSceneMode.Single)
     {
         if (IsInitialized())
-        {
-            return base.LoadSceneAsync(id, variant, mode);
+        {            
+            return base.LoadSceneAsync(id, variant, mode);                        
         }
         else
         {
@@ -199,6 +260,8 @@ public class HDAddressablesManager : AddressablesManager
 
 		// Downloader is disabled while the app is loading in order to let it load faster and smoother
 		IsAutomaticDownloaderEnabled = !GameSceneManager.isLoading && IsAutomaticDownloaderAllowed() && DebugSettings.isAutomaticDownloaderEnabled;
+
+        UpdateAddressablesAreas();
     }
 
     public bool IsAutomaticDownloaderAllowed()
@@ -220,8 +283,67 @@ public class HDAddressablesManager : AddressablesManager
         return dragonData != null && !dragonData.isLocked;
     }
 
+    #region addressables_areas
+    private HDAddressablesAreaLoader m_addressablesAreaLoader;
+
+    private void InitAddressablesAreas()
+    {
+        m_addressablesAreaLoader = new HDAddressablesAreaLoader();       
+    }
+
+    private void ResetAddressablesAreas()
+    {
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader.Reset();
+        }
+    }    
+    
+    private HDAddressablesAreaLoader LoadAddressablesBatchAsynch(string sceneId)
+    {
+        AddressablesBatchHandle handle = GetAddressablesAreaBatchHandle(sceneId);
+
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader = new HDAddressablesAreaLoader();
+        }
+
+        m_addressablesAreaLoader.Setup(handle, sceneId);
+
+        return m_addressablesAreaLoader;
+    }
+    
+    private AddressablesBatchHandle GetAddressablesAreaBatchHandle(string sceneId)
+    {
+        AddressablesBatchHandle returnValue = new AddressablesBatchHandle();        
+        if (sceneId == MenuSceneController.NAME)
+        {
+            // Menu            
+            AddMenuDependenciesToAddressablesBatchHandle(returnValue);
+        }
+        else if (sceneId == GameSceneController.NAME)
+        {
+            // Dependecies because of area_1 level            
+            AddLevelArea1DependenciesToAddressablesBatchHandle(returnValue);
+
+            // Dependencies because of the current dragon (ingame version)
+        }
+
+        return returnValue;
+    }
+
+    public void UpdateAddressablesAreas()
+    {
+        if (m_addressablesAreaLoader != null)
+        {
+            m_addressablesAreaLoader.Update();
+        }
+    }
+#endregion
+
+
 #region ingame
-    public class Ingame_SwitchAreaHandle
+public class Ingame_SwitchAreaHandle
     {        
         private List<string> PrevAreaRealSceneNames { get; set; }
         private List<string> NextAreaRealSceneNames { get; set; }
@@ -382,15 +504,22 @@ public class HDAddressablesManager : AddressablesManager
         // We need to track the result of every downloadable required by ingame only once per run, so we need to reset it to leave it prepared for the next run
         m_tracker.ResetIdsLoadTracked();
     }
-#endregion
+    #endregion
 
-#region DOWNLOADABLE GROUPS HANDLERS
+    #region groups
+    private const string GROUP_MENU = "menu";
+    private const string GROUP_LEVEL_AREA_1 = "area1";
+    private const string GROUP_LEVEL_AREA_2 = "area2";
+    private const string GROUP_LEVEL_AREA_3 = "area3";
+    #endregion
+
+    #region DOWNLOADABLE_GROUPS_HANDLERS
     // [AOC] Keep it hardcoded? For now it's fine since there aren't so many 
     //		 groups and rules can be tricky to represent in content
 
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = "area1";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = "area2";
-    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = "area3";
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_1 = GROUP_LEVEL_AREA_1;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_2 = GROUP_LEVEL_AREA_2;
+    private const string DOWNLOADABLE_GROUP_LEVEL_AREA_3 = GROUP_LEVEL_AREA_3;
     
     // Combined    
     private const string DOWNLOADABLE_GROUP_LEVEL_AREAS_1_2 = "areas1_2";
@@ -594,5 +723,23 @@ public class HDAddressablesManager : AddressablesManager
 		return powers;
 	}
 
+    #endregion
+
+    #region ADDRESSABLES_BATCH_HANDLERS            
+    private void AddMenuDependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    {
+        if (handle != null)
+        {
+            handle.AddGroup(GROUP_MENU);
+        }
+    }
+     
+    private void AddLevelArea1DependenciesToAddressablesBatchHandle(AddressablesBatchHandle handle)
+    { 
+        if (handle != null)
+        {
+            handle.AddGroup(GROUP_LEVEL_AREA_1);
+        }        
+    }
 #endregion
 }

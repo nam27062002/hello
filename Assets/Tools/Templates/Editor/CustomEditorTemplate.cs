@@ -67,10 +67,9 @@ public class MonoBehaviourTemplateEditor : Editor {
 			// Unity's "script" property
 			if(p.name == "m_Script") {
 				// Draw the property, disabled
-				bool wasEnabled = GUI.enabled;
-				GUI.enabled = false;
+				EditorGUI.BeginDisabledGroup(true);
 				EditorGUILayout.PropertyField(p, true);
-				GUI.enabled = wasEnabled;
+				EditorGUI.EndDisabledGroup();
 			}
 
 			// Properties we don't want to show

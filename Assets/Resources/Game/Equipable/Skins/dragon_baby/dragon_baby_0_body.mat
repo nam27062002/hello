@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 255f4642216a02643bff73728a6ff4b7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7bfdf9b1f8d6618478ace84fec461c87, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -70,6 +70,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _Alpha_as_depth: 0
     - _BlendMode: 0
@@ -96,6 +97,9 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 2.32
@@ -113,6 +117,8 @@ Material:
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0.08823532, g: 0.08823532, b: 0.08823532, a: 0}
@@ -123,6 +129,7 @@ Material:
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.35953718, g: 0.3666403, b: 0.36764705, a: 1}
     - _InnerLightColor: {r: 0.28676468, g: 0.13283953, b: 0.13283953, a: 1}
-    - _SecondLightColor: {r: 0.4980536, g: 0.7205882, b: 0.54563, a: 0}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.11191608, g: 0.16911763, b: 0.12414537, a: 0}
     - _SecondLightDir: {r: -0.34283984, g: 0.6856796, b: -0.6421093, a: 0}
     - _Tint: {r: 0.85294116, g: 0.85294116, b: 0.85294116, a: 1}

@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: pet_monkey_king_17
   m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: FRESNEL NORMALMAP SPECULAR
+  m_ShaderKeywords: DIFFUSE_AS_SPECULARMASK FRESNEL SPECULAR
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: e010f308eaae64943af56821161c7e94, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: a205b7a170b9741ce91876d28322c572, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -70,27 +70,39 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _Alpha_as_depth: 0
     - _BlendMode: 0
     - _BumpScale: 1
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
+    - _EnableDiffuseAsSpecMask: 1
     - _EnableDoublesided: 0
     - _EnableFresnel: 1
-    - _EnableNormalMap: 1
+    - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
-    - _Fresnel: 4.38
+    - _Fresnel: 6.32
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -104,11 +116,13 @@ Material:
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SmoothnessTextureChannel: 0
-    - _SpecExponent: 6.68
+    - _SpecExponent: 75
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StencilMask: 10
     - _UVSec: 0
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0.021969333, g: 0.04411763, b: 0.01492214, a: 0}
@@ -116,8 +130,9 @@ Material:
     - _ColorAdd: {r: 0.01145449, g: 0.029411793, b: 0.010813159, a: 0}
     - _ColorMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColor: {r: 0.051470578, g: 0.051470578, b: 0.051470578, a: 1}
+    - _FresnelColor: {r: 0.625, g: 0.5200304, b: 0.29411763, a: 1}
     - _InnerLightColor: {r: 0.15084344, g: 0.33088237, b: 0.18933451, a: 1}
-    - _SecondLightColor: {r: 0.74156576, g: 0.7906246, b: 0.9338235, a: 0}
-    - _SecondLightDir: {r: 0.82, g: -2.75, b: 2.64, a: 0.41}
-    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SecondLightColor: {r: 0.26102942, g: 0.32200807, b: 0.5, a: 0}
+    - _SecondLightDir: {r: 0.02886448, g: -0.33194187, b: -0.9428581, a: 0}
+    - _Tint: {r: 0.9044118, g: 0.8911116, b: 0.87116134, a: 1}

@@ -90,7 +90,7 @@ public class MenuDragonScreenController : MonoBehaviour {
         m_goToScreen = MenuScreen.NONE;
 
 		// Check pending rewards
-		if(UsersManager.currentUser.rewardStack.Count > 0) {
+		if(UsersManager.currentUser.rewardStack.Count > 0 && false) {
 			m_goToScreen = MenuScreen.PENDING_REWARD;
 			return;
 		}

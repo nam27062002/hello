@@ -37,7 +37,7 @@ internal class DragonShaderGUI : ShaderGUI
 
     private static class Styles
     {
-        readonly public static string mainTextureText = "Main Texture";
+        readonly public static string mainTextureText = "Albedo Texture";
         readonly public static string detailTextureText = "Detail Texture";
         readonly public static string normalTextureText = "Normal Texture";
 
@@ -55,13 +55,14 @@ internal class DragonShaderGUI : ShaderGUI
         readonly public static string enableNormalMapText = "Enable Normal map";
         readonly public static string normalStrengthText = "Normal Texture strength";
 
-        readonly public static string CutoffText = "Alpha cutoff threshold";
-
         readonly public static string enableSpecularText = "Enable Specular";
         readonly public static string specularPowerText = "Specular Exponent";
         readonly public static string secondLightDirectionText = "Second light direction";
         readonly public static string secondLightColorText = "Second light color";
         readonly public static string enableOpaqueSpecularText = "Enable Opaque Specular";
+        readonly public static string setAlbedoAsSpecMaskText = "Albedo as Spec mask";
+        readonly public static string albedoAsSpecMaskTipText1 = "Specular mask comes from (Detail Texture.g)";
+        readonly public static string albedoAsSpecMaskTipText2 = "Specular mask comes from (Albedo intensity)";
 
         readonly public static string enableFresnelText = "Enable Fresnel";
         readonly public static string enableOpaqueFresnelText = "Enable Opaque Fresnel";
@@ -171,6 +172,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_EnableSilhouette;
     MaterialProperty mp_EnableOpaqueFresnel;
     MaterialProperty mp_EnableOpaqueSpecular;
+    MaterialProperty mp_EnableAlbedoAsSpecMsk;
     MaterialProperty mp_EnableVertexOffset;
 	MaterialProperty mp_EnableVertexOffsetX;
 	MaterialProperty mp_EnableVertexOffsetY;
@@ -185,7 +187,7 @@ internal class DragonShaderGUI : ShaderGUI
     MaterialProperty mp_ReflectionType;
 
     MaterialEditor m_materialEditor;
-    ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
+    //ColorPickerHDRConfig m_ColorPickerHDRConfig = new ColorPickerHDRConfig(0f, 99f, 1 / 99f, 3f);
 
     readonly static string kw_normalmap = "NORMALMAP";
     readonly static string kw_specular = "SPECULAR";
@@ -270,6 +272,7 @@ internal class DragonShaderGUI : ShaderGUI
         mp_EnableOpaqueFresnel = FindProperty("_EnableOpaqueFresnel", props);
         mp_EnableBlendFresnel = FindProperty("_EnableBlendFresnel", props);
         mp_EnableOpaqueSpecular = FindProperty("_EnableOpaqueSpecular", props);
+        mp_EnableAlbedoAsSpecMsk = FindProperty("_EnableDiffuseAsSpecMask", props);
 
         mp_EnableVertexOffset = FindProperty("_EnableVertexOffset", props);
 		mp_EnableVertexOffsetX = FindProperty("_EnableVertexOffsetX", props);
@@ -314,12 +317,7 @@ internal class DragonShaderGUI : ShaderGUI
         {
             setBlendMode(material, blendMode);
         }
-/*
-        if (blendMode == 1)
-        {
-            materialEditor.ShaderProperty(mp_cutOff, Styles.CutoffText);
-        }
-*/
+
         materialEditor.TextureProperty(mp_mainTexture, Styles.mainTextureText);
         materialEditor.TextureProperty(mp_detailTexture, Styles.detailTextureText, false);
         materialEditor.TextureProperty(mp_normalTexture, Styles.normalTextureText, false);
@@ -344,6 +342,8 @@ internal class DragonShaderGUI : ShaderGUI
             materialEditor.ShaderProperty(mp_secondLightDir, Styles.secondLightDirectionText);
             materialEditor.ShaderProperty(mp_secondLightColor, Styles.secondLightColorText);
             materialEditor.ShaderProperty(mp_EnableOpaqueSpecular, Styles.enableOpaqueSpecularText);
+            materialEditor.ShaderProperty(mp_EnableAlbedoAsSpecMsk, Styles.setAlbedoAsSpecMaskText);
+            EditorGUILayout.HelpBox(mp_EnableAlbedoAsSpecMsk.floatValue > 0.0f ? Styles.albedoAsSpecMaskTipText2: Styles.albedoAsSpecMaskTipText1, MessageType.Info);
         }
 
         if (featureSet(mp_EnableFresnel, Styles.enableFresnelText))

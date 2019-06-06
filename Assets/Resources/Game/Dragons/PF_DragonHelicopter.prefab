@@ -139,7 +139,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 120086}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 16.207743, y: 49.886295, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4074298336630626}
@@ -348,8 +348,6 @@ MonoBehaviour:
   m_waterAirLimitParticle: {fileID: 1000013716686454, guid: 32bd8689eb3e0e048a58b3307803829f,
     type: 2}
   m_corpseAsset: PF_DragonHelicopterCorpse
-  m_hiccupParticle: PS_hiccups
-  m_hiccupAnchor: {fileID: 0}
   m_shieldParticle:
     name: PS_BreakingShield
     path: 
@@ -565,6 +563,7 @@ MonoBehaviour:
   m_useBoostOnIntro: 0
   m_limitsCheck: 0
   m_lastPhysicsValidPos: {x: 0, y: 0, z: 0}
+  m_lastValidPos: {x: 0, y: 0, z: 0}
 --- !u!114 &11442574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3659,7 +3658,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010199618924}
-  m_LocalRotation: {x: 0.026091058, y: -0.61783713, z: 0.020519245, w: 0.78560525}
+  m_LocalRotation: {x: 0.03719593, y: 0.71443427, z: -0.038089477, w: 0.6976743}
   m_LocalPosition: {x: 0, y: 0, z: -1.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -7746,6 +7745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f134506f4047e4ba8f3a04e30e7152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_colors: 0000000001000000
   m_prewarmDuration: 0.5
   m_breathSound: Dragon_Burst Mode
   m_superBreathSound: Dragon_Burst Mode
@@ -48906,7 +48906,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1412778705
+  randomSeed: -205047516
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -52438,7 +52438,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c68c9e2340326e42b558a65cb9a4091, type: 2}
+  - {fileID: 2100000, guid: b7cffb65bb871a14d9e097541c3a9254, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

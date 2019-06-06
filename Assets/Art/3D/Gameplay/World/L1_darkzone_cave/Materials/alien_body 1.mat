@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: alien_body 1
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: EMISSIVE_BLINK FOG MAINCOLOR_COLOR OPAQUEALPHA SPECULAR VERTEXCOLOR_NONE
+  m_ShaderKeywords: EMISSIVE_BLINK FOG MAINCOLOR_COLOR OPAQUEALPHA VERTEXCOLOR_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -88,8 +88,11 @@ Material:
     - _EnableCutoff: 0
     - _EnableFog: 1
     - _EnableNormalMap: 0
+    - _EnableNormalwAsSpecular: 0
     - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
+    - _EnableTint: 0
+    - _EnableWaveEmission: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -109,10 +112,12 @@ Material:
     - _TimeFlick: 0
     - _TimeOffset: 0
     - _UVSec: 0
+    - _WaveEmission: 0.1
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.042279407, g: 0.042279407, b: 0.25, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissiveColor: {r: 1, g: 1, b: 1, a: 1}
     - _Panning: {r: 0, g: 0, b: 0, a: 0}
     - _SpecularDir: {r: 0.031234745, g: 0.9995121, b: -0, a: 0}
     - _Tint: {r: 0.074935116, g: 0.077613026, b: 0.46323532, a: 0.934}

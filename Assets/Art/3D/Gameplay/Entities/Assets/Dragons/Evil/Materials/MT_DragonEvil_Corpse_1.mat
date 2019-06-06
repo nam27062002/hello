@@ -7,21 +7,21 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: MT_DragonEvil_Corpse_1
-  m_Shader: {fileID: 4800000, guid: 2345015ac46679e4cb5817ed44c82547, type: 3}
-  m_ShaderKeywords: CUTOFF DOUBLESIDED FRESNEL NORMALMAP SPECULAR
+  m_Shader: {fileID: 4800000, guid: 7c755659303fc430e9beee01a27dff3e, type: 3}
+  m_ShaderKeywords: COLORMODE_COLORRAMPMASKED CUTOFF DOUBLESIDED FXLAYER_NONE LITMODE_LIT
+    REFLECTIONTYPE_NORMAL SELFILLUMINATE_NORMAL _ZWRITE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3020
   stringTagMap:
     QUEUE: AlphaTest
-    RenderType: TransparentCutout
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 9215bd0c2662a42ea84f59a94db2a360, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -37,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
-        m_Texture: {fileID: 2800000, guid: 19020747fa6ab4858b9b1219aba0c215, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 9ed17bd4a13d549a58fb60b11ba2f826, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1c7126735cf2cb8449e10fc9cf77ccf1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,12 +64,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 2800000, guid: d51c004d031768a44ab5f6b453c80e0b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ReflectionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - ColorMode: 4
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _BlendMode: 1
     - _BumpScale: 1
@@ -87,13 +93,14 @@ Material:
     - _EmissionScaleUI: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 1
+    - _EnableDiffuseAsSpecMask: 0
     - _EnableDoublesided: 1
-    - _EnableFresnel: 1
-    - _EnableNormalMap: 1
+    - _EnableFresnel: 0
+    - _EnableNormalMap: 0
     - _EnableOpaqueFresnel: 0
     - _EnableOpaqueSpecular: 0
     - _EnableSilhouette: 0
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _EnableVertexOffset: 0
     - _EnableVertexOffsetX: 0
     - _EnableVertexOffsetY: 0
@@ -109,6 +116,7 @@ Material:
     - _Mode: 0
     - _NormalStrenght: 1
     - _OcclusionStrength: 1
+    - _OpaqueAlpha: 0
     - _Parallax: 0.02
     - _ReflectionAmount: 0
     - _SecondLightIntensity: 0.47
@@ -128,6 +136,9 @@ Material:
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0.3897059, g: 0.3659125, b: 0.26649007, a: 1}
     - _InnerLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.26666668, g: 0.26666668, b: 0.26666668, a: 0}
     - _SecondLightDir: {r: -0.54, g: -1.16, b: -0.26, a: 0.45}
-    - _Tint: {r: 1, g: 1, b: 1, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint1: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint2: {r: 1, g: 1, b: 1, a: 1}

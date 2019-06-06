@@ -32,7 +32,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -212.2579, y: 114.36799, z: -51.36888}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4587793263031640}
@@ -324,6 +324,9 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -556,7 +559,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":1,"max":3},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","checkCanBeBitten":true,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"possiblePreyList":"Air/PF_FlyingPig","speedMultiplier":1,"eatPauseAfterPreyRelease":{"min":2,"max":3},"dataType":"AI.Behaviour.PetTakePreyToPlayer+PetTakePreyToPlayerData","editorFolded":false},{"waitingTime":{"min":1,"max":3},"dataType":"AI.Behaviour.PetWaitDeactivated+PetWaitDeactivatedData","editorFolded":false},{"petSeachEntitySku":"common","dataType":"AI.Behaviour.PetSearchEntityTargetData","editorFolded":false},{"timeSecondAction":{"min":5,"max":10},"dataType":"AI.Behaviour.PetDecideDogActionData","editorFolded":false}]'
   m_databaseKey: PF_PetDog_39
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -689,6 +692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: pet_39
 --- !u!114 &114382133897834958
 MonoBehaviour:
@@ -737,6 +741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 0
+  m_sku: 
   m_showOnResults: 1
 --- !u!114 &114686186145264284
 MonoBehaviour:
@@ -772,11 +777,13 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0
@@ -825,7 +832,7 @@ MonoBehaviour:
   m_possibleSpawners:
   - m_spawnPrefab: Air/PF_OwlBig
     m_chance: 1
-  - m_spawnPrefab: Air/PF_OwlSmall
+  - m_spawnPrefab: Goblin/PF_WorkerMiner
     m_chance: 1
   - m_spawnPrefab: Dragon/PF_EnemyTier0
     m_chance: 1
@@ -835,13 +842,17 @@ MonoBehaviour:
     m_chance: 2
   - m_spawnPrefab: Air/PF_FlyingPig
     m_chance: 2
-  - m_spawnPrefab: Surface/PF_Horse
+  - m_spawnPrefab: Surface/PF_SpiderSmall
     m_chance: 1
   - m_spawnPrefab: Air/PF_Ghost03
     m_chance: 1
   - m_spawnPrefab: Air/PF_Ghost02
     m_chance: 1
   - m_spawnPrefab: Junk/PF_GoodJunkBottle
+    m_chance: 2
+  - m_spawnPrefab: Monster/PF_Mushroom
+    m_chance: 2
+  - m_spawnPrefab: Surface/PF_Rat
     m_chance: 2
 --- !u!135 &135000013338795870
 SphereCollider:

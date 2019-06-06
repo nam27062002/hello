@@ -303,11 +303,19 @@ public class HungryDragonEditorMenu
 		LeagueLeaderboardGeneratorEditor.ShowWindow();
 	}
 
-    //--------------------------------------------------- OTHERS -----------------------------------------------------//
-    /// <summary>
-    /// Add menu item to be able to open the level editor.
-    /// </summary>
-    [MenuItem("Hungry Dragon/Level Editor", false, 50)]
+	/// <summary>
+	/// Preview of all Ease functions.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Tools/Color Ramp Editor", false, 301)]
+	public static void MenuColorRampEditor() {
+		ColorRampEditor.OpenWindow();
+	}
+
+	//--------------------------------------------------- OTHERS -----------------------------------------------------//
+	/// <summary>
+	/// Add menu item to be able to open the level editor.
+	/// </summary>
+	[MenuItem("Hungry Dragon/Level Editor", false, 50)]
     public static void ShowLevelEditorWindow()
     {
         // Show existing window instance. If one doesn't exist, make one.

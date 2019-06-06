@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 0
+  m_sku: 
   m_showOnResults: 1
 --- !u!1001 &100100000
 Prefab:
@@ -715,6 +716,9 @@ MonoBehaviour:
   m_animA: 
   m_animB: 
   m_animC: 
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -947,7 +951,7 @@ MonoBehaviour:
     min: 0.5
     max: 1
   m_useSpawnerRotation: 0
-  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":200,"type":0,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.5,"playerDistance":6,"closeRangeMultiplier":20,"farRangeMultiplier":220,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
+  m_serializedJson: '[{"petWanderSku":"common","dataType":"AI.Behaviour.WanderPlayerData","editorFolded":false},{"petChaseSku":"common","checkCanBeBitten":true,"dataType":"AI.Behaviour.PetChaseTargetData","editorFolded":false},{"dragonSizeRangeMultiplier":200,"type":0,"dataType":"AI.Behaviour.PetSearchCollectibleTargetData","editorFolded":false},{"speedMultiplier":2.5,"playerDistance":6,"closeRangeMultiplier":20,"farRangeMultiplier":220,"dataType":"AI.Behaviour.PetPointingCollectibleTargetData","editorFolded":false}]'
   m_databaseKey: PF_PetColumbo_57
   m_preciseDestArrival: 0
   m_avoidDistanceAttenuation: 0
@@ -1171,6 +1175,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0

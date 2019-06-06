@@ -8,8 +8,8 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: blocker_tier4_material
   m_Shader: {fileID: 4800000, guid: 4bd59ad400e211745b4759937240dc56, type: 3}
-  m_ShaderKeywords: EMISSIVE_NONE MAINCOLOR_TEXTURE NORMALMAP NORMALWASSPECULAR OPAQUEALPHA
-    SPECULAR VERTEXCOLOR_NONE _ZWRITE_ON
+  m_ShaderKeywords: EMISSIVE_NONE MAINCOLOR_TEXTURE NORMALWASSPECULAR OPAQUEALPHA
+    VERTEXCOLOR_NONE _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -49,7 +49,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTex:
-        m_Texture: {fileID: 2800000, guid: 5f9175cc976e8fe4baabc57ad596799a, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -89,10 +89,10 @@ Material:
     - _EnableBlendTexture: 0
     - _EnableCutoff: 0
     - _EnableFog: 0
-    - _EnableNormalMap: 1
+    - _EnableNormalMap: 0
     - _EnableNormalwAsSpecular: 1
     - _EnableOpaqueAlpha: 1
-    - _EnableSpecular: 1
+    - _EnableSpecular: 0
     - _EnableTint: 0
     - _EnableWaveEmission: 0
     - _GlossMapScale: 1

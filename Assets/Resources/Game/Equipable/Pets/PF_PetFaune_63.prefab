@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_attachPoint: 0
+  m_sku: 
   m_showOnResults: 1
 --- !u!1001 &100100000
 Prefab:
@@ -363,6 +364,9 @@ MonoBehaviour:
   m_animA: special
   m_animB: 
   m_animC: 
+  m_useFreezeParticle: 0
+  m_freezeParticleScale: 1
+  m_useMoveAnimInLove: 0
   m_exclamationTransform: {fileID: 0}
   m_speedToWaterSplash: 0
   m_waterSplashParticle:
@@ -627,6 +631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e4b01ef8e8b54b638ddb530e3150fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_tags: 0
   m_sku: pet_63
 --- !u!114 &114120182260049616
 MonoBehaviour:
@@ -697,11 +702,13 @@ MonoBehaviour:
     m_burningTime: 0
     m_canBeDissolved: 1
     m_ashExceptions: []
+    m_disableOnBurn: []
   m_onSpawnSound: 
   m_airMotion:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0

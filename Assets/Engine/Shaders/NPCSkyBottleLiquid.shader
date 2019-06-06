@@ -49,6 +49,8 @@ Shader "Hungry Dragon/NPC/NPC Sky bottle liquid"
 //			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 			#define EMISSIVE
+			#define LITMODE_LIT
+
 
 			#include "entities.cginc"
 			ENDCG

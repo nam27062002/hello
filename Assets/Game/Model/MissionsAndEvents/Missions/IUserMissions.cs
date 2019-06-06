@@ -173,7 +173,12 @@ public abstract class IUserMissions {
 		List<string> typesToIgnore = new List<string>();
 		if(_preventRepetition) {
 			for(int i = 0; i < m_missions.Length; i++) {
-				if(m_missions[i] != null) typesToIgnore.Add(m_missions[i].typeDef.sku);
+                if (m_missions[i] != null) {
+                    DefinitionNode typeDef = m_missions[i].typeDef;
+                    if (typeDef != null) {
+                        typesToIgnore.Add(typeDef.sku);
+                    }
+                }
 			}
 		}
 

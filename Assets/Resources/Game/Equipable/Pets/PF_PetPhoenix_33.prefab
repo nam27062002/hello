@@ -29,8 +29,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 112168}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -483.1483, y: 243.2199, z: -88.57818}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4745434911807152}
@@ -1098,12 +1098,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6555954cba2934fdf9207bcef85a0f10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_usePlayerTier: 0
   m_tier: 4
   m_megaFireIgnoresTier: 0
   m_entityTags: 0
   m_ignoreEntityTags: 0
   m_burnDecorations: 0
   m_type: 1
+  m_onBurnAudio: 
 --- !u!114 &114687268252911206
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1144,6 +1146,7 @@ MonoBehaviour:
     m_mass: 1
     m_defaultUpVector: 0
     m_orientationSpeed: 360
+    m_useAngularVelocity: 1
     m_dragonStyleRotation: 0
     m_faceDirection: 1
     m_rollRotation: 0

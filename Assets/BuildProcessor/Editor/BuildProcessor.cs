@@ -26,6 +26,19 @@ public class BuildPreProcessor : IPreprocessBuild {
 
 	public void OnPreprocessBuild(BuildTarget target, string path)
 	{
+        EditorAssetBundlesManager.NeedsToGenerateAssetsLUT = false;
+
+        // AssetsLUT needs to be generated when building DEV
+        CaletySettings settingsInstance = (CaletySettings)Resources.Load("CaletySettings");
+        if (settingsInstance != null)
+        {
+            if (settingsInstance.m_iBuildEnvironmentSelected == (int)CaletyConstants.eBuildEnvironments.BUILD_DEV)
+            {
+                EditorAssetBundlesManager.NeedsToGenerateAssetsLUT = true;
+                EditorAssetBundlesManager.GenerateAssetsLUTFromDownloadablesCatalog();
+            }
+        }
+
         PlatformBuilderHelper.platformResourcesReady = false;
         Debug.Log ("Preprocessing build for: " + target.ToString () + " platform");
 		string dpath = PlatformBuilderHelper.getRelativePlatformResourcesPath();
@@ -76,7 +89,9 @@ public class BuildPostProcessor : IPostprocessBuild {
 
 	public void OnPostprocessBuild(BuildTarget target, string path)
 	{
-		Debug.Log ("Postprocessing build for: " + target.ToString () + " platform");
+        EditorAssetBundlesManager.NeedsToGenerateAssetsLUT = false;
+
+        Debug.Log ("Postprocessing build for: " + target.ToString () + " platform");
         if (PlatformBuilderHelper.platformResourcesReady)
         {
             string dpath = PlatformBuilderHelper.getRelativePlatformResourcesPath();

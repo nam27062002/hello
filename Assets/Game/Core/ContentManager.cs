@@ -51,6 +51,8 @@ public class ContentManager
 
     private static ContentDeltaDelegate m_kContentDeltaDelegate = null;
 
+    public static bool USE_ASSETS_LUT_V2 = Downloadables.Manager.USE_CRC_IN_URL;
+
     //////////////////////////////////////////////////////////////////////////
 
     public static bool m_ready = false;
@@ -65,9 +67,9 @@ public class ContentManager
     public static bool UseCachedAssetsLUTFromServer 
     {
         get
-        {                        
+        {
 #if UNITY_EDITOR
-            return false;
+            return false;            
 #else
             return FeatureSettingsManager.instance.IsContentDeltasCachedEnabled;
 #endif
@@ -77,9 +79,9 @@ public class ContentManager
     public static bool UseDeltaContent
     {
         get
-        {                     
+        {
 #if UNITY_EDITOR
-            return false;
+            return false;            
 #else
             return FeatureSettingsManager.instance.IsContentDeltasEnabled;
 #endif
@@ -115,11 +117,23 @@ public class ContentManager
         }       
 	}
 
+    public static string GetAssetsLUTPlatform()
+    {        
+#if UNITY_ANDROID
+            return "Android";
+#else
+            return "iOS";
+#endif                
+    }
+
     private static void InitContentDeltaManager()
     {
         m_kContentDeltaDelegate = new ContentDeltaDelegate();
         ContentDeltaManager.SharedInstance.AddListener(m_kContentDeltaDelegate);
-        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer, true, true);                
+
+        bool useAssetBundlesFormat = USE_ASSETS_LUT_V2;
+        string platform = (useAssetBundlesFormat) ? GetAssetsLUTPlatform() : null;        
+        ContentDeltaManager.SharedInstance.Initialise("AssetsLUT/assetsLUT", UseCachedAssetsLUTFromServer, true, true, useAssetBundlesFormat, platform);                
     }
 
     private static void InitDefinitions()
@@ -234,8 +248,9 @@ public class ContentManager
 
 		// UI
 		kDefinitionFiles.Add(DefinitionsCategory.SHARE_LOCATIONS, new string[] { "Rules/shareLocationDefinitions" });
-        
-        
+        kDefinitionFiles.Add(DefinitionsCategory.ICONS, new string[] { "Rules/iconDefinitions" });
+
+
         // ADD HERE ANY NEW DEFINITIONS FILE!
 
 
@@ -324,7 +339,7 @@ public class ContentManager
      
 
 
-    #region log
+#region log
     private const bool LOG_USE_COLOR = false;
     private const string LOG_CHANNEL = "[ContentManager] ";    
 
@@ -343,5 +358,5 @@ public class ContentManager
     {
         Debug.LogError(LOG_CHANNEL + msg);
     }
-    #endregion
+#endregion
 }

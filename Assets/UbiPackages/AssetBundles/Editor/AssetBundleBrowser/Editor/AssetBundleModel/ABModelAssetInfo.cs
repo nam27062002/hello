@@ -277,7 +277,7 @@ namespace AssetBundleBrowser.AssetBundleModel
                 }
                 else
                 {
-                    System.Type type = AssetDatabase.GetMainAssetTypeAtPath(m_AssetName);
+                    //System.Type type = AssetDatabase.GetMainAssetTypeAtPath(m_AssetName);
                     Object obj = AssetDatabase.LoadAssetAtPath(m_AssetName, AssetDatabase.GetMainAssetTypeAtPath( m_AssetName ));
                     Object[] dependencies = EditorUtility.CollectDependencies(new Object[] {obj });
                     foreach (var dep in dependencies)

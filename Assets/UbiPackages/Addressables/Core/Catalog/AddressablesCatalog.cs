@@ -73,6 +73,11 @@ public class AddressablesCatalog
             {
                 LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
+
+                if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
+                {
+                    SetAllAssetBundlesAsLocal();
+                }
             }
 #endif
         }
@@ -94,7 +99,7 @@ public class AddressablesCatalog
 #endif
 
         return data;
-    }
+    }   
 
     private bool LoadEntries(JSONArray entries, Logger logger)
     {
@@ -129,7 +134,7 @@ public class AddressablesCatalog
         }
 
         return success;
-    }
+    }    
 
     private bool EntriesNoVariants_AddEntry(AddressablesCatalogEntry entry, Logger logger)
     {
@@ -310,7 +315,32 @@ public class AddressablesCatalog
     public List<string> GetLocalABList()
     {
         return m_localABList;
-    }    
+    }
+
+    private void SetAllAssetBundlesAsLocal()
+    {
+        string abName;
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in m_entriesNoVariants)
+        {
+            abName = pair.Value.AssetBundleName;
+            if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
+            {
+                m_localABList.Add(abName);
+            }
+        }
+
+        foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> p in m_entriesWithVariants)
+        {
+            foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in p.Value)
+            {
+                abName = pair.Value.AssetBundleName;
+                if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
+                {
+                    m_localABList.Add(abName);
+                }
+            }
+        }
+    }
 
     public List<string> GetUsedABList()
     {

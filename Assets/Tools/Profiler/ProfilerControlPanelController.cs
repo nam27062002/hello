@@ -1086,4 +1086,9 @@ public class ProfilerControlPanelController : MonoBehaviour
         Debug.Log("Materials changed: " + changed);
     }
     #endregion
+
+
+    public void OnDisableGoldenMaterial(bool newValue) {
+        ViewControl.sm_allowGoldenMaterial = !newValue;
+    }
 }

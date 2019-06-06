@@ -204,6 +204,15 @@
         "etl"
       ]
     },
+	"custom.gameplay.loadgameend": {	 
+      "Parameters": [
+        { "loadingTime": { "Status": "OK" } }
+      ],
+      "APIs": [
+        "dna",
+        "etl"
+      ]
+    },
     "custom.player.iap": {
       "Parameters": [
         { "storeTransactionID": { "Status": "OK" } },
@@ -1499,11 +1508,11 @@
       "Values": []
     },
     "experimentName": {
-      "Type": "STRING:30",
+      "Type": "STRING:250",
       "Values": []
     },
     "experimentGroup": {
-      "Type": "STRING:30",
+      "Type": "STRING:250",
       "Values": []
     },
     "dragon": {

@@ -553,12 +553,12 @@ public class RewardManager : UbiBCN.SingletonMonoBehaviour<RewardManager>, IBroa
         } else {
             skipXP = SceneController.mode == SceneController.Mode.TOURNAMENT || InstanceManager.player.data.type != IDragonData.Type.CLASSIC;// [AOC] Only CLASSIC dragons!
         }
-            
+        instance.m_xp += _reward.xp;
+        
         if ( skipXP ) {
             _reward.xp = 0;
         } else {
 			(InstanceManager.player.data as DragonDataClassic).progression.AddXp(_reward.xp, true);
-			instance.m_xp += _reward.xp;
 		}
 		
 		// Global notification (i.e. to show feedback)

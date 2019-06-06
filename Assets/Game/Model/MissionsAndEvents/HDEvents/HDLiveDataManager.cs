@@ -453,10 +453,13 @@ public class HDLiveDataManager : Singleton<HDLiveDataManager> {
 
     public void SwitchToQuest() {
         m_tournament.Deactivate();
-        m_passive.Activate();
-        m_quest.Activate();
         m_league.Deactivate();
-        m_dragonDiscounts.Activate();
+
+        if (UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)) {
+            m_passive.Activate();
+            m_quest.Activate();
+            m_dragonDiscounts.Activate();
+        }
     }
 
     public void SwitchToLeague() {

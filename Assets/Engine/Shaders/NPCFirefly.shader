@@ -43,6 +43,8 @@ Shader "Hungry Dragon/NPC/NPC Firefly"
 //			#define DYNAMIC_LIGHT
 			#define OPAQUEALPHA
 
+			#define LITMODE_LIT
+
 			#include "entities.cginc"
 			ENDCG
 		}

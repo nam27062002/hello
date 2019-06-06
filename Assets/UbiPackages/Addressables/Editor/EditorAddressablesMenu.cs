@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,12 +18,14 @@ public class EditorAddressablesMenu : MonoBehaviour
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_GENERATE_ASSET_BUNDLES_CATALOG = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "5. Generate Asset Bundles Catalog";
     private const string ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES = ADDRESSABLES_BUILD_BY_STEPS_MENU + "/" + "6. Process Asset Bundles";    
 
-    private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";
-    //private const string ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS = ADDRESSABLES_BUILD_MENU + "/" + "Build for iOS and Android";
-
+    private const string ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM = ADDRESSABLES_BUILD_MENU + "/" + "Build for target platform";    
     private const string ADDRESSABLES_COPY_LOCAL_ASSET_BUNDLES_TO_PLAYER = ADDRESSABLES_MENU + "/" + "Copy Local Asset Bundles To Player";
 
-    private const string ADDRESSABLES_EDITOR_MODE = ADDRESSABLES_MENU + "/Editor mode";
+    private const string ADDRESSABLES_MODE = ADDRESSABLES_MENU + "/Mode";
+    private const string ADDRESSABLES_EDITOR_MODE = ADDRESSABLES_MODE + "/Editor";
+    private const string ADDRESSABLES_CATALOG_MODE = ADDRESSABLES_MODE + "/Catalog";
+    private const string ADDRESSABLES_ALL_IN_LOCAL_AB_MODE = ADDRESSABLES_MODE + "/All In Local Asset Bundles";
+    private const string ADDRESSABLES_ALL_IN_RESOURCES_MODE = ADDRESSABLES_MODE + "/All In Resources";
 
     public static EditorAddressablesManager m_manager;
     public static EditorAddressablesManager Manager
@@ -100,7 +103,7 @@ public class EditorAddressablesMenu : MonoBehaviour
 
     // 5. Process Asset Bundles
     [MenuItem(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES)]
-    static void ProcessAssetBundles()
+    public static void ProcessAssetBundles()
     {
         Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         OnDone(ADDRESSABLES_BUILD_BY_STEPS_MENU_PROCESS_ASSET_BUNDLES);
@@ -111,16 +114,7 @@ public class EditorAddressablesMenu : MonoBehaviour
     {
         Manager.BuildForTargetPlatform();        
         OnDone(ADDRESSABLES_BUILD_FOR_TARGET_PLATFORM);
-    }
-
-    /*
-    [MenuItem(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS)]
-    public static void Build()
-    {
-        Manager.BuildForBothPlatforms();
-        OnDone(ADDRESSABLES_BUILD_FOR_BOTH_PLATFORMS);
-    }
-    */
+    }   
     
     private static void OnDone(string taskName)
     {
@@ -128,8 +122,7 @@ public class EditorAddressablesMenu : MonoBehaviour
         Debug.Log(taskName + " done.");
     }    
 
-    [MenuItem(ADDRESSABLES_EDITOR_MODE)]
-    public static void ToggleEditorMode()
+    public static void SetMode(AddressablesManager.EMode value)
     {
         if (Application.isPlaying)
         {
@@ -137,33 +130,167 @@ public class EditorAddressablesMenu : MonoBehaviour
             return;
         }
 
-        AddressablesManager.EditorMode = !AddressablesManager.EditorMode;    
-        
-        // If no editor mode is enabled then local asset bundles need to be loaded to the player folder so they can be used
-        if (AddressablesManager.EditorMode)
+        // Generated assets need to be moved to their original location again
+        Manager.MoveGeneratedResourcesToOriginalUbication();        
+
+        AddressablesManager.Mode = value;
+
+        if (AddressablesManager.Mode_NeedsAssetBundles())
+        {
+            Manager.CopyLocalAndRemoteAssetBundlesToSource(EditorUserBuildSettings.activeBuildTarget);
+        }
+
+        Manager.GeneratePlayerCatalog();
+        Manager.GenerateAssetBundlesCatalog();        
+
+        if (AddressablesManager.Mode == AddressablesManager.EMode.Editor || AddressablesManager.Mode == AddressablesManager.EMode.AllInResources)
         {
             DeleteLocalAssetBundlesInPlayerDestination();
         }
-        else
-        {
-            CopyLocalAssetBundlesToPlayerDestination(EditorUserBuildSettings.activeBuildTarget);
+        else if (AddressablesManager.Mode_NeedsAssetBundles())
+        {         
+            Manager.ProcessAssetBundles(EditorUserBuildSettings.activeBuildTarget, true);
         }
+
+		AssetDatabase.Refresh ();
+    }
+
+    [MenuItem(ADDRESSABLES_EDITOR_MODE)]
+    public static void Mode_SetEditor()
+    {
+        SetMode(AddressablesManager.EMode.Editor);        
     }
 
     [MenuItem(ADDRESSABLES_EDITOR_MODE, true)]
-    public static bool ToggleEditorModeValidate()
-    {        
-        Menu.SetChecked(ADDRESSABLES_EDITOR_MODE, AddressablesManager.EditorMode);
+    public static bool Mode_SetEditorValidate()
+    {
+        Menu.SetChecked(ADDRESSABLES_EDITOR_MODE, AddressablesManager.Mode == AddressablesManager.EMode.Editor);
         return true;
-    }    
-     
-    public static void CopyLocalAssetBundlesToPlayerDestination(BuildTarget target)
-    {                
-        Manager.CopyLocalAssetBundlesToPlayerDestination(target);
+    }
+
+    [MenuItem(ADDRESSABLES_CATALOG_MODE)]
+    public static void Mode_SetCatalog()
+    {
+        SetMode(AddressablesManager.EMode.Catalog);        
+    }
+
+    [MenuItem(ADDRESSABLES_CATALOG_MODE, true)]
+    public static bool Mode_SetCatalogValidate()
+    {
+        Menu.SetChecked(ADDRESSABLES_CATALOG_MODE, AddressablesManager.Mode == AddressablesManager.EMode.Catalog);
+        return true;
+    }
+
+    [MenuItem(ADDRESSABLES_ALL_IN_LOCAL_AB_MODE)]
+    public static void Mode_SetAllInLocalAB()
+    {
+        SetMode(AddressablesManager.EMode.AllInLocalAssetBundles);        
+    }
+
+    [MenuItem(ADDRESSABLES_ALL_IN_LOCAL_AB_MODE, true)]
+    public static bool Mode_SetAllInLocalABValidate()
+    {
+        Menu.SetChecked(ADDRESSABLES_ALL_IN_LOCAL_AB_MODE, AddressablesManager.Mode == AddressablesManager.EMode.AllInLocalAssetBundles);
+        return true;
+    }
+
+    [MenuItem(ADDRESSABLES_ALL_IN_RESOURCES_MODE)]
+    public static void Mode_SetAllInResources()
+    {
+        SetMode(AddressablesManager.EMode.AllInResources);
+    }
+
+    [MenuItem(ADDRESSABLES_ALL_IN_RESOURCES_MODE, true)]
+    public static bool Mode_SetAllInResourcesValidate()
+    {
+        Menu.SetChecked(ADDRESSABLES_ALL_IN_RESOURCES_MODE, AddressablesManager.Mode == AddressablesManager.EMode.AllInResources);
+        return true;
+    }
+
+    private static AddressablesManager.EMode sm_modePreBuild;
+
+	private static bool sm_needsToSetModeOnPrebuild = true;
+	public static bool NeedsToSetModeOnPreBuild 
+	{ 
+		get { return sm_needsToSetModeOnPrebuild; } 
+		set { sm_needsToSetModeOnPrebuild = value; }
+	}
+
+    public static void OnPreBuild(BuildTarget target)
+    {
+        // Copy the platform assetsLUT to Resources
+		if (Downloadables.Manager.USE_CRC_IN_URL) 
+		{
+			CopyPlatformAssetsLUTToResources (target);
+		}
+
+        sm_modePreBuild = AddressablesManager.Mode;
+
+		Debug.Log("OnPrebuild Mode " + AddressablesManager.EffectiveMode);
+		if (sm_needsToSetModeOnPrebuild)
+		{
+        	SetMode(AddressablesManager.EffectiveMode);  
+
+			// Default value is set for the next time
+			sm_needsToSetModeOnPrebuild = true;
+		}
+    }
+
+    public static void CopyPlatformAssetsLUTToResources(BuildTarget target)
+    {
+        string directoryInResources = "Assets/Resources/AssetsLUT/";
+        string assetsLUTInResources = directoryInResources + "assetsLUT.json";
+        if (Directory.Exists(directoryInResources))
+        {
+            if (File.Exists(assetsLUTInResources))
+            {
+                File.Delete(assetsLUTInResources);
+            }
+        }
+        else
+        {
+            // Makes sure that the destination folder exists        
+            Directory.CreateDirectory(directoryInResources);
+        }
+
+        string assetsLUTSource = "AssetsLUT/assetsLUT_";
+        switch (target)
+        {
+            case BuildTarget.Android:
+                assetsLUTSource += "Android";
+                break;
+
+            case BuildTarget.iOS:
+                assetsLUTSource += "iOS";
+                break;
+        }
+
+        assetsLUTSource += ".json";
+
+        if (File.Exists(assetsLUTSource))
+        {
+            File.Copy(assetsLUTSource, assetsLUTInResources);
+        }
+        else
+        {
+            Debug.LogWarning("No assetsLUT found for platform " + target.ToString() + ": " + assetsLUTSource);
+        }
+
+        AssetDatabase.Refresh();
+    }
+
+    public static void OnPostBuild()
+    {
+        if (AddressablesManager.Mode != sm_modePreBuild)
+        {
+            SetMode(sm_modePreBuild);
+        }                        
     }
 
     public static void DeleteLocalAssetBundlesInPlayerDestination()
     {
         Manager.DeleteLocalAssetBundlesInPlayerDestination();
     }
+
+
 }

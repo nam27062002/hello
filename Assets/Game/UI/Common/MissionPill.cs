@@ -40,8 +40,8 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 	[Separator("Active State")]
 	[SerializeField] private GameObject m_activeObj = null;
 	[Space]
-	[SerializeField] private Image m_missionIcon = null;
-	[SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
+	[SerializeField] private BaseIcon m_missionIcon = null;
+    [SerializeField] private TextMeshProUGUI m_missionDescriptionText = null;
 	[SerializeField] private TextMeshProUGUI m_rewardText = null;
 	[SerializeField] private GameObject m_missionCompletedObj = null;
 	[Space]
@@ -229,9 +229,15 @@ public class MissionPill : MonoBehaviour, IBroadcastListener {
 		// Check if this mission is complete
 		if(m_missionCompletedObj != null) m_missionCompletedObj.SetActive(m_mission.objective.isCompleted);
 
-		// Change Icon
-		m_missionIcon.sprite = Resources.Load<Sprite>(UIConstants.MISSION_ICONS_PATH + m_mission.def.GetAsString("icon"));
+        // Get the icon definition
+        string iconSku = m_mission.def.GetAsString("icon");
 
+        // The BaseIcon component will load the proper image or 3d model according to iconDefinition.xml
+        m_missionIcon.LoadIcon(iconSku);
+        m_missionIcon.gameObject.SetActive(true);
+
+
+               
 		// Where
 		// [AOC] TODO!! Feature not yet implemented, use a fixed text for now
 		if(m_targetAreaText != null) {

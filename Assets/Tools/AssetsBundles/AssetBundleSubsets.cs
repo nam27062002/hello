@@ -77,24 +77,79 @@ public class AssetBundleSubsets {
                 }
             }
         }
+    }
+
+    public void LogSubsets(bool _console = false, bool _file = false) { 
+        StreamWriter sw = null;
 
         int assetCount = 0;
         for (int subset = 0; subset < m_subsets.Length; subset++) {
             List<string> sorted = m_subsets[subset].ToList();
-            sorted.Sort();
 
-            string output = "-++[" + GetSubSetName(subset) + "]++++-----------------------\n";
-            foreach (string asset in sorted) {
-                output += "    " + asset;
-                if (m_assetLODsMap.ContainsKey(asset)) {
-                    output += " [" + m_assetLODsMap[asset] + "]";
+            if (sorted.Count > 0) {
+                sorted.Sort();
+
+                if (_console) {
+                    Debug.LogWarning("-++[" + GetSubSetName(subset) + "]++++-----------------------");
                 }
-                output += "\n";
-                assetCount++;
-            }
-            output += "-++----";
+                if (_file) {
+                    sw = new StreamWriter(GetSubSetName(subset) + ".txt", false);
+                }
 
+                string output = "";
+                foreach (string asset in sorted) {
+                    output += "    " + asset;
+                    if (m_assetLODsMap.ContainsKey(asset)) {
+                        output += " [" + m_assetLODsMap[asset] + "]";
+                    }
+                    output += "\n";
+                    assetCount++;
+                }
+
+                if (_console) {
+                    Debug.LogWarning(output);
+                    Debug.LogWarning("-++----");
+                }
+                if (_file) {
+                    sw.Write(output);
+                    sw.Close();
+                }
+            }
+        }
+    }
+
+    public void LogAssets(bool _console = false, bool _file = false) {
+        List<string> allAssets = new List<string>();
+
+        for (int subset = 0; subset < m_subsets.Length; subset++) {
+            List<string> sorted = m_subsets[subset].ToList();
+
+            if (sorted.Count > 0) {
+                string complexSubSetName = GetComplexSubSetName(subset);
+                foreach (string asset in sorted) {
+                    allAssets.Add(asset + complexSubSetName);
+                }
+            }
+        }
+
+        allAssets.Sort();
+
+        if (_console) {
+            Debug.LogWarning("-++[" + m_subsetPrefix + "Assets]++++-----------------------");
+            string output = "";
+            foreach (string asset in allAssets) {
+                output += asset;
+            }
             Debug.LogWarning(output);
+            Debug.LogWarning("-++----");
+        }
+
+        if (_file) {
+            StreamWriter sw = new StreamWriter(m_subsetPrefix + "Assets.txt", false);
+            foreach (string asset in allAssets) {
+                sw.WriteLine(asset);
+            }
+            sw.Close();
         }
     }
 
@@ -149,6 +204,21 @@ public class AssetBundleSubsets {
         for (int i = 0; i < m_combinations[_set].Count; ++i) {
             if (i > 0) name += "_";
             name += m_setNames[m_combinations[_set][i]];
+        }
+
+        return name;
+    }
+
+    private string GetComplexSubSetName(int _set) {
+        string name = "";
+
+        for (int i = 0; i < m_sets.Count(); ++i) {
+            if (m_combinations[_set].Contains(i)) {
+                name += "-";
+                name += m_setNames[i];
+            } else {
+                name += "-x";
+            }
         }
 
         return name;

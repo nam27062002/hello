@@ -215,9 +215,16 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef SPECULAR
 	// Specular
 	float3 halfDir = normalize(i.viewDir + light0Direction);
-	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+
+#ifdef DIFFUSE_AS_SPECULARMASK
+	float specMsk = dot(main.xyz, float3(0.3, 0.59, 0.11));
+#else
+	float specMsk = detail.g;
+#endif
+
+	float specularLight = pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * specMsk;
 	halfDir = normalize(i.viewDir + light1Direction);
-	specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * detail.g;
+	specularLight += pow(max(dot(normalDirection, halfDir), 0), _SpecExponent) * specMsk;
 
 #else
 	float specularLight = 0.0;

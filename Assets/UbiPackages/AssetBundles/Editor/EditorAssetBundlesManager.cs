@@ -8,33 +8,90 @@ public class EditorAssetBundlesManager
 {
     public static string ASSET_BUNDLES_PATH = "AssetBundles";
     public static string DOWNLOADABLES_FOLDER = "AssetBundles/Remote";
-    public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";
-    public static string DOWNLOADABLES_CATALOG_PATH = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
+    public static string ASSET_BUNDLES_LOCAL_FOLDER = "AssetBundles/Local";
+    public static string DOWNLOADABLES_CATALOG_NAME = "downloadablesCatalog.json";    
 
     public static void Clear()
     {
-        string assetBundleDirectory = GetAssetBundlesDirectory();
-        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
+        string directory = GetAssetBundlesDirectory();
+        EditorFileUtils.DeleteFileOrDirectory(directory);
+
+        directory = GetPlatformDirectory(DOWNLOADABLES_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(directory);
+
+        directory = GetPlatformDirectory(ASSET_BUNDLES_LOCAL_FOLDER);
+        EditorFileUtils.DeleteFileOrDirectory(directory);        
     }
 
     public static string GetAssetBundlesDirectory()
     {
-        return ASSET_BUNDLES_PATH + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();        
+        return GetPlatformDirectory(ASSET_BUNDLES_PATH);
     }
 
-    public static void BuildAssetBundles(BuildTarget platform)
+    public static string GetPlatformDirectory(string directory)
+    {
+        return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
+    }
+
+    private static bool sm_needsToGenerateAssetsLUT = false;
+    public static bool NeedsToGenerateAssetsLUT
+    {
+        get { return sm_needsToGenerateAssetsLUT; }
+        set { sm_needsToGenerateAssetsLUT = value; }
+    }
+
+    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
     {
         Debug.Log("Building asset bundles...");
         string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
-        EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
-        if (!Directory.Exists(assetBundleDirectory))
+        // LZ4 algorithm is used to reduce memory footprint
+        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+
+        // LZMA algorithm, it gives the smallest possible size
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;
+
+        // If we're rebuilding all asset bundles then we need to clean up first
+        if (abNames == null)
         {
-            Directory.CreateDirectory(assetBundleDirectory);
+            EditorFileUtils.DeleteFileOrDirectory(assetBundleDirectory);
+
+            if (!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, compression, platform);
+        }
+        else
+        {
+            if (!Directory.Exists(assetBundleDirectory))
+            {
+                Directory.CreateDirectory(assetBundleDirectory);
+            }
+
+            // Rebuilds only the selected ones        
+            BuildPipeline.BuildAssetBundles(assetBundleDirectory, GetBuildsForPaths(abNames).ToArray(), compression, platform);
+        }
+    }    
+
+    private static List<AssetBundleBuild> GetBuildsForPaths(List<string> abNames)
+    {
+        List<AssetBundleBuild> assetBundleBuilds = new List<AssetBundleBuild>();
+
+        // Get asset bundle names from selection
+        foreach (var o in abNames)
+        {
+            AssetBundleBuild build = new AssetBundleBuild();
+
+            build.assetBundleName = o;
+            build.assetBundleVariant = null;
+            build.assetNames = AssetDatabase.GetAssetPathsFromAssetBundle(o);
+
+            assetBundleBuilds.Add(build);
         }
 
-        // LZ4 algorithm is used to reduce memory footprint
-        BuildPipeline.BuildAssetBundles(assetBundleDirectory, BuildAssetBundleOptions.ChunkBasedCompression, platform);
+        return assetBundleBuilds;
     }
 
     public static AssetBundleManifest LoadAssetBundleManifest(out AssetBundle manifestBundle)
@@ -164,31 +221,32 @@ public class EditorAssetBundlesManager
         }
 
         catalog.UrlBase = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
-        JSONClass json = catalog.ToJSON();       
-        EditorFileUtils.WriteToFile(DOWNLOADABLES_CATALOG_PATH, json.ToString());
+        JSONClass json = catalog.ToJSON();
 
-        // It copies it to the player's folder too
-        if (!string.IsNullOrEmpty(playerFolder))
+        string downloadablesCatalogFileName = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
+        EditorFileUtils.WriteToFile(downloadablesCatalogFileName, json.ToString());
+
+        // AssetsLUT is generated so remote asset bundles can work
+        if (NeedsToGenerateAssetsLUT)
         {
-            string path = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
-            EditorFileUtils.WriteToFile(path, json.ToString());
-        }
+            GenerateAssetsLUTFromDownloadablesCatalog();
+        }        
     }
 
-    private static string ASSETS_LUT_PATH = "Assets/Resources/AssetsLUT";
-    private static string ASSETS_LUT_FILENAME = "assetsLUT.json";
+    private static string ASSETS_LUT_PATH = "AssetsLUT/";
+    private static string ASSETS_LUT_FILENAME_WITHOUT_EXTENSION = "assetsLUT";
+    private static string ASSETS_LUT_FILENAME = ASSETS_LUT_FILENAME_WITHOUT_EXTENSION + ".json";
     private static string ASSETS_LUT_FULL_PATH = ASSETS_LUT_PATH + "/" + ASSETS_LUT_FILENAME;
 
-    private static string ASSETS_LUT_AB_PREFIX = Downloadables.Manager.REMOTE_FOLDER;
-    private static string ASSETS_LUT_AB_PREFIX_IOS = ASSETS_LUT_AB_PREFIX + "iOS/";
-    private static string ASSETS_LUT_AB_PREFIX_ANDROID = ASSETS_LUT_AB_PREFIX + "Android/";    
+    private static string ASSETS_LUT_AB_PREFIX = Downloadables.Manager.REMOTE_FOLDER;    
 
     public static void GenerateAssetsLUTFromDownloadablesCatalog()
     {
         Downloadables.Catalog assetsLUTCatalog = new Downloadables.Catalog();
-        
+
+        string targetPlatformString = EditorUserBuildSettings.activeBuildTarget.ToString();
         string assetsLUTPath = ASSETS_LUT_PATH;        
-        string assetsLUTFullPath = ASSETS_LUT_FULL_PATH;
+        string assetsLUTFullPath = ASSETS_LUT_PATH + "/" + ASSETS_LUT_FILENAME_WITHOUT_EXTENSION + "_" + targetPlatformString + ".json";
         JSONNode assetsLUTJson = null;
         if (File.Exists(assetsLUTFullPath))
         {
@@ -199,10 +257,17 @@ public class EditorAssetBundlesManager
             Dictionary<string, Downloadables.CatalogEntry> entries = assetsLUTCatalog.GetEntries();
             if (entries != null)
             {
+                JSONNode assetsList = null;
+                if (assetsLUTJson[Downloadables.Catalog.CATALOG_ATT_ENTRIES] != null)
+                {
+                    assetsList = assetsLUTJson[Downloadables.Catalog.CATALOG_ATT_ENTRIES];
+                }
+
                 List<string> keysToDelete = new List<string>();
                 foreach (KeyValuePair<string, Downloadables.CatalogEntry> pair in entries)
                 {                    
-                    if (pair.Key.Contains("iOS/") || pair.Key.Contains("Android/"))
+                    if (pair.Key.Contains("iOS/") || pair.Key.Contains("Android/") || 
+                       (assetsList != null && assetsList[pair.Key] != null && assetsList[pair.Key]["type"] == "bundle"))
                     {
                         keysToDelete.Add(pair.Key);
                     }
@@ -216,7 +281,8 @@ public class EditorAssetBundlesManager
             }
         }
 
-        string fileName = Path.Combine(DOWNLOADABLES_FOLDER, DOWNLOADABLES_CATALOG_NAME);
+        string assetBundlesPlatformFolder = GetPlatformDirectory(ASSET_BUNDLES_PATH);
+        string fileName = Path.Combine(assetBundlesPlatformFolder, DOWNLOADABLES_CATALOG_NAME);
         if (File.Exists(fileName))
         {
             JSONNode json = JSON.Parse(File.ReadAllText(fileName));
@@ -230,12 +296,7 @@ public class EditorAssetBundlesManager
                 entry = new Downloadables.CatalogEntry();
                 entry.CRC = pair.Value.CRC;
                 entry.Size = pair.Value.Size;
-                assetsLUTCatalog.AddEntry(ASSETS_LUT_AB_PREFIX_IOS + pair.Key, entry);
-
-                entry = new Downloadables.CatalogEntry();
-                entry.CRC = pair.Value.CRC;
-                entry.Size = pair.Value.Size;
-                assetsLUTCatalog.AddEntry(ASSETS_LUT_AB_PREFIX_ANDROID + pair.Key, entry);
+                assetsLUTCatalog.AddEntry(pair.Key, entry);                
             }
 
             if (!Directory.Exists(assetsLUTPath))
@@ -245,10 +306,33 @@ public class EditorAssetBundlesManager
 
             json = assetsLUTCatalog.ToJSON();
 
+            if (json != null)
+            {                
+                JSONClass assets = (JSONClass)json[Downloadables.Catalog.CATALOG_ATT_ENTRIES];
+                if (assets != null)
+                {
+                    string id;
+                    System.Collections.ArrayList keys = assets.GetKeys();
+                    int count = keys.Count;
+                    string type;
+                    for (int i = 0; i < count; i++)
+                    {
+                        id = (string)keys[i];
+                        type = (catalog.GetEntry(id) != null) ? "bundle" : "content";                            
+                        assets[id].Add("type", type);                        
+                    }
+                }
+            }
+
             if (assetsLUTJson != null)
             {
                 string key = "urlBase";
-                json.Add(key, assetsLUTJson[key]);
+                string url = assetsLUTJson[key];
+                if (AssetBundles.LaunchAssetBundleServer.IsRunning())
+                {
+                    url = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+                }            
+                json.Add(key, url);
 
                 key = "release";
                 json.Add(key, assetsLUTJson[key]);
@@ -257,6 +341,9 @@ public class EditorAssetBundlesManager
                 json.Add(key, assetsLUTJson[key]);
 
                 key = "revision";
+                json.Add(key, assetsLUTJson[key]);
+
+                key = "bundlesBase";
                 json.Add(key, assetsLUTJson[key]);
             }
 

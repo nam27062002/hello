@@ -28,6 +28,22 @@ public class EditorBuildMenu : MonoBehaviour
         string buildTargetAsString = buildTarget.ToString();
         string path = EditorUtility.SaveFilePanel("Build " + buildTargetAsString, "Builds", "", "");
 
+        if (buildTarget == BuildTarget.Android)
+        {
+            string extension = ".apk";
+            if (!path.EndsWith(extension))
+            {
+                path += extension;
+            }
+        }
+
+        /*
+        PlayerSettings.Android.keystoreName = "AndroidKeys/releaseKey.keystore";
+        PlayerSettings.Android.keystorePass = "android";
+        PlayerSettings.Android.keyaliasName = "androidreleasekey";
+        PlayerSettings.Android.keyaliasPass = "android";
+        */
+
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = sceneNames;
         buildPlayerOptions.locationPathName = path;
@@ -80,9 +96,8 @@ public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild
     public int callbackOrder { get { return 0; } }
 
     public void OnPreprocessBuild(BuildTarget target, string path)
-    {        
-        EditorAddressablesMenu.CopyLocalAssetBundlesToPlayerDestination(target);
-        AssetDatabase.Refresh();
+    {
+        EditorAddressablesMenu.OnPreBuild(target);        
     }
 
     public class BuildPostProcessor : UnityEditor.Build.IPostprocessBuild
@@ -91,11 +106,7 @@ public class BuildPreProcessor : UnityEditor.Build.IPreprocessBuild
 
         public void OnPostprocessBuild(BuildTarget target, string path)
         {
-            if (AddressablesManager.EditorMode)
-            {
-                // Local asset bundles are deleted since they were needed only during the building process to make them be in the build
-                EditorAddressablesMenu.DeleteLocalAssetBundlesInPlayerDestination();
-            }
+            EditorAddressablesMenu.OnPostBuild();
         }
     }
 }

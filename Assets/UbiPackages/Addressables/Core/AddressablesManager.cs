@@ -48,30 +48,62 @@ public class AddressablesManager
     public const string ADDRESSABLES_EDITOR_GENERATED_PATH = ADDRESSABLES_EDITOR_PATH + "generated/";
     public const string ADDRESSABLES_EDITOR_GENERATED_CATALOG_PATH = ADDRESSABLES_EDITOR_GENERATED_PATH + ADDRESSABLES_EDITOR_CATALOG_FILENAME;
 
-    private const string EDITOR_MODE_KEY = "EditorMode";
+    public enum EMode
+    {
+        Editor,
+        Catalog,
+        AllInLocalAssetBundles,    
+        AllInResources    
+    };
+		
+	private static List<string> EModeKeys = new List<string>(System.Enum.GetNames(typeof(EMode)));
+    public static EMode KeyToMode(string key)
+    {
+        EMode returnValue = EMode.Editor;
+        int index = EModeKeys.IndexOf(key);
+        if (index > -1) 
+        {
+            returnValue = (EMode)index;
+        }
 
-    /// Flag to indicate if we want to simulate assetBundles in Editor without building them actually.
-    private static int sm_editorMode = -1;
-    public static bool EditorMode
+		return returnValue;
+    }
+
+	public static string ModeToKey(EMode mode)
+	{
+		return EModeKeys [(int)mode];
+	}
+
+    private static string MODE_KEY = "mode";
+    public static EMode Mode
     {
         get
-        {
-            if (sm_editorMode == -1)
-                sm_editorMode = UnityEditor.EditorPrefs.GetBool(EDITOR_MODE_KEY, true) ? 1 : 0;
-
-            return sm_editorMode != 0;
+        {            
+            int index = UnityEditor.EditorPrefs.GetInt(MODE_KEY, 0);
+            return (EMode)index;
         }
 
         set
         {
-            int newValue = value ? 1 : 0;
-            if (newValue != sm_editorMode)
-            {
-                sm_editorMode = newValue;
-                UnityEditor.EditorPrefs.SetBool(EDITOR_MODE_KEY, value);
-            }
+            UnityEditor.EditorPrefs.SetInt(MODE_KEY, (int)value);            
         }
     }
+
+	public static EMode DefaultMode = EMode.Catalog;
+
+	public static EMode EffectiveMode
+	{
+		get 
+		{
+			return (Mode == EMode.Editor) ? DefaultMode : Mode;
+		}
+	}
+
+    public static bool Mode_NeedsAssetBundles()
+    {        
+		EMode mode = EffectiveMode;
+        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles;
+    }    
 #endif
 
     private AddressablesCatalog m_catalog;
@@ -80,13 +112,15 @@ public class AddressablesManager
         
     public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
+        AddressablesBatchHandle.sm_manager = this;
+
         sm_logger = logger;
 
         bool buildCatalog = true;
 
 #if UNITY_EDITOR
         // editor catalog is used instead in editor mode
-        if (EditorMode)
+        if (Mode == EMode.Editor)
         {
             m_catalog = GetEditorCatalog(true);            
             buildCatalog = false;
@@ -334,7 +368,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 returnValue = new AddressablesOpResult();
                 returnValue.Setup(null, null);
@@ -367,7 +401,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 returnValue = new AddressablesOpResult();
                 returnValue.Setup(null, null);
@@ -413,7 +447,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -431,7 +465,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -449,7 +483,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 // Dependencies are only handled by provider from Asset Bundles
@@ -462,6 +496,47 @@ public class AddressablesManager
         }
     }
 
+    /// <summary>
+    /// Fills a list with the ids of the asset bundles currently loaded.
+    /// </summary>    
+    public void FillWithLoadedAssetBundleIdList(List<string> ids)
+    {        
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (Mode != EMode.Editor)
+#endif
+            {
+                // Dependencies are only handled by provider from Asset Bundles
+                m_providerFromAB.FillWithLoadedAssetBundleIdList(ids);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }        
+    }
+
+    public bool isDependencyIdDownloadable(string dependencyId)
+    {
+        bool returnValue = false;
+        if (IsInitialized())
+        {
+#if UNITY_EDITOR
+            if (Mode != EMode.Editor)
+#endif
+            {
+                returnValue = m_providerFromAB.IsAssetBundleRemote(dependencyId);
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     public List<string> GetAssetBundlesGroupDependencyIds(string groupId)
     {
         List<string> returnValue = null;
@@ -469,7 +544,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 AssetBundlesGroup abGroup = GetAssetBundlesGroup(groupId);
@@ -493,7 +568,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (!EditorMode)
+            if (Mode != EMode.Editor)
 #endif
             {
                 returnValue = m_providerFromAB.GetAssetBundlesGroup(groupId);
@@ -505,7 +580,7 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }    
+    }        
 
     public Downloadables.Handle CreateDownloadablesHandle(string groupId)
     {
@@ -513,7 +588,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 groupId = null;
             }
@@ -535,7 +610,7 @@ public class AddressablesManager
         if (IsInitialized())
         {
 #if UNITY_EDITOR
-            if (EditorMode)
+            if (Mode == EMode.Editor)
             {
                 groupIds = null;
             }
@@ -846,7 +921,7 @@ public class AddressablesManager
 
 #if UNITY_EDITOR
         // Editor mode must be used only when there's an entry defined for the addressable requested, otherwise we need to use the default provider (fromResources)
-        if (EditorMode && entryWasFound)
+        if (Mode == EMode.Editor && entryWasFound)
         {
             returnValue = m_providerFromEditor;
         }

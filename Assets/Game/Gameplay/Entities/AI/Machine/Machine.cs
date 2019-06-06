@@ -35,13 +35,13 @@ namespace AI {
 		private Signals m_signals;
         private int m_allowEdible;
         private bool allowEdible { 
-                        get { return m_allowEdible == 0 || !IsStunned() || !IsInLove() || !IsBubbled(); } 
+                        get { return (m_allowEdible == 0 || IsStunned() || IsInLove() || IsBubbled()) && !GetSignal(Signals.Type.LockedInCage); } 
                         set { if (value) { m_allowEdible = Mathf.Max(0, m_allowEdible - 1); } else { m_allowEdible++; } } 
                     }
 
         private int m_allowBurnable;
         private bool allowBurnable { 
-                        get { return m_allowBurnable == 0 || !IsStunned() || !IsInLove() || !IsBubbled(); } 
+                        get { return m_allowBurnable == 0 || IsStunned() || IsInLove() || IsBubbled(); } 
                         set { if (value) { m_allowBurnable = Mathf.Max(0, m_allowBurnable - 1); } else { m_allowBurnable++; } } 
                     }
 

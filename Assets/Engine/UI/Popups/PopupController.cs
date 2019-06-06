@@ -134,8 +134,10 @@ public class PopupController : MonoBehaviour {
 	/// </summary>
 	/// <param name="_bDestroy">Whether to destroy the popup once the close animation has finished.</param>
 	public void Close(bool _bDestroy) {
-		// Store flag
-		m_destroyAfterClose = _bDestroy;
+        m_isReady = false;
+
+        // Store flag
+        m_destroyAfterClose = _bDestroy;
 
 		// Invoke event - order is relevant!
 		OnClosePreAnimation.Invoke();
@@ -180,7 +182,6 @@ public class PopupController : MonoBehaviour {
 	private void OnCloseAnimationFinished() {
 		// Update state
 		m_isOpen = false;
-		m_isReady = false;
 
 		// Invoke event - Order is relevant!
 		OnClose.Invoke(this);

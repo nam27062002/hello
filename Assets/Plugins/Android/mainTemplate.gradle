@@ -1,15 +1,18 @@
 buildscript {
 	repositories {
+		google()
 		jcenter()
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.3.0'
+		classpath 'com.android.tools.build:gradle:3.2.0'
 	}
 }
 
 allprojects {
    repositories {
+      google()
+      jcenter()   
       flatDir {
         dirs 'libs'
       }
@@ -39,27 +42,50 @@ android {
 		javaMaxHeapSize "4g"
 	}
 	defaultConfig {
+		minSdkVersion **MINSDKVERSION**	
 		targetSdkVersion **TARGETSDKVERSION**
+		applicationId '**APPLICATIONID**'		
 		multiDexEnabled true
 	}
 
 	lintOptions {
 		abortOnError false
 	}
+
+	aaptOptions {
+		noCompress '.unity3d', '.ress', '.resource', '.obb'**STREAMING_ASSETS**
+	}
+
 **SIGN**
 	buildTypes {
 		debug {
-			minifyEnabled false
-			multiDexKeepProguard file('D:/Dragon_clean/Assets/Editor/Calety/gradle-multidex-config.txt')
+ 			minifyEnabled **MINIFY_DEBUG**
+ 			useProguard **PROGUARD_DEBUG**
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 		release {
-			minifyEnabled false
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', 'D:/Dragon_clean/Assets/Editor/Calety/gradle-proguard.txt'
-			multiDexKeepProguard file('D:/Dragon_clean/Assets/Editor/Calety/gradle-multidex-config.txt')
+ 			minifyEnabled **MINIFY_RELEASE**
+  			useProguard **PROGUARD_RELEASE**			
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt', '/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-proguard.txt'
+			multiDexKeepProguard file('/Users/dcampos/projects/HungryDragonAndroid/Assets/Editor/Calety/gradle-multidex-config.txt')
 			**SIGNCONFIG**
 		}
 	}
 
+**PACKAGING_OPTIONS**
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
 }
 
+**SOURCE_BUILD_SETUP**

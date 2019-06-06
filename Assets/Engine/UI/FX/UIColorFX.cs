@@ -4,6 +4,11 @@
 // Copyright (c) 2015 Ubisoft. All rights reserved.
 
 //----------------------------------------------------------------------------//
+// PREPROCESSOR																  //
+//----------------------------------------------------------------------------//
+//#define ALLOW_RAMP_INTENSITY   // [AOC] Disable to make it more optimal by just getting the full value from the gradient
+
+//----------------------------------------------------------------------------//
 // INCLUDES																	  //
 //----------------------------------------------------------------------------//
 using UnityEngine;
@@ -25,6 +30,10 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+	public const string IMAGE_REFERENCE_MATERIAL_PATH = "UI/UIImageHolder";
+	public const string TEXT_REFERENCE_MATERIAL_PATH = "UI/UIFontHolder";
+	public const string COLOR_RAMP_MATERIAL_SUFFIX = "_Ramp";
+
 	// Auxiliar class
 	[System.Serializable]
 	public class Setup {
@@ -56,6 +65,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
+	[Comment("For memory optimization, don't toggle if not needed!")]
+	[SerializeField] private bool m_applyToFonts = false;
+	[SerializeField] private bool m_applyToImages = true;
+
+	[Space]
 	[FormerlySerializedAs("colorMultiply")]
 	[SerializeField] private Color m_colorMultiply = new Color(1, 1, 1, 1);
 	public Color colorMultiply {
@@ -69,6 +83,32 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		get { return m_colorAdd; }
 		set { m_colorAdd = value; SetDirty(); }
 	}
+
+	[Space]
+	[SerializeField] private bool m_colorRampEnabled = false;
+	public bool colorRampEnabled {
+		get { return m_colorRampEnabled; }
+		set {
+			// If value changes, force a reload of the materials
+			if(m_colorRampEnabled != value) DestroyMaterials();
+			m_colorRampEnabled = value;
+			SetDirty(); 
+		}
+	}
+
+	[SerializeField] private Texture2D m_colorRamp = null;
+	public Texture2D colorRamp {
+		get { return m_colorRamp; }
+		set { m_colorRamp = value;  SetDirty(); }
+	}
+
+#if ALLOW_RAMP_INTENSITY
+	[SerializeField] [Range(0f, 1f)] private float m_colorRampIntensity = 0f;
+	public float colorRampIntensity {
+		get { return m_colorRampIntensity; }
+		set { m_colorRampIntensity = value; SetDirty(); }
+	}
+#endif
 
 	[Space]
 	[FormerlySerializedAs("alpha")]
@@ -162,15 +202,16 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// </summary>
 	private void Update() {
 		// Detect hierarchy changes
-        // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potencially every tick,
+        // We assume that hierarchy is not going to change when the application is running in order to prevent memory from being allocated potentially every tick,
         // however we want to apply the materials in edit time (hierarchy in edit time might change in order to check how a new widget would look like in the hierarchy)
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying && transform.hasChanged) {
 			// Make sure materials are valid
 			m_materialDirty = true;
 			m_dirty = true;
+			transform.hasChanged = false;
 		}
-		#endif
+#endif
 
 		// Keep materials updated
 		if(m_materialDirty) {
@@ -235,12 +276,12 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		this.contrast = _setup.contrast;
 
 		// If in edit mode, force an update
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			SetDirty();
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	/// <summary>
@@ -260,11 +301,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		m_dirty = true;
 
 		// If in edit mode, force an update so new values are applied
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	/// <summary>
@@ -276,11 +317,11 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		m_materialDirty = true;
 
 		// If in edit mode, force an update so new values are applied
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if(!Application.isPlaying) {
 			Update();
 		}
-		#endif
+#endif
 	}
 
 	//------------------------------------------------------------------------//
@@ -291,12 +332,16 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// </summary>
 	private void UpdateValues() {
 		// Images
-		UpdateMaterial(m_imageMaterial);
-		UpdateMaterial(m_imageMaterialReplacement);
+		if(m_applyToImages) {
+			UpdateMaterial(m_imageMaterial);
+			UpdateMaterial(m_imageMaterialReplacement);
+		}
 
 		// Fonts
-		UpdateMaterial(m_fontMaterial);
-		UpdateMaterial(m_fontMaterialReplacement);
+		if(m_applyToFonts) {
+			UpdateMaterial(m_fontMaterial);
+			UpdateMaterial(m_fontMaterialReplacement);
+		}
 	}
 
 	/// <summary>
@@ -307,10 +352,21 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 		if(_mat != null) {
 			_mat.SetColor("_ColorMultiply", colorMultiply);
 			_mat.SetColor("_ColorAdd", colorAdd);
+
+			_mat.SetFloat("_ColorRampEnabled", m_colorRampEnabled ? 1f : 0f);
+			if(m_colorRampEnabled) {
+				_mat.SetTexture("_ColorRampTex", colorRamp);
+#if ALLOW_RAMP_INTENSITY
+				_mat.SetFloat("_ColorRampIntensity", colorRampIntensity);
+#endif
+			}
+
 			_mat.SetFloat("_Alpha", alpha);
+
 			_mat.SetFloat("_BrightnessAmount", brightness);
 			_mat.SetFloat("_SaturationAmount", saturation);
 			_mat.SetFloat("_ContrastAmount", contrast);
+
 			_mat.SetFloat("_LateMultiply", lateMultiply ? 1f : 0f);
 		}
 	}
@@ -319,34 +375,48 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// Make sure materials are created and apply them to all subchildren.
 	/// </summary>
 	private void ApplyMaterials() {
-		// Create all materials if not already done
-        Material mBase = Resources.Load<Material>("UI/UIImageHolder");
-		if(m_imageMaterial == null) {
-			m_imageMaterial = new Material(mBase);
-			m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
-			m_imageMaterial.name = "MT_UIColorFX_" + this.name;
+		// Choose material based on setup
+		string suffix = "";
+		if(m_colorRampEnabled) {
+			suffix = COLOR_RAMP_MATERIAL_SUFFIX;
 		}
 
-        mBase = Resources.Load<Material>("UI/UIFontHolder");
-        if (m_fontMaterial == null) {
-			m_fontMaterial = new Material(mBase);
-			m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
-			m_fontMaterial.name = "MT_UIColorFX_" + this.name;
+		// Create all materials if not already done
+		if(m_applyToImages) {
+			if(m_imageMaterial == null) {
+				Material matBase = Resources.Load<Material>(IMAGE_REFERENCE_MATERIAL_PATH + suffix);
+				m_imageMaterial = new Material(matBase);
+				m_imageMaterial.hideFlags = HideFlags.HideAndDontSave;
+				m_imageMaterial.name = "MT_UIColorFX_" + this.name;
+			}
+		}
+
+		if(m_applyToFonts) {
+			if(m_fontMaterial == null) {
+				Material matBase = Resources.Load<Material>(TEXT_REFERENCE_MATERIAL_PATH);
+				m_fontMaterial = new Material(matBase);
+				m_fontMaterial.hideFlags = HideFlags.HideAndDontSave;
+				m_fontMaterial.name = "MT_UIColorFX_" + this.name;
+			}
 		}
 
 		// Get all image components and replace their material
-		if(m_imageMaterial != null) {
-			Image[] images = GetComponentsInChildren<Image>();
-			foreach(Image img in images) {
-				img.material = m_imageMaterial;
+		if(m_applyToImages) {
+			if(m_imageMaterial != null) {
+				Image[] images = GetComponentsInChildren<Image>();
+				foreach(Image img in images) {
+					img.material = m_imageMaterial;
+				}
 			}
 		}
 
 		// Do the same with textfields
-		if(m_fontMaterial != null) {
-			Text[] texts = GetComponentsInChildren<Text>();
-			foreach(Text txt in texts) {
-				txt.material = m_fontMaterial;
+		if(m_applyToFonts) {
+			if(m_fontMaterial != null) {
+				Text[] texts = GetComponentsInChildren<Text>();
+				foreach(Text txt in texts) {
+					txt.material = m_fontMaterial;
+				}
 			}
 		}
 	}
@@ -354,7 +424,7 @@ public class UIColorFX : UIBehaviour {	// Inherit from UIBehaviour to have some 
 	/// <summary>
 	/// Destroy the custom materials.
 	/// </summary>
-	private void DestroyMaterials() {
+	public void DestroyMaterials() {
 		if(m_imageMaterial != null) {
 			DestroyImmediate(m_imageMaterial);
 			m_imageMaterial = null;

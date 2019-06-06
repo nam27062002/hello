@@ -119,10 +119,17 @@ public class AssetBundlesManager
 
         ProcessCatalog(localAssetBundlesPath, catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
+        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
+
+        bool containsAnyRemoteAB = ContainsCatalogAnyRemoteAssetBundle();
+        if (!containsAnyRemoteAB)
+        {
+            downloadablesCatalog = null;
+        }        
+
         m_downloadablesManager = new Downloadables.Manager(downloadablesConfig, networkDriver, diskDriver, null, tracker, downloadablesLogger);
 
-        Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
-        if (m_groups != null)
+        if (m_groups != null && containsAnyRemoteAB)
         {
             Downloadables.CatalogGroup downloadablesGroup;
             foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
@@ -135,7 +142,7 @@ public class AssetBundlesManager
                 }
             }
         }
-        
+
         m_downloadablesManager.Initialize(downloadablesCatalog, downloadablesGroups);        
 
         if (CanLog())
@@ -306,6 +313,19 @@ public class AssetBundlesManager
         }       
     }    
 
+    private bool ContainsCatalogAnyRemoteAssetBundle()
+    {
+        foreach (KeyValuePair<string, AssetBundleHandle> pair in m_assetBundleHandles)
+        {
+            if (pair.Value.IsRemote())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void Reset()
     {
         m_groups = null;
@@ -429,6 +449,22 @@ public class AssetBundlesManager
             request.Op = op;
         }
     }
+
+    /// <summary>
+    /// Returns whether or not the asset bundle is remote    
+    /// </summary>  
+    public bool IsAssetBundleRemote(string id)
+    {
+        bool returnValue = IsAssetBundleValid(id);
+        if (returnValue)
+        {
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            returnValue = handle.IsRemote();            
+        }
+
+        return returnValue;
+    }
+
 
     /// <summary>
     /// Returns whether or not the asset bundle which id is passed as a parameter is available to be loaded,
@@ -1192,36 +1228,36 @@ public class AssetBundlesManager
     /// </summary>
     private List<string> m_loaderRequests;
 
-    /// <summary>
-    /// Operation resused to load an asset bundle. Only one asset bundle can be loaded simultaneously
-    /// </summary>
-    private LoadAssetBundleOp m_loaderLoadAssetBundleOp;    
+    private const int LOADER_SIMULTANEOUS_OPS_AMOUNT = 1;
 
+    private List<LoadAssetBundleOp> m_loaderLoadAssetBundleOps = new List<LoadAssetBundleOp>();
+    
     private void Loader_Init()
     {
         if (m_loaderRequests == null)
         {
             m_loaderRequests = new List<string>();
-        }        
-
-        if (m_loaderLoadAssetBundleOp == null)
-        {
-            m_loaderLoadAssetBundleOp = new LoadAssetBundleOp();
         }
 
         Loader_Reset();
     }
-
+    
     private void Loader_Reset()
     {
         if (m_loaderRequests != null)        
         {
             m_loaderRequests.Clear();
         }
-
-        if (m_loaderLoadAssetBundleOp != null)
+        
+        if (m_loaderLoadAssetBundleOps != null)
         {
-            m_loaderLoadAssetBundleOp.Reset();
+            int count = m_loaderLoadAssetBundleOps.Count;
+            for (int i = 0; i < count; i++)
+            {
+                m_loaderLoadAssetBundleOps[i].Reset();
+            }
+
+            m_loaderLoadAssetBundleOps.Clear();
         }
     }
 
@@ -1293,14 +1329,21 @@ public class AssetBundlesManager
             }
             else if (handle.IsLoading())
             {
-                if (m_loaderLoadAssetBundleOp != null)
+                int abCount = 0;
+                int count = m_loaderLoadAssetBundleOps.Count;
+                for (int i = 0; i < count; i++)
                 {
-                    AssetBundleHandle loaderHandle = m_loaderLoadAssetBundleOp.GetHandle();
-                    if (loaderHandle != null && loaderHandle.Id == id)
+                    if (m_loaderLoadAssetBundleOps[i].GetHandle().Id == id)
                     {
-                        returnValue = m_loaderLoadAssetBundleOp.Progress;
+                        abCount++;
+                        returnValue += m_loaderLoadAssetBundleOps[i].Progress;
                     }
                 }
+
+                if (abCount > 0)
+                {
+                    returnValue /= abCount;
+                }                
             }
         }
 
@@ -1310,35 +1353,42 @@ public class AssetBundlesManager
     private void Loader_Update()
     {
         // Checks if it's ready for serving the next request
-        if (m_loaderLoadAssetBundleOp.IsPerforming)
+        int count = m_loaderLoadAssetBundleOps.Count;        
+        for (int i = 0; i < count;)
         {
-            m_loaderLoadAssetBundleOp.Update();
-        }
-        else        
-        {
-            if (m_loaderRequests.Count > 0)
+            m_loaderLoadAssetBundleOps[i].Update();
+            if (m_loaderLoadAssetBundleOps[i].IsDone)
             {
-                string id = m_loaderRequests[0];
-                m_loaderRequests.RemoveAt(0);
-                AssetBundleHandle handle = GetAssetBundleHandle(id);
-                if (handle != null)
-                {
-                    handle.OnLoadRequested();                    
+                m_loaderLoadAssetBundleOps[i].Reset();
+                m_loaderLoadAssetBundleOps.RemoveAt(i);
+                count--;
+            }
+            else
+            {
+                i++;
+            }            
+        }
 
-                    m_loaderLoadAssetBundleOp.Setup(handle, Loader_OnDone);
-                    m_loaderLoadAssetBundleOp.Perform();
-                }                 
-            }           
-        }
-    }  
-    
-    private void Loader_OnDone(AssetBundlesOp.EResult result, object data)
-    {        
-        if (m_loaderLoadAssetBundleOp != null)
-        {            
-            m_loaderLoadAssetBundleOp.Reset();
-        }
-    }      
+        int freeSlots = LOADER_SIMULTANEOUS_OPS_AMOUNT - m_loaderLoadAssetBundleOps.Count;
+        int diff = (m_loaderRequests.Count > freeSlots) ? freeSlots : m_loaderRequests.Count;        
+        if (diff > 0)
+        {
+            string id = m_loaderRequests[0];
+            m_loaderRequests.RemoveAt(0);
+            AssetBundleHandle handle = GetAssetBundleHandle(id);
+            LoadAssetBundleOp op;
+            if (handle != null)
+            {
+                handle.OnLoadRequested();
+
+                op = new LoadAssetBundleOp();
+                op.Setup(handle, null);
+                m_loaderLoadAssetBundleOps.Add(op);
+
+                op.Perform();
+            }                 
+        }                   
+    }          
 #endregion
 
 #region logger

@@ -10,6 +10,7 @@ echo off
 setlocal EnableDelayedExpansion
 
 call :project AddressablesUnitTests
+call :project AddressablesAssetsTests
 goto :finish
 
 :project

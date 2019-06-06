@@ -73,6 +73,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[Toggle(OPAQUEFRESNEL)] _EnableOpaqueFresnel("Enable opaque fresnel", Float) = 0
 		[Toggle(OPAQUESPECULAR)] _EnableOpaqueSpecular("Enable opaque specular", Float) = 0
 		[Toggle(BLENDFRESNEL)] _EnableBlendFresnel("Enable blend fresnel", Float) = 0.0
+		[Toggle(DIFFUSE_AS_SPECULARMASK)] _EnableDiffuseAsSpecMask("Enable diffuse as specular mask", Float) = 0.0
 
 		[Toggle(VERTEXOFFSET)]	_EnableVertexOffset("Enable vertex offset", Float) = 0.0
 		[Toggle(VERTEXOFFSETX)] _EnableVertexOffsetX("Vertex offset X", Float) = 0.0
@@ -84,8 +85,6 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 		[KeywordEnum(Normal, AutoInnerLight, BlinkLights, Emissive)] SelfIlluminate("Emission layer", Float) = 0
 
 		[KeywordEnum(Normal, Color, ColorRamp)] ReflectionType("Reflection type", Float) = 0
-
-
 	}
 
 	SubShader {
@@ -127,6 +126,7 @@ Shader "Hungry Dragon/Dragon/Dragon standard" {
 			#pragma shader_feature	__ VERTEXOFFSETX
 			#pragma shader_feature	__ VERTEXOFFSETY
 			#pragma shader_feature	__ VERTEXOFFSETZ
+			#pragma shader_feature	__ DIFFUSE_AS_SPECULARMASK
 
 			#pragma shader_feature SELFILLUMINATE_NORMAL SELFILLUMINATE_AUTOINNERLIGHT SELFILLUMINATE_BLINKLIGHTS SELFILLUMINATE_EMISSIVE
 			#pragma shader_feature FXLAYER_NORMAL FXLAYER_REFLECTION FXLAYER_FIRE FXLAYER_DISSOLVE FXLAYER_COLORIZE

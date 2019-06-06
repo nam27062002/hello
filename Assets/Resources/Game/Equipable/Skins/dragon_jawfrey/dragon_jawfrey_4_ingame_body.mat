@@ -21,7 +21,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: c84f9fc8954c4964a8bfcbf5409694d3, type: 3}
+        m_Texture: {fileID: 2800000, guid: aeda078a60ecbf04aa3993bb22032b40, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailTex:
@@ -42,10 +42,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - FXLayer: 0
+    - ReflectionType: 0
     - SelfIlluminate: 0
     - _BlendMode: 0
+    - _ColorRampAmount: 0
+    - _ColorRampID0: 0
+    - _ColorRampID1: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DissolveAmount: 0
+    - _DissolveLowerLimit: -1
+    - _DissolveMargin: 0.1
+    - _DissolveUpperLimit: 1
     - _DstBlend: 0
     - _EnableBlendFresnel: 0
     - _EnableCutoff: 0
@@ -57,23 +65,29 @@ Material:
     - _EnableSilhouette: 0
     - _EnableSpecular: 1
     - _EnableVertexOffset: 0
+    - _EnableVertexOffsetX: 0
+    - _EnableVertexOffsetY: 0
+    - _EnableVertexOffsetZ: 0
     - _FireAmount: 0
     - _FireSpeed: 1
     - _Fresnel: 7.68
     - _InnerLightAdd: 17.12
     - _InnerLightWavePhase: 1
     - _InnerLightWaveSpeed: 1
-    - _NormalStrenght: 1
+    - _NormalStrenght: 1.72
     - _ReflectionAmount: 0
     - _SpecExponent: 24.9
     - _SrcBlend: 1
     - _StencilMask: 10
+    - _VOAmplitude: 0.3
+    - _VOSpeed: 3
     - _ZWrite: 1
     m_Colors:
     - _AmbientAdd: {r: 0, g: 0, b: 0, a: 0}
     - _ColorAdd: {r: 0, g: 0, b: 0, a: 0}
     - _FresnelColor: {r: 0.10845588, g: 0.19728704, b: 0.25, a: 1}
     - _InnerLightColor: {r: 0.9044118, g: 0.19950257, b: 0.19950257, a: 1}
+    - _ReflectionColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondLightColor: {r: 0.025086507, g: 0.121042445, b: 0.21323532, a: 0}
     - _SecondLightDir: {r: -0.16212952, g: 0.3860227, b: -0.9081302, a: 0}
     - _Tint: {r: 0.8897059, g: 0.8897059, b: 0.8897059, a: 1}

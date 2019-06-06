@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastListener {
 
+    public static bool sm_allowGoldenMaterial = true;
 
     public static Material sm_goldenMaterial = null;
     public static Material sm_goldenFreezeMaterial = null;
@@ -685,7 +686,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 	MaterialType GetMaterialType(bool _isGolden, bool _furyActive = false, DragonBreathBehaviour.Type _type = DragonBreathBehaviour.Type.None) {
 		MaterialType matType = ViewControl.MaterialType.NORMAL;
-		if (_isGolden || _furyActive) {
+		if (sm_allowGoldenMaterial && (_isGolden || _furyActive)) {
 			if (IsBurnableByPlayer(_type)) {	
 				matType = MaterialType.GOLD;
 			}
@@ -693,7 +694,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 
 		// Check Freezing. It Has priority over inlove
 		if (m_freezingLevel > 0) {
-			if ( matType == MaterialType.GOLD ){
+			if (sm_allowGoldenMaterial && matType == MaterialType.GOLD ){
 				matType = MaterialType.GOLD_FREEZE;
 			}else{
 				matType = MaterialType.FREEZE;
@@ -701,7 +702,7 @@ public class ViewControl : MonoBehaviour, IViewControl, ISpawnable, IBroadcastLi
 		}
         else if ( m_inLove )
         {
-            if ( matType == MaterialType.GOLD ){
+            if (sm_allowGoldenMaterial && matType == MaterialType.GOLD ){
                 matType = MaterialType.GOLD_INLOVE;
             }else{
                 matType = MaterialType.INLOVE;

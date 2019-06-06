@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------//
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 //----------------------------------------------------------------------------//
 // CLASSES																	  //
@@ -54,43 +55,60 @@ public class SpawnerStarEditor : Editor {
 
 	}
 
-	/// <summary>
-	/// The scene is being refreshed.
-	/// </summary>
-	public void OnSceneGUI() {		
-		Vector3[] points = m_targetSpawner.points;
-		int entityCount = m_entityCountProp.intValue;
-		int pointCount = points.Length;
 
-		if (entityCount < 1) {
-			m_entityCountProp.intValue = 1;
-			m_entityCountProp.serializedObject.ApplyModifiedProperties();
-		}
+    public override void OnInspectorGUI() {
+        DrawDefaultInspector();
 
-		if (entityCount != pointCount) {
-			points = new Vector3[entityCount];
+        GUILayout.Space(5f);
+        if (GUILayout.Button("Circle Distribution")) {
+            List<Vector3> points = m_targetSpawner.points;
+            int pointCount = points.Count;
 
-			if (entityCount == 1) {
-				points[0] = Vector3.zero;
-			} else {
-				// generate a default distribution (circle)
-				float a = (2f * Mathf.PI) / entityCount;
-				float r = 3f * entityCount / 5f;
-				for (int i = 0; i < entityCount; ++i) {
-					points[i].x = r * Mathf.Cos(a * i);
-					points[i].y = r * Mathf.Sin(a * i);
-				}
-			}
-		}
+            // generate a default distribution (circle)
+            float a = (2f * Mathf.PI) / pointCount;
+            float r = 3f * pointCount / 3f;
+            for (int i = 0; i < pointCount; ++i) {
+                Vector3 p = points[i];
 
-		float size = HandleUtility.GetHandleSize(Vector3.zero) * 0.15f;
-		for (int i = 0; i < entityCount; ++i) {
-			points[i] = Handles.FreeMoveHandle(points[i] + m_targetSpawner.transform.position, Quaternion.identity, size, Vector3.zero, Handles.SphereCap);
-			points[i] -= m_targetSpawner.transform.position;
-			points[i].z = 0f;
-		}
+                p.x = r * Mathf.Cos(a * i);
+                p.y = r * Mathf.Sin(a * i);
 
-		m_targetSpawner.points = points;
-		m_targetSpawner.UpdateBounds();
+                points[i] = p;
+            }
+        }
+    }
+ 
+    /// <summary>
+    /// The scene is being refreshed.
+    /// </summary>
+    public void OnSceneGUI() {		
+        List<Vector3> points = m_targetSpawner.points;
+        int entityCount = m_entityCountProp.intValue;
+        int pointCount = points.Count;
+
+        if (entityCount < 1) {
+        	m_entityCountProp.intValue = 1;
+        	m_entityCountProp.serializedObject.ApplyModifiedProperties();
+        }
+
+        if (entityCount != pointCount) {
+            points.Resize(entityCount);
+
+        	if (entityCount == 1) {
+        		points[0] = Vector3.zero;
+        	}
+        }
+
+        float size = HandleUtility.GetHandleSize(Vector3.zero) * 0.15f;
+        for (int i = 0; i < entityCount; ++i) {
+            Vector3 p = Handles.FreeMoveHandle(points[i] + m_targetSpawner.transform.position, Quaternion.identity, size, Vector3.zero, Handles.SphereCap);
+            p -= m_targetSpawner.transform.position;
+            p.z = 0f;
+
+            points[i] = p;
+        }
+
+        m_targetSpawner.points = points;
+        m_targetSpawner.UpdateBounds();
 	}
 }

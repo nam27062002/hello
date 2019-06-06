@@ -5,6 +5,8 @@
 #import <Foundation/Foundation.h>
 #import "IronSource/ISBaseAdapter+Internal.h"
 
+static NSString * const UnityAdsAdapterVersion     = @"4.1.2";
+
 //System Frameworks For UnityAds Adapter
 
 @import AdSupport;

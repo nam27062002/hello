@@ -70,6 +70,8 @@ Shader "Hungry Dragon/NPC/NPC Cocoon"
 			#define VERTEX_ANIMATION
 			#define AMBIENTCOLOR
 //			#define TINT
+			#define LITMODE_LIT
+
 
 			#include "entities.cginc"
 

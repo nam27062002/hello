@@ -75,7 +75,9 @@ namespace AssetBundles
                     return;
 
                 var lastProcess = Process.GetProcessById(instance.m_ServerPID);
-                lastProcess.Kill();
+                if (lastProcess != null)
+                    lastProcess.Kill();
+
                 instance.m_ServerPID = 0;
             }
             catch
