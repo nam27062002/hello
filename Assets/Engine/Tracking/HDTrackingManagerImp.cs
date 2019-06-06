@@ -2175,7 +2175,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
 
     private void Track_LoadingResultsEnd(float durationInSeconds)
     {
-        string eName = "custom.gameplay.loadGameEnd";
+        string eName = "custom.gameplay.loadgameend";
         int timeInMilliseconds = (int)(durationInSeconds * 1000.0f);
         if (FeatureSettingsManager.IsDebugEnabled)
         {
