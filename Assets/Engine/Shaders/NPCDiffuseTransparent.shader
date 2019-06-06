@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
+﻿Shader "Hungry Dragon/NPC/NPC Diffuse + Transparent (Spawners)"
 {
 	Properties
 	{

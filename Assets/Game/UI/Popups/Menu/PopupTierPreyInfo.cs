@@ -40,10 +40,6 @@ public class PopupTierPreyInfo : MonoBehaviour {
 	[Space]
 	[SerializeField] protected float m_timeBetweenLoaders = 0.5f;   // From FGOL
 	[SerializeField] protected int m_framesBetweenLoaders = 5;  // From FGOL
-	[Space]
-	[SerializeField] protected Shader m_entitiesPreviewShader = null;
-	[SerializeField] [Range(0f, 5f)] protected float m_fresnelFactor = 3f;
-	[SerializeField] protected Color m_fresnelColor = Color.gray;
 
 	// Internal
 	protected DefinitionNode m_targetTierDef = null;
@@ -92,18 +88,8 @@ public class PopupTierPreyInfo : MonoBehaviour {
     /// Something has changed on the inspector.
     /// </summary>
     protected void OnValidate() {
-		// Layouts array has fixed size
-		m_layoutPrefabs.Resize((int)DragonTier.COUNT);
-
-		// Only while playing
-		if(Application.isPlaying) {
-			// Update fresnel values for all loaded entities
-			if(m_loaders != null) {
-				for(int i = 0; i < m_loaders.Length; i++) {
-					UpdateShaders(m_loaders[i].loadedInstance); // Nothing will happen if null
-				}
-			}
-		}
+        // Layouts array has fixed size
+        m_layoutPrefabs.Resize((int)DragonTier.COUNT);
 	}
 
 	//------------------------------------------------------------------------//
@@ -226,52 +212,6 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// Apply the entities shaders modifications to the given game object.
-	/// </summary>
-	/// <param name="_go">Target game object.</param>
-	protected void UpdateShaders(GameObject _go) {
-		// Ignore if object not valid
-		if(_go == null) return;
-
-		// Find all renderers in the target game object
-		Material m = null;
-		string fresnelFactorID;
-		string fresnelColorID;
-		Renderer[] renderers = _go.GetComponentsInChildren<Renderer>();
-		for(int i = 0; i < renderers.Length; i++) {
-			for(int j = 0; j < renderers[i].materials.Length; j++) {
-				// Shorter notation for clearer code
-				m = renderers[i].materials[j];
-
-				// Default IDs
-				fresnelFactorID = "_FresnelPower";
-				fresnelColorID = "_FresnelColor";
-
-				// If the material doesn't have fresnel properties, replace by default material
-				if(!m.HasProperty(fresnelFactorID) || !m.HasProperty(fresnelColorID)) {
-					// Except dragon materials, which have their own special names
-					if(m.shader.name.Contains("/Dragon/")) {    // [AOC] Hacky as hell!
-						fresnelFactorID = "_Fresnel";
-					}
-
-					// And transparent material, used for glows and some other VFX
-					else if(m.shader.name.Contains("Transparent")) {
-						// Nothing to do
-					}
-
-					// Standard material, replace it
-					else {
-						m.shader = m_entitiesPreviewShader;
-					}
-				}
-
-				// Everything ok! Apply fresnel
-				m.SetFloat(fresnelFactorID, m_fresnelFactor);
-				m.SetColor(fresnelColorID, m_fresnelColor);
-			}
-		}
-	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -288,9 +228,6 @@ public class PopupTierPreyInfo : MonoBehaviour {
 		for(int i = 0; i < components.Length; i++) {
 			Destroy(components[i]);
 		}
-
-		// Update materials shaders so the prefab is properly rendered in the UI
-		UpdateShaders(_loader.loadedInstance);
 
 		// If the prefab has any LookAtMainCamera component (billboards), override it to look at popup's canvas camera
 		LookAtMainCamera[] lookAtMainCameraComponents = _loader.loadedInstance.GetComponentsInChildren<LookAtMainCamera>();
