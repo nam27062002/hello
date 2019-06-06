@@ -230,12 +230,10 @@ public class DisguisesScreenController : MonoBehaviour {
 		DisguisePill initialPill = null;
 		for (int i = 0; i < m_pills.Length; i++) {
 			if (i < defList.Count) {
-				// Load icon sprite for this skin
-                Sprite spr = HDAddressablesManager.Instance.LoadAsset<Sprite>(defList[i].Get("icon"));
 
 				// Init pill
 				DefinitionNode def = defList[i];
-				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku), spr);
+				m_pills[i].Load(def, m_wardrobe.GetSkinState(def.sku));
 				m_pills[i].name = def.sku;	// [AOC] For debug purposes
 
 				// Is it the forced initial skin?
