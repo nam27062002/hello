@@ -195,6 +195,10 @@ public class MenuPetLoader : MonoBehaviour {
     /// </summary>
     /// <param name="_sku">The sku of the pet to be loaded</param>
     public void Load(string _sku) {
+
+        // If the pet is already loaded do nothing
+        if (m_petSku == _sku) { return; }
+
         // Unload current pet if any
         Unload();
 

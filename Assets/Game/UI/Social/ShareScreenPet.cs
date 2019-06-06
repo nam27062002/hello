@@ -98,30 +98,26 @@ public class ShareScreenPet : IShareScreen {
 			// Load target pet
 			m_petLoader.Load(_petSku);
 
-			// Reapply render queues
-			m_renderQueueSetter.Apply();
 
-			// Rotate pet preview to replicate the reference transform
-			// m_petLoader.transform.localRotation = _refTransform.localRotation;
+            // [JMO] Since OTA we are still loading the pet so the model is not ready yet
+            // We change the animations/poses later, in CapturePreprocess()
 
-			// Start the animation at a random frame (usually first frame looks shitty :s)
-			/*Animator anim = m_petLoader.petInstance.animator;
-			AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);  //could replace 0 by any other animation layer index
-			//anim.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
-			AnimatorClipInfo clipInfo = anim.GetCurrentAnimatorClipInfo(0)[0];
-			int numFrames = (int)(clipInfo.clip.length * clipInfo.clip.frameRate);
-			Debug.Log(Color.yellow.Tag(numFrames.ToString()));
-			anim.Play(state.fullPathHash, -1, Mathf.InverseLerp(0, numFrames, 2));	// Go to frame #2
-			*/
+        }
 
-			// [AOC] Disable animation instead, pet's default poses look good enough
-			m_petLoader.petInstance.animator.enabled = false;		
-		}
-
-		// Power Info
-		if(m_powerIcon != null) {
+        // Power Info
+        if (m_powerIcon != null) {
 			DefinitionNode powerDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.POWERUPS, m_petDef.GetAsString("powerup"));
 			m_powerIcon.InitFromDefinition(powerDef, false, false, PowerIcon.Mode.PET);
 		}
 	}
+
+    protected override void CapturePreprocess()
+    {
+        // Reapply render queues
+        m_renderQueueSetter.Apply();
+
+        // [AOC] Disable animation instead, pet's default poses look good enough
+        m_petLoader.petInstance.animator.enabled = false;
+
+    }
 }
