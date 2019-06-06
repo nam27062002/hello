@@ -345,11 +345,19 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
-		// Same if the download has finished
-        // Except if we want to force the popup
-		if(_handle.IsAvailable() && !_forcePopup) return null;
 
-		// Let's do it!
+        // If the download has finished
+        if (_handle.IsAvailable())
+        {
+            // And we arent forcing force the popup, dont show popup.
+            if (!_forcePopup) return null;
+
+            // If the downloaded amount is 0 (All-in-resources mode), dont show popup.
+            if (_handle.GetDownloadedBytes() <= 0) return null;
+
+        }
+		
+        // Let's do it!
 		string popupPath = string.Empty;
 
 		// Choose popup path based on handle state
