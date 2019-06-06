@@ -639,6 +639,8 @@ public class GameSceneController : GameSceneControllerBase {
                 // Stops performance track
                 HDTrackingManager.Instance.Notify_StopPerformanceTracker();
 
+                HDTrackingManager.Instance.Notify_LoadingResultsStart();
+
                 // Show loading screen
                 LoadingScreen.Toggle(true, false);
 
