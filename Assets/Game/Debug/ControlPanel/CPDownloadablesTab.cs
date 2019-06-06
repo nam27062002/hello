@@ -166,10 +166,10 @@ public class CPDownloadablesTab : MonoBehaviour
     /// <summary>
     /// Sets the player pref value for "download completed popup already shown"
     /// </summary>
-    public void OnDownloadCompletedPopupToggleChanged()
+    public void OnDownloadCompletedPopupToggleClick()
     {
-        //bool newValue = m_downloadCompletedPopupToggle.isOn;
-        //Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, newValue);
+        bool newValue = m_downloadCompletedPopupToggle.isOn;
+        Prefs.SetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, newValue);
     }
 
     #region dumper

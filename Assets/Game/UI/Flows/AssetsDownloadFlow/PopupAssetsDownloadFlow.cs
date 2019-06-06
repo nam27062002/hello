@@ -331,12 +331,14 @@ public class PopupAssetsDownloadFlow : MonoBehaviour {
     /// <param name="_handle">The download handle whose information we will be using.</param>
     /// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
     /// <param name="_context">The situation that triggered the download popup. It will show an adapted message in each case.</param>
-    public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, PopupType _typeFilterMask, AssetsDownloadFlow.Context _context) {
+    /// <param name="_forcePopup">If true, shows the popup even if the content is already donwloaded</param>
+    public static PopupAssetsDownloadFlow OpenPopupByState(Downloadables.Handle _handle, PopupType _typeFilterMask, AssetsDownloadFlow.Context _context, bool _forcePopup = false) {
 		// Ignore if handle is not valid
 		if(_handle == null) return null;
 
 		// Same if the download has finished
-		if(_handle.IsAvailable()) return null;
+        // Except if we want to force the popup
+		if(_handle.IsAvailable() && !_forcePopup) return null;
 
 		// Let's do it!
 		string popupPath = string.Empty;

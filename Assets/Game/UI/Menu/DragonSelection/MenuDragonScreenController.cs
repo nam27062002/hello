@@ -533,7 +533,8 @@ public class MenuDragonScreenController : MonoBehaviour {
 			// Init the assets download flow. Don't show popups though, the menu interstitial popups controller will take care of it
 			m_assetsDownloadFlow.InitWithHandle(allHandle);
 		}
-	}
+
+    }
 
 	/// <summary>
 	/// The current menu screen has changed (animation starts now).
