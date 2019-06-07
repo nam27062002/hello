@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 54000013371132386}
   - component: {fileID: 135000013338795870}
   - component: {fileID: 114879837775497350}
+  - component: {fileID: 114532014255244848}
   m_Layer: 0
   m_Name: PF_PetChinesePig_73
   m_TagString: Pet
@@ -764,6 +765,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle: PS_ChinesePigTrail
   playOnStart: 1
+--- !u!114 &114532014255244848
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c77f84975844ddb9c992ef9d965e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_controller: {fileID: 114879837775497350}
 --- !u!114 &114879837775497350
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -887,7 +900,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+    audioMixerGroup: {fileID: 0}
   musicPlaylists:
   - name: Default
     playlistItems: []
