@@ -119,8 +119,8 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
         List<string> assetBundleIdsToLoad;
         UbiListUtils.SplitIntersectionAndDisjoint(rawAssetBundleIdsToLoad, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
-        AssetBundleIdsToUnload = assetBundleIdsToUnload;
-        AssetBundleIdsToLoad = assetBundleIdsToLoad;
+        AssetBundleIdsToUnload = rawAssetBundleIdsToUnload; //assetBundleIdsToUnload;
+        AssetBundleIdsToLoad = rawAssetBundleIdsToLoad; //assetBundleIdsToLoad;
         MandatoryAssetBundleIdsToLoad = rawMandatoryAssetBundleIdsToLoad;
 
         Step = EStep.UnloadingPreviousAssetBundleList;
