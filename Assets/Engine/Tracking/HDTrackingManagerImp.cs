@@ -1662,7 +1662,7 @@ public class HDTrackingManagerImp : HDTrackingManager {
     private bool SendRtTracking()
     {
         bool ret = true;
-        ret = !(GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentRestrictionEnabled());
+        ret = !(GDPRManager.SharedInstance.IsAgeRestrictionEnabled() || GDPRManager.SharedInstance.IsConsentTrackingRestrictionEnabled());
         return ret;
     }
 
