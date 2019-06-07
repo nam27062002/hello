@@ -55,8 +55,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 
     // Cache some data
     private DragonDataSpecial m_dragonData = null;
-    private const string LAB_MUSIC = "hd_lab_music";
-    private int m_labMusicCount = 0;
 	
 	//------------------------------------------------------------------------//
 	// GENERIC METHODS														  //
@@ -223,12 +221,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 	/// The screen is about to be displayed.
 	/// </summary>
 	public void OnShowPreAnimation() {
-        // if ( InstanceManager.musicController.Ambience_ToPlay.music_key != LAB_MUSIC )
-        if (m_labMusicCount <= 0)
-        {
-            m_labMusicCount++;
-            InstanceManager.musicController.Ambience_Play(LAB_MUSIC, gameObject);
-        }
 
 		// Trigger intro popup?
 		if(!Prefs.GetBoolPlayer(PopupLabIntro.DISPLAYED_KEY)) {
@@ -289,10 +281,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		// Make sure we are allowed to change screen (prevent spamming)
 		// [AOC] Resolves issue HDK-4255 among others
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
-        
-		// Stop lab music
-        m_labMusicCount--;
-        InstanceManager.musicController.Ambience_Stop(LAB_MUSIC, gameObject);
         
 		// Go back to default mode
 		SceneController.SetMode(SceneController.Mode.DEFAULT);
