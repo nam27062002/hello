@@ -3347,6 +3347,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224608729850126784}
+  - component: {fileID: 114904661076016252}
   m_Layer: 5
   m_Name: RewardIconRoot
   m_TagString: Untagged
@@ -4259,6 +4260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114678728844067202}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114188455741051932}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -4663,8 +4665,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.73397565, g: 1, b: 0.5514706, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -1
@@ -5433,8 +5439,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -6101,8 +6111,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -7489,8 +7503,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -7507,8 +7525,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -7827,8 +7849,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.4068966, g: 1, b: 0, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0.15
   m_saturation: -1
@@ -8734,11 +8760,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mode: 0
-  m_petSku: pet_67
+  m_petSku: 
   m_anim: 0
   m_showRarityGlow: 0
   m_resetScale: 1
   m_keepLayers: 0
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: MenuPetLoader+MenuPetLoaderEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114508597636271880
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8834,6 +8865,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114124197011343366}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114105991050120630}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -8930,8 +8962,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -9194,8 +9230,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -9820,6 +9860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114000694019363486}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114097836719316048}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -10425,8 +10466,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -11046,8 +11091,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -11624,6 +11673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114185184465762008}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114142890527372596}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -11750,6 +11800,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114546289183688312}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114083609978497068}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -12123,6 +12174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114484892391260048}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114411193550547220}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -12323,6 +12375,21 @@ MonoBehaviour:
     topRight: {r: 0.1764706, g: 0.10196079, b: 0.054901965, a: 1}
     bottomLeft: {r: 0.30980393, g: 0.18039216, b: 0.09411766, a: 1}
     bottomRight: {r: 0.30980393, g: 0.18039216, b: 0.09411766, a: 1}
+--- !u!114 &114904661076016252
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1998413021459572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285cd8cfbf6c84d2fab86d95b9d993fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_assetId: 
+  m_loadOnAwake: 0
+  m_image: {fileID: 114159296999310212}
+  m_loadingPrefab: {fileID: 0}
 --- !u!114 &114914411287720402
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12362,8 +12429,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 0.625, g: 0.625, b: 0.625, a: 1}
   m_colorAdd: {r: 0.30980393, g: 0.18039216, b: 0.09411765, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: -0.75
@@ -12557,6 +12628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114159296999310212}
+  m_iconLoader: {fileID: 114904661076016252}
   m_rewardText: {fileID: 114412048832966276}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
