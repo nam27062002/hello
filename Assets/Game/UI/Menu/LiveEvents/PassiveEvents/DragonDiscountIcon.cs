@@ -29,7 +29,7 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 	//------------------------------------------------------------------------//
 	// Exposed
 	[Space]
-	[SerializeField] private Image m_dragonIcon = null;
+	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
 	[SerializeField] private Image m_tierIcon = null;
 	[SerializeField] private TextMeshProUGUI m_discountText = null;
 	[Space]
@@ -106,14 +106,13 @@ public class DragonDiscountIcon : IPassiveEventIcon {
 		IDragonData targetDragonData = _targetDragonData;
 
 		// Dragon icon
-		if(m_dragonIcon != null) {
+		if(m_dragonIconLoader != null) {
 			bool show = false;
 			if(targetDragonData != null) {
 				show = true;
                 string iconName = IDragonData.GetDefaultDisguise(targetDragonData.sku).Get("icon");
-                m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(iconName);
+				m_dragonIconLoader.LoadAsync(iconName);
             }
-			m_dragonIcon.gameObject.SetActive(show);
 		}
 
 		// Tier icon
