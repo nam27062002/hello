@@ -206,7 +206,6 @@ public class MenuPetLoader : MonoBehaviour {
         DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
         if (def != null) {
             // Instantiate the prefab and add it as child of this object
-            //GameObject petPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(def.GetAsString("menuPrefab"));
             m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(def.GetAsString("menuPrefab"));
 
             // Update pet sku
