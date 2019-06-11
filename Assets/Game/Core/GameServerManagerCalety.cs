@@ -133,8 +133,8 @@ public class GameServerManagerCalety : GameServerManager {
         }
 
 		// The user has requested a password to do a cross platform merge
-		public override void onMergeXPlatformPass(string pass) {
-			Debug.TaggedLog(tag, "onMergeXPlatformPass " + pass);
+		public override void onMergeXPlatformPass(string strParole, long iSecondsToExpire) {
+			Debug.TaggedLog(tag, "onMergeXPlatformPass " + strParole);
 		}
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
@@ -143,7 +143,7 @@ public class GameServerManagerCalety : GameServerManager {
 		}
 
 		// Probably not needed anywhere, but useful for test cases (actually implemented in unit tests)
-		public override void onMergeXPlatformFailed() {
+		public override void onMergeXPlatformFailed(GameSessionManager.EMergeXPlatformErrorResult eMergeError = GameSessionManager.EMergeXPlatformErrorResult.E_MERGE_ERROR_UNKNOWN) {
 			Debug.TaggedLog(tag, "onMergeXPlatformFailed");
 		}
 
