@@ -29,7 +29,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	[SerializeField] private ShowHideAnimator m_animator = null;
 	[SerializeField] private Canvas m_loadingCanvas = null;
 	[Space]
-	[SerializeField] private Image m_dragonIcon = null;
+	[SerializeField] private UISpriteAddressablesLoader m_dragonIconLoader = null;
     [SerializeField] private Image m_tierIcon = null;
     [Space]
     [SerializeField] private PowerIcon[] m_powerIcons = null;
@@ -50,6 +50,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 
 	public void Awake(){
 		m_animator.OnHidePostAnimation.AddListener(OnHidePostAnimation);
+	//	m_animator.OnShowPostAnimation.AddListener();
 	}
 
 	public void OnHidePostAnimation(ShowHideAnimator _animator) {
@@ -64,6 +65,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// <param name="_animate">Use fade animation?</param>
 	public static void Toggle(bool _show, bool _animate = true) {
 		if ( _show ){
+			InitWithCurrentData();
 			instance.m_loadingCanvas.gameObject.SetActive(true);
 			instance.m_loadingCanvas.worldCamera.gameObject.SetActive(true);
 		}
@@ -87,7 +89,7 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 		List<string> pets = currentDragon.pets;
 
         // Dragon image
-        instance.m_dragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
+        instance.m_dragonIconLoader.LoadAsync(skinDef.Get("icon"));
         instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
 
 		// Powers: skin + pets

@@ -369,7 +369,7 @@ public class Ingame_SwitchAreaHandle
         private List<AddressablesOp> m_prevAreaScenesToUnload;
         private List<AddressablesOp> m_nextAreaScenesToLoad;        
 
-        public Ingame_SwitchAreaHandle(string prevArea, string nextArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+        public Ingame_SwitchAreaHandle(string prevArea, string nextArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames, List<string> dependenciesToStayInMemory)
         {
             PrevAreaRealSceneNames = prevAreaRealSceneNames;
             NextAreaRealSceneNames = nextAreaRealSceneNames;
@@ -399,8 +399,15 @@ public class Ingame_SwitchAreaHandle
             List<string> assetBundleIdsToLoad;            
             UbiListUtils.SplitIntersectionAndDisjoint(nextAreaDependencyIds, assetBundleIdsToStay, out assetBundleIdsToStay, out assetBundleIdsToLoad);
 
-            DependencyIdsToLoad = assetBundleIdsToLoad;
-            DependencyIdsToUnload = assetBundleIdsToUnload;            
+            // Makes sure that the dependencyIds (typically the ones that player's dragon and pets depend on) that need to stay in memory are not unloaded
+            List<string> actualAssetBundleIdsToUnload;
+            UbiListUtils.SplitIntersectionAndDisjoint(assetBundleIdsToUnload, dependenciesToStayInMemory, out assetBundleIdsToStay, out actualAssetBundleIdsToUnload);
+
+            List<string> actualAssetBundleIdsToLoad;
+            UbiListUtils.SplitIntersectionAndDisjoint(assetBundleIdsToLoad, dependenciesToStayInMemory, out assetBundleIdsToStay, out actualAssetBundleIdsToLoad);
+
+            DependencyIdsToLoad = actualAssetBundleIdsToLoad;
+            DependencyIdsToUnload = actualAssetBundleIdsToUnload;            
         }       
 
         public bool NeedsToUnloadPrevAreaDependencies()
@@ -487,7 +494,7 @@ public class Ingame_SwitchAreaHandle
         }
     }    
 
-    public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames)
+    public Ingame_SwitchAreaHandle Ingame_SwitchArea(string prevArea, string newArea, List<string> prevAreaRealSceneNames, List<string> nextAreaRealSceneNames, List<string> dependencyIdsToStayInMemory)
     {
         // Makes sure that all scenes are available. For now a scene is not scheduled to be loaded if it's not available because there's no support
         // for downloading stuff during the loading screen. 
@@ -508,7 +515,7 @@ public class Ingame_SwitchAreaHandle
             }
         }
 
-        return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames);
+        return new Ingame_SwitchAreaHandle(prevArea, newArea, prevAreaRealSceneNames, nextAreaRealSceneNames, dependencyIdsToStayInMemory);
     }
 
     /// <summary>
