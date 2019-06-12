@@ -27,17 +27,8 @@ public class LoadAssetBundleOp : AssetBundlesOp
     }
 
     protected override void ExtendedPerform()
-    {
-        if (m_handle.IsRemote() || AssetBundlesManager.LOCAL_IN_STREAMING_ASSETS)
-        {
-            m_request = AssetBundle.LoadFromFileAsync(m_handle.Path);
-        }
-        else
-        {
-            TextAsset abAsText = (TextAsset)Resources.Load(m_handle.Path);
-            byte[] abBytes = abAsText.bytes;
-            m_request = AssetBundle.LoadFromMemoryAsync(abBytes);
-        }        
+    {        
+        m_request = AssetBundle.LoadFromFileAsync(m_handle.Path);        
     }
 
     protected override void ExtendedUpdate()

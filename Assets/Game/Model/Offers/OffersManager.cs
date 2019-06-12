@@ -128,7 +128,10 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 
 			// If enabled, store to the enabled collection
 			if(offerDefs[i].GetAsBool("enabled", false)) {
-				instance.m_allEnabledOffers.Add(newPack);
+                //lets check if player has all the bundles required to view this offer
+                if (instance.IsOfferAvailable(newPack)) {
+                    instance.m_allEnabledOffers.Add(newPack);
+                }
 			}
 
             switch( newPack.type ) {
@@ -329,12 +332,39 @@ public class OffersManager : UbiBCN.SingletonMonoBehaviour<OffersManager> {
 		return dirty;
 	}
 
-	/// <summary>
-	/// Refresh the offer collections adding/removing the given offer based
-	/// on its type and state.
-	/// </summary>
-	/// <param name="_offer">Offer to be processed.</param>
-	private void UpdateCollections(OfferPack _offer) {
+    private bool IsOfferAvailable(OfferPack _newPack) {
+        List<OfferPackItem> items = _newPack.items;
+
+        for (int i = 0; i < items.Count; ++i) {
+            OfferPackItem item = items[i];
+
+            DefinitionNode def = null;
+			List<string> resourceIDs = null;
+            if (item.type.Equals(Metagame.RewardPet.TYPE_CODE)) {
+				resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForPet(item.sku);
+            } else if (item.type.Equals(Metagame.RewardSkin.TYPE_CODE)) {
+                def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, item.sku);
+				if(def != null) {
+					resourceIDs = HDAddressablesManager.Instance.GetResourceIDsForDragon(def.Get("dragonSku"));
+				}
+            }
+
+            if (resourceIDs != null) {
+                if (!HDAddressablesManager.Instance.IsResourceListAvailable(resourceIDs)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Refresh the offer collections adding/removing the given offer based
+    /// on its type and state.
+    /// </summary>
+    /// <param name="_offer">Offer to be processed.</param>
+    private void UpdateCollections(OfferPack _offer) {
 		// Which state? Refresh lists
 		switch(_offer.state) {
 			case OfferPack.State.ACTIVE: {

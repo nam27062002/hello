@@ -227,7 +227,8 @@ public class GameSettings : SingletonScriptableObject<GameSettings> {
 	/// </summary>
 	public static void Init() {
 		// Get external references
-		instance.m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
+		// instance.m_audioMixer = AudioController.Instance.AudioObjectPrefab.GetComponent<AudioSource>().outputAudioMixerGroup.audioMixer;
+		instance.m_audioMixer = InstanceManager.masterMixer;
 
 		// Apply stored values
 		Set(SOUND_ENABLED, Get(SOUND_ENABLED));

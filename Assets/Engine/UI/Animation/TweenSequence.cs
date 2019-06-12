@@ -58,11 +58,11 @@ public class TweenSequence : MonoBehaviour {
 	/// Launch the sequence!
 	/// </summary>
 	/// <param name="_recreate">If set to <c>true</c>, force the sequence recreation.</param>
-	public void Launch(bool _recreate = false) {
-		// Must we create the sequence?
-		if(m_sequence == null || _recreate) {
-			GenerateSequence();
-		}
+	public void Launch() {
+
+        // [JOM] Always regenerate the sequence. Otherwise, the tweeners OnStart events wont be 
+        // triggered again after the restart -> Bug [HDK-3494]
+        GenerateSequence();
 
 		// Restart it!
 		m_sequence.Restart();

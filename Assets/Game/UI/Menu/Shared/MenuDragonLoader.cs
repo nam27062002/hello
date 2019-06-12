@@ -115,7 +115,7 @@ public class MenuDragonLoader : MonoBehaviour {
 	}
 
 	public bool m_loadAsync = false;
-	private ResourceRequest m_asyncRequest = null;
+	private AddressablesOp m_asyncRequest = null;
 
 	private bool m_useShadowMaterial = false;
 	public bool useShadowMaterial {
@@ -229,24 +229,25 @@ public class MenuDragonLoader : MonoBehaviour {
 			if (  m_useResultsScreen )
 				prefabColumn = "resultsPrefab";
 
-            string pathToPrefab = "";
+            string prefab = "";
             if ( def.Get("type") == "special" )
             {
                 // TODO: Change this and use a proper tier
                 DefinitionNode specialTierDef = DragonDataSpecial.GetDragonTierDef(_sku, DragonTier.TIER_1);
-                pathToPrefab = IDragonData.MENU_PREFAB_PATH + specialTierDef.GetAsString(prefabColumn);
+                prefab = specialTierDef.GetAsString(prefabColumn);
             }
             else
             {
-                pathToPrefab = IDragonData.MENU_PREFAB_PATH + def.GetAsString(prefabColumn);
+                prefab = def.GetAsString(prefabColumn);
             }
 
 			if (m_loadAsync && !forceSync && FeatureSettingsManager.MenuDragonsAsyncLoading){
-				m_asyncRequest = Resources.LoadAsync<GameObject>(pathToPrefab);
-			}else{
+                m_asyncRequest = HDAddressablesManager.Instance.LoadAssetAsync( prefab );
+            }
+            else{
 				// Instantiate the prefab and add it as child of this object
-				GameObject dragonPrefab = Resources.Load<GameObject>(pathToPrefab);
-				if(dragonPrefab != null) {
+				GameObject dragonPrefab = HDAddressablesManager.Instance.LoadAsset<GameObject>(prefab);
+                if (dragonPrefab != null) {
 					GameObject newInstance = GameObject.Instantiate<GameObject>(dragonPrefab);
 					ConfigureInstance( newInstance );
 					if (onDragonLoaded != null)
@@ -264,8 +265,9 @@ public class MenuDragonLoader : MonoBehaviour {
 	{
 		if ( m_asyncRequest != null && m_asyncRequest.isDone )
 		{
-			GameObject newInstance = GameObject.Instantiate<GameObject>( m_asyncRequest.asset as GameObject );
-			ConfigureInstance( newInstance );
+            GameObject go = m_asyncRequest.GetAsset<GameObject>();
+            GameObject newInstance = GameObject.Instantiate<GameObject>( go );
+            ConfigureInstance( newInstance );
 			m_asyncRequest = null;
 			if (onDragonLoaded != null)
 				onDragonLoaded(this);

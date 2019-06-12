@@ -368,30 +368,46 @@ public class BasicAssetBundlesTestController : MonoBehaviour
     #region ab
     public void AB_Init()
     {
-        Memory_BeginSample("AB_INIT");        
-
-        string localAssetBundlesPath = "Addressables";                
-        string path = Path.Combine("Addressables", "downloadablesCatalog");
-
         Logger logger = new ConsoleLogger("AssetBundles");
 
-        // Addressables catalog 
-        TextAsset targetFile = Resources.Load<TextAsset>(path);
-        string catalogAsText = (targetFile == null) ? null : targetFile.text;
-        JSONNode json = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);                                
+        Memory_BeginSample("AB_INIT");
         
-        // Downloadables config
-        string downloadablesConfigPath = Path.Combine(localAssetBundlesPath, "downloadablesConfig");
-        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Downloadables catalog        
+        string catalogAsText = GetAddressablesFileText("downloadablesCatalog", true);
+        JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
+        // Downloadables config        
+        catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
         JSONNode downloadablesConfigASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);
+
+        // AssetBundles catalog
+        catalogAsText = GetAddressablesFileText("assetBundlesCatalog", true);
+        JSONNode abCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        AssetBundlesManager.Instance.Initialize(localAssetBundlesPath, downloadablesConfig, json, true, tracker, logger);
+        AssetBundlesManager.Instance.Initialize(abCatalogASJSON, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);
 
         Memory_EndSample(true);
+    }
+
+    private string GetAddressablesFileText(string fileName, bool platformDependent)
+    {
+#if UNITY_EDITOR
+        string path = "Assets/Editor/Addressables/generated/";
+        if (platformDependent)
+        {
+            path += UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        }
+
+        path += fileName;
+        return File.ReadAllText(fileName);
+#else
+        string path = "Addressables/" + fileName;                        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        return (targetFile == null) ? null : targetFile.text;
+#endif
     }
 
     public void AB_Reset()

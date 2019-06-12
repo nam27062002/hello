@@ -40,6 +40,8 @@ public class AnimojiScreenController : MonoBehaviour {
 		MICROPHONE_PERMISSIONS_REQUEST,
 		PERMISSIONS_OK,
 		PERMISSIONS_ERROR,
+		LOADING_PREVIEW,
+		PREPARING_PREVIEW,
 		PREVIEW,
 		COUNTDOWN,
 		RECORDING,
@@ -396,7 +398,7 @@ public class AnimojiScreenController : MonoBehaviour {
 
                 // Notify animoji tracking event start
                 HDTrackingManagerImp.Instance.Notify_AnimojiStart();
-			} break;
+			} break;					
 
 			case State.PREVIEW: {
 				// Toggle views
@@ -569,7 +571,25 @@ public class AnimojiScreenController : MonoBehaviour {
 				ProcessMicrophonePermission();
 			} break;
 
-		case State.PERMISSIONS_OK: {
+			case State.PERMISSIONS_OK: {					
+				ChangeState(State.LOADING_PREVIEW);
+			} break;
+
+			case State.PERMISSIONS_ERROR: {
+				// Toggle views
+				SelectUI(true);
+			} break;
+
+			case State.LOADING_PREVIEW:	{
+				// Load dragon head prefab
+				string dragonSku = InstanceManager.menuSceneController.selectedDragon;
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonSku);
+				m_addressableId = dragonDef.GetAsString("animojiPrefab");        
+				AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync(m_addressableId);
+				op.OnDone = OnInitDragon;
+			} break;
+
+			case State.PREPARING_PREVIEW: {
 				// Toggle views
 				SelectUI(true);
 
@@ -594,19 +614,22 @@ public class AnimojiScreenController : MonoBehaviour {
 				Debug.Assert(m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
 
 				// Initialize controller
-				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);
+				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon, m_dragonPrefab);
 				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
-				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
+				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);	
 
 				// Go to next state after a frame
 				ChangeStateOnNextFrame(State.PREVIEW);
 			} break;
-
-			case State.PERMISSIONS_ERROR: {
-				// Toggle views
-				SelectUI(true);
-			} break;
 		}
+	}
+
+	private string m_addressableId;
+	private GameObject m_dragonPrefab;
+	private void OnInitDragon(AddressablesOp op) {		
+		Debug.Assert(op.Error == null, "ANIMOJI PREFAB " + m_addressableId + " COULDN'T BO LOADED", this);
+		m_dragonPrefab = op.GetAsset<GameObject>();    
+		ChangeState (State.PREPARING_PREVIEW);
 	}
 
 	/// <summary>

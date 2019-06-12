@@ -54,6 +54,8 @@ public class AddressablesCatalogEntry
 
 #if UNITY_EDITOR
     private const string ATT_GUID = "guid";
+    private const string ATT_PLATFORM = "platform";
+    private const string ATT_GENERATED_BY_SCRIPT = "generatedByScript";
 
     private string m_guid;
     public string GUID
@@ -62,18 +64,37 @@ public class AddressablesCatalogEntry
         private set { m_guid = value; }
     }
 
+    private string m_platform;
+    public string Platform
+    {
+        get { return m_platform; }
+        set { m_platform = value; }
+    }
+
+    public bool IsAvailableForPlatform(UnityEditor.BuildTarget target)
+    {
+        return m_platform == null || m_platform == target.ToString();
+    }
+
     private bool m_editorMode;
+
+    private bool m_generatedByScript = false;
+    public bool GeneratedByScript
+    {
+        get { return m_generatedByScript; }
+    }
 
     public AddressablesCatalogEntry(bool editorMode) : this()
     {
-        m_editorMode = editorMode;
+        m_editorMode = editorMode;        
     }
 
-    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode) : this() {
+    public AddressablesCatalogEntry(string id, string variant, string gui, bool editorMode, bool generatedByScript) : this() {
         Id = id;
         Variant = variant;
         GUID = gui;
         m_editorMode = editorMode;
+        m_generatedByScript = generatedByScript;      
     }
 #endif
 
@@ -91,6 +112,7 @@ public class AddressablesCatalogEntry
 
 #if UNITY_EDITOR
         GUID = null;
+        m_generatedByScript = false;
 #endif
     }
 
@@ -143,6 +165,19 @@ public class AddressablesCatalogEntry
             {
                 LogLoadAttributeError(att, value);
             }
+
+            att = ATT_PLATFORM;
+            Platform = data[att];
+
+            att = ATT_GENERATED_BY_SCRIPT;
+            if (data.ContainsKey(att))
+            {
+                m_generatedByScript = data[ATT_GENERATED_BY_SCRIPT].AsBool;
+            }
+            else
+            {
+                m_generatedByScript = false;
+            }
 #endif
 
             // Asset Bundle name            
@@ -156,13 +191,6 @@ public class AddressablesCatalogEntry
 
             att = ATT_ASSET_NAME;
             AssetName = data[att];
-
-#if UNITY_EDITOR
-            if (m_editorMode && AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInResources)
-            {
-                SetupAsEntryInResources(Id);
-            }
-#endif
         }
     }   
 
@@ -192,6 +220,13 @@ public class AddressablesCatalogEntry
         {
             AddToJSON(data, ATT_GUID, GUID);            
             needsToAddAssetBundleName = true;
+
+            if (!string.IsNullOrEmpty(Platform))
+            {
+                AddToJSON(data, ATT_PLATFORM, Platform);
+            }
+
+            AddToJSON(data, ATT_GENERATED_BY_SCRIPT, GeneratedByScript.ToString());
         }
 #endif
         if (needsToAddAssetBundleName)

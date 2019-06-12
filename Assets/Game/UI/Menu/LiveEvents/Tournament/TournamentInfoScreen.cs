@@ -39,9 +39,16 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
     [SeparatorAttribute("Buttons")]
     [SerializeField] private Button m_playButton = null;
 
+    [SeparatorAttribute("Others")]
+    [SerializeField] private AssetsDownloadFlow m_assetsDownloadFlow = null;
+    public AssetsDownloadFlow assetsDownloadFlow
+    {
+        get { return m_assetsDownloadFlow; }
+    }
 
-	//----------------------------------------------------------------//
-	private HDTournamentManager m_tournament;
+
+    //----------------------------------------------------------------//
+    private HDTournamentManager m_tournament;
 	private HDTournamentDefinition m_definition;
 	private bool m_waitingRewardsData = false;
     private bool m_waitingDefinition = false;
@@ -225,6 +232,18 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 	/// The next screen button has been pressed.
 	/// </summary>
 	public void OnNextButton() {
+
+        // Check for assets for this specific tournament
+        Downloadables.Handle tournamentHandle = HDAddressablesManager.Instance.GetHandleForTournamentDragon(m_tournament);
+        if (!tournamentHandle.IsAvailable())
+        {
+            // Initialize download flow with handle for ALL assets
+            m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_CLICKS_ON_TOURNAMENT);
+
+            return;
+        }
+
         if (!m_waitingDefinition) {
             // Send Tracking event
             HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
@@ -259,6 +278,9 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
 		m_waitingRewardsData = false;
         m_waitingNetwork = false;
 
+        // OTA: Show download progress if the download is active
+        m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+    
         // Program a periodic update
         InvokeRepeating("UpdatePeriodic", 0f, UPDATE_FREQUENCY);
 	}

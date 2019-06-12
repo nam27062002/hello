@@ -1,4 +1,6 @@
-﻿public abstract class AddressablesOp : UbiAsyncOperation
+﻿using UnityEngine;
+
+public abstract class AddressablesOp : UbiAsyncOperation
 {
     public delegate void OnDoneCallback(AddressablesOp op);
 
@@ -49,17 +51,14 @@
         private set;
     }
 
-    private object m_asset;
-
-    public virtual T GetAsset<T>()
+    public virtual T GetAsset<T>() where T : Object
     {
-        return (m_asset == null) ? default(T) : (T)m_asset;
+        return default(T);
     }
 
-    public void Setup(AddressablesError error, object asset)
+    public void Setup(AddressablesError error)
     {
-        Error = error;
-        m_asset = asset;
+        Error = error;        
     }    
 
     private OnDoneCallback m_onDone;

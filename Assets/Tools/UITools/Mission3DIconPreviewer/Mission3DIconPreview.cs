@@ -46,7 +46,7 @@ public class Mission3DIconPreview  : MonoBehaviour {
 
 	public void Awake()
 	{
-		HDAddressablesManager.Instance.Initialise();
+		HDAddressablesManager.Instance.Initialize();
 	}
 
     public void Start()

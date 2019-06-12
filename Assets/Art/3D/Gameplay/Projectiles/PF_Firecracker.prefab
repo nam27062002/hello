@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 65185112917952912}
   - component: {fileID: 114372304259190030}
   - component: {fileID: 114885352729978432}
+  - component: {fileID: 114744369618671806}
   m_Layer: 19
   m_Name: PF_Firecracker
   m_TagString: Untagged
@@ -474,6 +475,18 @@ MonoBehaviour:
   m_firingEntityType: 1
   m_explodeIfHomingtargetNull: 0
   m_breaksArmor: 0
+--- !u!114 &114744369618671806
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1363264916768824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c77f84975844ddb9c992ef9d965e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_controller: {fileID: 114885352729978432}
 --- !u!114 &114885352729978432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -597,7 +610,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+    audioMixerGroup: {fileID: 0}
   musicPlaylists:
   - name: Default
     playlistItems: []

@@ -26,6 +26,11 @@ namespace Downloadables
             DownloadableIds = downloadableIds;
         }
 
+        public override void AddDownloadableIds(List<string> downloadableIds)
+        {
+            DownloadableIds = UbiListUtils.AddRange<string>(DownloadableIds, downloadableIds, (DownloadableIds == null), true);
+        }
+
         public override bool IsAvailable()
         {
             // It's available if all downloadables are available
@@ -62,6 +67,11 @@ namespace Downloadables
                     sm_manager.Groups_SetIsPermissionGranted(groupId, value);
                 }
             }            
+        }
+
+        public override List<string> GetDownloadableIds()
+        {
+            return DownloadableIds;
         }
 
         /// <summary>
@@ -159,7 +169,7 @@ namespace Downloadables
             {
                 foreach (string groupId in GroupIds)
                 {
-					if (!sm_manager.Groups_GetPermissionRequested(groupId))
+					if (!sm_manager.Groups_GetIsPermissionRequested(groupId))
                     {
                         return true;
                     }

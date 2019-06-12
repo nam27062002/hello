@@ -32,7 +32,7 @@ public class AlgerAddressablesTest : MonoBehaviour {
 	/// Initialization.
 	/// </summary>
 	private void Awake() {
-		HDAddressablesManager.Instance.Initialise();
+		HDAddressablesManager.Instance.Initialize();
 	}
 
 	/// <summary>
