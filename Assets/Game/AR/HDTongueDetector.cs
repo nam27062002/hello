@@ -58,13 +58,7 @@ public class HDTongueDetector : MonoBehaviour
 	public UnityEvent onTongueDetected = new UnityEvent();
 	public UnityEvent onTongueLost = new UnityEvent();
 
-    private string m_addressableId;
-
-    private bool m_isReady = false;
-    public bool IsReady {
-        get { return m_isReady; }
-        private set { m_isReady = value; }
-    }
+    private string m_addressableId;	   
 
 	//------------------------------------------------------------------------//
 	// STATIC METHODS														  //
@@ -115,35 +109,23 @@ public class HDTongueDetector : MonoBehaviour
 	/// Load a specific dragon setup.
 	/// </summary>
 	/// <param name="_dragonSku">Dragon sku.</param>
-	public void InitWithDragon(string _dragonSku) {        
+	public void InitWithDragon(string _dragonSku, GameObject _dragonPrefab) {        
         ControlPanel.Log(Colors.paleYellow.Tag("INIT WITH DRAGON " + _dragonSku));
 
 		// Make sure dragon is supported
-		Debug.Assert(IsDragonSupported(_dragonSku), "DRAGON " + _dragonSku + " DOESN'T SUPPORT ANIMOJIS!", this);
+		Debug.Assert(IsDragonSupported(_dragonSku), "DRAGON " + _dragonSku + " DOESN'T SUPPORT ANIMOJIS!", this);		       		        
+		InstantiateDragon(_dragonPrefab); 
+    }		    
 
-        IsReady = false;
+	private void InstantiateDragon(GameObject prefab) {
+		Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + m_addressableId, this);        
+		// Instantiate it and get controller reference
+		GameObject dragonInstance = GameObject.Instantiate<GameObject>(prefab, m_dragonAnimojiAnchor, false);
+		m_dragonAnimojiInstance = dragonInstance.GetComponentInChildren<DragonAnimoji>();
+		Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + m_addressableId + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
 
-        // Load dragon head prefab
-        DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, _dragonSku);
-        m_addressableId = dragonDef.GetAsString("animojiPrefab");        
-        AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync(m_addressableId);
-        op.OnDone = OnInitDragon;
-    }
-
-    private void OnInitDragon(AddressablesOp op) {
-        IsReady = true;
-
-        Debug.Assert(op.Error == null, "ANIMOJI PREFAB " + m_addressableId + " COULDN'T BO LOADED", this);
-        
-        GameObject prefab = op.GetAsset<GameObject>();        
-        Debug.Assert(prefab != null, "COULDN'T LOAD ANIMOJI PREFAB " + m_addressableId, this);        
-        // Instantiate it and get controller reference
-        GameObject dragonInstance = GameObject.Instantiate<GameObject>(prefab, m_dragonAnimojiAnchor, false);
-        m_dragonAnimojiInstance = dragonInstance.GetComponentInChildren<DragonAnimoji>();
-        Debug.Assert(m_dragonAnimojiInstance != null, "ANIMOJI PREFAB " + m_addressableId + " DOESN'T HAVE A DragonAnimoji COMPONENT", this);
-
-        m_dragonAnimojiInstance.gameObject.SetActive(false);        
-    }
+		m_dragonAnimojiInstance.gameObject.SetActive(false);        
+	}
 
 	/// <summary>
 	/// Start recording process.

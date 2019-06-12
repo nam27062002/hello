@@ -38,10 +38,11 @@ public class AnimojiScreenController : MonoBehaviour {
 		INIT,
 		CAMERA_PERMISSIONS_REQUEST,
 		MICROPHONE_PERMISSIONS_REQUEST,
-		PERMISSIONS_OK,        
-        PERMISSIONS_ERROR,
-        INITIALIZING_CONTROLLER,
-        PREVIEW,
+		PERMISSIONS_OK,
+		PERMISSIONS_ERROR,
+		LOADING_PREVIEW,
+		PREPARING_PREVIEW,
+		PREVIEW,
 		COUNTDOWN,
 		RECORDING,
 		SHARING,
@@ -234,13 +235,7 @@ public class AnimojiScreenController : MonoBehaviour {
 				// Wait until permission is granted/denied
 			} break;
 
-            case State.INITIALIZING_CONTROLLER: {                
-                if (m_animojiSceneController.IsReady) {
-                    ChangeStateOnNextFrame(State.PREVIEW);
-                }
-            } break;
-
-            case State.PREVIEW: {
+			case State.PREVIEW: {
 				// Update tongue reminder timer
 				if(m_tongueReminderTimer > 0f) {
 					m_tongueReminderTimer -= Time.deltaTime;
@@ -403,14 +398,11 @@ public class AnimojiScreenController : MonoBehaviour {
 
                 // Notify animoji tracking event start
                 HDTrackingManagerImp.Instance.Notify_AnimojiStart();
-			} break;
+			} break;					
 
 			case State.PREVIEW: {
-                m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
-                m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);
-
-                // Toggle views
-                SelectUI(true);
+				// Toggle views
+				SelectUI(true);
 
 				// Reset tongue reminder
 				m_tongueReminderTimer = TONGUE_REMINDER_TIME;
@@ -579,7 +571,25 @@ public class AnimojiScreenController : MonoBehaviour {
 				ProcessMicrophonePermission();
 			} break;
 
-		case State.PERMISSIONS_OK: {
+			case State.PERMISSIONS_OK: {					
+				ChangeState(State.LOADING_PREVIEW);
+			} break;
+
+			case State.PERMISSIONS_ERROR: {
+				// Toggle views
+				SelectUI(true);
+			} break;
+
+			case State.LOADING_PREVIEW:	{
+				// Load dragon head prefab
+				string dragonSku = InstanceManager.menuSceneController.selectedDragon;
+				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonSku);
+				m_addressableId = dragonDef.GetAsString("animojiPrefab");        
+				AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync(m_addressableId);
+				op.OnDone = OnInitDragon;
+			} break;
+
+			case State.PREPARING_PREVIEW: {
 				// Toggle views
 				SelectUI(true);
 
@@ -602,21 +612,25 @@ public class AnimojiScreenController : MonoBehaviour {
 
 				m_unityARFaceAnchorManager = m_animojiSceneInstance.GetComponentInChildren<UnityARFaceAnchorManager>();
 				Debug.Assert(m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
-				
-                // Go to next state after a frame                
-                ChangeStateOnNextFrame(State.INITIALIZING_CONTROLLER);
-            } break;
 
-            case State.INITIALIZING_CONTROLLER: {
-                m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon);                
-            } break;            
+				// Initialize controller
+				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon, m_dragonPrefab);
+				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
+				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);	
 
-            case State.PERMISSIONS_ERROR: {
-				// Toggle views
-				SelectUI(true);
+				// Go to next state after a frame
+				ChangeStateOnNextFrame(State.PREVIEW);
 			} break;
 		}
-	}    
+	}
+
+	private string m_addressableId;
+	private GameObject m_dragonPrefab;
+	private void OnInitDragon(AddressablesOp op) {		
+		Debug.Assert(op.Error == null, "ANIMOJI PREFAB " + m_addressableId + " COULDN'T BO LOADED", this);
+		m_dragonPrefab = op.GetAsset<GameObject>();    
+		ChangeState (State.PREPARING_PREVIEW);
+	}
 
 	/// <summary>
 	/// Change the logic state on the next frame.
