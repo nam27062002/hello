@@ -199,7 +199,7 @@ public class LevelLoader
         m_loadSync = loadSync;
         OnChangeState = onChangeState;
 
-        // Retreives the dependencies (typically the ones that player's dragon and pets depend on) that shouldn't be unloaded between areas
+        // Retrieves the dependencies (typically the ones that player's dragon and pets depend on) that shouldn't be unloaded between areas
         m_loadLevelHandle = HDAddressablesManager.Instance.Ingame_SwitchArea(m_prevArea, m_nextArea, m_realSceneNamesToUnload, m_realSceneNamesToLoad, m_dependencyIdsToStayInMemory);        
         State = EState.UnloadingPrevAreaScenes;        
     }
