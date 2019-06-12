@@ -85,10 +85,12 @@ public class UI3DAddressablesLoaderEditor : Editor {
                     int i = m_targetUI3DLoader.useFolderLevelInID;
                     while (i > 0)
                     {
-                        int index = path.LastIndexOf(Path.DirectorySeparatorChar);
+                        // The incoming path will be always use the separator '/' regardless of the OS
+                        int index = path.LastIndexOf("/");
                         if (index > 0)
                         {
-                            id = path.Substring(index + 1) + Path.DirectorySeparatorChar + id;
+                            // In the catalog the separator is always "/"
+                            id = path.Substring(index + 1) + "/" + id;
                             path = path.Substring(0, index);
                             i--;
                         }

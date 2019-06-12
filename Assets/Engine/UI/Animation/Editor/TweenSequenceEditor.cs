@@ -170,7 +170,7 @@ public class TweenSequenceEditor : Editor {
 
 			// Recreate and launch button
 			if(GUILayout.Button("Recreate and Launch", GUILayout.ExpandHeight(true))) {
-				m_targetTweenSequence.Launch(true);
+				m_targetTweenSequence.Launch();
 			}
 		} EditorGUILayout.EndHorizontal();
 		GUI.enabled = true;

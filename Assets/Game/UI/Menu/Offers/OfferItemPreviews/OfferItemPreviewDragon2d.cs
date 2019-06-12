@@ -27,7 +27,7 @@ public class OfferItemPreviewDragon2d : IOfferItemPreview {
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed
-	[SerializeField] private Image m_image = null;
+	[SerializeField] private UISpriteAddressablesLoader m_loader = null;
 
 	//------------------------------------------------------------------------//
 	// OfferItemPreview IMPLEMENTATION										  //
@@ -41,10 +41,9 @@ public class OfferItemPreviewDragon2d : IOfferItemPreview {
 
 		// Initialize image with the target dragon icon
 		m_def = m_item.reward.def;
-		if(m_def == null) {
-			m_image.sprite = null;
-		} else {
-			m_image.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_def.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
+        if (m_def != null) {			
+            string defaultIcon = IDragonData.GetDefaultDisguise(m_def.sku).Get("icon");
+            m_loader.LoadAsync(defaultIcon);
 		}
 	}
 

@@ -53,7 +53,8 @@ public class AddressablesManager
         Editor,
         Catalog,
         AllInLocalAssetBundles,    
-        AllInResources    
+        AllInResources,
+        LocalAssetBundlesInResources
     };
 		
 	private static List<string> EModeKeys = new List<string>(System.Enum.GetNames(typeof(EMode)));
@@ -102,7 +103,7 @@ public class AddressablesManager
     public static bool Mode_NeedsAssetBundles()
     {        
 		EMode mode = EffectiveMode;
-        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles;
+        return mode == EMode.Catalog || mode == EMode.AllInLocalAssetBundles || mode == EMode.LocalAssetBundlesInResources;
     }    
 #endif
 
@@ -110,7 +111,7 @@ public class AddressablesManager
     private bool m_isInitialized = false;
     private AddressablesCatalogEntry m_entryHelper;    
         
-    public void Initialize(JSONNode catalogJSON, string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, JSONNode assetBundlesCatalogJSON, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalogJSON, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         AddressablesBatchHandle.sm_manager = this;
 
@@ -144,7 +145,7 @@ public class AddressablesManager
         AddressablesProvider.Logger = logger;
 
         m_providerFromAB = new AddressablesFromAssetBundlesProvider();
-        m_providerFromAB.Initialize(localAssetBundlesPath, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
+        m_providerFromAB.Initialize(assetBundlesCatalogJSON, downloadablesConfig, downloadablesCatalogJSON, useMockDrivers, tracker, logger);
 
         m_providerFromResources = new AddressablesFromResourcesProvider();
 
@@ -233,6 +234,32 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public List<string> GetDownloadableDependencyIds(List<string> dependencyIds)
+    {
+        List<string> returnValue = null;
+        if (IsInitialized())
+        {
+            if (dependencyIds != null)
+            {
+                returnValue = new List<string>();
+                int count = dependencyIds.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (isDependencyIdDownloadable(dependencyIds[i]))
+                    {
+                        returnValue.Add(dependencyIds[i]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Whether or not a resource (either scene or asset) is available, which means that this resource and all its dependencies are either local or remote and already downloaded
     /// </summary>
@@ -304,6 +331,18 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public bool ExistsDependencyId(string dependencyId)
+    {
+        bool returnValue = false;
+
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.ExistsDependencyId(dependencyId);
+        }
+
+        return returnValue;
+    }
+
     /// <summary>
     /// Downloads asynchronously the dependencies (typically asset bundles if the addressable is stored in an asset bundle) required to be loaded before loading the addressable with <c>id</c> as an identifier.
     /// </summary>
@@ -370,8 +409,8 @@ public class AddressablesManager
 #if UNITY_EDITOR
             if (Mode == EMode.Editor)
             {
-                returnValue = new AddressablesOpResult();
-                returnValue.Setup(null, null);
+                returnValue = new AddressablesResultOp();
+                returnValue.Setup(null);
             }
             else
 #endif
@@ -403,8 +442,8 @@ public class AddressablesManager
 #if UNITY_EDITOR
             if (Mode == EMode.Editor)
             {
-                returnValue = new AddressablesOpResult();
-                returnValue.Setup(null, null);
+                returnValue = new AddressablesResultOp();
+                returnValue.Setup(null);
             }
             else
 #endif
@@ -580,9 +619,9 @@ public class AddressablesManager
         }
 
         return returnValue;
-    }        
+    }            
 
-    public Downloadables.Handle CreateDownloadablesHandle(string groupId)
+    public Downloadables.Handle CreateDownloadablesHandle(string groupId = null)
     {
         Downloadables.Handle returnValue = null;
         if (IsInitialized())
@@ -626,6 +665,52 @@ public class AddressablesManager
         return returnValue;
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        Downloadables.Handle returnValue = null;
+        if (IsInitialized())
+        {
+            returnValue = m_providerFromAB.CreateAllDownloadablesHandle();
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Adds the downloadable dependencies of the addressable passed as a parameter.
+    /// </summary>
+    /// <param name="addressableId">Addressable id which downloadable dependencies </param>
+    public void AddResourceDownloadableIdsToHandle(Downloadables.Handle handle, string addressableId, string variant = null)
+    {
+        if (handle != null)
+        {
+            List<string> ids = GetDependencyIds(addressableId, variant);
+            List<string> downloadableIds = GetDownloadableDependencyIds(ids);
+
+            handle.AddDownloadableIds(downloadableIds);
+        }
+    }
+
+    /// <summary>
+    /// Adds the downloadable dependencies of the addressable passed as a parameter.
+    /// </summary>
+    /// <param name="addressableId">Addressable id which downloadable dependencies </param>
+    public void AddResourceListDownloadableIdsToHandle(Downloadables.Handle handle, List<string> addressableIds, string variant = null)
+    {
+        if (handle != null && addressableIds != null)
+        {            
+            int count = addressableIds.Count;
+            for (int i = 0; i < count; i++)
+            {
+                AddResourceDownloadableIdsToHandle(handle, addressableIds[i], variant);
+            }            
+        }
+    }
+
     /// <summary>
     /// Sets the download priority for the group which id is passed as a parameter. Highest priority: 1. The higher this number the lower priority when downloading
     /// </summary>
@@ -636,6 +721,56 @@ public class AddressablesManager
         if (IsInitialized())
         {
             m_providerFromAB.SetDownloadablesGroupPriority(groupId, priority);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionRequested(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionRequested(groupId, value);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+        }
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        if (IsInitialized())
+        {
+            return m_providerFromAB.GetDownloadableGroupPermissionGranted(groupId);
+        }
+        else
+        {
+            Errors_ProcessManagerNotInitialized(false);
+            return false;
+        }
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        if (IsInitialized())
+        {
+            m_providerFromAB.SetDownloadableGroupPermissionGranted(groupId, value);
         }
         else
         {
@@ -714,7 +849,7 @@ public class AddressablesManager
         return returnValue;
     }   
     
-    public T LoadAsset<T>(string id, string variant = null)
+    public T LoadAsset<T>(string id, string variant = null) where T : UnityEngine.Object
     {        
         T returnValue = default(T);
 
@@ -875,8 +1010,8 @@ public class AddressablesManager
         if (returnOp)
         {
             AddressablesError error = new AddressablesError(AddressablesError.EType.Error_Manager_Not_initialized);
-            returnValue = new AddressablesOpResult();
-            returnValue.Setup(error, null);        
+            returnValue = new AddressablesResultOp();
+            returnValue.Setup(error);        
         }
 
         return returnValue;
@@ -904,6 +1039,18 @@ public class AddressablesManager
         // If id is not in the catalog we assume that id is a path to the resource
         if (entry == null)
         {
+            if (CanLog())
+            {
+                string str = "Addressable id <" + id + "> ";
+                if (!string.IsNullOrEmpty(variant))
+                {
+                    str += "and variant <" + variant + "> "; 
+                }
+
+                str += " not found in addressables catalog so <" + id + "> will be used as relative path from Resources folder to the asset.";
+                LogWarning(str);
+            }
+
             entry = m_entryHelper;
             entry.SetupAsEntryInResources(id);
         }        
@@ -939,7 +1086,7 @@ public class AddressablesManager
         return sm_logger != null && sm_logger.CanLog();
     }
 
-    public void Log(string msg)
+    public static void Log(string msg)
     {
         if (CanLog())
         {
@@ -947,7 +1094,7 @@ public class AddressablesManager
         }
     }
 
-    public void LogWarning(string msg)
+    public static void LogWarning(string msg)
     {
         if (CanLog())
         {
@@ -955,7 +1102,7 @@ public class AddressablesManager
         }
     }
 
-    public void LogError(string msg)
+    public static void LogError(string msg)
     {
         if (CanLog())
         {
@@ -963,7 +1110,7 @@ public class AddressablesManager
         }
     }
 
-    private void LogErrorManagerNotInitialized()
+    private static void LogErrorManagerNotInitialized()
     {
         if (CanLog())
         {
@@ -971,7 +1118,7 @@ public class AddressablesManager
         }
     }
 
-    private void LogErrorIdNotFound(string id)
+    private static void LogErrorIdNotFound(string id)
     {
         if (CanLog())
         {
@@ -979,7 +1126,7 @@ public class AddressablesManager
         }
     }
 
-    private void Errors_ProcessAddressablesOpError(AddressablesError error)
+    private static void Errors_ProcessAddressablesOpError(AddressablesError error)
     {
         if (CanLog())
         {

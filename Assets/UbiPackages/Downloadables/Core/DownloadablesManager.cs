@@ -280,6 +280,10 @@ namespace Downloadables
                     {
                         groupIds.Add(pair.Key);
                     }
+
+                    // Internal groups are included too
+                    groupIds.Add(GROUPS_DEFAULT_ID);
+                    groupIds.Add(GROUPS_ALL_ID);
                 }
 
                 // Cleans obsolete stuff
@@ -596,7 +600,7 @@ namespace Downloadables
                 CatalogEntryStatus entryToSimulateDownload = null;
                 for (int i = 0; i < count; i++)
                 {
-                    if (m_downloader.IsDownloadAllowed(Groups_GetPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
+                    if (m_downloader.IsDownloadAllowed(Groups_GetIsPermissionRequested(m_groupsSortedByPriority[i].Id), Groups_GetIsPermissionGranted(m_groupsSortedByPriority[i].Id)))
                     {
                         if (FindEntryToDownloadInList(m_groupsSortedByPriority[i].EntryIds, ref entryToDownload, ref entryToSimulateDownload))
                         {
@@ -668,7 +672,7 @@ namespace Downloadables
                     }
                 }
             }
-        }
+        }        
 #endregion
 
         // Region responsible for handling downloadable groups
@@ -677,7 +681,12 @@ namespace Downloadables
         /// Key of the default group used to store all downloadables that don't belong to any explicit group
         /// </summary>
         private const string GROUPS_DEFAULT_ID = "internalDefault";
-        
+
+        /// <summary>
+        /// Key used for all downloadables, so if the user has granted permission for this group then all downloadables will always be downloaded
+        /// </summary>
+        private const string GROUPS_ALL_ID = "internalAll";
+
         private Dictionary<string, CatalogGroup> m_groups = new Dictionary<string, CatalogGroup>();
         private float m_groupsLastUpdateAt;
 
@@ -736,9 +745,12 @@ namespace Downloadables
 
             // Creates the default group, which will store all entries that don't belong to any other group
             List<string> entryIds = new List<string>();
+            List<string> allEntryIds = new List<string>();
             CatalogGroup defaultGroup = new CatalogGroup();
             foreach (KeyValuePair<string, CatalogEntryStatus> pair in m_catalog)
             {
+                allEntryIds.Add(pair.Value.Id);
+
                 if (!pair.Value.BelongsToAnyGroup())
                 {
                     pair.Value.AddGroup(defaultGroup);
@@ -750,6 +762,18 @@ namespace Downloadables
             m_groups.Add(GROUPS_DEFAULT_ID, defaultGroup);
             defaultGroup.Index = index;
             m_groupsSortedByPriority.Add(defaultGroup);
+
+
+            List<CatalogGroup> allOtherGroups = new List<CatalogGroup>();
+            foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+            {
+                allOtherGroups.Add(pair.Value);
+            }
+
+            // A group containing all entries is created. It's not added the groups sorted by priority list because it contains all asset bundles
+            CatalogGroup allGroup = new CatalogGroup();
+            allGroup.Setup(GROUPS_ALL_ID, allEntryIds, allOtherGroups);            
+            m_groups.Add(GROUPS_ALL_ID, allGroup);
 
             // We make sure that groups will be sorted by priority as they've just been created
             Groups_PrioritiesDirty = true;
@@ -791,31 +815,69 @@ namespace Downloadables
             return returnValue;
         }
 
-        public bool Groups_GetPermissionRequested(string groupId)
+        public bool Groups_GetIsPermissionRequested(string groupId)
         {
             bool returnValue = true;
-            CatalogGroup group = Groups_GetGroup(groupId);
+
+            CatalogGroup group;
+
+            // For other groups than "all" group we need to check if the permission for "all" group has already been requested. If so then we extend that permission to every single group
+            if (groupId != GROUPS_ALL_ID)
+            {
+                group = Groups_GetGroup(GROUPS_ALL_ID);
+                if (group != null && group.PermissionRequested)
+                {
+                    return true;
+                }
+            }
+             
+            // Checks the permission for the group requested
+            group = Groups_GetGroup(groupId);
             if (group != null)
             {
                 returnValue = group.PermissionRequested;
-            }
+            }            
 
 			return returnValue;
         }
 
         public void Groups_SetIsPermissionRequested(string groupId, bool value)
-        {
-            CatalogGroup group = Groups_GetGroup(groupId);
-            if (group != null)
+        {                        
+            if (groupId == GROUPS_ALL_ID)
             {
-                group.PermissionRequested = value;                
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    pair.Value.PermissionRequested = value;
+                }
+            }
+            else
+            {
+                CatalogGroup group = Groups_GetGroup(groupId);
+                if (group != null)
+                {
+                    group.PermissionRequested = value;
+                }
             }
 		}
 
         public bool Groups_GetIsPermissionGranted(string groupId)
         {
             bool returnValue = true;
-            CatalogGroup group = Groups_GetGroup(groupId);
+
+            CatalogGroup group;
+
+            // For other groups than "all" group we need to check if the permission for "all" group has already been granted. If so then we extend that permission to every single group
+            if (groupId != GROUPS_ALL_ID)
+            {
+                group = Groups_GetGroup(GROUPS_ALL_ID);
+                if (group != null && group.PermissionOverCarrierGranted)
+                {
+                    return true;
+                }
+            }
+
+            // Checks the permission for the group requested
+            group = Groups_GetGroup(groupId);
             if (group != null)
             {
                 returnValue = group.PermissionOverCarrierGranted;               
@@ -825,10 +887,20 @@ namespace Downloadables
 
         public void Groups_SetIsPermissionGranted(string groupId, bool value)
         {
-			CatalogGroup group = Groups_GetGroup(groupId);
-            if (group != null)
+            if (groupId == GROUPS_ALL_ID)
             {
-                group.PermissionOverCarrierGranted = value;               
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    pair.Value.PermissionOverCarrierGranted = value;
+                }
+            }
+            else
+            {
+                CatalogGroup group = Groups_GetGroup(groupId);
+                if (group != null)
+                {
+                    group.PermissionOverCarrierGranted = value;
+                }
             }
         }
 
@@ -885,6 +957,11 @@ namespace Downloadables
             return returnValue;
         }
 
+        public Handle Groups_CreateAllGroupsHandle()
+        {
+            return Groups_CreateHandle(GROUPS_ALL_ID);
+        }
+
         public void Groups_SetPriority(string groupId, int priority)
         {
             CatalogGroup group = Groups_GetGroup(groupId);
@@ -938,6 +1015,31 @@ namespace Downloadables
         public List<CatalogGroup> Groups_GetSortedByPriority()
         {
             return m_groupsSortedByPriority;
+        }
+
+        public HashSet<string> Groups_GetAllGroupIds()
+        {
+            HashSet<string> returnValue = new HashSet<string>();
+            if (m_groups != null)
+            {
+                foreach (KeyValuePair<string, CatalogGroup> pair in m_groups)
+                {
+                    returnValue.Add(pair.Key);
+                }
+            }
+
+            return returnValue;
+        }
+
+        public CatalogGroup Groups_GetGroupAll()
+        {
+            CatalogGroup returnValue = null;
+            if (m_groups != null)
+            {
+                m_groups.TryGetValue(GROUPS_ALL_ID, out returnValue);
+            }
+
+            return returnValue;
         }
 #endregion
 

@@ -8,6 +8,8 @@
 // INCLUDES																//
 //----------------------------------------------------------------------//
 using UnityEngine;
+using UnityEngine.Events;
+
 
 //----------------------------------------------------------------------//
 // CLASSES																//
@@ -22,12 +24,15 @@ public class MenuPetLoader : MonoBehaviour {
 	public enum Mode {
 		MANUAL				// Manual control via the Load() method and the exposed m_petSku parameter
 	}
-	
-	//------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES											//
-	//------------------------------------------------------------------//
-	// Exposed setup
-	[SerializeField] private Mode m_mode = Mode.MANUAL;
+
+    [System.Serializable]
+    public class MenuPetLoaderEvent : UnityEvent<MenuPetLoader> { }
+
+    //------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES											//
+    //------------------------------------------------------------------//
+    // Exposed setup
+    [SerializeField] private Mode m_mode = Mode.MANUAL;
 	public Mode mode {
 		get { return m_mode; }
 		set {
@@ -100,14 +105,18 @@ public class MenuPetLoader : MonoBehaviour {
 	}
 
 	private Camera m_uiCamera;
+    private AddressablesOp m_loadingRequest = null;
 
-	//------------------------------------------------------------------//
-	// GENERIC METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Initialiation.
-	/// </summary>
-	private void Awake() {
+    public MenuPetLoaderEvent OnLoadingComplete = new MenuPetLoaderEvent();
+
+
+    //------------------------------------------------------------------//
+    // GENERIC METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Initialiation.
+    /// </summary>
+    private void Awake() {
 		Canvas c = GetComponentInParent<Canvas>();
 		if (c)
 			m_uiCamera = c.worldCamera;
@@ -142,81 +151,109 @@ public class MenuPetLoader : MonoBehaviour {
 		// Unsubscribe from external events
 	}
 
-	//------------------------------------------------------------------//
-	// OTHER METHODS													//
-	//------------------------------------------------------------------//
-	/// <summary>
-	/// Configure the loader with a specific setup.
-	/// Doesn't update the current view, if any.
-	/// Use either Load() or Reload() for that.
-	/// </summary>
-	/// <param name="_mode">Pet loading mode.</param>
-	/// <param name="_initialAnim">Initial animation.</param>
-	/// <param name="_resetScale">Whether to respect pet's prefab original scale or reset it.</param>
-	public void Setup(Mode _mode, MenuPetPreview.Anim _initialAnim, bool _resetScale) {
+    private void OnDestroy() {
+        // Delete pending requests
+        if (m_loadingRequest != null) {
+            m_loadingRequest.Cancel();
+            m_loadingRequest = null;
+        }
+    }
+
+    private void Update() {
+        if (m_loadingRequest != null) {
+            if (m_loadingRequest.isDone) {
+                InstantiatePrefab(m_loadingRequest.GetAsset<GameObject>());
+
+                OnLoadingComplete.Invoke(this);
+
+                m_loadingRequest = null;
+            }
+        }
+    }
+
+
+    //------------------------------------------------------------------//
+    // OTHER METHODS													//
+    //------------------------------------------------------------------//
+    /// <summary>
+    /// Configure the loader with a specific setup.
+    /// Doesn't update the current view, if any.
+    /// Use either Load() or Reload() for that.
+    /// </summary>
+    /// <param name="_mode">Pet loading mode.</param>
+    /// <param name="_initialAnim">Initial animation.</param>
+    /// <param name="_resetScale">Whether to respect pet's prefab original scale or reset it.</param>
+    public void Setup(Mode _mode, MenuPetPreview.Anim _initialAnim, bool _resetScale) {
 		// Store new setup
 		m_mode = _mode;
 		m_anim = _initialAnim;
 		m_resetScale = _resetScale;
 	}
 
-	/// <summary>
-	/// Load the pet with the given sku.
-	/// </summary>
-	/// <param name="_sku">The sku of the pet to be loaded</param>
-	public void Load(string _sku) {
-		// Unload current pet if any
-		Unload();
+    /// <summary>
+    /// Load the pet with the given sku.
+    /// </summary>
+    /// <param name="_sku">The sku of the pet to be loaded</param>
+    public void Load(string _sku) {
 
-		// Load selected pet
-		DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
-		if(def != null) {
-			// Instantiate the prefab and add it as child of this object
-			GameObject petPrefab = Resources.Load<GameObject>(Pet.MENU_PREFAB_PATH + def.GetAsString("menuPrefab"));
-			if(petPrefab != null) {
-				GameObject newInstance = GameObject.Instantiate<GameObject>(petPrefab);
-				newInstance.transform.SetParent(this.transform);
-				newInstance.transform.localPosition = Vector3.zero;
-				newInstance.transform.localRotation = Quaternion.identity;
+        // If the pet is already loaded do nothing
+        if (m_petSku == _sku) { return; }
 
-				// Keep layers?
-				if(!m_keepLayers) {
-					newInstance.SetLayerRecursively(this.gameObject.layer);
-				}
+        // Unload current pet if any
+        Unload();
 
-				// Initialize preview and launch the default animation
-				m_petInstance = newInstance.GetComponent<MenuPetPreview>();
-				m_petInstance.sku = _sku;
-				m_petInstance.SetAnim(m_anim);
+        // Load selected pet
+        DefinitionNode def = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.PETS, _sku);
+        if (def != null) {
+            // Instantiate the prefab and add it as child of this object
+            m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(def.GetAsString("menuPrefab"));
 
-				// Some pets need look at at the ui camera instead of main camera (3D)
-				if (m_uiCamera != null){
-					LookAtMainCamera[] lookAt = newInstance.GetComponentsInChildren<LookAtMainCamera>();
-					for (int x = 0; x < lookAt.Length ; x++) {
-						lookAt[x].overrideCamera = m_uiCamera;
-					}
-				}
+            // Update pet sku
+            m_petSku = _sku;
+        }
+    }
 
-				// Show rarity glow if required
-				// [AOC] Only when playing, otherwise causes a null reference!
-				if(Application.isPlaying) {
-                    // Remove rarity glow
-					// petPreview.ToggleRarityGlow(m_showRarityGlow);
-				}
+    private void InstantiatePrefab(GameObject _prefabObj) {
+        if (_prefabObj != null) {
+			GameObject newInstance = Instantiate(_prefabObj);
+			newInstance.transform.SetParent(this.transform);
+			newInstance.transform.localPosition = Vector3.zero;
+			newInstance.transform.localRotation = Quaternion.identity;
 
-				// Reset scale if required
-				if(m_resetScale) {
-					newInstance.transform.localScale = Vector3.one;
-				}
-
-				// Make sure particles are properly scaled as well
-				pscaler.ReloadOriginalData();
-				pscaler.DoScale();
+			// Keep layers?
+			if(!m_keepLayers) {
+				newInstance.SetLayerRecursively(this.gameObject.layer);
 			}
-		}
 
-		// Update pet sku
-		m_petSku = _sku;
+			// Initialize preview and launch the default animation
+			m_petInstance = newInstance.GetComponent<MenuPetPreview>();
+			m_petInstance.sku = m_petSku;
+			m_petInstance.SetAnim(m_anim);
+
+			// Some pets need look at at the ui camera instead of main camera (3D)
+			if (m_uiCamera != null){
+				LookAtMainCamera[] lookAt = newInstance.GetComponentsInChildren<LookAtMainCamera>();
+				for (int x = 0; x < lookAt.Length ; x++) {
+					lookAt[x].overrideCamera = m_uiCamera;
+				}
+			}
+
+			// Show rarity glow if required
+			// [AOC] Only when playing, otherwise causes a null reference!
+			if(Application.isPlaying) {
+                // Remove rarity glow
+				// petPreview.ToggleRarityGlow(m_showRarityGlow);
+			}
+
+			// Reset scale if required
+			if(m_resetScale) {
+				newInstance.transform.localScale = Vector3.one;
+			}
+
+			// Make sure particles are properly scaled as well
+			pscaler.ReloadOriginalData();
+			pscaler.DoScale();
+		}
 	}
 
 	/// <summary>
@@ -235,7 +272,7 @@ public class MenuPetLoader : MonoBehaviour {
 	public void Unload() {
 		// Destroy all childs of the loader and clear references
 		foreach(Transform child in transform) {
-			GameObject.DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
+            DestroyImmediate(child.gameObject);	// Immediate so it can be called from the editor
 			m_petInstance = null;
 		}
 	}

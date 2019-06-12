@@ -73,33 +73,46 @@ public class AddressableGroupsTestController : MonoBehaviour
     {
         Logger logger = new ConsoleLogger("Addressables");
 
-        string addressablesPath = "Addressables";
-        string assetBundlesPath = addressablesPath;
-        string addressablesCatalogPath = Path.Combine(addressablesPath, "addressablesCatalog");
-
-        // Addressables catalog 
-        TextAsset targetFile = Resources.Load<TextAsset>(addressablesCatalogPath);
-        string catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Addressables catalog         
+        string catalogAsText = GetAddressablesFileText("addressablesCatalog", true);
         JSONNode catalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
-        // Downloadables catalog
-        string downloadablesPath = addressablesPath;
-        string downloadablesCatalogPath = Path.Combine(downloadablesPath, "downloadablesCatalog");
-        targetFile = Resources.Load<TextAsset>(downloadablesCatalogPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Downloadables catalog        
+        catalogAsText = GetAddressablesFileText("downloadablesCatalog", true);
         JSONNode downloadablesCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
 
-        // Downloadables config
-        string downloadablesConfigPath = Path.Combine(downloadablesPath, "downloadablesConfig");
-        targetFile = Resources.Load<TextAsset>(downloadablesConfigPath);
-        catalogAsText = (targetFile == null) ? null : targetFile.text;
+        // Downloadables config        
+        catalogAsText = GetAddressablesFileText("downloadablesConfig", false);
         JSONNode downloadablesConfigASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
         Downloadables.Config downloadablesConfig = new Downloadables.Config();
         downloadablesConfig.Load(downloadablesConfigASJSON, logger);
 
+        // AssetBundles catalog
+        catalogAsText = GetAddressablesFileText("assetBundlesCatalog", true);
+        JSONNode abCatalogASJSON = (string.IsNullOrEmpty(catalogAsText)) ? null : JSON.Parse(catalogAsText);
+
         Downloadables.Tracker tracker = new Downloadables.DummyTracker(downloadablesConfig, logger);
-        m_addressablesManager.Initialize(catalogASJSON, assetBundlesPath, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);        
+        m_addressablesManager.Initialize(catalogASJSON, abCatalogASJSON, downloadablesConfig, downloadablesCatalogASJSON, true, tracker, logger);        
     }
+
+    private string GetAddressablesFileText(string fileName, bool platformDependent)
+    {
+#if UNITY_EDITOR
+        string path = "Assets/Editor/Addressables/generated/";
+        if (platformDependent)
+        {
+            path += UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
+        }
+
+        path += fileName;
+        return File.ReadAllText(fileName);
+#else
+        string path = "Addressables/" + fileName;                        
+        TextAsset targetFile = Resources.Load<TextAsset>(path);
+        return (targetFile == null) ? null : targetFile.text;
+#endif
+    }
+
 
     public void Addressables_Reset()
     {

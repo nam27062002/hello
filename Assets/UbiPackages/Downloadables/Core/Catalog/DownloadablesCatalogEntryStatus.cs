@@ -733,7 +733,7 @@ namespace Downloadables
         
         public bool BelongsToAnyGroup()
         {
-            return Groups == null || Groups.Count > 0;
+            return Groups != null && Groups.Count > 0;
         }
 
         public bool GetPermissionRequested()
