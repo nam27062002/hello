@@ -447,18 +447,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// [AOC] As of version 1.12 (1st update post-WWL), don't give the pre-reg rewards anymore
 		return;
 
-		// Ignore if it has already been triggered
-		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
-
-		// Only in the right screen
-		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
-
-		// Minimum amount of runs must be completed
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
-
-		// Just launch the popup
-		PopupManager.EnqueuePopup(PopupPreRegRewards.PATH);
-		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
 	/// <summary>
