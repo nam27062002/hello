@@ -112,9 +112,10 @@ public abstract class Modifier : IModifierDefinition {
 	}
 
     protected virtual SimpleJSON.JSONClass __ToJson() {
-        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass {
-            { "type", m_type },
-            { "target", m_target }
+        SimpleJSON.JSONClass data = new SimpleJSON.JSONClass();
+        {
+            data.Add("type", m_type);
+            data.Add("target", m_target);
         };
 
         return data;
