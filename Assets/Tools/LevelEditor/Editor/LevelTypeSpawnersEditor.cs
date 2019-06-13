@@ -18,7 +18,7 @@ public class LevelTypeSpawnersEditor : Editor {
 		m_target = (LevelEditor.LevelTypeSpawners)target;
 	}
 
-
+/*
 	public override void OnInspectorGUI() {
 		// Update the serializedProperty - always do this in the beginning of OnInspectorGUI.
 		bool dirty = false;
@@ -67,4 +67,5 @@ public class LevelTypeSpawnersEditor : Editor {
 			
 			
 	}
+	*/
 }

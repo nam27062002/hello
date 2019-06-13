@@ -47,7 +47,7 @@ namespace LevelEditor {
 			// Title - encapsulate in a nice button to make it foldable
 			GUI.backgroundColor = Colors.gray;
 			bool folded = Prefs.GetBoolEditor("LevelEditor.SectionDragonSpawn.folded", false);
-			if(GUILayout.Button((folded ? "►" : "▼") + " Dragon Spawn Points", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true))) {
+			if(GUILayout.Button((folded ? "►" : "▼") + " Spawn Points", LevelEditorWindow.styles.sectionHeaderStyle, GUILayout.ExpandWidth(true))) {
 				folded = !folded;
 				Prefs.SetBoolEditor("LevelEditor.SectionDragonSpawn.folded", folded);
 			}
@@ -68,6 +68,7 @@ namespace LevelEditor {
 					string oldDragon = LevelEditor.settings.testDragon;
 					string newDragon = oldDragon;
 
+					List<string> availableSpawnPoints = new List<string>();
 
 					// Dragon selector
 					GUI.enabled = !playing;
@@ -117,46 +118,112 @@ namespace LevelEditor {
                         // Show/Create spawn point
                         GameObject spawnPointObj = null;
 
+						GUILayout.Space(20);
+						GUILayout.Label("Dragon Spawn Points:");							
+						GUILayout.Space(5);
+
                         // Focus default spawn point
                         GUI.enabled = levelLoaded;
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint("", false, false);
                         if (spawnPointObj == null && !playing) {
+							GUI.backgroundColor = Colors.orange;
                             if (GUILayout.Button("Create Default Spawn")) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint("", true));
                             }
-                        } else {
+                        } else if (spawnPointObj != null) {
+							GUI.backgroundColor = Colors.paleGreen;
                             if (GUILayout.Button("Show Default Spawn")) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint("", false));
                             }
+							availableSpawnPoints.Add(spawnPointObj.name);
                         }
 
                         GUI.enabled = levelLoaded;
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false, false);
                         if (spawnPointObj == null && !playing) {
+							GUI.backgroundColor = Colors.orange;
                             if (GUILayout.Button("Create Spawn for " + newDragon)) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(newDragon, true));
                             }
-                        } else {
+                        } else if (spawnPointObj != null) {
+							GUI.backgroundColor = Colors.paleGreen;
                             if (GUILayout.Button("Show Spawn for " + newDragon)) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(newDragon, false));
                             }
+							availableSpawnPoints.Add(spawnPointObj.name);
                         }
 
 						// Focus Level Editor spawn point
 						GUI.enabled = levelLoaded;
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, false, false);
                         if (spawnPointObj == null && !playing) {
+							GUI.backgroundColor = Colors.orange;
                             if (GUILayout.Button("Create Level Editor Spawn")) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, true));
                             }
-                        } else {
+                        } else if (spawnPointObj != null) {
+							GUI.backgroundColor = Colors.paleGreen;
                             if (GUILayout.Button("Show Level Editor Spawn")) {
                                 ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, false));
                             }
+							availableSpawnPoints.Add(spawnPointObj.name);
                         }
 
+						if (levelLoaded && spawnersLevelList != null && spawnersLevelList.Count > 0) {
+							GUILayout.Space(20);
+							GUILayout.Label("Level Spawn Points:");							
+							GUILayout.Space(5);
+							List<DefinitionNode> spawnPoints = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LEVEL_SPAWN_POINTS);
+							foreach (DefinitionNode spawnPoint in spawnPoints) {								
+								spawnersLevel = null;
+
+								foreach(LevelTypeSpawners level in spawnersLevelList) {
+									if (level.m_sceneTags.Contains(spawnPoint.Get("sceneTags"))) {
+										spawnersLevel = level;
+										break;
+									}									
+								}
+
+								if (spawnersLevel != null) {
+									EditorGUILayout.BeginHorizontal(); {										
+										// Label
+										GUILayout.Label(spawnPoint.Get("tidName"), GUILayout.Width(200));
+										spawnPointObj = spawnersLevel.GetDragonSpawnPoint(spawnPoint.Get("sku"), false, false);
+										if (spawnPointObj == null && !playing) {
+											GUI.backgroundColor = Colors.orange;
+											if (GUILayout.Button("Create " + spawnPoint.Get("sku") + " Spawn")) {
+												ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(spawnPoint.Get("sku"), true));
+											}
+										} else if (spawnPointObj != null) {
+											GUI.backgroundColor = Colors.paleGreen;
+											if (GUILayout.Button("Show " + spawnPoint.Get("sku") + " Spawn")) {
+												ConfigureSpawnObj(spawnersLevel.GetDragonSpawnPoint(spawnPoint.Get("sku"), false));
+											}
+											availableSpawnPoints.Add(spawnPointObj.name);
+										}
+									} EditorGUILayoutExt.EndHorizontalSafe();							
+								}								
+							}
+						}
 						GUI.enabled = true;
 					}
+
+					GUI.enabled = !playing;
+					GUILayout.Space(20);
+					EditorGUILayout.BeginHorizontal(); {						
+						GUILayout.Label("Selected Spawn Point:");
+						
+						string[] options = availableSpawnPoints.ToArray();
+						int oldIdx = ArrayUtility.IndexOf<string>(options, LevelEditor.settings.spawnPoint);
+						
+						GUI.backgroundColor = Colors.silver;
+						int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);
+						if(oldIdx != newIdx) {							
+							LevelEditor.settings.spawnPoint = options[newIdx];
+							EditorUtility.SetDirty(LevelEditor.settings);
+							AssetDatabase.SaveAssets();
+						}
+					} EditorGUILayoutExt.EndHorizontalSafe();
 				} EditorGUILayout.EndVertical();
 			}
 		}
@@ -178,4 +245,4 @@ namespace LevelEditor {
 		//--------------------------------------------------------------------//
 
 	}
-}
+}			

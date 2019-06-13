@@ -528,7 +528,8 @@ namespace LevelEditor {
 			// Unity makes it easy for us
 			bool isDirty = false;
 			for( int i = 0; i<activeLevels.Count && !isDirty; i++ )
-				isDirty = isDirty || activeLevels[i].gameObject.scene.isDirty;
+				if (activeLevels[i] != null)
+					isDirty = isDirty || activeLevels[i].gameObject.scene.isDirty;
 			return isDirty;
 		}
 

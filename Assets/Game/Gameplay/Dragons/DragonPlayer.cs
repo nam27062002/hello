@@ -693,9 +693,17 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		// Use level editor's spawn point or try to use specific's dragon spawn point?
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			string selectedSP = LevelEditor.LevelEditor.settings.spawnPoint;
+			if (!string.IsNullOrEmpty(selectedSP)) {
+				spawnPointObj = GameObject.Find(selectedSP);
+			}
+
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+				if (spawnPointObj == null) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+				}
+			}
 		} else {
 			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
 		}

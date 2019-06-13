@@ -41,7 +41,10 @@ namespace LevelEditor {
 				m_prefabName = prefab;
 			}
 		}
-		public List<SpawnData> m_spawnsData = new List<SpawnData>();
+
+		public string m_sceneTags = "";
+
+		//public List<SpawnData> m_spawnsData = new List<SpawnData>();
         private GameObject m_spawnerRoot;
         private int m_spawnersCount;
 
@@ -69,22 +72,10 @@ namespace LevelEditor {
 			}
 		}
 
-		public void IntroSpawn( string sku )
-		{
-			GameObject go = GetDragonSpawnPoint(sku, false);
-			// Spawn here eating entity
-			/*
-			for( int i = 0; i<m_spawnsData.Count; i++ ){
-				if ( m_spawnsData[i].m_dragonSku == sku ){
-					if ( !string.IsNullOrEmpty( m_spawnsData[i].m_prefabName ) ){
-						InstantiateSpawner( go, m_spawnsData[i].m_prefabName );
-					}
-				}
-			}
-			*/
+		public void IntroSpawn( string sku ) {
+			GameObject go = GetDragonSpawnPoint(sku, false);			
 			InstantiateSpawner( go, "IntroSpawners/SP_Intro" );            
 		}
-
 
 		void InstantiateSpawner( GameObject root, string spawner){
 			GameObject sp = (GameObject)Resources.Load( spawner );
@@ -130,7 +121,7 @@ namespace LevelEditor {
 		public GameObject GetDragonSpawnPoint(string _sku = "", bool _createItIfNotFound = false, bool _returnDefaultIfNotFound = true) {
 			// Generate game object name for this dragon
 			string name = DRAGON_SPAWN_POINT_NAME;
-			if(!string.IsNullOrEmpty(_sku)) name += "_" + _sku.ToString();
+			if(!string.IsNullOrEmpty(_sku)) name += "_" + _sku;
 
 			// Does the level have a spawn point for this dragon?
 			GameObject spawnPointObj = gameObject.FindObjectRecursive(name);
