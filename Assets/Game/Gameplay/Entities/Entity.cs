@@ -153,19 +153,16 @@ public class Entity : IEntity, IBroadcastListener {
 		m_pcChance = m_def.GetAsFloat("pcChance");
 
 		m_isBurnable = m_def.GetAsBool("isBurnable");
-		m_burnableFromTier = (DragonTier)m_def.GetAsInt("burnableFromTier");
+		m_burnableFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("burnableFromTier"));
 
 		m_isEdible = m_def.GetAsBool("isEdible");
-		m_edibleFromTier = (DragonTier)m_def.GetAsInt("edibleFromTier");
-
-		// m_canBeHolded = m_def.GetAsBool("canBeHolded", false);
-		// m_holdFromTier = (DragonTier)m_def.GetAsInt("holdFromTier");
+		m_edibleFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("edibleFromTier"));
 
 		m_canBeGrabbed = m_def.GetAsBool("canBeGrabed", false);
-		m_grabFromTier = (DragonTier)m_def.GetAsInt("grabFromTier");
+		m_grabFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("grabFromTier"));
 
 		m_canBeLatchedOn = m_def.GetAsBool("canBeLatchedOn", false);
-		m_latchFromTier = (DragonTier)m_def.GetAsInt("latchOnFromTier");
+		m_latchFromTier = DragonTierGlobals.GetFromInt(m_def.GetAsInt("latchOnFromTier"));
 
         m_maxHealth = m_def.GetAsFloat("maxHealth", 1);
         if (InstanceManager.player != null) {
@@ -177,6 +174,7 @@ public class Entity : IEntity, IBroadcastListener {
 
 		ApplyPowerUpMultipliers();
 	}
+	
 
 	override public void Spawn(ISpawner _spawner) {        
         base.Spawn(_spawner);
