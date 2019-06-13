@@ -583,6 +583,12 @@ public class AnimojiScreenController : MonoBehaviour {
 			case State.LOADING_PREVIEW:	{
 				// Load dragon head prefab
 				string dragonSku = InstanceManager.menuSceneController.selectedDragon;
+
+				ControlPanel.Log(Colors.paleYellow.Tag("INIT WITH DRAGON " + dragonSku));
+
+				// Make sure dragon is supported
+				Debug.Assert(IsDragonSupported(dragonSku), "DRAGON " + dragonSku + " DOESN'T SUPPORT ANIMOJIS!", this);		 
+
 				DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DRAGONS, dragonSku);
 				m_addressableId = dragonDef.GetAsString("animojiPrefab");        
 				AddressablesOp op = HDAddressablesManager.Instance.LoadAssetAsync(m_addressableId);
@@ -614,9 +620,11 @@ public class AnimojiScreenController : MonoBehaviour {
 				Debug.Assert(m_unityARFaceAnchorManager != null, "Couldn't find UnityARFaceAnchorManager", this);
 
 				// Initialize controller
-				m_animojiSceneController.InitWithDragon(InstanceManager.menuSceneController.selectedDragon, m_dragonPrefab);
+				m_animojiSceneController.InitWithDragon(m_dragonPrefab);
 				m_animojiSceneController.onFaceAdded.AddListener(OnFaceDetected);
 				m_animojiSceneController.onTongueLost.AddListener(OnTongueLost);	
+
+				m_dragonPrefab = null;
 
 				// Go to next state after a frame
 				ChangeStateOnNextFrame(State.PREVIEW);
