@@ -45,9 +45,7 @@ public class AssetBundlesManager
 
     public static string ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION = "assetBundlesCatalog";
     public static string ASSET_BUNDLES_CATALOG_FILENAME = ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION + ".json";    
-    public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";
-
-    public static bool LOCAL_IN_STREAMING_ASSETS = true;    
+    public static string ASSET_BUNDLES_PATH_RELATIVE = "AssetBundles";    
 
     private Downloadables.Manager m_downloadablesManager;  
     public Downloadables.Manager DownloadablesManager
@@ -63,13 +61,13 @@ public class AssetBundlesManager
     /// <summary>
     /// Initialize the system.
     /// </summary>
-    /// <param name="localAssetBundlesPath">Path to assetBundlesCatalog.json and where the local asset bundles are stored.</param>    
+    /// <param name="catalogJSON">JSON containing the asset bundles catalog</param>    
     /// <param name="downloadablesConfig">Downloadables configuration</param>        
     /// <param name="downloadablesCatalog">JSON containing the catalog of downloadables.</param>        
     /// <param name="useMockDrivers">When <c>true</c> mock drivers are used, which is useful when testing. Otherwise production drivers are used.</param>
     /// <param name="tracker">Downloadables tracker that is notified with downloadables related events.</param>
     /// <param name="logger">Logger</param>
-    public void Initialize(string localAssetBundlesPath, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
+    public void Initialize(JSONNode catalogJSON, Downloadables.Config downloadablesConfig, JSONNode downloadablesCatalog, bool useMockDrivers, Downloadables.Tracker tracker, Logger logger)
     {
         // Just in case this is not the first time Initialize is called        
         Reset();
@@ -108,7 +106,7 @@ public class AssetBundlesManager
 
         Logger downloadablesLogger = logger;
 
-        AssetBundlesCatalog catalog = LoadCatalog(localAssetBundlesPath);
+        AssetBundlesCatalog catalog = LoadCatalog(catalogJSON);
 
         // Deletes local asset bundles from downloadables catalog so they won't be downloaded if by error they haven't been removed from the catalog
         List<string> idsRemoved = Downloadables.Manager.RemoveEntryIds(downloadablesCatalog, catalog.GetLocalAssetBundlesList());        
@@ -117,7 +115,7 @@ public class AssetBundlesManager
             Logger.LogError("The following asset bundles are included in downloadables catalog even though they're defined as local: " + UbiListUtils.GetListAsString(idsRemoved));
         }
 
-        ProcessCatalog(localAssetBundlesPath, catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
+        ProcessCatalog(catalog, Downloadables.Manager.GetEntryIds(downloadablesCatalog));
 
         Dictionary<string, Downloadables.CatalogGroup> downloadablesGroups = new Dictionary<string, Downloadables.CatalogGroup>();
 
@@ -234,13 +232,10 @@ public class AssetBundlesManager
         return returnValue;
     }
 
-    private AssetBundlesCatalog LoadCatalog(string directory)
+    private AssetBundlesCatalog LoadCatalog(JSONNode json)
     {
         AssetBundlesCatalog returnValue = new AssetBundlesCatalog();
-
-        string path = Path.Combine(directory, ASSET_BUNDLES_CATALOG_FILENAME_NO_EXTENSION);
-        TextAsset targetFile = Resources.Load<TextAsset>(path);
-        JSONNode json = (targetFile != null) ? JSON.Parse(targetFile.text) : null;
+        
         if (json != null)
         {            
             returnValue.Load(json, sm_logger);
@@ -257,23 +252,15 @@ public class AssetBundlesManager
         return returnValue;
     }  
 
-    private void ProcessCatalog(string localPath, AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
+    private void ProcessCatalog(AssetBundlesCatalog catalog, ArrayList remoteEntryIds)
     {                
         if (catalog != null)
         {            
             m_assetBundleHandles = new Dictionary<string, AssetBundleHandle>();
 
-            string localDirectory;
-            if (LOCAL_IN_STREAMING_ASSETS)
-            {
-                // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
-                localDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);
-                localDirectory = Path.Combine(localDirectory, ASSET_BUNDLES_PATH_RELATIVE);
-            }
-            else
-            {
-                localDirectory = Path.Combine(localPath, ASSET_BUNDLES_PATH_RELATIVE);
-            }
+            // Full directory is used so we can use AssetBundle.LoadFromFileAsync() to load asset bundles from streaming assets and from downloadables folder in device storage
+            string localDirectory = Application.streamingAssetsPath;//Path.Combine(Application.streamingAssetsPath, directory);            
+            localDirectory = Path.Combine(localDirectory, ASSET_BUNDLES_PATH_RELATIVE);            
 
             List<string> assetBundleIds = catalog.GetAllAssetBundleIds();
 
@@ -301,9 +288,13 @@ public class AssetBundlesManager
                 {
                     handle.Setup(id, Downloadables.Manager.GetPathToDownload(id), dependencies, true);
                 }
-                else
+                else if (catalog.IsAssetBundleLocal(id))
                 {
                     handle.Setup(id, Path.Combine(localDirectory, id), dependencies, false);
+                }
+                else if (CanLog())
+                {
+                    Logger.LogError("Asset bundle <" + id + "> has been defined as remote in asset bundles catalog but it's not defined in the downloadables catalog.");
                 }
 
                 m_assetBundleHandles.Add(assetBundleIds[i], handle);
@@ -429,7 +420,7 @@ public class AssetBundlesManager
         return returnValue;
     }
 
-    private AssetBundlesOpRequest PreprocessRequest(bool buildRequest, ref AssetBundlesOp.OnDoneCallback onDone)
+    private AssetBundlesOpRequest PreprocessRequest(bool buildRequest, ref AssetBundlesOp.OnDoneCallback  onDone)
     {
         AssetBundlesOpRequest returnValue = null;
         if (buildRequest)
@@ -615,9 +606,34 @@ public class AssetBundlesManager
         return DownloadablesManager.Groups_CreateHandle(groupIds);
     }
 
+    public Downloadables.Handle CreateAllDownloadablesHandle()
+    {
+        return DownloadablesManager.Groups_CreateAllGroupsHandle();
+    }
+
     public void SetDownloadablesGroupPriority(string groupId, int priority)
     {
         DownloadablesManager.Groups_SetPriority(groupId, priority);
+    }
+
+    public bool GetDownloadableGroupPermissionRequested(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionRequested(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionRequested(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionRequested(groupId, value);
+    }
+
+    public bool GetDownloadableGroupPermissionGranted(string groupId)
+    {
+        return DownloadablesManager.Groups_GetIsPermissionGranted(groupId);
+    }
+
+    public void SetDownloadableGroupPermissionGranted(string groupId, bool value)
+    {
+        DownloadablesManager.Groups_SetIsPermissionGranted(groupId, value);
     }
 
     public AssetBundlesOpRequest DownloadAssetBundleAndDependencies(string id, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
@@ -810,6 +826,34 @@ public class AssetBundlesManager
         return returnValue;
     }    
 
+
+    /// <summary>
+    /// Loads synchronously an asset called <c>assetName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle has already been downloaded and loaded.
+    /// This method makes it easier to migrate from loading an asset from Resources to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle before calling this method.    
+    /// </summary>    
+    /// <param name="assetBundleId">Asset bundle id that contains the asset.</param>
+    /// <param name="assetName">Name of the asset to load.</param>
+    /// <returns>The asset required if everything went ok, otherwise <c>null</c> is returned.</returns>
+    public T LoadAsset<T>(string assetBundleId, string assetName) where T : Object
+    {
+        T returnValue = null;
+        AssetBundleHandle handle = GetAssetBundleHandle(assetBundleId);
+        if (handle != null)
+        {
+            if (handle.IsLoaded())
+            {
+                AssetBundle assetBundle = handle.AssetBundle;
+                if (assetBundle != null)
+                {
+                    returnValue = assetBundle.LoadAsset<T>(assetName);
+                }
+            }
+        }
+
+        return returnValue;                    
+    }
+
+
     /// <summary>
     /// Loads synchronously an asset called <c>assetName</c> from an asset bundle with <c>assetBundleId</c> as id. This method assumes that the asset bundle has already been downloaded and loaded.
     /// This method makes it easier to migrate from loading an asset from Resources to loading it from an asset bundle but client needs to have downloaded and loaded this asset bundle before calling this method.    
@@ -846,6 +890,9 @@ public class AssetBundlesManager
     public AssetBundlesOpRequest LoadAssetAsync(string assetBundleId, string assetName, AssetBundlesOp.OnDoneCallback onDone, bool buildRequest = false)
     {        
         AssetBundlesOpRequest returnValue = PreprocessRequest(buildRequest, ref onDone);
+
+        returnValue.AssetBundleId = assetBundleId;
+        returnValue.AssetName = assetName;
 
         if (!LoadAssetFromAssetBundlesFullOp.EarlyExit(assetBundleId, assetName, onDone))
         {
@@ -1142,6 +1189,11 @@ public class AssetBundlesManager
     public List<Downloadables.CatalogGroup> GetDownloadablesGroupsSortedByPriority()
     {
         return m_downloadablesManager.Groups_GetSortedByPriority();
+    }
+
+    public Downloadables.CatalogGroup Groups_GetGroupAll()
+    {
+        return m_downloadablesManager.Groups_GetGroupAll();
     }
 
     public void DeleteAllDownloadables()

@@ -105,7 +105,7 @@ public class HDAddressablesAreaLoader : UbiAsyncOperation
         List<string> currentDependencyIdsLoaded = new List<string>();
         HDAddressablesManager.Instance.FillWithLoadedAssetBundleIdList(currentDependencyIdsLoaded);
 
-        m_dependenciesOp.Setup(currentDependencyIdsLoaded, handle.DependencyIds);
+        m_dependenciesOp.Setup(currentDependencyIdsLoaded, handle.DependencyIds, handle.MandatoryDependencyIds);
         m_sceneToLoad = sceneToLoad;
 
         Step = EStep.DealingWithDependencies;

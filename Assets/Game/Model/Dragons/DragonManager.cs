@@ -311,8 +311,9 @@ public class DragonManager : UbiBCN.SingletonMonoBehaviour<DragonManager> {
 			playerObj = null;
 		}
 
-		// Load the prefab for the dragon with the given ID
-		GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + _data.gamePrefab);
+        // Load the prefab for the dragon with the given ID
+        // GameObject prefabObj = Resources.Load<GameObject>(IDragonData.GAME_PREFAB_PATH + _data.gamePrefab);
+        GameObject prefabObj = HDAddressablesManager.Instance.LoadAsset<GameObject>(_data.gamePrefab);
 		Debug.Assert(prefabObj != null, "The prefab defined to dragon " + _data.sku + " couldn't be found");
 
 		// Create a new instance - will automatically be added to the InstanceManager.player property

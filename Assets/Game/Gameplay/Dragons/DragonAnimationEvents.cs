@@ -54,7 +54,7 @@ public class DragonAnimationEvents : MonoBehaviour {
 
 	private bool m_eventsRegistered = false;
 
-	public AudioMixerSnapshot m_insideWaterSnapshot;
+	protected AudioMixerSnapshot m_insideWaterSnapshot;
 	public float m_waterDeepToSnapshot;
 	private bool m_checkWaterSnapshot = false;
 	private float m_startWaterMovementY;
@@ -82,6 +82,11 @@ public class DragonAnimationEvents : MonoBehaviour {
 	public string m_onPreMegaFire = "";
 
     protected bool m_mutedWindSounds = false;
+
+	void Awake()
+	{
+		m_insideWaterSnapshot = InstanceManager.masterMixer.FindSnapshot("Underwater");
+	}
 
 	protected virtual void Start() {
 		m_attackBehaviour = transform.parent.GetComponent<DragonAttackBehaviour>();

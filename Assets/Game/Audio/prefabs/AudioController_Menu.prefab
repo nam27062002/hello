@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000011377450084}
   - component: {fileID: 114000010819930914}
+  - component: {fileID: 114716034193975884}
   m_Layer: 0
   m_Name: AudioController_Menu
   m_TagString: Untagged
@@ -1316,7 +1317,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 24309366, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+    audioMixerGroup: {fileID: 0}
   - Name: MUSIC
     _parentCategoryName: 
     AudioObjectPrefab: {fileID: 0}
@@ -1361,7 +1362,7 @@ MonoBehaviour:
         RandomStartPosition: 0
         individualSettings: []
     _volume: 1
-    audioMixerGroup: {fileID: 24394002, guid: f9c941808b0b54fa79ff7aae4e1db556, type: 2}
+    audioMixerGroup: {fileID: 0}
   musicPlaylists:
   - name: Default
     playlistItems: []
@@ -1376,8 +1377,20 @@ MonoBehaviour:
   _audioDisabled: 0
   _volume: 1
   _currentInspectorSelection:
-    currentCategoryIndex: 1
+    currentCategoryIndex: 0
     currentItemIndex: 0
     currentSubitemIndex: 0
     currentPlaylistEntryIndex: 0
     currentPlaylistIndex: 0
+--- !u!114 &114716034193975884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010669197226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c77f84975844ddb9c992ef9d965e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_controller: {fileID: 114000010819930914}

@@ -164,47 +164,83 @@ public class PetScrollRect : OptimizedScrollRect<PetPill, PetPillData> {
 		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.RARE)] = 1;
 		rarityOrder[Metagame.Reward.RarityToSku(Metagame.Reward.Rarity.COMMON)] = 2;
 
-		// Put owned pets at the beginning of the list, then sort by category (following filter buttons order), finally by content order
-		foreach(List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {
+        // Put available pets (OTA asset bundle downloaded) first, then put owned pets at the beginning of the list, 
+        // then sort by category (following filter buttons order) and finally by content order, 
+
+        foreach (List<ScrollRectItemData<PetPillData>> items in m_filterData.Values) {
 			items.Sort((ScrollRectItemData<PetPillData> _data1, ScrollRectItemData<PetPillData> _data2) => {
 				DefinitionNode def1 = _data1.data.def;
 				DefinitionNode def2 = _data2.data.def;
 
-				bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(def1.sku);
-				bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(def2.sku);
-				if(unlocked1 && !unlocked2) {
-					return -1;
-				} else if(unlocked2 && !unlocked1) {
-					return 1;
-				} else {
-					// Both pets locked or unlocked:
-					// Sort by rarity (rarest ones first)
-					int rarityOrder1 = int.MaxValue;
-					int rarityOrder2 = int.MaxValue;
-					rarityOrder.TryGetValue(def1.Get("rarity"), out rarityOrder1);
-					rarityOrder.TryGetValue(def2.Get("rarity"), out rarityOrder2);
-					if(rarityOrder1 < rarityOrder2) {
-						return -1;
-					} else if(rarityOrder2 < rarityOrder1) {
-						return 1;
-					} else {
-						// Same rarity:
-						// Sort by category (following filter buttons order)
-						int catOrder1 = int.MaxValue;
-						int catOrder2 = int.MaxValue;
-						filterOrder.TryGetValue(def1.Get("category"), out catOrder1);
-						filterOrder.TryGetValue(def2.Get("category"), out catOrder2);
-						if(catOrder1 < catOrder2) {
-							return -1;
-						} else if(catOrder2 < catOrder1) {
-							return 1;
-						} else {
-							// Same category:
-							// Sort by order as defined in content
-							return def1.GetAsInt("order").CompareTo(def2.GetAsInt("order"));
-						}
-					}
-				}
+                // Sort by pet availability (OTA)
+                // downloaded pets first and not downloaded last
+                List<string> resource1IDs = HDAddressablesManager.Instance.GetResourceIDsForPet(def1.sku);
+                bool pet1Available = HDAddressablesManager.Instance.IsResourceListAvailable(resource1IDs);
+                List<string> resource2IDs = HDAddressablesManager.Instance.GetResourceIDsForPet(def2.sku);
+                bool pet2Available = HDAddressablesManager.Instance.IsResourceListAvailable(resource2IDs);
+
+                if (pet1Available && !pet2Available)
+                {
+                    return -1;
+                }
+                else if (!pet1Available && pet2Available)
+                {
+                    return 1;
+                }
+                else
+                {
+
+                    bool unlocked1 = UsersManager.currentUser.petCollection.IsPetUnlocked(def1.sku);
+                    bool unlocked2 = UsersManager.currentUser.petCollection.IsPetUnlocked(def2.sku);
+                    if (unlocked1 && !unlocked2)
+                    {
+                        return -1;
+                    }
+                    else if (unlocked2 && !unlocked1)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        // Both pets locked or unlocked:
+                        // Sort by rarity (rarest ones first)
+                        int rarityOrder1 = int.MaxValue;
+                        int rarityOrder2 = int.MaxValue;
+                        rarityOrder.TryGetValue(def1.Get("rarity"), out rarityOrder1);
+                        rarityOrder.TryGetValue(def2.Get("rarity"), out rarityOrder2);
+                        if (rarityOrder1 < rarityOrder2)
+                        {
+                            return -1;
+                        }
+                        else if (rarityOrder2 < rarityOrder1)
+                        {
+                            return 1;
+                        }
+                        else
+                        {
+                            // Same rarity:
+                            // Sort by category (following filter buttons order)
+                            int catOrder1 = int.MaxValue;
+                            int catOrder2 = int.MaxValue;
+                            filterOrder.TryGetValue(def1.Get("category"), out catOrder1);
+                            filterOrder.TryGetValue(def2.Get("category"), out catOrder2);
+                            if (catOrder1 < catOrder2)
+                            {
+                                return -1;
+                            }
+                            else if (catOrder2 < catOrder1)
+                            {
+                                return 1;
+                            }
+                            else
+                            {
+                                // Same category:
+                                // Sort by order as defined in content
+                                return def1.GetAsInt("order").CompareTo(def2.GetAsInt("order"));
+                            }
+                        }
+                    }
+                }
 			});
 		}
 	}

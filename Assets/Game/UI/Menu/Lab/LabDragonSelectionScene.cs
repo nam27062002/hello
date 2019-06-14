@@ -233,13 +233,11 @@ public class LabDragonSelectionScene : MenuScreenScene {
 		// Ignore if not in special dragon mode
 		if(SceneController.mode != SceneController.Mode.SPECIAL_DRAGONS) return;
 
-		// Ignore if acquired dragon is not special
+        // Refreshing the camera here was moveing it back to the lab scren, causing the next bugs:
 		// Issue HDK-3435: buying a classic dragon from an offer pack while in the lab
-		if(_data.type != IDragonData.Type.SPECIAL) return;
+        // Issue HDK-3845: Weird flow after buying a special dragon in the lab screen
+        // So don´t do it.
 
-		// Update camera
-		SelectCameraSnapPoint();
-		RefreshCamera();
 	}
 
 	/// <summary>

@@ -37,11 +37,18 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		public float contrast   = -0.6f;  
 	}
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed
-	[SerializeField] private Transform m_notificationAnchor = null;
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed
+    [SerializeField] private Image m_icon = null;
+    public Image icon { get { return m_icon; } }
+    [SerializeField] private Localizer m_infoText;
+    [SerializeField] private RectTransform m_lockIconAnim;
+    [SerializeField] private ShowHideAnimator m_equippedFrame;
+    [SerializeField] private DOTweenAnimation m_equippedFX;
+    [Space]
+    [SerializeField] private Transform m_notificationAnchor = null;
 	[Space]
 	[SerializeField] private Color m_equippedTextColor = Color.white;
 	[SerializeField] private Color m_getNowTextColor = Colors.gray;
@@ -79,37 +86,43 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		}
 	}
 
-	private Image m_icon;
-	public Image icon { get { return m_icon; } }
+    // Internal
+    private static bool m_useAsycLoading = true;
+    private AddressablesOp m_previewRequest = null;
+    private UINotification m_newNotification = null;
 
-	// Internal references
-	private RectTransform m_lockIconAnim;
-	private ShowHideAnimator m_equippedFrame;
-	private DOTweenAnimation m_equippedFX;
-	private Localizer m_infoText;
-	private UINotification m_newNotification = null;
+    //------------------------------------------------------------------------//
+    // GENERIC METHODS														  //
+    //------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// GENERIC METHODS														  //
-	//------------------------------------------------------------------------//
-	/// <summary>
-	/// Initialization.
-	/// </summary>
-	void Awake() {
-		m_icon = transform.FindComponentRecursive<Image>("DragonSkinIcon");
-		m_equippedFrame = transform.FindComponentRecursive<ShowHideAnimator>("EquippedFrame");
-		m_equippedFX = transform.FindComponentRecursive<DOTweenAnimation>("EquippedFX");
-		m_infoText = transform.FindComponentRecursive<Localizer>("InfoText");
-		m_lockIconAnim = transform.FindComponentRecursive<RectTransform>("PF_UILock");
-	}
+    public void Update()
+    {
+        // Update the icon sprite when the async load is completed
+        if (m_useAsycLoading)
+        {
+            if (m_previewRequest != null)
+            {
+                if (m_previewRequest.isDone)
+                {
+                    m_icon.sprite = m_previewRequest.GetAsset<Sprite>();
+                    m_icon.enabled = true;
+                    m_previewRequest = null;
+                }
+            }
+        }
+    }
 
-	/// <summary>
-	/// Initialize the pill with the given skin definition, state and preview image.
-	/// </summary>
-	/// <param name="_def">Skin definition to be used to initialize the pill.</param>
-	/// <param name="_state">State of the skin.</param>
-	/// <param name="_spr">Preview image of the skin.</param>
-	public void Load(DefinitionNode _def, Wardrobe.SkinState _state, Sprite _spr) {
+
+    //------------------------------------------------------------------------//
+    // METHODS														          //
+    //------------------------------------------------------------------------//
+
+    /// <summary>
+    /// Initialize the pill with the given skin definition, state and preview image.
+    /// </summary>
+    /// <param name="_def">Skin definition to be used to initialize the pill.</param>
+    /// <param name="_state">State of the skin.</param>
+    public void Load(DefinitionNode _def, Wardrobe.SkinState _state) {
 		// Store data
 		m_def = _def;
 		m_state = _state;
@@ -119,8 +132,20 @@ public class DisguisePill : MonoBehaviour, IPointerClickHandler {
 		m_equippedFrame.ForceHide(false);
 		m_equippedFX.gameObject.SetActive(false);
 
-		// Skin preview 
-		m_icon.sprite = _spr;
+        // Load icon sprite for this skin
+        if (m_icon != null)
+        {
+            if (m_useAsycLoading)
+            {
+                m_icon.sprite = null;
+                m_icon.enabled = false;
+                m_previewRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_def.Get("icon"));
+            }
+            else
+            {
+                m_icon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(m_def.Get("icon"));
+            }
+        }
 
 		// Set initial state
 		SetState(_state);

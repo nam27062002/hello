@@ -447,18 +447,6 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		// [AOC] As of version 1.12 (1st update post-WWL), don't give the pre-reg rewards anymore
 		return;
 
-		// Ignore if it has already been triggered
-		if(UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.PRE_REG_REWARDS)) return;
-
-		// Only in the right screen
-		if(m_currentScreen != MenuScreen.DRAGON_SELECTION) return;
-
-		// Minimum amount of runs must be completed
-		if(UsersManager.currentUser.gamesPlayed < GameSettings.ENABLE_PRE_REG_REWARDS_POPUP_AT_RUN) return;
-
-		// Just launch the popup
-		PopupManager.EnqueuePopup(PopupPreRegRewards.PATH);
-		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
 	/// <summary>
@@ -540,23 +528,40 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 		switch(m_currentScreen) {
 			case MenuScreen.DRAGON_SELECTION: {
 				MenuDragonScreenController screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<MenuDragonScreenController>();
-				if(screenController != null) {
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			} break;
 
-			case MenuScreen.LAB_DRAGON_SELECTION: {
-				LabDragonSelectionScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<LabDragonSelectionScreen>();
-				if(screenController != null) {
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
-				}
-			} break;
+                if (screenController != null &&
+                    screenController.assetsDownloadFlow != null) {
 
-			case MenuScreen.TOURNAMENT_DRAGON_SETUP: {
-				TournamentBuildScreen screenController = InstanceManager.menuSceneController.GetScreenData(m_currentScreen).ui.GetComponent<TournamentBuildScreen>();
-				if(screenController != null) {
-					downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded();
-				}
+                        // If the target progression point has been reached (usually Sparks), trigger download for ALL
+                        if (UsersManager.currentUser.GetHighestDragon().GetOrder() == AssetsDownloadFlowSettings.autoTriggerAfterDragon)
+                        {
+
+                            screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+                            downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_TRIGGER_DRAGON);
+
+					    }
+                        // The player bought a Medium or bigger tier dragon, trigger download for ALL
+                        else if (UsersManager.currentUser.GetHighestDragon().GetOrder() > AssetsDownloadFlowSettings.autoTriggerAfterDragon)
+                        {
+                            
+                            screenController.assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+                            downloadPopup = screenController.assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_NOT_DOWNLOADED_DRAGON);
+                        }
+
+
+                        // In case the download is completed, at this point we want to show a popup informing the player
+                        float downloadProgress = HDAddressablesManager.Instance.GetHandleForAllDownloadables().Progress;
+                        if (downloadProgress >= 1)
+                        {
+                            // Make sure the popup hasn't been launched previously
+                            if (!Prefs.GetBoolPlayer(AssetsDownloadFlowSettings.OTA_DOWNLOAD_COMPLETE_POPUP_SHOWN, false))
+                            {
+                                // Force to show the popup
+                                screenController.assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.NOT_SPECIFIED, true);
+
+                            }
+                        }
+                    }
 			} break;
 		}
 

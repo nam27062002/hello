@@ -39,6 +39,9 @@ public class BuildPreProcessor : IPreprocessBuild {
             }
         }
 
+        /*
+        // Not needed anymore since it's done by Addressables
+
         PlatformBuilderHelper.platformResourcesReady = false;
         Debug.Log ("Preprocessing build for: " + target.ToString () + " platform");
 		string dpath = PlatformBuilderHelper.getRelativePlatformResourcesPath();
@@ -80,6 +83,7 @@ public class BuildPreProcessor : IPreprocessBuild {
         {
             Debug.Log("No specific assets for  " + target.ToString() + " platform.");
         }
+        */
     }
 }
 
@@ -90,6 +94,9 @@ public class BuildPostProcessor : IPostprocessBuild {
 	public void OnPostprocessBuild(BuildTarget target, string path)
 	{
         EditorAssetBundlesManager.NeedsToGenerateAssetsLUT = false;
+
+        /*
+        // Not needed anymore since it's done by Addressables
 
         Debug.Log ("Postprocessing build for: " + target.ToString () + " platform");
         if (PlatformBuilderHelper.platformResourcesReady)
@@ -116,5 +123,6 @@ public class BuildPostProcessor : IPostprocessBuild {
                 Debug.Log("resources folder: " + resourcesPath + " don't exists.");
             }
         }
+        */
 	}
 }

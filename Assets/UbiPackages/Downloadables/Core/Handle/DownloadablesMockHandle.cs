@@ -31,6 +31,7 @@ namespace Downloadables
     /// </summary>
     public class MockHandle : Handle
     {
+
         public class Action
         {
             public float TimeAt { get; set; }

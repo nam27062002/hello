@@ -1068,6 +1068,7 @@ GameObject:
   - component: {fileID: 224744970781880318}
   - component: {fileID: 222698308353006348}
   - component: {fileID: 114167690920280946}
+  - component: {fileID: 114528489674997392}
   m_Layer: 0
   m_Name: Failed
   m_TagString: Untagged
@@ -1878,8 +1879,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2037,14 +2042,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 461da4b56ecdd254babd22b053cac816, type: 3}
+  m_Sprite: {fileID: 21300000, guid: fb00483b6a0dda84d84be862763b018f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2504,8 +2509,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2522,8 +2531,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2664,8 +2677,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2804,8 +2821,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2964,6 +2985,27 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0, b: 0, a: 0.553}
   m_RaycastTarget: 1
   m_gizmoOnlyWhenSelected: 1
+--- !u!114 &114528489674997392
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1859486376315288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889ebb13ef73942ce8eff2236d04e933, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bold: 0
+  m_boldSize: 0.5
+  m_outline: 1
+  m_outlineQuality: 0
+  m_outlineSize: 1.5
+  m_outlineColor: {r: 0.1254902, g: 0.15686275, b: 0.18823531, a: 1}
+  m_shadow: 1
+  m_shadowAngle: 270
+  m_shadowSize: 6
+  m_shadowColor: {r: 0, g: 0, b: 0, a: 0.547}
 --- !u!114 &114542103928406466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3617,8 +3659,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -3927,8 +3973,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -3945,8 +3995,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -4053,8 +4107,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 0
+  m_colorRamp: {fileID: 0}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -11523,7 +11581,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.004562378, y: 0}
+  m_AnchoredPosition: {x: -0.0012397766, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224759819468584036

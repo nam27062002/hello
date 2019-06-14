@@ -27,6 +27,8 @@ public class AddressablesCatalog
 
     private bool m_editorMode;
 
+    private Dictionary<string, bool> m_bannedABList;
+
     public AddressablesCatalog(bool editorMode=false) : this()
     {
         m_editorMode = editorMode;
@@ -60,7 +62,7 @@ public class AddressablesCatalog
         Reset();
         Join(catalogJSON, logger, true);        
     }
-
+    
     public bool Join(JSONNode catalogJSON, Logger logger, bool strictMode=false)
     {
         bool success = true;
@@ -74,10 +76,7 @@ public class AddressablesCatalog
                 LoadGroups(catalogJSON[CATALOG_ATT_GROUPS].AsArray, logger, strictMode);
                 LoadLocalABList(catalogJSON[CATALOG_ATT_LOCAL_AB_LIST].AsArray);
 
-                if (AddressablesManager.EffectiveMode == AddressablesManager.EMode.AllInLocalAssetBundles)
-                {
-                    SetAllAssetBundlesAsLocal();
-                }
+                SetAddressablesMode(AddressablesManager.EffectiveMode);
             }
 #endif
         }
@@ -317,30 +316,72 @@ public class AddressablesCatalog
         return m_localABList;
     }
 
-    private void SetAllAssetBundlesAsLocal()
-    {
-        string abName;
+    private void SetAddressablesMode(AddressablesManager.EMode mode)
+    {        
         foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in m_entriesNoVariants)
         {
-            abName = pair.Value.AssetBundleName;
-            if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
-            {
-                m_localABList.Add(abName);
-            }
+            SetAddressablesModeToEntry(mode, pair.Value);
         }
 
         foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> p in m_entriesWithVariants)
         {
             foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in p.Value)
             {
-                abName = pair.Value.AssetBundleName;
+                SetAddressablesModeToEntry(mode, pair.Value);
+            }
+        }
+
+        if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources || mode == AddressablesManager.EMode.AllInResources)
+        {
+            if (mode == AddressablesManager.EMode.LocalAssetBundlesInResources)
+            {
+                int count = m_localABList.Count;
+                foreach (KeyValuePair<string, AssetBundlesGroup> pair in m_groups)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (pair.Value.AssetBundleIds != null && pair.Value.AssetBundleIds.Contains(m_localABList[i]))
+                        {
+                            pair.Value.AssetBundleIds.Remove(m_localABList[i]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                m_groups.Clear();
+            }
+
+
+            m_localABList.Clear();
+        }
+    }
+
+    private void SetAddressablesModeToEntry(AddressablesManager.EMode mode, AddressablesCatalogEntry entry)
+    {
+        string abName = entry.AssetBundleName;
+
+        switch (mode)
+        {
+            case AddressablesManager.EMode.AllInResources:
+                entry.SetupAsEntryInResources(entry.Id);
+                break;
+
+            case AddressablesManager.EMode.AllInLocalAssetBundles:
                 if (!string.IsNullOrEmpty(abName) && !m_localABList.Contains(abName))
                 {
                     m_localABList.Add(abName);
                 }
-            }
+                break;
+
+            case AddressablesManager.EMode.LocalAssetBundlesInResources:
+                if (m_localABList.Contains(abName))
+                {
+                    entry.SetupAsEntryInResources(entry.Id);
+                }
+                break;
         }
-    }
+    }   
 
     public List<string> GetUsedABList()
     {
@@ -504,5 +545,69 @@ public class AddressablesCatalog
             }           
         }        
     }   
+
+    public void SetupPlatform(UnityEditor.BuildTarget target)
+    {
+        m_bannedABList = new Dictionary<string, bool>();
+
+        foreach (KeyValuePair<string, Dictionary<string, AddressablesCatalogEntry>> pair in m_entriesWithVariants)
+        {
+            SetupEntriesPlatform(pair.Value, target, m_bannedABList);
+        }            
+
+        SetupEntriesPlatform(m_entriesNoVariants, target, m_bannedABList);
+        
+        // Loops through all remaining entries to make sure that the asset bundles candidate to be delete can actually be deleted
+        string abName;
+        List<AddressablesCatalogEntry> entries = GetEntries();         
+        int count = entries.Count;
+        for (int i = 0; i < count; i++)
+        {
+            abName = entries[i].AssetBundleName;
+            if (!string.IsNullOrEmpty(abName) && m_bannedABList.ContainsKey(abName))
+            {
+                m_bannedABList.Remove(abName);
+            }
+        }
+
+        // Deletes the asset bundles that are still in this list because they are not used for target platform        
+        foreach (KeyValuePair<string, bool> pair in m_bannedABList)
+        {
+            if (m_localABList.Contains(pair.Key))
+            {
+                m_localABList.Remove(pair.Key);
+            }
+        }
+    }
+
+    private void SetupEntriesPlatform(Dictionary<string, AddressablesCatalogEntry> entries, UnityEditor.BuildTarget target, Dictionary<string, bool> assetBundlesToDelete)
+    {
+        List<string> entriesToDelete = new List<string>();
+        string abName;
+        foreach (KeyValuePair<string, AddressablesCatalogEntry> pair in entries)
+        {            
+            if (!pair.Value.IsAvailableForPlatform(target))
+            {
+                abName = pair.Value.AssetBundleName;
+                if (!string.IsNullOrEmpty(abName) && !assetBundlesToDelete.ContainsKey(abName))
+                {
+                    assetBundlesToDelete.Add(abName, true);
+                }
+            
+                entriesToDelete.Add(pair.Key);                
+            }
+        }
+
+        int count = entriesToDelete.Count;
+        for (int i = 0; i < count; i++)
+        {
+            entries.Remove(entriesToDelete[i]);
+        }
+    }
+
+    public bool IsAssetBundleBanned(string abName)
+    {
+        return m_bannedABList != null && m_bannedABList.ContainsKey(abName);
+    }
 #endif
 }

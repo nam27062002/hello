@@ -39,6 +39,16 @@ namespace Downloadables
             set
             {
                 m_permissionRequested = value;
+
+                if (GroupsLinked != null)
+                {
+                    int count = GroupsLinked.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        GroupsLinked[i].PermissionRequested = value;
+                    }
+                }
+
                 NeedsToSave = true;
             }
         }
@@ -54,6 +64,16 @@ namespace Downloadables
             set
             {
                 m_permissionOverCarrierGranted = value;
+
+                if (GroupsLinked != null)
+                {
+                    int count = GroupsLinked.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        GroupsLinked[i].PermissionOverCarrierGranted = value;
+                    }
+                }
+
                 NeedsToSave = true;
             }
         }
@@ -70,6 +90,11 @@ namespace Downloadables
         /// </summary>
         public int Index { get; set; }
 
+        /// <summary>
+        /// List of groups linked to this group. This is typically used to make this list of groups permissions share permissions with this group.
+        /// </summary>
+        private List<CatalogGroup> GroupsLinked { get; set; }
+
         public void Reset()
         {
             EntryIds = null;
@@ -78,6 +103,7 @@ namespace Downloadables
             Priority = MIN_PRIORITY;
             m_latestSaveAt = -1;
             Index = -1;
+            GroupsLinked = null;
         }
 
         public void ResetPermissions()
@@ -86,12 +112,13 @@ namespace Downloadables
             PermissionOverCarrierGranted = false;
         }
 
-        public void Setup(string id, List<string> entryIds)
+        public void Setup(string id, List<string> entryIds, List<CatalogGroup> groupsLinked = null)
         {
             Reset();
 
             Id = id;
             EntryIds = entryIds;
+            GroupsLinked = groupsLinked;
 
             Load();
         }
@@ -114,8 +141,8 @@ namespace Downloadables
         {
             if (data != null)
             {
-                m_permissionRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
-                m_permissionOverCarrierGranted = GetAttAsBool(data, ATT_PERMISSION_GRANTED); 
+                PermissionRequested = GetAttAsBool (data, ATT_PERMISSION_REQUESTED);
+                PermissionOverCarrierGranted = GetAttAsBool(data, ATT_PERMISSION_GRANTED); 
             }
         }
 

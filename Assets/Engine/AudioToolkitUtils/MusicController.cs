@@ -12,6 +12,8 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     {        
         InstanceManager.musicController = this;
 
+        m_defaultAudioSnapshot = InstanceManager.masterMixer.FindSnapshot("Default");
+
         Messenger.AddListener<string>(MessengerEvents.SCENE_PREUNLOAD, OnScenePreunload);
         Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
         Broadcaster.AddListener(BroadcastEventType.FURY_RUSH_TOGGLED, this);
@@ -317,6 +319,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 
 	private const string AMBIENCE_CATEGORY_MUSIC = "MUSIC";
     private const string AMBIENCE_CATEGORY_SFX = "SFX";
+    private const string AMBIENCE_CATEGORY_SFX_2D = "SFX 2D";
 
     struct MusicPlaying
     {
@@ -395,7 +398,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 					}
 				}
             }
-            else if (categoryName == AMBIENCE_CATEGORY_SFX)
+            else if (categoryName == AMBIENCE_CATEGORY_SFX || categoryName == AMBIENCE_CATEGORY_SFX_2D )
             {
                 AmbienceSfx_Play(key, from);
             }
@@ -453,7 +456,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
 					Ambience_ToPlay.Reset();
 				}
             }
-            else if (categoryName == AMBIENCE_CATEGORY_SFX)
+            else if (categoryName == AMBIENCE_CATEGORY_SFX || categoryName == AMBIENCE_CATEGORY_SFX_2D )
             {
                 AmbienceSfx_Stop(key, from);
             }
@@ -513,7 +516,7 @@ public class MusicController : MonoBehaviour, IBroadcastListener
     #endregion
 
     #region snapshots
-    public AudioMixerSnapshot m_defaultAudioSnapshot;
+    protected AudioMixerSnapshot m_defaultAudioSnapshot;
     private List<AudioMixerSnapshot> m_currentSnapshots = new List<AudioMixerSnapshot>();
     private AudioMixerSnapshot m_usingSnapshot = null;
     private const float m_transitionDuration = 0.1f;

@@ -16,22 +16,17 @@ public class EditorAssetBundlesManager
         string directory = GetAssetBundlesDirectory();
         EditorFileUtils.DeleteFileOrDirectory(directory);
 
-        directory = GetPlatformDirectory(DOWNLOADABLES_FOLDER);
+        directory = EditorFileUtils.GetPlatformDirectory(DOWNLOADABLES_FOLDER);
         EditorFileUtils.DeleteFileOrDirectory(directory);
 
-        directory = GetPlatformDirectory(ASSET_BUNDLES_LOCAL_FOLDER);
+        directory = EditorFileUtils.GetPlatformDirectory(ASSET_BUNDLES_LOCAL_FOLDER);
         EditorFileUtils.DeleteFileOrDirectory(directory);        
     }
 
     public static string GetAssetBundlesDirectory()
     {
-        return GetPlatformDirectory(ASSET_BUNDLES_PATH);
-    }
-
-    public static string GetPlatformDirectory(string directory)
-    {
-        return directory + "/" + EditorUserBuildSettings.activeBuildTarget.ToString();
-    }
+        return EditorFileUtils.GetPlatformDirectory(ASSET_BUNDLES_PATH);
+    }    
 
     private static bool sm_needsToGenerateAssetsLUT = false;
     public static bool NeedsToGenerateAssetsLUT
@@ -40,13 +35,31 @@ public class EditorAssetBundlesManager
         set { sm_needsToGenerateAssetsLUT = value; }
     }
 
-    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames=null)
+    public static void BuildAssetBundles(BuildTarget platform, List<string> abNames = null)
+    {        
+        // LZ4 algorithm is used to reduce memory footprint
+        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+
+        // Uncompressed mode is used to reduce loading times
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.UncompressedAssetBundle;
+        /*switch (AddressablesManager.EffectiveMode)
+        {
+            case AddressablesManager.EMode.AllInLocalAssetBundles:
+                // LZMA algorithm, it gives the smallest possible size
+                compression = BuildAssetBundleOptions.None;
+                break;
+        }*/
+
+        BuildAssetBundles(platform, compression, abNames);
+    }
+
+    public static void BuildAssetBundles(BuildTarget platform, BuildAssetBundleOptions compression, List<string> abNames=null)
     {
         Debug.Log("Building asset bundles...");
         string assetBundleDirectory = EditorFileUtils.PathCombine(ASSET_BUNDLES_PATH, platform.ToString());
 
         // LZ4 algorithm is used to reduce memory footprint
-        BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
+        //BuildAssetBundleOptions compression = BuildAssetBundleOptions.ChunkBasedCompression;
 
         // LZMA algorithm, it gives the smallest possible size
         //BuildAssetBundleOptions compression = BuildAssetBundleOptions.None;
@@ -223,7 +236,7 @@ public class EditorAssetBundlesManager
         catalog.UrlBase = AssetBundles.LaunchAssetBundleServer.GetServerURL() + EditorUserBuildSettings.activeBuildTarget.ToString() + "/";
         JSONClass json = catalog.ToJSON();
 
-        string downloadablesCatalogFileName = Path.Combine(playerFolder, DOWNLOADABLES_CATALOG_NAME);
+        string downloadablesCatalogFileName = GetGeneratedDownloadablesCatalogPath();
         EditorFileUtils.WriteToFile(downloadablesCatalogFileName, json.ToString());
 
         // AssetsLUT is generated so remote asset bundles can work
@@ -231,6 +244,16 @@ public class EditorAssetBundlesManager
         {
             GenerateAssetsLUTFromDownloadablesCatalog();
         }        
+    }
+
+    private static string GetGeneratedDownloadablesCatalogFolder()
+    {
+        return EditorFileUtils.GetPlatformDirectory(EditorAddressablesManager.ADDRESSABLES_EDITOR_GENERATED_PATH);
+    }
+
+    private static string GetGeneratedDownloadablesCatalogPath()
+    {
+        return Path.Combine(GetGeneratedDownloadablesCatalogFolder(), DOWNLOADABLES_CATALOG_NAME);
     }
 
     private static string ASSETS_LUT_PATH = "AssetsLUT/";
@@ -281,8 +304,7 @@ public class EditorAssetBundlesManager
             }
         }
 
-        string assetBundlesPlatformFolder = GetPlatformDirectory(ASSET_BUNDLES_PATH);
-        string fileName = Path.Combine(assetBundlesPlatformFolder, DOWNLOADABLES_CATALOG_NAME);
+        string fileName = GetGeneratedDownloadablesCatalogPath();
         if (File.Exists(fileName))
         {
             JSONNode json = JSON.Parse(File.ReadAllText(fileName));
