@@ -57,6 +57,7 @@ public class PopupController : MonoBehaviour {
 	public class PopupEvent : UnityEvent<PopupController> { }
 	public PopupEvent OnOpen = new PopupEvent();
 	public PopupEvent OnClose = new PopupEvent();
+	public PopupEvent OnDestroyed = new PopupEvent();
 
     protected PopupManagementInfo m_popupManagementInfo = new PopupManagementInfo();
 
@@ -88,13 +89,17 @@ public class PopupController : MonoBehaviour {
             // Dispatch message - it could be problematic using "this" at this point
             Broadcaster.Broadcast(BroadcastEventType.POPUP_DESTROYED, m_popupManagementInfo);
 
-            // Clear all events
-            OnOpenPreAnimation.RemoveAllListeners();
+			// Notify listeners
+			OnDestroyed.Invoke(this);
+
+			// Clear all events
+			OnOpenPreAnimation.RemoveAllListeners();
             OnOpenPostAnimation.RemoveAllListeners();
             OnClosePreAnimation.RemoveAllListeners();
             OnClosePostAnimation.RemoveAllListeners();
 			OnOpen.RemoveAllListeners();
 			OnClose.RemoveAllListeners();
+			OnDestroyed.RemoveAllListeners();
         }
 	}
 

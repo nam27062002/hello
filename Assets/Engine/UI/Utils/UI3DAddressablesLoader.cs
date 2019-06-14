@@ -22,6 +22,7 @@ public class UI3DAddressablesLoader : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
+    [System.Serializable]
 	public class UI3DAddressablesLoaderEvent : UnityEvent<UI3DAddressablesLoader> {}
 
 	//------------------------------------------------------------------------//

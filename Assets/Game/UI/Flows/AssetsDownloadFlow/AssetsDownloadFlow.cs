@@ -18,23 +18,55 @@ using TMPro;
 /// Simple UI widget to show the progress of an addressable download.
 /// </summary>
 public class AssetsDownloadFlow : MonoBehaviour {
-	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
-	//------------------------------------------------------------------------//
 
-	//------------------------------------------------------------------------//
-	// MEMBERS AND PROPERTIES												  //
-	//------------------------------------------------------------------------//
-	// Exposed references
+    //----------------------------------------------------------------------------//
+    // ENUM 																	  //
+    //----------------------------------------------------------------------------//
+    public enum Context
+    {
+
+        NOT_SPECIFIED,
+        PLAYER_BUYS_TRIGGER_DRAGON,
+        PLAYER_BUYS_NOT_DOWNLOADED_DRAGON,
+        PLAYER_CLICKS_ON_PET,
+        PLAYER_CLICKS_ON_TOURNAMENT,
+        LOADING_SCREEN,
+        PLAYER_CLICKS_ON_SKINS,
+        PLAYER_CLICKS_ANIMOJIS,
+        PLAYER_CLICKS_AR,
+        PLAYER_BUYS_SPECIAL_DRAGON,
+        PLAYER_CLICKS_ON_UPGRADE_SPECIAL
+
+    }
+
+    //------------------------------------------------------------------------//
+    // MEMBERS AND PROPERTIES												  //
+    //------------------------------------------------------------------------//
+    // Exposed references
+    [Header("References")]
 	[SerializeField] private ShowHideAnimator m_root = null;
 	[Space]
 	[SerializeField] private AssetsDownloadFlowProgressBar m_progressBar = null;
-	[SerializeField] private Localizer m_statusText = null;
+	[Space]
+	[SerializeField] private GameObject m_downloadingGroup = null;
+	[Space]
+    [SerializeField] private GameObject m_downloadCompletedGroup = null;
+	[Space]
+    [SerializeField] private GameObject m_errorGroup = null;
 	[SerializeField] private Localizer m_errorText = null;
+
+	[Space]
+	[Header("Setup")]
+	[SerializeField] private bool m_hideOnPopup = false;
+	[SerializeField] private float m_popupCurtainAlpha = 0.75f;
+	[SerializeField] private bool m_popupShowTeasingInfo = false;
 
 	// Internal logic
 	private bool m_enabled = true;
 	private Downloadables.Handle m_handle = null;
+	public Downloadables.Handle handle {
+		get { return m_handle; }
+	}
 	private PopupController m_queuedPopup = null;   // We'll only allow one popup per flow
 	private bool m_restartAnim = false;
 
@@ -65,9 +97,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		CancelInvoke("PeriodicUpdate");
 
 		// Clear linked popup (if any)
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
+		ClearPopup();
 	}
 
 	//------------------------------------------------------------------------//
@@ -109,21 +139,23 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// Checks whether a popup needs to be opened with the current handle.
 	/// </summary>
 	/// <returns>The opened popup if any was needed.</returns>
-	public PopupAssetsDownloadFlow OpenPopupIfNeeded() {
+	public PopupAssetsDownloadFlow OpenPopupIfNeeded(Context _context = Context.NOT_SPECIFIED) {
 		// Not if not enabled
 		if(!m_enabled) return null;
 
 		// Open popup based on handle's state
-		return OpenPopupByState(true);
+		return OpenPopupByState(PopupAssetsDownloadFlow.PopupType.MANDATORY, _context);
 	}
 
-	/// <summary>
-	/// Checks whether a popup needs to be opened with the current handle.
-	/// If so, puts it in the queue and replaces any popup previously queued by this component.
-	/// </summary>
-	/// <param name="_onlyMandatoryPopups">Only open the popup if it is mandatory. i.e. "In Progress" popup won't be triggered if this parameter is set to <c>true</c>.</param>
-	/// <returns>The opened popup if any was needed.</returns>
-	public PopupAssetsDownloadFlow OpenPopupByState(bool _onlyMandatoryPopups) {
+    /// <summary>
+    /// Checks whether a popup needs to be opened with the current handle.
+    /// If so, puts it in the queue and replaces any popup previously queued by this component.
+    /// </summary>
+    /// <param name="_typeFilterMask">Popup type filter. Multiple types can be filtered using the | operator: <c>TypeMask.MANDATORY | TypeMask.ERROR</c>.</param>
+    /// <param name="_context">The situation that triggered the download popup. It will show an adapted message in each case.</param>
+    /// <param name="_forcePopup">If true, shows the popup even if the content is already donwloaded</param>
+    /// <returns>The opened popup if any was needed.</returns>
+    public PopupAssetsDownloadFlow OpenPopupByState(PopupAssetsDownloadFlow.PopupType _typeFilterMask, Context _context = Context.NOT_SPECIFIED, bool _forcePopup = false) {
 		// [AOC] TODO!! Ideally, if the popup we're gonna open is the same we already have opened (and for the same handle), do nothing
 		//				For now we'll just replace the old popup by a new clone.
 
@@ -131,15 +163,19 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		if(!m_enabled) return null;
 
 		// Whatever the result, if we already queued a popup, remove it now from the queue
-		if(m_queuedPopup != null) {
-			PopupManager.RemoveFromQueue(m_queuedPopup, true);
-		}
+		ClearPopup();
 
 		// Do we need to open a popup?
-		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _onlyMandatoryPopups);
+		PopupAssetsDownloadFlow downloadPopup = PopupAssetsDownloadFlow.OpenPopupByState(m_handle, _typeFilterMask, _context, _forcePopup);
 		if(downloadPopup != null) {
 			// Yes! Store its controller
 			m_queuedPopup = downloadPopup.GetComponent<PopupController>();
+			m_queuedPopup.OnClose.AddListener(OnPopupClosed);
+			m_queuedPopup.OnDestroyed.AddListener(OnPopupClosed);   // In case the popup is destroyed while queued
+
+			// Setup popup
+			downloadPopup.curtainAlpha = m_popupCurtainAlpha;
+			downloadPopup.showTeasingInfo = m_popupShowTeasingInfo;
 		}
 
 		// Return newly opened popup
@@ -167,6 +203,7 @@ public class AssetsDownloadFlow : MonoBehaviour {
 
 		// Refresh info (if visible)
 		if(show) RefreshData();
+
 	}
 
 	/// <summary>
@@ -182,6 +219,12 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		// If manually disabled, there's nothing else to discuss
 		if(!m_enabled) {
 			//Debug.Log(Color.magenta.Tag("m_enabled false!"));
+			show = false;
+		}
+
+		// Depending on the setup, don't show if a popup is open
+		else if(m_hideOnPopup && m_queuedPopup != null && m_queuedPopup.isOpen) {
+			//Debug.Log(Color.magenta.Tag("Popup open"));
 			show = false;
 		}
 
@@ -224,23 +267,33 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// Update the visuals with latest data.
 	/// </summary>
 	private void RefreshData() {
+
 		// Progress Bar
 		if(m_progressBar != null) {
 			m_progressBar.Refresh(m_handle);
+            
+            if (m_downloadCompletedGroup != null)
+            {
+                // Hide the download complete icon
+                m_downloadCompletedGroup.SetActive(m_handle.Progress >= 1f);
+            }
 		}
 
-		// Status text
+		// Downloading group
 		bool hasError = m_handle.GetError() != Downloadables.Handle.EError.NONE;
-		if(m_statusText != null) {
+		if(m_downloadingGroup != null) {
 			// Just show/hide, no custom text for now
-			m_statusText.gameObject.SetActive(!hasError);
+			m_downloadingGroup.SetActive(!hasError);
+		}
+
+		// Error group
+		if(m_errorGroup != null) {
+			// Show/hide
+			m_errorGroup.SetActive(hasError);
 		}
 
 		// Error text
 		if(m_errorText != null) {
-			// Show/hide
-			m_errorText.gameObject.SetActive(hasError);
-
 			// Set text based on error type
 			if(hasError) {
 				string errorTid = "TID_OTA_ERROR_GENERIC_TITLE";
@@ -266,6 +319,16 @@ public class AssetsDownloadFlow : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// Close opened popup and nullify it.
+	/// </summary>
+	private void ClearPopup() {
+		if(m_queuedPopup != null) {
+			PopupManager.RemoveFromQueue(m_queuedPopup, true);
+			m_queuedPopup = null;
+		}
+	}
+
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
 	//------------------------------------------------------------------------//
@@ -274,6 +337,21 @@ public class AssetsDownloadFlow : MonoBehaviour {
 	/// </summary>
 	public void OnInfoButton() {
 		// Just open different popups based on current state
-		OpenPopupByState(false);
+		OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY);
+	}
+
+	/// <summary>
+	/// The queued popup has been closed.
+	/// </summary>
+	/// <param name="_popup">The popup that triggered the event.</param>
+	private void OnPopupClosed(PopupController _popup) {
+		// Is it the tracked popup?
+		if(_popup == m_queuedPopup) {
+			// Stop tracking
+			m_queuedPopup = null;
+		}
+
+		// Refresh visibility
+		RefreshVisibility();
 	}
 }

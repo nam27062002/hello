@@ -22,19 +22,27 @@ using System.Text;
 /// </summary>
 public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 	//------------------------------------------------------------------------//
-	// CONSTANTS															  //
+	// ENUM															          //
 	//------------------------------------------------------------------------//
+
+    public enum State
+    {
+        NOT_INITIALIZED, IN_PROGRESS, COMPLETED, ERROR
+    }
 
 	//------------------------------------------------------------------------//
 	// MEMBERS AND PROPERTIES												  //
 	//------------------------------------------------------------------------//
 	// Exposed members
 	[SerializeField] private Slider m_progressBar = null;
-	[SerializeField] private TextMeshProUGUI m_progressText = null;
-	[SerializeField] private UIGradient m_progressBarGradient = null;
+    [SerializeField] protected GameObject m_progressBarFill;
 
-	// Internal
-	private StringBuilder m_sb = new StringBuilder();
+    [SerializeField] private TextMeshProUGUI m_progressText = null;
+    [SerializeField] public State m_state;
+
+
+    // Internal
+    private StringBuilder m_sb = new StringBuilder();
 	private string m_localizedSeconds = "";
 
 	//------------------------------------------------------------------------//
@@ -68,50 +76,105 @@ public class AssetsDownloadFlowProgressBar : MonoBehaviour, IBroadcastListener {
 			m_progressBar.normalizedValue = _handle.Progress;
 		}
 
-		// Progress Text
-		if(m_progressText != null) {
-			m_sb.Length = 0;
+        // Progress Text
+        if (m_progressText != null)
+        {
+            m_sb.Length = 0;
 
-			// Download progress
-			// 300 KB/800 MB
-			m_sb.Append(LocalizationManager.SharedInstance.Localize(
-				"TID_FRACTION",
-				StringUtils.FormatFileSize(_handle.GetDownloadedBytes(), 2),
-				StringUtils.FormatFileSize(_handle.GetTotalBytes(), 0)  // No decimals looks better for total size
-			));
+            // Download progress
+            // 300 KB/800 MB
+            m_sb.Append(LocalizationManager.SharedInstance.Localize(
+                "TID_FRACTION",
+                StringUtils.FormatFileSize(_handle.GetDownloadedBytes(), 2),
+                StringUtils.FormatFileSize(_handle.GetTotalBytes(), 0)  // No decimals looks better for total size
+            ));
 
-			// Speed - only if no error
-			if(_handle.GetError() == Downloadables.Handle.EError.NONE) {
-				// (256 KB/s)
-				m_sb.Append(LocalizationManager.SharedInstance.ReplaceParameters(" (%U0/%U1)",
-					StringUtils.FormatFileSize(_handle.GetSpeed(), 2),
-					m_localizedSeconds
-				));
-			}
+            // Speed - only if no error
+            if (_handle.GetError() == Downloadables.Handle.EError.NONE)
+            {
+                // (256 KB/s)
+                m_sb.Append(LocalizationManager.SharedInstance.ReplaceParameters(" (%U0/%U1)",
+                    StringUtils.FormatFileSize(_handle.GetSpeed(), 2),
+                    m_localizedSeconds
+                ));
 
-			m_progressText.text =  m_sb.ToString();
+            }
+
+            m_progressText.text = m_sb.ToString();
+        }
+
+
+        // Update colors and progress bar elements
+        if (_handle.GetError() != Downloadables.Handle.EError.NONE)
+        {
+            RefreshProgressBarElements(State.ERROR);
+        } else
+        {
+            if (_handle.Progress == 1)
+            {
+                RefreshProgressBarElements(State.COMPLETED);
+            } 
+            else
+            {
+                RefreshProgressBarElements(State.IN_PROGRESS);
+            }
+            
 		}
 
-		// Gradient color
-		if(m_progressBarGradient != null) {
-			m_progressBarGradient.SetValues(
-				AssetsDownloadFlowSettings.GetProgressBarColor(_handle)
-			);
-		}
-	}
+
+    }
+
+
+    /// <summary>
+    /// Show the proper progress bar elements and color them
+    /// according to the new state of the download.
+    /// </summary>
+    /// <param name="_handle">Handle to be used.</param>
+    public virtual void RefreshProgressBarElements (State _newState)
+    {
+        
+        // If state has changed
+        if (m_state != _newState || m_state == State.NOT_INITIALIZED)
+        {
+
+            // Set the proper colors according to the new state of the progress bar
+            switch (_newState)
+            {
+                case State.IN_PROGRESS:
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarDownloadingColor);
+                        break;
+                    }
+                case State.COMPLETED:
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarFinishedColor);
+                        break;
+                    }
+                default: // Error case
+                    {
+                        m_progressBarFill.GetComponent<UIGradient>().SetValues(AssetsDownloadFlowSettings.progressBarErrorColor);
+                        break;
+                    }
+            }
+
+        }
+
+        m_state = _newState;
+
+    }
 
 	//------------------------------------------------------------------------//
 	// DEBUG_METHODS														  //
 	//------------------------------------------------------------------------//
 	/// <summary>
-	/// Force a color on the bar.
+	/// Force a new state of the progress bar
 	/// </summary>
-	/// <param name="_color">Color to be applied.</param>
-	public void DEBUG_SetColor(Gradient4 _color) {
-		// Just do it :)
-		if(m_progressBarGradient != null) {
-			m_progressBarGradient.SetValues(_color);
-		}
+	/// <param name="_state">New state</param>
+	public void DEBUG_SetState(State _state) {
+       
+        // Change the state, and so the color of the elements
+        RefreshProgressBarElements(_state);
+
 	}
 
 	//------------------------------------------------------------------------//

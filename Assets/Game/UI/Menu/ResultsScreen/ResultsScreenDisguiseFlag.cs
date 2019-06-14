@@ -59,7 +59,7 @@ public class ResultsScreenDisguiseFlag : MonoBehaviour {
 		m_nameText.Localize(_disguiseDef.Get("tidName"));
 
 		// Load icon sprite for this skin
-		m_previewImage.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _disguiseDef.Get("dragonSku") + "/" + _disguiseDef.Get("icon"));
+		m_previewImage.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(_disguiseDef.Get("icon"));
 
 		// Store definition
 		m_def = _disguiseDef;

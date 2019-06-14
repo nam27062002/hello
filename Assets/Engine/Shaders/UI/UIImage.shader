@@ -21,12 +21,12 @@ Shader "Custom/UI/UIImage" {
 
 		[Toggle] _LateMultiply("Late Multiply", Float) = 0
 		
+		// Required for UI.Mask
 		_StencilComp ("Stencil Comparison", Float) = 8
 		_Stencil ("Stencil ID", Float) = 0
 		_StencilOp ("Stencil Operation", Float) = 0
 		_StencilWriteMask ("Stencil Write Mask", Float) = 255
 		_StencilReadMask ("Stencil Read Mask", Float) = 255
-
 		_ColorMask ("Color Mask", Float) = 15
 
 		[Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
@@ -46,21 +46,22 @@ Shader "Custom/UI/UIImage" {
 			"PreviewType"="Plane"
 			"CanUseSpriteAtlas"="True"
 		}
-
-		/*Stencil {
+		
+		// Required for UI.Mask
+		Stencil {
 			Ref [_Stencil]
 			Comp [_StencilComp]
 			Pass [_StencilOp] 
 			ReadMask [_StencilReadMask]
 			WriteMask [_StencilWriteMask]
-		}*/
+		}
+		ColorMask [_ColorMask]
 
 		Cull Off
 		Lighting Off
 		ZWrite Off
 		ZTest [unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
-		ColorMask [_ColorMask]
 
 		Pass {
 		Name "Default"

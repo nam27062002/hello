@@ -32,8 +32,8 @@ public abstract class AddressablesProvider
     public virtual AddressablesOp DownloadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         // By default there's no dependencies
-        AddressablesOpResult returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, null);
+        AddressablesResultOp returnValue = new AddressablesResultOp();
+        returnValue.Setup(null);
 
         return returnValue;
     }
@@ -41,8 +41,8 @@ public abstract class AddressablesProvider
     public virtual AddressablesOp LoadDependenciesAsync(AddressablesCatalogEntry entry)
     {
         // By default there's no dependencies
-        AddressablesOpResult returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, null);
+        AddressablesResultOp returnValue = new AddressablesResultOp();
+        returnValue.Setup(null);
 
         return returnValue;
     }
@@ -53,7 +53,7 @@ public abstract class AddressablesProvider
     public abstract AddressablesOp LoadSceneAsync(AddressablesCatalogEntry entry, LoadSceneMode mode);
     public abstract AddressablesOp UnloadSceneAsync(AddressablesCatalogEntry entry);
 
-    public T LoadAsset<T>(AddressablesCatalogEntry entry)
+    public virtual T LoadAsset<T>(AddressablesCatalogEntry entry) where T : Object
     {
         return (T)System.Convert.ChangeType(LoadAsset(entry), typeof(T));
     }
@@ -66,9 +66,9 @@ public abstract class AddressablesProvider
         AddressablesOp returnValue;
         if (op == null)
         {
-            AddressablesOpResult opResult = new AddressablesOpResult();
+            AddressablesResultOp opResult = new AddressablesResultOp();
             AddressablesError error = new AddressablesError(errorType);
-            opResult.Setup(error, null);
+            opResult.Setup(error);
             returnValue = opResult;
         }
         else

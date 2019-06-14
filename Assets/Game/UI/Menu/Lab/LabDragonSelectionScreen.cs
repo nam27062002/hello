@@ -18,7 +18,7 @@ using DG.Tweening;
 /// <summary>
 /// Screen controller for the Lab Dragon Selection screen.
 /// </summary>
-public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
+public class LabDragonSelectionScreen : MonoBehaviour {
 	//------------------------------------------------------------------------//
 	// CONSTANTS															  //
 	//------------------------------------------------------------------------//
@@ -83,21 +83,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	/// <summary>
-	/// Component has been enabled.
-	/// </summary>
-	private void OnEnable() {
-		// Subcribe to external events
-		Broadcaster.AddListener(BroadcastEventType.POPUP_CLOSED, this);
-	}
-
-	/// <summary>
-	/// Component has been disabled.
-	/// </summary>
-	private void OnDisable() {
-		// Unsubscribe from external events
-		Broadcaster.RemoveListener(BroadcastEventType.POPUP_CLOSED, this);
-	}
 
 	//------------------------------------------------------------------------//
 	// OTHER METHODS														  //
@@ -119,11 +104,18 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 			})
 			.AppendInterval(1f)     // Add some delay before unlocking input to avoid issues when spamming touch (fixes issue https://mdc-tomcat-jira100.ubisoft.org/jira/browse/HDK-765)
 			.AppendCallback(() => {
-				// Check download flow
-				CheckDownloadFlowForDragon(m_dragonData.sku);
 
-				// Unlock input
-				Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
+				// Check for assets download
+                Downloadables.Handle acquiredDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(_acquiredDragonSku);
+                if (!acquiredDragonHandle.IsAvailable())
+                {
+                    // Initialize download flow with handle for ALL and check for popups
+                    m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+                    m_assetsDownloadFlow.OpenPopupIfNeeded(AssetsDownloadFlow.Context.PLAYER_BUYS_SPECIAL_DRAGON);
+                }
+
+                // Unlock input
+                Messenger.Broadcast<bool>(MessengerEvents.UI_LOCK_INPUT, false);
 			})
 			.SetAutoKill(true)
 			.Play();
@@ -191,28 +183,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		}
 	}
 
-	/// <summary>
-	/// Check downloadable group status for a target dragon.
-	/// </summary>
-	/// <param name="_sku">The sku of the dragon we want to check.</param>
-	/// <param name="_checkPopups">Open popups if needed?</param>
-	private void CheckDownloadFlowForDragon(string _sku, bool _checkPopups = false) {
-		// Get handler for this dragon
-		Downloadables.Handle handle = null;
-
-		// We don't want to show anything if the dragon is not owned
-		if(DragonManager.IsDragonOwned(_sku)) {
-			handle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(_sku);
-		}
-
-		// Trigger flow!
-		m_assetsDownloadFlow.InitWithHandle(handle);
-
-		// Check for popups?
-		if(_checkPopups) {
-			m_assetsDownloadFlow.OpenPopupIfNeeded();
-		}
-	}
 
 	//------------------------------------------------------------------------//
 	// CALLBACKS															  //
@@ -242,8 +212,10 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		// Do a first refresh
 		InitWithDragon(InstanceManager.menuSceneController.selectedDragonData, false);
 
-		// Check OTA for this dragon
-		CheckDownloadFlowForDragon(m_dragonData.sku, false);	// Don't trigger popups, the menu interstitial popups controller will take care of it
+		// OTA: Show the general download progress bar
+		Downloadables.Handle allContentHandle = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+        m_assetsDownloadFlow.InitWithHandle(allContentHandle);
+
 	} 
 
 	/// <summary>
@@ -295,9 +267,21 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		// Prevent spamming
 		if(!InstanceManager.menuSceneController.transitionManager.transitionAllowed) return;
 
-		// If needed, show assets download popup and don't continue
-		PopupAssetsDownloadFlow popup = m_assetsDownloadFlow.OpenPopupByState(false);
-		if(popup != null) return;
+        // Get assets download handle for current dragon
+        string currentDragonSku = UsersManager.currentUser.currentSpecialDragon;
+        Downloadables.Handle currentDragonHandle = HDAddressablesManager.Instance.GetHandleForSpecialDragon(currentDragonSku);
+        if (!currentDragonHandle.IsAvailable())
+        {
+            // Resources not available, which means we need to download ALL
+            m_assetsDownloadFlow.InitWithHandle(HDAddressablesManager.Instance.GetHandleForAllDownloadables());
+
+            // If needed, show assets download popup
+            m_assetsDownloadFlow.OpenPopupByState(PopupAssetsDownloadFlow.PopupType.ANY, AssetsDownloadFlow.Context.PLAYER_BUYS_SPECIAL_DRAGON);
+
+            // Don't move to next screen
+            return;
+        }
+
 
 		// Go to the special missions screen
 		// If the leagues tutorial has not yet been triggered, go to the leagues screen instead
@@ -322,8 +306,6 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 				// Get new dragon's data from the dragon manager and do the refresh logic
 				InitWithDragon(DragonManager.GetDragonData(_sku), true);
 
-				// Check OTA
-				CheckDownloadFlowForDragon(m_dragonData == null ? "" : m_dragonData.sku, true);
 			}, m_dragonChangeInfoDelay
 		);
 	}
@@ -353,25 +335,4 @@ public class LabDragonSelectionScreen : MonoBehaviour, IBroadcastListener {
 		popup.Init(m_dragonData);
 	}
 
-	/// <summary>
-	/// Broadcast callback.
-	/// </summary>
-	/// <param name="_eventType">Type of event.</param>
-	/// <param name="_broadcastEventInfo">Event data.</param>
-	public void OnBroadcastSignal(BroadcastEventType _eventType, BroadcastEventInfo _broadcastEventInfo) {
-		// Find out event type
-		switch(_eventType) {
-			case BroadcastEventType.POPUP_CLOSED: {
-				// Popup closed. Is it the tier unlocked popup?
-				PopupManagementInfo popupEventInfo = (PopupManagementInfo)_broadcastEventInfo;
-				PopupLabTierUnlocked labTierUnlockedPopup = popupEventInfo.popupController.GetComponent<PopupLabTierUnlocked>();
-				if(labTierUnlockedPopup != null) {
-					// Yes! Check OTA
-					CheckDownloadFlowForDragon(m_dragonData.sku, true);
-
-					// [AOC] TODO!! If it's the last tier, show small info popup informing the player that he can still keep upgrading his special dragon stats
-				}
-			} break;
-		}
-	}
 }

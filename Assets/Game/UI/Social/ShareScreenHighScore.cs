@@ -61,7 +61,7 @@ public class ShareScreenHighScore : IShareScreen {
 		// Dragon portrait
 		if(m_dragonImage != null) {
 			DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, _dragonData.disguise);
-			m_dragonImage.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + _dragonData.def.sku + "/" + skinDef.Get("icon"));
+            m_dragonImage.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(skinDef.Get("icon"));
 		}
 
 		// Pet Slots

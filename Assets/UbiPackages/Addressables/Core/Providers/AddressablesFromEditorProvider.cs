@@ -50,21 +50,30 @@ public class AddressablesFromEditorProvider : AddressablesProvider
         return ProcessAsyncOperation(op, AddressablesError.EType.Error_Invalid_Scene);
     }
 
+    public override T LoadAsset<T>(AddressablesCatalogEntry entry)
+    {
+        if (CanLog())
+        {
+            Log("LoadAsset by Editor provider");
+        }
+
+        return AssetDatabase.LoadAssetAtPath<T>(GetPath(entry));
+    }
+
     public override object LoadAsset(AddressablesCatalogEntry entry)
     {
         return LoadAssetObject(entry);        
     }
 
     public override AddressablesOp LoadAssetAsync(AddressablesCatalogEntry entry)
-    {
-        Object data = LoadAssetObject(entry);
-        AddressablesOp returnValue = new AddressablesOpResult();
-        returnValue.Setup(null, data);
+    {        
+        AddressablesLoadFromEditorOp returnValue = new AddressablesLoadFromEditorOp();
+        returnValue.Setup(GetPath(entry));
 
         return returnValue;
     }
 
-    private Object LoadAssetObject(AddressablesCatalogEntry entry)
+    private object LoadAssetObject(AddressablesCatalogEntry entry)
     {
         if (CanLog())
         {

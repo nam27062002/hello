@@ -338,7 +338,7 @@ public class DragonHelicopterPowers : MonoBehaviour, IBroadcastListener
             else 
             {
                 projectile.explodeIfHomingtargetNull = false;
-                projectile.ShootAtPosition( originTransform.position + transform.forward * 1000, originTransform.forward, 9999, originTransform);
+                projectile.ShootAtPosition( originTransform.position + originTransform.forward * 1000, originTransform.forward, 9999, originTransform);
             }
 		}
 	}

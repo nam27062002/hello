@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 11400002}
   - component: {fileID: 8200000}
   - component: {fileID: 11400000}
+  - component: {fileID: 114837595219039524}
   m_Layer: 0
   m_Name: AudioObject3D
   m_TagString: Untagged
@@ -45,8 +46,7 @@ AudioSource:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300001, guid: f9c941808b0b54fa79ff7aae4e1db556,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -187,3 +187,16 @@ Prefab:
 --- !u!1002 &100100001
 EditorExtensionImpl:
   serializedVersion: 6
+--- !u!114 &114837595219039524
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea760a462092642e6a06d335d31e501e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_audioSource: {fileID: 8200000}
+  outputMixerGroup: Master

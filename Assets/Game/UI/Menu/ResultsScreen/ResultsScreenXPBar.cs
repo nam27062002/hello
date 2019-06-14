@@ -132,7 +132,8 @@ public class ResultsScreenXPBar : DragonXPBar {
 		// Load and pose next dragon's preview
 		m_nextDragonData = DragonManager.GetNextDragonData(DragonManager.currentDragon.def.sku);
 		if(m_nextDragonData != null) {
-			m_nextDragonIcon.sprite = Resources.Load<Sprite>(UIConstants.DISGUISE_ICONS_PATH + m_nextDragonData.def.sku + "/" + IDragonData.DEFAULT_SKIN_ICON);
+            string defaultIcon = IDragonData.GetDefaultDisguise(m_nextDragonData.def.sku).Get("icon");
+			m_nextDragonIcon.sprite = HDAddressablesManager.Instance.LoadAsset<Sprite>(defaultIcon);
 			m_nextDragonRoot.SetActive(true);
 		} else {
 			m_nextDragonRoot.SetActive(false);

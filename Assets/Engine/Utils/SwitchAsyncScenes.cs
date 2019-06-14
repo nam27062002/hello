@@ -10,7 +10,8 @@ public class SwitchAsyncScenes
     public enum EState
     {
         NONE,
-        UNLOADING_SCENES,
+        UNLOADING_SCENES,        
+        LOADING_EXTRA_DEPENDENCIES,
         LOADING_SCENES,
         ACTIVATING_SCENES,
         DONE
@@ -29,7 +30,12 @@ public class SwitchAsyncScenes
             switch (mState)
             {
                 case EState.UNLOADING_SCENES:
-					if (OnUnload != null)
+                    if (ExtraDependenciesToUnload != null)
+                    {
+                        HDAddressablesManager.Instance.UnloadDependencyIdsList(ExtraDependenciesToUnload);
+                    }
+
+                    if (OnUnload != null)
                     {
 						OnUnload();
                     }
@@ -41,9 +47,16 @@ public class SwitchAsyncScenes
             mState = value;
 
             switch (mState)
-            {
+            {                
                 case EState.UNLOADING_SCENES:
                     PrepareTasks(ScenesToUnload, ref mTasks, false);
+                    break;                
+
+                case EState.LOADING_EXTRA_DEPENDENCIES:
+                    if (ExtraDependenciesToLoad != null)
+                    {
+                        AsyncOp = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(ExtraDependenciesToLoad);
+                    }                    
                     break;
 
                 case EState.LOADING_SCENES:
@@ -55,6 +68,8 @@ public class SwitchAsyncScenes
                     {
                         OnDone();
                     }
+
+                    Reset();
                     break;
             }
         }
@@ -62,6 +77,10 @@ public class SwitchAsyncScenes
 
     private List<string> ScenesToUnload { get; set; }
     private List<string> ScenesToLoad { get; set; }
+
+    private List<string> ExtraDependenciesToUnload { get; set; }
+    private List<string> ExtraDependenciesToLoad { get; set; }
+    private AddressablesOp AsyncOp { get; set; }
 
     private List<AddressablesOp> mTasks;
     private List<AddressablesOp> Tasks
@@ -93,6 +112,9 @@ public class SwitchAsyncScenes
         State = EState.NONE;
         ScenesToUnload = null;
         ScenesToLoad = null;
+        ExtraDependenciesToUnload = null;
+        ExtraDependenciesToLoad = null;
+        AsyncOp = null;
 
         if (Tasks != null)
         {
@@ -102,11 +124,15 @@ public class SwitchAsyncScenes
         OnDone = null;
     }
 
-    public void Perform(List<string> scenesToUnload, List<string> scenesToLoad, bool delayActivationScenes, System.Action onDone=null, System.Action onUnload=null)
+    public void Perform(List<string> scenesToUnload, List<string> scenesToLoad, bool delayActivationScenes, List<string> extraDependenciesToUnload=null, List<string> extraDependenciesToLoad=null, 
+                        System.Action onDone=null, System.Action onUnload=null)
     {
+        Reset();
         ScenesToUnload = scenesToUnload;
         ScenesToLoad = scenesToLoad;
         DelayActivationScenes = delayActivationScenes;
+        ExtraDependenciesToUnload = extraDependenciesToUnload;
+        ExtraDependenciesToLoad = extraDependenciesToLoad;
         OnDone = onDone;
 		OnUnload = onUnload;
         State = EState.UNLOADING_SCENES;
@@ -131,7 +157,16 @@ public class SwitchAsyncScenes
                 }
 
                 if (done)
-                {                                      
+                {
+                    State = EState.LOADING_EXTRA_DEPENDENCIES;
+                }
+            }
+            break;
+
+            case EState.LOADING_EXTRA_DEPENDENCIES:
+            {
+                if (AsyncOp == null || AsyncOp.isDone)
+                {
                     State = EState.LOADING_SCENES;
                 }
             }
