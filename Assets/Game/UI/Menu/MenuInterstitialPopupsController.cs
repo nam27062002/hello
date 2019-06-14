@@ -471,8 +471,15 @@ public class MenuInterstitialPopupsController : MonoBehaviour {
 			if(!photoTutorialTrigger.Check()) return;
 		}
 
-		// All checks passed! Show the popup
-		PopupManager.EnqueuePopup(PopupInfoAnimoji.PATH);
+        // OTA: Are all the asset bundles downloaded?
+        Downloadables.Handle allContentHandle  = HDAddressablesManager.Instance.GetHandleForAllDownloadables();
+        if (! allContentHandle.IsAvailable())
+        {
+            return;
+        }
+
+        // All checks passed! Show the popup
+        PopupManager.EnqueuePopup(PopupInfoAnimoji.PATH);
 		SetFlag(StateFlag.POPUP_DISPLAYED, true);
 	}
 
