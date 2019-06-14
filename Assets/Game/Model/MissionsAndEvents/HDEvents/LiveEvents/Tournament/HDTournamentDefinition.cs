@@ -65,6 +65,9 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 		public long m_targetAmount;
 		public int m_loops;
 		public string m_area = "";
+		public string m_spawnPoint = "";
+		public float m_progressionSeconds = 0f;
+		public int m_progressionXP = 0;
 
 		public override void Clear ()
 		{
@@ -73,7 +76,11 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 			m_seconds = -1;
 			m_targetAmount = -1;
 			m_loops = -1;
+			
 			m_area = "";
+			m_spawnPoint = "";
+			m_progressionSeconds = 0f;
+			m_progressionXP = 0;
 		}
 
 		public override void ParseGoal (JSONNode _data)

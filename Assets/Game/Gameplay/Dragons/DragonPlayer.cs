@@ -724,12 +724,32 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
         if(m_dragonEatBehaviour != null)
 		    m_dragonEatBehaviour.enabled = true;
 		GameObject spawnPointObj = null;
+		
 		if(useLevelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			string selectedSP = LevelEditor.LevelEditor.settings.spawnPoint;
+			if (!string.IsNullOrEmpty(selectedSP)) {
+				spawnPointObj = GameObject.Find(selectedSP);
+			}
+
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
+				if (spawnPointObj == null) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+				}
+			}
 		} else {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			// maybe we are inside a tournament
+			if (HDLiveDataManager.tournament.isActive) {
+				HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+				string selectedSP = tournamentDef.m_goal.m_spawnPoint;
+				if (!string.IsNullOrEmpty(selectedSP)) {
+					spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + selectedSP);
+				}
+			}
+			
+			if (spawnPointObj == null) {
+				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
+			}
 		}
 		// If we couldn't find a valid spawn point, try to find a generic one
 		if(spawnPointObj == null) {

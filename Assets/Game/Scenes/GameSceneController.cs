@@ -518,6 +518,14 @@ public class GameSceneController : GameSceneControllerBase {
 
 				// Init game camera
 				InstanceManager.gameCamera.Init();
+                if (HDLiveDataManager.tournament.isActive) {
+                    HDTournamentDefinition tournamentDef = HDLiveDataManager.tournament.tournamentData.tournamentDef;
+                    progressionOffsetSeconds = tournamentDef.m_goal.m_progressionSeconds;
+    			    progressionOffsetXP = tournamentDef.m_goal.m_progressionXP;
+                } else {
+                    progressionOffsetSeconds = 0f;
+    			    progressionOffsetXP = 0;
+                }
 
                 // Dispatch game event
                 Broadcaster.Broadcast(BroadcastEventType.GAME_LEVEL_LOADED);
@@ -526,9 +534,8 @@ public class GameSceneController : GameSceneControllerBase {
 				// Don't make it playable until the countdown ends
 				InstanceManager.player.playable = false;
 				InstanceManager.player.gameObject.SetActive(true);
-				// InstanceManager.player.MoveToSpawnPoint();
 				InstanceManager.player.StartIntroMovement();
-
+				
 				// Spawn collectibles
 				CollectiblesManager.OnLevelLoaded();
 
