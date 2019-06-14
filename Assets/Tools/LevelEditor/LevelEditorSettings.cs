@@ -73,6 +73,11 @@ namespace LevelEditor {
 		public bool spawnAtCameraPos = false;
 		public string levelSku = "";
 		public string spawnPoint = "";
+		public bool progressionCustom = false;
+		public bool progressionFilterByTier = true;
+		public bool progressionFilterBySpawnPoint = true;
+		public string progressionOffsetSeconds = "0";
+		public string progressionOffsetXP = "0";
 
 		[Separator("Ground Settings", 20)]
 		public Vector3 groundPieceSize = new Vector3(50f, 1f, 15f);	// Ground pieces default size

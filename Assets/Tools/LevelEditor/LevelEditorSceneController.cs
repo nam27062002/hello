@@ -218,9 +218,14 @@ namespace LevelEditor {
 			ParticleManager.PreBuild();
 			PoolManager.Build();
 
+			// Setup progression offset based on spawn position
+			progressionOffsetSeconds = float.Parse(LevelEditor.settings.progressionOffsetSeconds);
+			progressionOffsetXP = int.Parse(LevelEditor.settings.progressionOffsetXP);
+
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
-
+			
+			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
 				Vector3 startPos = mainCamera.transform.position;
 				startPos.z = 0f;
@@ -237,7 +242,7 @@ namespace LevelEditor {
 
 			// Init game camera
 			InstanceManager.gameCamera.Init();
-
+			
 			// Instantiate map prefab
 			InitLevelMap();
 

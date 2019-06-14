@@ -196,7 +196,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 	public bool IsRespawingPeriodically() 	{ return false; }
 
     public bool CanRespawn() {
-		if (m_spawnConditions != null && m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+		if (m_spawnConditions != null 
+		&&  m_spawnConditions.IsReadyToBeDisabled(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds,
+		 										  RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+		{
 			if (!m_newCamera.IsInsideActivationMinArea(m_bounds)) {
 				Destroy(gameObject, 0.15f);
 				return false;
@@ -204,7 +207,10 @@ public class AutoSpawnBehaviour : MonoBehaviour, ISpawner, IBroadcastListener {
 		}
 
 		if (m_state == State.Respawning) {
-			if (m_spawnConditions == null || m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds, RewardManager.xp)) {
+			if (m_spawnConditions == null
+			||  m_spawnConditions.IsReadyToSpawn(m_gameSceneController.elapsedSeconds + m_gameSceneController.progressionOffsetSeconds,
+												 RewardManager.xp + m_gameSceneController.progressionOffsetXP))
+			{
 				if (m_gameSceneController.elapsedSeconds > m_respawnTime) {
 					bool isInsideActivationArea = m_newCamera.IsInsideCameraFrustrum(m_bounds);
 					if (!isInsideActivationArea) {
