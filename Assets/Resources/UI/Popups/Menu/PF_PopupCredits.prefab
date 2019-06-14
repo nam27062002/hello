@@ -888,7 +888,7 @@ MonoBehaviour:
     spaceCount: 48
     wordCount: 42
     linkCount: 0
-    lineCount: 9
+    lineCount: 8
     pageCount: 1
     materialCount: 3
   m_havePropertiesChanged: 1
@@ -1235,12 +1235,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_image: {fileID: 114849600393819666}
-  m_defaultPath: UI/Common/Logo/logo
-  m_paths:
-  - languageSku: lang_japanese
-    logoPath: UI/Common/Logo/logo_jp
-  - languageSku: lang_chinese
-    logoPath: UI/Common/Logo/logo_zh
 --- !u!114 &114353860664737462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1861,8 +1855,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e3eedcba421948d1ac712f3d495135f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_applyToFonts: 0
+  m_applyToImages: 1
   m_colorMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_colorAdd: {r: 0, g: 0, b: 0, a: 0}
+  m_colorRampEnabled: 1
+  m_colorRamp: {fileID: 2800000, guid: 92d1ad3d880381642a2b82b44b2c0766, type: 3}
   m_alpha: 1
   m_brightness: 0
   m_saturation: 0
@@ -2511,7 +2509,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -55.79}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50.992188, y: -126.62644}
+  m_AnchoredPosition: {x: 51, y: -126.62644}
   m_SizeDelta: {x: 118.7, y: 85.1}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224325450699737274
