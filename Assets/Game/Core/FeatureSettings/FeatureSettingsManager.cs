@@ -845,6 +845,15 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
 
     private void Shaders_ApplyQuality(FeatureSettings.ELevel3Values quality)
     {
+        StartCoroutine( LateWarmUp( quality ) );
+    }
+
+    private System.Collections.IEnumerator LateWarmUp(FeatureSettings.ELevel3Values quality)
+    {
+        for (int i = 0; i < 10; i++){
+            yield return null;    
+        }
+        
         string key = Shaders_QualityLevelToKey(quality);
         if (key != Shaders_CurrentKey)
         {
@@ -855,7 +864,6 @@ public class FeatureSettingsManager : UbiBCN.SingletonMonoBehaviour<FeatureSetti
             Shader.DisableKeyword(SHADERS_KEY_LOW);
 
             Shader.EnableKeyword(Shaders_CurrentKey);
-
             Shaders_WarmUpVariantCollection(quality);
         }
     }
