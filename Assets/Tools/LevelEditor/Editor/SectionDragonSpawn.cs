@@ -65,16 +65,17 @@ namespace LevelEditor {
 				// Group in a box
 				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					// Aux vars
-					LevelTypeSpawners spawnersLevel = null;
-					
+					LevelTypeSpawners spawnersLevel = null;					
 					List<Level> spawnersLevelList = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
-					foreach(LevelTypeSpawners level in spawnersLevelList) {
-						if (spawnersLevel == null && !string.IsNullOrEmpty(level.m_sceneTags)) {
-							spawnersLevel = level;
-						}
-						if (level.m_sceneTags.Contains("start")) {
-							spawnersLevel = level;
-							break;
+					if (spawnersLevelList != null) {
+						foreach(LevelTypeSpawners level in spawnersLevelList) {
+							if (spawnersLevel == null && !string.IsNullOrEmpty(level.m_sceneTags)) {
+								spawnersLevel = level;
+							}
+							if (level.m_sceneTags.Contains("start")) {
+								spawnersLevel = level;
+								break;
+							}
 						}
 					}
 
