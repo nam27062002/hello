@@ -728,6 +728,7 @@ GameObject:
   - component: {fileID: 222618570781238304}
   - component: {fileID: 114722142747436012}
   - component: {fileID: 114778179406148994}
+  - component: {fileID: 114767554882602598}
   m_Layer: 5
   m_Name: IconBground
   m_TagString: Untagged
@@ -1215,7 +1216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1580921430714758
 GameObject:
   m_ObjectHideFlags: 1
@@ -2115,6 +2116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114543961132733258}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114115698401878524}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -2273,6 +2275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114960376087695866}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114242332176137598}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -4659,6 +4662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114430611291822060}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114925300787820822}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -5370,6 +5374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_icon: {fileID: 114257214566010946}
+  m_iconLoader: {fileID: 0}
   m_rewardText: {fileID: 114161817912505990}
   m_showNameForEggsAndPets: 1
   m_showNameForCurrencies: 0
@@ -5880,8 +5885,14 @@ MonoBehaviour:
   m_assetId: CPS
   m_loadOnAwake: 0
   m_container: {fileID: 224082417126725786}
-  m_loadingPrefab: {fileID: 0}
+  m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
+    type: 2}
   m_loadedInstance: {fileID: 0}
+  OnLoadingComplete:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI3DAddressablesLoader+UI3DAddressablesLoaderEvent, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &114689165960725528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5965,7 +5976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23529413, g: 0.14901961, b: 0.07450981, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -6262,6 +6273,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114767554882602598
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1323238885034966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 0.25490198, g: 0.16078432, b: 0.07450981, a: 1}
+    topRight: {r: 0.25490198, g: 0.16078432, b: 0.07450981, a: 1}
+    bottomLeft: {r: 0.5568628, g: 0.34509805, b: 0.16078432, a: 1}
+    bottomRight: {r: 0.5568628, g: 0.34509805, b: 0.16078432, a: 1}
 --- !u!114 &114778179406148994
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7063,6 +7090,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_updateEventState: 0
   m_objectiveText: {fileID: 114161884096883272}
+  m_objectiveIcon: {fileID: 0}
   m_timerText: {fileID: 114051019405735936}
   m_progressBar: {fileID: 114689294079974874}
   m_receiveContributionFX: {fileID: 198914394054572428}
