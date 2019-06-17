@@ -194,7 +194,7 @@ namespace LevelEditor {
 								if (spawnersLevel != null) {
 									EditorGUILayout.BeginHorizontal(); {										
 										// Label
-										GUILayout.Label(spawnPoint.Get("tidName"), GUILayout.Width(200));
+										GUILayout.Label(LocalizationManager.SharedInstance.Get(spawnPoint.Get("tidName")), GUILayout.Width(200));
 										spawnPointObj = spawnersLevel.GetDragonSpawnPoint(spawnPoint.Get("sku"), false, false);
 										if (spawnPointObj == null && !playing) {
 											GUI.backgroundColor = Colors.orange;
@@ -214,86 +214,87 @@ namespace LevelEditor {
 						}						
 					}
 
-					// 
-					GUI.enabled = !playing;
-					GUILayout.Space(20);
-					EditorGUILayout.BeginHorizontal(); {						
-						GUILayout.Label("Selected Spawn Point:");
-												
-						string[] options = availableSpawnPoints.ToArray();	
-						int oldIdx = ArrayUtility.IndexOf<string>(options, LevelEditor.settings.spawnPoint);
-						
-						GUI.backgroundColor = Colors.silver;
-						int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);
-						if(oldIdx != newIdx) {							
-							LevelEditor.settings.spawnPoint = options[newIdx];
-							EditorUtility.SetDirty(LevelEditor.settings);
-							AssetDatabase.SaveAssets();
-						}
-					} EditorGUILayoutExt.EndHorizontalSafe();
-
-
-					bool refreshProgression = DrawProgressionOptions();
-					
-
-					// Progression tweaks
-					if (LevelEditor.settings.progressionCustom) {
-						GUILayout.Space(5);
-						EditorGUILayout.BeginHorizontal(); {
-							GUILayout.Label("Progression Time:");
-							LevelEditor.settings.progressionOffsetSeconds = GUILayout.TextField(LevelEditor.settings.progressionOffsetSeconds, GUILayout.Width(200));
-						} EditorGUILayoutExt.EndHorizontalSafe();
-						EditorGUILayout.BeginHorizontal(); {
-							GUILayout.Label("Progression XP:");
-							LevelEditor.settings.progressionOffsetXP = GUILayout.TextField(LevelEditor.settings.progressionOffsetXP, GUILayout.Width(200));
-						} EditorGUILayoutExt.EndHorizontalSafe();
-					} else {						
-						DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGONS, "sku", LevelEditor.settings.testDragon);
-						string tier = "tier_0";
-						if (dragonDef != null) {
-							tier = dragonDef.Get("tier");
-						}
-
-						if (refreshProgression || m_progressionOptions == null || !m_selectedTier.Equals(tier) || !LevelEditor.settings.spawnPoint.Equals(m_selectedSpawnPoint)) {	
-							m_selectedTier = tier;
-							m_selectedSpawnPoint = LevelEditor.settings.spawnPoint;
-
-							List<DefinitionNode> levelProgressions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LEVEL_PROGRESSION);
-							List<string> progressionOptions = new List<string>();
-
-							progressionOptions.Add("time: 0 | xp: 0");
-							foreach (DefinitionNode def in levelProgressions) {
-								if (!LevelEditor.settings.progressionFilterByTier
-								||  def.Get("tier").Equals(tier)) {
-									if (!LevelEditor.settings.progressionFilterBySpawnPoint
-									||	LevelEditor.settings.spawnPoint.Contains(def.Get("spawnPoint"))) {
-										progressionOptions.Add("time: " + def.Get("time") + " | xp: " + def.Get("xp"));
-									}
-								}						
-							}
-							m_progressionOptions = progressionOptions.ToArray();												
-						}
-
-						GUILayout.Space(5);
+					if (levelLoaded) {
+						GUI.enabled = !playing;
+						GUILayout.Space(20);
 						EditorGUILayout.BeginHorizontal(); {						
-							GUILayout.Label("Selected Progression:");
-							
-							int oldIdx = ArrayUtility.IndexOf<string>(m_progressionOptions, "time: " + LevelEditor.settings.progressionOffsetSeconds + " | xp: " + LevelEditor.settings.progressionOffsetXP);
+							GUILayout.Label("Selected Spawn Point:");
+													
+							string[] options = availableSpawnPoints.ToArray();	
+							int oldIdx = ArrayUtility.IndexOf<string>(options, LevelEditor.settings.spawnPoint);
 							
 							GUI.backgroundColor = Colors.silver;
-							int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), m_progressionOptions);
-							if(oldIdx != newIdx) {
-								string value = m_progressionOptions[newIdx].Replace(" ", "");
-								value = value.Replace("time:", "");
-								value = value.Replace("xp:", "");
-
-								string[] values = value.Split('|');				
-								LevelEditor.settings.progressionOffsetSeconds = values[0];
-								LevelEditor.settings.progressionOffsetXP = values[1];
+							int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), options);
+							if(oldIdx != newIdx) {							
+								LevelEditor.settings.spawnPoint = options[newIdx];
 								EditorUtility.SetDirty(LevelEditor.settings);
 								AssetDatabase.SaveAssets();
 							}
 						} EditorGUILayoutExt.EndHorizontalSafe();
+
+
+						bool refreshProgression = DrawProgressionOptions();
+						
+
+						// Progression tweaks
+						if (LevelEditor.settings.progressionCustom) {
+							GUILayout.Space(5);
+							EditorGUILayout.BeginHorizontal(); {
+								GUILayout.Label("Progression Time:");
+								LevelEditor.settings.progressionOffsetSeconds = GUILayout.TextField(LevelEditor.settings.progressionOffsetSeconds, GUILayout.Width(200));
+							} EditorGUILayoutExt.EndHorizontalSafe();
+							EditorGUILayout.BeginHorizontal(); {
+								GUILayout.Label("Progression XP:");
+								LevelEditor.settings.progressionOffsetXP = GUILayout.TextField(LevelEditor.settings.progressionOffsetXP, GUILayout.Width(200));
+							} EditorGUILayoutExt.EndHorizontalSafe();
+						} else {						
+							DefinitionNode dragonDef = DefinitionsManager.SharedInstance.GetDefinitionByVariable(DefinitionsCategory.DRAGONS, "sku", LevelEditor.settings.testDragon);
+							string tier = "tier_0";
+							if (dragonDef != null) {
+								tier = dragonDef.Get("tier");
+							}
+
+							if (refreshProgression || m_progressionOptions == null || !m_selectedTier.Equals(tier) || !LevelEditor.settings.spawnPoint.Equals(m_selectedSpawnPoint)) {	
+								m_selectedTier = tier;
+								m_selectedSpawnPoint = LevelEditor.settings.spawnPoint;
+
+								List<DefinitionNode> levelProgressions = DefinitionsManager.SharedInstance.GetDefinitionsList(DefinitionsCategory.LEVEL_PROGRESSION);
+								List<string> progressionOptions = new List<string>();
+
+								progressionOptions.Add("time: 0 | xp: 0");
+								foreach (DefinitionNode def in levelProgressions) {
+									if (!LevelEditor.settings.progressionFilterByTier
+									||  def.Get("tier").Equals(tier)) {
+										if (!LevelEditor.settings.progressionFilterBySpawnPoint
+										||	LevelEditor.settings.spawnPoint.Contains(def.Get("spawnPoint"))) {
+											progressionOptions.Add("time: " + def.Get("time") + " | xp: " + def.Get("xp"));
+										}
+									}						
+								}
+								m_progressionOptions = progressionOptions.ToArray();												
+							}
+
+							GUILayout.Space(5);
+							EditorGUILayout.BeginHorizontal(); {						
+								GUILayout.Label("Selected Progression:");
+								
+								int oldIdx = ArrayUtility.IndexOf<string>(m_progressionOptions, "time: " + LevelEditor.settings.progressionOffsetSeconds + " | xp: " + LevelEditor.settings.progressionOffsetXP);
+								
+								GUI.backgroundColor = Colors.silver;
+								int newIdx = EditorGUILayout.Popup(Mathf.Max(oldIdx, 0), m_progressionOptions);
+								if(oldIdx != newIdx) {
+									string value = m_progressionOptions[newIdx].Replace(" ", "");
+									value = value.Replace("time:", "");
+									value = value.Replace("xp:", "");
+
+									string[] values = value.Split('|');				
+									LevelEditor.settings.progressionOffsetSeconds = values[0];
+									LevelEditor.settings.progressionOffsetXP = values[1];
+									EditorUtility.SetDirty(LevelEditor.settings);
+									AssetDatabase.SaveAssets();
+								}
+							} EditorGUILayoutExt.EndHorizontalSafe();
+						}
 					}
 
 					GUI.enabled = true;
