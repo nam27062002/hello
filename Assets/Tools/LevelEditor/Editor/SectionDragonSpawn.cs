@@ -66,10 +66,18 @@ namespace LevelEditor {
 				EditorGUILayout.BeginVertical(LevelEditorWindow.styles.sectionContentStyle, GUILayout.Height(1)); {	// [AOC] Requesting a very small size fits the group to its content's actual size
 					// Aux vars
 					LevelTypeSpawners spawnersLevel = null;
-					// TODO MALH: select proper spawner scene
+					
 					List<Level> spawnersLevelList = LevelEditorWindow.sectionLevels.GetLevel(LevelEditorSettings.Mode.SPAWNERS);
-					if ( spawnersLevelList != null && spawnersLevelList.Count > 0 ) 
-						spawnersLevel = spawnersLevelList[0] as LevelTypeSpawners;
+					foreach(LevelTypeSpawners level in spawnersLevelList) {
+						if (spawnersLevel == null && !string.IsNullOrEmpty(level.m_sceneTags)) {
+							spawnersLevel = level;
+						}
+						if (level.m_sceneTags.Contains("start")) {
+							spawnersLevel = level;
+							break;
+						}
+					}
+
 					bool levelLoaded = (spawnersLevel != null);
 					bool playing = EditorApplication.isPlaying;
 					string oldDragon = LevelEditor.settings.testDragon;
@@ -130,7 +138,7 @@ namespace LevelEditor {
 						GUILayout.Space(5);
 
                         // Focus default spawn point
-                        GUI.enabled = levelLoaded;
+                        GUI.enabled = true;
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint("", false, false);
                         if (spawnPointObj == null && !playing) {
 							GUI.backgroundColor = Colors.orange;
@@ -144,8 +152,7 @@ namespace LevelEditor {
                             }
 							availableSpawnPoints.Add(spawnPointObj.name);
                         }
-
-                        GUI.enabled = levelLoaded;
+                        
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint(newDragon, false, false);
                         if (spawnPointObj == null && !playing) {
 							GUI.backgroundColor = Colors.orange;
@@ -161,7 +168,6 @@ namespace LevelEditor {
                         }
 
 						// Focus Level Editor spawn point
-						GUI.enabled = levelLoaded;
                         spawnPointObj = spawnersLevel.GetDragonSpawnPoint(LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME, false, false);
                         if (spawnPointObj == null && !playing) {
 							GUI.backgroundColor = Colors.orange;
@@ -212,9 +218,7 @@ namespace LevelEditor {
 								}								
 							}
 						}						
-					}
-
-					if (levelLoaded) {
+					
 						GUI.enabled = !playing;
 						GUILayout.Space(20);
 						EditorGUILayout.BeginHorizontal(); {						
@@ -232,9 +236,8 @@ namespace LevelEditor {
 							}
 						} EditorGUILayoutExt.EndHorizontalSafe();
 
-
-						bool refreshProgression = DrawProgressionOptions();
-						
+						//
+						bool refreshProgression = DrawProgressionOptions();					
 
 						// Progression tweaks
 						if (LevelEditor.settings.progressionCustom) {
