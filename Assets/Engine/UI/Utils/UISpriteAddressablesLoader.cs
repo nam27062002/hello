@@ -105,10 +105,13 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     }
 
     public AddressablesOp LoadAsync() {
+        // Disable the image component to avoid the white placeholder until the load is finished.
+        m_image.enabled = false;
         m_image.sprite = null;
 
         // We don't care if we're already loading another asset, it will be ignored once done loading
         m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
+
         ShowLoading(true);
 
         return m_loadingRequest;
