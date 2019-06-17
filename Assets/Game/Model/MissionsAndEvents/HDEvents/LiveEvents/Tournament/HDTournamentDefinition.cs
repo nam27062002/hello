@@ -173,7 +173,15 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				}break;
 			}
             ret.Add("gameMode", gameMode);
-			ret.Add("area", m_area);
+
+			SimpleJSON.JSONClass area = new JSONClass();
+			{				
+				area.Add("spawnPoint", m_spawnPoint);
+				area.Add("xp", m_progressionXP);
+				area.Add("time", m_progressionSeconds);
+			}
+			ret.Add("area", area);
+			
 			return ret;
 		}
 	}
