@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using AI;
 
-public class PetDogSpawner : AbstractSpawner {	
+public class PetDogSpawner : AbstractSpawner, IBroadcastListener  {	
 
 	private enum LookAtVector {
 		Right = 0,
@@ -46,17 +46,26 @@ public class PetDogSpawner : AbstractSpawner {
 	}
 
 	public List<SpawnerChances> m_possibleSpawners;
+
 	private PoolHandler[] m_poolHandlers;
+	private SpawnerChances[]  m_validSpanwerChances;
 
 	private float m_maxChance;
     void Awake()
     {
         m_operator = null;
         m_operatorPilot = null;
+
+		// Register change area events
+		Broadcaster.AddListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.AddListener(BroadcastEventType.GAME_AREA_ENTER, this);
     }
 
 	override protected void OnDestroy() {
 		base.OnDestroy();
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_LEVEL_LOADED, this);
+		Broadcaster.RemoveListener(BroadcastEventType.GAME_AREA_ENTER, this);
+
 		if ( ApplicationManager.IsAlive )
 		{
 			ForceRemoveEntities();
@@ -75,28 +84,54 @@ public class PetDogSpawner : AbstractSpawner {
     private AreaBounds m_areaBounds = new RectAreaBounds(Vector3.zero, Vector3.one);
     public override AreaBounds area { get { return m_areaBounds; } set { m_areaBounds = value; } }
 
+	public void OnBroadcastSignal(BroadcastEventType eventType, BroadcastEventInfo broadcastEventInfo)
+    {
+        switch( eventType )
+        {
+			case BroadcastEventType.GAME_AREA_ENTER:
+            case BroadcastEventType.GAME_LEVEL_LOADED:
+            {
+				PreparePools();
+				ForceReset();
+            }break;
+        }
+    }
+
+	void PreparePools()
+	{
+		List<SpawnerChances> listValidSpanwer = new List<SpawnerChances>();
+		List<PoolHandler> listValidHandlers = new List<PoolHandler>();
+		for (int i = 0; i<m_possibleSpawners.Count; i++) {
+			string prefab = m_possibleSpawners[i].m_spawnPrefab;
+			PoolHandler handle = PoolManager.GetHandler(prefab);
+			if ( handle != null ) 
+			{
+				listValidSpanwer.Add( m_possibleSpawners[i] );
+				listValidHandlers.Add(handle);
+			}
+		}
+		m_validSpanwerChances = listValidSpanwer.ToArray();
+		m_poolHandlers = listValidHandlers.ToArray();
+		CalculateMaxChance();
+	}
+
     protected override void OnStart() {
         // Progressive respawn disabled because it respawns only one instance and it's triggered by Catapult which is not prepared to loop until Respawn returns true
         UseProgressiveRespawn = false;
         UseSpawnManagerTree = false;
-        RegisterInSpawnerManager();        
-
-		m_poolHandlers = new PoolHandler[m_possibleSpawners.Count];
-
-		for (int i = 0; i<m_possibleSpawners.Count; i++) {
-			string prefab = m_possibleSpawners[i].m_spawnPrefab;
-			m_poolHandlers[i] = PoolManager.RequestPool(prefab, 1);
-		}
-
-		CalculateMaxChance();
+        RegisterInSpawnerManager();
+		PreparePools();
     }
 
     private void CalculateMaxChance()
     {
     	m_maxChance = 0;
-		for( int i = 0; i<m_possibleSpawners.Count; i++ )
+		if ( m_validSpanwerChances != null )
 		{
-			m_maxChance += m_possibleSpawners[i].m_chance;
+			for( int i = 0; i<m_validSpanwerChances.Length; i++ )
+			{
+				m_maxChance += m_validSpanwerChances[i].m_chance;
+			}
 		}
     }
 
@@ -124,16 +159,16 @@ public class PetDogSpawner : AbstractSpawner {
     public void RamdomizeEntity()
     {
    #if UNITY_EDITOR
-   		CalculateMaxChance();
+   		// CalculateMaxChance();
    #endif
 		float chance = Random.Range(0.0f, m_maxChance);
 		float currentChance = 0;
-		for( int i = 0; i<m_possibleSpawners.Count; i++ )
+		for( int i = 0; i<m_validSpanwerChances.Length; i++ )
 		{
-			currentChance += m_possibleSpawners[i].m_chance;
+			currentChance += m_validSpanwerChances[i].m_chance;
 			if (chance <= currentChance )
 			{
-				m_entityPrefabStr = m_possibleSpawners[ i ].m_spawnPrefab;
+				m_entityPrefabStr = m_validSpanwerChances[ i ].m_spawnPrefab;
 				m_entityPrefabIndex = i;
 				break;
 			}
