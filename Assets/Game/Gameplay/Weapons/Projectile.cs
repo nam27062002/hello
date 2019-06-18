@@ -197,7 +197,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
 		else 									m_direction = _target.position - m_transform.position;
 
-		m_distanceToTarget = m_direction.sqrMagnitude;
+		m_distanceToTarget = (_target.position - m_transform.position).sqrMagnitude;
 		m_direction.Normalize();
 
 		DoShoot(m_speed, _damage);
@@ -225,7 +225,7 @@ public class Projectile : TriggerCallbackReceiver, IProjectile {
 		if (m_motionType == MotionType.Homing) 	m_direction = _direction;
 		else 									m_direction = _target - m_transform.position;
 
-		m_distanceToTarget = m_direction.sqrMagnitude;
+		m_distanceToTarget = (_target - m_transform.position).sqrMagnitude;
 		m_direction.Normalize();
 
 		DoShoot(m_speed, _damage);
