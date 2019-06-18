@@ -135,10 +135,7 @@ public class GameSceneController : GameSceneControllerBase {
         m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-        // Make sure loading screen is visible
-        LoadingScreen.Toggle(true, false);
-
+        
         // Check whether the tutorial popup must be displayed
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
             || DebugSettings.isPlayTest)

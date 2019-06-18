@@ -55,7 +55,7 @@ public class GameHUD : MonoBehaviour {
         Messenger.RemoveListener<DragonPlayer.ReviveReason>(MessengerEvents.PLAYER_REVIVE, OnRevive);
     }    
 
-    bool CanPause(){		
+    public bool CanPause(){		
     	if (!m_paused){
 			if (m_pauseButton.IsInteractable()){
 				if (InstanceManager.gameSceneController.state == GameSceneController.EStates.RUNNING) {

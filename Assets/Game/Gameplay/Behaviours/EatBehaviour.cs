@@ -325,7 +325,7 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	// Update is called once per frame
 	protected virtual void Update() 
 	{
-		if (PreyCount <= 0 && m_attackTarget != null && m_type == IEntity.Type.PLAYER && m_holdingPrey == null)
+		if (!m_pauseEating && PreyCount <= 0 && m_attackTarget != null && m_type == IEntity.Type.PLAYER && m_holdingPrey == null)
 		{
 			BiteKill( true );
 			if ( PreyCount > 0 || m_holdingPrey != null )
@@ -406,17 +406,20 @@ public abstract class EatBehaviour : MonoBehaviour, ISpawnable {
 	public void InstantGrabMotion()
 	{
 		// Rotation
-		Quaternion rot = m_holdingPrey.transform.localRotation;
-        m_holdingPrey.transform.localRotation = GameConstants.Quaternion.identity;
-		Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
-		Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
-		m_holdingPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
+		if ( m_holdingPrey != null )
+		{
+			Quaternion rot = m_holdingPrey.transform.localRotation;
+			m_holdingPrey.transform.localRotation = GameConstants.Quaternion.identity;
+			Vector3 holdDirection = m_mouth.InverseTransformDirection(m_holdTransform.forward);
+			Vector3 holdUpDirection = m_mouth.InverseTransformDirection(m_holdTransform.up);
+			m_holdingPrey.transform.localRotation = Quaternion.LookRotation( -holdDirection, holdUpDirection );
 
-		// Position
-		Vector3 pos = m_holdingPrey.transform.localPosition;
-        m_holdingPrey.transform.localPosition = GameConstants.Vector3.zero;
-		Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
-		m_holdingPrey.transform.localPosition = -holdPoint;
+			// Position
+			Vector3 pos = m_holdingPrey.transform.localPosition;
+			m_holdingPrey.transform.localPosition = GameConstants.Vector3.zero;
+			Vector3 holdPoint = m_mouth.InverseTransformPoint( m_holdTransform.position );
+			m_holdingPrey.transform.localPosition = -holdPoint;
+		}
 	}
 
 	/// <summary>
