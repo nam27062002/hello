@@ -50,7 +50,8 @@ public class QuitPlayBackButtonHandler : BackButtonHandler, IBroadcastListener {
 		{
 			// [AOC] Based on Google's feedback for 1.22, open the pause popup instead
 			//PopupManager.OpenPopupInstant(PopupExitRunConfirmation.PATH);
-			InstanceManager.gameHUD.OnPauseButton();
+			if ( InstanceManager.gameHUD.CanPause() )
+				InstanceManager.gameHUD.OnPauseButton();
 		}
 		/*
 		if (GameSettings.Get(GameSettings.SHOW_EXIT_RUN_CONFIRMATION_POPUP)) {
