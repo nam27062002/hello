@@ -296,8 +296,7 @@ public class MenuSceneController : SceneController {
 	/// Play button has been pressed.
 	/// </summary>
 	public void GoToGame() {
-		// Initialize and show loading screen
-		LoadingScreen.InitWithCurrentData();
+		// Show loading screen
 		LoadingScreen.Toggle(true, false);
 
 		// Go to game!

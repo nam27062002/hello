@@ -105,7 +105,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     }
 
     public AddressablesOp LoadAsync() {
-        // Disable the image component to avoid the white placeholder until the load is finished.
+        // Remove the image until the load is finished.
         m_image.enabled = false;
         m_image.sprite = null;
 
@@ -122,7 +122,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
     /// </summary>
     private void Update() {
         if (m_loadingRequest != null) {
-            if (m_loadingRequest.isDone) {
+            if (m_loadingRequest.isDone && m_loadingRequest.GetAsset<Sprite>() != null ) {
                 m_image.sprite = m_loadingRequest.GetAsset<Sprite>();
                 m_image.enabled = true;
                 m_loadingRequest = null;
