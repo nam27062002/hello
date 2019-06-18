@@ -339,7 +339,7 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 
 	}*/
 
-	public void Init() {
+	public void Init(Vector3 _introPos) {
 		GameObject gameInputObj = GameObject.Find("PF_GameInput");
 		if(gameInputObj != null)
 		{
@@ -354,11 +354,14 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 			} else {
 				if (LevelEditor.LevelEditor.settings.useIntro)
 				{
-					StartIntro(true);
+					StartIntro(_introPos);
 				}
 				else
 				{
-					MoveToSpawnPos(true);
+					m_position = _introPos;
+					m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
+					m_transform.position = m_position;
+
 					SetTargetObject( InstanceManager.player.gameObject );
 					m_state = State.PLAY;
 				}
@@ -366,15 +369,18 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 		}
 		else
 		{
-			StartIntro(false);
+			StartIntro(_introPos);
 		}
 
 		UpdateBounds();
 	}
 
-	public void StartIntro( bool useLevelEditor = false )
+	public void StartIntro(Vector3 _introPos)
 	{
-		MoveToSpawnPos(useLevelEditor);
+		m_position = _introPos;
+		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
+		m_transform.position = m_position;
+
 		SetTargetObject( InstanceManager.player.gameObject );
 		m_state = State.INTRO;
 		m_introTimer = m_introDuration;
@@ -382,31 +388,6 @@ public class GameCamera : MonoBehaviour, IBroadcastListener
 		m_introDisplacement = InstanceManager.player.dragonMotion.introDisplacement;
 		m_position += Vector3.left * m_introDisplacement * m_introMoveCurve.Evaluate(0);
 		m_transform.rotation = Quaternion.identity;
-	}
-
-	private void MoveToSpawnPos( bool _levelEditor = false )
-	{
-		IDragonData data = InstanceManager.player.data;
-		GameObject spawnPointObj = null;
-		if(_levelEditor) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + LevelEditor.LevelTypeSpawners.LEVEL_EDITOR_SPAWN_POINT_NAME);
-			if ( spawnPointObj == null )
-				spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		} else {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME + "_" + data.def.sku);
-		}
-		// If we couldn't find a valid spawn point, try to find a generic one
-		if(spawnPointObj == null) {
-			spawnPointObj = GameObject.Find(LevelEditor.LevelTypeSpawners.DRAGON_SPAWN_POINT_NAME);
-		}
-
-		Vector3 pos = GameConstants.Vector3.zero;
-		if(spawnPointObj != null) {
-			pos = spawnPointObj.transform.position;
-		}
-		m_position = pos;
-		m_position.z = -m_minZ;	// ensure we pull back some distance, so that we don't screw up the bounds calculations due to plane-ray intersection messing up
-		m_transform.position = m_position;
 	}
 
 	void OnDestroy() {

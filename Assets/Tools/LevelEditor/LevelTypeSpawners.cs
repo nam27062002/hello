@@ -73,8 +73,10 @@ namespace LevelEditor {
 		}
 
 		public void IntroSpawn( string sku ) {
-			GameObject go = GetDragonSpawnPoint(sku, false);			
-			InstantiateSpawner( go, "IntroSpawners/SP_Intro" );            
+			GameObject go = GetDragonSpawnPoint(sku, false);
+			if (go != null) {
+				InstantiateSpawner( go, "IntroSpawners/SP_Intro" );            
+			}
 		}
 
 		void InstantiateSpawner( GameObject root, string spawner){

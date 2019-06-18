@@ -180,8 +180,8 @@ namespace LevelEditor {
 				if (Input.GetKeyDown(KeyCode.I))
 				{
 					bool usingEditor = true;
-					InstanceManager.player.StartIntroMovement( usingEditor );
-					InstanceManager.gameCamera.StartIntro( usingEditor );
+					Vector3 startPos = InstanceManager.player.StartIntroMovement( usingEditor );
+					InstanceManager.gameCamera.StartIntro( startPos );
 					LevelTypeSpawners sp = FindObjectOfType<LevelTypeSpawners>();
 					if ( sp != null )
 						sp.IntroSpawn(InstanceManager.player.data.def.sku);
@@ -225,9 +225,10 @@ namespace LevelEditor {
 			// Reset dragon stats
 			InstanceManager.player.ResetStats(false);
 			
+			Vector3 startPos = GameConstants.Vector3.zero;
 			// Setup spawn position
 			if (LevelEditor.settings.spawnAtCameraPos) {
-				Vector3 startPos = mainCamera.transform.position;
+				startPos = mainCamera.transform.position;
 				startPos.z = 0f;
 				InstanceManager.player.transform.position = startPos;
 			} else {
@@ -241,7 +242,7 @@ namespace LevelEditor {
 			InstanceManager.player.playable = true;
 
 			// Init game camera
-			InstanceManager.gameCamera.Init();
+			InstanceManager.gameCamera.Init(startPos);
 			
 			// Instantiate map prefab
 			InitLevelMap();

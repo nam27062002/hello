@@ -689,7 +689,7 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 	/// Uses GameObject.Find, so don't abuse it!
 	/// </summary>
 	/// <param name="_levelEditor">Try to use the level editor's spawn point?</param>
-	public void MoveToSpawnPoint(bool _levelEditor) {
+	public Vector3 MoveToSpawnPoint(bool _levelEditor) {
 		// Use level editor's spawn point or try to use specific's dragon spawn point?
 		GameObject spawnPointObj = null;
 		if(_levelEditor) {
@@ -716,10 +716,18 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		// Move to position
 		if(spawnPointObj != null) {
 			m_dragonMotion.MoveToSpawnPosition(spawnPointObj.transform.position);
+			return spawnPointObj.transform.position;
 		}
+
+		return GameConstants.Vector3.zero;
 	}
 
-	public void StartIntroMovement( bool useLevelEditor = false )
+
+	/// <summary>
+	/// Search for a valid starting point.
+	/// </summary>
+	/// <returns>Returns the starting position.</returns>
+	public Vector3 StartIntroMovement( bool useLevelEditor = false )
 	{
         if(m_dragonEatBehaviour != null)
 		    m_dragonEatBehaviour.enabled = true;
@@ -760,7 +768,11 @@ public class DragonPlayer : MonoBehaviour, IBroadcastListener {
 		{
 			Vector3 introPos = spawnPointObj.transform.position;
 			m_dragonMotion.StartIntroMovement(introPos);
+
+			return introPos;
 		}
+
+		return GameConstants.Vector3.zero;
 	}
 
 	//------------------------------------------------------------------//
