@@ -23,9 +23,9 @@ public class MenuDragonSpecialPower : MonoBehaviour {
 
     [SerializeField] private List<PowerElementList> m_elementsPerPowerLevel = null;
 
-    //
+    // internal
     private MenuDragonPreview m_dragonPreview;
-
+    private DragonDataSpecial m_data;
 
     // Use this for initialization
     void Start() {
@@ -61,8 +61,35 @@ public class MenuDragonSpecialPower : MonoBehaviour {
         // Refresh disguise
         if (m_dragonPreview.equip.dragonDisguiseSku != _data.disguise)
         {
-            m_dragonPreview.equip.EquipDisguise( _data.disguise );
+            // Store the data for internal use
+            m_data = _data;
+
+            // Get all the dependencies needed for the current skin
+            AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(_data.sku);
+            List<string> dependencyIds = handle.DependencyIds;
+
+            // Load de the dependencies asynchronously
+            AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
+            op.OnDone = OnDisguiseLoaded;
+
         }
+    }
+
+    /// <summary>
+    /// Callback function called after the the disguise assest are loaded
+    /// </summary>
+    private void OnDisguiseLoaded(AddressablesOp op)
+    {
+
+        if (op.Error != null)
+        {
+            Debug.LogError("Error loading the disguise " + m_data.disguise);
+            return;
+        }
+
+        // Load successful. Equip the disguise.
+        m_dragonPreview.equip.EquipDisguise(m_data.disguise);
+    
     }
 
     private void OnPowerUpgrade(DragonDataSpecial _data) {

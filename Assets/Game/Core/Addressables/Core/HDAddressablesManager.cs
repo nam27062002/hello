@@ -682,13 +682,31 @@ public class Ingame_SwitchAreaHandle
 		return handle;
 	}
 
-	/// <summary>
-	/// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
-	/// </summary>
-	/// <returns>The handle for all downloadables required for the given setup.</returns>
-	/// <param name="_tier">Tier.</param>
-	/// <param name="_powers">Powers sku list.</param>
-	private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
+
+    /// <summary>
+    /// Get a handle for the specified disguise
+    /// </summary>
+    /// <returns>The handle for all downloadables required for that disguise.</returns>
+    /// <param name="_dragonSku">Special dragon sku.</param>
+    public AddressablesBatchHandle GetHandleForDragonDisguise(string _dragonSku)
+    {
+        AddressablesBatchHandle handle = new AddressablesBatchHandle();
+
+        AddDisguiseDependencies(handle, DragonManager.GetDragonData(_dragonSku));
+
+        return handle;
+
+
+    }
+
+
+    /// <summary>
+    /// Get the handle for all level dowloadables required for a dragon tier and a list of equipped powers.
+    /// </summary>
+    /// <returns>The handle for all downloadables required for the given setup.</returns>
+    /// <param name="_tier">Tier.</param>
+    /// <param name="_powers">Powers sku list.</param>
+    private Downloadables.Handle GetLevelHandle(DragonTier _tier, List<string> _powers) {
 		// Check equipped powers to detect those that might modify the target tier
 		for(int i = 0; i < _powers.Count; ++i) {
 			// Is it one of the tier-modifying powers?
