@@ -88,8 +88,10 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
 		List<string> pets = currentDragon.pets;
 
-        // Dragon image
-        instance.m_dragonIconLoader.LoadAsync(skinDef.Get("icon"));
+        // Dragon image: It's loaded synchronously because we know that asset bundles required to load it are already loaded because they were already necessary in the previous screen, but
+        // if we end up needing to unload all asset bundles wehn switching screens in order to release the assets loaded from those asset bundles then we'll need to come up with a different
+        // approach to load the dragon icon
+        instance.m_dragonIconLoader.Load(skinDef.Get("icon"));
         instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
 
 		// Powers: skin + pets

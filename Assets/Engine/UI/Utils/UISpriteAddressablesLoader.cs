@@ -98,6 +98,11 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         m_image.enabled = true;
     }
 
+    public void Load(string assetId) {
+        m_assetId = assetId;
+        Load();        
+    }
+
     public AddressablesOp LoadAsync(string _assetId) {
         m_assetId = _assetId;
 
@@ -110,7 +115,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         m_image.sprite = null;
 
         // We don't care if we're already loading another asset, it will be ignored once done loading
-        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);
+        m_loadingRequest = HDAddressablesManager.Instance.LoadAssetAsync(m_assetId);        
 
         ShowLoading(true);
 
@@ -128,7 +133,7 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
                 m_loadingRequest = null;
             }
         }
-    }
+    }   
 
     /// <summary>
     /// Show/hide loading icon.
