@@ -31,7 +31,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 
     public int m_numericType = -1;
 
-    public bool m_shouldRequestDefinition = false;
+    public bool m_shouldRequestDefinition = true;
     private bool m_requestingRewards = false;
 
 	protected HDLiveEventData m_data;

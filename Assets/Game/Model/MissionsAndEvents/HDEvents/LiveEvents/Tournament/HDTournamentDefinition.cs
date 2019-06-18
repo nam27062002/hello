@@ -127,15 +127,20 @@ public class HDTournamentDefinition : HDLiveEventDefinition{
 				}
 			}
 
-			if ( _data.ContainsKey("area") ){
+			if (_data.ContainsKey("area")) {
 				JSONNode area = _data["area"];
 
-				m_spawnPoint = area["spawnPoint"];
-				m_progressionXP = area["xp"].AsInt;
-				m_progressionSeconds = area["time"].AsFloat;
+				m_spawnPoint = area.GetSafe("spawnPoint", "");
+
+				m_progressionXP = area.GetSafe("xp", "0").AsInt;
+				m_progressionSeconds = area.GetSafe("time", "0").AsFloat;
 
 				DefinitionNode spawnPointDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.LEVEL_SPAWN_POINTS, m_spawnPoint);
-				m_area = spawnPointDef.Get("area");
+				if (spawnPointDef != null) {
+					m_area = spawnPointDef.Get("area");
+				} else {
+					m_area = "";
+				}
 			}
 		}
 
