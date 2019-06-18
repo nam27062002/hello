@@ -804,6 +804,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1357562536725192
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 224571728504201330}
+  m_Layer: 5
+  m_Name: Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1360801726478074
 GameObject:
   m_ObjectHideFlags: 1
@@ -5884,7 +5899,7 @@ MonoBehaviour:
   m_useFolderLevelInID: 1
   m_assetId: CPS
   m_loadOnAwake: 0
-  m_container: {fileID: 224082417126725786}
+  m_container: {fileID: 224571728504201330}
   m_loadingPrefab: {fileID: 1000012634209028, guid: 26aee784e64c9488288dc7ec217b8df4,
     type: 2}
   m_loadedInstance: {fileID: 0}
@@ -11680,8 +11695,9 @@ RectTransform:
   m_GameObject: {fileID: 1245864054632442}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -200}
-  m_LocalScale: {x: 80.1282, y: 80.1282, z: 80.12822}
-  m_Children: []
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 224571728504201330}
   m_Father: {fileID: 224559413926373402}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12646,6 +12662,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 156, y: 121}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!224 &224571728504201330
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1357562536725192}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 80, y: 80, z: 80}
+  m_Children: []
+  m_Father: {fileID: 224082417126725786}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224587797153485994
 RectTransform:
   m_ObjectHideFlags: 1
