@@ -244,15 +244,47 @@ public class TournamentInfoScreen : MonoBehaviour, IBroadcastListener {
             return;
         }
 
-        if (!m_waitingDefinition) {
-            // Send Tracking event
-            HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
-
-            // [AOC] TODO!! Select fixed or flexible build screen!
-            InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+        if (m_waitingDefinition)
+        {
+            return;
         }
+
+        // Get all the dependencies needed for the current skin (otherwise the dragon skin looks fuchsia)
+        AddressablesBatchHandle handle = HDAddressablesManager.Instance.GetHandleForDragonDisguise(m_definition.m_build.dragon);
+        List<string> dependencyIds = handle.DependencyIds;
+
+        // Make sure all the dragon resources are being loaded
+        // (If they are already loaded in memory will jump directly to the callback)
+        AddressablesOp op = HDAddressablesManager.Instance.LoadDependencyIdsListAsync(dependencyIds);
+
+        // The next tournament screen will be called in the async load callback
+        op.OnDone = GoToTournamentDragonScreen;
+
 	}
-    
+
+    /// <summary>
+    /// Callback function called after the the dragon dependencies are loaded
+    /// </summary>
+    private void GoToTournamentDragonScreen(AddressablesOp op)
+    {
+
+        if (op.Error != null)
+        {
+            Debug.LogError("Error loading the dragon resources " + m_definition.m_build.dragon);
+            return;
+        }
+
+        // All resources are loaded, go to the next screen.
+
+        // Send Tracking event
+        HDTrackingManager.Instance.Notify_TournamentClickOnNextOnDetailsScreen(m_definition.m_name);
+
+        // [AOC] TODO!! Select fixed or flexible build screen!
+        InstanceManager.menuSceneController.GoToScreen(MenuScreen.TOURNAMENT_DRAGON_SETUP, true);
+
+    }
+
+
     /// <summary>
     /// Back button has been pressed.
     /// </summary>
