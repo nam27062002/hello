@@ -1306,7 +1306,7 @@ public class GameServerManagerCalety : GameServerManager {
 
                 case ECommand.HDLiveEvents_Quest_GetMyReward: {
                         JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
-                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS, data, true);
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_QUEST_GET_MY_REWARD, data, true);
                     } break;
 
 
@@ -1756,12 +1756,12 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
     //--------------------------------------------------------------------------------
 
-    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_ENTER = "tournaments/Register";
-    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_SET_SCORE = "tournaments/score/Set";
-    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_REFUND = "tournaments/Refund";
-    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_MY_REWARD = "tournaments.rewards/get";
-    private const string ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS = "quests/progress/Add";    
-    private const string ACTION_HD_LIVE_EVENTS_QUEST_GET_MY_REWARD = "quests.rewards/get";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_ENTER = "tournaments/register";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_SET_SCORE = "tournaments/score/set";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_REFUND = "tournaments/refund";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_MY_REWARD = "tournaments/rewards/get";
+    private const string ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS = "quests/progress/add";    
+    private const string ACTION_HD_LIVE_EVENTS_QUEST_GET_MY_REWARD = "quests/rewards/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
     private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/levent/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/levent/getProgress";

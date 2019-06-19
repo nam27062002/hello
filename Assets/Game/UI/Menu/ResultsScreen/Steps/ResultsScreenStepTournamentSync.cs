@@ -221,14 +221,16 @@ public class ResultsScreenStepTournamentSync : ResultsScreenStep {
 		if(_errorCode == HDLiveDataManager.ComunicationErrorCodes.NO_ERROR) {
 			// No! :) Go to next step
 			OnFinished.Invoke();
-		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER
-                || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND 
+		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_NOT_FOUND 
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_IS_NOT_VALID 
                 || _errorCode == HDLiveDataManager.ComunicationErrorCodes.EVENT_TTL_EXPIRED)
 		{
             m_event.ForceFinishByError();
             // No! :) Go to next step
             OnFinished.Invoke();
+		} else if (_errorCode == HDLiveDataManager.ComunicationErrorCodes.QUEST_IS_OVER) {
+			m_event.RequestDefinition(true);
+			OnFinished.Invoke();
 		} else {
 			// Yes :( Show error screen
 			m_errorPanel.Show();

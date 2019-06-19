@@ -405,14 +405,16 @@ public abstract class HDLiveEventManager : HDLiveDataController {
             Metagame.Reward r = Metagame.Reward.CreateFromJson(responseJson);
             UsersManager.currentUser.PushReward(r);
             FinishEvent();
-            ClearEvent();
             break;
 
             case HDLiveDataManager.ComunicationErrorCodes.NOTHING_PENDING:            
             FinishEvent();
-            ClearEvent();
-            break;
+            break;            
         }
+
+        ClearEvent();
+        HDLiveDataManager.instance.SaveEventsToCache();
+
         // Get My Events
         // Request new event data
         if(!HDLiveDataManager.TEST_CALLS) {       // Would read the event again from the json xD
