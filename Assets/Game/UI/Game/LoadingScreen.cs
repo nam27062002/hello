@@ -63,9 +63,9 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// </summary>
 	/// <param name="_show">Whether to show or hide the screen.</param>
 	/// <param name="_animate">Use fade animation?</param>
-	public static void Toggle(bool _show, bool _animate = true) {
+	public static void Toggle(bool _show, bool _animate = true, bool loadAddressables = false) {
 		if ( _show ){
-			InitWithCurrentData();
+			InitWithCurrentData(loadAddressables);
 			instance.m_loadingCanvas.gameObject.SetActive(true);
 			instance.m_loadingCanvas.worldCamera.gameObject.SetActive(true);
 		}
@@ -76,26 +76,42 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
 	/// <summary>
 	/// Initialize the screen with current data: selected dragon, skin, pets, etc.
 	/// </summary>
-	public static void InitWithCurrentData() {
-		// Aux vars
-		IDragonData currentDragon = null;
-		if (SceneController.mode == SceneController.Mode.TOURNAMENT) {
-			currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
-		} else {
-			currentDragon = DragonManager.currentDragon;
-		}
+	private static void InitWithCurrentData(bool loadAddressables) {
+        IDragonData currentDragon = GetCurrentDragonData();
 
-		DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
-		List<string> pets = currentDragon.pets;
+        if (loadAddressables) {
+            LoadAddressables();
+        } else {
+            instance.m_dragonIconLoader.IsVisible = false;
+        }
 
-        // Dragon image: It's loaded synchronously because we know that asset bundles required to load it are already loaded because they were already necessary in the previous screen, but
-        // if we end up needing to unload all asset bundles wehn switching screens in order to release the assets loaded from those asset bundles then we'll need to come up with a different
-        // approach to load the dragon icon
-        instance.m_dragonIconLoader.Load(skinDef.Get("icon"));
+
         instance.m_tierIcon.sprite = ResourcesExt.LoadFromSpritesheet(UIConstants.UI_SPRITESHEET_PATH, currentDragon.tierDef.Get("icon"));
 
 		// Powers: skin + pets
 		// [AOC] PowerIcon does all the job for us!
 		PowerIcon.InitPowerIconsWithDragonData(ref instance.m_powerIcons, currentDragon);
 	}
+
+    private static IDragonData GetCurrentDragonData() {
+        IDragonData currentDragon = null;
+        if (SceneController.mode == SceneController.Mode.TOURNAMENT)
+        {
+            currentDragon = HDLiveDataManager.tournament.tournamentData.tournamentDef.dragonData;
+        }
+        else
+        {
+            currentDragon = DragonManager.currentDragon;
+        }
+
+        return currentDragon;
+    }
+
+    public static void LoadAddressables() {
+        IDragonData currentDragon = GetCurrentDragonData();        
+        DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
+
+        instance.m_dragonIconLoader.IsVisible = true;
+        instance.m_dragonIconLoader.Load(skinDef.Get("icon"));
+    }
 }

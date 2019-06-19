@@ -27,11 +27,15 @@ public class HDAddressablesManager : AddressablesManager
 
     private HDDownloadablesTracker m_tracker;
 
+    private string LastSceneId { get; set; }
+
     /// <summary>
     /// Make sure this method is called after ContentDeltaManager.OnContentDelta() was called since this method uses data from assetsLUT to create downloadables catalog.
     /// </summary>
     public void Initialize()
     {
+        LastSceneId = null;
+
         Logger logger = (FeatureSettingsManager.IsDebugEnabled) ? new CPLogger(ControlPanel.ELogChannel.Addressables) : null;
 
         // Addressables catalog     
@@ -320,7 +324,10 @@ public class HDAddressablesManager : AddressablesManager
             m_addressablesAreaLoader = new HDAddressablesAreaLoader();
         }
 
-        m_addressablesAreaLoader.Setup(handle, sceneId);
+        // First loading mustn't show the dragon icon
+        m_addressablesAreaLoader.Setup(handle, sceneId, ((sceneId == MenuSceneController.NAME && !string.IsNullOrEmpty(LastSceneId)) || sceneId == GameSceneController.NAME));
+
+        LastSceneId = sceneId;
 
         return m_addressablesAreaLoader;
     }
