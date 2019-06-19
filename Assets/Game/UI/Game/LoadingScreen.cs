@@ -112,6 +112,6 @@ public class LoadingScreen : UbiBCN.SingletonMonoBehaviour<LoadingScreen> {
         DefinitionNode skinDef = skinDef = DefinitionsManager.SharedInstance.GetDefinition(DefinitionsCategory.DISGUISES, currentDragon.disguise);
 
         instance.m_dragonIconLoader.IsVisible = true;
-        instance.m_dragonIconLoader.Load(skinDef.Get("icon"));
+        instance.m_dragonIconLoader.LoadAsync(skinDef.Get("icon"));
     }
 }

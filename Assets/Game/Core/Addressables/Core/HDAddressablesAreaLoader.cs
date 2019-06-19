@@ -26,12 +26,7 @@ public class HDAddressablesAreaLoader : UbiAsyncOperation
 
             switch (m_step)
             {
-                case EStep.LoadingScene:
-                    if (LoadAddressablesInLoading)
-                    {
-                        LoadingScreen.LoadAddressables();
-                    }
-
+                case EStep.LoadingScene:                 
                     m_loadingSceneOp = HDAddressablesManager.Instance.LoadSceneAsync(m_sceneToLoad);
                     break;
             }
@@ -114,12 +109,20 @@ public class HDAddressablesAreaLoader : UbiAsyncOperation
         List<string> currentDependencyIdsLoaded = new List<string>();
         HDAddressablesManager.Instance.FillWithLoadedAssetBundleIdList(currentDependencyIdsLoaded);
 
-        m_dependenciesOp.Setup(currentDependencyIdsLoaded, handle.DependencyIds, handle.MandatoryDependencyIds);
-        m_sceneToLoad = sceneToLoad;
-
         LoadAddressablesInLoading = loadAddressablesInLoading;
 
+        m_dependenciesOp.Setup(currentDependencyIdsLoaded, handle.DependencyIds, handle.MandatoryDependencyIds, OnUnloadABDone);
+        m_sceneToLoad = sceneToLoad;        
+
         Step = EStep.DealingWithDependencies;
+    }
+
+    private void OnUnloadABDone()
+    {
+        if (LoadAddressablesInLoading)
+        {
+            LoadingScreen.LoadAddressables();
+        }
     }
 
     public void Update()

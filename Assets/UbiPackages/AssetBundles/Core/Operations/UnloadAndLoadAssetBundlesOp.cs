@@ -36,6 +36,12 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
                         AssetBundlesManager.Instance.UnloadAssetBundleList(AssetBundleIdsToUnload);
                     }
 
+                    if (OnUnloadDone != null)
+                    {
+                        OnUnloadDone();
+                        OnUnloadDone = null;
+                    }
+
                     Step = EStep.LoadingNextAssetBundleList;
                     break;
 
@@ -106,7 +112,9 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
     private List<string> AssetBundleIdsToLoad { get; set; }
     private List<string> MandatoryAssetBundleIdsToLoad { get; set; }
 
-    public void Setup(List<string> rawAssetBundleIdsToUnload, List<string> rawAssetBundleIdsToLoad, List<string> rawMandatoryAssetBundleIdsToLoad)
+    private System.Action OnUnloadDone { get; set; }
+
+    public void Setup(List<string> rawAssetBundleIdsToUnload, List<string> rawAssetBundleIdsToLoad, List<string> rawMandatoryAssetBundleIdsToLoad, System.Action onUnloadDone = null)
     {
         Step = EStep.None;
         /*
@@ -127,6 +135,8 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
         AssetBundleIdsToLoad = rawAssetBundleIdsToLoad;
         
         MandatoryAssetBundleIdsToLoad = rawMandatoryAssetBundleIdsToLoad;
+
+        OnUnloadDone = onUnloadDone;
 
         Step = EStep.UnloadingPreviousAssetBundleList;
     }
