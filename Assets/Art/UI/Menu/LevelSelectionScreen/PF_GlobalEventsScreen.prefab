@@ -712,7 +712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1232559577933450
 GameObject:
   m_ObjectHideFlags: 1
@@ -1450,6 +1450,7 @@ GameObject:
   - component: {fileID: 222000120019033982}
   - component: {fileID: 114902997237185186}
   - component: {fileID: 114589692679436222}
+  - component: {fileID: 114410967481679614}
   m_Layer: 5
   m_Name: CicrcleBack
   m_TagString: Untagged
@@ -2279,7 +2280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1763124031816346
 GameObject:
   m_ObjectHideFlags: 1
@@ -7426,6 +7427,22 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114410967481679614
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1485589432242978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5788eaa6d5dc042a1beeb27bba305a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gradient:
+    topLeft: {r: 0.124, g: 0.06771478, b: 0.01612, a: 1}
+    topRight: {r: 0.10980393, g: 0.058823533, b: 0.011764707, a: 1}
+    bottomLeft: {r: 0.375, g: 0.2452679, b: 0.13235293, a: 1}
+    bottomRight: {r: 0.37647063, g: 0.24705884, b: 0.13333334, a: 1}
 --- !u!114 &114413905330938498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -11007,9 +11024,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_tweenType: 7
   m_tweenDuration: 0.5
-  m_tweenValue: 2
+  m_tweenValue: 0
   m_tweenEase: 17
-  m_tweenDelay: 0.1
+  m_tweenDelay: 0.5
   m_ignoreTimeScale: 1
   m_showTweens: []
   m_hideTweens: []
@@ -11662,7 +11679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2392157, g: 0.14901961, b: 0.07450981, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
