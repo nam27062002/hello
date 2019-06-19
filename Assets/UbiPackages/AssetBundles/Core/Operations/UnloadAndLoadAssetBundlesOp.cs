@@ -109,7 +109,7 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
     public void Setup(List<string> rawAssetBundleIdsToUnload, List<string> rawAssetBundleIdsToLoad, List<string> rawMandatoryAssetBundleIdsToLoad)
     {
         Step = EStep.None;
-        
+        /*
         List<string> assetBundleIdsToStay = null;
 
         // Only the asset bundles that are not required by rawAssetBundleIdsToLoad need to be unloaded
@@ -121,6 +121,10 @@ public class UnloadAndLoadAssetBundlesOp : UbiAsyncOperation
 
         AssetBundleIdsToUnload = assetBundleIdsToUnload;
         AssetBundleIdsToLoad = assetBundleIdsToLoad;
+        */
+
+        AssetBundleIdsToUnload = rawAssetBundleIdsToUnload;
+        AssetBundleIdsToLoad = rawAssetBundleIdsToLoad;
         
         MandatoryAssetBundleIdsToLoad = rawMandatoryAssetBundleIdsToLoad;
 
