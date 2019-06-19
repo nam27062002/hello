@@ -159,6 +159,11 @@ public class UISpriteAddressablesLoader : MonoBehaviour {
         }
     }
 
+    public bool IsVisible {
+        get { return (m_image == null) ? false : m_image.enabled; }
+        set { if (m_image != null) m_image.enabled = value; }
+    }
+
     //------------------------------------------------------------------------//
     // CALLBACKS															  //
     //------------------------------------------------------------------------//

@@ -134,8 +134,8 @@ public class GameSceneController : GameSceneControllerBase {
         m_mapUsageTracker = new TrackerMapUsage();
         m_specialPowerTimeTracker = new TrackerSpecialPowerTime();
 
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;        
+
         // Check whether the tutorial popup must be displayed
         if (!UsersManager.currentUser.IsTutorialStepCompleted(TutorialStep.FIRST_RUN)
             || DebugSettings.isPlayTest)
@@ -639,7 +639,7 @@ public class GameSceneController : GameSceneControllerBase {
                 HDTrackingManager.Instance.Notify_LoadingResultsStart();
 
                 // Show loading screen
-                LoadingScreen.Toggle(true, false);
+                LoadingScreen.Toggle(true, false, true);
 
 				// Disable dragon and entities!
      			InstanceManager.player.gameObject.SetActive(false);
