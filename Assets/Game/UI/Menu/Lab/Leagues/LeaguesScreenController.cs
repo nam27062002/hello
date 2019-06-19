@@ -248,8 +248,10 @@ public class LeaguesScreenController : MonoBehaviour {
                                 break;
 
                             case HDLiveData.State.VALID: {
-                                    InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
-                                    InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
+                                    if (!LoadingScreen.isVisible) {
+                                        InstanceManager.menuSceneController.GetScreenData(MenuScreen.LEAGUES_REWARD).ui.GetComponent<LeaguesRewardScreen>().StartFlow();
+                                        InstanceManager.menuSceneController.GoToScreen(MenuScreen.LEAGUES_REWARD, true);
+                                    }
                                 }
                                 break;
 
