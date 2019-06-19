@@ -8,19 +8,29 @@ using UnityEngine;
 /// </summary>
 public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
 {
+    public enum FreezingCheckType
+    {
+        NONE,
+        EAT,
+        BURN
+    };
+
     /// <summary>
     /// Registry.
     /// </summary>
 	public class Registry
 	{
+        
 		public Transform m_transform;
 		public float m_distanceSqr;
         public bool m_checkTier;
+        public FreezingCheckType m_checkType;
         public DragonTier m_dragonTier;
         public Registry()
         {
             m_checkTier = false;
             m_dragonTier = DragonTier.TIER_0;
+            m_checkType = FreezingCheckType.NONE;
         }
 	};
 
@@ -174,7 +184,24 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
             {
                 // Check if tier pass
                 Entity entity = m_entities[i];
-                if (!freezing.m_checkTier || ( entity != null && (entity.IsEdible( freezing.m_dragonTier)|| entity.CanBeHolded( freezing.m_dragonTier ))))
+                bool isValid = false;
+                switch( freezing.m_checkType )
+                {
+                    case FreezingCheckType.NONE:
+                    {
+                        isValid = true;
+                    }break;
+                    case FreezingCheckType.EAT:
+                    {
+                        isValid = entity.IsEdible( freezing.m_dragonTier) || entity.CanBeHolded( freezing.m_dragonTier );
+                    }break;
+                    case FreezingCheckType.BURN:
+                    {
+                        isValid = entity.IsBurnable(freezing.m_dragonTier);
+                    }break;
+                }
+
+                if ( isValid )
                 {
                     m_toFreeze.Add( m_entities[i] );
                     if ( m_killOnFrozen )
@@ -193,9 +220,6 @@ public class FreezingObjectsRegistry : MonoBehaviour, IBroadcastListener
                     }
                     m_entities.RemoveAt( i );
                 }
-
-
-               
             }   
         }
         
