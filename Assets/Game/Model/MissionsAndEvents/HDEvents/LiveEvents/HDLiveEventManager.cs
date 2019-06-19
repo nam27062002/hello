@@ -32,7 +32,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
     public int m_numericType = -1;
 
     public bool m_shouldRequestDefinition = false;
-    private bool m_requestingRewards = false;
+    protected bool m_requestingRewards = false;
 
 	protected HDLiveEventData m_data;
 	public HDLiveEventData data
@@ -326,21 +326,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		return new List<HDLiveData.Reward>();
 	}
 
-	public void RequestRewards()
-    {
-		if (!m_requestingRewards && m_data.m_state < HDLiveEventData.State.REWARD_COLLECTED)
-		{
-			m_requestingRewards = true;
-			if ( HDLiveDataManager.TEST_CALLS )
-	        {
-				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
-	        }
-	        else
-	        {
-				GameServerManager.SharedInstance.HDEvents_GetMyReward(data.m_eventId, RequestRewardsResponse);    
-	        }
-        }
-    }
+	public abstract void RequestRewards();    
 
 	protected virtual void RequestRewardsResponse(FGOL.Server.Error _error, GameServerManager.ServerResponse _response)
     {
@@ -404,7 +390,7 @@ public abstract class HDLiveEventManager : HDLiveDataController {
 		}
 		else
 		{
-			GameServerManager.SharedInstance.HDEvents_GetRefund(data.m_eventId, GetRefundResponse);    
+			GameServerManager.SharedInstance.HDEvents_Tournament_GetRefund(data.m_eventId, GetRefundResponse);    
 		}
 	}
 

@@ -688,14 +688,6 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyProgress, parameters, _callback);
 	}
 
-	public override void HDEvents_AddProgress(int _eventID, int _score, ServerCallback _callback) {
-		// Compose parameters and enqeue command
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-		parameters.Add("progress", _score.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.HDLiveEvents_AddProgress, parameters, _callback);
-	}
-
     public override void HDEvents_GetLeaderboard(int _eventID, ServerCallback _callback)
     {
         // Compose parameters and enqeue command
@@ -704,30 +696,71 @@ public class GameServerManagerCalety : GameServerManager {
         Commands_EnqueueCommand(ECommand.HDLiveEvents_GetLeaderboard, parameters, _callback);
     }
 
-    public override void HDEvents_SetScore(int _eventID, int _score, SimpleJSON.JSONNode _build, ServerCallback _callback) {
-        // Compose parameters and enqeue command
+    public override void HDEvents_Tournament_SetScore(int _eventID, int _score, SimpleJSON.JSONNode _build, ServerCallback _callback) {
+        JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        json.Add("score", _score.ToString(JSON_FORMAT));
+        json.Add("build", _build.ToString());
+        json.Add("fetchLeaderboard", "true");
+        
         Dictionary<string, string> parameters = new Dictionary<string, string>();
-        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-        parameters.Add("score", _score.ToString(JSON_FORMAT));
-		parameters.Add("returnData", "true");
-		parameters.Add("build", _build.ToString());
-        Commands_EnqueueCommand(ECommand.HDLiveEvents_SetScore, parameters, _callback);
+        parameters.Add("body", json.ToString());
+
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_Tournament_SetScore, parameters, _callback);
     }
 
-	public override void HDEvents_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
-        parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-        parameters.Add("type", _type);
-		parameters.Add("amount", _amount.ToString(JSON_FORMAT));
-		parameters.Add("elo", _matchmakingValue.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.HDLiveEvents_Enter, parameters, _callback);
-	}
-    
+	public override void HDEvents_Tournament_EnterEvent(int _eventID, string _type, long _amount, int _matchmakingValue, ServerCallback _callback) {
+		JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        json.Add("amount", _amount.ToString(JSON_FORMAT));
+        json.Add("elo", _matchmakingValue.ToString(JSON_FORMAT));
+        json.Add("type", _type);
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+        
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_Tournament_Enter, parameters, _callback);
+	}    
 
-	public override void HDEvents_GetMyReward(int _eventID, ServerCallback _callback) {
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetMyReward, parameters, _callback);
+    public override void HDEvents_Tournament_GetRefund(int _eventID, ServerCallback _callback) {
+		JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_Tournament_GetRefund, parameters, _callback);
+	}
+
+	public override void HDEvents_Tournament_GetMyReward(int _eventID, ServerCallback _callback) {
+        JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+		
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_Tournament_GetMyReward, parameters, _callback);
+	}
+
+	public override void HDEvents_Quest_AddProgress(int _eventID, int _score, ServerCallback _callback) {
+		JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        json.Add("progress", _score.ToString(JSON_FORMAT));
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+        
+		Commands_EnqueueCommand(ECommand.HDLiveEvents_Quest_AddProgress, parameters, _callback);
+	}
+
+    public override void HDEvents_Quest_GetMyReward(int _eventID, ServerCallback _callback) {
+        JSONNode json = new JSONClass();
+        json.Add("eventId", _eventID.ToString(JSON_FORMAT));
+        
+        Dictionary<string, string> parameters = new Dictionary<string, string>();
+        parameters.Add("body", json.ToString());
+		
+        Commands_EnqueueCommand(ECommand.HDLiveEvents_Quest_GetMyReward, parameters, _callback);
 	}
 
 	public override void HDEvents_FinishMyEvent(int _eventID, ServerCallback _callback) {
@@ -736,11 +769,6 @@ public class GameServerManagerCalety : GameServerManager {
 		Commands_EnqueueCommand(ECommand.HDLiveEvents_FinishMyEvent, parameters, _callback);
 	}
 
-    public override void HDEvents_GetRefund(int _eventID, ServerCallback _callback) {
-		Dictionary<string, string> parameters = new Dictionary<string, string>();
-		parameters.Add("eventId", _eventID.ToString(JSON_FORMAT));
-		Commands_EnqueueCommand(ECommand.HDLiveEvents_GetRefund, parameters, _callback);
-	}
 
     //--------------------------------------------------------------------------
 
@@ -830,14 +858,16 @@ public class GameServerManagerCalety : GameServerManager {
 
 		HDLiveEvents_GetMyEvents,
 		HDLiveEvents_GetEventDefinition,// params: int _eventID. Returns an event description
-        HDLiveEvents_GetMyProgress,		// params: int _eventID. Returns the event progres for this player
-        HDLiveEvents_AddProgress,	// params: int _eventID, _contribution on quests
-        HDLiveEvents_GetLeaderboard,   // params: int _eventID
-        HDLiveEvents_SetScore,     // params: int _eventID. _score on tournaments
-        HDLiveEvents_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
-		HDLiveEvents_GetMyReward,		// params: int _eventID
+        HDLiveEvents_GetMyProgress,		// params: int _eventID. Returns the event progres for this player        
+        HDLiveEvents_GetLeaderboard,   // params: int _eventID        
+        HDLiveEvents_Tournament_Enter,       // params: int _eventID. entrance type, amount, matchmaking value
+        HDLiveEvents_Tournament_SetScore,     // params: int _eventID. _score on tournaments
+        HDLiveEvents_Tournament_GetRefund,			// params: int _eventID
+		HDLiveEvents_Tournament_GetMyReward,		// params: int _eventID
+        HDLiveEvents_Quest_AddProgress,	// params: int _eventID, _contribution on quests
+        HDLiveEvents_Quest_GetMyReward,		// params: int _eventID
 		HDLiveEvents_FinishMyEvent,		// params: int _eventID
-        HDLiveEvents_GetRefund,			// params: int _eventID
+        
 
         HDLeagues_GetSeason,            // params: string _sku
         HDLeagues_GetLeague,
@@ -1060,13 +1090,14 @@ public class GameServerManagerCalety : GameServerManager {
             case ECommand.HDLiveEvents_GetMyEvents:
 			case ECommand.HDLiveEvents_GetEventDefinition:
 			case ECommand.HDLiveEvents_GetMyProgress:
-			case ECommand.HDLiveEvents_AddProgress:
+			case ECommand.HDLiveEvents_Quest_AddProgress:
+            case ECommand.HDLiveEvents_Quest_GetMyReward:
             case ECommand.HDLiveEvents_GetLeaderboard:
-            case ECommand.HDLiveEvents_SetScore:
-            case ECommand.HDLiveEvents_Enter:
-			case ECommand.HDLiveEvents_GetMyReward:
+            case ECommand.HDLiveEvents_Tournament_SetScore:
+            case ECommand.HDLiveEvents_Tournament_Enter:
+			case ECommand.HDLiveEvents_Tournament_GetMyReward:
 			case ECommand.HDLiveEvents_FinishMyEvent:
-            case ECommand.HDLiveEvents_GetRefund:
+            case ECommand.HDLiveEvents_Tournament_GetRefund:
 
             case ECommand.HDLeagues_GetSeason:
             case ECommand.HDLeagues_GetLeague:
@@ -1197,6 +1228,7 @@ public class GameServerManagerCalety : GameServerManager {
                 case ECommand.GlobalEvents_TMPCustomizer: {
                         Command_SendCommand(COMMAND_GLOBAL_EVENTS_TMP_CUSTOMIZER, null, null, "");
                     } break;
+
                 case ECommand.GlobalEvents_GetState:
                 case ECommand.GlobalEvents_GetEvent:
                 case ECommand.GlobalEvents_GetRewards:
@@ -1227,55 +1259,55 @@ public class GameServerManagerCalety : GameServerManager {
                         kParams.Add("isChildren", GDPRManager.SharedInstance.IsAgeRestrictionEnabled().ToString().ToLower());
                         Command_SendCommand(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, kParams);
                     } break;
+
                 case ECommand.HDLiveEvents_GetEventDefinition:
                 case ECommand.HDLiveEvents_GetMyProgress:
-                case ECommand.HDLiveEvents_GetLeaderboard:
-                case ECommand.HDLiveEvents_GetMyReward:
-                case ECommand.HDLiveEvents_FinishMyEvent:
-                case ECommand.HDLiveEvents_GetRefund: {
+                case ECommand.HDLiveEvents_GetLeaderboard:                
+                case ECommand.HDLiveEvents_FinishMyEvent:                 {
                         Dictionary<string, string> kParams = new Dictionary<string, string>();
                         kParams["eventId"] = parameters["eventId"];
                         string global_event_command = "";
                         switch (command.Cmd) {
                             case ECommand.HDLiveEvents_GetEventDefinition: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF; break;
                             case ECommand.HDLiveEvents_GetMyProgress: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS; break;
-                            case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;
-                            case ECommand.HDLiveEvents_GetMyReward: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD; break;
-                            case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT; break;
-                            case ECommand.HDLiveEvents_GetRefund: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_REFUND; break;
+                            case ECommand.HDLiveEvents_GetLeaderboard: global_event_command = COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD; break;                            
+                            case ECommand.HDLiveEvents_FinishMyEvent: global_event_command = COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT; break;                            
                         }
 
                         Command_SendCommand(global_event_command, kParams);
                     } break;
-                case ECommand.HDLiveEvents_Enter: {
-                        Dictionary<string, string> kParams = new Dictionary<string, string>();
-                        kParams["eventId"] = parameters["eventId"];
-                        kParams["type"] = parameters["type"];
-                        kParams["amount"] = parameters["amount"];
-                        kParams["elo"] = parameters["elo"];
-                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_ENTER, kParams, parameters, "");
+
+                case ECommand.HDLiveEvents_Tournament_Enter: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_TOURNAMENT_ENTER, data, true);
                     } break;
-                case ECommand.HDLiveEvents_AddProgress: {
-                        Dictionary<string, string> kParams = new Dictionary<string, string>();
-                        kParams["eventId"] = parameters["eventId"];
-                        kParams["progress"] = parameters["progress"];
-                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, kParams, parameters, "");
-                        // progress					
-                    } break;
-                case ECommand.HDLiveEvents_SetScore: {
-                        Dictionary<string, string> kParams = new Dictionary<string, string>();
-                        kParams["eventId"] = parameters["eventId"];
-                        kParams["score"] = parameters["score"];
-                        kParams["returnData"] = parameters["returnData"];
-                        string body = "";
-                        if (parameters.ContainsKey("build")) {
-                            body = parameters["build"];
-                            parameters.Remove("build");
-                        }
-                        Command_SendCommand(COMMAND_HD_LIVE_EVENTS_SET_SCORE, kParams, parameters, body);
-                        // progress                 
+
+                case ECommand.HDLiveEvents_Tournament_SetScore: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_TOURNAMENT_SET_SCORE, data, true);
                     }
                     break;
+
+                case ECommand.HDLiveEvents_Tournament_GetRefund: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_REFUND, data, true);
+                    }
+                    break;
+
+                case ECommand.HDLiveEvents_Tournament_GetMyReward: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_MY_REWARD, data, true);
+                    } break;
+
+                case ECommand.HDLiveEvents_Quest_AddProgress: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS, data, true);
+                    } break;
+
+                case ECommand.HDLiveEvents_Quest_GetMyReward: {
+                        JSONClass data = JSON.Parse(parameters["body"]) as JSONClass;
+                        Command_SendCommandAsGameAction(ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS, data, true);
+                    } break;
 
 
                 //--------------------------------------------------------------
@@ -1724,16 +1756,18 @@ public class GameServerManagerCalety : GameServerManager {
 	private const string COMMAND_GLOBAL_EVENTS_GET_LEADERBOARD = "/api/gevent/leaderboard";
     //--------------------------------------------------------------------------------
 
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_ENTER = "tournaments/Register";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_SET_SCORE = "tournaments/score/Set";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_REFUND = "tournaments/Refund";
+    private const string ACTION_HD_LIVE_EVENTS_TOURNAMENT_GET_MY_REWARD = "tournaments.rewards/get";
+    private const string ACTION_HD_LIVE_EVENTS_QUEST_REGISTER_PROGRESS = "quests/progress/Add";    
+    private const string ACTION_HD_LIVE_EVENTS_QUEST_GET_MY_REWARD = "quests.rewards/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS = "/api/levent/getMyEvents";
     private const string COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF = "/api/levent/get";
     private const string COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS = "/api/levent/getProgress";
-    private const string COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS = "/api/levent/addProgress";
-    private const string COMMAND_HD_LIVE_EVENTS_SET_SCORE = "/api/levent/setScore";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";
-    private const string COMMAND_HD_LIVE_EVENTS_ENTER = "/api/levent/register";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD = "/api/levent/getRewards";
-    private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";
-    private const string COMMAND_HD_LIVE_EVENTS_GET_REFUND = "/api/levent/getRefund";
+    private const string COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD = "/api/levent/getLeaderboard";    
+    private const string COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT = "/api/levent/finish";    
+    
 
     private const string ACTION_HD_LEAGUES_GET_SEASON           = "leagues/season/get";
     private const string ACTION_HD_LEAGUES_SET_SCORE            = "leagues/score/set";
@@ -1786,13 +1820,8 @@ public class GameServerManagerCalety : GameServerManager {
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_EVENTS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_EVENT_DEF, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_REGISTER_PROGRESS, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_SET_SCORE, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-        nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_ENTER, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
-		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_MY_REWARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_FINISH_MY_EVENT, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);     
-		nm.RegistryEndPoint(COMMAND_HD_LIVE_EVENTS_GET_REFUND, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
 
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_ALL_LEAGUES, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);
         nm.RegistryEndPoint(COMMAND_HD_LEAGUES_GET_LEADERBOARD, NetworkManager.EPacketEncryption.E_ENCRYPTION_NONE, codes, CaletyExtensions_OnCommandDefaultResponse);

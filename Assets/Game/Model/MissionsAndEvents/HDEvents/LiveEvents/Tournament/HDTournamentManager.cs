@@ -196,7 +196,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
         else
         {
 			int playerProgress = GetCurrentMatchmakingValue();
-			GameServerManager.SharedInstance.HDEvents_EnterEvent(data.m_eventId, _type, _amount, playerProgress, EntranceResponse);    
+			GameServerManager.SharedInstance.HDEvents_Tournament_EnterEvent(data.m_eventId, _type, _amount, playerProgress, EntranceResponse);    
         }
     }
 
@@ -234,7 +234,7 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 			}
 			_build.Add("pets", arr);
 
-            GameServerManager.SharedInstance.HDEvents_SetScore(data.m_eventId, _score, _build, SetScoreResponse);
+            GameServerManager.SharedInstance.HDEvents_Tournament_SetScore(data.m_eventId, _score, _build, SetScoreResponse);
         }
     }
 
@@ -259,6 +259,21 @@ public class HDTournamentManager : HDLiveEventManager, IBroadcastListener {
 		Messenger.Broadcast<HDLiveDataManager.ComunicationErrorCodes>(MessengerEvents.TOURNAMENT_SCORE_SENT, outErr);
     }
 
+	public override void RequestRewards() {
+		if (!m_requestingRewards && m_data.m_state < HDLiveEventData.State.REWARD_COLLECTED)
+		{
+			m_requestingRewards = true;
+			if ( HDLiveDataManager.TEST_CALLS )
+	        {
+				ApplicationManager.instance.StartCoroutine( DelayedCall(m_type + "_rewards.json", RequestRewardsResponse));
+	        }
+	        else
+	        {
+				GameServerManager.SharedInstance.HDEvents_Tournament_GetMyReward(data.m_eventId, RequestRewardsResponse);    
+	        }
+        }
+
+	}
 #endregion
 
 	/// <summary>
